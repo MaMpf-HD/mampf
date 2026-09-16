@@ -32,6 +32,8 @@ de:
         of_due_points: "von den bisher korrigierten Punkten"
         due_so_far: "Bisher korrigiert"
         due_so_far_hint: "Punkte und Prozent zählen, was für die Studierende feststeht: Blätter, deren Frist samt Nachfrist vorbei ist, und bereits korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        due_so_far_hint_with_tests: "Punkte und Prozent zählen, was für die Studierende feststeht, Blätter und Tests zusammen: Blätter, deren Frist samt Nachfrist vorbei ist, Tests, deren Woche vorbei ist, und alles bereits Korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        sheets_and_tests: "Blätter und Tests"
         maximum: "Maximum"
         assignments: "Übungsblätter"
         tests: "Tests"

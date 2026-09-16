@@ -109,8 +109,15 @@
             >
               <%= t("student_performance.records.columns.due_so_far") %>
 
+              <% if @test_points %>
+                <span class="fw-normal text-muted">
+                  (<%= t("student_performance.records.columns.sheets_and_tests") %>)
+                </span>
+              <% end %>
+
               <%= helpdesk(
-                    t("student_performance.records.columns.due_so_far_hint"),
+                    t("student_performance.records.columns." \
+                      "#{@test_points ? "due_so_far_hint_with_tests" : "due_so_far_hint"}"),
                     false) %>
             </th>
 
@@ -254,7 +261,6 @@
               </th>
             <% end %>
 
-            <%# A title on two lines keeps a column of icons as narrow as the icons. %>
             <% @achievements.each do |achievement| %>
               <th
                 scope="col"

@@ -32,6 +32,8 @@ en:
         of_due_points: "of the points marked so far"
         due_so_far: "Marked so far"
         due_so_far_hint: "Points and percentage count what is settled for the student: assignments whose deadline, grace period included, has passed, and any already marked - minus the excused ones and those still waiting to be marked. The maximum therefore differs from student to student."
+        due_so_far_hint_with_tests: "Points and percentage count what is settled for the student, sheets and tests together: sheets whose deadline, grace period included, has passed, tests whose week is over, and anything already marked - minus the excused ones and those still waiting to be marked. The maximum therefore differs from student to student."
+        sheets_and_tests: "sheets and tests"
         maximum: "Maximum"
         assignments: "Assignments"
         tests: "Tests"

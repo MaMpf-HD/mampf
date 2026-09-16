@@ -286,7 +286,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           get lecture_student_performance_records_path(lecture)
 
           tests_group = groups.find do |text|
-            text.include?(I18n.t("student_performance.records.columns.tests"))
+            text.strip.start_with?(I18n.t("student_performance.records.columns.tests"))
           end
           expect(tests_group).to include(
             I18n.t("student_performance.records.columns.not_due_count", count: 1)
@@ -298,12 +298,28 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             .to include(ApplicationController.helpers.number_to_percentage(80, precision: 0))
         end
 
+        it "says that the marked-so-far figures take sheets and tests together" do
+          test(deadline: 2.weeks.from_now.end_of_week, points: 10)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(groups.join).to include(
+            I18n.t("student_performance.records.columns.sheets_and_tests")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.records.columns.due_so_far_hint_with_tests")
+          )
+        end
+
         it "has no tests group without a test" do
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
           get lecture_student_performance_records_path(lecture)
 
-          expect(groups.join).not_to include(I18n.t("student_performance.records.columns.tests"))
+          expect(groups.map(&:strip)).not_to include(
+            start_with(I18n.t("student_performance.records.columns.tests"))
+          )
         end
       end
 
