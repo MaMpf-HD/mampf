@@ -3,6 +3,8 @@ module Assessment
   # of its table - a group's on the tutor's page, the lecture's in the
   # achievement's dashboard.
   class AchievementValuesController < ApplicationController
+    include AchievementStreams
+
     before_action :set_resources
     before_action :set_locale
     before_action :authorize_entry!
@@ -26,11 +28,13 @@ module Assessment
       end
       @participation.reload
       flash.now[:notice] = t("assessment.achievements.marking.saved")
-      render turbo_stream: [row_stream, summary_stream, stream_flash].compact
+      render turbo_stream: [row_stream, summary_stream, delete_button_stream, stream_flash]
     end
 
+    # Somebody else may have entered since the table was drawn; the summary
+    # counts them too.
     def refresh
-      render turbo_stream: row_stream
+      render turbo_stream: [row_stream, summary_stream]
     end
 
     private
@@ -75,9 +79,11 @@ module Assessment
       end
 
       def summary_stream
-        summary = AchievementMarkingTableComponent.new(achievement: @achievement,
-                                                       grading_scope: table_scope).summary
-        turbo_stream.replace("pointing-summary", html: render_to_string(summary))
+        achievement_summary_stream(@achievement, table_scope)
+      end
+
+      def delete_button_stream
+        achievement_delete_button_stream(@achievement)
       end
   end
 end

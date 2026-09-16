@@ -1,6 +1,7 @@
 module Assessment
   class TaskPointsController < ApplicationController
     include ExamStreams
+    include AchievementStreams
 
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
@@ -308,13 +309,13 @@ module Assessment
       def summary_stream
         return [] if @assessable.is_a?(Exam)
 
-        summary = if @assessable.is_a?(Achievement)
-          AchievementMarkingTableComponent.new(achievement: @assessable,
-                                               grading_scope: table_scope).summary
-        else
-          TutorialPointingTableComponent.new(assignment: @assessable,
-                                             grading_scope: table_scope).summary
+        if @assessable.is_a?(Achievement)
+          return [achievement_summary_stream(@assessable, table_scope),
+                  achievement_delete_button_stream(@assessable)]
         end
+
+        summary = TutorialPointingTableComponent.new(assignment: @assessable,
+                                                     grading_scope: table_scope).summary
         turbo_stream.replace("pointing-summary", html: render_to_string(summary))
       end
 

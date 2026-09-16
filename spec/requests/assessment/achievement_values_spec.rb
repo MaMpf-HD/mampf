@@ -102,11 +102,23 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(response).to redirect_to(root_path)
     end
 
-    it "lets the lecturer enter from the lecture's table" do
+    it "lets the lecturer enter from the lecture's table, and locks the delete button" do
       enter("pass", as: teacher, scope: "lecture")
 
       expect(row.reload.grade_text).to eq("pass")
       expect(response.body).to include(group.title)
+      expect(response.body).to include("achievement-delete-button")
+      expect(response.body).to include(I18n.t("assessment.achievement_not_destructible.has_values"))
+    end
+
+    it "answers a reload with the row and the summary" do
+      row.update!(grade_text: "pass")
+      sign_in tutor
+      patch refresh_achievement_value_participation_path(row, grading_scope_type: "tutorial"),
+            as: :turbo_stream
+
+      expect(response.body).to include("achievement-participation-row-#{row.id}")
+      expect(response.body).to include("pointing-summary")
     end
   end
 

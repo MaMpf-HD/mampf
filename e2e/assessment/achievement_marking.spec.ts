@@ -70,12 +70,23 @@ test.describe("entering an achievement", () => {
     const graceRow = teacher.page.getByRole("table").getByRole("row", { name: /Grace Hopper/ });
     await expect(graceRow).toContainText("Monday group");
     await expect(graceRow.getByRole("img", { name: "Not met" })).toBeVisible();
+
+    // the delete button follows the values without a reload: locked while
+    // Grace's 9 stands, free once it is cleared, locked again by the
+    // certificate
+    const deleteButton = teacher.page.getByRole("button", { name: "Delete" });
+    await expect(deleteButton).toBeDisabled();
+    await graceRow.getByRole("spinbutton", { name: "Value for Grace Hopper" }).fill("");
+    await graceRow.getByRole("button", { name: "Save this row's value" }).click();
+    await expect(graceRow.getByRole("img", { name: "Not yet graded" })).toBeVisible();
+    await expect(deleteButton).toBeEnabled();
     await graceRow.getByRole("button", { name: "Excuse with a certificate" }).click();
     const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the achievement" });
     await dialog.getByLabel("Reason (optional, teaching staff only)").fill("sick note");
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(graceRow.getByRole("img", { name: "Excused" })).toBeVisible();
     await expect(graceRow.getByRole("spinbutton")).toHaveCount(0);
+    await expect(deleteButton).toBeDisabled();
 
     // the overview reads the achievement as met for both: Ada's talk, Grace's
     // certificate

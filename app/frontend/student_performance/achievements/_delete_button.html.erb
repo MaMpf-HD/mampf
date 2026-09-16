@@ -1,5 +1,5 @@
 <% if achievement.persisted? %>
-  <div class="text-end mt-3">
+  <div id="achievement-delete-button" class="text-end mt-3">
     <% if achievement.destructible? %>
       <%= button_to t("basics.delete"),
                     lecture_student_performance_achievement_path(lecture, achievement),
