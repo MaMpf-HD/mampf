@@ -48,6 +48,10 @@
       </div>
       <div id="assignment_form_container"></div>
       <div id="assessment-assignments-wrapper">
+        <% if tests.any? %>
+          <h6><%= t('assessment.test.homework_heading') %></h6>
+        <% end %>
+
         <% if homework.any? %>
           <table class="table table-hover mb-4">
             <thead>

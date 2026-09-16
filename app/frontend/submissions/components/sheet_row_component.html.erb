@@ -22,16 +22,7 @@
 
           <%= sheet.assignment.title %>
 
-          <% if sheet.assignment.kind_test? %>
-            <span
-              class="
-                badge bg-secondary-subtle text-secondary-emphasis fw-normal
-                ms-1
-              "
-            >
-              <%= t("assessment.test.badge") %>
-            </span>
-          <% end %>
+          <%= helpers.test_badge if sheet.assignment.kind_test? %>
         </div>
 
         <% if note %>

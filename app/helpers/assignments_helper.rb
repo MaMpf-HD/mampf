@@ -20,4 +20,10 @@ module AssignmentsHelper
            from: I18n.l(week.first, format: :test_week_start),
            to: I18n.l(week.last, format: :test_week_end))
   end
+
+  # The mark beside a test's title wherever it is listed among sheets.
+  def test_badge
+    tag.span(I18n.t("assessment.test.badge"),
+             class: "badge bg-secondary-subtle text-secondary-emphasis fw-normal ms-1")
+  end
 end
