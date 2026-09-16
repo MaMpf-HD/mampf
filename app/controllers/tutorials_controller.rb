@@ -29,8 +29,7 @@ class TutorialsController < ApplicationController
   def index
     authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order(deadline: :desc)
-    @assignment = Assignment.find_by(id: params[:assignment]) ||
-                  @assignments&.first
+    @assignment = Assignment.find_by(id: params[:assignment]) || current_assignment
     @tutorials = if current_user.editor_or_teacher_in?(@lecture)
       @lecture.tutorials
     else
@@ -220,6 +219,13 @@ class TutorialsController < ApplicationController
   end
 
   private
+
+    # The sheet a tutor has work on: the newest whose marking is open - a
+    # test in its week counts - and, before any is, the first still to come.
+    def current_assignment
+      open, ahead = @assignments.partition(&:grading_open?)
+      open.first || ahead.last
+    end
 
     def set_tutorial
       @tutorial = Tutorial.find_by(id: params[:id])
