@@ -129,53 +129,6 @@ test.describe("pointing table", () => {
     await expect(tutor.page.getByText("2 hand-ins · 1 reviewed · 1 pending grading")).toBeVisible();
   });
 
-  test("ranks the rows by their total from the heading", async ({ factory, teacher, tutor }) => {
-    const { lecture, assignment, assessmentId } = await createAssessedAssignment(
-      factory, teacher.user.id, "Problem Set 1", ["expired"],
-    );
-    const task = await addTask(factory, assessmentId, "Warm-up", 10);
-    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
-      lecture_id: lecture.id,
-      tutor_id: tutor.user.id,
-    });
-    for (const [name, points] of [["Ada Lovelace", 3], ["Grace Hopper", 8], ["Nina Simone", null]]) {
-      const student = await factory.create("confirmed_user", [], { name_in_tutorials: name });
-      await factory.create("lecture_membership", [], {
-        lecture_id: lecture.id, user_id: student.id,
-      });
-      await factory.create("tutorial_membership", [], {
-        tutorial_id: tutorial.id, user_id: student.id,
-      });
-      if (points === null) {
-        continue;
-      }
-      const marked = await factory.create("assessment_participation", [], {
-        assessment_id: assessmentId, user_id: student.id, tutorial_id: tutorial.id,
-        status: "reviewed", submitted_at: new Date().toISOString(),
-      });
-      await scoreTask(factory, task.id, marked.id, points);
-    }
-
-    await tutor.page.goto(
-      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
-    );
-    const rows = tutor.page.getByRole("table").getByRole("row");
-    await expect(rows.nth(1)).toContainText("Ada Lovelace");
-
-    // largest first, the unmarked last; the other way round on the next click
-    await tutor.page.getByRole("link", { name: "Total Points" }).click();
-    await expect(rows.nth(1)).toContainText("Grace Hopper");
-    await expect(rows.nth(2)).toContainText("Ada Lovelace");
-    await expect(rows.nth(3)).toContainText("Nina Simone");
-    await expect(tutor.page.getByRole("columnheader", { name: /Total Points/ }))
-      .toHaveAttribute("aria-sort", "descending");
-
-    await tutor.page.getByRole("link", { name: "Total Points" }).click();
-    await expect(rows.nth(1)).toContainText("Ada Lovelace");
-    await expect(rows.nth(2)).toContainText("Grace Hopper");
-    await expect(rows.nth(3)).toContainText("Nina Simone");
-  });
-
   test("saves one row, then the rest at once", async ({ factory, teacher, tutor }) => {
     const { lecture, assignment, assessmentId } = await createAssessedAssignment(
       factory, teacher.user.id, "Problem Set 1", ["expired"],

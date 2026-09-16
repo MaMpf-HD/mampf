@@ -1,35 +1,19 @@
 class PointingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, :sort_url, :sort_dir,
-                      keyword_init: true)
+  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, keyword_init: true)
 
   # A heading sits the way its column's content does: text starts at the
   # left, a badge, a select or an icon stands in the middle.
   TEXT_COLUMNS = [:team, :talk, :note, :graded].freeze
 
-  # A table that sorts by the total hands in the link for its heading and
-  # the direction it is sorted in, `aria-sort` style.
-  def initialize(assessable:, layout:, sort_url: nil, sort_dir: nil)
+  def initialize(assessable:, layout:)
     @assessable = assessable
     @layout = layout
     @assessment = assessable.assessment
-    @sort_url = sort_url
-    @sort_dir = sort_dir
     super()
   end
 
   def columns
     @layout.columns.flat_map { |column| build(column) }
-  end
-
-  ARIA_SORT = { "asc" => "ascending", "desc" => "descending" }.freeze
-  SORT_ICONS = { "asc" => "bi-caret-up-fill", "desc" => "bi-caret-down-fill" }.freeze
-
-  def aria_sort(column)
-    ARIA_SORT.fetch(column.sort_dir, "none")
-  end
-
-  def sort_icon(column)
-    SORT_ICONS.fetch(column.sort_dir, "bi-chevron-expand text-muted opacity-50")
   end
 
   private
@@ -96,9 +80,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
         css_class: "text-center #{@layout.column_class(:total)} grade-th",
         label: t("assessment.grading_tutorial.total_points"),
         sublabel: "(#{@assessment&.effective_total_points || 0} " \
-                  "#{t("assessment.grading_tutorial.max_points")})",
-        sort_url: @sort_url,
-        sort_dir: @sort_dir
+                  "#{t("assessment.grading_tutorial.max_points")})"
       )
     end
 

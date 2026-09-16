@@ -6,7 +6,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
   # rubocop: disable Metrics/ParameterLists
   def initialize(assessable:, assessment:, lecture:,
                  active_tab: nil, tasks: nil, task: nil,
-                 grade_scheme: nil, sort: nil, dir: nil)
+                 grade_scheme: nil)
     super()
     @assessable = assessable
     @assessment = assessment
@@ -15,8 +15,6 @@ class AssessmentDashboardComponent < ViewComponent::Base
     @task = task
     @grade_scheme = grade_scheme
     @active_tab = normalize_tab_key(active_tab) || default_tab
-    @sort = sort
-    @dir = dir
   end
   # rubocop: enable Metrics/ParameterLists
 
@@ -144,8 +142,7 @@ class AssessmentDashboardComponent < ViewComponent::Base
     def point_tab_component
       case assessable
       when Assignment
-        TutorialPointingTableComponent.new(assignment: assessable, grading_scope: lecture,
-                                           sort: @sort, dir: @dir)
+        TutorialPointingTableComponent.new(assignment: assessable, grading_scope: lecture)
       when Exam
         ExamPointingTableComponent.new(exam: assessable)
       else

@@ -131,31 +131,6 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      # The heading's link asks the dashboard for the points tab sorted; the
-      # answer carries the table's frame with the rows in that order.
-      it "sorts the points tab by the total when the heading's link asks" do
-        tutorial = create(:tutorial, lecture: lecture)
-        assignment.assessment.tasks.create!(max_points: 10, position: 1)
-        assignment.update_column(:deadline, 2.days.ago) # rubocop:disable Rails/SkipsModelValidations
-        { "Ada" => 3, "Grace" => 8 }.each do |name, points|
-          student = create(:confirmed_user, name_in_tutorials: name)
-          create(:tutorial_membership, tutorial: tutorial, user: student)
-          create(:assessment_participation, :reviewed, assessment: assignment.assessment,
-                                                       user: student, tutorial: tutorial,
-                                                       points_total: points,
-                                                       submitted_at: 3.days.ago)
-        end
-
-        get assessment_assessment_path(assessment.id),
-            params: { assessable_type: "Assignment", assessable_id: assignment.id,
-                      tab: "points", sort: "total", dir: "desc" },
-            headers: { "Turbo-Frame" => "pointing-table" }
-
-        names = Nokogiri::HTML(response.body).css("#pointing-table tbody tr")
-                        .pluck("data-status-filter-name")
-        expect(names).to eq(["Grace", "Ada"])
-      end
-
       it "sends someone who opens the bare link to the lecture's assessment tab" do
         get assessment_assessment_path(assessment.id),
             params: { assessable_type: "Assignment", assessable_id: assignment.id,
