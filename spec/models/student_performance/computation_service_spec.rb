@@ -495,16 +495,17 @@ RSpec.describe(StudentPerformance::ComputationService) do
                                      .assessment_participations
                                      .find_by(user: user)
           participation.update!(grade_text: "fail", status: :exempt)
+          record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
 
-          described_class.new(lecture: lecture)
-                         .compute_and_upsert_record_for(user)
+          # One person and everybody read the rows through different queries.
+          described_class.new(lecture: lecture).compute_and_upsert_record_for(user)
+          expect(record.reload.achievements_met_ids).to include(achievement.id)
+          expect(record.achievements_ungraded_ids).not_to include(achievement.id)
+
+          record.update!(achievements_met_ids: [], achievements_ungraded_ids: [achievement.id])
           described_class.new(lecture: lecture).compute_and_upsert_all_records!
-
-          record = StudentPerformance::Record
-                   .find_by(lecture: lecture, user: user)
-          expect(record.achievements_met_ids).to include(achievement.id)
-          expect(record.achievements_ungraded_ids)
-            .not_to include(achievement.id)
+          expect(record.reload.achievements_met_ids).to include(achievement.id)
+          expect(record.achievements_ungraded_ids).not_to include(achievement.id)
         end
       end
 
