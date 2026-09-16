@@ -23,6 +23,46 @@ module Assessment
         end
       end
 
+      # The rows of a roster in one go: the missing ones seeded in one
+      # statement, all of them loaded by user, and the blank ones handed to
+      # the group each person is in now. `groups` maps every user id to their
+      # tutorial, nil for none.
+      def rows_for(assessment, users, groups)
+        assessment.seed_participations_from!(
+          user_ids: users.map(&:id),
+          tutorial_mapping: users.to_h { |user| [user.id, groups[user.id]&.id] },
+          recompute: false
+        )
+        rows = load_rows(assessment, users.map(&:id))
+        rehome_blank_rows(rows, groups)
+        rows
+      end
+
+      def load_rows(assessment, user_ids)
+        Participation.where(user_id: user_ids, assessment: assessment)
+                     .includes(:user, :task_points, :tutorial, :assessment)
+                     .index_by(&:user_id)
+      end
+
+      # Blank participations must follow tutorial membership so the current
+      # tutor can enter points; recorded work must stay with its original
+      # tutorial. Points may land on the row between this page's read and its
+      # write, so the row is read again under the lock the point entry takes.
+      def rehome_blank_rows(rows, groups)
+        rows.each_value do |row|
+          next unless groups.key?(row.user_id) && blank?(row)
+          next if row.tutorial_id == groups[row.user_id]&.id
+
+          row.with_lock { row.update!(tutorial: groups[row.user_id]) if blank?(row) }
+        end
+      end
+
+      # Points taken back again leave task points of nil behind; those carry
+      # nothing either. A criterion's row is blank while no value is recorded.
+      def blank?(row)
+        row.pending? && row.submitted_at.nil? && !row.results_visible? && row.grade_text.blank?
+      end
+
       # Concurrent requests may hit either the uniqueness validation or the index;
       # both must reuse the existing participation.
       def create_participation(assessment, user, tutorial: nil)
