@@ -33,23 +33,12 @@
     // scrolling underneath draws a slice of itself between the two bands.
     top: calc(#{$group-row-height} - 1px);
     box-shadow: inset 0 -1px 0 var(--bs-border-color);
-    // Every column of figures is as narrow as its widest entry, so a wide
-    // screen's slack is the name column's and not spread between numbers
-    // that belong together.
-    width: 1%;
   }
 
   // Figures belong under each other, and monospace makes the row read like a
   // terminal.
   .numeric {
     font-variant-numeric: tabular-nums;
-  }
-
-  // Columns cut to their content need a little more air between them than
-  // the small table gives.
-  th,
-  td {
-    padding-inline: 0.45rem;
   }
 
   // Three right-aligned figures under one heading read as one number with gaps
@@ -72,10 +61,12 @@
   }
 
   // The tests' share closes their group the way the overall share closes
-  // "marked so far"; the heavier line opens the group.
+  // "marked so far", heavier line on the far side included, so that the
+  // share is not read as the first of the criteria.
   .test-share {
     padding-left: 0.75rem;
     border-left: var(--bs-border-width) solid var(--bs-border-color);
+    border-right: 2px solid var(--bs-border-color);
   }
 
   .tests-start {
