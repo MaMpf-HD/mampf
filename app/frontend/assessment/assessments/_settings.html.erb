@@ -1,4 +1,4 @@
-<%= vite_javascript_tag 'js/datetimepicker' %>
+<%= vite_javascript_tag 'js/datetimepicker' unless assessable.kind_test? %>
 
 <% if assessable.persisted? %>
   <div class="text-end mb-3">
