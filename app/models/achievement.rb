@@ -42,6 +42,15 @@ class Achievement < ApplicationRecord
     nil
   end
 
+  # "AR" for "Attendance Rate", "ÜP" for "Übungsblatt-Punkte": what a column
+  # of icons can carry as its heading, the title itself being the tooltip.
+  def short_title
+    words = title.to_s.scan(/[[:alnum:]]+/)
+    return words[0, 2].pluck(0).join.upcase if words.size >= 2
+
+    words.first.to_s[0, 2].upcase
+  end
+
   # The one place that decides whether a recorded value clears this
   # achievement. The marking table and the performance computation both ask
   # here, so the two cannot answer differently.

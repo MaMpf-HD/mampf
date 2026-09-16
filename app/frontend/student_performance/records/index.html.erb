@@ -262,14 +262,10 @@
             <% end %>
 
             <% @achievements.each do |achievement| %>
-              <th
-                scope="col"
-                class="text-center small"
-                title="<%= achievement.title %>"
-              >
-                <span class="achievement-title">
-                  <%= truncate(achievement.title, length: 24) %>
-                </span>
+              <th scope="col" class="text-center small">
+                <abbr title="<%= achievement.title %>">
+                  <%= achievement.short_title %>
+                </abbr>
               </th>
             <% end %>
           </tr>

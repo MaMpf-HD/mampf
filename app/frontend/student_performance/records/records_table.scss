@@ -33,11 +33,9 @@
     // scrolling underneath draws a slice of itself between the two bands.
     top: calc(#{$group-row-height} - 1px);
     box-shadow: inset 0 -1px 0 var(--bs-border-color);
-    // The upright criteria headings make this row tall; everything in it
-    // stands on the line the figures start under. Every column of figures is
-    // as narrow as its widest entry, so a wide screen's slack is the name
-    // column's and not spread between numbers that belong together.
-    vertical-align: bottom;
+    // Every column of figures is as narrow as its widest entry, so a wide
+    // screen's slack is the name column's and not spread between numbers
+    // that belong together.
     width: 1%;
   }
 
@@ -82,17 +80,5 @@
 
   .tests-start {
     border-left: 2px solid var(--bs-border-color);
-  }
-
-  // A criterion is a column of icons, and its heading stands upright so the
-  // column is no wider than they are.
-  .achievement-title {
-    display: inline-block;
-    max-height: 9rem;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
   }
 }

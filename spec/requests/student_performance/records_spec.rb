@@ -337,7 +337,9 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           # rubocop:enable Rails/SkipsModelValidations
 
           get lecture_student_performance_records_path(lecture)
-          expect(response.body).to include(achievement.title)
+          heading = Nokogiri::HTML(response.body).css("thead abbr").first
+          expect(heading.text.strip).to eq(achievement.short_title)
+          expect(heading["title"]).to eq(achievement.title)
           expect(response.body).to include(%(class="bi bi-check-circle text-success"))
           expect(response.body).to include(
             %(aria-label="#{I18n.t("student_performance.records.columns.achievement_met")}")
