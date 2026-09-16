@@ -64,6 +64,19 @@ RSpec.describe("Tutorials", type: :request) do
       expect(page.css("tr.submission-row")).to be_empty
     end
 
+    it "does not draw another lecture's group, whatever the URL names" do
+      achievement = create(:achievement, :boolean, lecture: lecture)
+      foreign = create(:tutorial, lecture: create(:lecture))
+      create(:tutorial_membership, tutorial: foreign, user: create(:confirmed_user,
+                                                                   name_in_tutorials: "Ola"))
+
+      get lecture_tutorials_path(lecture, params: { tutorial: foreign.id,
+                                                    achievement: achievement.id })
+
+      expect(response.body).not_to include("Ola")
+      expect(achievement.assessment.assessment_participations.where(tutorial: foreign)).to be_empty
+    end
+
     it "opens on the first sheet to come while none is open yet" do
       assignment.update!(deadline: 3.weeks.from_now)
       soon = create(:assignment, lecture: lecture, title: "Sheet 1", deadline: 1.week.from_now)

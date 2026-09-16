@@ -41,7 +41,9 @@ class TutorialsController < ApplicationController
     else
       current_user.given_tutorials.where(lecture: @lecture)
     end
-    @tutorial = Tutorial.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
+    # Only a group the page offers: an achievement's table lists the group's
+    # members and seeds their rows.
+    @tutorial = @tutorials.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
 
