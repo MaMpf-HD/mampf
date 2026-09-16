@@ -106,21 +106,28 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(row.reload.grade_text).to be_nil
     end
 
-    # The row's group is read for the permission, then the row is locked for
-    # the write; a table drawn in between may have handed the blank row to
-    # the student's new group.
-    it "asks again on the locked row whether the tutor may still enter" do
+    # A blank row follows the student to their new group at the moment of
+    # writing, whether or not a table has been drawn since the move.
+    it "hands a blank row to the student's new group before asking who may enter" do
       other_group = create(:tutorial, lecture: lecture)
-      allow(Assessment::AchievementValueService).to receive(:enter)
-        .and_wrap_original do |enter, *args, &check|
-          row.update!(tutorial: other_group)
-          enter.call(*args, &check)
-        end
+      other_tutor = create(:confirmed_user)
+      other_group.tutors << other_tutor
+      row
+      student.tutorial_memberships.find_by!(tutorial: group).update!(tutorial: other_group)
 
       enter("pass")
-
       expect(row.reload.grade_text).to be_nil
       expect(response).to redirect_to(root_path)
+
+      enter("pass", as: other_tutor)
+      expect(row.reload.grade_text).to eq("pass")
+      expect(row.tutorial).to eq(other_group)
+
+      # recorded work stays with the group that recorded it
+      student.tutorial_memberships.find_by!(tutorial: other_group).update!(tutorial: group)
+      enter("fail")
+      expect(row.reload.grade_text).to eq("pass")
+      expect(row.tutorial).to eq(other_group)
     end
 
     it "lets the lecturer enter from the lecture's table, and locks the delete button" do

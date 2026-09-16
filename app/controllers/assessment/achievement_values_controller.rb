@@ -57,12 +57,11 @@ module Assessment
         @lecture = @achievement.lecture
       end
 
-      # The row belongs to the group that holds it; a tutor may enter for
-      # their group, an editor for the lecture. Asked again on the locked
-      # row before the write: a blank row follows the student to their new
-      # group whenever a table draws.
+      # A tutor may enter for the group that holds the row - the student's
+      # current one while the row is blank - an editor for the lecture. Asked
+      # again on the locked row before the write.
       def authorize_entry!(row = @participation)
-        authorize!(:enter_points, row.tutorial || @lecture)
+        authorize!(:enter_points, ParticipationIndex.group_holding(row) || @lecture)
       end
 
       # grading_scope_type selects the table to answer into, not the permission

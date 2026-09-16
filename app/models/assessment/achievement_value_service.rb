@@ -8,13 +8,13 @@ module Assessment
 
     BOOLEAN_VALUES = [Achievement::PASSED, "fail"].freeze
 
-    # The block sees the row as the lock read it: the group that holds the
-    # row may have changed since the caller looked, and with it who may
-    # enter for it. The achievement is locked too, so its type cannot change
-    # under the value (Achievement#value_type_fixed_by_values holds the
-    # other end).
+    # The block sees the row as the lock read it and as the student's current
+    # group holds it: whoever may enter for that group may write. The
+    # achievement is locked too, so its type cannot change under the value
+    # (Achievement#value_type_fixed_by_values holds the other end).
     def self.enter(participation, value, grader)
       participation.with_lock do
+        ParticipationIndex.follow_membership(participation)
         yield(participation) if block_given?
         achievement = participation.assessment.assessable.lock!
         value = normalize(achievement, value.to_s.strip)

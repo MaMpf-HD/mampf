@@ -58,6 +58,23 @@ module Assessment
         end
       end
 
+      # The group whose tutor may write on the row: the student's current one
+      # while the row is blank, the one that holds the recorded work after.
+      def group_holding(row)
+        return row.tutorial unless blank?(row)
+
+        TutorialMembership.find_by(user_id: row.user_id,
+                                   lecture_id: row.assessment.lecture_id)&.tutorial
+      end
+
+      # One row, under a lock the caller holds: a value written after the
+      # student changed groups belongs to the new group, whether or not a
+      # table has been drawn since.
+      def follow_membership(row)
+        group = group_holding(row)
+        row.update!(tutorial: group) if row.tutorial_id != group&.id
+      end
+
       # Points taken back again leave task points of nil behind; those carry
       # nothing either. An achievement's row is blank while no value is entered.
       def blank?(row)
