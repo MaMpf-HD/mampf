@@ -130,6 +130,19 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(page.css("input[type=number]")).to be_present
       end
 
+      it "hands on a row whose points were taken back again, nil task points and all" do
+        assignment.update!(test_week: Time.zone.today.beginning_of_week.iso8601)
+        old_group = create(:tutorial, lecture: lecture, title: "Old group")
+        row = create(:assessment_participation, assessment: assessment, user: member,
+                                                tutorial: old_group)
+        create(:assessment_task_point, task: assessment.tasks.first,
+                                       assessment_participation: row, points: nil)
+
+        render_inline(described_class.new(assignment: assignment.reload, grading_scope: tutorial))
+
+        expect(row.reload.tutorial).to eq(tutorial)
+      end
+
       it "keeps a row something was written on where that was" do
         old_group = create(:tutorial, lecture: lecture, title: "Old group")
         row = create(:assessment_participation, assessment: assessment, user: member,

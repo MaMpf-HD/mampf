@@ -82,8 +82,10 @@ class TutorialPointingTableComponent < ViewComponent::Base
     end
   end
 
+  # Points taken back again leave task points of nil behind; those carry
+  # nothing either.
   def blank?(row)
-    row.pending? && row.submitted_at.nil? && row.task_points.none?
+    row.pending? && row.submitted_at.nil? && !row.results_visible?
   end
 
   def seed_test_rows(users, groups)
