@@ -83,6 +83,8 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect { render_inline(component) }
           .to change { assessment.assessment_participations.where(user: member).count }
           .from(0).to(1)
+        expect(assessment.assessment_participations.find_by(user: member))
+          .to have_attributes(status: "pending", submitted_at: nil, points_total: nil)
 
         page = render_inline(component)
         row = page.css("tr[id^=pointing-participation-row-]").first
@@ -91,6 +93,24 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(row.text).not_to include(I18n.t("assessment.grading_tutorial.record_first"))
         expect(assessment.assessment_participations.find_by(user: member).tutorial)
           .to eq(tutorial)
+      end
+
+      # Three hundred rows made one by one would be three hundred commits,
+      # each recomputing a performance record; here they are one statement.
+      it "seeds the group's rows in one statement, recomputing nothing" do
+        create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
+        inserts = 0
+        callback = lambda { |*, payload|
+          inserts += 1 if payload[:sql].start_with?("INSERT INTO \"assessment_participations\"")
+        }
+        expect(StudentPerformance::ComputationService).not_to receive(:new)
+
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          render_inline(component)
+        end
+
+        expect(inserts).to eq(1)
+        expect(assessment.assessment_participations.count).to eq(2)
       end
 
       it "leaves the test deletable, the rows it made carrying nothing yet" do
@@ -254,14 +274,14 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     end
 
     it "returns a hash keyed by user_id, submitters and non-submitters alike" do
-      result = component.preload_participations([user], [submission])
+      result = component.preload_participations([user], [submission], { user.id => tutorial })
 
       expect(result[user.id]).to eq(participation)
       expect(result[submitter.id]).to eq(submitter_participation)
     end
 
     it "preloads task_points so no further query is issued" do
-      preloaded = component.preload_participations([user], [])[user.id]
+      preloaded = component.preload_participations([user], [], { user.id => tutorial })[user.id]
       query_count = 0
       callback = lambda { |*, payload|
         query_count += 1 unless payload[:sql].match?(/SCHEMA|TRANSACTION/)

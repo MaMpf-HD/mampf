@@ -20,7 +20,9 @@ class TutorialPointingTableComponent < ViewComponent::Base
                         .order(:last_modification_by_users_at)
                         .includes(:users, tutorial: :tutors)
     @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial)
-    @participations_by_user_id = preload_participations(@non_submitters, @stack)
+    @participations_by_user_id =
+      preload_participations(@non_submitters, @stack,
+                             @non_submitters.to_h { |user| [user.id, @tutorial] })
   end
 
   def init_teacher_case
@@ -38,7 +40,8 @@ class TutorialPointingTableComponent < ViewComponent::Base
                                             .where.not(id: @non_submitters.map(&:id) +
                                                            @stack.flat_map(&:user_ids))
     @participations_by_user_id =
-      preload_participations(@non_submitters.to_a + @non_tutorial_participants.to_a, @stack)
+      preload_participations(@non_submitters.to_a + @non_tutorial_participants.to_a, @stack,
+                             membership_tutorials)
 
     # Somebody who moved groups after handing in on paper stays with the group
     # that has the sheet; everybody else sits with the group they are in.
@@ -48,15 +51,27 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   # Read once for the whole page; the rows take theirs from here instead of
-  # asking per row.
-  def preload_participations(non_submitters, submissions)
+  # asking per row. A test's rows are made here, for everybody on the roster
+  # who has none yet, in one statement: made one by one, each would have
+  # the performance record recomputed on commit, three hundred times over
+  # for one first look at the table.
+  def preload_participations(non_submitters, submissions, groups)
     return {} unless @assignment.assessment
 
+    seed_test_rows(non_submitters, groups) if @assignment.kind_test?
     user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
     Assessment::Participation
       .where(user_id: user_ids, assessment: @assignment.assessment)
-      .includes(:task_points, :tutorial, :assessment)
+      .includes(:user, :task_points, :tutorial, :assessment)
       .index_by(&:user_id)
+  end
+
+  def seed_test_rows(users, groups)
+    @assignment.assessment.seed_participations_from!(
+      user_ids: users.map(&:id),
+      tutorial_mapping: users.to_h { |user| [user.id, groups[user.id]&.id] },
+      recompute: false
+    )
   end
 
   def team_participations(submission)
@@ -65,8 +80,10 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   # Before the backfill worker has been round there is no participation yet;
   # the row is drawn from an unsaved one, and recording the hand-in saves it.
-  # A test's row takes points without that step, so it needs its id first: it
-  # is created as the table is drawn, the exception an exam's rows make too.
+  # A test's row takes points without that step, so it needs its id first:
+  # its rows are seeded as the table is drawn, the exception an exam's rows
+  # make too. One for somebody the seeding did not reach - a member of no
+  # group on the lecturer's page - is made here, on its own.
   def participation_for(user, tutorial)
     @participations_by_user_id[user.id] ||=
       if @assignment.kind_test?
