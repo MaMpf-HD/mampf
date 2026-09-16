@@ -11,12 +11,7 @@ class RosterNotificationMailer < ApplicationMailer
       return if rosterable.is_a?(Lecture)
 
       template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
-      info      = if rosterable.is_a?(Exam)
-        { exam_date: I18n.l(rosterable.date, format: :long),
-          exam_location: rosterable.location.presence || "N/A" }
-      else
-        {}
-      end
+      info      = rosterable.is_a?(Exam) ? exam_info(rosterable) : {}
 
       with(
         rosterable: rosterable,
@@ -83,6 +78,13 @@ class RosterNotificationMailer < ApplicationMailer
                  recipient: tutor).public_send(template).deliver_later
           end
         end
+      end
+
+      def exam_info(rosterable)
+        return {} unless rosterable.is_a?(Exam)
+
+        { exam_date: I18n.l(rosterable.date, format: :long),
+          exam_location: rosterable.location.presence || "N/A" }
       end
   end
 
