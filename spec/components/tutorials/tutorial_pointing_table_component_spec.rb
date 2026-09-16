@@ -140,6 +140,55 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(row.reload.tutorial).to eq(old_group)
       end
 
+      # After the week the old group's page still lists somebody who moved
+      # away and left a blank row; the row goes to the group they are in now,
+      # and the old group's tutor finds it held there.
+      it "hands a blank row on to the new group from the old group's page too" do
+        # rubocop:disable Rails/SkipsModelValidations
+        assignment.update_column(:deadline, 1.week.ago.end_of_week)
+        # rubocop:enable Rails/SkipsModelValidations
+        new_group = create(:tutorial, lecture: lecture, title: "New group")
+        row = create(:assessment_participation, assessment: assessment, user: member,
+                                                tutorial: tutorial)
+        TutorialMembership.where(user: member).destroy_all
+        create(:tutorial_membership, tutorial: new_group, user: member)
+
+        page = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: tutorial))
+
+        expect(row.reload.tutorial).to eq(new_group)
+        expect(page.text).to include(I18n.t("assessment.grading_tutorial.held_by",
+                                            tutorial: "New group"))
+      end
+
+      it "hands a blank row to no group when the student left every group" do
+        row = create(:assessment_participation, assessment: assessment, user: member,
+                                                tutorial: tutorial)
+        create(:lecture_membership, lecture: lecture, user: member)
+        TutorialMembership.where(user: member).destroy_all
+
+        render_inline(described_class.new(assignment: assignment, grading_scope: lecture))
+
+        expect(row.reload.tutorial).to be_nil
+      end
+
+      # What this page read as blank may have been marked since; the write
+      # looks again under the lock the marking took.
+      it "leaves a row alone that was marked since the page read it" do
+        assignment.update!(test_week: Time.zone.today.beginning_of_week.iso8601)
+        old_group = create(:tutorial, lecture: lecture, title: "Old group")
+        row = create(:assessment_participation, assessment: assessment, user: member,
+                                                tutorial: old_group)
+        allow_any_instance_of(Assessment::Participation).to receive(:with_lock) do |locked, &block|
+          locked.update!(submitted_at: Time.current)
+          block.call
+        end
+
+        render_inline(described_class.new(assignment: assignment.reload, grading_scope: tutorial))
+
+        expect(row.reload.tutorial).to eq(old_group)
+      end
+
       it "offers to record an absence once the week has begun, not before" do
         label = I18n.t("assessment.grading_exam.mark_absent")
         expect(render_inline(component).css("a[aria-label='#{label}']")).to be_empty
@@ -271,10 +320,13 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
         expect(grouped[tutorial]).to include(submission)
       end
 
+      # A row with a hand-in on it stays with its group whatever the roster
+      # says; a blank one would follow the roster.
       it "groups non-submitters by tutorial via their preloaded participation" do
         user = create(:confirmed_user)
         participation = create(:assessment_participation, assessment: assessment, user: user,
-                                                          tutorial: tutorial)
+                                                          tutorial: tutorial,
+                                                          submitted_at: 1.day.ago)
         allow(assignment).to receive(:non_submitters_in_tutorials).and_return([user])
 
         grouped = described_class.new(assignment: assignment, grading_scope: lecture)

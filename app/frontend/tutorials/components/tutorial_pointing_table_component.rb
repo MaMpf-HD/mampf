@@ -21,8 +21,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
                         .includes(:users, tutorial: :tutors)
     @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial)
     @participations_by_user_id =
-      preload_participations(@non_submitters, @stack,
-                             @non_submitters.to_h { |user| [user.id, @tutorial] })
+      preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
   end
 
   def init_teacher_case
@@ -39,9 +38,8 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
                                             .where.not(id: @non_submitters.map(&:id) +
                                                            @stack.flat_map(&:user_ids))
-    @participations_by_user_id =
-      preload_participations(@non_submitters.to_a + @non_tutorial_participants.to_a, @stack,
-                             membership_tutorials)
+    listed = @non_submitters.to_a + @non_tutorial_participants.to_a
+    @participations_by_user_id = preload_participations(listed, @stack, groups_of(listed))
 
     # Somebody who moved groups after handing in on paper stays with the group
     # that has the sheet; everybody else sits with the group they are in.
@@ -64,15 +62,28 @@ class TutorialPointingTableComponent < ViewComponent::Base
     rows
   end
 
+  # The group each listed user is a member of now, nil for none: after the
+  # deadline a group's page also lists people who have moved away and left a
+  # row behind, so the page's own group is not the answer.
+  def groups_of(users)
+    users.to_h { |user| [user.id, membership_tutorials[user.id]] }
+  end
+
   # Blank participations must follow tutorial membership so the current tutor
   # can enter points; recorded work must stay with its original tutorial.
+  # Points may land on the row between this page's read and its write, so
+  # the row is read again under the lock the point entry takes.
   def rehome_blank_rows(rows, groups)
     rows.each_value do |row|
-      next unless row.pending? && row.submitted_at.nil? && row.task_points.none?
-      next unless groups.key?(row.user_id) && row.tutorial_id != groups[row.user_id]&.id
+      next unless groups.key?(row.user_id) && blank?(row)
+      next if row.tutorial_id == groups[row.user_id]&.id
 
-      row.update!(tutorial: groups[row.user_id])
+      row.with_lock { row.update!(tutorial: groups[row.user_id]) if blank?(row) }
     end
+  end
+
+  def blank?(row)
+    row.pending? && row.submitted_at.nil? && row.task_points.none?
   end
 
   def seed_test_rows(users, groups)
@@ -89,19 +100,12 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   # Before the backfill worker has been round there is no participation yet;
   # the row is drawn from an unsaved one, and recording the hand-in saves it.
-  # A test's row takes points without that step, so it needs its id first:
-  # its rows are seeded before they are drawn, the exception an exam's rows
-  # make too, and this creates one only for a user the seeding was not told
-  # about.
+  # A test's rows are seeded before any is asked for, so this never builds
+  # one for a test.
   def participation_for(user, tutorial)
     @participations_by_user_id[user.id] ||=
-      if @assignment.kind_test?
-        Assessment::ParticipationIndex.create_participation(@assignment.assessment, user,
-                                                            tutorial: tutorial)
-      else
-        Assessment::Participation.new(assessment: @assignment.assessment, user: user,
-                                      tutorial: tutorial)
-      end
+      Assessment::Participation.new(assessment: @assignment.assessment, user: user,
+                                    tutorial: tutorial)
   end
 
   def grading_enabled?
@@ -161,7 +165,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
     def membership_tutorials
       @membership_tutorials ||=
-        TutorialMembership.where(tutorial: @tutorials).includes(:tutorial)
+        TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
                           .index_by(&:user_id).transform_values(&:tutorial)
     end
 end
