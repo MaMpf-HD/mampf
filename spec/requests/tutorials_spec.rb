@@ -36,6 +36,30 @@ RSpec.describe("Tutorials", type: :request) do
       expect(response).to have_http_status(:success)
       expect(Nokogiri::HTML(response.body).css("tr.submission-row").size).to eq(5)
     end
+
+    # A test set up for next week has the latest deadline and nothing to do
+    # on it yet; the page opens on the sheet whose marking is open.
+    it "opens on the newest sheet whose marking is open, not on the one furthest ahead" do
+      sheet = create(:assignment, :expired, lecture: lecture, title: "Sheet 3",
+                                            expired_since: 2.days)
+      create(:assignment, lecture: lecture, title: "Test next week", kind: :test,
+                          deadline: 2.weeks.from_now)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+      expect(selected.text.strip).to eq(sheet.title)
+    end
+
+    it "opens on the first sheet to come while none is open yet" do
+      assignment.update!(deadline: 3.weeks.from_now)
+      soon = create(:assignment, lecture: lecture, title: "Sheet 1", deadline: 1.week.from_now)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+      expect(selected.text.strip).to eq(soon.title)
+    end
   end
 
   describe "the pointing table's queries" do

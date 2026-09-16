@@ -8,7 +8,7 @@ class AssignmentsController < ApplicationController
   end
 
   def new
-    @assignment = Assignment.new
+    @assignment = Assignment.new(kind: kind_param)
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @assignment.lecture = @lecture
     authorize! :new, @assignment
@@ -30,7 +30,7 @@ class AssignmentsController < ApplicationController
   end
 
   def create
-    @assignment = Assignment.new(assignment_params)
+    @assignment = Assignment.new(assignment_params.merge(kind: kind_param))
     authorize! :create, @assignment
     @lecture = @assignment.lecture
     set_assignment_locale
@@ -149,7 +149,13 @@ class AssignmentsController < ApplicationController
 
     def assignment_params
       params.expect(assignment: [:title, :medium_id, :lecture_id,
-                                 :deadline, :accepted_file_type,
+                                 :deadline, :test_week, :accepted_file_type,
                                  :requires_submission])
+    end
+
+    # Unknown enum values raise ArgumentError instead of a validation error.
+    def kind_param
+      kind = params.dig(:assignment, :kind) || params[:kind]
+      kind.to_s.presence_in(Assignment.kinds.keys) || :homework
     end
 end

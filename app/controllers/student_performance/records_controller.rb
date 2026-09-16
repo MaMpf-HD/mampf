@@ -23,16 +23,19 @@ module StudentPerformance
       @due_points = due_points
       scope = filter_by_tutorial(filter_by_name(records_scope))
 
+      sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
+      load_test_share(scope, tests) if tests.any?
       @pagy, @records = pagy(sorted(scope))
-      assessments = assignment_assessments
-      # A sheet nobody could hand in yet counts towards none of the figures in
-      # this table, so it gets no column of its own — the detail page lists it.
-      # The heading says how many were left out.
-      @assessments = assessments.select { |a| due_points.due?(a.id) }
-      @not_due_count = assessments.size - @assessments.size
+      # Test results become visible during the week, as each tutorial is graded.
+      @sheets = sheets.select { |a| due_points.due?(a.id) }
+      @tests = tests.select(&:grading_open?)
+      @sheets_not_due = sheets.size - @sheets.size
+      @tests_not_due = tests.size - @tests.size
+      @assessments = @sheets + @tests
       load_assessment_statuses
-      @awaiting_marking = awaiting_marking_counts(scope, assessments)
+      @awaiting_marking = awaiting_marking_counts(scope, sheets + tests)
       @achievements = @lecture.achievements.order(:title)
+      @achievement_headings = Achievement.short_titles(@achievements)
     end
 
     def show
@@ -132,6 +135,8 @@ module StudentPerformance
           ->(record) { due_points.marked_max_for(record.user_id).to_f }
         when "percentage"
           ->(record) { due_points.marked_percentage_for(record)&.to_f || -1 }
+        when "test_share"
+          ->(record) { test_share_for(record)&.to_f || -1 } if @test_points
         end
       end
 
@@ -139,15 +144,12 @@ module StudentPerformance
         TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
       end
 
-      # Per assignment, how many of the listed students handed in without being
-      # marked yet. Counted over the whole filtered set rather than the current
-      # page, because the number describes the sheet, not the page.
-      #
-      # Only over sheets that are due: nobody may mark before the grace period
-      # is over, so an early hand-in is waiting for the deadline, not for a
-      # tutor, and counting it claims a backlog nobody could work off.
+      # Count across the filtered roster so pagination does not change the backlog.
+      # Exclude assignments whose grading has not opened yet.
       def awaiting_marking_counts(scope, assessments)
-        ids = assessments.select { |a| due_points.due?(a.id) }.map(&:id)
+        ids = assessments.select do |a|
+          a.assessable.kind_test? ? a.grading_open? : due_points.due?(a.id)
+        end.map(&:id)
         return {} if ids.empty?
 
         Assessment::Participation
@@ -211,7 +213,7 @@ module StudentPerformance
       def assignment_assessments
         Assessment::Assessment
           .where(lecture_id: @lecture.id, assessable_type: "Assignment")
-          .includes(:tasks)
+          .includes(:tasks, :assessable)
           .joins("JOIN assignments ON assignments.id = " \
                  "assessment_assessments.assessable_id")
           .order("assignments.deadline ASC")
@@ -252,6 +254,21 @@ module StudentPerformance
                                     .where(user_submission_joins: { user_id: @record.user_id },
                                            assignment_id: assignment_ids)
                                     .index_by(&:assignment_id)
+      end
+
+      # Sorting by test percentage needs totals for the entire filtered roster.
+      def load_test_share(scope, tests)
+        @test_points = due_points.of_kind(:test)
+        @test_points_by_user = Assessment::Participation
+                               .where(assessment_id: tests.map(&:id),
+                                      user_id: scope.reorder(nil).select(:user_id),
+                                      status: :reviewed)
+                               .group(:user_id).sum(:points_total)
+      end
+
+      def test_share_for(record)
+        @test_points.marked_percentage_of(record.user_id,
+                                          @test_points_by_user.fetch(record.user_id, 0))
       end
 
       def load_assessment_statuses

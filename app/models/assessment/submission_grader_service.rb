@@ -51,7 +51,7 @@ module Assessment
         )
 
         PointEntryService.enter_points(participation, points_by_task_id, scorer, nil)
-        stamp_paper_hand_in!(participation, points_by_task_id)
+        stamp_paper_hand_in!(participation, points_by_task_id, assignment)
         participation
       end
 
@@ -90,12 +90,23 @@ module Assessment
 
         # Points on a sheet nobody recorded a hand-in for say the sheet was
         # there: the tutor had it on paper. The stamp is what the student's
-        # page and the performance table read.
-        def stamp_paper_hand_in!(participation, points_by_task_id)
+        # page and the performance table read. On a test it says no more than
+        # that points were started, so it goes again once they are all taken
+        # back - a row with the stamp cannot be recorded absent.
+        def stamp_paper_hand_in!(participation, points_by_task_id, assignment)
+          return stamp_test!(participation) if assignment.kind_test?
           return if participation.submitted_at.present?
           return if points_by_task_id.values.all?(&:blank?)
 
           participation.update!(submitted_at: Time.current)
+        end
+
+        def stamp_test!(participation)
+          participation.task_points.reset
+          started = participation.results_visible?
+          return if participation.submitted_at.present? == started
+
+          participation.update!(submitted_at: started ? Time.current : nil)
         end
 
         def score_submission_entry!(entry, scorer, validated_scopes)

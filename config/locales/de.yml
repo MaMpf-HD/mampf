@@ -2892,6 +2892,8 @@ de:
   date:
     formats:
       concise: '%d.%m.%Y'
+      test_week_start: '%d.%m.'
+      test_week_end: '%d.%m.%Y'
   datetimepicker:
     invalid_date: 'Ungültiges Datums-Zeit-Format.'
   time:
@@ -3042,6 +3044,7 @@ de:
     hub:
       page_title: "Abgaben - %{lecture}"
       heading: Frühere Blätter
+      heading_with_tests: Frühere Blätter und Tests
       standing:
         mark_percentage: "%{percentage} %"
         heading: Klausurzulassung
@@ -3051,10 +3054,10 @@ de:
         nothing_marked: Es ist noch nichts korrigiert.
         awaiting_marks:
           one: >-
-            1 Blatt mit %{points} Punkten liegt noch bei Deinem Tutor und ist
+            1 Ergebnis mit %{points} Punkten liegt noch bei Deinem Tutor und ist
             oben nicht berücksichtigt.
           other: >-
-            %{count} Blätter mit zusammen %{points} Punkten liegen noch bei
+            %{count} Ergebnisse mit zusammen %{points} Punkten liegen noch bei
             Deinem Tutor und sind oben nicht berücksichtigt.
         needed: "%{points} nötig"
         bar_plain: "%{percentage} Prozent der Punkte erreicht"
@@ -3095,9 +3098,10 @@ de:
         due: "Fällig %{time}"
         in_time: "in %{time}"
         worth:
-          one: "%{count} Aufgabe, %{points} Punkte"
-          other: "%{count} Aufgaben, %{points} Punkte"
+          one: "%{count} Aufgabe, %{points} Punkte erreichbar"
+          other: "%{count} Aufgaben, %{points} Punkte erreichbar"
         hand_in: Abgeben
+        in_tutorial: in Deinem Tutorium
         hand_in_elsewhere: >-
           Abgabe nicht über MaMpf. Dein Tutor erfasst, was abgegeben wurde,
           und trägt die Punkte ein.
@@ -3135,6 +3139,9 @@ de:
       sheet_count:
         one: "%{count} Blatt"
         other: "%{count} Blätter"
+      test_count:
+        one: "%{count} Test"
+        other: "%{count} Tests"
       column_sheet: Blatt
       column_status: Status
       column_points: Deine Punkte
@@ -3206,6 +3213,7 @@ de:
         partially_marked: noch nicht alle Aufgaben korrigiert
         missed: bis zur Frist kam nichts an
         awaiting_record: Abgabe auf Papier oder anderem Weg - Dein Tutor trägt ein, was ankam
+        awaiting_record_test: noch kein Ergebnis eingetragen - Dein Tutor trägt die Punkte ein oder vermerkt Dich als abwesend
         absent: als abwesend vermerkt
         exempt: wird bei Dir nicht gewertet
         not_recorded: >

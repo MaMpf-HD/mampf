@@ -408,6 +408,20 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
         expect(participation.reload.submitted_at).to be_nil
       end
+
+      # On a test the stamp says only that points were started; taken back
+      # again, they leave the row as it was, open to being recorded absent.
+      it "takes a test's stamp off again once every point is taken back" do
+        assignment.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+        participation.update!(submitted_at: nil)
+
+        described_class.score_tasks_by_participation!(participation, points_by_task_id, scorer)
+        expect(participation.reload.submitted_at).to be_present
+
+        described_class.score_tasks_by_participation!(participation, { task.id => "" }, scorer)
+        expect(participation.reload.submitted_at).to be_nil
+        expect(participation).to be_pending
+      end
     end
   end
 

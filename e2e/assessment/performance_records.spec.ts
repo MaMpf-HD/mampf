@@ -64,7 +64,7 @@ test.describe("performance records", () => {
     const page = new AssessmentDashboardPage(teacher.page, lecture.id);
     await openPerformance(page);
     await teacher.page.getByRole("row", { name: /Ada Lovelace/ })
-      .getByRole("link", { name: "Details" }).click();
+      .getByRole("link", { name: "Ada Lovelace" }).click();
 
     await expect(teacher.page.getByText("Ada Lovelace")).toBeVisible();
     await expect(teacher.page.getByText("Assignment Breakdown")).toBeVisible();
@@ -104,7 +104,7 @@ test.describe("performance records", () => {
     const page = new AssessmentDashboardPage(teacher.page, lecture.id);
     await openPerformance(page);
     await teacher.page.getByRole("row", { name: /Ada Lovelace/ })
-      .getByRole("link", { name: "Details" }).click();
+      .getByRole("link", { name: "Ada Lovelace" }).click();
     await teacher.page.getByRole("button", { name: "Recompute" }).click();
 
     await expect(
@@ -138,7 +138,7 @@ test.describe("performance records", () => {
     const page = new AssessmentDashboardPage(teacher.page, lecture.id);
     await openPerformance(page);
     await teacher.page.getByRole("row", { name: /Ada Lovelace/ })
-      .getByRole("link", { name: "Details" }).click();
+      .getByRole("link", { name: "Ada Lovelace" }).click();
     const row = teacher.page.getByRole("row", { name: /Problem Set 1/ });
 
     await expect(row.getByText("Not Submitted")).toBeVisible();

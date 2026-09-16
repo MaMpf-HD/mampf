@@ -20,7 +20,7 @@ RSpec.describe(SheetFoldComponent, type: :component) do
 
   def sheet_defaults
     { points_by_task: {}, submission: nil, points: nil, max_points: 16,
-      partners: [], marked_at: nil, marked_by: nil }
+      partners: [], marked_at: nil, marked_by: nil, test: false }
   end
 
   # A sheet has its problems set up as soon as there are any, and where the
@@ -38,7 +38,8 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                                             attrs[:max_points].to_f.positive?,
                              partners: attrs[:partners],
                              marked_at: attrs[:marked_at],
-                             marked_by: attrs[:marked_by])
+                             marked_by: attrs[:marked_by],
+                             assignment: instance_double(Assignment, kind_test?: attrs[:test]))
     allow(double).to(receive(:points_for) { |asked| points_by_task[asked] })
     double
   end
@@ -288,6 +289,13 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       content = render_fold(:missed)
 
       expect(content).to include(I18n.t("submission.hub.fold.no_file"))
+    end
+
+    it "has nothing to say about files for a test" do
+      content = render_fold(:marked, test: true)
+
+      expect(content).not_to include(I18n.t("submission.hub.fold.files_heading"))
+      expect(content).not_to include(I18n.t("submission.hub.fold.no_file"))
     end
   end
 

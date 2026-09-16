@@ -1,6 +1,7 @@
-<%= vite_stylesheet_tag "student_performance/certifications/certifications_table.scss" %>
-
+<%# a frame swap discards everything outside it, the stylesheet included %>
 <%= turbo_frame_tag "performance-certifications-frame" do %>
+  <%= vite_stylesheet_tag "student_performance/certifications/certifications_table.scss" %>
+
   <div class="d-flex justify-content-between align-items-end pb-2 mb-2 mt-2">
     <p class="text-muted small mb-0">
       <%= t("student_performance.certifications.index.subtitle") %>

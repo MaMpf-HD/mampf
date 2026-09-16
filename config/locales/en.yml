@@ -2676,6 +2676,8 @@ en:
   date:
     formats:
       concise: '%Y-%m-%d'
+      test_week_start: '%b %-d'
+      test_week_end: '%b %-d, %Y'
   datetimepicker:
     invalid_date: 'Invalid date time format.'
   time:
@@ -2817,6 +2819,7 @@ en:
     hub:
       page_title: "Submissions - %{lecture}"
       heading: Earlier sheets
+      heading_with_tests: Earlier sheets and tests
       standing:
         mark_percentage: "%{percentage} %"
         heading: Exam admission
@@ -2826,11 +2829,11 @@ en:
         nothing_marked: Nothing has been marked yet.
         awaiting_marks:
           one: >-
-            1 sheet worth %{points} points is still with your tutor and is not
+            1 result worth %{points} points is still with your tutor and is not
             counted above.
           other: >-
-            %{count} sheets worth %{points} points in total are still with your
-            tutor and are not counted above.
+            %{count} results worth %{points} points in total are still with
+            your tutor and are not counted above.
         needed: "%{points} needed"
         bar_plain: "%{percentage} percent of the points earned"
         bar_absolute: "%{points} of the %{needed} points needed"
@@ -2870,9 +2873,10 @@ en:
         due: "Due %{time}"
         in_time: "in %{time}"
         worth:
-          one: "%{count} problem, %{points} points"
-          other: "%{count} problems, %{points} points"
+          one: "%{count} problem, %{points} points possible"
+          other: "%{count} problems, %{points} points possible"
         hand_in: Hand in
+        in_tutorial: in your tutorial
         hand_in_elsewhere: >-
           Not handed in via MaMpf. Your tutor records what arrived and enters
           the points.
@@ -2909,6 +2913,9 @@ en:
       sheet_count:
         one: "%{count} sheet"
         other: "%{count} sheets"
+      test_count:
+        one: "%{count} test"
+        other: "%{count} tests"
       column_sheet: Sheet
       column_status: Status
       column_points: Your points
@@ -2980,6 +2987,7 @@ en:
         partially_marked: not every problem has been marked yet
         missed: nothing arrived by the deadline
         awaiting_record: handed in on paper or by other means - your tutor records what arrived
+        awaiting_record_test: no result entered yet - your tutor enters the points, or records you as absent
         absent: recorded as absent
         exempt: not counted for you
         not_recorded: >

@@ -32,8 +32,13 @@ de:
         of_due_points: "von den bisher korrigierten Punkten"
         due_so_far: "Bisher korrigiert"
         due_so_far_hint: "Punkte und Prozent zählen, was für die Studierende feststeht: Blätter, deren Frist samt Nachfrist vorbei ist, und bereits korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        due_so_far_hint_with_tests: "Punkte und Prozent zählen, was für die Studierende feststeht, Blätter und Tests zusammen: Blätter, deren Frist samt Nachfrist vorbei ist, Tests, deren Woche vorbei ist, und alles bereits Korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        sheets_and_tests: "Blätter und Tests"
         maximum: "Maximum"
         assignments: "Übungsblätter"
+        tests: "Tests"
+        tests_hint: 'Testpunkte stecken auch in den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
+        test_share: "Anteil in den Tests"
         not_due_count: "%{count} noch nicht fällig"
         achievements: "Zusatzkriterien"
         assessments: "Bewertungen"
@@ -54,10 +59,9 @@ de:
         all_participants: "Alle Teilnehmenden"
         without_tutorial: "Ohne Übungsgruppe"
         awaiting_marking:
-          one: "1 Abgabe ist noch nicht bewertet"
-          other: "%{count} Abgaben sind noch nicht bewertet"
+          one: "1 noch nicht bewertet"
+          other: "%{count} noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
-        details: "Details"
       show:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"
@@ -142,12 +146,16 @@ de:
         inconclusive: "Zurückgestellt"
       deferral:
         assignments_incomplete: "Die Blätterliste ist noch offen"
-        points_not_due:
-          one: "1 Blatt noch nicht fällig"
-          other: "%{count} Blätter noch nicht fällig"
+        points_not_due: "%{what} noch nicht fällig"
+        sheet_count:
+          one: "1 Blatt"
+          other: "%{count} Blätter"
+        test_count:
+          one: "1 Test"
+          other: "%{count} Tests"
         points_pending:
-          one: "1 Abgabe noch nicht bewertet"
-          other: "%{count} Abgaben noch nicht bewertet"
+          one: "1 noch nicht bewertet"
+          other: "%{count} noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
       missed:
@@ -170,7 +178,7 @@ de:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
         subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
-        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter an und setze im Reiter %{tab} das Häkchen „Die Blätterliste ist vollständig“."
+        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter und Tests an und setze im Reiter %{tab} das Häkchen „Die Liste der Blätter und Tests ist vollständig“."
         total: "Studierende gesamt"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"

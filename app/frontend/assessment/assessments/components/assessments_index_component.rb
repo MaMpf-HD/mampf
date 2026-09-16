@@ -18,6 +18,18 @@ class AssessmentsIndexComponent < ViewComponent::Base
     @legacy ||= all_assessables.reject(&:assessment)
   end
 
+  def homework
+    sheets.reject(&:kind_test?)
+  end
+
+  def tests
+    sheets.select(&:kind_test?)
+  end
+
+  def two_tables?
+    homework.any? && tests.any?
+  end
+
   def legacy_by_type
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end
@@ -92,5 +104,9 @@ class AssessmentsIndexComponent < ViewComponent::Base
 
     def all_assessables
       @all_assessables ||= assessables_by_type.values.flatten
+    end
+
+    def sheets
+      @sheets ||= assessables_by_type.fetch("Assignment", []).select(&:assessment)
     end
 end

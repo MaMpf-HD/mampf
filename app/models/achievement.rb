@@ -42,6 +42,25 @@ class Achievement < ApplicationRecord
     nil
   end
 
+  # Short headings leave room for the achievement status icons.
+  def short_title
+    words = title.to_s.scan(/[[:alnum:]]+/)
+    return words[0, 2].pluck(0).join.upcase if words.size >= 2
+    return words.first[0, 2].upcase if words.any?
+
+    title.to_s[0, 2].upcase
+  end
+
+  def self.short_titles(achievements)
+    achievements.group_by(&:short_title).each_with_object({}) do |(short, group), headings|
+      if group.size == 1
+        headings[group.first.id] = short
+      else
+        group.each_with_index { |achievement, i| headings[achievement.id] = "#{short}#{i + 1}" }
+      end
+    end
+  end
+
   # The one place that decides whether a recorded value clears this
   # achievement. The marking table and the performance computation both ask
   # here, so the two cannot answer differently.

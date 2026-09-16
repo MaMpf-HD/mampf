@@ -142,7 +142,11 @@
               <% submission = @submission_by_assignment[assessment.assessable_id] %>
 
               <tr>
-                <td><%= assessment.title %></td>
+                <td>
+                  <%= assessment.title %>
+
+                  <%= test_badge if assessment.assessable.kind_test? %>
+                </td>
 
                 <td>
                   <%= render ParticipationStatusBadgeComponent.new(

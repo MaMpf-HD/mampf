@@ -150,8 +150,12 @@ module Assessment
                 .sum { |sheet| sheet.max_points || 0 }
         end
 
+        # Absent from a test in its week counts like marked: the points are
+        # lost, not still to be had, so the test is in the base already.
         def marked_not_due?(sheet)
-          !due_for_points?(sheet) && sheet.participation&.reviewed?
+          return false if due_for_points?(sheet)
+
+          sheet.participation&.reviewed? || sheet.participation&.absent? || false
         end
 
         def points_awaiting_marks
@@ -171,11 +175,15 @@ module Assessment
           @awaiting_marks_sheets ||= sheets.select { |sheet| awaiting_marks?(sheet) }
         end
 
+        # A test nobody has entered anything on is with the tutor too - row or
+        # no row - until points or an absence say whether the reader sat it.
         def awaiting_marks?(sheet)
           return false unless due_for_points?(sheet)
 
-          sheet.participation&.pending? &&
-            sheet.participation.submitted_at.present?
+          participation = sheet.participation
+          return participation.nil? || participation.pending? if sheet.assignment.kind_test?
+
+          participation&.pending? && participation.submitted_at.present?
         end
 
         # StudentPerformance::Record does not track assignment deadlines or sheet
@@ -229,11 +237,17 @@ module Assessment
         # there is nothing left to replace, delete or leave, and a sheet takes
         # one hand-in. Left among the open ones it would get a card, and the
         # card has nothing to say about the state - no badge, no note, no
-        # number. The row has all three.
+        # number. The row has all three. Test results - points or a recorded
+        # absence - show at once, even while other tutorials have yet to finish.
         def still_open?(sheet)
           return false if sheet.state == :rejected
+          return false if sheet.assignment.kind_test? && test_settled?(sheet)
 
           sheet.assignment.active? || sheet.assignment.in_grace_period?
+        end
+
+        def test_settled?(sheet)
+          sheet.results_visible? || sheet.state == :absent
         end
 
         # The sheet the page leads with, and every sheet sharing its deadline - a

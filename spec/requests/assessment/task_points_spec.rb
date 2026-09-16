@@ -672,6 +672,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response.body).to include("pointing-participation-row-#{participation.id}")
       end
 
+      it "records no hand-in on a test, whose points are the record" do
+        test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                              deadline: Time.zone.now.end_of_week)
+
+        patch mark_user_as_participated_path,
+              params: { assignment_id: test.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:bad_request)
+        expect(test.assessment.assessment_participations.where.not(submitted_at: nil)).to be_empty
+      end
+
       # The tutor's page lists one group; a row drawn for the lecture's page
       # would bring the group column with it.
       it "draws the row in the shape of the page's group" do
@@ -1066,6 +1079,87 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
         expect(response).to redirect_to(root_path)
       end
+    end
+  end
+
+  # A test is sat or not, like an exam; the group's tutor records who was
+  # not there, once the week has begun.
+  describe "absence on a test" do
+    let(:test) do
+      create(:assignment, lecture: lecture, kind: :test, deadline: Time.zone.now.end_of_week)
+    end
+    let!(:row) do
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      create(:assessment_participation, assessment: test.assessment, user: student,
+                                        tutorial: tutorial)
+    end
+
+    before do
+      tutorial.tutors << tutor
+      sign_in tutor
+    end
+
+    # The answer comes back in the shape of the group's table, with the
+    # way back on it.
+    it "lets the group's tutor record an absence and take it back" do
+      patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+      expect(row.reload).to be_absent
+      expect(response.body).to include("pointing-participation-row-#{row.id}")
+      expect(response.body).to include(I18n.t("assessment.grading_exam.remove_absent"))
+      expect(response.body).not_to include(tutorial.title)
+
+      patch remove_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+      expect(row.reload).to be_pending
+    end
+
+    # Points entered by mistake and taken back again leave the row as it
+    # was: the absence the tutor meant to record goes through.
+    it "records an absence once points entered by mistake are taken back" do
+      task = test.assessment.tasks.first
+      patch point_participation_path(row),
+            params: { task_points: { task.id => "6" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+      expect(row.reload.submitted_at).to be_present
+      expect(response.body).not_to include(I18n.t("assessment.grading_exam.mark_absent"))
+
+      patch point_participation_path(row),
+            params: { task_points: { task.id => "" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+      expect(row.reload.submitted_at).to be_nil
+      expect(response.body).to include(I18n.t("assessment.grading_exam.mark_absent"))
+
+      patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+      expect(row.reload).to be_absent
+    end
+
+    it "takes an absence back after the test was moved to a later week" do
+      row.update!(status: :absent)
+      test.update!(test_week: 2.weeks.from_now.to_date.beginning_of_week.iso8601)
+
+      patch remove_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+
+      expect(row.reload).to be_pending
+      expect(response.body).not_to include(I18n.t("assessment.grading_exam.remove_absent"))
+    end
+
+    it "refuses an absence before the week has begun" do
+      test.update!(test_week: 2.weeks.from_now.to_date.beginning_of_week.iso8601)
+
+      patch mark_as_absent_path(row), as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("assessment.grading_tutorial.test_not_yet_open"))
+      expect(row.reload).to be_pending
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      create(:tutorial, lecture: lecture).tutors << other
+      sign_in other
+
+      patch mark_as_absent_path(row), as: :turbo_stream
+
+      expect(row.reload).to be_pending
     end
   end
 

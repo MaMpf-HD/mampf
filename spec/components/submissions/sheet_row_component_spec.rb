@@ -13,11 +13,12 @@ RSpec.describe(SheetRowComponent, type: :component) do
   # `tasks_set_up?` follows the maximum unless it is given: points come from
   # problems, so a sheet worth 16 has them. The two are told apart where it
   # matters - a problem may be set at 0.
-  def sheet(state, points: nil, max_points: 16, tasks_set_up: nil,
-            friendly_deadline: 15.minutes.from_now)
+  def sheet(state, points: nil, max_points: 16, tasks_set_up: nil, **assignment_attrs)
     # `dom_id` names the row after the assignment, which takes a key.
     assignment = instance_double(Assignment, title: "Homework 8",
-                                             friendly_deadline: friendly_deadline,
+                                             friendly_deadline: 15.minutes.from_now,
+                                             kind_test?: false,
+                                             **assignment_attrs,
                                              id: 8, to_key: [8],
                                              model_name: Assignment.model_name)
     scale = max_points.to_f.positive?
@@ -144,6 +145,13 @@ RSpec.describe(SheetRowComponent, type: :component) do
 
     # The number is the whole story for a marked sheet; that it was handed in
     # late and let through changes nothing about it.
+    it "says under an unrecorded test what the tutor will enter, not what arrived" do
+      content = render_state(:awaiting_record, kind_test?: true)
+
+      expect(content).to include(I18n.t("submission.hub.notes.awaiting_record_test"))
+      expect(content).not_to include(I18n.t("submission.hub.notes.awaiting_record"))
+    end
+
     it "says nothing under a marked sheet" do
       content = render_state(:marked, points: 6.5)
 

@@ -33,17 +33,26 @@
         <%= t('assessment.subtitle.assignments') %>
       </p>
       <div class="row mb-3">
-        <div class="col-12 text-center">
+        <div class="col-12 text-center d-flex justify-content-center gap-2">
           <%= link_to t('admin.assignment.new'),
                       new_assignment_path(params: { lecture_id: lecture.id }),
                       class: 'btn btn-sm btn-primary',
                       id: 'newAssignmentButton',
                       data: { turbo_stream: true } %>
+
+          <%= link_to t('assessment.test.new'),
+                      new_assignment_path(params: { lecture_id: lecture.id, kind: "test" }),
+                      class: 'btn btn-sm btn-outline-primary',
+                      data: { turbo_stream: true } %>
         </div>
       </div>
       <div id="assignment_form_container"></div>
       <div id="assessment-assignments-wrapper">
-        <% if assessables_with_assessment.any? %>
+        <% if two_tables? %>
+          <h6><%= t('assessment.test.homework_heading') %></h6>
+        <% end %>
+
+        <% if homework.any? %>
           <table class="table table-hover mb-4">
             <thead>
               <tr>
@@ -65,15 +74,37 @@
             </thead>
 
             <tbody id="assessment-assignments-list">
-              <% assessables_with_assessment.each do |assessable| %>
+              <% homework.each do |assessable| %>
                 <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
               <% end %>
             </tbody>
           </table>
-        <% else %>
+        <% elsif tests.empty? %>
           <div class="text-center text-muted py-4">
             <%= t('assessment.no_assignments_yet') %>
           </div>
+        <% end %>
+
+        <% if tests.any? %>
+          <% if two_tables? %>
+            <h6 class="mt-4"><%= t('assessment.test.heading') %></h6>
+          <% end %>
+          <table class="table table-hover mb-4">
+            <thead>
+              <tr>
+                <th><%= t('admin.assignment.title') %></th>
+                <th class="text-center"><%= t('assessment.tasks') %></th>
+                <th class="text-center"><%= t('assessment.points') %></th>
+                <th><%= t('assessment.test.week') %></th>
+              </tr>
+            </thead>
+
+            <tbody id="assessment-tests-list">
+              <% tests.each do |assessable| %>
+                <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
+              <% end %>
+            </tbody>
+          </table>
         <% end %>
       </div>
       <%= form_with url: assignments_complete_assessment_assessments_path(

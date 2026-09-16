@@ -78,6 +78,7 @@ module Assessment
     validate :lecture_matches_assessable
     validate :requires_submission_locked_after_deadline,
              if: -> { requires_submission_changed? }
+    validate :no_hand_in_for_a_test, if: :requires_submission
 
     # A task's own callback covers changes to what an assessment is worth;
     # what is left here is the assessment disappearing entirely.
@@ -136,6 +137,13 @@ module Assessment
         return unless assessable.is_a?(Assignment) && assessable.past_deadline?
 
         errors.add(:requires_submission, :locked_after_deadline)
+      end
+
+      # Requests can enable requires_submission even when the form hides it.
+      def no_hand_in_for_a_test
+        return unless assessable.is_a?(Assignment) && assessable.kind_test?
+
+        errors.add(:requires_submission, :not_for_a_test)
       end
 
       def recompute_all_performance_records

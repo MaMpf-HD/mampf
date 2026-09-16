@@ -113,6 +113,29 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
     end
   end
 
+  # A test names its week and the tutorial; there is nothing to do on the
+  # card, and no sentence about MaMpf - the tutorial says where it happens.
+  describe "a test" do
+    let(:assignment) do
+      create(:assignment, lecture: lecture, title: "Test 1",
+                          deadline: 2.weeks.from_now, kind: :test)
+    end
+
+    it "shows its week, the tutorial and the worth, and nothing to do" do
+      create(:assessment_task, assessment: assignment.assessment, max_points: 10)
+
+      content = render_card
+
+      expect(content).to include("Test 1")
+      expect(content).to include(I18n.t("assessment.test.week"))
+      expect(content).to include(I18n.t("submission.hub.card.in_tutorial"))
+      expect(content).to include(I18n.t("submission.hub.card.worth", count: 1, points: "10"))
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in_elsewhere"))
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
+      expect(content).not_to include("PDF")
+    end
+  end
+
   describe "a sheet nothing has been handed in for" do
     it "offers both ways to start and says how they work" do
       content = render_card

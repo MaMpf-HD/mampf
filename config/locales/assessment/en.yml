@@ -2,14 +2,23 @@ en:
   assessment:
     tabs:
       assessments: "Assessments"
-      assignments: "Assignments"
+      assignments: "Assignments & Tests"
       talks: "Talks"
       performance: "Performance"
       achievements: "Achievements"
       certifications: "Exam Eligibility"
     assessments: 'Assessments'
+    test:
+      new: 'Add test'
+      heading: 'Tests'
+      homework_heading: 'Homework'
+      week: 'Test week'
+      sheet_or_test: 'Sheet or test'
+      week_hint: 'Students take the test in their tutorial that week; tutors can enter points from the Monday on.'
+      week_label: '%{from} – %{to}'
+      badge: 'Test'
     subtitle:
-      assignments: 'Manage homework sheets, grading, and point allocation.'
+      assignments: 'Manage homework sheets and in-tutorial tests, grading, and point allocation.'
     achievements:
       placeholder: 'Achievements will be displayed here in a later step.'
       flash:
@@ -139,8 +148,8 @@ en:
       registration_not_open: 'Registration not yet open.'
       go_to_registration: 'Go to Registration →'
     assignments_complete:
-      label: 'The assignment list is complete'
-      hint: 'Tick this once every assignment of the term exists. Until then, exam eligibility defers every verdict — each assignment still to come can overturn it. Creating a new assignment clears the tick again.'
+      label: 'The list of sheets and tests is complete'
+      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
       cancel: 'Cancel'
       close_dialog:
         title: 'Tick the box'
@@ -280,6 +289,7 @@ en:
       paper_hand_in_remove: 'Take the hand-in record back'
       paper_hand_in_kept: 'Handed in on paper or by other means; with points entered the record stays'
       held_by: 'Hand-in held by %{tutorial}'
+      test_not_yet_open: 'The test week has not begun yet.'
       record_first: 'Record the hand-in first'
       download_hand_in: 'Download hand-in'
       show_hand_in: 'View hand-in'
@@ -504,6 +514,9 @@ en:
       note_for: 'Internal note on %{name}'
 
   activerecord:
+    attributes:
+      assignment:
+        kind: "Kind"
     errors:
       messages:
         immutable: "cannot be changed after creation"
@@ -540,3 +553,4 @@ en:
           attributes:
             requires_submission:
               locked_after_deadline: "can't be changed after the deadline has passed"
+              not_for_a_test: "is not possible for a test written in the tutorial"

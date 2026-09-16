@@ -20,7 +20,8 @@ class TutorialPointingTableComponent < ViewComponent::Base
                         .order(:last_modification_by_users_at)
                         .includes(:users, tutorial: :tutors)
     @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial)
-    @participations_by_user_id = preload_participations(@non_submitters, @stack)
+    @participations_by_user_id =
+      preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
   end
 
   def init_teacher_case
@@ -37,8 +38,8 @@ class TutorialPointingTableComponent < ViewComponent::Base
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
                                             .where.not(id: @non_submitters.map(&:id) +
                                                            @stack.flat_map(&:user_ids))
-    @participations_by_user_id =
-      preload_participations(@non_submitters.to_a + @non_tutorial_participants.to_a, @stack)
+    listed = @non_submitters.to_a + @non_tutorial_participants.to_a
+    @participations_by_user_id = preload_participations(listed, @stack, groups_of(listed))
 
     # Somebody who moved groups after handing in on paper stays with the group
     # that has the sheet; everybody else sits with the group they are in.
@@ -47,16 +48,52 @@ class TutorialPointingTableComponent < ViewComponent::Base
     end
   end
 
-  # Read once for the whole page; the rows take theirs from here instead of
-  # asking per row.
-  def preload_participations(non_submitters, submissions)
+  # Batch creation avoids per-student inserts and validation queries.
+  def preload_participations(non_submitters, submissions, groups)
     return {} unless @assignment.assessment
 
+    seed_test_rows(non_submitters, groups) if @assignment.kind_test?
     user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
-    Assessment::Participation
-      .where(user_id: user_ids, assessment: @assignment.assessment)
-      .includes(:task_points, :tutorial, :assessment)
-      .index_by(&:user_id)
+    rows = Assessment::Participation
+           .where(user_id: user_ids, assessment: @assignment.assessment)
+           .includes(:user, :task_points, :tutorial, :assessment)
+           .index_by(&:user_id)
+    rehome_blank_rows(rows, groups)
+    rows
+  end
+
+  # The group each listed user is a member of now, nil for none: after the
+  # deadline a group's page also lists people who have moved away and left a
+  # row behind, so the page's own group is not the answer.
+  def groups_of(users)
+    users.to_h { |user| [user.id, membership_tutorials[user.id]] }
+  end
+
+  # Blank participations must follow tutorial membership so the current tutor
+  # can enter points; recorded work must stay with its original tutorial.
+  # Points may land on the row between this page's read and its write, so
+  # the row is read again under the lock the point entry takes.
+  def rehome_blank_rows(rows, groups)
+    rows.each_value do |row|
+      next unless groups.key?(row.user_id) && blank?(row)
+      next if row.tutorial_id == groups[row.user_id]&.id
+
+      row.with_lock { row.update!(tutorial: groups[row.user_id]) if blank?(row) }
+    end
+  end
+
+  # Points taken back again leave task points of nil behind; those carry
+  # nothing either.
+  def blank?(row)
+    row.pending? && row.submitted_at.nil? && !row.results_visible?
+  end
+
+  def seed_test_rows(users, groups)
+    @assignment.assessment.seed_participations_from!(
+      user_ids: users.map(&:id),
+      tutorial_mapping: users.to_h { |user| [user.id, groups[user.id]&.id] },
+      recompute: false
+    )
   end
 
   def team_participations(submission)
@@ -65,8 +102,10 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
   # Before the backfill worker has been round there is no participation yet;
   # the row is drawn from an unsaved one, and recording the hand-in saves it.
+  # A test's rows are seeded before any is asked for, so this never builds
+  # one for a test.
   def participation_for(user, tutorial)
-    @participations_by_user_id[user.id] ||
+    @participations_by_user_id[user.id] ||=
       Assessment::Participation.new(assessment: @assignment.assessment, user: user,
                                     tutorial: tutorial)
   end
@@ -88,7 +127,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
   # Every answer that swaps a row out sends the line above the table along,
   # rebuilt from the rows, so the two never disagree.
   def summary
-    PointingSummaryComponent.new(statuses: row_statuses)
+    PointingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?)
   end
 
   # A team row speaks for its first member with a participation, as the row
@@ -128,7 +167,7 @@ class TutorialPointingTableComponent < ViewComponent::Base
 
     def membership_tutorials
       @membership_tutorials ||=
-        TutorialMembership.where(tutorial: @tutorials).includes(:tutorial)
+        TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
                           .index_by(&:user_id).transform_values(&:tutorial)
     end
 end

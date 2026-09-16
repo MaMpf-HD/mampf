@@ -17,7 +17,7 @@
       <%= render(SheetChipComponent.new(sheet: sheet)) %>
     </div>
 
-    <% unless digital_hand_in? %>
+    <% if !digital_hand_in? && !test? %>
       <p class="hub-aside text-muted mb-0">
         <%= t("submission.hub.card.hand_in_elsewhere") %>
       </p>

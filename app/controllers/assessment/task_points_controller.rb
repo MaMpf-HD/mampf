@@ -22,8 +22,9 @@ module Assessment
     before_action :authorize_lecture_edit!, only: [:mark_as_exempt, :remove_exempt]
     before_action :refuse_without_row, only: [:update_participation, :refresh_participation]
     before_action :refuse_unless_sheet, only: [:mark_as_participated, :remove_participated]
-    before_action :refuse_unless_exam, only: [:mark_as_absent, :remove_absent,
-                                              :mark_as_exempt, :remove_exempt]
+    before_action :refuse_unless_attended, only: [:mark_as_absent, :remove_absent]
+    before_action :refuse_unless_exam, only: [:mark_as_exempt, :remove_exempt]
+    before_action :refuse_before_test_week, only: :mark_as_absent
     before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
                                                    :remove_absent, :mark_as_exempt,
                                                    :remove_exempt]
@@ -210,9 +211,8 @@ module Assessment
         unsupported_assessable
       end
 
-      # Only a sheet is handed in; only an exam is attended.
       def refuse_unless_sheet
-        return if @assessable.is_a?(Assignment)
+        return if @assessable.is_a?(Assignment) && !@assessable.kind_test?
 
         unsupported_assessable
       end
@@ -221,6 +221,23 @@ module Assessment
         return if @assessable.is_a?(Exam)
 
         unsupported_assessable
+      end
+
+      def refuse_unless_attended
+        return if @assessable.is_a?(Exam)
+        return if @assessable.is_a?(Assignment) && @assessable.kind_test?
+
+        unsupported_assessable
+      end
+
+      # Absence does not change task points, so it bypasses the point-entry
+      # validation that checks whether grading is open. Taking an absence back
+      # is not gated: a test moved to a later week must not leave it standing.
+      def refuse_before_test_week
+        return unless @assessable.is_a?(Assignment) && !@assessable.grading_open?
+
+        respond_with_flash(:alert, t("assessment.grading_tutorial.test_not_yet_open"),
+                           status: :unprocessable_content)
       end
 
       def unsupported_assessable

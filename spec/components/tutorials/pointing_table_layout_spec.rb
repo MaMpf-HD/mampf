@@ -24,6 +24,14 @@ RSpec.describe(PointingTableLayout) do
       expect(layout.columns).to eq([:team, :hand_in, :correction])
     end
 
+    it "gives a test no file columns" do
+      assignment = build_stubbed(:assignment, kind: :test)
+      allow(assignment).to receive(:assessable?).and_return(true)
+
+      expect(described_class.for(assessable: assignment).columns)
+        .to eq([:team, :status, :tasks, :total, :save])
+    end
+
     it "gives a talk a single grade" do
       layout = described_class.for(assessable: build_stubbed(:talk))
 

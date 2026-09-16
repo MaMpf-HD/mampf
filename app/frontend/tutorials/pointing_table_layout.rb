@@ -27,7 +27,7 @@ class PointingTableLayout
       columns = [:team]
       columns << :tutorial if grading_scope.is_a?(Lecture)
       columns += [:status, :tasks, :total, :save] if assessable.assessable?
-      columns += [:hand_in, :correction]
+      columns += [:hand_in, :correction] unless assessable.kind_test?
       new(columns: columns, body: :tasks)
     when Talk
       new(columns: [:talk, :team, :status, :grade, :note, :graded, :save],

@@ -62,11 +62,16 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # Points go on a sheet that came in; a row nothing was handed in for waits
   # for the mark in the hand-in column first. An exam has nothing to hand in.
+  # Entering test points records participation; no separate hand-in is needed.
   def points_enterable?
     return false if @participation.exempt? || @participation.absent?
     return true if @assessable.is_a?(Exam)
 
-    paper_hand_in? && !elsewhere?
+    (paper_hand_in? || test?) && !elsewhere?
+  end
+
+  def test?
+    @assessable.is_a?(Assignment) && @assessable.kind_test?
   end
 
   # Somebody absent or excused has no grade to enter; what a scheme gave
@@ -83,7 +88,7 @@ class ParticipationRowComponent < ViewComponent::Base
   def locked_reason
     if elsewhere?
       t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
-    elsif status == :awaiting_record && can_enter_points?
+    elsif status == :awaiting_record && can_enter_points? && !test?
       t("assessment.grading_tutorial.record_first")
     end
   end
@@ -195,18 +200,25 @@ class ParticipationRowComponent < ViewComponent::Base
     "#{since} · #{t("assessment.grading_exam.points_missing")}"
   end
 
-  # Absence is the grader's to record, an exemption the lecturer's - it takes
-  # a certificate and changes what counts.
   def absence_button
     return unless can_enter_points?
+    return if test? && elsewhere?
 
     if @participation.absent?
-      row_action_link(remove_absent_path(@participation), "bi-person-check-fill",
-                      t("assessment.grading_exam.remove_absent"))
-    elsif @participation.pending?
-      row_action_link(mark_as_absent_path(@participation), "bi-person-x-fill",
-                      t("assessment.grading_exam.mark_absent"))
+      row_action_link(remove_absent_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-person-check-fill", t("assessment.grading_exam.remove_absent"))
+    elsif @participation.pending? && absence_recordable?
+      row_action_link(mark_as_absent_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-person-x-fill", t("assessment.grading_exam.mark_absent"))
     end
+  end
+
+  # Absence is the grader's to record, an exemption the lecturer's - it takes
+  # a certificate and changes what counts. On a test, from its Monday and
+  # while no points were started; taking an absence back is offered whatever
+  # the week says, so a test moved to a later week does not leave one standing.
+  def absence_recordable?
+    !test? || (allow_grading? && !paper_hand_in?)
   end
 
   # Certificates can arrive after absence was recorded. mark_exempt clears

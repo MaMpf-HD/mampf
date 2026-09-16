@@ -728,6 +728,12 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         def deferral(reason, count: nil)
           return I18n.t("student_performance.evaluator.deferral.#{reason}") unless count
 
+          if reason == :points_not_due
+            return I18n.t("student_performance.evaluator.deferral.points_not_due",
+                          what: I18n.t("student_performance.evaluator.deferral.sheet_count",
+                                       count: count))
+          end
+
           I18n.t("student_performance.evaluator.deferral.#{reason}", count: count)
         end
 
@@ -850,6 +856,22 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               .to include(deferral(:points_not_due, count: 1))
             expect(response.body)
               .not_to include(deferral(:points_pending, count: 0))
+          end
+
+          it "counts a test to come as a test, not as a sheet" do
+            test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                                  deadline: 2.weeks.from_now)
+            FactoryBot.create(:assessment_task, assessment: test.assessment, max_points: 10)
+            lecture.update!(assignments_complete: true)
+
+            get lecture_student_performance_certifications_path(lecture)
+
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.deferral.points_not_due",
+                     what: [I18n.t("student_performance.evaluator.deferral.sheet_count", count: 1),
+                            I18n.t("student_performance.evaluator.deferral.test_count", count: 1)]
+                           .to_sentence)
+            )
           end
         end
 

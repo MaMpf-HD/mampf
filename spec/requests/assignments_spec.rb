@@ -103,6 +103,47 @@ RSpec.describe("Assignments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
+      # The kind is the form's to set once; what comes with it - the week,
+      # no hand-in - is the model's, and the response leads to the problems.
+      context "with a test" do
+        # The lecture's term may lie ahead; the weeks on offer are its.
+        let(:first_week) { [lecture.begin_date, Time.zone.today].max.beginning_of_week }
+        let(:monday) { first_week + 14 }
+        let(:test_attributes) do
+          valid_attributes.except(:deadline)
+                          .merge(title: "Test 1", kind: "test", test_week: monday.iso8601)
+        end
+
+        it "offers the form for one, with the term's weeks and without a hand-in setting" do
+          get new_assignment_path(lecture_id: lecture.id, kind: "test"), as: :turbo_stream
+
+          expect(response.body).to include("Add test")
+          weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
+          expect(weeks.pluck("value")).to include(monday.iso8601)
+          expect(weeks.first["value"]).to eq(first_week.iso8601)
+          expect(response.body).not_to include("Digital submission via MaMpf")
+        end
+
+        it "creates it due with its week, taking no hand-in" do
+          expect do
+            post(assignments_path, params: { assignment: test_attributes }, as: :turbo_stream)
+          end.to change(Assignment, :count).by(1)
+
+          test = Assignment.order(:created_at).last
+          expect(test).to be_kind_test
+          expect(test.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
+          expect(test.assessment.requires_submission).to be(false)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "takes a kind it does not know for homework" do
+          get new_assignment_path(lecture_id: lecture.id, kind: "quiz"), as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("Digital submission via MaMpf")
+        end
+      end
+
       context "with valid parameters" do
         it "creates a new assignment" do
           expect do

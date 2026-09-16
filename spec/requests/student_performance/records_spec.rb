@@ -255,6 +255,74 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         end
       end
 
+      # Tests sit in their own group, and get their column with their week
+      # rather than with their deadline: the points arrive group by group.
+      context "with tests among the sheets" do
+        let(:member) { FactoryBot.create(:confirmed_user) }
+
+        def test(deadline:, points:)
+          assignment = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                                      deadline: 1.year.from_now)
+          # rubocop:disable Rails/SkipsModelValidations
+          assignment.update_column(:deadline, deadline)
+          # rubocop:enable Rails/SkipsModelValidations
+          FactoryBot.create(:assessment_task, assessment: assignment.assessment,
+                                              max_points: points)
+          assignment.assessment.reload
+        end
+
+        def groups
+          Nokogiri::HTML(response.body).css("thead tr").first.css("th").map(&:text)
+        end
+
+        it "lists a test whose week has begun apart from the sheets, with its share" do
+          running = test(deadline: Time.zone.now.end_of_week, points: 10)
+          test(deadline: 2.weeks.from_now.end_of_week, points: 10)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :reviewed, assessment: running,
+                                                                  user: member,
+                                                                  points_total: 8)
+
+          get lecture_student_performance_records_path(lecture)
+
+          tests_group = groups.find do |text|
+            text.strip.start_with?(I18n.t("student_performance.records.columns.tests"))
+          end
+          expect(tests_group).to include(
+            I18n.t("student_performance.records.columns.not_due_count", count: 1)
+          )
+          titles = Nokogiri::HTML(response.body).css("thead tr")[1].css("th")
+                           .filter_map { |th| th["title"] }
+          expect(titles).to include(running.title)
+          expect(Nokogiri::HTML(response.body).css("td.test-share").first.text)
+            .to include(ApplicationController.helpers.number_to_percentage(80, precision: 0))
+        end
+
+        it "says that the marked-so-far figures take sheets and tests together" do
+          test(deadline: 2.weeks.from_now.end_of_week, points: 10)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(groups.join).to include(
+            I18n.t("student_performance.records.columns.sheets_and_tests")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.records.columns.due_so_far_hint_with_tests")
+          )
+        end
+
+        it "has no tests group without a test" do
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(groups.map(&:strip)).not_to include(
+            start_with(I18n.t("student_performance.records.columns.tests"))
+          )
+        end
+      end
+
       context "with achievements" do
         it "renders achievement columns when achievements exist" do
           user = FactoryBot.create(:confirmed_user)
@@ -269,7 +337,9 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           # rubocop:enable Rails/SkipsModelValidations
 
           get lecture_student_performance_records_path(lecture)
-          expect(response.body).to include(achievement.title)
+          heading = Nokogiri::HTML(response.body).css("thead abbr").first
+          expect(heading.text.strip).to eq(achievement.short_title)
+          expect(heading["title"]).to eq(achievement.title)
           expect(response.body).to include(%(class="bi bi-check-circle text-success"))
           expect(response.body).to include(
             %(aria-label="#{I18n.t("student_performance.records.columns.achievement_met")}")
@@ -500,6 +570,30 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                                       "Grace Hopper"])
         end
 
+        # The tests' share is its own column, so it is its own order: Nina,
+        # last overall, is first here, and Grace, unmarked, sorts below anyone
+        # with a figure.
+        it "orders by the tests' share, largest first" do
+          test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                                deadline: 1.year.from_now)
+          # rubocop:disable Rails/SkipsModelValidations
+          test.update_column(:deadline, 1.week.ago.end_of_week)
+          # rubocop:enable Rails/SkipsModelValidations
+          FactoryBot.create(:assessment_task, assessment: test.assessment, max_points: 10)
+          FactoryBot.create(:assessment_participation, :reviewed, assessment: test.assessment,
+                                                                  user: nina, points_total: 9)
+          FactoryBot.create(:assessment_participation, :reviewed, assessment: test.assessment,
+                                                                  user: ada, points_total: 4)
+
+          get lecture_student_performance_records_path(
+            lecture, sort: "test_share", dir: "desc"
+          )
+
+          expect(listed_names).to eq(["Nina Simone", "Ada Lovelace", "Grace Hopper"])
+          expect(Nokogiri::HTML(response.body).css("th.test-share").first["aria-sort"])
+            .to eq("descending")
+        end
+
         it "keeps the search when a column is sorted" do
           get lecture_student_performance_records_path(
             lecture, q: "ac", sort: "points", dir: "desc"
@@ -562,6 +656,20 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           get lecture_student_performance_records_path(lecture)
 
           expect(response.body).not_to include("bi-hourglass-split")
+        end
+
+        # A test is marked during its week, so a row half entered on Tuesday
+        # is a backlog on Tuesday, not once the week is over.
+        it "marks a test's column in its week when a row was half entered" do
+          test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                                deadline: Time.zone.now.end_of_week)
+          FactoryBot.create(:assessment_task, assessment: test.assessment, max_points: 10)
+          FactoryBot.create(:assessment_participation, assessment: test.assessment,
+                                                       user: student, submitted_at: 1.hour.ago)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).to include("bi-hourglass-split")
         end
 
         it "does not mark the column for work that was never handed in" do
@@ -688,6 +796,16 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response.body).not_to include(
           I18n.t("student_performance.records.columns.not_submitted")
         )
+      end
+
+      it "marks a test as one" do
+        FactoryBot.create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                       deadline: 3.days.from_now)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        row = Nokogiri::HTML(response.body).css("tr").find { |tr| tr.text.include?("Test 1") }
+        expect(row.css(".badge").text).to include(I18n.t("assessment.test.badge"))
       end
 
       it "says a sheet collected on paper is not recorded yet and offers the exemption" do

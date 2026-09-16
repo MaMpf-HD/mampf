@@ -30,6 +30,110 @@ RSpec.describe(Assignment, type: :model) do
     expect(assignment).to be_invalid
   end
 
+  # A test is a sheet written in the tutorial: nothing is uploaded, its week
+  # is its deadline, and its groups write it on different days of that week.
+  describe "a test" do
+    let(:lecture) { FactoryBot.create(:lecture, submission_grace_period: 60) }
+    let(:test) do
+      FactoryBot.create(:valid_assignment, lecture: lecture, kind: :test,
+                                           deadline: 1.week.from_now.beginning_of_week + 2.days)
+    end
+
+    it "is due with the end of the week it was given a day of" do
+      expect(test.deadline).to eq((1.week.from_now.beginning_of_week + 2.days).end_of_week)
+      expect(test.test_week).to eq(
+        1.week.from_now.beginning_of_week.to_date..(1.week.from_now.end_of_week.to_date)
+      )
+    end
+
+    it "is set for a week by its Monday" do
+      monday = 2.weeks.from_now.to_date.beginning_of_week
+      test.test_week = monday.iso8601
+
+      expect(test.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
+    end
+
+    it "offers the weeks from this one to the term's end, and its own" do
+      term = FactoryBot.create(:term, year: Time.zone.today.year,
+                                      season: Time.zone.today.month < 10 ? "SS" : "WS")
+      running = FactoryBot.create(:lecture, term: term)
+      test = FactoryBot.build(:assignment, lecture: running, kind: :test,
+                                           deadline: 2.weeks.from_now.end_of_week)
+
+      choices = test.test_week_choices
+      expect(choices.first).to eq([term.begin_date, Time.zone.today].max.beginning_of_week)
+      expect(choices).to all(be_monday)
+      expect(choices).to include(2.weeks.from_now.to_date.beginning_of_week)
+      expect(choices.last).to eq(term.end_date.beginning_of_week)
+    end
+
+    it "offers half a year of weeks when the term is over" do
+      choices = test.test_week_choices
+
+      expect(choices.first).to eq(Time.zone.today.beginning_of_week)
+      expect(choices.size).to be_between(26, 28)
+    end
+
+    # A lecture bound to no term, while no term is active either: the form
+    # must still open.
+    it "offers weeks to a lecture without a term, active term or not" do
+      Term.update_all(active: false) # rubocop:disable Rails/SkipsModelValidations
+      loose = FactoryBot.create(:lecture, :term_independent)
+      test = FactoryBot.build(:assignment, lecture: loose, kind: :test)
+
+      expect(test.test_week_choices.first).to eq(Time.zone.today.beginning_of_week)
+    end
+
+    it "leaves the deadline empty for a week that is no date" do
+      test.test_week = "2026-99-99"
+      expect(test).to be_invalid
+      expect(test.errors[:deadline]).to be_present
+
+      test.test_week = ""
+      expect(test).to be_invalid
+    end
+
+    it "takes no sheet to read, whatever the form sends" do
+      test.medium = FactoryBot.create(:lecture_medium, :with_lecture_by_id,
+                                      lecture_id: lecture.id, sort: "Exercise")
+      expect(test).to be_invalid
+      expect(test.errors[:medium_id]).to be_present
+    end
+
+    it "takes no hand-in through MaMpf, whatever the form sends" do
+      expect(test.requires_submission).to be(false)
+      expect(test.assessment.requires_submission).to be(false)
+
+      test.assessment.requires_submission = true
+      expect(test.assessment).to be_invalid
+      expect(test.assessment.errors[:requires_submission]).to be_present
+    end
+
+    it "opens for marking with its week, not after it, and knows no grace period" do
+      expect(test.grading_open?).to be(false)
+      expect(test.friendly_deadline).to eq(test.deadline)
+
+      Timecop.travel(test.deadline.beginning_of_week + 1.hour) do
+        expect(test.grading_open?).to be(true)
+        expect(test.active?).to be(true)
+      end
+    end
+
+    it "stays a test, as homework stays homework" do
+      test.kind = :homework
+      expect(test).to be_invalid
+      expect(test.errors[:kind]).to be_present
+
+      homework = FactoryBot.create(:valid_assignment, lecture: lecture)
+      homework.kind = :test
+      expect(homework).to be_invalid
+    end
+  end
+
+  it "is homework unless said otherwise" do
+    expect(FactoryBot.create(:valid_assignment)).to be_kind_homework
+  end
+
   describe "#past_deadline?" do
     it "returns true when deadline is in the past" do
       assignment = FactoryBot.build(:valid_assignment, :inactive)

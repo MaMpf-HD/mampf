@@ -1,6 +1,9 @@
 class Assignment < ApplicationRecord
   include Assessment::Pointable
 
+  # Prefix the enum methods to avoid colliding with Kernel#test.
+  enum :kind, { homework: 0, test: 1 }, prefix: true
+
   attr_writer :requires_submission
 
   belongs_to :lecture, touch: true
@@ -8,6 +11,7 @@ class Assignment < ApplicationRecord
   has_many :submissions, dependent: :destroy
   has_many :sightings, class_name: "AssignmentSighting", dependent: :destroy
 
+  before_validation :end_test_week, if: -> { kind_test? && deadline_changed? }
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment
   before_destroy :check_destructibility, prepend: true
@@ -27,6 +31,7 @@ class Assignment < ApplicationRecord
   after_rollback :forget_deadline_move
 
   def requires_submission
+    return false if kind_test?
     return assessment.requires_submission if assessment
 
     @requires_submission.nil? || @requires_submission
@@ -35,6 +40,11 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
   validate :deadline_not_in_past, if: -> { deadline_changed? }
+  # Changing kind would reinterpret existing submissions and grading data.
+  validate :kind_immutable, if: -> { persisted? && kind_changed? }
+  # The form offers a test no sheet to attach; a request that names one
+  # anyway is refused rather than quietly obeyed.
+  validates :medium_id, absence: true, if: :kind_test?
 
   scope :active, -> { where(deadline: Time.zone.now..) }
 
@@ -96,6 +106,43 @@ class Assignment < ApplicationRecord
     Time.zone.now <= deadline
   end
 
+  # A test's deadline is the end of its week; the groups write it during that
+  # week, each in its own session, so marking opens with the week and not
+  # after it. Homework is marked once its deadline and grace period are over.
+  def grading_open?
+    return Time.zone.now >= deadline.beginning_of_week if kind_test?
+
+    totally_expired?
+  end
+
+  def test_week
+    return unless deadline
+
+    deadline.beginning_of_week.to_date..deadline.to_date
+  end
+
+  # Invalid dates must reach the deadline presence validation, not raise.
+  def test_week=(monday)
+    self.deadline = Time.zone.parse(monday.to_s)&.end_of_week
+  rescue ArgumentError
+    self.deadline = nil
+  end
+
+  # Lecture#begin_date falls back to Term.active, which may also be absent.
+  def test_week_choices
+    first = [lecture.term&.begin_date, Time.zone.today].compact.max.beginning_of_week
+    term_end = lecture.term&.end_date
+    last = (term_end && term_end >= first ? term_end : first + 6.months).beginning_of_week
+    weeks = []
+    monday = first
+    while monday <= last
+      weeks << monday
+      monday += 7
+    end
+    weeks |= [deadline.to_date.beginning_of_week] if deadline
+    weeks.sort
+  end
+
   def semiactive?
     Time.zone.now <= friendly_deadline
   end
@@ -107,7 +154,6 @@ class Assignment < ApplicationRecord
   def totally_expired?
     !semiactive?
   end
-  alias grading_open? totally_expired?
 
   def assessable?
     assessment != nil
@@ -117,8 +163,9 @@ class Assignment < ApplicationRecord
     semiactive? && !active?
   end
 
+  # No grace period for a test: nothing is handed in late.
   def friendly_deadline
-    return deadline unless lecture.submission_grace_period
+    return deadline if kind_test? || lecture.submission_grace_period.nil?
 
     deadline + lecture.submission_grace_period.minutes
   end
@@ -218,6 +265,14 @@ class Assignment < ApplicationRecord
       return if deadline.blank?
 
       errors.add(:deadline, :in_past) if deadline < Time.zone.now
+    end
+
+    def kind_immutable
+      errors.add(:kind, :immutable)
+    end
+
+    def end_test_week
+      self.deadline = deadline.end_of_week if deadline
     end
 
     def inherit_deletion_date_from_lecture

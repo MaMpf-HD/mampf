@@ -596,6 +596,27 @@ RSpec.describe("Submissions", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
+      # A test sits in the one list with the sheets, marked as what it is,
+      # and the heading names both once there is one.
+      it "lists a marked test among the sheets, marked as a test" do
+        test = create(:assignment, :expired, lecture: lecture, title: "Test 1",
+                                             expired_since: 1.week, kind: :test)
+        create(:assessment_task, assessment: test.assessment, max_points: 10)
+        mark(test, [8])
+
+        get lecture_submissions_path(lecture)
+
+        page = Nokogiri::HTML(response.body)
+        expect(page.at_css("#sheets-heading").text.squish)
+          .to eq(I18n.t("submission.hub.heading_with_tests"))
+        row = page.at_css("details#sheet_assignment_#{test.id}")
+        expect(row.text).to include("Test 1")
+        expect(row.text).to include(I18n.t("assessment.test.badge"))
+        expect(row.text).to include("8")
+        expect(response.body).to include(I18n.t("submission.hub.test_count", count: 1))
+        expect(response.body).not_to include(I18n.t("submission.hub.sheet_count", count: 0))
+      end
+
       it "turns a tutor of the lecture away" do
         create(:tutor_tutorial_join, tutorial: tutorial, tutor: user)
 

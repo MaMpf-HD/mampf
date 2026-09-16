@@ -24,6 +24,27 @@ RSpec.describe(Achievement, type: :model) do
     end
   end
 
+  describe "#short_title" do
+    it "takes the initials of the first two words, or two letters of the only one" do
+      expect(build(:achievement, title: "Attendance Rate").short_title).to eq("AR")
+      expect(build(:achievement, title: "Übungsblatt-Punkte").short_title).to eq("ÜP")
+      expect(build(:achievement, title: "Test 2 bestanden").short_title).to eq("T2")
+      expect(build(:achievement, title: "Anwesenheit").short_title).to eq("AN")
+      expect(build(:achievement, title: "✓✓").short_title).to eq("✓✓")
+    end
+  end
+
+  describe ".short_titles" do
+    it "numbers two criteria whose letters come out the same" do
+      talk = build_stubbed(:achievement, title: "Blackboard Talk")
+      test = build_stubbed(:achievement, title: "Bonus Test")
+      rate = build_stubbed(:achievement, title: "Attendance Rate")
+
+      expect(described_class.short_titles([talk, test, rate]))
+        .to eq(talk.id => "BT1", test.id => "BT2", rate.id => "AR")
+    end
+  end
+
   describe "associations" do
     it "belongs to a lecture" do
       achievement = FactoryBot.build(:achievement, lecture: nil)
