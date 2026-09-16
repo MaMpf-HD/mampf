@@ -154,8 +154,8 @@ en:
           one: "1 test"
           other: "%{count} tests"
         points_pending:
-          one: "1 submission not graded yet"
-          other: "%{count} submissions not graded yet"
+          one: "1 still to be marked"
+          other: "%{count} still to be marked"
         points_not_measurable: "No points to measure"
         achievements_ungraded: "Achievement not graded yet"
       missed:

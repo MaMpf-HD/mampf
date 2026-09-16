@@ -154,8 +154,8 @@ de:
           one: "1 Test"
           other: "%{count} Tests"
         points_pending:
-          one: "1 Abgabe noch nicht bewertet"
-          other: "%{count} Abgaben noch nicht bewertet"
+          one: "1 noch nicht bewertet"
+          other: "%{count} noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
       missed:

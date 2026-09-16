@@ -2829,11 +2829,11 @@ en:
         nothing_marked: Nothing has been marked yet.
         awaiting_marks:
           one: >-
-            1 sheet worth %{points} points is still with your tutor and is not
+            1 result worth %{points} points is still with your tutor and is not
             counted above.
           other: >-
-            %{count} sheets worth %{points} points in total are still with your
-            tutor and are not counted above.
+            %{count} results worth %{points} points in total are still with
+            your tutor and are not counted above.
         needed: "%{points} needed"
         bar_plain: "%{percentage} percent of the points earned"
         bar_absolute: "%{points} of the %{needed} points needed"

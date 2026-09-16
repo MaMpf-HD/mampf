@@ -171,11 +171,15 @@ module Assessment
           @awaiting_marks_sheets ||= sheets.select { |sheet| awaiting_marks?(sheet) }
         end
 
+        # A test nobody has entered anything on is with the tutor too - row or
+        # no row - until points or an absence say whether the reader sat it.
         def awaiting_marks?(sheet)
           return false unless due_for_points?(sheet)
 
-          sheet.participation&.pending? &&
-            sheet.participation.submitted_at.present?
+          participation = sheet.participation
+          return participation.nil? || participation.pending? if sheet.assignment.kind_test?
+
+          participation&.pending? && participation.submitted_at.present?
         end
 
         # StudentPerformance::Record does not track assignment deadlines or sheet

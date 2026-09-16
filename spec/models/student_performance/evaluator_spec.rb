@@ -468,6 +468,26 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.verdict_deferral_reasons).to eq([:points_not_due])
       end
 
+      # Nobody has said whether the student sat the test; the tutor may be
+      # about to enter the points. Refusing them now would be refusing them
+      # for the tutor's backlog.
+      it "defers on a test nobody has entered anything on, and refuses once absence is recorded" do
+        test = sheet(deadline: 2.days.ago, points: 10)
+        test.assessable.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+        record = record_with(total: 0, max: 10)
+
+        deferred = evaluator.evaluate(record)
+        expect(deferred.proposed_status).to eq(:inconclusive)
+        expect(deferred.verdict_deferral_reasons).to eq([:points_pending])
+
+        FactoryBot.create(:assessment_participation, :absent, assessment: test, user: student)
+        fresh = described_class.new(
+          rule, assignments_complete: true,
+                due_points: StudentPerformance::DuePoints.new(lecture: lecture)
+        )
+        expect(fresh.evaluate(record).proposed_status).to eq(:failed)
+      end
+
       # "Not due yet" covers anything between one sheet and the rest of the
       # term, and somebody deciding on this student needs to know which.
       it "says how many sheets are still to come" do

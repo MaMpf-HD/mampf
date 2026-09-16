@@ -32,10 +32,12 @@ module StudentPerformance
     #
     # The queue is why the figure differs from student to student otherwise - a
     # sheet nobody has marked yet is neither earned nor lost, and counting it as
-    # a zero would put the tutor's backlog on the student's account.
+    # a zero would put the tutor's backlog on the student's account. A test
+    # nobody has entered anything on is in that queue too: whether the student
+    # sat it is known only once points or an absence are recorded.
     def marked_max_for(user_id)
-      max_for(user_id) - awaiting_marks_points.fetch(user_id, 0) +
-        reviewed_coming_points.fetch(user_id, 0)
+      max_for(user_id) - awaiting_marks_points.fetch(user_id, 0) -
+        unrecorded_test_points(user_id) + settled_coming_points.fetch(user_id, 0)
     end
 
     def marked_percentage_for(record)
@@ -56,7 +58,7 @@ module StudentPerformance
     def not_yet_due_for(user_id)
       coming_total -
         exempted_coming_points.fetch(user_id, 0) -
-        reviewed_coming_points.fetch(user_id, 0)
+        settled_coming_points.fetch(user_id, 0)
     end
 
     # The same two sets counted rather than added. A reason on the certification
@@ -65,17 +67,17 @@ module StudentPerformance
     def not_yet_due_count_for(user_id)
       coming_assessments.size -
         exempted_coming_counts.fetch(user_id, 0) -
-        reviewed_coming_counts.fetch(user_id, 0)
+        settled_coming_counts.fetch(user_id, 0)
     end
 
     # Early submissions are not awaiting points: tutors cannot enter points
     # until the deadline and submission_grace_period have passed.
     def pending_points_for(user_id)
-      awaiting_marks_points.fetch(user_id, 0)
+      awaiting_marks_points.fetch(user_id, 0) + unrecorded_test_points(user_id)
     end
 
     def pending_count_for(user_id)
-      pending_counts.fetch(user_id, 0)
+      pending_counts.fetch(user_id, 0) + unrecorded_test_count(user_id)
     end
 
     private
@@ -102,7 +104,7 @@ module StudentPerformance
                 .where(lecture_id: @lecture.id, assessable_type: "Assignment")
                 .joins("JOIN assignments ON assignments.id = " \
                        "assessment_assessments.assessable_id")
-                .includes(:tasks)
+                .includes(:tasks).preload(:assessable)
         return scope unless @kind
 
         scope.where(assignments: { kind: Assignment.kinds.fetch(@kind.to_s) })
@@ -160,27 +162,56 @@ module StudentPerformance
           .where(assessment_id: assessments.map(&:id), status: :exempt)
       end
 
+      def due_tests
+        @due_tests ||= due_assessments.select { |assessment| assessment.assessable.kind_test? }
+      end
+
+      def unrecorded_test_points(user_id)
+        sum_points(due_tests) - recorded_test_points.fetch(user_id, 0)
+      end
+
+      def unrecorded_test_count(user_id)
+        due_tests.size - recorded_test_counts.fetch(user_id, 0)
+      end
+
+      # A test's row with anything on it: points started, reviewed, absent or
+      # excused. The rest of the roster, row or no row, is unrecorded.
+      def recorded_test_rows
+        Assessment::Participation
+          .where(assessment_id: due_tests.map(&:id))
+          .where("submitted_at IS NOT NULL OR status <> :pending",
+                 pending: Assessment::Participation.statuses[:pending])
+      end
+
+      def recorded_test_points
+        @recorded_test_points ||= points_per_user(recorded_test_rows, due_tests)
+      end
+
+      def recorded_test_counts
+        @recorded_test_counts ||= count_per_user(recorded_test_rows)
+      end
+
       def exempted_coming_counts
         @exempted_coming_counts ||= count_per_user(
           exempt_participations(coming_assessments)
         )
       end
 
-      # Marked before its deadline was moved forward: those points are in the
-      # total, so they are in the base as well - and they are not still to be
-      # had, which is what `not_yet_due_for` would otherwise say about them.
-      def reviewed_coming
+      # Marked before its deadline was moved forward, or recorded absent from a
+      # test in its week: those points are settled - in the total or lost - so
+      # they are in the base, and they are not still to be had, which is what
+      # `not_yet_due_for` would otherwise say about them.
+      def settled_coming
         Assessment::Participation
-          .where(assessment_id: coming_assessments.map(&:id), status: :reviewed)
+          .where(assessment_id: coming_assessments.map(&:id), status: [:reviewed, :absent])
       end
 
-      def reviewed_coming_points
-        @reviewed_coming_points ||= points_per_user(reviewed_coming,
-                                                    coming_assessments)
+      def settled_coming_points
+        @settled_coming_points ||= points_per_user(settled_coming, coming_assessments)
       end
 
-      def reviewed_coming_counts
-        @reviewed_coming_counts ||= count_per_user(reviewed_coming)
+      def settled_coming_counts
+        @settled_coming_counts ||= count_per_user(settled_coming)
       end
 
       def pending_counts

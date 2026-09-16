@@ -186,7 +186,8 @@ RSpec.describe(StudentPerformance::DuePoints) do
 
     it "measures the tests' points against the tests alone" do
       sheet(deadline: 2.days.ago, points: 20)
-      test(deadline: 2.days.ago, points: 10)
+      marked = test(deadline: 2.days.ago, points: 10)
+      FactoryBot.create(:assessment_participation, :reviewed, assessment: marked, user: student)
 
       expect(test_points.total).to eq(10)
       expect(test_points.marked_percentage_of(student.id, 8)).to eq(80)
@@ -199,6 +200,40 @@ RSpec.describe(StudentPerformance::DuePoints) do
                                                               user: student)
 
       expect(test_points.marked_max_for(student.id)).to eq(10)
+    end
+
+    # Whether the student sat a test is known once points or an absence are
+    # recorded; until then the test is with the tutor, not on the account.
+    it "keeps a test nobody has entered anything on out of the base and in the queue" do
+      test(deadline: 2.days.ago, points: 10)
+      blank = test(deadline: 2.days.ago, points: 6)
+      FactoryBot.create(:assessment_participation, assessment: blank, user: student)
+
+      expect(due_points.marked_max_for(student.id)).to eq(0)
+      expect(due_points.pending_points_for(student.id)).to eq(16)
+      expect(due_points.pending_count_for(student.id)).to eq(2)
+    end
+
+    it "counts a test the student was absent from as lost, in its week already" do
+      absent = test(deadline: 3.days.from_now, points: 10)
+      FactoryBot.create(:assessment_participation, :absent, assessment: absent, user: student)
+      sat_out = test(deadline: 2.days.ago, points: 10)
+      FactoryBot.create(:assessment_participation, :absent, assessment: sat_out, user: student)
+
+      expect(due_points.marked_max_for(student.id)).to eq(20)
+      expect(due_points.not_yet_due_for(student.id)).to eq(0)
+      expect(due_points.not_yet_due_count_for(student.id)).to eq(0)
+      expect(due_points.pending_points_for(student.id)).to eq(0)
+    end
+
+    it "counts a test with points started as waiting to be marked, once" do
+      started = test(deadline: 2.days.ago, points: 10)
+      FactoryBot.create(:assessment_participation, assessment: started, user: student,
+                                                   submitted_at: 3.days.ago)
+
+      expect(due_points.marked_max_for(student.id)).to eq(0)
+      expect(due_points.pending_points_for(student.id)).to eq(10)
+      expect(due_points.pending_count_for(student.id)).to eq(1)
     end
   end
 
