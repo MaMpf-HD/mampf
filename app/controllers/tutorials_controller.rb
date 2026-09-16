@@ -30,8 +30,9 @@ class TutorialsController < ApplicationController
     authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order(deadline: :desc)
     @achievements = @lecture.achievements.order(:title)
+    # The page shows one thing; an achievement asked for wins over a sheet.
     @achievement = @achievements.find_by(id: params[:achievement])
-    @assignment = Assignment.find_by(id: params[:assignment])
+    @assignment = @assignments.find_by(id: params[:assignment]) unless @achievement
     @assignment ||= current_assignment unless @achievement
     # A lecture with achievements and no sheets yet opens on its first achievement.
     @achievement ||= @achievements.first unless @assignment

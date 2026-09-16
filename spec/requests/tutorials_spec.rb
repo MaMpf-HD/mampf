@@ -51,6 +51,19 @@ RSpec.describe("Tutorials", type: :request) do
       expect(selected.text.strip).to eq(sheet.title)
     end
 
+    it "shows the achievement asked for, and nothing of a sheet named beside it" do
+      achievement = create(:achievement, :boolean, lecture: lecture, title: "Blackboard talk")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id,
+                                                    achievement: achievement.id,
+                                                    assignment: assignment.id })
+
+      page = Nokogiri::HTML(response.body)
+      expect(page.at_css("#assignment-select option[selected]").text.strip).to eq("Blackboard talk")
+      expect(page.css("#bulk-upload-area")).to be_empty
+      expect(page.css("tr.submission-row")).to be_empty
+    end
+
     it "opens on the first sheet to come while none is open yet" do
       assignment.update!(deadline: 3.weeks.from_now)
       soon = create(:assignment, lecture: lecture, title: "Sheet 1", deadline: 1.week.from_now)
