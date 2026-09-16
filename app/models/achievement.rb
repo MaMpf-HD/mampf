@@ -46,8 +46,9 @@ class Achievement < ApplicationRecord
   def short_title
     words = title.to_s.scan(/[[:alnum:]]+/)
     return words[0, 2].pluck(0).join.upcase if words.size >= 2
+    return words.first[0, 2].upcase if words.any?
 
-    words.first.to_s[0, 2].upcase
+    title.to_s[0, 2].upcase
   end
 
   def self.short_titles(achievements)

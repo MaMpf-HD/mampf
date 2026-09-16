@@ -30,6 +30,7 @@ RSpec.describe(Achievement, type: :model) do
       expect(build(:achievement, title: "Übungsblatt-Punkte").short_title).to eq("ÜP")
       expect(build(:achievement, title: "Test 2 bestanden").short_title).to eq("T2")
       expect(build(:achievement, title: "Anwesenheit").short_title).to eq("AN")
+      expect(build(:achievement, title: "✓✓").short_title).to eq("✓✓")
     end
   end
 
