@@ -60,7 +60,7 @@ class SheetRowComponent < ViewComponent::Base
   def note
     return unless NOTE_TONES.key?(state)
 
-    t("submission.hub.notes.#{state}", **interpolations)
+    t("submission.hub.notes.#{note_key}", **interpolations)
   end
 
   def note_class
@@ -111,6 +111,14 @@ class SheetRowComponent < ViewComponent::Base
   end
 
   private
+
+    # A test not recorded yet was not handed in anywhere; the note says what
+    # the tutor is going to enter instead of what arrived.
+    def note_key
+      return :awaiting_record_test if state == :awaiting_record && sheet.assignment.kind_test?
+
+      state
+    end
 
     # Only the grace period needs one, and both its badge and its note want it.
     def interpolations

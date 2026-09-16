@@ -123,10 +123,11 @@ module Assessment
         # A file without a `submitted_at` costs points without anybody having done
         # anything wrong, which is why it has a state of its own. A sheet that
         # comes in on paper is with the tutor until they record it, so nothing
-        # is missing yet; a test was written in the room, so once its week is
-        # over it is waiting to be marked.
+        # is missing yet - and so is a test's result: until the tutor enters
+        # it, or records the reader as absent, nobody can say whether they sat
+        # it. A test row with something on it is with the tutor to be finished.
         def closed_state
-          return :awaiting_marks if assignment.kind_test?
+          return :awaiting_record if assignment.kind_test? && participation&.submitted_at.nil?
 
           if participation&.submitted_at
             return submission&.correction.present? ? :correction_uploaded : :awaiting_marks

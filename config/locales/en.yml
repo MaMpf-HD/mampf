@@ -2987,6 +2987,7 @@ en:
         partially_marked: not every problem has been marked yet
         missed: nothing arrived by the deadline
         awaiting_record: handed in on paper or by other means - your tutor records what arrived
+        awaiting_record_test: no result entered yet - your tutor enters the points, or records you as absent
         absent: recorded as absent
         exempt: not counted for you
         not_recorded: >

@@ -3213,6 +3213,7 @@ de:
         partially_marked: noch nicht alle Aufgaben korrigiert
         missed: bis zur Frist kam nichts an
         awaiting_record: Abgabe auf Papier oder anderem Weg - Dein Tutor trägt ein, was ankam
+        awaiting_record_test: noch kein Ergebnis eingetragen - Dein Tutor trägt die Punkte ein oder vermerkt Dich als abwesend
         absent: als abwesend vermerkt
         exempt: wird bei Dir nicht gewertet
         not_recorded: >
