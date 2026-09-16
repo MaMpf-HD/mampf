@@ -328,10 +328,14 @@ en:
       end_mail: |
         With kind regards,
         Your MaMpf-Team
-      link_text_html: |
+      link_text_group_html: |
         <p>You can access your new group here: %{rosterable_link}</p>
-      link_text: |
+      link_text_group: |
         You can access your new group here: %{rosterable_link}
+      link_text_exam_html: |
+        <p>You can view your new exam info here: %{rosterable_link}</p>
+      link_text_exam: |
+        You can view your new exam info here: %{rosterable_link}
       roster_added_to_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
@@ -349,6 +353,18 @@ en:
 
         You are now a participant in this group.
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{lecture_title}'
+      roster_added_to_exam_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been added to exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+      roster_added_to_exam_email_body: |
+        Hello %{name},
+
+        You have been added to exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+      roster_added_to_exam_email_subject: 'Added to exam %{rosterable_title} in %{lecture_title}'
       roster_removed_from_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
@@ -373,6 +389,25 @@ en:
 
         Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
       roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_exam_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_exam_email_body: |
+        Hello %{name},
+
+        You have been removed from exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+
+        If you believe this was a mistake or if you have any questions,
+        please contact your instructor or the support team.
+      roster_removed_from_exam_email_subject: 'Removed from exam %{rosterable_title} in %{lecture_title}'
       roster_moved_between_groups_email_body_html: |
         <p>Hello %{name},</p>
         <p>

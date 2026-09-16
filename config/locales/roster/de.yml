@@ -333,10 +333,14 @@ de:
       end_mail: |
         Mit freundlichen Grüßen,
         Dein MaMpf-Team
-      link_text_html: |
+      link_text_group_html: |
         <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
-      link_text: |
+      link_text_group: |
         Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}
+      link_text_exam_html: |
+        <p>Du kannst Deine neue Prüfungsinformationen hier aufrufen: %{rosterable_link}</p>
+      link_text_exam: |
+        Du kannst Deine neue Prüfungsinformationen hier aufrufen: %{rosterable_link}
       roster_added_to_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
@@ -354,6 +358,18 @@ de:
 
         Du nimmst nun an dieser Gruppe teil.
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
+      roster_added_to_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest zur Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
+        </p>
+      roster_added_to_exam_email_body: |
+        Hallo %{name},
+
+        Du wurdest zur Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ hinzugefügt.
+      roster_added_to_exam_email_subject: 'Zur Prüfung %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
@@ -378,6 +394,25 @@ de:
 
         Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
+      roster_removed_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest aus der Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+          wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_removed_from_exam_email_body: |
+        Hallo %{name},
+
+        Du wurdest aus der Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
+      roster_removed_from_exam_email_subject: 'Aus der Prüfung %{rosterable_title} in %{lecture_title} entfernt'
       roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
