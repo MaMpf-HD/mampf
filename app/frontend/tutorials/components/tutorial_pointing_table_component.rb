@@ -96,9 +96,9 @@ class TutorialPointingTableComponent < ViewComponent::Base
   # Before the backfill worker has been round there is no participation yet;
   # the row is drawn from an unsaved one, and recording the hand-in saves it.
   # A test's row takes points without that step, so it needs its id first:
-  # its rows are seeded as the table is drawn, the exception an exam's rows
-  # make too. One for somebody the seeding did not reach - a member of no
-  # group on the lecturer's page - is made here, on its own.
+  # its rows are seeded before they are drawn, the exception an exam's rows
+  # make too, and this creates one only for a user the seeding was not told
+  # about.
   def participation_for(user, tutorial)
     @participations_by_user_id[user.id] ||=
       if @assignment.kind_test?
