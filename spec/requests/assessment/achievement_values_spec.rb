@@ -84,6 +84,23 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(row.reload.grade_text).to be_nil
     end
 
+    # The row's group is read for the permission, then the row is locked for
+    # the write; a table drawn in between may have handed the blank row to
+    # the student's new group.
+    it "asks again on the locked row whether the tutor may still enter" do
+      other_group = create(:tutorial, lecture: lecture)
+      allow(Assessment::AchievementValueService).to receive(:enter)
+        .and_wrap_original do |enter, *args, &check|
+          row.update!(tutorial: other_group)
+          enter.call(*args, &check)
+        end
+
+      enter("pass")
+
+      expect(row.reload.grade_text).to be_nil
+      expect(response).to redirect_to(root_path)
+    end
+
     it "lets the lecturer enter from the lecture's table" do
       enter("pass", as: teacher, scope: "lecture")
 

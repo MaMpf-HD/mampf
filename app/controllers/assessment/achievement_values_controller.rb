@@ -21,7 +21,9 @@ module Assessment
     end
 
     def update
-      AchievementValueService.enter(@participation, params[:grade], current_user)
+      AchievementValueService.enter(@participation, params[:grade], current_user) do |row|
+        authorize_entry!(row)
+      end
       @participation.reload
       flash.now[:notice] = t("assessment.achievements.marking.saved")
       render turbo_stream: [row_stream, summary_stream, stream_flash].compact
@@ -52,9 +54,11 @@ module Assessment
       end
 
       # The row belongs to the group that holds it; a tutor may enter for
-      # their group, an editor for the lecture.
-      def authorize_entry!
-        authorize!(:enter_points, @participation.tutorial || @lecture)
+      # their group, an editor for the lecture. Asked again on the locked
+      # row before the write: a blank row follows the student to their new
+      # group whenever a table draws.
+      def authorize_entry!(row = @participation)
+        authorize!(:enter_points, row.tutorial || @lecture)
       end
 
       # grading_scope_type selects the table to answer into, not the permission

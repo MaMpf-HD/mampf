@@ -8,11 +8,15 @@ module Assessment
 
     BOOLEAN_VALUES = [Achievement::PASSED, "fail"].freeze
 
+    # The block sees the row as the lock read it: the group that holds the
+    # row may have changed since the caller looked, and with it who may
+    # enter for it.
     def self.enter(participation, value, grader)
       achievement = participation.assessment.assessable
       value = normalize(achievement, value.to_s.strip)
 
       participation.with_lock do
+        yield(participation) if block_given?
         GradeEntryService.refuse_absent_or_exempt!(participation)
         stamp = if value.nil?
           { grader_id: nil, graded_at: nil }
