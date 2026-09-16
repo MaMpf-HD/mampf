@@ -64,6 +64,17 @@ RSpec.describe("Tutorials", type: :request) do
       expect(page.css("tr.submission-row")).to be_empty
     end
 
+    it "leaves an achievement without an assessment off the page" do
+      achievement = create(:achievement, :boolean, lecture: lecture, title: "Old one")
+      achievement.assessment.destroy!
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id,
+                                                    achievement: achievement.id })
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).not_to include("Old one")
+    end
+
     it "does not draw another lecture's group, whatever the URL names" do
       achievement = create(:achievement, :boolean, lecture: lecture)
       foreign = create(:tutorial, lecture: create(:lecture))

@@ -29,7 +29,8 @@ class TutorialsController < ApplicationController
   def index
     authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order(deadline: :desc)
-    @achievements = @lecture.achievements.order(:title)
+    # Only older data lacks the assessment; such an achievement has no table.
+    @achievements = @lecture.achievements.joins(:assessment).order(:title)
     # The page shows one thing; an achievement asked for wins over a sheet.
     @achievement = @achievements.find_by(id: params[:achievement])
     @assignment = @assignments.find_by(id: params[:assignment]) unless @achievement
