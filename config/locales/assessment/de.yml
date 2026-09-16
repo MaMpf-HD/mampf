@@ -512,6 +512,9 @@ de:
       note_for: 'Interne Notiz zu %{name}'
 
   activerecord:
+    attributes:
+      assignment:
+        kind: "Art"
     errors:
       messages:
         immutable: "kann nach dem Anlegen nicht mehr geändert werden"

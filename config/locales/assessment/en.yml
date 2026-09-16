@@ -512,6 +512,9 @@ en:
       note_for: 'Internal note on %{name}'
 
   activerecord:
+    attributes:
+      assignment:
+        kind: "Kind"
     errors:
       messages:
         immutable: "cannot be changed after creation"
