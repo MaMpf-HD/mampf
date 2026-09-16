@@ -29,7 +29,12 @@ class TutorialsController < ApplicationController
   def index
     authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order(deadline: :desc)
-    @assignment = Assignment.find_by(id: params[:assignment]) || current_assignment
+    @achievements = @lecture.achievements.order(:title)
+    @achievement = @achievements.find_by(id: params[:achievement])
+    @assignment = Assignment.find_by(id: params[:assignment])
+    @assignment ||= current_assignment unless @achievement
+    # A lecture with criteria and no sheets yet opens on its first criterion.
+    @achievement ||= @achievements.first unless @assignment
     @tutorials = if current_user.editor_or_teacher_in?(@lecture)
       @lecture.tutorials
     else

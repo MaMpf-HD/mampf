@@ -1,27 +1,40 @@
+<%# The page shows one sheet, test or criterion at a time; `subject` is whichever it is. %>
+<% subject = achievement || assignment %>
 <div class="d-flex flex-wrap align-items-end gap-3 m-3">
   <div class="col-12 col-md-4">
     <label class="form-label fw-semibold mb-2" for="assignment-select">
-      <% if assignments.any?(&:kind_test?) %>
+      <% if achievements.any? %>
+        <%= t('assessment.achievements.marking.select_label') %>
+      <% elsif assignments.any?(&:kind_test?) %>
         <%= t('assessment.test.sheet_or_test') %>
       <% else %>
         <%= t('basics.assignment') %>
       <% end %>
     </label>
 
-    <% if assignments.size > 1 %>
+    <% if assignments.size + achievements.size > 1 %>
       <select id="assignment-select"
               class="form-select form-select-sm"
               data-controller="select-navigation"
               data-action="change->select-navigation#visit">
-        <option selected><%= assignment.title %></option>
+        <option selected><%= subject.title %></option>
         <% (assignments - [assignment]).each do |a| %>
           <option value="<%= lecture_tutorials_path(@lecture, params: { assignment: a.id, tutorial: tutorial.id }) %>">
             <%= a.title %>
           </option>
         <% end %>
+        <% if achievements.any? %>
+          <optgroup label="<%= t('assessment.tabs.achievements') %>">
+            <% (achievements - [achievement]).each do |a| %>
+              <option value="<%= lecture_tutorials_path(@lecture, params: { achievement: a.id, tutorial: tutorial.id }) %>">
+                <%= a.title %>
+              </option>
+            <% end %>
+          </optgroup>
+        <% end %>
       </select>
     <% else %>
-      <input id="assignment-select" class="form-control form-control-sm" disabled value="<%= assignment.title %>">
+      <input id="assignment-select" class="form-control form-control-sm" disabled value="<%= subject.title %>">
     <% end %>
   </div>
 
@@ -39,7 +52,15 @@
 </div>
 
 
-<% if assignment.kind_test? %>
+<% if achievement %>
+  <p class="text-muted m-3 mb-0">
+    <i class="bi bi-patch-check me-1"></i>
+    <%= t("assessment.achievements.value_types.#{achievement.value_type}") %>
+    <% if achievement.threshold.present? %>
+      &middot; <%= t('assessment.achievements.marking.threshold') %> <%= achievement.threshold.to_s.sub(/\.0+\z/, '') %><%= ' %' if achievement.percentage? %>
+    <% end %>
+  </p>
+<% elsif assignment.kind_test? %>
   <p class="text-muted m-3 mb-0">
     <i class="bi bi-calendar-week me-1"></i>
     <%= t('assessment.test.week') %>: <%= test_week_label(assignment) %>
@@ -47,7 +68,7 @@
 <% end %>
 
 <!-- DEADLINE / GRACE PERIOD WARNING -->
-<% if !assignment.kind_test? && current_user.in?(tutorial.tutors) && (assignment.active? || assignment.in_grace_period?) %>
+<% if assignment && !assignment.kind_test? && current_user.in?(tutorial.tutors) && (assignment.active? || assignment.in_grace_period?) %>
   <div class="alert alert-danger m-3">
     <strong><%= t('basics.attention') %>:</strong>
     <% if assignment.active? %>
@@ -57,7 +78,7 @@
     <% end %>
   </div>
 <% end %>
-<% if current_user.in?(tutorial.tutors) %>
+<% if assignment && current_user.in?(tutorial.tutors) %>
   <div class="card mt-3" id="bulk-upload-area">
     <div class="card-body">
       <% if stack.present? %>

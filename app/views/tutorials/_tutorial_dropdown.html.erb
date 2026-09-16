@@ -10,7 +10,8 @@
     <% list.each do |t| %>
       <option value="<%= lecture_tutorials_path(
                         @lecture,
-                        params: { assignment: @assignment.id, tutorial: t.id }
+                        params: { assignment: @assignment&.id, achievement: @achievement&.id,
+                                  tutorial: t.id }.compact
                       ) %>">
         <%= t.title %>
       </option>
