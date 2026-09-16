@@ -84,6 +84,7 @@ thead th.sticky-col {
 @include column(save);
 @include column(hand-in);
 @include column(correction);
+@include column(value);
 
 /* The note is the one column that may grow: whatever the others leave over
    goes to it, and it never falls below its own width. */
