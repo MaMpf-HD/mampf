@@ -289,7 +289,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :video,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       get transcription_stream_video_medium_path(medium),
@@ -305,7 +306,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :video,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       get transcription_stream_video_medium_path(medium), params: { token: token }
@@ -317,7 +319,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :video,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       get transcription_stream_video_medium_path(medium),
@@ -337,7 +340,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id + 1,
         purpose: :video,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       get transcription_stream_video_medium_path(medium),
@@ -415,7 +419,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :transcript,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       post add_transcript_path(medium), params: { token: token, transcript: "WEBVTT" }
@@ -435,7 +440,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :video,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       post add_transcript_path(medium),
@@ -452,7 +458,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :transcript,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
       file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "toc.vtt"),
                                           "text/vtt")
@@ -468,7 +475,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :transcript,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
       temp_vtt = Tempfile.new(["invalid", ".vtt"]).tap do |f|
         f.write("WEBVTT\n\n00:00:11.12 --> 00:00:42.771\ninvalid\n")
@@ -504,6 +512,29 @@ RSpec.describe("Media", type: :request) do
 
       expect(response).to have_http_status(:conflict)
     end
+
+    it "rejects an upload if the video is detached before the locked check" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
+      )
+      file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "toc.vtt"),
+                                          "text/vtt")
+      allow_any_instance_of(Medium).to receive(:with_lock)
+        .and_wrap_original do |original, *args, &block|
+        medium.update!(video: nil)
+        original.call(*args, &block)
+      end
+
+      post add_transcript_path(medium),
+           params: { token: token, transcript: file },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:conflict)
+      expect(medium.reload.transcript).to be_nil
+    end
   end
 
   describe "POST /api/webhooks/media/:id/transcription_failed", :mampfsearch do
@@ -526,7 +557,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :transcription_failed,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       post transcription_failed_path(medium),
@@ -545,7 +577,8 @@ RSpec.describe("Media", type: :request) do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :transcription_failed,
-        ttl: 5.minutes
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
       )
 
       post transcription_failed_path(medium),
@@ -554,6 +587,29 @@ RSpec.describe("Media", type: :request) do
 
       expect(response).to have_http_status(:ok)
       expect(medium.reload.transcription_status).to eq("failed_permanently")
+    end
+
+    it "rejects a failure if the video is detached before the locked check" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcription_failed,
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
+      )
+      allow_any_instance_of(Medium).to receive(:with_lock)
+        .and_wrap_original do |original, *args, &block|
+        medium.update!(video: nil)
+        original.call(*args, &block)
+      end
+
+      post transcription_failed_path(medium),
+           params: { token: token, error: "Old video failed" },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:conflict)
+      medium.reload
+      expect(medium.transcription_status).to eq("not_transcribed")
+      expect(medium.transcription_error).to be_nil
     end
   end
 

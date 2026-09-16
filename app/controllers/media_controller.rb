@@ -288,30 +288,34 @@ class MediaController < ApplicationController
 
   def add_transcript
     return unless verify_search_api_token!
-    return unless verify_transcription_token!(purpose: :transcript)
 
-    if params[:transcript].present?
-      old_transcript = @medium.transcript
-      @medium.transcript = params[:transcript]
-      @medium.transcription_status = :completed
-      @medium.transcription_attempts = 0
-      @medium.transcription_error = nil
-      if @medium.save
-        old_transcript&.delete
-        head :ok
+    @medium.with_lock do
+      next unless verify_transcription_token!(purpose: :transcript)
+
+      if params[:transcript].present?
+        old_transcript = @medium.transcript
+        @medium.transcript = params[:transcript]
+        @medium.transcription_status = :completed
+        @medium.transcription_attempts = 0
+        @medium.transcription_error = nil
+        if @medium.save
+          old_transcript&.delete
+          head :ok
+        else
+          render json: { errors: @medium.errors.full_messages }, status: :unprocessable_content
+        end
       else
-        render json: { errors: @medium.errors.full_messages }, status: :unprocessable_content
+        head :bad_request
       end
-    else
-      head :bad_request
     end
   end
 
   def transcription_failed
     return unless verify_search_api_token!
-    return unless verify_transcription_token!(purpose: :transcription_failed)
 
     @medium.with_lock do
+      next unless verify_transcription_token!(purpose: :transcription_failed)
+
       attempts = @medium.transcription_attempts + 1
       status = if attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
         :failed_permanently
@@ -323,8 +327,8 @@ class MediaController < ApplicationController
         transcription_attempts: attempts,
         transcription_error: params[:error].presence || "MampfSearch transcription failed."
       )
+      head :ok
     end
-    head :ok
   end
 
   # play the video using thyme player
@@ -725,9 +729,11 @@ class MediaController < ApplicationController
 
     def verify_transcription_token!(purpose:)
       payload = TranscriptionToken.verify!(params[:token], purpose: purpose)
-      raise(TranscriptionToken::InvalidTokenError) unless payload.fetch("medium_id").to_i == @medium.id
+      unless payload.fetch("medium_id").to_i == @medium.id
+        raise(TranscriptionToken::InvalidTokenError)
+      end
 
-      if payload["video_version"].present? && payload["video_version"] != @medium.video_fingerprint
+      if payload.fetch("video_version") != @medium.video_fingerprint
         head :conflict
         return false
       end
