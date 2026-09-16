@@ -346,6 +346,21 @@ RSpec.describe("Media", type: :request) do
 
       expect(response).to have_http_status(:forbidden)
     end
+
+    it "rejects a transcription token with a mismatched video version with 409 conflict" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :video,
+        ttl: 5.minutes,
+        video_version: "obsolete-version-hash"
+      )
+
+      get transcription_stream_video_medium_path(medium),
+          params: { token: token },
+          headers: auth_headers
+
+      expect(response).to have_http_status(:conflict)
+    end
   end
 
   describe "POST /media/:id/transcribe", :mampfsearch do
@@ -471,6 +486,23 @@ RSpec.describe("Media", type: :request) do
       )
     ensure
       temp_vtt&.close!
+    end
+
+    it "rejects an upload with a mismatched video version with 409 conflict" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes,
+        video_version: "obsolete-version-hash"
+      )
+      file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "toc.vtt"),
+                                          "text/vtt")
+
+      post add_transcript_path(medium),
+           params: { token: token, transcript: file },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:conflict)
     end
   end
 

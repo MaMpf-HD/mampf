@@ -448,6 +448,19 @@ RSpec.describe(Medium, type: :model) do
     end
   end
 
+  describe "#video_fingerprint", :mampfsearch do
+    it "returns SHA256 digest of video id and size when video is present" do
+      medium = FactoryBot.create(:valid_medium, :with_video)
+      expected = Digest::SHA256.hexdigest("#{medium.video.id}:#{medium.video.size}")
+      expect(medium.video_fingerprint).to eq(expected)
+    end
+
+    it "returns nil when video is absent" do
+      medium = FactoryBot.create(:valid_medium, video: nil)
+      expect(medium.video_fingerprint).to be_nil
+    end
+  end
+
   describe "#handle_video_attachment_change", :mampfsearch do
     it "resets transcription state and enqueues delete job when video is detached" do
       medium = FactoryBot.create(:valid_medium, :with_video,

@@ -25,6 +25,7 @@ RSpec.describe(Mampfsearch::IngestionService, :mampfsearch) do
       expect(search_client).to receive(:transcribe_lesson).with(
         hash_including(
           media_rails_id: medium.id,
+          video_version: medium.video_fingerprint,
           lesson_rails_id: lesson.id,
           lecture_rails_id: lecture.id,
           course_rails_id: course.id,

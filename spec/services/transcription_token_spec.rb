@@ -65,5 +65,20 @@ RSpec.describe(TranscriptionToken, :mampfsearch) do
         described_class.verify!(tampered_token, purpose: :video)
       end.to raise_error(described_class::InvalidTokenError)
     end
+
+    it "encodes and verifies video_version when provided" do
+      token = described_class.generate(
+        medium_id: 42,
+        purpose: :video,
+        ttl: 5.minutes,
+        video_version: "abc123version"
+      )
+
+      expect(described_class.verify!(token, purpose: :video)).to include(
+        "medium_id" => 42,
+        "purpose" => "video",
+        "video_version" => "abc123version"
+      )
+    end
   end
 end

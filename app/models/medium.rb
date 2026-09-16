@@ -458,6 +458,13 @@ class Medium < ApplicationRecord
     video.present?
   end
 
+  # Uniquely identifies this recording for transcript cache invalidation.
+  def video_fingerprint
+    return if video.blank?
+
+    Digest::SHA256.hexdigest("#{video.id}:#{video.size}")
+  end
+
   def geogebra_filename
     return if geogebra.blank?
 

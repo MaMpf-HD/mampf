@@ -9,7 +9,7 @@ class TranscriptionToken
   class InvalidTokenError < StandardError; end
 
   class << self
-    def generate(medium_id:, purpose:, ttl:)
+    def generate(medium_id:, purpose:, ttl:, video_version: nil)
       purpose = purpose.to_s
       validate_purpose!(purpose)
 
@@ -19,6 +19,7 @@ class TranscriptionToken
         "expires_at" => ttl.from_now.to_i,
         "nonce" => SecureRandom.hex(16)
       }
+      payload["video_version"] = video_version.to_s if video_version.present?
       encoded_payload = Base64.urlsafe_encode64(payload.to_json, padding: false)
 
       "#{encoded_payload}.#{signature_for(encoded_payload)}"

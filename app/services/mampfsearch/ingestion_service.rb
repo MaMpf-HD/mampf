@@ -11,20 +11,25 @@ module Mampfsearch
     def transcribe
       return unless @medium.transcribable?
 
+      video_version = @medium.video_fingerprint
+
       video_token = TranscriptionToken.generate(
         medium_id: @medium.id,
         purpose: :video,
-        ttl: TranscriptionToken::VIDEO_TTL
+        ttl: TranscriptionToken::VIDEO_TTL,
+        video_version: video_version
       )
       transcript_token = TranscriptionToken.generate(
         medium_id: @medium.id,
         purpose: :transcript,
-        ttl: TranscriptionToken::TRANSCRIPT_TTL
+        ttl: TranscriptionToken::TRANSCRIPT_TTL,
+        video_version: video_version
       )
       failed_token = TranscriptionToken.generate(
         medium_id: @medium.id,
         purpose: :transcription_failed,
-        ttl: TranscriptionToken::FAILED_TTL
+        ttl: TranscriptionToken::FAILED_TTL,
+        video_version: video_version
       )
 
       routes = Rails.application.routes.url_helpers
@@ -42,6 +47,7 @@ module Mampfsearch
 
       SearchClient.instance.transcribe_lesson(
         media_rails_id: @medium.id,
+        video_version: video_version,
         lesson_rails_id: hierarchy[:lesson_rails_id],
         lecture_rails_id: hierarchy[:lecture_rails_id],
         course_rails_id: hierarchy[:course_rails_id],

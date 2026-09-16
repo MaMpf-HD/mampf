@@ -725,9 +725,14 @@ class MediaController < ApplicationController
 
     def verify_transcription_token!(purpose:)
       payload = TranscriptionToken.verify!(params[:token], purpose: purpose)
-      return true if payload.fetch("medium_id").to_i == @medium.id
+      raise(TranscriptionToken::InvalidTokenError) unless payload.fetch("medium_id").to_i == @medium.id
 
-      raise(TranscriptionToken::InvalidTokenError)
+      if payload["video_version"].present? && payload["video_version"] != @medium.video_fingerprint
+        head :conflict
+        return false
+      end
+
+      true
     rescue TranscriptionToken::InvalidTokenError
       head :forbidden
       false

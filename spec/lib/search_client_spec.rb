@@ -69,6 +69,38 @@ RSpec.describe(SearchClient, :mampfsearch) do
       )
     end
 
+    it "includes video_version in payload when provided" do
+      fake_http = double("http")
+      allow(fake_http).to receive(:headers).and_return(fake_http)
+      expect(fake_http).to receive(:post).with("/lesson/ingest", json: hash_including(
+        video_version: "abc123version"
+      )).and_return(fake_response(200, '{"status":"queued"}'))
+
+      allow(pool).to receive(:with) { |&block| block.call(fake_http) }
+
+      client.transcribe_lesson(
+        media_rails_id: 1, course_rails_id: 3,
+        video_url: "http://video.url", transcript_upload_url: "http://upload.url",
+        video_version: "abc123version"
+      )
+    end
+
+    it "logs a warning when video_version is blank" do
+      fake_http = double("http")
+      allow(fake_http).to receive(:headers).and_return(fake_http)
+      allow(fake_http).to receive(:post).and_return(fake_response(200, '{"status":"queued"}'))
+      allow(pool).to receive(:with) { |&block| block.call(fake_http) }
+
+      expect(Rails.logger).to receive(:warn).with(
+        a_string_including("called without video_version for media 1")
+      )
+
+      client.transcribe_lesson(
+        media_rails_id: 1, course_rails_id: 3,
+        video_url: "http://video.url", transcript_upload_url: "http://upload.url"
+      )
+    end
+
     it "raises TimeoutError on HTTP timeout" do
       fake_client = double("client")
       allow(fake_client).to receive(:headers).and_return(fake_client)
