@@ -33,7 +33,7 @@ class TutorialsController < ApplicationController
     @achievement = @achievements.find_by(id: params[:achievement])
     @assignment = Assignment.find_by(id: params[:assignment])
     @assignment ||= current_assignment unless @achievement
-    # A lecture with criteria and no sheets yet opens on its first criterion.
+    # A lecture with achievements and no sheets yet opens on its first achievement.
     @achievement ||= @achievements.first unless @assignment
     @tutorials = if current_user.editor_or_teacher_in?(@lecture)
       @lecture.tutorials

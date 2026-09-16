@@ -35,7 +35,7 @@ RSpec.describe(Achievement, type: :model) do
   end
 
   describe ".short_titles" do
-    it "numbers two criteria whose letters come out the same" do
+    it "numbers two achievements whose letters come out the same" do
       talk = build_stubbed(:achievement, title: "Blackboard Talk")
       test = build_stubbed(:achievement, title: "Bonus Test")
       rate = build_stubbed(:achievement, title: "Attendance Rate")

@@ -1,7 +1,7 @@
 module Assessment
-  # The value a tutor records for somebody on a criterion, from the row of
-  # a criterion's table - a group's on the tutor's page, the lecture's in the
-  # criteria dashboard.
+  # The value a tutor enters for somebody on an achievement, from the row
+  # of its table - a group's on the tutor's page, the lecture's in the
+  # achievement's dashboard.
   class AchievementValuesController < ApplicationController
     before_action :set_resources
     before_action :set_locale
@@ -21,7 +21,7 @@ module Assessment
     end
 
     def update
-      AchievementValueService.record(@participation, params[:grade], current_user)
+      AchievementValueService.enter(@participation, params[:grade], current_user)
       @participation.reload
       flash.now[:notice] = t("assessment.achievements.marking.saved")
       render turbo_stream: [row_stream, summary_stream, stream_flash].compact
@@ -51,7 +51,7 @@ module Assessment
         @lecture = @achievement.lecture
       end
 
-      # The row belongs to the group that holds it; a tutor may record for
+      # The row belongs to the group that holds it; a tutor may enter for
       # their group, an editor for the lecture.
       def authorize_entry!
         authorize!(:enter_points, @participation.tutorial || @lecture)

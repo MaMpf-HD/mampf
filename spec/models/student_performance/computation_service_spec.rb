@@ -488,8 +488,8 @@ RSpec.describe(StudentPerformance::ComputationService) do
             .not_to include(achievement.id)
         end
 
-        # A certificate stands in for the criterion: excused is met, whatever
-        # the row recorded before, and it is not waiting for a value either.
+        # A certificate stands in for the achievement: excused is met, whatever
+        # value the row held before, and it is not waiting for one either.
         it "counts an exemption as met, over a value that says otherwise" do
           participation = achievement.assessment
                                      .assessment_participations

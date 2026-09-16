@@ -5,7 +5,7 @@ module StudentPerformance
     attr_reader :lecture
 
     UPSERT_BATCH_SIZE = 100
-    # Somebody excused from a criterion - a certificate stands in for it -
+    # Somebody excused from an achievement - a certificate stands in for it -
     # has met it as far as the rule is concerned. Stands in for the value.
     EXEMPT = :exempt
 
@@ -120,7 +120,7 @@ module StudentPerformance
         end.map(&:id)
       end
 
-      # The value recorded per criterion, or EXEMPT where the person was
+      # The value entered per achievement, or EXEMPT where the person was
       # excused from it - whatever value the row may still carry from before.
       def achievement_grade_texts_for(user_id)
         a_ids = lecture_achievements.filter_map { |a| a.assessment&.id }
@@ -128,7 +128,7 @@ module StudentPerformance
 
         achievement_rows(a_ids, user_id: user_id)
           .pluck(:assessment_id, :status, :grade_text)
-          .to_h { |aid, status, text| [aid, recorded_value(status, text)] }
+          .to_h { |aid, status, text| [aid, entered_value(status, text)] }
       end
 
       def achievement_participations_cache
@@ -141,7 +141,7 @@ module StudentPerformance
               .pluck(:user_id, :assessment_id, :status, :grade_text)
               .group_by(&:first)
               .transform_values do |rows|
-                rows.to_h { |_, aid, status, text| [aid, recorded_value(status, text)] }
+                rows.to_h { |_, aid, status, text| [aid, entered_value(status, text)] }
               end
           end
         end
@@ -156,7 +156,7 @@ module StudentPerformance
                  exempt: Assessment::Participation.statuses[:exempt])
       end
 
-      def recorded_value(status, grade_text)
+      def entered_value(status, grade_text)
         status == "exempt" ? EXEMPT : grade_text
       end
 

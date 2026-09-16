@@ -111,7 +111,7 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.assessment.persisted_tasks || []
   end
 
-  # A criterion's row has no marking queue: it is met, not met, or waits
+  # An achievement's row has no marking queue: it is met, not met, or waits
   # for a value - or the person was excused.
   def status
     return achievement_status if achievement?
@@ -138,7 +138,7 @@ class ParticipationRowComponent < ViewComponent::Base
     t("assessment.achievements.marking.#{achievement_status}")
   end
 
-  # The value as the tutor recorded it, or the word for a yes/no one.
+  # The value as the tutor entered it, or the word for a yes/no one.
   def achievement_value_display
     value = @participation.grade_text
     return "—" if value.blank?
@@ -403,7 +403,7 @@ class ParticipationRowComponent < ViewComponent::Base
     false
   end
 
-  # A criterion's value is the tutor's to record, like points.
+  # An achievement's value is the tutor's to enter, like points.
   def can_enter_row?
     single_grade? ? can_enter_grade? : can_enter_points?
   end

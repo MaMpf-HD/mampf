@@ -1,10 +1,10 @@
 # Something a student has to have done besides collecting points — held a
 # blackboard talk, handed in a project. It carries no points of its own; the
-# tutor records a value per student, and an eligibility rule can require it.
+# tutor enters a value per student, and an eligibility rule can require it.
 class Achievement < ApplicationRecord
   include Assessment::Assessable
 
-  # What a tutor records for an achievement that is simply done or not done.
+  # What a tutor enters for an achievement that is simply done or not done.
   # Written by the marking view, read here — keep both ends on this constant.
   PASSED = "pass".freeze
 
@@ -76,8 +76,8 @@ class Achievement < ApplicationRecord
     end
   end
 
-  # Where somebody stands on the criterion, as the tables show it: excused,
-  # nothing recorded yet, or the value's verdict.
+  # Where somebody stands on the achievement, as the tables show it:
+  # excused, no value yet, or the value's verdict.
   def status_of(participation)
     return :exempt if participation.exempt?
     return :unmarked if participation.grade_text.blank?
@@ -85,7 +85,7 @@ class Achievement < ApplicationRecord
     met_by?(participation.grade_text) ? :met : :not_met
   end
 
-  # The one place that decides whether a recorded value clears this
+  # The one place that decides whether an entered value clears this
   # achievement. The marking table and the performance computation both ask
   # here, so the two cannot answer differently.
   def met_by?(grade_text)

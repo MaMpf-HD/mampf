@@ -17,8 +17,8 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
     page.css("tbody tr").find { |row| row["data-status-filter-name"] == name }
   end
 
-  # Joining the lecture seeds a row on every criterion, in no group.
-  def record(user, **attrs)
+  # Joining the lecture seeds a row on every achievement, in no group.
+  def enter(user, **attrs)
     achievement.assessment.assessment_participations.find_by!(user: user).update!(**attrs)
   end
 
@@ -53,8 +53,8 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
     end
 
     it "shows where each person stands and offers the value" do
-      record(member("Ada"), grade_text: "pass")
-      record(member("Grace"), grade_text: "fail")
+      enter(member("Ada"), grade_text: "pass")
+      enter(member("Grace"), grade_text: "fail")
       member("Nina")
 
       page = render_inline(component)
@@ -71,7 +71,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
     end
 
     it "shows an excused person's row without a field, and the way back for the lecturer" do
-      record(member("Ada"), status: :exempt, note: "Certificate")
+      enter(member("Ada"), status: :exempt, note: "Certificate")
 
       page = render_inline(component)
 
@@ -102,7 +102,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
   describe "the value's field" do
     let(:component) { described_class.new(achievement: achievement, grading_scope: group) }
 
-    it "is a number with the threshold over it for a numeric criterion" do
+    it "is a number with the threshold over it for a numeric achievement" do
       achievement.update!(value_type: :numeric, threshold: 12)
       member("Ada")
 
@@ -112,7 +112,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
       expect(page.css("thead").text).to include("threshold 12")
     end
 
-    it "is a number with a percent sign for a percentage criterion" do
+    it "is a number with a percent sign for a percentage achievement" do
       achievement.update!(value_type: :percentage, threshold: 75)
       member("Ada")
 

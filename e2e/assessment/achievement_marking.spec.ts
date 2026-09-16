@@ -3,13 +3,14 @@ import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_pa
 import { createLecture } from "./helpers";
 
 /**
- * A criterion is recorded the way a sheet is marked: the tutor picks it on
- * their page next to the sheets and enters a value per student, the lecturer
- * sees every group in the criterion's dashboard and can excuse somebody with
- * a certificate. What either records, the performance overview shows.
+ * An achievement is entered the way a sheet is marked: the tutor picks it
+ * on their page next to the sheets and enters a value per student, the
+ * lecturer sees every group in the achievement's dashboard and can excuse
+ * somebody with a certificate. What either enters, the performance overview
+ * shows.
  */
-test.describe("marking a criterion", () => {
-  test("is recorded by the tutor, excused by the lecturer, and read off the overview", async ({
+test.describe("entering an achievement", () => {
+  test("is entered by the tutor, excused by the lecturer, and read off the overview", async ({
     factory,
     teacher,
     tutor,
@@ -34,10 +35,10 @@ test.describe("marking a criterion", () => {
       });
     }
 
-    // the tutor's page opens on the first criterion, there being no sheet
-    // yet, and the tutor records a yes/no one and then a number
+    // the tutor's page opens on the first achievement, there being no sheet
+    // yet, and the tutor enters a yes/no one and then a number
     await tutor.page.goto(`/lectures/${lecture.id}/tutorials?tutorial=${tutorial.id}`);
-    await expect(tutor.page.getByLabel("Sheet, test or criterion"))
+    await expect(tutor.page.getByLabel("Sheet, test or achievement"))
       .toHaveValue("Blackboard talk");
     await expect(tutor.page.getByText("2 not yet graded")).toBeVisible();
     const ada = tutor.page.getByRole("table").getByRole("row", { name: /Ada Lovelace/ });
@@ -46,14 +47,14 @@ test.describe("marking a criterion", () => {
     await expect(ada.getByRole("img", { name: "Met" })).toBeVisible();
     await expect(tutor.page.getByText("1 met · 1 not yet graded")).toBeVisible();
 
-    await tutor.page.getByLabel("Sheet, test or criterion").selectOption("Lab attendance");
+    await tutor.page.getByLabel("Sheet, test or achievement").selectOption("Lab attendance");
     await expect(tutor.page.getByText("Numeric · threshold 12")).toBeVisible();
     const grace = tutor.page.getByRole("table").getByRole("row", { name: /Grace Hopper/ });
     await grace.getByRole("spinbutton", { name: "Value for Grace Hopper" }).fill("9");
     await grace.getByRole("button", { name: "Save this row's value" }).click();
     await expect(grace.getByRole("img", { name: "Not met" })).toBeVisible();
 
-    // the lecturer sees the group's work in the criterion's dashboard, and
+    // the lecturer sees the group's work in the achievement's dashboard, and
     // excuses Grace with a certificate
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();
@@ -63,13 +64,13 @@ test.describe("marking a criterion", () => {
     await expect(graceRow).toContainText("Monday group");
     await expect(graceRow.getByRole("img", { name: "Not met" })).toBeVisible();
     await graceRow.getByRole("button", { name: "Excuse with a certificate" }).click();
-    const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the criterion" });
+    const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the achievement" });
     await dialog.getByLabel("Reason (optional, teaching staff only)").fill("sick note");
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(graceRow.getByRole("img", { name: "Excused" })).toBeVisible();
     await expect(graceRow.getByRole("spinbutton")).toHaveCount(0);
 
-    // the overview reads the criterion as met for both: Ada's talk, Grace's
+    // the overview reads the achievement as met for both: Ada's talk, Grace's
     // certificate
     await dashboard.gotoOverview();
     await dashboard.overviewTab("Performance").click();

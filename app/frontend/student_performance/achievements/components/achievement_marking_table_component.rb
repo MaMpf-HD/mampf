@@ -1,5 +1,5 @@
-# A criterion's table: one row per person, with the value the tutor records
-# and whether it meets the criterion. A tutor sees their group, the lecturer
+# An achievement's table: one row per person, with the value the tutor
+# enters and whether it meets the achievement. A tutor sees their group, the lecturer
 # every member, group by group; the rows are seeded as the table is drawn,
 # the way a test's are.
 class AchievementMarkingTableComponent < ViewComponent::Base

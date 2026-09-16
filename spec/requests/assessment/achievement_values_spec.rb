@@ -17,15 +17,15 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
 
   before { group.tutors << tutor }
 
-  def record(value, as: tutor, scope: "tutorial")
+  def enter(value, as: tutor, scope: "tutorial")
     sign_in(as)
     patch(achievement_value_participation_path(row, grading_scope_type: scope),
           params: { grade: value }, as: :turbo_stream)
   end
 
   describe "PATCH /participations/:id/achievement_value" do
-    it "records what the group's tutor entered and answers with the row and the summary" do
-      record("pass")
+    it "keeps what the group's tutor entered and answers with the row and the summary" do
+      enter("pass")
 
       expect(response).to have_http_status(:ok)
       expect(row.reload.grade_text).to eq("pass")
@@ -38,7 +38,7 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
 
     it "clears the value again on a blank, and the record with it" do
       row.update!(grade_text: "pass")
-      record("")
+      enter("")
 
       expect(row.reload.grade_text).to be_nil
       expect(row.grader).to be_nil
@@ -46,8 +46,8 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(record.achievements_ungraded_ids).to include(achievement.id)
     end
 
-    it "refuses a value the criterion cannot read" do
-      record("maybe")
+    it "refuses a value the achievement cannot read" do
+      enter("maybe")
 
       expect(row.reload.grade_text).to be_nil
       kind = I18n.t("assessment.achievements.value_types.boolean")
@@ -56,21 +56,21 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       )
     end
 
-    it "takes a number on a numeric criterion, and refuses one above a percentage" do
+    it "takes a number on a numeric achievement, and refuses one above a percentage" do
       achievement.update!(value_type: :numeric, threshold: 10)
-      record("12,5")
+      enter("12,5")
       expect(row.reload.grade_text).to eq("12.5")
       expect(StudentPerformance::Record.find_by(lecture: lecture, user: student)
                                        .achievements_met_ids).to include(achievement.id)
 
       achievement.update!(value_type: :percentage, threshold: 50)
-      record("120")
+      enter("120")
       expect(row.reload.grade_text).to eq("12.5")
     end
 
     it "leaves an excused row alone" do
       row.update!(status: :exempt)
-      record("fail")
+      enter("fail")
 
       expect(row.reload.grade_text).to be_nil
       expect(response.body).to include(I18n.t("assessment.grading_exam.status_word.exempt"))
@@ -79,20 +79,20 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
     it "keeps another group's tutor out" do
       other = create(:confirmed_user)
       create(:tutorial, lecture: lecture).tutors << other
-      record("pass", as: other)
+      enter("pass", as: other)
 
       expect(row.reload.grade_text).to be_nil
     end
 
-    it "lets the lecturer record from the lecture's table" do
-      record("pass", as: teacher, scope: "lecture")
+    it "lets the lecturer enter from the lecture's table" do
+      enter("pass", as: teacher, scope: "lecture")
 
       expect(row.reload.grade_text).to eq("pass")
       expect(response.body).to include(group.title)
     end
   end
 
-  describe "exemption on a criterion" do
+  describe "exemption on an achievement" do
     it "lets the lecturer excuse somebody with a note, and take it back" do
       sign_in teacher
       patch mark_as_exempt_path(row, grading_scope_type: "lecture"),
@@ -108,7 +108,7 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
     end
 
     # Rows written before this branch may say reviewed; a certificate after
-    # a value throws nothing away on a criterion.
+    # a value throws nothing away on an achievement.
     it "excuses somebody whose row already carries a value, whatever it says" do
       row.update!(grade_text: "fail", status: :reviewed)
       sign_in teacher
@@ -118,7 +118,7 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(row.reload).to be_exempt
     end
 
-    it "is not the tutor's to record" do
+    it "is not the tutor's to enter" do
       sign_in tutor
       patch mark_as_exempt_path(row, grading_scope_type: "tutorial"),
             params: { note: "x" }, as: :turbo_stream

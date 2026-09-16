@@ -1,5 +1,5 @@
 module Assessment
-  # Writes what a tutor recorded for somebody on a criterion: "pass" or
+  # Writes what a tutor entered for somebody on an achievement: "pass" or
   # "fail" on a yes/no one, a number on a numeric one, a percentage on the
   # third. The row never becomes reviewed - a certificate handed in later has
   # to be able to excuse it, and `Achievement#met_by?` reads the value alone.
@@ -8,7 +8,7 @@ module Assessment
 
     BOOLEAN_VALUES = [Achievement::PASSED, "fail"].freeze
 
-    def self.record(participation, value, grader)
+    def self.enter(participation, value, grader)
       achievement = participation.assessment.assessable
       value = normalize(achievement, value.to_s.strip)
 

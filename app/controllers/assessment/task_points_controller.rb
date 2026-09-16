@@ -217,7 +217,7 @@ module Assessment
         unsupported_assessable
       end
 
-      # An exam's candidate or somebody on a criterion can be excused with a
+      # An exam's candidate or somebody on an achievement can be excused with a
       # certificate; a sheet's exemption is recorded on the student's record.
       def refuse_unless_excusable
         return if @assessable.is_a?(Exam) || @assessable.is_a?(Achievement)
@@ -402,7 +402,7 @@ module Assessment
         @assessment = @participation.assessment
         @lecture = @assessment.lecture
         @assessable = @assessment.assessable
-        # A sheet's or a criterion's row is scored within a group; an exam's is
+        # A sheet's or an achievement's row is scored within a group; an exam's is
         # the lecture's business, whatever its tutorial column may hold.
         @tutorial = @participation.tutorial unless @assessable.is_a?(Exam)
         return if @assessable

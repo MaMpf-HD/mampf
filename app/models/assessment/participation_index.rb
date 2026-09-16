@@ -58,7 +58,7 @@ module Assessment
       end
 
       # Points taken back again leave task points of nil behind; those carry
-      # nothing either. A criterion's row is blank while no value is recorded.
+      # nothing either. An achievement's row is blank while no value is entered.
       def blank?(row)
         row.pending? && row.submitted_at.nil? && !row.results_visible? && row.grade_text.blank?
       end
