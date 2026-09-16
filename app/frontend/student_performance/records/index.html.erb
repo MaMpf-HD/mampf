@@ -333,7 +333,9 @@
               <% if @test_points %>
                 <% test_share = @test_points.marked_percentage_of(
                      record.user_id, @test_points_by_user.fetch(record.user_id, 0)) %>
-                <td class="text-center text-nowrap numeric test-share <%= "tests-start" if @tests.empty? %>">
+                <% share_classes = ["text-center text-nowrap numeric test-share",
+                                    ("tests-start" if @tests.empty?)].compact.join(" ") %>
+                <td class="<%= share_classes %>">
                   <% if test_share.nil? %>
                     <span class="text-muted" aria-hidden="true">&mdash;</span>
                     <span class="visually-hidden">
