@@ -91,21 +91,11 @@
       <td class="text-center <%= layout.column_class(:value) %>">
         <% if can_enter_points? && value_enterable? %>
           <% if @assessable.boolean? %>
-            <%= tag.select(
-                  name: "grade",
-                  class: "form-select form-select-sm w-auto mx-auto",
-                  aria: { label: t("assessment.achievements.marking.value_for", name: @user.tutorial_name) },
-                  data: { participation_row_target: "gradeInput",
-                          action: "change->participation-row#onParticipationChanged" }
-                ) do %>
-              <%= tag.option("—", value: "", selected: @participation.grade_text.blank?) %>
-
-              <%= tag.option(t("assessment.achievements.marking.pass"), value: Achievement::PASSED,
-                                                                        selected: @participation.grade_text == Achievement::PASSED) %>
-
-              <%= tag.option(t("assessment.achievements.marking.fail"), value: "fail",
-                                                                        selected: @participation.grade_text == "fail") %>
-            <% end %>
+            <%= select_tag "grade",
+                           options_for_select(value_choices, @participation.grade_text),
+                           class: "form-select form-select-sm w-auto mx-auto",
+                           aria: { label: value_label },
+                           data: value_input_data("change") %>
           <% else %>
             <div
               class="input-group input-group-sm mx-auto"
@@ -114,10 +104,8 @@
               <%= number_field_tag "grade", @participation.grade_text,
                                    class: "form-control text-end",
                                    min: 0, max: (100 if @assessable.percentage?), step: "any",
-                                   aria: { label: t("assessment.achievements.marking.value_for", name: @user.tutorial_name) },
-                                   data: { participation_row_target: "gradeInput",
-                                           below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
-                                           action: "input->participation-row#onParticipationChanged" } %>
+                                   aria: { label: value_label },
+                                   data: value_input_data("input") %>
 
               <% if @assessable.percentage? %>
                 <span class="input-group-text">%</span>
@@ -238,7 +226,7 @@
           <%= exemption_button %>
         <% end %>
 
-        <% if (tasks? && can_enter_points? && points_enterable?) || (single_grade? && can_enter_grade? && grade_enterable?) || (achievement? && can_enter_points? && value_enterable?) %>
+        <% if entry_offered? %>
           <%= form_with url: save_url,
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },

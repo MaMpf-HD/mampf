@@ -150,6 +150,30 @@ class ParticipationRowComponent < ViewComponent::Base
     t("assessment.achievements.marking.#{value}")
   end
 
+  def value_label
+    t("assessment.achievements.marking.value_for", name: @user.tutorial_name)
+  end
+
+  def value_choices
+    [["—", ""],
+     [t("assessment.achievements.marking.pass"), Achievement::PASSED],
+     [t("assessment.achievements.marking.fail"), "fail"]]
+  end
+
+  def value_input_data(event)
+    { participation_row_target: "gradeInput",
+      below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
+      action: "#{event}->participation-row#onParticipationChanged" }
+  end
+
+  # Whether the row carries a save form: a sheet's or a test's for points,
+  # a talk's or an exam's for the grade, an achievement's for the value.
+  def entry_offered?
+    (tasks? && can_enter_points? && points_enterable?) ||
+      (single_grade? && can_enter_grade? && grade_enterable?) ||
+      (achievement? && can_enter_points? && value_enterable?)
+  end
+
   def value_enterable?
     !@participation.exempt? && !elsewhere?
   end
