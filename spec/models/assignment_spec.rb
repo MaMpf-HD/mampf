@@ -46,6 +46,34 @@ RSpec.describe(Assignment, type: :model) do
       )
     end
 
+    it "is set for a week by its Monday" do
+      monday = 2.weeks.from_now.to_date.beginning_of_week
+      test.test_week = monday.iso8601
+
+      expect(test.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
+    end
+
+    it "offers the weeks from this one to the term's end, and its own" do
+      term = FactoryBot.create(:term, year: Time.zone.today.year,
+                                      season: Time.zone.today.month < 10 ? "SS" : "WS")
+      running = FactoryBot.create(:lecture, term: term)
+      test = FactoryBot.build(:assignment, lecture: running, kind: :test,
+                                           deadline: 2.weeks.from_now.end_of_week)
+
+      choices = test.test_week_choices
+      expect(choices.first).to eq([term.begin_date, Time.zone.today].max.beginning_of_week)
+      expect(choices).to all(be_monday)
+      expect(choices).to include(2.weeks.from_now.to_date.beginning_of_week)
+      expect(choices.last).to eq(term.end_date.beginning_of_week)
+    end
+
+    it "offers half a year of weeks when the term is over" do
+      choices = test.test_week_choices
+
+      expect(choices.first).to eq(Time.zone.today.beginning_of_week)
+      expect(choices.size).to be_between(26, 28)
+    end
+
     it "takes no hand-in through MaMpf, whatever the form sends" do
       expect(test.requires_submission).to be(false)
       expect(test.assessment.requires_submission).to be(false)

@@ -1,5 +1,4 @@
 import { expect, test } from "../_support/fixtures";
-import { dateLabel } from "../page-objects/datepicker";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 
 /**
@@ -34,17 +33,18 @@ test.describe("a test written in the tutorial", () => {
     });
     const studentName = student.user.name_in_tutorials;
 
-    // the teacher sets the test up for the week after next, with one problem
+    // the teacher sets the test up for the second week on offer, with one
+    // problem; the weeks are the term's, and the term is the factory's, so
+    // the week's Monday is read off the form rather than the calendar
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();
     await teacher.page.getByRole("link", { name: "Add test" }).click();
     await expect(dashboard.container.getByRole("heading", { name: "Add test" })).toBeVisible();
     await expect(dashboard.container.getByLabel("Digital submission via MaMpf")).toHaveCount(0);
     await dashboard.container.getByLabel("Title").fill("Test 1");
-    const testDay = new Date();
-    testDay.setDate(testDay.getDate() + 10);
-    await dashboard.container.getByLabel("Test week").click();
-    await teacher.page.getByRole("gridcell", { name: dateLabel(testDay) }).click();
+    const week = dashboard.container.getByLabel("Test week");
+    await week.selectOption({ index: 1 });
+    const monday = new Date(`${await week.inputValue()}T12:00:00`);
     await dashboard.container.getByRole("button", { name: "Save" }).click();
     await expect(dashboard.dashboard.getByRole("heading", { name: "Test 1" })).toBeVisible();
     await dashboard.pane.getByLabel("Max Points").fill("10");
@@ -65,9 +65,6 @@ test.describe("a test written in the tutorial", () => {
 
     // the week begins: the Monday group writes it, and the tutor enters the
     // points straight away
-    const monday = new Date(testDay);
-    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-    monday.setHours(12, 0, 0, 0);
     await clock.travelTo(monday);
 
     await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);

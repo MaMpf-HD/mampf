@@ -13,47 +13,54 @@
                        required: true %>
     </div>
 
-    <div class="col-md-6">
-      <%= f.label :deadline, assignment.kind_test? ? t("assessment.test.week") : t("basics.deadline"),
-                  class: "form-label" %>
+    <%# A test is set for a week, picked from the term's; a sheet for a moment. %>
+    <% if assignment.kind_test? %>
+      <div class="col-md-6">
+        <%= f.label :test_week, t("assessment.test.week"), class: "form-label" %>
 
-      <div
-        class="input-group flex-nowrap align-items-start td-picker"
-        id="assignment-deadline-picker"
-        data-controller="datetimepicker"
-        data-td-target-input="nearest"
-        data-td-target-toggle="nearest"
-      >
-        <div class="flex-grow-1">
-          <%= f.text_field :deadline,
-                           class: "form-control td-input",
-                           data: { td_target: "#assignment-deadline-picker" },
-                           value: assignment.deadline&.strftime("%Y-%m-%d %H:%M"),
-                           autocomplete: "off" %>
-        </div>
+        <%= f.select :test_week, test_week_options(assignment), {},
+                     { class: "form-select" } %>
 
-        <span
-          class="input-group-text td-picker-button"
-          role="button"
-          data-td-target="#assignment-deadline-picker"
-          data-td-toggle="datetimepicker"
-        >
-          <i class="bi bi-calendar-fill"></i>
-        </span>
-      </div>
-
-      <div
-        class="invalid-feedback td-error"
-        id="assignment-deadline-error"
-        data-td-invalid-date="<%= t("datetimepicker.invalid_date") %>"
-      ></div>
-
-      <% if assignment.kind_test? %>
         <div class="form-text text-muted">
           <%= t("assessment.test.week_hint") %>
         </div>
-      <% end %>
-    </div>
+      </div>
+    <% else %>
+      <div class="col-md-6">
+        <%= f.label :deadline, t("basics.deadline"), class: "form-label" %>
+
+        <div
+          class="input-group flex-nowrap align-items-start td-picker"
+          id="assignment-deadline-picker"
+          data-controller="datetimepicker"
+          data-td-target-input="nearest"
+          data-td-target-toggle="nearest"
+        >
+          <div class="flex-grow-1">
+            <%= f.text_field :deadline,
+                             class: "form-control td-input",
+                             data: { td_target: "#assignment-deadline-picker" },
+                             value: assignment.deadline&.strftime("%Y-%m-%d %H:%M"),
+                             autocomplete: "off" %>
+          </div>
+
+          <span
+            class="input-group-text td-picker-button"
+            role="button"
+            data-td-target="#assignment-deadline-picker"
+            data-td-toggle="datetimepicker"
+          >
+            <i class="bi bi-calendar-fill"></i>
+          </span>
+        </div>
+
+        <div
+          class="invalid-feedback td-error"
+          id="assignment-deadline-error"
+          data-td-invalid-date="<%= t("datetimepicker.invalid_date") %>"
+        ></div>
+      </div>
+    <% end %>
 
     <%# A test has no sheet to read, no file to upload and no hand-in to require. %>
     <% unless assignment.kind_test? %>

@@ -116,7 +116,32 @@ class Assignment < ApplicationRecord
   end
 
   def test_week
+    return unless deadline
+
     deadline.beginning_of_week.to_date..deadline.to_date
+  end
+
+  # The form names a test's week by its Monday; the test is due with the
+  # Sunday.
+  def test_week=(monday)
+    self.deadline = Time.zone.parse(monday.to_s)&.end_of_week
+  end
+
+  # The Mondays a test can be set for: this week to the end of the term - or
+  # half a year where there is no term ahead - and the week it already has,
+  # so that the form can show it.
+  def test_week_choices
+    first = [lecture.begin_date, Time.zone.today].max.beginning_of_week
+    term_end = lecture.term&.end_date
+    last = (term_end && term_end >= first ? term_end : first + 6.months).beginning_of_week
+    weeks = []
+    monday = first
+    while monday <= last
+      weeks << monday
+      monday += 7
+    end
+    weeks |= [deadline.to_date.beginning_of_week] if deadline
+    weeks.sort
   end
 
   def semiactive?

@@ -49,47 +49,56 @@
                           } %>
       </div>
 
-      <div class="col-md-6">
-        <%= af.label :deadline,
-                     assessable.kind_test? ? t('assessment.test.week') : t('basics.deadline'),
-                     class: "form-label" %>
+      <%# A test is set for a week, picked from the term's; a sheet for a moment. %>
+      <% if assessable.kind_test? %>
+        <div class="col-md-6">
+          <%= af.label :test_week, t('assessment.test.week'), class: "form-label" %>
 
-        <div
-          class="input-group flex-nowrap align-items-start td-picker"
-          id="assessment-deadline-picker"
-          data-controller="datetimepicker"
-          data-td-target-input="nearest"
-          data-td-target-toggle="nearest"
-        >
-          <div class="flex-grow-1">
-            <%= af.text_field :deadline,
-                class: 'form-control td-input',
-                data: {
-                  td_target: '#assessment-deadline-picker',
-                  assessments__dirty_form_target: 'field',
-                  action: 'input->assessments--dirty-form#checkForChanges change->assessments--dirty-form#checkForChanges'
-                },
-                value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
-                autocomplete: 'off' %>
-          </div>
+          <%= af.select :test_week, test_week_options(assessable), {},
+                        { class: "form-select",
+                          data: {
+                            assessments__dirty_form_target: 'field',
+                            action: 'change->assessments--dirty-form#checkForChanges'
+                          } } %>
 
-          <span
-            class="input-group-text td-picker-button"
-            role="button"
-            data-td-target="#assessment-deadline-picker"
-            data-td-toggle="datetimepicker"
-          >
-            <i class="bi bi-calendar-fill"></i>
-          </span>
-        </div>
-
-        <% if assessable.kind_test? %>
           <div class="form-text text-muted">
-            <%= test_week_label(assessable) %>.
             <%= t('assessment.test.week_hint') %>
           </div>
-        <% end %>
-      </div>
+        </div>
+      <% else %>
+        <div class="col-md-6">
+          <%= af.label :deadline, t('basics.deadline'), class: "form-label" %>
+
+          <div
+            class="input-group flex-nowrap align-items-start td-picker"
+            id="assessment-deadline-picker"
+            data-controller="datetimepicker"
+            data-td-target-input="nearest"
+            data-td-target-toggle="nearest"
+          >
+            <div class="flex-grow-1">
+              <%= af.text_field :deadline,
+                  class: 'form-control td-input',
+                  data: {
+                    td_target: '#assessment-deadline-picker',
+                    assessments__dirty_form_target: 'field',
+                    action: 'input->assessments--dirty-form#checkForChanges change->assessments--dirty-form#checkForChanges'
+                  },
+                  value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
+                  autocomplete: 'off' %>
+            </div>
+
+            <span
+              class="input-group-text td-picker-button"
+              role="button"
+              data-td-target="#assessment-deadline-picker"
+              data-td-toggle="datetimepicker"
+            >
+              <i class="bi bi-calendar-fill"></i>
+            </span>
+          </div>
+        </div>
+      <% end %>
 
       <%# A test has no sheet to read, no file to upload and no hand-in to require. %>
       <% unless assessable.kind_test? %>

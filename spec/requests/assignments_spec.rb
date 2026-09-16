@@ -106,16 +106,21 @@ RSpec.describe("Assignments", type: :request) do
       # The kind is the form's to set once; what comes with it - the week,
       # no hand-in - is the model's, and the response leads to the problems.
       context "with a test" do
+        # The lecture's term may lie ahead; the weeks on offer are its.
+        let(:first_week) { [lecture.begin_date, Time.zone.today].max.beginning_of_week }
+        let(:monday) { first_week + 14 }
         let(:test_attributes) do
-          valid_attributes.merge(title: "Test 1", kind: "test",
-                                 deadline: 2.weeks.from_now.iso8601)
+          valid_attributes.except(:deadline)
+                          .merge(title: "Test 1", kind: "test", test_week: monday.iso8601)
         end
 
-        it "offers the form for one, without a hand-in setting" do
+        it "offers the form for one, with the term's weeks and without a hand-in setting" do
           get new_assignment_path(lecture_id: lecture.id, kind: "test"), as: :turbo_stream
 
           expect(response.body).to include("Add test")
-          expect(response.body).to include("Test week")
+          weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
+          expect(weeks.pluck("value")).to include(monday.iso8601)
+          expect(weeks.first["value"]).to eq(first_week.iso8601)
           expect(response.body).not_to include("Digital submission via MaMpf")
         end
 
@@ -126,7 +131,7 @@ RSpec.describe("Assignments", type: :request) do
 
           test = Assignment.order(:created_at).last
           expect(test).to be_kind_test
-          expect(test.deadline).to be_within(1.second).of(2.weeks.from_now.end_of_week)
+          expect(test.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
           expect(test.assessment.requires_submission).to be(false)
           expect(response).to have_http_status(:ok)
         end
