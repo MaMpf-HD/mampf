@@ -40,12 +40,12 @@ test.describe("entering an achievement", () => {
     await tutor.page.goto(`/lectures/${lecture.id}/tutorials?tutorial=${tutorial.id}`);
     await expect(tutor.page.getByLabel("Sheet, test or achievement"))
       .toHaveValue("Blackboard talk");
-    await expect(tutor.page.getByText("2 not yet graded")).toBeVisible();
+    await expect(tutor.page.getByText("2 without a value")).toBeVisible();
     const ada = tutor.page.getByRole("table").getByRole("row", { name: /Ada Lovelace/ });
     await ada.getByRole("combobox", { name: "Value for Ada Lovelace" }).selectOption("met");
     await ada.getByRole("button", { name: "Save this row's value" }).click();
     await expect(ada.getByRole("img", { name: "Met" })).toBeVisible();
-    await expect(tutor.page.getByText("1 met · 1 not yet graded")).toBeVisible();
+    await expect(tutor.page.getByText("1 met · 1 without a value")).toBeVisible();
 
     await tutor.page.getByLabel("Sheet, test or achievement").selectOption("Lab attendance");
     await expect(tutor.page.getByText("Numeric · threshold 12")).toBeVisible();
@@ -78,7 +78,7 @@ test.describe("entering an achievement", () => {
     await expect(deleteButton).toBeDisabled();
     await graceRow.getByRole("spinbutton", { name: "Value for Grace Hopper" }).fill("");
     await graceRow.getByRole("button", { name: "Save this row's value" }).click();
-    await expect(graceRow.getByRole("img", { name: "Not yet graded" })).toBeVisible();
+    await expect(graceRow.getByRole("img", { name: "No value yet" })).toBeVisible();
     await expect(deleteButton).toBeEnabled();
     await graceRow.getByRole("button", { name: "Excuse with a certificate" }).click();
     const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the achievement" });
