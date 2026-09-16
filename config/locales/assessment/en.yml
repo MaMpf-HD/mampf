@@ -87,7 +87,7 @@ en:
       has_submissions: 'Cannot delete: Submissions exist'
       has_grading_data: 'Cannot delete: Grading data exists'
     achievement_not_destructible:
-      has_values: 'Cannot delete: Values have been entered'
+      has_values: 'Cannot delete: Values or exemptions have been entered'
       referenced_by_rules: 'Cannot delete: A rule requires this achievement'
     exam_not_destructible:
       roster_not_empty: 'Cannot delete: Registered participants exist'
@@ -531,10 +531,16 @@ en:
     attributes:
       assignment:
         kind: "Kind"
+      achievement:
+        value_type: "Type"
     errors:
       messages:
         immutable: "cannot be changed after creation"
       models:
+        achievement:
+          attributes:
+            value_type:
+              fixed_by_values: "cannot be changed once values have been entered"
         assessment/task:
           attributes:
             base:

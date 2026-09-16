@@ -138,13 +138,16 @@ class ParticipationRowComponent < ViewComponent::Base
     t("assessment.achievements.marking.#{achievement_status}")
   end
 
-  # The value as the tutor entered it, or the word for a yes/no one.
+  # The value as the tutor entered it, or the word for a yes/no one. A value
+  # from before the type was fixed may fit neither; it shows as it is.
   def achievement_value_display
     value = @participation.grade_text
     return "—" if value.blank?
-    return t("assessment.achievements.marking.#{value}") if @assessable.boolean?
+    return "#{value} %" if @assessable.percentage?
+    return value unless @assessable.boolean?
+    return value unless Assessment::AchievementValueService::BOOLEAN_VALUES.include?(value)
 
-    @assessable.percentage? ? "#{value} %" : value
+    t("assessment.achievements.marking.#{value}")
   end
 
   def value_enterable?

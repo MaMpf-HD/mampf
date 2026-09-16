@@ -26,6 +26,7 @@ class Achievement < ApplicationRecord
                             less_than_or_equal_to: 100 },
             if: :percentage?
   validates :threshold, absence: true, if: :boolean?
+  validate :value_type_fixed_by_values, if: -> { persisted? && value_type_changed? }
 
   after_create :setup_assessment
   before_destroy :check_destructibility, prepend: true
@@ -61,7 +62,7 @@ class Achievement < ApplicationRecord
   # and a rule that requires the achievement would lose a condition.
   def destruction_blockers
     blockers = []
-    blockers << :has_values if values_entered?
+    blockers << :has_values if values_entered? || exemptions_entered?
     blockers << :referenced_by_rules if rule_achievements.exists?
     blockers
   end
@@ -108,11 +109,23 @@ class Achievement < ApplicationRecord
       true
     end
 
+    # The values read by the type: "pass" says nothing on a numeric
+    # achievement, 12.5 nothing on a yes/no one. The threshold may still
+    # move; the values keep their meaning under a new one.
+    def value_type_fixed_by_values
+      errors.add(:value_type, :fixed_by_values) if values_entered?
+    end
+
     def values_entered?
       return false unless assessment
 
-      rows = assessment.assessment_participations
-      rows.where.not(grade_text: [nil, ""]).or(rows.exempt).exists?
+      assessment.assessment_participations.where.not(grade_text: [nil, ""]).exists?
+    end
+
+    def exemptions_entered?
+      return false unless assessment
+
+      assessment.assessment_participations.exempt.exists?
     end
 
     # Said out loud: a wrong "not met" here costs a student their exam

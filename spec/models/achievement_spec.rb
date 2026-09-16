@@ -170,6 +170,19 @@ RSpec.describe(Achievement, type: :model) do
       expect { achievement.destroy }.not_to change(described_class, :count)
     end
 
+    # "pass" says nothing on a numeric achievement, 12.5 nothing on a yes/no
+    # one; an exemption reads the same under any type.
+    it "keeps its type once a value is entered, but not for an exemption alone" do
+      row.update!(grade_text: "pass")
+      achievement.value_type = :numeric
+      achievement.threshold = 3
+      expect(achievement).not_to be_valid
+      expect(achievement.errors[:value_type]).to be_present
+
+      row.update!(grade_text: nil, status: :exempt)
+      expect(achievement).to be_valid
+    end
+
     it "stays while a rule requires it" do
       rule = create(:student_performance_rule, lecture: lecture)
       create(:student_performance_rule_achievement, rule: rule, achievement: achievement)

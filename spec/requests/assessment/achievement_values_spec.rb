@@ -63,9 +63,10 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(StudentPerformance::Record.find_by(lecture: lecture, user: student)
                                        .achievements_met_ids).to include(achievement.id)
 
+      enter("")
       achievement.update!(value_type: :percentage, threshold: 50)
       enter("120")
-      expect(row.reload.grade_text).to eq("12.5")
+      expect(row.reload.grade_text).to be_nil
     end
 
     it "leaves an excused row alone" do

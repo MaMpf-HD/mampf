@@ -87,7 +87,7 @@ de:
       has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
     achievement_not_destructible:
-      has_values: 'Löschen nicht möglich: Es sind schon Werte eingetragen'
+      has_values: 'Löschen nicht möglich: Es sind schon Werte oder Befreiungen eingetragen'
       referenced_by_rules: 'Löschen nicht möglich: Eine Regel verlangt dieses Zusatzkriterium'
     exam_not_destructible:
       roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
@@ -531,10 +531,16 @@ de:
     attributes:
       assignment:
         kind: "Art"
+      achievement:
+        value_type: "Typ"
     errors:
       messages:
         immutable: "kann nach dem Anlegen nicht mehr geändert werden"
       models:
+        achievement:
+          attributes:
+            value_type:
+              fixed_by_values: "kann nicht mehr geändert werden, sobald Werte eingetragen sind"
         assessment/task:
           attributes:
             base:

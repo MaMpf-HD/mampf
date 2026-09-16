@@ -156,7 +156,7 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
 
   describe "PATCH /lectures/:lecture_id/performance/achievements/:id" do
     let!(:achievement) do
-      FactoryBot.create(:achievement, lecture: lecture)
+      FactoryBot.create(:achievement, :percentage, lecture: lecture, threshold: 80)
     end
 
     context "as an editor" do
@@ -191,8 +191,6 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
       end
 
       it "returns an unprocessable turbo response for blank threshold" do
-        achievement.update!(value_type: :percentage, threshold: 80.0)
-
         patch lecture_student_performance_achievement_path(lecture, achievement),
               params: {
                 achievement: {
@@ -212,6 +210,27 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         expect(response.body).to include(
           %(data-achievement-form-original-threshold-value="80.0")
         )
+      end
+
+      it "keeps the type once a value has been entered, and says so" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { value_type: "boolean", threshold: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(achievement.reload).to be_percentage
+        assert_flash_error
+        expect(response.body).to include(
+          I18n.t("activerecord.errors.models.achievement.attributes.value_type.fixed_by_values")
+        )
+      end
+
+      it "moves the threshold with values entered" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { threshold: "90" } },
+              as: :turbo_stream
+
+        expect(achievement.reload.threshold).to eq(90)
       end
 
       it "renders validation errors only through invalid-feedback" do

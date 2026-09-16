@@ -90,14 +90,20 @@ module StudentPerformance
           stream_flash
         ]
       else
-        render turbo_stream: turbo_stream.update(
-          "assessments_container",
-          ::AchievementDashboardComponent.new(
-            achievement: @achievement,
-            lecture: @lecture,
-            original_achievement: original_achievement
-          )
-        ), status: :unprocessable_content
+        # The form carries no error markup of its own; what the browser did
+        # not catch is said here.
+        flash.now[:alert] = @achievement.errors.full_messages.to_sentence
+        render turbo_stream: [
+          turbo_stream.update(
+            "assessments_container",
+            ::AchievementDashboardComponent.new(
+              achievement: @achievement,
+              lecture: @lecture,
+              original_achievement: original_achievement
+            )
+          ),
+          stream_flash
+        ], status: :unprocessable_content
       end
     end
 
