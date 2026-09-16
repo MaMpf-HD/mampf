@@ -80,6 +80,11 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
         it "returns false" do
           expect(component.grading_enabled?).to be(false)
         end
+
+        it "still offers the delete button" do
+          render_inline(component)
+          expect(rendered_content).to include(I18n.t("basics.delete"))
+        end
       end
 
       context "when achievement has an assessment" do

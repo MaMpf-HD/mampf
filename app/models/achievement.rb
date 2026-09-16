@@ -109,6 +109,8 @@ class Achievement < ApplicationRecord
     end
 
     def values_entered?
+      return false unless assessment
+
       rows = assessment.assessment_participations
       rows.where.not(grade_text: [nil, ""]).or(rows.exempt).exists?
     end
