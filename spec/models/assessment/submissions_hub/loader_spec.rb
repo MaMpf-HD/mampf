@@ -552,6 +552,21 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
       expect(result.open_sheets.map(&:assignment)).to eq([assignment])
     end
+
+    # The week runs on for the other groups; this reader has written the test
+    # and has points to look at, which is the list's business, not a card's.
+    it "moves a test to the list the moment its points are in, week or no week" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: 3.days.from_now)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      expect(result.open_sheets.map(&:assignment)).to eq([test])
+
+      mark(test, [8])
+
+      fresh = described_class.new(lecture: lecture, user: user).call
+      expect(fresh.open_sheets).to be_empty
+      expect(fresh.sheets.find { |sheet| sheet.assignment == test }.state).to eq(:marked)
+    end
   end
 
   describe "#due" do

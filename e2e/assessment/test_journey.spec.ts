@@ -89,16 +89,12 @@ test.describe("a test written in the tutorial", () => {
     await expect(performance.getByRole("cell", { name: "8", exact: true })).toHaveCount(2);
     await expect(performance.getByRole("cell", { name: "80%" })).toHaveCount(2);
 
-    // the test is still ahead of the later groups, so the student's card stays
+    // the week still runs for the later groups, but this student has written
+    // it: the card is gone, the test sits in the list as news, marked as a test
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
-    await expect(student.page.getByRole("heading", { name: "Test 1" })).toBeVisible();
-
-    // once the week is over the test is in the list, marked as a test
-    const nextMonday = new Date(monday);
-    nextMonday.setDate(nextMonday.getDate() + 7);
-    await clock.travelTo(nextMonday);
-    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByRole("heading", { name: "Test 1" })).toHaveCount(0);
     const list = student.page.getByRole("region", { name: "Earlier sheets and tests" });
+    await expect(list.getByText("New since you last looked:")).toBeVisible();
     const entry = list.getByRole("group").filter({ hasText: "Test 1" });
     await expect(entry.getByText("Test", { exact: true })).toBeVisible();
     await expect(entry.getByText("8", { exact: true })).toBeVisible();

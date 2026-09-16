@@ -229,9 +229,12 @@ module Assessment
         # there is nothing left to replace, delete or leave, and a sheet takes
         # one hand-in. Left among the open ones it would get a card, and the
         # card has nothing to say about the state - no badge, no note, no
-        # number. The row has all three.
+        # number. The row has all three. A test is closed the same way once
+        # its points are in: the week may still run for the other groups, but
+        # this reader has written it and has a result to look at.
         def still_open?(sheet)
           return false if sheet.state == :rejected
+          return false if sheet.assignment.kind_test? && sheet.results_visible?
 
           sheet.assignment.active? || sheet.assignment.in_grace_period?
         end
