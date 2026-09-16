@@ -42,6 +42,9 @@ class Assignment < ApplicationRecord
   validate :deadline_not_in_past, if: -> { deadline_changed? }
   # Changing kind would reinterpret existing submissions and grading data.
   validate :kind_immutable, if: -> { persisted? && kind_changed? }
+  # The form offers a test no sheet to attach; a request that names one
+  # anyway is refused rather than quietly obeyed.
+  validates :medium_id, absence: true, if: :kind_test?
 
   scope :active, -> { where(deadline: Time.zone.now..) }
 

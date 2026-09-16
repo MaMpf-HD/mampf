@@ -93,6 +93,13 @@ RSpec.describe(Assignment, type: :model) do
       expect(test).to be_invalid
     end
 
+    it "takes no sheet to read, whatever the form sends" do
+      test.medium = FactoryBot.create(:lecture_medium, :with_lecture_by_id,
+                                      lecture_id: lecture.id, sort: "Exercise")
+      expect(test).to be_invalid
+      expect(test.errors[:medium_id]).to be_present
+    end
+
     it "takes no hand-in through MaMpf, whatever the form sends" do
       expect(test.requires_submission).to be(false)
       expect(test.assessment.requires_submission).to be(false)
