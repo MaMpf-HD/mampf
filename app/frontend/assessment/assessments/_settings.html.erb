@@ -82,6 +82,13 @@
             <i class="bi bi-calendar-fill"></i>
           </span>
         </div>
+
+        <% if assessable.kind_test? %>
+          <div class="form-text text-muted">
+            <%= test_week_label(assessable) %>.
+            <%= t('assessment.test.week_hint') %>
+          </div>
+        <% end %>
       </div>
 
       <%# A test has no sheet to read, no file to upload and no hand-in to require. %>
