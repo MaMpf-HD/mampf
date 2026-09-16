@@ -144,9 +144,13 @@ en:
         inconclusive: "Deferred"
       deferral:
         assignments_incomplete: "The assignment list is still open"
-        points_not_due:
-          one: "1 assignment not due yet"
-          other: "%{count} assignments not due yet"
+        points_not_due: "%{what} not due yet"
+        sheet_count:
+          one: "1 assignment"
+          other: "%{count} assignments"
+        test_count:
+          one: "1 test"
+          other: "%{count} tests"
         points_pending:
           one: "1 submission not graded yet"
           other: "%{count} submissions not graded yet"
@@ -172,7 +176,7 @@ en:
       back_to_dashboard: "Back to dashboard"
       index:
         subtitle: "Review eligibility proposals and approve students for the exam."
-        assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable. Create the missing assignments and tick \"the assignment list is complete\" on the %{tab} tab."
+        assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable. Create the missing assignments and tests and tick \"The list of sheets and tests is complete\" on the %{tab} tab."
         total: "Total Students"
         passed: "Eligible"
         failed: "Not Eligible"

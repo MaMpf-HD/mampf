@@ -144,9 +144,13 @@ de:
         inconclusive: "Zurückgestellt"
       deferral:
         assignments_incomplete: "Die Blätterliste ist noch offen"
-        points_not_due:
-          one: "1 Blatt noch nicht fällig"
-          other: "%{count} Blätter noch nicht fällig"
+        points_not_due: "%{what} noch nicht fällig"
+        sheet_count:
+          one: "1 Blatt"
+          other: "%{count} Blätter"
+        test_count:
+          one: "1 Test"
+          other: "%{count} Tests"
         points_pending:
           one: "1 Abgabe noch nicht bewertet"
           other: "%{count} Abgaben noch nicht bewertet"
@@ -172,7 +176,7 @@ de:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
         subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
-        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter an und setze im Reiter %{tab} das Häkchen „Die Blätterliste ist vollständig“."
+        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter und Tests an und setze im Reiter %{tab} das Häkchen „Die Liste der Blätter und Tests ist vollständig“."
         total: "Studierende gesamt"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"

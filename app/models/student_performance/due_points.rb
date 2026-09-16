@@ -13,6 +13,13 @@ module StudentPerformance
       @total ||= sum_points(due_assessments)
     end
 
+    # The same reckoning over one kind of sheet, for a figure about that kind
+    # alone. Memoized, as this one is, for the page's sake.
+    def of_kind(kind)
+      @of_kind ||= {}
+      @of_kind[kind] ||= self.class.new(lecture: @lecture, kind: kind)
+    end
+
     def due?(assessment_id)
       due_assessment_ids.include?(assessment_id)
     end

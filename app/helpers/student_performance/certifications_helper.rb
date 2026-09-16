@@ -26,7 +26,7 @@ module StudentPerformance
     def deferral_text(proposal, reason)
       case reason
       when :points_not_due
-        deferral_count(reason, proposal.details[:not_due_sheets])
+        not_due_text(proposal.details[:not_due_sheets], proposal.details[:not_due_tests])
       when :points_pending
         deferral_count(reason, proposal.details[:pending_sheets])
       else
@@ -46,6 +46,19 @@ module StudentPerformance
 
       def deferral_count(reason, sheets)
         t("student_performance.evaluator.deferral.#{reason}", count: sheets.to_i)
+      end
+
+      # "2 sheets and 1 test not due yet": a test counted among the sheets
+      # would leave the reader looking for a sheet that is not there.
+      def not_due_text(sheets, tests)
+        parts = []
+        if sheets.to_i.positive?
+          parts << t("student_performance.evaluator.deferral.sheet_count", count: sheets)
+        end
+        if tests.to_i.positive?
+          parts << t("student_performance.evaluator.deferral.test_count", count: tests)
+        end
+        t("student_performance.evaluator.deferral.points_not_due", what: parts.to_sentence)
       end
   end
 end

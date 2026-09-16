@@ -262,7 +262,7 @@ module StudentPerformance
       # The tests' points are in the record's total with the sheets'; their
       # share on its own needs them summed apart, over the page's students.
       def load_test_share(tests)
-        @test_points = DuePoints.new(lecture: @lecture, kind: :test)
+        @test_points = due_points.of_kind(:test)
         @test_points_by_user = Assessment::Participation
                                .where(assessment_id: tests.map(&:id),
                                       user_id: @records.map(&:user_id), status: :reviewed)

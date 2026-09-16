@@ -85,15 +85,18 @@ module StudentPerformance
 
       # How many sheets each of the two open points reasons is about, so that
       # the page can say it rather than leaving "not due yet" to stand for
-      # anything between one sheet and the rest of the term. A count and not
+      # anything between one sheet and the rest of the term - sheets and tests
+      # counted apart, since the page names each. A count and not
       # the points behind it: the page shows no total to hold them against,
       # and a bare "60 points" is a number out of nowhere.
       #
       # Kept beside the reasons rather than in them: `0` is true in Ruby, and a
       # reason picked by its own count would then always be picked.
       def deferral_amounts(record)
+        not_due_tests = @due_points.of_kind(:test).not_yet_due_count_for(record.user_id)
         {
-          not_due_sheets: not_yet_due_count(record),
+          not_due_sheets: not_yet_due_count(record) - not_due_tests,
+          not_due_tests: not_due_tests,
           pending_sheets: pending_count(record)
         }
       end

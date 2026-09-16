@@ -597,7 +597,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
       expected_keys = [:assignments_incomplete, :meets_points, :points_not_due,
                        :points_pending, :points_not_measurable,
                        :points_outstanding, :meets_achievements,
-                       :achievements_ungraded, :not_due_sheets,
+                       :achievements_ungraded, :not_due_sheets, :not_due_tests,
                        :pending_sheets]
       expect(result.details.keys).to match_array(expected_keys)
     end
