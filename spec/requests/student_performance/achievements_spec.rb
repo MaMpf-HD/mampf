@@ -252,22 +252,24 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         end.to change(Achievement, :count).by(-1)
       end
 
-      it "explains a refused destroy in words a teacher can act on" do
-        allow_any_instance_of(Achievement).to receive(:destroy) do |record|
-          record.errors.add(:base, "Achievement is still in use")
-          false
-        end
+      it "keeps an achievement somebody has a value on, and says so in words" do
+        student = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: student)
+        achievement.assessment.assessment_participations.find_by!(user: student)
+                   .update!(grade_text: Achievement::PASSED)
 
-        delete lecture_student_performance_achievement_path(
-          lecture, achievement
-        ), as: :turbo_stream
+        expect do
+          delete(lecture_student_performance_achievement_path(
+                   lecture, achievement
+                 ), as: :turbo_stream)
+        end.not_to change(Achievement, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
         assert_flash_error
         expect(response.body).to include(
-          I18n.t("assessment.achievements.errors.referenced_by_rules")
+          I18n.t("assessment.achievement_not_destructible.has_values")
         )
-        expect(response.body).not_to include("Achievement is still in use")
+        expect(response.body).not_to include("rule_achievements")
       end
 
       context "when referenced by a rule" do
@@ -285,11 +287,14 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
           end.not_to change(Achievement, :count)
         end
 
-        it "returns unprocessable_content for turbo requests" do
+        it "returns unprocessable_content for turbo requests, naming the rule" do
           delete lecture_student_performance_achievement_path(
             lecture, achievement
           ), as: :turbo_stream
           expect(response).to have_http_status(:unprocessable_content)
+          expect(response.body).to include(
+            I18n.t("assessment.achievement_not_destructible.referenced_by_rules")
+          )
         end
       end
     end

@@ -27,7 +27,6 @@ de:
       errors:
         destroy_failed: 'Löschen des Zusatzkriteriums fehlgeschlagen.'
         not_found: 'Zusatzkriterium nicht gefunden.'
-        referenced_by_rules: 'Löschen nicht möglich: Zusatzkriterium wird von einer Regel referenziert.'
       subtitle: 'Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen.'
       new: 'Neues Zusatzkriterium'
       edit: 'Zusatzkriterium bearbeiten'
@@ -89,6 +88,9 @@ de:
     not_destructible:
       has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
+    achievement_not_destructible:
+      has_values: 'Löschen nicht möglich: Es sind schon Werte eingetragen'
+      referenced_by_rules: 'Löschen nicht möglich: Eine Regel verlangt dieses Zusatzkriterium'
     exam_not_destructible:
       roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
       in_campaign: 'Löschen nicht möglich: Anmeldung wurde bereits geöffnet oder abgeschlossen'

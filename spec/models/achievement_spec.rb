@@ -146,6 +146,39 @@ RSpec.describe(Achievement, type: :model) do
     end
   end
 
+  describe "destructibility" do
+    let(:lecture) { create(:lecture) }
+    let(:achievement) { create(:achievement, :boolean, lecture: lecture) }
+    let(:row) do
+      student = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: student)
+      achievement.assessment.assessment_participations.find_by!(user: student)
+    end
+
+    it "goes while nobody has a value on it" do
+      row
+      expect(achievement).to be_destructible
+      expect { achievement.destroy }.to change(described_class, :count).by(-1)
+    end
+
+    it "stays once a value is entered, or somebody is excused" do
+      row.update!(grade_text: "fail")
+      expect(achievement.destruction_blockers).to eq([:has_values])
+
+      row.update!(grade_text: nil, status: :exempt)
+      expect(achievement.destruction_blockers).to eq([:has_values])
+      expect { achievement.destroy }.not_to change(described_class, :count)
+    end
+
+    it "stays while a rule requires it" do
+      rule = create(:student_performance_rule, lecture: lecture)
+      create(:student_performance_rule_achievement, rule: rule, achievement: achievement)
+
+      expect(achievement.destruction_blockers).to eq([:referenced_by_rules])
+      expect(achievement.destroy).to be(false)
+    end
+  end
+
   describe "#met_by?" do
     context "when boolean" do
       let(:achievement) { FactoryBot.build(:achievement, :boolean) }

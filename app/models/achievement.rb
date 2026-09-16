@@ -28,6 +28,7 @@ class Achievement < ApplicationRecord
   validates :threshold, absence: true, if: :boolean?
 
   after_create :setup_assessment
+  before_destroy :check_destructibility, prepend: true
 
   after_commit :invalidate_performance_records,
                on: [:update, :destroy],
@@ -49,6 +50,20 @@ class Achievement < ApplicationRecord
     return words.first[0, 2].upcase if words.any?
 
     title.to_s[0, 2].upcase
+  end
+
+  def destructible?
+    destruction_blockers.empty?
+  end
+
+  # Named as Assignment names them, so the delete button asks any assessable
+  # the same question. An entered value or an exemption is somebody's work,
+  # and a rule that requires the achievement would lose a condition.
+  def destruction_blockers
+    blockers = []
+    blockers << :has_values if values_entered?
+    blockers << :referenced_by_rules if rule_achievements.exists?
+    blockers
   end
 
   def self.short_titles(achievements)
@@ -86,6 +101,17 @@ class Achievement < ApplicationRecord
   end
 
   private
+
+    def check_destructibility
+      throw(:abort) unless destructible?
+
+      true
+    end
+
+    def values_entered?
+      rows = assessment.assessment_participations
+      rows.where.not(grade_text: [nil, ""]).or(rows.exempt).exists?
+    end
 
     # Said out loud: a wrong "not met" here costs a student their exam
     # admission, and there is nothing else to notice it by.

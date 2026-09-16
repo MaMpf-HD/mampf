@@ -27,7 +27,6 @@ en:
       errors:
         destroy_failed: 'Failed to delete achievement.'
         not_found: 'Achievement not found.'
-        referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
       subtitle: 'Define additional criteria students must fulfill beyond points.'
       new: 'New Achievement'
       edit: 'Edit Achievement'
@@ -89,6 +88,9 @@ en:
     not_destructible:
       has_submissions: 'Cannot delete: Submissions exist'
       has_grading_data: 'Cannot delete: Grading data exists'
+    achievement_not_destructible:
+      has_values: 'Cannot delete: Values have been entered'
+      referenced_by_rules: 'Cannot delete: A rule requires this achievement'
     exam_not_destructible:
       roster_not_empty: 'Cannot delete: Registered participants exist'
       in_campaign: 'Cannot delete: Registration is already open or completed'

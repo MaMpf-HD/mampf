@@ -116,14 +116,13 @@ module StudentPerformance
           stream_flash
         ]
       else
-        # `restrict_with_error` phrases this in table names; the only thing that
-        # can block a deletion here is a rule that needs the achievement. The
-        # flash says so in words - and the errors go with it, or the settings
+        # `restrict_with_error` phrases a refusal in table names; the flash
+        # names the blockers in words - and the errors go, or the settings
         # form on the dashboard would repeat the table names under a button
         # nobody pressed.
-        flash.now[:alert] = I18n.t(
-          "assessment.achievements.errors.referenced_by_rules"
-        )
+        flash.now[:alert] = @achievement.destruction_blockers.map do |blocker|
+          I18n.t("assessment.achievement_not_destructible.#{blocker}")
+        end.to_sentence
         @achievement.errors.clear
         render turbo_stream: [
           turbo_stream.update(
