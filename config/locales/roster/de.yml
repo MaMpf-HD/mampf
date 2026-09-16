@@ -498,3 +498,26 @@ de:
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'
+      roster_change_exam_schedule_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Der Termin der Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> hat sich geändert.
+        </p>
+        <p>
+          Die Prüfung findet nun am <strong>%{exam_date}</strong>
+          in <strong>%{exam_location}</strong> statt.
+        </p>
+        <p>
+          Bitte notiere Dir die neuen Angaben.
+        </p>
+      roster_change_exam_schedule_email_body: |
+        Hallo %{name},
+
+        Der Termin der Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ hat sich geändert.
+
+        Die Prüfung findet nun am %{exam_date} in %{exam_location} statt.
+
+        Bitte notiere Dir die neuen Angaben.
+      roster_change_exam_schedule_email_subject: 'Terminänderung für Prüfung %{rosterable_title} in %{lecture_title}'

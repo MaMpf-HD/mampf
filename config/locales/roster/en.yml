@@ -493,3 +493,26 @@ en:
         If you believe this was a mistake or if you have any questions,
         please contact your instructor or the support team.
       roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'
+      roster_change_exam_schedule_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          The schedule for exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong> has changed.
+        </p>
+        <p>
+          The exam will now take place on <strong>%{exam_date}</strong>
+          at <strong>%{exam_location}</strong>.
+        </p>
+        <p>
+          Please make a note of the new details.
+        </p>
+      roster_change_exam_schedule_email_body: |
+        Hello %{name},
+
+        The schedule for exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}" has changed.
+
+        The exam will now take place on %{exam_date} at %{exam_location}.
+
+        Please make a note of the new details.
+      roster_change_exam_schedule_email_subject: 'Schedule change for exam %{rosterable_title} in %{lecture_title}'
