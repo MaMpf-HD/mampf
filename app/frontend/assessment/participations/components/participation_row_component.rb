@@ -200,7 +200,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def absence_button
     return unless can_enter_points?
-    return if test? && (!allow_grading? || elsewhere?)
+    return if test? && (!allow_grading? || elsewhere? || paper_hand_in?)
 
     if @participation.absent?
       row_action_link(remove_absent_path(@participation, grading_scope_type: grading_scope_type),

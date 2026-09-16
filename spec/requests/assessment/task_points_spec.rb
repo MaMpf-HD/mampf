@@ -1112,6 +1112,26 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(row.reload).to be_pending
     end
 
+    # Points entered by mistake and taken back again leave the row as it
+    # was: the absence the tutor meant to record goes through.
+    it "records an absence once points entered by mistake are taken back" do
+      task = test.assessment.tasks.first
+      patch point_participation_path(row),
+            params: { task_points: { task.id => "6" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+      expect(row.reload.submitted_at).to be_present
+      expect(response.body).not_to include(I18n.t("assessment.grading_exam.mark_absent"))
+
+      patch point_participation_path(row),
+            params: { task_points: { task.id => "" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+      expect(row.reload.submitted_at).to be_nil
+      expect(response.body).to include(I18n.t("assessment.grading_exam.mark_absent"))
+
+      patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+      expect(row.reload).to be_absent
+    end
+
     it "refuses an absence before the week has begun" do
       test.update!(test_week: 2.weeks.from_now.to_date.beginning_of_week.iso8601)
 
