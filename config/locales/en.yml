@@ -2913,6 +2913,9 @@ en:
       sheet_count:
         one: "%{count} sheet"
         other: "%{count} sheets"
+      test_count:
+        one: "%{count} test"
+        other: "%{count} tests"
       column_sheet: Sheet
       column_status: Status
       column_points: Your points

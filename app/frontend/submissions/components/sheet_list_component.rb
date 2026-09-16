@@ -13,8 +13,14 @@ class SheetListComponent < ViewComponent::Base
     @due = due
   end
 
+  # "12 sheets, 1 test": each kind counted in its own word, and neither
+  # counted to zero beside the other.
   def count_label
-    t("submission.hub.sheet_count", count: sheets.size)
+    tests, homework = sheets.partition { |sheet| sheet.assignment.kind_test? }
+    parts = []
+    parts << t("submission.hub.sheet_count", count: homework.size) if homework.any? || tests.empty?
+    parts << t("submission.hub.test_count", count: tests.size) if tests.any?
+    parts.join(", ")
   end
 
   # "Earlier sheets" until a test sits among them.

@@ -3139,6 +3139,9 @@ de:
       sheet_count:
         one: "%{count} Blatt"
         other: "%{count} Blätter"
+      test_count:
+        one: "%{count} Test"
+        other: "%{count} Tests"
       column_sheet: Blatt
       column_status: Status
       column_points: Deine Punkte

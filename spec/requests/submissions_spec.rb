@@ -613,6 +613,8 @@ RSpec.describe("Submissions", type: :request) do
         expect(row.text).to include("Test 1")
         expect(row.text).to include(I18n.t("assessment.test.badge"))
         expect(row.text).to include("8")
+        expect(response.body).to include(I18n.t("submission.hub.test_count", count: 1))
+        expect(response.body).not_to include(I18n.t("submission.hub.sheet_count", count: 0))
       end
 
       it "turns a tutor of the lecture away" do
