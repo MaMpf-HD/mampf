@@ -553,14 +553,14 @@
                   <div data-certification-inline-target="edit" class="d-none">
                     <%#
                       Not a tick and a cross: those are "admit" and "refuse"
-                      two rows down. Saving looks like saving does in the
-                      marking tables; cancelling says so.
+                      two rows down. The three are bare icons as in the
+                      marking tables: save, back out, throw the decision away.
                     %>
 
-                    <div class="d-flex gap-1 justify-content-end">
+                    <div class="d-flex align-items-center justify-content-end">
                       <button
                         type="button"
-                        class="btn btn-sm btn-primary py-0 px-1"
+                        class="<%= row_action_classes %> text-success"
                         data-action="certification-inline#save"
                         title="<%= t('student_performance.certifications.index.save') %>"
                         aria-label="<%= t('student_performance.certifications.index.save') %>"
@@ -570,10 +570,12 @@
 
                       <button
                         type="button"
-                        class="btn btn-sm btn-outline-secondary py-0 px-2"
+                        class="<%= row_action_classes %>"
                         data-action="certification-inline#cancel"
+                        title="<%= t('student_performance.certifications.index.cancel') %>"
+                        aria-label="<%= t('student_performance.certifications.index.cancel') %>"
                       >
-                        <%= t("student_performance.certifications.index.cancel") %>
+                        <i class="bi bi-arrow-return-left"></i>
                       </button>
 
                       <%= button_to(
@@ -581,7 +583,7 @@
                               @lecture, cert
                             ),
                             method: :delete,
-                            class: "btn btn-sm btn-outline-secondary py-0 px-1",
+                            class: "#{row_action_classes} row-action-danger",
                             title: t(
                               "student_performance.certifications.index.reset"
                             ),

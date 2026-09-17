@@ -3,6 +3,11 @@ module StudentPerformance
     # The reasons a row spells out. While `assignments_complete?` is false
     # every proposal defers for the same reason, and the box above the table
     # gives it once, so the rows stay empty.
+    # The row's buttons look like the marking tables' rows' do.
+    def row_action_classes
+      ParticipationRowComponent::ROW_ACTION_CLASSES
+    end
+
     def proposal_reasons(proposal, lecture)
       case proposal.proposed_status
       when :failed
