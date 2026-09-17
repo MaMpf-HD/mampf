@@ -91,4 +91,22 @@
   <% if team_line %>
     <p class="hub-aside text-muted mb-0 mt-3"><%= team_line %></p>
   <% end %>
+
+  <% if joinable_late? %>
+    <%= form_with url: join_submission_path, method: :post, scope: "join",
+                  class: "d-flex flex-wrap align-items-center gap-2 mt-3" do |f| %>
+      <span class="hub-aside text-muted">
+        <%= t("submission.hub.fold.join_late") %>
+      </span>
+
+      <%= f.hidden_field :assignment_id, value: sheet.assignment.id %>
+
+      <%= f.text_field :code, class: "form-control form-control-sm w-auto",
+                              autocomplete: "off",
+                              aria: { label: t("basics.code") },
+                              placeholder: t("basics.code") %>
+
+      <%= f.submit t("buttons.join"), class: "btn btn-sm btn-outline-primary" %>
+    <% end %>
+  <% end %>
 </div>

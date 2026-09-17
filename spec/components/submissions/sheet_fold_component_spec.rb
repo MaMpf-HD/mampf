@@ -26,6 +26,8 @@ RSpec.describe(SheetFoldComponent, type: :component) do
   # A sheet has its problems set up as soon as there are any, and where the
   # example lists none it follows the maximum: points come from problems. The
   # two are told apart where it matters - a problem may be set at 0.
+  let(:lecture) { instance_double(Lecture) }
+
   def sheet(state, **overrides)
     attrs = sheet_defaults.merge(overrides)
     points_by_task = attrs[:points_by_task]
@@ -39,7 +41,10 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                              partners: attrs[:partners],
                              marked_at: attrs[:marked_at],
                              marked_by: attrs[:marked_by],
-                             assignment: instance_double(Assignment, kind_test?: attrs[:test]))
+                             joinable_late?: attrs.fetch(:joinable_late, false),
+                             assignment: instance_double(Assignment, id: 7,
+                                                                     kind_test?: attrs[:test],
+                                                                     lecture: lecture))
     allow(double).to(receive(:points_for) { |asked| points_by_task[asked] })
     double
   end
@@ -47,6 +52,31 @@ RSpec.describe(SheetFoldComponent, type: :component) do
   def render_fold(...)
     render_inline(described_class.new(sheet: sheet(...)))
     rendered_content
+  end
+
+  # The team may still take a late-comer in with its code; the fold is where
+  # a missed sheet says so, and only to somebody in a group.
+  def reader_rostered(group)
+    view = vc_test_controller.view_context
+    allow(view).to receive(:rostered_tutorial_for).and_return(group)
+    allow(vc_test_controller).to receive(:view_context).and_return(view)
+  end
+
+  it "offers the code on a missed sheet for somebody in a group" do
+    reader_rostered(instance_double(Tutorial))
+
+    content = render_fold(:missed, max_points: 16, joinable_late: true)
+
+    expect(content).to include(I18n.t("submission.hub.fold.join_late").strip)
+    expect(content).to include(I18n.t("buttons.join"))
+  end
+
+  it "offers no code to somebody in no group" do
+    reader_rostered(nil)
+
+    content = render_fold(:missed, max_points: 16, joinable_late: true)
+
+    expect(content).not_to include(I18n.t("buttons.join"))
   end
 
   describe "points per problem" do

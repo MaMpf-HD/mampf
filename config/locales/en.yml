@@ -2944,6 +2944,9 @@ en:
         team: "Team: you and %{names}"
         team_with_points: >
           Team: you and %{names} - these %{points} points are yours
+        join_late: >
+          Handed in with a team after all? Its code still gets you on it, until
+          the team has been marked.
         no_points:
           nothing_yet: Nothing has been entered yet.
           on_the_correction: >
@@ -2998,9 +3001,8 @@ en:
     invalid_code_for_assignment: >
       The code you entered is invalid for %{assignment}.
     invalid_code: The code you entered is invalid.
-    assignment_expired: >
-      The due date for this homework assignment has already
-      expired.
+    team_marked: >
+      This team has already been marked; ask your tutor to add you.
     already_in: You are already a partner for this assignment.
     lecture_not_subscribed: >
       You are not subscribed to the corresponding event series.

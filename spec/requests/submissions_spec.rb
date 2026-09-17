@@ -1169,6 +1169,61 @@ RSpec.describe("Submissions", type: :request) do
         expect(response).to redirect_to(root_url)
         expect(Submission.exists?(submission.id)).to be(true)
       end
+
+      # The deadline closes the upload, not the team: whoever forgot to join
+      # still may with the code, until the team has been marked - and a
+      # closed sheet has no card, so the whole page is asked for again.
+      describe "joining late" do
+        let(:partner) { create(:confirmed_user, name_in_tutorials: "Ada") }
+        let(:team) do
+          create(:tutorial_membership, tutorial: tutorial, user: partner)
+          partner.lectures << lecture
+          submission = create(:submission, :with_manuscript, assignment: closed_assignment,
+                                                             tutorial: tutorial)
+          submission.users << partner
+          submission
+        end
+
+        # Rows are seeded for members of the lecture, not for subscribers.
+        before { create(:lecture_membership, lecture: lecture, user: user) }
+
+        def join_late
+          post(join_submission_path, params: {
+                 join: { code: team.token, assignment_id: closed_assignment.id }
+               })
+        end
+
+        it "takes the reader in with the team's code and sends them back to the hub" do
+          join_late
+
+          expect(response).to redirect_to(lecture_submissions_path(lecture))
+          expect(flash[:notice]).to be_present
+          expect(team.reload.users).to include(user)
+          expect(closed_assignment.assessment.assessment_participations.find_by(user: user))
+            .to be_present
+        end
+
+        it "refuses once the team has been marked, and says whom to ask" do
+          task = create(:assessment_task, assessment: closed_assignment.assessment)
+          row = create(:assessment_participation, assessment: closed_assignment.assessment,
+                                                  user: partner, submitted_at: 2.days.ago)
+          create(:assessment_task_point, assessment_participation: row, task: task, points: 3)
+
+          join_late
+
+          expect(response).to redirect_to(lecture_submissions_path(lecture))
+          expect(flash[:alert]).to eq(I18n.t("submission.team_marked"))
+          expect(team.reload.users).not_to include(user)
+        end
+
+        it "offers the code on the closed sheet's row" do
+          team
+
+          get lecture_submissions_path(lecture)
+
+          expect(response.body).to include(I18n.t("submission.hub.fold.join_late").strip)
+        end
+      end
     end
 
     describe "the team" do

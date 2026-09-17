@@ -27,6 +27,13 @@ module Assessment
         open_state
       end
 
+      # A sheet that closed without the reader on any team: the team may still
+      # take them in with its code, until it has been marked - which is asked
+      # when the code arrives.
+      def joinable_late?
+        state == :missed && assessment&.requires_submission
+      end
+
       # Whatever the participation carries is shown. The 0 the other states read
       # is not carried by anything - it is the statement "this sheet counts and
       # counts as nothing", and that takes something having been at stake.

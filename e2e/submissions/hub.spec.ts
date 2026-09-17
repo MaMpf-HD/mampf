@@ -273,6 +273,42 @@ test.describe("the student's sheet list", () => {
     await expect(handedIn).toBeVisible();
   });
 
+  // The deadline closes the upload, not the team: a partner who forgot to
+  // join still gets on with the team's code, until the team has been marked.
+  test("takes a late-comer onto a closed sheet's team with its code", async ({
+    factory,
+    teacher,
+    student,
+    student2,
+  }) => {
+    const lecture = await enrolledLecture(factory, teacher.user.id, student.user.id);
+    const assignment = await closedSheet(factory, lecture.id, "Homework 1");
+    const partner = student2.user;
+    await factory.create("lecture_user_join", [], { lecture_id: lecture.id, user_id: partner.id });
+    await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: partner.id });
+    const group = (await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Tuesday group",
+    }));
+    await factory.create("tutorial_membership", [], { tutorial_id: group.id, user_id: partner.id });
+    const team = await factory.create("submission", ["with_manuscript"], {
+      assignment_id: assignment.id, tutorial_id: group.id,
+    });
+    await factory.create("user_submission_join", [], {
+      submission_id: team.id, user_id: partner.id,
+    });
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    const list = student.page.getByRole("region", { name: "Earlier sheets" });
+    await list.getByRole("group").getByText("Homework 1").click();
+    await list.getByRole("textbox", { name: "Code" }).fill(await team.__call("token"));
+    await list.getByRole("button", { name: "Join" }).click();
+
+    await expect(student.page.getByText(/joined/i)).toBeVisible();
+    await list.getByRole("group").getByText("Homework 1").click();
+    await expect(list.getByRole("link", { name: /Hand-in: manuscript.pdf/ })).toBeVisible();
+    await expect(list.getByRole("textbox", { name: "Code" })).toHaveCount(0);
+  });
+
   test("hands the correction and the manuscript back as files", async ({
     factory,
     teacher,

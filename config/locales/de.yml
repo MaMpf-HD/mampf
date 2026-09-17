@@ -3170,6 +3170,9 @@ de:
         team: "Team: Du und %{names}"
         team_with_points: >
           Team: Du und %{names} - diese %{points} Punkte sind Deine
+        join_late: >
+          Doch mit einem Team abgegeben? Mit dessen Code kommst Du noch dazu,
+          solange das Team nicht bewertet ist.
         no_points:
           nothing_yet: Es ist noch nichts eingetragen.
           on_the_correction: >
@@ -3224,7 +3227,7 @@ de:
     invalid_code: Der eingegebene Code ist ungültig.
     invalid_code_for_assignment: >
       Der eingegebene Code ist ungültig für %{assignment}.
-    assignment_expired: Die Frist für diese Hausaufgabe ist bereits abgelaufen.
+    team_marked: Dieses Team ist schon bewertet; bitte Deinen Tutor, Dich hinzuzufügen.
     already_in: Bei dieser Abgabe bist Du schon dabei.
     lecture_not_subscribed: Du hast die zugehörige Veranstaltung icht abonniert.
     no_partners_no_leave: >

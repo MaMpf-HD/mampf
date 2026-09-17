@@ -169,6 +169,8 @@ class SubmissionsController < ApplicationController
     @submission = Submission.find_by(token: join_params[:code],
                                      assignment: @assignment)
     check_code_and_join
+    return join_closed_sheet if @assignment.totally_expired?
+
     if @error
       @invitations = hub.invitations_for(@assignment)
       return render :enter_code, status: :unprocessable_content
@@ -339,6 +341,17 @@ class SubmissionsController < ApplicationController
     # list holds only sheets that are closed - so every action answers by
     # re-rendering that sheet's card frame. Reading the whole hub back for it is
     # what keeps the card from ever disagreeing with the row below it.
+    # A closed sheet has no card to answer into; its row in the list is drawn
+    # by the whole page, so the page is asked for again.
+    def join_closed_sheet
+      if @error
+        redirect_to lecture_submissions_path(@lecture), alert: @error
+      else
+        redirect_to lecture_submissions_path(@lecture),
+                    notice: t("submission.joined_successfully", assignment: @assignment.title)
+      end
+    end
+
     def render_card(status: :ok)
       loaded = hub
       @sheet = loaded.sheets.find { |sheet| sheet.assignment == @assignment }
@@ -603,14 +616,14 @@ class SubmissionsController < ApplicationController
                         assignment: @assignment.title)
       elsif !@submission
         @error = I18n.t("submission.invalid_code")
-      elsif @assignment&.totally_expired?
-        @error = I18n.t("submission.assignment_expired")
+      # The deadline closes the upload, not the team: whoever forgot to join
+      # may still, with the team's code, until the team has been marked.
+      elsif @submission.marked?
+        @error = I18n.t("submission.team_marked")
       elsif @submission.correction
         @error = I18n.t("submission.already_corrected")
-      # Joining a team whose sheet nobody may touch any more - a rejected one -
-      # would put the reader somewhere they cannot hand in, replace or leave.
-      # The same predicate the ability uses for those.
-      elsif @submission.not_updatable?
+      # A rejected hand-in is nobody's to join: it counts as not handed in.
+      elsif @submission.accepted == false
         @error = I18n.t("submission.already_rejected")
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
