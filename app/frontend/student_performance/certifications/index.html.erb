@@ -333,8 +333,6 @@
               <%= t("student_performance.certifications.columns.certification") %>
             </th>
 
-            <th scope="col" class="actions-column"></th>
-
             <th scope="col" class="hint-column">
               <%= t("student_performance.certifications.columns.hint") %>
             </th>
@@ -342,6 +340,8 @@
             <th scope="col" class="note-column">
               <%= t("student_performance.certifications.columns.note") %>
             </th>
+
+            <th scope="col" class="text-end"></th>
           </tr>
         </thead>
 
@@ -476,21 +476,75 @@
                 <% end %>
               </td>
 
-              <td class="actions-column">
+              <td class="hint-column small">
+                <% if @disagreeing_user_ids.include?(record.user_id) %>
+                  <span class="text-amber">
+                    <i class="bi bi-clock-history me-1"></i>
+                    <%= t("student_performance.certifications.columns.rule_today") %>
+                    <%= t("student_performance.certifications.rule_today.#{proposal.proposed_status}") %>
+
+                    <% reasons = proposal_reasons(proposal, @lecture) %>
+
+                    <% if reasons.any? %>
+                      &mdash;
+                      <%= reasons.join(", ") %>
+                    <% end %>
+                  </span>
+                <% elsif @stale_manual_user_ids.include?(record.user_id) %>
+                  <span class="text-muted">
+                    <i class="bi bi-clock-history me-1"></i>
+                    <%= t("student_performance.certifications.status.manual_stale") %>
+                  </span>
+                <% elsif proposal && !decided %>
+                  <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
+                    <span class="text-amber d-block">
+                      <i class="bi bi-question-circle me-1"></i>
+                      <%= deferral_text(proposal, reason) %>
+                    </span>
+                  <% end %>
+                  <% proposal.missed_criteria.each do |criterion| %>
+                    <span class="text-danger d-block">
+                      <i class="bi bi-x-circle me-1"></i>
+                      <%= t("student_performance.evaluator.missed.#{criterion}") %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </td>
+
+              <td class="small note-column">
+                <% if decided %>
+                  <div data-certification-inline-target="display">
+                    <span class="text-muted"><%= cert.note %></span>
+                  </div>
+                  <div data-certification-inline-target="edit" class="d-none">
+                    <input
+                      type="text"
+                      data-certification-inline-target="noteInput"
+                      data-action="keydown.enter->certification-inline#save"
+                      class="form-control form-control-sm"
+                      value="<%= cert.note %>"
+                      placeholder="<%= t('student_performance.certifications.override.note_hint') %>"
+                      autocomplete="off"
+                    >
+                  </div>
+                <% end %>
+              </td>
+
+              <td class="text-end">
                 <% if decided %>
                   <div data-certification-inline-target="display">
                     <button
                       type="button"
-                      class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
+                      class="btn btn-outline-secondary btn-sm py-0 px-2"
                       data-action="certification-inline#toggleEdit"
                       title="<%= t('student_performance.certifications.index.edit_certification') %>"
                       aria-label="<%= t('student_performance.certifications.index.edit_certification') %>"
                     >
-                      <i class="bi bi-pencil"></i>
+                      <%= t("basics.edit") %>
                     </button>
                   </div>
                   <div data-certification-inline-target="edit" class="d-none">
-                    <div class="d-flex gap-1">
+                    <div class="d-flex gap-1 justify-content-end">
                       <button
                         type="button"
                         class="btn btn-sm btn-primary py-0 px-1"
@@ -575,7 +629,7 @@
                       "btn-success" : "btn-outline-success"
                     fail_btn = proposal&.proposed_status == :failed ?
                       "btn-danger" : "btn-outline-danger" %>
-                  <div class="d-flex gap-1">
+                  <div class="d-flex gap-1 justify-content-end">
                     <%= button_to(
                           lecture_student_performance_certifications_path(
                             @lecture
@@ -629,60 +683,6 @@
                         ) do %>
                       <i class="bi bi-x-lg"></i>
                     <% end %>
-                  </div>
-                <% end %>
-              </td>
-
-              <td class="hint-column small">
-                <% if @disagreeing_user_ids.include?(record.user_id) %>
-                  <span class="text-amber">
-                    <i class="bi bi-clock-history me-1"></i>
-                    <%= t("student_performance.certifications.columns.rule_today") %>
-                    <%= t("student_performance.certifications.rule_today.#{proposal.proposed_status}") %>
-
-                    <% reasons = proposal_reasons(proposal, @lecture) %>
-
-                    <% if reasons.any? %>
-                      &mdash;
-                      <%= reasons.join(", ") %>
-                    <% end %>
-                  </span>
-                <% elsif @stale_manual_user_ids.include?(record.user_id) %>
-                  <span class="text-muted">
-                    <i class="bi bi-clock-history me-1"></i>
-                    <%= t("student_performance.certifications.status.manual_stale") %>
-                  </span>
-                <% elsif proposal && !decided %>
-                  <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
-                    <span class="text-amber d-block">
-                      <i class="bi bi-question-circle me-1"></i>
-                      <%= deferral_text(proposal, reason) %>
-                    </span>
-                  <% end %>
-                  <% proposal.missed_criteria.each do |criterion| %>
-                    <span class="text-danger d-block">
-                      <i class="bi bi-x-circle me-1"></i>
-                      <%= t("student_performance.evaluator.missed.#{criterion}") %>
-                    </span>
-                  <% end %>
-                <% end %>
-              </td>
-
-              <td class="small note-column">
-                <% if decided %>
-                  <div data-certification-inline-target="display">
-                    <span class="text-muted"><%= cert.note %></span>
-                  </div>
-                  <div data-certification-inline-target="edit" class="d-none">
-                    <input
-                      type="text"
-                      data-certification-inline-target="noteInput"
-                      data-action="keydown.enter->certification-inline#save"
-                      class="form-control form-control-sm"
-                      value="<%= cert.note %>"
-                      placeholder="<%= t('student_performance.certifications.override.note_hint') %>"
-                      autocomplete="off"
-                    >
                   </div>
                 <% end %>
               </td>
