@@ -112,6 +112,24 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
           expect(response).to redirect_to(root_path)
           expect(ungrouped.reload.task_points).to be_empty
         end
+
+        # A blank row of a student who moved is the new group's: the bulk
+        # save asks the membership, as the single-row route does.
+        it "refuses the former group's tutor on a row of a student who moved" do
+          moved = FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                               user: student, tutorial: tutorial)
+          tutorial_membership.update!(tutorial: tutorial2)
+
+          patch point_multi_submissions_tutorial_path,
+                params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                          grading_scope_type: "tutorial",
+                          submissions: [{ "target" => "participation", "id" => moved.id,
+                                          "task_points" => { task.id => "3" } }].to_json },
+                as: :turbo_stream
+
+          expect(response.body).to include(I18n.t("assessment.errors.user_cannot_enter_points"))
+          expect(moved.reload.task_points).to be_empty
+        end
       end
 
       context "when assignment is not found" do

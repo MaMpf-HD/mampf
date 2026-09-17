@@ -118,8 +118,11 @@ module Assessment
 
         # Somebody in no group takes part in the lecture itself, and that is
         # the lecturer's to enter.
+        # The row is held by the student's current group while it is blank,
+        # as the single-row route decides it.
         def score_participation_entry!(entry, scorer, validated_scopes)
-          participation = Participation.find(entry["id"])
+          participation = Participation.find(entry["id"]).lock!
+          ParticipationIndex.follow_membership(participation)
 
           authorize_scope!(participation.tutorial || participation.assessment.lecture,
                            scorer, validated_scopes)
