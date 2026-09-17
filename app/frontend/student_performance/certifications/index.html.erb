@@ -551,6 +551,12 @@
                     </button>
                   </div>
                   <div data-certification-inline-target="edit" class="d-none">
+                    <%#
+                      Not a tick and a cross: those are "admit" and "refuse"
+                      two rows down. Saving looks like saving does in the
+                      marking tables; cancelling says so.
+                    %>
+
                     <div class="d-flex gap-1 justify-content-end">
                       <button
                         type="button"
@@ -559,17 +565,15 @@
                         title="<%= t('student_performance.certifications.index.save') %>"
                         aria-label="<%= t('student_performance.certifications.index.save') %>"
                       >
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-floppy-fill"></i>
                       </button>
 
                       <button
                         type="button"
-                        class="btn btn-sm btn-outline-secondary py-0 px-1"
+                        class="btn btn-sm btn-outline-secondary py-0 px-2"
                         data-action="certification-inline#cancel"
-                        title="<%= t('student_performance.certifications.index.cancel') %>"
-                        aria-label="<%= t('student_performance.certifications.index.cancel') %>"
                       >
-                        <i class="bi bi-x-lg"></i>
+                        <%= t("student_performance.certifications.index.cancel") %>
                       </button>
 
                       <%= button_to(
