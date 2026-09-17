@@ -1,9 +1,8 @@
 class TranscriptionToken
   ALGORITHM = "SHA256".freeze
-  VIDEO_TTL = 5.minutes
-  TRANSCRIPT_TTL = 1.hour
-  # The callback token must survive all RQ attempts and their job timeouts.
-  FAILED_TTL = 4.hours
+  VIDEO_TTL = 48.hours
+  TRANSCRIPT_TTL = 48.hours
+  FAILED_TTL = 48.hours
   PURPOSES = ["video", "transcript", "transcription_failed"].freeze
 
   class InvalidTokenError < StandardError; end
