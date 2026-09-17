@@ -29,13 +29,22 @@ class TutorialsController < ApplicationController
   def index
     authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order(deadline: :desc)
-    @assignment = Assignment.find_by(id: params[:assignment]) || current_assignment
+    # Only older data lacks the assessment; such an achievement has no table.
+    @achievements = @lecture.achievements.joins(:assessment).order(:title)
+    # The page shows one thing; an achievement asked for wins over a sheet.
+    @achievement = @achievements.find_by(id: params[:achievement])
+    @assignment = @assignments.find_by(id: params[:assignment]) unless @achievement
+    @assignment ||= current_assignment unless @achievement
+    # A lecture with achievements and no sheets yet opens on its first achievement.
+    @achievement ||= @achievements.first unless @assignment
     @tutorials = if current_user.editor_or_teacher_in?(@lecture)
       @lecture.tutorials
     else
       current_user.given_tutorials.where(lecture: @lecture)
     end
-    @tutorial = Tutorial.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
+    # Only a group the page offers: an achievement's table lists the group's
+    # members and seeds their rows.
+    @tutorial = @tutorials.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
 

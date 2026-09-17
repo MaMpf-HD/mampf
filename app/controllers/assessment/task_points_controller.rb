@@ -1,6 +1,7 @@
 module Assessment
   class TaskPointsController < ApplicationController
     include ExamStreams
+    include AchievementStreams
 
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_team,
@@ -23,7 +24,7 @@ module Assessment
     before_action :refuse_without_row, only: [:update_participation, :refresh_participation]
     before_action :refuse_unless_sheet, only: [:mark_as_participated, :remove_participated]
     before_action :refuse_unless_attended, only: [:mark_as_absent, :remove_absent]
-    before_action :refuse_unless_exam, only: [:mark_as_exempt, :remove_exempt]
+    before_action :refuse_unless_excusable, only: [:mark_as_exempt, :remove_exempt]
     before_action :refuse_before_test_week, only: :mark_as_absent
     before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
                                                    :remove_absent, :mark_as_exempt,
@@ -182,7 +183,7 @@ module Assessment
       def participation_row(participation = @participation)
         ParticipationRowComponent.new(participation: participation,
                                       assessment: @assessment,
-                                      table_option: :pointing,
+                                      table_option: table_option,
                                       grading_scope: table_scope)
       end
 
@@ -217,8 +218,10 @@ module Assessment
         unsupported_assessable
       end
 
-      def refuse_unless_exam
-        return if @assessable.is_a?(Exam)
+      # An exam's candidate or somebody on an achievement can be excused with a
+      # certificate; a sheet's exemption is recorded on the student's record.
+      def refuse_unless_excusable
+        return if @assessable.is_a?(Exam) || @assessable.is_a?(Achievement)
 
         unsupported_assessable
       end
@@ -283,8 +286,8 @@ module Assessment
       def participation_row_stream
         return exam_streams if @assessable.is_a?(Exam)
 
-        turbo_stream.replace("pointing-participation-row-#{@participation.id}",
-                             html: render_to_string(participation_row))
+        row = participation_row
+        turbo_stream.replace(row.row_id, html: render_to_string(row))
       end
 
       # An exam has nothing to hand in and no group; the service refuses the
@@ -299,8 +302,17 @@ module Assessment
       end
 
       # ExamStreams already includes the exam summaries.
+      def table_option
+        @assessable.is_a?(Achievement) ? :achievement : :pointing
+      end
+
       def summary_stream
         return [] if @assessable.is_a?(Exam)
+
+        if @assessable.is_a?(Achievement)
+          return [achievement_summary_stream(@assessable, table_scope),
+                  achievement_delete_button_stream(@assessable)]
+        end
 
         summary = TutorialPointingTableComponent.new(assignment: @assessable,
                                                      grading_scope: table_scope).summary
@@ -391,9 +403,9 @@ module Assessment
         @assessment = @participation.assessment
         @lecture = @assessment.lecture
         @assessable = @assessment.assessable
-        # Only a sheet's row is scored within a group; an exam's is the
-        # lecture's business, whatever its tutorial column may hold.
-        @tutorial = @participation.tutorial if @assessable.is_a?(Assignment)
+        # A sheet's or an achievement's row is scored within a group; an exam's is
+        # the lecture's business, whatever its tutorial column may hold.
+        @tutorial = @participation.tutorial unless @assessable.is_a?(Exam)
         return if @assessable
 
         respond_with_flash(:alert, t("assessment.task_points.participation_missing_assignment"),

@@ -1,21 +1,30 @@
-<% if @assignments.present? %>
+<% if @assignments.present? || @achievements.present? %>
 <div>
   <div class="row">
     <div class="col-12">
       <%= render partial: 'tutorials/header_index',
                locals: { assignment: @assignment,
-                          assignments: @assignments,
-                          tutorials: @tutorials,
-                          grading_scope: @tutorial,
+                         assignments: @assignments,
+                         achievement: @achievement,
+                         achievements: @achievements,
+                         tutorials: @tutorials,
+                         grading_scope: @tutorial,
                          tutorial: @tutorial,
                          stack: @stack } %>
     </div>
   </div>
   <div id="tutorial-table" class="m-3">
-    <%= render TutorialPointingTableComponent.new(
-      assignment: @assignment,
-      grading_scope: @tutorial
-    ) %>
+    <% if @achievement %>
+      <%= render AchievementMarkingTableComponent.new(
+        achievement: @achievement,
+        grading_scope: @tutorial
+      ) %>
+    <% else %>
+      <%= render TutorialPointingTableComponent.new(
+        assignment: @assignment,
+        grading_scope: @tutorial
+      ) %>
+    <% end %>
   </div>
 </div>
 <% else %>

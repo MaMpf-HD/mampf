@@ -5,19 +5,7 @@
         <h1 class="h3 mb-1"><%= achievement.title %></h1>
       </div>
 
-      <div class="d-flex gap-2">
-        <% if achievement.persisted? %>
-          <%= button_to t("basics.delete"),
-                        lecture_student_performance_achievement_path(lecture,
-                                                                    achievement),
-                        method: :delete,
-                        class: "btn btn-outline-danger btn-sm",
-                        data: {
-                          turbo_confirm:
-                            t("assessment.achievements.confirm_delete")
-                        } %>
-        <% end %>
-
+      <div>
         <%= link_to t("back"), back_path,
                     class: "btn btn-sm btn-outline-secondary",
                     data: { turbo_stream: true } %>
@@ -32,11 +20,16 @@
                original_achievement: original_achievement
              } %>
 
+  <%# Well away from "Back" at the top: the two must not sit side by side. %>
+  <%= render partial: "student_performance/achievements/delete_button",
+             locals: { achievement: achievement, lecture: lecture } %>
+
   <% if grading_enabled? %>
     <hr class="my-4">
     <h2 class="h5 mb-3"><%= t("assessment.grading") %></h2>
     <%= render AchievementMarkingTableComponent.new(
-      achievement: achievement
+      achievement: achievement,
+      grading_scope: lecture
     ) %>
   <% end %>
 </div>

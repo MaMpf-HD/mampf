@@ -57,8 +57,6 @@ export default class extends Controller {
     }
   }
 
-  // Grade options come from a select; GradeEntryService validates them.
-  // Only point inputs need the minimum-value check.
   onParticipationChanged(event) {
     if (this.validateNewPoint(event)) {
       this.markDirty("participation");
@@ -126,26 +124,26 @@ export default class extends Controller {
     }
   }
 
+  // Points and an achievement's value come through number inputs that sit
+  // outside the form they feed, so requestSubmit() never validates them. An
+  // unreadable number reads as "" and would clear the value; it stays put
+  // instead. A select has nothing to check.
   validateNewPoint(event) {
     const input = event.currentTarget;
-    const min = parseFloat(input.min);
-    const value = parseFloat(input.value);
-
-    if (Number.isNaN(value)) {
-      input.setCustomValidity("");
+    input.setCustomValidity("");
+    if (input.type !== "number") {
       return true;
     }
 
-    if (value < min) {
-      const message = input.dataset.belowMinMessage.replace("%{min}", min);
-      input.setCustomValidity(message);
-      input.reportValidity();
-      return false;
-    }
-    else {
-      input.setCustomValidity("");
+    const { badInput, rangeUnderflow, rangeOverflow } = input.validity;
+    if (!(badInput || rangeUnderflow || rangeOverflow)) {
       return true;
     }
+    if (rangeUnderflow && input.dataset.belowMinMessage) {
+      input.setCustomValidity(input.dataset.belowMinMessage.replace("%{min}", input.min));
+    }
+    input.reportValidity();
+    return false;
   }
 
   extractTasksPoints(pointInputTargets) {

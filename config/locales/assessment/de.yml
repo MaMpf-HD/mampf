@@ -27,7 +27,6 @@ de:
       errors:
         destroy_failed: 'Löschen des Zusatzkriteriums fehlgeschlagen.'
         not_found: 'Zusatzkriterium nicht gefunden.'
-        referenced_by_rules: 'Löschen nicht möglich: Zusatzkriterium wird von einer Regel referenziert.'
       subtitle: 'Zusätzliche Kriterien definieren, die Studierende über Punkte hinaus erfüllen müssen.'
       new: 'Neues Zusatzkriterium'
       edit: 'Zusatzkriterium bearbeiten'
@@ -43,14 +42,22 @@ de:
       no_achievements_yet: 'Noch keine Zusatzkriterien angelegt.'
       confirm_delete: 'Zusatzkriterium wirklich löschen?'
       marking:
-        marked: 'bewertet'
-        met_label: 'erfüllt'
         value: 'Wert'
-        status: 'Status'
         met: 'Erfüllt'
         not_met: 'Nicht erfüllt'
-        unmarked: 'Noch nicht bewertet'
-        no_participations: 'Noch keine Teilnahmen vorhanden.'
+        unmarked: 'Noch kein Wert'
+        exempt: 'Befreit'
+        threshold: 'Schwelle'
+        value_for: 'Wert für %{name}'
+        select_label: 'Blatt, Test oder Kriterium'
+        exempt_title: 'Vom Kriterium befreien'
+        save_row: 'Wert dieser Zeile speichern'
+        reload_row: 'Gespeicherten Wert neu laden; ungespeicherte Änderungen gehen verloren'
+        pass: 'erfüllt'
+        fail: 'nicht erfüllt'
+        saved: 'Wert gespeichert.'
+        invalid_value: '„%{value}“ ist kein Wert für ein Kriterium vom Typ %{kind}.'
+        no_members: 'Hier ist noch niemand, für den ein Wert einzutragen wäre.'
     assignment: 'Hausaufgabe'
     assignments: 'Hausaufgaben'
     exam: 'Prüfung'
@@ -78,6 +85,9 @@ de:
     not_destructible:
       has_submissions: 'Löschen nicht möglich: Abgaben vorhanden'
       has_grading_data: 'Löschen nicht möglich: Bewertungsdaten vorhanden'
+    achievement_not_destructible:
+      has_values: 'Löschen nicht möglich: Es sind schon Werte oder Befreiungen eingetragen'
+      referenced_by_rules: 'Löschen nicht möglich: Eine Regel verlangt dieses Zusatzkriterium'
     exam_not_destructible:
       roster_not_empty: 'Löschen nicht möglich: Registrierte Teilnehmer vorhanden'
       in_campaign: 'Löschen nicht möglich: Anmeldung wurde bereits geöffnet oder abgeschlossen'
@@ -326,6 +336,9 @@ de:
         pending_grading: '%{count} noch nicht bewertet'
         not_submitted: '%{count} nicht abgegeben'
         awaiting_record: '%{count} noch nicht erfasst'
+        met: '%{count} erfüllt'
+        not_met: '%{count} nicht erfüllt'
+        unmarked: '%{count} ohne Wert'
         exempt: '%{count} befreit'
         absent: '%{count} abwesend'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id}'
@@ -517,10 +530,16 @@ de:
     attributes:
       assignment:
         kind: "Art"
+      achievement:
+        value_type: "Typ"
     errors:
       messages:
         immutable: "kann nach dem Anlegen nicht mehr geändert werden"
       models:
+        achievement:
+          attributes:
+            value_type:
+              fixed_by_values: "kann nicht mehr geändert werden, sobald Werte eingetragen sind"
         assessment/task:
           attributes:
             base:

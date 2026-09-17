@@ -20,7 +20,7 @@ module Assessment
     # is lost, because the way in from `reviewed` is refused below.
     def mark_exempt(participation, note: nil)
       participation.with_lock do
-        validate_not_reviewed!(participation, :exempt)
+        validate_not_reviewed!(participation, :exempt) unless achievement?(participation)
 
         attrs = { status: :exempt, submitted_at: nil,
                   grade_numeric: nil, grader: nil, graded_at: nil }
@@ -68,6 +68,12 @@ module Assessment
 
       def status_word(status)
         I18n.t("assessment.grading_exam.status_word.#{status}")
+      end
+
+      # An achievement's row carries a value, never marks that an exemption
+      # would throw away; a certificate may come after the value.
+      def achievement?(participation)
+        participation.assessment&.assessable.is_a?(Achievement)
       end
   end
 end

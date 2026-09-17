@@ -42,10 +42,16 @@ module Demo
         lecture.achievements.where(title: demo_achievement_titles).order(:title)
       end
 
+      # The demo's own values go first: an achievement with values entered
+      # refuses to be deleted, and rightly so outside the demo.
       def reset_demo_performance!(lecture)
-        lecture.student_performance_records.delete_all
-
-        demo_achievements(lecture).find_each(&:destroy!)
+        ApplicationRecord.transaction do
+          demo_achievements(lecture).find_each do |achievement|
+            achievement.assessment&.assessment_participations&.delete_all
+            achievement.destroy!
+          end
+          lecture.student_performance_records.delete_all
+        end
 
         Rails.logger.debug("Reset demo achievements and performance records.")
       end
@@ -67,7 +73,7 @@ module Demo
             assessment.assessment_participations.create!(
               user_id: user_id,
               tutorial_id: tutorial_id,
-              status: :reviewed
+              status: :pending
             )
           end
         end

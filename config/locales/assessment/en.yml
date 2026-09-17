@@ -27,7 +27,6 @@ en:
       errors:
         destroy_failed: 'Failed to delete achievement.'
         not_found: 'Achievement not found.'
-        referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
       subtitle: 'Define additional criteria students must fulfill beyond points.'
       new: 'New Achievement'
       edit: 'Edit Achievement'
@@ -43,14 +42,22 @@ en:
       no_achievements_yet: 'No achievements defined yet.'
       confirm_delete: 'Really delete this achievement?'
       marking:
-        marked: 'graded'
-        met_label: 'met'
         value: 'Value'
-        status: 'Status'
         met: 'Met'
         not_met: 'Not met'
-        unmarked: 'Not yet graded'
-        no_participations: 'No participations yet.'
+        unmarked: 'No value yet'
+        exempt: 'Excused'
+        threshold: 'threshold'
+        value_for: 'Value for %{name}'
+        select_label: 'Sheet, test or achievement'
+        exempt_title: 'Excuse from the achievement'
+        save_row: "Save this row's value"
+        reload_row: 'Reload the saved value; unsaved changes are lost'
+        pass: 'met'
+        fail: 'not met'
+        saved: 'Value saved.'
+        invalid_value: '"%{value}" is not a value for a %{kind} achievement.'
+        no_members: 'Nobody to enter a value for yet.'
     assignment: 'Assignment'
     assignments: 'Assignments'
     exam: 'Exam'
@@ -78,6 +85,9 @@ en:
     not_destructible:
       has_submissions: 'Cannot delete: Submissions exist'
       has_grading_data: 'Cannot delete: Grading data exists'
+    achievement_not_destructible:
+      has_values: 'Cannot delete: Values or exemptions have been entered'
+      referenced_by_rules: 'Cannot delete: A rule requires this achievement'
     exam_not_destructible:
       roster_not_empty: 'Cannot delete: Registered participants exist'
       in_campaign: 'Cannot delete: Registration is already open or completed'
@@ -326,6 +336,9 @@ en:
         pending_grading: '%{count} pending grading'
         not_submitted: '%{count} not submitted'
         awaiting_record: '%{count} not yet recorded'
+        met: '%{count} met'
+        not_met: '%{count} not met'
+        unmarked: '%{count} without a value'
         exempt: '%{count} exempt'
         absent: '%{count} absent'
       no_user_for_config: 'No user for participation %{participation_id}'
@@ -517,10 +530,16 @@ en:
     attributes:
       assignment:
         kind: "Kind"
+      achievement:
+        value_type: "Type"
     errors:
       messages:
         immutable: "cannot be changed after creation"
       models:
+        achievement:
+          attributes:
+            value_type:
+              fixed_by_values: "cannot be changed once values have been entered"
         assessment/task:
           attributes:
             base:

@@ -2,7 +2,7 @@
 # statuses.
 class PointingSummaryComponent < ViewComponent::Base
   PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
-           :exempt, :absent].freeze
+           :met, :not_met, :unmarked, :exempt, :absent].freeze
 
   # A talk's rows have nothing handed in to count. An exam draws two tables
   # on one page, so the second line needs an id of its own to be replaced.

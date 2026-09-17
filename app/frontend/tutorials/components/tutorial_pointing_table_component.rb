@@ -52,13 +52,14 @@ class TutorialPointingTableComponent < ViewComponent::Base
   def preload_participations(non_submitters, submissions, groups)
     return {} unless @assignment.assessment
 
-    seed_test_rows(non_submitters, groups) if @assignment.kind_test?
+    assessment = @assignment.assessment
+    if @assignment.kind_test?
+      return Assessment::ParticipationIndex.rows_for(assessment, non_submitters, groups)
+    end
+
     user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
-    rows = Assessment::Participation
-           .where(user_id: user_ids, assessment: @assignment.assessment)
-           .includes(:user, :task_points, :tutorial, :assessment)
-           .index_by(&:user_id)
-    rehome_blank_rows(rows, groups)
+    rows = Assessment::ParticipationIndex.load_rows(assessment, user_ids)
+    Assessment::ParticipationIndex.rehome_blank_rows(rows, groups)
     rows
   end
 
@@ -67,33 +68,6 @@ class TutorialPointingTableComponent < ViewComponent::Base
   # row behind, so the page's own group is not the answer.
   def groups_of(users)
     users.to_h { |user| [user.id, membership_tutorials[user.id]] }
-  end
-
-  # Blank participations must follow tutorial membership so the current tutor
-  # can enter points; recorded work must stay with its original tutorial.
-  # Points may land on the row between this page's read and its write, so
-  # the row is read again under the lock the point entry takes.
-  def rehome_blank_rows(rows, groups)
-    rows.each_value do |row|
-      next unless groups.key?(row.user_id) && blank?(row)
-      next if row.tutorial_id == groups[row.user_id]&.id
-
-      row.with_lock { row.update!(tutorial: groups[row.user_id]) if blank?(row) }
-    end
-  end
-
-  # Points taken back again leave task points of nil behind; those carry
-  # nothing either.
-  def blank?(row)
-    row.pending? && row.submitted_at.nil? && !row.results_visible?
-  end
-
-  def seed_test_rows(users, groups)
-    @assignment.assessment.seed_participations_from!(
-      user_ids: users.map(&:id),
-      tutorial_mapping: users.to_h { |user| [user.id, groups[user.id]&.id] },
-      recompute: false
-    )
   end
 
   def team_participations(submission)

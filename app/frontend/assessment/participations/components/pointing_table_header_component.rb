@@ -47,6 +47,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
       when :status, :status_compact then t("assessment.grading_tutorial.status")
       when :hand_in then t("basics.submission")
       when :correction then t("basics.correction")
+      when :value then t("assessment.achievements.marking.value")
       else t("assessment.grade_talk_row.#{column}")
       end
     end
@@ -54,7 +55,7 @@ class PointingTableHeaderComponent < ViewComponent::Base
     def team_label
       case @assessable
       when Talk then t("assessment.grade_talk_row.speaker")
-      when Exam then t("basics.name")
+      when Exam, Achievement then t("basics.name")
       else t("basics.team")
       end
     end
@@ -62,9 +63,22 @@ class PointingTableHeaderComponent < ViewComponent::Base
     # A correction may be any type the uploader takes, whatever the sheet
     # asked for; only the hand-in's type is known here.
     def sublabel_for(column)
-      return unless column == :hand_in
+      case column
+      when :hand_in then "(#{@assessable.accepted_file_type})"
+      when :value then threshold_label
+      end
+    end
 
-      "(#{@assessable.accepted_file_type})"
+    # What the value is measured against, over the column that takes it.
+    def threshold_label
+      return if @assessable.boolean? || @assessable.threshold.blank?
+
+      unit = @assessable.percentage? ? " %" : ""
+      "(#{t("assessment.achievements.marking.threshold")} #{format_threshold}#{unit})"
+    end
+
+    def format_threshold
+      @assessable.threshold.to_s.sub(/\.0+\z/, "")
     end
 
     def task_column(task)
