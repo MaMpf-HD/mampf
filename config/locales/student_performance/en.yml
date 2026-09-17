@@ -247,9 +247,6 @@ en:
         cancel: "Cancel"
         save: "Save Override"
       flash:
-        created: "Decision saved."
-        updated: "Decision updated."
-        reset_one: "Decision reset."
         reset:
           one: "%{count} decision reset."
           other: "%{count} decisions reset."

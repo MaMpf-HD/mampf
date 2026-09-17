@@ -69,9 +69,9 @@ module StudentPerformance
         rule: @rule
       )
 
+      # The row shows the decision; only a refusal needs words.
       if cert.save
-        redirect_to return_to_path,
-                    notice: I18n.t("student_performance.certifications.flash.created")
+        redirect_to return_to_path
       else
         redirect_to return_to_path,
                     alert: cert.errors.full_messages.first
@@ -206,8 +206,7 @@ module StudentPerformance
       )
 
       if cert.save
-        redirect_to return_to_path,
-                    notice: I18n.t("student_performance.certifications.flash.updated")
+        redirect_to return_to_path
       else
         redirect_to return_to_path,
                     alert: cert.errors.full_messages.first
@@ -220,8 +219,7 @@ module StudentPerformance
     def destroy
       @certification.destroy!
 
-      redirect_to return_to_path,
-                  notice: I18n.t("student_performance.certifications.flash.reset_one")
+      redirect_to return_to_path
     end
 
     private

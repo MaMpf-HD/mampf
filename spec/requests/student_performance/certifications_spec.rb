@@ -1416,15 +1416,15 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(cert.certified_at).to be_within(5.seconds).of(Time.current)
       end
 
-      it "shows a success flash message" do
+      # The row shows the decision; a bar on top would only push it away.
+      it "comes back to the table without a flash" do
         patch lecture_student_performance_certification_path(lecture, cert),
               params: { certification: {
                 status: "passed", note: "Re-evaluation"
               } }
+        expect(flash[:notice]).to be_nil
         follow_redirect!
-        expect(response.body).to include(
-          I18n.t("student_performance.certifications.flash.updated")
-        )
+        expect(response).to have_http_status(:ok)
       end
 
       it "allows override without a note" do
@@ -1845,13 +1845,11 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(StudentPerformance::Certification.exists?(manual.id)).to be(false)
       end
 
-      it "says so" do
+      it "comes back to the table without a flash" do
         delete lecture_student_performance_certification_path(lecture, cert)
-        follow_redirect!
 
-        expect(response.body).to include(
-          I18n.t("student_performance.certifications.flash.reset_one")
-        )
+        expect(flash[:notice]).to be_nil
+        expect(response).to redirect_to(lecture_student_performance_certifications_path(lecture))
       end
     end
 

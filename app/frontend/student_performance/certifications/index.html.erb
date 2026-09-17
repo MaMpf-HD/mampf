@@ -65,14 +65,11 @@
 
   <%= turbo_frame_tag "rule-editor-frame" do %>
     <%#
-      A frame swap discards the layout's flash. The row shows what a decision
-      did, so only a refusal travels inside the frame - a confirmation on top
-      would push the row that was clicked out of place.
+      A frame swap discards the layout's flash, so it travels inside the
+      frame. A single row's decision sets none - the row shows it - so no
+      bar pushes the row that was clicked out of place.
     %>
-
-    <% if turbo_frame_request? && (flash[:alert] || flash[:error]) %>
-      <%= render partial: "flash/message" %>
-    <% end %>
+    <%= render partial: "flash/message" if turbo_frame_request? %>
 
     <% if @rule %>
       <div class="bg-light rounded border mt-3 mb-4 py-2 px-3">

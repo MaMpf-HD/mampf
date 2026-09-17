@@ -247,9 +247,6 @@ de:
         cancel: "Abbrechen"
         save: "Überschreibung speichern"
       flash:
-        created: "Zulassung gespeichert."
-        updated: "Zulassung aktualisiert."
-        reset_one: "Zulassung zurückgesetzt."
         reset:
           one: "%{count} Zulassung zurückgesetzt."
           other: "%{count} Zulassungen zurückgesetzt."
