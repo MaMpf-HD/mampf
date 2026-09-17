@@ -63,53 +63,41 @@ module Assessment
     # On first apply, grades all reviewed participations. On re-apply
     # (same config), grades participations with no grade yet - late-reviewed
     # students - and re-grades those the scheme graded before whose points
-    # changed since; a grade entered by hand is never touched. Returns how
-    # many were newly graded and how many re-graded.
+    # changed since; a grade entered by hand is never touched. Every row is
+    # read again under its lock before it is written: a grade entered by hand
+    # between the selection and the write is a decision, and stays. Returns
+    # how many were newly graded and how many re-graded.
     def apply!(applied_by:)
-      target = if already_applied?
-        ungraded_reviewed_participations
-      else
-        reviewed_participations
-      end
-
-      absent_target = if already_applied?
-        ungraded_absent_participations
-      else
-        absent_participations
-      end
-
-      changed = already_applied? ? changed_since_scheme_graded : []
-      counts = { graded: target.count + absent_target.count, regraded: changed.size }
-      return counts if already_applied? && counts.values.all?(&:zero?)
-
+      counts = { graded: 0, regraded: 0 }
       now = Time.current
 
       Participation.transaction do
-        (target.to_a + changed).each do |participation|
-          grade = compute_grade_for(participation)
-          participation.update!(
-            grade_numeric: grade,
-            grade_scheme: @scheme,
-            grader: applied_by,
-            graded_at: now
-          )
+        target = already_applied? ? ungraded_reviewed_participations : reviewed_participations
+        target.find_each do |participation|
+          next unless still_ungraded?(participation)
+
+          write_grade(participation, compute_grade_for(participation), applied_by, now)
+          counts[:graded] += 1
         end
 
+        if already_applied?
+          changed_since_scheme_graded.each do |participation|
+            next unless still_changed_scheme_grade?(participation)
+
+            write_grade(participation, compute_grade_for(participation), applied_by, now)
+            counts[:regraded] += 1
+          end
+        end
+
+        absent_target = already_applied? ? ungraded_absent_participations : absent_participations
         absent_target.find_each do |participation|
-          participation.update!(
-            grade_numeric: FAILING_GRADE,
-            grade_scheme: @scheme,
-            grader: applied_by,
-            graded_at: now
-          )
+          next unless still_ungraded?(participation)
+
+          write_grade(participation, FAILING_GRADE, applied_by, now)
+          counts[:graded] += 1
         end
 
-        unless already_applied?
-          @scheme.update!(
-            applied_at: now,
-            applied_by: applied_by
-          )
-        end
+        @scheme.update!(applied_at: now, applied_by: applied_by) unless already_applied?
       end
 
       counts
@@ -145,6 +133,24 @@ module Assessment
     end
 
     private
+
+      def write_grade(participation, grade, applied_by, now)
+        participation.update!(grade_numeric: grade, grade_scheme: @scheme,
+                              grader: applied_by, graded_at: now)
+      end
+
+      # A first apply grades every reviewed row; a re-apply only those still
+      # without a grade once the lock is held.
+      def still_ungraded?(participation)
+        participation.lock!
+        !already_applied? || participation.grade_numeric.nil?
+      end
+
+      def still_changed_scheme_grade?(participation)
+        participation.lock!
+        participation.reviewed? && participation.grade_scheme_id == @scheme.id &&
+          participation.points_changed_after_grading?
+      end
 
       def reviewed_participations
         @assessment.assessment_participations.where(status: :reviewed)

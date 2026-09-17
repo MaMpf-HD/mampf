@@ -215,6 +215,27 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         expect(untouched.reload.grade_numeric).to eq(1.0)
       end
 
+      # The rows are chosen, then written one by one; a grade typed in
+      # between is the lecturer's and must survive the write.
+      it "leaves a grade entered by hand between the selection and the write" do
+        row = create_reviewed_participation(points: 55)
+        applier.apply!(applied_by: professor)
+        FactoryBot.create(:assessment_task_point, assessment_participation: row,
+                                                  task: exam_task, points: 30)
+        row.update!(points_total: 30)
+        allow(applier).to receive(:changed_since_scheme_graded).and_wrap_original do |select|
+          rows = select.call
+          Assessment::GradeEntryService.set_grade(row, { grade_numeric: 2.0 }, professor)
+          rows
+        end
+
+        counts = applier.apply!(applied_by: professor)
+
+        expect(counts).to eq({ graded: 0, regraded: 0 })
+        expect(row.reload.grade_numeric).to eq(2.0)
+        expect(row.grade_scheme).to be_nil
+      end
+
       it "is a no-op when already applied and no ungraded participations" do
         create_reviewed_participation(points: 55)
         applier.apply!(applied_by: professor)
