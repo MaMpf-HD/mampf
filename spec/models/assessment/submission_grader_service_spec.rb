@@ -192,6 +192,21 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(row.reload).to be_reviewed
     end
 
+    # Rows come and go per member; the points are wherever a member has them.
+    it "reads the team's points off whichever member has them" do
+      second = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: second)
+      FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: second)
+      team.users << second
+      described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
+      assessment.assessment_participations.find_by(user: partner).destroy!
+
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(team.users.first).to eq(partner)
+      expect(row.task_points.find_by(task: task).points).to eq(7)
+    end
+
     # The newcomer hears from the tutor; the partner hears of a join as ever.
     it "tells the newcomer and the team" do
       partner.update!(email_for_submission_join: true)

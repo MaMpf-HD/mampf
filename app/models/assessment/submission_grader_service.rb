@@ -202,15 +202,18 @@ module Assessment
           I18n.t("assessment.task_points.marked_on_own", name: user.tutorial_name)
         end
 
-        # What one teammate already has, per task; nil points are nothing.
+        # What the team already has, per task, read off the first teammate
+        # with any points; nil points are nothing.
         def team_points(submission, newcomer)
-          teammate = (submission.users - [newcomer]).first
-          return {} unless teammate && submission.assignment.assessable?
+          return {} unless submission.assignment.assessable?
 
-          row = submission.assignment.assessment.assessment_participations.find_by(user: teammate)
-          return {} unless row
+          scored = submission.assignment.assessment.assessment_participations
+                             .where(user: submission.users - [newcomer])
+                             .includes(:task_points)
+                             .find { |row| row.task_points.any? { |tp| tp.points.present? } }
+          return {} unless scored
 
-          row.task_points.where.not(points: nil).pluck(:task_id, :points).to_h
+          scored.task_points.filter_map { |tp| [tp.task_id, tp.points] if tp.points.present? }.to_h
         end
 
         def validate_submission_present(submission)
