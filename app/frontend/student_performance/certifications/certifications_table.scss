@@ -17,3 +17,27 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+// A count in every pill, quiet enough not to be a second row of figures:
+// body-coloured on the page's grey, the active pill's on white.
+.count-pills {
+  .nav-link {
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+
+    &.active {
+      color: white;
+    }
+  }
+
+  .badge {
+    color: var(--bs-body-color);
+    background: var(--bs-tertiary-bg);
+    font-size: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nav-link.active .badge {
+    background: white;
+  }
+}

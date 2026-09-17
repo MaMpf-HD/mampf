@@ -131,18 +131,21 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                             lecture: lecture, user: user_c)
         end
 
-        it "shows correct summary counts" do
+        # The counts sit in the filter pills: each says how many and leads
+        # to them.
+        it "counts every state in its filter pill" do
+          [user_a, user_b, user_c].each do |user|
+            FactoryBot.create(:student_performance_record, lecture: lecture, user: user)
+          end
+
           get lecture_student_performance_certifications_path(lecture)
-          body = response.body
-          expect(body).to include(
-            I18n.t("student_performance.certifications.index.passed")
-          )
-          expect(body).to include(
-            I18n.t("student_performance.certifications.index.failed")
-          )
-          expect(body).to include(
-            I18n.t("student_performance.certifications.index.uncertified")
-          )
+
+          pills = Nokogiri::HTML(response.body).css(".count-pills a").to_h do |pill|
+            [pill.text.squish.sub(/ \d+\z/, ""), pill.at_css(".badge").text.to_i]
+          end
+          filters = I18n.t("student_performance.certifications.filters")
+          expect(pills).to eq({ filters[:all] => 3, filters[:passed] => 1, filters[:failed] => 1,
+                                filters[:uncertified] => 1, filters[:flagged] => 0 })
         end
 
         it "shows certification badges for each student" do

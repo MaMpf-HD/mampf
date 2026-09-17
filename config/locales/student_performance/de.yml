@@ -179,10 +179,6 @@ de:
       index:
         subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
         assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter und Tests an und setze im Reiter %{tab} das Häkchen „Die Liste der Blätter und Tests ist vollständig“."
-        total: "Studierende gesamt"
-        passed: "Zugelassen"
-        failed: "Nicht zugelassen"
-        uncertified: "Offen"
         list_open: "Blätterliste noch offen — die Regel entscheidet derzeit nichts."
         list_open_link: "Zum Reiter %{tab}"
         todo_title: "Zu klären"

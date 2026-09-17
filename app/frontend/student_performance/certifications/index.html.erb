@@ -182,73 +182,6 @@
     <% end %>
   <% end %>
 
-  <% if @total_students > 0 %>
-    <div class="progress mb-3" style="height: 6px;">
-      <div
-        class="progress-bar bg-success"
-        role="progressbar"
-        style="width: <%= (@passed_count.to_f / @total_students * 100) %>%;"
-        aria-label="<%= t("student_performance.certifications.index.passed") %>"
-      ></div>
-
-      <div
-        class="progress-bar bg-danger"
-        role="progressbar"
-        style="width: <%= (@failed_count.to_f / @total_students * 100) %>%;"
-        aria-label="<%= t("student_performance.certifications.index.failed") %>"
-      ></div>
-
-      <div
-        class="progress-bar bg-amber"
-        role="progressbar"
-        style="width: <%= (@uncertified_count.to_f / @total_students * 100) %>%;"
-        aria-label="<%= t("student_performance.certifications.index.uncertified") %>"
-      ></div>
-    </div>
-  <% end %>
-
-  <div class="d-flex flex-wrap gap-5 mb-4">
-    <div class="d-flex flex-column">
-      <span class="fs-5 fw-bold text-dark lh-1 mb-1">
-        <%= @total_students %>
-      </span>
-
-      <span class="text-muted small">
-        <%= t("student_performance.certifications.index.total") %>
-      </span>
-    </div>
-
-    <div class="d-flex flex-column">
-      <span class="fs-5 fw-bold text-success lh-1 mb-1">
-        <%= @passed_count %>
-      </span>
-
-      <span class="text-muted small">
-        <%= t("student_performance.certifications.index.passed") %>
-      </span>
-    </div>
-
-    <div class="d-flex flex-column">
-      <span class="fs-5 fw-bold text-danger lh-1 mb-1">
-        <%= @failed_count %>
-      </span>
-
-      <span class="text-muted small">
-        <%= t("student_performance.certifications.index.failed") %>
-      </span>
-    </div>
-
-    <div class="d-flex flex-column">
-      <span class="fs-5 fw-bold text-amber lh-1 mb-1">
-        <%= @uncertified_count %>
-      </span>
-
-      <span class="text-muted small">
-        <%= t("student_performance.certifications.index.uncertified") %>
-      </span>
-    </div>
-  </div>
-
   <% if @flagged_user_ids.any? %>
     <div class="alert alert-warning py-2 mb-4">
       <div class="small fw-semibold text-uppercase mb-1">
@@ -295,22 +228,30 @@
   <% end %>
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
-    <nav class="nav nav-pills small">
+    <%#
+      The counts are the page's summary: each says how many there are and
+      leads to them. "Flagged" stands apart because it cuts across the other
+      three. The search travels with the pill: a name typed in and then
+      narrowed to "flagged" is still the name staff are looking for.
+    %>
+
+    <nav class="nav nav-pills small count-pills align-items-center">
       <% %i[all passed failed uncertified flagged].each do |filter| %>
         <% active = (params[:status].presence || "all") == filter.to_s %>
 
-        <%#
-          The search travels with the pill: a name typed in and then narrowed
-          to "flagged" is still the name staff are looking for.
-        %>
+        <% if filter == :flagged %>
+          <span class="vr mx-2 align-self-stretch"></span>
+        <% end %>
 
         <%= link_to lecture_student_performance_certifications_path(
                       @lecture,
                       status: filter == :all ? nil : filter,
                       q: params[:q].presence),
-                   class: "nav-link rounded-pill py-1 px-3 #{'active' if active} #{'text-muted' unless active}",
+                   class: "nav-link rounded-pill py-1 px-2 d-inline-flex align-items-center gap-2 #{'active' if active}",
+                   aria: { current: ("page" if active) },
                    data: { turbo_frame: "performance-certifications-frame" } do %>
           <%= t("student_performance.certifications.filters.#{filter}") %>
+          <span class="badge rounded-pill"><%= @filter_counts[filter] %></span>
         <% end %>
       <% end %>
     </nav>

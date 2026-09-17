@@ -179,10 +179,6 @@ en:
       index:
         subtitle: "Review eligibility proposals and approve students for the exam."
         assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable. Create the missing assignments and tests and tick \"The list of sheets and tests is complete\" on the %{tab} tab."
-        total: "Total Students"
-        passed: "Eligible"
-        failed: "Not Eligible"
-        uncertified: "Undecided"
         list_open: "Assignment list still open — the rule decides nothing for now."
         list_open_link: "Go to the %{tab} tab"
         todo_title: "To settle"

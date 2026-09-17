@@ -30,6 +30,8 @@ module StudentPerformance
       compute_summary_counts
       compute_proposal_counts if @rule
       flag_certifications
+      @filter_counts = { all: @total_students, passed: @passed_count, failed: @failed_count,
+                         uncertified: @uncertified_count, flagged: @flagged_user_ids.size }
       @achievements = if @rule
         @rule.required_achievements.order(:title)
       else
