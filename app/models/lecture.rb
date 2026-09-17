@@ -133,6 +133,8 @@ class Lecture < ApplicationRecord
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_media
   after_save :touch_lessons
+  after_update_commit :sync_mampfsearch_hierarchy_if_course_changed
+
   after_save :touch_chapters
   after_save :touch_sections
 
@@ -922,6 +924,17 @@ class Lecture < ApplicationRecord
   end
 
   private
+
+    def sync_mampfsearch_hierarchy_if_course_changed
+      return unless saved_change_to_course_id?
+
+      affected = Medium.where(teachable_type: "Lecture", teachable_id: id)
+                       .or(Medium.where(teachable_type: "Lesson",
+                                        teachable_id: lessons.select(:id)))
+                       .or(Medium.where(teachable_type: "Talk",
+                                        teachable_id: talks.select(:id)))
+      MampfsearchMetadataSyncJob.enqueue_for(affected)
+    end
 
     # used for after save callback
     def remove_teacher_as_editor

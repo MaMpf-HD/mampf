@@ -140,6 +140,7 @@ class Medium < ApplicationRecord
   after_destroy_commit :purge_from_mampfsearch
   after_update_commit :purge_from_mampfsearch_if_video_detached
   after_save_commit :trigger_transcription_if_video_attached_or_changed
+  after_update_commit :sync_mampfsearch_hierarchy_if_changed
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_teachable
@@ -1188,5 +1189,12 @@ class Medium < ApplicationRecord
       return unless not_transcribed?
 
       MampfsearchIngestJob.perform_later(id)
+    end
+
+    def sync_mampfsearch_hierarchy_if_changed
+      return unless saved_change_to_teachable_id? || saved_change_to_teachable_type?
+      return unless transcribable? && completed?
+
+      MampfsearchMetadataSyncJob.perform_later(id)
     end
 end

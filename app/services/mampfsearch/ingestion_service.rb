@@ -43,7 +43,7 @@ module Mampfsearch
       transcription_failed_url = "#{base_url}#{transcription_failed_path}?" \
                                  "token=#{ERB::Util.url_encode(failed_token)}"
 
-      hierarchy = resolve_teachable_hierarchy
+      hierarchy = Hierarchy.for(@medium)
 
       SearchClient.instance.transcribe_lesson(
         media_rails_id: @medium.id,
@@ -63,33 +63,6 @@ module Mampfsearch
         host = ENV.fetch("URL_HOST")
         protocol = Rails.application.config.force_ssl ? "https" : "http"
         "#{protocol}://#{host}"
-      end
-
-      def resolve_teachable_hierarchy
-        lesson = nil
-        lecture = nil
-        course = nil
-
-        case @medium.teachable
-        when Lesson
-          lesson = @medium.teachable
-          lecture = lesson.lecture
-          course = lecture&.course
-        when Talk
-          lecture = @medium.teachable.lecture
-          course = lecture&.course
-        when Lecture
-          lecture = @medium.teachable
-          course = lecture.course
-        when Course
-          course = @medium.teachable
-        end
-
-        {
-          lesson_rails_id: lesson&.id,
-          lecture_rails_id: lecture&.id,
-          course_rails_id: course&.id
-        }
       end
   end
 end

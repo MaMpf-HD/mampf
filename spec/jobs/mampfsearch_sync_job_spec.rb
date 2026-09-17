@@ -6,6 +6,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
   before do
     allow(SearchClient).to receive(:instance).and_return(search_client)
     allow(search_client).to receive(:list_media_versions).and_return({})
+    allow(search_client).to receive(:list_media_hierarchies).and_return(nil)
   end
 
   describe "#recover_stuck_jobs" do
@@ -85,6 +86,57 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
   end
 
   describe "#reconcile_search_index" do
+    it "queues metadata sync for an indexed video with a different hierarchy" do
+      medium = FactoryBot.create(:lesson_medium, :with_video,
+                                 transcription_status: :completed)
+      hierarchy = Mampfsearch::Hierarchy.for(medium)
+      allow(search_client).to receive(:list_media_versions)
+        .and_return(medium.id => medium.video_fingerprint)
+      allow(search_client).to receive(:list_media_hierarchies)
+        .and_return(medium.id => [hierarchy[:course_rails_id], 0,
+                                  hierarchy[:lesson_rails_id],
+                                  hierarchy[:course_rails_id],
+                                  hierarchy[:lecture_rails_id]])
+
+      expect(MampfsearchMetadataSyncJob).to receive(:perform_later).with(medium.id)
+      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+
+      described_class.perform_now
+    end
+
+    it "skips metadata sync when the indexed hierarchy matches" do
+      medium = FactoryBot.create(:lesson_medium, :with_video,
+                                 transcription_status: :completed)
+      hierarchy = Mampfsearch::Hierarchy.for(medium)
+      allow(search_client).to receive(:list_media_versions)
+        .and_return(medium.id => medium.video_fingerprint)
+      allow(search_client).to receive(:list_media_hierarchies)
+        .and_return(medium.id => [hierarchy[:course_rails_id],
+                                  hierarchy[:lecture_rails_id],
+                                  hierarchy[:lesson_rails_id],
+                                  hierarchy[:course_rails_id],
+                                  hierarchy[:lecture_rails_id]])
+
+      expect(MampfsearchMetadataSyncJob).not_to receive(:perform_later)
+      described_class.perform_now
+    end
+
+    it "repairs a stale parent link even if the medium IDs match" do
+      medium = FactoryBot.create(:lesson_medium, :with_video,
+                                 transcription_status: :completed)
+      hierarchy = Mampfsearch::Hierarchy.for(medium)
+      allow(search_client).to receive(:list_media_versions)
+        .and_return(medium.id => medium.video_fingerprint)
+      allow(search_client).to receive(:list_media_hierarchies)
+        .and_return(medium.id => [hierarchy[:course_rails_id],
+                                  hierarchy[:lecture_rails_id],
+                                  hierarchy[:lesson_rails_id],
+                                  hierarchy[:course_rails_id], 0])
+
+      expect(MampfsearchMetadataSyncJob).to receive(:perform_later).with(medium.id)
+      described_class.perform_now
+    end
+
     it "invalidates an older version and re-ingests the completed video" do
       medium = FactoryBot.create(:valid_medium, :with_video,
                                  transcription_status: :completed)

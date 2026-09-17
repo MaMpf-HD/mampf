@@ -226,6 +226,44 @@ RSpec.describe(SearchClient, :mampfsearch) do
     end
   end
 
+  describe "#sync_media_hierarchy" do
+    it "sends the current hierarchy with its video version" do
+      pool = client.instance_variable_get(:@pool)
+      fake_client = double("client")
+      allow(fake_client).to receive(:headers).and_return(fake_client)
+      hierarchy = { course_rails_id: 1, lecture_rails_id: 2, lesson_rails_id: 3 }
+      response = double("response", status: double("status", code: 200),
+                                    body: double("body", to_s: '{"updated":true}'))
+      expect(fake_client).to receive(:post).with(
+        "/lesson/media/42/hierarchy",
+        json: hierarchy.merge(video_version: "video-version")
+      ).and_return(response)
+      allow(pool).to receive(:with) { |&block| block.call(fake_client) }
+
+      result = client.sync_media_hierarchy(
+        42, video_version: "video-version", hierarchy: hierarchy
+      )
+      expect(result).to be(true)
+    end
+  end
+
+  describe "#list_media_hierarchies" do
+    it "converts indexed medium IDs to integers" do
+      pool = client.instance_variable_get(:@pool)
+      fake_client = double("client")
+      allow(fake_client).to receive(:headers).and_return(fake_client)
+      response = double(
+        "response", status: double("status", code: 200),
+                    body: double("body", to_s: '{"media_hierarchies":{"42":[1,2,3,1,2]}}')
+      )
+      expect(fake_client).to receive(:post).with("/lesson/versions")
+                                           .and_return(response)
+      allow(pool).to receive(:with) { |&block| block.call(fake_client) }
+
+      expect(client.list_media_hierarchies).to eq(42 => [1, 2, 3, 1, 2])
+    end
+  end
+
   describe "#invalidate_media" do
     it "sends the observed version for conditional invalidation" do
       pool = client.instance_variable_get(:@pool)

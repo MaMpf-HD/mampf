@@ -43,9 +43,20 @@ class MampfsearchSyncJob < ApplicationJob
       return unless search_versions.is_a?(Hash)
 
       current_media = Medium.where.not(video_data: nil).index_by(&:id)
-      indexed_ids = search_versions.keys.to_set
-
       # 1. Invalidate orphaned or outdated index entries without deleting newer versions.
+      indexed_ids = invalidate_outdated_index_entries(search_versions, current_media)
+      # 2. Re-ingest media marked completed in MaMpf but missing from index (e.g. after reset)
+      completed_ids = current_media.values.select(&:completed?).to_set(&:id)
+      missing_from_search = completed_ids - indexed_ids
+      enqueue_batch(Medium.where(id: missing_from_search)) if missing_from_search.any?
+      # 3. Update indexed media whose hierarchy changed without re-ingesting the video.
+      reconcile_hierarchies(current_media, search_versions, indexed_ids)
+    rescue SearchClient::MampfSearchError => e
+      Rails.logger.warn("Search index reconciliation skipped (#{e.class}): #{e.message}")
+    end
+
+    def invalidate_outdated_index_entries(search_versions, current_media)
+      indexed_ids = search_versions.keys.to_set
       search_versions.each do |id, indexed_version|
         medium = current_media[id]
         next if medium && medium.video_fingerprint == indexed_version
@@ -55,15 +66,29 @@ class MampfsearchSyncJob < ApplicationJob
         )
         indexed_ids.delete(id) if invalidated
       end
+      indexed_ids
+    end
 
-      # 2. Re-ingest media marked completed in MaMpf but missing from index (e.g. after reset)
-      completed_ids = current_media.values.select(&:completed?).to_set(&:id)
-      missing_from_search = completed_ids - indexed_ids
-      return if missing_from_search.empty?
+    def reconcile_hierarchies(current_media, search_versions, indexed_ids)
+      search_hierarchies = SearchClient.instance.list_media_hierarchies
+      return unless search_hierarchies.is_a?(Hash)
 
-      enqueue_batch(Medium.where(id: missing_from_search))
-    rescue SearchClient::MampfSearchError => e
-      Rails.logger.warn("Search index reconciliation skipped (#{e.class}): #{e.message}")
+      indexed_ids.each do |id|
+        medium = current_media[id]
+        next unless medium&.completed?
+        next unless medium.video_fingerprint == search_versions[id]
+
+        hierarchy = Mampfsearch::Hierarchy.for(medium)
+        course_id, lecture_id, lesson_id = hierarchy.values_at(
+          :course_rails_id, :lecture_rails_id, :lesson_rails_id
+        )
+        expected = [course_id, lecture_id, lesson_id,
+                    lecture_id ? course_id : nil,
+                    lesson_id ? lecture_id : nil]
+        next if search_hierarchies[id] == expected
+
+        MampfsearchMetadataSyncJob.perform_later(id)
+      end
     end
 
     def enqueue_batch(relation)

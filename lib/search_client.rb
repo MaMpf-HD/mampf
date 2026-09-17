@@ -81,6 +81,21 @@ class SearchClient
     versions.transform_keys { |id| Integer(id) }
   end
 
+  def list_media_hierarchies
+    response = perform_request(scope: "/lesson/versions") do |client|
+      client.post("/lesson/versions")
+    end
+    response["media_hierarchies"]&.transform_keys { |id| Integer(id) }
+  end
+
+  def sync_media_hierarchy(media_rails_id, video_version:, hierarchy:)
+    path = "/lesson/media/#{media_rails_id}/hierarchy"
+    response = perform_request(scope: path) do |client|
+      client.post(path, json: hierarchy.merge(video_version: video_version))
+    end
+    response.fetch("updated")
+  end
+
   def invalidate_media(media_rails_id, expected_video_version:)
     path = "/lesson/media/#{media_rails_id}/invalidate"
     response = perform_request(scope: path) do |client|

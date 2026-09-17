@@ -22,6 +22,7 @@ class Lesson < ApplicationRecord
   validates :date, presence: true
   validates :sections, presence: true
 
+  after_update :record_mampfsearch_hierarchy_change
   before_destroy :touch_media
   before_destroy :touch_siblings
   before_destroy :touch_sections, prepend: true
@@ -33,6 +34,7 @@ class Lesson < ApplicationRecord
   after_save :touch_siblings
   after_save :touch_self
   after_save :touch_tags
+  after_update_commit :sync_mampfsearch_hierarchy_if_lecture_changed
 
   delegate :editors_with_inheritance, to: :lecture, allow_nil: true
 
@@ -290,6 +292,19 @@ class Lesson < ApplicationRecord
   end
 
   private
+
+    # touch_self saves the lesson again, replacing Rails' saved-change data.
+    def record_mampfsearch_hierarchy_change
+      @mampfsearch_hierarchy_changed = saved_change_to_lecture_id?
+    end
+
+    def sync_mampfsearch_hierarchy_if_lecture_changed
+      changed = @mampfsearch_hierarchy_changed
+      @mampfsearch_hierarchy_changed = nil
+      return unless changed
+
+      MampfsearchMetadataSyncJob.enqueue_for(media)
+    end
 
     # path for show lesson action
     def lesson_path
