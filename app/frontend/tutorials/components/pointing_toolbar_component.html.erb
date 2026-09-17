@@ -71,41 +71,11 @@
   <% end %>
 
   <% if can_enter_points? && grading_enabled? %>
-    <button
-      type="button"
-      class="btn btn-success btn-sm"
-      disabled
-      data-pointing-table-target="bulkSave"
-      data-action="click->pointing-table#submitAll"
-    >
-      <i class="bi bi-floppy-fill me-1"></i>
-      <%= t("assessment.grading_tutorial.save_all") %>
-
-      <span
-        class="badge text-bg-light ms-1"
-        hidden
-        data-pointing-table-target="dirtyCount"
-      ></span>
-    </button>
-    <%= form_with url: point_multi_submissions_tutorial_path,
-                  method: :patch,
-                  local: true,
-                  data: { turbo: true, pointing_table_target: "form" },
-                  html: { hidden: true } do %>
-      <input
-        type="hidden"
-        name="submissions"
-        data-pointing-table-target="payload"
-      >
-
-      <input type="hidden" name="assignment_id" value="<%= @assignment.id %>">
-      <input type="hidden" name="tutorial_id" value="<%= @tutorial&.id %>">
-
-      <input
-        type="hidden"
-        name="grading_scope_type"
-        value="<%= grading_scope_type %>"
-      >
-    <% end %>
+    <%= render partial: "assessment/participations/bulk_save",
+               locals: { url: point_multi_submissions_tutorial_path,
+                         payload_name: "submissions",
+                         hidden_fields: { assignment_id: @assignment.id,
+                                          tutorial_id: @tutorial&.id,
+                                          grading_scope_type: grading_scope_type } } %>
   <% end %>
 <% end %>

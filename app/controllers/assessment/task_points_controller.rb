@@ -4,13 +4,14 @@ module Assessment
     include AchievementStreams
 
     before_action :set_assessable_resource,
-                  only: [:update_team_multi, :update_team,
+                  only: [:update_team_multi, :update_exam_multi, :update_team,
                          :update_participation, :refresh_submission,
                          :refresh_participation, :mark_as_participated,
                          :remove_participated, :mark_as_absent, :remove_absent,
                          :mark_as_exempt, :remove_exempt]
     before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
+                                                 :update_exam_multi,
                                                  :update_team,
                                                  :update_participation,
                                                  :refresh_submission,
@@ -66,6 +67,33 @@ module Assessment
       SubmissionGraderService.score_multi_teams_by_types!(records, current_user)
 
       rerender_submission_table
+    end
+
+    # Every row of the exam's table with unsaved points, in one transaction:
+    # one refused row - not a candidate, absent, excused - saves none.
+    def update_exam_multi
+      begin
+        entries = JSON.parse(params[:participations] || "[]")
+      rescue JSON::ParserError
+        return respond_with_flash(:alert, t("assessment.errors.invalid_request_params"))
+      end
+
+      rows = @assessment.assessment_participations
+                        .where(id: entries.pluck("id"), user_id: @assessable.users.select(:id))
+                        .index_by { |row| row.id.to_s }
+      unless rows.size == entries.pluck("id").uniq.size
+        return respond_with_flash(:alert, t("assessment.grading_exam.user_not_candidate"))
+      end
+
+      ActiveRecord::Base.transaction do
+        entries.each do |entry|
+          PointEntryService.enter_points(rows.fetch(entry["id"]), entry["task_points"],
+                                         current_user)
+        end
+      end
+
+      flash.now[:notice] = t("assessment.task_points.update")
+      render turbo_stream: exam_streams(rows.each_value(&:reload).values) + [stream_flash]
     end
 
     def update_team
@@ -353,6 +381,8 @@ module Assessment
         @grading_scope_type = params[:grading_scope_type]
         if params[:submissions]
           set_resources_from_bulk_params_submissions
+        elsif params[:exam_id]
+          set_resources_from_exam
         elsif params[:submission_id]
           set_resources_from_submission
         elsif params[:assignment_id]
@@ -380,6 +410,23 @@ module Assessment
           end
         end
 
+        @assessment = @assessable.assessment
+        return if @assessment
+
+        respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"),
+                           status: :not_found)
+      end
+
+      # An exam's rows are the lecture's business: no group, so the lecture
+      # is what the grader is checked against.
+      def set_resources_from_exam
+        @assessable = Exam.find_by(id: params[:exam_id])
+        unless @assessable
+          return respond_with_flash(:alert, t("assessment.errors.invalid_request_params"),
+                                    status: :not_found)
+        end
+
+        @lecture = @assessable.lecture
         @assessment = @assessable.assessment
         return if @assessment
 

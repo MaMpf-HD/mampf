@@ -38,6 +38,10 @@ class ExamPointingTableComponent < ViewComponent::Base
     PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false)
   end
 
+  def can_enter_points?
+    helpers.current_user.can_enter_points_in?(@lecture)
+  end
+
   private
 
     def tutorial_ids_by_user

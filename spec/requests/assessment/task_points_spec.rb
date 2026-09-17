@@ -643,6 +643,69 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
   end
 
   # PATCH refresh_point_submission_tutorial
+  describe "PATCH /exams/:exam_id/point_multi_participations" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
+    let!(:exam_task) { create(:assessment_task, assessment: exam_assessment, max_points: 10) }
+    let(:candidates) { create_list(:confirmed_user, 2) }
+    let!(:rows) do
+      candidates.map do |candidate|
+        create(:exam_roster_entry, exam: exam, user: candidate)
+        create(:assessment_participation, assessment: exam_assessment, user: candidate)
+      end
+    end
+
+    def save_all(entries, as: teacher)
+      sign_in(as)
+      patch(point_multi_participations_exam_path(exam),
+            params: { participations: entries.to_json }, as: :turbo_stream)
+    end
+
+    def entry(row, points)
+      { id: row.id, target: "participation", task_points: { exam_task.id => points } }
+    end
+
+    it "enters every row's points in one request and redraws both tables" do
+      save_all([entry(rows[0], "6"), entry(rows[1], "3.5")])
+
+      expect(response).to have_http_status(:success)
+      expect(rows[0].reload.points_total).to eq(6)
+      expect(rows[1].reload.points_total).to eq(3.5)
+      page = Nokogiri::HTML(response.body)
+      targets = page.css("turbo-stream").pluck("target")
+      rows.each do |row|
+        expect(targets).to include("pointing-participation-row-#{row.id}",
+                                   "grading-participation-row-#{row.id}")
+      end
+      expect(page.at_css("turbo-stream[target=grading-scheme]")).to be_present
+    end
+
+    # One refused row saves none: the candidate who was excused, and a row
+    # that is nobody's on this exam.
+    it "saves nothing when one row is refused" do
+      rows[1].update!(status: :exempt)
+      save_all([entry(rows[0], "6"), entry(rows[1], "3")])
+
+      assert_flash_error
+      expect(rows[0].reload.points_total).to be_nil
+
+      stranger = create(:assessment_participation, assessment: exam_assessment,
+                                                   user: create(:confirmed_user))
+      save_all([entry(rows[0], "6"), entry(stranger, "3")])
+
+      expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+      expect(rows[0].reload.points_total).to be_nil
+    end
+
+    it "is the lecture's business, not a tutor's" do
+      tutorial.tutors << tutor
+      save_all([entry(rows[0], "6")], as: tutor)
+
+      expect(response).to redirect_to(root_path)
+      expect(rows[0].reload.points_total).to be_nil
+    end
+  end
+
   describe "PATCH /submissions/:submission_id/refresh_point_submission" do
     let(:submission) do
       create(:submission, assignment: assignment, tutorial: tutorial, users: [student])

@@ -21,7 +21,14 @@
 
         <%= render PointingFilterComponent.new(id: "exam-points-#{@exam.id}",
                                                status_options: status_options,
-                                               tutorial_options: tutorial_options) %>
+                                               tutorial_options: tutorial_options) do %>
+          <% if can_enter_points? %>
+            <%= render partial: "assessment/participations/bulk_save",
+                       locals: { url: point_multi_participations_exam_path(@exam),
+                                 payload_name: "participations",
+                                 hidden_fields: {} } %>
+          <% end %>
+        <% end %>
       </div>
 
       <div

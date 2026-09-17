@@ -896,6 +896,10 @@ Rails.application.routes.draw do
         to: "assessment/task_points#update_team_multi",
         as: "point_multi_submissions_tutorial"
 
+  patch "exams/:exam_id/point_multi_participations",
+        to: "assessment/task_points#update_exam_multi",
+        as: "point_multi_participations_exam"
+
   patch "submissions/:submission_id/refresh_point_submission",
         to: "assessment/task_points#refresh_submission",
         as: "refresh_point_submission_tutorial"
