@@ -13,12 +13,14 @@ import { callBackend } from "./backend";
  */
 export class TimeCop {
   private readonly context: APIRequestContext;
+  private travelled?: Date;
 
   constructor(context: APIRequestContext) {
     this.context = context;
   }
 
   async travelToDate(when: Date): Promise<void> {
+    this.travelled = when;
     // Sent as UTC parts: the runner and the server need not agree on a zone, and
     // an hour's difference is exactly the kind that makes a deadline test lie.
     await callBackend(this.context, "timecop/travel", {
@@ -32,13 +34,16 @@ export class TimeCop {
     });
   }
 
+  // Counted from where the server's clock stands: the date travelled to
+  // last, or now - so two calls move two steps, not one twice.
   async moveAheadDays(days: number): Promise<void> {
-    const when = new Date();
+    const when = new Date(this.travelled ?? Date.now());
     when.setUTCDate(when.getUTCDate() + days);
     await this.travelToDate(when);
   }
 
   async reset(): Promise<void> {
+    this.travelled = undefined;
     await callBackend(this.context, "timecop/reset", {});
   }
 }
