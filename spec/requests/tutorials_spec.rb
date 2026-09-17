@@ -64,6 +64,28 @@ RSpec.describe("Tutorials", type: :request) do
       expect(page.css("tr.submission-row")).to be_empty
     end
 
+    # A lecturer tutors no group of their own; the page opens on the lecture's
+    # first one rather than on nothing.
+    it "opens on the lecture's first group for a lecturer without one" do
+      tutorial.tutors.delete(editor)
+
+      get lecture_tutorials_path(lecture)
+
+      expect(response).to have_http_status(:success)
+      expect(Nokogiri::HTML(response.body).at_css("#tutorial-select")["value"])
+        .to eq(tutorial.title)
+    end
+
+    it "says so when the lecture has no group at all" do
+      bare = create(:lecture)
+      create(:editable_user_join, user: editor, editable: bare)
+
+      get lecture_tutorials_path(bare)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(I18n.t("tutorial.no_tutorials_yet").strip)
+    end
+
     it "leaves an achievement without an assessment off the page" do
       achievement = create(:achievement, :boolean, lecture: lecture, title: "Old one")
       achievement.assessment.destroy!

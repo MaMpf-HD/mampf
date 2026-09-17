@@ -3123,6 +3123,9 @@ en:
         In order to change things please edit the publication settings for the
         medium.
   tutorial:
+    no_tutorials_yet: >
+      This lecture has no tutorials yet, so there is no table of points to
+      enter into.
     no_submissions_for_assignment: >
       There are no submissions for this assignment.
     no_submissions: >

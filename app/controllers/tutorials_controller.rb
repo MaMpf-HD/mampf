@@ -43,8 +43,10 @@ class TutorialsController < ApplicationController
       current_user.given_tutorials.where(lecture: @lecture)
     end
     # Only a group the page offers: an achievement's table lists the group's
-    # members and seeds their rows.
-    @tutorial = @tutorials.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
+    # members and seeds their rows. A lecturer tutors no group of their own,
+    # so the page opens on the first one; nil only while the lecture has none.
+    @tutorial = @tutorials.find_by(id: params[:tutorial]) ||
+                current_user.tutorials(@lecture).first || @tutorials.first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
 

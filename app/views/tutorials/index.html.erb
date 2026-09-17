@@ -1,4 +1,8 @@
-<% if @assignments.present? || @achievements.present? %>
+<% if @tutorial.nil? %>
+  <div class="jumbotron">
+    <%= t('tutorial.no_tutorials_yet') %>
+  </div>
+<% elsif @assignments.present? || @achievements.present? %>
 <div>
   <div class="row">
     <div class="col-12">

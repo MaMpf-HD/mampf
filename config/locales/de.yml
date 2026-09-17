@@ -3346,6 +3346,9 @@ de:
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
   tutorial:
+    no_tutorials_yet: >
+      Diese Vorlesung hat noch keine Tutorien, also auch keine Tabelle, in die
+      Punkte eingetragen werden könnten.
     no_submissions_for_assignment: >
       Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
     no_submissions: >
