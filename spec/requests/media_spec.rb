@@ -455,6 +455,7 @@ RSpec.describe("Media", type: :request) do
     end
 
     it "accepts a valid vtt upload with valid tokens" do
+      medium.update!(transcription_status: :queued, transcription_attempts: 2)
       token = TranscriptionToken.generate(
         medium_id: medium.id,
         purpose: :transcript,
@@ -469,6 +470,9 @@ RSpec.describe("Media", type: :request) do
            headers: auth_headers
 
       expect(response).to have_http_status(:ok)
+      expect(medium.reload.transcript).to be_present
+      expect(medium.transcription_status).to eq("completed")
+      expect(medium.transcription_attempts).to eq(2)
     end
 
     it "rejects an upload that is not a valid vtt" do

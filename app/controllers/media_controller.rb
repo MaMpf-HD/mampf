@@ -296,7 +296,6 @@ class MediaController < ApplicationController
         old_transcript = @medium.transcript
         @medium.transcript = params[:transcript]
         @medium.transcription_status = :completed
-        @medium.transcription_attempts = 0
         @medium.transcription_error = nil
         if @medium.save
           old_transcript&.delete
