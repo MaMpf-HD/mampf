@@ -50,9 +50,12 @@ test.describe("exam eligibility decisions", () => {
 
     await expect(teacher.page.getByRole("link", { name: "Undecided" }))
       .toBeVisible();
+    // nothing to accept while sheets may still come: the card says so, and
+    // no sweep is offered
+    await expect(teacher.page.getByText("Assignment list still open")).toBeVisible();
     await expect(teacher.page.getByRole("button", {
       name: "Accept Open Proposals",
-    })).toBeVisible();
+    })).toHaveCount(0);
     expect(await lecture.__call("student_performance_certifications"))
       .toHaveLength(0);
   });

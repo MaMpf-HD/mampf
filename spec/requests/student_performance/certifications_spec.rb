@@ -58,13 +58,17 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           expect(response.body).to include(CGI.escapeHTML(hint))
         end
 
-        it "leaves the sweep visible but refuses to run it" do
+        # Nothing could be accepted; the rule card says why and where to
+        # change it, so no button waits greyed out for that day.
+        it "offers no sweep" do
           get lecture_student_performance_certifications_path(lecture)
 
-          expect(response.body).to include(
+          expect(response.body).not_to include(
             I18n.t("student_performance.certifications.index.bulk_accept")
           )
-          expect(response.body).to include("disabled")
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.list_open")
+          )
         end
 
         # The banner carries the same words, so the whole page is no evidence:
@@ -954,7 +958,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             tr.text.include?(decided_user.tutorial_name)
           end
 
-          expect(row.css("td")[-2].text.strip).to eq("Sick note on file")
+          expect(row.css("td.note-column").text.strip).to eq("Sick note on file")
         end
       end
 
