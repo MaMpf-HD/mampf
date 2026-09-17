@@ -20,6 +20,16 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     expect(medium.transcription_error).to be_nil
   end
 
+  it "preserves completed status when re-ingesting a missing index entry" do
+    medium.update!(transcription_status: :completed, transcription_attempts: 1)
+    expect(Mampfsearch::IngestionService).to receive(:transcribe).with(medium)
+
+    described_class.perform_now(medium.id)
+
+    expect(medium.reload.transcription_status).to eq("completed")
+    expect(medium.transcription_attempts).to eq(1)
+  end
+
   it "skips medium that is not transcribable" do
     medium_without_video = FactoryBot.create(:valid_medium, video: nil)
     expect(Mampfsearch::IngestionService).not_to receive(:transcribe)

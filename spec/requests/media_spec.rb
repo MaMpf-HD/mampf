@@ -379,6 +379,15 @@ RSpec.describe("Media", type: :request) do
       expect(flash[:notice]).to eq(I18n.t("controllers.media.transcription_started"))
     end
 
+    it "marks a completed medium queued for manual retranscription" do
+      medium.update!(transcription_status: :completed)
+      allow(MampfsearchIngestJob).to receive(:perform_later)
+
+      post transcribe_medium_path(medium)
+
+      expect(medium.reload.transcription_status).to eq("queued")
+    end
+
     it "returns not found in production" do
       target_medium = medium
       allow(Rails.env).to receive(:local?).and_return(false)

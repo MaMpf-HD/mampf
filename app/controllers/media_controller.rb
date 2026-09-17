@@ -281,7 +281,8 @@ class MediaController < ApplicationController
       return
     end
 
-    @medium.update!(transcription_attempts: 0, transcription_error: nil)
+    @medium.update!(transcription_status: :queued,
+                    transcription_attempts: 0, transcription_error: nil)
     MampfsearchIngestJob.perform_later(@medium.id)
     redirect_back_or_to(root_path, notice: I18n.t("controllers.media.transcription_started"))
   end

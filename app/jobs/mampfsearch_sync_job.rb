@@ -89,11 +89,13 @@ class MampfsearchSyncJob < ApplicationJob
       claimed = false
       medium.with_lock do
         unless medium.queued?
-          medium.update!(
-            transcription_status: :queued,
-            transcription_requested_at: Time.current,
-            transcription_error: nil
-          )
+          unless medium.completed?
+            medium.update!(
+              transcription_status: :queued,
+              transcription_requested_at: Time.current,
+              transcription_error: nil
+            )
+          end
           claimed = true
         end
       end

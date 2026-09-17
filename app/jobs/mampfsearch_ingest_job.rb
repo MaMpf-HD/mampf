@@ -5,11 +5,13 @@ class MampfsearchIngestJob < ApplicationJob
     medium = Medium.find_by(id: medium_id)
     return unless medium&.transcribable?
 
-    medium.update!(
-      transcription_status: :queued,
-      transcription_requested_at: Time.current,
-      transcription_error: nil
-    )
+    unless medium.completed?
+      medium.update!(
+        transcription_status: :queued,
+        transcription_requested_at: Time.current,
+        transcription_error: nil
+      )
+    end
     Mampfsearch::IngestionService.transcribe(medium)
   rescue StandardError => e
     fail_transcription(medium, e.message)

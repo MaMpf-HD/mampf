@@ -97,7 +97,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       described_class.perform_now
 
-      expect(medium.reload.transcription_status).to eq("queued")
+      expect(medium.reload.transcription_status).to eq("completed")
     end
 
     it "does not re-ingest if the version changed before invalidation" do
@@ -138,7 +138,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       described_class.perform_now
 
-      expect(missing_medium.reload.transcription_status).to eq("queued")
+      expect(missing_medium.reload.transcription_status).to eq("completed")
     end
 
     it "logs a warning and recovers gracefully when search client raises MampfSearchError" do
@@ -165,9 +165,8 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       described_class.perform_now
 
-      expect(Medium.where(transcription_status: :queued).count).to eq(15)
-      expect(missing_media.count { |m| m.reload.queued? }).to eq(3)
-      expect(missing_media.count { |m| m.reload.completed? }).to eq(2)
+      expect(Medium.where(transcription_status: :queued).count).to eq(12)
+      expect(missing_media.count { |m| m.reload.completed? }).to eq(5)
     end
 
     it "does not enqueue missing media when in-flight queued jobs are at threshold" do
