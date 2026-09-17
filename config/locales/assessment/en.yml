@@ -269,6 +269,7 @@ en:
       participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
       not_in_group: 'Only a member of the group can be put on one of its teams.'
       team_rejected: 'A rejected hand-in takes nobody.'
+      joined_late: 'Joined the team after the deadline, on %{time}.'
       marked_on_own: >-
         %{name} is already marked for this sheet on a row of their own. Clear
         that first.

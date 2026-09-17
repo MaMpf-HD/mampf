@@ -1178,8 +1178,9 @@ RSpec.describe("Submissions", type: :request) do
         let(:team) do
           create(:tutorial_membership, tutorial: tutorial, user: partner)
           partner.lectures << lecture
-          submission = create(:submission, :with_manuscript, assignment: closed_assignment,
-                                                             tutorial: tutorial)
+          submission = create(:submission, :with_manuscript,
+                              assignment: closed_assignment, tutorial: tutorial,
+                              last_modification_by_users_at: closed_assignment.deadline - 1.hour)
           submission.users << partner
           submission
         end
@@ -1201,6 +1202,15 @@ RSpec.describe("Submissions", type: :request) do
           expect(team.reload.users).to include(user)
           expect(closed_assignment.assessment.assessment_participations.find_by(user: user))
             .to be_present
+        end
+
+        # The file and its time are the team's; a join changes neither.
+        it "leaves the hand-in in time" do
+          expect(team).to be_in_time
+
+          join_late
+
+          expect(team.reload).to be_in_time
         end
 
         it "refuses once the team has been marked, and says whom to ask" do

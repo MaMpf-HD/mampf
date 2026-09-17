@@ -647,8 +647,9 @@ class SubmissionsController < ApplicationController
       @join = UserSubmissionJoin.new(user: current_user,
                                      submission: @submission)
       @join.save
+      # A join is not a modification of the hand-in: the file and its time
+      # stay what they are, and the tutor's row says who came later.
       if @join.valid?
-        @submission.update(last_modification_by_users_at: Time.zone.now)
         send_join_email
         remove_invitee_status
         sync_assessment_participations(users: [current_user]) if @submission.manuscript

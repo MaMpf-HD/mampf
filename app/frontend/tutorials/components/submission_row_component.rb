@@ -18,12 +18,29 @@ class SubmissionRowComponent < ViewComponent::Base
     @grading_scope.class.name.downcase
   end
 
+  # Who came onto the team after the deadline - the hand-in is not late for
+  # it, the tutor should just know.
+  def joined_late?(user)
+    late_joins.key?(user.id)
+  end
+
+  def joined_late_info(user)
+    t("assessment.task_points.joined_late",
+      time: l(late_joins.fetch(user.id).created_at, format: :file_time))
+  end
+
   # Whom the tutor may put on this team: the group's members on no team
   # for this sheet. A rejected hand-in takes nobody; it counts as none.
   def addable_members
     return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
 
     @addable_members.sort_by { |member| member.tutorial_name.to_s.downcase }
+  end
+
+  def late_joins
+    @late_joins ||= @submission.user_submission_joins
+                               .select { |join| join.created_at > @assignment.deadline }
+                               .index_by(&:user_id)
   end
 
   def grading_enabled?

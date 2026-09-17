@@ -30,6 +30,15 @@
               ></i>
             <% end %>
 
+            <% if joined_late?(user) %>
+              <i
+                class="bi bi-box-arrow-in-right ms-1 text-secondary"
+                role="img"
+                title="<%= joined_late_info(user) %>"
+                aria-label="<%= joined_late_info(user) %>"
+              ></i>
+            <% end %>
+
             <%# The hand-in is late as a whole. %>
             <% if index.zero? && @submission.too_late? %>
               <i
