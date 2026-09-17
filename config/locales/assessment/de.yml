@@ -438,11 +438,11 @@ de:
         one: '1 Studierender hat noch keine Note.'
         other: '%{count} Studierende haben noch keine Note.'
       changed_warning:
-        one: '1 Note aus dem Schema passt nicht mehr zu den Punkten.'
-        other: '%{count} Noten aus dem Schema passen nicht mehr zu den Punkten.'
+        one: '1 Note aus dem Schema wurde für Punkte vergeben, die sich seitdem geändert haben.'
+        other: '%{count} Noten aus dem Schema wurden für Punkte vergeben, die sich seitdem geändert haben.'
       regraded:
-        one: '1 Note an die geänderten Punkte angepasst.'
-        other: '%{count} Noten an die geänderten Punkte angepasst.'
+        one: '1 Note aus den geänderten Punkten neu berechnet.'
+        other: '%{count} Noten aus den geänderten Punkten neu berechnet.'
       revise_button: 'Schema überarbeiten'
       reapply_button: 'Auf neue und geänderte Bewertungen anwenden'
       reapply_confirm: >-

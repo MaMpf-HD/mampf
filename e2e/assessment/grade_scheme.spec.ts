@@ -146,10 +146,10 @@ test.describe("grade schemes", () => {
 
     // the scheme's grade follows, the hand's stays
     await page.tab("Grades").click();
-    await expect(page.pane.getByText("1 grade from the scheme no longer fits the points."))
+    await expect(page.pane.getByText("1 grade from the scheme was given for points that have changed since."))
       .toBeVisible();
     await page.pane.getByRole("button", { name: /Apply to new and changed/ }).click();
-    await expect(teacher.page.getByText("1 grade brought up to the changed points."))
+    await expect(teacher.page.getByText("1 grade recomputed from the changed points."))
       .toBeVisible();
     await expect(adaGrade).toHaveValue("3.0");
     await expect(graceGrade).toHaveValue("2.0");

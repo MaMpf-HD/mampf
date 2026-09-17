@@ -438,11 +438,11 @@ en:
         one: '1 student has no grade yet.'
         other: '%{count} students have no grade yet.'
       changed_warning:
-        one: '1 grade from the scheme no longer fits the points.'
-        other: '%{count} grades from the scheme no longer fit the points.'
+        one: '1 grade from the scheme was given for points that have changed since.'
+        other: '%{count} grades from the scheme were given for points that have changed since.'
       regraded:
-        one: '1 grade brought up to the changed points.'
-        other: '%{count} grades brought up to the changed points.'
+        one: '1 grade recomputed from the changed points.'
+        other: '%{count} grades recomputed from the changed points.'
       revise_button: 'Revise Scheme'
       reapply_button: 'Apply to new and changed'
       reapply_confirm: >-
