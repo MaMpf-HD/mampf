@@ -190,6 +190,31 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         expect(scheme.reload.applied_at).to eq(original_applied_at)
       end
 
+      # A scheme's grade follows the points it was computed from; one entered
+      # by hand is somebody's decision and stays, whatever the points do.
+      it "re-grades what it graded itself once the points changed, and no more" do
+        by_scheme = create_reviewed_participation(points: 55)
+        by_hand = create_reviewed_participation(points: 55)
+        untouched = create_reviewed_participation(points: 55)
+        applier.apply!(applied_by: professor)
+        Assessment::GradeEntryService.set_grade(by_hand, { grade_numeric: 3.0 }, professor)
+
+        [by_scheme, by_hand].each do |participation|
+          FactoryBot.create(:assessment_task_point, assessment_participation: participation,
+                                                    task: exam_task, points: 30)
+          participation.update!(points_total: 30)
+        end
+
+        counts = applier.apply!(applied_by: professor)
+
+        expect(counts).to eq({ graded: 0, regraded: 1 })
+        expect(by_scheme.reload.grade_numeric).to eq(3.0)
+        expect(by_scheme.grade_scheme).to eq(scheme)
+        expect(by_hand.reload.grade_numeric).to eq(3.0)
+        expect(by_hand.grade_scheme).to be_nil
+        expect(untouched.reload.grade_numeric).to eq(1.0)
+      end
+
       it "is a no-op when already applied and no ungraded participations" do
         create_reviewed_participation(points: 55)
         applier.apply!(applied_by: professor)

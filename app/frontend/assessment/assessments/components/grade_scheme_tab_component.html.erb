@@ -134,20 +134,27 @@
             <i class="bi bi-arrow-repeat me-1"></i>
             <%= t("assessment.grade_scheme.reapply_button") %>
 
-            <% if ungraded_reviewed_count.positive? %>
+            <% if reapply_count.positive? %>
               <span class="badge bg-warning text-dark ms-1">
-                <%= ungraded_reviewed_count %>
+                <%= reapply_count %>
               </span>
             <% end %>
           <% end %>
         </div>
       </div>
-      <% if ungraded_reviewed_count.positive? %>
+      <% if reapply_count.positive? %>
         <div class="alert alert-warning py-2 mb-3">
           <i class="bi bi-exclamation-triangle me-1"></i>
 
-          <%= t("assessment.grade_scheme.ungraded_warning",
-                count: ungraded_reviewed_count) %>
+          <% if ungraded_reviewed_count.positive? %>
+            <%= t("assessment.grade_scheme.ungraded_warning",
+                  count: ungraded_reviewed_count) %>
+          <% end %>
+
+          <% if changed_since_graded_count.positive? %>
+            <%= t("assessment.grade_scheme.changed_warning",
+                  count: changed_since_graded_count) %>
+          <% end %>
         </div>
       <% end %>
       <%= render "assessment/assessments/components/grade_scheme_summary_with_distribution",

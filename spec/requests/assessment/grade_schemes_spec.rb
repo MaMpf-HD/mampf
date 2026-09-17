@@ -170,6 +170,23 @@ RSpec.describe("Assessment::GradeSchemes", type: :request) do
       expect(response).to redirect_to(exam_path(exam, tab: "grades"))
     end
 
+    it "says on a re-apply how many were newly graded and how many re-graded" do
+      assessment.update!(requires_points: true)
+      task = create(:assessment_task, assessment: assessment, max_points: 60)
+      graded = create(:assessment_participation, :reviewed, assessment: assessment,
+                                                            points_total: 55)
+      patch apply_assessment_assessment_grade_scheme_path(assessment, grade_scheme)
+      create(:assessment_task_point, assessment_participation: graded, task: task, points: 30)
+      graded.update!(points_total: 30)
+      create(:assessment_participation, :reviewed, assessment: assessment, points_total: 40)
+
+      patch apply_assessment_assessment_grade_scheme_path(assessment, grade_scheme)
+
+      expect(flash[:notice]).to include(I18n.t("assessment.grade_scheme.reapplied", count: 1))
+      expect(flash[:notice]).to include(I18n.t("assessment.grade_scheme.regraded", count: 1))
+      expect(graded.reload.grade_numeric).to eq(3.0)
+    end
+
     context "as a student" do
       before { sign_in student }
 

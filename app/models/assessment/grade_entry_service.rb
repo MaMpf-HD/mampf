@@ -24,7 +24,7 @@ module Assessment
         # a scheme applied later must not skip a fully scored candidate.
         if status == :pending && participation.all_tasks_scored?
           status = :reviewed
-          stamp = { grader_id: nil, graded_at: Time.current }
+          stamp = { grader_id: nil, graded_at: Time.current, grade_scheme_id: nil }
         end
         participation.update!(grade_text: grade_info[:grade_text],
                               grade_numeric: grade_info[:grade_numeric],
@@ -43,12 +43,15 @@ module Assessment
     end
 
     # Record who changed the grade and when; note-only edits must preserve
-    # grader_id and graded_at. No grade, no grader - whatever the status.
+    # grader_id and graded_at. No grade, no grader - whatever the status. A
+    # grade changed by hand is no longer the scheme's to re-apply.
     def self.stamp_for(participation, grade_info, grader)
-      return { grader_id: nil, graded_at: nil } if grade_info.values.none?(&:present?)
+      if grade_info.values.none?(&:present?)
+        return { grader_id: nil, graded_at: nil, grade_scheme_id: nil }
+      end
       return {} unless grade_changed?(participation, grade_info)
 
-      { grader_id: grader.id, graded_at: Time.current }
+      { grader_id: grader.id, graded_at: Time.current, grade_scheme_id: nil }
     end
 
     def self.grade_changed?(participation, grade_info)

@@ -259,17 +259,22 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   # A graded row keeps its grade when a point is taken out again; the
-  # notice says so, since the status alone reads as complete.
+  # notice says so, since the status alone reads as complete - and whether
+  # re-applying the scheme would touch the grade.
   def points_changed_notice
     return unless @participation.points_changed_after_grading?
 
-    since = t("assessment.grading_exam.points_changed_since",
-              points_at: I18n.l(@participation.task_points.map(&:updated_at).max,
-                                format: :file_time),
-              graded_at: I18n.l(@participation.graded_at, format: :file_time))
-    return since if @participation.all_tasks_scored?
+    parts = [t("assessment.grading_exam.points_changed_since",
+               points_at: I18n.l(@participation.task_points.map(&:updated_at).max,
+                                 format: :file_time),
+               graded_at: I18n.l(@participation.graded_at, format: :file_time))]
+    parts << t("assessment.grading_exam.points_missing") unless @participation.all_tasks_scored?
+    parts << t("assessment.grading_exam.grade_by_hand") if grade_by_hand?
+    parts.join(" · ")
+  end
 
-    "#{since} · #{t("assessment.grading_exam.points_missing")}"
+  def grade_by_hand?
+    @participation.grade_scheme_id.nil? && @assessable.assessment.grade_scheme&.applied?
   end
 
   def absence_button

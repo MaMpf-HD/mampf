@@ -30,7 +30,7 @@ test.describe("grade schemes", () => {
     });
     await scoreTask(factory, task.id, participation.id, 70);
 
-    return { lecture, exam };
+    return { lecture, exam, task };
   }
 
   async function openGrades(page: ExamDashboardPage) {
@@ -96,6 +96,65 @@ test.describe("grade schemes", () => {
       .toBeVisible();
     await expect(ada.getByRole("combobox", { name: "Grade for Ada Lovelace" })).toHaveValue("1.0");
     await expect(proposal).toHaveCount(0);
+  });
+
+  // A scheme's grade follows the points it was computed from; a grade the
+  // teacher typed is a decision and stays.
+  test("brings its own grades up to corrected points, and leaves one entered by hand", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture, exam, task } = await markedExam(factory, teacher.user.id);
+    const assessment = await exam.__call("assessment");
+    const grace = await factory.create("confirmed_user", [], { name_in_tutorials: "Grace Hopper" });
+    await factory.create("exam_roster_entry", [], { exam_id: exam.id, user_id: grace.id });
+    const graceRow = await factory.create("assessment_participation", [], {
+      assessment_id: assessment.id, user_id: grace.id, status: "reviewed",
+      submitted_at: new Date().toISOString(),
+    });
+    await scoreTask(factory, task.id, graceRow.id, 70);
+    await factory.create("assessment_grade_scheme", [], { assessment_id: assessment.id });
+
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await openGrades(page);
+    teacher.page.on("dialog", dialog => dialog.accept());
+    await page.pane.getByRole("button", { name: "Apply draft" }).click();
+    await expect(teacher.page.getByText("Grade scheme applied!")).toBeVisible();
+
+    // Grace's 1.0 is overruled by hand
+    const adaGrade = page.pane.getByRole("row", { name: /Ada Lovelace/ })
+      .getByRole("combobox", { name: "Grade for Ada Lovelace" });
+    const graceGrade = page.pane.getByRole("row", { name: /Grace Hopper/ })
+      .getByRole("combobox", { name: "Grade for Grace Hopper" });
+    await expect(adaGrade).toHaveValue("1.0");
+    await graceGrade.selectOption("2.0");
+    await page.pane.getByRole("row", { name: /Grace Hopper/ })
+      .getByRole("button", { name: "Save this row's grade" }).click();
+    await expect(teacher.page.getByText("Changes saved.")).toBeVisible();
+
+    // both students' points are corrected down to 30
+    await page.tab("Points").click();
+    for (const name of ["Ada Lovelace", "Grace Hopper"]) {
+      const row = page.pane.getByRole("row", { name: new RegExp(name) });
+      await row.getByRole("spinbutton", { name: `Task 1 for ${name}` }).fill("30");
+      const saved = teacher.page.waitForResponse(
+        response => response.url().includes("/point_participation") && response.ok(),
+      );
+      await row.getByRole("button", { name: "Save this row's points" }).click();
+      await saved;
+    }
+
+    // the scheme's grade follows, the hand's stays
+    await page.tab("Grades").click();
+    await expect(page.pane.getByText("1 grade from the scheme no longer fits the points."))
+      .toBeVisible();
+    await page.pane.getByRole("button", { name: /Apply to new and changed/ }).click();
+    await expect(teacher.page.getByText("1 grade brought up to the changed points."))
+      .toBeVisible();
+    await expect(adaGrade).toHaveValue("3.0");
+    await expect(graceGrade).toHaveValue("2.0");
+    await expect(page.pane.getByRole("row", { name: /Grace Hopper/ })
+      .getByRole("img", { name: /entered by hand/ })).toBeVisible();
   });
 
   test("discards a draft and offers to start over", async ({

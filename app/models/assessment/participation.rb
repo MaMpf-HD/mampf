@@ -7,6 +7,10 @@ module Assessment
     belongs_to :user
     belongs_to :tutorial, optional: true
     belongs_to :grader, class_name: "User", optional: true, inverse_of: false
+    # The scheme that gave the grade, nil for one entered by hand; re-applying
+    # a scheme may overwrite the first and must leave the second.
+    belongs_to :grade_scheme, class_name: "Assessment::GradeScheme", optional: true,
+                              inverse_of: false
 
     has_many :task_points, dependent: :destroy,
                            class_name: "Assessment::TaskPoint",
@@ -44,7 +48,8 @@ module Assessment
     end
 
     # A grade entered or applied before the points were corrected may no
-    # longer fit them; nothing recomputes it, somebody has to look.
+    # longer fit them; a scheme's grade is re-applied on request, a grade
+    # entered by hand needs somebody to look.
     def points_changed_after_grading?
       return false if graded_at.nil?
 

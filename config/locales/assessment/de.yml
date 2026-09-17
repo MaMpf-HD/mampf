@@ -364,6 +364,7 @@ de:
       scheme_now_gives: 'Was das angewendete Schema für die jetzigen Punkte gibt.'
       points_changed_since: 'Punkte geändert am %{points_at}, Note vom %{graded_at}'
       points_missing: 'eine Aufgabe ohne Punkte'
+      grade_by_hand: 'Note von Hand eingetragen, ein erneutes Anwenden des Schemas lässt sie stehen'
       summary_points_changed: '%{count} mit seit der Bewertung geänderten Punkten'
       filter_points_changed: 'Punkte seit der Bewertung geändert'
       points_changed_alert:
@@ -436,11 +437,18 @@ de:
       ungraded_warning:
         one: '1 Studierender hat noch keine Note.'
         other: '%{count} Studierende haben noch keine Note.'
+      changed_warning:
+        one: '1 Note aus dem Schema passt nicht mehr zu den Punkten.'
+        other: '%{count} Noten aus dem Schema passen nicht mehr zu den Punkten.'
+      regraded:
+        one: '1 Note an die geänderten Punkte angepasst.'
+        other: '%{count} Noten an die geänderten Punkte angepasst.'
       revise_button: 'Schema überarbeiten'
-      reapply_button: 'Auf neue Bewertungen anwenden'
+      reapply_button: 'Auf neue und geänderte Bewertungen anwenden'
       reapply_confirm: >-
-        Das Schema wird auf alle noch nicht benoteten Studierenden angewendet.
-        Bereits vergebene Noten werden nicht verändert. Fortfahren?
+        Das Schema wird auf alle noch nicht benoteten Studierenden angewendet und
+        erneut auf die, deren Punkte sich seit der Benotung geändert haben. Von
+        Hand eingetragene Noten bleiben. Fortfahren?
       summary:
         title: 'Notenstufen'
         pass_rate: 'Bestehensquote'

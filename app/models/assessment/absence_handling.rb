@@ -23,7 +23,7 @@ module Assessment
         validate_not_reviewed!(participation, :exempt) unless achievement?(participation)
 
         attrs = { status: :exempt, submitted_at: nil,
-                  grade_numeric: nil, grader: nil, graded_at: nil }
+                  grade_numeric: nil, grade_scheme: nil, grader: nil, graded_at: nil }
         attrs[:note] = note if note.present?
         participation.update!(attrs)
       end
@@ -36,7 +36,8 @@ module Assessment
       participation.with_lock do
         validate_status!(participation, :absent)
 
-        participation.update!(status: :pending, grade_numeric: nil, grader: nil, graded_at: nil)
+        participation.update!(status: :pending, grade_numeric: nil, grade_scheme: nil,
+                              grader: nil, graded_at: nil)
       end
     end
 

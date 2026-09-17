@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_17_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -152,8 +152,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "grade_scheme_id"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
+    t.index ["grade_scheme_id"], name: "index_assessment_participations_on_grade_scheme_id"
     t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"
     t.index ["status"], name: "index_assessment_participations_on_status"
     t.index ["tutorial_id"], name: "index_assessment_participations_on_tutorial_id"
@@ -1482,6 +1484,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
   add_foreign_key "assessment_grade_schemes", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assessment_grade_schemes", "users", column: "applied_by_id"
   add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assessment_participations", "assessment_grade_schemes", column: "grade_scheme_id", on_delete: :nullify
   add_foreign_key "assessment_participations", "tutorials"
   add_foreign_key "assessment_participations", "users"
   add_foreign_key "assessment_participations", "users", column: "grader_id"

@@ -61,8 +61,10 @@ module Assessment
     end
 
     # On first apply, grades all reviewed participations. On re-apply
-    # (same config), only grades participations with no grade yet. This
-    # picks up late-reviewed students while preserving manual corrections.
+    # (same config), grades participations with no grade yet - late-reviewed
+    # students - and re-grades those the scheme graded before whose points
+    # changed since; a grade entered by hand is never touched. Returns how
+    # many were newly graded and how many re-graded.
     def apply!(applied_by:)
       target = if already_applied?
         ungraded_reviewed_participations
@@ -76,17 +78,18 @@ module Assessment
         absent_participations
       end
 
-      target_count = target.count
-      absent_count = absent_target.count
-      return 0 if already_applied? && target_count.zero? && absent_count.zero?
+      changed = already_applied? ? changed_since_scheme_graded : []
+      counts = { graded: target.count + absent_target.count, regraded: changed.size }
+      return counts if already_applied? && counts.values.all?(&:zero?)
 
       now = Time.current
 
       Participation.transaction do
-        target.find_each do |participation|
+        (target.to_a + changed).each do |participation|
           grade = compute_grade_for(participation)
           participation.update!(
             grade_numeric: grade,
+            grade_scheme: @scheme,
             grader: applied_by,
             graded_at: now
           )
@@ -95,6 +98,7 @@ module Assessment
         absent_target.find_each do |participation|
           participation.update!(
             grade_numeric: FAILING_GRADE,
+            grade_scheme: @scheme,
             grader: applied_by,
             graded_at: now
           )
@@ -108,7 +112,13 @@ module Assessment
         end
       end
 
-      target_count + absent_count
+      counts
+    end
+
+    # The rows this scheme graded whose points moved afterwards.
+    def changed_since_scheme_graded
+      reviewed_participations.where(grade_scheme: @scheme).includes(:task_points)
+                             .select(&:points_changed_after_grading?)
     end
 
     def compute_grade_for(participation)

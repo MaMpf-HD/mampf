@@ -364,6 +364,7 @@ en:
       scheme_now_gives: 'What the applied scheme gives for the points as they are now.'
       points_changed_since: 'Points changed on %{points_at}, grade from %{graded_at}'
       points_missing: 'a task without points'
+      grade_by_hand: 'grade entered by hand, re-applying the scheme leaves it'
       summary_points_changed: '%{count} with points changed since grading'
       filter_points_changed: 'Points changed since grading'
       points_changed_alert:
@@ -436,11 +437,18 @@ en:
       ungraded_warning:
         one: '1 student has no grade yet.'
         other: '%{count} students have no grade yet.'
+      changed_warning:
+        one: '1 grade from the scheme no longer fits the points.'
+        other: '%{count} grades from the scheme no longer fit the points.'
+      regraded:
+        one: '1 grade brought up to the changed points.'
+        other: '%{count} grades brought up to the changed points.'
       revise_button: 'Revise Scheme'
-      reapply_button: 'Apply to new'
+      reapply_button: 'Apply to new and changed'
       reapply_confirm: >-
-        This will apply the current scheme to any students not yet graded.
-        Already assigned grades will not be changed. Continue?
+        This applies the current scheme to students not yet graded, and again
+        to those it graded whose points changed since. Grades entered by hand
+        are not changed. Continue?
       summary:
         title: 'Grade Bands'
         pass_rate: 'Pass rate'
