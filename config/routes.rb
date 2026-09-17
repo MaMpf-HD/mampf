@@ -904,6 +904,10 @@ Rails.application.routes.draw do
         to: "assessment/task_points#refresh_submission",
         as: "refresh_point_submission_tutorial"
 
+  patch "submissions/:submission_id/add_member",
+        to: "assessment/task_points#add_member",
+        as: "add_member_submission"
+
   patch "participations/:participation_id/refresh_point_participation",
         to: "assessment/task_points#refresh_participation",
         as: "refresh_point_participation"

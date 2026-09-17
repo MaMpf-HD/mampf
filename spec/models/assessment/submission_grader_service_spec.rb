@@ -152,6 +152,67 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     end
   end
 
+  describe ".add_member!" do
+    let(:partner) { FactoryBot.create(:confirmed_user) }
+    let(:newcomer) { FactoryBot.create(:confirmed_user) }
+    let(:team) do
+      submission = FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                                    tutorial: tutorial)
+      submission.users << partner
+      submission
+    end
+
+    before do
+      [partner, newcomer].each do |member|
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+        FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: member)
+      end
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
+
+    it "puts the newcomer on the team with a hand-in of their own, and no points" do
+      task
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(team.reload.users).to include(newcomer)
+      expect(row.submitted_at).to be_present
+      expect(row.tutorial).to eq(tutorial)
+      expect(row.task_points).to be_empty
+    end
+
+    # The tutor says "this one too": what the team has, the newcomer gets.
+    it "gives the newcomer the points the team already has" do
+      described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
+
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(row.task_points.find_by(task: task).points).to eq(7)
+      expect(row.reload).to be_reviewed
+    end
+
+    it "takes only a member of the group" do
+      stranger = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: stranger)
+
+      expect { described_class.add_member!(team, stranger, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.not_in_group"))
+      expect(team.reload.users).not_to include(stranger)
+    end
+
+    it "refuses somebody who is on another team for the sheet already" do
+      other = FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                               tutorial: tutorial)
+      other.users << newcomer
+
+      expect { described_class.add_member!(team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError)
+      expect(team.reload.users).not_to include(newcomer)
+    end
+  end
+
   describe ".remove_participation" do
     let!(:user) { FactoryBot.create(:confirmed_user) }
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }

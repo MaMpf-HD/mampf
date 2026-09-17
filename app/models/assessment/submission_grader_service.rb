@@ -72,6 +72,24 @@ module Assessment
         participation
       end
 
+      # A tutor puts somebody who forgot to join onto the team's upload. The
+      # row is stamped as handed in, and where the team already has points
+      # the newcomer gets the same - the tutor is saying "this one too".
+      def add_member!(submission, user, scorer)
+        assignment = submission.assignment
+        raise_if_errors!(validate_member_of_group(submission, user))
+
+        Participation.transaction do
+          UserSubmissionJoin.create!(user: user, submission: submission)
+          participation = init_participation(assignment.assessment, user, submission.tutorial)
+          points = team_points(submission, user)
+          PointEntryService.enter_points(participation, points, scorer, submission) if points.any?
+          participation
+        end
+      rescue ActiveRecord::RecordInvalid => e
+        raise(SubmissionGraderError, e.record.errors.full_messages.to_sentence)
+      end
+
       # The other way round: the sheet did not come in after all. Only while
       # nothing is written on it - points say it did.
       def remove_participation(participation)
@@ -143,6 +161,23 @@ module Assessment
             participation = init_participation(assessment, user, submission.tutorial)
             PointEntryService.enter_points(participation, points_by_task_id, scorer, submission)
           end
+        end
+
+        def validate_member_of_group(submission, user)
+          return if submission.tutorial.members.exists?(id: user.id)
+
+          I18n.t("assessment.task_points.not_in_group")
+        end
+
+        # What one teammate already has, per task; nil points are nothing.
+        def team_points(submission, newcomer)
+          teammate = (submission.users - [newcomer]).first
+          return {} unless teammate && submission.assignment.assessable?
+
+          row = submission.assignment.assessment.assessment_participations.find_by(user: teammate)
+          return {} unless row
+
+          row.task_points.where.not(points: nil).pluck(:task_id, :points).to_h
         end
 
         def validate_submission_present(submission)

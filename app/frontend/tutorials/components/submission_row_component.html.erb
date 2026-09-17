@@ -63,6 +63,46 @@
           <%= t('basics.emails_copied_to_clipboard') %>
         </span>
       </button>
+
+      <% if addable_members.any? %>
+        <%# Fixed, or the scrolling table would cut the menu at the pinned column's edge. %>
+        <div class="dropdown">
+          <button
+            type="button"
+            class="btn btn-link p-0 ms-2 text-secondary"
+            data-bs-toggle="dropdown"
+            data-bs-auto-close="outside"
+            data-bs-popper-config='{"strategy": "fixed"}'
+            aria-expanded="false"
+            title="<%= t('assessment.task_points.add_member') %>"
+            aria-label="<%= t('assessment.task_points.add_member') %>"
+          >
+            <i class="bi bi-person-plus"></i>
+          </button>
+
+          <div class="dropdown-menu p-3" style="min-width: 18rem;">
+            <%= form_with url: add_member_submission_path(@submission), method: :patch,
+                          data: { turbo_stream: true } do |f| %>
+              <p class="small text-muted mb-2">
+                <%= t('assessment.task_points.add_member_hint') %>
+              </p>
+
+              <%= hidden_field_tag :grading_scope_type, grading_scope_type %>
+
+              <div class="d-flex gap-2">
+                <%= f.select :user_id,
+                             addable_members.map { |member| [member.tutorial_name, member.id] },
+                             {},
+                             class: "form-select form-select-sm",
+                             aria: { label: t('assessment.task_points.add_member') } %>
+
+                <%= f.submit t('assessment.task_points.add'),
+                             class: "btn btn-sm btn-outline-primary text-nowrap" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </td>
 
@@ -89,7 +129,7 @@
         <div class="d-inline-flex align-items-center gap-1">
           <%= form_with url: point_submission_tutorial_path(
             @submission,
-            grading_scope_type: @grading_scope.class.name.downcase),
+            grading_scope_type: grading_scope_type),
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
                       html: { style: "display:none;" } do %>
@@ -104,7 +144,7 @@
 
           <%= form_with url: refresh_point_submission_tutorial_path(
             @submission,
-            grading_scope_type: @grading_scope.class.name.downcase),
+            grading_scope_type: grading_scope_type),
                       method: :patch,
                       data: { turbo: true, participation_row_target: "refreshForm" },
                       html: { style: "display:none;" } do %>

@@ -1,7 +1,8 @@
 class SubmissionRowComponent < ViewComponent::Base
   # The table hands its rows the team's participations, read once for the
   # whole page; a row rendered on its own reads them itself.
-  def initialize(submission:, assignment:, grading_scope:, participations: nil)
+  def initialize(submission:, assignment:, grading_scope:, participations: nil,
+                 addable_members: [])
     super()
     @submission = submission
     @tutorial = @submission.tutorial
@@ -10,6 +11,19 @@ class SubmissionRowComponent < ViewComponent::Base
     @grading_scope = grading_scope
     @lecture = @assignment.lecture
     @participations = (participations || @submission.participations || []).compact
+    @addable_members = addable_members
+  end
+
+  def grading_scope_type
+    @grading_scope.class.name.downcase
+  end
+
+  # Whom the tutor may put on this team: the group's members on no team
+  # for this sheet. A rejected hand-in takes nobody; it counts as none.
+  def addable_members
+    return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
+
+    @addable_members.sort_by { |member| member.tutorial_name.to_s.downcase }
   end
 
   def grading_enabled?

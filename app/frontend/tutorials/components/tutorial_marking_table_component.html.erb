@@ -29,7 +29,8 @@
                       submission: submission,
                       assignment: @assignment,
                       grading_scope: @tutorial,
-                      participations: team_participations(submission))) %>
+                      participations: team_participations(submission),
+                      addable_members: @non_submitters)) %>
                 <% end %>
                 <% if grading_enabled? %>
                   <% @non_submitters.each do |user| %>
@@ -46,7 +47,8 @@
                         submission: submission,
                         assignment: @assignment,
                         grading_scope: @lecture,
-                        participations: team_participations(submission))) %>
+                        participations: team_participations(submission),
+                        addable_members: @non_submitters_by_tutorial[tutorial] || [])) %>
                   <% end %>
 
                   <% if grading_enabled? %>

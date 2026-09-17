@@ -5,7 +5,7 @@ module Assessment
 
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_exam_multi, :update_team,
-                         :update_participation, :refresh_submission,
+                         :add_member, :update_participation, :refresh_submission,
                          :refresh_participation, :mark_as_participated,
                          :remove_participated, :mark_as_absent, :remove_absent,
                          :mark_as_exempt, :remove_exempt]
@@ -13,6 +13,7 @@ module Assessment
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_exam_multi,
                                                  :update_team,
+                                                 :add_member,
                                                  :update_participation,
                                                  :refresh_submission,
                                                  :refresh_participation,
@@ -122,18 +123,30 @@ module Assessment
       @submission = @submission.reload
       @assessable = @submission.assignment
       @tutorial = @submission.tutorial
-      render_task_points_update(
-        turbo_stream.replace(
-          "submission-row-#{@submission.id}",
-          html: render_to_string(
-            SubmissionRowComponent.new(
-              submission: @submission,
-              assignment: @assessable,
-              grading_scope: table_scope
-            )
-          )
-        )
-      )
+      render_task_points_update(submission_row_stream)
+    end
+
+    # Somebody who forgot to join is put on the team by the tutor: the row
+    # they had of their own goes, the team's row shows them.
+    def add_member
+      user = @tutorial.members.find_by(id: params[:user_id])
+      unless user
+        return respond_with_flash(:alert, t("assessment.errors.user_not_found"),
+                                  status: :not_found)
+      end
+
+      row_before = @assessment.assessment_participations.find_by(user: user)
+      gone = if row_before
+        "points-participation-row-#{row_before.id}"
+      else
+        "points-participation-row-user-#{user.id}"
+      end
+      SubmissionGraderService.add_member!(@submission, user, current_user)
+      @submission.reload
+
+      flash.now[:notice] = t("assessment.task_points.member_added", name: user.tutorial_name)
+      render turbo_stream: [turbo_stream.remove(gone), submission_row_stream, summary_stream,
+                            stream_flash].flatten
     end
 
     def update_participation
@@ -365,6 +378,14 @@ module Assessment
         summary = TutorialMarkingTableComponent.new(assignment: @assessable,
                                                     grading_scope: table_scope).summary
         turbo_stream.replace("marking-summary", html: render_to_string(summary))
+      end
+
+      def submission_row_stream
+        row = SubmissionRowComponent.new(
+          submission: @submission, assignment: @assessable, grading_scope: table_scope,
+          addable_members: @assessable.non_submitters_in_tutorial(@tutorial)
+        )
+        turbo_stream.replace("submission-row-#{@submission.id}", html: render_to_string(row))
       end
 
       def rerender_submission_table

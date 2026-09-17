@@ -63,6 +63,12 @@ thead th.sticky-col {
   background-color: #fafafa;
 }
 
+/* A menu opened in a pinned cell would be painted over by the pinned cells
+   of the rows below it, which come later and sit at the same level. */
+.sticky-col:has(.dropdown-menu.show) {
+  z-index: 5;
+}
+
 @mixin column($name) {
   .#{$name}-col {
     --col-width: var(--#{$name}-width);

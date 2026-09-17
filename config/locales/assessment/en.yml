@@ -267,6 +267,11 @@ en:
       assignment_id_has_no_assessment: 'Assignment %{assignment_id} has no associated assessment.'
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
       participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
+      not_in_group: 'Only a member of the group can be put on one of its teams.'
+      member_added: '%{name} is on the team now.'
+      add_member: 'Put somebody on this team'
+      add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
+      add: 'Add'
     errors:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'

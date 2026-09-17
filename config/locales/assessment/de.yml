@@ -267,6 +267,11 @@ de:
       assignment_id_has_no_assessment: 'Hausaufgabe %{assignment_id} hat keine zugehörige Bewertung'
       participation_id_has_no_assignment: 'Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe'
       participation_has_task_points: 'Für diese Teilnahme wurden bereits Punkte eingetragen, daher kann sie nicht gelöscht werden.'
+      not_in_group: 'Nur ein Mitglied der Gruppe kann in eines ihrer Teams aufgenommen werden.'
+      member_added: '%{name} ist jetzt im Team.'
+      add_member: 'Jemanden in dieses Team aufnehmen'
+      add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
+      add: 'Aufnehmen'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'

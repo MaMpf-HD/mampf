@@ -731,6 +731,59 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     end
   end
 
+  describe "PATCH /submissions/:submission_id/add_member" do
+    let(:team) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student])
+    end
+    let(:newcomer) { create(:confirmed_user) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: newcomer)
+      create(:tutorial_membership, tutorial: tutorial, user: newcomer)
+      tutorial.tutors << tutor
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
+
+    def add(user, as:, scope: "tutorial")
+      sign_in(as)
+      patch(add_member_submission_path(team),
+            params: { user_id: user.id, grading_scope_type: scope }, as: :turbo_stream)
+    end
+
+    # The newcomer's own row goes, the team's row comes back with them on it.
+    it "lets the group's tutor put a member on the team" do
+      add(newcomer, as: tutor)
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to include(newcomer)
+      targets = Nokogiri::HTML(response.body).css("turbo-stream").pluck("target")
+      expect(targets).to include("points-participation-row-user-#{newcomer.id}",
+                                 "submission-row-#{team.id}", "marking-summary")
+      expect(response.body).to include(newcomer.tutorial_name)
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      create(:tutorial, lecture: lecture).tutors << other
+      add(newcomer, as: other)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).not_to include(newcomer)
+    end
+
+    it "takes nobody from outside the group" do
+      stranger = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: stranger)
+      add(stranger, as: tutor)
+
+      expect(response).to have_http_status(:not_found)
+      expect(team.reload.users).not_to include(stranger)
+    end
+  end
+
   describe "PATCH /submissions/:submission_id/refresh_point_submission" do
     let(:submission) do
       create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
