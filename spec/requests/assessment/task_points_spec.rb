@@ -765,6 +765,16 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(response.body).to include(newcomer.tutorial_name)
     end
 
+    # A row redrawn for any reason still offers them.
+    it "offers the candidates again when the row is refreshed" do
+      sign_in(tutor)
+      patch(refresh_point_submission_tutorial_path(team),
+            params: { grading_scope_type: "tutorial" }, as: :turbo_stream)
+
+      expect(response.body).to include(I18n.t("assessment.task_points.add_member"))
+      expect(response.body).to include(newcomer.tutorial_name)
+    end
+
     it "keeps another group's tutor out" do
       other = create(:confirmed_user)
       create(:tutorial, lecture: lecture).tutors << other

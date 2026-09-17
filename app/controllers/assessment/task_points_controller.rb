@@ -321,17 +321,7 @@ module Assessment
       def rerender_submission_row
         respond_to do |format|
           format.turbo_stream do
-            row = turbo_stream.replace(
-              "submission-row-#{@submission.id}",
-              html: render_to_string(
-                SubmissionRowComponent.new(
-                  submission: @submission,
-                  assignment: @assessable,
-                  grading_scope: table_scope
-                )
-              )
-            )
-            render turbo_stream: [row, summary_stream]
+            render turbo_stream: [submission_row_stream, summary_stream]
           end
         end
       end
@@ -381,10 +371,8 @@ module Assessment
       end
 
       def submission_row_stream
-        row = SubmissionRowComponent.new(
-          submission: @submission, assignment: @assessable, grading_scope: table_scope,
-          addable_members: @assessable.non_submitters_in_tutorial(@tutorial)
-        )
+        row = SubmissionRowComponent.new(submission: @submission, assignment: @assessable,
+                                         grading_scope: table_scope)
         turbo_stream.replace("submission-row-#{@submission.id}", html: render_to_string(row))
       end
 
