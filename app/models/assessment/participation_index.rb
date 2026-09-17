@@ -50,8 +50,10 @@ module Assessment
       # tutorial. Points may land on the row between this page's read and its
       # write, so the row is read again under the lock the point entry takes.
       def rehome_blank_rows(rows, groups)
+        uploaded = users_with_hand_in(rows.values.first&.assessment)
         rows.each_value do |row|
           next unless groups.key?(row.user_id) && blank?(row)
+          next if uploaded.include?(row.user_id)
           next if row.tutorial_id == groups[row.user_id]&.id
 
           row.with_lock { row.update!(tutorial: groups[row.user_id]) if blank?(row) }
@@ -60,8 +62,13 @@ module Assessment
 
       # The group whose tutor may write on the row: the student's current one
       # while the row is blank, the one that holds the recorded work after.
+      # A row behind an uploaded hand-in is the upload's, rejected or not:
+      # its group is where the file went.
       def group_holding(row)
         return row.tutorial unless blank?(row)
+
+        hand_in = hand_in_for(row)
+        return hand_in.tutorial if hand_in
 
         TutorialMembership.find_by(user_id: row.user_id,
                                    lecture_id: row.assessment.lecture_id)&.tutorial
@@ -79,6 +86,24 @@ module Assessment
       # nothing either. An achievement's row is blank while no value is entered.
       def blank?(row)
         row.pending? && row.submitted_at.nil? && !row.results_visible? && row.grade_text.blank?
+      end
+
+      def hand_in_for(row)
+        hand_ins_for(row.assessment).joins(:user_submission_joins)
+                                    .find_by(user_submission_joins: { user_id: row.user_id })
+      end
+
+      def users_with_hand_in(assessment)
+        hand_ins_for(assessment).joins(:user_submission_joins)
+                                .pluck("user_submission_joins.user_id").to_set
+      end
+
+      # Only a sheet takes uploads; nothing else has a Submission.
+      def hand_ins_for(assessment)
+        assignment = assessment&.assessable
+        return Submission.none unless assignment.is_a?(Assignment)
+
+        Submission.proper.where(assignment: assignment)
       end
 
       # Concurrent requests may hit either the uniqueness validation or the index;

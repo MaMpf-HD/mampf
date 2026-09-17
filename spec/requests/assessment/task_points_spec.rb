@@ -430,6 +430,21 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(participation.reload.tutorial).to eq(tutorial2)
       end
 
+      # An upload is the group's it went to, whatever the membership does
+      # afterwards - the file is in that tutor's stack. Rejected, the row
+      # looks blank again and still stays.
+      it "leaves a row behind an uploaded hand-in with the group the upload went to" do
+        submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                           tutorial: tutorial, users: [student])
+        submission.update!(accepted: false)
+        participation.update!(submitted_at: nil)
+
+        enter("6", as: tutor2)
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.tutorial).to eq(tutorial)
+        expect(participation.task_points).to be_empty
+      end
+
       it "is the new group's tutor who marks the absence from a test" do
         test = create(:assignment, lecture: lecture, kind: :test, deadline: 1.day.ago)
         create(:assessment, :with_points, assessable: test)

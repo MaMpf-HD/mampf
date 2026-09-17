@@ -72,6 +72,25 @@ RSpec.describe(Assessment::ParticipationIndex, type: :model) do
       expect(moved.reload.tutorial).to eq(elsewhere)
       expect(kept.reload.tutorial).to eq(group)
     end
+
+    # A rejected upload leaves the row looking blank; the file is still in
+    # the group's stack, and so is the row - the table and the single-row
+    # question agree.
+    it "leaves a row behind an uploaded hand-in with the upload's group" do
+      sheet = FactoryBot.create(:assignment, lecture: lecture)
+      FactoryBot.create(:assessment, :with_points, assessable: sheet)
+      elsewhere = FactoryBot.create(:tutorial, lecture: lecture)
+      FactoryBot.create(:submission, :with_manuscript, assignment: sheet, tutorial: group,
+                                                       users: [members.first], accepted: false)
+      row = FactoryBot.create(:assessment_participation, assessment: sheet.reload.assessment,
+                                                         user: members.first, tutorial: group)
+
+      described_class.rehome_blank_rows({ members.first.id => row },
+                                        { members.first.id => elsewhere })
+
+      expect(row.reload.tutorial).to eq(group)
+      expect(described_class.group_holding(row)).to eq(group)
+    end
   end
 
   describe ".init_participations" do
