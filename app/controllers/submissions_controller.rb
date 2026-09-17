@@ -644,22 +644,40 @@ class SubmissionsController < ApplicationController
       # join from.
       rostered_tutorial!(@assignment.lecture)
 
-      @join = UserSubmissionJoin.new(user: current_user,
-                                     submission: @submission)
-      @join.save
       # A join is not a modification of the hand-in: the file and its time
-      # stay what they are, and the tutor's row says who came later.
-      if @join.valid?
-        send_join_email
+      # stay what they are, and the tutor's row says who came later. The
+      # reader's own row is held from the check to the write: points entered
+      # on it in between would be the mark the check is there to keep.
+      joined = ActiveRecord::Base.transaction do
+        own_row&.lock!
+        if marked_on_own?
+          @error = I18n.t("submission.marked_on_own")
+          raise(ActiveRecord::Rollback)
+        end
+
+        @join = UserSubmissionJoin.new(user: current_user, submission: @submission)
+        unless @join.save
+          @error = @join.errors[:base].join(", ")
+          raise(ActiveRecord::Rollback)
+        end
+
         remove_invitee_status
         sync_assessment_participations(users: [current_user]) if @submission.manuscript
-      else
-        @error = @join.errors[:base].join(", ")
+        true
       end
+      send_join_email if joined
+    end
+
+    def own_row
+      return unless @assignment.assessable?
+      return @own_row if defined?(@own_row)
+
+      @own_row = @assignment.assessment.assessment_participations
+                            .includes(:task_points).find_by(user: current_user)
     end
 
     def marked_on_own?
-      @assignment.assessable? && @assignment.assessment.marked_for_user?(current_user)
+      own_row.present? && @assignment.assessment.marked?(own_row)
     end
 
     def send_join_email

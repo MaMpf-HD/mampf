@@ -80,9 +80,13 @@ module Assessment
         assignment = submission.assignment
         raise_if_errors!(validate_member_of_group(submission, user))
         raise_if_errors!(validate_team_takes_members(submission))
-        raise_if_errors!(validate_unmarked_on_own(assignment.assessment, user))
 
         participation = Participation.transaction do
+          # The newcomer's own row is held from the check to the write:
+          # points entered on it in between would be the decision the
+          # check is there to keep.
+          own_row = lock_own_row(assignment.assessment, user)
+          raise_if_errors!(validate_unmarked_on_own(assignment.assessment, own_row))
           UserSubmissionJoin.create!(user: user, submission: submission)
           row = init_participation(assignment.assessment, user, submission.tutorial)
           # The row is the upload's now, wherever it was seeded.
@@ -194,13 +198,19 @@ module Assessment
           I18n.t("assessment.task_points.team_rejected")
         end
 
+        def lock_own_row(assessment, user)
+          return unless assessment
+
+          assessment.assessment_participations.lock.find_by(user: user)
+        end
+
         # Marked on a row of their own, the newcomer is done with the sheet;
         # the team's points would replace a decision already taken. A sheet
         # without an assessment has no rows to be marked on.
-        def validate_unmarked_on_own(assessment, user)
-          return unless assessment&.marked_for_user?(user)
+        def validate_unmarked_on_own(assessment, own_row)
+          return unless assessment&.marked?(own_row)
 
-          I18n.t("assessment.task_points.marked_on_own", name: user.tutorial_name)
+          I18n.t("assessment.task_points.marked_on_own", name: own_row.user.tutorial_name)
         end
 
         # What the team already has, per task, read off the first teammate
