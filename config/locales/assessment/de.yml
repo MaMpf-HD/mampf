@@ -276,7 +276,6 @@ de:
       member_added: '%{name} ist jetzt im Team.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
-      add: 'Aufnehmen'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'

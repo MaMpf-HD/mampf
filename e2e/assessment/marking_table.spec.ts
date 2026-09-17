@@ -107,9 +107,7 @@ test.describe("marking table", () => {
 
     const teamRow = table.getByRole("row", { name: /Ada Lovelace/ });
     await teamRow.getByRole("button", { name: "Put somebody on this team" }).click();
-    await teamRow.getByRole("combobox", { name: "Put somebody on this team" })
-      .selectOption("Grace Hopper");
-    await teamRow.getByRole("button", { name: "Add" }).click();
+    await teamRow.getByRole("button", { name: "Grace Hopper" }).click();
 
     await expect(tutor.page.getByText("Grace Hopper is on the team now.")).toBeVisible();
     const joined = table.getByRole("row", { name: /Ada Lovelace/ });
