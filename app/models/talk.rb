@@ -210,11 +210,15 @@ class Talk < ApplicationRecord
       errors.add(:lecture, :must_be_seminar)
     end
 
+    # Said once, for the assignment that asked; a later save of the same
+    # instance starts clean.
     def graded_speakers_stay
-      return if @graded_speakers_dropped.blank?
+      dropped = @graded_speakers_dropped
+      @graded_speakers_dropped = nil
+      return if dropped.blank?
 
-      names = User.where(id: @graded_speakers_dropped).map(&:tutorial_name).to_sentence
-      errors.add(:speaker_ids, :graded, names: names)
+      names = User.where(id: dropped).map(&:tutorial_name)
+      errors.add(:speaker_ids, :graded, names: names.to_sentence, count: names.size)
     end
 
     def setup_assessment

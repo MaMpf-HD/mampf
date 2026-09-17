@@ -307,8 +307,14 @@ RSpec.describe(Talk, type: :model) do
 
     it "stays on the talk when the form drops them, and the form is told" do
       expect(talk.update(speaker_ids: [other.id.to_s])).to be(false)
-      expect(talk.errors[:speaker_ids].first).to include("Ada")
+      expect(talk.errors[:speaker_ids].first).to start_with("Ada ")
       expect(talk.reload.speakers).to include(graded, other)
+    end
+
+    it "does not hold the refusal against the next save of the same instance" do
+      talk.update(speaker_ids: [other.id.to_s])
+
+      expect(talk.update(title: "Another title")).to be(true)
     end
 
     it "lets the form drop the other speaker" do
