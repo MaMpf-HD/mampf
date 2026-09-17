@@ -102,8 +102,8 @@ test.describe("from a mark to a decision", () => {
     await page.gotoOverview();
     await page.overviewTab("Exam Eligibility").click();
 
-    await teacher.page.getByRole("button", { name: "Accept Open Proposals" })
-      .click();
+    teacher.page.on("dialog", dialog => dialog.accept());
+    await teacher.page.getByRole("button", { name: "Accept proposals" }).click();
     // the row already said "Eligible" as a proposal, so what marks the swap is
     // that it stopped being one
     // A decided row carries the inline editor with it, and that lists both

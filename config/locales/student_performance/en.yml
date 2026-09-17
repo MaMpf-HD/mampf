@@ -182,8 +182,9 @@ en:
         list_open: "Assignment list still open — the rule decides nothing for now."
         list_open_link: "Go to the %{tab} tab"
         todo_title: "To settle"
-        bulk_accept: "Accept Open Proposals"
+        bulk_accept: "Accept proposals"
         bulk_accept_hint: "Adopts the proposal for every student without a decision. Deferred proposals stay open."
+        bulk_accept_confirm: "Adopts the proposal for every student without a decision: %{forecast}. Continue?"
         bulk_reset:
           one: "Reset %{count} computed decision"
           other: "Reset %{count} computed decisions"

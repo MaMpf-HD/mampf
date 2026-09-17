@@ -182,8 +182,9 @@ de:
         list_open: "Blätterliste noch offen — die Regel entscheidet derzeit nichts."
         list_open_link: "Zum Reiter %{tab}"
         todo_title: "Zu klären"
-        bulk_accept: "Offene Vorschläge akzeptieren"
+        bulk_accept: "Vorschläge übernehmen"
         bulk_accept_hint: "Übernimmt den Vorschlag für alle Studierenden ohne Entscheidung. Zurückgestellte Vorschläge bleiben offen."
+        bulk_accept_confirm: "Übernimmt den Vorschlag für alle Studierenden ohne Entscheidung: %{forecast}. Fortfahren?"
         bulk_reset:
           one: "%{count} berechnete Zulassung zurücksetzen"
           other: "%{count} berechnete Zulassungen zurücksetzen"

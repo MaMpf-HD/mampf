@@ -15,30 +15,21 @@
 
       <% if @rule && @uncertified_count > 0 && @lecture.assignments_complete? &&
             (@proposed_passed + @proposed_failed) > 0 %>
+        <%# What the sweep would do is asked back, not worn on the button. %>
         <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
                     class: "btn btn-sm btn-success",
-                    title: t("student_performance.certifications.index.bulk_accept_hint") do %>
+                    title: t("student_performance.certifications.index.bulk_accept_hint"),
+                    form: { data: { turbo_confirm: bulk_accept_confirmation(
+                      passed: @proposed_passed, failed: @proposed_failed,
+                      inconclusive: @proposed_inconclusive
+                    ) } } do %>
           <i class="bi bi-check-all me-1"></i>
           <%= t("student_performance.certifications.index.bulk_accept") %>
 
-          <%#
-            joined in Ruby: a comma of its own in the markup renders with a
-            space in front of it
-          %>
-          <% scope = "student_performance.certifications.index" %>
-
-          <% forecast = [
-               "#{@proposed_passed} #{t("#{scope}.proposed_passed")}",
-               "#{@proposed_failed} #{t("#{scope}.proposed_failed")}"
-             ] %>
-
-          <% if @proposed_inconclusive.positive? %>
-            <% forecast << "#{@proposed_inconclusive} " \
-                           "#{t("#{scope}.proposed_inconclusive")}" %>
-          <% end %>
-
-          <span class="ms-1">(<%= forecast.join(", ") %>)</span>
+          <span class="badge text-bg-light ms-1">
+            <%= @proposed_passed + @proposed_failed %>
+          </span>
         <% end %>
       <% end %>
 
