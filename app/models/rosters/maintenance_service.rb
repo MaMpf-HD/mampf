@@ -54,9 +54,15 @@ module Rosters
       # a talk or an exam owns its assessment, so leaving it means leaving the
       # gradebook behind. A tutorial is merely where a result is graded; the
       # assessment belongs to the assignment and survives the move.
+      # A lecture's removal cascades into its talks, and a talk graded for
+      # the person refuses; asked here first, the refusal reads as this
+      # service's, not as a crash further down.
       def ensure_no_grading_data!(user, rosterable)
         assessment = rosterable.try(:assessment)
-        return unless assessment&.grading_data_for_user?(user)
+        held = assessment&.grading_data_for_user?(user)
+        held ||= rosterable.is_a?(Lecture) &&
+                 rosterable.talks.any? { |talk| !talk.speaker_removable?(user) }
+        return unless held
 
         raise(GradingDataPresentError,
               "#{rosterable.class.name} #{rosterable.id} holds grading data " \
