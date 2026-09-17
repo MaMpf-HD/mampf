@@ -14,21 +14,22 @@ module Demo
     # document; above it, the smallest one is an exercise sheet.
     MIN_SHEET_BYTES = 10 * 1024
 
-    # `handed_in_at` dates the submission back: a hand-in counts as late by the
-    # hour it was written, and these are written today, long after the
-    # deadlines they belong to.
+    # `handed_in_at` dates the submission back, and the team's joins with it:
+    # a hand-in counts as late by the hour it was written and a join after
+    # the deadline is marked by the name, and these are written today, long
+    # after the deadlines they belong to.
     def hand_in!(assignment:, tutorial:, team:, correction: nil,
                  handed_in_at: nil)
       submission = Submission.new(assignment: assignment, tutorial: tutorial,
                                   users: [team.first])
       submission.manuscript = manuscript_copy
       submission.save!
-      stamp!(submission, handed_in_at) if handed_in_at
       # A partner joins the existing submission; handing both to a new one
       # trips the team-size check, which counts what is already in the team.
       team.drop(1).each do |partner|
         UserSubmissionJoin.create!(user: partner, submission: submission)
       end
+      stamp!(submission, handed_in_at) if handed_in_at
       record_hand_in!(assignment, team, submission)
       return submission unless correction
 
@@ -99,6 +100,8 @@ module Demo
       # rubocop:disable Rails/SkipsModelValidations
       submission.update_columns(created_at: handed_in_at,
                                 last_modification_by_users_at: handed_in_at)
+      submission.user_submission_joins.update_all(created_at: handed_in_at,
+                                                  updated_at: handed_in_at)
       # rubocop:enable Rails/SkipsModelValidations
     end
   end

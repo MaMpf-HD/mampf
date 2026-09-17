@@ -39,8 +39,10 @@ class SubmissionRowComponent < ViewComponent::Base
     @addable_members.sort_by { |member| member.tutorial_name.to_s.downcase }
   end
 
+  # The earliest join founded the team; whether that was late is the
+  # triangle's business, not a name's.
   def late_joins
-    @late_joins ||= @submission.user_submission_joins
+    @late_joins ||= @submission.user_submission_joins.sort_by(&:created_at).drop(1)
                                .select { |join| join.created_at > @assignment.deadline }
                                .index_by(&:user_id)
   end

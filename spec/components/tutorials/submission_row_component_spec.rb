@@ -320,6 +320,20 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       expect(marker.first.parent.text).to include(student2.tutorial_name)
       expect(html.css(".bi-exclamation-triangle-fill")).to be_empty
     end
+
+    # Whoever founded a team after the deadline handed in late, which the
+    # triangle says; they did not join anything.
+    it "does not mark the founder of a late team" do
+      founded_late = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [create(:confirmed_user)])
+
+      html = render_inline(described_class.new(submission: founded_late,
+                                               assignment: assignment,
+                                               grading_scope: tutorial))
+
+      expect(html.css(".bi-box-arrow-in-right")).to be_empty
+      expect(html.css(".bi-exclamation-triangle-fill").size).to eq(1)
+    end
   end
 
   describe "#can_enter_points?" do
