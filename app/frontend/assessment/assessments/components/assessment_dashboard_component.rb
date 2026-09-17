@@ -142,9 +142,9 @@ class AssessmentDashboardComponent < ViewComponent::Base
     def point_tab_component
       case assessable
       when Assignment
-        TutorialPointingTableComponent.new(assignment: assessable, grading_scope: lecture)
+        TutorialMarkingTableComponent.new(assignment: assessable, grading_scope: lecture)
       when Exam
-        ExamPointingTableComponent.new(exam: assessable)
+        ExamPointsTableComponent.new(exam: assessable)
       else
         raise(ArgumentError, "No points tab for #{assessable.class}")
       end

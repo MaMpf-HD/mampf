@@ -1,6 +1,6 @@
-<%= helpers.turbo_frame_tag "pointing-table" do %>
+<%= helpers.turbo_frame_tag "marking-table" do %>
   <% if rows? %>
-    <div data-controller="pointing-table status-filter">
+    <div data-controller="marking-table status-filter">
       <div class="my-3">
         <%= render toolbar %>
       </div>
@@ -16,7 +16,7 @@
             data-cy="tutorial-submissions-table"
           >
             <thead>
-              <%= render(PointingTableHeaderComponent.new(
+              <%= render(MarkingTableHeaderComponent.new(
                 assessable: @assignment,
                 layout: layout
               )) %>

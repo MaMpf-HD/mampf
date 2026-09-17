@@ -1,6 +1,6 @@
 # One line saying where the sheet stands, counted off the rows' own display
 # statuses.
-class PointingSummaryComponent < ViewComponent::Base
+class MarkingSummaryComponent < ViewComponent::Base
   PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
            :met, :not_met, :unmarked, :exempt, :absent].freeze
 
@@ -8,7 +8,7 @@ class PointingSummaryComponent < ViewComponent::Base
   # on one page, so the second line needs an id of its own to be replaced.
   attr_reader :id
 
-  def initialize(statuses:, hand_ins: true, id: "pointing-summary", extra_parts: [])
+  def initialize(statuses:, hand_ins: true, id: "marking-summary", extra_parts: [])
     super()
     @statuses = statuses
     @hand_ins = hand_ins

@@ -32,7 +32,7 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
       expect(row.grader).to eq(tutor)
       expect(row).to be_pending
       expect(response.body).to include("achievement-participation-row-#{row.id}")
-      expect(response.body).to include("pointing-summary")
+      expect(response.body).to include("marking-summary")
       expect(response.body).to include(I18n.t("assessment.achievements.marking.met"))
     end
 
@@ -146,7 +146,7 @@ RSpec.describe(Assessment::AchievementValuesController, type: :request) do
             as: :turbo_stream
 
       expect(response.body).to include("achievement-participation-row-#{row.id}")
-      expect(response.body).to include("pointing-summary")
+      expect(response.body).to include("marking-summary")
     end
   end
 

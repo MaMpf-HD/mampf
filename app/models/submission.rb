@@ -109,7 +109,7 @@ class Submission < ApplicationRecord
     assignment.totally_expired? || correction.present? || accepted == false
   end
 
-  def valid_for_pointing?
+  def valid_for_marking?
     in_time? || accepted == true
   end
 

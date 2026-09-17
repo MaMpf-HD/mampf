@@ -37,7 +37,7 @@ module Assessment
       def exam_tables
         @exam_tables ||= begin
           rows = ExamRows.for(@assessable)
-          [ExamPointingTableComponent.new(exam: @assessable, rows: rows),
+          [ExamPointsTableComponent.new(exam: @assessable, rows: rows),
            ExamGradingTableComponent.new(exam: @assessable, rows: rows)]
         end
       end

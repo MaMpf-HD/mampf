@@ -21,7 +21,7 @@ async function handIn(
   return submission;
 }
 
-test.describe("pointing table", () => {
+test.describe("marking table", () => {
   test("records a hand-in on paper and takes it back", async ({
     factory,
     teacher,

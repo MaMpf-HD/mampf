@@ -100,7 +100,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
           expect(response).to have_http_status(:success)
           expect(ungrouped.reload.task_points.find_by(task: task).points).to eq(3)
-          expect(response.body).to include("target=\"pointing-table\"")
+          expect(response.body).to include("target=\"marking-table\"")
         end
 
         it "turns a tutor away" do
@@ -519,8 +519,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         expect(response).to have_http_status(:success)
         expect(exam_participation.task_points.find_by(task: exam_task).points).to eq(6)
-        expect(response.body).to include("pointing-participation-row-#{exam_participation.id}")
-        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+        expect(response.body).to include("points-participation-row-#{exam_participation.id}")
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]"))
           .to be_present
       end
 
@@ -613,7 +613,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               params: { grading_scope_type: "lecture" }, as: :turbo_stream
 
         expect(response).to have_http_status(:success)
-        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]"))
           .to be_present
       end
     end
@@ -674,7 +674,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       page = Nokogiri::HTML(response.body)
       targets = page.css("turbo-stream").pluck("target")
       rows.each do |row|
-        expect(targets).to include("pointing-participation-row-#{row.id}",
+        expect(targets).to include("points-participation-row-#{row.id}",
                                    "grading-participation-row-#{row.id}")
       end
       expect(page.at_css("turbo-stream[target=grading-scheme]")).to be_present
@@ -734,7 +734,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
               as: :turbo_stream
       end
 
-      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
       expect(summary.text).to include(
         I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
       )
@@ -773,7 +773,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             params: { grading_scope_type: "lecture" },
             as: :turbo_stream
 
-      expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]"))
+      expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]"))
         .to be_present
     end
 
@@ -805,8 +805,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         participation = assessment.assessment_participations.find_by(user: student)
         expect(participation.submitted_at).to be_present
-        expect(response.body).to include("target=\"pointing-participation-row-user-#{student.id}\"")
-        expect(response.body).to include("pointing-participation-row-#{participation.id}")
+        expect(response.body).to include("target=\"points-participation-row-user-#{student.id}\"")
+        expect(response.body).to include("points-participation-row-#{participation.id}")
       end
 
       it "records no hand-in on a test, whose points are the record" do
@@ -855,8 +855,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
         expect(participation.reload.submitted_at).to be_present
         expect(response.body)
-          .to include("target=\"pointing-participation-row-#{participation.id}\"")
-        expect(response.body).not_to include("target=\"pointing-table\"")
+          .to include("target=\"points-participation-row-#{participation.id}\"")
+        expect(response.body).not_to include("target=\"marking-table\"")
       end
 
       context "when user is not found" do
@@ -1013,8 +1013,8 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             as: :turbo_stream
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq(Mime[:turbo_stream])
-      expect(response.body).to include("target=\"pointing-participation-row-#{participation.id}\"")
-      expect(response.body).not_to include("target=\"pointing-table\"")
+      expect(response.body).to include("target=\"points-participation-row-#{participation.id}\"")
+      expect(response.body).not_to include("target=\"marking-table\"")
     end
 
     context "when the participation has task points with points assigned" do
@@ -1241,7 +1241,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     it "lets the group's tutor record an absence and take it back" do
       patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
       expect(row.reload).to be_absent
-      expect(response.body).to include("pointing-participation-row-#{row.id}")
+      expect(response.body).to include("points-participation-row-#{row.id}")
       expect(response.body).to include(I18n.t("assessment.grading_exam.remove_absent"))
       expect(response.body).not_to include(tutorial.title)
 
@@ -1309,7 +1309,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     end
 
     def summary_in(response)
-      Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
     end
 
     context "as the teacher" do
@@ -1319,7 +1319,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         patch mark_as_absent_path(candidate), as: :turbo_stream
 
         expect(candidate.reload).to be_absent
-        expect(response.body).to include("pointing-participation-row-#{candidate.id}")
+        expect(response.body).to include("points-participation-row-#{candidate.id}")
         expect(summary_in(response).text)
           .to include(I18n.t("assessment.grading_tutorial.summary.absent", count: 1))
 

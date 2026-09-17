@@ -8,7 +8,7 @@ module Assessment
       def achievement_summary_stream(achievement, grading_scope)
         summary = AchievementMarkingTableComponent.new(achievement: achievement,
                                                        grading_scope: grading_scope).summary
-        turbo_stream.replace("pointing-summary", html: render_to_string(summary))
+        turbo_stream.replace("marking-summary", html: render_to_string(summary))
       end
 
       # The tutor's page has no such button; Turbo ignores a replacement

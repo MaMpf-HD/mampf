@@ -1,7 +1,7 @@
-<%= helpers.turbo_frame_tag "pointing-table" do %>
+<%= helpers.turbo_frame_tag "marking-table" do %>
   <% if rows.any? %>
     <div
-      data-controller="pointing-table status-filter"
+      data-controller="marking-table status-filter"
       data-status-filter-page-size-value="20"
       data-action="status-filter:page-size@window->status-filter#adoptPageSize"
     >
@@ -19,7 +19,7 @@
                      locals: { id: "exam-points-#{@exam.id}", with_size: true } %>
         </div>
 
-        <%= render PointingFilterComponent.new(id: "exam-points-#{@exam.id}",
+        <%= render MarkingFilterComponent.new(id: "exam-points-#{@exam.id}",
                                                status_options: status_options,
                                                tutorial_options: tutorial_options) do %>
           <% if can_enter_points? %>
@@ -39,7 +39,7 @@
         <div class="table-overflow" data-table-fade-target="inner">
           <table class="table align-middle my-3">
             <thead>
-              <%= render(PointingTableHeaderComponent.new(assessable: @exam, layout: layout)) %>
+              <%= render(MarkingTableHeaderComponent.new(assessable: @exam, layout: layout)) %>
             </thead>
 
             <tbody>

@@ -2,7 +2,7 @@
   <%= render summary %>
 <% end %>
 
-<%= render PointingFilterComponent.new(
+<%= render MarkingFilterComponent.new(
   id: @assignment.id,
   status_options: (status_options if grading_enabled?),
   tutorial_options: (tutorial_options if lecture_form?)

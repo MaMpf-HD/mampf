@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(PointingSummaryComponent, type: :component) do
+RSpec.describe(MarkingSummaryComponent, type: :component) do
   around { |example| I18n.with_locale(:en) { example.run } }
 
   def summary(statuses)
@@ -17,6 +17,6 @@ RSpec.describe(PointingSummaryComponent, type: :component) do
   end
 
   it "carries the id the row answers replace" do
-    expect(render_inline(described_class.new(statuses: [])).css("p#pointing-summary")).to be_present
+    expect(render_inline(described_class.new(statuses: [])).css("p#marking-summary")).to be_present
   end
 end

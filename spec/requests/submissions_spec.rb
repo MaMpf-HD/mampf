@@ -485,7 +485,7 @@ RSpec.describe("Submissions", type: :request) do
       sign_in tutor
       patch reject_submission_path(submission), as: :turbo_stream
 
-      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
       expect(summary.text).to include(
         I18n.t("assessment.grading_tutorial.summary.not_submitted", count: 1)
       )
@@ -504,7 +504,7 @@ RSpec.describe("Submissions", type: :request) do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("submission-row-#{submission.id}")
-      expect(response.body).not_to include("pointing-summary")
+      expect(response.body).not_to include("marking-summary")
     end
   end
 

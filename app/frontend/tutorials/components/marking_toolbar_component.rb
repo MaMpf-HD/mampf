@@ -1,6 +1,6 @@
-# The strip above the pointing table, the same on a group's page and in the
+# The strip above the marking table, the same on a group's page and in the
 # lecture's dashboard: summary, filters, the rare actions and saving.
-class PointingToolbarComponent < ViewComponent::Base
+class MarkingToolbarComponent < ViewComponent::Base
   def initialize(assignment:, grading_scope:, statuses:, submissions:, tutorials: [])
     super()
     @assignment = assignment
@@ -12,7 +12,7 @@ class PointingToolbarComponent < ViewComponent::Base
   end
 
   def summary
-    PointingSummaryComponent.new(statuses: @statuses, hand_ins: !@assignment.kind_test?)
+    MarkingSummaryComponent.new(statuses: @statuses, hand_ins: !@assignment.kind_test?)
   end
 
   def status_options

@@ -95,13 +95,13 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       before { Timecop.travel(3.hours.from_now) }
       after { Timecop.return }
 
-      context "and submission is valid for pointing" do
+      context "and submission is valid for marking" do
         it "returns true" do
           expect(component_tutorial.allow_grading?).to eq(true)
         end
       end
 
-      context "and submission is not valid for pointing" do
+      context "and submission is not valid for marking" do
         it "returns false" do
           expect(component_late_rejected.allow_grading?).to eq(false)
         end

@@ -121,7 +121,7 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
-  describe "the pointing table's queries" do
+  describe "the marking table's queries" do
     def count_queries
       count = 0
       subscription = ActiveSupport::Notifications

@@ -1,6 +1,6 @@
 # The exam's points tab: one row per candidate on the roster, points per
 # task. The grade for the same rows lives in the grading tab.
-class ExamPointingTableComponent < ViewComponent::Base
+class ExamPointsTableComponent < ViewComponent::Base
   # `rows:` lets an answer that redraws both tables load the roster once.
   def initialize(exam:, rows: nil)
     super()
@@ -17,7 +17,7 @@ class ExamPointingTableComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @exam, table_option: :pointing)
+    @layout ||= MarkingTableLayout.for(assessable: @exam, table_option: :points)
   end
 
   def rows
@@ -26,7 +26,7 @@ class ExamPointingTableComponent < ViewComponent::Base
 
   def row_for(participation)
     ParticipationRowComponent.new(participation: participation, assessment: @assessment,
-                                  grading_scope: @lecture, table_option: :pointing,
+                                  grading_scope: @lecture, table_option: :points,
                                   filter_tutorial_id: tutorial_ids_by_user[participation.user_id])
   end
 
@@ -35,7 +35,7 @@ class ExamPointingTableComponent < ViewComponent::Base
   end
 
   def summary
-    PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false)
+    MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: false)
   end
 
   def can_enter_points?

@@ -45,7 +45,7 @@ module Assessment
         summary = TalkGradingTableComponent.new(seminar: @lecture).summary
         [turbo_stream.replace("grading-participation-row-#{@participation.id}",
                               html: render_to_string(row)),
-         turbo_stream.replace("pointing-summary", html: render_to_string(summary))]
+         turbo_stream.replace("marking-summary", html: render_to_string(summary))]
       end
 
       def set_resources

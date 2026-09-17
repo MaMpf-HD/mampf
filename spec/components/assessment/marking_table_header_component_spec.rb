@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(PointingTableHeaderComponent, type: :component) do
+RSpec.describe(MarkingTableHeaderComponent, type: :component) do
   let(:tutorial_scope) { build_stubbed(:tutorial) }
   let(:lecture_scope) { build_stubbed(:lecture) }
   let(:legacy_assignment) { build_stubbed(:assignment, accepted_file_type: ".pdf") }
@@ -13,7 +13,7 @@ RSpec.describe(PointingTableHeaderComponent, type: :component) do
   end
 
   def header(assessable, scope: tutorial_scope)
-    layout = PointingTableLayout.for(assessable: assessable, grading_scope: scope)
+    layout = MarkingTableLayout.for(assessable: assessable, grading_scope: scope)
     described_class.new(assessable: assessable, layout: layout)
   end
 

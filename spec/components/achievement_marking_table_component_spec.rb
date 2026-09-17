@@ -66,7 +66,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
         .to include(I18n.t("assessment.achievements.marking.unmarked"))
       expect(row_of(page, "Ada").css("select[name=grade] option[selected]").first["value"])
         .to eq("pass")
-      expect(page.css("#pointing-summary").text.squish)
+      expect(page.css("#marking-summary").text.squish)
         .to eq("1 met · 1 not met · 1 without a value")
     end
 

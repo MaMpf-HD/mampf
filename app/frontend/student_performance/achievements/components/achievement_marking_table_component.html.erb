@@ -1,10 +1,10 @@
-<%= helpers.turbo_frame_tag "pointing-table" do %>
+<%= helpers.turbo_frame_tag "marking-table" do %>
   <% if rows.any? %>
-    <div data-controller="pointing-table status-filter">
+    <div data-controller="marking-table status-filter">
       <div class="my-3">
         <%= render summary %>
 
-        <%= render PointingFilterComponent.new(id: filter_id,
+        <%= render MarkingFilterComponent.new(id: filter_id,
                                                status_options: status_options,
                                                tutorial_options: tutorial_options) %>
       </div>
@@ -17,7 +17,7 @@
         <div class="table-overflow" data-table-fade-target="inner">
           <table class="table align-middle my-3">
             <thead>
-              <%= render(PointingTableHeaderComponent.new(assessable: achievement, layout: layout)) %>
+              <%= render(MarkingTableHeaderComponent.new(assessable: achievement, layout: layout)) %>
             </thead>
 
             <tbody>

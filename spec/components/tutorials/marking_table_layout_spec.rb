@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(PointingTableLayout) do
+RSpec.describe(MarkingTableLayout) do
   describe ".for" do
     it "gives a sheet its tasks, and the team and the saving as pins" do
       layout = described_class.for(assessable: build_stubbed(:assignment))

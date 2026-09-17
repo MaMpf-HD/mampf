@@ -1,5 +1,5 @@
-# Renders pointing-table filters with optional actions supplied as content.
-class PointingFilterComponent < ViewComponent::Base
+# Renders marking-table filters with optional actions supplied as content.
+class MarkingFilterComponent < ViewComponent::Base
   def initialize(id:, status_options: nil, tutorial_options: nil)
     super()
     @id = id

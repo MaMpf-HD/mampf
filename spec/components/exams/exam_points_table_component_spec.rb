@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(ExamPointingTableComponent, type: :component) do
+RSpec.describe(ExamPointsTableComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
   let(:exam) { create(:exam, lecture: lecture) }
@@ -60,12 +60,12 @@ RSpec.describe(ExamPointingTableComponent, type: :component) do
 
       page = render_inline(component)
 
-      expect(page.css("p#pointing-summary")).to be_present
+      expect(page.css("p#marking-summary")).to be_present
       options = page.css("select[data-status-filter-target=status] option")
       expect(options.map { |o| o.text.strip })
         .to include(I18n.t("student_performance.records.columns.absent"))
       expect(page.css("input[type=number]").size).to eq(1)
-      expect(page.css("tr[id^=pointing-participation-row-]").size).to eq(1)
+      expect(page.css("tr[id^=points-participation-row-]").size).to eq(1)
     end
 
     it "cuts the rows into pages of 20 unless the reader picks another size" do

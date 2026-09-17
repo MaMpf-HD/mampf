@@ -11,7 +11,7 @@ class ParticipationRowComponent < ViewComponent::Base
   Proposal = Struct.new(:grade, :tooltip, keyword_init: true)
 
   # rubocop:disable Metrics/ParameterLists
-  def initialize(participation:, assessment:, grading_scope:, table_option: :pointing,
+  def initialize(participation:, assessment:, grading_scope:, table_option: :points,
                  proposal: nil, filter_tutorial_id: nil)
     super()
     @participation = participation
@@ -37,8 +37,8 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope,
-                                        table_option: @table_option)
+    @layout ||= MarkingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope,
+                                       table_option: @table_option)
   end
 
   def tasks?
@@ -98,13 +98,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def extract_task_points_participation(task)
-    graded_task_points.find do |sp|
-      sp.task_id == task.id
-    end&.points
-  end
-
-  def graded_task_points
-    @graded_task_points ||= @participation.graded_tasks_points
+    @participation.task_points.find { |task_point| task_point.task_id == task.id }&.points
   end
 
   def tasks
@@ -213,7 +207,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def save_url
     case @table_option
-    when :pointing
+    when :points
       point_participation_path(@participation, grading_scope_type: grading_scope_type)
     when :grading
       grade_participation_path(@participation)
@@ -226,7 +220,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def refresh_url
     case @table_option
-    when :pointing
+    when :points
       refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
     when :grading
       refresh_grade_participation_path(@participation)
@@ -346,7 +340,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def paper_hand_in_removable?
-    graded_task_points.all? { |point| point.points.nil? }
+    @participation.task_points.all? { |point| point.points.nil? }
   end
 
   def task_points_participation_input(task, allow_grading)

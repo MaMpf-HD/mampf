@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(TutorialPointingTableComponent, type: :component) do
+RSpec.describe(TutorialMarkingTableComponent, type: :component) do
   let(:lecture) { create(:lecture, submission_grace_period: 70) }
   let(:tutorial) { create(:tutorial, lecture: lecture) }
   let!(:assignment) do
@@ -87,7 +87,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
           .to have_attributes(status: "pending", submitted_at: nil, points_total: nil)
 
         page = render_inline(component)
-        row = page.css("tr[id^=pointing-participation-row-]").first
+        row = page.css("tr[id^=points-participation-row-]").first
         expect(row["id"]).not_to include("user-")
         expect(row.css("input[type=number]")).to be_present
         expect(row.text).not_to include(I18n.t("assessment.grading_tutorial.record_first"))
@@ -229,7 +229,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
       it "counts no hand-ins and draws no file columns" do
         page = render_inline(component)
 
-        expect(page.css("#pointing-summary").text).not_to include("hand-in")
+        expect(page.css("#marking-summary").text).not_to include("hand-in")
         expect(page.css("th").map(&:text).join).not_to include(I18n.t("basics.submission"))
       end
     end
@@ -310,7 +310,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     describe "rendering" do
       it "renders the grading table" do
         render_inline(component)
-        expect(rendered_content).to include("pointing-table")
+        expect(rendered_content).to include("marking-table")
       end
     end
   end
@@ -360,7 +360,7 @@ RSpec.describe(TutorialPointingTableComponent, type: :component) do
     describe "rendering" do
       it "renders the grading table" do
         render_inline(component)
-        expect(rendered_content).to include("pointing-table")
+        expect(rendered_content).to include("marking-table")
       end
     end
   end

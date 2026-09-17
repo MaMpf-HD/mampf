@@ -103,10 +103,6 @@ module Assessment
       task_ids.none? { |task_id| points_by_task_id[task_id].nil? }
     end
 
-    def graded_tasks_points
-      task_points
-    end
-
     # The one place the student side asks whether marks may be shown. Sheets
     # have no release step - what a tutor saves, the student sees - so the
     # answer today is "somebody wrote a value on some task". Everything student

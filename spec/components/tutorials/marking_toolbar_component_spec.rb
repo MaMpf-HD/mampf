@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(PointingToolbarComponent, type: :component) do
+RSpec.describe(MarkingToolbarComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, teacher: teacher) }
   let(:tutorial) { create(:tutorial, lecture: lecture, title: "Tuesday group") }

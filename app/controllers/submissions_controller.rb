@@ -330,9 +330,9 @@ class SubmissionsController < ApplicationController
     def summary_stream(grading_scope)
       return unless @assignment.assessable?
 
-      summary = TutorialPointingTableComponent.new(assignment: @assignment,
-                                                   grading_scope: grading_scope).summary
-      turbo_stream.replace("pointing-summary", html: render_to_string(summary))
+      summary = TutorialMarkingTableComponent.new(assignment: @assignment,
+                                                  grading_scope: grading_scope).summary
+      turbo_stream.replace("marking-summary", html: render_to_string(summary))
     end
 
     # Everything a student does changes one sheet and nothing else - the history

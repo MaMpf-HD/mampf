@@ -90,7 +90,7 @@ export default class extends Controller {
   handleDirty(targetType) {
     this.element.classList.add("row-dirty");
 
-    // pointing-table uses these task_points for submitAll; changing the
+    // marking-table uses these task_points for submitAll; changing the
     // row-dirty class alone does not update its bulk-save payload.
     this.dispatch("dirty", {
       prefix: false,

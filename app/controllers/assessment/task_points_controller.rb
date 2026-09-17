@@ -227,9 +227,9 @@ module Assessment
         scope = row_before ? row_before.tutorial : roster_tutorial
         authorize!(:enter_points, scope || @lecture)
         row_id = if row_before
-          "pointing-participation-row-#{row_before.id}"
+          "points-participation-row-#{row_before.id}"
         else
-          "pointing-participation-row-user-#{user.id}"
+          "points-participation-row-user-#{user.id}"
         end
         participation = SubmissionGraderService.init_participation(@assessment, user,
                                                                    roster_tutorial)
@@ -345,7 +345,7 @@ module Assessment
 
       # ExamStreams already includes the exam summaries.
       def table_option
-        @assessable.is_a?(Achievement) ? :achievement : :pointing
+        @assessable.is_a?(Achievement) ? :achievement : :points
       end
 
       def summary_stream
@@ -356,18 +356,18 @@ module Assessment
                   achievement_delete_button_stream(@assessable)]
         end
 
-        summary = TutorialPointingTableComponent.new(assignment: @assessable,
-                                                     grading_scope: table_scope).summary
-        turbo_stream.replace("pointing-summary", html: render_to_string(summary))
+        summary = TutorialMarkingTableComponent.new(assignment: @assessable,
+                                                    grading_scope: table_scope).summary
+        turbo_stream.replace("marking-summary", html: render_to_string(summary))
       end
 
       def rerender_submission_table
         respond_to do |format|
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(
-              "pointing-table",
+              "marking-table",
               html: render_to_string(
-                TutorialPointingTableComponent.new(
+                TutorialMarkingTableComponent.new(
                   assignment: @assessable,
                   grading_scope: table_scope
                 )

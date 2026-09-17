@@ -91,7 +91,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
   describe "#row_id" do
     it "returns the correct row id" do
-      expect(component_tutor.row_id).to eq("pointing-participation-row-#{participation.id}")
+      expect(component_tutor.row_id).to eq("points-participation-row-#{participation.id}")
     end
   end
 
@@ -139,29 +139,28 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
   describe "#extract_task_points_participation" do
     let!(:task) { create(:assessment_task, assessment: assessment) }
 
-    before { participation }
+    # Points may only be written once the deadline has passed.
+    before do
+      participation
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
 
     context "when task points exist" do
       it "returns the points" do
-        graded_task = double("graded_task", task_id: task.id, points: 8.0)
-        allow(participation).to receive(:graded_tasks_points).and_return([graded_task])
+        create(:assessment_task_point, assessment_participation: participation, task: task,
+                                       points: 8.0)
         expect(component_tutor.extract_task_points_participation(task)).to eq(8.0)
       end
     end
 
     context "when no task points exist" do
       it "returns nil" do
-        graded_task = double("graded_task", task_id: task.id, points: nil)
-        allow(participation).to receive(:graded_tasks_points).and_return([graded_task])
+        create(:assessment_task_point, assessment_participation: participation, task: task,
+                                       points: nil)
         expect(component_tutor.extract_task_points_participation(task)).to be_nil
       end
-    end
-
-    it "memoizes graded_tasks_points across multiple calls" do
-      allow(participation).to receive(:graded_tasks_points).and_return([])
-      component_tutor.extract_task_points_participation(task)
-      component_tutor.extract_task_points_participation(task)
-      expect(participation).to have_received(:graded_tasks_points).once
     end
   end
 
@@ -575,7 +574,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
                                       grading_scope: tutorial)
       render_inline(component)
 
-      expect(component.row_id).to eq("pointing-participation-row-user-#{student.id}")
+      expect(component.row_id).to eq("points-participation-row-user-#{student.id}")
       expect(component.points_enterable?).to be(false)
       expect(rendered_content).to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
       expect(rendered_content).not_to include("point_participation")

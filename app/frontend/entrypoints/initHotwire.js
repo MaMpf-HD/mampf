@@ -170,8 +170,8 @@ window.Stimulus.register("sortable", SortableController);
 import ParticipationRowController from "~/assessment/participation_row.controller.js";
 window.Stimulus.register("participation-row", ParticipationRowController);
 
-import PointingTableController from "~/assessment/pointing_table.controller.js";
-window.Stimulus.register("pointing-table", PointingTableController);
+import MarkingTableController from "~/assessment/marking_table.controller.js";
+window.Stimulus.register("marking-table", MarkingTableController);
 
 import TableFadeController from "~/tutorials/table_fade.controller.js";
 window.Stimulus.register("table-fade", TableFadeController);

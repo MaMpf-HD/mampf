@@ -1,6 +1,6 @@
-# The pointing table of a sheet: a row for every hand-in and one for everybody
+# The marking table of a sheet: a row for every hand-in and one for everybody
 # else on the roster. A tutor sees their group, the lecturer every group.
-class TutorialPointingTableComponent < ViewComponent::Base
+class TutorialMarkingTableComponent < ViewComponent::Base
   def initialize(assignment:, grading_scope: nil)
     super()
     @assignment = assignment
@@ -89,19 +89,19 @@ class TutorialPointingTableComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
+    @layout ||= MarkingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
   end
 
   def toolbar
-    PointingToolbarComponent.new(assignment: @assignment, grading_scope: @grading_scope,
-                                 statuses: row_statuses, submissions: @stack,
-                                 tutorials: @tutorials || [])
+    MarkingToolbarComponent.new(assignment: @assignment, grading_scope: @grading_scope,
+                                statuses: row_statuses, submissions: @stack,
+                                tutorials: @tutorials || [])
   end
 
   # Every answer that swaps a row out sends the line above the table along,
   # rebuilt from the rows, so the two never disagree.
   def summary
-    PointingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?)
+    MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?)
   end
 
   # A team row speaks for its first member with a participation, as the row

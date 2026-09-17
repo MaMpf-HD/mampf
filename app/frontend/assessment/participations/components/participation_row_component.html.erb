@@ -6,8 +6,8 @@
   data-row-id="<%= @participation.id %>"
   data-row-target-type="participation"
   <% if tasks? %>
-    data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
-    data-pointing-table-target="row"
+    data-action="dirty->marking-table#rowDirty clean->marking-table#rowClean"
+    data-marking-table-target="row"
   <% end %>
   data-status-filter-target="row"
   data-status-filter-status="<%= status %>"

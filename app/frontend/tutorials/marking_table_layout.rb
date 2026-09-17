@@ -1,5 +1,5 @@
 # Defines the columns, pins, and widths shared by table headers and rows.
-class PointingTableLayout
+class MarkingTableLayout
   class UnsupportedAssessableError < StandardError; end
 
   WIDTHS = {
@@ -22,7 +22,7 @@ class PointingTableLayout
   # Pin :talk and :team so the talk and speaker remain visible while
   # scrolling through the grade and note columns. An exam has two tables,
   # one for the points and one for the grade; `table_option` picks.
-  def self.for(assessable:, grading_scope: nil, table_option: :pointing)
+  def self.for(assessable:, grading_scope: nil, table_option: :points)
     case assessable
     when Assignment
       columns = [:team]
@@ -46,7 +46,7 @@ class PointingTableLayout
       new(columns: columns + [:status, :value, :save], body: :achievement,
           widths: { save: 130 })
     else
-      raise(UnsupportedAssessableError, "No pointing table layout for #{assessable.class}")
+      raise(UnsupportedAssessableError, "No marking table layout for #{assessable.class}")
     end
   end
 
@@ -69,7 +69,7 @@ class PointingTableLayout
   end
 
   def column_class(column)
-    raise(ArgumentError, "Unknown pointing table column #{column}") unless @widths.key?(column)
+    raise(ArgumentError, "Unknown marking table column #{column}") unless @widths.key?(column)
 
     css = "#{column.to_s.dasherize}-col"
     pinned?(column) ? "sticky-col #{css}" : css

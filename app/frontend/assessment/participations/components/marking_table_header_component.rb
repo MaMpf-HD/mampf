@@ -1,4 +1,4 @@
-class PointingTableHeaderComponent < ViewComponent::Base
+class MarkingTableHeaderComponent < ViewComponent::Base
   Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, keyword_init: true)
 
   # A heading sits the way its column's content does: text starts at the

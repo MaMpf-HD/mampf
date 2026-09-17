@@ -17,11 +17,11 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
+    @layout ||= MarkingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
   end
 
   def allow_grading?
-    @submission.valid_for_pointing? && @assignment&.grading_open?
+    @submission.valid_for_marking? && @assignment&.grading_open?
   end
 
   def tasks
@@ -47,13 +47,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def extract_task_points(task)
-    graded_task_points.find do |sp|
-      sp.task_id == task.id
-    end&.points
-  end
-
-  def graded_task_points
-    participation ? participation.task_points : []
+    participation&.task_points&.find { |task_point| task_point.task_id == task.id }&.points
   end
 
   def task_points_input(task, allow_grading)

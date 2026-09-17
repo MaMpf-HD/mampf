@@ -27,7 +27,7 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: achievement, grading_scope: @grading_scope)
+    @layout ||= MarkingTableLayout.for(assessable: achievement, grading_scope: @grading_scope)
   end
 
   def status_options
@@ -43,8 +43,8 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   def summary
-    PointingSummaryComponent.new(statuses: rows.map { |row| achievement.status_of(row) },
-                                 hand_ins: false)
+    MarkingSummaryComponent.new(statuses: rows.map { |row| achievement.status_of(row) },
+                                hand_ins: false)
   end
 
   def filter_id
