@@ -4176,6 +4176,10 @@ en:
           attributes:
             lecture:
               must_be_seminar: "Talks can only be created for seminars."
+            speaker_ids:
+              graded: >-
+                %{names} stay on the talk: it has already been graded for
+                them. Clear the grade first.
             title:
               blank: You need to give a title.
         term:

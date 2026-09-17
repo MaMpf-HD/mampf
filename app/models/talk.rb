@@ -1,5 +1,7 @@
 # Talk class
 class Talk < ApplicationRecord
+  class SpeakerRemovalNotAllowedError < StandardError; end
+
   include Registration::Registerable
   include Rosters::Rosterable
   include Assessment::Gradable
@@ -18,6 +20,7 @@ class Talk < ApplicationRecord
 
   validates :title, presence: true
   validate :lecture_must_be_seminar
+  validate :graded_speakers_stay
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
@@ -130,6 +133,25 @@ class Talk < ApplicationRecord
     speakers << speaker unless speaker.in?(speakers)
   end
 
+  # A speaker the talk has been graded for stays on it: dropped, the grade
+  # would survive the roster invisibly. Clearing the grade is the way out.
+  def speaker_removable?(user)
+    speakers_with_grading_data.exclude?(user.id)
+  end
+
+  def remove_user_from_roster!(user)
+    raise(SpeakerRemovalNotAllowedError) unless speaker_removable?(user)
+
+    super
+  end
+
+  # The form sends the whole list; the graded stay on it and the form is told.
+  def speaker_ids=(ids)
+    wanted = Array(ids).compact_blank.map(&:to_i)
+    @graded_speakers_dropped = (speakers_with_grading_data & speaker_ids) - wanted
+    super((wanted + @graded_speakers_dropped).uniq)
+  end
+
   # Deleting a talk takes its media with it, and there is no way to get them
   # back, so they have to be moved or deleted deliberately first.
   def destruction_blockers
@@ -140,6 +162,14 @@ class Talk < ApplicationRecord
 
   def roster_entries
     speaker_talk_joins
+  end
+
+  def speakers_with_grading_data
+    return [] unless assessment
+
+    assessment.assessment_participations.includes(:task_points).filter_map do |participation|
+      participation.user_id if assessment.grading_data_for?(participation)
+    end
   end
 
   def roster_user_id_column
@@ -178,6 +208,13 @@ class Talk < ApplicationRecord
       return if lecture.seminar?
 
       errors.add(:lecture, :must_be_seminar)
+    end
+
+    def graded_speakers_stay
+      return if @graded_speakers_dropped.blank?
+
+      names = User.where(id: @graded_speakers_dropped).map(&:tutorial_name).to_sentence
+      errors.add(:speaker_ids, :graded, names: names)
     end
 
     def setup_assessment

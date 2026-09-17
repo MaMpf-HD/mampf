@@ -4429,6 +4429,10 @@ de:
           attributes:
             lecture:
               must_be_seminar: "Vorträge können nur für Seminare erstellt werden."
+            speaker_ids:
+              graded: >-
+                %{names} bleiben auf dem Vortrag: er ist für sie schon
+                benotet. Lösche zuerst die Note.
             title:
               blank: Es muss ein Titel angegeben werden.
         term:
