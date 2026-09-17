@@ -553,8 +553,9 @@
                   <div data-certification-inline-target="edit" class="d-none">
                     <%#
                       Not a tick and a cross: those are "admit" and "refuse"
-                      two rows down. The three are bare icons as in the
-                      marking tables: save, back out, throw the decision away.
+                      two rows down. Bare icons as in the marking tables: save,
+                      wipe the decision (filled and amber - it changes things,
+                      backing out does not), and back out last.
                     %>
 
                     <div class="d-flex align-items-center justify-content-end">
@@ -568,22 +569,12 @@
                         <i class="bi bi-floppy-fill"></i>
                       </button>
 
-                      <button
-                        type="button"
-                        class="<%= row_action_classes %>"
-                        data-action="certification-inline#cancel"
-                        title="<%= t('student_performance.certifications.index.cancel') %>"
-                        aria-label="<%= t('student_performance.certifications.index.cancel') %>"
-                      >
-                        <i class="bi bi-arrow-return-left"></i>
-                      </button>
-
                       <%= button_to(
                             lecture_student_performance_certification_path(
                               @lecture, cert
                             ),
                             method: :delete,
-                            class: "#{row_action_classes} row-action-danger",
+                            class: "#{row_action_classes} text-amber",
                             title: t(
                               "student_performance.certifications.index.reset"
                             ),
@@ -600,8 +591,18 @@
                               }
                             }
                           ) do %>
-                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <i class="bi bi-eraser-fill"></i>
                       <% end %>
+
+                      <button
+                        type="button"
+                        class="<%= row_action_classes %>"
+                        data-action="certification-inline#cancel"
+                        title="<%= t('student_performance.certifications.index.cancel') %>"
+                        aria-label="<%= t('student_performance.certifications.index.cancel') %>"
+                      >
+                        <i class="bi bi-arrow-return-left"></i>
+                      </button>
                     </div>
 
                     <%= form_with(
