@@ -60,13 +60,20 @@ module Rosters
       def ensure_no_grading_data!(user, rosterable)
         assessment = rosterable.try(:assessment)
         held = assessment&.grading_data_for_user?(user)
-        held ||= rosterable.is_a?(Lecture) &&
-                 rosterable.talks.any? { |talk| !talk.speaker_removable?(user) }
+        held ||= rosterable.is_a?(Lecture) && graded_on_a_talk?(user, rosterable)
         return unless held
 
         raise(GradingDataPresentError,
               "#{rosterable.class.name} #{rosterable.id} holds grading data " \
               "for user #{user.id}")
+      end
+
+      # The person's rows on the lecture's talks in one read, not one per talk.
+      def graded_on_a_talk?(user, lecture)
+        Assessment::Participation
+          .where(user: user, assessment: Assessment::Assessment.where(assessable: lecture.talks))
+          .includes(:task_points, :assessment)
+          .any? { |row| row.assessment.grading_data_for?(row) }
       end
 
       def user_in_roster?(user, rosterable)
