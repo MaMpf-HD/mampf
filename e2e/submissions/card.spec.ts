@@ -299,7 +299,7 @@ test.describe("the card for a sheet that is due", () => {
   // tutor has recorded and marked it, the points arrive in the list.
   test("shows a sheet not handed in via MaMpf with its deadline, and later its points", async ({
     factory,
-    clock,
+    timeCop,
     teacher,
     tutor,
     student,
@@ -339,7 +339,7 @@ test.describe("the card for a sheet that is due", () => {
     await expect(student.page.getByRole("link", { name: "Join with a code" })).toHaveCount(0);
 
     const deadline = new Date(await assignment.__call("deadline") as string);
-    await clock.travelTo(new Date(deadline.getTime() + 2 * 86400000));
+    await timeCop.travelToDate(new Date(deadline.getTime() + 2 * 86400000));
 
     await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
     const row = tutor.page.getByRole("table")
@@ -362,7 +362,7 @@ test.describe("the card for a sheet that is due", () => {
   // Past the deadline the card still stands, and it says how long is left.
   test("counts the grace period down on the card", async ({
     factory,
-    clock,
+    timeCop,
     teacher,
     student,
   }) => {
@@ -372,7 +372,7 @@ test.describe("the card for a sheet that is due", () => {
     const deadline = new Date(await assignment.__call("deadline") as string);
     const inGrace = new Date(deadline.getTime() + 5 * 60 * 1000);
 
-    await clock.travelTo(inGrace);
+    await timeCop.travelToDate(inGrace);
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
 
     await expect(student.page.getByText("left", { exact: false }).first())

@@ -6,19 +6,19 @@ import { callBackend } from "./backend";
  * time - so use it for what the backend decides (a deadline passing, a grace
  * period running out), not for anything the page works out in JavaScript.
  *
- * Reach it through the `clock` fixture, which puts the clock back when the
+ * Reach it through the `timeCop` fixture, which puts the clock back when the
  * test ends - however it ends. A `finally` in the test cannot: after a timeout
  * the browser contexts are gone before it runs, and every test after inherits
  * the date.
  */
-export class Clock {
+export class TimeCop {
   private readonly context: APIRequestContext;
 
   constructor(context: APIRequestContext) {
     this.context = context;
   }
 
-  async travelTo(when: Date): Promise<void> {
+  async travelToDate(when: Date): Promise<void> {
     // Sent as UTC parts: the runner and the server need not agree on a zone, and
     // an hour's difference is exactly the kind that makes a deadline test lie.
     await callBackend(this.context, "timecop/travel", {
@@ -30,6 +30,12 @@ export class Clock {
       seconds: when.getUTCSeconds(),
       use_utc: "true",
     });
+  }
+
+  async moveAheadDays(days: number): Promise<void> {
+    const when = new Date();
+    when.setUTCDate(when.getUTCDate() + days);
+    await this.travelToDate(when);
   }
 
   async reset(): Promise<void> {

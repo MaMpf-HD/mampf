@@ -10,7 +10,7 @@ import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_pa
 test.describe("a test written in the tutorial", () => {
   test("is set for a week, marked in it, and read", async ({
     factory,
-    clock,
+    timeCop,
     teacher,
     tutor,
     student,
@@ -66,7 +66,7 @@ test.describe("a test written in the tutorial", () => {
 
     // the week begins: the Monday group writes it, and the tutor enters the
     // points straight away
-    await clock.travelTo(monday);
+    await timeCop.travelToDate(monday);
 
     await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
     await expect(tutor.page.getByText("Test week:")).toBeVisible();
