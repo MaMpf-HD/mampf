@@ -24,5 +24,11 @@ class CreateGradeSchemes < ActiveRecord::Migration[8.0]
                     column: :assessment_id
     add_foreign_key :assessment_grade_schemes, :users,
                     column: :applied_by_id
+
+    # The scheme that gave a row its grade, nil for a grade entered by hand:
+    # re-applying a scheme may overwrite the first and must leave the second.
+    add_reference :assessment_participations, :grade_scheme,
+                  type: :uuid, null: true,
+                  foreign_key: { to_table: :assessment_grade_schemes, on_delete: :nullify }
   end
 end
