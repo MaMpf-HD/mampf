@@ -2946,7 +2946,7 @@ en:
           Team: you and %{names} - these %{points} points are yours
         join_late: >
           Handed in with a team after all? Its code still gets you on it, until
-          the team has been marked.
+          the team has been marked; after that your tutor can still add you.
         no_points:
           nothing_yet: Nothing has been entered yet.
           on_the_correction: >
@@ -3308,6 +3308,12 @@ en:
       %{user} has joined the submission for %{assignment} in %{lecture}
     submission_join: >
       %{user} has joined the submission for %{assignment} in %{lecture}.
+    submission_added_subject: >
+      You are on the team for %{assignment} in %{lecture} now
+    submission_added: >
+      %{tutor} has put you on the team of %{team} for %{assignment} in
+      %{lecture}. Their hand-in counts for you now, and so do the points it
+      gets.
     submission_leave_subject: >
       %{user} has left the submission for %{assignment} in %{lecture}
     submission_leave: >

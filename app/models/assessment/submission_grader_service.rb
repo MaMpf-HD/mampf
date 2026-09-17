@@ -74,18 +74,21 @@ module Assessment
 
       # A tutor puts somebody who forgot to join onto the team's upload. The
       # row is stamped as handed in, and where the team already has points
-      # the newcomer gets the same - the tutor is saying "this one too".
+      # the newcomer gets the same - the tutor is saying "this one too". The
+      # newcomer hears of it; the team hears of a join as it always does.
       def add_member!(submission, user, scorer)
         assignment = submission.assignment
         raise_if_errors!(validate_member_of_group(submission, user))
 
-        Participation.transaction do
+        participation = Participation.transaction do
           UserSubmissionJoin.create!(user: user, submission: submission)
-          participation = init_participation(assignment.assessment, user, submission.tutorial)
+          row = init_participation(assignment.assessment, user, submission.tutorial)
           points = team_points(submission, user)
-          PointEntryService.enter_points(participation, points, scorer, submission) if points.any?
-          participation
+          PointEntryService.enter_points(row, points, scorer, submission) if points.any?
+          row
         end
+        tell_of_addition(submission, user, scorer)
+        participation
       rescue ActiveRecord::RecordInvalid => e
         raise(SubmissionGraderError, e.record.errors.full_messages.to_sentence)
       end
@@ -160,6 +163,17 @@ module Assessment
           submission.users.each do |user|
             participation = init_participation(assessment, user, submission.tutorial)
             PointEntryService.enter_points(participation, points_by_task_id, scorer, submission)
+          end
+        end
+
+        def tell_of_addition(submission, newcomer, tutor)
+          NotificationMailer.with(recipient: newcomer, locale: newcomer.locale,
+                                  submission: submission, user: tutor)
+                            .submission_added_email.deliver_later
+          (submission.users.email_for_submission_join - [newcomer]).each do |member|
+            NotificationMailer.with(recipient: member, locale: member.locale,
+                                    submission: submission, user: newcomer)
+                              .submission_join_email.deliver_later
           end
         end
 

@@ -192,6 +192,17 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(row.reload).to be_reviewed
     end
 
+    # The newcomer hears from the tutor; the partner hears of a join as ever.
+    it "tells the newcomer and the team" do
+      partner.update!(email_for_submission_join: true)
+      expect do
+        described_class.add_member!(team, newcomer, scorer)
+      end.to have_enqueued_mail(NotificationMailer, :submission_added_email)
+        .with(params: hash_including(recipient: newcomer, user: scorer), args: [])
+        .and(have_enqueued_mail(NotificationMailer, :submission_join_email)
+        .with(params: hash_including(recipient: partner, user: newcomer), args: []))
+    end
+
     it "takes only a member of the group" do
       stranger = FactoryBot.create(:confirmed_user)
       FactoryBot.create(:lecture_membership, lecture: lecture, user: stranger)

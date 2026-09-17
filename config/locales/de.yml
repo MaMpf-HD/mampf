@@ -3172,7 +3172,8 @@ de:
           Team: Du und %{names} - diese %{points} Punkte sind Deine
         join_late: >
           Doch mit einem Team abgegeben? Mit dessen Code kommst Du noch dazu,
-          solange das Team nicht bewertet ist.
+          solange das Team nicht bewertet ist; danach kann Dich Dein Tutor
+          noch aufnehmen.
         no_points:
           nothing_yet: Es ist noch nichts eingetragen.
           on_the_correction: >
@@ -3544,6 +3545,12 @@ de:
     submission_join: >
       %{user} ist der Abgabe zu %{assignment} in %{lecture}
       beigetreten.
+    submission_added_subject: >
+      Du bist jetzt im Team für %{assignment} in %{lecture}
+    submission_added: >
+      %{tutor} hat Dich in das Team von %{team} für %{assignment} in
+      %{lecture} aufgenommen. Die Abgabe des Teams zählt jetzt auch für Dich,
+      und ebenso die Punkte, die sie bekommt.
     submission_leave_subject: >
       %{user} hat Abgabe zu %{assignment} in %{lecture} verlassen
     submission_leave: >
