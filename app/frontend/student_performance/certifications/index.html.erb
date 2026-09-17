@@ -33,10 +33,11 @@
         <% end %>
       <% end %>
 
+      <%# A rare correction, not a second main action: a quiet link. %>
       <% if @computed_count > 0 %>
         <%= button_to bulk_reset_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
-                    class: "btn btn-sm btn-outline-secondary",
+                    class: "btn btn-sm btn-link text-secondary text-decoration-none",
                     form: {
                       data: {
                         turbo_confirm: t(
