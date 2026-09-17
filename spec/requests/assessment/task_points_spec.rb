@@ -712,6 +712,16 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(rows[0].reload.points_total).to be_nil
     end
 
+    it "refuses a payload that is not a list of rows with points" do
+      [[], [{ id: rows[0].id }], { id: rows[0].id }, "x"].each do |payload|
+        sign_in(teacher)
+        patch(point_multi_participations_exam_path(exam),
+              params: { participations: payload.to_json }, as: :turbo_stream)
+        expect(response.body).to include(I18n.t("assessment.errors.invalid_request_params"))
+      end
+      expect(rows[0].reload.points_total).to be_nil
+    end
+
     it "is the lecture's business, not a tutor's" do
       tutorial.tutors << tutor
       save_all([entry(rows[0], "6")], as: tutor)

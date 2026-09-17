@@ -70,22 +70,25 @@ module Assessment
     end
 
     # Every row of the exam's table with unsaved points, in one transaction:
-    # one refused row - not a candidate, absent, excused - saves none.
+    # one refused row - not a candidate, absent, excused - saves none. The
+    # rows are locked in id order, whichever order they were typed in, so
+    # two saves of the same table cannot wait for each other.
     def update_exam_multi
-      begin
-        entries = JSON.parse(params[:participations] || "[]")
-      rescue JSON::ParserError
+      entries = bulk_entries(params[:participations])
+      unless entries
         return respond_with_flash(:alert, t("assessment.errors.invalid_request_params"))
       end
 
+      ids = entries.pluck("id").uniq
       rows = @assessment.assessment_participations
-                        .where(id: entries.pluck("id"), user_id: @assessable.users.select(:id))
+                        .where(id: ids, user_id: @assessable.users.select(:id))
                         .index_by { |row| row.id.to_s }
-      unless rows.size == entries.pluck("id").uniq.size
+      unless rows.size == ids.size
         return respond_with_flash(:alert, t("assessment.grading_exam.user_not_candidate"))
       end
 
       ActiveRecord::Base.transaction do
+        ids.sort.each { |id| rows.fetch(id).lock! }
         entries.each do |entry|
           PointEntryService.enter_points(rows.fetch(entry["id"]), entry["task_points"],
                                          current_user)
@@ -415,6 +418,20 @@ module Assessment
 
         respond_with_flash(:alert, t("assessment.task_points.assignment_missing_assessment"),
                            status: :not_found)
+      end
+
+      # The payload as the marking-table controller sends it: a list of rows,
+      # each with an id and its points by task. Anything else is not a save.
+      def bulk_entries(raw)
+        entries = JSON.parse(raw.to_s)
+        return unless entries.is_a?(Array) && entries.any?
+        return unless entries.all? do |entry|
+          entry.is_a?(Hash) && entry["id"].is_a?(String) && entry["task_points"].is_a?(Hash)
+        end
+
+        entries
+      rescue JSON::ParserError
+        nil
       end
 
       # An exam's rows are the lecture's business: no group, so the lecture
