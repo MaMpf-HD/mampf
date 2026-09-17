@@ -135,18 +135,12 @@ module Assessment
                                   status: :not_found)
       end
 
-      row_before = @assessment.assessment_participations.find_by(user: user)
-      gone = if row_before
-        "points-participation-row-#{row_before.id}"
-      else
-        "points-participation-row-user-#{user.id}"
-      end
+      gone = own_row_ids(user).map { |id| turbo_stream.remove(id) }
       SubmissionGraderService.add_member!(@submission, user, current_user)
       @submission.reload
 
       flash.now[:notice] = t("assessment.task_points.member_added", name: user.tutorial_name)
-      render turbo_stream: [turbo_stream.remove(gone), submission_row_stream, summary_stream,
-                            stream_flash].flatten
+      render turbo_stream: [gone, submission_row_stream, summary_stream, stream_flash].flatten
     end
 
     def update_participation
@@ -214,7 +208,7 @@ module Assessment
                                   status: :not_found)
       end
 
-      render turbo_stream: [record_paper_hand_in(user), summary_stream]
+      render turbo_stream: [record_paper_hand_in(user), summary_stream].flatten
     end
 
     def remove_participated
@@ -245,14 +239,24 @@ module Assessment
         row_before = @assessment.assessment_participations.find_by(user: user)
         scope = row_before ? row_before.tutorial : roster_tutorial
         authorize!(:enter_points, scope || @lecture)
-        row_id = if row_before
-          "points-participation-row-#{row_before.id}"
-        else
-          "points-participation-row-user-#{user.id}"
-        end
+        row_ids = own_row_ids(user)
         participation = SubmissionGraderService.init_participation(@assessment, user,
                                                                    roster_tutorial)
-        turbo_stream.replace(row_id, html: render_to_string(participation_row(participation)))
+        html = render_to_string(participation_row(participation))
+        row_ids.map { |id| turbo_stream.replace(id, html: html) }
+      end
+
+      # The ids a page may have drawn somebody's own row under: the row's, or
+      # the user's while there was no row. Which one the page has cannot be
+      # known here - the backfill worker seeds rows every minute and may have
+      # been round since - so a stream aims at both; a miss is a no-op. The
+      # row's id goes first, or a row drawn under the user's id would be
+      # replaced twice.
+      def own_row_ids(user)
+        row = @assessment.assessment_participations.find_by(user: user)
+        ids = ["points-participation-row-user-#{user.id}"]
+        ids.unshift("points-participation-row-#{row.id}") if row
+        ids
       end
 
       # Points tables are drawn for sheets and exams; a participation in

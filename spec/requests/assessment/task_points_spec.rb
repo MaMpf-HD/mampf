@@ -765,6 +765,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(response.body).to include(newcomer.tutorial_name)
     end
 
+    # The page may have been drawn before the backfill worker seeded the
+    # newcomer's row, under the user's id; both are taken away.
+    it "takes the newcomer's own row away under either id" do
+      row = create(:assessment_participation, assessment: assessment, user: newcomer,
+                                              tutorial: tutorial)
+      add(newcomer, as: tutor)
+
+      removed = Nokogiri::HTML(response.body).css("turbo-stream[action='remove']")
+                        .pluck("target")
+      expect(removed).to contain_exactly("points-participation-row-#{row.id}",
+                                         "points-participation-row-user-#{newcomer.id}")
+    end
+
     # A row redrawn for any reason still offers them.
     it "offers the candidates again when the row is refreshed" do
       sign_in(tutor)
@@ -945,6 +958,24 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response.body)
           .to include("target=\"points-participation-row-#{participation.id}\"")
         expect(response.body).not_to include("target=\"marking-table\"")
+      end
+
+      # The page may have been drawn before the backfill worker seeded the
+      # row, under the user's id; which one it has cannot be known here.
+      it "aims at the row's id and the user's, the row's first" do
+        participation = FactoryBot.create(:assessment_participation,
+                                          assessment: assessment, user: student,
+                                          tutorial: tutorial, submitted_at: nil)
+
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        targets = Nokogiri::HTML(response.body).css("turbo-stream[action='replace']")
+                          .pluck("target")
+        expect(targets.first(2)).to eq(["points-participation-row-#{participation.id}",
+                                        "points-participation-row-user-#{student.id}"])
       end
 
       context "when user is not found" do
