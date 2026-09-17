@@ -40,7 +40,7 @@ class Submission < ApplicationRecord
   def marked?
     return false unless assignment.assessable?
 
-    participations.compact.any? { |participation| assessment.grading_data_for?(participation) }
+    participations.compact.any? { |participation| assessment.marked?(participation) }
   end
 
   def partners_of_user(user)

@@ -659,8 +659,7 @@ class SubmissionsController < ApplicationController
     end
 
     def marked_on_own?
-      @assignment.assessable? &&
-        @assignment.assessment.grading_data_for_user?(current_user)
+      @assignment.assessable? && @assignment.assessment.marked_for_user?(current_user)
     end
 
     def send_join_email

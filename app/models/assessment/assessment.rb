@@ -45,6 +45,23 @@ module Assessment
                           .find_by(user_id: user.id))
     end
 
+    # Whether a mark has been made on the row: points entered, a grade, or a
+    # decision such as absent. Narrower than grading_data_for?: a point field
+    # saved blank and a total of nothing are records worth keeping, not marks
+    # a late-comer's join would overturn.
+    def marked?(participation)
+      return false unless participation
+      return true if participation.task_points.any? { |point| point.points.present? }
+      return true if participation.grade_numeric.present?
+      return true if participation.grade_text.present?
+
+      !participation.pending?
+    end
+
+    def marked_for_user?(user)
+      marked?(assessment_participations.includes(:task_points).find_by(user_id: user.id))
+    end
+
     delegate :title, to: :assessable
 
     def results_published?

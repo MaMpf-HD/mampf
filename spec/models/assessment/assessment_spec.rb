@@ -84,6 +84,44 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
+  # Roster removal keeps every record; a team's late-comer rule asks for a
+  # mark, and a point field saved blank is none.
+  describe "#marked?" do
+    let(:assessment) { FactoryBot.create(:assessment, :with_tasks) }
+    let(:row) { FactoryBot.create(:assessment_participation, assessment: assessment) }
+
+    # Points may be written once the sheet has closed.
+    before { Timecop.travel(assessment.assessable.deadline + 1.day) }
+
+    after { Timecop.return }
+
+    it "is false for a row with blank point fields, which grading_data_for? counts" do
+      FactoryBot.create(:assessment_task_point, assessment_participation: row,
+                                                task: assessment.tasks.first, points: nil)
+      row.update!(points_total: 0)
+
+      expect(assessment.grading_data_for?(row.reload)).to be(true)
+      expect(assessment.marked?(row)).to be(false)
+    end
+
+    it "is true once points are entered" do
+      FactoryBot.create(:assessment_task_point, assessment_participation: row,
+                                                task: assessment.tasks.first, points: 3)
+
+      expect(assessment.marked?(row.reload)).to be(true)
+    end
+
+    it "is true for a decision such as absent" do
+      row.update!(status: :absent)
+
+      expect(assessment.marked?(row)).to be(true)
+    end
+
+    it "is false without a row" do
+      expect(assessment.marked_for_user?(FactoryBot.create(:confirmed_user))).to be(false)
+    end
+  end
+
   describe "#results_published?" do
     it "is false until a publication timestamp is set" do
       assessment = FactoryBot.create(:assessment)

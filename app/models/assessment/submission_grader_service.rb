@@ -198,7 +198,7 @@ module Assessment
         # the team's points would replace a decision already taken. A sheet
         # without an assessment has no rows to be marked on.
         def validate_unmarked_on_own(assessment, user)
-          return unless assessment&.grading_data_for_user?(user)
+          return unless assessment&.marked_for_user?(user)
 
           I18n.t("assessment.task_points.marked_on_own", name: user.tutorial_name)
         end
