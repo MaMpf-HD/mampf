@@ -3226,6 +3226,9 @@ de:
     invalid_code_for_assignment: >
       Der eingegebene Code ist ungültig für %{assignment}.
     team_marked: Dieses Team ist schon bewertet; bitte Deinen Tutor, Dich hinzuzufügen.
+    marked_on_own: >
+      Du bist für dieses Blatt schon eigenständig bewertet; frag Deinen Tutor,
+      ob Du ins Team gehörst.
     already_in: Bei dieser Abgabe bist Du schon dabei.
     lecture_not_subscribed: Du hast die zugehörige Veranstaltung icht abonniert.
     no_partners_no_leave: >

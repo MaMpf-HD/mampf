@@ -268,6 +268,10 @@ en:
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
       participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
       not_in_group: 'Only a member of the group can be put on one of its teams.'
+      team_rejected: 'A rejected hand-in takes nobody.'
+      marked_on_own: >-
+        %{name} is already marked for this sheet on a row of their own. Clear
+        that first.
       member_added: '%{name} is on the team now.'
       add_member: 'Put somebody on this team'
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'

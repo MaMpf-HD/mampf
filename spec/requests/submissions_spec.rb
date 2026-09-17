@@ -1216,6 +1216,21 @@ RSpec.describe("Submissions", type: :request) do
           expect(team.reload.users).not_to include(user)
         end
 
+        # The same boundary from the other side: a row of one's own with marks
+        # on it would be wiped by the join.
+        it "refuses somebody marked on a row of their own" do
+          task = create(:assessment_task, assessment: closed_assignment.assessment)
+          own = create(:assessment_participation, assessment: closed_assignment.assessment,
+                                                  user: user, submitted_at: 2.days.ago)
+          create(:assessment_task_point, assessment_participation: own, task: task, points: 2)
+
+          join_late
+
+          expect(flash[:alert]).to eq(I18n.t("submission.marked_on_own"))
+          expect(team.reload.users).not_to include(user)
+          expect(own.reload.task_points.sole.points).to eq(2)
+        end
+
         it "offers the code on the closed sheet's row" do
           team
 

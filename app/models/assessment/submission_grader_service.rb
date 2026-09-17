@@ -79,10 +79,14 @@ module Assessment
       def add_member!(submission, user, scorer)
         assignment = submission.assignment
         raise_if_errors!(validate_member_of_group(submission, user))
+        raise_if_errors!(validate_team_takes_members(submission))
+        raise_if_errors!(validate_unmarked_on_own(assignment.assessment, user))
 
         participation = Participation.transaction do
           UserSubmissionJoin.create!(user: user, submission: submission)
           row = init_participation(assignment.assessment, user, submission.tutorial)
+          # The row is the upload's now, wherever it was seeded.
+          row.update!(tutorial: submission.tutorial) if row.tutorial_id != submission.tutorial_id
           points = team_points(submission, user)
           PointEntryService.enter_points(row, points, scorer, submission) if points.any?
           row
@@ -181,6 +185,21 @@ module Assessment
           return if submission.tutorial.members.exists?(id: user.id)
 
           I18n.t("assessment.task_points.not_in_group")
+        end
+
+        # A rejected hand-in counts as none; nobody is put on it.
+        def validate_team_takes_members(submission)
+          return unless submission.accepted == false
+
+          I18n.t("assessment.task_points.team_rejected")
+        end
+
+        # Marked on a row of their own, the newcomer is done with the sheet;
+        # the team's points would replace a decision already taken.
+        def validate_unmarked_on_own(assessment, user)
+          return unless assessment.grading_data_for_user?(user)
+
+          I18n.t("assessment.task_points.marked_on_own", name: user.tutorial_name)
         end
 
         # What one teammate already has, per task; nil points are nothing.

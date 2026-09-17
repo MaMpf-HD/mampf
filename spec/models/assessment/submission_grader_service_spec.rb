@@ -213,6 +213,43 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(team.reload.users).not_to include(stranger)
     end
 
+    # Marks of their own are a decision taken; the team's would replace it.
+    it "refuses somebody marked on a row of their own" do
+      own = FactoryBot.create(:assessment_participation, assessment: assessment, user: newcomer,
+                                                         tutorial: tutorial,
+                                                         submitted_at: 2.days.ago)
+      FactoryBot.create(:assessment_task_point, assessment_participation: own, task: task,
+                                                points: 2)
+
+      expect { described_class.add_member!(team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.marked_on_own",
+                               name: newcomer.tutorial_name))
+      expect(team.reload.users).not_to include(newcomer)
+      expect(own.reload.task_points.sole.points).to eq(2)
+    end
+
+    it "puts nobody on a rejected hand-in" do
+      team.update!(accepted: false)
+
+      expect { described_class.add_member!(team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.team_rejected"))
+      expect(team.reload.users).not_to include(newcomer)
+    end
+
+    # A blank row seeded elsewhere becomes the upload's, as every row behind
+    # an upload is.
+    it "brings a row seeded in another group along to the upload's" do
+      elsewhere = FactoryBot.create(:tutorial, lecture: lecture)
+      FactoryBot.create(:assessment_participation, assessment: assessment, user: newcomer,
+                                                   tutorial: elsewhere)
+
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(row.reload.tutorial).to eq(tutorial)
+    end
+
     it "refuses somebody who is on another team for the sheet already" do
       other = FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
                                                                tutorial: tutorial)

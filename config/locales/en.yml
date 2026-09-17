@@ -3001,6 +3001,9 @@ en:
     invalid_code: The code you entered is invalid.
     team_marked: >
       This team has already been marked; ask your tutor to add you.
+    marked_on_own: >
+      You have already been marked for this sheet on your own; ask your tutor
+      if you should be on the team.
     already_in: You are already a partner for this assignment.
     lecture_not_subscribed: >
       You are not subscribed to the corresponding event series.

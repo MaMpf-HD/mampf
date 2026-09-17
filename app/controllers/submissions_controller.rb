@@ -617,9 +617,12 @@ class SubmissionsController < ApplicationController
       elsif !@submission
         @error = I18n.t("submission.invalid_code")
       # The deadline closes the upload, not the team: whoever forgot to join
-      # may still, with the team's code, until the team has been marked.
+      # may still, with the team's code, until the team has been marked - or
+      # they themselves, on a row of their own: joining would wipe it.
       elsif @submission.marked?
         @error = I18n.t("submission.team_marked")
+      elsif marked_on_own?
+        @error = I18n.t("submission.marked_on_own")
       elsif @submission.correction
         @error = I18n.t("submission.already_corrected")
       # A rejected hand-in is nobody's to join: it counts as not handed in.
@@ -652,6 +655,11 @@ class SubmissionsController < ApplicationController
       else
         @error = @join.errors[:base].join(", ")
       end
+    end
+
+    def marked_on_own?
+      @assignment.assessable? &&
+        @assignment.assessment.grading_data_for_user?(current_user)
     end
 
     def send_join_email
