@@ -179,38 +179,37 @@
       </div>
 
       <%# The clock marks a decision the world has moved on from since it was made. %>
+      <%# Each action ends the sentence that calls for it. %>
       <% if @disagreeing_user_ids.any? %>
-        <div class="d-flex align-items-center justify-content-between py-1">
-          <div>
-            <i class="bi bi-clock-history me-2"></i>
+        <div class="d-flex flex-wrap align-items-baseline py-1">
+          <i class="bi bi-clock-history me-2"></i>
 
-            <%= t("student_performance.certifications.index.disagreeing_warning",
-                  count: @disagreeing_user_ids.size) %>
-          </div>
+          <%= t("student_performance.certifications.index.disagreeing_warning",
+                count: @disagreeing_user_ids.size) %>
 
           <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
-                        class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-            <i class="bi bi-arrow-repeat me-1"></i>
+                        class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
+                        form_class: "d-inline" do %>
             <%= t("student_performance.certifications.index.reevaluate") %>
+            <i class="bi bi-arrow-right-short"></i>
           <% end %>
         </div>
       <% end %>
 
       <% if @stale_manual_user_ids.any? %>
-        <div class="d-flex align-items-center justify-content-between py-1">
-          <div>
-            <i class="bi bi-clock-history me-2"></i>
+        <div class="d-flex flex-wrap align-items-baseline py-1">
+          <i class="bi bi-clock-history me-2"></i>
 
-            <%= t("student_performance.certifications.index.stale_manual_warning",
-                  count: @stale_manual_user_ids.size) %>
-          </div>
+          <%= t("student_performance.certifications.index.stale_manual_warning",
+                count: @stale_manual_user_ids.size) %>
 
           <%= button_to bulk_confirm_manual_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
-                        class: "btn btn-warning btn-sm ms-3 text-nowrap" do %>
-            <i class="bi bi-check-all me-1"></i>
+                        class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
+                        form_class: "d-inline" do %>
             <%= t("student_performance.certifications.index.confirm_manual") %>
+            <i class="bi bi-arrow-right-short"></i>
           <% end %>
         </div>
       <% end %>
