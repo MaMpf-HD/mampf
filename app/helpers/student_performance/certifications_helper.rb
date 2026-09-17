@@ -1,8 +1,5 @@
 module StudentPerformance
   module CertificationsHelper
-    # The reasons a row spells out. While `assignments_complete?` is false
-    # every proposal defers for the same reason, and the box above the table
-    # gives it once, so the rows stay empty.
     # What the sweep would decide, asked back before it runs. Joined in Ruby:
     # a comma of its own in the markup renders with a space in front of it.
     def bulk_accept_confirmation(passed:, failed:, inconclusive:)
@@ -18,6 +15,9 @@ module StudentPerformance
       ParticipationRowComponent::ROW_ACTION_CLASSES
     end
 
+    # The reasons a row spells out. While `assignments_complete?` is false
+    # every proposal defers for the same reason, and the box above the table
+    # gives it once, so the rows stay empty.
     def proposal_reasons(proposal, lecture)
       case proposal.proposed_status
       when :failed
