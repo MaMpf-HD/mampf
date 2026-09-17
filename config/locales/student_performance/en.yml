@@ -213,8 +213,8 @@ en:
         no_rule_hint: "You can record decisions manually per student at any time — even without a rule."
         required_achievements_label: "Achievements"
         disagreeing_warning:
-          one: "%{count} decision contradicts the current rule."
-          other: "%{count} decisions contradict the current rule."
+          one: "%{count} decision no longer matches the current rule."
+          other: "%{count} decisions no longer match the current rule."
         stale_manual_warning:
           one: "%{count} manual decision: rule or performance data changed since."
           other: "%{count} manual decisions: rule or performance data changed since."
@@ -236,7 +236,7 @@ en:
       rule_today:
         passed: "eligible"
         failed: "not eligible"
-        inconclusive: "cannot decide"
+        inconclusive: "no verdict"
       filters:
         all: "All"
         passed: "Eligible"

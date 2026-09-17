@@ -706,9 +706,11 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                             lecture: lecture, user: user_m)
         end
 
-        it "shows the manual override indicator" do
+        it "says the manual decision predates the performance data" do
           get lecture_student_performance_certifications_path(lecture)
-          expect(response.body).to include("bi-pencil-square")
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.stale_manual_warning", count: 1)
+          )
         end
 
         it "shows the override note" do

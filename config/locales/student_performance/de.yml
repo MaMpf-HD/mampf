@@ -213,8 +213,8 @@ de:
         no_rule_hint: "Du kannst Zulassungen jederzeit manuell pro Studierende:r erfassen — auch ohne Regel."
         required_achievements_label: "Zusatzkriterien"
         disagreeing_warning:
-          one: "%{count} Zulassung widerspricht der aktuellen Regel."
-          other: "%{count} Zulassungen widersprechen der aktuellen Regel."
+          one: "%{count} Zulassung weicht von der aktuellen Regel ab."
+          other: "%{count} Zulassungen weichen von der aktuellen Regel ab."
         stale_manual_warning:
           one: "%{count} manuelle Entscheidung: Regel oder Leistungsdaten haben sich seither geändert."
           other: "%{count} manuelle Entscheidungen: Regel oder Leistungsdaten haben sich seither geändert."
@@ -236,7 +236,7 @@ de:
       rule_today:
         passed: "zugelassen"
         failed: "nicht zugelassen"
-        inconclusive: "kann nicht entscheiden"
+        inconclusive: "kein Ergebnis"
       filters:
         all: "Alle"
         passed: "Zugelassen"

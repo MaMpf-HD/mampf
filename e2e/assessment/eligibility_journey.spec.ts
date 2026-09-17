@@ -130,12 +130,12 @@ test.describe("from a mark to a decision", () => {
     await teacher.page
       .getByRole("button", { name: "Reconcile with rule" }).click();
 
-    // the row says "Not Eligible" either way — once as the rule's objection,
-    // once as the decision. What only reconciling does is settle the argument.
+    // the row says "Not Eligible" either way — once as what the rule says
+    // today, once as the decision. What only reconciling does is make them one.
     const reconciled = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
     await expect(reconciled).not.toContainText("Per rule:");
     await expect(verdict(/Ada Lovelace/)).toHaveText("Not Eligible");
-    // And the page stops asking: nothing contradicts the rule any more.
+    // And the page stops asking: nothing differs from the rule any more.
     await expect(teacher.page.getByRole("button", { name: "Reconcile with rule" }))
       .toHaveCount(0);
   });
