@@ -406,10 +406,10 @@ de:
       pending_title: 'Punkteerfassung läuft.'
       pending_message: '%{reviewed} von %{total} überprüft, %{pending} noch ausstehend.'
       pending_breakdown: '%{absent} nicht angetreten, %{exempt} entschuldigt'
-      distribution_hint: 'Überprüfen Sie die Punkteverteilung und erstellen Sie ein Notenschema zur Notenvergabe.'
+      distribution_hint: 'Prüfe die Punkteverteilung und lege ein Notenschema für die Notenvergabe an.'
       create_button: 'Notenschema erstellen'
       draft_title: 'Notenschema konfiguriert.'
-      draft_message: 'Überprüfen Sie das Schema, sehen Sie die Notenvorschau und wenden Sie es an, wenn Sie bereit sind.'
+      draft_message: 'Prüfe das Schema, sieh Dir die Notenvorschau an und wende es an, wenn es passt.'
       draft_overwrite_warning:
         one: >-
           1 Studierender hat bereits eine Note.
@@ -464,8 +464,8 @@ de:
         two_point_auto: 'Zwei-Punkte-Automatik'
         manual_curve: 'Manuelle Kurve'
         anchor_delta: 'Anker + Schritt'
-        two_point_description: 'Legen Sie zwei Schwellenwerte fest, und das System generiert automatisch die Zwischennoten.'
-        anchor_delta_description: 'Legen Sie einen Anker-Schwellenwert und einen gleichmäßigen Notenschritt fest. Das System leitet den anderen Schwellenwert automatisch ab.'
+        two_point_description: 'Lege zwei Schwellenwerte fest; die Zwischennoten ergeben sich daraus.'
+        anchor_delta_description: 'Lege einen Anker-Schwellenwert und einen gleichmäßigen Notenschritt fest; der andere Schwellenwert ergibt sich daraus.'
         anchor_type_passing: 'Anker auf Bestehen (4,0)'
         anchor_type_excellence: 'Anker auf Exzellenz (1,0)'
         anchor_label: 'Anker-Schwelle'
@@ -486,7 +486,7 @@ de:
         col_range: 'Punktebereich'
         col_students: 'Studierende'
         col_percentage: 'Anteil'
-        manual_description: 'Ziehen Sie die Notengrenzen im Histogramm, um die Stufen festzulegen.'
+        manual_description: 'Zieh die Notengrenzen im Histogramm, um die Stufen festzulegen.'
         manual_placeholder: 'Manuelle Konfiguration kommt bald'
         regenerate_hint: 'Schwellenwerte geändert — bitte Notenstufen neu generieren.'
         points_step_label: 'Punkteschritt'
@@ -514,7 +514,7 @@ de:
       markers_caption_proposed: 'Schwellenmarker (1.0, 4.0) beziehen sich auf das neue Schema.'
     statistics_analysis: 'Statistiken & Analyse'
     statistics_placeholder: 'Statistiken sind noch nicht verfügbar'
-    statistics_description: 'Hier können Sie Statistiken und Analysen für diese Prüfung einsehen.'
+    statistics_description: 'Hier findest Du Statistiken und Auswertungen zu dieser Prüfung.'
     grade_talk_row:
       speaker: "Sprecher:in"
       grade: "Note"
