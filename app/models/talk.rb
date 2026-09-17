@@ -145,6 +145,11 @@ class Talk < ApplicationRecord
     super
   end
 
+  # An allocation run again after grading leaves the graded on the talk too.
+  def remove_excess_users!(target_ids, campaign)
+    super(target_ids | speakers_with_grading_data, campaign)
+  end
+
   # The form sends the whole list; the graded stay on it and the form is told.
   def speaker_ids=(ids)
     wanted = Array(ids).compact_blank.map(&:to_i)

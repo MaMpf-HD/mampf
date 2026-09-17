@@ -328,6 +328,16 @@ RSpec.describe(Talk, type: :model) do
       expect(talk.remove_user_from_roster!(other)).to be_present
       expect(talk.reload.speakers).to eq([graded])
     end
+
+    # The allocation removes in bulk, past the single removal's guard.
+    it "survives an allocation run again without them" do
+      campaign = create(:registration_campaign)
+      talk.speaker_talk_joins.update_all(source_campaign_id: campaign.id) # rubocop:disable Rails/SkipsModelValidations
+
+      talk.materialize_allocation!(user_ids: [], campaign: campaign)
+
+      expect(talk.reload.speakers).to eq([graded])
+    end
   end
 
   describe "#destruction_blockers" do

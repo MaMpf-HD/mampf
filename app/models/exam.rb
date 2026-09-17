@@ -96,6 +96,11 @@ class Exam < ApplicationRecord
     participants_with_grading_data.exclude?(user.id)
   end
 
+  # An allocation run again after grading leaves the graded on the exam too.
+  def remove_excess_users!(target_ids, campaign)
+    super(target_ids | participants_with_grading_data, campaign)
+  end
+
   def ensure_participant_removable!(user)
     return if participant_removable?(user)
 
