@@ -244,6 +244,21 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(own.reload.task_points.sole.points).to eq(2)
     end
 
+    # A sheet from before there were assessments. The controller refuses it
+    # before the service is asked; the service says so in its own words
+    # rather than falling over.
+    it "refuses a sheet without an assessment in words" do
+      bare = FactoryBot.create(:assignment, lecture: lecture, deadline: 1.hour.from_now)
+      bare.assessment.destroy!
+      bare_team = FactoryBot.create(:submission, :with_manuscript, assignment: bare.reload,
+                                                                   tutorial: tutorial)
+      bare_team.users << partner
+
+      expect { described_class.add_member!(bare_team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.init_participation_missing_args"))
+    end
+
     it "puts nobody on a rejected hand-in" do
       team.update!(accepted: false)
 
