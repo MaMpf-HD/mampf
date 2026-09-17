@@ -103,16 +103,15 @@ class SearchClient
               "MampfSearch is not configured (MAMPFSEARCH_BASE_URL is missing)")
       end
 
-      response = @pool.with do |client|
+      @pool.with do |client|
         request_client = if scope
           token = SearchApiToken.generate(scope: scope)
           client.headers(authorization: "Bearer #{token}")
         else
           client
         end
-        yield(request_client)
+        handle_response(yield(request_client))
       end
-      handle_response(response)
     rescue HTTP::TimeoutError
       raise(TimeoutError, "The search microservice timed out.")
     rescue HTTP::Error, SystemCallError, SocketError => e
@@ -122,9 +121,11 @@ class SearchClient
     end
 
     def handle_response(response)
+      body = response.body.to_s
+
       case response.status.code
       when 200..299
-        JSON.parse(response.body.to_s)
+        JSON.parse(body)
       when 400..422
         raise(InvalidQueryError, "Invalid search parameters (HTTP #{response.status.code}).")
       when 500..599

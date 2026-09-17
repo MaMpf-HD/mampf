@@ -273,6 +273,45 @@ RSpec.describe(SearchClient, :mampfsearch) do
     end
   end
 
+  describe "response handling" do
+    let(:pool) { client.instance_variable_get(:@pool) }
+    let(:checked_out) { [] }
+    let(:fake_client) { double("client") }
+
+    before do
+      allow(pool).to receive(:with) do |&block|
+        checked_out << true
+        block.call(fake_client)
+      ensure
+        checked_out.pop
+      end
+    end
+
+    it "parses successful responses before returning the connection" do
+      body = double("body")
+      expect(body).to receive(:to_s) do
+        expect(checked_out).to eq([true])
+        '{"status":"ok"}'
+      end
+      response = double("response", status: double("status", code: 200), body: body)
+      allow(fake_client).to receive(:get).with("/ready").and_return(response)
+
+      expect(client.health).to eq("status" => "ok")
+    end
+
+    it "drains error responses before returning the connection" do
+      body = double("body")
+      expect(body).to receive(:to_s) do
+        expect(checked_out).to eq([true])
+        "service unavailable"
+      end
+      response = double("response", status: double("status", code: 503), body: body)
+      allow(fake_client).to receive(:get).with("/ready").and_return(response)
+
+      expect { client.health }.to raise_error(SearchClient::InvalidResponseError)
+    end
+  end
+
   describe "authentication headers" do
     let(:pool) { client.instance_variable_get(:@pool) }
     let(:secret) { "test-secret-key-at-least-32-characters-long" }
