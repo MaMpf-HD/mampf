@@ -215,6 +215,32 @@ RSpec.describe(Assessment::GradeSchemeApplier) do
         expect(untouched.reload.grade_numeric).to eq(1.0)
       end
 
+      # A task cleared after grading leaves the row reviewed - the grade keeps
+      # the status - but incomplete; a grade from a part of the points is no
+      # grade, so the row waits until the task is scored again.
+      it "leaves a row with a task cleared since alone until it is scored again" do
+        second_task = FactoryBot.create(:assessment_task, assessment: assessment, max_points: 10)
+        row = create_reviewed_participation(points: 55)
+        [[exam_task, 50], [second_task, 5]].each do |task, points|
+          FactoryBot.create(:assessment_task_point, assessment_participation: row,
+                                                    task: task, points: points)
+        end
+        applier.apply!(applied_by: professor)
+        expect(row.reload.grade_numeric).to eq(1.0)
+
+        row.task_points.find_by(task: second_task).update!(points: nil)
+        row.update!(points_total: 50)
+        expect(applier.changed_since_scheme_graded).to be_empty
+        expect(applier.apply!(applied_by: professor)).to eq({ graded: 0, regraded: 0 })
+        expect(row.reload.grade_numeric).to eq(1.0)
+
+        row.task_points.find_by(task: exam_task).update!(points: 25)
+        row.task_points.find_by(task: second_task).update!(points: 5)
+        row.update!(points_total: 30)
+        expect(applier.apply!(applied_by: professor)).to eq({ graded: 0, regraded: 1 })
+        expect(row.reload.grade_numeric).to eq(3.0)
+      end
+
       # The rows are chosen, then written one by one; a grade typed in
       # between is the lecturer's and must survive the write.
       it "leaves a grade entered by hand between the selection and the write" do

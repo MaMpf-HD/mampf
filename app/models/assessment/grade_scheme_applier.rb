@@ -103,10 +103,13 @@ module Assessment
       counts
     end
 
-    # The rows this scheme graded whose points moved afterwards.
+    # The rows this scheme graded whose points moved afterwards. A row with
+    # a task cleared since stays reviewed - the grade keeps the status - but
+    # is not complete, and a grade from a part of the points is no grade;
+    # it waits until every task is scored again.
     def changed_since_scheme_graded
       reviewed_participations.where(grade_scheme: @scheme).includes(:task_points)
-                             .select(&:points_changed_after_grading?)
+                             .select { |row| regradable?(row) }
     end
 
     def compute_grade_for(participation)
@@ -149,7 +152,11 @@ module Assessment
       def still_changed_scheme_grade?(participation)
         participation.lock!
         participation.reviewed? && participation.grade_scheme_id == @scheme.id &&
-          participation.points_changed_after_grading?
+          regradable?(participation)
+      end
+
+      def regradable?(participation)
+        participation.points_changed_after_grading? && participation.all_tasks_scored?
       end
 
       def reviewed_participations
