@@ -692,9 +692,6 @@ en:
           status for this event series. The previous teacher will be demoted
           and becomes an editor. Such a voucher will be invalidated directly
           after its redemption.
-        voucher_for_speaker: >
-          Vouchers for speakers can be redeemed by users to obtain speaker
-          status for this seminar and to directly take over talks.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -951,11 +948,9 @@ en:
         speakers: >
           Here you can select the speakers of the talk. They can edit the talk
           and add media to it. You can only select users who have the status of
-          speaker in the seminar, or editors or yourself. In order to grant
-          students the status of speaker, you have to create a voucher in
-          the "People/Tutorials" tab. You have to communicate the voucher to
-          the students outside of MaMpf. The voucher can then be redeemed by the
-          students.
+          speaker in the seminar, or editors or yourself. Students become
+          speakers through a registration process for the talks, set up on the
+          "Groups" tab.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -1906,6 +1901,9 @@ en:
         create a voucher. This is a special code that the person can redeem in
         their profile to get the role, e.g. to become a tutor for your lecture.
         You should send the code to the person via a different medium, e.g. email.
+      speakers_by_registration: >
+        Speakers are no longer assigned by voucher: set up a registration
+        process for the talks on the "Groups" tab.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -4244,8 +4242,6 @@ en:
             role:
               only_one_active: >
                 There can be only one active voucher of this type for the lecture.
-              speaker_vouchers_only_for_seminars: >
-                Speaker vouchers are only allowed for seminars.
               invalid_for_lecture: >
                 This role is not available for this lecture.
         watchlist_entry:

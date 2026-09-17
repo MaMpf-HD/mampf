@@ -789,10 +789,6 @@ de:
           DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
           DozentIn wird dann EditorIn. Ein solcher Gutschein wird direkt nach
           dem Einlösen für ungültig erklärt.
-        voucher_for_speaker: >
-          Gutscheine für Vortragende können von NutzerInnen eingelöst werden, um
-          Vortragendenstatus für das Seminar zu erhalten und direkt Vorträge
-          zu übernehmen.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -1070,11 +1066,9 @@ de:
           Hier kannst Du die Vortragenden eintragen. Diese können
           den Vortrag bearbeiten und Medien hinzufügen. Du kannst nur Personen
           auswählen, die den Status "Vortragender" in dem Seminar haben,
-          dazu EditorInnen und Dich selbst. Um Studierenden des Status
-          eines Vortragenden zu geben, musst Du unter "Personen/Tutorien" einen
-          Gutschein erstellen, den die Studierenden einlösen können.
-          Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
-          werden
+          dazu EditorInnen und Dich selbst. Studierende werden über ein
+          Anmeldeverfahren für die Vorträge zu Vortragenden, das Du im Reiter
+          "Gruppen" einrichtest.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -2092,6 +2086,9 @@ de:
         den die Person in ihrem Profil einlösen kann, um die Rolle zu erhalten.
         Du solltest den Code über ein anderes Medium an die Person senden,
         z.B. per E-Mail.
+      speakers_by_registration: >
+        Vortragende werden nicht mehr per Gutschein zugewiesen: Richte dafür
+        im Reiter "Gruppen" ein Anmeldeverfahren für die Vorträge ein.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -4502,8 +4499,6 @@ de:
             role:
               only_one_active: >
                 Für diese Vorlesung kann es nur einen aktiven Gutschein dieses Typs geben.
-              speaker_vouchers_only_for_seminars: >
-                Vortragenden-Gutscheine können nur für Seminare erstellt werden.
               invalid_for_lecture: >
                 Diese Rolle ist für diese Vorlesung nicht verfügbar.
         watchlist_entry:
