@@ -114,6 +114,7 @@ module Assessment
         case @assessable
         when Exam then score_exam_tasks!(task_points)
         else
+          hold_row!
           SubmissionGraderService.score_tasks_by_participation!(
             @participation, task_points, current_user
           )
@@ -137,7 +138,10 @@ module Assessment
     # absence, takes the same right.
     def mark_as_absent
       authorize_lecture_edit! if @participation.exempt?
-      AbsenceHandling.mark_absent(@participation)
+      ActiveRecord::Base.transaction do
+        hold_row! unless @assessable.is_a?(Exam)
+        AbsenceHandling.mark_absent(@participation)
+      end
       render_task_points_update(participation_row_stream)
     end
 
@@ -250,6 +254,16 @@ module Assessment
 
       # The row of somebody taken off the roster stays in the database; nothing
       # is recorded on it any more.
+      # Asked again under the lock: a blank row follows the student's
+      # membership at the moment of writing, and whoever tutors that group
+      # may write on it.
+      def hold_row!
+        @participation.lock!
+        ParticipationIndex.follow_membership(@participation)
+        @tutorial = @participation.tutorial
+        authorize_assessment!
+      end
+
       def refuse_unless_candidate
         return unless @assessable.is_a?(Exam)
         return if @assessable.users.exists?(id: @participation.user_id)
@@ -403,9 +417,10 @@ module Assessment
         @assessment = @participation.assessment
         @lecture = @assessment.lecture
         @assessable = @assessment.assessable
-        # A sheet's or an achievement's row is scored within a group; an exam's is
-        # the lecture's business, whatever its tutorial column may hold.
-        @tutorial = @participation.tutorial unless @assessable.is_a?(Exam)
+        # A sheet's or an achievement's row is scored within the group that
+        # holds it - the student's current one while the row is blank; an
+        # exam's is the lecture's business, whatever its tutorial column holds.
+        @tutorial = ParticipationIndex.group_holding(@participation) unless @assessable.is_a?(Exam)
         return if @assessable
 
         respond_with_flash(:alert, t("assessment.task_points.participation_missing_assignment"),

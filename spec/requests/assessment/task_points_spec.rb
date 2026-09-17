@@ -373,6 +373,62 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
     end
 
+    # A blank row follows the student's membership at the moment of writing,
+    # whether or not a table has been drawn since the move; work once
+    # recorded stays with the group that recorded it.
+    context "when the student has moved to another group" do
+      let(:tutor2) { create(:confirmed_user) }
+
+      before do
+        tutorial.tutors << tutor
+        tutorial2.tutors << tutor2
+        tutorial_membership.update!(tutorial: tutorial2)
+        Timecop.travel(3.hours.from_now)
+      end
+
+      after { Timecop.return }
+
+      def enter(points, as:)
+        sign_in(as)
+        patch(point_participation_path(participation),
+              params: { task_points: { task.id => points }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream)
+      end
+
+      it "is the new group's tutor who enters the points, not the old one's" do
+        enter("6", as: tutor)
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.task_points).to be_empty
+
+        enter("6", as: tutor2)
+        expect(response).to have_http_status(:success)
+        expect(participation.reload.tutorial).to eq(tutorial2)
+        expect(participation.task_points.pick(:points)).to eq(6)
+
+        tutorial_membership.update!(tutorial: tutorial)
+        enter("3", as: tutor)
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.tutorial).to eq(tutorial2)
+      end
+
+      it "is the new group's tutor who marks the absence from a test" do
+        test = create(:assignment, lecture: lecture, kind: :test, deadline: 1.day.ago)
+        create(:assessment, :with_points, assessable: test)
+        row = create(:assessment_participation, assessment: test.reload.assessment,
+                                                user: student, tutorial: tutorial)
+
+        sign_in tutor
+        patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+        expect(row.reload).to be_pending
+
+        sign_in tutor2
+        patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+        expect(row.reload).to be_absent
+        expect(row.tutorial).to eq(tutorial2)
+      end
+    end
+
     # A sheet handed in on paper by somebody in no group: the participation
     # has no tutorial, and the lecture is what the grader is checked against.
     context "when the participation belongs to no group" do
