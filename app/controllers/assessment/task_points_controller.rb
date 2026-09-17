@@ -95,8 +95,11 @@ module Assessment
         end
       end
 
+      # The tables read the roster once, with users and points along; the
+      # rows to redraw come out of that read rather than one reload each.
+      saved = exam_tables.first.rows.select { |row| rows.key?(row.id.to_s) }
       flash.now[:notice] = t("assessment.task_points.update")
-      render turbo_stream: exam_streams(rows.each_value(&:reload).values) + [stream_flash]
+      render turbo_stream: exam_streams(saved) + [stream_flash]
     end
 
     def update_team
