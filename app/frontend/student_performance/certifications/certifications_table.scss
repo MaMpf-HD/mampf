@@ -1,6 +1,6 @@
-// Only the hint column holds a sentence; the others hold a name, a figure, a
-// status, an icon. Without `width: 100%` on that one the browser spreads the
-// free space over all of them.
+// Two columns hold sentences - the hint and the note; the others hold a
+// name, a figure, a status, an icon. The two share what the others leave
+// over, so neither ends up at the far edge behind the other's slack.
 .certifications-table {
   th,
   td {
@@ -9,8 +9,14 @@
 
   .hint-column {
     white-space: normal;
-    width: 100%;
+    width: 55%;
     min-width: 14rem;
+  }
+
+  .note-column {
+    white-space: normal;
+    width: 45%;
+    min-width: 10rem;
   }
 
   .numeric {

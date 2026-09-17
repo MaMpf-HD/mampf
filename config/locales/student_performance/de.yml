@@ -237,7 +237,7 @@ de:
         all: "Alle"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
-        flagged: "Auffällig"
+        flagged: "Zu klären"
         uncertified: "Offen"
       override:
         title: "Manuell überschreiben"

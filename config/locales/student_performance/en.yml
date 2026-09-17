@@ -237,7 +237,7 @@ en:
         all: "All"
         passed: "Eligible"
         failed: "Not Eligible"
-        flagged: "Needs attention"
+        flagged: "To settle"
         uncertified: "Undecided"
       override:
         title: "Manual Override"

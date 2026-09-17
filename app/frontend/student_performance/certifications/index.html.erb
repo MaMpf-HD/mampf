@@ -325,12 +325,10 @@
             </th>
 
             <% @achievements.each do |achievement| %>
-              <th
-                scope="col"
-                class="text-center small"
-                title="<%= achievement.title %>"
-              >
-                <%= truncate(achievement.title, length: 12) %>
+              <th scope="col" class="text-center small px-3">
+                <abbr title="<%= achievement.title %>">
+                  <%= @achievement_headings[achievement.id] %>
+                </abbr>
               </th>
             <% end %>
 
@@ -345,7 +343,7 @@
               <%= t("student_performance.certifications.columns.hint") %>
             </th>
 
-            <th scope="col">
+            <th scope="col" class="note-column">
               <%= t("student_performance.certifications.columns.note") %>
             </th>
 
@@ -391,7 +389,7 @@
               </td>
 
               <% @achievements.each do |achievement| %>
-                <td class="text-center">
+                <td class="text-center px-3">
                   <% if record.achievements_met_ids&.include?(achievement.id) %>
                     <i
                       class="bi bi-check-circle text-success"
@@ -519,16 +517,10 @@
                 <% end %>
               </td>
 
-              <td class="small" style="max-width: 180px">
+              <td class="small note-column">
                 <% if decided %>
                   <div data-certification-inline-target="display">
-                    <span
-                      class="text-muted text-truncate d-inline-block"
-                      style="max-width: 160px"
-                      title="<%= cert.note %>"
-                    >
-                      <%= cert.note %>
-                    </span>
+                    <span class="text-muted"><%= cert.note %></span>
                   </div>
                   <div data-certification-inline-target="edit" class="d-none">
                     <input

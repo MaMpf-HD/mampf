@@ -37,6 +37,7 @@ module StudentPerformance
       else
         Achievement.none
       end
+      @achievement_headings = Achievement.short_titles(@achievements)
       load_filtered_records
     end
 
