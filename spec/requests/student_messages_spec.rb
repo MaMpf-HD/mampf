@@ -84,10 +84,12 @@ RSpec.describe("StudentMessages", type: :request) do
         expect(response).to redirect_to("/lectures/#{lecture.id}/tutorials?tutorial=#{tutorial.id}")
       end
 
-      # Only a path of this app is a way back.
-      it "lands on the communication tab for anything but a path" do
+      # A bad way back must not fail the request once the message is on its
+      # way; it is not followed.
+      it "lands on the communication tab for anything but a path of this app" do
         ["javascript:alert(1)", "https://evil.example/x", "//evil.example",
-         "/\\evil.example", "http://[", "x" * 10_000].each do |bad|
+         "/\\evil.example", "http://[", "x" * 10_000, "/\t//evil.example", "/bad path",
+         "/bad%zz", "/#{"x" * 3000}"].each do |bad|
           send_message(return_to: bad)
 
           expect(response).to redirect_to(edit_lecture_path(lecture, tab: "communication"))
@@ -198,7 +200,7 @@ RSpec.describe("StudentMessages", type: :request) do
       end
     end
 
-    # A handful a day is a sender's; hundreds an hour are an account's.
+    # Bulk mail per sender is bounded, whatever the account does.
     it "caps what one sender writes in an hour" do
       sign_in teacher
       Rails.cache.clear
@@ -208,6 +210,18 @@ RSpec.describe("StudentMessages", type: :request) do
         send_message
       end.not_to change(StudentMessage, :count)
 
+      expect(flash[:alert]).to eq(I18n.t("student_message.too_many"))
+    end
+
+    # A refused tutor is sent to a page of theirs, not to the lecture editor.
+    it "sends a capped tutor back to their own page" do
+      sign_in tutor
+      Rails.cache.clear
+
+      20.times { send_message(audiences: ["tutorial:#{tutorial.id}"]) }
+      send_message(audiences: ["tutorial:#{tutorial.id}"])
+
+      expect(response).to redirect_to(lecture_tutorials_path(lecture))
       expect(flash[:alert]).to eq(I18n.t("student_message.too_many"))
     end
 

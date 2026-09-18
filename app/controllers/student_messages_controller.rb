@@ -1,17 +1,13 @@
 # Lets lecture staff, and tutors for their own group, send a one-off email
 # (optionally with an attachment) to the students of the groups they pick.
 class StudentMessagesController < ApplicationController
-  # A sender writes a handful of mails a day; a compromised account would
-  # write hundreds. The cap is per sender across lectures.
-  rate_limit to: 20, within: 1.hour, only: :create,
-             by: -> { current_user&.id || request.remote_ip },
-             with: lambda {
-               redirect_to edit_lecture_path(params[:lecture_id], tab: "communication"),
-                           alert: I18n.t("student_message.too_many")
-             }
-
   before_action :set_lecture
   before_action :set_catalog
+  # A per-sender cap on bulk mail, across lectures. Declared after the
+  # catalog so that a refused sender is sent back to their own page.
+  rate_limit to: 20, within: 1.hour, only: :create,
+             by: -> { current_user.id },
+             with: -> { redirect_to return_path, alert: I18n.t("student_message.too_many") }
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
@@ -87,14 +83,27 @@ class StudentMessagesController < ApplicationController
       User.where(id: audiences.flat_map(&:user_ids).uniq).pluck(:email)
     end
 
-    # Where the form was: the lecture's communication tab or a tutor's page.
-    # Only a path of this app: anything else would make Rails refuse the
-    # redirect after the message has gone out.
+    # Where the form was, or the sender's own page. Both forms hand over a
+    # path of this app; a value that is not one is not followed, so that a
+    # bad one cannot fail the redirect once the message is on its way.
     def return_path
       given = params[:return_to].to_s
-      return given if given.start_with?("/") && !given.start_with?("//", "/\\")
+      return given if app_path?(given)
 
-      edit_lecture_path(@lecture, tab: "communication")
+      if @catalog.staff?
+        edit_lecture_path(@lecture, tab: "communication")
+      else
+        lecture_tutorials_path(@lecture)
+      end
+    end
+
+    def app_path?(given)
+      return false unless given.start_with?("/") && !given.start_with?("//") && given.size <= 2000
+
+      uri = URI.parse(given)
+      uri.scheme.nil? && uri.host.nil?
+    rescue URI::InvalidURIError
+      false
     end
 
     def message_params
