@@ -124,6 +124,19 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.text_part.body.to_s).to include("We start on Monday.")
     end
 
+    # Every uploader asks the gate: cached data that did not come through
+    # the scan is no attachment.
+    it "refuses cached data that was not scanned" do
+      unscanned = StudentMessageUploader.upload(StringIO.new("%PDF-1.4 demo"), :cache)
+      other = StudentMessage.new(lecture: lecture, sender: teacher, subject: "s", body: "b")
+      other.address_to(catalog.pick(["lecture:all"]))
+      other.attachment = unscanned.to_json
+
+      expect(other).not_to be_valid
+      expect(other.errors[:attachment])
+        .to include(I18n.t("submission.upload_failure_scan_required"))
+    end
+
     it "attaches the uploaded file" do
       message.attachment = StringIO.new("%PDF-1.4 demo")
       message.attachment_attacher.file.metadata["filename"] = "program.pdf"
