@@ -165,8 +165,7 @@ module StudentMessages
         User.where(id: user_registrations.where.not(status: :rejected).select(:user_id))
       end
 
-      # Per campaign, how many registered and how many were rejected: two
-      # queries for every campaign of the lecture.
+      # Two queries for all campaigns rather than two per campaign.
       def registration_counts
         @registration_counts ||= begin
           scope = Registration::UserRegistration

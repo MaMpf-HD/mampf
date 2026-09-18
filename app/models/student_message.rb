@@ -46,9 +46,9 @@ class StudentMessage < ApplicationRecord
 
   private
 
-    # Snapshot the audience at creation time so that the asynchronous
-    # delivery reaches exactly the recipients (and matches the count) that
-    # the sender saw when sending.
+    # Snapshot the audience at creation time: the delivery job runs later
+    # and must reach who was in the groups when the message was sent, not
+    # who is in them by then.
     def snapshot_audiences
       return if @addressed.blank?
 

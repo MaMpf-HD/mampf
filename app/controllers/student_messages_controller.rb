@@ -71,8 +71,8 @@ class StudentMessagesController < ApplicationController
 
     # A file straight from the form is what the scanning attacher refuses;
     # opened here it goes through the scan like an upload, and keeps its
-    # name. The block closes the handle whether the scan lets it through
-    # or not.
+    # name. In a block: a scan that refuses raises before Shrine would
+    # close it.
     def attach_scanned(upload)
       return if upload.blank?
 
@@ -88,8 +88,8 @@ class StudentMessagesController < ApplicationController
     end
 
     # Where the form was: the lecture's communication tab or a tutor's page.
-    # Only a path of this app is taken; anything else - another host, a
-    # scheme, a string that is no URI - lands on the communication tab.
+    # Only a path of this app: anything else would make Rails refuse the
+    # redirect after the message has gone out.
     def return_path
       given = params[:return_to].to_s
       return given if given.start_with?("/") && !given.start_with?("//", "/\\")

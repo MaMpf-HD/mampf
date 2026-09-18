@@ -6,8 +6,8 @@ class StudentMessageMailer < ApplicationMailer
   def student_message_email
     @message = params[:message]
     @lecture = @message.lecture
-    # Recipients were snapshotted when the message was created, so the
-    # delivery reaches exactly the audience (and count) the sender saw.
+    # Snapshotted when the message was created: who was in the groups
+    # then, not who is in them now.
     recipients = @message.recipient_emails
     return if recipients.empty?
 
