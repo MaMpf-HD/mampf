@@ -30,6 +30,12 @@ export default class extends Controller {
   }
 
   async changed() {
+    // Until the answer is in, the button would send the new selection under
+    // the old count.
+    for (const control of this.element.querySelectorAll("#student-message-recipients button, #student-message-recipients input[type=submit]")) {
+      control.disabled = true;
+    }
+
     for (const toggle of this.sectionToggleTargets) {
       const boxes = this.boxesOf(toggle);
       const checked = boxes.filter(box => box.checked).length;
