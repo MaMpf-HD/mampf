@@ -61,13 +61,17 @@ class StudentMessagesController < ApplicationController
     end
 
     # A file straight from the form is what the scanning attacher refuses;
-    # opened here it goes through the scan like an upload, and keeps its name.
+    # opened here it goes through the scan like an upload, and keeps its
+    # name. The block closes the handle whether the scan lets it through
+    # or not.
     def attach_scanned(upload)
       return if upload.blank?
 
-      @message.attachment_attacher.attach_cached(
-        File.open(upload.tempfile.path), metadata: { "filename" => upload.original_filename }
-      )
+      File.open(upload.tempfile.path) do |file|
+        @message.attachment_attacher.attach_cached(
+          file, metadata: { "filename" => upload.original_filename }
+        )
+      end
     end
 
     def emails_of(audiences)
