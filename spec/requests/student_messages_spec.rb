@@ -185,7 +185,7 @@ RSpec.describe("StudentMessages", type: :request) do
       end
     end
 
-    # A course's editor may edit the lecture, and writes as its staff.
+    # The edit right is inherited from the course, and staff status with it.
     context "as an editor of the course" do
       it "sends as staff, and sees the picker" do
         course_editor = create(:confirmed_user)

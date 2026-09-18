@@ -1,9 +1,10 @@
 module StudentMessages
   # Everything a sender may write to in a lecture: everybody at once, or
-  # groups picked from the sections the picker lists. Staff see every group
-  # of the lecture, a tutor the groups they grade. Each section's counts
-  # come from one grouped query; who is in a group is read only when it is
-  # picked.
+  # groups picked from the sections the picker lists. One place decides
+  # what a sender may address, for the preview and for the send alike. The
+  # counts are read per section, not per group, so the picker costs the
+  # same however many groups a lecture has; who is in a group is read when
+  # it is picked.
   class Catalog
     HEADINGS = [:tutorials, :talks, :cohorts, :exams, :registrations].freeze
 
@@ -49,8 +50,8 @@ module StudentMessages
       end
     end
 
-    # Whoever may edit the lecture - its teacher, its editors, the course's
-    # editors, admins - writes as its staff.
+    # The lecture's edit right decides, so that a course's editors, who
+    # inherit it, write as staff too: in cc, on the lecture's list.
     def staff?
       return @staff if defined?(@staff)
 

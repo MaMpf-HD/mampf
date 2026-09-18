@@ -6,8 +6,8 @@ class StudentMessageMailer < ApplicationMailer
   def student_message_email
     @message = params[:message]
     @lecture = @message.lecture
-    # Snapshotted when the message was created: who was in the groups
-    # then, not who is in them now.
+    # The saved addresses, not the groups as they are now: a change in
+    # between must not retarget a queued mail.
     recipients = @message.recipient_emails
     return if recipients.empty?
 

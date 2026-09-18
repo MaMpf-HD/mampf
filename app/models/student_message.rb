@@ -33,8 +33,8 @@ class StudentMessage < ApplicationRecord
     audiences.pluck("label")
   end
 
-  # What the footer names as the recipients: the groups, or, for a message
-  # from before groups could be picked, everybody registered then.
+  # A row from before groups could be picked has no labels; the audit and
+  # the footer share one fallback for it.
   def audience_sentence
     audience_labels.presence&.to_sentence ||
       I18n.t("student_message.everyone_registered_then")
@@ -46,9 +46,8 @@ class StudentMessage < ApplicationRecord
 
   private
 
-    # Snapshot the audience at creation time: the delivery job runs later
-    # and must reach who was in the groups when the message was sent, not
-    # who is in them by then.
+    # The addresses are saved with the message, so that a group changing
+    # between the send and the delivery job cannot retarget it.
     def snapshot_audiences
       return if @addressed.blank?
 
