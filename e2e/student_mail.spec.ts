@@ -1,13 +1,15 @@
+import type { FactoryBot } from "./_support/factorybot";
 import { expect, test } from "./_support/fixtures";
 
 // Two groups, one member each; the count follows what is picked.
-async function lectureWithTwoGroups(factory, teacherId: number, tutorId: number) {
+async function lectureWithTwoGroups(factory: FactoryBot, teacherId: number, tutorId: number) {
   const lecture = await factory.create("lecture", [], { teacher_id: teacherId, locale: "en" });
   const monday = await factory.create("tutorial", ["with_tutor_by_id"], {
     lecture_id: lecture.id, title: "Mo 10", tutor_id: tutorId,
   });
   const tuesday = await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Tu 14" });
-  for (const [tutorial, name] of [[monday, "Ada Lovelace"], [tuesday, "Grace Hopper"]]) {
+  const members = [[monday, "Ada Lovelace"], [tuesday, "Grace Hopper"]] as const;
+  for (const [tutorial, name] of members) {
     const student = await factory.create("confirmed_user", [], { name_in_tutorials: name });
     await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: student.id });
     await factory.create("tutorial_membership", [], {
