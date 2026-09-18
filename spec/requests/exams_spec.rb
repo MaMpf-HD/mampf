@@ -353,6 +353,130 @@ RSpec.describe("Exams", type: :request) do
         expect(response).to have_http_status(:redirect)
       end
     end
+
+    describe "schedule change notification" do
+      let!(:participant) { create(:confirmed_user, locale: "en") }
+
+      before do
+        create(:exam_roster_entry, exam: exam, user: participant)
+        sign_in teacher
+      end
+
+      context "when date changes" do
+        let(:valid_attributes_new_date) do
+          {
+            date: 5.weeks.from_now.strftime("%Y-%m-%d %H:%M"),
+          }
+        end
+        it "sends a schedule change email to participants" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam),
+                    params: { exam: valid_attributes_new_date },
+                    as: :turbo_stream)
+            end.to change { ActionMailer::Base.deliveries.count }.by(1)
+          end
+        end
+      end
+
+      context "when location changes" do
+        let(:valid_attributes_new_location) do
+          {
+            location: "Room 202"
+          }
+        end
+        it "sends a schedule change email to participants" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam),
+                    params: { exam: valid_attributes_new_location },
+                    as: :turbo_stream)
+            end.to change { ActionMailer::Base.deliveries.count }.by(1)
+          end
+        end
+      end
+
+      context "when both date and location change" do
+        let(:valid_attributes_new_date_and_location) do
+          {
+            date: 5.weeks.from_now.strftime("%Y-%m-%d %H:%M"),
+            location: "Room 101"
+          }
+        end
+        it "sends only one email per participant" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam),
+                    params: { exam: valid_attributes_new_date_and_location },
+                    as: :turbo_stream)
+            end.to change { ActionMailer::Base.deliveries.count }.by(1)
+          end
+        end
+      end
+
+      context "when neither date nor location changes" do
+        let(:valid_attributes_new_name) do
+          {
+            title: "Updated Exam Title",
+            location: exam.location,
+            capacity: 75
+          }
+        end
+        it "does not send an email" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam),
+                    params: { exam: valid_attributes_new_name },
+                    as: :turbo_stream)
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
+
+      context "when the update is invalid due to missing title" do
+        it "does not send an email" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam),
+                    params: { exam: { title: "",
+                                      date: 5.weeks.from_now.strftime("%Y-%m-%d %H:%M") } },
+                    as: :turbo_stream)
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
+
+      context "when there are no participants" do
+        it "does not attempt to send email" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam.tap { |e| e.exam_roster_entries.destroy_all }),
+                    params: { exam: { location: "Room 999" } },
+                    as: :turbo_stream)
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
+
+      context "with multiple participants" do
+        let!(:other_participant) { create(:confirmed_user, locale: "en") }
+
+        before { create(:exam_roster_entry, exam: exam, user: other_participant) }
+
+        it "sends an email to every participant" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam),
+                    params: { exam: { location: "Room 999" } },
+                    as: :turbo_stream)
+            end.to change { ActionMailer::Base.deliveries.count }.by(2)
+          end
+
+          recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:to)
+          expect(recipients).to contain_exactly(participant.email, other_participant.email)
+        end
+      end
+    end
   end
 
   describe "DELETE /exams/:id" do
@@ -397,6 +521,130 @@ RSpec.describe("Exams", type: :request) do
       it "redirects unauthorized users" do
         delete exam_path(exam), as: :turbo_stream
         expect(response).to have_http_status(:redirect)
+      end
+    end
+  end
+
+  describe "POST /exams/:id/participants" do
+    let(:new_student) { create(:confirmed_user, locale: "en") }
+
+    context "as a teacher" do
+      before { sign_in teacher }
+
+      it "adds the user as a participant" do
+        expect do
+          post(participants_exam_path(exam), params: { user_id: new_student.id }, as: :turbo_stream)
+        end.to change { exam.roster_entries.count }.by(1)
+      end
+
+      it "sends an email when a participant is successfully added" do
+        perform_enqueued_jobs do
+          expect do
+            post(participants_exam_path(exam), params: { user_id: new_student.id },
+                                               as: :turbo_stream)
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+
+        email = ActionMailer::Base.deliveries.last
+        expected_subject = I18n.with_locale(new_student.locale) do
+          I18n.t("roster.mailer.roster_added_to_exam_email_subject",
+                 rosterable_title: exam.title,
+                 lecture_title: lecture.title)
+        end
+        expect(email.subject).to eq(expected_subject)
+        expect(email.to).to eq([new_student.email])
+      end
+
+      context "when the user is already registered" do
+        before { create(:exam_roster_entry, exam: exam, user: new_student) }
+
+        it "does not send a duplicate email" do
+          perform_enqueued_jobs do
+            expect do
+              post(participants_exam_path(exam), params: { user_id: new_student.id },
+                                                 as: :turbo_stream)
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
+
+      context "when the user is not found" do
+        it "does not send an email" do
+          perform_enqueued_jobs do
+            expect do
+              post(participants_exam_path(exam), params: { user_id: 99_999 }, as: :turbo_stream)
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "does not send an email" do
+        perform_enqueued_jobs do
+          expect do
+            post(participants_exam_path(exam), params: { user_id: new_student.id },
+                                               as: :turbo_stream)
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+      end
+    end
+  end
+
+  describe "DELETE /exams/:id/participants/:user_id" do
+    let(:member) { create(:confirmed_user, locale: "en") }
+
+    before { create(:exam_roster_entry, exam: exam, user: member) }
+
+    context "as a teacher" do
+      before { sign_in teacher }
+
+      it "removes the user from the exam roster" do
+        expect do
+          delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
+        end.to change { exam.roster_entries.count }.by(-1)
+      end
+
+      it "sends an email when a participant is successfully removed" do
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+
+        email = ActionMailer::Base.deliveries.last
+        expected_subject = I18n.with_locale(member.locale) do
+          I18n.t("roster.mailer.roster_removed_from_exam_email_subject",
+                 rosterable_title: exam.title,
+                 lecture_title: lecture.title)
+        end
+        expect(email.subject).to eq(expected_subject)
+      end
+
+      context "when removal is blocked" do
+        before { allow_any_instance_of(Exam).to receive(:participant_removable?).and_return(false) }
+
+        it "does not send an email" do
+          perform_enqueued_jobs do
+            expect do
+              delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "does not send an email" do
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
       end
     end
   end
