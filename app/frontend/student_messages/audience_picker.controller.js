@@ -12,6 +12,11 @@ export default class extends Controller {
     this.modeChanged();
   }
 
+  // A reply arriving after a navigation would land on the next page's form.
+  disconnect() {
+    this.abortController?.abort();
+  }
+
   modeChanged() {
     const picking = this.groupsModeTarget.checked;
     this.groupsTarget.disabled = !picking;
