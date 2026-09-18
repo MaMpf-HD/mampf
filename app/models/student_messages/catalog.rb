@@ -1,13 +1,23 @@
 module StudentMessages
-  # Everything a sender may write to in a lecture, in the order the picker
-  # lists it: staff see every group of the lecture, a tutor the groups they
-  # grade. Nothing here is a query until a count or a pick asks for it.
+  # Everything a sender may write to in a lecture: everybody at once, or
+  # groups picked from the sections the picker lists. Staff see every group
+  # of the lecture, a tutor the groups they grade. Nothing here is a query
+  # until a count or a pick asks for it.
   class Catalog
-    HEADINGS = [:lecture, :tutorials, :talks, :cohorts, :exams, :registrations].freeze
+    HEADINGS = [:tutorials, :talks, :cohorts, :exams, :registrations].freeze
 
     def initialize(lecture, sender)
       @lecture = lecture
       @sender = sender
+    end
+
+    # Everybody in the lecture - on the roster or registered - as one
+    # audience; staff only.
+    def everyone
+      return unless staff?
+
+      @everyone ||= audience("lecture:all", I18n.t("student_message.audiences.everyone"),
+                             :lecture, @lecture.registration_mail_recipients)
     end
 
     # [[heading, [audience, ...]], ...] without the empty headings.
@@ -19,7 +29,7 @@ module StudentMessages
     end
 
     def audiences
-      sections.flat_map(&:last)
+      [everyone, *sections.flat_map(&:last)].compact
     end
 
     # The audiences behind the keys a form sent, nil if any of them is not
@@ -40,15 +50,6 @@ module StudentMessages
 
       def audience(key, label, heading, users)
         Audience.new(key: key, label: label, heading: heading, users: users)
-      end
-
-      def lecture
-        return [] unless staff?
-
-        [audience("lecture:all", I18n.t("student_message.audiences.everyone"), :lecture,
-                  @lecture.registration_mail_recipients),
-         audience("lecture:roster", I18n.t("student_message.audiences.roster"), :lecture,
-                  @lecture.members)]
       end
 
       def tutorials

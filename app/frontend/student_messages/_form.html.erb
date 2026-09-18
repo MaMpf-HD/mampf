@@ -1,6 +1,6 @@
 <%#
-  The form both pages share. Staff pick the groups from the lecture's
-  catalog; a tutor's page hands in the one group the mail is for.
+  The form both pages share. Staff say "everybody" or pick groups from the
+  lecture's catalog; a tutor's page hands in the one group the mail is for.
   `return_to` is where the page was, so a send lands back on it.
 %>
 
@@ -20,33 +20,86 @@
         <%= t("student_message.to") %>
       </legend>
 
-      <div class="row g-3">
-        <% catalog.sections.each do |heading, audiences| %>
-          <div class="col-12 col-md-6 col-lg-4">
-            <div class="small text-muted text-uppercase mb-1">
-              <%= t("student_message.headings.#{heading}") %>
-            </div>
+      <div class="form-check">
+        <%= radio_button_tag "student_message[audiences][]", catalog.everyone.key, true,
+                             id: "audience-everyone", class: "form-check-input",
+                             data: { action: "change->audience-picker#modeChanged " \
+                                             "change->audience-picker#changed" } %>
 
-            <% audiences.each do |audience| %>
-              <div class="form-check">
-                <%= f.check_box :audiences,
-                                { multiple: true, class: "form-check-input",
-                                  id: "audience-#{audience.key.tr(":", "-")}",
-                                  data: { action: "change->audience-picker#changed" } },
-                                audience.key, nil %>
+        <label class="form-check-label" for="audience-everyone">
+          <%= catalog.everyone.label %>
+          <span class="text-muted">(<%= catalog.everyone.count %>)</span>
+
+          <div class="form-text mt-0">
+            <%= t("student_message.audiences.everyone_hint") %>
+          </div>
+        </label>
+      </div>
+
+      <div class="form-check">
+        <%= radio_button_tag "student_message[audiences][]", "", false,
+                             id: "audience-groups", class: "form-check-input",
+                             data: { audience_picker_target: "groupsMode",
+                                     action: "change->audience-picker#modeChanged " \
+                                             "change->audience-picker#changed" } %>
+
+        <label class="form-check-label" for="audience-groups">
+          <%= t("student_message.audiences.groups") %>
+        </label>
+      </div>
+
+      <%# Disabled, and so not sent, while "everybody" is the answer. %>
+      <fieldset
+        class="ms-4 mt-2"
+        disabled
+        hidden
+        data-audience-picker-target="groups"
+      >
+        <div class="row g-3">
+          <% catalog.sections.each do |heading, audiences| %>
+            <% offered = audiences.select { |audience| audience.count.positive? } %>
+            <% next if offered.empty? %>
+
+            <div class="col-12 col-md-6 col-lg-4" data-audience-section>
+              <div class="form-check mb-1">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="audience-section-<%= heading %>"
+                  data-audience-picker-target="sectionToggle"
+                  data-action="change->audience-picker#toggleSection"
+                >
 
                 <label
-                  class="form-check-label"
-                  for="audience-<%= audience.key.tr(":", "-") %>"
+                  class="form-check-label small text-muted text-uppercase"
+                  for="audience-section-<%= heading %>"
                 >
-                  <%= audience.label %>
-                  <span class="text-muted">(<%= audience.count %>)</span>
+                  <%= t("student_message.headings.#{heading}") %> &middot;
+                  <%= t("student_message.section_all") %>
                 </label>
               </div>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
+
+              <% offered.each do |audience| %>
+                <div class="form-check">
+                  <%= f.check_box :audiences,
+                                  { multiple: true, class: "form-check-input",
+                                    id: "audience-#{audience.key.tr(":", "-")}",
+                                    data: { action: "change->audience-picker#changed" } },
+                                  audience.key, nil %>
+
+                  <label
+                    class="form-check-label"
+                    for="audience-<%= audience.key.tr(":", "-") %>"
+                  >
+                    <%= audience.label %>
+                    <span class="text-muted">(<%= audience.count %>)</span>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </fieldset>
     </fieldset>
   <% else %>
     <%= f.hidden_field :audiences, multiple: true, value: fixed_audience.key %>
@@ -76,5 +129,5 @@
   </div>
 
   <%= render partial: "student_messages/recipients",
-             locals: { emails: catalog ? [] : fixed_audience.emails } %>
+             locals: { emails: (catalog ? catalog.everyone : fixed_audience).emails } %>
 <% end %>

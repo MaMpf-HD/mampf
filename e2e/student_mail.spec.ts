@@ -24,11 +24,16 @@ test.describe("email to students", () => {
       const { page } = teacher;
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=communication`);
-      await expect(page.getByRole("button", { name: "Send" })).toBeDisabled();
+      await expect(page.getByRole("button", { name: "Send to 2 students" })).toBeEnabled();
+      await expect(page.getByRole("checkbox", { name: /Mo 10/ })).toBeHidden();
 
+      await page.getByRole("radio", { name: "Groups picked" }).check();
+      await expect(page.getByRole("button", { name: "Send" })).toBeDisabled();
       await page.getByRole("checkbox", { name: /Mo 10/ }).check();
       await expect(page.getByRole("button", { name: "Send to 1 student" })).toBeEnabled();
-      await page.getByRole("checkbox", { name: /Tu 14/ }).check();
+      // the section's own box takes the rest, and says so
+      await page.getByRole("checkbox", { name: "Tutorials · all" }).check();
+      await expect(page.getByRole("checkbox", { name: /Tu 14/ })).toBeChecked();
       await expect(page.getByRole("button", { name: "Send to 2 students" })).toBeVisible();
 
       await page.getByLabel("Subject").fill("Room change");

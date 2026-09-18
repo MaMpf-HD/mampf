@@ -1,17 +1,18 @@
 de:
   student_message:
     title: "E-Mail an Studierende"
+    section_all: "alle"
     to: "An"
     headings:
-      lecture: "Veranstaltung"
       tutorials: "Tutorien"
       talks: "Vorträge"
       cohorts: "Kohorten"
       exams: "Klausuren"
       registrations: "Anmeldungen"
     audiences:
-      everyone: "Alle auf dem Roster oder angemeldet"
-      roster: "Alle auf dem Roster"
+      everyone: "Alle Studierenden der Veranstaltung"
+      everyone_hint: "eingeschrieben oder angemeldet"
+      groups: "Ausgewählte Gruppen"
       registered: "alle Angemeldeten"
       rejected: "abgelehnt"
     nobody_picked: "Noch niemand ausgewählt."

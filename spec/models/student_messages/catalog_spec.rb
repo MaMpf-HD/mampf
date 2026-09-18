@@ -7,20 +7,24 @@ RSpec.describe(StudentMessages::Catalog) do
   let(:tutorial) { create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: tutor.id) }
   let(:other_tutorial) { create(:tutorial, lecture: lecture) }
   let(:member) { create(:confirmed_user) }
+  let(:outsider) { create(:confirmed_user) }
 
   before do
     create(:lecture_membership, lecture: lecture, user: member)
     create(:tutorial_membership, tutorial: tutorial, user: member)
+    create(:lecture_membership, lecture: lecture, user: outsider)
     other_tutorial
   end
 
   describe "for staff" do
     subject(:catalog) { described_class.new(lecture, teacher) }
 
-    it "offers the lecture, its groups and their members" do
-      expect(catalog.sections.map(&:first)).to eq([:lecture, :tutorials])
+    it "offers everybody, the groups and their members" do
+      expect(catalog.everyone.key).to eq("lecture:all")
+      expect(catalog.everyone.user_ids).to contain_exactly(member.id, outsider.id)
+      expect(catalog.sections.map(&:first)).to eq([:tutorials])
       keys = catalog.audiences.map(&:key)
-      expect(keys).to include("lecture:all", "lecture:roster", "tutorial:#{tutorial.id}",
+      expect(keys).to include("lecture:all", "tutorial:#{tutorial.id}",
                               "tutorial:#{other_tutorial.id}")
       expect(catalog.pick(["tutorial:#{tutorial.id}"]).first.user_ids).to eq([member.id])
       expect(catalog.pick(["tutorial:#{other_tutorial.id}"]).first.count).to eq(0)
@@ -94,6 +98,7 @@ RSpec.describe(StudentMessages::Catalog) do
 
     it "offers their own group and nothing else" do
       expect(catalog).not_to be_staff
+      expect(catalog.everyone).to be_nil
       expect(catalog.audiences.map(&:key)).to eq(["tutorial:#{tutorial.id}"])
       expect(catalog.pick(["tutorial:#{other_tutorial.id}"])).to be_nil
       expect(catalog.pick(["lecture:all"])).to be_nil

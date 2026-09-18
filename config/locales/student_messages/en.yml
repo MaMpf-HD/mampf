@@ -1,17 +1,18 @@
 en:
   student_message:
     title: "Email to students"
+    section_all: "all"
     to: "To"
     headings:
-      lecture: "Lecture"
       tutorials: "Tutorials"
       talks: "Talks"
       cohorts: "Cohorts"
       exams: "Exams"
       registrations: "Registrations"
     audiences:
-      everyone: "Everyone on the roster or registered"
-      roster: "Everyone on the roster"
+      everyone: "Everybody in the lecture"
+      everyone_hint: "on the roster or registered"
+      groups: "Groups picked"
       registered: "everyone registered"
       rejected: "rejected"
     nobody_picked: "Nobody picked yet."

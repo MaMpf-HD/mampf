@@ -50,14 +50,14 @@ RSpec.describe("StudentMessages", type: :request) do
         expect(message.audience_labels).to eq([I18n.t("student_message.audiences.everyone")])
       end
 
-      # The groups picked are what the mail reaches, once each.
+      # The groups picked are what the mail reaches, once each; the empty
+      # value the "groups picked" radio sends is nothing.
       it "reaches the union of the groups picked" do
-        send_message(audiences: ["tutorial:#{tutorial.id}", "lecture:roster"])
+        send_message(audiences: ["", "tutorial:#{tutorial.id}", "tutorial:#{other_tutorial.id}"])
 
         message = StudentMessage.last
         expect(message.recipient_emails).to contain_exactly(member.email, outsider.email)
-        expect(message.audience_labels).to eq([tutorial.title,
-                                               I18n.t("student_message.audiences.roster")])
+        expect(message.audience_labels).to eq([tutorial.title, other_tutorial.title])
       end
 
       it "refuses a group that is not the lecture's, and sends nothing" do
@@ -227,6 +227,7 @@ RSpec.describe("StudentMessages", type: :request) do
       get edit_lecture_path(lecture, tab: "communication")
 
       expect(response.body).to include("student-mail-card")
+      expect(response.body).to include("audience-everyone")
       expect(response.body).to include("audience-tutorial-#{tutorial.id}")
       expect(response.body).to include("audience-campaign-#{campaign.id}-all")
       expect(response.body).to include("Old one")
