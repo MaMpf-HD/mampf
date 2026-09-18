@@ -84,7 +84,7 @@ RSpec.describe("StudentMessages", type: :request) do
         expect(response).to redirect_to("/lectures/#{lecture.id}/tutorials?tutorial=#{tutorial.id}")
       end
 
-      it "stores a pdf attachment" do
+      it "stores a pdf attachment, scanned" do
         file = Rack::Test::UploadedFile.new(
           StringIO.new("%PDF-1.4 demo"), "application/pdf",
           original_filename: "program.pdf"
@@ -92,7 +92,26 @@ RSpec.describe("StudentMessages", type: :request) do
 
         send_message({ attachment: file })
 
-        expect(StudentMessage.last.attachment_filename).to eq("program.pdf")
+        attachment = StudentMessage.last.attachment
+        expect(attachment.metadata["filename"]).to eq("program.pdf")
+        expect(attachment.metadata.dig(MalwareScanGate::METADATA_KEY, "status"))
+          .to eq(MalwareScanGate::CLEAN_STATUS)
+      end
+
+      # It goes out to every address picked, under MaMpf's name.
+      it "sends nothing with an infected attachment" do
+        scanner = instance_double(ClamavScanner)
+        allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+        allow(MalwareScanMetrics).to receive(:record_scan)
+        allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
+        file = Rack::Test::UploadedFile.new(StringIO.new("%PDF-1.4 demo"), "application/pdf",
+                                            original_filename: "program.pdf")
+
+        expect do
+          send_message({ attachment: file })
+        end.not_to change(StudentMessage, :count)
+
+        expect(flash[:alert]).to eq(I18n.t("submission.upload_failure_malware"))
       end
 
       it "rejects non-pdf attachments (content-sniffed, not by extension)" do

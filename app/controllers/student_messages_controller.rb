@@ -24,11 +24,12 @@ class StudentMessagesController < ApplicationController
     audiences = @catalog.pick(message_params[:audiences])
     return redirect_to(return_path, alert: t("student_message.no_audience")) if audiences.blank?
 
-    @message = StudentMessage.new(message_params.except(:audiences))
+    @message = StudentMessage.new(message_params.except(:audiences, :attachment))
     @message.lecture = @lecture
     @message.sender = current_user
     @message.sender_role = @catalog.staff? ? :staff : :tutor
     @message.address_to(audiences)
+    attach_scanned(message_params[:attachment])
 
     if @message.save
       StudentMessageMailer.with(message: @message).student_message_email.deliver_later
@@ -36,6 +37,10 @@ class StudentMessagesController < ApplicationController
     else
       redirect_to return_path, alert: @message.errors.full_messages.to_sentence
     end
+  rescue MalwareScanGate::InfectedUploadError
+    redirect_to return_path, alert: t("submission.upload_failure_malware")
+  rescue MalwareScanGate::ScannerUnavailableError
+    redirect_to return_path, alert: t("submission.upload_failure_scanner_unavailable")
   end
 
   private
@@ -53,6 +58,16 @@ class StudentMessagesController < ApplicationController
       return if @catalog.audiences.any?
 
       redirect_to root_path, alert: t("student_message.not_allowed")
+    end
+
+    # A file straight from the form is what the scanning attacher refuses;
+    # opened here it goes through the scan like an upload, and keeps its name.
+    def attach_scanned(upload)
+      return if upload.blank?
+
+      @message.attachment_attacher.attach_cached(
+        File.open(upload.tempfile.path), metadata: { "filename" => upload.original_filename }
+      )
     end
 
     def emails_of(audiences)

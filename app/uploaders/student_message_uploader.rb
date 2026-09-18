@@ -10,6 +10,10 @@ class StudentMessageUploader < Shrine
   plugin :restore_cached_data
   plugin :validation_helpers
 
+  # The attachment goes out to every address the sender picked, under
+  # MaMpf's name: scanned like every other upload.
+  Attacher.prepend(MalwareScannableAttacher)
+
   Attacher.validate do
     validate_min_size 1
     validate_max_size MAX_SIZE
