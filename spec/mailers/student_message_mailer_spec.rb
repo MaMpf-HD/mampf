@@ -67,6 +67,16 @@ RSpec.describe(StudentMessageMailer) do
         .to include(I18n.t("student_message.audiences.everyone"))
     end
 
+    # The display name is the sender's to change; the address and the role
+    # are not.
+    it "names the sender's address and role in the footer" do
+      expected_role = I18n.with_locale(lecture.locale_with_inheritance) do
+        I18n.t("mailer.student_message_role.staff")
+      end
+
+      expect(mail.text_part.body.to_s).to include("(#{teacher.email}, #{expected_role})")
+    end
+
     # From before groups could be picked: no labels on record.
     it "says 'everyone registered at the time' for a message without groups" do
       message.update_columns(audiences: []) # rubocop:disable Rails/SkipsModelValidations
