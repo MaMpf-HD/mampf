@@ -57,6 +57,12 @@ test.describe("email to students", () => {
       await page.getByRole("button", { name: "Email the group" }).click();
 
       const dialog = page.getByRole("dialog", { name: "Email to Mo 10" });
+      // the modal's focus trap must not keep the addresses from the clipboard
+      await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+      await dialog.getByRole("button", { name: "Copy email addresses" }).click();
+      await expect(dialog.getByRole("status")).toHaveText("Addresses copied to clipboard");
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("@");
+
       await dialog.getByLabel("Subject").fill("Next week");
       await dialog.getByLabel("Message").fill("No session next week.");
       await dialog.getByRole("button", { name: "Send to 1 student" }).click();

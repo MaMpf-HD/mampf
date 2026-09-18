@@ -16,6 +16,7 @@ en:
       registered: "everyone registered"
       rejected: "rejected"
     nobody_picked: "Nobody picked yet."
+    addresses_copy_failed: "The addresses could not be copied."
     copy_addresses: "Copy email addresses"
     addresses_copied: "Addresses copied to clipboard"
     subject: "Subject"

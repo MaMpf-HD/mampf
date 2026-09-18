@@ -16,6 +16,7 @@ de:
       registered: "alle Angemeldeten"
       rejected: "abgelehnt"
     nobody_picked: "Noch niemand ausgewählt."
+    addresses_copy_failed: "Die Adressen konnten nicht kopiert werden."
     copy_addresses: "E-Mail-Adressen kopieren"
     addresses_copied: "Adressen in die Zwischenablage kopiert"
     subject: "Betreff"

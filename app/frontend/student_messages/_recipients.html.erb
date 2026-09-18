@@ -1,4 +1,9 @@
-<%# Who a selection reaches: the count, the addresses to copy, the send button. %>
+<%#
+  Who a selection reaches: the send button and the addresses to copy. The
+  native clipboard, not clipboard.js: its hidden textarea sits outside a
+  modal's focus trap and copies nothing there.
+%>
+
 <div
   id="student-message-recipients"
   class="d-flex align-items-center flex-wrap gap-2"
@@ -12,21 +17,33 @@
   <% if emails.empty? %>
     <span class="text-muted"><%= t("student_message.nobody_picked") %></span>
   <% else %>
-    <button
-      type="button"
-      class="btn btn-sm btn-outline-secondary clipboard-btn clipboard-button"
-      title="<%= t("buttons.copy_to_clipboard") %>"
-      data-clipboard-text="<%= emails.join("; ") %>"
-      data-testid="copy-student-emails"
+    <span
+      data-controller="clipboard"
+      data-clipboard-text-value="<%= emails.join("; ") %>"
+      data-clipboard-confirmation-value="<%= t("student_message.addresses_copied") %>"
+      data-clipboard-failure-value="<%= t("student_message.addresses_copy_failed") %>"
+      data-clipboard-resting-icon-value="bi-clipboard"
     >
-      <i class="bi bi-clipboard" aria-hidden="true"></i>
-      <%= t("student_message.copy_addresses") %>
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        data-action="clipboard#copy"
+        data-testid="copy-student-emails"
+      >
+        <i
+          class="bi bi-clipboard"
+          data-clipboard-target="icon"
+          aria-hidden="true"
+        ></i>
 
-      <div class="clipboardpopup" style="display: block;">
-        <span class="clipboardpopuptext token-clipboard-popup">
-          <%= t("student_message.addresses_copied") %>
-        </span>
-      </div>
-    </button>
+        <%= t("student_message.copy_addresses") %>
+      </button>
+
+      <span
+        class="visually-hidden"
+        role="status"
+        data-clipboard-target="status"
+      ></span>
+    </span>
   <% end %>
 </div>
