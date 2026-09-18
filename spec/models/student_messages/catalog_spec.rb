@@ -156,10 +156,21 @@ RSpec.describe(StudentMessages::Catalog) do
   describe "for a tutor" do
     subject(:catalog) { described_class.new(lecture, tutor) }
 
-    it "offers their own group and nothing else" do
+    it "offers their own group and nothing else, without asking every group" do
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+      6.times { create(:tutorial, lecture: lecture) }
+
+      keys = ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        catalog.audiences.map(&:key)
+      end
+
       expect(catalog).not_to be_staff
       expect(catalog.everyone).to be_nil
-      expect(catalog.audiences.map(&:key)).to eq(["tutorial:#{tutorial.id}"])
+      expect(keys).to eq(["tutorial:#{tutorial.id}"])
+      expect(selects).to be <= 6
       expect(catalog.pick(["tutorial:#{other_tutorial.id}"])).to be_nil
       expect(catalog.pick(["lecture:all"])).to be_nil
     end

@@ -64,9 +64,15 @@ module StudentMessages
         Audience.new(key: key, label: label, heading: heading, users: users, count: count)
       end
 
+      # Outside the staff, only a tutorial's own tutors may write on it - the
+      # graders a tutorial inherits are the staff - so the tutor's list is
+      # read directly rather than asking every tutorial of the lecture.
       def tutorials
-        groups = @lecture.tutorials.to_a
-        groups.select! { |tutorial| @sender.can_enter_points_in?(tutorial) } unless staff?
+        groups = if staff?
+          @lecture.tutorials.to_a
+        else
+          @sender.given_tutorials.where(lecture: @lecture).to_a
+        end
         counts = TutorialMembership.where(tutorial_id: groups.map(&:id))
                                    .group(:tutorial_id).distinct.count(:user_id)
         groups.map do |tutorial|
