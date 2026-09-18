@@ -173,6 +173,21 @@ RSpec.describe("StudentMessages", type: :request) do
       end
     end
 
+    # A course's editor may edit the lecture, and writes as its staff.
+    context "as an editor of the course" do
+      it "sends as staff, and sees the picker" do
+        course_editor = create(:confirmed_user)
+        lecture.course.editors << course_editor
+        sign_in course_editor
+
+        get edit_lecture_path(lecture, tab: "communication")
+        expect(response.body).to include("audience-everyone")
+
+        send_message(audiences: ["tutorial:#{tutorial.id}"])
+        expect(StudentMessage.last).to be_staff
+      end
+    end
+
     context "as a student" do
       before { sign_in member }
 

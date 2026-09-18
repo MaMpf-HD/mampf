@@ -40,10 +40,12 @@ module StudentMessages
       picked.all? ? picked : nil
     end
 
+    # Whoever may edit the lecture - its teacher, its editors, the course's
+    # editors, admins - writes as its staff.
     def staff?
       return @staff if defined?(@staff)
 
-      @staff = @sender.admin? || @sender.editor_or_teacher_in?(@lecture)
+      @staff = @sender.can_edit?(@lecture)
     end
 
     private

@@ -93,6 +93,18 @@ RSpec.describe(StudentMessages::Catalog) do
     end
   end
 
+  # Editing rights are inherited from the course; so is writing as staff.
+  describe "for an editor of the course" do
+    it "is staff, everybody included" do
+      course_editor = create(:confirmed_user)
+      lecture.course.editors << course_editor
+      catalog = described_class.new(lecture, course_editor)
+
+      expect(catalog).to be_staff
+      expect(catalog.everyone).to be_present
+    end
+  end
+
   describe "for a tutor" do
     subject(:catalog) { described_class.new(lecture, tutor) }
 
