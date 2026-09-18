@@ -277,5 +277,15 @@ RSpec.describe("StudentMessages", type: :request) do
       expect(response.body).to include(I18n.t("student_message.tutorial.button"))
       expect(response.body).to include("value=\"tutorial:#{tutorial.id}\"")
     end
+
+    # A first word to the group comes before the first sheet.
+    it "gives the tutor the mail button before the lecture has a sheet" do
+      sign_in tutor
+
+      get lecture_tutorials_path(lecture, tutorial: tutorial.id)
+
+      expect(response.body).to include(I18n.t("assignment.nothing_yet_in_lecture").strip)
+      expect(response.body).to include(I18n.t("student_message.tutorial.button"))
+    end
   end
 end
