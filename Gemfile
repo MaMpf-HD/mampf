@@ -30,6 +30,7 @@ gem "fastimage", "~> 2.3"
 gem "filesize", "~> 0.2"
 gem "flipper", "~> 1.4"
 gem "flipper-active_record", "~> 1.4"
+gem "http", "~> 6.0", ">= 6.0.1"
 gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"

@@ -14,20 +14,23 @@
     // when the sibling repo exists, empty otherwise. Cloned it later? Rebuild.
     // Runs in Alpine, not the host shell, because host shells differ (other flags
     // on macOS, no `sh` on pure Windows).
-    "initializeCommand": [
-        "docker",
-        "run",
-        "--rm",
-        "--mount",
-        "type=bind,source=${localWorkspaceFolder},target=/workspace",
-        "--mount",
-        "type=bind,source=${localWorkspaceFolder}/..,target=/workspace-parent,readonly",
-        "alpine:3.22",
-        "sh",
-        "/workspace/.devcontainer/create-mampf-infra-compose.sh",
-        "/workspace",
-        "/workspace-parent"
-    ],
+    "initializeCommand": {
+        "mampf-infra": [
+            "docker",
+            "run",
+            "--rm",
+            "--mount",
+            "type=bind,source=${localWorkspaceFolder},target=/workspace",
+            "--mount",
+            "type=bind,source=${localWorkspaceFolder}/..,target=/workspace-parent,readonly",
+            "alpine:3.22",
+            "sh",
+            "/workspace/.devcontainer/create-mampf-infra-compose.sh",
+            "/workspace",
+            "/workspace-parent"
+        ],
+        "mampf-network": "docker network inspect mampf_dev >/dev/null 2>&1 || docker network create mampf_dev"
+    },
     "service": "app",
     // https://github.com/orgs/community/discussions/15506
     "workspaceFolder": "/workspaces/mampf/",
