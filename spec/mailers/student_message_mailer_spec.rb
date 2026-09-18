@@ -67,6 +67,23 @@ RSpec.describe(StudentMessageMailer) do
         .to include(I18n.t("student_message.audiences.everyone"))
     end
 
+    # From before groups could be picked: no labels on record.
+    it "says 'everyone registered at the time' for a message without groups" do
+      message.update_columns(audiences: []) # rubocop:disable Rails/SkipsModelValidations
+      expected = I18n.with_locale(lecture.locale_with_inheritance) do
+        I18n.t("student_message.everyone_registered_then")
+      end
+
+      expect(mail.text_part.body.to_s).to include(expected)
+    end
+
+    # A job enqueued before the rename carries the old name in its GlobalID.
+    it "is found under the old name a queued job may carry" do
+      old_gid = "gid://mampf/Registration::StudentMessage/#{message.id}"
+
+      expect(GlobalID::Locator.locate(old_gid)).to eq(message)
+    end
+
     it "prefixes the subject with the lecture title" do
       # the mail is rendered in the lecture's locale, so the localized
       # sort prefix of the title must be computed in that locale as well
