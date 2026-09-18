@@ -30,6 +30,14 @@ RSpec.describe(StudentMessages::Catalog) do
       expect(catalog.pick(["tutorial:#{other_tutorial.id}"]).first.count).to eq(0)
     end
 
+    # Everybody next to a group is everybody; the record must not name a
+    # group the mail did not single out.
+    it "reads everybody beside a group as everybody alone" do
+      picked = catalog.pick(["lecture:all", "tutorial:#{tutorial.id}"])
+
+      expect(picked.map(&:key)).to eq(["lecture:all"])
+    end
+
     it "refuses a key that is not the lecture's" do
       foreign = create(:tutorial, lecture: create(:lecture))
 
@@ -63,6 +71,18 @@ RSpec.describe(StudentMessages::Catalog) do
         expect(by_key["item:#{item.id}"].user_ids).to eq([registrant.id])
         expect(by_key["item:#{item.id}"].label).to end_with(item.title)
         expect(by_key["campaign:#{campaign.id}:rejected"].user_ids).to eq([rejected.id])
+        expect(by_key["campaign:#{campaign.id}:rejected"].count).to eq(1)
+      end
+
+      # "Rejected" is the campaign's own queue: a rejection that was
+      # overridden is not in it.
+      it "counts as rejected only whom the campaign still rejects" do
+        Registration::UserRegistration.where(user: rejected)
+                                      .update_all(rejection_overridden_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+        keys = catalog.audiences.map(&:key)
+
+        expect(keys).not_to include("campaign:#{campaign.id}:rejected")
       end
 
       # An exam's campaign has one item, the exam: its registrants are the

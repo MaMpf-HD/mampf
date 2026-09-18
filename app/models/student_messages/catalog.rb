@@ -35,11 +35,15 @@ module StudentMessages
     end
 
     # The audiences behind the keys a form sent, nil if any of them is not
-    # the sender's to write to - which refuses the whole message.
+    # the sender's to write to - which refuses the whole message. Everybody
+    # next to a group is everybody: the record would otherwise name a group
+    # the mail did not single out.
     def pick(keys)
       by_key = audiences.index_by(&:key)
       picked = Array(keys).compact_blank.uniq.map { |key| by_key[key] }
-      picked.all? ? picked : nil
+      return unless picked.all?
+
+      picked.include?(everyone) ? [everyone] : picked
     end
 
     # Whether an item of a preference campaign is on offer: before the
@@ -140,7 +144,7 @@ module StudentMessages
           list << audience("campaign:#{campaign.id}:all",
                            "#{name}: #{I18n.t("student_message.audiences.registered")}",
                            :registrations, registrants(campaign.user_registrations),
-                           count: registration_counts.dig(:registered, campaign.id) || 0)
+                           count: registered_counts.fetch(campaign.id, 0))
           if items.many?
             items.each do |item|
               list << audience("item:#{item.id}", "#{name}: #{group_title(item.registerable)}",
@@ -149,13 +153,16 @@ module StudentMessages
             end
           end
         end
-        rejected = registration_counts.dig(:rejected, campaign.id) || 0
-        if rejected.positive?
+        # The campaign's own rejected queue: not a row with a rejection that
+        # was overridden, left by the solver, or beside a registration that
+        # went through. One count per campaign; a lecture has few.
+        rejected = campaign.open_rejected_registrations
+        rejected_count = rejected.distinct.count(:user_id)
+        if rejected_count.positive?
           list << audience("campaign:#{campaign.id}:rejected",
                            "#{name}: #{I18n.t("student_message.audiences.rejected")}",
-                           :registrations,
-                           User.where(id: campaign.user_registrations.rejected.select(:user_id)),
-                           count: rejected)
+                           :registrations, User.where(id: rejected.select(:user_id)),
+                           count: rejected_count)
         end
         list
       end
@@ -177,15 +184,12 @@ module StudentMessages
         User.where(id: user_registrations.where.not(status: :rejected).select(:user_id))
       end
 
-      # Two queries for all campaigns rather than two per campaign.
-      def registration_counts
-        @registration_counts ||= begin
-          scope = Registration::UserRegistration
-                  .where(registration_campaign_id: running_campaigns.map(&:id))
-          { registered: scope.where.not(status: :rejected).group(:registration_campaign_id)
-                             .distinct.count(:user_id),
-            rejected: scope.rejected.group(:registration_campaign_id).distinct.count(:user_id) }
-        end
+      # One query for all campaigns rather than one per campaign.
+      def registered_counts
+        @registered_counts ||= Registration::UserRegistration
+                               .where(registration_campaign_id: running_campaigns.map(&:id))
+                               .where.not(status: :rejected)
+                               .group(:registration_campaign_id).distinct.count(:user_id)
       end
 
       def item_counts
