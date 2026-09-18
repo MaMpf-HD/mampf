@@ -139,6 +139,24 @@ RSpec.describe("StudentMessages", type: :request) do
         expect(flash[:alert]).to include(I18n.t("student_message.attachment_must_be_pdf"))
       end
 
+      it "answers a crafted scalar attachment with 400, not a crash" do
+        send_message({ attachment: "text" })
+
+        expect(response).to have_http_status(:bad_request)
+        expect(StudentMessage.count).to eq(0)
+      end
+
+      # The labels a record keeps are what the mail prints, in the mail's
+      # language, whatever the sender's page spoke.
+      it "keeps the labels in the lecture's language" do
+        lecture.update!(locale: "de")
+        teacher.update!(locale: "en")
+        send_message
+
+        expect(StudentMessage.last.audience_labels)
+          .to eq([I18n.t("student_message.audiences.everyone", locale: :de)])
+      end
+
       it "rejects a message without a body" do
         expect do
           send_message({ body: "" })

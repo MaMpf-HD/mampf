@@ -58,8 +58,13 @@ class StudentMessagesController < ApplicationController
     end
 
     # Whoever may write to nothing in this lecture has no business here.
+    # The labels this catalog makes are what the record keeps and the mail
+    # prints, so they are made in the lecture's language, not the sender's;
+    # the picker on the page makes its own.
     def set_catalog
-      @catalog = StudentMessages::Catalog.new(@lecture, current_user)
+      @catalog = I18n.with_locale(@lecture.locale_with_inheritance || I18n.default_locale) do
+        StudentMessages::Catalog.new(@lecture, current_user).tap(&:audiences)
+      end
       return if @catalog.audiences.any?
 
       redirect_to root_path, alert: t("student_message.not_allowed")
@@ -71,6 +76,7 @@ class StudentMessagesController < ApplicationController
     # close it.
     def attach_scanned(upload)
       return if upload.blank?
+      raise(ActionController::BadRequest) unless upload.respond_to?(:tempfile)
 
       File.open(upload.tempfile.path) do |file|
         @message.attachment_attacher.attach_cached(
