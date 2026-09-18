@@ -27,12 +27,14 @@ module StudentMessages
       @user_ids ||= @users.distinct.pluck(:id)
     end
 
+    # Without a count from the catalog - "everybody" has none - the
+    # addresses are read once and counted, as the form asks for both.
     def count
-      @count || user_ids.size
+      @count || emails.size
     end
 
     def emails
-      Audience.recipients([self]).pluck(:email)
+      @emails ||= Audience.recipients([self]).pluck(:email)
     end
   end
 end

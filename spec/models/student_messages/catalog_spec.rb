@@ -182,6 +182,24 @@ RSpec.describe(StudentMessages::Catalog) do
       selects
     end
 
+    # The form asks everybody for its count and its addresses: one read.
+    it "reads everybody once for the count and the addresses" do
+      catalog = described_class.new(Lecture.find(lecture.id), teacher)
+      everyone = catalog.everyone
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        everyone.count
+        everyone.emails
+      end
+
+      expect(selects).to eq(1)
+      expect(everyone.count).to eq(everyone.emails.size)
+    end
+
     it "reads each section's counts in one go, however many groups there are" do
       campaign = create(:registration_campaign, :open, :first_come_first_served,
                         campaignable: lecture)
