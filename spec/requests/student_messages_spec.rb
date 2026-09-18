@@ -236,6 +236,17 @@ RSpec.describe("StudentMessages", type: :request) do
     end
   end
 
+  # What a sender writes is theirs, not the request log's.
+  it "keeps the subject and the body out of the log" do
+    filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+    logged = filter.filter("student_message" => { "subject" => "Room change",
+                                                  "body" => "We meet in room 3.",
+                                                  "audiences" => ["lecture:all"] })
+
+    expect(logged["student_message"]).to eq("subject" => "[FILTERED]", "body" => "[FILTERED]",
+                                            "audiences" => ["lecture:all"])
+  end
+
   describe "GET /lectures/:lecture_id/student_messages/recipients" do
     def ask(audiences)
       get(recipients_lecture_student_messages_path(lecture),
