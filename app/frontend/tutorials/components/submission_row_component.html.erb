@@ -1,0 +1,213 @@
+<tr
+  id="<%= row_id %>"
+  is="turbo-frame"
+  class="submission-row <%= helpers.submission_late_color(@submission) %>"
+  data-id="<%= @submission.id %>"
+  data-controller="participation-row"
+  data-row-id="<%= @submission.id %>"
+  data-row-target-type="submission"
+  data-action="dirty->marking-table#rowDirty clean->marking-table#rowClean"
+  data-marking-table-target="row"
+  data-status-filter-target="row"
+  data-status-filter-status="<%= status %>"
+  data-status-filter-tutorial="<%= @submission.tutorial_id %>"
+  data-status-filter-name="<%= @submission.users.map(&:tutorial_name).join(', ') %>"
+>
+  <td class="<%= layout.column_class(:team) %>">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <% @submission.users.each_with_index do |user, index| %>
+          <div>
+            <%= user.tutorial_name %>
+            <% movement = movement_info_for_user(user) %>
+
+            <% if movement %>
+              <i
+                class="bi bi-info-circle ms-1 text-secondary"
+                role="img"
+                title="<%= movement %>"
+                aria-label="<%= movement %>"
+              ></i>
+            <% end %>
+
+            <% if joined_late?(user) %>
+              <i
+                class="bi bi-box-arrow-in-right ms-1 text-secondary"
+                role="img"
+                title="<%= joined_late_info(user) %>"
+                aria-label="<%= joined_late_info(user) %>"
+              ></i>
+            <% end %>
+
+            <%# The hand-in is late as a whole. %>
+            <% if index.zero? && @submission.too_late? %>
+              <i
+                class="bi bi-exclamation-triangle-fill ms-1 text-warning-emphasis"
+                role="img"
+                title="<%= late_submission_info(@submission, @submission.tutorial) %>"
+                aria-label="<%= late_submission_info(@submission, @submission.tutorial) %>"
+              ></i>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <button
+        type="button"
+        class="
+          clipboardpopup btn btn-link p-0 ms-3 text-secondary
+          clipboard-btn clipboard-button
+        "
+        data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
+        data-id="<%= @submission.id %>"
+        title="<%= t('buttons.copy_email_to_clipboard') %>"
+        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
+      >
+        <i class="bi bi-clipboard"></i>
+
+        <span
+          class="clipboardpopuptext token-clipboard-popup"
+          data-id="<%= @submission.id %>"
+        >
+          <%= t('basics.emails_copied_to_clipboard') %>
+        </span>
+      </button>
+
+      <% if addable_members.any? %>
+        <%#
+          Fixed, or the scrolling table would cut the menu at the pinned
+          column's edge. One item per name: a click adds, and the arrow keys
+          walk the names as they walk any menu.
+        %>
+        <div class="dropdown">
+          <button
+            type="button"
+            class="btn btn-link p-0 ms-2 text-secondary"
+            data-bs-toggle="dropdown"
+            data-bs-popper-config='{"strategy": "fixed"}'
+            aria-expanded="false"
+            title="<%= t('assessment.task_points.add_member') %>"
+            aria-label="<%= t('assessment.task_points.add_member') %>"
+          >
+            <i class="bi bi-person-plus"></i>
+          </button>
+
+          <div class="dropdown-menu" style="max-width: 18rem;">
+            <h6 class="dropdown-header text-wrap fw-normal">
+              <%= t('assessment.task_points.add_member_hint') %>
+            </h6>
+
+            <% addable_members.each do |member| %>
+              <%= button_to member.tutorial_name,
+                            add_member_submission_path(@submission),
+                            method: :patch,
+                            params: { user_id: member.id,
+                                      grading_scope_type: grading_scope_type },
+                            class: "dropdown-item",
+                            form: { data: { turbo: true } } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </td>
+
+  <% if layout.show?(:tutorial) %>
+    <td class="text-center <%= layout.column_class(:tutorial) %>">
+      <span><%= @submission.tutorial&.title %></span>
+    </td>
+  <% end %>
+
+  <% if grading_enabled? %>
+    <td class="text-center <%= layout.column_class(:status) %>">
+      <% if participation %>
+        <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
+      <% end %>
+    </td>
+    <% tasks.each do |task| %>
+      <%= task_points_cell(task, allow_grading?) %>
+    <% end %>
+    <td class="text-center <%= layout.column_class(:total) %>">
+      <span data-participation-row-target="totalPoints">0</span>
+    </td>
+    <td class="text-center <%= layout.column_class(:save) %>">
+      <% if can_enter_points? %>
+        <div class="d-inline-flex align-items-center gap-1">
+          <%= form_with url: point_submission_tutorial_path(
+            @submission,
+            grading_scope_type: grading_scope_type),
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "form" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="taskPointsPayload"
+            >
+          <% end %>
+
+          <%= save_row_button(allow_grading?) %>
+
+          <%= form_with url: refresh_point_submission_tutorial_path(
+            @submission,
+            grading_scope_type: grading_scope_type),
+                      method: :patch,
+                      data: { turbo: true, participation_row_target: "refreshForm" },
+                      html: { style: "display:none;" } do %>
+            <input
+              type="hidden"
+              name="task_points"
+              data-participation-row-target="taskPointsPayload"
+            >
+          <% end %>
+
+          <%= refresh_row_button(allow_grading?) %>
+        </div>
+      <% end %>
+    </td>
+  <% end %>
+
+  <td
+    class="text-center <%= layout.column_class(:hand_in) %>"
+    data-id="<%= @submission.id %>"
+  >
+    <div class="d-inline-flex align-items-center gap-1">
+      <% unless @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types) %>
+        <%= link_to show_submission_manuscript_path(@submission),
+                  class: "d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5 text-decoration-none",
+                  target: "_blank",
+                  rel: "noopener",
+                  title: t('assessment.grading_tutorial.show_hand_in'),
+                  aria: { label: t('assessment.grading_tutorial.show_hand_in') } do %>
+          <i class="bi bi-file-earmark-text"></i>
+        <% end %>
+      <% end %>
+
+      <%= link_to show_submission_manuscript_path(@submission, params: { download: 'true' }),
+                class: "d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5 text-decoration-none",
+                data: { turbo: false },
+                title: t('assessment.grading_tutorial.download_hand_in'),
+                aria: { label: t('assessment.grading_tutorial.download_hand_in') } do %>
+        <i class="bi bi-download"></i>
+      <% end %>
+
+      <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+        <%= render partial: 'submissions/other_actions',
+                  locals: { submission: @submission, grading_scope: @grading_scope} %>
+      <% end %>
+    </div>
+  </td>
+
+  <td
+    class="text-center <%= layout.column_class(:correction) %>"
+    data-id="<%= @submission.id %>"
+  >
+    <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+      <%= render partial: 'submissions/correction_column',
+                locals: { submission: @submission } %>
+    <% else %>
+      <%= render partial: 'submissions/download',
+                locals: { submission: @submission } %>
+    <% end %>
+  </td>
+</tr>

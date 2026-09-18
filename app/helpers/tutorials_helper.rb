@@ -12,7 +12,26 @@ module TutorialsHelper
                        end, tutorial.tutor_ids)
   end
 
-  def tutorials_selection(lecture)
-    lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
+  def grading_enabled?(assignment)
+    assignment.assessable?
+  end
+
+  def tutorials_for_dropdown(user, lecture, current_tutorial)
+    if !user.in?(lecture.tutors)
+      {
+        "All tutorials" => lecture.tutorials - [current_tutorial]
+      }
+
+    elsif user.editor_or_teacher_in?(lecture)
+      {
+        "Own tutorials" => user.tutorials(lecture) - [current_tutorial],
+        "Other tutorials" => lecture.tutorials - user.tutorials(lecture) - [current_tutorial]
+      }.delete_if { |_, list| list.empty? }
+
+    else # user is a tutor
+      {
+        "Your tutorials" => user.tutorials(lecture) - [current_tutorial]
+      }
+    end
   end
 end

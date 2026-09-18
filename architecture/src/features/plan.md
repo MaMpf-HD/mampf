@@ -268,10 +268,12 @@ graph TD
     `StudentPerformance::Evaluator` to generate certification proposals.
     Build teacher certification workflow UI.
 
-    Background jobs: `PerformanceRecordUpdateJob` (recompute Records
-    after grade changes) and `CertificationStaleCheckJob` (flag stale
-    certifications when Records change). These are essential for
-    keeping the performance pipeline correct during active grading.
+    No background jobs. Performance records are kept current
+    automatically via `after_commit` callbacks on grading models
+    (`Assessment::Participation`, `Assessment::TaskPoint`, `Achievement`,
+    `Assessment::Assessment`, `Assessment::Task`, `LectureMembership`),
+    and stale certifications are derived by the `Certification.stale`
+    scope rather than flagged.
 
     Controllers: `StudentPerformance::RecordsController` (factual data
     display), `StudentPerformance::CertificationsController` (teacher

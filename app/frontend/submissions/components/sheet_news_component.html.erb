@@ -1,0 +1,24 @@
+<div id="sheet-news">
+  <% if any? %>
+    <div class="news-row">
+      <span>
+        <span class="new-dot" aria-hidden="true"></span>
+
+        <span class="visually-hidden">
+          <%= t("submission.hub.news.lead") %>
+        </span>
+
+        <span aria-hidden="true"><%= t("submission.hub.news.prefix") %></span>
+
+        <%= safe_join(named.map { |sheet| item(sheet) }, ", ") %>
+
+        <% if more_count.positive? %>
+          <%= t("submission.hub.news.more", count: more_count) %>
+        <% end %>
+      </span>
+
+      <%= button_to t("submission.hub.news.seen_all"),
+                    lecture_sheets_seen_path(lecture), class: "seen-all" %>
+    </div>
+  <% end %>
+</div>

@@ -47,9 +47,13 @@ test.describe("Account settings", () => {
       await page.getByRole("textbox", { name: "name in tutorials" }).fill(newName);
       await profilePage.save();
 
-      await factory.create("tutorial", ["with_tutor_by_id"],
+      const tutorial = await factory.create("tutorial", ["with_tutor_by_id"],
         { lecture_id: lecture.id, tutor_id: tutorUser.id });
       await new LecturePage(page, lecture.id).subscribe();
+      // A hand-in goes to the group one sits in, so there has to be a seat.
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
       const submissionsPage = new SubmissionsPage(page, lecture.id);
       await submissionsPage.goto();
       await submissionsPage.createSubmission();

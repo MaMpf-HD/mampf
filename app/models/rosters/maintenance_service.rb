@@ -3,6 +3,7 @@ module Rosters
     # Manages manual roster operations (add, remove, move) while enforcing capacity
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
+    class GradingDataPresentError < StandardError; end
 
     # Raised to unwind the move. ActiveRecord::Rollback cannot do that job here:
     # the nested with_lock transactions swallow it and commit anyway.
@@ -21,6 +22,7 @@ module Rosters
 
     def remove_user!(user, rosterable)
       removed = rosterable.with_lock do
+        ensure_no_grading_data!(user, rosterable)
         remove_user_without_lock!(user, rosterable)
       end
       RosterNotificationMailer.removed(user, rosterable) if removed
@@ -32,6 +34,8 @@ module Rosters
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
         raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
+
+        ensure_no_grading_data!(user, from_rosterable)
 
         removed = remove_user_without_lock!(user, from_rosterable)
         added   = add_user_without_lock!(user, to_rosterable, force: force)
@@ -45,6 +49,32 @@ module Rosters
     end
 
     private
+
+      # Only rosterables that *are* the assessable can lose a result this way —
+      # a talk or an exam owns its assessment, so leaving it means leaving the
+      # gradebook behind. A tutorial is merely where a result is graded; the
+      # assessment belongs to the assignment and survives the move.
+      # A lecture's removal cascades into its talks, and a talk graded for
+      # the person refuses; asked here first, the refusal reads as this
+      # service's, not as a crash further down.
+      def ensure_no_grading_data!(user, rosterable)
+        assessment = rosterable.try(:assessment)
+        held = assessment&.grading_data_for_user?(user)
+        held ||= rosterable.is_a?(Lecture) && graded_on_a_talk?(user, rosterable)
+        return unless held
+
+        raise(GradingDataPresentError,
+              "#{rosterable.class.name} #{rosterable.id} holds grading data " \
+              "for user #{user.id}")
+      end
+
+      # The person's rows on the lecture's talks in one read, not one per talk.
+      def graded_on_a_talk?(user, lecture)
+        Assessment::Participation
+          .where(user: user, assessment: Assessment::Assessment.where(assessable: lecture.talks))
+          .includes(:task_points, :assessment)
+          .any? { |row| row.assessment.grading_data_for?(row) }
+      end
 
       def user_in_roster?(user, rosterable)
         rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)

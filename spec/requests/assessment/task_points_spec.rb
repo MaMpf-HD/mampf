@@ -1,0 +1,1569 @@
+require "rails_helper"
+
+RSpec.describe("Assessment::TaskPoints", type: :request) do
+  let(:teacher) { create(:confirmed_user) }
+  let(:tutor) { create(:confirmed_user) }
+
+  let(:lecture) { create(:lecture, teacher: teacher, submission_grace_period: 70) }
+  let!(:assignment) do
+    FactoryBot.create(:assignment, deadline: 1.hour.from_now, lecture: lecture)
+  end
+  let!(:assessment) do
+    FactoryBot.create(:assessment, :with_points, assessable: assignment)
+  end
+  let!(:task) { create(:assessment_task, assessment: assessment) }
+
+  let(:tutorial) { create(:tutorial, lecture: lecture) }
+  let(:student) { create(:confirmed_user) }
+  let!(:tutorial_membership) do
+    create(:tutorial_membership, user: student, tutorial: tutorial)
+  end
+  let!(:lecture_membership) do
+    create(:lecture_membership, user: student, lecture: lecture)
+  end
+
+  let(:tutorial2) { create(:tutorial, lecture: lecture) }
+  let(:student2) { create(:confirmed_user) }
+  let!(:tutorial_membership2) do
+    create(:tutorial_membership, user: student2, tutorial: tutorial2)
+  end
+  let!(:lecture_membership2) do
+    create(:lecture_membership, user: student2, lecture: lecture)
+  end
+
+  before do
+    assignment.reload
+    assessment.reload
+  end
+
+  # PATCH update_team_multi (tutorial)
+  describe "PATCH /submissions/point_multi_submissions" do
+    before do
+      tutorial.tutors << tutor
+      sign_in tutor
+    end
+
+    context "after grace period" do
+      before { Timecop.travel(3.hours.from_now) }
+      after { Timecop.return }
+
+      context "with a submission target" do
+        let(:submission) do
+          create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
+        end
+        let(:payload) do
+          [{ "target" => "submission",
+             "id" => submission.id,
+             "task_points" => { task.id => "7" } }].to_json
+        end
+
+        it "calls SubmissionGraderService.score_multi_teams_by_types!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_multi_teams_by_types!)
+          patch point_multi_submissions_tutorial_path,
+                params: { tutorial_id: tutorial.id, assignment_id: assignment.id,
+                          grading_scope_type: "tutorial",
+                          submissions: payload },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream" do
+          patch point_multi_submissions_tutorial_path,
+                params: { tutorial_id: tutorial.id, assignment_id: assignment.id,
+                          grading_scope_type: "tutorial",
+                          submissions: payload },
+                as: :turbo_stream
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response).to have_http_status(:success)
+        end
+      end
+
+      # The lecture's table names no group: it holds rows of every group and
+      # of people in none, and only the lecturer saves from it.
+      context "from the lecture's table" do
+        let!(:ungrouped) do
+          member = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :submitted, assessment: assessment,
+                                                                   user: member, tutorial: nil)
+        end
+        let(:payload) do
+          [{ "target" => "participation", "id" => ungrouped.id,
+             "task_points" => { task.id => "3" } }].to_json
+        end
+
+        it "lets the lecturer save somebody in no group" do
+          sign_in teacher
+          patch point_multi_submissions_tutorial_path,
+                params: { assignment_id: assignment.id, grading_scope_type: "lecture",
+                          submissions: payload },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:success)
+          expect(ungrouped.reload.task_points.find_by(task: task).points).to eq(3)
+          expect(response.body).to include("target=\"marking-table\"")
+        end
+
+        it "turns a tutor away" do
+          patch point_multi_submissions_tutorial_path,
+                params: { assignment_id: assignment.id, grading_scope_type: "lecture",
+                          submissions: payload },
+                as: :turbo_stream
+
+          expect(response).to redirect_to(root_path)
+          expect(ungrouped.reload.task_points).to be_empty
+        end
+
+        # A blank row of a student who moved is the new group's: the bulk
+        # save asks the membership, as the single-row route does.
+        it "refuses the former group's tutor on a row of a student who moved" do
+          moved = FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                               user: student, tutorial: tutorial)
+          tutorial_membership.update!(tutorial: tutorial2)
+
+          patch point_multi_submissions_tutorial_path,
+                params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                          grading_scope_type: "tutorial",
+                          submissions: [{ "target" => "participation", "id" => moved.id,
+                                          "task_points" => { task.id => "3" } }].to_json },
+                as: :turbo_stream
+
+          expect(response.body).to include(I18n.t("assessment.errors.user_cannot_enter_points"))
+          expect(moved.reload.task_points).to be_empty
+        end
+      end
+
+      context "when assignment is not found" do
+        it "returns turbo_stream with alert" do
+          patch point_multi_submissions_tutorial_path,
+                params: { tutorial_id: tutorial.id, assignment_id: 999_999,
+                          grading_scope_type: "tutorial",
+                          submissions: [].to_json },
+                as: :turbo_stream
+          expect(response).to have_http_status(:not_found)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+          expect(response.body).to include(
+            I18n.t("assessment.errors.no_assignment")
+          )
+        end
+      end
+
+      context "when tutorial is not found" do
+        it "responds with turbo_stream alert" do
+          patch point_multi_submissions_tutorial_path,
+                params: { tutorial_id: 999_999, assignment_id: assignment.id,
+                          grading_scope_type: "tutorial",
+                          submissions: [].to_json },
+                as: :turbo_stream
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
+      end
+    end
+
+    context "before deadline" do
+      let(:submission) do
+        create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
+      end
+      let(:payload) do
+        [{ "target" => "submission",
+           "id" => submission.id,
+           "task_points" => { task.id => "7" } }].to_json
+      end
+
+      it "returns turbo_stream with alert" do
+        patch point_multi_submissions_tutorial_path,
+              params: { tutorial_id: tutorial.id, assignment_id: assignment.id,
+                        grading_scope_type: "tutorial",
+                        submissions: payload },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+    end
+  end
+
+  # PATCH point_submission_tutorial
+  describe "PATCH /submissions/:submission_id/point_submission" do
+    let(:submission) do
+      create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
+    end
+
+    context "as tutor" do
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
+      end
+
+      context "after grace period" do
+        before { Timecop.travel(3.hours.from_now) }
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_submission!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
+            .and_return(nil)
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json,
+                          grading_scope_type: "tutorial" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json,
+                          grading_scope_type: "tutorial" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+        end
+
+        context "when submission is not found" do
+          it "responds with turbo_stream alert" do
+            patch point_submission_tutorial_path(999_999),
+                  params: { task_points: {}.to_json, grading_scope_type: "tutorial" },
+                  as: :turbo_stream
+            expect(response).to have_http_status(:not_found)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
+            expect(response.body).to include(
+              I18n.t("assessment.errors.no_submission")
+            )
+          end
+        end
+      end
+
+      context "before deadline" do
+        it "returns turbo_stream success" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json,
+                          grading_scope_type: "tutorial" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
+      end
+    end
+
+    context "as teacher" do
+      before { sign_in teacher }
+
+      context "after grace period" do
+        before { Timecop.travel(3.hours.from_now) }
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_submission!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_submission!)
+            .and_return(nil)
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_submission_tutorial_path(submission),
+                params: { task_points: { task.id => "8" }.to_json,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+        end
+      end
+    end
+
+    context "as a module editor" do
+      let(:editor) { create(:confirmed_user) }
+
+      before do
+        lecture.course.editors << editor
+        sign_in editor
+        Timecop.travel(3.hours.from_now)
+      end
+
+      after { Timecop.return }
+
+      it "enters points like the teacher" do
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        participation = assessment.assessment_participations.find_by(user: student)
+        expect(participation.task_points.find_by(task: task).points).to eq(8)
+      end
+
+      # Edit rights on the lecture reach into every one of its groups.
+      it "enters points on a group's page without being its tutor" do
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        participation = assessment.assessment_participations.find_by(user: student)
+        expect(participation.task_points.find_by(task: task).points).to eq(8)
+      end
+    end
+  end
+
+  # PATCH point_user_tutorial (update_participation)
+  describe "PATCH /participations/:participation_id/point_user" do
+    let!(:participation) do
+      create(:assessment_participation, assessment: assessment, user: student, tutorial: tutorial)
+    end
+
+    context "as teacher, grading_scope_type=lecture" do
+      before do
+        sign_in teacher
+        participation.reload
+        student.reload
+      end
+
+      context "after grace period" do
+        before { Timecop.travel(3.hours.from_now) }
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_participation_path(participation),
+                params: { task_points: { task.id => "6" }.to_json,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_participation_path(participation),
+                params: { task_points: { task.id => "6" }.to_json,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
+
+        context "when participation is not found" do
+          it "responds with turbo_stream alert" do
+            patch point_participation_path(999_999),
+                  params: { task_points: {}.to_json, grading_scope_type: "lecture" },
+                  as: :turbo_stream
+            expect(response).to have_http_status(:not_found)
+            expect(response.media_type).to eq(Mime[:turbo_stream])
+            expect(response.body).to include(
+              I18n.t("assessment.errors.no_participation")
+            )
+          end
+        end
+      end
+
+      context "before deadline" do
+        it "returns turbo_stream success" do
+          patch point_participation_path(participation),
+                params: { task_points: { task.id => "6" }.to_json,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
+      end
+    end
+
+    context "as tutor, grading_scope_type=tutorial" do
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
+      end
+
+      context "after grace period" do
+        before { Timecop.travel(3.hours.from_now) }
+        after { Timecop.return }
+
+        it "calls SubmissionGraderService.score_tasks_by_participation!" do
+          expect(Assessment::SubmissionGraderService).to receive(:score_tasks_by_participation!)
+          patch point_participation_path(participation),
+                params: { task_points: { task.id => "6" }.to_json,
+                          grading_scope_type: "tutorial" },
+                as: :turbo_stream
+        end
+
+        it "returns turbo_stream success" do
+          patch point_participation_path(participation),
+                params: { task_points: { task.id => "6" }.to_json,
+                          grading_scope_type: "tutorial" },
+                as: :turbo_stream
+          expect(response).to have_http_status(:success)
+          expect(response.media_type).to eq(Mime[:turbo_stream])
+        end
+      end
+    end
+
+    # A blank row follows the student's membership at the moment of writing,
+    # whether or not a table has been drawn since the move; work once
+    # recorded stays with the group that recorded it.
+    context "when the student has moved to another group" do
+      let(:tutor2) { create(:confirmed_user) }
+
+      before do
+        tutorial.tutors << tutor
+        tutorial2.tutors << tutor2
+        tutorial_membership.update!(tutorial: tutorial2)
+        Timecop.travel(3.hours.from_now)
+      end
+
+      after { Timecop.return }
+
+      def enter(points, as:)
+        sign_in(as)
+        patch(point_participation_path(participation),
+              params: { task_points: { task.id => points }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream)
+      end
+
+      it "is the new group's tutor who enters the points, not the old one's" do
+        enter("6", as: tutor)
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.task_points).to be_empty
+
+        enter("6", as: tutor2)
+        expect(response).to have_http_status(:success)
+        expect(participation.reload.tutorial).to eq(tutorial2)
+        expect(participation.task_points.pick(:points)).to eq(6)
+
+        tutorial_membership.update!(tutorial: tutorial)
+        enter("3", as: tutor)
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.tutorial).to eq(tutorial2)
+      end
+
+      # An upload is the group's it went to, whatever the membership does
+      # afterwards - the file is in that tutor's stack. Rejected, the row
+      # looks blank again and still stays.
+      it "leaves a row behind an uploaded hand-in with the group the upload went to" do
+        submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                           tutorial: tutorial, users: [student])
+        submission.update!(accepted: false)
+        participation.update!(submitted_at: nil)
+
+        enter("6", as: tutor2)
+        expect(response).to redirect_to(root_path)
+        expect(participation.reload.tutorial).to eq(tutorial)
+        expect(participation.task_points).to be_empty
+      end
+
+      it "is the new group's tutor who marks the absence from a test" do
+        test = create(:assignment, lecture: lecture, kind: :test, deadline: 1.day.ago)
+        create(:assessment, :with_points, assessable: test)
+        row = create(:assessment_participation, assessment: test.reload.assessment,
+                                                user: student, tutorial: tutorial)
+
+        sign_in tutor
+        patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+        expect(row.reload).to be_pending
+
+        sign_in tutor2
+        patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+        expect(row.reload).to be_absent
+        expect(row.tutorial).to eq(tutorial2)
+      end
+    end
+
+    # A sheet handed in on paper by somebody in no group: the participation
+    # has no tutorial, and the lecture is what the grader is checked against.
+    context "when the participation belongs to no group" do
+      let!(:ungrouped) do
+        create(:assessment_participation, assessment: assessment,
+                                          user: create(:confirmed_user))
+      end
+
+      before { Timecop.travel(3.hours.from_now) }
+      after { Timecop.return }
+
+      it "is scored by the teacher" do
+        sign_in teacher
+
+        patch point_participation_path(ungrouped),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(ungrouped.reload.task_points.pick(:points)).to eq(6)
+      end
+
+      it "is not scored by a tutor" do
+        tutorial.tutors << tutor
+        sign_in tutor
+
+        patch point_participation_path(ungrouped),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(ungrouped.reload.task_points).to be_empty
+      end
+    end
+
+    context "when the participation is not found" do
+      before { sign_in teacher }
+
+      it "says so with a 404" do
+        patch point_participation_path("00000000-0000-0000-0000-000000000000"),
+              params: { task_points: {}.to_json, grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to include(I18n.t("assessment.errors.no_participation"))
+      end
+    end
+
+    context "when the participation's assessable is an Exam" do
+      let(:exam) { create(:exam, lecture: lecture) }
+      let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
+      let!(:exam_participation) do
+        create(:exam_roster_entry, exam: exam, user: student)
+        create(:assessment_participation, assessment: exam_assessment, user: student)
+      end
+
+      before { sign_in teacher }
+
+      let!(:exam_task) { create(:assessment_task, assessment: exam_assessment, max_points: 10) }
+
+      it "enters the points without asking the sheet service" do
+        expect(Assessment::SubmissionGraderService).not_to receive(:score_tasks_by_participation!)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(exam_participation.task_points.find_by(task: exam_task).points).to eq(6)
+        expect(response.body).to include("points-participation-row-#{exam_participation.id}")
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]"))
+          .to be_present
+      end
+
+      # The card beside the grading table counts reviewed rows; it must not say
+      # "0 of 2" next to a summary that says one is reviewed.
+      it "redraws the scheme card with the row" do
+        other = create(:confirmed_user)
+        create(:exam_roster_entry, exam: exam, user: other)
+        create(:assessment_participation, assessment: exam_assessment, user: other)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        card = Nokogiri::HTML(response.body).at_css("turbo-stream[target=grading-scheme]")
+        expect(card).to be_present
+        expect(card.text).to include(I18n.t("assessment.grade_scheme.pending_message",
+                                            reviewed: 1, total: 2, pending: 1))
+      end
+
+      # The grade stays as it was; the row that comes back says the points moved.
+      it "marks a graded row whose points change, in both tables" do
+        exam_participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                                   graded_at: 1.minute.ago)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "9" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(exam_participation.reload).to have_attributes(grade_numeric: 2.0)
+        expect(exam_participation.graded_at).to be_within(5.seconds).of(1.minute.ago)
+        expect(response.body)
+          .to include("target=\"grading-participation-row-#{exam_participation.id}\"")
+        expect(response.body)
+          .to include(I18n.t("assessment.grading_exam.summary_points_changed", count: 1))
+      end
+
+      # A colleague saving the row as it is has corrected nothing.
+      it "does not mark a graded row whose points are saved unchanged by somebody else" do
+        create(:assessment_task_point, task: exam_task,
+                                       assessment_participation: exam_participation,
+                                       points: 9, grader: teacher)
+        exam_participation.update!(status: :reviewed, grade_numeric: 2.0, grader: teacher,
+                                   graded_at: Time.current)
+        colleague = create(:confirmed_user)
+        lecture.editors << colleague
+        sign_in colleague
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "9" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(exam_participation.task_points.find_by(task: exam_task).grader).to eq(teacher)
+        expect(exam_participation.reload.points_changed_after_grading?).to be(false)
+      end
+
+      it "gives somebody no longer on the roster no points" do
+        exam.exam_roster_entries.find_by(user: student).update!(excluded_at: Time.current)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+        expect(exam_participation.task_points).to be_empty
+      end
+
+      it "gives a candidate recorded as absent no points" do
+        exam_participation.update!(status: :absent)
+
+        patch point_participation_path(exam_participation),
+              params: { task_points: { exam_task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.body).to include(
+          I18n.t("assessment.grading_exam.not_scorable",
+                 status: I18n.t("assessment.grading_exam.status_word.absent"))
+        )
+        expect(exam_participation.task_points).to be_empty
+      end
+
+      it "reloads the row with the exam's summary" do
+        patch refresh_point_participation_path(exam_participation),
+              params: { grading_scope_type: "lecture" }, as: :turbo_stream
+
+        expect(response).to have_http_status(:success)
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]"))
+          .to be_present
+      end
+    end
+
+    context "when the participation's assessable is a talk" do
+      let(:seminar) { create(:seminar, teacher: teacher) }
+      let(:talk) { create(:talk, lecture: seminar) }
+      let(:talk_assessment) { create(:assessment, :with_points, assessable: talk) }
+      let!(:talk_participation) do
+        create(:assessment_participation, assessment: talk_assessment, user: student)
+      end
+
+      before { sign_in teacher }
+
+      it "refuses with a 400" do
+        patch point_participation_path(talk_participation),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:bad_request)
+        expect(response.body).to include(
+          I18n.t("assessment.task_points.unsupported_assessment_type")
+        )
+      end
+    end
+  end
+
+  # PATCH refresh_point_submission_tutorial
+  describe "PATCH /exams/:exam_id/point_multi_participations" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
+    let!(:exam_task) { create(:assessment_task, assessment: exam_assessment, max_points: 10) }
+    let(:candidates) { create_list(:confirmed_user, 2) }
+    let!(:rows) do
+      candidates.map do |candidate|
+        create(:exam_roster_entry, exam: exam, user: candidate)
+        create(:assessment_participation, assessment: exam_assessment, user: candidate)
+      end
+    end
+
+    def save_all(entries, as: teacher)
+      sign_in(as)
+      patch(point_multi_participations_exam_path(exam),
+            params: { participations: entries.to_json }, as: :turbo_stream)
+    end
+
+    def entry(row, points)
+      { id: row.id, target: "participation", task_points: { exam_task.id => points } }
+    end
+
+    it "enters every row's points in one request and redraws both tables" do
+      save_all([entry(rows[0], "6"), entry(rows[1], "3.5")])
+
+      expect(response).to have_http_status(:success)
+      expect(rows[0].reload.points_total).to eq(6)
+      expect(rows[1].reload.points_total).to eq(3.5)
+      page = Nokogiri::HTML(response.body)
+      targets = page.css("turbo-stream").pluck("target")
+      rows.each do |row|
+        expect(targets).to include("points-participation-row-#{row.id}",
+                                   "grading-participation-row-#{row.id}")
+      end
+      expect(page.at_css("turbo-stream[target=grading-scheme]")).to be_present
+    end
+
+    # One refused row saves none: the candidate who was excused, and a row
+    # that is nobody's on this exam.
+    it "saves nothing when one row is refused" do
+      rows[1].update!(status: :exempt)
+      save_all([entry(rows[0], "6"), entry(rows[1], "3")])
+
+      assert_flash_error
+      expect(rows[0].reload.points_total).to be_nil
+
+      stranger = create(:assessment_participation, assessment: exam_assessment,
+                                                   user: create(:confirmed_user))
+      save_all([entry(rows[0], "6"), entry(stranger, "3")])
+
+      expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+      expect(rows[0].reload.points_total).to be_nil
+    end
+
+    it "refuses a payload that is not a list of rows with points" do
+      [[], [{ id: rows[0].id }], { id: rows[0].id }, "x"].each do |payload|
+        sign_in(teacher)
+        patch(point_multi_participations_exam_path(exam),
+              params: { participations: payload.to_json }, as: :turbo_stream)
+        expect(response.body).to include(I18n.t("assessment.errors.invalid_request_params"))
+      end
+      expect(rows[0].reload.points_total).to be_nil
+    end
+
+    it "is the lecture's business, not a tutor's" do
+      tutorial.tutors << tutor
+      save_all([entry(rows[0], "6")], as: tutor)
+
+      expect(response).to redirect_to(root_path)
+      expect(rows[0].reload.points_total).to be_nil
+    end
+  end
+
+  describe "PATCH /submissions/:submission_id/add_member" do
+    let(:team) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student])
+    end
+    let(:newcomer) { create(:confirmed_user) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: newcomer)
+      create(:tutorial_membership, tutorial: tutorial, user: newcomer)
+      tutorial.tutors << tutor
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
+
+    def add(user, as:, scope: "tutorial")
+      sign_in(as)
+      patch(add_member_submission_path(team),
+            params: { user_id: user.id, grading_scope_type: scope }, as: :turbo_stream)
+    end
+
+    # The newcomer's own row goes, the team's row comes back with them on it.
+    it "lets the group's tutor put a member on the team" do
+      add(newcomer, as: tutor)
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to include(newcomer)
+      targets = Nokogiri::HTML(response.body).css("turbo-stream").pluck("target")
+      expect(targets).to include("points-participation-row-user-#{newcomer.id}",
+                                 "submission-row-#{team.id}", "marking-summary")
+      expect(response.body).to include(newcomer.tutorial_name)
+    end
+
+    # The page may have been drawn before the backfill worker seeded the
+    # newcomer's row, under the user's id; both are taken away.
+    it "takes the newcomer's own row away under either id" do
+      row = create(:assessment_participation, assessment: assessment, user: newcomer,
+                                              tutorial: tutorial)
+      add(newcomer, as: tutor)
+
+      removed = Nokogiri::HTML(response.body).css("turbo-stream[action='remove']")
+                        .pluck("target")
+      expect(removed).to contain_exactly("points-participation-row-#{row.id}",
+                                         "points-participation-row-user-#{newcomer.id}")
+    end
+
+    # A row redrawn for any reason still offers them.
+    it "offers the candidates again when the row is refreshed" do
+      sign_in(tutor)
+      patch(refresh_point_submission_tutorial_path(team),
+            params: { grading_scope_type: "tutorial" }, as: :turbo_stream)
+
+      expect(response.body).to include(I18n.t("assessment.task_points.add_member"))
+      expect(response.body).to include(newcomer.tutorial_name)
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      create(:tutorial, lecture: lecture).tutors << other
+      add(newcomer, as: other)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).not_to include(newcomer)
+    end
+
+    it "takes nobody from outside the group" do
+      stranger = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: stranger)
+      add(stranger, as: tutor)
+
+      expect(response).to have_http_status(:not_found)
+      expect(team.reload.users).not_to include(stranger)
+    end
+  end
+
+  describe "PATCH /submissions/:submission_id/refresh_point_submission" do
+    let(:submission) do
+      create(:submission, assignment: assignment, tutorial: tutorial, users: [student])
+    end
+
+    before { sign_in teacher }
+
+    it "returns turbo_stream success" do
+      patch refresh_point_submission_tutorial_path(submission),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+      expect(response).to have_http_status(:success)
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+    end
+
+    # Somebody else may have marked the sheet since the page was drawn; the
+    # reloaded row must not stand next to a line that still counts it as open.
+    it "brings the summary along with the reloaded row" do
+      Timecop.travel(3.hours.from_now) do
+        create(:assessment_participation, assessment: assessment, user: student,
+                                          tutorial: tutorial, status: :reviewed,
+                                          submitted_at: 1.hour.ago)
+
+        patch refresh_point_submission_tutorial_path(submission),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+      end
+
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
+      expect(summary.text).to include(
+        I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
+      )
+    end
+
+    context "when submission is not found" do
+      it "responds with turbo_stream alert" do
+        patch refresh_point_submission_tutorial_path(999_999),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:not_found)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(response.body).to include(I18n.t("assessment.errors.no_submission"))
+      end
+    end
+  end
+
+  # PATCH refresh_point_participation
+  describe "PATCH /participations/:participation_id/refresh_point_user" do
+    let!(:participation) do
+      create(:assessment_participation, assessment: assessment, user: student)
+    end
+
+    before { sign_in teacher }
+
+    it "returns turbo_stream success" do
+      patch refresh_point_participation_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+      expect(response).to have_http_status(:success)
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+    end
+
+    it "brings the summary along with the reloaded row" do
+      patch refresh_point_participation_path(participation),
+            params: { grading_scope_type: "lecture" },
+            as: :turbo_stream
+
+      expect(Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]"))
+        .to be_present
+    end
+
+    context "when participation is not found" do
+      it "responds with turbo_stream alert" do
+        patch refresh_point_participation_path(999_999),
+              params: { grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:not_found)
+        expect(response.media_type).to eq(Mime[:turbo_stream])
+        expect(response.body).to include(I18n.t("assessment.errors.no_participation"))
+      end
+    end
+  end
+
+  # PATCH mark_user_as_participated
+  describe "PATCH /participations/mark_as_participated" do
+    context "as tutor" do
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
+      end
+
+      it "records the paper hand-in and answers with the student's row" do
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        participation = assessment.assessment_participations.find_by(user: student)
+        expect(participation.submitted_at).to be_present
+        expect(response.body).to include("target=\"points-participation-row-user-#{student.id}\"")
+        expect(response.body).to include("points-participation-row-#{participation.id}")
+      end
+
+      it "records no hand-in on a test, whose points are the record" do
+        test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                              deadline: Time.zone.now.end_of_week)
+
+        patch mark_user_as_participated_path,
+              params: { assignment_id: test.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:bad_request)
+        expect(test.assessment.assessment_participations.where.not(submitted_at: nil)).to be_empty
+      end
+
+      # The tutor's page lists one group; a row drawn for the lecture's page
+      # would bring the group column with it.
+      it "draws the row in the shape of the page's group" do
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(response.body).not_to include(tutorial.title)
+      end
+
+      it "names the group in the row drawn for the lecture's page" do
+        sign_in teacher
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+
+        expect(response.body).to include(tutorial.title)
+      end
+
+      it "answers with the row alone when the student already has one" do
+        participation = FactoryBot.create(:assessment_participation,
+                                          assessment: assessment, user: student,
+                                          tutorial: tutorial, submitted_at: nil)
+
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        expect(participation.reload.submitted_at).to be_present
+        expect(response.body)
+          .to include("target=\"points-participation-row-#{participation.id}\"")
+        expect(response.body).not_to include("target=\"marking-table\"")
+      end
+
+      # The page may have been drawn before the backfill worker seeded the
+      # row, under the user's id; which one it has cannot be known here.
+      it "aims at the row's id and the user's, the row's first" do
+        participation = FactoryBot.create(:assessment_participation,
+                                          assessment: assessment, user: student,
+                                          tutorial: tutorial, submitted_at: nil)
+
+        patch mark_user_as_participated_path,
+              params: { assignment_id: assignment.id, user_id: student.id,
+                        tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+
+        targets = Nokogiri::HTML(response.body).css("turbo-stream[action='replace']")
+                          .pluck("target")
+        expect(targets.first(2)).to eq(["points-participation-row-#{participation.id}",
+                                        "points-participation-row-user-#{student.id}"])
+      end
+
+      context "when user is not found" do
+        it "does not call init_participation" do
+          expect(Assessment::SubmissionGraderService).not_to receive(:init_participation)
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: 999_999 },
+                as: :turbo_stream
+        end
+
+        it "sets an alert flash message" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: 999_999 },
+                as: :turbo_stream
+          expect(flash[:alert]).to eq(I18n.t("assessment.errors.user_not_found"))
+        end
+      end
+
+      # A member in no group takes part in the lecture itself, and that is the
+      # lecturer's row, not a tutor's.
+      context "when the member is in no group" do
+        let!(:ungrouped) do
+          FactoryBot.create(:confirmed_user).tap do |member|
+            FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          end
+        end
+
+        it "is turned away as a tutor" do
+          expect(Assessment::SubmissionGraderService).not_to receive(:init_participation)
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: ungrouped.id },
+                as: :turbo_stream
+
+          expect(response).to redirect_to(root_path)
+        end
+
+        it "records the paper hand-in as the teacher, in no group" do
+          sign_in teacher
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: ungrouped.id,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+
+          participation = assessment.assessment_participations.find_by(user: ungrouped)
+          expect(participation.tutorial_id).to be_nil
+          expect(participation.submitted_at).to be_present
+        end
+      end
+
+      context "when the user is not a member of the lecture" do
+        it "says so with a 404" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id,
+                          user_id: FactoryBot.create(:confirmed_user).id },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+
+      # The sheet is with the group that holds the participation; the tutor
+      # of the group somebody moved into may not touch it.
+      context "when another group holds the participation" do
+        let!(:held_elsewhere) do
+          FactoryBot.create(:assessment_participation, assessment: assessment,
+                                                       user: student, tutorial: tutorial2,
+                                                       submitted_at: nil)
+        end
+
+        it "turns the tutor of the current group away and stamps nothing" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: student.id,
+                          tutorial_id: tutorial.id, grading_scope_type: "tutorial" },
+                as: :turbo_stream
+
+          expect(response).to redirect_to(root_path)
+          expect(held_elsewhere.reload.submitted_at).to be_nil
+        end
+
+        it "lets the tutor of the group that holds it record the hand-in" do
+          tutorial2.tutors << tutor
+
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: student.id,
+                          tutorial_id: tutorial2.id, grading_scope_type: "tutorial" },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:success)
+          expect(held_elsewhere.reload.submitted_at).to be_present
+          expect(held_elsewhere.tutorial).to eq(tutorial2)
+        end
+      end
+
+      # This page draws rows for assignments; an exam participation has no
+      # row to go back into and must not be stamped on the way.
+      context "when the participation named is an exam's" do
+        let(:exam) { create(:exam, lecture: lecture) }
+        let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
+        let!(:exam_participation) do
+          create(:assessment_participation, assessment: exam_assessment, user: student,
+                                            submitted_at: nil)
+        end
+
+        it "refuses with a 400 and stamps nothing" do
+          sign_in teacher
+          patch mark_user_as_participated_path,
+                params: { participation_id: exam_participation.id, user_id: student.id,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+
+          expect(response).to have_http_status(:bad_request)
+          expect(exam_participation.reload.submitted_at).to be_nil
+        end
+      end
+    end
+  end
+
+  # PATCH remove_participated
+  describe "PATCH /participations/remove_participated" do
+    before do
+      tutorial.tutors << tutor
+      sign_in tutor
+    end
+
+    let!(:participation) do
+      FactoryBot.create(:assessment_participation,
+                        assessment: assessment, user: student, tutorial: tutorial)
+    end
+
+    it "turns the tutor of another group away and keeps the stamp" do
+      participation.update!(submitted_at: 1.day.ago)
+      tutorial2.tutors << (stranger = create(:confirmed_user))
+      sign_in stranger
+
+      patch remove_participation_path(participation_id: participation.id,
+                                      grading_scope_type: "tutorial"),
+            as: :turbo_stream
+
+      expect(response).to redirect_to(root_path)
+      expect(participation.reload.submitted_at).to be_present
+    end
+
+    it "calls SubmissionGraderService.remove_participation" do
+      expect(Assessment::SubmissionGraderService).to receive(:remove_participation)
+        .and_return(participation)
+      patch remove_participation_path(participation),
+            params: { grading_scope_type: "tutorial" },
+            as: :turbo_stream
+    end
+
+    it "answers with the row alone" do
+      patch remove_participation_path(participation),
+            params: { grading_scope_type: "tutorial" },
+            as: :turbo_stream
+      expect(response).to have_http_status(:success)
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+      expect(response.body).to include("target=\"points-participation-row-#{participation.id}\"")
+      expect(response.body).not_to include("target=\"marking-table\"")
+    end
+
+    context "when the participation has task points with points assigned" do
+      let!(:task2) { FactoryBot.create(:assessment_task, assessment: assessment) }
+
+      before do
+        Timecop.travel(3.hours.from_now)
+        create(:assessment_task_point,
+               assessment_participation: participation, task: task2, points: 0)
+      end
+      after { Timecop.return }
+
+      it "does not destroy the participation" do
+        patch remove_participation_path(participation),
+              params: { grading_scope_type: "tutorial" }, as: :turbo_stream
+        expect(Assessment::Participation.exists?(participation.id)).to be(true)
+      end
+    end
+
+    context "when the participation has no task points" do
+      it "takes the stamp off and keeps the row" do
+        participation.update!(submitted_at: 1.day.ago)
+
+        patch remove_participation_path(participation),
+              params: { grading_scope_type: "tutorial" }, as: :turbo_stream
+
+        expect(participation.reload.submitted_at).to be_nil
+      end
+    end
+  end
+
+  # Authorization
+  describe "authorization" do
+    context "when user is not signed in" do
+      it "redirects point_submission to sign in" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: {}.to_json, grading_scope_type: "tutorial" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it "redirects point_user to sign in" do
+        participation = create(:assessment_participation, assessment: assessment, user: student)
+        patch point_participation_path(participation),
+              params: { task_points: {}.to_json, grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    context "when user cannot edit lecture (student)" do
+      before { sign_in student }
+      after { Timecop.return }
+
+      it "redirects point_submission to root" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        Timecop.travel(3.hours.from_now)
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+
+      it "redirects point_user to root" do
+        participation = create(:assessment_participation, assessment: assessment, user: student,
+                                                          tutorial: tutorial)
+        Timecop.travel(3.hours.from_now)
+        patch point_participation_path(participation),
+              params: { task_points: { task.id => "6" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
+
+    context "when user is a tutor" do
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
+      end
+      after { Timecop.return }
+
+      it "allows point_submission with grading_scope_type=tutorial" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        Timecop.travel(3.hours.from_now)
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      # The page hint says which table the row goes back into; who may grade
+      # follows the hand-in's own group, whatever the hint says.
+      it "allows point_submission on the group's hand-in whatever the page says" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        Timecop.travel(3.hours.from_now)
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      it "denies point_submission on another group's hand-in whatever the page says" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial2,
+                                         users: [student2])
+        Timecop.travel(3.hours.from_now)
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(submission.users.first.assessment_participations).to be_empty
+      end
+
+      it "denies point_participation on another group's participation" do
+        other = create(:assessment_participation, assessment: assessment, user: student2,
+                                                  tutorial: tutorial2)
+        Timecop.travel(3.hours.from_now)
+        patch point_participation_path(other),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "tutorial" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(other.reload.task_points).to be_empty
+      end
+    end
+
+    context "when grading_scope_type is missing or invalid" do
+      before do
+        tutorial.tutors << tutor
+        sign_in tutor
+        Timecop.travel(3.hours.from_now)
+      end
+      after { Timecop.return }
+
+      it "still grades the group's hand-in without a grading_scope_type" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+
+      it "still grades the group's hand-in with a bogus grading_scope_type" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "bogus" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "when user is the lecture teacher" do
+      before do
+        lecture.update(teacher: teacher)
+        sign_in teacher
+      end
+      after { Timecop.return }
+
+      it "allows point_submission with grading_scope_type=lecture" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        Timecop.travel(3.hours.from_now)
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "when user is a teacher but not this lecture's teacher" do
+      let(:other_teacher) { create(:confirmed_user) }
+
+      before do
+        lecture.update(teacher: teacher)
+        sign_in other_teacher
+        Timecop.travel(3.hours.from_now)
+      end
+      after { Timecop.return }
+
+      it "redirects point_submission to root" do
+        submission = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [student])
+        patch point_submission_tutorial_path(submission),
+              params: { task_points: { task.id => "8" }.to_json,
+                        grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  # A test is sat or not, like an exam; the group's tutor records who was
+  # not there, once the week has begun.
+  describe "absence on a test" do
+    let(:test) do
+      create(:assignment, lecture: lecture, kind: :test, deadline: Time.zone.now.end_of_week)
+    end
+    let!(:row) do
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      create(:assessment_participation, assessment: test.assessment, user: student,
+                                        tutorial: tutorial)
+    end
+
+    before do
+      tutorial.tutors << tutor
+      sign_in tutor
+    end
+
+    # The answer comes back in the shape of the group's table, with the
+    # way back on it.
+    it "lets the group's tutor record an absence and take it back" do
+      patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+      expect(row.reload).to be_absent
+      expect(response.body).to include("points-participation-row-#{row.id}")
+      expect(response.body).to include(I18n.t("assessment.grading_exam.remove_absent"))
+      expect(response.body).not_to include(tutorial.title)
+
+      patch remove_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+      expect(row.reload).to be_pending
+    end
+
+    # Points entered by mistake and taken back again leave the row as it
+    # was: the absence the tutor meant to record goes through.
+    it "records an absence once points entered by mistake are taken back" do
+      task = test.assessment.tasks.first
+      patch point_participation_path(row),
+            params: { task_points: { task.id => "6" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+      expect(row.reload.submitted_at).to be_present
+      expect(response.body).not_to include(I18n.t("assessment.grading_exam.mark_absent"))
+
+      patch point_participation_path(row),
+            params: { task_points: { task.id => "" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+      expect(row.reload.submitted_at).to be_nil
+      expect(response.body).to include(I18n.t("assessment.grading_exam.mark_absent"))
+
+      patch mark_as_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+      expect(row.reload).to be_absent
+    end
+
+    it "takes an absence back after the test was moved to a later week" do
+      row.update!(status: :absent)
+      test.update!(test_week: 2.weeks.from_now.to_date.beginning_of_week.iso8601)
+
+      patch remove_absent_path(row, grading_scope_type: "tutorial"), as: :turbo_stream
+
+      expect(row.reload).to be_pending
+      expect(response.body).not_to include(I18n.t("assessment.grading_exam.remove_absent"))
+    end
+
+    it "refuses an absence before the week has begun" do
+      test.update!(test_week: 2.weeks.from_now.to_date.beginning_of_week.iso8601)
+
+      patch mark_as_absent_path(row), as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("assessment.grading_tutorial.test_not_yet_open"))
+      expect(row.reload).to be_pending
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      create(:tutorial, lecture: lecture).tutors << other
+      sign_in other
+
+      patch mark_as_absent_path(row), as: :turbo_stream
+
+      expect(row.reload).to be_pending
+    end
+  end
+
+  describe "absence and exemption on an exam" do
+    let(:exam) { create(:exam, lecture: lecture) }
+    let(:exam_assessment) { create(:assessment, :with_points, assessable: exam) }
+    let!(:candidate) do
+      create(:exam_roster_entry, exam: exam, user: student)
+      create(:assessment_participation, assessment: exam_assessment, user: student)
+    end
+
+    def summary_in(response)
+      Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
+    end
+
+    context "as the teacher" do
+      before { sign_in teacher }
+
+      it "records an absence and takes it back, the row and the summary following" do
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to be_absent
+        expect(response.body).to include("points-participation-row-#{candidate.id}")
+        expect(summary_in(response).text)
+          .to include(I18n.t("assessment.grading_tutorial.summary.absent", count: 1))
+
+        patch remove_absent_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to be_pending
+      end
+
+      it "excuses a candidate with the reason, and takes that back with it" do
+        patch mark_as_exempt_path(candidate), params: { note: "certificate" }, as: :turbo_stream
+
+        expect(candidate.reload).to have_attributes(status: "exempt", note: "certificate")
+
+        patch remove_exempt_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to have_attributes(status: "pending", note: nil)
+      end
+
+      it "refuses to excuse somebody already graded, and says so" do
+        candidate.update!(status: :reviewed)
+
+        patch mark_as_exempt_path(candidate), params: { note: "late" }, as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(
+          I18n.t("assessment.grading_exam.reviewed_stays",
+                 status: I18n.t("assessment.grading_exam.status_word.exempt"))
+        )
+        expect(candidate.reload).to be_reviewed
+      end
+
+      it "records nothing on somebody taken off the roster" do
+        exam.exam_roster_entries.find_by(user: student).update!(excluded_at: Time.current)
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("assessment.grading_exam.user_not_candidate"))
+        expect(candidate.reload).to be_pending
+      end
+
+      it "has nothing to take back on a row that is not absent" do
+        patch remove_absent_path(candidate), as: :turbo_stream
+
+        expect(response).to have_http_status(:ok)
+        expect(candidate.reload).to be_pending
+      end
+
+      it "knows no absence on a sheet" do
+        sheet_row = create(:assessment_participation, assessment: assessment, user: student,
+                                                      tutorial: tutorial)
+
+        patch mark_as_absent_path(sheet_row), as: :turbo_stream
+
+        expect(response).to have_http_status(:bad_request)
+        expect(sheet_row.reload).to be_pending
+      end
+    end
+
+    # A tutor may enter an exam's points where the lecture lets them, but an
+    # exemption changes what counts and stays with whoever edits the lecture.
+    context "as somebody who may enter points but not edit the lecture" do
+      let(:grader) { create(:confirmed_user) }
+
+      before do
+        allow_any_instance_of(User).to receive(:can_enter_points_in?).and_return(true)
+        sign_in grader
+      end
+
+      it "may record an absence" do
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(candidate.reload).to be_absent
+      end
+
+      it "may not excuse" do
+        patch mark_as_exempt_path(candidate), params: { note: "certificate" }, as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_pending
+      end
+
+      it "may not turn an exemption into an absence" do
+        candidate.update!(status: :exempt, note: "certificate")
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_exempt
+      end
+    end
+
+    # Point entry on a sheet follows the row's tutorial; an exam's row must
+    # not open up to a group's tutors through that column.
+    context "as a tutor of a tutorial the row happens to name" do
+      let(:tutor) { create(:confirmed_user) }
+      let!(:task) { create(:assessment_task, assessment: exam_assessment, max_points: 10) }
+
+      before do
+        tutorial.tutors << tutor
+        candidate.update!(tutorial: tutorial)
+        sign_in tutor
+      end
+
+      it "may neither score nor record an absence" do
+        patch point_participation_path(candidate),
+              params: { task_points: { task.id => "6" }.to_json, grading_scope_type: "lecture" },
+              as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(candidate.task_points).to be_empty
+
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_pending
+      end
+    end
+
+    context "as a stranger" do
+      before { sign_in create(:confirmed_user) }
+
+      it "is turned away" do
+        patch mark_as_absent_path(candidate), as: :turbo_stream
+
+        expect(response).to redirect_to(root_path)
+        expect(candidate.reload).to be_pending
+      end
+    end
+  end
+end

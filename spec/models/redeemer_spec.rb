@@ -167,9 +167,12 @@ RSpec.describe(Redeemer, type: :model) do
       end
     end
 
+    # Speaker vouchers are no longer issued; the ones still in circulation
+    # redeem until they expire.
     context "when the voucher is for a speaker" do
       let(:lecture) { FactoryBot.create(:lecture, :is_seminar) }
       let(:role) { :speaker }
+      let(:voucher) { FactoryBot.create(:voucher, :speaker, lecture: lecture) }
       let(:talk1) { FactoryBot.create(:talk, lecture: lecture) }
       let(:talk2) { FactoryBot.create(:talk, lecture: lecture) }
       let(:params) { { talk_ids: [talk1.id, talk2.id] } }

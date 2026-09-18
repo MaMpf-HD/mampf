@@ -6,14 +6,16 @@ class SubmissionsController < ApplicationController
              with: -> { redirect_to :start, alert: I18n.t("submission.too_many_attempts") }
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
-                                          :redeem_code, :join, :cancel_new]
-  before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
-  before_action :set_lecture, only: :index
-  before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
+                                          :redeem_code, :join, :cancel_new,
+                                          :seen, :seen_all]
+  before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join,
+                                        :seen]
+  before_action :authorize_sheet, only: [:new, :enter_code, :cancel_new,
+                                         :cancel_edit, :join, :seen]
+  before_action :refuse_without_digital_hand_in, only: [:new, :create, :enter_code, :join]
+  before_action :set_lecture, only: [:index, :seen_all]
   before_action :prevent_caching, only: :show_manuscript
-  before_action :check_if_tutorials, only: :index
-  before_action :check_if_assignments, only: :index
-  before_action :check_student_status, only: :index
+  before_action :check_student_status, only: [:index, :seen_all]
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   authorize_resource
@@ -30,62 +32,81 @@ class SubmissionsController < ApplicationController
   # NOTE: authorization for #index is done manually via before_actions
   # SubmissionAbility lets anyone pass
   def index
-    @assignments = @lecture.assignments
-    @current_assignments = @lecture.current_assignments
-    @previous_assignments = @lecture.previous_assignments
-    @old_assignments = @assignments.expired.order(deadline: :desc) -
-                       @previous_assignments
-    @future_assignments = @assignments.active.order(:deadline) -
-                          @current_assignments
+    @history = history
 
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "submissions/index/index",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
+  def seen
+    AssignmentSighting.stamp!(user: current_user, assignment: @assignment)
+
+    render turbo_stream: [*clear_marker(@assignment), replace_news(history)]
+  end
+
+  # Same gate as #index, by the same before_actions.
+  def seen_all
+    assignments = history.select(&:news?).map(&:assignment)
+    assignments.each do |assignment|
+      AssignmentSighting.stamp!(user: current_user, assignment: assignment)
+    end
+
+    render turbo_stream: [*assignments.flat_map { |assignment| clear_marker(assignment) },
+                          replace_news([])]
+  end
+
+  # `new` and `edit` are the same frame with the same form in it; only the
+  # record differs.
   def new
     @submission = Submission.new
     @submission.assignment = @assignment
     set_submission_locale
+    render_form
   end
 
   def edit
+    render_form
   end
 
   def create
     @submission = Submission.new(submission_create_params)
+    # Deleted between the form and the save: the same answer as any other sheet
+    # that is gone, before anything asks it for a lecture or a seat.
+    return render_sheet_gone unless @submission.assignment
+
     # authorize_resource only sees the Submission class here (no @submission is
     # preloaded for :create), so re-authorize the built instance to run the
     # enrollment check in SubmissionAbility.
     authorize! :create, @submission
-    @lecture = @submission&.assignment&.lecture
+    @lecture = @submission.assignment.lecture
     set_submission_locale
-    @too_late = @submission.not_updatable?
-    return if @too_late
+    @assignment = @submission.assignment
+    return render_card(status: :unprocessable_content) if @submission.not_updatable?
 
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
       @errors = @submission.check_file_properties(@submission.manuscript
                                                              .metadata,
                                                   :manuscript)
-      return if @errors.present?
+      return render_form(status: :unprocessable_content) if @errors.present?
     end
     @submission.user_submission_joins.build(user: current_user)
     @submission.save
-    @assignment = @submission.assignment
     @errors = @submission.errors
-    return unless @submission.valid?
+    return render_form(status: :unprocessable_content) unless @submission.valid?
 
     send_invitation_emails
     @submission.update(last_modification_by_users_at: Time.zone.now)
-    return unless @submission.manuscript
-
-    send_upload_email(User.where(id: current_user.id))
+    if @submission.manuscript
+      sync_assessment_participations(users: [current_user])
+      send_upload_email(User.where(id: current_user.id))
+    end
+    render_card_and_standing
   end
 
+  # Nothing about the group: the work stays with the tutor it was handed in to,
+  # whatever became of the reader's seat since. Only the file moves here.
   def update
-    return if @too_late
-
-    update_params = submission_update_params
-
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
@@ -93,34 +114,40 @@ class SubmissionsController < ApplicationController
       @errors = @submission.check_file_properties(@submission.manuscript
                                                              .metadata,
                                                   :manuscript)
-      return if @errors.present?
+      return render_form(status: :unprocessable_content) if @errors.present?
 
       @submission.save
       @errors = @submission.errors
-      return unless @submission.valid?
+      return render_form(status: :unprocessable_content) unless @submission.valid?
     end
-    @submission.update(update_params)
     if @submission.valid?
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
         @submission.update(manuscript: nil,
                            last_modification_by_users_at: Time.zone.now)
         send_upload_removal_email(@submission.users)
+        clear_submitted_at(@submission.users)
       elsif @submission.manuscript_data != old_manuscript_data
         @submission.update(last_modification_by_users_at: Time.zone.now)
         send_upload_email(@submission.users)
+        sync_assessment_participations
       end
     end
     @errors = @submission.errors
+    return render_form(status: :unprocessable_content) if @errors.any?
+
+    render_card_and_standing
   end
 
   def destroy
-    return if @too_late
-
+    clear_submitted_at(@submission.users)
     @submission.destroy
+    @submission = nil
+    render_card_and_standing
   end
 
   def enter_code
+    @invitations = hub.invitations_for(@assignment)
   end
 
   def redeem_code
@@ -139,29 +166,39 @@ class SubmissionsController < ApplicationController
   end
 
   def join
-    @assignment = Assignment.find_by(id: join_params[:assignment_id])
-    @lecture = @assignment.lecture
-    set_submission_locale
-    code = join_params[:code]
-    @submission = Submission.find_by(token: code, assignment: @assignment)
+    @submission = Submission.find_by(token: join_params[:code],
+                                     assignment: @assignment)
     check_code_and_join
+    return join_closed_sheet if @assignment.totally_expired?
+
+    if @error
+      @invitations = hub.invitations_for(@assignment)
+      return render :enter_code, status: :unprocessable_content
+    end
+
+    render_card_and_standing
   end
 
+  # Leaving is refused for the last person on a team - that is a delete, and it
+  # is a different button. The card says so rather than quietly doing nothing.
   def leave
-    return if @too_late
-
     if @submission.users.one?
-      @error = I18n.t("submission.no_partners_no_leave")
-      return
+      @card_error = I18n.t("submission.no_partners_no_leave")
+      return render_card(status: :unprocessable_content)
     end
+    clear_submitted_at([current_user])
     @submission.users.delete(current_user)
     send_leave_email
+    @submission = nil
+    render_card_and_standing
   end
 
   def cancel_edit
+    render_card
   end
 
   def cancel_new
+    render_card
   end
 
   def show_manuscript
@@ -190,76 +227,202 @@ class SubmissionsController < ApplicationController
 
   def refresh_token
     @submission.update(token: Submission.generate_token)
+    render_card
   end
 
   def enter_invitees
-    @too_late = @submission.assignment.totally_expired?
+    @partners = hub.invitable_partners(@submission)
   end
 
   def invite
-    if @too_late
-      render :create
-      return
-    end
     send_invitation_emails
-    render :create
+    render_card
   end
 
   def edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_edit_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
   def cancel_edit_correction
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "correction-#{@submission.id}",
+          partial: "submissions/correction_wrap",
+          locals: { submission: @submission }
+        )
+      end
+    end
   end
 
+  # With the refused file still assigned, the row would show it as saved;
+  # the reload drops it.
   def add_correction
-    if correction_params[:correction].present?
-      @submission.correction = correction_params[:correction]
-      @errors = @submission.check_file_properties_any(@submission.correction
-                                                             .metadata,
-                                                      :correction)
-      return if @errors.present?
-
-      @submission.save
-      @errors = @submission.errors
-      return unless @submission.valid?
+    @submission.assign_attributes(correction_params)
+    errors = @submission.check_file_properties_any(@submission.correction&.metadata,
+                                                   :correction)[:correction]
+    if errors.blank? && @submission.save
+      send_correction_upload_email(@submission.users)
+      return render partial: "submissions/correction_wrap", locals: { submission: @submission }
     end
-    @submission.update(correction_params)
-    @errors = @submission.errors
-    return if @errors.present?
 
-    send_correction_upload_email(@submission.users)
+    errors = @submission.errors.map(&:message) if errors.blank?
+    @submission.reload
+    render partial: "submissions/correction_edit_wrap",
+           locals: { submission: @submission, errors: errors },
+           status: :unprocessable_content
   end
 
   def delete_correction
     @submission.update(correction: nil)
-    render :add_correction
-  end
-
-  def select_tutorial
-    @tutorial = @submission.tutorial
-    @lecture = @submission.assignment.lecture
-  end
-
-  def cancel_action
-  end
-
-  def move
-    @old_tutorial = @submission.tutorial
-    @submission.update(move_params)
-    @tutorial = @submission.tutorial
+    render partial: "submissions/correction_wrap", locals: { submission: @submission }
   end
 
   def accept
     @submission.update(accepted: true)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
+    restore_submitted_at(@submission.users)
     send_acceptance_email(@submission.users)
+    rerender_submission_row
   end
 
+  # A refused hand-in waits for nothing any more, and the gradebook has to know
+  # it: `submitted_at` counts a sheet among the points still being marked, and
+  # those are taken out of the base a student is measured against.
   def reject
     @submission.update(accepted: false)
+    @tutorial = @submission.tutorial
+    @assignment = @submission.assignment
+    clear_submitted_at(@submission.users)
     send_rejection_email(@submission.users)
+    rerender_submission_row
   end
 
   private
+
+    # A sheet from before there were states has no line above its table.
+    def rerender_submission_row
+      grading_scope = params[:grading_scope_type] == "tutorial" ? @tutorial : @tutorial.lecture
+      respond_to do |format|
+        format.turbo_stream do
+          row = turbo_stream.replace(
+            "submission-row-#{@submission.id}",
+            html: render_to_string(
+              SubmissionRowComponent.new(
+                submission: @submission,
+                assignment: @assignment,
+                grading_scope: grading_scope
+              )
+            )
+          )
+          render turbo_stream: [row, summary_stream(grading_scope)].compact
+        end
+      end
+    end
+
+    def summary_stream(grading_scope)
+      return unless @assignment.assessable?
+
+      summary = TutorialMarkingTableComponent.new(assignment: @assignment,
+                                                  grading_scope: grading_scope).summary
+      turbo_stream.replace("marking-summary", html: render_to_string(summary))
+    end
+
+    # Everything a student does changes one sheet and nothing else - the history
+    # list holds only sheets that are closed - so every action answers by
+    # re-rendering that sheet's card frame. Reading the whole hub back for it is
+    # what keeps the card from ever disagreeing with the row below it.
+    # A closed sheet has no card to answer into; its row in the list is drawn
+    # by the whole page, so the page is asked for again.
+    def join_closed_sheet
+      if @error
+        redirect_to lecture_submissions_path(@lecture), alert: @error
+      else
+        redirect_to lecture_submissions_path(@lecture),
+                    notice: t("submission.joined_successfully", assignment: @assignment.title)
+      end
+    end
+
+    def render_card(status: :ok)
+      loaded = hub
+      @sheet = loaded.sheets.find { |sheet| sheet.assignment == @assignment }
+      @invitations = loaded.invitations_for(@assignment)
+      @partners = loaded.possible_partners
+      @invited_users = loaded.invited_users_for(@sheet&.submission)
+      render :card, status: status
+    end
+
+    # These answers carry two places at once, and a frame can only carry one.
+    # The block reads the same record and the same sheets as the card, and
+    # `submitted_at` is what the two share: rendering it alongside is what keeps
+    # them from disagreeing after an action moved it. The data is in hand either
+    # way - the card is read from the loader.
+    #
+    # Since the block counts only sheets whose deadline is past, a hand-in on a
+    # sheet that is still open leaves it unchanged; the second target is then a
+    # re-render of the same words rather than an update. It stays because the
+    # standing must never lag the card, not because it always moves.
+    def render_card_and_standing(status: :ok)
+      loaded = hub
+      render turbo_stream: [
+        turbo_stream.replace(SubmissionCardComponent.frame_id(@assignment),
+                             card_component(loaded)),
+        turbo_stream.replace(StandingComponent::TARGET,
+                             StandingComponent.new(standing: loaded.standing))
+      ], status: status
+    end
+
+    def card_component(loaded)
+      sheet = loaded.sheets.find { |candidate| candidate.assignment == @assignment }
+      SubmissionCardComponent.new(sheet: sheet,
+                                  invitations: loaded.invitations_for(@assignment),
+                                  partners: loaded.possible_partners,
+                                  invited_users: loaded.invited_users_for(sheet&.submission),
+                                  error: @card_error)
+    end
+
+    # The form back in the frame with its messages beside the fields, rather
+    # than an alert box next to a card that still shows the old state.
+    def render_form(status: :ok)
+      # A new hand-in is filed under the group the reader sits in, and there is
+      # no name to print for somebody who has not been placed in one - the
+      # refusal the save would give, before the page is built rather than
+      # halfway through it. A hand-in that exists stays where it was filed,
+      # seat or no seat, so replacing its file asks for none.
+      rostered_tutorial!(@assignment.lecture) unless @submission&.persisted?
+      @partners = hub.possible_partners
+      render :form, status: status
+    end
+
+    def hub
+      @hub ||= Assessment::SubmissionsHub::Loader.new(lecture: @lecture,
+                                                      user: current_user).call
+    end
+
+    # Open sheets already have submission forms in the hub.open_sheets cards;
+    # including them in history would show each assignment twice.
+    def history
+      hub.sheets - hub.open_sheets
+    end
+
+    def clear_marker(assignment)
+      [turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :news)),
+       turbo_stream.remove(ActionView::RecordIdentifier.dom_id(assignment, :seen))]
+    end
+
+    def replace_news(sheets)
+      turbo_stream.replace("sheet-news",
+                           SheetNewsComponent.new(sheets: sheets, lecture: @lecture))
+    end
 
     def set_submission
       @submission = Submission.find_by(id: params[:id])
@@ -268,27 +431,29 @@ class SubmissionsController < ApplicationController
       set_submission_locale
       return if @submission
 
-      flash.now[:alert] = I18n.t("controllers.no_submission")
-      render js: "window.location='#{root_path}'"
+      # No card to put a message in, so the frame says what happened and offers
+      # the way back rather than navigating itself somewhere unexpected.
+      @gone_message = I18n.t("controllers.no_submission")
+      render :gone, status: :gone
     end
 
+    # The group is the one the reader sits in, never one they picked: the form
+    # has no field for it any more, and a hand-in that is not in a group reaches
+    # no tutor and no gradebook.
     def submission_create_params
-      permitted = params.expect(submission: [:tutorial_id, :assignment_id])
-      lecture = Assignment.find_by(id: permitted[:assignment_id])&.lecture
-      return permitted unless lecture&.roster_managed?
+      permitted = params.expect(submission: [:assignment_id])
+      assignment = Assignment.find_by(id: permitted[:assignment_id])
+      # nothing to file it under, and no seat to ask for - `create` answers
+      return permitted unless assignment
 
-      permitted.merge(tutorial_id: rostered_tutorial!(lecture).id)
+      permitted.merge(tutorial_id: rostered_tutorial!(assignment.lecture).id)
     end
 
-    # disallow modification of assignment
-    def submission_update_params
-      lecture = @submission.assignment.lecture
-      # The form has no tutorial field in roster mode, so there is nothing to expect.
-      return { tutorial_id: rostered_tutorial!(lecture).id } if lecture&.roster_managed?
-
-      params.expect(submission: [:tutorial_id])
-    end
-
+    # The gate every way in goes through: a hand-in belongs to the group the
+    # reader sits in - that is who marks it and how it reaches the gradebook -
+    # and there is nothing to file one under without a seat. Raising here
+    # rather than refusing in the ability is what gets the reader the sentence
+    # that names what is missing.
     def rostered_tutorial!(lecture)
       current_user.rostered_tutorial_in(lecture) || raise(TutorialNotRosteredError)
     end
@@ -298,15 +463,53 @@ class SubmissionsController < ApplicationController
       params.expect(submission: [:manuscript])
     end
 
+    # `join` posts the sheet inside its own form object, the others carry it in
+    # the query - and either way an id nobody can look up gets the same answer
+    # as a submission that is gone.
+    def assignment_id
+      action_name == "join" ? join_params[:assignment_id] : params[:assignment_id]
+    end
+
     def set_assignment
-      @assignment = Assignment.find_by(id: params[:assignment_id])
+      @assignment = Assignment.find_by(id: assignment_id)
       @lecture = @assignment&.lecture
       set_submission_locale
       return if @assignment
 
-      flash.now[:alert] = I18n.t("controllers.no_assignment")
-      render js: "window.location='#{root_path}'"
-      nil
+      render_sheet_gone
+    end
+
+    # The card offers no way in for such a sheet; a request that arrives
+    # anyway - a stale page, a hand-written one - is answered in the frame.
+    def refuse_without_digital_hand_in
+      assignment = @assignment || Assignment.find_by(id: params.dig(:submission, :assignment_id))
+      return if assignment.nil? || assignment.requires_submission
+
+      @gone_message = I18n.t("submission.hub.card.no_digital_hand_in")
+      render :gone, status: :unprocessable_content
+    end
+
+    # Same answer as a submission that is gone, for the same reason: the frame
+    # says what happened instead of steering the whole page elsewhere.
+    def render_sheet_gone
+      @gone_message = I18n.t("controllers.no_assignment")
+      render :gone, status: :gone
+    end
+
+    # `SubmissionAbility` grants the whole class to anybody logged in for these,
+    # so what they answer for is a sheet rather than a submission of the
+    # reader's - `cancel_edit` has one in hand, but what it renders is the sheet
+    # either way. The rule is therefore the one handing in uses, `:create` for
+    # this sheet, and it sits in one place, because four gates is how the fifth
+    # gets forgotten. Deliberately not `:update` on the submission: cancelling
+    # an edit must work on a sheet nobody may edit any more.
+    #
+    # `index` is not among them: it takes a lecture rather than a sheet and is
+    # gated by `check_student_status`. Neither is `redeem_code`, which takes a
+    # code and nothing else - there is no sheet to check until the code resolves
+    # to one, and `check_code_validity` ends on the same enrolment test.
+    def authorize_sheet
+      authorize!(:create, Submission.new(assignment: @assignment))
     end
 
     def set_lecture
@@ -314,10 +517,6 @@ class SubmissionsController < ApplicationController
       set_submission_locale and return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_too_late
-      @too_late = @submission.not_updatable?
     end
 
     def set_submission_locale
@@ -329,20 +528,24 @@ class SubmissionsController < ApplicationController
       params.expect(join: [:code, :assignment_id])
     end
 
+    # Inviting nobody is a hand-in without a team, not a broken request: the
+    # form's select is empty until somebody is picked, and then the field is not
+    # sent at all.
     def invitation_params
-      params.expect(submission: [invitee_ids: []])
+      nested = params[:submission]
+      return ActionController::Parameters.new unless nested.is_a?(ActionController::Parameters)
+
+      nested.permit(invitee_ids: [])
     end
 
     def correction_params
       params.expect(submission: [:correction])
     end
 
-    def move_params
-      params.expect(submission: [:tutorial_id])
-    end
-
     def send_invitation_emails
-      requested_ids = invitation_params[:invitee_ids].map(&:to_i)
+      requested_ids = Array(invitation_params[:invitee_ids]).map(&:to_i)
+      return if requested_ids.empty?
+
       invitees = @submission.admissible_invitees(current_user)
                             .select { |i| requested_ids.include?(i.id) }
       invitees.each do |i|
@@ -413,10 +616,18 @@ class SubmissionsController < ApplicationController
                         assignment: @assignment.title)
       elsif !@submission
         @error = I18n.t("submission.invalid_code")
-      elsif @assignment&.totally_expired?
-        @error = I18n.t("submission.assignment_expired")
+      # The deadline closes the upload, not the team: whoever forgot to join
+      # may still, with the team's code, until the team has been marked - or
+      # they themselves, on a row of their own: joining would wipe it.
+      elsif @submission.marked?
+        @error = I18n.t("submission.team_marked")
+      elsif marked_on_own?
+        @error = I18n.t("submission.marked_on_own")
       elsif @submission.correction
         @error = I18n.t("submission.already_corrected")
+      # A rejected hand-in is nobody's to join: it counts as not handed in.
+      elsif @submission.accepted == false
+        @error = I18n.t("submission.already_rejected")
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
       elsif !current_user.proper_student_in?(@submission.tutorial.lecture)
@@ -428,20 +639,45 @@ class SubmissionsController < ApplicationController
       check_code_validity
       return if @error
 
-      # Joining by code (which is also how an invitation is accepted) would place
-      # the submission in a tutorial the user is not a member of.
-      rostered_tutorial!(@assignment.lecture) if @assignment.lecture.roster_managed?
+      # Joining by code (which is also how an invitation is accepted) is a
+      # hand-in like any other: without a group of one's own there is nothing to
+      # join from.
+      rostered_tutorial!(@assignment.lecture)
 
-      @join = UserSubmissionJoin.new(user: current_user,
-                                     submission: @submission)
-      @join.save
-      if @join.valid?
-        @submission.update(last_modification_by_users_at: Time.zone.now)
-        send_join_email
+      # A join is not a modification of the hand-in: the file and its time
+      # stay what they are, and the tutor's row says who came later. The
+      # reader's own row is held from the check to the write: points entered
+      # on it in between would be the mark the check is there to keep.
+      joined = ActiveRecord::Base.transaction do
+        own_row&.lock!
+        if marked_on_own?
+          @error = I18n.t("submission.marked_on_own")
+          raise(ActiveRecord::Rollback)
+        end
+
+        @join = UserSubmissionJoin.new(user: current_user, submission: @submission)
+        unless @join.save
+          @error = @join.errors[:base].join(", ")
+          raise(ActiveRecord::Rollback)
+        end
+
         remove_invitee_status
-      else
-        @error = @join.errors[:base].join(", ")
+        sync_assessment_participations(users: [current_user]) if @submission.manuscript
+        true
       end
+      send_join_email if joined
+    end
+
+    def own_row
+      return unless @assignment.assessable?
+      return @own_row if defined?(@own_row)
+
+      @own_row = @assignment.assessment.assessment_participations
+                            .includes(:task_points).find_by(user: current_user)
+    end
+
+    def marked_on_own?
+      own_row.present? && @assignment.assessment.marked?(own_row)
     end
 
     def send_join_email
@@ -476,16 +712,61 @@ class SubmissionsController < ApplicationController
                   alert: I18n.t("controllers.no_student_status_in_lecture")
     end
 
-    def check_if_tutorials
-      return if @lecture.tutorials.any?
+    # DuePoints and SubmissionsHub read submitted_at on each request, so
+    # clearing it does not require recomputing StudentPerformance::Record.
+    def clear_submitted_at(users)
+      assessment = @submission&.assignment&.assessment
+      return unless assessment
 
-      redirect_to :root, alert: I18n.t("controllers.no_tutorials_in_lecture")
+      assessment.assessment_participations
+                .where(user_id: users.map(&:id))
+                .update_all(submitted_at: nil, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
     end
 
-    def check_if_assignments
-      return if @lecture.assignments.any?
+    # The other way round: a hand-in that was refused and then accepted after
+    # all is waiting to be marked again. Only where the stamp is missing, so a
+    # sheet that already carries one keeps the time it was handed in.
+    def restore_submitted_at(users)
+      assessment = @submission&.assignment&.assessment
+      return unless assessment
 
-      redirect_to :root, alert: I18n.t("controllers.no_assignments_in_lecture")
+      handed_in_at = @submission.last_modification_by_users_at ||
+                     @submission.created_at
+      assessment.assessment_participations
+                .where(user_id: users.map(&:id), submitted_at: nil)
+                .where.not(status: [:absent, :exempt])
+                .update_all(submitted_at: handed_in_at, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    def sync_assessment_participations(users: nil)
+      assignment = @submission&.assignment
+      assessment = assignment&.assessment
+      return unless assessment
+
+      lecture = assignment.lecture
+      target_users = Array(users || @submission.users)
+      member_ids = lecture.members.where(id: target_users.map(&:id)).pluck(:id)
+      target_users.select! { |user| user.id.in?(member_ids) }
+      return if target_users.empty?
+
+      target_users.each do |user|
+        participation = assessment.assessment_participations
+                                  .find_or_initialize_by(user: user)
+        participation.status = :pending
+        participation.grade_numeric = nil
+        participation.grade_text = nil
+        participation.points_total = nil
+        participation.graded_at = nil
+        participation.grader_id = nil
+        participation.task_points.destroy_all if participation.persisted?
+
+        participation.submitted_at = Time.current
+        participation.tutorial_id ||=
+          Assessment::Participation.tutorial_for(user, lecture)
+        participation.save!
+      rescue ActiveRecord::RecordNotUnique
+        retry
+      end
     end
 
     def set_disposition

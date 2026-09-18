@@ -1,11 +1,8 @@
 FactoryBot.define do
   factory :course do
-    title do
-      "#{Faker::Book.title.gsub("&", "and")} #{Faker::Number.between(from: 1, to: 9999)}"
-    end
-    short_title do
-      "#{Faker::Book.title.gsub("&", "and")} #{Faker::Number.between(from: 1, to: 9999)}"
-    end
+    # Both have to be unique, so the number is counted rather than drawn.
+    sequence(:title) { |n| "#{Faker::Book.title.gsub("&", "and")} #{n}" }
+    sequence(:short_title) { |n| "#{Faker::Book.title.gsub("&", "and")} #{n}" }
     locale { :en }
 
     transient do

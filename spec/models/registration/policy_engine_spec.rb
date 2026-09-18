@@ -73,5 +73,107 @@ RSpec.describe(Registration::PolicyEngine, type: :service) do
       expect(result.trace.size).to eq(1)
       expect(result.trace.first[:outcome][:pass]).to be(false)
     end
+
+    context "with a student_performance policy" do
+      let(:lecture) { FactoryBot.create(:lecture, :with_organizational_stuff) }
+      let(:other_lecture) do
+        FactoryBot.create(:lecture, :with_organizational_stuff)
+      end
+
+      it "passes when user has a passed certification" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture,
+                          user: user,
+                          certified_by: FactoryBot.create(:confirmed_user))
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :registration)
+
+        expect(result.pass).to be(true)
+      end
+
+      it "fails when user has no certification" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :registration)
+
+        expect(result.pass).to be(false)
+        expect(result.trace.last[:outcome][:details][:certification_status])
+          .to eq(:missing)
+      end
+
+      it "passes only once every selected lecture is passed" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_ids" => [lecture.id.to_s, other_lecture.id.to_s] }
+        )
+        certifier = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: other_lecture, user: user,
+                          certified_by: certifier)
+
+        engine = described_class.new(campaign)
+        expect(engine.eligible?(user, phase: :registration).pass).to be(false)
+
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture, user: user, certified_by: certifier)
+
+        expect(described_class.new(campaign)
+                              .eligible?(user, phase: :registration).pass).to be(true)
+      end
+
+      it "evaluates during finalization phase" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          :for_finalization,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture,
+                          user: user,
+                          certified_by: FactoryBot.create(:confirmed_user))
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :finalization)
+
+        expect(result.pass).to be(true)
+      end
+
+      it "skips registration-phase policy during finalization" do
+        FactoryBot.create(
+          :registration_policy,
+          :student_performance,
+          registration_campaign: campaign,
+          position: 1,
+          config: { "lecture_id" => lecture.id }
+        )
+
+        engine = described_class.new(campaign)
+        result = engine.eligible?(user, phase: :finalization)
+
+        expect(result.pass).to be(true)
+        expect(result.trace).to be_empty
+      end
+    end
   end
 end

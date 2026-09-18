@@ -24,7 +24,7 @@ module Seeds
 
       ActiveRecord::Base.transaction do
         advance!(semesters)
-        Demo::SetupSupport.setup!
+        Demo::SetupSupport.setup_from_scratch!(homework: false)
         Demo::CampaignSetupSupport.setup!
         Demo::NextTermBannerSupport.setup!
         Demo::VignettesSupport.setup!
@@ -32,6 +32,11 @@ module Seeds
         settle_current_term_campaigns!
         extend_open_deadlines!
         Seeds::CourseworkSupport.setup!
+        # After the coursework step, because that is where the accounts a
+        # developer signs in with are seated, and the homework is handed in per
+        # team. What the seed ships is then the same as what `demo:setup`
+        # produces on it.
+        Demo::SetupSupport.setup_homework_submissions!
         Seeds::EnrichSupport.enrich!
         # last, so that the accounts the demo scenarios create are usable too
         reset_passwords!

@@ -5,6 +5,9 @@
 
 <p>
   <%= t('admin.voucher.general_explanation') %>
+  <% if lecture.seminar? %>
+    <%= t('admin.voucher.speakers_by_registration') %>
+  <% end %>
 </p>
 
 <% if current_user.can_update_personell?(lecture) %>

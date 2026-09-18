@@ -1,0 +1,17 @@
+<div id="grading-points-changed">
+  <% if any? %>
+    <div class="alert alert-warning py-2 my-3" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>
+      <%= t("assessment.grading_exam.points_changed_alert", count: @count) %>
+
+      <button
+        type="button"
+        class="btn btn-link alert-link p-0 align-baseline"
+        data-action="click->status-filter#showStatus"
+        data-status-filter-status-param="flag:points_changed"
+      >
+        <%= t("assessment.grading_exam.show_points_changed") %>
+      </button>
+    </div>
+  <% end %>
+</div>

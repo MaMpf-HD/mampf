@@ -60,7 +60,26 @@ RSpec.describe(Talk, type: :model) do
       expect(@talk).to be_valid
     end
     it "has a speaker" do
-      expect(@talk.speakers).not_to be_nil
+      expect(@talk.speakers.first).to be_kind_of(User)
+    end
+  end
+
+  describe "assessment integration" do
+    let(:seminar_lecture) { FactoryBot.create(:lecture, sort: "seminar") }
+    let(:talk) { FactoryBot.build(:talk, lecture: seminar_lecture, title: "Group Theory Talk") }
+    let(:speaker1) { FactoryBot.create(:confirmed_user) }
+    let(:speaker2) { FactoryBot.create(:confirmed_user) }
+
+    context "when assessment_grading flag is enabled" do
+      it "creates an assessment on talk creation" do
+        talk.save!
+
+        expect(talk.assessment).to be_present
+        expect(talk.assessment.title).to eq("Group Theory Talk")
+        expect(talk.assessment.requires_points).to be(false)
+        expect(talk.assessment.requires_submission).to be(false)
+        expect(talk.assessment.lecture).to eq(seminar_lecture)
+      end
     end
   end
 
@@ -272,6 +291,55 @@ RSpec.describe(Talk, type: :model) do
       expect(lecture.lecture_memberships.where(user: user)).to exist
     end
   end
+  # Dropped, a graded speaker's row would survive the roster invisibly and
+  # still count in the scheme's statistics.
+  describe "a graded speaker" do
+    let(:seminar) { create(:lecture, :is_seminar) }
+    let(:talk) { create(:talk, lecture: seminar) }
+    let(:graded) { create(:confirmed_user, name_in_tutorials: "Ada") }
+    let(:other) { create(:confirmed_user) }
+
+    before do
+      talk.speakers << [graded, other]
+      talk.assessment.assessment_participations.create!(user: graded, status: :reviewed,
+                                                        grade_numeric: 2.0)
+    end
+
+    it "stays on the talk when the form drops them, and the form is told" do
+      expect(talk.update(speaker_ids: [other.id.to_s])).to be(false)
+      expect(talk.errors[:speaker_ids].first).to start_with("Ada ")
+      expect(talk.reload.speakers).to include(graded, other)
+    end
+
+    it "does not hold the refusal against the next save of the same instance" do
+      talk.update(speaker_ids: [other.id.to_s])
+
+      expect(talk.update(title: "Another title")).to be(true)
+    end
+
+    it "lets the form drop the other speaker" do
+      expect(talk.update(speaker_ids: [graded.id.to_s])).to be(true)
+      expect(talk.reload.speakers).to eq([graded])
+    end
+
+    it "is not taken off the roster either" do
+      expect { talk.remove_user_from_roster!(graded) }
+        .to raise_error(described_class::SpeakerRemovalNotAllowedError)
+      expect(talk.remove_user_from_roster!(other)).to be_present
+      expect(talk.reload.speakers).to eq([graded])
+    end
+
+    # The allocation removes in bulk, past the single removal's guard.
+    it "survives an allocation run again without them" do
+      campaign = create(:registration_campaign)
+      talk.speaker_talk_joins.update_all(source_campaign_id: campaign.id) # rubocop:disable Rails/SkipsModelValidations
+
+      talk.materialize_allocation!(user_ids: [], campaign: campaign)
+
+      expect(talk.reload.speakers).to eq([graded])
+    end
+  end
+
   describe "#destruction_blockers" do
     let(:seminar) { create(:lecture, :is_seminar) }
     let(:talk) { create(:talk, lecture: seminar) }

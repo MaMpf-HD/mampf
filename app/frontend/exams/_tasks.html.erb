@@ -1,0 +1,14 @@
+<div id="exam-tasks">
+  <% if assessment %>
+    <%= render "assessment/assessments/tasks",
+               assessment: assessment,
+               assessable: exam,
+               tasks: tasks,
+               task: local_assigns[:task] %>
+  <% else %>
+    <div class="alert alert-warning" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= t('assessment.errors.no_assessment') %>
+    </div>
+  <% end %>
+</div>
