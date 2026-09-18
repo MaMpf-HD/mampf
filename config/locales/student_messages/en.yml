@@ -39,7 +39,7 @@ en:
     sent_count:
       one: "1 recipient"
       other: "%{count} recipients"
-    everyone_registered_then: "Everyone registered at the time"
+    everyone_registered_then: "Everybody in the lecture at the time"
     tutorial:
       button: "Email the group"
       title: "Email to %{tutorial}"

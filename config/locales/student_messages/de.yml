@@ -39,7 +39,7 @@ de:
     sent_count:
       one: "1 Empfänger(in)"
       other: "%{count} Empfänger(innen)"
-    everyone_registered_then: "Alle damals Angemeldeten"
+    everyone_registered_then: "Alle Studierenden der Veranstaltung zu der Zeit"
     tutorial:
       button: "Mail an die Gruppe"
       title: "E-Mail an %{tutorial}"
