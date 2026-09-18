@@ -11,24 +11,27 @@ class MampfsearchSyncJob < ApplicationJob
 
     def recover_stuck_jobs
       Medium.stuck_transcriptions.find_each do |medium|
-        if medium.transcription_attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
+        attempts = medium.transcription_attempts + 1
+
+        if attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
           medium.update!(
+            transcription_attempts: attempts,
             transcription_status: :failed_permanently,
             transcription_error: "Transcription timed out after " \
-                                 "#{SearchClient::MAX_TRANSCRIPTION_ATTEMPTS} attempts"
+                                 "#{attempts} attempts"
           )
           Rails.logger.error("Mampfsearch transcription permanently timed out for medium " \
                              "#{medium.id} after " \
-                             "#{SearchClient::MAX_TRANSCRIPTION_ATTEMPTS} attempts")
+                             "#{attempts} attempts")
         else
           medium.update!(
-            transcription_attempts: medium.transcription_attempts + 1,
+            transcription_attempts: attempts,
             transcription_status: :failed_temporarily,
-            transcription_error: "Job timed out in worker, will retry"
+            transcription_error: "Transcription timed out in worker, will retry"
           )
           Rails.logger.warn(
             "Mampfsearch transcription timed out for medium #{medium.id} " \
-            "(attempt #{medium.transcription_attempts}), marked failed_temporarily"
+            "(attempt #{attempts}), marked failed_temporarily"
           )
         end
       end
