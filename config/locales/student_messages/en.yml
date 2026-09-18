@@ -33,6 +33,7 @@ en:
       one: "Your message is being sent to 1 student."
       other: "Your message is being sent to %{count} students."
     no_audience: "Pick whom the message should go to."
+    too_many: "That is a lot of mail for one hour; please wait a while before the next one."
     not_allowed: "You cannot write to the students of this lecture."
     sent_messages: "Sent messages"
     sent_count:

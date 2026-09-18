@@ -198,6 +198,19 @@ RSpec.describe("StudentMessages", type: :request) do
       end
     end
 
+    # A handful a day is a sender's; hundreds an hour are an account's.
+    it "caps what one sender writes in an hour" do
+      sign_in teacher
+      Rails.cache.clear
+
+      20.times { send_message }
+      expect do
+        send_message
+      end.not_to change(StudentMessage, :count)
+
+      expect(flash[:alert]).to eq(I18n.t("student_message.too_many"))
+    end
+
     context "as a student" do
       before { sign_in member }
 

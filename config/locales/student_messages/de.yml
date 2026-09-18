@@ -33,6 +33,7 @@ de:
       one: "Deine Nachricht wird an 1 Person verschickt."
       other: "Deine Nachricht wird an %{count} Personen verschickt."
     no_audience: "Wähle aus, an wen die Nachricht gehen soll."
+    too_many: "Das ist viel Post für eine Stunde; warte bitte eine Weile bis zur nächsten."
     not_allowed: "Du kannst den Studierenden dieser Veranstaltung nicht schreiben."
     sent_messages: "Gesendete Nachrichten"
     sent_count:

@@ -1,6 +1,15 @@
 # Lets lecture staff, and tutors for their own group, send a one-off email
 # (optionally with an attachment) to the students of the groups they pick.
 class StudentMessagesController < ApplicationController
+  # A sender writes a handful of mails a day; a compromised account would
+  # write hundreds. The cap is per sender across lectures.
+  rate_limit to: 20, within: 1.hour, only: :create,
+             by: -> { current_user&.id || request.remote_ip },
+             with: lambda {
+               redirect_to edit_lecture_path(params[:lecture_id], tab: "communication"),
+                           alert: I18n.t("student_message.too_many")
+             }
+
   before_action :set_lecture
   before_action :set_catalog
 
