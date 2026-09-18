@@ -79,15 +79,12 @@ class StudentMessagesController < ApplicationController
     end
 
     # Where the form was: the lecture's communication tab or a tutor's page.
+    # Only a path of this app is taken; anything else - another host, a
+    # scheme, a string that is no URI - lands on the communication tab.
     def return_path
-      if params[:return_to].present?
-        begin
-          uri = URI.parse(params[:return_to])
-          return params[:return_to] if uri.host.nil? || uri.host == request.host
-        rescue URI::InvalidURIError
-          # fall through
-        end
-      end
+      given = params[:return_to].to_s
+      return given if given.start_with?("/") && !given.start_with?("//", "/\\")
+
       edit_lecture_path(@lecture, tab: "communication")
     end
 

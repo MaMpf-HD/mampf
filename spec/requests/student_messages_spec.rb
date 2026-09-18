@@ -84,6 +84,16 @@ RSpec.describe("StudentMessages", type: :request) do
         expect(response).to redirect_to("/lectures/#{lecture.id}/tutorials?tutorial=#{tutorial.id}")
       end
 
+      # Only a path of this app is a way back.
+      it "lands on the communication tab for anything but a path" do
+        ["javascript:alert(1)", "https://evil.example/x", "//evil.example",
+         "/\\evil.example", "http://[", "x" * 10_000].each do |bad|
+          send_message(return_to: bad)
+
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "communication"))
+        end
+      end
+
       it "stores a pdf attachment, scanned" do
         file = Rack::Test::UploadedFile.new(
           StringIO.new("%PDF-1.4 demo"), "application/pdf",
