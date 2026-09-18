@@ -55,10 +55,8 @@ class Lecture < ApplicationRecord
   has_many :lecture_memberships, dependent: :destroy
   has_many :members, through: :lecture_memberships, source: :user
 
-  # messages from the lecture staff to registered students
-  has_many :registration_student_messages,
-           class_name: "Registration::StudentMessage",
-           dependent: :destroy
+  # messages from the lecture staff or a tutor to students of the lecture
+  has_many :student_messages, dependent: :destroy
 
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy

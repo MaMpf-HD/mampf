@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_18_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -760,20 +760,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
-  create_table "registration_student_messages", force: :cascade do |t|
-    t.bigint "lecture_id", null: false
-    t.bigint "sender_id", null: false
-    t.string "subject", null: false
-    t.text "body", null: false
-    t.text "attachment_data"
-    t.string "recipient_emails", default: [], null: false, array: true
-    t.integer "recipients_count", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_registration_student_messages_on_lecture_id"
-    t.index ["sender_id"], name: "index_registration_student_messages_on_sender_id"
-  end
-
   create_table "registration_user_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "preference_rank"
@@ -845,6 +831,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
     t.index ["speaker_id"], name: "index_speaker_talk_joins_on_speaker_id"
     t.index ["talk_id", "speaker_id"], name: "index_speaker_talk_joins_on_talk_id_and_speaker_id", unique: true
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
+  end
+
+  create_table "student_messages", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "sender_id", null: false
+    t.string "subject", null: false
+    t.text "body", null: false
+    t.text "attachment_data"
+    t.string "recipient_emails", default: [], null: false, array: true
+    t.integer "recipients_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "audiences", default: [], null: false
+    t.integer "sender_role", default: 0, null: false
+    t.index ["lecture_id"], name: "index_student_messages_on_lecture_id"
+    t.index ["sender_id"], name: "index_student_messages_on_sender_id"
   end
 
   create_table "student_performance_certifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1531,8 +1533,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
   add_foreign_key "referrals", "media"
   add_foreign_key "registration_items", "registration_campaigns"
   add_foreign_key "registration_policies", "registration_campaigns"
-  add_foreign_key "registration_student_messages", "lectures"
-  add_foreign_key "registration_student_messages", "users", column: "sender_id"
   add_foreign_key "registration_user_registrations", "registration_campaigns"
   add_foreign_key "registration_user_registrations", "registration_items"
   add_foreign_key "registration_user_registrations", "registration_policies", column: "rejection_policy_id"
@@ -1540,6 +1540,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_16_000000) do
   add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "student_messages", "lectures"
+  add_foreign_key "student_messages", "users", column: "sender_id"
   add_foreign_key "student_performance_certifications", "lectures"
   add_foreign_key "student_performance_certifications", "student_performance_rules", column: "rule_id"
   add_foreign_key "student_performance_certifications", "users"

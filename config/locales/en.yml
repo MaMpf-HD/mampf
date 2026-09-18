@@ -3249,9 +3249,12 @@ en:
       browser and open it afterwards.
     announcement_subject: 'New announcement'
     student_message_footer: >-
-      This message was sent by %{sender} via MaMpf to the registered
-      students of %{lecture}. Replies to this email go directly to the
+      This message was sent by %{sender} (%{email}, %{role}) via MaMpf to
+      %{audiences} in %{lecture}. Replies to this email go directly to the
       sender.
+    student_message_role:
+      staff: "lecture staff"
+      tutor: "tutor"
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'

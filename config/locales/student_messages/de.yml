@@ -1,0 +1,55 @@
+de:
+  student_message:
+    title: "E-Mail an Studierende"
+    section_all: "alle"
+    to: "An"
+    headings:
+      tutorials: "Tutorien"
+      talks: "Vorträge"
+      cohorts: "Kohorten"
+      exams: "Klausuren"
+      registrations: "Anmeldungen"
+    audiences:
+      everyone: "Alle Studierenden der Veranstaltung"
+      everyone_hint: "eingeschrieben oder angemeldet"
+      groups: "Ausgewählte Gruppen"
+      preference_hint: "Vor der Zuteilung meint eine Gruppe eines Präferenzverfahrens alle, die sie gelistet haben, egal auf welchem Rang."
+      registered: "alle Angemeldeten"
+      rejected: "abgelehnt"
+    count_failed: "Die Zahl konnte nicht gelesen werden; ändere die Auswahl, um es noch einmal zu versuchen."
+    nobody_picked: "Noch niemand ausgewählt."
+    addresses_copy_failed: "Die Adressen konnten nicht kopiert werden."
+    copy_addresses: "E-Mail-Adressen kopieren"
+    addresses_copied: "Adressen in die Zwischenablage kopiert"
+    subject: "Betreff"
+    body: "Nachricht"
+    attachment: "Anhang (optional)"
+    attachment_hint: "Eine PDF-Datei, maximal 10 MB — z. B. ein Kursprogramm."
+    attachment_must_be_pdf: "muss eine PDF-Datei sein"
+    send:
+      zero: "Senden"
+      one: "An 1 Person senden"
+      other: "An %{count} Personen senden"
+    sent:
+      one: "Deine Nachricht wird an 1 Person verschickt."
+      other: "Deine Nachricht wird an %{count} Personen verschickt."
+    no_audience: "Wähle aus, an wen die Nachricht gehen soll."
+    too_many: "Das ist viel Post für eine Stunde; warte bitte eine Weile bis zur nächsten."
+    not_allowed: "Du kannst den Studierenden dieser Veranstaltung nicht schreiben."
+    sent_messages: "Gesendete Nachrichten"
+    sent_count:
+      one: "1 Empfänger(in)"
+      other: "%{count} Empfänger(innen)"
+    everyone_registered_then: "Alle Studierenden der Veranstaltung zu der Zeit"
+    tutorial:
+      button: "Mail an die Gruppe"
+      title: "E-Mail an %{tutorial}"
+      hint: "Geht an alle in der Gruppe, von Dir; Antworten kommen zu Dir zurück."
+    crosslink_html: >-
+      Du möchtest Studierenden eine E-Mail schreiben (z. B. mit dem
+      Kursprogramm)? Das geht im Tab %{link}.
+  activerecord:
+    attributes:
+      student_message:
+        attachment: "Anhang"
+        audiences: "Empfänger"

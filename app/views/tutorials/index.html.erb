@@ -32,6 +32,11 @@
   </div>
 </div>
 <% else %>
+  <%# A first word to the group comes before the first sheet. %>
+  <div class="d-flex flex-wrap align-items-end gap-3 m-3">
+    <%= render partial: 'tutorials/group_columns',
+               locals: { tutorials: @tutorials, tutorial: @tutorial } %>
+  </div>
   <div class="jumbotron">
     <%= t('assignment.nothing_yet_in_lecture') %>
   </div>

@@ -38,17 +38,8 @@
     <% end %>
   </div>
 
-  <div class="col-12 col-md-4">
-    <label class="form-label fw-semibold mb-2" for="tutorial-select">
-      <%= t('basics.tutorial') %>
-    </label>
-
-    <% if tutorials.size > 1 %>
-      <%= render partial: 'tutorials/tutorial_dropdown' %>
-    <% else %>
-      <input id="tutorial-select" class="form-control form-control-sm" disabled value="<%= tutorial.title %>">
-    <% end %>
-  </div>
+  <%= render partial: 'tutorials/group_columns',
+             locals: { tutorials: tutorials, tutorial: tutorial } %>
 </div>
 
 
