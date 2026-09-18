@@ -5,7 +5,7 @@ module StudentMessages
   # count it read for a whole section at once, so the picker does not ask
   # one query per group.
   class Audience
-    attr_reader :key, :label, :heading
+    attr_reader :key, :label, :heading, :users
 
     def initialize(key:, label:, heading:, users:, count: nil)
       @key = key
@@ -13,6 +13,14 @@ module StudentMessages
       @heading = heading
       @users = users
       @count = count
+    end
+
+    # Everybody in any of the audiences, once: one query with a subselect
+    # per audience, however many were picked.
+    def self.recipients(audiences)
+      return User.none if audiences.empty?
+
+      audiences.map { |audience| User.where(id: audience.users.select(:id)) }.reduce(:or)
     end
 
     def user_ids
@@ -24,7 +32,7 @@ module StudentMessages
     end
 
     def emails
-      User.where(id: user_ids).pluck(:email)
+      Audience.recipients([self]).pluck(:email)
     end
   end
 end

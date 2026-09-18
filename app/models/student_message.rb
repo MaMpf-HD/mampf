@@ -52,8 +52,7 @@ class StudentMessage < ApplicationRecord
       return if @addressed.blank?
 
       self.audiences = @addressed.map { |audience| { key: audience.key, label: audience.label } }
-      user_ids = @addressed.flat_map(&:user_ids).uniq
-      self.recipient_emails = User.where(id: user_ids).pluck(:email)
+      self.recipient_emails = StudentMessages::Audience.recipients(@addressed).pluck(:email)
       self.recipients_count = recipient_emails.size
     end
 end

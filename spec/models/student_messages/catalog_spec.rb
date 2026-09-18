@@ -121,6 +121,32 @@ RSpec.describe(StudentMessages::Catalog) do
     end
   end
 
+  # Whom a selection reaches is one query, however many groups were picked.
+  describe ".recipients" do
+    it "unites the groups picked in one query" do
+      groups = create_list(:tutorial, 6, lecture: lecture)
+      others = groups.map do |group|
+        create(:confirmed_user).tap do |user|
+          create(:tutorial_membership, tutorial: group, user: user)
+        end
+      end
+      catalog = described_class.new(Lecture.find(lecture.id), teacher)
+      keys = groups.map { |group| "tutorial:#{group.id}" } + ["tutorial:#{tutorial.id}"]
+      picked = catalog.pick(keys)
+
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+      emails = ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        StudentMessages::Audience.recipients(picked).pluck(:email)
+      end
+
+      expect(emails).to match_array(others.map(&:email) + [member.email])
+      expect(selects).to eq(1)
+    end
+  end
+
   # The picker asks every group for its count; the lecture editor renders it
   # on every visit, so the number of queries must not follow the number of groups.
   describe "counting" do

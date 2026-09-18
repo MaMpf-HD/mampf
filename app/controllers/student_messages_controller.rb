@@ -86,7 +86,7 @@ class StudentMessagesController < ApplicationController
     end
 
     def emails_of(audiences)
-      User.where(id: audiences.flat_map(&:user_ids).uniq).pluck(:email)
+      StudentMessages::Audience.recipients(audiences).pluck(:email)
     end
 
     # Where the form was, or the sender's own page. Both forms hand over a
