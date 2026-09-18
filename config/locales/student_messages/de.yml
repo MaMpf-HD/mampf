@@ -13,6 +13,7 @@ de:
       everyone: "Alle Studierenden der Veranstaltung"
       everyone_hint: "eingeschrieben oder angemeldet"
       groups: "Ausgewählte Gruppen"
+      preference_hint: "Vor der Zuteilung meint eine Gruppe eines Präferenzverfahrens alle, die sie gelistet haben, egal auf welchem Rang."
       registered: "alle Angemeldeten"
       rejected: "abgelehnt"
     nobody_picked: "Noch niemand ausgewählt."

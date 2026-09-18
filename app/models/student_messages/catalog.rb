@@ -42,6 +42,15 @@ module StudentMessages
 
     # Whoever may edit the lecture - its teacher, its editors, the course's
     # editors, admins - writes as its staff.
+    # Whether an item of a preference campaign is on offer: before the
+    # allocation such an item means everybody who listed it, at any rank.
+    def preference_items_offered?
+      @lecture.registration_campaigns.any? do |campaign|
+        campaign.preference_based? && !campaign.draft? && !campaign.completed? &&
+          campaign.registration_items.many?
+      end
+    end
+
     def staff?
       return @staff if defined?(@staff)
 
@@ -98,7 +107,7 @@ module StudentMessages
       # filled at finalization; after it the rosters take over and only the
       # rejected are left to write to. A campaign with one item is that item.
       def campaign_audiences(campaign)
-        items = campaign.registration_items.to_a
+        items = campaign.registration_items.includes(:registerable).sort_by(&:title)
         name = campaign_name(campaign, items)
         list = []
         unless campaign.completed?

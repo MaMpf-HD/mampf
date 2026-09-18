@@ -13,6 +13,7 @@ en:
       everyone: "Everybody in the lecture"
       everyone_hint: "on the roster or registered"
       groups: "Groups picked"
+      preference_hint: "Before the allocation, a group of a preference-based process means everybody who listed it, at any rank."
       registered: "everyone registered"
       rejected: "rejected"
     nobody_picked: "Nobody picked yet."
