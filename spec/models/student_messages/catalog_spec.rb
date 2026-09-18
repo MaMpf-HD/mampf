@@ -105,6 +105,38 @@ RSpec.describe(StudentMessages::Catalog) do
     end
   end
 
+  # The picker asks every group for its count; the lecture editor renders it
+  # on every visit, so the number of queries must not follow the number of groups.
+  describe "counting" do
+    def queries_to_count_everything(catalog)
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        catalog.everyone.count
+        catalog.sections.each { |section| section.last.each(&:count) }
+      end
+      selects
+    end
+
+    it "reads each section's counts in one go, however many groups there are" do
+      campaign = create(:registration_campaign, :open, :first_come_first_served,
+                        campaignable: lecture)
+      3.times { create(:registration_item, registration_campaign: campaign) }
+      create(:exam, lecture: lecture)
+      few = queries_to_count_everything(described_class.new(Lecture.find(lecture.id), teacher))
+
+      12.times { create(:tutorial, lecture: lecture) }
+      9.times { create(:registration_item, registration_campaign: campaign) }
+      create(:exam, lecture: lecture)
+      many = queries_to_count_everything(described_class.new(Lecture.find(lecture.id), teacher))
+
+      expect(many).to eq(few)
+      expect(many).to be <= 20
+    end
+  end
+
   describe "for a tutor" do
     subject(:catalog) { described_class.new(lecture, tutor) }
 

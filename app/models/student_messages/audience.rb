@@ -1,15 +1,18 @@
 module StudentMessages
   # One group a message can go to, named by a key such as "tutorial:3" or
   # "campaign:2:rejected" and listed under a heading of the picker. Knows
-  # who is in it; the catalog decides who may pick it.
+  # who is in it; the catalog decides who may pick it, and hands over the
+  # count it read for a whole section at once, so the picker does not ask
+  # one query per group.
   class Audience
     attr_reader :key, :label, :heading
 
-    def initialize(key:, label:, heading:, users:)
+    def initialize(key:, label:, heading:, users:, count: nil)
       @key = key
       @label = label
       @heading = heading
       @users = users
+      @count = count
     end
 
     def user_ids
@@ -17,7 +20,7 @@ module StudentMessages
     end
 
     def count
-      user_ids.size
+      @count || user_ids.size
     end
 
     def emails
