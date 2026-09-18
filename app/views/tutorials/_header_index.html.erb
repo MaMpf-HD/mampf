@@ -49,6 +49,17 @@
       <input id="tutorial-select" class="form-control form-control-sm" disabled value="<%= tutorial.title %>">
     <% end %>
   </div>
+
+  <%# The mail is the group's business, not the sheet's: it sits by the group. %>
+  <% group_audience = StudentMessages::Catalog.new(@lecture, current_user)
+                                              .pick(["tutorial:#{tutorial.id}"])&.first %>
+  <% if group_audience %>
+    <div class="col-12 col-md-3">
+      <%= render partial: 'student_messages/tutorial_modal',
+                 locals: { lecture: @lecture, audience: group_audience,
+                           return_to: request.fullpath } %>
+    </div>
+  <% end %>
 </div>
 
 

@@ -1,0 +1,80 @@
+<%#
+  The form both pages share. Staff pick the groups from the lecture's
+  catalog; a tutor's page hands in the one group the mail is for.
+  `return_to` is where the page was, so a send lands back on it.
+%>
+
+<%= form_with model: StudentMessage.new,
+              url: lecture_student_messages_path(lecture),
+              method: :post,
+              local: true,
+              html: { multipart: true },
+              data: (catalog ? { controller: "audience-picker",
+                                 audience_picker_url_value:
+                                   recipients_lecture_student_messages_path(lecture) } : {}) do |f| %>
+  <%= hidden_field_tag :return_to, return_to %>
+
+  <% if catalog %>
+    <fieldset class="mb-3">
+      <legend class="form-label fw-semibold fs-6">
+        <%= t("student_message.to") %>
+      </legend>
+
+      <div class="row g-3">
+        <% catalog.sections.each do |heading, audiences| %>
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="small text-muted text-uppercase mb-1">
+              <%= t("student_message.headings.#{heading}") %>
+            </div>
+
+            <% audiences.each do |audience| %>
+              <div class="form-check">
+                <%= f.check_box :audiences,
+                                { multiple: true, class: "form-check-input",
+                                  id: "audience-#{audience.key.tr(":", "-")}",
+                                  data: { action: "change->audience-picker#changed" } },
+                                audience.key, nil %>
+
+                <label
+                  class="form-check-label"
+                  for="audience-<%= audience.key.tr(":", "-") %>"
+                >
+                  <%= audience.label %>
+                  <span class="text-muted">(<%= audience.count %>)</span>
+                </label>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </fieldset>
+  <% else %>
+    <%= f.hidden_field :audiences, multiple: true, value: fixed_audience.key %>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :subject, t("student_message.subject"), class: "form-label" %>
+
+    <%= f.text_field :subject, class: "form-control", required: true, maxlength: 200,
+                               data: { testid: "student-mail-subject" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :body, t("student_message.body"), class: "form-label" %>
+
+    <%= f.text_area :body, class: "form-control", rows: 6, required: true,
+                           data: { testid: "student-mail-body" } %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :attachment, t("student_message.attachment"), class: "form-label" %>
+
+    <%= f.file_field :attachment, class: "form-control", accept: "application/pdf",
+                                  data: { testid: "student-mail-attachment" } %>
+
+    <div class="form-text"><%= t("student_message.attachment_hint") %></div>
+  </div>
+
+  <%= render partial: "student_messages/recipients",
+             locals: { emails: catalog ? [] : fixed_audience.emails } %>
+<% end %>

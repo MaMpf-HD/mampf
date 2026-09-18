@@ -1,0 +1,50 @@
+en:
+  student_message:
+    title: "Email to students"
+    to: "To"
+    headings:
+      lecture: "Lecture"
+      tutorials: "Tutorials"
+      talks: "Talks"
+      cohorts: "Cohorts"
+      exams: "Exams"
+      registrations: "Registrations"
+    audiences:
+      everyone: "Everyone on the roster or registered"
+      roster: "Everyone on the roster"
+      registered: "everyone registered"
+      rejected: "rejected"
+    nobody_picked: "Nobody picked yet."
+    copy_addresses: "Copy email addresses"
+    addresses_copied: "Addresses copied to clipboard"
+    subject: "Subject"
+    body: "Message"
+    attachment: "Attachment (optional)"
+    attachment_hint: "One PDF file, at most 10 MB — e.g. a course program."
+    attachment_must_be_pdf: "must be a PDF file"
+    send:
+      zero: "Send"
+      one: "Send to 1 student"
+      other: "Send to %{count} students"
+    sent:
+      one: "Your message is being sent to 1 student."
+      other: "Your message is being sent to %{count} students."
+    no_audience: "Pick whom the message should go to."
+    not_allowed: "You cannot write to the students of this lecture."
+    sent_messages: "Sent messages"
+    sent_count:
+      one: "1 recipient"
+      other: "%{count} recipients"
+    everyone_registered_then: "Everyone registered at the time"
+    tutorial:
+      button: "Email the group"
+      title: "Email to %{tutorial}"
+      hint: "Goes to everybody in the group, from you; replies come back to you."
+    crosslink_html: >-
+      You want to email students (e.g. to send around a course program)?
+      You can do that in the %{link} tab.
+  activerecord:
+    attributes:
+      student_message:
+        attachment: "Attachment"
+        audiences: "Recipients"

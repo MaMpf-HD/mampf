@@ -65,6 +65,9 @@ window.Stimulus.register("lecture-search", LectureSearchController);
 import QuestionCounterController from "~/lectures/quizzes/question_counter.controller.js";
 window.Stimulus.register("question-counter", QuestionCounterController);
 
+import AudiencePickerController from "~/student_messages/audience_picker.controller.js";
+window.Stimulus.register("audience-picker", AudiencePickerController);
+
 import CoursesEditController from "~/courses/edit/courses_edit.controller.js";
 window.Stimulus.register("courses-edit", CoursesEditController);
 

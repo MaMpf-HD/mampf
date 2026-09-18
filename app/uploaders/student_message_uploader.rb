@@ -1,5 +1,5 @@
-# Uploader for attachments of messages to registered students
-# (e.g. a course program sent around before the semester starts).
+# Uploader for attachments of messages to students (e.g. a course program
+# sent around before the semester starts).
 class StudentMessageUploader < Shrine
   MAX_SIZE = 10 * 1024 * 1024 # 10 MB
 
@@ -17,7 +17,7 @@ class StudentMessageUploader < Shrine
     # not taken from the file extension)
     validate_mime_type_inclusion(
       ["application/pdf"],
-      message: I18n.t("registration.student_message.attachment_must_be_pdf")
+      message: I18n.t("student_message.attachment_must_be_pdf")
     )
   end
 end

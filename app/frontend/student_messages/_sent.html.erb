@@ -1,0 +1,35 @@
+<%# The sender's audit trail: when, what, to whom. %>
+<% if messages.any? %>
+  <hr>
+  <h6><%= t("student_message.sent_messages") %></h6>
+  <table class="table table-sm mb-0">
+    <tbody>
+      <% messages.each do |message| %>
+        <tr>
+          <td class="text-muted text-nowrap">
+            <%= l(message.created_at, format: :short) %>
+          </td>
+
+          <td><%= message.subject %></td>
+
+          <td class="text-muted">
+            <% if message.attachment_filename %>
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+              <%= message.attachment_filename %>
+            <% end %>
+          </td>
+
+          <td class="text-muted small">
+            <%# A message from before groups could be picked went to everybody. %>
+            <%= message.audience_labels.presence&.to_sentence ||
+                  t("student_message.everyone_registered_then") %>
+          </td>
+
+          <td class="text-muted text-nowrap text-end">
+            <%= t("student_message.sent_count", count: message.recipients_count) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

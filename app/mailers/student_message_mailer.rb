@@ -1,9 +1,7 @@
-# Delivers a Registration::StudentMessage from the lecture staff to all
-# registered students (see Lecture#registration_mail_recipients).
+# Delivers a StudentMessage to the groups its sender picked.
 #
 # Note that this deliberately does not respect the email_for_announcement
-# opt-out: these are operational emails tied to a registration the
-# student entered themselves.
+# opt-out: these are operational emails tied to a group the student is in.
 class StudentMessageMailer < ApplicationMailer
   def student_message_email
     @message = params[:message]
@@ -19,9 +17,13 @@ class StudentMessageMailer < ApplicationMailer
     end
 
     # The whole lecture staff (teacher and editors) is kept in the loop
-    # via cc; the sender is already in "to" and is not cc'd twice.
-    staff_cc = ([@lecture.teacher] + @lecture.editors).uniq.map(&:email) -
-               [@message.sender.email]
+    # via cc; the sender is already in "to" and is not cc'd twice. A
+    # tutor's mail to their group is theirs alone.
+    staff_cc = if @message.staff?
+      ([@lecture.teacher] + @lecture.editors).uniq.map(&:email) - [@message.sender.email]
+    else
+      []
+    end
 
     I18n.with_locale(@lecture.locale_with_inheritance || I18n.default_locale) do
       # The sender goes into "to" so that they get a copy of their own

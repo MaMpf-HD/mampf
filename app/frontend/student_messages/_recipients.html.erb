@@ -1,0 +1,32 @@
+<%# Who a selection reaches: the count, the addresses to copy, the send button. %>
+<div
+  id="student-message-recipients"
+  class="d-flex align-items-center flex-wrap gap-2"
+  data-testid="student-mail-recipients"
+>
+  <%= submit_tag t("student_message.send", count: emails.size),
+                 class: "btn btn-primary",
+                 disabled: emails.empty?,
+                 data: { testid: "student-mail-send" } %>
+
+  <% if emails.empty? %>
+    <span class="text-muted"><%= t("student_message.nobody_picked") %></span>
+  <% else %>
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-secondary clipboard-btn clipboard-button"
+      title="<%= t("buttons.copy_to_clipboard") %>"
+      data-clipboard-text="<%= emails.join("; ") %>"
+      data-testid="copy-student-emails"
+    >
+      <i class="bi bi-clipboard" aria-hidden="true"></i>
+      <%= t("student_message.copy_addresses") %>
+
+      <div class="clipboardpopup" style="display: block;">
+        <span class="clipboardpopuptext token-clipboard-popup">
+          <%= t("student_message.addresses_copied") %>
+        </span>
+      </div>
+    </button>
+  <% end %>
+</div>

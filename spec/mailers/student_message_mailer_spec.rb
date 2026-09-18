@@ -12,10 +12,13 @@ RSpec.describe(StudentMessageMailer) do
     create(:registration_user_registration, :confirmed,
            registration_campaign: campaign, user: student)
   end
+  let(:catalog) { StudentMessages::Catalog.new(lecture, teacher) }
   let(:message) do
-    Registration::StudentMessage.create!(lecture: lecture, sender: teacher,
-                                         subject: "First session",
-                                         body: "We start on Monday.")
+    message = StudentMessage.new(lecture: lecture, sender: teacher, subject: "First session",
+                                 body: "We start on Monday.")
+    message.address_to(catalog.pick(["lecture:all"]))
+    message.save!
+    message
   end
 
   describe "#student_message_email" do
@@ -49,6 +52,19 @@ RSpec.describe(StudentMessageMailer) do
 
       expect(mail.to).to eq([editor.email])
       expect(mail.cc).to eq([teacher.email])
+    end
+
+    # A tutor's mail to their group is theirs alone.
+    it "puts nobody in cc when a tutor sends" do
+      lecture.update!(editors: [create(:confirmed_user)])
+      message.update!(sender: create(:confirmed_user), sender_role: :tutor)
+
+      expect(mail.cc).to be_empty
+    end
+
+    it "names the groups in the footer" do
+      expect(mail.text_part.body.to_s)
+        .to include(I18n.t("student_message.audiences.everyone"))
     end
 
     it "prefixes the subject with the lecture title" do
@@ -86,7 +102,7 @@ RSpec.describe(StudentMessageMailer) do
     it "sends nothing when the recipient snapshot is empty" do
       # cannot happen through the regular flow (the model validates the
       # presence of recipients), so this only guards against anomalous data
-      empty_message = Registration::StudentMessage.new(
+      empty_message = StudentMessage.new(
         lecture: lecture, sender: teacher, subject: "s", body: "b",
         recipient_emails: []
       )

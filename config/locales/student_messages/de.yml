@@ -1,0 +1,50 @@
+de:
+  student_message:
+    title: "E-Mail an Studierende"
+    to: "An"
+    headings:
+      lecture: "Veranstaltung"
+      tutorials: "Tutorien"
+      talks: "Vorträge"
+      cohorts: "Kohorten"
+      exams: "Klausuren"
+      registrations: "Anmeldungen"
+    audiences:
+      everyone: "Alle auf dem Roster oder angemeldet"
+      roster: "Alle auf dem Roster"
+      registered: "alle Angemeldeten"
+      rejected: "abgelehnt"
+    nobody_picked: "Noch niemand ausgewählt."
+    copy_addresses: "E-Mail-Adressen kopieren"
+    addresses_copied: "Adressen in die Zwischenablage kopiert"
+    subject: "Betreff"
+    body: "Nachricht"
+    attachment: "Anhang (optional)"
+    attachment_hint: "Eine PDF-Datei, maximal 10 MB — z. B. ein Kursprogramm."
+    attachment_must_be_pdf: "muss eine PDF-Datei sein"
+    send:
+      zero: "Senden"
+      one: "An 1 Person senden"
+      other: "An %{count} Personen senden"
+    sent:
+      one: "Deine Nachricht wird an 1 Person verschickt."
+      other: "Deine Nachricht wird an %{count} Personen verschickt."
+    no_audience: "Wähle aus, an wen die Nachricht gehen soll."
+    not_allowed: "Du kannst den Studierenden dieser Veranstaltung nicht schreiben."
+    sent_messages: "Gesendete Nachrichten"
+    sent_count:
+      one: "1 Empfänger(in)"
+      other: "%{count} Empfänger(innen)"
+    everyone_registered_then: "Alle damals Angemeldeten"
+    tutorial:
+      button: "Mail an die Gruppe"
+      title: "E-Mail an %{tutorial}"
+      hint: "Geht an alle in der Gruppe, von Dir; Antworten kommen zu Dir zurück."
+    crosslink_html: >-
+      Du möchtest Studierenden eine E-Mail schreiben (z. B. mit dem
+      Kursprogramm)? Das geht im Tab %{link}.
+  activerecord:
+    attributes:
+      student_message:
+        attachment: "Anhang"
+        audiences: "Empfänger"
