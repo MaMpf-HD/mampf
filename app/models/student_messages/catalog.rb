@@ -105,7 +105,7 @@ module StudentMessages
         counts = ExamRosterEntry.active.where(exam_id: exams.map(&:id))
                                 .group(:exam_id).distinct.count(:user_id)
         exams.map do |exam|
-          audience("exam:#{exam.id}", exam.title, :exams, exam.users,
+          audience("exam:#{exam.id}", group_title(exam), :exams, exam.users,
                    count: counts.fetch(exam.id, 0))
         end
       end
@@ -126,9 +126,7 @@ module StudentMessages
       # filled at finalization; after it the rosters take over and only the
       # rejected are left to write to. A campaign with one item is that item.
       def campaign_audiences(campaign)
-        # By the registerable's own title: Item#title asks each tutorial for
-        # its tutors, a query apiece.
-        items = campaign.registration_items.sort_by { |item| item.registerable.title }
+        items = campaign.registration_items.sort_by { |item| group_title(item.registerable) }
         name = campaign_name(campaign, items)
         list = []
         unless campaign.completed?
@@ -138,7 +136,7 @@ module StudentMessages
                            count: registration_counts.dig(:registered, campaign.id) || 0)
           if items.many?
             items.each do |item|
-              list << audience("item:#{item.id}", "#{name}: #{item.registerable.title}",
+              list << audience("item:#{item.id}", "#{name}: #{group_title(item.registerable)}",
                                :registrations, registrants(item.user_registrations),
                                count: item_counts.fetch(item.id, 0))
             end
@@ -158,7 +156,14 @@ module StudentMessages
       # An unnamed campaign for one thing - an exam, mostly - goes by that.
       def campaign_name(campaign, items)
         campaign.description.to_s.strip.presence ||
-          (items.one? ? items.first.registerable.title : campaign.student_facing_title)
+          (items.one? ? group_title(items.first.registerable) : campaign.student_facing_title)
+      end
+
+      # An exam's registration title carries its date, which tells two
+      # "Final exam"s apart; a tutorial's would ask for its tutors, a query
+      # per item, and the title alone names the group.
+      def group_title(registerable)
+        registerable.is_a?(Exam) ? registerable.registration_title : registerable.title
       end
 
       def registrants(user_registrations)

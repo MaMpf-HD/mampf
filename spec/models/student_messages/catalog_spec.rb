@@ -83,6 +83,22 @@ RSpec.describe(StudentMessages::Catalog) do
           .to start_with("Midterm")
       end
 
+      # Two exams of one name are told apart by their dates.
+      it "names an exam with its date" do
+        first, second = [Date.new(2027, 2, 1), Date.new(2027, 3, 15)].map do |date|
+          exam = create(:exam, lecture: lecture, title: "Final exam", date: date)
+          exam.registration_campaign.update!(description: "", status: :open)
+          exam
+        end
+        labels = catalog.audiences.map(&:label).grep(/Final exam/)
+
+        # the roster of each, and the registrants of each
+        expect(labels.size).to eq(4)
+        expect(labels.uniq.size).to eq(4)
+        expect(labels.grep(/#{Regexp.escape(first.registration_title)}/).size).to eq(2)
+        expect(labels.grep(/#{Regexp.escape(second.registration_title)}/).size).to eq(2)
+      end
+
       it "keeps only the rejected once the campaign is finalized" do
         campaign.update!(status: :completed)
         keys = catalog.audiences.map(&:key)
