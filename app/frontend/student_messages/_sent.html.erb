@@ -19,11 +19,7 @@
             <% end %>
           </td>
 
-          <td class="text-muted small">
-            <%# A message from before groups could be picked went to everybody. %>
-            <%= message.audience_labels.presence&.to_sentence ||
-                  t("student_message.everyone_registered_then") %>
-          </td>
+          <td class="text-muted small"><%= message.audience_sentence %></td>
 
           <td class="text-muted text-nowrap text-end">
             <%= t("student_message.sent_count", count: message.recipients_count) %>

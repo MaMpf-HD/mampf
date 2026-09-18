@@ -33,6 +33,13 @@ class StudentMessage < ApplicationRecord
     audiences.pluck("label")
   end
 
+  # What the footer names as the recipients: the groups, or, for a message
+  # from before groups could be picked, everybody registered then.
+  def audience_sentence
+    audience_labels.presence&.to_sentence ||
+      I18n.t("student_message.everyone_registered_then")
+  end
+
   def attachment_filename
     attachment&.metadata&.fetch("filename", nil)
   end

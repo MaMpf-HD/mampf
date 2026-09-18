@@ -4,7 +4,7 @@
   <p style="color: #6c757d; font-size: 0.9em;">
     <%= t("mailer.student_message_footer",
           sender: @message.sender.name,
-          audiences: @message.audience_labels.to_sentence,
+          audiences: @message.audience_sentence,
           lecture: @lecture.title_for_viewers) %>
   </p>
 </div>
