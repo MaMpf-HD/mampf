@@ -5,7 +5,7 @@ import { Controller } from "@hotwired/stimulus";
 // many people the selection reaches; the answer is a stream that redraws the
 // send button and the addresses to copy.
 export default class extends Controller {
-  static targets = ["groupsMode", "groups", "sectionToggle"];
+  static targets = ["groupsMode", "groups", "sectionToggle", "failure"];
   static values = { url: String };
 
   connect() {
@@ -35,6 +35,7 @@ export default class extends Controller {
     for (const control of this.element.querySelectorAll("#student-message-recipients button, #student-message-recipients input[type=submit]")) {
       control.disabled = true;
     }
+    this.failureTarget.hidden = true;
 
     for (const toggle of this.sectionToggleTargets) {
       const boxes = this.boxesOf(toggle);
@@ -63,9 +64,15 @@ export default class extends Controller {
       if (response.ok) {
         window.Turbo.renderStreamMessage(await response.text());
       }
+      else {
+        this.failureTarget.hidden = false;
+      }
     }
     catch (e) {
-      if (e.name !== "AbortError") console.warn("audience-picker: request failed", e);
+      if (e.name === "AbortError") return;
+      // The controls stay off: the count they show is not the selection's.
+      this.failureTarget.hidden = false;
+      console.warn("audience-picker: request failed", e);
     }
   }
 

@@ -16,6 +16,7 @@ en:
       preference_hint: "Before the allocation, a group of a preference-based process means everybody who listed it, at any rank."
       registered: "everyone registered"
       rejected: "rejected"
+    count_failed: "The count could not be read; change the selection to try again."
     nobody_picked: "Nobody picked yet."
     addresses_copy_failed: "The addresses could not be copied."
     copy_addresses: "Copy email addresses"

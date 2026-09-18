@@ -136,4 +136,15 @@
 
   <%= render partial: "student_messages/recipients",
              locals: { emails: (catalog ? catalog.everyone : fixed_audience).emails } %>
+
+  <% if catalog %>
+    <p
+      class="text-danger small mt-2"
+      hidden
+      data-audience-picker-target="failure"
+      role="alert"
+    >
+      <%= t("student_message.count_failed") %>
+    </p>
+  <% end %>
 <% end %>

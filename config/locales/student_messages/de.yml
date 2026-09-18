@@ -16,6 +16,7 @@ de:
       preference_hint: "Vor der Zuteilung meint eine Gruppe eines Präferenzverfahrens alle, die sie gelistet haben, egal auf welchem Rang."
       registered: "alle Angemeldeten"
       rejected: "abgelehnt"
+    count_failed: "Die Zahl konnte nicht gelesen werden; ändere die Auswahl, um es noch einmal zu versuchen."
     nobody_picked: "Noch niemand ausgewählt."
     addresses_copy_failed: "Die Adressen konnten nicht kopiert werden."
     copy_addresses: "E-Mail-Adressen kopieren"
