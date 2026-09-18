@@ -77,6 +77,22 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.subject).to eq("[#{expected_title}] First session")
     end
 
+    it "names the group in the subject when a tutor sends" do
+      tutorial = create(:tutorial, lecture: lecture, title: "Mo 10")
+      create(:tutorial_membership, tutorial: tutorial, user: student)
+      tutor_message = StudentMessage.new(lecture: lecture, sender: create(:confirmed_user),
+                                         sender_role: :tutor, subject: "Next week", body: "b")
+      tutor_message.address_to(catalog.pick(["tutorial:#{tutorial.id}"]))
+      tutor_message.save!
+      expected_title = I18n.with_locale(lecture.locale_with_inheritance) do
+        lecture.title_for_viewers
+      end
+
+      subject = described_class.with(message: tutor_message).student_message_email.subject
+
+      expect(subject).to eq("[#{expected_title}, Mo 10] Next week")
+    end
+
     it "contains the message body" do
       expect(mail.text_part.body.to_s).to include("We start on Monday.")
     end

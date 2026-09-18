@@ -35,7 +35,17 @@ class StudentMessageMailer < ApplicationMailer
            cc: staff_cc,
            reply_to: @message.sender.email,
            bcc: recipients,
-           subject: "[#{@lecture.title_for_viewers}] #{@message.subject}")
+           subject: "[#{subject_prefix}] #{@message.subject}")
     end
   end
+
+  private
+
+    # A tutor's mail names the group in the subject: the lecture alone would
+    # read like the lecturer's.
+    def subject_prefix
+      return @lecture.title_for_viewers if @message.staff?
+
+      "#{@lecture.title_for_viewers}, #{@message.audience_labels.to_sentence}"
+    end
 end
