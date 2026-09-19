@@ -355,6 +355,10 @@ class ParticipationRowComponent < ViewComponent::Base
         participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
+        max_points: task.max_points,
+        over_max_message: t("assessment.grading_tutorial.point_over_maximum",
+                            max: helpers.number_with_precision(task.max_points,
+                                                               strip_insignificant_zeros: true)),
         action: "change->participation-row#onParticipationChanged input->participation-row#onParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",

@@ -16,6 +16,7 @@ export default class extends Controller {
     if (this.hasSaveTarget) {
       this.saveTarget.disabled = true;
     }
+    this.pointInputTargets.forEach(input => this.flagBonus(input));
     this.calculateTotalPoints();
   }
 
@@ -48,6 +49,7 @@ export default class extends Controller {
   onPointSubmissionChanged(event) {
     const valid = this.validateNewPoint(event);
     if (valid) {
+      this.flagBonus(event.currentTarget);
       this.markDirty("submission");
       this.calculateTotalPoints();
     }
@@ -59,6 +61,7 @@ export default class extends Controller {
 
   onParticipationChanged(event) {
     if (this.validateNewPoint(event)) {
+      this.flagBonus(event.currentTarget);
       this.markDirty("participation");
       this.calculateTotalPoints();
     }
@@ -144,6 +147,16 @@ export default class extends Controller {
     }
     input.reportValidity();
     return false;
+  }
+
+  // Bonus points are allowed, so more than the task's maximum is not refused;
+  // the field only changes colour, which is enough to catch a 25 meant as 2.5.
+  flagBonus(input) {
+    const max = parseFloat(input.dataset.maxPoints);
+    const points = parseFloat(input.value);
+    const over = !isNaN(max) && !isNaN(points) && points > max;
+    input.classList.toggle("points-over-max", over);
+    input.title = over ? input.dataset.overMaxMessage : "";
   }
 
   extractTasksPoints(pointInputTargets) {

@@ -331,6 +331,7 @@ en:
       reload_row: 'Reload the saved points; unsaved changes are lost'
       points_input_label: '%{task} for %{name}'
       point_below_minimum: "Must be higher than %{min}"
+      point_over_maximum: "More than the task's %{max} points"
       filter_name: 'Name'
       filter_all: 'All'
       filter_reset: 'Reset filters'

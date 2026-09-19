@@ -331,6 +331,7 @@ de:
       reload_row: 'Gespeicherte Punkte neu laden; ungespeicherte Änderungen gehen verloren'
       points_input_label: '%{task} für %{name}'
       point_below_minimum: "Muss höher als %{min} sein"
+      point_over_maximum: "Mehr als die %{max} Punkte der Aufgabe"
       filter_name: 'Name'
       filter_all: 'Alle'
       filter_reset: 'Filter zurücksetzen'
