@@ -9,7 +9,13 @@
   </p>
 <% end %>
 
-<% if voucher.lecture.tutorials_without_tutor(current_user).any? %>
+<% if current_user.rostered_tutorial_in(voucher.lecture) %>
+  <p>
+    <%= t('profile.own_tutorial_not_offered') %>
+  </p>
+<% end %>
+
+<% if voucher.lecture.tutorials_open_to(current_user).any? %>
 
   <p>
     <%= t('profile.tutorials_available') %>

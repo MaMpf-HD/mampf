@@ -2058,6 +2058,9 @@ en:
     all_tutorials_taken: >
       There are no more tutorials available for this lecture that you can take
       over.
+    own_tutorial_not_offered: >
+      The tutorial you are enrolled in is not on offer: nobody tutors their own
+      group.
     already_tutor_by_redemption: >
       You have already redeemed this voucher to become a tutor.
     become_editor_html: >

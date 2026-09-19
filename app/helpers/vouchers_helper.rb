@@ -1,6 +1,6 @@
 module VouchersHelper
   def tutorial_options(user, voucher)
-    voucher.lecture.tutorials_without_tutor(user).map { |t| [t.title, t.id] }
+    voucher.lecture.tutorials_open_to(user).map { |t| [t.title, t.id] }
   end
 
   def given_tutorial_ids(user, voucher)
