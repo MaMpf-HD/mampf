@@ -183,6 +183,15 @@ RSpec.describe("Tutorials", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
+      # The title carries day and time, the location has a field of its own;
+      # the form shows the pattern before anything is typed.
+      it "shows what a title and a location look like" do
+        get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("tutorial.title_placeholder"))
+        expect(response.body).to include(I18n.t("tutorial.location_placeholder"))
+      end
+
       context "with a user who became a tutor by redeeming a voucher" do
         let(:redeemer) { create(:confirmed_user, name_in_tutorials: "Ada L.") }
         let!(:redemption) do

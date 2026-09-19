@@ -3126,6 +3126,8 @@ en:
         In order to change things please edit the publication settings for the
         medium.
   tutorial:
+    title_placeholder: "e.g. Mon 14–16"
+    location_placeholder: "e.g. SR 3"
     no_tutorials_yet: >
       This lecture has no tutorials yet, so there is no table of points to
       enter into.

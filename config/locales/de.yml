@@ -3350,6 +3350,8 @@ de:
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
   tutorial:
+    title_placeholder: "z. B. Mo 14–16"
+    location_placeholder: "z. B. SR 3"
     no_tutorials_yet: >
       Diese Vorlesung hat noch keine Tutorien, also auch keine Tabelle, in die
       Punkte eingetragen werden könnten.
