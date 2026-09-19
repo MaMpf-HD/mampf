@@ -205,6 +205,12 @@
   white-space: nowrap;
 }
 
+/* Wide enough for the longer of the two words, so the names line up. */
+.file-role {
+  flex: 0 0 auto;
+  min-width: 5.5rem;
+}
+
 /* Sheet | status (only where there is no number) | points. No deadline column:
    three weeks on, the due date is noise - the sheet that is still open carries
    it on its card instead. */
