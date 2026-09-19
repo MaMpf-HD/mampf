@@ -267,6 +267,13 @@ test.describe("marking table", () => {
     await expect(points).toHaveAttribute("title", "");
     await expect(points).not.toHaveCSS("border-color", amber);
 
+    // a value the browser refuses is not over the maximum either
+    await points.fill("25");
+    await expect(points).toHaveCSS("border-color", amber);
+    await points.fill("-1");
+    await expect(points).toHaveAttribute("title", "");
+    await expect(points).not.toHaveCSS("border-color", amber);
+
     await points.fill("12");
     await row.getByRole("button", { name: "Save this row's points" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();
