@@ -7,6 +7,7 @@
                          lecture_count: @next_term_lecture_count } %>
   <% end %>
   <div class="accordion" id="subscriptionsAccordion" style="flex: 1;">
+  <% current_filled = @current_stuff.any? || @current_own.any? %>
   <% if Term.active %>
     <div class="accordion-item">
       <div class="accordion-header">
@@ -16,7 +17,6 @@
                 data-bs-target="#collapseCurrentStuff"
                 aria-expanded="true"
                 aria-controls="collapseCurrentStuff">
-          <% current_filled = @current_stuff.any? || @current_own.any? %>
           <h4 class="<%= text_dark_link(current_filled) %>"
               id="currentStuffLink">
             <%= t('profile.my_term_html', term: Term.active.to_label) %>
@@ -156,7 +156,7 @@
         </h4>
       </button>
     </div>
-    <div class="subscriptionsCollapse <%= show_collapse(@current_stuff.empty?) %>"
+    <div class="subscriptionsCollapse <%= show_collapse(!current_filled) %>"
          id="collapseInactiveLectures"
          data-bs-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
       <div class="accordion-body">
@@ -164,7 +164,7 @@
              id="collapseInactiveLecturesContent"
              data-cy="subscribed-inactive-lectures-collapse"
              data-testid="further-subscribed">
-          <% if @current_stuff.empty? %>
+          <% unless current_filled %>
             <%= render partial: 'main/start/lecture',
                        collection: @inactive_lectures,
                        locals: { current: false,
@@ -174,7 +174,7 @@
           <% end %>
         </div>
         <%= tag.div id: 'emptyInactiveLectures',
-                  style: @current_stuff.empty? && @inactive_lectures&.empty? ? '' : 'display: none;' do %>
+                  style: !current_filled && @inactive_lectures&.empty? ? '' : 'display: none;' do %>
         <%= t('profile.no_inactive_stuff') %>
       <% end %>
       </div>

@@ -622,12 +622,17 @@ class User < ApplicationRecord
   end
 
   # Teachers and editors see their lectures on the start page without
-  # subscribing.
-  def staff_lectures_in(term)
-    return [] if term.blank?
+  # subscribing. As with the subscriptions, the current fold takes the
+  # lectures without a term along.
+  def current_staff_lectures
+    staff_lectures_in([Term.active, nil])
+  end
 
-    (given_lectures.where(term: term) + edited_lectures.where(term: term))
-      .uniq.natural_sort_by(&:title)
+  def next_term_staff_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    staff_lectures_in(coming)
   end
 
   def staff_lecture?(lecture)
@@ -883,6 +888,11 @@ class User < ApplicationRecord
   end
 
   private
+
+    def staff_lectures_in(terms)
+      (given_lectures.where(term: terms) + edited_lectures.where(term: terms))
+        .uniq.natural_sort_by(&:title)
+    end
 
     def password_differs_from_current
       stored = encrypted_password_in_database

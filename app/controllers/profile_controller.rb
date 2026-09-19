@@ -101,7 +101,8 @@ class ProfileController < ApplicationController
     # A seat, an application or the lecturer's role outlives the
     # subscription, so the card stays: the next load shows the lecture in
     # the group that carries it.
-    @own = current_user.staff_lecture?(@lecture)
+    @own = @parent.in?(["current_subscribed", "next_term_subscribed"]) &&
+           current_user.staff_lecture?(@lecture)
     @place_left = @own ||
                   (@parent == "next_term_subscribed" &&
                    (current_user.next_term_seated_lectures +
@@ -109,11 +110,11 @@ class ProfileController < ApplicationController
     @none_left = case @parent
                  when "current_subscribed"
                    current_user.current_subscribed_lectures.empty? &&
-                   current_user.staff_lectures_in(Term.active).empty?
+                   current_user.current_staff_lectures.empty?
                  when "inactive" then current_user.inactive_lectures.empty?
                  when "next_term_subscribed"
                    current_user.next_term_lectures.empty? &&
-                   current_user.staff_lectures_in(Term.active&.next).empty? &&
+                   current_user.next_term_staff_lectures.empty? &&
                    current_user.next_term_seated_lectures.empty? &&
                    current_user.next_term_registered_lectures.empty?
     end
@@ -147,6 +148,9 @@ class ProfileController < ApplicationController
                                                                  .includes(:course, :term)
                                                                  .sort
                 when "collapseAllCurrent" then current_user.current_subscribable_lectures
+    end
+    if @collapse_id == "collapseCurrentStuff"
+      @own_lectures = current_user.current_staff_lectures - @lectures
     end
     @link = "#{@collapse_id.remove("collapse").camelize(:lower)}Link"
   end

@@ -135,6 +135,41 @@ RSpec.describe("Main", type: :request) do
             .not_to include(I18n.t("basics.subscribe"), I18n.t("basics.unsubscribe"))
         end
 
+        it "lists an own lecture without a term in the current fold, as the subscriptions are" do
+          lecture = create(:lecture, :released_for_all, :term_independent, teacher: user)
+
+          get root_path
+
+          fold = Nokogiri::HTML(response.body).at_css("#collapseCurrentStuffContent")
+          expect(fold.at_css(".lectureCard[data-id='#{lecture.id}']")).to be_present
+        end
+
+        # With the current fold filled, the fold of terms gone by is not the
+        # one to open, and it is not drawn empty.
+        it "keeps the fold of terms gone by closed when an own lecture fills the current one" do
+          create(:lecture, :released_for_all, term: current_term, teacher: user)
+          gone = create(:term, :winter, year: 2023)
+          old_lecture = create(:lecture, :released_for_all, term: gone)
+          user.subscribe_lecture!(old_lecture)
+
+          get root_path
+
+          page = Nokogiri::HTML(response.body)
+          expect(page.at_css("#collapseCurrentStuff")["class"]).to include("show")
+          expect(page.at_css("#collapseInactiveLectures")["class"]).not_to include("show")
+          expect(page.at_css("#emptyInactiveLectures")["style"]).to include("display: none")
+        end
+
+        # The fold reloads its cards when it is opened again.
+        it "draws the own lecture again when the current fold is reopened" do
+          lecture = create(:lecture, :released_for_all, term: current_term, teacher: user)
+
+          get show_accordion_path(id: "collapseCurrentStuff"), xhr: true
+
+          expect(response.body).to include("data-id=\\\"#{lecture.id}\\\"")
+          expect(response.body).not_to include("$('#emptyCurrentStuff').show()")
+        end
+
         it "does not pin a course editor's every lecture to the page" do
           lecture = create(:lecture, :released_for_all, term: next_term)
           lecture.course.editors << user
