@@ -277,6 +277,21 @@ RSpec.describe("Tutorials", type: :request) do
         get edit_tutorial_path(tutorial), as: :turbo_stream
         expect(response).to have_http_status(:success)
       end
+
+      # A lecturer may make a student the tutor of their own group, but the
+      # form asks first; the option says whom it would be about.
+      it "marks a tutor candidate who is enrolled in the tutorial" do
+        enrolled = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: enrolled)
+        create(:tutorial_membership, tutorial: tutorial, user: enrolled)
+        Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: enrolled)
+
+        get edit_tutorial_path(tutorial), as: :turbo_stream
+
+        option = Nokogiri::HTML(response.body).at_css("option[value='#{enrolled.id}']")
+        expect(option["data-enrolled"]).to eq("true")
+        expect(response.body).to include("enrolled-tutor-guard")
+      end
     end
   end
 

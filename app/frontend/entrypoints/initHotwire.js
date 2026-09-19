@@ -95,6 +95,9 @@ window.Stimulus.register("row-click", RowClickController);
 import DatetimepickerController from "~/controllers/datetimepicker.controller.js";
 window.Stimulus.register("datetimepicker", DatetimepickerController);
 
+import EnrolledTutorGuardController from "~/tutorials/enrolled_tutor_guard.controller.js";
+window.Stimulus.register("enrolled-tutor-guard", EnrolledTutorGuardController);
+
 import CapacityGuardController from "~/roster/capacity_guard.controller.js";
 window.Stimulus.register("capacity-guard", CapacityGuardController);
 

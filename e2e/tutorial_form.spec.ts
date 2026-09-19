@@ -1,0 +1,39 @@
+import { expect, test } from "./_support/fixtures";
+
+// A lecturer may make a student the tutor of the group they are in, but is
+// told first that they would be marking their own sheets.
+test("asks before a member of the group becomes its tutor",
+  async ({ factory, student, teacher: { page, user } }) => {
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Mo 10",
+    });
+    await tutorial.__call("add_user_to_roster!", student.user);
+    // tutoring another group of the lecture makes the student a candidate
+    await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, title: "Tu 14", tutor_id: student.user.id,
+    });
+
+    await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+    await page.getByRole("link", { name: "Edit Settings" }).first().click();
+
+    const dialog = page.getByRole("dialog", { name: "Edit Tutorial" });
+    await dialog.getByRole("combobox", { name: "Tutors" }).fill(student.user.email);
+    // the native <option> and TomSelect's copy share the name; the copy is what is shown
+    await dialog.getByRole("option", { name: new RegExp(student.user.email) }).last().click();
+
+    // refused first: the form stays and nothing is saved
+    page.once("dialog", async (confirm) => {
+      expect(confirm.message()).toContain("would be marking their own sheets");
+      await confirm.dismiss();
+    });
+    await dialog.getByRole("button", { name: "Save" }).click();
+    await expect(dialog).toBeVisible();
+
+    page.once("dialog", confirm => confirm.accept());
+    await dialog.getByRole("button", { name: "Save" }).click();
+    await expect(dialog).toBeHidden();
+    // the tile lists its tutors by name
+    const tile = page.locator(".tutorial-gtile", { hasText: "Mo 10" });
+    await expect(tile).toContainText("student (public, 0)");
+  });
