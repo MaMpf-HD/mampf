@@ -560,6 +560,8 @@ de:
               fixed_by_values: "kann nicht mehr geändert werden, sobald Werte eingetragen sind"
         assessment/task:
           attributes:
+            max_points:
+              blank: "Es müssen Maximalpunkte angegeben werden."
             base:
               requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
         assessment/participation:
