@@ -64,8 +64,10 @@ thead th.sticky-col {
 }
 
 /* A menu opened in a pinned cell would be painted over by the pinned cells
-   of the rows below it, which come later and sit at the same level. */
-.sticky-col:has(.dropdown-menu.show) {
+   of the rows below it, which come later and sit at the same level; the
+   clipboard popup opens upwards, into the header. */
+.sticky-col:has(.dropdown-menu.show),
+.sticky-col:has(.clipboardpopuptext.show) {
   z-index: 5;
 }
 
