@@ -456,15 +456,21 @@ class SubmissionsController < ApplicationController
       params.expect(submission: [:manuscript])
     end
 
-    # The form says which file it was drawn for; a team member may have
-    # replaced or removed it since. A form from before there was a file knows
-    # no time at all.
+    # The form carries the time of the file it shows; a team member may have
+    # replaced or removed that file since. A form from before there was a file
+    # carries no time, and a value that is no time counts the same.
     def file_changed_since_form?
       current = @submission.last_modification_by_users_at
       return false if current.blank?
 
-      known = Time.zone.parse(params.dig(:submission, :known_file_at).to_s)
+      known = known_file_at
       known.nil? || known < current
+    end
+
+    def known_file_at
+      Time.zone.parse(params.dig(:submission, :known_file_at).to_s)
+    rescue ArgumentError
+      nil
     end
 
     # The refused upload stays in the form, so once the reader has seen what

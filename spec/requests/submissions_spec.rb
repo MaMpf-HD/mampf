@@ -1207,6 +1207,18 @@ RSpec.describe("Submissions", type: :request) do
         expect(response.body).to include(news(:removed_meanwhile))
       end
 
+      it "treats a time that is none as older, whatever shape it has" do
+        submission = hand_in
+        submission.update!(last_modification_by_users_at: 5.minutes.ago)
+
+        ["2026-99-99", "garbage", ["2026-09-19"], { "at" => "2026-09-19" }].each do |value|
+          stale_save(submission, known_file_at: value)
+
+          expect(response).to have_http_status(:conflict), value.inspect
+        end
+        expect(submission.reload.manuscript).to be_present
+      end
+
       it "treats a form from before there was a file as older" do
         submission = hand_in
         submission.update!(last_modification_by_users_at: 5.minutes.ago)
