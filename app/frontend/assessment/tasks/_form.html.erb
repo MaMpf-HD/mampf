@@ -25,7 +25,7 @@
                 method: :patch,
                 local: true,
                 namespace: dom_id(task),
-                html: { class: "card flex-grow-1" } do |f| %>
+                html: { class: "card flex-grow-1", novalidate: true } do |f| %>
     <div class="card-body">
       <div class="row g-2">
         <div class="col-md-3" data-controller="assessments--points-precision">

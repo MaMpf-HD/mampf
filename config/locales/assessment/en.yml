@@ -562,6 +562,7 @@ en:
           attributes:
             max_points:
               blank: "You need to give the maximum points."
+              greater_than_or_equal_to: "Maximum points can't be negative."
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
         assessment/participation:

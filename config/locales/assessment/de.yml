@@ -562,6 +562,7 @@ de:
           attributes:
             max_points:
               blank: "Es müssen Maximalpunkte angegeben werden."
+              greater_than_or_equal_to: "Maximalpunkte dürfen nicht negativ sein."
             base:
               requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
         assessment/participation:
