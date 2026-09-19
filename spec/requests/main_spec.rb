@@ -99,6 +99,52 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).not_to include("collapseNextTermStuff")
       end
 
+      # A lecturer's lecture is theirs without a subscription - that is a
+      # student's tie - and stays so when the term turns.
+      describe "the lectures the user holds or edits" do
+        it "lists the user's own lecture for the coming term without a subscription" do
+          lecture = create(:lecture, :released_for_all, term: next_term, teacher: user)
+
+          get root_path
+
+          expect(cards_in("next-term-subscribed")).to include(lecture.id.to_s)
+          empty_state = Nokogiri::HTML(response.body).at_css("#emptyNextTermStuff")
+          expect(empty_state["style"]).to include("display: none")
+        end
+
+        it "lists a lecture the user edits, once, whether subscribed or not" do
+          lecture = create(:lecture, :released_for_all, term: next_term)
+          lecture.editors << user
+          user.subscribe_lecture!(lecture)
+
+          get root_path
+
+          expect(cards_in("next-term-subscribed")).to eq([lecture.id.to_s])
+        end
+
+        it "lists the user's own lecture of the current term as well" do
+          lecture = create(:lecture, :released_for_all, term: current_term, teacher: user)
+
+          get root_path
+
+          fold = Nokogiri::HTML(response.body).at_css("#collapseCurrentStuffContent")
+          card = fold.at_css(".lectureCard[data-id='#{lecture.id}']")
+          expect(card).to be_present
+          expect(card.css("a").pluck("href")).to include(lecture_path(lecture))
+          expect(card.css("a[title]").pluck("title"))
+            .not_to include(I18n.t("basics.subscribe"), I18n.t("basics.unsubscribe"))
+        end
+
+        it "does not pin a course editor's every lecture to the page" do
+          lecture = create(:lecture, :released_for_all, term: next_term)
+          lecture.course.editors << user
+
+          get root_path
+
+          expect(cards_in("next-term-subscribed")).to be_empty
+        end
+      end
+
       it "takes the lecture out of the subscriptions of terms gone by" do
         lecture = create(:lecture, :released_for_all, term: next_term)
         user.subscribe_lecture!(lecture)

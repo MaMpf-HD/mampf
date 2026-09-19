@@ -621,6 +621,19 @@ class User < ApplicationRecord
             .natural_sort_by(&:title)
   end
 
+  # Teachers and editors see their lectures on the start page without
+  # subscribing.
+  def staff_lectures_in(term)
+    return [] if term.blank?
+
+    (given_lectures.where(term: term) + edited_lectures.where(term: term))
+      .uniq.natural_sort_by(&:title)
+  end
+
+  def staff_lecture?(lecture)
+    lecture.teacher == self || edited_lectures.include?(lecture)
+  end
+
   # Cohorts with propagate_to_lecture: false do not create lecture memberships.
   # Include them directly so their lectures remain visible on the start page.
   def next_term_seated_lectures
