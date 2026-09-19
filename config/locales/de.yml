@@ -3396,7 +3396,8 @@ de:
         Du kannst nur Personen auswählen, die den Status "TutorIn" in der
         Veranstaltung haben, dazu EditorInnen und Dich selbst.
         Um Studierenden den Status einer TutorIn zu geben, musst Du
-        einen Gutschein erstellen, den die Studierenden einlösen können.
+        im Reiter "Personal" einen Gutschein erstellen, den die Studierenden
+        einlösen können.
         Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
         werden.
     bulk_upload:

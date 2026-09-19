@@ -23,6 +23,7 @@
 
     <div class="mb-3">
       <%= f.label :tutor_ids, t('basics.tutors'), class: "form-label" %>
+      <%= helpdesk(t('tutorial.info.tutors'), true) %>
       <%= f.select :tutor_ids,
             tutors_preselection(tutorial),
             {},

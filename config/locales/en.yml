@@ -3170,7 +3170,7 @@ en:
         the submissions and upload corrections.
         You can only select users who have the status of tutor in the
         event series, or editors or yourself. In order to grant students the
-        status of tutor, you have to create a voucher.
+        status of tutor, you have to create a voucher on the "Personnel" tab.
         You have to communicate the voucher to the students outside
         of MaMpf. The students can then redeem the voucher.
     bulk_upload:
