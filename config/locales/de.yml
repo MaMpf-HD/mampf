@@ -456,7 +456,7 @@ de:
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
       tutors_overview:
-        hint_html: "Wer TutorIn werden soll, löst zuerst einen Gutschein für TutorInnen ein (siehe unten); im Reiter %{link} wird die Person dann ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
+        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten); EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
         none_yet: "Noch keine TutorInnen. Erstelle unten einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
         no_tutorial_yet: "Gutschein eingelöst, noch keinem Tutorium zugeordnet"
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
@@ -2251,7 +2251,7 @@ de:
     select_tutorials: Tutorien auswählen
     own_tutorial_not_offered: >
       Das Tutorium, in dem Du selbst eingetragen bist, wird nicht angeboten:
-      niemand tutoriert die eigene Gruppe.
+      mit einem Gutschein wird niemand TutorIn der eigenen Gruppe.
     already_tutor_by_redemption: >
       Du hast diesen Gutschein bereits eingelöst, um TutorInnenstatus zu erhalten.
     become_editor_html: >

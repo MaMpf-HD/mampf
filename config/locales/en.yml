@@ -393,7 +393,7 @@ en:
           downtime.
     lecture:
       tutors_overview:
-        hint_html: "Whoever is to become a tutor first redeems a tutor voucher (see below); on the %{link} tab they are put on their tutorials. This is who tutors what."
+        hint_html: "Students become tutors by redeeming a tutor voucher (see below); editors and the teacher can be picked right away. On the %{link} tab tutors are put on their tutorials. This is who tutors what."
         none_yet: "No tutors yet. Create a tutor voucher below and send it to the people who are to become tutors."
         no_tutorial_yet: "redeemed a voucher, not on a tutorial yet"
       updated: 'Submission settings successfully updated.'
@@ -2060,8 +2060,8 @@ en:
       to the tutorials.
     select_tutorials: Select Tutorials
     own_tutorial_not_offered: >
-      The tutorial you are enrolled in is not on offer: nobody tutors their own
-      group.
+      The tutorial you are enrolled in is not on offer: a tutor voucher does not
+      make you the tutor of your own group.
     already_tutor_by_redemption: >
       You have already redeemed this voucher to become a tutor.
     become_editor_html: >
