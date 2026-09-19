@@ -1,0 +1,6 @@
+// The capacity's "no limit" is a glyph, not a word: at text size it is a
+// smudge in an empty field.
+.tutorial-capacity::placeholder {
+  font-size: 1.5em;
+  line-height: 1;
+}
