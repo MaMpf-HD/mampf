@@ -1,0 +1,35 @@
+<%# Tutors are put on their tutorials on the groups tab; here they are listed. %>
+<hr class="lecture-pane-separator">
+<h3 class="lecture-pane-header"><%= t('basics.tutors') %></h3>
+<p class="text-muted">
+  <%= t('admin.lecture.tutors_overview.hint_html',
+        link: link_to(t('roster.tabs.groups'), edit_lecture_path(lecture, tab: 'groups'))) %>
+</p>
+
+<% assigned = tutors_with_tutorials(lecture) %>
+<% waiting = tutors_without_tutorial(lecture) %>
+
+<% if assigned.empty? && waiting.empty? %>
+  <p class="text-muted" data-testid="tutors-overview-empty">
+    <%= t('admin.lecture.tutors_overview.none_yet') %>
+  </p>
+<% else %>
+  <table class="table table-sm" data-testid="tutors-overview">
+    <tbody>
+      <% assigned.each do |tutor, tutorials| %>
+        <tr>
+          <td><%= tutor.tutorial_info %></td>
+          <td class="text-muted"><%= tutorials.map(&:title).natural_sort.join(", ") %></td>
+        </tr>
+      <% end %>
+      <% waiting.each do |tutor| %>
+        <tr>
+          <td><%= tutor.tutorial_info %></td>
+          <td class="text-muted fst-italic">
+            <%= t('admin.lecture.tutors_overview.no_tutorial_yet') %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

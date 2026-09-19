@@ -545,6 +545,44 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/edit (people tab)" do
+    # Tutors are put on their tutorials on the groups tab; the people tab
+    # lists them, with whoever redeemed a voucher and waits for a tutorial.
+    it "lists the tutors with their tutorials, and the voucher holders without one" do
+      lecture = create(:lecture, teacher: user)
+      ada = create(:confirmed_user, name_in_tutorials: "Ada L.")
+      grace = create(:confirmed_user, name_in_tutorials: "Grace H.")
+      create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: ada.id, title: "Mo 10")
+      create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: ada.id, title: "Tu 14")
+      Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: grace)
+
+      get edit_lecture_path(lecture, tab: "people")
+
+      rows = Nokogiri::HTML(response.body).css("[data-testid='tutors-overview'] tr")
+                     .map { |row| row.text.squish }
+      expect(rows.size).to eq(2)
+      expect(rows.first).to include("Ada L.", "Mo 10, Tu 14")
+      expect(rows.last).to include("Grace H.",
+                                   I18n.t("admin.lecture.tutors_overview.no_tutorial_yet"))
+    end
+
+    it "says so when there are no tutors yet" do
+      lecture = create(:lecture, teacher: user)
+
+      get edit_lecture_path(lecture, tab: "people")
+
+      expect(response.body).to include(I18n.t("admin.lecture.tutors_overview.none_yet"))
+    end
+
+    it "has no tutors list on a seminar" do
+      seminar = create(:seminar, teacher: user)
+
+      get edit_lecture_path(seminar, tab: "people")
+
+      expect(response.body).not_to include("tutors-overview")
+    end
+  end
+
   describe "GET /lectures/:id/edit (seminar content)" do
     # Talks can only be created and deleted in the groups tab, so the content
     # page says where to go rather than growing its own controls.

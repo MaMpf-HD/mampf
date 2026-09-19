@@ -392,6 +392,10 @@ en:
           homepage. This can be useful if it is an announcement of a server
           downtime.
     lecture:
+      tutors_overview:
+        hint_html: "Tutors are put on their tutorials on the %{link} tab; this is who tutors what."
+        none_yet: "No tutors yet."
+        no_tutorial_yet: "redeemed a voucher, not on a tutorial yet"
       updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
