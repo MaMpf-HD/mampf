@@ -890,8 +890,9 @@ class User < ApplicationRecord
   private
 
     def staff_lectures_in(terms)
-      (given_lectures.where(term: terms) + edited_lectures.where(term: terms))
-        .uniq.natural_sort_by(&:title)
+      given = given_lectures.where(term: terms).includes(:course, :term)
+      edited = edited_lectures.where(term: terms).includes(:course, :term, :teacher)
+      (given + edited).uniq.natural_sort_by(&:title)
     end
 
     def password_differs_from_current

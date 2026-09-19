@@ -170,6 +170,28 @@ RSpec.describe("Main", type: :request) do
           expect(response.body).not_to include("$('#emptyCurrentStuff').show()")
         end
 
+        # The cards read course, term and teacher; those come with the lectures.
+        it "reads the own lectures with what their cards need" do
+          3.times { create(:lecture, :released_for_all, term: current_term, teacher: user) }
+          3.times { create(:lecture, :released_for_all, term: current_term).editors << user }
+          selects = []
+          callback = lambda { |_name, _start, _finish, _id, payload|
+            selects << payload[:sql] if payload[:sql].start_with?("SELECT") &&
+                                        payload[:name] != "SCHEMA"
+          }
+
+          ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+            user.current_staff_lectures.each do |lecture|
+              [lecture.course, lecture.term, lecture.teacher]
+            end
+          end
+
+          # one read per relation, plus the active term itself
+          expect(selects.count { |sql| sql.include?('FROM "courses"') }).to be <= 2
+          expect(selects.count { |sql| sql.include?('FROM "terms"') }).to be <= 3
+          expect(selects.count { |sql| sql.include?('FROM "users"') }).to be <= 2
+        end
+
         it "does not pin a course editor's every lecture to the page" do
           lecture = create(:lecture, :released_for_all, term: next_term)
           lecture.course.editors << user
