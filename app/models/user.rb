@@ -621,6 +621,24 @@ class User < ApplicationRecord
             .natural_sort_by(&:title)
   end
 
+  # Teachers and editors see their lectures on the start page without
+  # subscribing. As with the subscriptions, the current fold takes the
+  # lectures without a term along.
+  def current_staff_lectures
+    staff_lectures_in([Term.active, nil])
+  end
+
+  def next_term_staff_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    staff_lectures_in(coming)
+  end
+
+  def staff_lecture?(lecture)
+    lecture.teacher == self || edited_lectures.include?(lecture)
+  end
+
   # Cohorts with propagate_to_lecture: false do not create lecture memberships.
   # Include them directly so their lectures remain visible on the start page.
   def next_term_seated_lectures
@@ -870,6 +888,12 @@ class User < ApplicationRecord
   end
 
   private
+
+    def staff_lectures_in(terms)
+      given = given_lectures.where(term: terms).includes(:course, :term)
+      edited = edited_lectures.where(term: terms).includes(:course, :term, :teacher)
+      (given + edited).uniq.natural_sort_by(&:title)
+    end
 
     def password_differs_from_current
       stored = encrypted_password_in_database
