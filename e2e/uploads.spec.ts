@@ -5,7 +5,6 @@ import { attachToUploadArea } from "./_support/uploads";
 
 const SUBMISSION_FORM = "form[data-controller~='submission-upload']";
 
-// The bulk upload sits in the marking toolbar's "More actions" menu.
 async function openBulkUpload(page: Page) {
   await page.getByRole("button", { name: "More actions" }).click();
   await page.getByRole("button", { name: "Bulk upload of corrections" }).click();

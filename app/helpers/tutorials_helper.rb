@@ -6,7 +6,7 @@ module TutorialsHelper
     cancel_new_tutorial_path(params: { lecture: tutorial.lecture })
   end
 
-  # An option knows whether its person is enrolled in the tutorial: the
+  # Each option carries whether its person is enrolled in the tutorial; the
   # form asks before making them tutor of their own group.
   def tutors_preselection(tutorial)
     enrolled = tutorial.member_ids.to_set

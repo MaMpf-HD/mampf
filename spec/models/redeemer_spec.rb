@@ -54,8 +54,8 @@ RSpec.describe(Redeemer, type: :model) do
         expect(redemption.claimed_tutorials).to include(tutorial1, tutorial2)
       end
 
-      # Nobody marks their own sheet: the tutorial the redeemer is in as a
-      # student is not theirs to take, whatever the request says.
+      # The tutorial the redeemer is in as a student is not theirs to take,
+      # whatever the request says.
       it "leaves out the tutorial the redeemer is enrolled in" do
         FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
         FactoryBot.create(:tutorial_membership, tutorial: tutorial1, user: user)

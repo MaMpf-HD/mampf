@@ -1,7 +1,5 @@
 import { expect, test } from "./_support/fixtures";
 
-// A lecturer may make a student the tutor of the group they are in, but is
-// told first that they would be marking their own sheets.
 test("asks before a member of the group becomes its tutor",
   async ({ factory, student, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
@@ -19,10 +17,10 @@ test("asks before a member of the group becomes its tutor",
 
     const dialog = page.getByRole("dialog", { name: "Edit Tutorial" });
     await dialog.getByRole("combobox", { name: "Tutors" }).fill(student.user.email);
-    // the native <option> and TomSelect's copy share the name; the copy is what is shown
+    // the native <option> and TomSelect's copy share the name; the copy is the one on screen
     await dialog.getByRole("option", { name: new RegExp(student.user.email) }).last().click();
 
-    // refused first: the form stays and nothing is saved
+    // dismissed first: the form stays open
     page.once("dialog", async (confirm) => {
       expect(confirm.message()).toContain("would be marking their own sheets");
       await confirm.dismiss();
@@ -33,7 +31,6 @@ test("asks before a member of the group becomes its tutor",
     page.once("dialog", confirm => confirm.accept());
     await dialog.getByRole("button", { name: "Save" }).click();
     await expect(dialog).toBeHidden();
-    // the tile lists its tutors by name
     const tile = page.locator(".tutorial-gtile", { hasText: "Mo 10" });
     await expect(tile).toContainText("student (public, 0)");
   });

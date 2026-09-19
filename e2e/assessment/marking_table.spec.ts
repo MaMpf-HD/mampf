@@ -226,8 +226,8 @@ test.describe("marking table", () => {
     await expect(saveAll).toBeDisabled();
   });
 
-  // Bonus points are a thing, so the table takes more than the maximum; it
-  // just says so, in case the 25 was meant as 2.5.
+  // Bonus points are allowed, so the table takes more than the maximum and
+  // only says so.
   test("points a finger at more than the task's maximum, and still saves it", async ({
     factory,
     teacher,
@@ -350,8 +350,8 @@ test.describe("marking table", () => {
     await expect(table.getByRole("row", { name: /Ada Lovelace/ })).toBeVisible();
   });
 
-  // The note opens upwards, and from the first row that is into the pinned
-  // header; a note the header paints over is not there for the reader.
+  // From the first row the popup opens into the pinned header; behind the
+  // header it is not there for the reader.
   test("keeps the copied-addresses note in front of the header", async ({
     factory,
     teacher,

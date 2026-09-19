@@ -546,8 +546,6 @@ RSpec.describe("Lectures", type: :request) do
   end
 
   describe "GET /lectures/:id/edit (people tab)" do
-    # Tutors are put on their tutorials on the groups tab; the people tab
-    # lists them, with whoever redeemed a voucher and waits for a tutorial.
     it "lists the tutors with their tutorials, and the voucher holders without one" do
       lecture = create(:lecture, teacher: user)
       ada = create(:confirmed_user, name_in_tutorials: "Ada L.")

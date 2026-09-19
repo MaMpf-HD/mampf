@@ -106,7 +106,6 @@ module LecturesHelper
     "text-primary"
   end
 
-  # Every tutor of the lecture with the tutorials they tutor, by name.
   def tutors_with_tutorials(lecture)
     by_tutor = lecture.tutorials.includes(:tutors).each_with_object({}) do |tutorial, hash|
       tutorial.tutors.each { |tutor| (hash[tutor] ||= []) << tutorial }
@@ -114,7 +113,8 @@ module LecturesHelper
     by_tutor.sort_by { |tutor, _| tutor.tutorial_name.to_s.downcase }
   end
 
-  # Redeemed a tutor voucher, not put on a tutorial yet.
+  # Redeemed a tutor voucher, not put on a tutorial yet - listed so the
+  # lecturer sees who is waiting.
   def tutors_without_tutorial(lecture)
     (Redemption.tutors_by_redemption_in(lecture) - lecture.tutors)
       .sort_by { |tutor| tutor.tutorial_name.to_s.downcase }

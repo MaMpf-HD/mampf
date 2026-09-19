@@ -373,8 +373,8 @@ details[open] > summary .news-marker {
   text-decoration: underline;
 }
 
-/* Badges only where no number can stand. Green for the reader's own hand-in
-   alone. */
+/* Badges only where no number can stand; SheetChipComponent says which tone
+   means what. */
 /* A pill with a ground of its own; a weight on top would say the same thing
    twice. */
 .chip {

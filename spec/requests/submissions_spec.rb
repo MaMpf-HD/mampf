@@ -1141,8 +1141,8 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
-    # The file checks answer with sentences rather than error codes; they used
-    # to be handed to the form as a bare array, which the form could not read.
+    # The file checks answer with sentences by attribute, not error codes; the
+    # form shows them like any other refusal.
     describe "a file the sheet does not take" do
       it "is refused with the reason on the form" do
         submission = hand_in
@@ -1169,7 +1169,7 @@ RSpec.describe("Submissions", type: :request) do
 
     # Two team members with the form open: the second save must not overwrite
     # what the first did unseen. The form carries the time of the file it
-    # shows, and a save from an older form is refused once, with the news.
+    # shows, and a save from an older form is refused once.
     describe "saving from a form older than the team's last change" do
       def save(submission, known_file_at:, manuscript: "", remove: false)
         patch(submission_path(submission), params: {

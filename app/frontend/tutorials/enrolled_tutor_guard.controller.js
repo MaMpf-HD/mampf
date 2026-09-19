@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
-// A lecturer may make a student the tutor of the group they are in - they
-// would be marking their own sheets - but not without being told.
+// A lecturer may make a student the tutor of the group they are in, but not
+// without being told that they would be marking their own sheets.
 export default class extends Controller {
   static targets = ["select"];
   static values = { confirmOne: String, confirmOther: String };

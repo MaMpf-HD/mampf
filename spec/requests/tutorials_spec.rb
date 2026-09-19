@@ -183,8 +183,6 @@ RSpec.describe("Tutorials", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      # The title carries day and time, the location has a field of its own;
-      # the form shows the pattern before anything is typed.
       it "shows what a title and a location look like" do
         get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
 
@@ -192,8 +190,8 @@ RSpec.describe("Tutorials", type: :request) do
         expect(response.body).to include(I18n.t("tutorial.location_placeholder"))
       end
 
-      # Whom the select offers is not obvious: only voucher holders, editors
-      # and the teacher; the form says so and where the voucher is made.
+      # Whom the select offers cannot be told from looking at it; the form
+      # says so, and where the voucher is made.
       it "explains who can be picked as a tutor" do
         get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
 
@@ -278,8 +276,6 @@ RSpec.describe("Tutorials", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
-      # A lecturer may make a student the tutor of their own group, but the
-      # form asks first; the option says whom it would be about.
       it "marks a tutor candidate who is enrolled in the tutorial" do
         enrolled = create(:confirmed_user)
         create(:lecture_membership, lecture: lecture, user: enrolled)

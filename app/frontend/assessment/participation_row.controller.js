@@ -150,7 +150,7 @@ export default class extends Controller {
   }
 
   // Bonus points are allowed, so more than the task's maximum is not refused;
-  // the field only changes colour, which is enough to catch a 25 meant as 2.5.
+  // the field only changes colour, for a 25 that was meant as 2.5.
   flagBonus(input) {
     const max = parseFloat(input.dataset.maxPoints);
     const points = parseFloat(input.value);

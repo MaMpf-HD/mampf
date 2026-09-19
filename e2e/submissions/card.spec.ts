@@ -254,8 +254,7 @@ test.describe("the card for a sheet that is due", () => {
   });
 
   // Both have the form open; whoever saves second would overwrite the other's
-  // file without knowing. The second save is refused once, with the news, and
-  // goes through the next time.
+  // file unseen. The second save is refused once and goes through the next time.
   test("warns before a file a team member just uploaded is overwritten", async ({
     factory,
     teacher,
@@ -278,7 +277,6 @@ test.describe("the card for a sheet that is due", () => {
     await student2.page.getByRole("button", { name: "Join" }).click();
     await expect(student2.page.getByRole("link", { name: "Replace file" })).toBeVisible();
 
-    // both open the form; the second one's file lands first
     await student.page.getByRole("link", { name: "Replace file" }).click();
     await student2.page.getByRole("link", { name: "Replace file" }).click();
     await page2.uploadSubmission("e2e/files/manuscript-mampfsty.pdf");

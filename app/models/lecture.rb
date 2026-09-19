@@ -989,8 +989,8 @@ class Lecture < ApplicationRecord
   end
 
   # What a tutor voucher may hand over: not a tutorial the person tutors
-  # already, and not the one they are in as a student - nobody marks their
-  # own sheet.
+  # already, and not the one they are in as a student, or they would be
+  # marking their own sheets.
   def tutorials_open_to(user)
     tutorials_without_tutor(user).where.not(id: user.enrolled_tutorials.select(:id))
   end

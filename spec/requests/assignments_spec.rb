@@ -208,8 +208,6 @@ RSpec.describe("Assignments", type: :request) do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
-        # The form drawn again after a refused save keeps the box as it was
-        # posted - "1" and "0" are not both true.
         it "keeps the digital-submission box as posted when the save is refused" do
           { "1" => "checked", "0" => nil }.each do |posted, expected|
             post assignments_path,

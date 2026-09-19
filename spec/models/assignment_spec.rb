@@ -68,9 +68,8 @@ RSpec.describe(Assignment, type: :model) do
       expect(choices.last).to eq(term.end_date.beginning_of_week)
     end
 
-    # A term the factory counts out may land in the present once enough of
-    # them exist in the process; a term that is over is asked for by year,
-    # the earliest one allowed, which the count never reaches.
+    # The factory's terms count upwards and reach the present once enough
+    # exist in the process; 2000 is the earliest year allowed and stays behind.
     it "offers half a year of weeks when the term is over" do
       gone = Term.find_by(year: 2000, season: "SS") ||
              FactoryBot.create(:term, year: 2000, season: "SS")

@@ -104,7 +104,7 @@ class SubmissionsController < ApplicationController
   # whatever became of the reader's seat since. Only the file moves here.
   def update
     if file_changed_since_form?
-      # Removing a file the team has removed already asks for nothing.
+      # A removal of a file the team has removed already has nothing left to do.
       return render_card_and_standing if removing? && @submission.manuscript_data.blank?
 
       return render_stale_form
@@ -461,9 +461,9 @@ class SubmissionsController < ApplicationController
       params.expect(submission: [:manuscript])
     end
 
-    # The form carries the time of the file it shows; a team member may have
-    # replaced or removed that file since. A form from before there was a file
-    # carries no time, and a value that is no time counts the same.
+    # The form carries the time of the file it shows, and a team member may
+    # have replaced or removed that file since. No time - a form from before
+    # there was a file, or a value that is none - counts as older.
     def file_changed_since_form?
       current = @submission.last_modification_by_users_at
       return false if current.blank?

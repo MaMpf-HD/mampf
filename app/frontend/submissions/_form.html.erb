@@ -67,8 +67,8 @@
                          data: { submission_upload_target: 'detachInput' } %>
 
       <%#
-        The file this form was drawn for. A team member who has meanwhile
-        replaced it must not be overwritten unseen, so the save compares.
+        The time of the file this form shows: the save compares it, so a file
+        a team member has replaced meanwhile is not overwritten unseen.
       %>
 
       <%= f.hidden_field :known_file_at,
