@@ -74,6 +74,19 @@ function testAlreadyRoleForAllItems(context, itemType) {
   });
 }
 
+// Tutoring every tutorial leaves none to claim, but the voucher itself is
+// still open: the teacher may add a tutorial and put the tutor on it later.
+function testTutorOfAllTutorials(context) {
+  helpers.createTutorialsOrTalks(context, "tutorial", context.user);
+  helpers.submitVoucher(context.voucher);
+  helpers.verifyNoItemsYetMessage(context, "tutorial");
+  helpers.verifyCancelVoucherButton();
+  helpers.logoutAndLoginAsTeacher(context);
+  cy.then(() => {
+    helpers.verifyNoNotification();
+  });
+}
+
 describe("Verify Voucher Form", () => {
   beforeEach(function () {
     helpers.createRedemptionScenario(this);
@@ -118,8 +131,8 @@ describe("Tutor voucher redemption", () => {
     });
 
     context("and the user is already a tutor for all of them", () => {
-      it("displays a message that the user is already a tutor for all tutorials", function () {
-        testAlreadyRoleForAllItems(this, "tutorial");
+      it("offers to redeem the voucher without a tutorial", function () {
+        testTutorOfAllTutorials(this);
       });
     });
   });
