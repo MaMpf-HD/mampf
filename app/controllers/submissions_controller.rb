@@ -462,14 +462,13 @@ class SubmissionsController < ApplicationController
     end
 
     # The form carries the time of the file it shows, and a team member may
-    # have replaced or removed that file since. No time - a form from before
-    # there was a file, or a value that is none - counts as older.
+    # have replaced or removed that file since. Anything but that time - no
+    # value, a value that is no time, or one from nowhere - is not the file.
     def file_changed_since_form?
       current = @submission.last_modification_by_users_at
       return false if current.blank?
 
-      known = known_file_at
-      known.nil? || known < current
+      known_file_at != current
     end
 
     def known_file_at

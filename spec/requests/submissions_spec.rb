@@ -1283,10 +1283,11 @@ RSpec.describe("Submissions", type: :request) do
         expect(response.body).to include(I18n.t("submission.hub.chips.nothing_handed_in"))
       end
 
-      it "treats a time that is none as older, whatever shape it has" do
+      it "refuses whatever is not the time of the file, whatever shape it has" do
         submission = stale_hand_in
 
-        ["2026-99-99", "garbage", ["2026-09-19"], { "at" => "2026-09-19" }].each do |value|
+        ["2026-99-99", "garbage", ["2026-09-19"], { "at" => "2026-09-19" },
+         1.day.from_now.iso8601(6)].each do |value|
           save(submission, known_file_at: value, remove: true)
 
           expect(response).to have_http_status(:conflict), value.inspect
