@@ -1141,6 +1141,27 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
+    # The file checks answer with sentences rather than error codes; they used
+    # to be handed to the form as a bare array, which the form could not read.
+    describe "a file the sheet does not take" do
+      it "is refused with the reason on the form" do
+        submission = hand_in
+        cached = SubmissionUploader.upload(File.open("spec/files/manuscript.pdf", "rb"),
+                                           :submission_cache,
+                                           metadata: { "filename" => "notes.zip" })
+
+        patch submission_path(submission), params: {
+          submission: { manuscript: cached.to_json, detach_user_manuscript: "false" }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("submission.wrong_file_type", file_type: ".zip",
+                                                              accepted_file_type: ".pdf").strip)
+        )
+      end
+    end
+
     # The gate is the ability, not the controller: `SubmissionAbility` allows
     # these actions only while `Submission#not_updatable?` is false, and once the
     # grace period is over that is what a closed sheet is.

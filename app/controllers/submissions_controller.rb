@@ -85,14 +85,10 @@ class SubmissionsController < ApplicationController
 
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
-      @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata,
-                                                  :manuscript)
-      return render_form(status: :unprocessable_content) if @errors.present?
+      return render_form(status: :unprocessable_content) unless file_properties_ok?
     end
     @submission.user_submission_joins.build(user: current_user)
     @submission.save
-    @errors = @submission.errors
     return render_form(status: :unprocessable_content) unless @submission.valid?
 
     send_invitation_emails
@@ -111,13 +107,9 @@ class SubmissionsController < ApplicationController
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
-      @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata,
-                                                  :manuscript)
-      return render_form(status: :unprocessable_content) if @errors.present?
+      return render_form(status: :unprocessable_content) unless file_properties_ok?
 
       @submission.save
-      @errors = @submission.errors
       return render_form(status: :unprocessable_content) unless @submission.valid?
     end
     if @submission.valid?
@@ -133,8 +125,7 @@ class SubmissionsController < ApplicationController
         sync_assessment_participations
       end
     end
-    @errors = @submission.errors
-    return render_form(status: :unprocessable_content) if @errors.any?
+    return render_form(status: :unprocessable_content) if @submission.errors.any?
 
     render_card_and_standing
   end
@@ -461,6 +452,16 @@ class SubmissionsController < ApplicationController
     # disallow modification of assignment
     def submission_manuscript_params
       params.expect(submission: [:manuscript])
+    end
+
+    # The checks hand back sentences by attribute, not error codes; on the
+    # model they reach the form like any other refusal.
+    def file_properties_ok?
+      @submission.check_file_properties(@submission.manuscript.metadata, :manuscript)
+                 .each do |attribute, messages|
+        messages.each { |message| @submission.errors.add(attribute, message.strip) }
+      end
+      @submission.errors.empty?
     end
 
     # `join` posts the sheet inside its own form object, the others carry it in
