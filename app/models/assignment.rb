@@ -4,7 +4,11 @@ class Assignment < ApplicationRecord
   # Prefix the enum methods to avoid colliding with Kernel#test.
   enum :kind, { homework: 0, test: 1 }, prefix: true
 
-  attr_writer :requires_submission
+  # The form posts "1"/"0"; a string would count as true either way, and a
+  # form drawn again after a refused save would show the box unticked.
+  def requires_submission=(value)
+    @requires_submission = ActiveModel::Type::Boolean.new.cast(value)
+  end
 
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true

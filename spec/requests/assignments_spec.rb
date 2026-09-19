@@ -208,6 +208,29 @@ RSpec.describe("Assignments", type: :request) do
           expect(response).to have_http_status(:unprocessable_content)
         end
 
+        # The form drawn again after a refused save keeps the box as it was
+        # posted - "1" and "0" are not both true.
+        it "keeps the digital-submission box as posted when the save is refused" do
+          { "1" => "checked", "0" => nil }.each do |posted, expected|
+            post assignments_path,
+                 params: { assignment: valid_attributes.merge(deadline: 1.day.ago.iso8601,
+                                                              requires_submission: posted) },
+                 as: :turbo_stream
+
+            box = Nokogiri::HTML(response.body)
+                          .at_css("input[type=checkbox][name='assignment[requires_submission]']")
+            expect(box["checked"]).to eq(expected)
+          end
+        end
+
+        it "creates no hand-in when the box was unticked" do
+          post assignments_path,
+               params: { assignment: valid_attributes.merge(requires_submission: "0") },
+               as: :turbo_stream
+
+          expect(Assignment.last.assessment.requires_submission).to be(false)
+        end
+
         it "renders the form with errors" do
           post assignments_path,
                params: { assignment: invalid_attributes },
