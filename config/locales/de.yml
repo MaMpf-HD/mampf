@@ -456,8 +456,8 @@ de:
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
       tutors_overview:
-        hint_html: "TutorInnen werden im Reiter %{link} an ihren Tutorien eingetragen; hier steht, wer welches Tutorium betreut."
-        none_yet: "Noch keine TutorInnen."
+        hint_html: "Wer TutorIn werden soll, löst zuerst einen Gutschein für TutorInnen ein (siehe unten); im Reiter %{link} wird die Person dann ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
+        none_yet: "Noch keine TutorInnen. Erstelle unten einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
         no_tutorial_yet: "Gutschein eingelöst, noch keinem Tutorium zugeordnet"
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
