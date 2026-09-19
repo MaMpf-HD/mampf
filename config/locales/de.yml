@@ -4504,7 +4504,6 @@ de:
           team_size: >
             Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
             hätte als erlaubt.
-                vignettes/question:
         vignettes/question:
           format: '%{message}'
           attributes:
