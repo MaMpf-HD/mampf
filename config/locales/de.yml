@@ -4440,6 +4440,15 @@ de:
               invalid: >
                 Es gibt schon eine Abgabe von Dir oder die Teamgröße ist
                 überschritten.
+            base:
+              changed_meanwhile: >
+                Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
+                um %{time} die Datei %{filename} hochgeladen. Prüfe sie, und
+                speichere Deine Datei noch einmal, wenn sie die richtige ist.
+              removed_meanwhile: >
+                Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
+                die Datei entfernt. Speichere noch einmal, wenn Deine Datei
+                abgegeben werden soll.
         tag:
           attributes:
             notions:

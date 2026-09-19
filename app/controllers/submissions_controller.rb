@@ -103,6 +103,8 @@ class SubmissionsController < ApplicationController
   # Nothing about the group: the work stays with the tutor it was handed in to,
   # whatever became of the reader's seat since. Only the file moves here.
   def update
+    return render_stale_form if file_changed_since_form?
+
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
@@ -452,6 +454,33 @@ class SubmissionsController < ApplicationController
     # disallow modification of assignment
     def submission_manuscript_params
       params.expect(submission: [:manuscript])
+    end
+
+    # The form says which file it was drawn for; a team member may have
+    # replaced or removed it since. A form from before there was a file knows
+    # no time at all.
+    def file_changed_since_form?
+      current = @submission.last_modification_by_users_at
+      return false if current.blank?
+
+      known = Time.zone.parse(params.dig(:submission, :known_file_at).to_s)
+      known.nil? || known < current
+    end
+
+    # The refused upload stays in the form, so once the reader has seen what
+    # the team did, saving again is all it takes.
+    def render_stale_form
+      if @submission.manuscript_data.present?
+        @submission.errors.add(:base, :changed_meanwhile,
+                               time: l(@submission.last_modification_by_users_at,
+                                       format: :short),
+                               filename: @submission.manuscript_filename)
+      else
+        @submission.errors.add(:base, :removed_meanwhile)
+      end
+      @submission.manuscript = submission_manuscript_params[:manuscript] if
+        submission_manuscript_params[:manuscript].present?
+      render_form(status: :conflict)
     end
 
     # The checks hand back sentences by attribute, not error codes; on the

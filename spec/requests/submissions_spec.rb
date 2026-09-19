@@ -1151,7 +1151,8 @@ RSpec.describe("Submissions", type: :request) do
                                            metadata: { "filename" => "notes.zip" })
 
         patch submission_path(submission), params: {
-          submission: { manuscript: cached.to_json, detach_user_manuscript: "false" }
+          submission: { manuscript: cached.to_json, detach_user_manuscript: "false",
+                        known_file_at: submission.last_modification_by_users_at&.iso8601(6) }
         }
 
         expect(response).to have_http_status(:unprocessable_content)
@@ -1159,6 +1160,72 @@ RSpec.describe("Submissions", type: :request) do
           CGI.escapeHTML(I18n.t("submission.wrong_file_type", file_type: ".zip",
                                                               accepted_file_type: ".pdf").strip)
         )
+      end
+    end
+
+    # Two team members with the form open: the second save must not overwrite
+    # what the first did unseen. The form carries the time of the file it was
+    # drawn for, and a save from an older form is refused once, with the news.
+    describe "saving from a form older than the team's last change" do
+      def stale_save(submission, known_file_at:)
+        patch(submission_path(submission), params: {
+                submission: { detach_user_manuscript: "true", manuscript: "",
+                              known_file_at: known_file_at }
+              })
+      end
+
+      def news(key, **args)
+        CGI.escapeHTML(
+          I18n.t("activerecord.errors.models.submission.attributes.base.#{key}", **args).strip
+        )
+      end
+
+      it "refuses, names the newer file, and leaves it in place" do
+        submission = hand_in
+        submission.update!(last_modification_by_users_at: 5.minutes.ago)
+
+        stale_save(submission, known_file_at: 10.minutes.ago.iso8601(6))
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(frame_id)
+        expect(response.body).to include(submission.manuscript_filename)
+        expect(response.body).to include(
+          news(:changed_meanwhile,
+               time: I18n.l(submission.last_modification_by_users_at, format: :short),
+               filename: submission.manuscript_filename)
+        )
+        expect(submission.reload.manuscript).to be_present
+      end
+
+      it "says so when the file was taken away meanwhile" do
+        submission = hand_in
+        submission.update!(manuscript: nil, last_modification_by_users_at: 5.minutes.ago)
+
+        stale_save(submission, known_file_at: 10.minutes.ago.iso8601(6))
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(news(:removed_meanwhile))
+      end
+
+      it "treats a form from before there was a file as older" do
+        submission = hand_in
+        submission.update!(last_modification_by_users_at: 5.minutes.ago)
+
+        stale_save(submission, known_file_at: "")
+
+        expect(response).to have_http_status(:conflict)
+        expect(submission.reload.manuscript).to be_present
+      end
+
+      it "goes through from a form that knows the current file" do
+        submission = hand_in
+        submission.update!(last_modification_by_users_at: 5.minutes.ago)
+
+        stale_save(submission,
+                   known_file_at: submission.last_modification_by_users_at.iso8601(6))
+
+        expect(response).to have_http_status(:success)
+        expect(submission.reload.manuscript).to be_nil
       end
     end
 

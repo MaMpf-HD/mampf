@@ -4187,6 +4187,14 @@ en:
               invalid: >
                 There is already a submission from you or the team has already
                 reached its maximal size.
+            base:
+              changed_meanwhile: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. Check that file, and save yours again
+                if it is the right one.
+              removed_meanwhile: >
+                Since you opened this page, somebody on your team removed the
+                file. Save again if your file is the one to hand in.
         tag:
           attributes:
             notions:

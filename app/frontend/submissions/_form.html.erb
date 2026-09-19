@@ -66,6 +66,14 @@
       <%= f.hidden_field :detach_user_manuscript, value: false,
                          data: { submission_upload_target: 'detachInput' } %>
 
+      <%#
+        The file this form was drawn for. A team member who has meanwhile
+        replaced it must not be overwritten unseen, so the save compares.
+      %>
+
+      <%= f.hidden_field :known_file_at,
+                         value: submission.last_modification_by_users_at&.iso8601(6) %>
+
       <div data-submission-upload-target="dashboard"></div>
     </div>
 
