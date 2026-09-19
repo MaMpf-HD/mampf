@@ -4196,6 +4196,10 @@ en:
               removed_meanwhile: >
                 Since you opened this page, somebody on your team removed the
                 file. Save again if your file is the one to hand in.
+              changed_before_removal: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. If that one is to go as well, remove
+                it here and save again.
         tag:
           attributes:
             notions:

@@ -103,7 +103,12 @@ class SubmissionsController < ApplicationController
   # Nothing about the group: the work stays with the tutor it was handed in to,
   # whatever became of the reader's seat since. Only the file moves here.
   def update
-    return render_stale_form if file_changed_since_form?
+    if file_changed_since_form?
+      # Removing a file the team has removed already asks for nothing.
+      return render_card_and_standing if removing? && @submission.manuscript_data.blank?
+
+      return render_stale_form
+    end
 
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
@@ -473,16 +478,22 @@ class SubmissionsController < ApplicationController
       nil
     end
 
+    def removing?
+      params.dig(:submission, :detach_user_manuscript) == "true"
+    end
+
     # The refused upload stays in the form, so once the reader has seen what
-    # the team did, saving again is all it takes.
+    # the team did, saving again is all it takes. A refused removal comes back
+    # with the team's new file on the form, and the message says that the
+    # removal has to be asked for again.
     def render_stale_form
-      if @submission.manuscript_data.present?
-        @submission.errors.add(:base, :changed_meanwhile,
+      if @submission.manuscript_data.blank?
+        @submission.errors.add(:base, :removed_meanwhile)
+      else
+        @submission.errors.add(:base, removing? ? :changed_before_removal : :changed_meanwhile,
                                time: l(@submission.last_modification_by_users_at,
                                        format: :short),
                                filename: @submission.manuscript_filename)
-      else
-        @submission.errors.add(:base, :removed_meanwhile)
       end
       @submission.manuscript = submission_manuscript_params[:manuscript] if
         submission_manuscript_params[:manuscript].present?

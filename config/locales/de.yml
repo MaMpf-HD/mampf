@@ -4451,6 +4451,10 @@ de:
                 Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
                 die Datei entfernt. Speichere noch einmal, wenn Deine Datei
                 abgegeben werden soll.
+              changed_before_removal: >
+                Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
+                um %{time} die Datei %{filename} hochgeladen. Wenn auch sie weg
+                soll, entferne sie hier und speichere noch einmal.
         tag:
           attributes:
             notions:
