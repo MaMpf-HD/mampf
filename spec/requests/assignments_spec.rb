@@ -25,6 +25,14 @@ RSpec.describe("Assignments", type: :request) do
         expect(response.body).to include("assessments_container")
         expect(response.body).to include("Add assignment")
       end
+
+      it "shows what a title looks like, for a sheet and for a test" do
+        get new_assignment_path(lecture_id: lecture.id), as: :turbo_stream
+        expect(response.body).to include(I18n.t("admin.assignment.title_placeholder"))
+
+        get new_assignment_path(lecture_id: lecture.id, kind: "test"), as: :turbo_stream
+        expect(response.body).to include(I18n.t("assessment.test.title_placeholder"))
+      end
     end
 
     context "as an editor" do

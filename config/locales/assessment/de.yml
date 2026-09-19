@@ -14,6 +14,7 @@ de:
       homework_heading: 'Hausaufgaben'
       week: 'Testwoche'
       sheet_or_test: 'Blatt oder Test'
+      title_placeholder: 'z. B. Test 1'
       week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen; Punkte lassen sich ab Montag eintragen.'
       week_label: '%{from}–%{to}'
       badge: 'Test'

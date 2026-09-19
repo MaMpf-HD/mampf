@@ -2077,7 +2077,7 @@ de:
     assignment:
       new: 'Neue Hausaufgabe anlegen'
       title: 'Titel'
-      title_placeholder: 'z.B. Übungsblatt 1'
+      title_placeholder: 'z. B. Übungsblatt 1'
       filetype: 'Dateityp'
       deletion: 'Löschdatum'
     voucher:
