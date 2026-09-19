@@ -251,23 +251,17 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
   end
 
   describe "#student_display_name" do
-    it "prefers name" do
-      student = double(name: "Alice", email: "a@b.com")
-      expect(component.student_display_name(student)).to eq("Alice")
+    it "uses the name a student goes by in groups" do
+      student = build(:confirmed_user, name: "Alice Liddell", name_in_tutorials: "Alice L.")
+      expect(component.student_display_name(student)).to eq("Alice L.")
     end
 
-    it "falls back to tutorial_name" do
-      student = double(name: nil, email: "a@b.com")
-      allow(student).to receive(:try).with(:tutorial_name)
-                                     .and_return("Group A")
-      expect(component.student_display_name(student)).to eq("Group A")
-    end
+    it "falls back to the display name, then the email" do
+      named = build(:confirmed_user, name: "Alice", name_in_tutorials: nil)
+      expect(component.student_display_name(named)).to eq("Alice")
 
-    it "falls back to email" do
-      student = double(name: nil, email: "a@b.com")
-      allow(student).to receive(:try).with(:tutorial_name)
-                                     .and_return(nil)
-      expect(component.student_display_name(student)).to eq("a@b.com")
+      bare = build(:confirmed_user, name: nil, name_in_tutorials: nil, email: "a@b.com")
+      expect(component.student_display_name(bare)).to eq("a@b.com")
     end
   end
 
@@ -546,8 +540,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
 
     it "student_display_name handles empty string fallbacks" do
-      student = double(name: "", email: "a@b.com")
-      allow(student).to receive(:try).with(:tutorial_name).and_return("")
+      student = build(:confirmed_user, name: "", name_in_tutorials: "", email: "a@b.com")
       c = described_class.new
       expect(c.student_display_name(student)).to eq("a@b.com")
     end
