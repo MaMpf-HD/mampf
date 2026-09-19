@@ -1156,10 +1156,14 @@ RSpec.describe("Submissions", type: :request) do
         }
 
         expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body).to include(
-          CGI.escapeHTML(I18n.t("submission.wrong_file_type", file_type: ".zip",
-                                                              accepted_file_type: ".pdf").strip)
+        reason = CGI.escapeHTML(
+          I18n.t("submission.wrong_file_type", file_type: ".zip", accepted_file_type: ".pdf").strip
         )
+        # once, next to the Save button, where every form puts what no field can show
+        expect(response.body.scan(reason).size).to eq(1)
+        expect(Nokogiri::HTML(response.body).at_css("input[type=submit] + .invalid-feedback").text)
+          .to include(CGI.unescapeHTML(reason))
+        expect(submission.reload.manuscript_filename).to eq("manuscript.pdf")
       end
     end
 
