@@ -73,7 +73,10 @@
 
     <div class="px-3 py-2">
       <span class="fw-bold me-3">
-        <%= number_with_precision(assessment.effective_total_points, strip_insignificant_zeros: true) %> <%= t('assessment.task.points_abbrev') %>
+        <%= number_with_precision(assessment.effective_total_points,
+                                  strip_insignificant_zeros: true) %>
+
+        <%= t('assessment.task.points_abbrev') %>
       </span>
 
       <span class="text-muted small">

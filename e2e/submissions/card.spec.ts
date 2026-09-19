@@ -291,8 +291,9 @@ test.describe("the card for a sheet that is due", () => {
     });
     await student.page.getByRole("button", { name: "Save" }).click();
 
-    await expect(student.page.getByText("somebody on your team uploaded manuscript-mampfsty.pdf"))
-      .toBeVisible();
+    await expect(
+      student.page.getByText("somebody on your team uploaded manuscript-mampfsty.pdf"),
+    ).toBeVisible();
 
     await student.page.getByRole("button", { name: "Save" }).click();
     await expect(student.page.getByRole("link", { name: "final.pdf" })).toBeVisible();
