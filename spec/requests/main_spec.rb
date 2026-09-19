@@ -115,10 +115,12 @@ RSpec.describe("Main", type: :request) do
         it "lists a lecture the user edits, once, whether subscribed or not" do
           lecture = create(:lecture, :released_for_all, term: next_term)
           lecture.editors << user
-          user.subscribe_lecture!(lecture)
 
           get root_path
+          expect(cards_in("next-term-subscribed")).to eq([lecture.id.to_s])
 
+          user.subscribe_lecture!(lecture)
+          get root_path
           expect(cards_in("next-term-subscribed")).to eq([lecture.id.to_s])
         end
 
