@@ -4443,8 +4443,10 @@ de:
             base:
               changed_meanwhile: >
                 Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
-                um %{time} die Datei %{filename} hochgeladen. Prüfe sie, und
-                speichere Deine Datei noch einmal, wenn sie die richtige ist.
+                um %{time} die Datei %{filename} hochgeladen. Um sie anzusehen,
+                brich hier ab; Deine Datei musst Du dann noch einmal hochladen.
+                Oder speichere gleich noch einmal, wenn Deine Datei die richtige
+                ist.
               removed_meanwhile: >
                 Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
                 die Datei entfernt. Speichere noch einmal, wenn Deine Datei
