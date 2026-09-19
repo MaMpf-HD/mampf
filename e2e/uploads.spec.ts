@@ -160,6 +160,35 @@ test.describe("uploading through Uppy", () => {
       )).toBeHidden();
     });
 
+  test("a submission, with the box ticked before the file is chosen",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      await factory.create("assignment", [], { lecture_id: lecture.id });
+      const tutorial = await factory.create("tutorial", [],
+        { lecture_id: lecture.id, title: "Mo 10" });
+      await factory.create("lecture_user_join", [], {
+        lecture_id: lecture.id, user_id: user.id,
+      });
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
+
+      await page.goto(`/lectures/${lecture.id}/submissions`);
+      await page.getByRole("link", { name: "Hand in" }).click();
+      const assurance = page.getByRole("checkbox", { name: "I assure that" });
+      await assurance.check();
+      await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
+
+      // Choosing the file is not a reason to ask again.
+      await expect(assurance).toBeChecked();
+      await expect(page.getByText('Please press "Upload" and then "Save"')).toBeVisible();
+
+      await page.getByRole("button", { name: "Upload file" }).click();
+
+      await expect(page.getByText('Please press "Save"')).toBeVisible();
+      await expect(page.getByText('Please press "Upload" and then "Save"')).toBeHidden();
+    });
+
   test("a correction, once the deadline has passed",
     async ({ factory, student, tutor: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
