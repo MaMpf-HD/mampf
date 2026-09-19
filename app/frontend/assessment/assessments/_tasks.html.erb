@@ -10,7 +10,7 @@
       <%= f.label :max_points, t('assessment.task.max_points'), class: "form-label" %>
 
       <div class="row g-2 align-items-start">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <%= f.number_field :max_points,
                              class: 'form-control',
                              placeholder: t('assessment.task.max_points_placeholder'),
@@ -22,13 +22,14 @@
                              } %>
         </div>
 
-        <div class="col-md-6">
-          <%= f.submit t('assessment.task.add'), class: "btn btn-primary w-100" %>
+        <div class="col-auto">
+          <%= f.submit t('assessment.task.add'), class: "btn btn-primary" %>
         </div>
       </div>
 
       <div class="form-text">
         <%= t("assessment.task.max_points_precision_hint") %>
+
         <span class="ms-1"><%= t("assessment.task.description_hint") %></span>
       </div>
 
@@ -57,6 +58,28 @@
                  assessment: assessment,
                  index: index + 1 %>
     <% end %>
+  </div>
+  <div
+    class="d-flex gap-2 align-items-center border-top mt-3 pt-2"
+    id="tasks-total"
+  >
+    <div class="px-3 py-2 text-center" style="min-width: 50px;">
+      <span class="fw-bold fs-5 text-muted" aria-hidden="true">&Sigma;</span>
+
+      <span class="visually-hidden">
+        <%= t('assessment.task.total_points') %>
+      </span>
+    </div>
+
+    <div class="px-3 py-2">
+      <span class="fw-bold me-3">
+        <%= number_with_precision(assessment.effective_total_points, strip_insignificant_zeros: true) %> <%= t('assessment.task.points_abbrev') %>
+      </span>
+
+      <span class="text-muted small">
+        <%= t('assessment.task.count', count: tasks.size) %>
+      </span>
+    </div>
   </div>
 <% else %>
   <div class="alert alert-info">

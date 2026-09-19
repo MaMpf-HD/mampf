@@ -109,6 +109,10 @@ de:
       description_placeholder: 'z.B. Aufgabe 1'
       default_name: 'A%{number}'
       description_hint: 'In der Punktetabelle heißen die Spalten A1, A2, ... – änderbar über den Aufgabennamen beim Bearbeiten.'
+      total_points: 'Gesamtpunkte'
+      count:
+        one: '1 Aufgabe'
+        other: '%{count} Aufgaben'
       max_points_precision_hint: 'Es werden 2 Nachkommastellen gespeichert.'
       max_points_precision_warning: 'Es werden nur 2 Nachkommastellen gespeichert.'
       missing_warning: 'Noch keine Aufgaben. Punkteingabe durch Tutor:innen nicht möglich.'

@@ -109,6 +109,10 @@ en:
       description_placeholder: 'e.g., Problem 1'
       default_name: 'T%{number}'
       description_hint: 'Columns in the points table default to T1, T2, ... – changeable via the task name when editing.'
+      total_points: 'Total points'
+      count:
+        one: '1 task'
+        other: '%{count} tasks'
       max_points_precision_hint: 'Stored with 2 decimal places.'
       max_points_precision_warning: 'Only 2 decimal places are stored.'
       missing_warning: 'No tasks yet. Points cannot be entered by tutors.'
