@@ -1,9 +1,15 @@
 import { readFileSync } from "node:fs";
 
-import { expect, test } from "./_support/fixtures";
+import { expect, Page, test } from "./_support/fixtures";
 import { attachToUploadArea } from "./_support/uploads";
 
 const SUBMISSION_FORM = "form[data-controller~='submission-upload']";
+
+// The bulk upload sits in the marking toolbar's "More actions" menu.
+async function openBulkUpload(page: Page) {
+  await page.getByRole("button", { name: "More actions" }).click();
+  await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+}
 
 // One test per place that uploads through Uppy. They all follow the same
 // shape: hand over a file, see it named on the page, save, see it survive.
@@ -217,7 +223,7 @@ test.describe("uploading through Uppy", () => {
         .toContainText("manuscript.pdf");
 
       const stored = page.waitForResponse(response => response.url().includes("add_correction"));
-      await page.getByRole("button", { name: "Save" }).click();
+      await page.getByRole("button", { name: "Save", exact: true }).click();
       await stored;
       await page.goto(`/lectures/${lecture.id}/tutorials`);
       await page.getByRole("link", { name: "Upload" }).first().click();
@@ -245,7 +251,7 @@ test.describe("uploading through Uppy", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/tutorials`);
-      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await openBulkUpload(page);
       // Bulk upload assigns by filename: everything behind -ID- is the submission.
       await attachToUploadArea(page, "#bulk-upload-form", {
         name: `correction-ID-${submission.id}.pdf`,
@@ -285,7 +291,7 @@ test.describe("uploading through Uppy", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/tutorials`);
-      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await openBulkUpload(page);
       await attachToUploadArea(page, "#bulk-upload-form", "e2e/files/manuscript.pdf");
 
       const save = page.locator("#upload-bulk-correction-save");
@@ -293,7 +299,7 @@ test.describe("uploading through Uppy", () => {
 
       // Reopening the area must not offer to save what the tutor discarded.
       await page.getByRole("button", { name: "Cancel" }).click();
-      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await openBulkUpload(page);
 
       await expect(page.locator("#upload-bulk-correction-metadata")).toBeEmpty();
       await expect(page.locator("#upload-bulk-correction-hidden")).toHaveValue("");
