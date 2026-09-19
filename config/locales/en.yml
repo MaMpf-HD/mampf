@@ -2059,9 +2059,6 @@ en:
       After having redeemed the voucher, the teacher can assign you
       to the tutorials.
     select_tutorials: Select Tutorials
-    all_tutorials_taken: >
-      There are no more tutorials available for this lecture that you can take
-      over.
     own_tutorial_not_offered: >
       The tutorial you are enrolled in is not on offer: nobody tutors their own
       group.

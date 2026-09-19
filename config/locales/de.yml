@@ -2249,8 +2249,6 @@ de:
       Nachdem Du den Gutschein eingelöst hast, kann Dich die DozentIn den
       Tutorien zuweisen.
     select_tutorials: Tutorien auswählen
-    all_tutorials_taken: >
-      Es sind keine weiteren Tutorien verfügbar, die Du noch übernehmen kannst.
     own_tutorial_not_offered: >
       Das Tutorium, in dem Du selbst eingetragen bist, wird nicht angeboten:
       niemand tutoriert die eigene Gruppe.
