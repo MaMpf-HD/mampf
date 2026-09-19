@@ -308,6 +308,9 @@ de:
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'
+      enrolled_tutor:
+        one: '%{names} ist in diesem Tutorium eingetragen und würde die eigenen Blätter bewerten. Trotzdem als TutorIn eintragen?'
+        other: '%{names} sind in diesem Tutorium eingetragen und würden die eigenen Blätter bewerten. Trotzdem als TutorInnen eintragen?'
       propagate_readonly_after_creation: 'Diese Einstellung kann nach dem Erstellen nicht mehr geändert werden.'
       setting_cannot_be_changed: 'Diese Einstellung kann nachträglich nicht mehr geändert werden.'
     messages:

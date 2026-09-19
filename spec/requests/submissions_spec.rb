@@ -1141,6 +1141,170 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
+    # The file checks answer with sentences by attribute, not error codes; the
+    # form shows them like any other refusal.
+    describe "a file the sheet does not take" do
+      it "is refused with the reason on the form" do
+        submission = hand_in
+        cached = SubmissionUploader.upload(File.open("spec/files/manuscript.pdf", "rb"),
+                                           :submission_cache,
+                                           metadata: { "filename" => "notes.zip" })
+
+        patch submission_path(submission), params: {
+          submission: { manuscript: cached.to_json, detach_user_manuscript: "false",
+                        known_file_at: submission.last_modification_by_users_at&.iso8601(6) }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        reason = CGI.escapeHTML(
+          I18n.t("submission.wrong_file_type", file_type: ".zip", accepted_file_type: ".pdf").strip
+        )
+        # once, next to the Save button, where every form puts what no field can show
+        expect(response.body.scan(reason).size).to eq(1)
+        expect(Nokogiri::HTML(response.body).at_css("input[type=submit] + .invalid-feedback").text)
+          .to include(CGI.unescapeHTML(reason))
+        expect(submission.reload.manuscript_filename).to eq("manuscript.pdf")
+      end
+    end
+
+    # Two team members with the form open: the second save must not overwrite
+    # what the first did unseen. The form carries the time of the file it
+    # shows, and a save from an older form is refused once.
+    describe "saving from a form older than the team's last change" do
+      def save(submission, known_file_at:, manuscript: "", remove: false)
+        patch(submission_path(submission), params: {
+                submission: { manuscript: manuscript,
+                              detach_user_manuscript: remove.to_s,
+                              known_file_at: known_file_at }
+              })
+      end
+
+      # Through the endpoint, so the file carries the scan and the intent the
+      # save checks; the answer is the cached data the form would post.
+      def cached_upload(submission, name)
+        file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
+                                            "application/pdf", original_filename: name)
+        post("/submissions/upload", params: { file: file },
+                                    headers: upload_intent_headers(SubmissionUploader,
+                                                                   user: user,
+                                                                   target: submission))
+        response.body
+      end
+
+      def news(key, **args)
+        CGI.escapeHTML(
+          I18n.t("activerecord.errors.models.submission.attributes.base.#{key}", **args).strip
+        )
+      end
+
+      def stale_hand_in
+        hand_in.tap do |submission|
+          submission.update!(last_modification_by_users_at: 5.minutes.ago)
+        end
+      end
+
+      let(:old_form) { 10.minutes.ago.iso8601(6) }
+
+      it "refuses a replacement, names the newer file, and keeps the reader's upload" do
+        submission = stale_hand_in
+        stored = submission.manuscript.id
+        cached = cached_upload(submission, "mine.pdf")
+
+        save(submission, known_file_at: old_form, manuscript: cached)
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(frame_id)
+        expect(response.body).to include(
+          news(:changed_meanwhile,
+               time: I18n.l(submission.last_modification_by_users_at, format: :short),
+               filename: submission.manuscript_filename)
+        )
+        expect(Nokogiri::HTML(response.body).at_css("input[name='submission[manuscript]']")["value"])
+          .to eq(cached)
+        expect(submission.reload.manuscript.id).to eq(stored)
+      end
+
+      it "takes the replacement from a form that knows the newer file" do
+        submission = stale_hand_in
+        stored = submission.manuscript.id
+
+        save(submission, known_file_at: submission.last_modification_by_users_at.iso8601(6),
+                         manuscript: cached_upload(submission, "mine.pdf"))
+
+        expect(response).to have_http_status(:success)
+        expect(submission.reload.manuscript.id).not_to eq(stored)
+        expect(submission.manuscript_filename).to eq("mine.pdf")
+      end
+
+      it "says so when the file was taken away meanwhile" do
+        submission = hand_in
+        submission.update!(manuscript: nil, last_modification_by_users_at: 5.minutes.ago)
+
+        save(submission, known_file_at: old_form,
+                         manuscript: cached_upload(submission, "mine.pdf"))
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(news(:removed_meanwhile))
+      end
+
+      # The form comes back showing the team's file, so the removal has to be
+      # asked for again - a save that just repeats the form must not delete.
+      it "refuses a removal, says the file has to be removed anew, and keeps it" do
+        submission = stale_hand_in
+
+        save(submission, known_file_at: old_form, remove: true)
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(
+          news(:changed_before_removal,
+               time: I18n.l(submission.last_modification_by_users_at, format: :short),
+               filename: submission.manuscript_filename)
+        )
+        expect(Nokogiri::HTML(response.body)
+                 .at_css("input[name='submission[detach_user_manuscript]']")["value"])
+          .to eq("false")
+        expect(submission.reload.manuscript).to be_present
+
+        save(submission, known_file_at: submission.last_modification_by_users_at.iso8601(6),
+                         remove: true)
+
+        expect(response).to have_http_status(:success)
+        expect(submission.reload.manuscript).to be_nil
+      end
+
+      it "lets a removal of a file the team removed already pass as done" do
+        submission = hand_in
+        submission.update!(manuscript: nil, last_modification_by_users_at: 5.minutes.ago)
+
+        expect do
+          save(submission, known_file_at: old_form, remove: true)
+        end.not_to have_enqueued_mail
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(I18n.t("submission.hub.chips.nothing_handed_in"))
+      end
+
+      it "refuses whatever is not the time of the file, whatever shape it has" do
+        submission = stale_hand_in
+
+        ["2026-99-99", "garbage", ["2026-09-19"], { "at" => "2026-09-19" },
+         1.day.from_now.iso8601(6)].each do |value|
+          save(submission, known_file_at: value, remove: true)
+
+          expect(response).to have_http_status(:conflict), value.inspect
+        end
+        expect(submission.reload.manuscript).to be_present
+      end
+
+      it "treats a form from before there was a file as older" do
+        submission = stale_hand_in
+
+        save(submission, known_file_at: "", remove: true)
+
+        expect(response).to have_http_status(:conflict)
+        expect(submission.reload.manuscript).to be_present
+      end
+    end
+
     # The gate is the ability, not the controller: `SubmissionAbility` allows
     # these actions only while `Submission#not_updatable?` is false, and once the
     # grace period is over that is what a closed sheet is.

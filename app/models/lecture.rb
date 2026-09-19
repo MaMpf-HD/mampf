@@ -988,6 +988,13 @@ class Lecture < ApplicationRecord
     tutorials.where.not(id: tutorial_ids_for_tutor(tutor))
   end
 
+  # What a tutor voucher may hand over: not a tutorial the person tutors
+  # already, and not the one they are in as a student, or they would be
+  # marking their own sheets.
+  def tutorials_open_to(user)
+    tutorials_without_tutor(user).where.not(id: user.enrolled_tutorials.select(:id))
+  end
+
   def talks_with_speaker(speaker)
     talks.where(id: talk_ids_for_speaker(speaker))
   end

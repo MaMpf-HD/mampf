@@ -18,6 +18,23 @@ RSpec.describe(TasksTabComponent, type: :component) do
       render_inline(component)
       expect(rendered_content).not_to include("alert-warning")
     end
+
+    it "adds the tasks up under the list" do
+      create(:assessment_task, assessment: assessment, max_points: 4)
+      create(:assessment_task, assessment: assessment, max_points: 3.5)
+
+      total = I18n.with_locale(:en) { render_inline(component) }
+                  .css("#tasks-total").text.squish
+
+      expect(total).to include("7.5 pts")
+      expect(total).to include("2 tasks")
+    end
+
+    it "has no sum to show without tasks" do
+      fragment = render_inline(component)
+
+      expect(fragment.css("#tasks-total")).to be_empty
+    end
   end
 
   context "when assessment is nil" do

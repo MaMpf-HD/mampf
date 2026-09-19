@@ -25,6 +25,14 @@ RSpec.describe("Assignments", type: :request) do
         expect(response.body).to include("assessments_container")
         expect(response.body).to include("Add assignment")
       end
+
+      it "shows what a title looks like, for a sheet and for a test" do
+        get new_assignment_path(lecture_id: lecture.id), as: :turbo_stream
+        expect(response.body).to include(I18n.t("admin.assignment.title_placeholder"))
+
+        get new_assignment_path(lecture_id: lecture.id, kind: "test"), as: :turbo_stream
+        expect(response.body).to include(I18n.t("assessment.test.title_placeholder"))
+      end
     end
 
     context "as an editor" do
@@ -198,6 +206,27 @@ RSpec.describe("Assignments", type: :request) do
                params: { assignment: invalid_attributes },
                as: :turbo_stream
           expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it "keeps the digital-submission box as posted when the save is refused" do
+          { "1" => "checked", "0" => nil }.each do |posted, expected|
+            post assignments_path,
+                 params: { assignment: valid_attributes.merge(deadline: 1.day.ago.iso8601,
+                                                              requires_submission: posted) },
+                 as: :turbo_stream
+
+            box = Nokogiri::HTML(response.body)
+                          .at_css("input[type=checkbox][name='assignment[requires_submission]']")
+            expect(box["checked"]).to eq(expected)
+          end
+        end
+
+        it "creates no hand-in when the box was unticked" do
+          post assignments_path,
+               params: { assignment: valid_attributes.merge(requires_submission: "0") },
+               as: :turbo_stream
+
+          expect(Assignment.last.assessment.requires_submission).to be(false)
         end
 
         it "renders the form with errors" do

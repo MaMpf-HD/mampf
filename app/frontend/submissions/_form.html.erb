@@ -3,8 +3,6 @@
   into a data-remote form (config/application.rb), and this one is answered by
   Turbo into the card's frame.
 %>
-<% messages = errors ? errors.to_hash : {} %>
-
 <%#
   The group is named, not chosen: a new hand-in goes to the one the reader
   sits in, an existing one stays where it was filed - which is not the same
@@ -25,12 +23,6 @@
                               submission_upload_missing_consent_message_value: t('submission.missing_consent'),
                               submission_upload_upload_button_label_value: t('submission.upload_file') } } do |f| %>
   <h2 class="h4 mb-3"><%= assignment.title %></h2>
-
-  <% [:manuscript, :user_submission_joins, :base].each do |key| %>
-    <% next if messages[key].blank? %>
-
-    <div class="alert alert-warning py-2"><%= messages[key].to_sentence %></div>
-  <% end %>
 
   <div class="row mb-3">
     <div class="col-12">
@@ -73,6 +65,14 @@
 
       <%= f.hidden_field :detach_user_manuscript, value: false,
                          data: { submission_upload_target: 'detachInput' } %>
+
+      <%#
+        The time of the file this form shows: the save compares it, so a file
+        a team member has replaced meanwhile is not overwritten unseen.
+      %>
+
+      <%= f.hidden_field :known_file_at,
+                         value: submission.last_modification_by_users_at&.iso8601(6) %>
 
       <div data-submission-upload-target="dashboard"></div>
     </div>
@@ -132,8 +132,9 @@
 
       <div class="col-12">
         <small
-          class="text-danger submission-initially-hidden"
+          class="text-danger"
           data-submission-upload-target="pendingNotice"
+          style="display: none"
         >
           <%= t('submission.submission_not_upload_notice_html') %>
         </small>
@@ -141,8 +142,9 @@
 
       <div class="col-12">
         <small
-          class="text-danger submission-initially-hidden"
+          class="text-danger"
           data-submission-upload-target="uploadedNotice"
+          style="display: none"
         >
           <%= t('submission.submission_upload_notice_html') %>
         </small>

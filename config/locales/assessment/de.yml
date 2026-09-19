@@ -14,6 +14,7 @@ de:
       homework_heading: 'Hausaufgaben'
       week: 'Testwoche'
       sheet_or_test: 'Blatt oder Test'
+      title_placeholder: 'z. B. Test 1'
       week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen; Punkte lassen sich ab Montag eintragen.'
       week_label: '%{from}–%{to}'
       badge: 'Test'
@@ -108,6 +109,10 @@ de:
       description_placeholder: 'z.B. Aufgabe 1'
       default_name: 'A%{number}'
       description_hint: 'In der Punktetabelle heißen die Spalten A1, A2, ... – änderbar über den Aufgabennamen beim Bearbeiten.'
+      total_points: 'Gesamtpunkte'
+      count:
+        one: '1 Aufgabe'
+        other: '%{count} Aufgaben'
       max_points_precision_hint: 'Es werden 2 Nachkommastellen gespeichert.'
       max_points_precision_warning: 'Es werden nur 2 Nachkommastellen gespeichert.'
       missing_warning: 'Noch keine Aufgaben. Punkteingabe durch Tutor:innen nicht möglich.'
@@ -326,6 +331,7 @@ de:
       reload_row: 'Gespeicherte Punkte neu laden; ungespeicherte Änderungen gehen verloren'
       points_input_label: '%{task} für %{name}'
       point_below_minimum: "Muss höher als %{min} sein"
+      point_over_maximum: "Mehr als die %{max} Punkte der Aufgabe"
       filter_name: 'Name'
       filter_all: 'Alle'
       filter_reset: 'Filter zurücksetzen'
@@ -559,6 +565,9 @@ de:
               fixed_by_values: "kann nicht mehr geändert werden, sobald Werte eingetragen sind"
         assessment/task:
           attributes:
+            max_points:
+              blank: "Es müssen Maximalpunkte angegeben werden."
+              greater_than_or_equal_to: "Maximalpunkte dürfen nicht negativ sein."
             base:
               requires_points_true: "Tasks können nur für Assessments mit requires_points: true erstellt werden"
         assessment/participation:

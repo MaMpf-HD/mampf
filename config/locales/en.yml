@@ -392,6 +392,10 @@ en:
           homepage. This can be useful if it is an announcement of a server
           downtime.
     lecture:
+      tutors_overview:
+        hint_html: "Students become tutors by redeeming a tutor voucher (see below); editors and the teacher can be picked right away. On the %{link} tab tutors are put on their tutorials. This is who tutors what."
+        none_yet: "No tutors yet. Create a tutor voucher below and send it to the people who are to become tutors."
+        no_tutorial_yet: "redeemed a voucher, not on a tutorial yet"
       updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
@@ -2055,9 +2059,9 @@ en:
       After having redeemed the voucher, the teacher can assign you
       to the tutorials.
     select_tutorials: Select Tutorials
-    all_tutorials_taken: >
-      There are no more tutorials available for this lecture that you can take
-      over.
+    own_tutorial_not_offered: >
+      The tutorial you are enrolled in is not on offer: a tutor voucher does not
+      make you the tutor of your own group.
     already_tutor_by_redemption: >
       You have already redeemed this voucher to become a tutor.
     become_editor_html: >
@@ -3126,6 +3130,8 @@ en:
         In order to change things please edit the publication settings for the
         medium.
   tutorial:
+    title_placeholder: "e.g. Mon 14–16"
+    location_placeholder: "e.g. SR 3"
     no_tutorials_yet: >
       This lecture has no tutorials yet, so there is no table of points to
       enter into.
@@ -3168,7 +3174,7 @@ en:
         the submissions and upload corrections.
         You can only select users who have the status of tutor in the
         event series, or editors or yourself. In order to grant students the
-        status of tutor, you have to create a voucher.
+        status of tutor, you have to create a voucher on the "Personnel" tab.
         You have to communicate the voucher to the students outside
         of MaMpf. The students can then redeem the voucher.
     bulk_upload:
@@ -4178,6 +4184,19 @@ en:
               invalid: >
                 There is already a submission from you or the team has already
                 reached its maximal size.
+            base:
+              changed_meanwhile: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. To look at it, cancel here; you will
+                then have to upload your file again. Or save once more right
+                away if your file is the right one.
+              removed_meanwhile: >
+                Since you opened this page, somebody on your team removed the
+                file. Save again if your file is the one to hand in.
+              changed_before_removal: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. If that one is to go as well, remove
+                it here and save again.
         tag:
           attributes:
             notions:

@@ -14,6 +14,7 @@ en:
       homework_heading: 'Homework'
       week: 'Test week'
       sheet_or_test: 'Sheet or test'
+      title_placeholder: 'e.g. Test 1'
       week_hint: 'Students take the test in their tutorial that week; tutors can enter points from the Monday on.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
@@ -108,6 +109,10 @@ en:
       description_placeholder: 'e.g., Problem 1'
       default_name: 'T%{number}'
       description_hint: 'Columns in the points table default to T1, T2, ... – changeable via the task name when editing.'
+      total_points: 'Total points'
+      count:
+        one: '1 task'
+        other: '%{count} tasks'
       max_points_precision_hint: 'Stored with 2 decimal places.'
       max_points_precision_warning: 'Only 2 decimal places are stored.'
       missing_warning: 'No tasks yet. Points cannot be entered by tutors.'
@@ -326,6 +331,7 @@ en:
       reload_row: 'Reload the saved points; unsaved changes are lost'
       points_input_label: '%{task} for %{name}'
       point_below_minimum: "Must be higher than %{min}"
+      point_over_maximum: "More than the task's %{max} points"
       filter_name: 'Name'
       filter_all: 'All'
       filter_reset: 'Reset filters'
@@ -559,6 +565,9 @@ en:
               fixed_by_values: "cannot be changed once values have been entered"
         assessment/task:
           attributes:
+            max_points:
+              blank: "You need to give the maximum points."
+              greater_than_or_equal_to: "Maximum points can't be negative."
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
         assessment/participation:

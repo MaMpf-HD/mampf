@@ -85,14 +85,10 @@ class SubmissionsController < ApplicationController
 
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
-      @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata,
-                                                  :manuscript)
-      return render_form(status: :unprocessable_content) if @errors.present?
+      return render_form(status: :unprocessable_content) unless file_properties_ok?
     end
     @submission.user_submission_joins.build(user: current_user)
     @submission.save
-    @errors = @submission.errors
     return render_form(status: :unprocessable_content) unless @submission.valid?
 
     send_invitation_emails
@@ -107,17 +103,20 @@ class SubmissionsController < ApplicationController
   # Nothing about the group: the work stays with the tutor it was handed in to,
   # whatever became of the reader's seat since. Only the file moves here.
   def update
+    if file_changed_since_form?
+      # A removal of a file the team has removed already has nothing left to do.
+      return render_card_and_standing if removing? && @submission.manuscript_data.blank?
+
+      return render_stale_form
+    end
+
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
-      @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata,
-                                                  :manuscript)
-      return render_form(status: :unprocessable_content) if @errors.present?
+      return render_form(status: :unprocessable_content) unless file_properties_ok?
 
       @submission.save
-      @errors = @submission.errors
       return render_form(status: :unprocessable_content) unless @submission.valid?
     end
     if @submission.valid?
@@ -133,8 +132,7 @@ class SubmissionsController < ApplicationController
         sync_assessment_participations
       end
     end
-    @errors = @submission.errors
-    return render_form(status: :unprocessable_content) if @errors.any?
+    return render_form(status: :unprocessable_content) if @submission.errors.any?
 
     render_card_and_standing
   end
@@ -461,6 +459,54 @@ class SubmissionsController < ApplicationController
     # disallow modification of assignment
     def submission_manuscript_params
       params.expect(submission: [:manuscript])
+    end
+
+    # The form carries the time of the file it shows, and a team member may
+    # have replaced or removed that file since. Anything but that time - no
+    # value, a value that is no time, or one from nowhere - is not the file.
+    def file_changed_since_form?
+      current = @submission.last_modification_by_users_at
+      return false if current.blank?
+
+      known_file_at != current
+    end
+
+    def known_file_at
+      Time.zone.parse(params.dig(:submission, :known_file_at).to_s)
+    rescue ArgumentError
+      nil
+    end
+
+    def removing?
+      params.dig(:submission, :detach_user_manuscript) == "true"
+    end
+
+    # The refused upload stays in the form, so once the reader has seen what
+    # the team did, saving again is all it takes. A refused removal comes back
+    # with the team's new file on the form, and the message says that the
+    # removal has to be asked for again.
+    def render_stale_form
+      if @submission.manuscript_data.blank?
+        @submission.errors.add(:base, :removed_meanwhile)
+      else
+        @submission.errors.add(:base, removing? ? :changed_before_removal : :changed_meanwhile,
+                               time: l(@submission.last_modification_by_users_at,
+                                       format: :short),
+                               filename: @submission.manuscript_filename)
+      end
+      @submission.manuscript = submission_manuscript_params[:manuscript] if
+        submission_manuscript_params[:manuscript].present?
+      render_form(status: :conflict)
+    end
+
+    # The checks hand back sentences by attribute, not error codes; on the
+    # model they reach the form like any other refusal.
+    def file_properties_ok?
+      @submission.check_file_properties(@submission.manuscript.metadata, :manuscript)
+                 .each do |attribute, messages|
+        messages.each { |message| @submission.errors.add(attribute, message.strip) }
+      end
+      @submission.errors.empty?
     end
 
     # `join` posts the sheet inside its own form object, the others carry it in

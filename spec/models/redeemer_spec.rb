@@ -53,6 +53,19 @@ RSpec.describe(Redeemer, type: :model) do
         redemption = Redemption.last
         expect(redemption.claimed_tutorials).to include(tutorial1, tutorial2)
       end
+
+      # The tutorial the redeemer is in as a student is not theirs to take,
+      # whatever the request says.
+      it "leaves out the tutorial the redeemer is enrolled in" do
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+        FactoryBot.create(:tutorial_membership, tutorial: tutorial1, user: user)
+
+        voucher.redeem(params)
+
+        expect(user.given_tutorials).to include(tutorial2)
+        expect(user.given_tutorials).not_to include(tutorial1)
+        expect(Redemption.last.claimed_tutorials).to eq([tutorial2])
+      end
     end
 
     context "when the voucher is for an editor" do

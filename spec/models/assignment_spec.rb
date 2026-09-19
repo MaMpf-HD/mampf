@@ -54,8 +54,9 @@ RSpec.describe(Assignment, type: :model) do
     end
 
     it "offers the weeks from this one to the term's end, and its own" do
-      term = FactoryBot.create(:term, year: Time.zone.today.year,
-                                      season: Time.zone.today.month < 10 ? "SS" : "WS")
+      season = Time.zone.today.month < 10 ? "SS" : "WS"
+      term = Term.find_by(year: Time.zone.today.year, season: season) ||
+             FactoryBot.create(:term, year: Time.zone.today.year, season: season)
       running = FactoryBot.create(:lecture, term: term)
       test = FactoryBot.build(:assignment, lecture: running, kind: :test,
                                            deadline: 2.weeks.from_now.end_of_week)
@@ -67,7 +68,13 @@ RSpec.describe(Assignment, type: :model) do
       expect(choices.last).to eq(term.end_date.beginning_of_week)
     end
 
+    # The factory's terms count upwards and reach the present once enough
+    # exist in the process; 2000 is the earliest year allowed and stays behind.
     it "offers half a year of weeks when the term is over" do
+      gone = Term.find_by(year: 2000, season: "SS") ||
+             FactoryBot.create(:term, year: 2000, season: "SS")
+      over = FactoryBot.create(:lecture, term: gone)
+      test = FactoryBot.build(:assignment, lecture: over, kind: :test)
       choices = test.test_week_choices
 
       expect(choices.first).to eq(Time.zone.today.beginning_of_week)

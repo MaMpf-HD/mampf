@@ -183,6 +183,22 @@ RSpec.describe("Tutorials", type: :request) do
         expect(response).to have_http_status(:success)
       end
 
+      it "shows what a title and a location look like" do
+        get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("tutorial.title_placeholder"))
+        expect(response.body).to include(I18n.t("tutorial.location_placeholder"))
+      end
+
+      # Whom the select offers cannot be told from looking at it; the form
+      # says so, and where the voucher is made.
+      it "explains who can be picked as a tutor" do
+        get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
+
+        info = ERB::Util.html_escape(I18n.t("tutorial.info.tutors"))
+        expect(response.body).to include(info[0, 60])
+      end
+
       context "with a user who became a tutor by redeeming a voucher" do
         let(:redeemer) { create(:confirmed_user, name_in_tutorials: "Ada L.") }
         let!(:redemption) do
@@ -258,6 +274,19 @@ RSpec.describe("Tutorials", type: :request) do
       it "returns http success" do
         get edit_tutorial_path(tutorial), as: :turbo_stream
         expect(response).to have_http_status(:success)
+      end
+
+      it "marks a tutor candidate who is enrolled in the tutorial" do
+        enrolled = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: enrolled)
+        create(:tutorial_membership, tutorial: tutorial, user: enrolled)
+        Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: enrolled)
+
+        get edit_tutorial_path(tutorial), as: :turbo_stream
+
+        option = Nokogiri::HTML(response.body).at_css("option[value='#{enrolled.id}']")
+        expect(option["data-enrolled"]).to eq("true")
+        expect(response.body).to include("enrolled-tutor-guard")
       end
     end
   end

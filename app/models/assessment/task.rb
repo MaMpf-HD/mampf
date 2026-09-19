@@ -6,7 +6,8 @@ module Assessment
     has_many :task_points, dependent: :destroy,
                            class_name: "Assessment::TaskPoint", inverse_of: :task
 
-    validates :max_points, numericality: { greater_than_or_equal_to: 0 }
+    validates :max_points, presence: true,
+                           numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validate :assessment_requires_points
 
     # Inside the create transaction, so it also runs before the recompute below

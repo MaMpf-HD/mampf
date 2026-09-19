@@ -271,6 +271,24 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       )
     end
 
+    it "names both files for the eye once a correction is back" do
+      hand_in([:with_manuscript, :with_correction])
+
+      content = Nokogiri::HTML.fragment(render_card)
+      roles = content.css(".file-pill .file-role").map { |node| node.text.strip }
+
+      expect(roles).to eq([I18n.t("submission.hub.fold.handed_in_label"),
+                           I18n.t("submission.hub.fold.correction_label")])
+    end
+
+    it "leaves a lone hand-in unlabelled" do
+      hand_in
+
+      content = Nokogiri::HTML.fragment(render_card)
+
+      expect(content.css(".file-pill .file-role")).to be_empty
+    end
+
     it "offers to delete a hand-in the reader made alone, and says what that does" do
       hand_in
 

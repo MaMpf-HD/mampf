@@ -226,6 +226,61 @@ test.describe("marking table", () => {
     await expect(saveAll).toBeDisabled();
   });
 
+  // Bonus points are allowed, so the table takes more than the maximum and
+  // only says so.
+  test("points a finger at more than the task's maximum, and still saves it", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const { lecture, assignment, assessmentId } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    await addTask(factory, assessmentId, "Warm-up", 10);
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id,
+      tutor_id: tutor.user.id,
+    });
+    const student = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Ada Lovelace",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.id,
+    });
+    await handIn(factory, assignment.id, tutorial.id, student.id);
+
+    await tutor.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
+    );
+    const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
+    const points = row.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" });
+
+    const amber = "rgb(255, 193, 7)";
+    await points.fill("25");
+    await expect(points).toHaveAttribute("title", "More than the task's 10 points");
+    await expect(points).toHaveCSS("border-color", amber);
+
+    await points.fill("5");
+    await expect(points).toHaveAttribute("title", "");
+    await expect(points).not.toHaveCSS("border-color", amber);
+
+    // a value the browser refuses is not over the maximum either
+    await points.fill("25");
+    await expect(points).toHaveCSS("border-color", amber);
+    await points.fill("-1");
+    await expect(points).toHaveAttribute("title", "");
+    await expect(points).not.toHaveCSS("border-color", amber);
+
+    await points.fill("12");
+    await row.getByRole("button", { name: "Save this row's points" }).click();
+    await expect(row.getByText("Reviewed")).toBeVisible();
+    await expect(points).toHaveValue("12.0");
+    await expect(points).toHaveAttribute("title", "More than the task's 10 points");
+  });
+
   // The two selects above the table are the tutor's way from one sheet or
   // group to the next; each option is a page.
   test("moves to another sheet and another group through the selects", async ({
@@ -300,5 +355,44 @@ test.describe("marking table", () => {
 
     await tutor.page.getByRole("button", { name: "Reset filters" }).click();
     await expect(table.getByRole("row", { name: /Ada Lovelace/ })).toBeVisible();
+  });
+
+  // From the first row the popup opens into the pinned header; behind the
+  // header it is not there for the reader.
+  test("keeps the copied-addresses note in front of the header", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    await tutor.page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    const { lecture, assignment, assessmentId } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    await addTask(factory, assessmentId, "Warm-up", 10);
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id,
+      tutor_id: tutor.user.id,
+    });
+    const student = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Ada Lovelace",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.id,
+    });
+    await handIn(factory, assignment.id, tutorial.id, student.id);
+
+    await tutor.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
+    );
+    const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
+    await row.getByRole("button", { name: "Copy mail adresses to Clipboard" }).click();
+
+    const note = tutor.page.getByText("Mail adresses have been copied to the clipboard.");
+    await expect(note).toBeVisible();
+    // hover fails when another element would take the pointer instead
+    await note.hover();
   });
 });

@@ -62,6 +62,8 @@
           <div id="edit_people"><%= render partial: 'lectures/edit/people', locals: { lecture: @lecture } %></div>
           <% if legacy_seminar %>
             <%= render partial: 'lectures/edit/tutorials', locals: { lecture: @lecture } %>
+          <% elsif !@lecture.seminar? %>
+            <%= render partial: 'lectures/edit/tutors', locals: { lecture: @lecture } %>
           <% end %>
           <%= render partial: 'lectures/edit/vouchers', locals: { lecture: @lecture } %>
         </div>
