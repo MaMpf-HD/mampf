@@ -7,10 +7,10 @@
                 local: true,
                 html: { class: "mb-3", novalidate: true } do |f| %>
     <div data-controller="assessments--points-precision">
-      <div class="row g-2 align-items-end">
-        <div class="col-md-6">
-          <%= f.label :max_points, t('assessment.task.max_points'), class: "form-label" %>
+      <%= f.label :max_points, t('assessment.task.max_points'), class: "form-label" %>
 
+      <div class="row g-2 align-items-start">
+        <div class="col-md-6">
           <%= f.number_field :max_points,
                              class: 'form-control',
                              placeholder: t('assessment.task.max_points_placeholder'),
