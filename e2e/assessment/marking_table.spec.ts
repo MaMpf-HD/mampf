@@ -258,11 +258,14 @@ test.describe("marking table", () => {
     const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
     const points = row.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" });
 
+    const amber = "rgb(255, 193, 7)";
     await points.fill("25");
     await expect(points).toHaveAttribute("title", "More than the task's 10 points");
+    await expect(points).toHaveCSS("border-color", amber);
 
     await points.fill("5");
     await expect(points).toHaveAttribute("title", "");
+    await expect(points).not.toHaveCSS("border-color", amber);
 
     await points.fill("12");
     await row.getByRole("button", { name: "Save this row's points" }).click();
