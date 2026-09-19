@@ -367,7 +367,8 @@ details[open] > summary .news-marker {
   text-decoration: underline;
 }
 
-/* Badges only where no number can stand. Three colours, never green. */
+/* Badges only where no number can stand. Green for the reader's own hand-in
+   alone. */
 /* A pill with a ground of its own; a weight on top would say the same thing
    twice. */
 .chip {
@@ -386,6 +387,11 @@ details[open] > summary .news-marker {
 .chip-act {
   background: #fff3cd;
   color: #7a5b00;
+}
+
+.chip-done {
+  background: #d1e7dd;
+  color: #0f5132;
 }
 
 /* One number language: tabular figures, "points / max", two decimals at most. */

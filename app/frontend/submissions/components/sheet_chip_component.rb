@@ -3,12 +3,13 @@
 # here.
 class SheetChipComponent < ViewComponent::Base
   # Grey says "nothing to do yet", amber "this is on you", red "this cost you
-  # points". Never green: a sheet coming back is not an achievement.
+  # points". Green only for a hand-in on an open sheet: the reader's own part
+  # is done. A sheet coming back is not an achievement.
   TONES = {
     nothing_handed_in: "act",
     grace_period: "act",
     tutor_decides: "act",
-    handed_in: "wait",
+    handed_in: "done",
     awaiting_marks: "wait",
     awaiting_record: "wait",
     correction_uploaded: "wait",

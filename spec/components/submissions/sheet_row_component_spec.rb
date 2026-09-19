@@ -97,7 +97,7 @@ RSpec.describe(SheetRowComponent, type: :component) do
   describe "the badges" do
     {
       nothing_handed_in: "chip-act",
-      handed_in: "chip-wait",
+      handed_in: "chip-done",
       tutor_decides: "chip-act",
       awaiting_marks: "chip-wait",
       correction_uploaded: "chip-wait",
