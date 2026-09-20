@@ -30,6 +30,10 @@ class AssessmentsIndexComponent < ViewComponent::Base
     homework.any? && tests.any?
   end
 
+  def scheduled_sheets
+    @scheduled_sheets ||= lecture.scheduled_sheets
+  end
+
   def legacy_by_type
     @legacy_by_type ||= legacy.group_by { |a| a.class.name }
   end

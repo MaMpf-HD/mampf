@@ -751,36 +751,25 @@ class Lecture < ApplicationRecord
     assignments_by_deadline.reverse.find { |x| x.first < Time.zone.now }&.second.to_a
   end
 
-  def scheduled_assignments?
-    media.where(sort: "Exercise").where.not(publisher: nil)
-         .any? { |m| m.publisher.create_assignment }
-  end
-
-  def scheduled_assignments
-    media.where(sort: "Exercise").where.not(publisher: nil)
-         .select { |m| m.publisher.create_assignment }
-         .map { |m| m.publisher.assignment }
-  end
-
   # What a lecturer has set up for release but not released yet. Not an
   # `Assignment`: that record does not exist until the medium is published, and
   # the date it appears on lives on the publisher rather than on the sheet.
-  ScheduledSheet = Struct.new(:release_date, :title, :deadline,
+  ScheduledSheet = Struct.new(:release_date, :title, :deadline, :medium,
+                              :accepted_file_type, :requires_submission,
                               keyword_init: true)
 
-  # The next of them, soonest release first: what the submissions page says when
-  # nothing is due right now. Deliberately not built on `scheduled_assignments`,
-  # which asks `MediumPublisher#assignment` for an `Assignment` and pays a
-  # `medium.teachable` per medium for it - and still cannot say when the sheet
-  # appears.
-  def next_scheduled_sheet
+  # Soonest release first. Not built on `MediumPublisher#assignment`, which
+  # builds an `Assignment` and pays a `medium.teachable` per medium for it -
+  # and still cannot say when the sheet appears.
+  def scheduled_sheets
     media.where(sort: "Exercise").where.not(publisher: nil)
-         .filter_map { |medium| scheduled_release(medium.publisher) }
-         .min_by(&:release_date)
+         .filter_map { |medium| scheduled_release(medium) }
+         .sort_by(&:release_date)
   end
 
-  def assignments?
-    assignments.any? || scheduled_assignments?
+  # What the submissions page says when nothing is due right now.
+  def next_scheduled_sheet
+    scheduled_sheets.first
   end
 
   def select_talks
@@ -1017,13 +1006,17 @@ class Lecture < ApplicationRecord
 
     # A publisher whose release date has passed has already made its assignment,
     # so it is no longer scheduled.
-    def scheduled_release(publisher)
+    def scheduled_release(medium)
+      publisher = medium.publisher
       return unless publisher&.create_assignment
       return unless publisher.release_date&.future?
 
       ScheduledSheet.new(release_date: publisher.release_date,
                          title: publisher.assignment_title,
-                         deadline: publisher.assignment_deadline)
+                         deadline: publisher.assignment_deadline,
+                         medium: medium,
+                         accepted_file_type: publisher.assignment_file_type,
+                         requires_submission: publisher.requires_submission)
     end
 
     def initialize_submission_deletion_date

@@ -18,6 +18,8 @@ en:
       week_hint: 'Students take the test in their tutorial that week; tutors can enter points from the Monday on.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
+    scheduled_sheet:
+      appears_on: 'appears on %{date}'
     subtitle:
       assignments: 'Manage homework sheets and in-tutorial tests, grading, and point allocation.'
     achievements:

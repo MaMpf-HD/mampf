@@ -52,7 +52,7 @@
           <h6><%= t('assessment.test.homework_heading') %></h6>
         <% end %>
 
-        <% if homework.any? %>
+        <% if homework.any? || scheduled_sheets.any? %>
           <table class="table table-hover mb-4">
             <thead>
               <tr>
@@ -74,6 +74,10 @@
             </thead>
 
             <tbody id="assessment-assignments-list">
+              <% scheduled_sheets.each do |sheet| %>
+                <%= render ScheduledSheetRowComponent.new(sheet: sheet) %>
+              <% end %>
+
               <% homework.each do |assessable| %>
                 <%= render AssessmentListItemComponent.new(assessable: assessable, lecture: lecture) %>
               <% end %>

@@ -1,0 +1,47 @@
+<tr class="text-muted">
+  <td>
+    <i
+      class="bi bi-clock me-1"
+      title="<%= t('assignment.info.scheduled_assignment') %>"
+      data-bs-toggle="tooltip"
+    ></i>
+
+    <%= sheet.title %>
+
+    <div class="small"><%= appears_on %></div>
+  </td>
+
+  <td>
+    <span
+      class="text-truncate d-inline-block"
+      style="max-width: 200px;"
+      title="<%= medium_title %>"
+    >
+      <%= link_to medium_title, edit_medium_path(sheet.medium),
+                  data: { turbo_frame: "_top" } %>
+    </span>
+  </td>
+
+  <td>
+    <%= content_tag(:code, sheet.accepted_file_type, class: "small") if sheet.accepted_file_type.present? %>
+  </td>
+
+  <td class="text-center">&mdash;</td>
+  <td class="text-center">&mdash;</td>
+
+  <td class="text-center">
+    <% if sheet.requires_submission %>
+      <i
+        class="bi bi-check-lg"
+        title="<%= t('assessment.requires_submission') %>"
+      ></i>
+    <% else %>
+      <i
+        class="bi bi-x-lg"
+        title="<%= t('assessment.no_submission_required') %>"
+      ></i>
+    <% end %>
+  </td>
+
+  <td><%= deadline_display %></td>
+</tr>
