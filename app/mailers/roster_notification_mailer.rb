@@ -12,7 +12,6 @@ class RosterNotificationMailer < ApplicationMailer
 
       template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
       info      = rosterable.is_a?(Exam) ? exam_info(rosterable) : {}
-
       with(
         rosterable: rosterable,
         recipient: user,
@@ -29,7 +28,6 @@ class RosterNotificationMailer < ApplicationMailer
         when Exam    then :removed_from_exam_email
         else              :removed_from_group_email
         end
-
       with(
         rosterable: rosterable,
         recipient: user
@@ -39,7 +37,8 @@ class RosterNotificationMailer < ApplicationMailer
     def moved(user, old_rosterable, new_rosterable)
       return log_unsupported(old_rosterable) unless supported?(old_rosterable)
       return log_unsupported(new_rosterable) unless supported?(new_rosterable)
-      return log_unsupported(rosterable) if rosterable.is_a?(Exam)
+      return log_unsupported(old_rosterable) if old_rosterable.is_a?(Exam)
+      return log_unsupported(new_rosterable) if new_rosterable.is_a?(Exam)
 
       with(
         old_rosterable: old_rosterable,
@@ -62,6 +61,28 @@ class RosterNotificationMailer < ApplicationMailer
       end
     end
 
+    def finalized(rosterable, users)
+      return log_unsupported(rosterable) unless supported?(rosterable)
+      # A bare lecture roster entry grants no access, so there is nothing to announce.
+      return if rosterable.is_a?(Lecture)
+
+      users.each do |user|
+        with(rosterable: rosterable, recipient: user).added_to_group_email.deliver_later
+      end
+    end
+
+    def rejected(user, rosterable, reason_code: nil)
+      return log_unsupported(rosterable) unless supported?(rosterable)
+      return if rosterable.is_a?(Lecture)
+
+      template  = rosterable.is_a?(Exam) ? :rejected_from_exam_email : :rejected_from_group_email
+      with(
+        rosterable: rosterable,
+        recipient: user,
+        info: { reason: resolve_safe_reason(reason_code) }
+      ).public_send(template).deliver_later
+    end
+
     def log_unsupported(rosterable)
       Rails.logger.error(
         "RosterNotificationMailer: Unsupported rosterable type: #{rosterable.class.name}"
@@ -70,6 +91,22 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     private
+
+      def resolve_safe_reason(reason_code)
+        return nil if reason_code.blank?
+
+        code = reason_code.to_s
+        translated = Registration::UserRegistration::REJECTION_REASON_CODE_TRANSLATION_ALIASES
+                     .fetch(code, code)
+
+        policy_key = "registration.policy.errors.#{translated}"
+        return I18n.t(policy_key) if I18n.exists?(policy_key)
+
+        reason_key = "registration.user_registration.reason_labels.#{translated}"
+        return I18n.t(reason_key) if I18n.exists?(reason_key)
+
+        nil
+      end
 
       def supported?(rosterable)
         SUPPORTED_ROSTERABLES.any? { |klass| rosterable.is_a?(klass) }
@@ -95,7 +132,7 @@ class RosterNotificationMailer < ApplicationMailer
       def exam_info(rosterable)
         return {} unless rosterable.is_a?(Exam)
 
-        { exam_date: I18n.l(rosterable.date, format: :long),
+        { exam_date: rosterable.date ? I18n.l(rosterable.date, format: :long) : "N/A",
           exam_location: rosterable.location.presence || "N/A" }
       end
   end
@@ -122,6 +159,14 @@ class RosterNotificationMailer < ApplicationMailer
 
   def removed_from_lecture_email
     email { t("roster.mailer.roster_removed_from_lecture_email_subject", **subject_vars) }
+  end
+
+  def rejected_from_group_email
+    email { t("roster.mailer.roster_rejected_from_group_email_subject", **subject_vars) }
+  end
+
+  def rejected_from_exam_email
+    email { t("roster.mailer.roster_rejected_from_exam_email_subject", **subject_vars) }
   end
 
   def participant_left_group_email

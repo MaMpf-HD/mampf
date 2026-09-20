@@ -521,3 +521,33 @@ de:
 
         Bitte notiere Dir die neuen Angaben.
       roster_change_exam_schedule_email_subject: 'Terminänderung für Prüfung %{rosterable_title} in %{lecture_title}'
+      roster_rejected_from_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung für <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_group_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung für „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_group_email_subject: 'Anmeldung für %{rosterable_title} in %{lecture_title} nicht erfolgreich'
+
+      roster_rejected_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung zur Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_exam_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung zur Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_exam_email_subject: 'Anmeldung zur Prüfung %{rosterable_title} in %{lecture_title} nicht erfolgreich'
+
+      rejected_reason_text_html: |
+        <p>Grund: %{reason}</p>
+      rejected_reason_text: |
+        Grund: %{reason}

@@ -294,6 +294,12 @@ module Registration
           rejection_policy_id: violation[:policy_id],
           rejected_at: now
         )
+
+        RosterNotificationMailer.rejected(
+          registration.user,
+          registration.registration_item,
+          reason_code: violation[:reason_code]
+        )
       end
     end
 
@@ -495,6 +501,8 @@ module Registration
 
       def reject_pending_registrations!
         now = Time.current
+        pending = user_registrations.pending.includes(:user, :registration_item).to_a
+        return if pending.empty?
 
         # Safe here because this scope only contains pending rows, so bypassing
         # per-record callbacks cannot affect confirmed registration counters
@@ -511,6 +519,14 @@ module Registration
           updated_at: now
         )
         # rubocop:enable Rails/SkipsModelValidations
+
+        pending.each do |registration|
+          RosterNotificationMailer.rejected(
+            registration.user,
+            registration.registration_item,
+            reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+          )
+        end
       end
 
       def ensure_editable
