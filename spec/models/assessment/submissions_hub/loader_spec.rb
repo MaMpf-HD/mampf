@@ -566,9 +566,11 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
     # The week runs on for the other groups; this reader has written the test
     # and has points to look at, which is the list's business, not a card's.
+    # The test is in the current week: from Friday on, three days ahead is the
+    # next week, and points cannot go in before a test's week begins.
     it "moves a test to the list the moment its points are in, week or no week" do
       test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
-                                 deadline: 3.days.from_now)
+                                 deadline: Time.zone.now.end_of_week)
       create(:assessment_task, assessment: test.assessment, max_points: 10)
       expect(result.open_sheets.map(&:assignment)).to eq([test])
 
@@ -581,7 +583,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
     it "moves a test to the list the moment the reader is recorded absent" do
       test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
-                                 deadline: 3.days.from_now)
+                                 deadline: Time.zone.now.end_of_week)
       create(:assessment_task, assessment: test.assessment, max_points: 10)
       participate(test, status: :absent)
 
@@ -699,7 +701,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     # earned on it, from the moment the absence is recorded in its week.
     it "counts a test the reader was recorded absent from, in its week already" do
       test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
-                                 deadline: 3.days.from_now)
+                                 deadline: Time.zone.now.end_of_week)
       create(:assessment_task, assessment: test.assessment, max_points: 10)
       participate(test, status: :absent)
 
