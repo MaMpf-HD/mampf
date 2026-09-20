@@ -132,6 +132,28 @@ RSpec.describe(MediumPublisher, type: :model) do
       expect(lecture.assignments.size).to eq(1)
     end
 
+    # The sheet the publisher makes is a sheet like any other: it gets its
+    # pointbook, with the box from the publish dialog.
+    it "gives the assignment its assessment, with the dialog's submission setting" do
+      medium = FactoryBot.create(:lecture_medium)
+      user = FactoryBot.create(:confirmed_user)
+      medium.editors << user
+      publisher = MediumPublisher.new(medium_id: medium.id, user_id: user.id,
+                                      release_now: true, create_assignment: true,
+                                      assignment_title: "Blatt 1",
+                                      assignment_deadline: 2.days.from_now,
+                                      assignment_file_type: ".pdf",
+                                      requires_submission: false)
+
+      publisher.publish!
+
+      assignment = medium.teachable.assignments.find_by(title: "Blatt 1")
+      expect(assignment.medium).to eq(medium)
+      expect(assignment.assessment).to be_present
+      expect(assignment.assessment.requires_submission).to be(false)
+      expect(assignment.requires_submission).to be(false)
+    end
+
     it "locks the medium thread if the lock_assignment flag is set" do
       medium = FactoryBot.create(:lecture_medium)
       user = FactoryBot.create(:confirmed_user)
