@@ -85,6 +85,37 @@ RSpec.describe("Profile", type: :request) do
         expect(response.body).to include("$card.empty()")
       end
 
+      # The lecturer's tie outlives the subscription: the card stays, as
+      # their own, and the fold is not empty.
+      it "keeps the card of a lecture the user holds" do
+        lecture.update!(teacher: user)
+        user.subscribe_lecture!(lecture)
+
+        patch(unsubscribe_lecture_path,
+              params: { lecture: { id: lecture.id,
+                                   parent: "next_term_subscribed" } },
+              xhr: true)
+
+        expect(response.body).not_to include("$card.remove()")
+        expect(response.body).not_to include("$('#emptyNextTermStuff').show()")
+        expect(response.body).to include("$card.empty()")
+        expect(response.body).not_to include(I18n.t("basics.subscribe"))
+      end
+
+      # The fold of terms gone by lists subscriptions only; an own lecture
+      # unsubscribed there goes like any other.
+      it "takes the card of an own lecture away from the fold of terms gone by" do
+        gone = create(:term, :winter, year: 2023)
+        old_lecture = create(:lecture, :released_for_all, term: gone, teacher: user)
+        user.subscribe_lecture!(old_lecture)
+
+        patch(unsubscribe_lecture_path,
+              params: { lecture: { id: old_lecture.id, parent: "inactive" } },
+              xhr: true)
+
+        expect(response.body).to include("$card.remove()")
+      end
+
       it "keeps the card of a lecture the user has a seat in" do
         cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
         create(:cohort_membership, cohort: cohort, user: user)

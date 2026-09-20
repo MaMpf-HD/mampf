@@ -1,9 +1,13 @@
-<div class="card h-100 <%= subscribed ? 'bg-mdb-color-lighten-7' : '' %>
+<%# `own`: the lecture's teacher or editor. Opens like a subscribed one;
+    no subscribe or unsubscribe button. %>
+<% own = local_assigns.fetch(:own, false) %>
+<% opens = subscribed || own %>
+<div class="card h-100 <%= opens ? 'bg-mdb-color-lighten-7' : '' %>
             <%= lecture_border(lecture) %>">
-  <div class="card-header <%= lecture_header_color(subscribed, lecture) %>">
+  <div class="card-header <%= lecture_header_color(opens, lecture) %>">
     <div class="row">
       <div class="col-8 col-sm-7 col-lg-8 col-xl-8 font-weight-bold">
-        <% if subscribed %>
+        <% if opens %>
           <%= link_to lecture.title_no_term,
                       lecture,
                       class: 'text-light' %>
@@ -52,8 +56,8 @@
                               placement: 'bottom' },
                       title: t('basics.unsubscribe'),
                       remote: true %>
-        <% elsif current_user.admin || lecture.published? ||
-                   lecture.edited_by?(current_user) %>
+        <% elsif !own && (current_user.admin || lecture.published? ||
+                            lecture.edited_by?(current_user)) %>
           <%= link_to '',
                       subscribe_lecture_path(params:
                                                  { lecture:
@@ -82,7 +86,7 @@
       </div>
     </div>
   </div>
-  <% if subscribed %>
+  <% if opens %>
      <%= link_to image_tag(lecture.course.normalized_image_file ?
                              image_course_path(lecture.course,
                                                variant: "normalized") :
@@ -98,7 +102,7 @@
                   alt: 'Card image cap') %>
   <% end %>
   <div class="card-body">
-    <% unless subscribed %>
+    <% unless opens %>
       <% lecture.course.divisions.each do |d| %>
         <div class="small">
           <%= "#{d.program.subject.name} #{d.program.name} #{d.name}" %>
@@ -106,7 +110,7 @@
       <% end %>
     <% end %>
     <div class="teachable-body">
-      <% if subscribed %>
+      <% if opens %>
         <%= tag.div class: news_color(current_user
                                         .active_notifications(lecture)
                                         .size) do %>
