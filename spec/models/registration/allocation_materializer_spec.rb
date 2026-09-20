@@ -41,5 +41,71 @@ RSpec.describe(Registration::AllocationMaterializer, type: :model) do
                    .reload.materialized_at
              }.from(nil)
     end
+
+    describe "finalization email" do
+      it "sends a finalized email for each confirmed user" do
+        perform_enqueued_jobs do
+          expect do
+            materializer.materialize!
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.to).to eq([user.email])
+      end
+
+      it "sends the correct subject" do
+        perform_enqueued_jobs { materializer.materialize! }
+
+        email = ActionMailer::Base.deliveries.last
+        expected_subject = I18n.with_locale(user.locale) do
+          I18n.t("roster.mailer.roster_added_to_group_email_subject",
+                 rosterable_title: item.registerable.title,
+                 lecture_title: item.registerable.lecture.title)
+        end
+        expect(email.subject).to eq(expected_subject)
+      end
+
+      context "when no users are confirmed for an item" do
+        before { user.user_registrations.update_all(status: :pending) }
+
+        it "does not send an email for that item" do
+          perform_enqueued_jobs do
+            expect do
+              materializer.materialize!
+            end.not_to(change { ActionMailer::Base.deliveries.count })
+          end
+        end
+      end
+
+      context "with multiple confirmed users on the same item" do
+        let(:other_user) { create(:user, locale: "en") }
+
+        before do
+          create(:registration_user_registration, :confirmed, registration_item: item,
+                                                              user: other_user,
+                                                              registration_campaign: campaign)
+        end
+
+        it "sends one email per user" do
+          perform_enqueued_jobs do
+            expect do
+              materializer.materialize!
+            end.to change { ActionMailer::Base.deliveries.count }.by(2)
+          end
+
+          recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:to)
+          expect(recipients).to contain_exactly(user.email, other_user.email)
+        end
+      end
+
+      it "does not send emails until after the materializing transaction commits" do
+        allow(item.registerable).to receive(:materialize_allocation!).and_raise(ActiveRecord::Rollback)
+
+        expect do
+          materializer.materialize!
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
+    end
   end
 end

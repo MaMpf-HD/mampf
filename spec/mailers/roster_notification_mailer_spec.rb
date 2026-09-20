@@ -293,6 +293,169 @@ describe RosterNotificationMailer do
     end
   end
 
+  describe ".finalized" do
+    context "with a supported rosterable" do
+      it "enqueues one email per user for a Tutorial" do
+        tutorial = create(:tutorial)
+        other_user = create(:user, locale: "de")
+
+        expect do
+          described_class.finalized(tutorial, [user, other_user])
+        end.to have_enqueued_mail(described_class, :added_to_group_email).twice
+      end
+
+      it "enqueues an email for a Cohort" do
+        cohort = create(:cohort)
+
+        expect do
+          described_class.finalized(cohort, [user])
+        end.to have_enqueued_mail(described_class, :added_to_group_email)
+      end
+
+      it "enqueues an email for a Talk" do
+        talk = create(:talk)
+
+        expect do
+          described_class.finalized(talk, [user])
+        end.to have_enqueued_mail(described_class, :added_to_group_email)
+      end
+    end
+
+    context "with a Lecture" do
+      it "enqueues no email" do
+        lecture = create(:lecture)
+
+        expect do
+          described_class.finalized(lecture, [user])
+        end.not_to have_enqueued_mail
+      end
+    end
+
+    context "with an unsupported rosterable" do
+      it "does not enqueue an email and logs instead" do
+        unsupported = create(:registration_campaign)
+        expect(Rails.logger).to receive(:error)
+          .with(/Unsupported rosterable type: Registration::Campaign/)
+
+        expect do
+          described_class.finalized(unsupported, [user])
+        end.not_to have_enqueued_mail
+      end
+    end
+
+    context "with an empty user list" do
+      it "enqueues no email" do
+        tutorial = create(:tutorial)
+
+        expect do
+          described_class.finalized(tutorial, [])
+        end.not_to have_enqueued_mail
+      end
+    end
+  end
+
+  describe ".rejected" do
+    context "with a supported rosterable" do
+      it "enqueues an email for a Tutorial" do
+        tutorial = create(:tutorial)
+
+        expect do
+          described_class.rejected(user, tutorial)
+        end.to have_enqueued_mail(described_class, :rejected_from_group_email)
+      end
+
+      it "enqueues an email for an Exam" do
+        exam = create(:exam, :written)
+
+        expect do
+          described_class.rejected(user, exam)
+        end.to have_enqueued_mail(described_class, :rejected_from_exam_email)
+      end
+    end
+
+    context "with a Lecture" do
+      it "enqueues no email" do
+        lecture = create(:lecture)
+
+        expect do
+          described_class.rejected(user, lecture)
+        end.not_to have_enqueued_mail
+      end
+    end
+
+    context "with an unsupported rosterable" do
+      it "does not enqueue an email and logs instead" do
+        unsupported = create(:registration_campaign)
+        expect(Rails.logger).to receive(:error)
+          .with(/Unsupported rosterable type: Registration::Campaign/)
+
+        expect do
+          described_class.rejected(user, unsupported)
+        end.not_to have_enqueued_mail
+      end
+    end
+
+    describe "reason resolution" do
+      let(:tutorial) { create(:tutorial, title: "Übung 3") }
+
+      it "includes the resolved reason when the reason_code has a translation" do
+        email = described_class.with(
+          rosterable: tutorial,
+          recipient: user,
+          info: { reason: I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                                 locale: user.locale) }
+        ).rejected_from_group_email
+
+        delivered = deliver(email)
+        expected_text = I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                               locale: user.locale)
+        expect(delivered_body(delivered)).to include(expected_text)
+      end
+
+      it "omits the reason line entirely when reason_code does not resolve" do
+        described_class.rejected(user, tutorial, reason_code: "totally_unknown_code")
+
+        perform_enqueued_jobs
+        delivered = ActionMailer::Base.deliveries.last
+
+        expect(delivered_body(delivered)).not_to include("Grund:")
+      end
+
+      it "omits the reason line entirely when no reason_code is given" do
+        described_class.rejected(user, tutorial)
+
+        perform_enqueued_jobs
+        delivered = ActionMailer::Base.deliveries.last
+
+        expect(delivered_body(delivered)).not_to include("Grund:")
+      end
+
+      it "resolves a known reason_code to its translated label" do
+        described_class.rejected(
+          user, tutorial,
+          reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+        )
+
+        perform_enqueued_jobs
+        delivered = ActionMailer::Base.deliveries.last
+        expected_text = I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                               locale: user.locale)
+
+        expect(delivered_body(delivered)).to include(expected_text)
+      end
+
+      it "never leaks a raw, untranslated reason_code as text" do
+        raw_code = "some_dynamically_generated_policy_string_with_specifics"
+        described_class.rejected(user, tutorial, reason_code: raw_code)
+
+        perform_enqueued_jobs
+        delivered = ActionMailer::Base.deliveries.last
+
+        expect(delivered_body(delivered)).not_to include(raw_code)
+      end
+    end
+  end
+
   describe "the plain text translations" do
     I18n.available_locales.each do |locale|
       it "carry no markup in #{locale}" do
