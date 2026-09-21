@@ -1,4 +1,4 @@
-import { Locator, Page } from "../_support/fixtures";
+import { expect, Locator, Page } from "../_support/fixtures";
 
 const DEFAULT_DATE_FUTURE = new Date();
 DEFAULT_DATE_FUTURE.setDate(DEFAULT_DATE_FUTURE.getDate() + 2);
@@ -23,13 +23,16 @@ export async function selectDate(page: Page, date = DEFAULT_DATE_FUTURE) {
 /**
  * Picks a date in the open widget, turning the pages of the calendar first
  * when the date's month is not the one on show: the trailing days of the next
- * month are on the page, but not all of them.
+ * month are on the page, but not all of them. The header reads "September 26",
+ * the widget's default; a month that never comes up fails here rather than
+ * a year on.
  */
 export async function pickDate(widget: Locator, date: Date) {
   const monthOnShow = date.toLocaleString("en-US", { month: "long", year: "2-digit" });
   const header = widget.locator(".picker-switch");
-  for (let turns = 0; turns < 12 && (await header.innerText()) !== monthOnShow; turns++) {
+  for (let turns = 0; turns < 2 && (await header.innerText()) !== monthOnShow; turns++) {
     await widget.getByTitle("Next Month").click();
   }
+  await expect(header).toHaveText(monthOnShow);
   await widget.getByRole("gridcell", { name: dateLabel(date) }).click();
 }
