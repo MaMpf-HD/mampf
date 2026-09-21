@@ -295,10 +295,10 @@ module Registration
           rejected_at: now
         )
 
-        RosterNotificationMailer.rejected(
-          registration.user,
-          registration.registration_item&.registerable
-        )
+        next if user_registration_confirmed?(registration.user)
+
+        RosterNotificationMailer.rejected(registration.user,
+                                          registration.registration_item&.registerable)
       end
     end
 
@@ -503,10 +503,8 @@ module Registration
         pending = user_registrations.pending.includes(:user, :registration_item).to_a
         return if pending.empty?
 
-        # Safe here because this scope only contains pending rows, so bypassing
-        # per-record callbacks cannot affect confirmed registration counters
         # rubocop:disable Rails/SkipsModelValidations
-        user_registrations.pending.update_all(
+        user_registrations.where(id: pending.map(&:id)).update_all(
           status: Registration::UserRegistration.statuses[:rejected],
           rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
           rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
@@ -519,11 +517,11 @@ module Registration
         )
         # rubocop:enable Rails/SkipsModelValidations
 
-        pending.each do |registration|
-          RosterNotificationMailer.rejected(
-            registration.user,
-            registration.registration_item&.registerable
-          )
+        pending.group_by(&:user).each do |rejected_user, registrations|
+          next if user_registration_confirmed?(rejected_user)
+
+          RosterNotificationMailer.rejected(rejected_user,
+                                            registrations.first.registration_item&.registerable)
         end
       end
 
