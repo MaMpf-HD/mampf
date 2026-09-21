@@ -365,7 +365,7 @@ RSpec.describe("Exams", type: :request) do
       context "when date changes" do
         let(:valid_attributes_new_date) do
           {
-            date: 5.weeks.from_now.strftime("%Y-%m-%d %H:%M"),
+            date: 5.weeks.from_now.strftime("%Y-%m-%d %H:%M")
           }
         end
         it "sends a schedule change email to participants" do

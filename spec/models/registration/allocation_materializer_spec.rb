@@ -67,7 +67,11 @@ RSpec.describe(Registration::AllocationMaterializer, type: :model) do
       end
 
       context "when no users are confirmed for an item" do
-        before { user.user_registrations.update_all(status: :pending) }
+        before do
+          # rubocop:disable Rails/SkipsModelValidations
+          user.user_registrations.update_all(status: :pending)
+          # rubocop:enable Rails/SkipsModelValidations
+        end
 
         it "does not send an email for that item" do
           perform_enqueued_jobs do
