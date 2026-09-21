@@ -566,8 +566,8 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
     # The week runs on for the other groups; this reader has written the test
     # and has points to look at, which is the list's business, not a card's.
-    # The test is in the current week: from Friday on, three days ahead is the
-    # next week, and points cannot go in before a test's week begins.
+    # Points are refused before the test's week, so a day offset fails from
+    # Friday on; the test is pinned to the current week.
     it "moves a test to the list the moment its points are in, week or no week" do
       test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
                                  deadline: Time.zone.now.end_of_week)

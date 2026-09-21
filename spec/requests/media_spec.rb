@@ -584,8 +584,6 @@ RSpec.describe("Media", type: :request) do
            })
     end
 
-    # The dialog's fields become the sheet, and the sheet gets its pointbook
-    # the way one made on the assessments tab does.
     it "makes the sheet with the dialog's settings when the medium goes out now" do
       publish
 

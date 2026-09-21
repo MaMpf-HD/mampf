@@ -1,6 +1,5 @@
-# A sheet the lecturer has set up with an exercise medium's release. The row
-# says when it appears, and where its settings are: on the medium, since
-# there is no sheet to edit yet.
+# Renders a sheet that an exercise medium's release will make. Until then
+# there is no sheet to edit, so the row points at the medium.
 class ScheduledSheetRowComponent < ViewComponent::Base
   attr_reader :sheet
 

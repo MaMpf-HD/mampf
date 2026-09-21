@@ -766,17 +766,16 @@ class Lecture < ApplicationRecord
 
   # Soonest release first, the overdue ones included: a publisher still on
   # the medium is a sheet still to come, since the worker takes it off once
-  # it has published. Not built on `MediumPublisher#assignment`, which builds
-  # an `Assignment` and pays a `medium.teachable` per medium for it - and
-  # still cannot say when the sheet appears.
+  # it has published. Read off the publisher rather than through
+  # `MediumPublisher#assignment`, which builds an `Assignment` and fetches
+  # its lecture for every sheet.
   def scheduled_sheets
     media.where(sort: "Exercise").where.not(publisher: nil)
          .filter_map { |medium| scheduled_release(medium) }
          .sort_by(&:release_date)
   end
 
-  # What the submissions page says when nothing is due right now. A release
-  # a minute overdue is the worker's business, not the page's.
+  # A release a minute overdue is the worker's business, not the student's.
   def next_scheduled_sheet
     scheduled_sheets.find { |sheet| !sheet.overdue? }
   end

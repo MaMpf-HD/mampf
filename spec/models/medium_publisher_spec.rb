@@ -132,8 +132,6 @@ RSpec.describe(MediumPublisher, type: :model) do
       expect(lecture.assignments.size).to eq(1)
     end
 
-    # The sheet the publisher makes is a sheet like any other: it gets its
-    # pointbook, with the box from the publish dialog.
     it "gives the assignment its assessment, with the dialog's submission setting" do
       medium = FactoryBot.create(:lecture_medium)
       user = FactoryBot.create(:confirmed_user)

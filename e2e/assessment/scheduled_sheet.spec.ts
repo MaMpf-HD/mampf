@@ -35,7 +35,7 @@ test("shows a sheet scheduled with a medium before it exists",
     await page.goto(`/assessment/assessments?lecture_id=${lecture.id}`);
     const rows = page.getByRole("row");
     await expect(rows.filter({ hasText: "Sheet 2" })).toContainText("appears on");
-    // its settings live on the medium, and it has no dashboard yet
+    // no dashboard before the release, so edits go through the medium
     await expect(rows.filter({ hasText: "Sheet 2" }).getByRole("link"))
       .toHaveAttribute("href", `/media/${medium.id}/edit`);
     await expect(rows.filter({ hasText: "Sheet 1" }).getByRole("link", { name: "Sheet 1" }))

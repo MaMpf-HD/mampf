@@ -33,8 +33,7 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
       expect(page.css("#assessment-tests-list").text).to include("Test 1")
     end
 
-    # A sheet set up with a medium's release exists only from that release
-    # on; the lecturer should still see it here, and where to change it.
+    # Listed before it exists, so the lecturer does not set it up twice.
     describe "a sheet scheduled with a medium" do
       let(:medium) do
         create(:lecture_medium, :with_lecture_by_id, lecture_id: lecture.id, sort: "Exercise")

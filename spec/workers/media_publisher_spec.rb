@@ -19,8 +19,7 @@ RSpec.describe(MediaPublisher) do
     medium
   end
 
-  # The scheduled way to a sheet: nothing exists until the worker runs, and
-  # what it makes then has to be the same sheet the dialog would have made.
+  # A scheduled release must give the sheet the same pointbook an immediate one does.
   it "publishes a medium whose time has come, and makes its sheet with the pointbook" do
     medium = schedule(release_date: 1.hour.ago)
 

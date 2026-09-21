@@ -58,8 +58,7 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
-  # What the assessments tab lists before the sheets exist: each with the
-  # medium whose release makes it, so the row can point at the settings.
+  # The tab needs the medium: before the release there is no sheet to edit.
   describe "#scheduled_sheets" do
     let(:lecture) { create(:lecture, :released_for_all) }
 
