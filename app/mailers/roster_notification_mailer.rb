@@ -72,11 +72,12 @@ class RosterNotificationMailer < ApplicationMailer
       return log_unsupported(rosterable) unless supported?(rosterable)
       return if rosterable.is_a?(Lecture)
 
-      template  = rosterable.is_a?(Exam) ? :rejected_from_exam_email : :rejected_from_group_email
-      with(
-        rosterable: rosterable,
-        recipient: user
-      ).public_send(template).deliver_later
+      if rosterable.is_a?(Exam)
+        with(rosterable: rosterable, recipient: user).rejected_from_exam_email.deliver_later
+      else
+        with(rosterable: rosterable,
+             recipient: user).rejected_from_group_email.deliver_later
+      end
     end
 
     def log_unsupported(rosterable)
@@ -117,7 +118,7 @@ class RosterNotificationMailer < ApplicationMailer
   def added_to_exam_email
     email do
       if @rosterable.is_a?(Exam)
-        @info[:exam_link] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
+        @info[:exam_date] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
         @info[:exam_location] = @rosterable.location.presence || "N/A"
       end
       t("roster.mailer.roster_added_to_exam_email_subject", **subject_vars)
@@ -165,7 +166,7 @@ class RosterNotificationMailer < ApplicationMailer
   def change_exam_schedule_email
     email do
       if @rosterable.is_a?(Exam)
-        @info[:exam_link] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
+        @info[:exam_date] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
         @info[:exam_location] = @rosterable.location.presence || "N/A"
       end
       t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars)
@@ -182,8 +183,8 @@ class RosterNotificationMailer < ApplicationMailer
       @participant     = params[:participant]
       @username        = @recipient.tutorial_name
       @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable)
-      @lecture         = lecture_for_rosterable(@rosterable || @new_rosterable)
-      @info            = params[:info] || {}
+      @lecture ||= lecture_for_rosterable(@rosterable || @new_rosterable)
+      @info = params[:info] || {}
     end
 
     def email

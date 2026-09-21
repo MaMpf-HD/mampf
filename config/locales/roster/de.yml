@@ -525,15 +525,13 @@ de:
       roster_rejected_from_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
-          Deine Anmeldung für <strong>%{rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> war nicht erfolgreich.
+          Deine Anmeldung für <strong>%{lecture_title}</strong> war nicht erfolgreich.
         </p>
       roster_rejected_from_group_email_body: |
         Hallo %{name},
 
-        Deine Anmeldung für „%{rosterable_title}“ in der Vorlesung
-        „%{lecture_title}“ war nicht erfolgreich.
-      roster_rejected_from_group_email_subject: 'Anmeldung für %{rosterable_title} in %{lecture_title} nicht erfolgreich'
+        Deine Anmeldung für „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_group_email_subject: 'Anmeldung für %{lecture_title} nicht erfolgreich'
 
       roster_rejected_from_exam_email_body_html: |
         <p>Hallo %{name},</p>

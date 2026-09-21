@@ -603,7 +603,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    context "with preference-based allocation where some users are placed and one is not" do
+    context "with preference-based allocation across three items and four students" do
       let(:seminar) { create(:seminar) }
       let(:campaign) do
         create(:registration_campaign, :preference_based, status: :processing,
@@ -611,20 +611,23 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
       let(:item1) { create(:talk, lecture: seminar) }
       let(:item2) { create(:talk, lecture: seminar) }
+      let(:item3) { create(:talk, lecture: seminar) }
       let!(:reg_item1) do
         create(:registration_item, registration_campaign: campaign, registerable: item1)
       end
       let!(:reg_item2) do
         create(:registration_item, registration_campaign: campaign, registerable: item2)
       end
+      let!(:reg_item3) do
+        create(:registration_item, registration_campaign: campaign, registerable: item3)
+      end
 
       let(:student1) { create(:confirmed_user, locale: "en") }
       let(:student2) { create(:confirmed_user, locale: "en") }
       let(:student3) { create(:confirmed_user, locale: "en") }
+      let(:student4) { create(:confirmed_user, locale: "en") } # rejected from all three
 
       before do
-        # Each student prefers item1 first, item2 second.
-        # expected 1 student on item1, 1 student on item2, 1 student unplaced
         create(:registration_user_registration,
                registration_campaign: campaign,
                registration_item: reg_item1,
@@ -632,28 +635,28 @@ RSpec.describe(Registration::Campaign, type: :model) do
         create(:registration_user_registration,
                registration_campaign: campaign,
                registration_item: reg_item2,
-               user: student1, status: :pending, preference_rank: 2)
+               user: student2, status: :confirmed, preference_rank: 1)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: reg_item3,
+               user: student3, status: :confirmed, preference_rank: 1)
 
+        # student4 applied to all three, confirmed on none
         create(:registration_user_registration,
                registration_campaign: campaign,
                registration_item: reg_item1,
-               user: student2, status: :pending, preference_rank: 1)
+               user: student4, status: :pending, preference_rank: 1)
         create(:registration_user_registration,
                registration_campaign: campaign,
                registration_item: reg_item2,
-               user: student2, status: :confirmed, preference_rank: 2)
-
+               user: student4, status: :pending, preference_rank: 2)
         create(:registration_user_registration,
                registration_campaign: campaign,
-               registration_item: reg_item1,
-               user: student3, status: :pending, preference_rank: 1)
-        create(:registration_user_registration,
-               registration_campaign: campaign,
-               registration_item: reg_item2,
-               user: student3, status: :pending, preference_rank: 2)
+               registration_item: reg_item3,
+               user: student4, status: :pending, preference_rank: 3)
       end
 
-      it "sends exactly one rejection email, to the fully-unplaced student only" do
+      it "sends exactly one rejection email to the fully-unplaced student, not one per lost item" do
         perform_enqueued_jobs { campaign.finalize! }
 
         rejection_emails = ActionMailer::Base.deliveries.select do |mail|
@@ -661,22 +664,22 @@ RSpec.describe(Registration::Campaign, type: :model) do
         end
 
         expect(rejection_emails.size).to eq(1)
-        expect(rejection_emails.first.to).to eq([student3.email])
+        expect(rejection_emails.first.to).to eq([student4.email])
       end
 
-      it "sends exactly two acceptance emails, one for each placed student" do
+      it "sends three acceptance emails, one per placed student" do
         perform_enqueued_jobs { campaign.finalize! }
 
         acceptance_emails = ActionMailer::Base.deliveries.select do |mail|
           mail.subject.include?("Added to group")
         end
 
-        expect(acceptance_emails.size).to eq(2)
-        expect(acceptance_emails.map(&:to).flatten).to contain_exactly(student1.email,
-                                                                       student2.email)
+        expect(acceptance_emails.size).to eq(3)
+        expect(acceptance_emails.map(&:to).flatten)
+          .to contain_exactly(student1.email, student2.email, student3.email)
       end
 
-      it "does not send a rejection email to students confirmed on another item" do
+      it "does not send any rejection email to students confirmed on some item" do
         perform_enqueued_jobs { campaign.finalize! }
 
         recipients_of_rejection = ActionMailer::Base
@@ -684,7 +687,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
                                   .select { |m| m.subject.include?("was not successful") }
                                   .flat_map(&:to)
 
-        expect(recipients_of_rejection).not_to include(student1.email, student2.email)
+        expect(recipients_of_rejection).not_to include(student1.email, student2.email,
+                                                       student3.email)
       end
     end
   end
