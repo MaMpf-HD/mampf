@@ -19,8 +19,7 @@ test.describe("annotations visibility", () => {
       const page = teacher.page;
       await page.goto(`/lectures/${lecture.id}/edit?tab=communication`);
       await page.getByRole("radio", { name: "no", exact: true }).check();
-      // The mail to students sits on the same tab with a submit of its own,
-      // so the button is the one that appears next to the changed setting.
+      // The only Save on the tab: the mail to students has a Send of its own.
       const saved = page.waitForResponse(response =>
         response.request().method() === "POST" && response.url().endsWith(`/lectures/${lecture.id}`));
       await page.getByRole("button", { name: "Save", exact: true }).click();

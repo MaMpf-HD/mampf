@@ -10,7 +10,7 @@ const LECTURE_TITLE_2 = "Lean4";
 const MEDIUM_TITLE_2 = "Intro operators";
 const MEDIUM_TITLE_3 = "Continuous functions";
 
-// What the player colours a shared card with, by category (see category.js).
+// A shared card takes its category's colour (category.js), not the author's.
 const CATEGORY_COLORS: Record<string, string> = {
   note: "#f78f19",
   content: "#A333C8",
@@ -35,9 +35,11 @@ type Scenario = {
   annotations: FactoryBotObject[];
 };
 
-// Two lectures, three media, four annotations of the given user - the last
-// two on the same medium. Lecture 1 comes last on the page: the overview
-// sorts by lecture.updated_at, and lecture 2 is created after lecture 1.
+/**
+ * Two annotations share a medium, so the order within a lecture is covered.
+ * Lecture 2 comes first on the page: the overview sorts by lecture.updated_at,
+ * and lecture 2 is created after lecture 1.
+ */
 async function annotationScenario(
   factory: FactoryBot, user: User, teacherId: number,
 ): Promise<Scenario> {
@@ -88,7 +90,7 @@ test.describe("the annotation sections", () => {
 
   test("show both own and students' annotations for a teacher",
     async ({ factory, teacher: { page, user } }) => {
-      // a user is considered a teacher only iff they have given any lecture
+      // The students' section is for people who have given a lecture.
       await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
       const overview = new AnnotationsOverviewPage(page);
       await overview.goto();

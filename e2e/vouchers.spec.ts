@@ -144,8 +144,8 @@ test.describe("when the server's clock moves ahead", () => {
         await createVoucher(voucherCard(teacher.page, role));
       }
 
-      // The expiry itself is covered by the model specs; this only checks that
-      // a voucher long past it is gone from the page.
+      // The model specs cover expiry; this checks that the people tab stops
+      // offering a voucher long past it.
       await timeCop.moveAheadDays(1000);
       await teacher.page.reload();
 

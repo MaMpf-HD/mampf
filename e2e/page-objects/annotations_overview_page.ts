@@ -2,8 +2,8 @@ import { Locator, Page } from "../_support/fixtures";
 
 /**
  * The overview of annotations: one's own, and for editors and teachers those
- * students shared, each as an accordion with a panel per lecture. A card is a
- * link that opens the player in a new tab.
+ * students shared. Both are accordions with a panel per lecture, so a lecture's
+ * panel is found inside its section, not on the page.
  */
 export class AnnotationsOverviewPage {
   readonly page: Page;
@@ -25,7 +25,7 @@ export class AnnotationsOverviewPage {
     return this.page.getByRole("region", { name: "Students annotations" });
   }
 
-  /** The accordion headers of a section, in the order they are shown. */
+  /** The lectures in the order shown, collapsed panels included. */
   lectures(section: Locator): Locator {
     return section.getByRole("button");
   }
@@ -40,12 +40,12 @@ export class AnnotationsOverviewPage {
     return panel.getByRole("link");
   }
 
-  /** The coloured frame inside the link; the colour is what the test reads. */
+  /** The border sits on the card inside the link, not on the link. */
   frame(card: Locator): Locator {
     return card.locator(".annotation-overview-item");
   }
 
-  /** Follows the card into the tab it opens. */
+  /** Waits for the tab the card opens, since a click alone would miss it. */
   async open(card: Locator): Promise<Page> {
     const opened = this.page.waitForEvent("popup");
     await card.click();

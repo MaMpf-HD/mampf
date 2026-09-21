@@ -82,7 +82,7 @@
             "label": "Vite Server (e2e tests)",
             "onAutoForward": "silent"
         },
-        // Test ports (for Playwright)
+        // Playwright reaches the test app through Thruster on this port
         "3145": {
             "label": "MaMpf App (for e2e tests)",
             "onAutoForward": "silent"

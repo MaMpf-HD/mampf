@@ -1,9 +1,9 @@
 import { Locator, Page } from "../_support/fixtures";
 
 /**
- * The video player and its feedback twin. Thyme draws its controls, markers
- * and the annotation area itself, without roles, so this is where they are
- * found by id.
+ * The video player and its feedback twin. The timeline markers and the
+ * annotation area have no roles, so they are found by the ids the templates
+ * and Thyme share.
  */
 export class ThymePlayer {
   readonly page: Page;
@@ -36,7 +36,7 @@ export class ThymePlayer {
     return this.page.locator("#current-time");
   }
 
-  /** One pin per annotation on the feedback player's timeline. */
+  /** The pins only, not the bar that holds them. */
   get annotationMarkers(): Locator {
     return this.page.locator("#feedback-markers > span");
   }

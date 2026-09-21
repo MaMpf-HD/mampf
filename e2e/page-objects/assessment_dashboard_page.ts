@@ -38,7 +38,7 @@ export class AssessmentDashboardPage {
       .getByRole("tab", { name, exact: true });
   }
 
-  /** The dashboard is the container's one region, titled by the assignment. */
+  /** Only the dashboard is a region inside the container; the overview is not. */
   get dashboard(): Locator {
     return this.container.getByRole("region");
   }

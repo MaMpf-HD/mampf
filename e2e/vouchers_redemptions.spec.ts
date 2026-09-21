@@ -44,8 +44,8 @@ const CLAIM_PROMPTS: Record<Claimable, string> = {
   tutorial: "Select Tutorials", talk: "Select Talks",
 };
 
-// Pinned rather than left to the factory: the pages print the course's
-// titles, and the test looks for them.
+// Fixed titles, since the bridge's title methods answer in the default locale
+// (German) while the pages speak the user's (English).
 const COURSE_TITLE = "Symplectic Geometry";
 const COURSE_SHORT_TITLE = "SymplGeo";
 
@@ -64,7 +64,7 @@ async function lectureWithVoucher(
   return { lecture, voucher };
 }
 
-// If user is given, the user is assigned as tutor or speaker.
+/** With a user, every tutorial or talk is theirs already, so none is left to claim. */
 async function createClaimables(
   factory: FactoryBot, lectureId: number, type: Claimable, user?: User, count = 3,
 ): Promise<FactoryBotObject[]> {
@@ -104,8 +104,8 @@ async function redeemVoucher(page: Page, role: Role) {
   await expect(page.getByText(SUCCESS_MESSAGES[role])).toBeVisible();
 }
 
-// Typing the title narrows TomSelect's own list, which is the one to click;
-// the native select stays beside it, hidden, with the same options.
+// TomSelect keeps the native options next to its own, so the click goes to
+// its list, the one on screen.
 async function claimAndRedeem(page: Page, role: Role, type: Claimable, titles: string[]) {
   const picker = page.getByRole("combobox", { name: CLAIM_PROMPTS[type] });
   const choices = page.locator(".ts-dropdown");
@@ -163,8 +163,8 @@ function peopleTabLink(lectureId: number): string {
   return `/lectures/${lectureId}/edit?tab=people`;
 }
 
-// Who the editors select holds: the option itself, since TomSelect's chips
-// have no role of their own.
+// The native option behind TomSelect carries the selection; the chip it draws
+// has no role.
 function editorOption(page: Page, user: User): Locator {
   return page.getByRole("option", {
     name: `${user.name_in_tutorials} (${user.email})`, exact: true, selected: true,

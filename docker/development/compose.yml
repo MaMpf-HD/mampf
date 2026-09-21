@@ -60,7 +60,7 @@ services:
       # Run the e2e stack behind Thruster, like dev/prod. Streamed media goes
       # through `send_file`, which only gets HTTP Range support (needed for video
       # seeking) when a front proxy serves it via X-Sendfile. Thruster is the
-      # public port (3145, unchanged for Playwright); Rails sits behind it.
+      # public port (3145) that Playwright targets; Rails sits behind it.
       - MAMPF_PORT=3146
       - REDIS_URL=redis://redis:6379/2
       - APP_HEALTHCHECK_PORT=3145
