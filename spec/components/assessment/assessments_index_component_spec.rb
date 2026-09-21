@@ -49,7 +49,9 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
                                                       assignment_file_type: ".pdf"))
       end
 
-      before { schedule(release_date: 2.days.from_now) }
+      let(:release) { 2.days.from_now }
+
+      before { schedule(release_date: release) }
 
       it "is listed before the sheets that exist, pointing at the medium's settings" do
         create(:valid_assignment, lecture: lecture, title: "Sheet 1")
@@ -58,7 +60,7 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
         rows = page.css("#assessment-assignments-list tr")
 
         expect(rows.map { |row| row.css("td").first.text.squish })
-          .to eq(["Sheet 2 appears on #{I18n.l(2.days.from_now, format: :short, locale: :en)}",
+          .to eq(["Sheet 2 appears on #{I18n.l(release, format: :short, locale: :en)}",
                   "Sheet 1"])
         expect(rows.first.css("a").pluck("href")).to eq(["/media/#{medium.id}/edit"])
         expect(rows.first.text).to include(".pdf")
