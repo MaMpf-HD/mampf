@@ -63,8 +63,9 @@ class RosterNotificationMailer < ApplicationMailer
       # A bare lecture roster entry grants no access, so there is nothing to announce.
       return if rosterable.is_a?(Lecture)
 
+      template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
       users.each do |user|
-        with(rosterable: rosterable, recipient: user).added_to_group_email.deliver_later
+        with(rosterable: rosterable, recipient: user).public_send(template).deliver_later
       end
     end
 
