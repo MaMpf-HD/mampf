@@ -1,6 +1,6 @@
-module Cypress
+module E2e
   # Creates a user for use in Playwright tests.
-  class UserCreatorPlaywrightController < CypressController
+  class UserCreatorController < BaseController
     PASSWORD = "playwright-correct-horse-battery".freeze
 
     def create

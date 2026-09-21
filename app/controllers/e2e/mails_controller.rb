@@ -1,7 +1,7 @@
 require "cgi"
 
-module Cypress
-  class MailsPlaywrightController < CypressController
+module E2e
+  class MailsController < BaseController
     def create
       recipient = params[:recipient].to_s
       raise(ArgumentError, "recipient must be present") if recipient.blank?

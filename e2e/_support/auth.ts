@@ -38,7 +38,7 @@ async function useUser(
   context: APIRequestContext,
   role: string,
 ): Promise<User> {
-  const user = await callBackend(context, "user_creator_playwright", { role: role }) as User;
+  const user = await callBackend(context, "user_creator", { role: role }) as User;
 
   const response = await context.post("/users/sign_in", {
     form: {

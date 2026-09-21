@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe("Cypress::FactoriesPlaywright", type: :request) do
+RSpec.describe("E2e::Factories", type: :request) do
   let(:params) { { factory_name: "term", traits: [] } }
 
   # A browser test's own page can still be finishing a request while the next
@@ -14,7 +14,7 @@ RSpec.describe("Cypress::FactoriesPlaywright", type: :request) do
       Term.new(year: 2099, season: "SS")
     end
 
-    post "/cypress/factories_playwright", params: params
+    post "/e2e/factories", params: params
 
     expect(response).to have_http_status(:created)
     expect(attempts).to eq(2)
@@ -31,7 +31,7 @@ RSpec.describe("Cypress::FactoriesPlaywright", type: :request) do
       term
     end
 
-    expect { post("/cypress/factories_playwright", params: params) }
+    expect { post("/e2e/factories", params: params) }
       .to change(Term, :count).by(1)
   end
 
@@ -39,7 +39,7 @@ RSpec.describe("Cypress::FactoriesPlaywright", type: :request) do
     allow(FactoryBot).to receive(:create)
       .and_raise(ActiveRecord::Deadlocked, "deadlock detected")
 
-    post "/cypress/factories_playwright", params: params
+    post "/e2e/factories", params: params
 
     expect(response).to have_http_status(:bad_request)
     expect(response.parsed_body["error"]).to include("Deadlocked")

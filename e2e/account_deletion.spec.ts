@@ -4,9 +4,9 @@ import { callBackend } from "./_support/backend";
 import { LoginPage } from "./page-objects/login_page";
 
 test("deletes an account that has redeemed a voucher", async ({ page, request, factory }) => {
-  const teacher = await callBackend(request, "user_creator_playwright",
+  const teacher = await callBackend(request, "user_creator",
     { role: "teacher" }) as User;
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "generic" }) as User;
   const lecture = await factory.create("lecture", [], { teacher_id: teacher.id });
   const voucher = await factory.create("voucher", [],

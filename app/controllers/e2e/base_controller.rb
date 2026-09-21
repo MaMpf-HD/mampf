@@ -1,13 +1,14 @@
-module Cypress
-  # Handles Cypress requests for interactive UI testing.
+module E2e
+  # Handles the Playwright suite's requests for what a test needs the server
+  # to do: records, users, the clock, mails, feature flags.
   #
   # The main purpose of this class is to send back errors as JSON object
-  # to parse them in the Cypress test UI. This way, we can display the error
-  # message and the stacktrace in the Cypress test.
+  # to parse them in the test runner. This way, we can display the error
+  # message and the stacktrace in the test's report.
   #
   # The convention with the frontend is to return the status `created`
   # for successful requests and `bad_request` (or anything else) for failed requests.
-  class CypressController < ApplicationController
+  class BaseController < ApplicationController
     respond_to :json
     rescue_from Exception, with: :show_errors
     skip_before_action :authenticate_user!
@@ -32,7 +33,7 @@ module Cypress
         end
       end
 
-      # Returns the error as JSON such that it can be displayed in the Cypress test.
+      # Returns the error as JSON such that it can be displayed in the test's report.
       def show_errors(exception)
         error = {
           error: "#{exception.class}: #{exception}",

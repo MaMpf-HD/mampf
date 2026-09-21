@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe("Cypress::DatabaseCleaner", type: :request) do
+RSpec.describe("E2e::DatabaseCleaner", type: :request) do
   # The truncation waits for a lock that the previous test's page still holds,
   # and Postgres picks one of the two to abort.
   it "asks again when the database picks its request to abort" do
@@ -12,7 +12,7 @@ RSpec.describe("Cypress::DatabaseCleaner", type: :request) do
       []
     end
 
-    post "/cypress/database_cleaner"
+    post "/e2e/database_cleaner"
 
     expect(response).to have_http_status(:created)
     expect(attempts).to eq(2)
@@ -22,7 +22,7 @@ RSpec.describe("Cypress::DatabaseCleaner", type: :request) do
     allow(DatabaseCleaner).to receive(:clean_with)
       .and_raise(ActiveRecord::Deadlocked, "deadlock detected")
 
-    post "/cypress/database_cleaner"
+    post "/e2e/database_cleaner"
 
     expect(response).to have_http_status(:bad_request)
     expect(response.parsed_body["error"]).to include("Deadlocked")

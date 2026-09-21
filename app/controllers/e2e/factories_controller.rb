@@ -1,9 +1,9 @@
-module Cypress
+module E2e
   # Handles Playwright requests to create factories via FactoryBot.
   #
-  # It is inspired by this blog post by Tom Conroy:
-  # https://tbconroy.com/2018/04/07/creating-data-with-factorybot-for-rails-cypress-tests/
-  class FactoriesPlaywrightController < CypressController
+  # It is inspired by Tom Conroy's post of April 2018 on tbconroy.com about
+  # creating data with FactoryBot for Rails end-to-end tests.
+  class FactoriesController < BaseController
     # Creates an instance of the factory (via FactoryBot) and returns it as JSON.
     def create
       attributes, should_validate = to_attribute_list(params)

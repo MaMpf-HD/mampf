@@ -1,5 +1,5 @@
-module Cypress
-  class FeatureFlagsController < CypressController
+module E2e
+  class FeatureFlagsController < BaseController
     def enable
       Flipper.enable(params[:name].to_sym)
       render json: { name: params[:name], enabled: true }, status: :created

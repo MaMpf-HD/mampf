@@ -1,6 +1,6 @@
-module Cypress
-  # Cleans the database for use in Cypress tests.
-  class DatabaseCleanerController < CypressController
+module E2e
+  # Cleans the database for use in Playwright tests.
+  class DatabaseCleanerController < BaseController
     def create
       res = retrying_deadlocks { DatabaseCleaner.clean_with(:truncation) }
 
