@@ -10,7 +10,7 @@ class ScheduledSheetRowComponent < ViewComponent::Base
   end
 
   def appears_on
-    t("assessment.scheduled_sheet.appears_on",
+    t("assessment.scheduled_sheet.#{sheet.overdue? ? "overdue" : "appears_on"}",
       date: I18n.l(sheet.release_date, format: :short))
   end
 

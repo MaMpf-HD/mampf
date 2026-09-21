@@ -20,6 +20,7 @@ de:
       badge: 'Test'
     scheduled_sheet:
       appears_on: 'erscheint am %{date}'
+      overdue: 'sollte am %{date} erscheinen – die Veröffentlichung steht noch aus'
     subtitle:
       assignments: 'Übungsblätter und Tests im Tutorium, Bewertungen und Punktevergabe verwalten.'
     achievements:

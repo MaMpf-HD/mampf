@@ -40,15 +40,17 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
         create(:lecture_medium, :with_lecture_by_id, lecture_id: lecture.id, sort: "Exercise")
       end
 
-      before do
+      def schedule(release_date:)
         medium.update!(publisher: MediumPublisher.new(medium_id: medium.id, user_id: teacher.id,
                                                       release_now: false,
-                                                      release_date: 2.days.from_now,
+                                                      release_date: release_date,
                                                       create_assignment: true,
                                                       assignment_title: "Sheet 2",
                                                       assignment_deadline: 9.days.from_now,
                                                       assignment_file_type: ".pdf"))
       end
+
+      before { schedule(release_date: 2.days.from_now) }
 
       it "is listed before the sheets that exist, pointing at the medium's settings" do
         create(:valid_assignment, lecture: lecture, title: "Sheet 1")
@@ -61,6 +63,15 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
                   "Sheet 1"])
         expect(rows.first.css("a").pluck("href")).to eq(["/media/#{medium.id}/edit"])
         expect(rows.first.text).to include(".pdf")
+      end
+
+      it "says so when the release is overdue" do
+        schedule(release_date: 10.minutes.ago)
+
+        page = I18n.with_locale(:en) { render_inline(described_class.new(lecture: lecture)) }
+
+        expect(page.css("#assessment-assignments-list tr").first.text)
+          .to include("was to appear on")
       end
 
       it "gets the table even when no sheet exists yet" do

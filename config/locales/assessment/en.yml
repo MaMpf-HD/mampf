@@ -20,6 +20,7 @@ en:
       badge: 'Test'
     scheduled_sheet:
       appears_on: 'appears on %{date}'
+      overdue: 'was to appear on %{date} – the release is still pending'
     subtitle:
       assignments: 'Manage homework sheets and in-tutorial tests, grading, and point allocation.'
     achievements:

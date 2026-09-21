@@ -94,5 +94,17 @@ RSpec.describe(Lecture, type: :model) do
     it "is empty when nothing is scheduled" do
       expect(lecture.scheduled_sheets).to be_empty
     end
+
+    # The publisher stays on the medium until the worker has published; while
+    # it is there, the sheet is still to come, however late.
+    it "keeps a sheet whose release is overdue, marked as such" do
+      schedule(release_date: 10.minutes.ago, title: "Homework 10")
+
+      sheets = lecture.scheduled_sheets
+
+      expect(sheets.map(&:title)).to eq(["Homework 10"])
+      expect(sheets.first).to be_overdue
+      expect(lecture.next_scheduled_sheet).to be_nil
+    end
   end
 end

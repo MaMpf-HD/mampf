@@ -756,20 +756,29 @@ class Lecture < ApplicationRecord
   # the date it appears on lives on the publisher rather than on the sheet.
   ScheduledSheet = Struct.new(:release_date, :title, :deadline, :medium,
                               :accepted_file_type, :requires_submission,
-                              keyword_init: true)
+                              keyword_init: true) do
+    # The worker publishes within the minute; a sheet overdue for longer says
+    # the worker is not running.
+    def overdue?
+      release_date.past?
+    end
+  end
 
-  # Soonest release first. Not built on `MediumPublisher#assignment`, which
-  # builds an `Assignment` and pays a `medium.teachable` per medium for it -
-  # and still cannot say when the sheet appears.
+  # Soonest release first, the overdue ones included: a publisher still on
+  # the medium is a sheet still to come, since the worker takes it off once
+  # it has published. Not built on `MediumPublisher#assignment`, which builds
+  # an `Assignment` and pays a `medium.teachable` per medium for it - and
+  # still cannot say when the sheet appears.
   def scheduled_sheets
     media.where(sort: "Exercise").where.not(publisher: nil)
          .filter_map { |medium| scheduled_release(medium) }
          .sort_by(&:release_date)
   end
 
-  # What the submissions page says when nothing is due right now.
+  # What the submissions page says when nothing is due right now. A release
+  # a minute overdue is the worker's business, not the page's.
   def next_scheduled_sheet
-    scheduled_sheets.first
+    scheduled_sheets.find { |sheet| !sheet.overdue? }
   end
 
   def select_talks
@@ -1004,12 +1013,9 @@ class Lecture < ApplicationRecord
 
   private
 
-    # A publisher whose release date has passed has already made its assignment,
-    # so it is no longer scheduled.
     def scheduled_release(medium)
       publisher = medium.publisher
-      return unless publisher&.create_assignment
-      return unless publisher.release_date&.future?
+      return unless publisher&.create_assignment && publisher.release_date
 
       ScheduledSheet.new(release_date: publisher.release_date,
                          title: publisher.assignment_title,
