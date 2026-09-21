@@ -13,6 +13,12 @@
             <track kind="metadata"
                src="<%= references_vtt_medium_path(@medium) %>"
                    srclang="de" default type="text/vtt" >
+          <% if @medium.transcript.present? %>
+            <track kind="subtitles"
+                   src="<%= @medium.transcript_url %>"
+                   srclang="<%= @medium.locale_with_inheritance %>"
+                   label="<%= t('thyme.transcript') %>">
+          <% end %>
         </video>
         <div id="video-controlBar">
           <div id="video-controls">
@@ -84,6 +90,12 @@
                  data-status="true">
                 add_to_queue
               </i>
+              <button type="button" id="subtitle-toggle"
+                      class="bi bi-badge-cc clickable ms-1"
+                      aria-pressed="false"
+                      aria-label="<%= t('thyme.toggle_subtitles') %>"
+                      style="font-size: 24px; line-height: 1; vertical-align: middle; <%= @medium.transcript.present? ? '' : 'display: none;' %>">
+              </button>
               <i id="full-screen" class="material-icons clickable ms-1"
                  data-status="false">
                 fullscreen
