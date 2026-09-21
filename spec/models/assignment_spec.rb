@@ -58,13 +58,15 @@ RSpec.describe(Assignment, type: :model) do
       term = Term.find_by(year: Time.zone.today.year, season: season) ||
              FactoryBot.create(:term, year: Time.zone.today.year, season: season)
       running = FactoryBot.create(:lecture, term: term)
+      # the term's last week, which is still ahead on every day of the term;
+      # two weeks from now is past the term's end in its last fortnight
       test = FactoryBot.build(:assignment, lecture: running, kind: :test,
-                                           deadline: 2.weeks.from_now.end_of_week)
+                                           deadline: term.end_date.end_of_week)
 
       choices = test.test_week_choices
       expect(choices.first).to eq([term.begin_date, Time.zone.today].max.beginning_of_week)
       expect(choices).to all(be_monday)
-      expect(choices).to include(2.weeks.from_now.to_date.beginning_of_week)
+      expect(choices).to include(test.deadline.to_date.beginning_of_week)
       expect(choices.last).to eq(term.end_date.beginning_of_week)
     end
 

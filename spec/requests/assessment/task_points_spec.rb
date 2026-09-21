@@ -446,7 +446,10 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
 
       it "is the new group's tutor who marks the absence from a test" do
-        test = create(:assignment, lecture: lecture, kind: :test, deadline: 1.day.ago)
+        # this week's test: "a day ago" is last week on a Monday, and a test
+        # cannot be made for a week that is over
+        test = create(:assignment, lecture: lecture, kind: :test,
+                                   deadline: Time.zone.now.end_of_week)
         create(:assessment, :with_points, assessable: test)
         row = create(:assessment_participation, assessment: test.reload.assessment,
                                                 user: student, tutorial: tutorial)
