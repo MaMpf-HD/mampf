@@ -25,7 +25,7 @@ export async function selectDate(page: Page, date = DEFAULT_DATE_FUTURE) {
  * when the date's month is not the one on show: the trailing days of the next
  * month are on the page, but not all of them.
  */
-export async function pickDate(page: Page, widget: Locator, date: Date) {
+export async function pickDate(widget: Locator, date: Date) {
   const monthOnShow = date.toLocaleString("en-US", { month: "long", year: "2-digit" });
   const header = widget.locator(".picker-switch");
   for (let turns = 0; turns < 12 && (await header.innerText()) !== monthOnShow; turns++) {
