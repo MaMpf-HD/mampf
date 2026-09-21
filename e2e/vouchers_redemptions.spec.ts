@@ -317,7 +317,8 @@ test.describe("editor voucher redemption", () => {
 
       await student.page.goto(peopleTabLink(lecture.id));
       await expect(editorOption(student.page, student.user)).toHaveCount(1);
-      await expectRoleNotification(teacher.page, "editor", student.user);
+      // Editors are told about redemptions too, so the new editor sees their own.
+      await expectRoleNotification(student.page, "editor", student.user);
     });
 
   test("displays a message that the user has already redeemed the voucher",
@@ -355,7 +356,7 @@ test.describe("teacher voucher redemption", () => {
         `${student.user.name_in_tutorials} (${student.user.email})`, { exact: true },
       )).toBeVisible();
       await expect(editorOption(student.page, teacher.user)).toHaveCount(1);
-      await expectRoleNotification(teacher.page, "teacher", student.user);
+      await expectRoleNotification(student.page, "teacher", student.user);
 
       // A teacher voucher is spent on redemption.
       await openProfile(student.page);
