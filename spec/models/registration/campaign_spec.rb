@@ -557,6 +557,51 @@ RSpec.describe(Registration::Campaign, type: :model) do
         end.to raise_error(Registration::Campaign::FinalizationBlockedError)
       end
     end
+
+    describe "capacity rejection notification" do
+      let(:campaign) { create(:registration_campaign, :with_items, status: :processing) }
+      let(:user) { create(:confirmed_user, locale: "en") }
+
+      it "sends a rejection email to pending users rejected for capacity" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: user, status: :pending)
+
+        perform_enqueued_jobs do
+          expect do
+            campaign.finalize!
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.to).to eq([user.email])
+      end
+
+      it "passes the solver_unassigned reason_code to the mailer" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: user, status: :pending)
+
+        expect(RosterNotificationMailer).to receive(:rejected).with(user, anything)
+
+        campaign.finalize!
+      end
+
+      it "sends one email per pending user, not per registration" do
+        other_user = create(:confirmed_user, locale: "en")
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: user, status: :pending)
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                user: other_user, status: :pending)
+
+        perform_enqueued_jobs do
+          expect do
+            campaign.finalize!
+          end.to change { ActionMailer::Base.deliveries.count }.by(2)
+        end
+
+        recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:to)
+        expect(recipients).to contain_exactly(user.email, other_user.email)
+      end
+    end
   end
 
   describe "#apply_rejections!" do
@@ -585,6 +630,59 @@ RSpec.describe(Registration::Campaign, type: :model) do
                                  ])
 
       expect(registration.reload).to be_rejected
+    end
+
+    describe "notification" do
+      let(:user) { create(:confirmed_user, locale: "en") }
+      let(:registration) do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: item,
+               user: user,
+               preference_rank: 1,
+               status: :pending)
+      end
+
+      it "sends a rejection email to the affected user" do
+        registration
+
+        perform_enqueued_jobs do
+          expect do
+            campaign.apply_rejections!([
+                                         {
+                                           registration_id: registration.id,
+                                           reason_code: :institutional_email_mismatch,
+                                           reason_label: "Email domain not allowed.",
+                                           message: "Email domain not allowed."
+                                         }
+                                       ])
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+
+        email = ActionMailer::Base.deliveries.last
+        expect(email.to).to eq([user.email])
+      end
+
+      it "calls the mailer with the user and registerable, not raw reason text" do
+        expect(RosterNotificationMailer).to receive(:rejected).with(user, anything)
+
+        campaign.apply_rejections!([
+                                     {
+                                       registration_id: registration.id,
+                                       reason_code: :institutional_email_mismatch,
+                                       reason_label: "some raw, unreviewed policy text",
+                                       message: "some raw, unreviewed policy text"
+                                     }
+                                   ])
+      end
+
+      it "does not send anything for an empty violations list" do
+        perform_enqueued_jobs do
+          expect do
+            campaign.apply_rejections!([])
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+      end
     end
   end
 

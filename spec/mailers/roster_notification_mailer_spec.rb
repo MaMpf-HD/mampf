@@ -395,63 +395,30 @@ describe RosterNotificationMailer do
       end
     end
 
-    describe "reason resolution" do
-      let(:tutorial) { create(:tutorial, title: "Übung 3") }
+    describe "reason link" do
+      let(:lecture) { create(:lecture) }
 
-      it "includes the resolved reason when the reason_code has a translation" do
-        email = described_class.with(
-          rosterable: tutorial,
-          recipient: user,
-          info: { reason: I18n.t("registration.user_registration.reason_labels.solver_unassigned",
-                                 locale: user.locale) }
-        ).rejected_from_group_email
+      context "when the rosterable has no page of its own (Tutorial/Cohort)" do
+        let(:tutorial) { create(:tutorial, lecture: lecture, title: "Übung 3") }
 
-        delivered = deliver(email)
-        expected_text = I18n.t("registration.user_registration.reason_labels.solver_unassigned",
-                               locale: user.locale)
-        expect(delivered_body(delivered)).to include(expected_text)
+        it "falls back to the lecture home link" do
+          email = described_class.with(rosterable: tutorial,
+                                       recipient: user).rejected_from_group_email
+          delivered = deliver(email)
+
+          expect(delivered_body(delivered)).to match(%r{https?://\S*})
+        end
       end
 
-      it "omits the reason line entirely when reason_code does not resolve" do
-        described_class.rejected(user, tutorial, reason_code: "totally_unknown_code")
+      context "when the rosterable is an Exam" do
+        let(:exam) { create(:exam, :written, lecture: lecture) }
 
-        perform_enqueued_jobs
-        delivered = ActionMailer::Base.deliveries.last
+        it "includes a link" do
+          email = described_class.with(rosterable: exam, recipient: user).rejected_from_exam_email
+          delivered = deliver(email)
 
-        expect(delivered_body(delivered)).not_to include("Grund:")
-      end
-
-      it "omits the reason line entirely when no reason_code is given" do
-        described_class.rejected(user, tutorial)
-
-        perform_enqueued_jobs
-        delivered = ActionMailer::Base.deliveries.last
-
-        expect(delivered_body(delivered)).not_to include("Grund:")
-      end
-
-      it "resolves a known reason_code to its translated label" do
-        described_class.rejected(
-          user, tutorial,
-          reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
-        )
-
-        perform_enqueued_jobs
-        delivered = ActionMailer::Base.deliveries.last
-        expected_text = I18n.t("registration.user_registration.reason_labels.solver_unassigned",
-                               locale: user.locale)
-
-        expect(delivered_body(delivered)).to include(expected_text)
-      end
-
-      it "never leaks a raw, untranslated reason_code as text" do
-        raw_code = "some_dynamically_generated_policy_string_with_specifics"
-        described_class.rejected(user, tutorial, reason_code: raw_code)
-
-        perform_enqueued_jobs
-        delivered = ActionMailer::Base.deliveries.last
-
-        expect(delivered_body(delivered)).not_to include(raw_code)
+          expect(delivered_body(delivered)).to match(%r{https?://\S*})
+        end
       end
     end
   end

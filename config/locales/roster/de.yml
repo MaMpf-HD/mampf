@@ -341,6 +341,10 @@ de:
         <p>Du kannst Deine neue Prüfungsinformationen hier aufrufen: %{rosterable_link}</p>
       link_text_exam: |
         Du kannst Deine neue Prüfungsinformationen hier aufrufen: %{rosterable_link}
+      link_reject_info_html: |
+        <p>Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}</p>
+      link_reject_info: |
+        Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}
       roster_added_to_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>

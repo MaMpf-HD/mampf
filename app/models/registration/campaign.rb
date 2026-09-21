@@ -297,8 +297,7 @@ module Registration
 
         RosterNotificationMailer.rejected(
           registration.user,
-          registration.registration_item,
-          reason_code: violation[:reason_code]
+          registration.registration_item&.registerable
         )
       end
     end
@@ -523,8 +522,7 @@ module Registration
         pending.each do |registration|
           RosterNotificationMailer.rejected(
             registration.user,
-            registration.registration_item,
-            reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED
+            registration.registration_item&.registerable
           )
         end
       end

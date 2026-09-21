@@ -11,11 +11,9 @@ class RosterNotificationMailer < ApplicationMailer
       return if rosterable.is_a?(Lecture)
 
       template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
-      info      = rosterable.is_a?(Exam) ? exam_info(rosterable) : {}
       with(
         rosterable: rosterable,
-        recipient: user,
-        info: info
+        recipient: user
       ).public_send(template).deliver_later
     end
 
@@ -55,8 +53,7 @@ class RosterNotificationMailer < ApplicationMailer
       rosterable.roster_entries.each do |entry|
         with(
           rosterable: rosterable,
-          recipient: entry.user,
-          info: exam_info(rosterable)
+          recipient: entry.user
         ).change_exam_schedule_email.deliver_later
       end
     end
@@ -71,15 +68,14 @@ class RosterNotificationMailer < ApplicationMailer
       end
     end
 
-    def rejected(user, rosterable, reason_code: nil)
+    def rejected(user, rosterable)
       return log_unsupported(rosterable) unless supported?(rosterable)
       return if rosterable.is_a?(Lecture)
 
       template  = rosterable.is_a?(Exam) ? :rejected_from_exam_email : :rejected_from_group_email
       with(
         rosterable: rosterable,
-        recipient: user,
-        info: { reason: resolve_safe_reason(reason_code) }
+        recipient: user
       ).public_send(template).deliver_later
     end
 
@@ -91,22 +87,6 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     private
-
-      def resolve_safe_reason(reason_code)
-        return nil if reason_code.blank?
-
-        code = reason_code.to_s
-        translated = Registration::UserRegistration::REJECTION_REASON_CODE_TRANSLATION_ALIASES
-                     .fetch(code, code)
-
-        policy_key = "registration.policy.errors.#{translated}"
-        return I18n.t(policy_key) if I18n.exists?(policy_key)
-
-        reason_key = "registration.user_registration.reason_labels.#{translated}"
-        return I18n.t(reason_key) if I18n.exists?(reason_key)
-
-        nil
-      end
 
       def supported?(rosterable)
         SUPPORTED_ROSTERABLES.any? { |klass| rosterable.is_a?(klass) }
@@ -128,13 +108,6 @@ class RosterNotificationMailer < ApplicationMailer
           end
         end
       end
-
-      def exam_info(rosterable)
-        return {} unless rosterable.is_a?(Exam)
-
-        { exam_date: rosterable.date ? I18n.l(rosterable.date, format: :long) : "N/A",
-          exam_location: rosterable.location.presence || "N/A" }
-      end
   end
 
   def added_to_group_email
@@ -142,7 +115,13 @@ class RosterNotificationMailer < ApplicationMailer
   end
 
   def added_to_exam_email
-    email { t("roster.mailer.roster_added_to_exam_email_subject", **subject_vars) }
+    email do
+      if @rosterable.is_a?(Exam)
+        @info[:exam_link] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
+        @info[:exam_location] = @rosterable.location.presence || "N/A"
+      end
+      t("roster.mailer.roster_added_to_exam_email_subject", **subject_vars)
+    end
   end
 
   def removed_from_group_email
@@ -162,11 +141,17 @@ class RosterNotificationMailer < ApplicationMailer
   end
 
   def rejected_from_group_email
-    email { t("roster.mailer.roster_rejected_from_group_email_subject", **subject_vars) }
+    email do
+      @info[:reason_link] = lecture_home_url(@lecture) if @lecture
+      t("roster.mailer.roster_rejected_from_group_email_subject", **subject_vars)
+    end
   end
 
   def rejected_from_exam_email
-    email { t("roster.mailer.roster_rejected_from_exam_email_subject", **subject_vars) }
+    email do
+      @info[:reason_link] = lecture_home_url(@lecture) if @lecture
+      t("roster.mailer.roster_rejected_from_exam_email_subject", **subject_vars)
+    end
   end
 
   def participant_left_group_email
@@ -178,7 +163,13 @@ class RosterNotificationMailer < ApplicationMailer
   end
 
   def change_exam_schedule_email
-    email { t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars) }
+    email do
+      if @rosterable.is_a?(Exam)
+        @info[:exam_link] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
+        @info[:exam_location] = @rosterable.location.presence || "N/A"
+      end
+      t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars)
+    end
   end
 
   private
