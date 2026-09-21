@@ -50,13 +50,10 @@ class RosterNotificationMailer < ApplicationMailer
     def change_exam_schedule(rosterable)
       return log_unsupported(rosterable) unless rosterable.is_a?(Exam)
 
-      info = exam_info(rosterable) # snapshot date/location now, not when the job runs
-
       rosterable.roster_entries.includes(:user).find_each do |entry|
         with(
           rosterable: rosterable,
-          recipient: entry.user,
-          info: info
+          recipient: entry.user
         ).change_exam_schedule_email.deliver_later
       end
     end
