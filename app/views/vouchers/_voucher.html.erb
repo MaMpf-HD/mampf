@@ -2,7 +2,7 @@
 
 <div class="card-body">
 
-  <h4 class="card-title lecture-pane-subheader">
+  <h4 class="card-title lecture-pane-subheader" id="<%= role %>-voucher-title">
     <%= t("basics.voucher_for", role: t("basics.#{role}s")) %>
     <%= helpdesk(t("admin.lecture.info.voucher_for_#{role}"), html=false) %>
   </h4>
@@ -12,6 +12,7 @@
     <div class="input-group mb-3">
       <button class="btn btn-outline-secondary clipboard-btn clipboard-button"
               title="<%= t('buttons.copy_to_clipboard')%>"
+              aria-label="<%= t('buttons.copy_to_clipboard')%>"
               data-clipboard-text="<%= voucher.secure_hash %>"
               data-cy="copy-<%= role %>-voucher-btn">
         <i class="bi bi-clipboard"></i>
@@ -24,6 +25,7 @@
       </button>
       <input type="text" class="form-control" disabled
             value="<%= voucher.secure_hash %>"
+            aria-label="<%= t('basics.voucher_code') %>"
             data-cy='<%= "#{role}-voucher-secure-hash" %>'>
     </div>
 

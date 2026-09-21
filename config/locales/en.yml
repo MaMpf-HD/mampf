@@ -3680,6 +3680,7 @@ en:
       <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
+    voucher_code: Voucher code
     speaker: Speaker
     speakers: Speakers
     mode: "Allocation Mode"

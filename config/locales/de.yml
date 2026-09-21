@@ -3918,6 +3918,7 @@ de:
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{role}
+    voucher_code: Gutscheincode
     speaker: Vortragender
     speakers: Vortragende
     mode: "Zuteilungsmodus"
