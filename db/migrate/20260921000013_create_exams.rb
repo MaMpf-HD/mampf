@@ -8,7 +8,7 @@ class CreateExams < ActiveRecord::Migration[8.0]
       t.integer :capacity
       t.text :description
       t.boolean :skip_campaigns, default: false, null: false
-      t.integer :self_materialization_mode, default: 0
+      t.integer :self_materialization_mode, default: 0, null: false
 
       t.timestamps
     end

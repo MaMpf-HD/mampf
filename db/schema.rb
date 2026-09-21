@@ -400,7 +400,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.integer "capacity"
     t.text "description"
     t.boolean "skip_campaigns", default: false, null: false
-    t.integer "self_materialization_mode", default: 0
+    t.integer "self_materialization_mode", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id", "date"], name: "index_exams_on_lecture_id_and_date"
