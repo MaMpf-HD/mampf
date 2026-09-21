@@ -333,6 +333,10 @@ en:
         <p>You can view your new exam info here: %{rosterable_link}</p>
       link_text_exam: |
         You can view your new exam info here: %{rosterable_link}
+      link_reject_info_html: |
+        <p>You can view your registration status here: %{rosterable_link}</p>
+      link_reject_info: |
+        You can view your registration status here: %{rosterable_link}
       roster_added_to_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>

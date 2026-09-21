@@ -2,11 +2,8 @@
       name: @username,
       lecture_title: @lecture&.title || '',
       rosterable_title: @rosterable.title) %>
-<% if @info[:reason].present? %>
-  <%= t('roster.mailer.rejected_reason_text_html', reason: @info[:reason]) %>
-<% end %>
-<% if @rosterable_link %>
-  <%= t('roster.mailer.link_text_exam_html',
-        rosterable_link: link_to(t('basics.link'), @rosterable_link)) %>
+<% if @info[:reason_link].present? %>
+  <%= t('roster.mailer.link_reject_info_html',
+        rosterable_link: link_to(t('basics.link'), @info[:reason_link])) %>
 <% end %>
 <%= t('roster.mailer.end_mail_html') %>
