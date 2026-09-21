@@ -5,12 +5,11 @@ module Registration
     end
 
     def materialize!
-      pending_notifications = []
+      ActiveRecord::Base.transaction do |transaction|
+        pending_notifications = []
 
-      ActiveRecord::Base.transaction do
         @campaign.registration_items.includes(:registerable).find_each do |item|
           user_ids = item.confirmed_user_ids
-          next if user_ids.empty?
 
           item.registerable.materialize_allocation!(
             user_ids: user_ids,
@@ -24,10 +23,13 @@ module Registration
 
           pending_notifications << [item.registerable, user_ids]
         end
-      end
 
-      pending_notifications.each do |registerable, user_ids|
-        RosterNotificationMailer.finalized(registerable, User.where(id: user_ids))
+        transaction.after_commit do
+          pending_notifications.each do |registerable, user_ids|
+            users = User.where(id: user_ids)
+            RosterNotificationMailer.finalized(registerable, users)
+          end
+        end
       end
     end
   end

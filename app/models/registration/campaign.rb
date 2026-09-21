@@ -276,29 +276,42 @@ module Registration
       return if violations.empty?
 
       now = Time.current
-      registrations_by_id = user_registrations.where(
-        id: violations.pluck(:registration_id)
-      ).index_by(&:id)
 
-      violations.each do |violation|
-        registration = registrations_by_id.fetch(violation[:registration_id]) do
-          raise(ActiveRecord::RecordNotFound,
-                "Couldn't find Registration::UserRegistration " \
-                "with id=#{violation[:registration_id]}")
+      ActiveRecord::Base.transaction do |transaction|
+        registrations_by_id = user_registrations.where(
+          id: violations.pluck(:registration_id)
+        ).index_by(&:id)
+
+        rejected_registrations = violations.map do |violation|
+          registration = registrations_by_id.fetch(violation[:registration_id]) do
+            raise(ActiveRecord::RecordNotFound,
+                  "Couldn't find Registration::UserRegistration " \
+                  "with id=#{violation[:registration_id]}")
+          end
+
+          registration.reject!(
+            reason_type: violation[:reason_type] || default_reason_type,
+            reason_code: violation[:reason_code].to_s,
+            reason_label: violation[:reason_label] || violation[:message],
+            rejection_policy_id: violation[:policy_id],
+            rejected_at: now
+          )
+
+          registration
         end
 
-        registration.reject!(
-          reason_type: violation[:reason_type] || default_reason_type,
-          reason_code: violation[:reason_code].to_s,
-          reason_label: violation[:reason_label] || violation[:message],
-          rejection_policy_id: violation[:policy_id],
-          rejected_at: now
-        )
+        to_notify = rejected_registrations.group_by(&:user).filter_map do |user, registrations|
+          next if user_registration_confirmed?(user)
+          next if user_registrations.pending.exists?(user_id: user.id)
 
-        next if user_registration_confirmed?(registration.user)
+          [user, registrations.first.registration_item&.registerable]
+        end
 
-        RosterNotificationMailer.rejected(registration.user,
-                                          registration.registration_item&.registerable)
+        transaction.after_commit do
+          to_notify.each do |user, rosterable|
+            RosterNotificationMailer.rejected(user, rosterable)
+          end
+        end
       end
     end
 

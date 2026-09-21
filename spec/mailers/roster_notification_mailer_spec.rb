@@ -352,6 +352,44 @@ describe RosterNotificationMailer do
         end.not_to have_enqueued_mail
       end
     end
+
+    context "with an Exam" do
+      it "enqueues an email for an Exam" do
+        exam = create(:exam, :written)
+
+        expect do
+          described_class.finalized(exam, [user])
+        end.to have_enqueued_mail(described_class, :added_to_exam_email)
+      end
+
+      it "delivers a mail with the exam subject and schedule details" do
+        exam = create(:exam, :written, date: Time.zone.parse("2026-11-15 10:00"),
+                                       location: "Room 101")
+
+        email = described_class.with(rosterable: exam, recipient: user).added_to_exam_email
+        delivered = deliver(email)
+
+        expected_subject = I18n.with_locale(user.locale) do
+          I18n.t("roster.mailer.roster_added_to_exam_email_subject",
+                 rosterable_title: exam.title,
+                 lecture_title: exam.lecture.title)
+        end
+        expect(delivered.subject).to eq(expected_subject)
+
+        body = delivered_body(delivered)
+        expect(body).to include(I18n.l(exam.date, format: :long, locale: user.locale))
+        expect(body).to include("Room 101")
+      end
+
+      it "enqueues one email per user" do
+        exam = create(:exam, :written)
+        other_user = create(:user, locale: "de")
+
+        expect do
+          described_class.finalized(exam, [user, other_user])
+        end.to have_enqueued_mail(described_class, :added_to_exam_email).twice
+      end
+    end
   end
 
   describe ".rejected" do

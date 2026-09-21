@@ -42,6 +42,23 @@ RSpec.describe(Registration::AllocationMaterializer, type: :model) do
              }.from(nil)
     end
 
+    it "does not enqueue notifications when a later item's materialization fails" do
+      campaign.registration_items.first
+      campaign.registration_items.second
+
+      call_count = 0
+      allow_any_instance_of(Tutorial).to receive(:materialize_allocation!) do
+        call_count += 1
+        raise ActiveRecord::Rollback if call_count == 2
+      end
+
+      perform_enqueued_jobs do
+        expect do
+          materializer.materialize!
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
+    end
+
     describe "finalization email" do
       it "sends a finalized email for each confirmed user" do
         perform_enqueued_jobs do

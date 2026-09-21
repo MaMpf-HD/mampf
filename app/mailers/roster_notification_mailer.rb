@@ -50,10 +50,13 @@ class RosterNotificationMailer < ApplicationMailer
     def change_exam_schedule(rosterable)
       return log_unsupported(rosterable) unless rosterable.is_a?(Exam)
 
-      rosterable.roster_entries.each do |entry|
+      info = exam_info(rosterable) # snapshot date/location now, not when the job runs
+
+      rosterable.roster_entries.includes(:user).find_each do |entry|
         with(
           rosterable: rosterable,
-          recipient: entry.user
+          recipient: entry.user,
+          info: info
         ).change_exam_schedule_email.deliver_later
       end
     end
@@ -119,8 +122,12 @@ class RosterNotificationMailer < ApplicationMailer
   def added_to_exam_email
     email do
       if @rosterable.is_a?(Exam)
-        @info[:exam_date] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
-        @info[:exam_location] = @rosterable.location.presence || "N/A"
+        @info[:exam_date] = if @rosterable.date
+          I18n.l(@rosterable.date, format: :long)
+        else
+          t("basics.value_not_available")
+        end
+        @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
       end
       t("roster.mailer.roster_added_to_exam_email_subject", **subject_vars)
     end
@@ -167,8 +174,12 @@ class RosterNotificationMailer < ApplicationMailer
   def change_exam_schedule_email
     email do
       if @rosterable.is_a?(Exam)
-        @info[:exam_date] = @rosterable.date ? I18n.l(@rosterable.date, format: :long) : "N/A"
-        @info[:exam_location] = @rosterable.location.presence || "N/A"
+        @info[:exam_date] = if @rosterable.date
+          I18n.l(@rosterable.date, format: :long)
+        else
+          t("basics.value_not_available")
+        end
+        @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
       end
       t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars)
     end

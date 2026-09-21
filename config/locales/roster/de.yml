@@ -338,9 +338,9 @@ de:
       link_text_group: |
         Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}
       link_text_exam_html: |
-        <p>Du kannst Deine neue Prüfungsinformationen hier aufrufen: %{rosterable_link}</p>
+        <p>Du kannst Deine neuen Prüfungsinformationen hier aufrufen: %{rosterable_link}</p>
       link_text_exam: |
-        Du kannst Deine neue Prüfungsinformationen hier aufrufen: %{rosterable_link}
+        Du kannst Deine neuen Prüfungsinformationen hier aufrufen: %{rosterable_link}
       link_reject_info_html: |
         <p>Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}</p>
       link_reject_info: |
@@ -369,7 +369,7 @@ de:
           in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
         <p>
-          Die Prüfung findet am %{exam_date} um %{exam_location} statt.
+          Die Prüfung findet am %{exam_date} in %{exam_location} statt.
         </p>
       roster_added_to_exam_email_body: |
         Hallo %{name},
@@ -377,7 +377,7 @@ de:
         Du wurdest zur Prüfung „%{rosterable_title}“ in der Vorlesung
         „%{lecture_title}“ hinzugefügt.
 
-        Die Prüfung findet am %{exam_date} um %{exam_location} statt.
+        Die Prüfung findet am %{exam_date} in %{exam_location} statt.
       roster_added_to_exam_email_subject: 'Zur Prüfung %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
