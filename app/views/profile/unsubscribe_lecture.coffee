@@ -18,6 +18,7 @@ $card.empty()
                         locals: { lecture: @lecture,
                                   current: @current,
                                   subscribed: false,
+                                  own: @own,
                                   parent: @parent } %>')
 <% end %>
 <% end %>

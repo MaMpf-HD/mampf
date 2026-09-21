@@ -99,6 +99,111 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).not_to include("collapseNextTermStuff")
       end
 
+      # A lecturer's lecture is theirs without a subscription - that is a
+      # student's tie - and stays so when the term turns.
+      describe "the lectures the user holds or edits" do
+        it "lists the user's own lecture for the coming term without a subscription" do
+          lecture = create(:lecture, :released_for_all, term: next_term, teacher: user)
+
+          get root_path
+
+          expect(cards_in("next-term-subscribed")).to include(lecture.id.to_s)
+          empty_state = Nokogiri::HTML(response.body).at_css("#emptyNextTermStuff")
+          expect(empty_state["style"]).to include("display: none")
+        end
+
+        it "lists a lecture the user edits, once, whether subscribed or not" do
+          lecture = create(:lecture, :released_for_all, term: next_term)
+          lecture.editors << user
+
+          get root_path
+          expect(cards_in("next-term-subscribed")).to eq([lecture.id.to_s])
+
+          user.subscribe_lecture!(lecture)
+          get root_path
+          expect(cards_in("next-term-subscribed")).to eq([lecture.id.to_s])
+        end
+
+        it "lists the user's own lecture of the current term as well" do
+          lecture = create(:lecture, :released_for_all, term: current_term, teacher: user)
+
+          get root_path
+
+          fold = Nokogiri::HTML(response.body).at_css("#collapseCurrentStuffContent")
+          card = fold.at_css(".lectureCard[data-id='#{lecture.id}']")
+          expect(card).to be_present
+          expect(card.css("a").pluck("href")).to include(lecture_path(lecture))
+          expect(card.css("a[title]").pluck("title"))
+            .not_to include(I18n.t("basics.subscribe"), I18n.t("basics.unsubscribe"))
+        end
+
+        it "lists an own lecture without a term in the current fold, as the subscriptions are" do
+          lecture = create(:lecture, :released_for_all, :term_independent, teacher: user)
+
+          get root_path
+
+          fold = Nokogiri::HTML(response.body).at_css("#collapseCurrentStuffContent")
+          expect(fold.at_css(".lectureCard[data-id='#{lecture.id}']")).to be_present
+        end
+
+        # With the current fold filled, the fold of terms gone by is not the
+        # one to open, and it is not drawn empty.
+        it "keeps the fold of terms gone by closed when an own lecture fills the current one" do
+          create(:lecture, :released_for_all, term: current_term, teacher: user)
+          gone = create(:term, :winter, year: 2023)
+          old_lecture = create(:lecture, :released_for_all, term: gone)
+          user.subscribe_lecture!(old_lecture)
+
+          get root_path
+
+          page = Nokogiri::HTML(response.body)
+          expect(page.at_css("#collapseCurrentStuff")["class"]).to include("show")
+          expect(page.at_css("#collapseInactiveLectures")["class"]).not_to include("show")
+          expect(page.at_css("#emptyInactiveLectures")["style"]).to include("display: none")
+        end
+
+        # The fold reloads its cards when it is opened again.
+        it "draws the own lecture again when the current fold is reopened" do
+          lecture = create(:lecture, :released_for_all, term: current_term, teacher: user)
+
+          get show_accordion_path(id: "collapseCurrentStuff"), xhr: true
+
+          expect(response.body).to include("data-id=\\\"#{lecture.id}\\\"")
+          expect(response.body).not_to include("$('#emptyCurrentStuff').show()")
+        end
+
+        # The cards read course, term and teacher; those come with the lectures.
+        it "reads the own lectures with what their cards need" do
+          3.times { create(:lecture, :released_for_all, term: current_term, teacher: user) }
+          3.times { create(:lecture, :released_for_all, term: current_term).editors << user }
+          selects = []
+          callback = lambda { |_name, _start, _finish, _id, payload|
+            selects << payload[:sql] if payload[:sql].start_with?("SELECT") &&
+                                        payload[:name] != "SCHEMA"
+          }
+
+          ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+            user.current_staff_lectures.each do |lecture|
+              [lecture.course, lecture.term, lecture.teacher]
+            end
+          end
+
+          # one read per relation, plus the active term itself
+          expect(selects.count { |sql| sql.include?('FROM "courses"') }).to be <= 2
+          expect(selects.count { |sql| sql.include?('FROM "terms"') }).to be <= 3
+          expect(selects.count { |sql| sql.include?('FROM "users"') }).to be <= 2
+        end
+
+        it "does not pin a course editor's every lecture to the page" do
+          lecture = create(:lecture, :released_for_all, term: next_term)
+          lecture.course.editors << user
+
+          get root_path
+
+          expect(cards_in("next-term-subscribed")).to be_empty
+        end
+      end
+
       it "takes the lecture out of the subscriptions of terms gone by" do
         lecture = create(:lecture, :released_for_all, term: next_term)
         user.subscribe_lecture!(lecture)
