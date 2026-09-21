@@ -45,8 +45,8 @@ class AddSubmissionDeletionDateToLectures < ActiveRecord::Migration[8.0]
 
   private
 
-    # Term#end_date as of this migration. A term without a year is broken
-    # data and raises here, as it did through the model.
+    # A summer term ends on September 30, any other on March 31 of the next
+    # year. A term without a year is broken data and raises.
     def term_end(year, season)
       season == "SS" ? Date.new(year, 9, 30) : Date.new(year + 1, 3, 31)
     end
