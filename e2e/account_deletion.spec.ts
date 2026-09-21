@@ -26,7 +26,7 @@ test("deletes an account that has redeemed a voucher", async ({ page, request, f
   await page.goto("/profile/edit?locale=en");
   await page.getByRole("link", { name: "Delete Account" }).click();
   const confirmation = page.getByRole("dialog", { name: "Delete Account" });
-  await confirmation.getByRole("textbox", { name: "Password" }).fill(user.password);
+  await confirmation.getByLabel("Password").fill(user.password);
   await confirmation.getByRole("button", { name: "Delete Account" }).click();
 
   await expect(page).toHaveURL(/\/$/);
