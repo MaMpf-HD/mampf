@@ -52,7 +52,7 @@
           <h6><%= t('assessment.test.homework_heading') %></h6>
         <% end %>
 
-        <% if homework.any? || scheduled_sheets.any? %>
+        <% if homework_table? %>
           <table class="table table-hover mb-4">
             <thead>
               <tr>
@@ -206,7 +206,7 @@
     </div>
   <% end %>
 
-  <% if assessables_by_type["Assignment"]&.any? %>
+  <% if assessables_by_type["Assignment"]&.any? || scheduled_sheets.any? %>
     <div class="lecture-pane-separator"></div>
     <h5 class="mb-3">
       <%= t('assessment.submission_settings') %>

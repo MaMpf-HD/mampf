@@ -74,11 +74,27 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
           .to include("was to appear on")
       end
 
-      it "gets the table even when no sheet exists yet" do
+      it "gets the table and the submission settings even when no sheet exists yet" do
         page = render_inline(described_class.new(lecture: lecture))
 
         expect(page.css("#assessment-assignments-list tr").size).to eq(1)
         expect(page.text).not_to include(I18n.t("assessment.no_assignments_yet"))
+        expect(page.text).to include(I18n.t("assessment.submission_settings", locale: :en))
+      end
+
+      it "counts as the homework table when a test needs the two named apart" do
+        create(:valid_assignment, lecture: lecture, title: "Test 1", kind: :test)
+
+        page = I18n.with_locale(:en) { render_inline(described_class.new(lecture: lecture)) }
+
+        expect(page.css("h6").map(&:text)).to eq(["Homework", "Tests"])
+      end
+
+      it "mutes every cell of the row" do
+        page = render_inline(described_class.new(lecture: lecture))
+        cells = page.css("#assessment-assignments-list tr").first.css("td")
+
+        expect(cells).to all(satisfy { |cell| cell["class"].to_s.include?("text-muted") })
       end
     end
   end

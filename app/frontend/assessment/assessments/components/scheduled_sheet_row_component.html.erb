@@ -1,5 +1,6 @@
-<tr class="text-muted">
-  <td>
+<%# Bootstrap colours table cells itself, so the row cannot mute them. %>
+<tr>
+  <td class="text-muted">
     <i
       class="bi bi-clock me-1"
       title="<%= t('assignment.info.scheduled_assignment') %>"
@@ -13,7 +14,7 @@
     </div>
   </td>
 
-  <td>
+  <td class="text-muted">
     <span
       class="text-truncate d-inline-block"
       style="max-width: 200px;"
@@ -24,14 +25,14 @@
     </span>
   </td>
 
-  <td>
+  <td class="text-muted">
     <%= content_tag(:code, sheet.accepted_file_type, class: "small") if sheet.accepted_file_type.present? %>
   </td>
 
-  <td class="text-center">&mdash;</td>
-  <td class="text-center">&mdash;</td>
+  <td class="text-center text-muted">&mdash;</td>
+  <td class="text-center text-muted">&mdash;</td>
 
-  <td class="text-center">
+  <td class="text-center text-muted">
     <% if sheet.requires_submission %>
       <i
         class="bi bi-check-lg"
@@ -45,5 +46,5 @@
     <% end %>
   </td>
 
-  <td><%= deadline_display %></td>
+  <td class="text-muted"><%= deadline_display %></td>
 </tr>
