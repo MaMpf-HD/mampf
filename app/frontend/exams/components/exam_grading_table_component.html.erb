@@ -21,7 +21,7 @@
                      locals: { id: "exam-grades-#{@exam.id}", with_size: true } %>
         </div>
 
-        <%= render PointingFilterComponent.new(id: "exam-grades-#{@exam.id}",
+        <%= render MarkingFilterComponent.new(id: "exam-grades-#{@exam.id}",
                                                status_options: status_options,
                                                tutorial_options: tutorial_options) %>
       </div>
@@ -34,7 +34,7 @@
         <div class="table-overflow" data-table-fade-target="inner">
           <table class="table align-middle my-3">
             <thead>
-              <%= render(PointingTableHeaderComponent.new(assessable: @exam, layout: layout)) %>
+              <%= render(MarkingTableHeaderComponent.new(assessable: @exam, layout: layout)) %>
             </thead>
 
             <tbody>

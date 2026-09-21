@@ -47,7 +47,7 @@ test.describe("homework sheets", () => {
 
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();
-    const box = teacher.page.getByLabel("The assignment list is complete");
+    const box = teacher.page.getByLabel("The list of sheets and tests is complete");
     await box.check();
 
     const dialog = teacher.page
@@ -57,7 +57,7 @@ test.describe("homework sheets", () => {
 
     await expect(box).not.toBeChecked();
     await dashboard.gotoOverview();
-    await expect(teacher.page.getByLabel("The assignment list is complete"))
+    await expect(teacher.page.getByLabel("The list of sheets and tests is complete"))
       .not.toBeChecked();
   });
 
@@ -76,7 +76,7 @@ test.describe("homework sheets", () => {
 
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();
-    const box = teacher.page.getByLabel("The assignment list is complete");
+    const box = teacher.page.getByLabel("The list of sheets and tests is complete");
     await box.check();
 
     const dialog = teacher.page.getByRole("dialog", { name: "Tick the box" });
@@ -95,7 +95,7 @@ test.describe("homework sheets", () => {
 
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();
-    await teacher.page.getByLabel("The assignment list is complete").check();
+    await teacher.page.getByLabel("The list of sheets and tests is complete").check();
 
     const dialog = teacher.page
       .getByRole("dialog", { name: "Tick the box" });
@@ -109,7 +109,7 @@ test.describe("homework sheets", () => {
     await saved;
 
     await dashboard.gotoOverview();
-    await expect(teacher.page.getByLabel("The assignment list is complete"))
+    await expect(teacher.page.getByLabel("The list of sheets and tests is complete"))
       .toBeChecked();
   });
 

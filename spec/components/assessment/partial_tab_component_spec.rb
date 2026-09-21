@@ -18,11 +18,11 @@ RSpec.describe(PartialTabComponent, type: :component) do
 
   it "works without locals" do
     component = described_class.new(
-      partial: "assessment/assessments/empty_assignments"
+      partial: "assessment/participations/exempt_modal"
     )
 
     expect(render_inline(component).to_html).to include(
-      I18n.t("assessment.no_assignments_yet")
+      I18n.t("assessment.grading_exam.exempt_modal.title")
     )
   end
 end

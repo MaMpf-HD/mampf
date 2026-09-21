@@ -24,7 +24,7 @@ class TalkGradingTableComponent < ViewComponent::Base
   end
 
   def summary
-    PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false)
+    MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: false)
   end
 
   # A talk is graded or not; nothing marks a speaker absent or exempt.
@@ -35,8 +35,8 @@ class TalkGradingTableComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: gradable_talks.first,
-                                        grading_scope: @seminar)
+    @layout ||= MarkingTableLayout.for(assessable: gradable_talks.first,
+                                       grading_scope: @seminar)
   end
 
   private

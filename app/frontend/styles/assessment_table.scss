@@ -1,11 +1,18 @@
-/* The pointing table. Widths and pin offsets come in as CSS variables from
-   PointingTableLayout, so header and rows can never disagree about them. */
+/* The marking table. Widths and pin offsets come in as CSS variables from
+   MarkingTableLayout, so header and rows can never disagree about them. */
 
 .row-dirty,
 .row-dirty td,
 table.table tbody tr.row-dirty,
 table.table tbody tr.row-dirty td {
   background-color: #fffbeb !important;
+}
+
+/* More than the task's maximum: allowed, but worth a second look. */
+.points-over-max,
+.points-over-max:focus {
+  border-color: var(--bs-warning);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-warning-rgb), 0.25);
 }
 
 /* The fades sit where a pinned column meets what scrolls under it. The save
@@ -48,8 +55,9 @@ table.table tbody tr.row-dirty td {
   }
 }
 
-/* A pinned column must not grow with a wide table, or the offsets next to
-   it would no longer meet it. */
+/* Pins and their offsets meet while the table overflows, every column then
+   at its width; with room to spare the browser widens them all and nothing
+   is pinned. */
 .sticky-col {
   position: sticky;
   max-width: var(--col-width);
@@ -60,6 +68,14 @@ table.table tbody tr.row-dirty td {
 thead th.sticky-col {
   z-index: 4;
   background-color: #fafafa;
+}
+
+/* A menu opened in a pinned cell would be painted over by the pinned cells
+   of the rows below it, which come later and sit at the same level; the
+   clipboard popup opens upwards, into the header. */
+.sticky-col:has(.dropdown-menu.show),
+.sticky-col:has(.clipboardpopuptext.show) {
+  z-index: 5;
 }
 
 @mixin column($name) {
@@ -84,6 +100,7 @@ thead th.sticky-col {
 @include column(save);
 @include column(hand-in);
 @include column(correction);
+@include column(value);
 
 /* The note is the one column that may grow: whatever the others leave over
    goes to it, and it never falls below its own width. */

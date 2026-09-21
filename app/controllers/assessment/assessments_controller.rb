@@ -189,8 +189,8 @@ module Assessment
       def assessment_params
         params.expect(
           assessment_assessment: [:requires_submission,
-                                  { assessable_attributes: [:id, :title, :deadline, :medium_id,
-                                                            :accepted_file_type] }]
+                                  { assessable_attributes: [:id, :title, :deadline, :test_week,
+                                                            :medium_id, :accepted_file_type] }]
         )
       end
   end

@@ -129,8 +129,25 @@ RSpec.describe(ExamGradingTableComponent, type: :component) do
       page = render_inline(component)
 
       marker = page.css("td.grade-col i.bi-exclamation-triangle-fill").first
-      expect(marker["title"]).to end_with(I18n.t("assessment.grading_exam.points_missing"))
+      expect(marker["title"]).to include(I18n.t("assessment.grading_exam.points_missing"))
       expect(page.css("td.grade-col .badge")).to be_empty
+    end
+
+    # A grade the scheme gave follows the points on a re-apply; one entered
+    # by hand does not, and the marker says which this one is.
+    it "says whether a re-apply would touch the grade" do
+      create(:assessment_task_point, task: task, assessment_participation: participation, points: 3)
+      scheme = create(:assessment_grade_scheme, assessment: assessment)
+      scheme.update!(applied_at: Time.current, applied_by: teacher)
+      by_hand = I18n.t("assessment.grading_exam.grade_by_hand")
+
+      expect(render_inline(component).css("td.grade-col i.bi-exclamation-triangle-fill")
+                                     .first["title"]).to include(by_hand)
+
+      participation.update!(grade_scheme: scheme)
+      expect(render_inline(described_class.new(exam: exam))
+               .css("td.grade-col i.bi-exclamation-triangle-fill").first["title"])
+        .not_to include(by_hand)
     end
 
     it "leaves a row alone whose points are older than its grade" do

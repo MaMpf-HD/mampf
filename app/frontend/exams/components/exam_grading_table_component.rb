@@ -11,7 +11,7 @@ class ExamGradingTableComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @exam, table_option: :grading)
+    @layout ||= MarkingTableLayout.for(assessable: @exam, table_option: :grading)
   end
 
   def rows
@@ -37,8 +37,8 @@ class ExamGradingTableComponent < ViewComponent::Base
       extra << I18n.t("assessment.grading_exam.summary_points_changed",
                       count: points_changed_count)
     end
-    PointingSummaryComponent.new(statuses: row_statuses, hand_ins: false, id: "grading-summary",
-                                 extra_parts: extra)
+    MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: false, id: "grading-summary",
+                                extra_parts: extra)
   end
 
   def points_changed_count

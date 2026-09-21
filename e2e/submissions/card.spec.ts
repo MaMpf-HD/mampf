@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { expect, test } from "../_support/fixtures";
 import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
 import { SubmissionsPage } from "../page-objects/submissions_page";
@@ -251,6 +253,52 @@ test.describe("the card for a sheet that is due", () => {
     expect(assignment.id).toBeTruthy();
   });
 
+  // Both have the form open; whoever saves second would overwrite the other's
+  // file unseen. The second save is refused once and goes through the next time.
+  test("warns before a file a team member just uploaded is overwritten", async ({
+    factory,
+    teacher,
+    student,
+    student2,
+  }) => {
+    const { lecture } = await lectureWithSheet(
+      factory, teacher.user.id, [student.user.id, student2.user.id],
+    );
+
+    const page = new SubmissionsPage(student.page, lecture.id);
+    await page.goto();
+    await page.createSubmission();
+    const code = await student.page.locator("code").innerText();
+
+    const page2 = new SubmissionsPage(student2.page, lecture.id);
+    await page2.goto();
+    await student2.page.getByRole("link", { name: "Join with a code" }).click();
+    await student2.page.getByRole("textbox", { name: "Code" }).fill(code);
+    await student2.page.getByRole("button", { name: "Join" }).click();
+    await expect(student2.page.getByRole("link", { name: "Replace file" })).toBeVisible();
+
+    await student.page.getByRole("link", { name: "Replace file" }).click();
+    await student2.page.getByRole("link", { name: "Replace file" }).click();
+    await page2.uploadSubmission("e2e/files/manuscript-mampfsty.pdf");
+    await student2.page.getByRole("button", { name: "Save" }).click();
+    await expect(student2.page.getByRole("link", { name: "manuscript-mampfsty.pdf" }))
+      .toBeVisible();
+
+    await page.uploadSubmission({
+      name: "final.pdf",
+      mimeType: "application/pdf",
+      buffer: readFileSync("e2e/files/manuscript.pdf"),
+    });
+    await student.page.getByRole("button", { name: "Save" }).click();
+
+    await expect(
+      student.page.getByText("somebody on your team uploaded manuscript-mampfsty.pdf"),
+    ).toBeVisible();
+
+    await student.page.getByRole("button", { name: "Save" }).click();
+    await expect(student.page.getByRole("link", { name: "final.pdf" })).toBeVisible();
+  });
+
   // The message belongs beside the field the reader typed in, not in an alert
   // box that leaves the form behind.
   test("says so in the form when the code is wrong", async ({
@@ -299,7 +347,7 @@ test.describe("the card for a sheet that is due", () => {
   // tutor has recorded and marked it, the points arrive in the list.
   test("shows a sheet not handed in via MaMpf with its deadline, and later its points", async ({
     factory,
-    clock,
+    timeCop,
     teacher,
     tutor,
     student,
@@ -339,7 +387,7 @@ test.describe("the card for a sheet that is due", () => {
     await expect(student.page.getByRole("link", { name: "Join with a code" })).toHaveCount(0);
 
     const deadline = new Date(await assignment.__call("deadline") as string);
-    await clock.travelTo(new Date(deadline.getTime() + 2 * 86400000));
+    await timeCop.travelToDate(new Date(deadline.getTime() + 2 * 86400000));
 
     await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
     const row = tutor.page.getByRole("table")
@@ -362,7 +410,7 @@ test.describe("the card for a sheet that is due", () => {
   // Past the deadline the card still stands, and it says how long is left.
   test("counts the grace period down on the card", async ({
     factory,
-    clock,
+    timeCop,
     teacher,
     student,
   }) => {
@@ -372,7 +420,7 @@ test.describe("the card for a sheet that is due", () => {
     const deadline = new Date(await assignment.__call("deadline") as string);
     const inGrace = new Date(deadline.getTime() + 5 * 60 * 1000);
 
-    await clock.travelTo(inGrace);
+    await timeCop.travelToDate(inGrace);
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
 
     await expect(student.page.getByText("left", { exact: false }).first())

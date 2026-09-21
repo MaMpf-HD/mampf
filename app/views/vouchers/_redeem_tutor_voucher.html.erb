@@ -9,36 +9,36 @@
   </p>
 <% end %>
 
-<% if voucher.lecture.tutorials_without_tutor(current_user).any? %>
+<% if current_user.rostered_tutorial_in(voucher.lecture) %>
+  <p>
+    <%= t('profile.own_tutorial_not_offered') %>
+  </p>
+<% end %>
+
+<%#
+  Whether there is no tutorial yet or none open to this person, the voucher
+  is still worth redeeming: the teacher puts tutors on their tutorials later.
+%>
+<% if voucher.lecture.tutorials_open_to(current_user).any? %>
 
   <p>
     <%= t('profile.tutorials_available') %>
   </p>
   <%= render partial: "vouchers/voucher_redemption_form", locals: { voucher: voucher } %>
 
-<% elsif voucher.lecture.tutorials.any? %>
+<% elsif current_user.in?(Redemption.tutors_by_redemption_in(voucher.lecture)) %>
 
   <p>
-    <%= t('profile.all_tutorials_taken') %>
+    <%= t('profile.already_tutor_by_redemption') %>
     <%= cancel_voucher_button %>
   </p>
 
 <% else %>
 
-  <% if current_user.in?(Redemption.tutors_by_redemption_in(voucher.lecture)) %>
+  <p>
+    <%= t('profile.no_tutorials_redemption') %>
+    <%= redeem_voucher_button(voucher) %>
+    <%= cancel_voucher_button %>
+  </p>
 
-    <p>
-      <%= t('profile.already_tutor_by_redemption') %>
-      <%= cancel_voucher_button %>
-    </p>
-    
-  <% else %>
-    
-    <p>
-      <%= t('profile.no_tutorials_redemption') %>
-      <%= redeem_voucher_button(voucher) %>
-      <%= cancel_voucher_button %>
-    </p>
-
-  <% end %>
 <% end %>

@@ -77,7 +77,7 @@ module StudentPerformance
     def update
       original_achievement = @achievement.dup
 
-      if @achievement.update(achievement_params)
+      if @achievement.with_lock { @achievement.update(achievement_params) }
         flash.now[:success] = I18n.t("assessment.achievements.flash.updated")
         render turbo_stream: [
           turbo_stream.update(
@@ -90,14 +90,20 @@ module StudentPerformance
           stream_flash
         ]
       else
-        render turbo_stream: turbo_stream.update(
-          "assessments_container",
-          ::AchievementDashboardComponent.new(
-            achievement: @achievement,
-            lecture: @lecture,
-            original_achievement: original_achievement
-          )
-        ), status: :unprocessable_content
+        # The form carries no error markup of its own; what the browser did
+        # not catch is said here.
+        flash.now[:alert] = @achievement.errors.full_messages.to_sentence
+        render turbo_stream: [
+          turbo_stream.update(
+            "assessments_container",
+            ::AchievementDashboardComponent.new(
+              achievement: @achievement,
+              lecture: @lecture,
+              original_achievement: original_achievement
+            )
+          ),
+          stream_flash
+        ], status: :unprocessable_content
       end
     end
 
@@ -116,14 +122,14 @@ module StudentPerformance
           stream_flash
         ]
       else
-        # `restrict_with_error` phrases this in table names; the only thing that
-        # can block a deletion here is a rule that needs the achievement. The
-        # flash says so in words - and the errors go with it, or the settings
+        # `restrict_with_error` phrases a refusal in table names; the flash
+        # names the blockers in words - and the errors go, or the settings
         # form on the dashboard would repeat the table names under a button
-        # nobody pressed.
-        flash.now[:alert] = I18n.t(
-          "assessment.achievements.errors.referenced_by_rules"
-        )
+        # nobody pressed. A blocker gone between the refusal and this line
+        # leaves the plain refusal.
+        flash.now[:alert] = @achievement.destruction_blockers.map do |blocker|
+          I18n.t("assessment.achievement_not_destructible.#{blocker}")
+        end.presence&.to_sentence || I18n.t("assessment.achievements.errors.destroy_failed")
         @achievement.errors.clear
         render turbo_stream: [
           turbo_stream.update(

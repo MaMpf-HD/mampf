@@ -1,0 +1,54 @@
+<%#
+  A tutor's mail to their group, from the page they grade it on. The last
+  few they sent stand under the form; nobody else sees them.
+%>
+
+<button
+  type="button"
+  class="btn btn-sm btn-outline-primary text-nowrap"
+  data-bs-toggle="modal"
+  data-bs-target="#tutorial-mail-modal"
+>
+  <i class="bi bi-envelope me-1" aria-hidden="true"></i>
+  <%= t("student_message.tutorial.button") %>
+</button>
+
+<div
+  class="modal fade"
+  id="tutorial-mail-modal"
+  tabindex="-1"
+  aria-labelledby="tutorial-mail-modal-title"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tutorial-mail-modal-title">
+          <%= t("student_message.tutorial.title", tutorial: audience.label) %>
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="<%= t("buttons.close") %>"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="text-muted small">
+          <%= t("student_message.tutorial.hint") %>
+        </p>
+
+        <%= render partial: "student_messages/form",
+                   locals: { lecture: lecture, catalog: nil, fixed_audience: audience,
+                             return_to: return_to } %>
+
+        <%= render partial: "student_messages/sent",
+                   locals: { messages: lecture.student_messages.where(sender: current_user)
+                                              .to_audience(audience.key)
+                                              .order(created_at: :desc).limit(5) } %>
+      </div>
+    </div>
+  </div>
+</div>

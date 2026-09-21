@@ -73,15 +73,23 @@ module Assessment
 
       was_applied = @grade_scheme.applied?
       applier = GradeSchemeApplier.new(@grade_scheme)
-      newly_graded = applier.apply!(applied_by: current_user)
+      counts = applier.apply!(applied_by: current_user)
 
       notice = if was_applied
-        I18n.t("assessment.grade_scheme.reapplied", count: newly_graded)
+        parts = [I18n.t("assessment.grade_scheme.reapplied", count: counts[:graded])]
+        if counts[:regraded].positive?
+          parts << I18n.t("assessment.grade_scheme.regraded", count: counts[:regraded])
+        end
+        parts.join(" ")
       else
         I18n.t("assessment.grade_scheme.applied")
       end
 
-      redirect_to_dashboard(tab: "grades", notice: notice)
+      # A redirect's flash never reaches the dashboard's frame; the stream
+      # carries it, as the discard's does. Without a scheme in hand the card
+      # shows the applied state, not the form.
+      @grade_scheme = nil
+      render_dashboard("grades", notice: notice)
     end
 
     def destroy

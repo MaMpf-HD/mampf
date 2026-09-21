@@ -95,13 +95,13 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       before { Timecop.travel(3.hours.from_now) }
       after { Timecop.return }
 
-      context "and submission is valid for pointing" do
+      context "and submission is valid for marking" do
         it "returns true" do
           expect(component_tutorial.allow_grading?).to eq(true)
         end
       end
 
-      context "and submission is not valid for pointing" do
+      context "and submission is not valid for marking" do
         it "returns false" do
           expect(component_late_rejected.allow_grading?).to eq(false)
         end
@@ -292,6 +292,47 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         expect(component_tutorial.late_submission_info(submission, tutorial))
           .to eq(component_tutorial.send(:t, "submission.late"))
       end
+    end
+  end
+
+  # The hand-in is not late for a member who came after the deadline; the
+  # row marks the member, not the team.
+  describe "a member who joined after the deadline" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      submission
+      Timecop.travel(assignment.deadline + 1.day)
+      submission.user_submission_joins.create!(user: student2)
+    end
+
+    after { Timecop.return }
+
+    it "is marked by name, and the hand-in stays in time" do
+      html = render_inline(described_class.new(submission: submission.reload,
+                                               assignment: assignment,
+                                               grading_scope: tutorial))
+
+      marker = html.css(".bi-box-arrow-in-right")
+      expect(marker.size).to eq(1)
+      expect(marker.first["aria-label"])
+        .to eq(I18n.t("assessment.task_points.joined_late",
+                      time: I18n.l(Time.current, format: :file_time)))
+      expect(marker.first.parent.text).to include(student2.tutorial_name)
+      expect(html.css(".bi-exclamation-triangle-fill")).to be_empty
+    end
+
+    # Whoever founded a team after the deadline handed in late, which the
+    # triangle says; they did not join anything.
+    it "does not mark the founder of a late team" do
+      founded_late = create(:submission, assignment: assignment, tutorial: tutorial,
+                                         users: [create(:confirmed_user)])
+
+      html = render_inline(described_class.new(submission: founded_late,
+                                               assignment: assignment,
+                                               grading_scope: tutorial))
+
+      expect(html.css(".bi-box-arrow-in-right")).to be_empty
+      expect(html.css(".bi-exclamation-triangle-fill").size).to eq(1)
     end
   end
 

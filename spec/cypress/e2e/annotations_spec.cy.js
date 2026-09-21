@@ -35,9 +35,10 @@ describe("Annotations visibility", () => {
           .should("be.visible")
           .find("input[value=0]").should("have.length", 1).click();
 
-        // Click on submit button to save changes
+        // Click on submit button to save changes. The mail to students sits
+        // on the same tab with a submit of its own, so the settings' form it is.
         cy.intercept("POST", `/lectures/${this.lecture.id}`).as("lectureUpdate");
-        cy.getBySelector("lecture-pane-communication")
+        cy.getBySelector("annotation-lecture-settings").closest("form")
           .find("input[type=submit]").should("have.length", 1).click();
         cy.wait("@lectureUpdate");
 

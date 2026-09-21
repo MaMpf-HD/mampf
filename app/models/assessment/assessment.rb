@@ -45,6 +45,23 @@ module Assessment
                           .find_by(user_id: user.id))
     end
 
+    # Whether a mark has been made on the row: points entered, a grade, or a
+    # decision such as absent. Narrower than grading_data_for?: a point field
+    # saved blank and a total of nothing are records worth keeping, not marks
+    # a late-comer's join would overturn.
+    def marked?(participation)
+      return false unless participation
+      return true if participation.task_points.any? { |point| point.points.present? }
+      return true if participation.grade_numeric.present?
+      return true if participation.grade_text.present?
+
+      !participation.pending?
+    end
+
+    def marked_for_user?(user)
+      marked?(assessment_participations.includes(:task_points).find_by(user_id: user.id))
+    end
+
     delegate :title, to: :assessable
 
     def results_published?
@@ -78,6 +95,7 @@ module Assessment
     validate :lecture_matches_assessable
     validate :requires_submission_locked_after_deadline,
              if: -> { requires_submission_changed? }
+    validate :no_hand_in_for_a_test, if: :requires_submission
 
     # A task's own callback covers changes to what an assessment is worth;
     # what is left here is the assessment disappearing entirely.
@@ -117,7 +135,7 @@ module Assessment
     end
 
     # Off the loaded association, sorted here rather than in SQL: every row of
-    # a pointing table asks the same assessment, and the tasks are read once.
+    # a marking table asks the same assessment, and the tasks are read once.
     def persisted_tasks
       tasks.select(&:persisted?).sort_by(&:position)
     end
@@ -136,6 +154,13 @@ module Assessment
         return unless assessable.is_a?(Assignment) && assessable.past_deadline?
 
         errors.add(:requires_submission, :locked_after_deadline)
+      end
+
+      # Requests can enable requires_submission even when the form hides it.
+      def no_hand_in_for_a_test
+        return unless assessable.is_a?(Assignment) && assessable.kind_test?
+
+        errors.add(:requires_submission, :not_for_a_test)
       end
 
       def recompute_all_performance_records

@@ -78,7 +78,7 @@ test.describe("finding the way around the assessment area", () => {
       await expect(dashboard.taskCard("Warm-up")).toBeVisible();
 
       await dashboard.tab("Points").click();
-      await expect(dashboard.pane.getByText("No points have been entered yet."))
+      await expect(dashboard.pane.getByText("No submissions for this assignment."))
         .toBeVisible();
 
       await dashboard.tab("Statistics").click();

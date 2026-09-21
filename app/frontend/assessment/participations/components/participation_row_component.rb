@@ -11,7 +11,7 @@ class ParticipationRowComponent < ViewComponent::Base
   Proposal = Struct.new(:grade, :tooltip, keyword_init: true)
 
   # rubocop:disable Metrics/ParameterLists
-  def initialize(participation:, assessment:, grading_scope:, table_option: :pointing,
+  def initialize(participation:, assessment:, grading_scope:, table_option: :points,
                  proposal: nil, filter_tutorial_id: nil)
     super()
     @participation = participation
@@ -37,8 +37,8 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope,
-                                        table_option: @table_option)
+    @layout ||= MarkingTableLayout.for(assessable: @assessable, grading_scope: @grading_scope,
+                                       table_option: @table_option)
   end
 
   def tasks?
@@ -47,6 +47,10 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def single_grade?
     layout.body == :single_grade
+  end
+
+  def achievement?
+    layout.body == :achievement
   end
 
   def allow_grading?
@@ -62,11 +66,16 @@ class ParticipationRowComponent < ViewComponent::Base
 
   # Points go on a sheet that came in; a row nothing was handed in for waits
   # for the mark in the hand-in column first. An exam has nothing to hand in.
+  # Entering test points records participation; no separate hand-in is needed.
   def points_enterable?
     return false if @participation.exempt? || @participation.absent?
     return true if @assessable.is_a?(Exam)
 
-    paper_hand_in? && !elsewhere?
+    (paper_hand_in? || test?) && !elsewhere?
+  end
+
+  def test?
+    @assessable.is_a?(Assignment) && @assessable.kind_test?
   end
 
   # Somebody absent or excused has no grade to enter; what a scheme gave
@@ -83,27 +92,84 @@ class ParticipationRowComponent < ViewComponent::Base
   def locked_reason
     if elsewhere?
       t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
-    elsif status == :awaiting_record && can_enter_points?
+    elsif status == :awaiting_record && can_enter_points? && !test?
       t("assessment.grading_tutorial.record_first")
     end
   end
 
   def extract_task_points_participation(task)
-    graded_task_points.find do |sp|
-      sp.task_id == task.id
-    end&.points
-  end
-
-  def graded_task_points
-    @graded_task_points ||= @participation.graded_tasks_points
+    @participation.task_points.find { |task_point| task_point.task_id == task.id }&.points
   end
 
   def tasks
     @assessable.assessment.persisted_tasks || []
   end
 
+  # An achievement's row has no marking queue: it is met, not met, or waits
+  # for a value - or the person was excused.
   def status
+    return achievement_status if achievement?
+
     @participation.display_status
+  end
+
+  def achievement_status
+    @assessable.status_of(@participation)
+  end
+
+  ACHIEVEMENT_STATUS_ICONS = {
+    met: ["bi-check-circle", "text-success"],
+    not_met: ["bi-x-circle", "text-danger"],
+    unmarked: ["bi-question-circle", "text-amber"],
+    exempt: ["bi-dash-circle", "text-secondary"]
+  }.freeze
+
+  def achievement_status_icon
+    ACHIEVEMENT_STATUS_ICONS.fetch(achievement_status).join(" ")
+  end
+
+  def achievement_status_label
+    t("assessment.achievements.marking.#{achievement_status}")
+  end
+
+  # The value as the tutor entered it, or the word for a yes/no one. A value
+  # from before the type was fixed may fit neither; it shows as it is.
+  def achievement_value_display
+    value = @participation.grade_text
+    return "—" if value.blank?
+    return "#{value} %" if @assessable.percentage?
+    return value unless @assessable.boolean?
+    return value unless Assessment::AchievementValueService::BOOLEAN_VALUES.include?(value)
+
+    t("assessment.achievements.marking.#{value}")
+  end
+
+  def value_label
+    t("assessment.achievements.marking.value_for", name: @user.tutorial_name)
+  end
+
+  def value_choices
+    [["—", ""],
+     [t("assessment.achievements.marking.pass"), Achievement::PASSED],
+     [t("assessment.achievements.marking.fail"), "fail"]]
+  end
+
+  def value_input_data(event)
+    { participation_row_target: "gradeInput",
+      below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
+      action: "#{event}->participation-row#onParticipationChanged" }
+  end
+
+  # Whether the row carries a save form: a sheet's or a test's for points,
+  # a talk's or an exam's for the grade, an achievement's for the value.
+  def entry_offered?
+    (tasks? && can_enter_points? && points_enterable?) ||
+      (single_grade? && can_enter_grade? && grade_enterable?) ||
+      (achievement? && can_enter_points? && value_enterable?)
+  end
+
+  def value_enterable?
+    !@participation.exempt? && !elsewhere?
   end
 
   def talk_dates
@@ -141,10 +207,12 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def save_url
     case @table_option
-    when :pointing
+    when :points
       point_participation_path(@participation, grading_scope_type: grading_scope_type)
     when :grading
       grade_participation_path(@participation)
+    when :achievement
+      achievement_value_participation_path(@participation, grading_scope_type: grading_scope_type)
     else
       raise(ArgumentError, "Unsupported table option: #{@table_option}")
     end
@@ -152,10 +220,13 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def refresh_url
     case @table_option
-    when :pointing
+    when :points
       refresh_point_participation_path(@participation, grading_scope_type: grading_scope_type)
     when :grading
       refresh_grade_participation_path(@participation)
+    when :achievement
+      refresh_achievement_value_participation_path(@participation,
+                                                   grading_scope_type: grading_scope_type)
     else
       raise(ArgumentError, "Unsupported table option: #{@table_option}")
     end
@@ -182,31 +253,43 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   # A graded row keeps its grade when a point is taken out again; the
-  # notice says so, since the status alone reads as complete.
+  # notice says so, since the status alone reads as complete - and whether
+  # re-applying the scheme would touch the grade.
   def points_changed_notice
     return unless @participation.points_changed_after_grading?
 
-    since = t("assessment.grading_exam.points_changed_since",
-              points_at: I18n.l(@participation.task_points.map(&:updated_at).max,
-                                format: :file_time),
-              graded_at: I18n.l(@participation.graded_at, format: :file_time))
-    return since if @participation.all_tasks_scored?
+    parts = [t("assessment.grading_exam.points_changed_since",
+               points_at: I18n.l(@participation.task_points.map(&:updated_at).max,
+                                 format: :file_time),
+               graded_at: I18n.l(@participation.graded_at, format: :file_time))]
+    parts << t("assessment.grading_exam.points_missing") unless @participation.all_tasks_scored?
+    parts << t("assessment.grading_exam.grade_by_hand") if grade_by_hand?
+    parts.join(" · ")
+  end
 
-    "#{since} · #{t("assessment.grading_exam.points_missing")}"
+  def grade_by_hand?
+    @participation.grade_scheme_id.nil? && @assessable.assessment.grade_scheme&.applied?
+  end
+
+  def absence_button
+    return unless can_enter_points?
+    return if test? && elsewhere?
+
+    if @participation.absent?
+      row_action_link(remove_absent_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-person-check-fill", t("assessment.grading_exam.remove_absent"))
+    elsif @participation.pending? && absence_recordable?
+      row_action_link(mark_as_absent_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-person-x-fill", t("assessment.grading_exam.mark_absent"))
+    end
   end
 
   # Absence is the grader's to record, an exemption the lecturer's - it takes
-  # a certificate and changes what counts.
-  def absence_button
-    return unless can_enter_points?
-
-    if @participation.absent?
-      row_action_link(remove_absent_path(@participation), "bi-person-check-fill",
-                      t("assessment.grading_exam.remove_absent"))
-    elsif @participation.pending?
-      row_action_link(mark_as_absent_path(@participation), "bi-person-x-fill",
-                      t("assessment.grading_exam.mark_absent"))
-    end
+  # a certificate and changes what counts. On a test, from its Monday and
+  # while no points were started; taking an absence back is offered whatever
+  # the week says, so a test moved to a later week does not leave one standing.
+  def absence_recordable?
+    !test? || (allow_grading? && !paper_hand_in?)
   end
 
   # Certificates can arrive after absence was recorded. mark_exempt clears
@@ -215,14 +298,15 @@ class ParticipationRowComponent < ViewComponent::Base
     return unless helpers.current_user.can_edit?(@assessable.lecture)
 
     if @participation.exempt?
-      row_action_link(remove_exempt_path(@participation), "bi-file-earmark-x-fill",
-                      t("assessment.grading_exam.remove_exempt"))
-    elsif @participation.pending? || @participation.absent?
+      row_action_link(remove_exempt_path(@participation, grading_scope_type: grading_scope_type),
+                      "bi-file-earmark-x-fill", t("assessment.grading_exam.remove_exempt"))
+    elsif @participation.pending? || @participation.absent? || achievement?
       label = t("assessment.grading_exam.mark_exempt")
       tag.button(type: "button",
                  class: ROW_ACTION_CLASSES,
                  data: { action: "click->participation-row#openExemptModal",
-                         url: mark_as_exempt_path(@participation),
+                         url: mark_as_exempt_path(@participation,
+                                                  grading_scope_type: grading_scope_type),
                          note: @participation.note },
                  title: label,
                  aria: { label: label }) do
@@ -256,7 +340,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def paper_hand_in_removable?
-    graded_task_points.all? { |point| point.points.nil? }
+    @participation.task_points.all? { |point| point.points.nil? }
   end
 
   def task_points_participation_input(task, allow_grading)
@@ -271,6 +355,10 @@ class ParticipationRowComponent < ViewComponent::Base
         participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
+        max_points: task.max_points,
+        over_max_message: t("assessment.grading_tutorial.point_over_maximum",
+                            max: helpers.number_with_precision(task.max_points,
+                                                               strip_insignificant_zeros: true)),
         action: "change->participation-row#onParticipationChanged input->participation-row#onParticipationChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",
@@ -321,7 +409,13 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def row_action_label(action)
-    scope = single_grade? ? "assessment.grade_talk_row" : "assessment.grading_tutorial"
+    scope = if single_grade?
+      "assessment.grade_talk_row"
+    elsif achievement?
+      "assessment.achievements.marking"
+    else
+      "assessment.grading_tutorial"
+    end
     helpers.t("#{scope}.#{action}")
   end
 
@@ -339,6 +433,7 @@ class ParticipationRowComponent < ViewComponent::Base
     false
   end
 
+  # An achievement's value is the tutor's to enter, like points.
   def can_enter_row?
     single_grade? ? can_enter_grade? : can_enter_points?
   end

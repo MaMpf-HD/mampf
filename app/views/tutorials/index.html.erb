@@ -1,24 +1,42 @@
-<% if @assignments.present? %>
+<% if @tutorial.nil? %>
+  <div class="jumbotron">
+    <%= t('tutorial.no_tutorials_yet') %>
+  </div>
+<% elsif @assignments.present? || @achievements.present? %>
 <div>
   <div class="row">
     <div class="col-12">
       <%= render partial: 'tutorials/header_index',
                locals: { assignment: @assignment,
-                          assignments: @assignments,
-                          tutorials: @tutorials,
-                          grading_scope: @tutorial,
+                         assignments: @assignments,
+                         achievement: @achievement,
+                         achievements: @achievements,
+                         tutorials: @tutorials,
+                         grading_scope: @tutorial,
                          tutorial: @tutorial,
                          stack: @stack } %>
     </div>
   </div>
   <div id="tutorial-table" class="m-3">
-    <%= render TutorialPointingTableComponent.new(
-      assignment: @assignment,
-      grading_scope: @tutorial
-    ) %>
+    <% if @achievement %>
+      <%= render AchievementMarkingTableComponent.new(
+        achievement: @achievement,
+        grading_scope: @tutorial
+      ) %>
+    <% else %>
+      <%= render TutorialMarkingTableComponent.new(
+        assignment: @assignment,
+        grading_scope: @tutorial
+      ) %>
+    <% end %>
   </div>
 </div>
 <% else %>
+  <%# A first word to the group comes before the first sheet. %>
+  <div class="d-flex flex-wrap align-items-end gap-3 m-3">
+    <%= render partial: 'tutorials/group_columns',
+               locals: { tutorials: @tutorials, tutorial: @tutorial } %>
+  </div>
   <div class="jumbotron">
     <%= t('assignment.nothing_yet_in_lecture') %>
   </div>

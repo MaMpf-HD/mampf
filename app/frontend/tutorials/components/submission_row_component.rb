@@ -1,7 +1,9 @@
 class SubmissionRowComponent < ViewComponent::Base
-  # The table hands its rows the team's participations, read once for the
-  # whole page; a row rendered on its own reads them itself.
-  def initialize(submission:, assignment:, grading_scope:, participations: nil)
+  # The table hands its rows the team's participations and the group's
+  # non-submitters, read once for the whole page; a row rendered on its own
+  # reads them itself.
+  def initialize(submission:, assignment:, grading_scope:, participations: nil,
+                 addable_members: nil)
     super()
     @submission = submission
     @tutorial = @submission.tutorial
@@ -10,6 +12,39 @@ class SubmissionRowComponent < ViewComponent::Base
     @grading_scope = grading_scope
     @lecture = @assignment.lecture
     @participations = (participations || @submission.participations || []).compact
+    @addable_members = addable_members
+  end
+
+  def grading_scope_type
+    @grading_scope.class.name.downcase
+  end
+
+  # Who came onto the team after the deadline - the hand-in is not late for
+  # it, the tutor should just know.
+  def joined_late?(user)
+    late_joins.key?(user.id)
+  end
+
+  def joined_late_info(user)
+    t("assessment.task_points.joined_late",
+      time: l(late_joins.fetch(user.id).created_at, format: :file_time))
+  end
+
+  # Whom the tutor may put on this team: the group's members on no team
+  # for this sheet. A rejected hand-in takes nobody; it counts as none.
+  def addable_members
+    return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
+
+    @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial)
+    @addable_members.sort_by { |member| member.tutorial_name.to_s.downcase }
+  end
+
+  # The earliest join founded the team; whether that was late is the
+  # triangle's business, not a name's.
+  def late_joins
+    @late_joins ||= @submission.user_submission_joins.sort_by(&:created_at).drop(1)
+                               .select { |join| join.created_at > @assignment.deadline }
+                               .index_by(&:user_id)
   end
 
   def grading_enabled?
@@ -17,11 +52,11 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def layout
-    @layout ||= PointingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
+    @layout ||= MarkingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
   end
 
   def allow_grading?
-    @submission.valid_for_pointing? && @assignment&.grading_open?
+    @submission.valid_for_marking? && @assignment&.grading_open?
   end
 
   def tasks
@@ -47,13 +82,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def extract_task_points(task)
-    graded_task_points.find do |sp|
-      sp.task_id == task.id
-    end&.points
-  end
-
-  def graded_task_points
-    participation ? participation.task_points : []
+    participation&.task_points&.find { |task_point| task_point.task_id == task.id }&.points
   end
 
   def task_points_input(task, allow_grading)
@@ -68,6 +97,10 @@ class SubmissionRowComponent < ViewComponent::Base
         participation_row_target: "pointInput",
         task_id: task.id,
         below_min_message: t("assessment.grading_tutorial.point_below_minimum", min: 0),
+        max_points: task.max_points,
+        over_max_message: t("assessment.grading_tutorial.point_over_maximum",
+                            max: helpers.number_with_precision(task.max_points,
+                                                               strip_insignificant_zeros: true)),
         action: "change->participation-row#onPointSubmissionChanged input->participation-row#onPointSubmissionChanged" # rubocop:disable Layout/LineLength
       },
       class: "form-control",

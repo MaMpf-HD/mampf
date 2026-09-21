@@ -57,4 +57,53 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.next_scheduled_sheet).to be_nil
     end
   end
+
+  # The tab needs the medium: before the release there is no sheet to edit.
+  describe "#scheduled_sheets" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    def schedule(release_date:, title:, file_type: ".pdf", requires_submission: true)
+      medium = create(:medium, :with_description, :with_editors,
+                      sort: "Exercise", teachable: lecture)
+      medium.update!(publisher: MediumPublisher.new(medium_id: medium.id,
+                                                    user_id: medium.editors.first.id,
+                                                    release_now: false,
+                                                    release_date: release_date,
+                                                    create_assignment: true,
+                                                    assignment_title: title,
+                                                    assignment_deadline: release_date + 1.week,
+                                                    assignment_file_type: file_type,
+                                                    requires_submission: requires_submission))
+      medium
+    end
+
+    it "lists them soonest first, each with its medium and the sheet's settings" do
+      later = schedule(release_date: 3.weeks.from_now, title: "Homework 12", file_type: ".zip",
+                       requires_submission: false)
+      sooner = schedule(release_date: 1.week.from_now, title: "Homework 11")
+
+      sheets = lecture.scheduled_sheets
+
+      expect(sheets.map(&:title)).to eq(["Homework 11", "Homework 12"])
+      expect(sheets.map(&:medium)).to eq([sooner, later])
+      expect(sheets.last.accepted_file_type).to eq(".zip")
+      expect(sheets.last.requires_submission).to be(false)
+    end
+
+    it "is empty when nothing is scheduled" do
+      expect(lecture.scheduled_sheets).to be_empty
+    end
+
+    # The publisher stays on the medium until the worker has published; while
+    # it is there, the sheet is still to come, however late.
+    it "keeps a sheet whose release is overdue, marked as such" do
+      schedule(release_date: 10.minutes.ago, title: "Homework 10")
+
+      sheets = lecture.scheduled_sheets
+
+      expect(sheets.map(&:title)).to eq(["Homework 10"])
+      expect(sheets.first).to be_overdue
+      expect(lecture.next_scheduled_sheet).to be_nil
+    end
+  end
 end

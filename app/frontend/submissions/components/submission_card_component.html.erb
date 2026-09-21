@@ -17,7 +17,7 @@
       <%= render(SheetChipComponent.new(sheet: sheet)) %>
     </div>
 
-    <% unless digital_hand_in? %>
+    <% if !digital_hand_in? && !test? %>
       <p class="hub-aside text-muted mb-0">
         <%= t("submission.hub.card.hand_in_elsewhere") %>
       </p>
@@ -29,7 +29,17 @@
                                                assignment: assignment)) %>
       <% end %>
       <% if handed_in? %>
+        <%#
+          A correction often comes back under the hand-in's own name, so once
+          there are two files each pill says which one it holds.
+        %>
         <div class="file-pill mb-3">
+          <% if correction_name %>
+            <span class="field-label file-role">
+              <%= t("submission.hub.fold.handed_in_label") %>
+            </span>
+          <% end %>
+
           <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
 
           <%= link_to file_name, show_submission_manuscript_path(submission),
@@ -42,16 +52,16 @@
         </div>
         <% if correction_name %>
           <div class="file-pill mb-3">
+            <span class="field-label file-role">
+              <%= t("submission.hub.fold.correction_label") %>
+            </span>
+
             <i class="fas fa-file-pdf text-danger" aria-hidden="true"></i>
 
             <%= link_to correction_name, show_correction_path(submission),
                       class: "file-name flex-grow-1",
                       "aria-label": correction_reader_label,
                       data: { turbo: false } %>
-
-            <span class="hub-aside text-muted text-nowrap">
-              <%= t("submission.hub.fold.correction_label") %>
-            </span>
           </div>
         <% end %>
       <% end %>

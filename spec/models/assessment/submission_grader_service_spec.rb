@@ -152,6 +152,145 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     end
   end
 
+  describe ".add_member!" do
+    let(:partner) { FactoryBot.create(:confirmed_user) }
+    let(:newcomer) { FactoryBot.create(:confirmed_user) }
+    let(:team) do
+      submission = FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                                    tutorial: tutorial)
+      submission.users << partner
+      submission
+    end
+
+    before do
+      [partner, newcomer].each do |member|
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+        FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: member)
+      end
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
+
+    it "puts the newcomer on the team with a hand-in of their own, and no points" do
+      task
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(team.reload.users).to include(newcomer)
+      expect(row.submitted_at).to be_present
+      expect(row.tutorial).to eq(tutorial)
+      expect(row.task_points).to be_empty
+    end
+
+    # The tutor says "this one too": what the team has, the newcomer gets.
+    it "gives the newcomer the points the team already has" do
+      described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
+
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(row.task_points.find_by(task: task).points).to eq(7)
+      expect(row.reload).to be_reviewed
+    end
+
+    # Rows come and go per member; the points are wherever a member has them.
+    it "reads the team's points off whichever member has them" do
+      second = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: second)
+      FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: second)
+      team.users << second
+      described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
+      assessment.assessment_participations.find_by(user: partner).destroy!
+
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(team.users.first).to eq(partner)
+      expect(row.task_points.find_by(task: task).points).to eq(7)
+    end
+
+    # The newcomer hears from the tutor; the partner hears of a join as ever.
+    it "tells the newcomer and the team" do
+      partner.update!(email_for_submission_join: true)
+      expect do
+        described_class.add_member!(team, newcomer, scorer)
+      end.to have_enqueued_mail(NotificationMailer, :submission_added_email)
+        .with(params: hash_including(recipient: newcomer, user: scorer), args: [])
+        .and(have_enqueued_mail(NotificationMailer, :submission_join_email)
+        .with(params: hash_including(recipient: partner, user: newcomer), args: []))
+    end
+
+    it "takes only a member of the group" do
+      stranger = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: stranger)
+
+      expect { described_class.add_member!(team, stranger, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.not_in_group"))
+      expect(team.reload.users).not_to include(stranger)
+    end
+
+    # Marks of their own are a decision taken; the team's would replace it.
+    it "refuses somebody marked on a row of their own" do
+      own = FactoryBot.create(:assessment_participation, assessment: assessment, user: newcomer,
+                                                         tutorial: tutorial,
+                                                         submitted_at: 2.days.ago)
+      FactoryBot.create(:assessment_task_point, assessment_participation: own, task: task,
+                                                points: 2)
+
+      expect { described_class.add_member!(team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.marked_on_own",
+                               name: newcomer.tutorial_name))
+      expect(team.reload.users).not_to include(newcomer)
+      expect(own.reload.task_points.sole.points).to eq(2)
+    end
+
+    # A sheet from before there were assessments. The controller refuses it
+    # before the service is asked; the service says so in its own words
+    # rather than falling over.
+    it "refuses a sheet without an assessment in words" do
+      bare = FactoryBot.create(:assignment, lecture: lecture, deadline: 1.hour.from_now)
+      bare.assessment.destroy!
+      bare_team = FactoryBot.create(:submission, :with_manuscript, assignment: bare.reload,
+                                                                   tutorial: tutorial)
+      bare_team.users << partner
+
+      expect { described_class.add_member!(bare_team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.init_participation_missing_args"))
+    end
+
+    it "puts nobody on a rejected hand-in" do
+      team.update!(accepted: false)
+
+      expect { described_class.add_member!(team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.team_rejected"))
+      expect(team.reload.users).not_to include(newcomer)
+    end
+
+    # A blank row seeded elsewhere becomes the upload's, as every row behind
+    # an upload is.
+    it "brings a row seeded in another group along to the upload's" do
+      elsewhere = FactoryBot.create(:tutorial, lecture: lecture)
+      FactoryBot.create(:assessment_participation, assessment: assessment, user: newcomer,
+                                                   tutorial: elsewhere)
+
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      expect(row.reload.tutorial).to eq(tutorial)
+    end
+
+    it "refuses somebody who is on another team for the sheet already" do
+      other = FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                               tutorial: tutorial)
+      other.users << newcomer
+
+      expect { described_class.add_member!(team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError)
+      expect(team.reload.users).not_to include(newcomer)
+    end
+  end
+
   describe ".remove_participation" do
     let!(:user) { FactoryBot.create(:confirmed_user) }
     let!(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
@@ -407,6 +546,20 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         described_class.score_tasks_by_participation!(participation, { task.id => "" }, scorer)
 
         expect(participation.reload.submitted_at).to be_nil
+      end
+
+      # On a test the stamp says only that points were started; taken back
+      # again, they leave the row as it was, open to being recorded absent.
+      it "takes a test's stamp off again once every point is taken back" do
+        assignment.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+        participation.update!(submitted_at: nil)
+
+        described_class.score_tasks_by_participation!(participation, points_by_task_id, scorer)
+        expect(participation.reload.submitted_at).to be_present
+
+        described_class.score_tasks_by_participation!(participation, { task.id => "" }, scorer)
+        expect(participation.reload.submitted_at).to be_nil
+        expect(participation).to be_pending
       end
     end
   end

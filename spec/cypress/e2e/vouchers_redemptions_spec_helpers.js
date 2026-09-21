@@ -9,8 +9,10 @@ export function createRedemptionScenario(context, role = "tutor", sort = "lectur
       { teacher_id: context.teacher.id, sort: sort }).as("lecture");
   });
 
+  // The role goes in as a trait: speaker vouchers are no longer issued, and
+  // the trait builds one that is still in circulation.
   cy.then(() => {
-    FactoryBot.create("voucher", { lecture_id: context.lecture.id, role: role })
+    FactoryBot.create("voucher", role, { lecture_id: context.lecture.id })
       .as("voucher");
   });
 

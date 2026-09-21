@@ -35,7 +35,7 @@ assessment and explicitly prepared for exams. It has since gone: an exam's grade
 read and entered in the same rows, `ExamGradingTableComponent`.
 
 ```admonish warning title="One reading component was not ready"
-Resolved: `PointGridComponent` was replaced by `ExamPointingTableComponent`, which draws
+Resolved: `PointGridComponent` was replaced by `ExamPointsTableComponent`, which draws
 the roster and reads absence off the status. What it did wrong, for the record:
 it filtered its main table with `.where.not(submitted_at: nil)`. An
 exam participation that is `reviewed` with no `submitted_at` — which
@@ -103,10 +103,10 @@ participation that has no tutorial — which is what every exam participation lo
 ### The dashboard hands every `Pointable` to the assignment table
 
 `build_tabs` added the points tab for any pointable assessable, and that tab rendered the
-tutorial pointing table with the assessable passed as `assignment:`. For an exam that
+tutorial marking table with the assessable passed as `assignment:`. For an exam that
 meant assignment-specific methods called on an `Exam`. Resolved: the dashboard dispatches
-on the assessable — `TutorialPointingTableComponent` for an assignment,
-`ExamPointingTableComponent` for an exam, and an error for anything else.
+on the assessable — `TutorialMarkingTableComponent` for an assignment,
+`ExamPointsTableComponent` for an exam, and an error for anything else.
 
 ## What an exam needs that no assignment does
 

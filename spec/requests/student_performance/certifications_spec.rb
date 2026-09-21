@@ -58,13 +58,17 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           expect(response.body).to include(CGI.escapeHTML(hint))
         end
 
-        it "leaves the sweep visible but refuses to run it" do
+        # Nothing could be accepted; the rule card says why and where to
+        # change it, so no button waits greyed out for that day.
+        it "offers no sweep" do
           get lecture_student_performance_certifications_path(lecture)
 
-          expect(response.body).to include(
+          expect(response.body).not_to include(
             I18n.t("student_performance.certifications.index.bulk_accept")
           )
-          expect(response.body).to include("disabled")
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.list_open")
+          )
         end
 
         # The banner carries the same words, so the whole page is no evidence:
@@ -131,18 +135,21 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                             lecture: lecture, user: user_c)
         end
 
-        it "shows correct summary counts" do
+        # The counts sit in the filter pills: each says how many and leads
+        # to them.
+        it "counts every state in its filter pill" do
+          [user_a, user_b, user_c].each do |user|
+            FactoryBot.create(:student_performance_record, lecture: lecture, user: user)
+          end
+
           get lecture_student_performance_certifications_path(lecture)
-          body = response.body
-          expect(body).to include(
-            I18n.t("student_performance.certifications.index.passed")
-          )
-          expect(body).to include(
-            I18n.t("student_performance.certifications.index.failed")
-          )
-          expect(body).to include(
-            I18n.t("student_performance.certifications.index.uncertified")
-          )
+
+          pills = Nokogiri::HTML(response.body).css(".count-pills a").to_h do |pill|
+            [pill.text.squish.sub(/ \d+\z/, ""), pill.at_css(".badge").text.to_i]
+          end
+          filters = I18n.t("student_performance.certifications.filters")
+          expect(pills).to eq({ filters[:all] => 3, filters[:passed] => 1, filters[:failed] => 1,
+                                filters[:uncertified] => 1, filters[:flagged] => 0 })
         end
 
         it "shows certification badges for each student" do
@@ -706,9 +713,11 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                             lecture: lecture, user: user_m)
         end
 
-        it "shows the manual override indicator" do
+        it "says the manual decision predates the performance data" do
           get lecture_student_performance_certifications_path(lecture)
-          expect(response.body).to include("bi-pencil-square")
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.stale_manual_warning", count: 1)
+          )
         end
 
         it "shows the override note" do
@@ -727,6 +736,12 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         # test that names one has to say how many too.
         def deferral(reason, count: nil)
           return I18n.t("student_performance.evaluator.deferral.#{reason}") unless count
+
+          if reason == :points_not_due
+            return I18n.t("student_performance.evaluator.deferral.points_not_due",
+                          what: I18n.t("student_performance.evaluator.deferral.sheet_count",
+                                       count: count))
+          end
 
           I18n.t("student_performance.evaluator.deferral.#{reason}", count: count)
         end
@@ -851,6 +866,22 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             expect(response.body)
               .not_to include(deferral(:points_pending, count: 0))
           end
+
+          it "counts a test to come as a test, not as a sheet" do
+            test = FactoryBot.create(:assignment, lecture: lecture, kind: :test,
+                                                  deadline: 2.weeks.from_now)
+            FactoryBot.create(:assessment_task, assessment: test.assessment, max_points: 10)
+            lecture.update!(assignments_complete: true)
+
+            get lecture_student_performance_certifications_path(lecture)
+
+            expect(response.body).to include(
+              I18n.t("student_performance.evaluator.deferral.points_not_due",
+                     what: [I18n.t("student_performance.evaluator.deferral.sheet_count", count: 1),
+                            I18n.t("student_performance.evaluator.deferral.test_count", count: 1)]
+                           .to_sentence)
+            )
+          end
         end
 
         context "when the rule would let the student through" do
@@ -927,7 +958,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             tr.text.include?(decided_user.tutorial_name)
           end
 
-          expect(row.css("td")[-2].text.strip).to eq("Sick note on file")
+          expect(row.css("td.note-column").text.strip).to eq("Sick note on file")
         end
       end
 
@@ -1385,15 +1416,15 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(cert.certified_at).to be_within(5.seconds).of(Time.current)
       end
 
-      it "shows a success flash message" do
+      # The row shows the decision; a bar on top would only push it away.
+      it "comes back to the table without a flash" do
         patch lecture_student_performance_certification_path(lecture, cert),
               params: { certification: {
                 status: "passed", note: "Re-evaluation"
               } }
+        expect(flash[:notice]).to be_nil
         follow_redirect!
-        expect(response.body).to include(
-          I18n.t("student_performance.certifications.flash.updated")
-        )
+        expect(response).to have_http_status(:ok)
       end
 
       it "allows override without a note" do
@@ -1814,13 +1845,11 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(StudentPerformance::Certification.exists?(manual.id)).to be(false)
       end
 
-      it "says so" do
+      it "comes back to the table without a flash" do
         delete lecture_student_performance_certification_path(lecture, cert)
-        follow_redirect!
 
-        expect(response.body).to include(
-          I18n.t("student_performance.certifications.flash.reset_one")
-        )
+        expect(flash[:notice]).to be_nil
+        expect(response).to redirect_to(lecture_student_performance_certifications_path(lecture))
       end
     end
 

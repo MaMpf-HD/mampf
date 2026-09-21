@@ -1,10 +1,17 @@
 <% if @collapse_id == 'collapseCurrentStuff' %>
-<% if @lectures.any? %>
+<% if @lectures.any? || @own_lectures.any? %>
 $('#<%= "#{@collapse_id}Content" %>').empty()
   .append('<%= j render partial: "main/start/lecture",
                         collection: @lectures,
                         locals: { current: true,
                                   subscribed: true,
+                                  parent: "current_subscribed" },
+                        as: :lecture %>')
+  .append('<%= j render partial: "main/start/lecture",
+                        collection: @own_lectures,
+                        locals: { current: true,
+                                  subscribed: false,
+                                  own: true,
                                   parent: "current_subscribed" },
                         as: :lecture %>')
 $('#emptyCurrentStuff').hide()

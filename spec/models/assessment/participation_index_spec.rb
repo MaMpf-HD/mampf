@@ -33,6 +33,66 @@ RSpec.describe(Assessment::ParticipationIndex, type: :model) do
     end
   end
 
+  describe ".rows_for" do
+    let(:lecture) { FactoryBot.create(:lecture, :released_for_all, teacher: teacher) }
+    let(:group) { FactoryBot.create(:tutorial, lecture: lecture) }
+    let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
+    let(:members) { FactoryBot.create_list(:confirmed_user, 3) }
+
+    it "seeds the missing rows in one statement, in the groups given, and loads them all" do
+      existing = FactoryBot.create(:assessment_participation, assessment: achievement.assessment,
+                                                              user: members.first, tutorial: group)
+      groups = members.to_h { |member| [member.id, group] }
+      inserts = 0
+      callback = lambda { |*, payload|
+        inserts += 1 if payload[:sql].start_with?("INSERT INTO \"assessment_participations\"")
+      }
+
+      rows = ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        described_class.rows_for(achievement.assessment, members, groups)
+      end
+
+      expect(inserts).to eq(1)
+      expect(rows.keys).to match_array(members.map(&:id))
+      expect(rows[members.first.id]).to eq(existing)
+      expect(rows.values.map(&:tutorial).uniq).to eq([group])
+    end
+
+    it "hands a blank row to the group its person is in now, and leaves one with a value" do
+      moved = FactoryBot.create(:assessment_participation, assessment: achievement.assessment,
+                                                           user: members.first, tutorial: group)
+      kept = FactoryBot.create(:assessment_participation, assessment: achievement.assessment,
+                                                          user: members.second, tutorial: group,
+                                                          grade_text: "pass")
+      elsewhere = FactoryBot.create(:tutorial, lecture: lecture)
+      groups = { members.first.id => elsewhere, members.second.id => elsewhere }
+
+      described_class.rows_for(achievement.assessment, members.first(2), groups)
+
+      expect(moved.reload.tutorial).to eq(elsewhere)
+      expect(kept.reload.tutorial).to eq(group)
+    end
+
+    # A rejected upload leaves the row looking blank; the file is still in
+    # the group's stack, and so is the row - the table and the single-row
+    # question agree.
+    it "leaves a row behind an uploaded hand-in with the upload's group" do
+      sheet = FactoryBot.create(:assignment, lecture: lecture)
+      FactoryBot.create(:assessment, :with_points, assessable: sheet)
+      elsewhere = FactoryBot.create(:tutorial, lecture: lecture)
+      FactoryBot.create(:submission, :with_manuscript, assignment: sheet, tutorial: group,
+                                                       users: [members.first], accepted: false)
+      row = FactoryBot.create(:assessment_participation, assessment: sheet.reload.assessment,
+                                                         user: members.first, tutorial: group)
+
+      described_class.rehome_blank_rows({ members.first.id => row },
+                                        { members.first.id => elsewhere })
+
+      expect(row.reload.tutorial).to eq(group)
+      expect(described_class.group_holding(row)).to eq(group)
+    end
+  end
+
   describe ".init_participations" do
     let(:other_speaker) { FactoryBot.create(:confirmed_user) }
     let(:other_talk) do

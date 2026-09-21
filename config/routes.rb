@@ -399,9 +399,9 @@ Rails.application.routes.draw do
               controller: "registration/campaigns",
               only: [:index, :new, :create],
               as: :registration_campaigns
-    resources :student_messages,
-              controller: "registration/student_messages",
-              only: [:create]
+    resources :student_messages, only: [:create] do
+      get :recipients, on: :collection
+    end
   end
 
   resources :campaigns,
@@ -896,9 +896,17 @@ Rails.application.routes.draw do
         to: "assessment/task_points#update_team_multi",
         as: "point_multi_submissions_tutorial"
 
+  patch "exams/:exam_id/point_multi_participations",
+        to: "assessment/task_points#update_exam_multi",
+        as: "point_multi_participations_exam"
+
   patch "submissions/:submission_id/refresh_point_submission",
         to: "assessment/task_points#refresh_submission",
         as: "refresh_point_submission_tutorial"
+
+  patch "submissions/:submission_id/add_member",
+        to: "assessment/task_points#add_member",
+        as: "add_member_submission"
 
   patch "participations/:participation_id/refresh_point_participation",
         to: "assessment/task_points#refresh_participation",
@@ -1184,6 +1192,14 @@ Rails.application.routes.draw do
   patch "participations/:participation_id/refresh_grade_participation",
         to: "assessment/grades#refresh",
         as: "refresh_grade_participation"
+
+  patch "participations/:participation_id/achievement_value",
+        to: "assessment/achievement_values#update",
+        as: "achievement_value_participation"
+
+  patch "participations/:participation_id/refresh_achievement_value",
+        to: "assessment/achievement_values#refresh",
+        as: "refresh_achievement_value_participation"
 
   # main routes
 

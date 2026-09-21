@@ -340,6 +340,26 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet_for(assignment).points).to be_nil
     end
 
+    # Nobody can say yet whether the reader sat the test: the tutor may be
+    # about to enter the points, or to record them as absent.
+    it "is :awaiting_record once a test's week is over with nothing entered" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Test 1",
+                                                 expired_since: 1.week, kind: :test)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_record)
+      expect(sheet_for(assignment).points).to be_nil
+    end
+
+    it "is :awaiting_marks for a test row the tutor has started on" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Test 1",
+                                                 expired_since: 1.week, kind: :test)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+      participate(assignment, submitted_at: 2.days.ago)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_marks)
+    end
+
     it "is :tutor_decides for a late hand-in nobody has ruled on" do
       assignment = create_assignment(deadline: 10.minutes.ago)
       hand_in(assignment)
@@ -543,6 +563,33 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
       expect(result.open_sheets.map(&:assignment)).to eq([assignment])
     end
+
+    # The week runs on for the other groups; this reader has written the test
+    # and has points to look at, which is the list's business, not a card's.
+    # Points are refused before the test's week, so a day offset fails from
+    # Friday on; the test is pinned to the current week.
+    it "moves a test to the list the moment its points are in, week or no week" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: Time.zone.now.end_of_week)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      expect(result.open_sheets.map(&:assignment)).to eq([test])
+
+      mark(test, [8])
+
+      fresh = described_class.new(lecture: lecture, user: user).call
+      expect(fresh.open_sheets).to be_empty
+      expect(fresh.sheets.find { |sheet| sheet.assignment == test }.state).to eq(:marked)
+    end
+
+    it "moves a test to the list the moment the reader is recorded absent" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: Time.zone.now.end_of_week)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      participate(test, status: :absent)
+
+      expect(result.open_sheets).to be_empty
+      expect(sheet_for(test).state).to eq(:absent)
+    end
   end
 
   describe "#due" do
@@ -648,6 +695,18 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       # rubocop:enable Rails/SkipsModelValidations
 
       expect(result.standing.points_marked_so_far).to eq(10)
+    end
+
+    # Absent is lost, not excused: the test stays in the base with nothing
+    # earned on it, from the moment the absence is recorded in its week.
+    it "counts a test the reader was recorded absent from, in its week already" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: Time.zone.now.end_of_week)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      participate(test, status: :absent)
+
+      expect(result.standing.points_marked_so_far).to eq(10)
+      expect(result.standing.points_still_open).to eq(0)
     end
   end
 

@@ -21,6 +21,8 @@
           <% end %>
 
           <%= sheet.assignment.title %>
+
+          <%= helpers.test_badge if sheet.assignment.kind_test? %>
         </div>
 
         <% if note %>

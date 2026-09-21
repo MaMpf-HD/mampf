@@ -8,7 +8,7 @@ class AssignmentsController < ApplicationController
   end
 
   def new
-    @assignment = Assignment.new
+    @assignment = Assignment.new(kind: kind_param)
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @assignment.lecture = @lecture
     authorize! :new, @assignment
@@ -27,10 +27,42 @@ class AssignmentsController < ApplicationController
 
   def edit
     set_assignment_locale
+
+    if @assignment.save
+      @assignment.reload
+      assessment = @assignment.assessment
+      tasks = assessment&.tasks&.order(:position) || []
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("assessments_container",
+                                AssessmentDashboardComponent.new(
+                                  assessable: @assignment,
+                                  assessment: assessment,
+                                  lecture: @lecture,
+                                  active_tab: "tasks",
+                                  tasks: tasks
+                                ))
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("assessments_container",
+                                                   partial: "assessment/assessments/card_body_form",
+                                                   locals: { assignment: @assignment,
+                                                             lecture: @lecture }),
+                 status: :unprocessable_content
+        end
+      end
+    end
   end
 
   def create
-    @assignment = Assignment.new(assignment_params)
+    @assignment = Assignment.new(assignment_params.merge(kind: kind_param))
     authorize! :create, @assignment
     @lecture = @assignment.lecture
     set_assignment_locale
@@ -83,25 +115,16 @@ class AssignmentsController < ApplicationController
   def destroy
     set_assignment_locale
     @lecture = @assignment.lecture
-    remaining_assignments = @lecture.assignments.where.not(id: @assignment.id)
-                                    .joins(:assessment)
-                                    .includes(:assessment)
 
     if @assignment.destroy
       respond_to do |format|
         format.js
         format.turbo_stream do
-          if remaining_assignments.empty?
-            render turbo_stream:
-            turbo_stream.update("assessments_container",
-                                partial: "assessment/assessments/empty_assignments")
-          else
-            render turbo_stream:
-            turbo_stream.update("assessments_container",
-                                partial: "assessment/assessments/index",
-                                locals: { lecture: @lecture,
-                                          assignments_with_assessments: remaining_assignments })
-          end
+          # The whole tab again: what is left may be a scheduled sheet, or
+          # nothing, and the tab knows how to say either.
+          render turbo_stream:
+          turbo_stream.update("assessments_container",
+                              AssessmentsOverviewComponent.new(lecture: @lecture))
         end
       end
     else
@@ -149,7 +172,13 @@ class AssignmentsController < ApplicationController
 
     def assignment_params
       params.expect(assignment: [:title, :medium_id, :lecture_id,
-                                 :deadline, :accepted_file_type,
+                                 :deadline, :test_week, :accepted_file_type,
                                  :requires_submission])
+    end
+
+    # Unknown enum values raise ArgumentError instead of a validation error.
+    def kind_param
+      kind = params.dig(:assignment, :kind) || params[:kind]
+      kind.to_s.presence_in(Assignment.kinds.keys) || :homework
     end
 end

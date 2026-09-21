@@ -65,6 +65,9 @@ window.Stimulus.register("lecture-search", LectureSearchController);
 import QuestionCounterController from "~/lectures/quizzes/question_counter.controller.js";
 window.Stimulus.register("question-counter", QuestionCounterController);
 
+import AudiencePickerController from "~/student_messages/audience_picker.controller.js";
+window.Stimulus.register("audience-picker", AudiencePickerController);
+
 import CoursesEditController from "~/courses/edit/courses_edit.controller.js";
 window.Stimulus.register("courses-edit", CoursesEditController);
 
@@ -91,6 +94,9 @@ window.Stimulus.register("row-click", RowClickController);
 
 import DatetimepickerController from "~/controllers/datetimepicker.controller.js";
 window.Stimulus.register("datetimepicker", DatetimepickerController);
+
+import EnrolledTutorGuardController from "~/tutorials/enrolled_tutor_guard.controller.js";
+window.Stimulus.register("enrolled-tutor-guard", EnrolledTutorGuardController);
 
 import CapacityGuardController from "~/roster/capacity_guard.controller.js";
 window.Stimulus.register("capacity-guard", CapacityGuardController);
@@ -170,8 +176,8 @@ window.Stimulus.register("sortable", SortableController);
 import ParticipationRowController from "~/assessment/participation_row.controller.js";
 window.Stimulus.register("participation-row", ParticipationRowController);
 
-import PointingTableController from "~/assessment/pointing_table.controller.js";
-window.Stimulus.register("pointing-table", PointingTableController);
+import MarkingTableController from "~/assessment/marking_table.controller.js";
+window.Stimulus.register("marking-table", MarkingTableController);
 
 import TableFadeController from "~/tutorials/table_fade.controller.js";
 window.Stimulus.register("table-fade", TableFadeController);

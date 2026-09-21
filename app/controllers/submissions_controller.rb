@@ -85,14 +85,10 @@ class SubmissionsController < ApplicationController
 
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
-      @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata,
-                                                  :manuscript)
-      return render_form(status: :unprocessable_content) if @errors.present?
+      return render_form(status: :unprocessable_content) unless file_properties_ok?
     end
     @submission.user_submission_joins.build(user: current_user)
     @submission.save
-    @errors = @submission.errors
     return render_form(status: :unprocessable_content) unless @submission.valid?
 
     send_invitation_emails
@@ -107,17 +103,20 @@ class SubmissionsController < ApplicationController
   # Nothing about the group: the work stays with the tutor it was handed in to,
   # whatever became of the reader's seat since. Only the file moves here.
   def update
+    if file_changed_since_form?
+      # A removal of a file the team has removed already has nothing left to do.
+      return render_card_and_standing if removing? && @submission.manuscript_data.blank?
+
+      return render_stale_form
+    end
+
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
-      @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata,
-                                                  :manuscript)
-      return render_form(status: :unprocessable_content) if @errors.present?
+      return render_form(status: :unprocessable_content) unless file_properties_ok?
 
       @submission.save
-      @errors = @submission.errors
       return render_form(status: :unprocessable_content) unless @submission.valid?
     end
     if @submission.valid?
@@ -133,8 +132,7 @@ class SubmissionsController < ApplicationController
         sync_assessment_participations
       end
     end
-    @errors = @submission.errors
-    return render_form(status: :unprocessable_content) if @errors.any?
+    return render_form(status: :unprocessable_content) if @submission.errors.any?
 
     render_card_and_standing
   end
@@ -169,6 +167,8 @@ class SubmissionsController < ApplicationController
     @submission = Submission.find_by(token: join_params[:code],
                                      assignment: @assignment)
     check_code_and_join
+    return join_closed_sheet if @assignment.totally_expired?
+
     if @error
       @invitations = hub.invitations_for(@assignment)
       return render :enter_code, status: :unprocessable_content
@@ -330,15 +330,26 @@ class SubmissionsController < ApplicationController
     def summary_stream(grading_scope)
       return unless @assignment.assessable?
 
-      summary = TutorialPointingTableComponent.new(assignment: @assignment,
-                                                   grading_scope: grading_scope).summary
-      turbo_stream.replace("pointing-summary", html: render_to_string(summary))
+      summary = TutorialMarkingTableComponent.new(assignment: @assignment,
+                                                  grading_scope: grading_scope).summary
+      turbo_stream.replace("marking-summary", html: render_to_string(summary))
     end
 
     # Everything a student does changes one sheet and nothing else - the history
     # list holds only sheets that are closed - so every action answers by
     # re-rendering that sheet's card frame. Reading the whole hub back for it is
     # what keeps the card from ever disagreeing with the row below it.
+    # A closed sheet has no card to answer into; its row in the list is drawn
+    # by the whole page, so the page is asked for again.
+    def join_closed_sheet
+      if @error
+        redirect_to lecture_submissions_path(@lecture), alert: @error
+      else
+        redirect_to lecture_submissions_path(@lecture),
+                    notice: t("submission.joined_successfully", assignment: @assignment.title)
+      end
+    end
+
     def render_card(status: :ok)
       loaded = hub
       @sheet = loaded.sheets.find { |sheet| sheet.assignment == @assignment }
@@ -448,6 +459,54 @@ class SubmissionsController < ApplicationController
     # disallow modification of assignment
     def submission_manuscript_params
       params.expect(submission: [:manuscript])
+    end
+
+    # The form carries the time of the file it shows, and a team member may
+    # have replaced or removed that file since. Anything but that time - no
+    # value, a value that is no time, or one from nowhere - is not the file.
+    def file_changed_since_form?
+      current = @submission.last_modification_by_users_at
+      return false if current.blank?
+
+      known_file_at != current
+    end
+
+    def known_file_at
+      Time.zone.parse(params.dig(:submission, :known_file_at).to_s)
+    rescue ArgumentError
+      nil
+    end
+
+    def removing?
+      params.dig(:submission, :detach_user_manuscript) == "true"
+    end
+
+    # The refused upload stays in the form, so once the reader has seen what
+    # the team did, saving again is all it takes. A refused removal comes back
+    # with the team's new file on the form, and the message says that the
+    # removal has to be asked for again.
+    def render_stale_form
+      if @submission.manuscript_data.blank?
+        @submission.errors.add(:base, :removed_meanwhile)
+      else
+        @submission.errors.add(:base, removing? ? :changed_before_removal : :changed_meanwhile,
+                               time: l(@submission.last_modification_by_users_at,
+                                       format: :short),
+                               filename: @submission.manuscript_filename)
+      end
+      @submission.manuscript = submission_manuscript_params[:manuscript] if
+        submission_manuscript_params[:manuscript].present?
+      render_form(status: :conflict)
+    end
+
+    # The checks hand back sentences by attribute, not error codes; on the
+    # model they reach the form like any other refusal.
+    def file_properties_ok?
+      @submission.check_file_properties(@submission.manuscript.metadata, :manuscript)
+                 .each do |attribute, messages|
+        messages.each { |message| @submission.errors.add(attribute, message.strip) }
+      end
+      @submission.errors.empty?
     end
 
     # `join` posts the sheet inside its own form object, the others carry it in
@@ -603,14 +662,17 @@ class SubmissionsController < ApplicationController
                         assignment: @assignment.title)
       elsif !@submission
         @error = I18n.t("submission.invalid_code")
-      elsif @assignment&.totally_expired?
-        @error = I18n.t("submission.assignment_expired")
+      # The deadline closes the upload, not the team: whoever forgot to join
+      # may still, with the team's code, until the team has been marked - or
+      # they themselves, on a row of their own: joining would wipe it.
+      elsif @submission.marked?
+        @error = I18n.t("submission.team_marked")
+      elsif marked_on_own?
+        @error = I18n.t("submission.marked_on_own")
       elsif @submission.correction
         @error = I18n.t("submission.already_corrected")
-      # Joining a team whose sheet nobody may touch any more - a rejected one -
-      # would put the reader somewhere they cannot hand in, replace or leave.
-      # The same predicate the ability uses for those.
-      elsif @submission.not_updatable?
+      # A rejected hand-in is nobody's to join: it counts as not handed in.
+      elsif @submission.accepted == false
         @error = I18n.t("submission.already_rejected")
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
@@ -628,17 +690,40 @@ class SubmissionsController < ApplicationController
       # join from.
       rostered_tutorial!(@assignment.lecture)
 
-      @join = UserSubmissionJoin.new(user: current_user,
-                                     submission: @submission)
-      @join.save
-      if @join.valid?
-        @submission.update(last_modification_by_users_at: Time.zone.now)
-        send_join_email
+      # A join is not a modification of the hand-in: the file and its time
+      # stay what they are, and the tutor's row says who came later. The
+      # reader's own row is held from the check to the write: points entered
+      # on it in between would be the mark the check is there to keep.
+      joined = ActiveRecord::Base.transaction do
+        own_row&.lock!
+        if marked_on_own?
+          @error = I18n.t("submission.marked_on_own")
+          raise(ActiveRecord::Rollback)
+        end
+
+        @join = UserSubmissionJoin.new(user: current_user, submission: @submission)
+        unless @join.save
+          @error = @join.errors[:base].join(", ")
+          raise(ActiveRecord::Rollback)
+        end
+
         remove_invitee_status
         sync_assessment_participations(users: [current_user]) if @submission.manuscript
-      else
-        @error = @join.errors[:base].join(", ")
+        true
       end
+      send_join_email if joined
+    end
+
+    def own_row
+      return unless @assignment.assessable?
+      return @own_row if defined?(@own_row)
+
+      @own_row = @assignment.assessment.assessment_participations
+                            .includes(:task_points).find_by(user: current_user)
+    end
+
+    def marked_on_own?
+      own_row.present? && @assignment.assessment.marked?(own_row)
     end
 
     def send_join_email

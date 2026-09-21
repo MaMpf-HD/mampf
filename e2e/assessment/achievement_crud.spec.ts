@@ -160,13 +160,8 @@ test.describe("achievements", () => {
     await page.overviewTab("Achievements").click();
     await teacher.page.getByRole("link", { name: "Blackboard talk" }).click();
 
-    teacher.page.on("dialog", dialog => dialog.accept());
-    await page.container.getByRole("button", { name: "Delete" }).click();
-
-    await expect(teacher.page.getByText(
-      "Cannot delete: Achievement is referenced by a rule.",
-    )).toBeVisible();
-    await expect(page.container.getByRole("heading", { name: "Blackboard talk" }))
+    await expect(page.container.getByRole("button", { name: "Delete" })).toBeDisabled();
+    await expect(page.container.getByTitle("Cannot delete: A rule requires this achievement"))
       .toBeVisible();
   });
 });

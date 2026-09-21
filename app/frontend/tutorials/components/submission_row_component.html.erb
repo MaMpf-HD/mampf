@@ -6,8 +6,8 @@
   data-controller="participation-row"
   data-row-id="<%= @submission.id %>"
   data-row-target-type="submission"
-  data-action="dirty->pointing-table#rowDirty clean->pointing-table#rowClean"
-  data-pointing-table-target="row"
+  data-action="dirty->marking-table#rowDirty clean->marking-table#rowClean"
+  data-marking-table-target="row"
   data-status-filter-target="row"
   data-status-filter-status="<%= status %>"
   data-status-filter-tutorial="<%= @submission.tutorial_id %>"
@@ -27,6 +27,15 @@
                 role="img"
                 title="<%= movement %>"
                 aria-label="<%= movement %>"
+              ></i>
+            <% end %>
+
+            <% if joined_late?(user) %>
+              <i
+                class="bi bi-box-arrow-in-right ms-1 text-secondary"
+                role="img"
+                title="<%= joined_late_info(user) %>"
+                aria-label="<%= joined_late_info(user) %>"
               ></i>
             <% end %>
 
@@ -63,6 +72,43 @@
           <%= t('basics.emails_copied_to_clipboard') %>
         </span>
       </button>
+
+      <% if addable_members.any? %>
+        <%#
+          Fixed, or the scrolling table would cut the menu at the pinned
+          column's edge. One item per name: a click adds, and the arrow keys
+          walk the names as they walk any menu.
+        %>
+        <div class="dropdown">
+          <button
+            type="button"
+            class="btn btn-link p-0 ms-2 text-secondary"
+            data-bs-toggle="dropdown"
+            data-bs-popper-config='{"strategy": "fixed"}'
+            aria-expanded="false"
+            title="<%= t('assessment.task_points.add_member') %>"
+            aria-label="<%= t('assessment.task_points.add_member') %>"
+          >
+            <i class="bi bi-person-plus"></i>
+          </button>
+
+          <div class="dropdown-menu" style="max-width: 18rem;">
+            <h6 class="dropdown-header text-wrap fw-normal">
+              <%= t('assessment.task_points.add_member_hint') %>
+            </h6>
+
+            <% addable_members.each do |member| %>
+              <%= button_to member.tutorial_name,
+                            add_member_submission_path(@submission),
+                            method: :patch,
+                            params: { user_id: member.id,
+                                      grading_scope_type: grading_scope_type },
+                            class: "dropdown-item",
+                            form: { data: { turbo: true } } %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </td>
 
@@ -89,7 +135,7 @@
         <div class="d-inline-flex align-items-center gap-1">
           <%= form_with url: point_submission_tutorial_path(
             @submission,
-            grading_scope_type: @grading_scope.class.name.downcase),
+            grading_scope_type: grading_scope_type),
                       method: :patch,
                       data: { turbo: true, participation_row_target: "form" },
                       html: { style: "display:none;" } do %>
@@ -104,7 +150,7 @@
 
           <%= form_with url: refresh_point_submission_tutorial_path(
             @submission,
-            grading_scope_type: @grading_scope.class.name.downcase),
+            grading_scope_type: grading_scope_type),
                       method: :patch,
                       data: { turbo: true, participation_row_target: "refreshForm" },
                       html: { style: "display:none;" } do %>

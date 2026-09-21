@@ -24,6 +24,27 @@ RSpec.describe(Achievement, type: :model) do
     end
   end
 
+  describe "#short_title" do
+    it "takes the initials of the first two words, or two letters of the only one" do
+      expect(build(:achievement, title: "Attendance Rate").short_title).to eq("AR")
+      expect(build(:achievement, title: "Übungsblatt-Punkte").short_title).to eq("ÜP")
+      expect(build(:achievement, title: "Test 2 bestanden").short_title).to eq("T2")
+      expect(build(:achievement, title: "Anwesenheit").short_title).to eq("AN")
+      expect(build(:achievement, title: "✓✓").short_title).to eq("✓✓")
+    end
+  end
+
+  describe ".short_titles" do
+    it "numbers two achievements whose letters come out the same" do
+      talk = build_stubbed(:achievement, title: "Blackboard Talk")
+      test = build_stubbed(:achievement, title: "Bonus Test")
+      rate = build_stubbed(:achievement, title: "Attendance Rate")
+
+      expect(described_class.short_titles([talk, test, rate]))
+        .to eq(talk.id => "BT1", test.id => "BT2", rate.id => "AR")
+    end
+  end
+
   describe "associations" do
     it "belongs to a lecture" do
       achievement = FactoryBot.build(:achievement, lecture: nil)
@@ -122,6 +143,52 @@ RSpec.describe(Achievement, type: :model) do
       FactoryBot.create(:achievement, title: "Blackboard Talk")
 
       expect(FactoryBot.build(:achievement, title: "Blackboard Talk")).to be_valid
+    end
+  end
+
+  describe "destructibility" do
+    let(:lecture) { create(:lecture) }
+    let(:achievement) { create(:achievement, :boolean, lecture: lecture) }
+    let(:row) do
+      student = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: student)
+      achievement.assessment.assessment_participations.find_by!(user: student)
+    end
+
+    it "goes while nobody has a value on it" do
+      row
+      expect(achievement).to be_destructible
+      expect { achievement.destroy }.to change(described_class, :count).by(-1)
+    end
+
+    it "stays once a value is entered, or somebody is excused" do
+      row.update!(grade_text: "fail")
+      expect(achievement.destruction_blockers).to eq([:has_values])
+
+      row.update!(grade_text: nil, status: :exempt)
+      expect(achievement.destruction_blockers).to eq([:has_values])
+      expect { achievement.destroy }.not_to change(described_class, :count)
+    end
+
+    # "pass" says nothing on a numeric achievement, 12.5 nothing on a yes/no
+    # one; an exemption reads the same under any type.
+    it "keeps its type once a value is entered, but not for an exemption alone" do
+      row.update!(grade_text: "pass")
+      achievement.value_type = :numeric
+      achievement.threshold = 3
+      expect(achievement).not_to be_valid
+      expect(achievement.errors[:value_type]).to be_present
+
+      row.update!(grade_text: nil, status: :exempt)
+      expect(achievement).to be_valid
+    end
+
+    it "stays while a rule requires it" do
+      rule = create(:student_performance_rule, lecture: lecture)
+      create(:student_performance_rule_achievement, rule: rule, achievement: achievement)
+
+      expect(achievement.destruction_blockers).to eq([:referenced_by_rules])
+      expect(achievement.destroy).to be(false)
     end
   end
 

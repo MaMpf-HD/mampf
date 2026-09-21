@@ -14,7 +14,7 @@ state is the head of the talk grading work. That is the baseline the steps below
 
 `SubmissionGraderService` and both row components ask `!assignment.active?`; the model
 asks `assessment.grading_open?`. Point all three at the model's hook. The submission row
-keeps `valid_for_pointing?` on top — that is a real extra condition, not a duplicate.
+keeps `valid_for_marking?` on top — that is a real extra condition, not a duplicate.
 
 The boundary moves from the plain deadline to the friendly one, so parts of the task
 point request specs will move with it. Read each failure before adjusting it: some of
@@ -137,7 +137,7 @@ to the assignment one.
 through `mark_exempt`: it clears the grade along with the status, and setting the status
 directly would leave a failing grade that re-applying a scheme will not remove either.
 
-`PointGridComponent` is gone: an exam's points tab is `ExamPointingTableComponent`,
+`PointGridComponent` is gone: an exam's points tab is `ExamPointsTableComponent`,
 which draws every candidate on the roster and reads absence off the status, not off
 `submitted_at`.
 

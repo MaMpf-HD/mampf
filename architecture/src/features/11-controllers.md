@@ -308,7 +308,7 @@ grid and the tutorial-scoped view — authorization determines scope.
 | update_team | Save points for one team (fan-out to individual TaskPoints via `TeamGradingService`) |
 
 ```admonish example "Responsibilities"
-- Point entry on `ExamPointingTableComponent`, grades and absences on `ExamGradingTableComponent`
+- Point entry on `ExamPointsTableComponent`, grades and absences on `ExamGradingTableComponent`
 - Tutorial-scoped view with team-based table, progress tracking, filters
 - Recalculate `participation.points_total` on save
 - Team grading via `Assessment::TeamGradingService`

@@ -46,7 +46,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
       it "counts the row as graded in the summary" do
         subject
-        summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+        summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
 
         expect(summary.text).to include(
           I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
@@ -234,7 +234,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
 
       subject
 
-      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
       expect(summary.text).to include(
         I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1)
       )
@@ -296,7 +296,7 @@ RSpec.describe(Assessment::GradesController, type: :request) do
       expect(exam_participation.reload).to have_attributes(grade_numeric: 2.3, note: "borderline",
                                                            status: "reviewed")
       expect(response.body).to include("grading-participation-row-#{exam_participation.id}")
-      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=pointing-summary]")
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
       expect(summary.text)
         .to include(I18n.t("assessment.grading_tutorial.summary.reviewed", count: 1))
     end

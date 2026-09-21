@@ -1,11 +1,10 @@
 import FactoryBot from "../support/factorybot";
 import Timecop from "../support/timecop";
 
-const ROLES = ["tutor", "editor", "teacher", "speaker"];
-// A seminar's groups are talks, so it offers no tutor role; conversely,
-// only a seminar has speakers.
-const LECTURE_ROLES = ROLES.filter(role => role !== "speaker");
-const SEMINAR_ROLES = ROLES.filter(role => role !== "tutor");
+// Vouchers hand out staff roles; speakers come through registration.
+// A seminar's groups are talks, so it offers no tutor role.
+const LECTURE_ROLES = ["tutor", "editor", "teacher"];
+const SEMINAR_ROLES = LECTURE_ROLES.filter(role => role !== "tutor");
 
 function createLectureScenario(context, type = "lecture") {
   cy.createUserAndLogin("teacher").as("teacher");
@@ -94,7 +93,7 @@ context("When the lecture is a seminar", () => {
   });
 
   describe("People tab in lecture edit page", () => {
-    it("shows buttons for creating editor, teacher and speaker vouchers", function () {
+    it("shows buttons for creating editor and teacher vouchers", function () {
       cy.contains(this.vouchers).should("be.visible");
 
       SEMINAR_ROLES.forEach((role) => {
@@ -102,6 +101,7 @@ context("When the lecture is a seminar", () => {
       });
 
       cy.getBySelector("create-tutor-voucher-btn").should("not.exist");
+      cy.getBySelector("create-speaker-voucher-btn").should("not.exist");
     });
 
     it("displays the voucher and invalidate button after the create button is clicked", function () {

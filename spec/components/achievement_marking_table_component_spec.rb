@@ -1,216 +1,125 @@
 require "rails_helper"
 
 RSpec.describe(AchievementMarkingTableComponent, type: :component) do
-  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:teacher) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
+  let(:group) { create(:tutorial, lecture: lecture, title: "Monday group") }
+  let(:achievement) { create(:achievement, :boolean, lecture: lecture) }
 
-  context "with a boolean achievement" do
-    let(:achievement) { create(:achievement, :boolean, lecture: lecture) }
-    let(:assessment) do
-      achievement.ensure_assessment!(
-        requires_points: false, requires_submission: false
-      )
+  def member(name, tutorial: group)
+    user = create(:confirmed_user, name_in_tutorials: name)
+    create(:lecture_membership, lecture: lecture, user: user)
+    create(:tutorial_membership, tutorial: tutorial, user: user) if tutorial
+    user
+  end
+
+  def row_of(page, name)
+    page.css("tbody tr").find { |row| row["data-status-filter-name"] == name }
+  end
+
+  # Joining the lecture seeds a row on every achievement, in no group.
+  def enter(user, **attrs)
+    achievement.assessment.assessment_participations.find_by!(user: user).update!(**attrs)
+  end
+
+  before { allow(vc_test_controller).to receive(:current_user).and_return(teacher) }
+
+  around { |example| I18n.with_locale(:en) { example.run } }
+
+  describe "a group's table" do
+    let(:component) { described_class.new(achievement: achievement, grading_scope: group) }
+
+    it "says so when the group has nobody in it" do
+      render_inline(component)
+
+      expect(rendered_content).to include(I18n.t("assessment.achievements.marking.no_members"))
     end
-    let(:component) { described_class.new(achievement: achievement) }
 
-    context "when no participations exist" do
-      it "renders the empty state" do
-        render_inline(component)
-        expect(rendered_content).to include(
-          I18n.t("assessment.achievements.marking.no_participations")
-        )
-      end
+    # Joining the lecture seeded the rows in no group; the group's table hands
+    # its members' blank rows to the group, and anybody without a row yet
+    # gets one as the table is drawn.
+    it "lists every member of the group with a row of their own, in the group" do
+      ada = member("Ada")
+      member("Grace")
+      member("Nina", tutorial: create(:tutorial, lecture: lecture))
+      achievement.assessment.assessment_participations.find_by(user: ada).destroy!
 
-      it "reports any_participations? as false" do
-        expect(component.any_participations?).to be(false)
-      end
+      page = render_inline(component)
+
+      expect(page.css("tbody tr").pluck("data-status-filter-name")).to eq(["Ada", "Grace"])
+      expect(page.css("tbody tr").pluck("id")).to all(start_with("achievement-participation-row-"))
+      expect(achievement.assessment.assessment_participations.where(tutorial: group).count).to eq(2)
+      expect(page.css("select[data-status-filter-target=tutorial]")).to be_empty
     end
 
-    context "with participations" do
-      let!(:passed) do
-        create(:assessment_participation,
-               assessment: assessment,
-               grade_text: "pass")
-      end
-      let!(:failed) do
-        create(:assessment_participation,
-               assessment: assessment,
-               grade_text: "fail")
-      end
-      let!(:unmarked) do
-        create(:assessment_participation,
-               assessment: assessment,
-               grade_text: nil)
-      end
+    it "shows where each person stands and offers the value" do
+      enter(member("Ada"), grade_text: "pass")
+      enter(member("Grace"), grade_text: "fail")
+      member("Nina")
 
-      # Escaped, because Faker hands out names with apostrophes often enough
-      # for a raw comparison to fail on some runs and not others.
-      it "renders a table with all participations" do
-        render_inline(component)
+      page = render_inline(component)
 
-        [passed, failed, unmarked].each do |participation|
-          expect(rendered_content)
-            .to include(CGI.escapeHTML(participation.user.tutorial_name))
-        end
-      end
+      expect(row_of(page, "Ada").text).to include(I18n.t("assessment.achievements.marking.met"))
+      expect(row_of(page, "Grace").text)
+        .to include(I18n.t("assessment.achievements.marking.not_met"))
+      expect(row_of(page, "Nina").text)
+        .to include(I18n.t("assessment.achievements.marking.unmarked"))
+      expect(row_of(page, "Ada").css("select[name=grade] option[selected]").first["value"])
+        .to eq("pass")
+      expect(page.css("#marking-summary").text.squish)
+        .to eq("1 met · 1 not met · 1 without a value")
+    end
 
-      it "shows check icon for pass" do
-        render_inline(component)
-        expect(rendered_content).to include("bi-check-circle")
-        expect(rendered_content).to include(
-          %(aria-label="#{I18n.t("assessment.achievements.marking.met")}")
-        )
-      end
+    it "shows an excused person's row without a field, and the way back for the lecturer" do
+      enter(member("Ada"), status: :exempt, note: "Certificate")
 
-      it "shows x icon for fail" do
-        render_inline(component)
-        expect(rendered_content).to include("bi-x-circle")
-        expect(rendered_content).to include(
-          %(aria-label="#{I18n.t("assessment.achievements.marking.not_met")}")
-        )
-      end
+      page = render_inline(component)
 
-      it "shows accessible label for unmarked status" do
-        render_inline(component)
-        expect(rendered_content).to include("bi-question-circle")
-        expect(rendered_content).to include(
-          %(aria-label="#{I18n.t("assessment.achievements.marking.unmarked")}")
-        )
-      end
-
-      it "does not show the value column" do
-        render_inline(component)
-        expect(rendered_content).not_to include(
-          I18n.t("assessment.achievements.marking.value")
-        )
-      end
-
-      it "returns correct met? results" do
-        expect(component.met?(passed)).to be(true)
-        expect(component.met?(failed)).to be(false)
-        expect(component.met?(unmarked)).to be(false)
-      end
-
-      it "returns correct status badges" do
-        expect(component.status_badge(passed)).to eq(:met)
-        expect(component.status_badge(failed)).to eq(:not_met)
-        expect(component.status_badge(unmarked)).to eq(:unmarked)
-      end
-
-      it "counts marked participations" do
-        expect(component.marked_count).to eq(2)
-      end
-
-      it "does not count blank grade_text as marked" do
-        create(:assessment_participation,
-               assessment: assessment,
-               grade_text: "")
-        expect(component.marked_count).to eq(2)
-      end
-
-      it "does not count whitespace-only grade_text as marked" do
-        create(:assessment_participation,
-               assessment: assessment,
-               grade_text: "   ")
-        expect(component.marked_count).to eq(2)
-      end
-
-      it "counts met participations" do
-        expect(component.met_count).to eq(1)
-      end
-
-      it "renders the summary line" do
-        render_inline(component)
-        expect(rendered_content).to include("2 / 3")
-      end
+      expect(row_of(page, "Ada").text).to include(I18n.t("assessment.achievements.marking.exempt"))
+      expect(row_of(page, "Ada").css("select[name=grade]")).to be_empty
+      back = I18n.t("assessment.grading_exam.remove_exempt")
+      expect(row_of(page, "Ada").css("a[aria-label='#{back}']")).to be_present
     end
   end
 
-  context "with a numeric achievement" do
-    let(:achievement) do
-      create(:achievement, :numeric, lecture: lecture, threshold: 15)
-    end
-    let(:assessment) do
-      achievement.ensure_assessment!(
-        requires_points: false, requires_submission: false
-      )
-    end
-    let(:component) { described_class.new(achievement: achievement) }
+  describe "the lecture's table" do
+    let(:component) { described_class.new(achievement: achievement, grading_scope: lecture) }
 
-    let!(:above) do
-      create(:assessment_participation,
-             assessment: assessment,
-             grade_text: "18")
-    end
-    let!(:below) do
-      create(:assessment_participation,
-             assessment: assessment,
-             grade_text: "10")
-    end
+    it "lists every member group by group, those in no group last, with a group filter" do
+      other = create(:tutorial, lecture: lecture, title: "Friday group")
+      member("Nina", tutorial: other)
+      member("Ada")
+      member("Ola", tutorial: nil)
 
-    it "displays value with threshold comparison" do
-      expect(component.value_display(above)).to eq("18 / 15")
-      expect(component.value_display(below)).to eq("10 / 15")
-    end
+      page = render_inline(component)
 
-    it "evaluates met? correctly" do
-      expect(component.met?(above)).to be(true)
-      expect(component.met?(below)).to be(false)
-    end
-
-    it "preserves decimal values in the display and comparison" do
-      achievement.update!(threshold: 12.5)
-      decimal = create(:assessment_participation,
-                       assessment: assessment,
-                       grade_text: "12.6")
-
-      expect(component.value_display(decimal)).to eq("12.6 / 12.5")
-      expect(component.met?(decimal)).to be(true)
+      expect(page.css("tbody tr").pluck("data-status-filter-name")).to eq(["Nina", "Ada", "Ola"])
+      expect(page.css("select[data-status-filter-target=tutorial] option").map { |o| o.text.strip })
+        .to include("Monday group", "Friday group")
     end
   end
 
-  context "with a percentage achievement" do
-    let(:achievement) do
-      create(:achievement, :percentage, lecture: lecture, threshold: 80.0)
-    end
-    let(:assessment) do
-      achievement.ensure_assessment!(
-        requires_points: false, requires_submission: false
-      )
-    end
-    let(:component) { described_class.new(achievement: achievement) }
+  describe "the value's field" do
+    let(:component) { described_class.new(achievement: achievement, grading_scope: group) }
 
-    let!(:above) do
-      create(:assessment_participation,
-             assessment: assessment,
-             grade_text: "85.0")
-    end
-    let!(:below) do
-      create(:assessment_participation,
-             assessment: assessment,
-             grade_text: "60.0")
+    it "is a number with the threshold over it for a numeric achievement" do
+      achievement.update!(value_type: :numeric, threshold: 12)
+      member("Ada")
+
+      page = render_inline(component)
+
+      expect(page.css("input[type=number][name=grade]")).to be_present
+      expect(page.css("thead").text).to include("threshold 12")
     end
 
-    it "displays value with percentage formatting" do
-      expect(component.value_display(above)).to eq("85.0% / 80.0%")
-      expect(component.value_display(below)).to eq("60.0% / 80.0%")
-    end
+    it "is a number with a percent sign for a percentage achievement" do
+      achievement.update!(value_type: :percentage, threshold: 75)
+      member("Ada")
 
-    it "evaluates met? correctly" do
-      expect(component.met?(above)).to be(true)
-      expect(component.met?(below)).to be(false)
-    end
+      page = render_inline(component)
 
-    context "with a blank threshold in memory" do
-      before do
-        achievement.threshold = nil
-      end
-
-      it "renders undecidable statuses without raising" do
-        render_inline(component)
-
-        expect(rendered_content).to include("bi-question-circle")
-        expect(component.value_display(above)).to eq("85.0% / —")
-      end
+      expect(page.css("input[type=number][name=grade][max='100']")).to be_present
+      expect(page.css(".input-group-text").text).to include("%")
     end
   end
 end

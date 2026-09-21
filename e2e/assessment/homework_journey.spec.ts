@@ -15,7 +15,7 @@ import { SubmissionsPage } from "../page-objects/submissions_page";
 test.describe("a homework sheet from the teacher to the student and back", () => {
   test("is created, handed in, marked, corrected and read", async ({
     factory,
-    clock,
+    timeCop,
     teacher,
     tutor,
     student,
@@ -75,7 +75,7 @@ test.describe("a homework sheet from the teacher to the student and back", () =>
 
     // the deadline passes - the due date was two days out, the grace period
     // is minutes
-    await clock.travelTo(new Date(Date.now() + 4 * 86400000));
+    await timeCop.travelToDate(new Date(Date.now() + 4 * 86400000));
 
     // the tutor finds the hand-in in the group's table, marks it and uploads
     // the correction

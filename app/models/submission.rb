@@ -34,6 +34,15 @@ class Submission < ApplicationRecord
     users.map { |user| found[user.id] }
   end
 
+  # Once anybody on the team has been marked, the team is closed to
+  # late-comers: joining would hand them points they were not there for.
+  # Until then, the code is the team's own word that somebody belongs.
+  def marked?
+    return false unless assignment.assessable?
+
+    participations.compact.any? { |participation| assessment.marked?(participation) }
+  end
+
   def partners_of_user(user)
     return unless user.in?(users)
 
@@ -109,7 +118,7 @@ class Submission < ApplicationRecord
     assignment.totally_expired? || correction.present? || accepted == false
   end
 
-  def valid_for_pointing?
+  def valid_for_marking?
     in_time? || accepted == true
   end
 

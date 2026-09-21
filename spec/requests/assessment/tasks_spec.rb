@@ -100,6 +100,15 @@ RSpec.describe("Assessment::Tasks", type: :request) do
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include("assessments_container")
+        expect(response.body).to include("Maximum points can&#39;t be negative.")
+      end
+
+      it "shows the missing max_points under the field" do
+        post assessment_assessment_tasks_path(assessment),
+             params: { assessment_task: { max_points: "" } },
+             as: :turbo_stream
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("You need to give the maximum points.")
       end
     end
   end

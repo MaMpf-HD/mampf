@@ -3,13 +3,14 @@ module Assessment
   module ExamStreams
     private
 
-      def exam_streams
-        exam_row_streams + exam_summary_streams + [exam_scheme_stream]
+      def exam_streams(participations = [@participation])
+        participations.flat_map { |participation| exam_row_streams(participation) } +
+          exam_summary_streams + [exam_scheme_stream]
       end
 
-      def exam_row_streams
+      def exam_row_streams(participation)
         exam_tables.map do |table|
-          row = table.row_for(@participation)
+          row = table.row_for(participation)
           turbo_stream.replace(row.row_id, html: render_to_string(row))
         end
       end
@@ -36,7 +37,7 @@ module Assessment
       def exam_tables
         @exam_tables ||= begin
           rows = ExamRows.for(@assessable)
-          [ExamPointingTableComponent.new(exam: @assessable, rows: rows),
+          [ExamPointsTableComponent.new(exam: @assessable, rows: rows),
            ExamGradingTableComponent.new(exam: @assessable, rows: rows)]
         end
       end

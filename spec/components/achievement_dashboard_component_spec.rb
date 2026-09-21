@@ -42,6 +42,32 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
     end
   end
 
+  describe "the delete button" do
+    before { allow(vc_test_controller).to receive(:current_user).and_return(teacher) }
+
+    it "stands under the settings, not beside the back link" do
+      page = render_inline(component)
+
+      header = page.css(".d-flex.justify-content-between").first
+      expect(header.css("form[method=post]")).to be_empty
+      expect(page.css("form[action$='#{achievement.id}'] button[type=submit]").text)
+        .to include(I18n.t("basics.delete"))
+    end
+
+    it "is locked with the reason once a value is entered" do
+      student = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: student)
+      achievement.assessment.assessment_participations.find_by!(user: student)
+                 .update!(grade_text: Achievement::PASSED)
+
+      page = render_inline(component)
+
+      expect(page.css("button[disabled]").text).to include(I18n.t("basics.delete"))
+      expect(page.css("[data-bs-toggle=tooltip]").first["title"])
+        .to eq(I18n.t("assessment.achievement_not_destructible.has_values"))
+    end
+  end
+
   describe "#grading_enabled?" do
     context "depending on the assessment" do
       context "when achievement has no assessment" do
@@ -53,6 +79,11 @@ RSpec.describe(AchievementDashboardComponent, type: :component) do
 
         it "returns false" do
           expect(component.grading_enabled?).to be(false)
+        end
+
+        it "still offers the delete button" do
+          render_inline(component)
+          expect(rendered_content).to include(I18n.t("basics.delete"))
         end
       end
 

@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
-const PAGE_SIZE_KEY = "pointing-table-page-size";
+const PAGE_SIZE_KEY = "marking-table-page-size";
 
 // Storage may be off or full; the choice then holds for this page only.
 function storedPageSize() {

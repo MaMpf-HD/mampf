@@ -4,7 +4,7 @@
       <div class="my-3">
         <%= render summary %>
 
-        <%= render PointingFilterComponent.new(id: "talks-#{@seminar.id}",
+        <%= render MarkingFilterComponent.new(id: "talks-#{@seminar.id}",
                                                status_options: status_options) %>
       </div>
 
@@ -16,7 +16,7 @@
         <div class="table-overflow" data-table-fade-target="inner">
           <table class="table table-hover align-middle my-3 grading-table">
             <thead>
-              <%= render(PointingTableHeaderComponent.new(
+              <%= render(MarkingTableHeaderComponent.new(
                 assessable: gradable_talks.first,
                 layout: layout
               )) %>

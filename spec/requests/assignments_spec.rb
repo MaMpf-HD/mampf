@@ -25,6 +25,14 @@ RSpec.describe("Assignments", type: :request) do
         expect(response.body).to include("assessments_container")
         expect(response.body).to include("Add assignment")
       end
+
+      it "shows what a title looks like, for a sheet and for a test" do
+        get new_assignment_path(lecture_id: lecture.id), as: :turbo_stream
+        expect(response.body).to include(I18n.t("admin.assignment.title_placeholder"))
+
+        get new_assignment_path(lecture_id: lecture.id, kind: "test"), as: :turbo_stream
+        expect(response.body).to include(I18n.t("assessment.test.title_placeholder"))
+      end
     end
 
     context "as an editor" do
@@ -103,6 +111,47 @@ RSpec.describe("Assignments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
+      # The kind is the form's to set once; what comes with it - the week,
+      # no hand-in - is the model's, and the response leads to the problems.
+      context "with a test" do
+        # The lecture's term may lie ahead; the weeks on offer are its.
+        let(:first_week) { [lecture.begin_date, Time.zone.today].max.beginning_of_week }
+        let(:monday) { first_week + 14 }
+        let(:test_attributes) do
+          valid_attributes.except(:deadline)
+                          .merge(title: "Test 1", kind: "test", test_week: monday.iso8601)
+        end
+
+        it "offers the form for one, with the term's weeks and without a hand-in setting" do
+          get new_assignment_path(lecture_id: lecture.id, kind: "test"), as: :turbo_stream
+
+          expect(response.body).to include("Add test")
+          weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
+          expect(weeks.pluck("value")).to include(monday.iso8601)
+          expect(weeks.first["value"]).to eq(first_week.iso8601)
+          expect(response.body).not_to include("Digital submission via MaMpf")
+        end
+
+        it "creates it due with its week, taking no hand-in" do
+          expect do
+            post(assignments_path, params: { assignment: test_attributes }, as: :turbo_stream)
+          end.to change(Assignment, :count).by(1)
+
+          test = Assignment.order(:created_at).last
+          expect(test).to be_kind_test
+          expect(test.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
+          expect(test.assessment.requires_submission).to be(false)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "takes a kind it does not know for homework" do
+          get new_assignment_path(lecture_id: lecture.id, kind: "quiz"), as: :turbo_stream
+
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("Digital submission via MaMpf")
+        end
+      end
+
       context "with valid parameters" do
         it "creates a new assignment" do
           expect do
@@ -157,6 +206,27 @@ RSpec.describe("Assignments", type: :request) do
                params: { assignment: invalid_attributes },
                as: :turbo_stream
           expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it "keeps the digital-submission box as posted when the save is refused" do
+          { "1" => "checked", "0" => nil }.each do |posted, expected|
+            post assignments_path,
+                 params: { assignment: valid_attributes.merge(deadline: 1.day.ago.iso8601,
+                                                              requires_submission: posted) },
+                 as: :turbo_stream
+
+            box = Nokogiri::HTML(response.body)
+                          .at_css("input[type=checkbox][name='assignment[requires_submission]']")
+            expect(box["checked"]).to eq(expected)
+          end
+        end
+
+        it "creates no hand-in when the box was unticked" do
+          post assignments_path,
+               params: { assignment: valid_attributes.merge(requires_submission: "0") },
+               as: :turbo_stream
+
+          expect(Assignment.last.assessment.requires_submission).to be(false)
         end
 
         it "renders the form with errors" do
@@ -336,12 +406,30 @@ RSpec.describe("Assignments", type: :request) do
         expect(response.media_type).to eq(Mime[:turbo_stream])
       end
 
-      it "removes the assignment from the list" do
+      it "answers with the tab, the sheet gone from it" do
         delete assignment_path(assignment), as: :turbo_stream
-        expect(response.body).to satisfy do |body|
-          body.include?("assessment-assessments-wrapper") ||
-            body.include?(ActionView::RecordIdentifier.dom_id(assignment))
-        end
+        expect(response.body).to include(I18n.t("admin.assignment.new"))
+        expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(assignment))
+      end
+
+      # The tab comes back whole, so a sheet still to appear with a medium's
+      # release stays on it when the last existing sheet goes.
+      it "keeps a scheduled sheet on the tab after the last sheet is deleted" do
+        medium = create(:lecture_medium, :with_lecture_by_id, lecture_id: lecture.id,
+                                                              sort: "Exercise")
+        medium.update!(publisher: MediumPublisher.new(medium_id: medium.id, user_id: teacher.id,
+                                                      release_now: false,
+                                                      release_date: 2.days.from_now,
+                                                      create_assignment: true,
+                                                      assignment_title: "Sheet 9",
+                                                      assignment_deadline: 9.days.from_now,
+                                                      assignment_file_type: ".pdf"))
+
+        delete assignment_path(assignment), as: :turbo_stream
+
+        expect(response.body).to include("Sheet 9")
+        expect(response.body).to include(I18n.t("admin.assignment.new"))
+        expect(response.body).not_to include(I18n.t("assessment.no_assignments_yet"))
       end
     end
 

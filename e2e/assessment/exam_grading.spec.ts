@@ -103,6 +103,30 @@ test.describe("exam grading", () => {
     await expect(page.pane.getByLabel("Name")).toBeFocused();
   });
 
+  test("saves every candidate's points at once", async ({ factory, teacher }) => {
+    const { lecture } = await examWithCandidates(factory, teacher.user.id);
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await page.open("Main Exam");
+    await page.tab("Points").click();
+
+    const saveAll = page.pane.getByRole("button", { name: /Save all changes/ });
+    await expect(saveAll).toBeDisabled();
+    await page.pane.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("7");
+    await page.pane.getByRole("spinbutton", { name: "Task 1 for Grace Hopper" }).fill("4");
+    await expect(saveAll).toContainText("2");
+    await saveAll.click();
+
+    await expect(page.pane.getByText("2 reviewed")).toBeVisible();
+    await expect(page.pane.getByRole("row", { name: /Grace Hopper/ }).getByText("Reviewed"))
+      .toBeVisible();
+    await page.tab("Grades").click();
+    await expect(page.pane.getByRole("row", { name: /Grace Hopper/ }).getByText("4.00"))
+      .toBeVisible();
+    // nobody pending any more: the card offers the scheme instead of counting
+    await expect(page.pane.getByText("Point entry in progress.")).toBeHidden();
+    await expect(page.pane.getByRole("link", { name: "Create Grade Scheme" })).toBeVisible();
+  });
+
   test("shows 20 candidates at a time, or one tutorial's", async ({ factory, teacher }) => {
     const lecture = await createLecture(factory, teacher.user.id);
     const exam = await factory.create("exam", ["with_date"], {
