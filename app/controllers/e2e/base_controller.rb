@@ -1,6 +1,6 @@
 module E2e
-  # Handles the Playwright suite's requests for what a test needs the server
-  # to do: records, users, the clock, mails, feature flags.
+  # Base class of the controllers in this directory, which the Playwright
+  # suite calls to prepare the server for a test.
   #
   # The main purpose of this class is to send back errors as JSON object
   # to parse them in the test runner. This way, we can display the error
