@@ -1,6 +1,12 @@
 module Demo
   module SetupSupport
     extend self
+    extend Demo::AssessmentSetupSupport
+    extend Demo::PerformanceSetupSupport
+    extend Demo::EligibilitySetupSupport
+    extend Demo::ExamSetupSupport
+    extend Demo::GradingSetupSupport
+    extend Demo::HomeworkSubmissionSupport
 
     LECTURE_CAMPAIGN_DESCRIPTION = "Demo Lecture Roster Campaign".freeze
     SEMINAR_CAMPAIGN_DESCRIPTION = "Demo Seminar Roster Campaign".freeze
@@ -30,9 +36,32 @@ module Demo
       Rails.logger.debug("=== Demo Roster Setup Complete ===")
     end
 
-    def setup!
+    # The everyday one, on a database restored from the shipped seed: that
+    # already has the demo tutorials and talks, and people seated in them so
+    # that submissions line up with the group they were handed in to. Building
+    # the rosters again would empty those groups and allocate them anew, which
+    # is why it is not part of this.
+    # `homework` is for the seed build alone: it seats the accounts a developer
+    # signs in with a few steps later, and homework staged before that would
+    # leave them without a hand-in.
+    def setup!(homework: true)
+      ensure_non_production!
+      reset_eligibility!
+      setup_assessment!
+      setup_homework_submissions! if homework
+      setup_performance!
+      setup_eligibility!
+      setup_exams!
+      setup_grading!
+    end
+
+    # The same on a database that has no demo groups yet - it builds them
+    # first. That is where the ones in the shipped seed come from, so this is
+    # what the seed build runs; on a seeded database it is the wrong one.
+    def setup_from_scratch!(homework: true)
       ensure_non_production!
       setup_rosters!
+      setup!(homework: homework)
     end
 
     private
@@ -116,6 +145,7 @@ module Demo
           talk = Talk.find_or_initialize_by(lecture: seminar, title: title)
           talk.capacity = 1
           talk.position ||= index + 1
+          talk.dates = [demo_talk_date(index)]
           talk.skip_campaigns = false if talk.respond_to?(:skip_campaigns=)
           talk.save!
           talk.speaker_talk_joins.delete_all
@@ -159,6 +189,12 @@ module Demo
             "#{campaign.rejected_users.count} rejected."
         end
         Rails.logger.debug("")
+      end
+
+      # Use past and future dates to demonstrate the grading table with both
+      # completed and upcoming talks.
+      def demo_talk_date(index)
+        Date.current.beginning_of_week + (index - 5).weeks + 2.days
       end
 
       def seminar!
@@ -273,6 +309,17 @@ module Demo
 
       def demo_tutorial_ids(lecture)
         demo_tutorials(lecture).pluck(:id)
+      end
+
+      # Every group that has anybody in it, the seed's own included: the named
+      # accounts one signs in with sit in those, and homework that is graded
+      # should reach them too.
+      def staffed_tutorials(lecture)
+        lecture.tutorials.order(:title).select { |tutorial| tutorial.tutorial_memberships.any? }
+      end
+
+      def staffed_tutorial_ids(lecture)
+        staffed_tutorials(lecture).map(&:id)
       end
   end
 end

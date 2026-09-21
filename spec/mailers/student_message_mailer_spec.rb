@@ -12,10 +12,13 @@ RSpec.describe(StudentMessageMailer) do
     create(:registration_user_registration, :confirmed,
            registration_campaign: campaign, user: student)
   end
+  let(:catalog) { StudentMessages::Catalog.new(lecture, teacher) }
   let(:message) do
-    Registration::StudentMessage.create!(lecture: lecture, sender: teacher,
-                                         subject: "First session",
-                                         body: "We start on Monday.")
+    message = StudentMessage.new(lecture: lecture, sender: teacher, subject: "First session",
+                                 body: "We start on Monday.")
+    message.address_to(catalog.pick(["lecture:all"]))
+    message.save!
+    message
   end
 
   describe "#student_message_email" do
@@ -51,6 +54,46 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.cc).to eq([teacher.email])
     end
 
+    # A tutor's mail to their group is theirs alone.
+    it "puts nobody in cc when a tutor sends" do
+      lecture.update!(editors: [create(:confirmed_user)])
+      message.update!(sender: create(:confirmed_user), sender_role: :tutor)
+
+      expect(mail.cc).to be_empty
+    end
+
+    it "names the groups in the footer" do
+      expect(mail.text_part.body.to_s)
+        .to include(I18n.t("student_message.audiences.everyone"))
+    end
+
+    # Two senders with the same display name are told apart by a verified
+    # address and a role the server assigns.
+    it "names the sender's address and role in the footer" do
+      expected_role = I18n.with_locale(lecture.locale_with_inheritance) do
+        I18n.t("mailer.student_message_role.staff")
+      end
+
+      expect(mail.text_part.body.to_s).to include("(#{teacher.email}, #{expected_role})")
+    end
+
+    # From before groups could be picked: no labels on record.
+    it "says 'everyone registered at the time' for a message without groups" do
+      message.update_columns(audiences: []) # rubocop:disable Rails/SkipsModelValidations
+      expected = I18n.with_locale(lecture.locale_with_inheritance) do
+        I18n.t("student_message.everyone_registered_then")
+      end
+
+      expect(mail.text_part.body.to_s).to include(expected)
+    end
+
+    # A job enqueued before the rename carries the old name in its GlobalID.
+    it "is found under the old name a queued job may carry" do
+      old_gid = "gid://mampf/Registration::StudentMessage/#{message.id}"
+
+      expect(GlobalID::Locator.locate(old_gid)).to eq(message)
+    end
+
     it "prefixes the subject with the lecture title" do
       # the mail is rendered in the lecture's locale, so the localized
       # sort prefix of the title must be computed in that locale as well
@@ -61,8 +104,37 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.subject).to eq("[#{expected_title}] First session")
     end
 
+    it "names the group in the subject when a tutor sends" do
+      tutorial = create(:tutorial, lecture: lecture, title: "Mo 10")
+      create(:tutorial_membership, tutorial: tutorial, user: student)
+      tutor_message = StudentMessage.new(lecture: lecture, sender: create(:confirmed_user),
+                                         sender_role: :tutor, subject: "Next week", body: "b")
+      tutor_message.address_to(catalog.pick(["tutorial:#{tutorial.id}"]))
+      tutor_message.save!
+      expected_title = I18n.with_locale(lecture.locale_with_inheritance) do
+        lecture.title_for_viewers
+      end
+
+      subject = described_class.with(message: tutor_message).student_message_email.subject
+
+      expect(subject).to eq("[#{expected_title}, Mo 10] Next week")
+    end
+
     it "contains the message body" do
       expect(mail.text_part.body.to_s).to include("We start on Monday.")
+    end
+
+    # Every uploader asks the gate: cached data that did not come through
+    # the scan is no attachment.
+    it "refuses cached data that was not scanned" do
+      unscanned = StudentMessageUploader.upload(StringIO.new("%PDF-1.4 demo"), :cache)
+      other = StudentMessage.new(lecture: lecture, sender: teacher, subject: "s", body: "b")
+      other.address_to(catalog.pick(["lecture:all"]))
+      other.attachment = unscanned.to_json
+
+      expect(other).not_to be_valid
+      expect(other.errors[:attachment])
+        .to include(I18n.t("submission.upload_failure_scan_required"))
     end
 
     it "attaches the uploaded file" do
@@ -86,7 +158,7 @@ RSpec.describe(StudentMessageMailer) do
     it "sends nothing when the recipient snapshot is empty" do
       # cannot happen through the regular flow (the model validates the
       # presence of recipients), so this only guards against anomalous data
-      empty_message = Registration::StudentMessage.new(
+      empty_message = StudentMessage.new(
         lecture: lecture, sender: teacher, subject: "s", body: "b",
         recipient_emails: []
       )

@@ -1,0 +1,69 @@
+<%= vite_stylesheet_tag "submissions/index/index.scss" %>
+
+<%#
+  The pane the other lecture pages sit in: the grey standing panel and the
+  white card are drawn against it, and the page background is patterned. The
+  width cap is what keeps a row's name and its number on the same screen.
+%>
+
+<div class="container small-width lecture-pane submissions-pane">
+  <%#
+    Sighted readers get the lecture from the navbar and the marked entry in
+    the sidebar; somebody moving through the page by heading gets neither, and
+    without this the outline starts at the sheet that happens to be due.
+  %>
+
+  <h1 class="visually-hidden">
+    <%= t("submission.hub.page_title", lecture: @lecture.title_for_viewers) %>
+  </h1>
+
+  <%#
+    No heading over the head: the card carries the sheet's title, its deadline
+    and the only coloured border on the page. Three signals for one thing. The
+    wrapping section goes with it - each card is a named section already, and
+    so is the standing beside it, so there is nothing left for a heading to
+    name.
+
+    Action left, standing right. Only the first open sheet shares the head;
+    anything else that can still be handed in follows at full width, so the
+    next deadline keeps the eye.
+  %>
+
+  <div class="mb-4">
+    <% head, *later = @hub.open_sheets %>
+
+    <div class="row">
+      <div class="col-12 col-lg-7 mb-3">
+        <% if head %>
+          <%= render(SubmissionCardComponent.new(
+                       sheet: head,
+                       invitations: @hub.invitations_for(head.assignment),
+                       partners: @hub.possible_partners,
+                       invited_users: @hub.invited_users_for(head.submission))) %>
+        <% else %>
+          <%= render(NoSheetDueComponent.new(next_scheduled: @hub.next_scheduled,
+                                             latest_marked: @hub.latest_marked)) %>
+        <% end %>
+      </div>
+
+      <div class="col-12 col-lg-5 mb-3">
+        <%= render(StandingComponent.new(standing: @hub.standing)) %>
+      </div>
+
+      <% later.each do |sheet| %>
+        <div class="col-12 mb-3">
+          <%= render(SubmissionCardComponent.new(
+                       sheet: sheet,
+                       invitations: @hub.invitations_for(sheet.assignment),
+                       partners: @hub.possible_partners,
+                       invited_users: @hub.invited_users_for(sheet.submission))) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <hr class="lecture-pane-separator">
+
+  <%= render(SheetListComponent.new(sheets: @history, lecture: @lecture,
+                                    due: @hub.due)) %>
+</div>

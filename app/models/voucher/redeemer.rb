@@ -36,7 +36,9 @@ module Redeemer
     end
 
     def redeem_tutor_voucher(tutorial_ids)
-      selected_tutorials = lecture.tutorials.where(id: tutorial_ids)
+      # Read before the status changes: once the person tutors them, the
+      # open ones are no longer open.
+      selected_tutorials = lecture.tutorials_open_to(Current.user).where(id: tutorial_ids).to_a
       lecture.update_tutor_status!(Current.user, selected_tutorials)
 
       Redemption.create(user: Current.user, voucher: self,

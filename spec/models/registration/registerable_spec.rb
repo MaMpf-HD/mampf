@@ -31,4 +31,21 @@ RSpec.describe(Registration::Registerable) do
       end
     end
   end
+
+  # The class method answers a different question from the instance method: not
+  # "one registration per campaign" but "does allocating here displace a sibling
+  # assignment". Only a tutorial displaces one, so only Tutorial says true.
+  it "ensures only tutorials claim exclusivity across siblings" do
+    Rails.application.eager_load!
+
+    models = ApplicationRecord.descendants.select do |model|
+      model.included_modules.include?(described_class)
+    end
+
+    models.each do |model|
+      expect(model.displaces_sibling_assignment?).to eq(model == Tutorial),
+                                                     "#{model}.displaces_sibling_assignment? " \
+                                                     "is wrong"
+    end
+  end
 end

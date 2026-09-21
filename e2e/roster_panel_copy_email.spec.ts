@@ -16,7 +16,7 @@ test.describe("the roster panel's copy button", () => {
       await tutorial.__call("add_user_to_roster!", student.user);
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      await page.getByText("Mo 10").click();
+      await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       await page.getByRole("button", ADDRESS_BUTTON).click();
 
       const copied = await page.evaluate(() => navigator.clipboard.readText());
@@ -40,7 +40,7 @@ test.describe("the roster panel's copy button", () => {
       await tutorial.__call("add_user_to_roster!", student.user);
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      await page.getByText("Mo 10").click();
+      await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       await page.getByRole("button", ADDRESS_BUTTON).click();
 
       await expect(page.getByRole("status"))

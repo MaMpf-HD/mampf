@@ -1,4 +1,3 @@
-# AssignmentsController
 class AssignmentsController < ApplicationController
   before_action :set_assignment, except: [:new, :cancel_new, :create]
   before_action :set_lecture, only: :create
@@ -9,35 +8,101 @@ class AssignmentsController < ApplicationController
   end
 
   def new
-    @assignment = Assignment.new
+    @assignment = Assignment.new(kind: kind_param)
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @assignment.lecture = @lecture
     authorize! :new, @assignment
     set_assignment_locale
+
+    respond_to do |format|
+      format.js
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update("assessments_container",
+                                                 partial: "assessment/assessments/card_body_form",
+                                                 locals: { assignment: @assignment,
+                                                           lecture: @lecture })
+      end
+    end
   end
 
   def edit
-  end
-
-  def create
-    @assignment = Assignment.new(assignment_params)
-    authorize! :create, @assignment
-    @assignment.save
-    @errors = @assignment.errors
-    @lecture = @assignment.lecture
     set_assignment_locale
   end
 
+  def create
+    @assignment = Assignment.new(assignment_params.merge(kind: kind_param))
+    authorize! :create, @assignment
+    @lecture = @assignment.lecture
+    set_assignment_locale
+
+    if @assignment.save
+      @assignment.reload
+      assessment = @assignment.assessment
+      tasks = assessment&.tasks&.order(:position) || []
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.update("assessments_container",
+                                AssessmentDashboardComponent.new(
+                                  assessable: @assignment,
+                                  assessment: assessment,
+                                  lecture: @lecture,
+                                  active_tab: "tasks",
+                                  tasks: tasks
+                                ))
+          ]
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("assessments_container",
+                                                   partial: "assessment/assessments/card_body_form",
+                                                   locals: { assignment: @assignment,
+                                                             lecture: @lecture }),
+                 status: :unprocessable_content
+        end
+      end
+    end
+  end
+
   def update
-    @assignment.update(assignment_params)
-    @errors = @assignment.errors
-    return if @errors.present?
+    set_assignment_locale
+
+    unless @assignment.update(assignment_params)
+      @errors = @assignment.errors
+      return
+    end
 
     @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
+    @assignment.reload
   end
 
   def destroy
-    @assignment.destroy
+    set_assignment_locale
+    @lecture = @assignment.lecture
+
+    if @assignment.destroy
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          # The whole tab again: what is left may be a scheduled sheet, or
+          # nothing, and the tab knows how to say either.
+          render turbo_stream:
+          turbo_stream.update("assessments_container",
+                              AssessmentsOverviewComponent.new(lecture: @lecture))
+        end
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          head :unprocessable_content
+        end
+      end
+    end
   end
 
   def cancel_edit
@@ -75,7 +140,13 @@ class AssignmentsController < ApplicationController
 
     def assignment_params
       params.expect(assignment: [:title, :medium_id, :lecture_id,
-                                 :deadline, :accepted_file_type,
-                                 :deletion_date])
+                                 :deadline, :test_week, :accepted_file_type,
+                                 :requires_submission])
+    end
+
+    # Unknown enum values raise ArgumentError instead of a validation error.
+    def kind_param
+      kind = params.dig(:assignment, :kind) || params[:kind]
+      kind.to_s.presence_in(Assignment.kinds.keys) || :homework
     end
 end

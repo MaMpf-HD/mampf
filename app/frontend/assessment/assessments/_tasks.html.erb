@@ -1,0 +1,92 @@
+<% task = local_assigns[:task] || assessment.tasks.build %>
+
+<div class="mb-4">
+  <%= form_with model: task,
+                url: assessment_assessment_tasks_path(assessment),
+                method: :post,
+                local: true,
+                html: { class: "mb-3", novalidate: true } do |f| %>
+    <div data-controller="assessments--points-precision">
+      <%= f.label :max_points, t('assessment.task.max_points'), class: "form-label" %>
+
+      <div class="row g-2 align-items-start">
+        <div class="col-md-4">
+          <%= f.number_field :max_points,
+                             class: 'form-control',
+                             placeholder: t('assessment.task.max_points_placeholder'),
+                             min: 0,
+                             step: "any",
+                             data: {
+                               assessments__points_precision_target: "input",
+                               action: "input->assessments--points-precision#check change->assessments--points-precision#check"
+                             } %>
+        </div>
+
+        <div class="col-auto">
+          <%= f.submit t('assessment.task.add'), class: "btn btn-primary" %>
+        </div>
+      </div>
+
+      <div class="form-text">
+        <%= t("assessment.task.max_points_precision_hint") %>
+
+        <span class="ms-1"><%= t("assessment.task.description_hint") %></span>
+      </div>
+
+      <div
+        class="form-text text-danger d-none"
+        data-assessments--points-precision-target="warning"
+      >
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <%= t("assessment.task.max_points_precision_warning") %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if tasks.any? %>
+  <div
+    id="tasks-list"
+    class="d-flex flex-column gap-2"
+    data-controller="sortable"
+    data-sortable-url-value="<%= reorder_assessment_assessment_tasks_path(assessment) %>"
+    data-sortable-error-message-value="<%= t('assessment.task.reorder_failed') %>"
+  >
+    <% tasks.each_with_index do |task, index| %>
+      <%= render "assessment/tasks/task_card",
+                 task: task,
+                 assessment: assessment,
+                 index: index + 1 %>
+    <% end %>
+  </div>
+  <div
+    class="d-flex gap-2 align-items-center border-top mt-3 pt-2"
+    id="tasks-total"
+  >
+    <div class="px-3 py-2 text-center" style="min-width: 50px;">
+      <span class="fw-bold fs-5 text-muted" aria-hidden="true">&Sigma;</span>
+
+      <span class="visually-hidden">
+        <%= t('assessment.task.total_points') %>
+      </span>
+    </div>
+
+    <div class="px-3 py-2">
+      <span class="fw-bold me-3">
+        <%= number_with_precision(assessment.effective_total_points,
+                                  strip_insignificant_zeros: true) %>
+
+        <%= t('assessment.task.points_abbrev') %>
+      </span>
+
+      <span class="text-muted small">
+        <%= t('assessment.task.count', count: tasks.size) %>
+      </span>
+    </div>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle me-2"></i>
+    <%= t('assessment.no_tasks_yet') %>
+  </div>
+<% end %>

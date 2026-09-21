@@ -1,0 +1,287 @@
+module Assessment
+  class SubmissionGraderService
+    class SubmissionGraderError < StandardError; end
+
+    class << self
+      def score_multi_teams_by_types!(records, scorer)
+        validated_scopes = []
+
+        ActiveRecord::Base.transaction do
+          records.each do |entry|
+            score_tasks_by_types!(entry, scorer, validated_scopes)
+          end
+        end
+      end
+
+      def score_tasks_by_types!(entry, scorer, validated_scopes)
+        case entry["target"]
+        when "submission"
+          score_submission_entry!(entry, scorer, validated_scopes)
+        when "participation"
+          score_participation_entry!(entry, scorer, validated_scopes)
+        else
+          raise(SubmissionGraderError, "Unknown target type #{entry["target"].inspect}")
+        end
+      end
+
+      def score_tasks_by_submission!(submission, points_by_task_id, scorer)
+        raise_if_errors!(validate_submission_present(submission))
+
+        assignment = submission.assignment
+        assessment = assignment&.assessment
+
+        raise_if_errors!(
+          validate_submission_has_assignment(submission, assignment),
+          validate_assignment_has_assessment(assignment, assessment),
+          validate_assessment_requires_points(assessment),
+          validate_assignment_grading_open(assignment)
+        )
+
+        enter_points_for_each_team_member!(assessment, submission, points_by_task_id, scorer)
+      end
+
+      def score_tasks_by_participation!(participation, points_by_task_id, scorer)
+        raise_if_errors!(validate_participation_present(participation))
+
+        assignment = participation.assessment&.assessable
+
+        raise_if_errors!(
+          validate_participation_has_assignment(participation, assignment),
+          validate_assignment_grading_open(assignment)
+        )
+
+        PointEntryService.enter_points(participation, points_by_task_id, scorer, nil)
+        stamp_paper_hand_in!(participation, points_by_task_id, assignment)
+        participation
+      end
+
+      # A stamp already there is the time the sheet came in and stays.
+      def init_participation(assessment, user, tutorial)
+        if assessment.nil? || user.nil?
+          raise(SubmissionGraderError,
+                I18n.t("assessment.task_points.init_participation_missing_args"))
+        end
+
+        participation = Participation.find_or_initialize_by(
+          assessment_id: assessment.id,
+          user_id: user.id
+        )
+        participation.tutorial_id ||= tutorial&.id
+        participation.submitted_at ||= Time.current if participation.pending?
+        participation.save! if participation.changed?
+        participation
+      end
+
+      # A tutor puts somebody who forgot to join onto the team's upload. The
+      # row is stamped as handed in, and where the team already has points
+      # the newcomer gets the same - the tutor is saying "this one too". The
+      # newcomer hears of it; the team hears of a join as it always does.
+      def add_member!(submission, user, scorer)
+        assignment = submission.assignment
+        raise_if_errors!(validate_member_of_group(submission, user))
+        raise_if_errors!(validate_team_takes_members(submission))
+
+        participation = Participation.transaction do
+          # The newcomer's own row is held from the check to the write:
+          # points entered on it in between would be the decision the
+          # check is there to keep.
+          own_row = lock_own_row(assignment.assessment, user)
+          raise_if_errors!(validate_unmarked_on_own(assignment.assessment, own_row))
+          UserSubmissionJoin.create!(user: user, submission: submission)
+          row = init_participation(assignment.assessment, user, submission.tutorial)
+          # The row is the upload's now, wherever it was seeded.
+          row.update!(tutorial: submission.tutorial) if row.tutorial_id != submission.tutorial_id
+          points = team_points(submission, user)
+          PointEntryService.enter_points(row, points, scorer, submission) if points.any?
+          row
+        end
+        tell_of_addition(submission, user, scorer)
+        participation
+      rescue ActiveRecord::RecordInvalid => e
+        raise(SubmissionGraderError, e.record.errors.full_messages.to_sentence)
+      end
+
+      # The other way round: the sheet did not come in after all. Only while
+      # nothing is written on it - points say it did.
+      def remove_participation(participation)
+        raise_if_errors!(validate_participation_present(participation))
+        task_points = participation.task_points
+        if task_points.empty? || task_points.all? { |tp| tp.points.nil? }
+          task_points.destroy_all
+          participation.update!(submitted_at: nil)
+        else
+          raise(SubmissionGraderError,
+                I18n.t("assessment.task_points.participation_has_task_points"))
+        end
+      end
+
+      private
+
+        # Points on a sheet nobody recorded a hand-in for say the sheet was
+        # there: the tutor had it on paper. The stamp is what the student's
+        # page and the performance table read. On a test it says no more than
+        # that points were started, so it goes again once they are all taken
+        # back - a row with the stamp cannot be recorded absent.
+        def stamp_paper_hand_in!(participation, points_by_task_id, assignment)
+          return stamp_test!(participation) if assignment.kind_test?
+          return if participation.submitted_at.present?
+          return if points_by_task_id.values.all?(&:blank?)
+
+          participation.update!(submitted_at: Time.current)
+        end
+
+        def stamp_test!(participation)
+          participation.task_points.reset
+          started = participation.results_visible?
+          return if participation.submitted_at.present? == started
+
+          participation.update!(submitted_at: started ? Time.current : nil)
+        end
+
+        def score_submission_entry!(entry, scorer, validated_scopes)
+          submission = Submission.find(entry["id"])
+
+          authorize_scope!(submission.tutorial, scorer, validated_scopes)
+          score_tasks_by_submission!(submission, entry["task_points"], scorer)
+        end
+
+        # Somebody in no group takes part in the lecture itself, and that is
+        # the lecturer's to enter.
+        # The row is held by the student's current group while it is blank,
+        # as the single-row route decides it.
+        def score_participation_entry!(entry, scorer, validated_scopes)
+          participation = Participation.find(entry["id"]).lock!
+          ParticipationIndex.follow_membership(participation)
+
+          authorize_scope!(participation.tutorial || participation.assessment.lecture,
+                           scorer, validated_scopes)
+          score_tasks_by_participation!(participation, entry["task_points"], scorer)
+        end
+
+        # A bulk save carries thirty rows of one group; the permission check
+        # loads tutors and runs once per scope, not per row.
+        def authorize_scope!(scope, scorer, validated_scopes)
+          return if validated_scopes.include?(scope)
+
+          raise_if_errors!(validate_scorer_may_enter_points(scope, scorer))
+          validated_scopes << scope
+        end
+
+        def enter_points_for_each_team_member!(assessment, submission, points_by_task_id, scorer)
+          submission.users.each do |user|
+            participation = init_participation(assessment, user, submission.tutorial)
+            PointEntryService.enter_points(participation, points_by_task_id, scorer, submission)
+          end
+        end
+
+        def tell_of_addition(submission, newcomer, tutor)
+          NotificationMailer.with(recipient: newcomer, locale: newcomer.locale,
+                                  submission: submission, user: tutor)
+                            .submission_added_email.deliver_later
+          (submission.users.email_for_submission_join - [newcomer]).each do |member|
+            NotificationMailer.with(recipient: member, locale: member.locale,
+                                    submission: submission, user: newcomer)
+                              .submission_join_email.deliver_later
+          end
+        end
+
+        def validate_member_of_group(submission, user)
+          return if submission.tutorial.members.exists?(id: user.id)
+
+          I18n.t("assessment.task_points.not_in_group")
+        end
+
+        # A rejected hand-in counts as none; nobody is put on it.
+        def validate_team_takes_members(submission)
+          return unless submission.accepted == false
+
+          I18n.t("assessment.task_points.team_rejected")
+        end
+
+        def lock_own_row(assessment, user)
+          return unless assessment
+
+          assessment.assessment_participations.lock.find_by(user: user)
+        end
+
+        # Marked on a row of their own, the newcomer is done with the sheet;
+        # the team's points would replace a decision already taken. A sheet
+        # without an assessment has no rows to be marked on.
+        def validate_unmarked_on_own(assessment, own_row)
+          return unless assessment&.marked?(own_row)
+
+          I18n.t("assessment.task_points.marked_on_own", name: own_row.user.tutorial_name)
+        end
+
+        # What the team already has, per task, read off the first teammate
+        # with any points; nil points are nothing.
+        def team_points(submission, newcomer)
+          return {} unless submission.assignment.assessable?
+
+          scored = submission.assignment.assessment.assessment_participations
+                             .where(user: submission.users - [newcomer])
+                             .includes(:task_points)
+                             .find { |row| row.task_points.any? { |tp| tp.points.present? } }
+          return {} unless scored
+
+          scored.task_points.filter_map { |tp| [tp.task_id, tp.points] if tp.points.present? }.to_h
+        end
+
+        def validate_submission_present(submission)
+          return if submission.present?
+
+          I18n.t("assessment.errors.no_submission")
+        end
+
+        def validate_participation_present(participation)
+          return if participation.present?
+
+          I18n.t("assessment.errors.no_participation")
+        end
+
+        def validate_submission_has_assignment(submission, assignment)
+          return if assignment.present?
+
+          I18n.t("assessment.task_points.submission_id_has_no_assignment",
+                 submission_id: submission.id)
+        end
+
+        def validate_participation_has_assignment(participation, assignment)
+          return if assignment.present?
+
+          I18n.t("assessment.task_points.participation_id_has_no_assignment",
+                 participation_id: participation.id)
+        end
+
+        def validate_assignment_has_assessment(assignment, assessment)
+          return if assessment.present?
+
+          I18n.t("assessment.task_points.assignment_id_has_no_assessment",
+                 assignment_id: assignment.id)
+        end
+
+        def validate_assessment_requires_points(assessment)
+          return if assessment.nil? || assessment.requires_points?
+
+          I18n.t("assessment.task_points.not_required_points")
+        end
+
+        def validate_assignment_grading_open(assignment)
+          return if assignment.nil? || assignment.grading_open?
+
+          I18n.t("assessment.task_points.cannot_score_not_grading_open_assignment")
+        end
+
+        def validate_scorer_may_enter_points(scope, user)
+          return if scope.nil? || user.can_enter_points_in?(scope)
+
+          I18n.t("assessment.errors.user_cannot_enter_points")
+        end
+
+        def raise_if_errors!(*errors)
+          errors = errors.flatten.compact
+          raise(SubmissionGraderError, errors.join("; ")) if errors.any?
+        end
+    end
+  end
+end

@@ -47,9 +47,9 @@ participation removes its assessment from the maximum entirely; an exemption is
 not a zero. `pending` and `absent` contribute nothing while their assessment stays
 in the maximum.
 
-**Work handed in but not yet marked is recorded separately.** A `pending`
-participation that carries a `submitted_at` is waiting for a tutor rather than
-missing, and `points_max_pending_materialized` on the performance record adds up
+**Work handed in but not yet marked is counted separately.** A `pending`
+participation that carries a `submitted_at` on a sheet that is due is waiting
+for a tutor rather than missing, and `StudentPerformance::DuePoints` adds up
 what that is worth. Without it a marking backlog is indistinguishable from work
 never done, and eligibility reads it as a failure.
 
@@ -236,7 +236,7 @@ The `requires_submission` field controls whether students must upload files:
 - **Exams:** Always `false`. Exams are graded in person or from scanned papers.
 - **Talks:** Always `false`. Presentations are graded live.
 
-When `requires_submission: false`, no file uploads occur and `submitted_at` remains `nil`. The Grading Tab shows only grading progress (not submission progress).
+When `requires_submission: false`, no file uploads occur; `submitted_at` is set by the tutor recording the paper hand-in in the pointing table. Until then a row reads *not yet recorded* rather than *not submitted*, on every page that shows it. The Grading Tab shows only grading progress (not submission progress).
 
 **It freezes once the deadline has passed.** The flag imposes no obligation on
 students — nothing in the submission path consults it — so the reason is not to
@@ -431,9 +431,9 @@ total and falls back to 5.0. That fallback guards a state which must not arise
 in the first place, so the rule belongs to whatever sets the status, not to the
 applier.
 
-Neither route exists in this stack yet: `Gradable#set_grade!` is the only method
-that writes `reviewed`, and nothing calls it. Both the point entry and the talk
-grading are being built on the separate tutor grading branch.
+Each route has one writer: task points reach `reviewed` through
+`Assessment::SubmissionGraderService`, a talk's grade through
+`Assessment::GradeEntryService`.
 ```
 
 ~~~admonish warning "`absent` and `exempt` are opposites, not shades of the same thing"
@@ -531,6 +531,10 @@ stateDiagram-v2
 
 Assignment participations are **lazy** — created on first interaction (submission or grading). After the deadline, a backfill job seeds remaining roster students.
 
+```admonish warning "Strict Grading & Clean Slate"
+In `Assignment` lifecycles (unlike Talks or Exams), grading is completely locked while the assignment is inside its upload timeframe (`Assessment::Assessable#grading_open?` validation). If a deadline is subsequently extended *after* initial grading, and the student submits a new file, their participation state triggers a "clean slate" reset: bumping it back to *pending* and wiping previously entered granular points and metadata unconditionally.
+```
+
 ```mermaid
 stateDiagram-v2
     direction LR
@@ -545,6 +549,7 @@ stateDiagram-v2
     none --> pending_sub : Student uploads file<br/>(submitted_at set)
     none --> exempt : Tutor marks excused
     pending_sub --> reviewed : Tutor enters points
+    reviewed --> pending_sub : Deadline extended & <br/>student uploads new file
     none --> pending_bf : Deadline backfill job<br/>(submitted_at = nil)
     pending_bf --> reviewed : Tutor enters points<br/>(e.g. paper handed in)
     pending_bf --> exempt : Tutor marks excused
@@ -1170,8 +1175,12 @@ end
 ### Lazy Participation Creation
 
 ```admonish success "Why assignments seed no participations"
-This is about assignments, and about talks, which behave the same way. Exams and
-achievements are seeded up front — see their lifecycles above.
+This is about assignments. Exams and achievements are seeded up front — see
+their lifecycles above. Talks sit in between: the seminar's grading table
+creates the rows it lacks when it is drawn (`TalkGraderService.init_participations`),
+a deliberate exception to reads that write nothing — speakers reach a talk
+through the roster in bulk, past any callback, and a row without an id could
+not be graded through its route. The create is idempotent on the unique index.
 
 Participations are created **lazily** rather than on assignment creation for several reasons:
 
@@ -1350,14 +1359,13 @@ A concern that extends `Assessment::Assessable` to enable recording a final grad
 | Method | Description |
 |--------|-------------|
 | `ensure_gradebook!(...)` | Creates or updates the linked Assessment::Assessment with `requires_points: false` by default while preserving an existing `requires_points: true` configuration |
-| `set_grade!(user:, value:, grader:)` | Records a final grade for a specific student |
 
 ### Behavior Highlights
 
 - Includes `Assessment::Assessable` and builds on its interface
 - Defaults `requires_points` to `false` when creating the assessment, but retains `true` if it was already enabled (e.g., when combined with `Assessment::Pointable`)
 - No tasks or submissions are required
-- Writes `grade_numeric` when the value is a number and `grade_text` otherwise, and sets the participation to `reviewed` in the same update
+- The grade itself is written by `Assessment::GradeEntryService`, never by the concern
 - Can be combined with `Assessment::Pointable` for exams that need both points and final grades
 
 ### Example Implementation
@@ -1376,27 +1384,14 @@ module Assessment
       requires_submission: false
     )
   end
-
-  def set_grade!(user:, value:, grader: nil)
-    a = assessment || raise("No gradebook; call ensure_gradebook! first")
-    part = a.participations.find_or_create_by!(user_id: user.id)
-    part.update!(
-      grade_numeric: value,
-      grader_id: grader&.id,
-      graded_at: Time.current,
-      status: :reviewed
-    )
-  end
 end
 ```
 
 ### Usage Scenarios
 
-- **For seminar talks:** After creating a talk, the `setup_assessment` callback calls `ensure_gradebook!` to create an assessment without tasks. After the presentation, call `talk.set_grade!(user: speaker, value: "1.0", grader: professor)` to record the final grade.
+- **For seminar talks:** After creating a talk, the `setup_assessment` callback calls `ensure_gradebook!` to create an assessment without tasks. The lecturer grades every speaker in the seminar's table (`TalkGradingTableComponent`); each row saves through `Assessment::GradesController` and `Assessment::GradeEntryService`.
 
-- **For exams with final grades:** An exam includes both `Assessment::Pointable` and `Assessment::Gradable`. After all tasks are graded and points computed, the teacher can call `exam.set_grade!(user: student, value: "1.3", grader: professor)` to store the official grade that appears on transcripts.
-
-- **Idempotent grade updates:** A teacher corrects a mistakenly entered grade by calling `talk.set_grade!` again with the new value. The method updates the existing participation record rather than creating a duplicate.
+- **For exams with final grades:** An exam includes both `Assessment::Pointable` and `Assessment::Gradable`. A grade scheme applying itself writes the grade on its own (`GradeSchemeApplier`); entering an exam grade by hand is planned to go through the same service and has no caller yet.
 
 ---
 
@@ -1683,26 +1678,24 @@ The grading system uses a layered approach: base grade entry service works for a
 
 **Interface:**
 ```ruby
-Assessment::GradeEntryService.set_grade(
-  participation:,
-  grade:,
-  grader:,
-  comment: nil
-)
+grade_info = Assessment::GradeEntryService.build_grade_info(grade_numeric: "1.3")
+Assessment::GradeEntryService.set_grade(participation, grade_info, grader, comment)
 ```
 
 **Behavior:**
-- Sets `participation.grade` with validation
-- Validates grade format (letter grade, pass/fail, numeric, etc.)
-- Tracks audit information (`graded_by_id`, `graded_at`)
-- Works for ANY Gradable type
-- Used by: manual entry UI, grade schemes (as output), talk grading
+- Writes `grade_numeric` (checked against `VALID_GRADES_NUMERIC`, the scheme's scale plus 5.0) and `grade_text`
+- Sets the status: `reviewed` with a grade, `pending` without one; `exempt` and `absent` stay as they are
+- `grader_id` and `graded_at` belong to the grade: a note alone leaves them, a grade taken back clears them
+- Works for any Gradable; a grade scheme applying itself writes on its own
+- Used by: the seminar's talk table (through `TalkGraderService`, which only checks that the participation is a talk's)
 
 **Use Cases:**
-- **Talk grading:** Teacher enters "1.0" after seminar presentation
-- **Oral exam:** Teacher enters "2.3" directly (no written tasks)
-- **Small exam override:** 3 students, teacher skips points and enters final grades
-- **Grade scheme output:** Scheme calculates "2.7" from total points, calls this service
+- **Talk grading:** Teacher enters "1.0" after seminar presentation (built)
+- **Oral exam:** Teacher enters "2.3" directly (no written tasks) — planned
+- **Small exam override:** 3 students, teacher skips points and enters final grades — planned
+
+A grade scheme does not call this service: `GradeSchemeApplier` writes the
+grades it computes itself, and only onto participations without one.
 
 ---
 

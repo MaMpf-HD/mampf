@@ -1,9 +1,15 @@
 # Talk class
 class Talk < ApplicationRecord
+  class SpeakerRemovalNotAllowedError < StandardError; end
+
   include Registration::Registerable
   include Rosters::Rosterable
+  include Assessment::Gradable
 
   belongs_to :lecture, touch: true
+
+  before_save :remove_duplicate_dates
+  after_create :setup_assessment
 
   has_many :speaker_talk_joins, dependent: :destroy
   has_many :speakers, through: :speaker_talk_joins
@@ -14,6 +20,7 @@ class Talk < ApplicationRecord
 
   validates :title, presence: true
   validate :lecture_must_be_seminar
+  validate :graded_speakers_stay
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
@@ -24,7 +31,6 @@ class Talk < ApplicationRecord
   has_many :talk_tag_joins, dependent: :destroy
   has_many :tags, through: :talk_tag_joins
 
-  before_save :remove_duplicate_dates
   after_save :touch_lecture
 
   # the talks of a lecture form an ordered list
@@ -127,6 +133,30 @@ class Talk < ApplicationRecord
     speakers << speaker unless speaker.in?(speakers)
   end
 
+  # A speaker the talk has been graded for stays on it: dropped, the grade
+  # would survive the roster invisibly. Clearing the grade is the way out.
+  def speaker_removable?(user)
+    speakers_with_grading_data.exclude?(user.id)
+  end
+
+  def remove_user_from_roster!(user)
+    raise(SpeakerRemovalNotAllowedError) unless speaker_removable?(user)
+
+    super
+  end
+
+  # An allocation run again after grading leaves the graded on the talk too.
+  def remove_excess_users!(target_ids, campaign)
+    super(target_ids | speakers_with_grading_data, campaign)
+  end
+
+  # The form sends the whole list; the graded stay on it and the form is told.
+  def speaker_ids=(ids)
+    wanted = Array(ids).compact_blank.map(&:to_i)
+    @graded_speakers_dropped = (speakers_with_grading_data & speaker_ids) - wanted
+    super((wanted + @graded_speakers_dropped).uniq)
+  end
+
   # Deleting a talk takes its media with it, and there is no way to get them
   # back, so they have to be moved or deleted deliberately first.
   def destruction_blockers
@@ -139,6 +169,14 @@ class Talk < ApplicationRecord
     speaker_talk_joins
   end
 
+  def speakers_with_grading_data
+    return [] unless assessment
+
+    assessment.assessment_participations.includes(:task_points).filter_map do |participation|
+      participation.user_id if assessment.grading_data_for?(participation)
+    end
+  end
+
   def roster_user_id_column
     :speaker_id
   end
@@ -149,6 +187,10 @@ class Talk < ApplicationRecord
 
   def exclusive_assignment?
     true
+  end
+
+  def assessable?
+    assessment != nil
   end
 
   private
@@ -171,5 +213,20 @@ class Talk < ApplicationRecord
       return if lecture.seminar?
 
       errors.add(:lecture, :must_be_seminar)
+    end
+
+    # Said once, for the assignment that asked; a later save of the same
+    # instance starts clean.
+    def graded_speakers_stay
+      dropped = @graded_speakers_dropped
+      @graded_speakers_dropped = nil
+      return if dropped.blank?
+
+      names = User.where(id: dropped).map(&:tutorial_name)
+      errors.add(:speaker_ids, :graded, names: names.to_sentence, count: names.size)
+    end
+
+    def setup_assessment
+      ensure_gradebook!
     end
 end

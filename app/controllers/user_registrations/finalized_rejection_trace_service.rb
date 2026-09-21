@@ -50,9 +50,13 @@ module UserRegistrations
       end
 
       def config_snapshot(policy)
-        return policy.config.to_h.deep_dup unless policy.prerequisite_campaign?
-
-        PrerequisiteCampaignDecoration.decorate_config(policy.config)
+        if policy.prerequisite_campaign?
+          PrerequisiteCampaignDecoration.decorate_config(policy.config)
+        elsif policy.student_performance?
+          StudentPerformanceDecoration.decorate_config(policy.config)
+        else
+          policy.config.to_h.deep_dup
+        end
       end
   end
 end

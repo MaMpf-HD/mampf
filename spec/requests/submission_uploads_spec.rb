@@ -74,6 +74,84 @@ RSpec.describe("SubmissionUploads", type: :request) do
     expect(data.dig("metadata", "malware_scan", "status")).to eq("clean")
   end
 
+  # The tutor's correction form in the grading table has to go through the
+  # upload endpoint: a file posted straight to the record is one no scan has
+  # seen, and the attacher refuses it.
+  it "hands the tutor a correction form that uploads through the endpoint" do
+    tutorial = create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
+                                                    lecture: assignment.lecture)
+    corrected = create(:submission, assignment: assignment, tutorial: tutorial)
+    sign_in user.reload
+
+    get edit_correction_path(corrected), as: :turbo_stream
+
+    expect(response).to have_http_status(:ok)
+    form = Nokogiri::HTML(response.body).at_css("form.correction-upload")
+    expect(form["data-controller"]).to eq("uppy-upload")
+    expect(form["data-uppy-upload-intent-value"]).to be_present
+    expect(form.at_css("input[type=file]")).to be_nil
+  end
+
+  describe "POST /submissions/:id/add_correction" do
+    let(:tutorial) do
+      create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
+                                           lecture: assignment.lecture)
+    end
+    let(:corrected) { create(:submission, assignment: assignment, tutorial: tutorial) }
+    let(:cached_upload) do
+      CorrectionUploader.upload(File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
+                                :submission_cache)
+    end
+
+    before { sign_in user.reload }
+
+    after { cached_upload.delete }
+
+    it "sends a file of the wrong kind back to the form with the reason" do
+      data = cached_upload.data
+      data["metadata"]["filename"] = "notes.exe"
+
+      post add_correction_path(corrected),
+           params: { submission: { correction: data.to_json } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(
+        I18n.t("submission.wrong_file_type", file_type: ".exe",
+                                             accepted_file_type:
+                                               CorrectionUploader.accepted_extension_list)
+      )
+      expect(Nokogiri::HTML(response.body).at_css("form.correction-upload")).to be_present
+      expect(corrected.reload.correction).to be_nil
+    end
+
+    it "sends an unscanned file back to the form with the reason" do
+      post add_correction_path(corrected),
+           params: { submission: { correction: cached_upload.to_json } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(
+        I18n.t("submission.upload_failure_scan_required", locale: user.locale).strip
+      )
+      expect(corrected.reload.correction).to be_nil
+    end
+
+    it "keeps the correction the row had when the new one is refused" do
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
+      corrected = create(:submission, :with_correction, assignment: assignment,
+                                                        tutorial: tutorial)
+      kept = corrected.correction.id
+      data = cached_upload.data
+      data["metadata"]["filename"] = "notes.exe"
+
+      post add_correction_path(corrected),
+           params: { submission: { correction: data.to_json } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(corrected.reload.correction.id).to eq(kept)
+      expect(response.body).to include(corrected.correction_filename)
+    end
+  end
+
   it "returns a scanner unavailable message for submission uploads" do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.unavailable("Connection refused"))

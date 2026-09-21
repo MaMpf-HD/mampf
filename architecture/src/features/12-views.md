@@ -678,7 +678,7 @@ Seminars show only talks with inline grading for fast workflow. Talks are create
 | View        | Key elements                                        | Mockup |
 |-------------|------------------------------------------------------|--------|
 | Index (Seminar) | List of talks with inline grading; columns: Title, Speaker(s), Grade (inline dropdown), Status, Actions; no "New Assessment" button; help text: "Talks are created in the Content tab" | [Mockup](../mockups/assessments_index_seminar.html) |
-| Show (Talk) | Tabbed interface (Overview/Settings/Participants); final grade display; speaker details; feedback notes | [Mockup](../mockups/assessments_show_talk.html) |
+| Show (Talk) | None: a talk has no page of its own, its dashboard URL lands on the seminar's table | — |
 
 #### Flow
 

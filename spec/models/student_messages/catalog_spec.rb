@@ -1,0 +1,246 @@
+require "rails_helper"
+
+RSpec.describe(StudentMessages::Catalog) do
+  let(:teacher) { create(:confirmed_user) }
+  let(:tutor) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
+  let(:tutorial) { create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: tutor.id) }
+  let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+  let(:member) { create(:confirmed_user) }
+  let(:outsider) { create(:confirmed_user) }
+
+  before do
+    create(:lecture_membership, lecture: lecture, user: member)
+    create(:tutorial_membership, tutorial: tutorial, user: member)
+    create(:lecture_membership, lecture: lecture, user: outsider)
+    other_tutorial
+  end
+
+  describe "for staff" do
+    subject(:catalog) { described_class.new(lecture, teacher) }
+
+    it "offers everybody, the groups and their members" do
+      expect(catalog.everyone.key).to eq("lecture:all")
+      expect(catalog.everyone.user_ids).to contain_exactly(member.id, outsider.id)
+      expect(catalog.sections.map(&:first)).to eq([:tutorials])
+      keys = catalog.audiences.map(&:key)
+      expect(keys).to include("lecture:all", "tutorial:#{tutorial.id}",
+                              "tutorial:#{other_tutorial.id}")
+      expect(catalog.pick(["tutorial:#{tutorial.id}"]).first.user_ids).to eq([member.id])
+      expect(catalog.pick(["tutorial:#{other_tutorial.id}"]).first.count).to eq(0)
+    end
+
+    # Everybody next to a group is everybody; the record must not name a
+    # group the mail did not single out.
+    it "reads everybody beside a group as everybody alone" do
+      picked = catalog.pick(["lecture:all", "tutorial:#{tutorial.id}"])
+
+      expect(picked.map(&:key)).to eq(["lecture:all"])
+    end
+
+    it "refuses a key that is not the lecture's" do
+      foreign = create(:tutorial, lecture: create(:lecture))
+
+      expect(catalog.pick(["tutorial:#{foreign.id}"])).to be_nil
+      expect(catalog.pick(["tutorial:#{tutorial.id}", "nonsense"])).to be_nil
+    end
+
+    # While a campaign runs, its items are the groups; the rosters are only
+    # filled at finalization, after which only the rejected are left to write to.
+    describe "registrations" do
+      let(:campaign) do
+        create(:registration_campaign, :open, :first_come_first_served, campaignable: lecture)
+      end
+      let(:item) { create(:registration_item, registration_campaign: campaign) }
+      let(:registrant) { create(:confirmed_user) }
+      let(:rejected) { create(:confirmed_user) }
+
+      before do
+        create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                            registration_item: item,
+                                                            user: registrant)
+        create(:registration_user_registration, :rejected, registration_campaign: campaign,
+                                                           registration_item: item,
+                                                           user: rejected)
+      end
+
+      it "lists the campaign, its items and the rejected while it runs" do
+        by_key = catalog.audiences.index_by(&:key)
+
+        expect(by_key["campaign:#{campaign.id}:all"].user_ids).to eq([registrant.id])
+        expect(by_key["item:#{item.id}"].user_ids).to eq([registrant.id])
+        expect(by_key["item:#{item.id}"].label).to end_with(item.title)
+        expect(by_key["campaign:#{campaign.id}:rejected"].user_ids).to eq([rejected.id])
+        expect(by_key["campaign:#{campaign.id}:rejected"].count).to eq(1)
+      end
+
+      # "Rejected" is the campaign's own queue: a rejection that was
+      # overridden is not in it.
+      it "counts as rejected only whom the campaign still rejects" do
+        Registration::UserRegistration.where(user: rejected)
+                                      .update_all(rejection_overridden_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+        keys = catalog.audiences.map(&:key)
+
+        expect(keys).not_to include("campaign:#{campaign.id}:rejected")
+      end
+
+      # An exam's campaign has one item, the exam: its registrants are the
+      # campaign's, and the campaign goes by the exam's name.
+      it "folds a one-item campaign into its item" do
+        exam = create(:exam, lecture: lecture, title: "Midterm")
+        exam_campaign = exam.registration_campaign
+        exam_campaign.update!(description: "", status: :open)
+        exam_item = Registration::Item.find_by!(registerable: exam)
+        create(:registration_user_registration, :confirmed, registration_campaign: exam_campaign,
+                                                            registration_item: exam_item,
+                                                            user: create(:confirmed_user))
+        keys = catalog.audiences.map(&:key)
+
+        expect(keys).to include("campaign:#{exam_campaign.id}:all")
+        expect(keys).not_to include("item:#{exam_item.id}")
+        expect(catalog.audiences.find { |a| a.key == "campaign:#{exam_campaign.id}:all" }.label)
+          .to start_with("Midterm")
+      end
+
+      # Two exams of one name are told apart by their dates.
+      it "names an exam with its date" do
+        first, second = [Date.new(2027, 2, 1), Date.new(2027, 3, 15)].map do |date|
+          exam = create(:exam, lecture: lecture, title: "Final exam", date: date)
+          exam.registration_campaign.update!(description: "", status: :open)
+          exam
+        end
+        labels = catalog.audiences.map(&:label).grep(/Final exam/)
+
+        # the roster of each, and the registrants of each
+        expect(labels.size).to eq(4)
+        expect(labels.uniq.size).to eq(4)
+        expect(labels.grep(/#{Regexp.escape(first.registration_title)}/).size).to eq(2)
+        expect(labels.grep(/#{Regexp.escape(second.registration_title)}/).size).to eq(2)
+      end
+
+      it "keeps only the rejected once the campaign is finalized" do
+        campaign.update!(status: :completed)
+        keys = catalog.audiences.map(&:key)
+
+        expect(keys).to include("campaign:#{campaign.id}:rejected")
+        expect(keys).not_to include("campaign:#{campaign.id}:all", "item:#{item.id}")
+      end
+    end
+  end
+
+  # Editing rights are inherited from the course; so is writing as staff.
+  describe "for an editor of the course" do
+    it "is staff, everybody included" do
+      course_editor = create(:confirmed_user)
+      lecture.course.editors << course_editor
+      catalog = described_class.new(lecture, course_editor)
+
+      expect(catalog).to be_staff
+      expect(catalog.everyone).to be_present
+    end
+  end
+
+  # Whom a selection reaches is one query, however many groups were picked.
+  describe ".recipients" do
+    it "unites the groups picked in one query" do
+      groups = create_list(:tutorial, 6, lecture: lecture)
+      others = groups.map do |group|
+        create(:confirmed_user).tap do |user|
+          create(:tutorial_membership, tutorial: group, user: user)
+        end
+      end
+      catalog = described_class.new(Lecture.find(lecture.id), teacher)
+      keys = groups.map { |group| "tutorial:#{group.id}" } + ["tutorial:#{tutorial.id}"]
+      picked = catalog.pick(keys)
+
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+      emails = ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        StudentMessages::Audience.recipients(picked).pluck(:email)
+      end
+
+      expect(emails).to match_array(others.map(&:email) + [member.email])
+      expect(selects).to eq(1)
+    end
+  end
+
+  # The picker asks every group for its count; the lecture editor renders it
+  # on every visit, so the number of queries must not follow the number of groups.
+  describe "counting" do
+    def queries_to_count_everything(catalog)
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        catalog.everyone.count
+        catalog.sections.each { |section| section.last.each(&:count) }
+      end
+      selects
+    end
+
+    # The form asks everybody for its count and its addresses: one read.
+    it "reads everybody once for the count and the addresses" do
+      catalog = described_class.new(Lecture.find(lecture.id), teacher)
+      everyone = catalog.everyone
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+
+      ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        everyone.count
+        everyone.emails
+      end
+
+      expect(selects).to eq(1)
+      expect(everyone.count).to eq(everyone.emails.size)
+    end
+
+    it "reads each section's counts in one go, however many groups there are" do
+      campaign = create(:registration_campaign, :open, :first_come_first_served,
+                        campaignable: lecture)
+      3.times { create(:registration_item, registration_campaign: campaign) }
+      create(:exam, lecture: lecture)
+      few = queries_to_count_everything(described_class.new(Lecture.find(lecture.id), teacher))
+
+      12.times { create(:tutorial, lecture: lecture) }
+      9.times { create(:registration_item, registration_campaign: campaign) }
+      create(:exam, lecture: lecture)
+      many = queries_to_count_everything(described_class.new(Lecture.find(lecture.id), teacher))
+
+      expect(many).to eq(few)
+      expect(many).to be <= 20
+    end
+  end
+
+  describe "for a tutor" do
+    subject(:catalog) { described_class.new(lecture, tutor) }
+
+    it "offers their own group and nothing else, without asking every group" do
+      selects = 0
+      callback = lambda { |_name, _start, _finish, _id, payload|
+        selects += 1 if payload[:sql].start_with?("SELECT") && payload[:name] != "SCHEMA"
+      }
+      6.times { create(:tutorial, lecture: lecture) }
+
+      keys = ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+        catalog.audiences.map(&:key)
+      end
+
+      expect(catalog).not_to be_staff
+      expect(catalog.everyone).to be_nil
+      expect(keys).to eq(["tutorial:#{tutorial.id}"])
+      expect(selects).to be <= 6
+      expect(catalog.pick(["tutorial:#{other_tutorial.id}"])).to be_nil
+      expect(catalog.pick(["lecture:all"])).to be_nil
+    end
+  end
+
+  it "offers a student nothing" do
+    expect(described_class.new(lecture, member).audiences).to be_empty
+  end
+end

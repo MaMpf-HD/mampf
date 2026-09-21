@@ -798,9 +798,8 @@ An assignment would only need to include `Gradable` as well; nothing else about
 schemes is exam-specific.
 
 The `Assessment::Gradable` concern already provides:
-- `grade_numeric` and `grade_text` on `Assessment::Participation` — `set_grade!`
-  picks the numeric column for numeric values and the text column otherwise
-- Manual grade entry capability
+- `grade_numeric` and `grade_text` on `Assessment::Participation`, written by
+  hand through `Assessment::GradeEntryService`
 
 Grading schemes add:
 - **Automated computation** from points

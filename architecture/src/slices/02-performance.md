@@ -139,11 +139,13 @@ like work never done. Jonas hands in all twelve assignments, eleven come back
 worth 96 points, the twelfth is still on his tutor's desk: 96 of 120, 80 %, and
 nothing says the missing 24 points are unmarked rather than lost.
 
-So the record carries a fourth figure, `points_max_pending_materialized` — the
-maximum of every assessment this student handed in that is not fully marked. The
-total, the maximum and the percentage are untouched, so the percentage still means
-*share of the term's points*, which is what an eligibility threshold is stated
-against. The outstanding amount sits beside it instead of being folded in.
+So a fourth figure is read beside the record: what this student handed in that
+is due and not fully marked, summed by `StudentPerformance::DuePoints` at read
+time rather than stored — a deadline passes without anything being written, and
+a stored figure would keep yesterday's count. The total, the maximum and the
+percentage are untouched, so the percentage still means *share of the term's
+points*, which is what an eligibility threshold is stated against. The
+outstanding amount sits beside it instead of being folded in.
 
 Two readers use it. The overview marks the **assignment's column** with an
 hourglass while any of its submissions are unmarked — that is a property of the
