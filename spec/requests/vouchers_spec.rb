@@ -24,7 +24,7 @@ RSpec.describe("Vouchers", type: :request) do
 
       expect(response.body).to include(I18n.t("profile.own_tutorial_not_offered").strip)
       expect(response.body).to include(I18n.t("profile.no_tutorials_redemption").strip)
-      expect(response.body).to include("redeem-voucher-btn")
+      expect(response.body).to include(I18n.t("profile.redeem_voucher"))
       expect(response.body).not_to include(CGI.escapeHTML(tutorial.title))
     end
 
@@ -51,7 +51,7 @@ RSpec.describe("Vouchers", type: :request) do
       verify
 
       expect(response.body).to include(I18n.t("profile.already_tutor_by_redemption").strip)
-      expect(response.body).not_to include("redeem-voucher-btn")
+      expect(response.body).not_to include(I18n.t("profile.redeem_voucher"))
     end
   end
 end

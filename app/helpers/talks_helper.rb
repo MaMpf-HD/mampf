@@ -64,8 +64,7 @@ module TalksHelper
                       model: "user",
                       placeholder: t("basics.enter_two_letters"),
                       no_results: t("basics.no_results"),
-                      modal: true,
-                      cy: "speaker-select"
+                      modal: true
                     }
                   })
     else
@@ -75,7 +74,6 @@ module TalksHelper
                   class: "selectize",
                   multiple: true,
                   data: {
-                    cy: "speaker-select",
                     no_results: t("basics.no_results_speaker", link: seminar_edit_people_link)
                   })
     end

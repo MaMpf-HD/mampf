@@ -26,7 +26,7 @@
         <% component.participants.each do |membership| %>
           <% user = membership.user %>
 
-          <tr data-cy="participant-row-<%= user.id %>">
+          <tr>
             <td><%= user.tutorial_name %></td>
             <td><%= user.email %></td>
 
