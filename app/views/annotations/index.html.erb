@@ -7,8 +7,11 @@
   <!-- Students annotations -->
   <!-- --------------------------------------------------------------------- -->
   <% if @show_students_annotations %>
+  <section aria-labelledby="students-annotations-heading">
 
-  <h2><%= t('admin.annotation.students_annotations') %></h2>
+  <h2 id="students-annotations-heading">
+    <%= t('admin.annotation.students_annotations') %>
+  </h2>
 
   <% if @student_annotations_by_lecture.empty? %>
 
@@ -31,6 +34,7 @@
 
   <% end %>
 
+  </section>
   <hr>
   <% end %>
 
@@ -38,7 +42,10 @@
   <!-- --------------------------------------------------------------------- -->
   <!-- Own annotations -->
   <!-- --------------------------------------------------------------------- -->
-  <h2><%= t('admin.annotation.your_annotations') %></h2>
+  <section aria-labelledby="your-annotations-heading">
+  <h2 id="your-annotations-heading">
+    <%= t('admin.annotation.your_annotations') %>
+  </h2>
 
   <% if @annotations_by_lecture.empty? %>
 
@@ -60,6 +67,7 @@
     is_students_annotations: false %>
 
   <% end %>
+  </section>
 
 
 </div>
