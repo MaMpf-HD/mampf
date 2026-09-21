@@ -2002,6 +2002,7 @@ en:
     email_for_submission_decision: >
       acceptance or rejection of a late submission
     delete_account: Delete Account
+    password: Password
     stored_submissions: >
       There are %{submissions} submissions to assignments from you in the
       system.

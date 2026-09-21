@@ -1,8 +1,15 @@
-<div id="<%= dom_prefix %>" data-cy="assessment-dashboard">
+<div
+  id="<%= dom_prefix %>"
+  role="region"
+  aria-labelledby="<%= dom_prefix %>-title"
+  data-cy="assessment-dashboard"
+>
   <div class="mb-3">
     <div class="d-flex justify-content-between align-items-start">
       <div>
-        <h1 class="h3 mb-1"><%= assessable.title %></h1>
+        <h1 class="h3 mb-1" id="<%= dom_prefix %>-title">
+          <%= assessable.title %>
+        </h1>
 
         <% if subtitle %>
           <p class="text-muted mb-0"><%= subtitle %></p>

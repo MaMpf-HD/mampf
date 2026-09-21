@@ -50,7 +50,7 @@ async function useUser(
   expect(response.status()).toEqual(200);
   const responseBody = await response.text();
   expect(responseBody).toBeDefined();
-  expect(responseBody).not.toMatch(/data-cy\s*=\s*["']?login-form["']?/);
+  expect(responseBody).not.toMatch(/id="login-form"/);
 
   return user;
 }

@@ -3,6 +3,7 @@
 <%= t('profile.confirm_account_deletion') %>
 <%= f.password_field :password,
                      class: 'form-control my-2',
+                     "aria-label": t('profile.password'),
                      "data-cy": "delete-account-pwd-field",
                      required: true %>
 <% if current_user.contributor? %>

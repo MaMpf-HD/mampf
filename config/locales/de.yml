@@ -2188,6 +2188,7 @@ de:
     email_for_submission_decision: >
       Annahme oder Ablehnung einer verspäteten Korrektur
     delete_account: Account löschen
+    password: Passwort
     stored_submissions: >
       Von Dir sind %{submissions} Abgaben zu Hausaufgaben im System gespeichert,
       bei denen eine Datei hochgeladen wurde. Diese teilen sich auf in:
