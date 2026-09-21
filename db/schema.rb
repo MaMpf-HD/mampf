@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_18_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -400,7 +400,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_18_000000) do
     t.integer "capacity"
     t.text "description"
     t.boolean "skip_campaigns", default: false, null: false
-    t.integer "self_materialization_mode", default: 0
+    t.integer "self_materialization_mode", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id", "date"], name: "index_exams_on_lecture_id_and_date"
