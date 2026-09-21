@@ -64,7 +64,6 @@
         3037,
         1080,
         5050,
-        8060,
         3004,
         5933
     ],
@@ -83,13 +82,9 @@
             "label": "Vite Server (e2e tests)",
             "onAutoForward": "silent"
         },
-        // Test ports (for Cypress)
+        // Test ports (for Playwright)
         "3145": {
             "label": "MaMpf App (for e2e tests)",
-            "onAutoForward": "silent"
-        },
-        "8060": {
-            "label": "Cypress",
             "onAutoForward": "silent"
         },
         // Miscellaneous

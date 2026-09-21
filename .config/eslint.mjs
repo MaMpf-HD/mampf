@@ -9,17 +9,6 @@ const ignoreFilesWithSprocketRequireSyntax = [
   "vendor/assets/javascripts/thredded_timeago.js",
 ];
 
-const ignoreCypressArchivedTests = [
-  "spec/cypress/e2e/admin_spec.cy.archive.js",
-  "spec/cypress/e2e/courses_spec.cy.archive.js",
-  "spec/cypress/e2e/media_spec.cy.archive.js",
-  "spec/cypress/e2e/search_spec.cy.archive.js",
-  "spec/cypress/e2e/submissions_spec.cy.archive.js",
-  "spec/cypress/e2e/thredded_spec.cy.archive.js",
-  "spec/cypress/e2e/tutorials_spec.cy.archive.js",
-  "spec/cypress/e2e/watchlists_spec.cy.archive.js",
-];
-
 const customGlobals = {
   TomSelect: "readable",
   bootstrap: "readable",
@@ -56,8 +45,6 @@ export default tseslint.config(
       "public/packs-test/",
       "public/uploads/",
       ...ignoreFilesWithSprocketRequireSyntax,
-      ...ignoreCypressArchivedTests,
-      "spec/cypress/**",
       "architecture/src/js/mermaid.min.js",
       "architecture/book/**",
       "app/frontend/js/mampf_routes.js"
