@@ -523,15 +523,13 @@ en:
       roster_rejected_from_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
-          Your registration for <strong>%{rosterable_title}</strong>
-          in the lecture <strong>%{lecture_title}</strong> was not successful.
+          Your registration for <strong>%{lecture_title}</strong> was not successful.
         </p>
       roster_rejected_from_group_email_body: |
         Hello %{name},
 
-        Your registration for "%{rosterable_title}" in the lecture
-        "%{lecture_title}" was not successful.
-      roster_rejected_from_group_email_subject: 'Registration for %{rosterable_title} in %{lecture_title} was not successful'
+        Your registration for "%{lecture_title}" was not successful.
+      roster_rejected_from_group_email_subject: 'Registration for %{lecture_title} was not successful'
       roster_rejected_from_exam_email_body_html: |
         <p>Hello %{name},</p>
         <p>
