@@ -751,36 +751,33 @@ class Lecture < ApplicationRecord
     assignments_by_deadline.reverse.find { |x| x.first < Time.zone.now }&.second.to_a
   end
 
-  def scheduled_assignments?
-    media.where(sort: "Exercise").where.not(publisher: nil)
-         .any? { |m| m.publisher.create_assignment }
-  end
-
-  def scheduled_assignments
-    media.where(sort: "Exercise").where.not(publisher: nil)
-         .select { |m| m.publisher.create_assignment }
-         .map { |m| m.publisher.assignment }
-  end
-
   # What a lecturer has set up for release but not released yet. Not an
   # `Assignment`: that record does not exist until the medium is published, and
   # the date it appears on lives on the publisher rather than on the sheet.
-  ScheduledSheet = Struct.new(:release_date, :title, :deadline,
-                              keyword_init: true)
-
-  # The next of them, soonest release first: what the submissions page says when
-  # nothing is due right now. Deliberately not built on `scheduled_assignments`,
-  # which asks `MediumPublisher#assignment` for an `Assignment` and pays a
-  # `medium.teachable` per medium for it - and still cannot say when the sheet
-  # appears.
-  def next_scheduled_sheet
-    media.where(sort: "Exercise").where.not(publisher: nil)
-         .filter_map { |medium| scheduled_release(medium.publisher) }
-         .min_by(&:release_date)
+  ScheduledSheet = Struct.new(:release_date, :title, :deadline, :medium,
+                              :accepted_file_type, :requires_submission,
+                              keyword_init: true) do
+    # The worker publishes within the minute; a sheet overdue for longer says
+    # the worker is not running.
+    def overdue?
+      release_date.past?
+    end
   end
 
-  def assignments?
-    assignments.any? || scheduled_assignments?
+  # Soonest release first, the overdue ones included: a publisher still on
+  # the medium is a sheet still to come, since the worker takes it off once
+  # it has published. Read off the publisher rather than through
+  # `MediumPublisher#assignment`, which builds an `Assignment` and fetches
+  # its lecture for every sheet.
+  def scheduled_sheets
+    media.where(sort: "Exercise").where.not(publisher: nil)
+         .filter_map { |medium| scheduled_release(medium) }
+         .sort_by(&:release_date)
+  end
+
+  # A release a minute overdue is the worker's business, not the student's.
+  def next_scheduled_sheet
+    scheduled_sheets.find { |sheet| !sheet.overdue? }
   end
 
   def select_talks
@@ -1015,15 +1012,16 @@ class Lecture < ApplicationRecord
 
   private
 
-    # A publisher whose release date has passed has already made its assignment,
-    # so it is no longer scheduled.
-    def scheduled_release(publisher)
-      return unless publisher&.create_assignment
-      return unless publisher.release_date&.future?
+    def scheduled_release(medium)
+      publisher = medium.publisher
+      return unless publisher&.create_assignment && publisher.release_date
 
       ScheduledSheet.new(release_date: publisher.release_date,
                          title: publisher.assignment_title,
-                         deadline: publisher.assignment_deadline)
+                         deadline: publisher.assignment_deadline,
+                         medium: medium,
+                         accepted_file_type: publisher.assignment_file_type,
+                         requires_submission: publisher.requires_submission)
     end
 
     def initialize_submission_deletion_date

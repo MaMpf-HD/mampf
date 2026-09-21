@@ -406,12 +406,30 @@ RSpec.describe("Assignments", type: :request) do
         expect(response.media_type).to eq(Mime[:turbo_stream])
       end
 
-      it "removes the assignment from the list" do
+      it "answers with the tab, the sheet gone from it" do
         delete assignment_path(assignment), as: :turbo_stream
-        expect(response.body).to satisfy do |body|
-          body.include?("assessment-assessments-wrapper") ||
-            body.include?(ActionView::RecordIdentifier.dom_id(assignment))
-        end
+        expect(response.body).to include(I18n.t("admin.assignment.new"))
+        expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(assignment))
+      end
+
+      # The tab comes back whole, so a sheet still to appear with a medium's
+      # release stays on it when the last existing sheet goes.
+      it "keeps a scheduled sheet on the tab after the last sheet is deleted" do
+        medium = create(:lecture_medium, :with_lecture_by_id, lecture_id: lecture.id,
+                                                              sort: "Exercise")
+        medium.update!(publisher: MediumPublisher.new(medium_id: medium.id, user_id: teacher.id,
+                                                      release_now: false,
+                                                      release_date: 2.days.from_now,
+                                                      create_assignment: true,
+                                                      assignment_title: "Sheet 9",
+                                                      assignment_deadline: 9.days.from_now,
+                                                      assignment_file_type: ".pdf"))
+
+        delete assignment_path(assignment), as: :turbo_stream
+
+        expect(response.body).to include("Sheet 9")
+        expect(response.body).to include(I18n.t("admin.assignment.new"))
+        expect(response.body).not_to include(I18n.t("assessment.no_assignments_yet"))
       end
     end
 

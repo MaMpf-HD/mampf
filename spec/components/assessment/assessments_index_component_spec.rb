@@ -32,6 +32,72 @@ RSpec.describe(AssessmentsIndexComponent, type: :component) do
       expect(page.css("h6")).to be_empty
       expect(page.css("#assessment-tests-list").text).to include("Test 1")
     end
+
+    # Listed before it exists, so the lecturer does not set it up twice.
+    describe "a sheet scheduled with a medium" do
+      let(:medium) do
+        create(:lecture_medium, :with_lecture_by_id, lecture_id: lecture.id, sort: "Exercise")
+      end
+
+      def schedule(release_date:)
+        medium.update!(publisher: MediumPublisher.new(medium_id: medium.id, user_id: teacher.id,
+                                                      release_now: false,
+                                                      release_date: release_date,
+                                                      create_assignment: true,
+                                                      assignment_title: "Sheet 2",
+                                                      assignment_deadline: 9.days.from_now,
+                                                      assignment_file_type: ".pdf"))
+      end
+
+      let(:release) { 2.days.from_now }
+
+      before { schedule(release_date: release) }
+
+      it "is listed before the sheets that exist, pointing at the medium's settings" do
+        create(:valid_assignment, lecture: lecture, title: "Sheet 1")
+
+        page = I18n.with_locale(:en) { render_inline(described_class.new(lecture: lecture)) }
+        rows = page.css("#assessment-assignments-list tr")
+
+        expect(rows.map { |row| row.css("td").first.text.squish })
+          .to eq(["Sheet 2 appears on #{I18n.l(release, format: :short, locale: :en)}",
+                  "Sheet 1"])
+        expect(rows.first.css("a").pluck("href")).to eq(["/media/#{medium.id}/edit"])
+        expect(rows.first.text).to include(".pdf")
+      end
+
+      it "says so when the release is overdue" do
+        schedule(release_date: 10.minutes.ago)
+
+        page = I18n.with_locale(:en) { render_inline(described_class.new(lecture: lecture)) }
+
+        expect(page.css("#assessment-assignments-list tr").first.text)
+          .to include("was to appear on")
+      end
+
+      it "gets the table and the submission settings even when no sheet exists yet" do
+        page = render_inline(described_class.new(lecture: lecture))
+
+        expect(page.css("#assessment-assignments-list tr").size).to eq(1)
+        expect(page.text).not_to include(I18n.t("assessment.no_assignments_yet"))
+        expect(page.text).to include(I18n.t("assessment.submission_settings", locale: :en))
+      end
+
+      it "counts as the homework table when a test needs the two named apart" do
+        create(:valid_assignment, lecture: lecture, title: "Test 1", kind: :test)
+
+        page = I18n.with_locale(:en) { render_inline(described_class.new(lecture: lecture)) }
+
+        expect(page.css("h6").map(&:text)).to eq(["Homework", "Tests"])
+      end
+
+      it "mutes every cell of the row" do
+        page = render_inline(described_class.new(lecture: lecture))
+        cells = page.css("#assessment-assignments-list tr").first.css("td")
+
+        expect(cells).to all(satisfy { |cell| cell["class"].to_s.include?("text-muted") })
+      end
+    end
   end
 
   context "with a seminar" do

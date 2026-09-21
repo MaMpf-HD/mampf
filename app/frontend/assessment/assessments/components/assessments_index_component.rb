@@ -26,8 +26,16 @@ class AssessmentsIndexComponent < ViewComponent::Base
     sheets.select(&:kind_test?)
   end
 
+  def scheduled_sheets
+    @scheduled_sheets ||= lecture.scheduled_sheets
+  end
+
+  def homework_table?
+    homework.any? || scheduled_sheets.any?
+  end
+
   def two_tables?
-    homework.any? && tests.any?
+    homework_table? && tests.any?
   end
 
   def legacy_by_type

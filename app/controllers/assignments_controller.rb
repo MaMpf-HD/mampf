@@ -83,25 +83,16 @@ class AssignmentsController < ApplicationController
   def destroy
     set_assignment_locale
     @lecture = @assignment.lecture
-    remaining_assignments = @lecture.assignments.where.not(id: @assignment.id)
-                                    .joins(:assessment)
-                                    .includes(:assessment)
 
     if @assignment.destroy
       respond_to do |format|
         format.js
         format.turbo_stream do
-          if remaining_assignments.empty?
-            render turbo_stream:
-            turbo_stream.update("assessments_container",
-                                partial: "assessment/assessments/empty_assignments")
-          else
-            render turbo_stream:
-            turbo_stream.update("assessments_container",
-                                partial: "assessment/assessments/index",
-                                locals: { lecture: @lecture,
-                                          assignments_with_assessments: remaining_assignments })
-          end
+          # The whole tab again: what is left may be a scheduled sheet, or
+          # nothing, and the tab knows how to say either.
+          render turbo_stream:
+          turbo_stream.update("assessments_container",
+                              AssessmentsOverviewComponent.new(lecture: @lecture))
         end
       end
     else

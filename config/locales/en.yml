@@ -1321,11 +1321,13 @@ en:
           The publication will not precisely occur at the right second, but it
           should not be later than around a minute after the given time.
         assignment_settings: >
-          Settings that will hold for <i>all</i> assignments in this lecture
-          can be adjusted on the lecture page under "Assignments".
+          Settings that hold for <i>all</i> assignments in this lecture, such
+          as the team size and the grace period, are on the lecture page under
+          "Assessments".
         assignment_further_settings: >-
-          Further settings such as tasks and points can be configured
-          on the lecture page under "Assessment".
+          Tasks and points are set on the lecture page under "Assessments"
+          once the assignment exists, which is when the medium is released.
+          Until then it is listed there as scheduled.
     tag:
       index: 'Search Tags'
       related_tags: 'Related Tags'
