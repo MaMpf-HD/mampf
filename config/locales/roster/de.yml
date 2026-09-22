@@ -345,6 +345,10 @@ de:
         <p>Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}</p>
       link_reject_info: |
         Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}
+      reject_reasons_html: |
+        Leider konnte Ihre Registrierung aus folgendem/folgenden Grund/Gründen nicht angenommen werden: %{reasons}
+      reject_reasons: |
+        Leider konnte Ihre Registrierung aus folgendem/folgenden Grund/Gründen nicht angenommen werden: %{reasons}
       roster_added_to_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>

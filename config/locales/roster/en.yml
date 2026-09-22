@@ -340,6 +340,10 @@ en:
         <p>You can view your registration status here: %{rosterable_link}</p>
       link_reject_info: |
         You can view your registration status here: %{rosterable_link}
+      reject_reasons_html: |
+        Unfortunately, your registration could not be accepted for the following reason(s): %{reasons}
+      reject_reasons: |
+        Unfortunately, your registration could not be accepted for the following reason(s): %{reasons}
       roster_added_to_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>

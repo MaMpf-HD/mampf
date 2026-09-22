@@ -6,6 +6,6 @@
 <%= t('roster.mailer.link_reject_info', rosterable_link: @info[:reason_link]) %>
 <% end %>
 <% if @info[:reasons].present? %>
-  <%= @info[:reasons] %>
+      <%= t('roster.mailer.reject_reasons',reasons: @info[:reasons]) %>
 <% end %>
 <%= t('roster.mailer.end_mail') %>

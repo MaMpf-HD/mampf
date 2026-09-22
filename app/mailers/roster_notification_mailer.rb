@@ -153,8 +153,7 @@ class RosterNotificationMailer < ApplicationMailer
   def rejected_from_group_email
     email do
       @info[:reason_link] = lecture_home_url(@lecture) if @lecture
-      reasons = params[:reasons]&.join(", ") || nil
-      @info[:reasons] = reasons
+      @info[:reasons] = rejection_reasons(params[:reasons])
       t("roster.mailer.roster_rejected_from_group_email_subject", **subject_vars)
     end
   end
@@ -162,8 +161,7 @@ class RosterNotificationMailer < ApplicationMailer
   def rejected_from_exam_email
     email do
       @info[:reason_link] = lecture_home_url(@lecture) if @lecture
-      reasons = params[:reasons]&.join(", ") || nil
-      @info[:reasons] = reasons
+      @info[:reasons] = rejection_reasons(params[:reasons])
       t("roster.mailer.roster_rejected_from_exam_email_subject", **subject_vars)
     end
   end
@@ -221,6 +219,10 @@ class RosterNotificationMailer < ApplicationMailer
         lecture_title: @lecture&.title || "",
         participant_name: @participant&.tutorial_name
       }
+    end
+
+    def rejection_reasons(reasons)
+      reasons&.join(", ") || nil
     end
 
     def lecture_for_rosterable(rosterable)
