@@ -21,25 +21,19 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :cypress do
+    namespace :e2e do
       post "playwright_user_login", to: "playwright_user_sessions#create" if Rails.env.test?
     end
   end
 
   if Rails.env.test?
-    namespace :cypress do
+    namespace :e2e do
       resources :factories, only: :create
       post "factories/call_instance_method", to: "factories#call_instance_method"
-      resources :factories_playwright, only: :create
-      post "factories_playwright/call_instance_method",
-           to: "factories_playwright#call_instance_method"
-      post "factories_playwright/update_instance",
-           to: "factories_playwright#update_instance"
+      post "factories/update_instance", to: "factories#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
-      resources :user_creator_playwright, only: :create
-      resources :mails_playwright, only: :create
-      resources :i18n, only: :create
+      resources :mails, only: :create
       post "feature_flags/enable", to: "feature_flags#enable"
       post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"

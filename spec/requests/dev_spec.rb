@@ -27,7 +27,7 @@ RSpec.describe("Dev") do
 
       expect(route_paths).not_to include(a_string_including("/dev/impersonate"))
       expect(route_paths).not_to include(a_string_including("/dev/teacher_login"))
-      expect(route_paths).not_to include(a_string_including("/cypress/playwright_user_login"))
+      expect(route_paths).not_to include(a_string_including("/e2e/playwright_user_login"))
     ensure
       allow(Rails.env).to receive(:local?).and_call_original
       Rails.application.reload_routes!
@@ -59,7 +59,7 @@ RSpec.describe("Dev") do
     end
   end
 
-  describe "POST /cypress/playwright_user_login" do
+  describe "POST /e2e/playwright_user_login" do
     it "signs in the last created Playwright user" do
       create(:confirmed_user_en, email: "student-1-old@play")
       last_playwright_user = create(:confirmed_user_en,
@@ -67,7 +67,7 @@ RSpec.describe("Dev") do
       create(:confirmed_user_en, email: "student-1-new@example.com")
       host! "localhost"
 
-      post cypress_playwright_user_login_path
+      post e2e_playwright_user_login_path
 
       expect(response).to redirect_to(root_path)
       expect(request.env["warden"].user(:user)).to eq(last_playwright_user)
@@ -76,7 +76,7 @@ RSpec.describe("Dev") do
     it "redirects back to the login page when there is no Playwright user" do
       host! "localhost"
 
-      post cypress_playwright_user_login_path
+      post e2e_playwright_user_login_path
 
       expect(response).to redirect_to(new_user_session_path)
     end
@@ -84,7 +84,7 @@ RSpec.describe("Dev") do
     it "rejects non-local hosts" do
       host! "example.com"
 
-      post cypress_playwright_user_login_path
+      post e2e_playwright_user_login_path
 
       expect(response).to have_http_status(:not_found)
     end

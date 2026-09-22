@@ -1,7 +1,7 @@
-module Cypress
-  # Allows to travel to a date in the backend via Cypress tests.
+module E2e
+  # Allows to travel to a date in the backend via Playwright tests.
 
-  class TimecopController < CypressController
+  class TimecopController < BaseController
     # Travels to a specific date and time.
     #
     # Time is passed as local time. If you want to pass a UTC time, set the

@@ -48,9 +48,6 @@ coverage
 # Ignore environment variables
 /public/uploads.zip
 
-
-/cypress/videos
-/cypress/screenshots
 # mac specific
 .DS_Store
 

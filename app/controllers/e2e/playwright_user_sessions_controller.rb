@@ -1,4 +1,4 @@
-module Cypress
+module E2e
   class PlaywrightUserSessionsController < Dev::BaseController
     skip_before_action :authenticate_user!
 

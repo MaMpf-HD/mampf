@@ -188,7 +188,7 @@ RSpec.describe("Assignments", type: :request) do
           post assignments_path,
                params: { assignment: valid_attributes },
                as: :turbo_stream
-          expect(response.body).to include("data-cy=\"assessment-dashboard\"")
+          expect(response.body).to include("id=\"dashboard-assignment-")
         end
       end
 

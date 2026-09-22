@@ -2002,6 +2002,7 @@ en:
     email_for_submission_decision: >
       acceptance or rejection of a late submission
     delete_account: Delete Account
+    password: Password
     stored_submissions: >
       There are %{submissions} submissions to assignments from you in the
       system.
@@ -3680,6 +3681,7 @@ en:
       <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
+    voucher_code: Voucher code
     speaker: Speaker
     speakers: Speakers
     mode: "Allocation Mode"

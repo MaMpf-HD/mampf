@@ -1,5 +1,5 @@
 <hr class="lecture-pane-separator">
-<h3 class="lecture-pane-header" data-cy="vouchers-header">
+<h3 class="lecture-pane-header">
   <%= t('basics.vouchers') %>
 </h3>
 
@@ -14,9 +14,10 @@
 <div class="row row-cols-1 row-cols-md-2 g-4">
   <% Voucher.roles_for_lecture(lecture).each do |role| %>
     <div class="col">
-      <div class="card voucher-card" id='<%= "#{role}"%>-voucher'>
+      <section class="card voucher-card" id="<%= role %>-voucher"
+               aria-labelledby="<%= role %>-voucher-title">
         <%= render partial: 'vouchers/voucher' , locals: { lecture: lecture, role: role } %>
-      </div>
+      </section>
     </div>
   <% end %>
 </div>

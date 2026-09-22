@@ -77,7 +77,7 @@ RSpec.describe("Auth sessions", type: :request) do
       }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include("data-cy=\"login-form\"")
+      expect(response.body).to include("id=\"login-form\"")
     end
 
     it "renders a Turbo Stream flash for invalid credentials" do

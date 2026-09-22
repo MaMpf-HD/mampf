@@ -5,8 +5,7 @@
      data-lecture-subscribers-lecture-value="<%= @lecture.id %>">
 
   <%= turbo_frame_tag "lecture-area", target: "_top",
-                      data: { cy: "lecture-area",
-                              controller: "lecture-highlights" } do %>
+                      data: { controller: "lecture-highlights" } do %>
     <!-- Header -->
     <div class="container small-width">
       <%= render partial: "lectures/edit/header",

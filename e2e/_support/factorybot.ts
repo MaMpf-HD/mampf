@@ -38,7 +38,7 @@ export class FactoryBot {
       traits: traits || [],
       args: args || {},
     };
-    const data = await callBackend(this.context, "factories_playwright", payload);
+    const data = await callBackend(this.context, "factories", payload);
     return new FactoryBotObject(this.context, factoryName, data);
   }
 
@@ -87,7 +87,7 @@ export class FactoryBotObject {
       user_id: user ? user.id : null,
     };
     const result = await callBackend(this.context,
-      "factories_playwright/call_instance_method", payload);
+      "factories/call_instance_method", payload);
     return result;
   }
 
@@ -110,6 +110,6 @@ export class FactoryBotObject {
       args: attributes,
     };
     return await callBackend(this.context,
-      "factories_playwright/update_instance", payload);
+      "factories/update_instance", payload);
   }
 }
