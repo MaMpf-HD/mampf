@@ -306,10 +306,16 @@ module Registration
         next if user_registration_confirmed?(user)
         next if user_registrations.pending.exists?(user_id: user.id)
 
-        [user, regs.first.registration_item&.registerable]
+        reasons = regs.map(&:resolved_rejection_reason_label).uniq
+
+        [user, reasons, self]
       end
-      rejected_to_notify.each do |user, rosterable|
-        RosterNotificationMailer.rejected(user, rosterable)
+      rejected_to_notify.each do |user, reasons, campaign|
+        RosterNotificationMailer.rejected(
+          user,
+          campaign,
+          reasons: reasons
+        )
       end
     end
 

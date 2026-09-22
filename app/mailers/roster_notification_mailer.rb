@@ -69,14 +69,18 @@ class RosterNotificationMailer < ApplicationMailer
       end
     end
 
-    def rejected(user, rosterable)
-      return log_unsupported(rosterable) unless supported?(rosterable)
-      return if rosterable.is_a?(Lecture)
+    def rejected(user, campaign, reasons:)
+      rosterable_of_campaign = campaign.registration_items.first&.registerable
+      return log_unsupported(rosterable_of_campaign) unless supported?(rosterable_of_campaign)
+      return if rosterable_of_campaign.is_a?(Lecture)
 
-      if rosterable.is_a?(Exam)
-        with(rosterable: rosterable, recipient: user).rejected_from_exam_email.deliver_later
+      if rosterable_of_campaign.is_a?(Exam)
+        with(rosterable: rosterable_of_campaign,
+             reasons: reasons,
+             recipient: user).rejected_from_exam_email.deliver_later
       else
-        with(rosterable: rosterable,
+        with(rosterable: rosterable_of_campaign,
+             reasons: reasons,
              recipient: user).rejected_from_group_email.deliver_later
       end
     end
@@ -149,6 +153,8 @@ class RosterNotificationMailer < ApplicationMailer
   def rejected_from_group_email
     email do
       @info[:reason_link] = lecture_home_url(@lecture) if @lecture
+      reasons = params[:reasons]&.join(", ") || nil
+      @info[:reasons] = reasons
       t("roster.mailer.roster_rejected_from_group_email_subject", **subject_vars)
     end
   end
@@ -156,6 +162,8 @@ class RosterNotificationMailer < ApplicationMailer
   def rejected_from_exam_email
     email do
       @info[:reason_link] = lecture_home_url(@lecture) if @lecture
+      reasons = params[:reasons]&.join(", ") || nil
+      @info[:reasons] = reasons
       t("roster.mailer.roster_rejected_from_exam_email_subject", **subject_vars)
     end
   end
