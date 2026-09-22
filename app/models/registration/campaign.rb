@@ -256,6 +256,8 @@ module Registration
                 finalized_at: Time.current,
                 allocation_decided_at: allocation_decided_at || Time.current)
       end
+
+      reject_notify
     end
 
     def reopen!(registration_deadline: nil)
@@ -276,42 +278,38 @@ module Registration
       return if violations.empty?
 
       now = Time.current
+      registrations_by_id = user_registrations.where(
+        id: violations.pluck(:registration_id)
+      ).index_by(&:id)
 
-      ActiveRecord::Base.transaction do |transaction|
-        registrations_by_id = user_registrations.where(
-          id: violations.pluck(:registration_id)
-        ).index_by(&:id)
-
-        rejected_registrations = violations.map do |violation|
-          registration = registrations_by_id.fetch(violation[:registration_id]) do
-            raise(ActiveRecord::RecordNotFound,
-                  "Couldn't find Registration::UserRegistration " \
-                  "with id=#{violation[:registration_id]}")
-          end
-
-          registration.reject!(
-            reason_type: violation[:reason_type] || default_reason_type,
-            reason_code: violation[:reason_code].to_s,
-            reason_label: violation[:reason_label] || violation[:message],
-            rejection_policy_id: violation[:policy_id],
-            rejected_at: now
-          )
-
-          registration
+      violations.each do |violation|
+        registration = registrations_by_id.fetch(violation[:registration_id]) do
+          raise(ActiveRecord::RecordNotFound,
+                "Couldn't find Registration::UserRegistration " \
+                "with id=#{violation[:registration_id]}")
         end
 
-        to_notify = rejected_registrations.group_by(&:user).filter_map do |user, registrations|
-          next if user_registration_confirmed?(user)
-          next if user_registrations.pending.exists?(user_id: user.id)
+        registration.reject!(
+          reason_type: violation[:reason_type] || default_reason_type,
+          reason_code: violation[:reason_code].to_s,
+          reason_label: violation[:reason_label] || violation[:message],
+          rejected_at: now
+        )
+      end
+    end
 
-          [user, registrations.first.registration_item&.registerable]
-        end
+    def reject_notify
+      rejected_registrations = user_registrations.where(status: :rejected)
+      rejected_to_notify = rejected_registrations
+                           .group_by(&:user)
+                           .filter_map do |user, regs|
+        next if user_registration_confirmed?(user)
+        next if user_registrations.pending.exists?(user_id: user.id)
 
-        transaction.after_commit do
-          to_notify.each do |user, rosterable|
-            RosterNotificationMailer.rejected(user, rosterable)
-          end
-        end
+        [user, regs.first.registration_item&.registerable]
+      end
+      rejected_to_notify.each do |user, rosterable|
+        RosterNotificationMailer.rejected(user, rosterable)
       end
     end
 
@@ -513,11 +511,11 @@ module Registration
 
       def reject_pending_registrations!
         now = Time.current
-        pending = user_registrations.pending.includes(:user, :registration_item).to_a
-        return if pending.empty?
 
+        # Safe here because this scope only contains pending rows, so bypassing
+        # per-record callbacks cannot affect confirmed registration counters
         # rubocop:disable Rails/SkipsModelValidations
-        user_registrations.where(id: pending.map(&:id)).update_all(
+        user_registrations.pending.update_all(
           status: Registration::UserRegistration.statuses[:rejected],
           rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_CAPACITY,
           rejection_reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_SOLVER_UNASSIGNED,
@@ -529,13 +527,6 @@ module Registration
           updated_at: now
         )
         # rubocop:enable Rails/SkipsModelValidations
-
-        pending.group_by(&:user).each do |rejected_user, registrations|
-          next if user_registration_confirmed?(rejected_user)
-
-          RosterNotificationMailer.rejected(rejected_user,
-                                            registrations.first.registration_item&.registerable)
-        end
       end
 
       def ensure_editable
