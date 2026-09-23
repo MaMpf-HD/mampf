@@ -34,6 +34,16 @@ class SheetFoldComponent < ViewComponent::Base
     @state ||= sheet.state
   end
 
+  def test?
+    sheet.assignment.kind_test?
+  end
+
+  # Somebody in no group has nothing to join from; the helper answers once
+  # per lecture for every row on the page.
+  def joinable_late?
+    sheet.joinable_late? && helpers.rostered_tutorial_for(sheet.assignment.lecture).present?
+  end
+
   def points_entered?
     state.in?(ENTERED_STATES)
   end

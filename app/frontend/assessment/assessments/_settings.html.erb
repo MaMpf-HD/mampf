@@ -1,4 +1,4 @@
-<%= vite_javascript_tag 'js/datetimepicker' %>
+<%= vite_javascript_tag 'js/datetimepicker' unless assessable.kind_test? %>
 
 <% if assessable.persisted? %>
   <div class="text-end mb-3">
@@ -42,50 +42,67 @@
 
         <%= af.text_field :title,
                           class: 'form-control',
-                          required: true,
                           data: {
                             assessments__dirty_form_target: 'field',
                             action: 'input->assessments--dirty-form#checkForChanges'
                           } %>
       </div>
 
-      <div class="col-md-6">
-        <%= af.label :deadline, t('basics.deadline'), class: "form-label" %>
+      <% if assessable.kind_test? %>
+        <div class="col-md-6">
+          <%= af.label :test_week, t('assessment.test.week'), class: "form-label" %>
 
-        <div
-          class="input-group flex-nowrap align-items-start td-picker"
-          id="assessment-deadline-picker"
-          data-controller="datetimepicker"
-          data-td-target-input="nearest"
-          data-td-target-toggle="nearest"
-        >
-          <div class="flex-grow-1">
-            <%= af.text_field :deadline,
-                class: 'form-control td-input',
-                data: {
-                  td_target: '#assessment-deadline-picker',
-                  assessments__dirty_form_target: 'field',
-                  action: 'input->assessments--dirty-form#checkForChanges change->assessments--dirty-form#checkForChanges'
-                },
-                value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
-                autocomplete: 'off' %>
+          <%= af.select :test_week, test_week_options(assessable), {},
+                        { class: "form-select",
+                          data: {
+                            assessments__dirty_form_target: 'field',
+                            action: 'change->assessments--dirty-form#checkForChanges'
+                          } } %>
+
+          <div class="form-text text-muted">
+            <%= t('assessment.test.week_hint') %>
           </div>
-
-          <span
-            class="input-group-text td-picker-button"
-            role="button"
-            data-td-target="#assessment-deadline-picker"
-            data-td-toggle="datetimepicker"
-          >
-            <i class="bi bi-calendar-fill"></i>
-          </span>
         </div>
-      </div>
+      <% else %>
+        <div class="col-md-6">
+          <%= af.label :deadline, t('basics.deadline'), class: "form-label" %>
 
-      <div class="col-md-6">
-        <%= af.label :medium_id, t('medium.singular'), class: "form-label" %>
+          <div
+            class="input-group flex-nowrap align-items-start td-picker"
+            id="assessment-deadline-picker"
+            data-controller="datetimepicker"
+            data-td-target-input="nearest"
+            data-td-target-toggle="nearest"
+          >
+            <div class="flex-grow-1">
+              <%= af.text_field :deadline,
+                  class: 'form-control td-input',
+                  data: {
+                    td_target: '#assessment-deadline-picker',
+                    assessments__dirty_form_target: 'field',
+                    action: 'input->assessments--dirty-form#checkForChanges change->assessments--dirty-form#checkForChanges'
+                  },
+                  value: assessable.deadline&.strftime("%Y-%m-%d %H:%M"),
+                  autocomplete: 'off' %>
+            </div>
 
-        <%= af.select :medium_id,
+            <span
+              class="input-group-text td-picker-button"
+              role="button"
+              data-td-target="#assessment-deadline-picker"
+              data-td-toggle="datetimepicker"
+            >
+              <i class="bi bi-calendar-fill"></i>
+            </span>
+          </div>
+        </div>
+      <% end %>
+
+      <% unless assessable.kind_test? %>
+        <div class="col-md-6">
+          <%= af.label :medium_id, t('medium.singular'), class: "form-label" %>
+
+          <%= af.select :medium_id,
                      options_for_select(Medium.where(teachable: lecture, sort: 'Exercise')
                                               .map { |m| [m.local_title_for_viewers, m.id] },
                                         assessable.medium_id),
@@ -95,12 +112,11 @@
                          assessments__dirty_form_target: 'field',
                          action: 'change->assessments--dirty-form#checkForChanges'
                        } } %>
-      </div>
+        </div>
+        <div class="col-md-6">
+          <%= af.label :accepted_file_type, t('submission.file_format'), class: "form-label" %>
 
-      <div class="col-md-6">
-        <%= af.label :accepted_file_type, t('submission.file_format'), class: "form-label" %>
-
-        <%= af.select :accepted_file_type,
+          <%= af.select :accepted_file_type,
                      options_for_select(Assignment.accepted_file_types.map { |t| [t, t] },
                                         assessable.accepted_file_type),
                      {},
@@ -111,20 +127,22 @@
                          action: 'change->assessments--dirty-form#checkForChanges'
                        } } %>
 
-        <% if assessable.past_deadline? %>
-          <div class="form-text text-muted">
-            <i class="bi bi-lock-fill me-1"></i>
-            <%= t('assessment.locked_after_deadline') %>
-          </div>
-        <% end %>
-      </div>
+          <% if assessable.past_deadline? %>
+            <div class="form-text text-muted">
+              <i class="bi bi-lock-fill me-1"></i>
+              <%= t('assessment.locked_after_deadline') %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 
   <div class="row g-3 mt-1">
-    <div class="col-12">
-      <div class="form-check">
-        <%= f.check_box :requires_submission,
+    <% unless assessable.kind_test? %>
+      <div class="col-12">
+        <div class="form-check">
+          <%= f.check_box :requires_submission,
                         class: "form-check-input",
                         checked: assessment.requires_submission,
                         disabled: assessable.past_deadline?,
@@ -133,18 +151,19 @@
                           action: 'change->assessments--dirty-form#checkForChanges'
                         } %>
 
-        <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
+          <%= f.label :requires_submission, t('assessment.requires_submission'), class: "form-check-label" %>
 
-        <div class="form-text text-muted">
-          <% if assessable.past_deadline? %>
-            <i class="bi bi-lock-fill me-1"></i>
-            <%= t('assessment.locked_after_deadline') %>
-          <% else %>
-            <%= t('assessment.requires_submission_hint') %>
-          <% end %>
+          <div class="form-text text-muted">
+            <% if assessable.past_deadline? %>
+              <i class="bi bi-lock-fill me-1"></i>
+              <%= t('assessment.locked_after_deadline') %>
+            <% else %>
+              <%= t('assessment.requires_submission_hint') %>
+            <% end %>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
 
     <div
       class="col-12 mt-3 text-center d-none"

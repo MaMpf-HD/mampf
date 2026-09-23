@@ -565,6 +565,47 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
+  describe "POST /media/:id/publish" do
+    let(:teacher) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
+    let(:medium) do
+      create(:lecture_medium, :with_lecture_by_id, lecture_id: lecture.id, sort: "Exercise")
+    end
+
+    before { sign_in teacher }
+
+    def publish(overrides = {})
+      post(publish_medium_path(medium), params: {
+             medium: { release_now: "1", released: "all", lock_comments: "0",
+                       create_assignment: "1", assignment_title: "Sheet 3",
+                       assignment_deadline: 1.week.from_now.strftime("%Y-%m-%d %H:%M"),
+                       assignment_file_type: ".zip",
+                       requires_submission: "0" }.merge(overrides)
+           })
+    end
+
+    it "makes the sheet with the dialog's settings when the medium goes out now" do
+      publish
+
+      expect(response).to redirect_to(edit_medium_path(medium))
+      assignment = lecture.assignments.find_by(title: "Sheet 3")
+      expect(assignment.medium).to eq(medium)
+      expect(assignment.accepted_file_type).to eq(".zip")
+      expect(assignment.deadline).to be_within(1.minute).of(1.week.from_now)
+      expect(assignment.assessment.requires_submission).to be(false)
+      expect(medium.reload.released).to eq("all")
+    end
+
+    it "keeps the sheet on the medium until the release date when it is scheduled" do
+      publish(release_now: "0", release_date: 2.days.from_now.strftime("%Y-%m-%d %H:%M"))
+
+      expect(lecture.assignments).to be_empty
+      expect(medium.reload.released).to be_nil
+      expect(medium.publisher.assignment_title).to eq("Sheet 3")
+      expect(lecture.scheduled_sheets.map(&:title)).to eq(["Sheet 3"])
+    end
+  end
+
   describe "GET /media/:id/check_annotation_visibility" do
     # SER-05 was a false positive: set_medium (a before_action that also runs for
     # this action) redirects on a missing medium, so the action never sees nil and

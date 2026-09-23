@@ -11,6 +11,8 @@ module Demo
     UNCORRECTED_SHEETS = 2
     # Handing in after the deadline happens, but rarely.
     LATE_EVERY = 20
+    # Some sheets come in on paper: a stamp on the participation, no file.
+    ON_PAPER_EVERY = 5
 
     def setup_homework_submissions!
       lecture = assessment_lecture!
@@ -37,11 +39,14 @@ module Demo
         handed_in = 0
 
         assignments.each_with_index do |assignment, index|
+          next unless assignment.requires_submission
+
           sheets_left = assignments.size - index
           demo_teams(lecture).each_with_index do |(tutorial, team), position|
-            team = team.reject { |member| sits_out?(assignment, member) }
+            team = team.reject { |member| sits_out?(assignment, member, tutorial) }
             next if team.empty?
             next unless hands_in?(assignment, team)
+            next if on_paper?(position)
 
             late = (handed_in % LATE_EVERY).zero?
             Demo::HandInSupport.hand_in!(
@@ -53,20 +58,26 @@ module Demo
             handed_in += 1
           end
         end
-
-        recompute_performance_records!(lecture)
       end
 
-      # Somebody the gradebook excused for this sheet, or dropped from it
-      # altogether, did not hand it in; the partner hands in alone that week.
-      # A dropped member matters twice over: the backfill worker writes them a
-      # pending participation a minute later, and a team formed with them
-      # would then carry one marked and one blank member.
-      def sits_out?(assignment, member)
+      # HandInSupport would fill submitted_at for students recorded as missing.
+      # A missing participation can also be recreated by AssessmentBackfillWorker
+      # as pending, leaving that team member's status different from the others.
+      # Somebody whose sheet another group holds handed it in there, before
+      # moving; no file goes to the new group for it.
+      def sits_out?(assignment, member, tutorial)
         participation = assignment.assessment
                                   &.assessment_participations
                                   &.find_by(user_id: member.id)
-        participation.nil? || participation.exempt? || participation.absent?
+        participation.nil? || participation.exempt? || participation.absent? ||
+          participation.submitted_at.nil? ||
+          (participation.tutorial_id.present? && participation.tutorial_id != tutorial.id)
+      end
+
+      # The stamp is already on the participation; the paper sheet is what
+      # the table has no file for.
+      def on_paper?(position)
+        position % ON_PAPER_EVERY == ON_PAPER_EVERY - 1
       end
 
       # A team is marked as one: the tutor enters the points once and every
@@ -99,15 +110,6 @@ module Demo
                                 grader_id: marked.grader_id,
                                 points_total: marked.points_total)
         end
-      end
-
-      # `record_hand_in!` stamps with `update_all`, which is what keeps the run
-      # quick and what skips the callback behind it. The materialized record
-      # counts a sheet as awaiting marks by its `submitted_at`, so without this
-      # the standing block ends up disagreeing with the list beneath it.
-      def recompute_performance_records!(lecture)
-        service = StudentPerformance::ComputationService.new(lecture: lecture)
-        lecture.members.find_each { |member| service.compute_and_upsert_record_for(member) }
       end
 
       # On a sheet that is still open the gradebook has already decided who has

@@ -160,47 +160,6 @@ jobs:
           -f ../cicd/compose.cicd.yml
           logs app-test
 
-  # Cypress end-to-end (e2e) tests
-  e2e-tests:
-    name: e2e (Cypress)
-    environment: testing
-    runs-on: ubuntu-latest
-    permissions: write-all
-    needs: build-mampf
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pull MaMpf image (from GHCR)
-        working-directory: docker/development/
-        run: >
-          docker pull ghcr.io/mampf-hd/mampftest:image
-
-      - name: Run Cypress tests
-        working-directory: docker/development/
-        run: >
-          docker compose
-          -f ./compose.yml
-          -f ../cicd/compose.cicd.yml
-          -f ../cypress/compose.yml
-          run cypress
-
-      - name: Show app-test logs on failure
-        if: failure()
-        working-directory: docker/development/
-        run: >
-          docker compose
-          -f ./compose.yml
-          -f ../cicd/compose.cicd.yml
-          logs app-test
-
   # Brakeman security scan
   # We put this here and not in a separate workflow such that we only have to
   # approve the workflow once (for the pull request).

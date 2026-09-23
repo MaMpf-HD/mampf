@@ -17,16 +17,6 @@
         <%= helpdesk(t('admin.lecture.info.organizational'), false) %>
       </div>
     </div>
-    <div class="col-6">
-      <div class="form-check">
-        <%= f.check_box :muesli,
-                        class: 'form-check-input' %>
-        <%= f.label :muesli,
-                    t('admin.lecture.uses_muesli'),
-                    { class: 'form-label' } %>
-        <%= helpdesk(t('admin.lecture.info.muesli'), false) %>
-      </div>
-    </div>
     <% if !lecture.term && lecture.organizational %>
       <div class="col-6">
         <div class="form-check">

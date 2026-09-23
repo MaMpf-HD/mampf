@@ -1,7 +1,3 @@
-.submission-initially-hidden {
-  display: none;
-}
-
 #clipboard-button:hover {
 	color: #494f54 !important;
 }
@@ -39,25 +35,11 @@
 }
 
 
-.correction-upload-area {
-  display: none;
-}
-
-.tutorialTableContent {
-  overflow-y: scroll;
-  max-height: 75vh;
-}
-
 #bulk-upload-area, #bulk-upload-report {
 	display: none;
 }
 
-#late-submission-warning {
-	position: relative;
-	top: 0.25em;
-}
-
-#export-teams:focus, #export-teams:active:focus, #export-teams.active:focus {
-    outline:none;
-    box-shadow:none;
+input[type="file"] {
+  max-width: 100%;
+  min-width: 0;
 }

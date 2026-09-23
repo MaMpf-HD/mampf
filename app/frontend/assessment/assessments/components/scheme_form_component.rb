@@ -24,6 +24,17 @@ class SchemeFormComponent < ViewComponent::Base
     grade_scheme.persisted? ? :patch : :post
   end
 
+  # Leaving the form is a fresh look at the grades tab, nothing saved.
+  def cancel_path
+    assessable = assessment.assessable
+    if assessable.is_a?(Exam)
+      helpers.exam_path(assessable, tab: "grades")
+    else
+      helpers.assessment_assessment_path(assessment, assessable_type: assessable.class.name,
+                                                     assessable_id: assessable.id, tab: "grades")
+    end
+  end
+
   def max_points
     assessment.effective_total_points || 0
   end

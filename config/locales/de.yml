@@ -89,7 +89,6 @@ de:
       singular: 'Quiz-Erläuterung'
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
-    muesli: 'MÜSLI'
     board: 'Forum'
     comments: 'Kommentare'
     organizational_html: 'Organisa&shy;torisches'
@@ -456,6 +455,10 @@ de:
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
+      tutors_overview:
+        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten); EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
+        none_yet: "Noch keine TutorInnen. Erstelle unten einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
+        no_tutorial_yet: "Gutschein eingelöst, noch keinem Tutorium zugeordnet"
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'
@@ -679,9 +682,6 @@ de:
         organizational_on_top: >
           Wenn Du diesen Haken setzt, wird die Seite "Organisatorisches"
           als Startseite für diese Veranstaltung erscheinen.
-        muesli: >
-          Wenn Du diesen Haken setzt, wird in der
-          Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
         vignettes: >
           Wenn Du diesen Haken setzt, erscheinen die Vignetten dieser
           Veranstaltung in der Sidebar für alle, die ihre Inhalte sehen.
@@ -793,10 +793,6 @@ de:
           DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
           DozentIn wird dann EditorIn. Ein solcher Gutschein wird direkt nach
           dem Einlösen für ungültig erklärt.
-        voucher_for_speaker: >
-          Gutscheine für Vortragende können von NutzerInnen eingelöst werden, um
-          Vortragendenstatus für das Seminar zu erhalten und direkt Vorträge
-          zu übernehmen.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -829,7 +825,6 @@ de:
       imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
-      uses_muesli: 'Veranstaltung verwendet MÜSLI'
       uses_vignettes: 'Veranstaltung verwendet Vignetten'
       first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
@@ -1075,11 +1070,9 @@ de:
           Hier kannst Du die Vortragenden eintragen. Diese können
           den Vortrag bearbeiten und Medien hinzufügen. Du kannst nur Personen
           auswählen, die den Status "Vortragender" in dem Seminar haben,
-          dazu EditorInnen und Dich selbst. Um Studierenden des Status
-          eines Vortragenden zu geben, musst Du unter "Personen/Tutorien" einen
-          Gutschein erstellen, den die Studierenden einlösen können.
-          Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
-          werden
+          dazu EditorInnen und Dich selbst. Studierende werden über ein
+          Anmeldeverfahren für die Vorträge zu Vortragenden, das Du im Reiter
+          "Gruppen" einrichtest.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -1474,11 +1467,11 @@ de:
         assignment_settings: >
           Einstellungen, die für <i>jede</i> Hausaufgabe in dieser
           Veranstaltung gelten, wie die Teamgröße für Abgaben und die
-          Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
-          einstellen.
+          Kulanzfrist, findest Du auf der Vorlesungsseite unter „Testate“.
         assignment_further_settings: >-
-          Weitere Einstellungen wie Aufgaben und Punkte können auf
-          der Vorlesungsseite unter „Testate" konfiguriert werden.
+          Aufgaben und Punkte legst Du auf der Vorlesungsseite unter „Testate“
+          fest, sobald die Hausaufgabe existiert – das ist mit der
+          Veröffentlichung des Mediums. Bis dahin steht sie dort als geplant.
     tag:
       index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
@@ -2084,7 +2077,7 @@ de:
     assignment:
       new: 'Neue Hausaufgabe anlegen'
       title: 'Titel'
-      title_placeholder: 'z.B. Übungsblatt 1'
+      title_placeholder: 'z. B. Übungsblatt 1'
       filetype: 'Dateityp'
       deletion: 'Löschdatum'
     voucher:
@@ -2097,6 +2090,9 @@ de:
         den die Person in ihrem Profil einlösen kann, um die Rolle zu erhalten.
         Du solltest den Code über ein anderes Medium an die Person senden,
         z.B. per E-Mail.
+      speakers_by_registration: >
+        Vortragende werden nicht mehr per Gutschein zugewiesen: Richte dafür
+        im Reiter "Gruppen" ein Anmeldeverfahren für die Vorträge ein.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2174,6 +2170,7 @@ de:
     email_for_submission_decision: >
       Annahme oder Ablehnung einer verspäteten Korrektur
     delete_account: Account löschen
+    password: Passwort
     stored_submissions: >
       Von Dir sind %{submissions} Abgaben zu Hausaufgaben im System gespeichert,
       bei denen eine Datei hochgeladen wurde. Diese teilen sich auf in:
@@ -2234,8 +2231,9 @@ de:
       Nachdem Du den Gutschein eingelöst hast, kann Dich die DozentIn den
       Tutorien zuweisen.
     select_tutorials: Tutorien auswählen
-    all_tutorials_taken: >
-      Es sind keine weiteren Tutorien verfügbar, die Du noch übernehmen kannst.
+    own_tutorial_not_offered: >
+      Das Tutorium, in dem Du selbst eingetragen bist, wird nicht angeboten:
+      mit einem Gutschein wird niemand TutorIn der eigenen Gruppe.
     already_tutor_by_redemption: >
       Du hast diesen Gutschein bereits eingelöst, um TutorInnenstatus zu erhalten.
     become_editor_html: >
@@ -2331,13 +2329,6 @@ de:
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
-    create_tutorials: Übungsgruppen anlegen
-    no_tutorials_yet: >
-      Für diese Veranstaltung wurden noch keine Tutorien angelegt.
-    tutorials: >
-      Für diese Veranstaltung gibt es die folgenden Tutorien:
-    no_submissions_yet: >
-      Es waren bisher noch keine Hausaufgaben abzugeben.
   sure: 'Bist Du sicher?'
   details: 'Details'
   none: 'keine'
@@ -2885,6 +2876,8 @@ de:
   date:
     formats:
       concise: '%d.%m.%Y'
+      test_week_start: '%d.%m.'
+      test_week_end: '%d.%m.%Y'
   datetimepicker:
     invalid_date: 'Ungültiges Datums-Zeit-Format.'
   time:
@@ -3035,6 +3028,7 @@ de:
     hub:
       page_title: "Abgaben - %{lecture}"
       heading: Frühere Blätter
+      heading_with_tests: Frühere Blätter und Tests
       standing:
         mark_percentage: "%{percentage} %"
         heading: Klausurzulassung
@@ -3044,10 +3038,10 @@ de:
         nothing_marked: Es ist noch nichts korrigiert.
         awaiting_marks:
           one: >-
-            1 Blatt mit %{points} Punkten liegt noch bei Deinem Tutor und ist
+            1 Ergebnis mit %{points} Punkten liegt noch bei Deinem Tutor und ist
             oben nicht berücksichtigt.
           other: >-
-            %{count} Blätter mit zusammen %{points} Punkten liegen noch bei
+            %{count} Ergebnisse mit zusammen %{points} Punkten liegen noch bei
             Deinem Tutor und sind oben nicht berücksichtigt.
         needed: "%{points} nötig"
         bar_plain: "%{percentage} Prozent der Punkte erreicht"
@@ -3088,9 +3082,14 @@ de:
         due: "Fällig %{time}"
         in_time: "in %{time}"
         worth:
-          one: "%{count} Aufgabe, %{points} Punkte"
-          other: "%{count} Aufgaben, %{points} Punkte"
+          one: "%{count} Aufgabe, %{points} Punkte erreichbar"
+          other: "%{count} Aufgaben, %{points} Punkte erreichbar"
         hand_in: Abgeben
+        in_tutorial: in Deinem Tutorium
+        hand_in_elsewhere: >-
+          Abgabe nicht über MaMpf. Dein Tutor erfasst, was abgegeben wurde,
+          und trägt die Punkte ein.
+        no_digital_hand_in: Dieses Blatt wird nicht über MaMpf abgegeben.
         replace: Datei ersetzen
         invite: Jemanden einladen
         join: Mit einem Code beitreten
@@ -3124,10 +3123,24 @@ de:
       sheet_count:
         one: "%{count} Blatt"
         other: "%{count} Blätter"
+      test_count:
+        one: "%{count} Test"
+        other: "%{count} Tests"
       column_sheet: Blatt
       column_status: Status
       column_points: Deine Punkte
       old_style: Blatt alter Art
+      news:
+        lead: "Neu seit Deinem letzten Blick:"
+        marker: Neu seit Deinem letzten Blick.
+        prefix: "Neu —"
+        correction_html: "%{sheet} (Korrektur)"
+        points_html: "%{sheet} (Punkte)"
+        both_html: "%{sheet} (Korrektur und Punkte)"
+        more:
+          one: "und %{count} weiteres"
+          other: "und %{count} weitere"
+        seen_all: alle als gesehen markieren
       fold:
         handed_in_label: Abgabe
         not_uploaded_yet: noch nicht hochgeladen
@@ -3141,6 +3154,10 @@ de:
         team: "Team: Du und %{names}"
         team_with_points: >
           Team: Du und %{names} - diese %{points} Punkte sind Deine
+        join_late: >
+          Doch mit einem Team abgegeben? Mit dessen Code kommst Du noch dazu,
+          solange das Team nicht bewertet ist; danach kann Dich Dein Tutor
+          noch aufnehmen.
         no_points:
           nothing_yet: Es ist noch nichts eingetragen.
           on_the_correction: >
@@ -3174,6 +3191,7 @@ de:
         grace_period: "noch %{time}"
         tutor_decides: Dein Tutor entscheidet
         awaiting_marks: Wartet auf Korrektur
+        awaiting_record: Noch nicht erfasst
         correction_uploaded: Korrektur da
         exempt: Entschuldigt
       notes:
@@ -3182,6 +3200,8 @@ de:
         rejected: verspätet abgegeben, Dein Tutor hat es nicht gelten lassen
         partially_marked: noch nicht alle Aufgaben korrigiert
         missed: bis zur Frist kam nichts an
+        awaiting_record: Abgabe auf Papier oder anderem Weg - Dein Tutor trägt ein, was ankam
+        awaiting_record_test: noch kein Ergebnis eingetragen - Dein Tutor trägt die Punkte ein oder vermerkt Dich als abwesend
         absent: als abwesend vermerkt
         exempt: wird bei Dir nicht gewertet
         not_recorded: >
@@ -3192,7 +3212,10 @@ de:
     invalid_code: Der eingegebene Code ist ungültig.
     invalid_code_for_assignment: >
       Der eingegebene Code ist ungültig für %{assignment}.
-    assignment_expired: Die Frist für diese Hausaufgabe ist bereits abgelaufen.
+    team_marked: Dieses Team ist schon bewertet; bitte Deinen Tutor, Dich hinzuzufügen.
+    marked_on_own: >
+      Du bist für dieses Blatt schon eigenständig bewertet; frag Deinen Tutor,
+      ob Du ins Team gehörst.
     already_in: Bei dieser Abgabe bist Du schon dabei.
     lecture_not_subscribed: Du hast die zugehörige Veranstaltung icht abonniert.
     no_partners_no_leave: >
@@ -3292,7 +3315,6 @@ de:
     already_rejected: >
       Diese Abgabe wurde abgelehnt, Du kannst ihr nicht mehr beitreten.
     late: verspätete Abgabe
-    late_submissions: verspätetete Abgaben
     rejected: abgelehnt
     bulk_download_submissions: Paketdownload der Abgaben
     bulk_download_corrections: Paketdownload der Korrekturen
@@ -3315,8 +3337,17 @@ de:
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
   tutorial:
+    title_placeholder: "z. B. Mo 14–16"
+    location_placeholder: "z. B. SR 3"
+    no_tutorials_yet: >
+      Diese Vorlesung hat noch keine Tutorien, also auch keine Tabelle, in die
+      Punkte eingetragen werden könnten.
     no_submissions_for_assignment: >
       Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
+    no_submissions: >
+      Keine Abgaben eingereicht
+    no_submission: >
+      Keine Abgabe
     destruction_info:
       <i>
       Hinweis.
@@ -3329,8 +3360,7 @@ de:
       Eigene Tutorien
     other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
-      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
-      können Korrekturen hochgeladen werden.
+      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Frist kann der Bewertungsprozess erfolgen und die Korrekturen können von den Tutoren hochgeladen werden.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
@@ -3353,7 +3383,8 @@ de:
         Du kannst nur Personen auswählen, die den Status "TutorIn" in der
         Veranstaltung haben, dazu EditorInnen und Dich selbst.
         Um Studierenden den Status einer TutorIn zu geben, musst Du
-        einen Gutschein erstellen, den die Studierenden einlösen können.
+        im Reiter "Personal" einen Gutschein erstellen, den die Studierenden
+        einlösen können.
         Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
         werden.
     bulk_upload:
@@ -3441,9 +3472,12 @@ de:
       die Adresszeile Deines Browsers zu kopieren und dann aufzurufen.
     announcement_subject: 'Neue Mitteilung'
     student_message_footer: >-
-      Diese Nachricht wurde von %{sender} über MaMpf an die angemeldeten
-      Studierenden von %{lecture} verschickt. Antworten auf diese E-Mail
-      gehen direkt an den Absender / die Absenderin.
+      Diese Nachricht wurde von %{sender} (%{email}, %{role}) über MaMpf an
+      %{audiences} in %{lecture} verschickt. Antworten auf diese E-Mail gehen
+      direkt an den Absender / die Absenderin.
+    student_message_role:
+      staff: "DozentIn oder EditorIn"
+      tutor: "TutorIn"
     mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'VerfasserIn'
@@ -3504,6 +3538,12 @@ de:
     submission_join: >
       %{user} ist der Abgabe zu %{assignment} in %{lecture}
       beigetreten.
+    submission_added_subject: >
+      Du bist jetzt im Team für %{assignment} in %{lecture}
+    submission_added: >
+      %{tutor} hat Dich in das Team von %{team} für %{assignment} in
+      %{lecture} aufgenommen. Die Abgabe des Teams zählt jetzt auch für Dich,
+      und ebenso die Punkte, die sie bekommt.
     submission_leave_subject: >
       %{user} hat Abgabe zu %{assignment} in %{lecture} verlassen
     submission_leave: >
@@ -3860,6 +3900,7 @@ de:
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{role}
+    voucher_code: Gutscheincode
     speaker: Vortragender
     speakers: Vortragende
     mode: "Zuteilungsmodus"
@@ -3898,6 +3939,7 @@ de:
     create_cohort: 'Gruppe erstellen'
     edit_cohort: 'Gruppe bearbeiten'
     save: 'Speichern'
+    refresh: 'Aktualisieren'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
     save_changes: "Änderungen speichern"
@@ -4379,6 +4421,21 @@ de:
               invalid: >
                 Es gibt schon eine Abgabe von Dir oder die Teamgröße ist
                 überschritten.
+            base:
+              changed_meanwhile: >
+                Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
+                um %{time} die Datei %{filename} hochgeladen. Um sie anzusehen,
+                brich hier ab; Deine Datei musst Du dann noch einmal hochladen.
+                Oder speichere gleich noch einmal, wenn Deine Datei die richtige
+                ist.
+              removed_meanwhile: >
+                Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
+                die Datei entfernt. Speichere noch einmal, wenn Deine Datei
+                abgegeben werden soll.
+              changed_before_removal: >
+                Seit Du diese Seite geöffnet hast, hat jemand aus Deinem Team
+                um %{time} die Datei %{filename} hochgeladen. Wenn auch sie weg
+                soll, entferne sie hier und speichere noch einmal.
         tag:
           attributes:
             notions:
@@ -4391,6 +4448,14 @@ de:
           attributes:
             lecture:
               must_be_seminar: "Vorträge können nur für Seminare erstellt werden."
+            speaker_ids:
+              graded:
+                one: >-
+                  %{names} bleibt auf dem Vortrag: er ist schon benotet.
+                  Lösche zuerst die Note.
+                other: >-
+                  %{names} bleiben auf dem Vortrag: er ist für sie schon
+                  benotet. Lösche zuerst die Note.
             title:
               blank: Es muss ein Titel angegeben werden.
         term:
@@ -4435,7 +4500,6 @@ de:
           team_size: >
             Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
             hätte als erlaubt.
-                vignettes/question:
         vignettes/question:
           format: '%{message}'
           attributes:
@@ -4446,8 +4510,6 @@ de:
             role:
               only_one_active: >
                 Für diese Vorlesung kann es nur einen aktiven Gutschein dieses Typs geben.
-              speaker_vouchers_only_for_seminars: >
-                Vortragenden-Gutscheine können nur für Seminare erstellt werden.
               invalid_for_lecture: >
                 Diese Rolle ist für diese Vorlesung nicht verfügbar.
         watchlist_entry:

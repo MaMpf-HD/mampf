@@ -99,6 +99,38 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.body).to include("Test Assignment")
       end
 
+      it "sends a talk's dashboard to the seminar's table" do
+        seminar = create(:lecture, :is_seminar, teacher: teacher)
+        # A fixed title: the factory's random one may carry an apostrophe,
+        # which the page escapes.
+        talk = create(:talk, lecture: seminar, title: "Riemann and the primes")
+        create(:speaker_talk_join, talk: talk)
+
+        get assessment_assessment_path(talk.reload.assessment.id),
+            params: { assessable_type: "Talk", assessable_id: talk.id },
+            headers: { "Turbo-Frame" => "assessment-assessments-frame" }
+
+        expect(response).to redirect_to(assessment_assessments_path(lecture_id: seminar.id))
+        follow_redirect!
+        expect(response.body).to include(talk.title)
+      end
+
+      it "renders the points tab when a non-submitter has been marked as participated" do
+        tutorial = create(:tutorial, lecture: lecture)
+        student = create(:confirmed_user)
+        create(:tutorial_membership, tutorial: tutorial, user: student)
+        assignment.assessment.tasks.create!(max_points: 10, position: 1)
+        Assessment::Participation.create!(assessment: assignment.assessment,
+                                          user: student, tutorial: tutorial)
+
+        get assessment_assessment_path(assessment.id),
+            params: { assessable_type: "Assignment", assessable_id: assignment.id,
+                      tab: "points" },
+            headers: { "Turbo-Frame" => "assessment-assessments-frame" }
+
+        expect(response).to have_http_status(:success)
+      end
+
       it "sends someone who opens the bare link to the lecture's assessment tab" do
         get assessment_assessment_path(assessment.id),
             params: { assessable_type: "Assignment", assessable_id: assignment.id,
@@ -156,6 +188,17 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
     before { sign_in teacher }
 
+    it "sends a talk's assessment to the seminar's table instead of a dashboard" do
+      seminar = create(:lecture, :is_seminar, teacher: teacher)
+      talk = create(:talk, lecture: seminar)
+
+      patch assessment_assessment_path(talk.reload.assessment.id),
+            params: { assessment_assessment: { requires_submission: false } },
+            as: :turbo_stream
+
+      expect(response).to redirect_to(edit_lecture_path(seminar, tab: "assessments"))
+    end
+
     context "with valid parameters" do
       it "updates the assessment" do
         patch assessment_assessment_path(assessment.id),
@@ -186,6 +229,22 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response).to have_http_status(:success)
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include("assessments_container")
+      end
+
+      it "moves a test to the week it is given, due with its Sunday" do
+        test = create(:valid_assignment, lecture: lecture, kind: :test,
+                                         deadline: 1.week.from_now)
+        monday = 3.weeks.from_now.to_date.beginning_of_week
+
+        patch assessment_assessment_path(test.assessment.id),
+              params: {
+                assessment_assessment: {
+                  assessable_attributes: { id: test.id, test_week: monday.iso8601 }
+                }
+              },
+              as: :turbo_stream
+
+        expect(test.reload.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
       end
     end
 

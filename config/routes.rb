@@ -21,25 +21,19 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :cypress do
+    namespace :e2e do
       post "playwright_user_login", to: "playwright_user_sessions#create" if Rails.env.test?
     end
   end
 
   if Rails.env.test?
-    namespace :cypress do
+    namespace :e2e do
       resources :factories, only: :create
       post "factories/call_instance_method", to: "factories#call_instance_method"
-      resources :factories_playwright, only: :create
-      post "factories_playwright/call_instance_method",
-           to: "factories_playwright#call_instance_method"
-      post "factories_playwright/update_instance",
-           to: "factories_playwright#update_instance"
+      post "factories/update_instance", to: "factories#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
-      resources :user_creator_playwright, only: :create
-      resources :mails_playwright, only: :create
-      resources :i18n, only: :create
+      resources :mails, only: :create
       post "feature_flags/enable", to: "feature_flags#enable"
       post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"
@@ -316,13 +310,13 @@ Rails.application.routes.draw do
       to: "submissions#index",
       as: "lecture_submissions"
 
+  post "lectures/:id/submissions/seen_all",
+       to: "submissions#seen_all",
+       as: "lecture_sheets_seen"
+
   get "lectures/:id/tutorials",
       to: "tutorials#index",
       as: "lecture_tutorials"
-
-  get "lectures/:id/tutorial_overview",
-      to: "tutorials#overview",
-      as: "lecture_tutorial_overview"
 
   get "lectures/:id/subscribe",
       to: "lectures#subscribe_page",
@@ -367,6 +361,10 @@ Rails.application.routes.draw do
         collection do
           post :recompute
         end
+        member do
+          patch :exempt
+          patch :unexempt
+        end
       end
 
       resource :rules, only: [:edit, :update] do
@@ -395,9 +393,9 @@ Rails.application.routes.draw do
               controller: "registration/campaigns",
               only: [:index, :new, :create],
               as: :registration_campaigns
-    resources :student_messages,
-              controller: "registration/student_messages",
-              only: [:create]
+    resources :student_messages, only: [:create] do
+      get :recipients, on: :collection
+    end
   end
 
   resources :campaigns,
@@ -834,6 +832,10 @@ Rails.application.routes.draw do
        to: "submissions#join",
        as: "join_submission"
 
+  post "submissions/seen",
+       to: "submissions#seen",
+       as: "sheet_seen"
+
   get "submissions/enter_code",
       to: "submissions#enter_code",
       as: "enter_submission_code"
@@ -889,6 +891,58 @@ Rails.application.routes.draw do
   patch "submissions/:id/reject",
         to: "submissions#reject",
         as: "reject_submission"
+
+  patch "participations/mark_as_participated",
+        to: "assessment/task_points#mark_as_participated",
+        as: "mark_user_as_participated"
+
+  patch "participations/:participation_id/remove_participated",
+        to: "assessment/task_points#remove_participated",
+        as: "remove_participation"
+
+  patch "submissions/:submission_id/point_submission",
+        to: "assessment/task_points#update_team",
+        as: "point_submission_tutorial"
+
+  patch "participations/:participation_id/point_participation",
+        to: "assessment/task_points#update_participation",
+        as: "point_participation"
+
+  patch "submissions/point_multi_submissions",
+        to: "assessment/task_points#update_team_multi",
+        as: "point_multi_submissions_tutorial"
+
+  patch "exams/:exam_id/point_multi_participations",
+        to: "assessment/task_points#update_exam_multi",
+        as: "point_multi_participations_exam"
+
+  patch "submissions/:submission_id/refresh_point_submission",
+        to: "assessment/task_points#refresh_submission",
+        as: "refresh_point_submission_tutorial"
+
+  patch "submissions/:submission_id/add_member",
+        to: "assessment/task_points#add_member",
+        as: "add_member_submission"
+
+  patch "participations/:participation_id/refresh_point_participation",
+        to: "assessment/task_points#refresh_participation",
+        as: "refresh_point_participation"
+
+  patch "participations/:participation_id/mark_as_absent",
+        to: "assessment/task_points#mark_as_absent",
+        as: "mark_as_absent"
+
+  patch "participations/:participation_id/remove_absent",
+        to: "assessment/task_points#remove_absent",
+        as: "remove_absent"
+
+  patch "participations/:participation_id/mark_as_exempt",
+        to: "assessment/task_points#mark_as_exempt",
+        as: "mark_as_exempt"
+
+  patch "participations/:participation_id/remove_exempt",
+        to: "assessment/task_points#remove_exempt",
+        as: "remove_exempt"
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
@@ -1145,6 +1199,23 @@ Rails.application.routes.draw do
          to: "user_registrations#save_preferences",
          as: :save_preferences
   end
+
+  # participations routes
+  patch "participations/:participation_id/grade_participation",
+        to: "assessment/grades#update",
+        as: "grade_participation"
+
+  patch "participations/:participation_id/refresh_grade_participation",
+        to: "assessment/grades#refresh",
+        as: "refresh_grade_participation"
+
+  patch "participations/:participation_id/achievement_value",
+        to: "assessment/achievement_values#update",
+        as: "achievement_value_participation"
+
+  patch "participations/:participation_id/refresh_achievement_value",
+        to: "assessment/achievement_values#refresh",
+        as: "refresh_achievement_value_participation"
 
   # main routes
 

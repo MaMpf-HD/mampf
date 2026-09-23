@@ -200,7 +200,6 @@ export default class extends Controller {
   showChooserState({ fileSelected = false } = {}) {
     this.show(this.dashboardTarget);
     this.show(this.permissionFieldTarget);
-    this.permissionTarget.checked = false;
     this.hide(this.metadataTarget);
     this.show(this.noMetadataTarget, "inline");
     this.hide(this.removeButtonTarget);

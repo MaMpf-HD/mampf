@@ -51,6 +51,18 @@ RSpec.describe("Assessment::Tasks", type: :request) do
   end
 
   describe "POST /assessment/assessments/:assessment_id/tasks" do
+    it "sends a talk's assessment to the seminar's table, which has no tasks" do
+      seminar = create(:lecture, :is_seminar, teacher: teacher)
+      talk = create(:talk, lecture: seminar)
+
+      expect do
+        post(assessment_assessment_tasks_path(talk.reload.assessment),
+             params: { assessment_task: { max_points: 7.5 } },
+             as: :turbo_stream)
+      end.not_to change(Assessment::Task, :count)
+      expect(response).to redirect_to(edit_lecture_path(seminar, tab: "assessments"))
+    end
+
     context "with valid parameters" do
       it "creates a task" do
         expect do
@@ -88,6 +100,15 @@ RSpec.describe("Assessment::Tasks", type: :request) do
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include("assessments_container")
+        expect(response.body).to include("Maximum points can&#39;t be negative.")
+      end
+
+      it "shows the missing max_points under the field" do
+        post assessment_assessment_tasks_path(assessment),
+             params: { assessment_task: { max_points: "" } },
+             as: :turbo_stream
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("You need to give the maximum points.")
       end
     end
   end

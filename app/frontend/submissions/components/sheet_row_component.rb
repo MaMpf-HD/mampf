@@ -14,6 +14,7 @@ class SheetRowComponent < ViewComponent::Base
     tutor_decides: :quiet,
     partially_marked: :quiet,
     missed: :quiet,
+    awaiting_record: :quiet,
     absent: :quiet,
     exempt: :quiet,
     not_recorded: :bad,
@@ -50,6 +51,8 @@ class SheetRowComponent < ViewComponent::Base
     SheetChipComponent.for?(state)
   end
 
+  delegate :news?, to: :sheet
+
   def points_class
     ["text-end", "num", ("num-none" unless number?)].compact.join(" ")
   end
@@ -57,7 +60,7 @@ class SheetRowComponent < ViewComponent::Base
   def note
     return unless NOTE_TONES.key?(state)
 
-    t("submission.hub.notes.#{state}", **interpolations)
+    t("submission.hub.notes.#{note_key}", **interpolations)
   end
 
   def note_class
@@ -108,6 +111,12 @@ class SheetRowComponent < ViewComponent::Base
   end
 
   private
+
+    def note_key
+      return :awaiting_record_test if state == :awaiting_record && sheet.assignment.kind_test?
+
+      state
+    end
 
     # Only the grace period needs one, and both its badge and its note want it.
     def interpolations

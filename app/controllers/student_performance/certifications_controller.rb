@@ -30,11 +30,14 @@ module StudentPerformance
       compute_summary_counts
       compute_proposal_counts if @rule
       flag_certifications
+      @filter_counts = { all: @total_students, passed: @passed_count, failed: @failed_count,
+                         uncertified: @uncertified_count, flagged: @flagged_user_ids.size }
       @achievements = if @rule
         @rule.required_achievements.order(:title)
       else
         Achievement.none
       end
+      @achievement_headings = Achievement.short_titles(@achievements)
       load_filtered_records
     end
 
@@ -66,9 +69,9 @@ module StudentPerformance
         rule: @rule
       )
 
+      # The row shows the decision; only a refusal needs words.
       if cert.save
-        redirect_to return_to_path,
-                    notice: I18n.t("student_performance.certifications.flash.created")
+        redirect_to return_to_path
       else
         redirect_to return_to_path,
                     alert: cert.errors.full_messages.first
@@ -203,8 +206,7 @@ module StudentPerformance
       )
 
       if cert.save
-        redirect_to return_to_path,
-                    notice: I18n.t("student_performance.certifications.flash.updated")
+        redirect_to return_to_path
       else
         redirect_to return_to_path,
                     alert: cert.errors.full_messages.first
@@ -217,8 +219,7 @@ module StudentPerformance
     def destroy
       @certification.destroy!
 
-      redirect_to return_to_path,
-                  notice: I18n.t("student_performance.certifications.flash.reset_one")
+      redirect_to return_to_path
     end
 
     private

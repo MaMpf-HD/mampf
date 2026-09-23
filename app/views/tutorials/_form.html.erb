@@ -1,7 +1,7 @@
 
 <div class="list-group-item tutorialRow"
        data-id="<%= tutorial.id.to_i %>">
-  <%= form_with model: tutorial, data: { cy: 'tutorial-form' } do |f| %>
+  <%= form_with model: tutorial do |f| %>
     <div class="row">
       <div class="form-group col-4">
         <%= f.text_field :title,
@@ -31,8 +31,7 @@
                       { class: 'selectize',
                         multiple: true,
                         id: "tutorial_tutor_ids_#{tutorial.id}",
-                        data: { cy: "tutor-select",
-                                no_results: t('basics.no_results_tutor') } } %>
+                        data: { no_results: t('basics.no_results_tutor') } } %>
         <% end %>
       </div>
       <div class="form-group col-4">

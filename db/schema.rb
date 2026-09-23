@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -152,8 +152,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "grade_scheme_id"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
+    t.index ["grade_scheme_id"], name: "index_assessment_participations_on_grade_scheme_id"
     t.index ["grader_id"], name: "index_assessment_participations_on_grader_id"
     t.index ["status"], name: "index_assessment_participations_on_status"
     t.index ["tutorial_id"], name: "index_assessment_participations_on_tutorial_id"
@@ -189,6 +191,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.check_constraint "max_points >= 0::numeric", name: "max_points_non_negative"
   end
 
+  create_table "assignment_sightings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "assignment_id", null: false
+    t.datetime "seen_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignment_id"], name: "index_assignment_sightings_on_assignment_id"
+    t.index ["user_id", "assignment_id"], name: "index_assignment_sightings_on_user_id_and_assignment_id", unique: true
+  end
+
   create_table "assignments", force: :cascade do |t|
     t.bigint "lecture_id", null: false
     t.bigint "medium_id"
@@ -198,6 +210,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.datetime "updated_at", null: false
     t.text "accepted_file_type", default: ".pdf"
     t.date "deletion_date", default: "2200-01-01", null: false
+    t.integer "kind", default: 0, null: false
     t.index ["deadline", "deletion_date"], name: "index_assignments_on_deadline_and_deletion_date"
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
@@ -398,7 +411,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.integer "capacity"
     t.text "description"
     t.boolean "skip_campaigns", default: false, null: false
-    t.integer "self_materialization_mode", default: 0
+    t.integer "self_materialization_mode", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id", "date"], name: "index_exams_on_lecture_id_and_date"
@@ -514,7 +527,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.integer "start_section"
     t.text "organizational_concept"
     t.boolean "organizational"
-    t.boolean "muesli"
     t.text "released"
     t.text "content_mode"
     t.text "passphrase"
@@ -759,20 +771,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
-  create_table "registration_student_messages", force: :cascade do |t|
-    t.bigint "lecture_id", null: false
-    t.bigint "sender_id", null: false
-    t.string "subject", null: false
-    t.text "body", null: false
-    t.text "attachment_data"
-    t.string "recipient_emails", default: [], null: false, array: true
-    t.integer "recipients_count", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_registration_student_messages_on_lecture_id"
-    t.index ["sender_id"], name: "index_registration_student_messages_on_sender_id"
-  end
-
   create_table "registration_user_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "preference_rank"
@@ -847,6 +845,22 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 
+  create_table "student_messages", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "sender_id", null: false
+    t.string "subject", null: false
+    t.text "body", null: false
+    t.text "attachment_data"
+    t.string "recipient_emails", default: [], null: false, array: true
+    t.integer "recipients_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "audiences", default: [], null: false
+    t.integer "sender_role", default: 0, null: false
+    t.index ["lecture_id"], name: "index_student_messages_on_lecture_id"
+    t.index ["sender_id"], name: "index_student_messages_on_sender_id"
+  end
+
   create_table "student_performance_certifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "lecture_id", null: false
     t.bigint "user_id", null: false
@@ -869,7 +883,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.bigint "user_id", null: false
     t.decimal "points_total_materialized", precision: 10, scale: 2
     t.decimal "points_max_materialized", precision: 10, scale: 2
-    t.decimal "points_max_pending_materialized", precision: 10, scale: 2
     t.decimal "percentage_materialized", precision: 5, scale: 2
     t.jsonb "achievements_met_ids", default: [], null: false
     t.jsonb "achievements_ungraded_ids", default: [], null: false
@@ -928,6 +941,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
     t.text "correction_data"
     t.datetime "last_modification_by_users_at", precision: nil
     t.boolean "accepted"
+    t.datetime "corrected_at"
     t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
     t.index ["token"], name: "index_submissions_on_token", unique: true
     t.index ["tutorial_id"], name: "index_submissions_on_tutorial_id"
@@ -1484,6 +1498,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
   add_foreign_key "assessment_grade_schemes", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assessment_grade_schemes", "users", column: "applied_by_id"
   add_foreign_key "assessment_participations", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assessment_participations", "assessment_grade_schemes", column: "grade_scheme_id", on_delete: :nullify
   add_foreign_key "assessment_participations", "tutorials"
   add_foreign_key "assessment_participations", "users"
   add_foreign_key "assessment_participations", "users", column: "grader_id"
@@ -1492,6 +1507,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
   add_foreign_key "assessment_task_points", "submissions"
   add_foreign_key "assessment_task_points", "users", column: "grader_id"
   add_foreign_key "assessment_tasks", "assessment_assessments", column: "assessment_id"
+  add_foreign_key "assignment_sightings", "assignments"
+  add_foreign_key "assignment_sightings", "users"
   add_foreign_key "assignments", "lectures"
   add_foreign_key "claims", "redemptions"
   add_foreign_key "cohort_memberships", "cohorts"
@@ -1530,8 +1547,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
   add_foreign_key "referrals", "media"
   add_foreign_key "registration_items", "registration_campaigns"
   add_foreign_key "registration_policies", "registration_campaigns"
-  add_foreign_key "registration_student_messages", "lectures"
-  add_foreign_key "registration_student_messages", "users", column: "sender_id"
   add_foreign_key "registration_user_registrations", "registration_campaigns"
   add_foreign_key "registration_user_registrations", "registration_items"
   add_foreign_key "registration_user_registrations", "registration_policies", column: "rejection_policy_id"
@@ -1539,6 +1554,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_11_000000) do
   add_foreign_key "speaker_talk_joins", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "student_messages", "lectures"
+  add_foreign_key "student_messages", "users", column: "sender_id"
   add_foreign_key "student_performance_certifications", "lectures"
   add_foreign_key "student_performance_certifications", "student_performance_rules", column: "rule_id"
   add_foreign_key "student_performance_certifications", "users"

@@ -304,6 +304,9 @@ en:
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
+      enrolled_tutor:
+        one: '%{names} is enrolled in this tutorial and would be marking their own sheets. Make them its tutor anyway?'
+        other: '%{names} are enrolled in this tutorial and would be marking their own sheets. Make them its tutors anyway?'
       propagate_readonly_after_creation: 'This setting cannot be changed after creation.'
       setting_cannot_be_changed: 'This setting cannot be changed afterwards.'
     messages:

@@ -22,6 +22,12 @@ RSpec.describe(Assessment::Task, type: :model) do
       expect(task).to be_valid
     end
 
+    it "asks for max_points once when the field is left empty" do
+      task = FactoryBot.build(:assessment_task, max_points: "")
+      expect(task).not_to be_valid
+      expect(task.errors.details[:max_points]).to eq([{ error: :blank }])
+    end
+
     context "when assessment requires points" do
       let(:assessment) { FactoryBot.create(:assessment, requires_points: true) }
 

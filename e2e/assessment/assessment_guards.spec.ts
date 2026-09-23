@@ -21,7 +21,7 @@ test.describe("guards and empty states", () => {
 
     await expect(dashboard.pane.getByLabel("Submission format")).toBeDisabled();
     await expect(dashboard.pane.getByRole("checkbox", {
-      name: "Requires digital submission",
+      name: "Digital submission via MaMpf",
     })).toBeDisabled();
     await expect(dashboard.pane.getByText("Locked (deadline has passed)").first())
       .toBeVisible();

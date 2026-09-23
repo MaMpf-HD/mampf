@@ -1,7 +1,7 @@
-<%= vite_stylesheet_tag "student_performance/records/records_table.scss" %>
-
+<%# Turbo frame responses must include the stylesheet and flash inside the frame. %>
 <%= turbo_frame_tag "performance-records-frame" do %>
-  <%# a frame swap discards the layout, so a confirmation has to travel inside it %>
+  <%= vite_stylesheet_tag "student_performance/records/records_table.scss" %>
+
   <%= render partial: "flash/message" if turbo_frame_request? %>
 
   <p class="text-muted small mb-2 mt-2">
@@ -109,25 +109,53 @@
             >
               <%= t("student_performance.records.columns.due_so_far") %>
 
+              <% if @test_points %>
+                <span class="fw-normal text-muted">
+                  (<%= t("student_performance.records.columns.sheets_and_tests") %>)
+                </span>
+              <% end %>
+
               <%= helpdesk(
-                    t("student_performance.records.columns.due_so_far_hint"),
+                    t("student_performance.records.columns." \
+                      "#{@test_points ? "due_so_far_hint_with_tests" : "due_so_far_hint"}"),
                     false) %>
             </th>
 
-            <% if @assessments.any? %>
+            <% if @sheets.any? %>
               <th
                 scope="colgroup"
-                colspan="<%= @assessments.size %>"
+                colspan="<%= @sheets.size %>"
                 class="text-center text-nowrap"
               >
                 <%= t("student_performance.records.columns.assignments") %>
 
-                <% if @not_due_count.positive? %>
+                <% if @sheets_not_due.positive? %>
                   <span class="fw-normal text-muted">
                     (<%= t("student_performance.records.columns.not_due_count",
-                           count: @not_due_count) %>)
+                           count: @sheets_not_due) %>)
                   </span>
                 <% end %>
+              </th>
+            <% end %>
+
+            <% if @test_points %>
+              <th
+                scope="colgroup"
+                colspan="<%= @tests.size + 1 %>"
+                class="text-center text-nowrap tests-start"
+              >
+                <%= t("student_performance.records.columns.tests") %>
+
+                <% if @tests_not_due.positive? %>
+                  <span class="fw-normal text-muted">
+                    (<%= t("student_performance.records.columns.not_due_count",
+                           count: @tests_not_due) %>)
+                  </span>
+                <% end %>
+
+                <%= helpdesk(
+                      t("student_performance.records.columns.tests_hint"),
+                      false) %>
               </th>
             <% end %>
 
@@ -140,8 +168,6 @@
                 <%= t("student_performance.records.columns.achievements") %>
               </th>
             <% end %>
-
-            <th scope="col" rowspan="2" class="small"></th>
           </tr>
 
           <tr>
@@ -185,10 +211,10 @@
               <% end %>
             </th>
 
-            <% @assessments.each do |assessment| %>
+            <% @assessments.each_with_index do |assessment, index| %>
               <th
                 scope="col"
-                class="text-center small"
+                class="text-center small <%= "tests-start" if index == @sheets.size %>"
                 title="<%= assessment.title %>"
               >
                 <span class="text-nowrap">
@@ -222,13 +248,27 @@
               </th>
             <% end %>
 
-            <% @achievements.each do |achievement| %>
+            <% if @test_points %>
               <th
                 scope="col"
-                class="text-center small"
-                title="<%= achievement.title %>"
+                class="text-center test-share <%= "tests-start" if @tests.empty? %>"
+                aria-sort="<%= records_sort_state("test_share") %>"
               >
-                <%= truncate(achievement.title, length: 24) %>
+                <%= records_sort_link(@lecture, "test_share") do %>
+                  <span aria-hidden="true">%</span>
+
+                  <span class="visually-hidden">
+                    <%= t("student_performance.records.columns.test_share") %>
+                  </span>
+                <% end %>
+              </th>
+            <% end %>
+
+            <% @achievements.each do |achievement| %>
+              <th scope="col" class="text-center small">
+                <abbr title="<%= achievement.title %>">
+                  <%= @achievement_headings[achievement.id] %>
+                </abbr>
               </th>
             <% end %>
           </tr>
@@ -238,7 +278,9 @@
           <% @records.each do |record| %>
             <tr id="<%= dom_id(record) %>">
               <td class="text-nowrap">
-                <%= record.user.tutorial_name %>
+                <%= link_to record.user.tutorial_name,
+                            lecture_student_performance_record_path(@lecture, record),
+                            data: { turbo_frame: "performance-records-frame" } %>
               </td>
 
               <td class="text-end text-nowrap numeric due-points">
@@ -267,9 +309,13 @@
                 </span>
               </td>
 
-              <% @assessments.each do |assessment| %>
-                <% status = @participation_map&.dig([record.user_id, assessment.id]) || :not_submitted %>
-                <% status = :not_due if status == :not_submitted && !@due_points.due?(assessment.id) %>
+              <% @assessments.each_with_index do |assessment, index| %>
+                <% status = @participation_map&.dig([record.user_id, assessment.id]) ||
+                            assessment.status_without_hand_in %>
+
+                <% status = :not_due if status.in?([:not_submitted, :awaiting_record]) &&
+                                        !@due_points.due?(assessment.id) %>
+
                 <% points = @points_map&.dig([record.user_id, assessment.id]) %>
                 <% max = assessment.effective_total_points %>
 
@@ -277,10 +323,27 @@
                      status: status, variant: :compact, points: points) %>
 
                 <td
-                  class="text-center numeric small"
+                  class="text-center numeric small <%= "tests-start" if index == @sheets.size %>"
                   title="<%= badge.tooltip(assessment.title) { max } %>"
                 >
                   <%= render badge %>
+                </td>
+              <% end %>
+
+              <% if @test_points %>
+                <% test_share = @test_points.marked_percentage_of(
+                     record.user_id, @test_points_by_user.fetch(record.user_id, 0)) %>
+                <% share_classes = ["text-center text-nowrap numeric test-share",
+                                    ("tests-start" if @tests.empty?)].compact.join(" ") %>
+                <td class="<%= share_classes %>">
+                  <% if test_share.nil? %>
+                    <span class="text-muted" aria-hidden="true">&mdash;</span>
+                    <span class="visually-hidden">
+                      <%= t("student_performance.records.percentage_unavailable") %>
+                    </span>
+                  <% else %>
+                    <%= number_to_percentage(test_share, precision: 0) %>
+                  <% end %>
                 </td>
               <% end %>
 
@@ -321,15 +384,6 @@
                   <% end %>
                 </td>
               <% end %>
-
-              <td>
-                <%= link_to lecture_student_performance_record_path(
-                              @lecture, record),
-                            class: "btn btn-outline-secondary btn-sm",
-                            data: { turbo_frame: "performance-records-frame" } do %>
-                  <%= t("student_performance.records.index.details") %>
-                <% end %>
-              </td>
             </tr>
           <% end %>
         </tbody>

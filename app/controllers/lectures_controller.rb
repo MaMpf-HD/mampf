@@ -105,9 +105,17 @@ class LecturesController < ApplicationController
   def update
     return unless @lecture.valid_annotations_status?
 
-    notify_new_editors
+    attach_scanned_home_attachment
+    new_editors = editors_to_notify
     update_lecture_and_forum
+    notify_new_editors(new_editors) if @errors.empty?
     handle_update_response
+  rescue MalwareScanGate::InfectedUploadError
+    redirect_to edit_lecture_path(@lecture, tab: "home"),
+                alert: t("submission.upload_failure_malware")
+  rescue MalwareScanGate::ScannerUnavailableError
+    redirect_to edit_lecture_path(@lecture, tab: "home"),
+                alert: t("submission.upload_failure_scanner_unavailable")
   end
 
   def publish
@@ -396,17 +404,25 @@ class LecturesController < ApplicationController
     end
 
     def lecture_params
+      permitted_lecture_params.except(:home_attachment)
+    end
+
+    # Permits :home_attachment on update so a file-only request passes expect;
+    # lecture_params leaves it out, attach_scanned_home_attachment attaches it.
+    # The new-lecture form has no such field.
+    def permitted_lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
-                        :organizational_concept, :muesli, :vignettes,
+                        :organizational_concept, :vignettes,
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
                         :submission_deletion_date, :uses_exam_eligibility,
                         :annotations_status,
-                        :home_intro, :home_attachment, :remove_home_attachment]
-      if action_name == "update" && current_user.can_update_personell?(@lecture)
-        allowed_params.push({ editor_ids: [] })
+                        :home_intro, :remove_home_attachment]
+      if action_name == "update"
+        allowed_params.push(:home_attachment)
+        allowed_params.push({ editor_ids: [] }) if current_user.can_update_personell?(@lecture)
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
@@ -502,20 +518,40 @@ class LecturesController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_test")
     end
 
-    def notify_new_editors
+    # Reads the new editors before the update, which makes them editors already.
+    def editors_to_notify
       editor_ids = lecture_params[:editor_ids]
-      return if editor_ids.nil?
+      return User.none if editor_ids.nil?
 
       all_ids = editor_ids.map(&:to_i) - [0]
-      new_ids = all_ids - @lecture.editor_ids
-      recipients = User.where(id: new_ids)
+      User.where(id: all_ids - @lecture.editor_ids).to_a
+    end
+
+    def notify_new_editors(recipients)
       recipients.each { |r| LectureNotifier.notify_new_editor_by_mail(r, @lecture) }
     end
 
+    # Caches the form's file through the malware scan; the attacher refuses it
+    # as a mass-assigned attribute.
+    def attach_scanned_home_attachment
+      upload = permitted_lecture_params[:home_attachment]
+      return if upload.blank?
+      raise(ActionController::BadRequest) unless upload.respond_to?(:tempfile)
+
+      File.open(upload.tempfile.path) do |file|
+        @lecture.home_attachment_attacher.attach_cached(
+          file, metadata: { "filename" => upload.original_filename }
+        )
+      end
+    end
+
+    # Touches only after a successful update: a touch after a failed one still
+    # commits, and promotes the attachment the validation refused.
     def update_lecture_and_forum
-      @lecture.update(lecture_params)
-      @lecture.touch
-      @lecture.forum&.update(name: @lecture.forum_title)
+      if @lecture.update(lecture_params)
+        @lecture.touch
+        @lecture.forum&.update(name: @lecture.forum_title)
+      end
       @errors = @lecture.errors
     end
 

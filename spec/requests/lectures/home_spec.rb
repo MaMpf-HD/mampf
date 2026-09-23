@@ -5,13 +5,6 @@ RSpec.describe("Lectures::Home", type: :request) do
   let(:student) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: editor) }
 
-  def pdf_upload
-    Rack::Test::UploadedFile.new(
-      StringIO.new("%PDF-1.4 demo"), "application/pdf",
-      original_filename: "program.pdf"
-    )
-  end
-
   describe "GET /lectures/:id/home" do
     it "renders the teacher's intro text" do
       lecture.update!(home_intro: "<div>Welcome to the seminar</div>")
@@ -144,7 +137,7 @@ RSpec.describe("Lectures::Home", type: :request) do
 
   describe "GET /lectures/:id/home_attachment" do
     it "streams the pdf to anyone who may see the home page" do
-      lecture.update!(home_attachment: pdf_upload)
+      attach_home_pdf(lecture).save!
       sign_in student
 
       get lecture_home_attachment_path(lecture)
@@ -166,7 +159,7 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
 
     it "denies access for a non-staff user on an unpublished lecture" do
-      lecture.update!(home_attachment: pdf_upload, released: nil)
+      attach_home_pdf(lecture).update!(released: nil)
       sign_in student
 
       get lecture_home_attachment_path(lecture)

@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.describe("Tutorials", type: :request) do
   let(:lecture) { create(:lecture) }
   let(:editor) { create(:confirmed_user) }
-  let!(:tutorial) { create(:tutorial, lecture: lecture) }
+  let(:tutor) { create(:confirmed_user) }
+  let!(:tutorial) { create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: lecture) }
 
   before do
     create(:editable_user_join, user: editor, editable: lecture)
@@ -33,24 +34,143 @@ RSpec.describe("Tutorials", type: :request) do
       get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
 
       expect(response).to have_http_status(:success)
-      expect(response.body.scan("submission-row").size).to eq(5)
+      expect(Nokogiri::HTML(response.body).css("tr.submission-row").size).to eq(5)
+    end
+
+    # A test set up for next week has the latest deadline and nothing to do
+    # on it yet; the page opens on the sheet whose marking is open.
+    it "opens on the newest sheet whose marking is open, not on the one furthest ahead" do
+      sheet = create(:assignment, :expired, lecture: lecture, title: "Sheet 3",
+                                            expired_since: 2.days)
+      create(:assignment, lecture: lecture, title: "Test next week", kind: :test,
+                          deadline: 2.weeks.from_now)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+      expect(selected.text.strip).to eq(sheet.title)
+    end
+
+    it "shows the achievement asked for, and nothing of a sheet named beside it" do
+      achievement = create(:achievement, :boolean, lecture: lecture, title: "Blackboard talk")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id,
+                                                    achievement: achievement.id,
+                                                    assignment: assignment.id })
+
+      page = Nokogiri::HTML(response.body)
+      expect(page.at_css("#assignment-select option[selected]").text.strip).to eq("Blackboard talk")
+      expect(page.css("#bulk-upload-area")).to be_empty
+      expect(page.css("tr.submission-row")).to be_empty
+    end
+
+    # A lecturer tutors no group of their own; the page opens on the lecture's
+    # first one rather than on nothing.
+    it "opens on the lecture's first group for a lecturer without one" do
+      tutorial.tutors.delete(editor)
+
+      get lecture_tutorials_path(lecture)
+
+      expect(response).to have_http_status(:success)
+      expect(Nokogiri::HTML(response.body).at_css("#tutorial-select")["value"])
+        .to eq(tutorial.title)
+    end
+
+    it "says so when the lecture has no group at all" do
+      bare = create(:lecture)
+      create(:editable_user_join, user: editor, editable: bare)
+
+      get lecture_tutorials_path(bare)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(I18n.t("tutorial.no_tutorials_yet").strip)
+    end
+
+    it "leaves an achievement without an assessment off the page" do
+      achievement = create(:achievement, :boolean, lecture: lecture, title: "Old one")
+      achievement.assessment.destroy!
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id,
+                                                    achievement: achievement.id })
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).not_to include("Old one")
+    end
+
+    it "does not draw another lecture's group, whatever the URL names" do
+      achievement = create(:achievement, :boolean, lecture: lecture)
+      foreign = create(:tutorial, lecture: create(:lecture))
+      create(:tutorial_membership, tutorial: foreign, user: create(:confirmed_user,
+                                                                   name_in_tutorials: "Ola"))
+
+      get lecture_tutorials_path(lecture, params: { tutorial: foreign.id,
+                                                    achievement: achievement.id })
+
+      expect(response.body).not_to include("Ola")
+      expect(achievement.assessment.assessment_participations.where(tutorial: foreign)).to be_empty
+    end
+
+    it "opens on the first sheet to come while none is open yet" do
+      assignment.update!(deadline: 3.weeks.from_now)
+      soon = create(:assignment, lecture: lecture, title: "Sheet 1", deadline: 1.week.from_now)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+      expect(selected.text.strip).to eq(soon.title)
     end
   end
 
-  # The page somebody lands on before there is anything: it used to be
-  # unreachable, because the sidebar greyed the entry out exactly then.
-  describe "GET /lectures/:id/tutorial_overview" do
-    before { sign_in editor }
+  describe "the marking table's queries" do
+    def count_queries
+      count = 0
+      subscription = ActiveSupport::Notifications
+                     .subscribe("sql.active_record") do |*, payload|
+        count += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION|CACHE/)
+      end
+      yield
+      count
+    ensure
+      ActiveSupport::Notifications.unsubscribe(subscription)
+    end
 
-    it "offers the way to create the first group when there is none" do
-      tutorial.destroy
+    # A group of its own per measurement, every hand-in marked on every task,
+    # so that a row asking per row for its team, its marks or its tasks shows
+    # up in the count.
+    def marked_group(hand_ins)
+      built = create(:lecture, :released_for_all)
+      group = create(:tutorial, :with_tutor_by_id, tutor_id: tutor.id, lecture: built)
+      assignment = create(:assignment, :expired, lecture: built, accepted_file_type: ".pdf")
+      tasks = Array.new(3) do
+        create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+      end
+      hand_ins.times do
+        student = create(:confirmed_user)
+        create(:tutorial_membership, tutorial: group, user: student)
+        create(:submission, :with_manuscript, assignment: assignment,
+                                              tutorial: group).users << student
+        participation = create(:assessment_participation,
+                               assessment: assignment.assessment, user: student,
+                               submitted_at: 2.days.ago)
+        tasks.each do |task|
+          create(:assessment_task_point, task: task, points: 2,
+                                         assessment_participation: participation)
+        end
+      end
+      [built, group, assignment]
+    end
 
-      get lecture_tutorial_overview_path(lecture)
+    def queries_for(hand_ins)
+      built, group, assignment = marked_group(hand_ins)
+      params = { tutorial: group.id, assignment: assignment.id }
 
-      expect(response.body).to include(I18n.t("lecture.no_tutorials_yet"))
-      expect(response.body).to include(I18n.t("lecture.create_tutorials"))
-      expect(response.body)
-        .to include(CGI.escapeHTML(edit_lecture_path(lecture, tab: "groups")))
+      count_queries { get(lecture_tutorials_path(built, params: params)) }
+    end
+
+    it "does not grow with the number of hand-ins" do
+      sign_in tutor
+
+      expect(queries_for(8)).to eq(queries_for(2))
     end
   end
 
@@ -61,6 +181,22 @@ RSpec.describe("Tutorials", type: :request) do
       it "returns http success" do
         get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
         expect(response).to have_http_status(:success)
+      end
+
+      it "shows what a title and a location look like" do
+        get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("tutorial.title_placeholder"))
+        expect(response.body).to include(I18n.t("tutorial.location_placeholder"))
+      end
+
+      # Whom the select offers cannot be told from looking at it; the form
+      # says so, and where the voucher is made.
+      it "explains who can be picked as a tutor" do
+        get new_tutorial_path(lecture_id: lecture.id), as: :turbo_stream
+
+        info = ERB::Util.html_escape(I18n.t("tutorial.info.tutors"))
+        expect(response.body).to include(info[0, 60])
       end
 
       context "with a user who became a tutor by redeeming a voucher" do
@@ -138,6 +274,19 @@ RSpec.describe("Tutorials", type: :request) do
       it "returns http success" do
         get edit_tutorial_path(tutorial), as: :turbo_stream
         expect(response).to have_http_status(:success)
+      end
+
+      it "marks a tutor candidate who is enrolled in the tutorial" do
+        enrolled = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: enrolled)
+        create(:tutorial_membership, tutorial: tutorial, user: enrolled)
+        Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: enrolled)
+
+        get edit_tutorial_path(tutorial), as: :turbo_stream
+
+        option = Nokogiri::HTML(response.body).at_css("option[value='#{enrolled.id}']")
+        expect(option["data-enrolled"]).to eq("true")
+        expect(response.body).to include("enrolled-tutor-guard")
       end
     end
   end

@@ -114,6 +114,24 @@ RSpec.describe("Submissions", type: :request) do
         .to include(SubmissionCardComponent.frame_id(assignment))
     end
 
+    # The card of such a sheet offers no way in; the endpoint refuses the
+    # hand-written request the same way, and so does the form's page.
+    it "refuses a sheet that is not handed in via MaMpf" do
+      user.lectures << lecture
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+      assignment.assessment.update!(requires_submission: false)
+
+      expect { post(submissions_path, params: create_params) }
+        .not_to change(Submission, :count)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("submission.hub.card.no_digital_hand_in"))
+
+      get new_submission_path(assignment_id: assignment.id)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("submission.hub.card.no_digital_hand_in"))
+    end
+
     # The hand-in goes to the group the reader sits in - that is who marks it
     # and how it reaches the gradebook - so being enrolled is not enough.
     it "refuses somebody who sits in no group" do
@@ -438,7 +456,7 @@ RSpec.describe("Submissions", type: :request) do
       submission = hand_in(sheet_worth(20, title: "Homework 2"))
 
       sign_in tutor
-      patch reject_submission_path(submission, format: :js)
+      patch reject_submission_path(submission), as: :turbo_stream
 
       record = lecture.student_performance_records.find_by(user_id: user.id)
 
@@ -452,11 +470,41 @@ RSpec.describe("Submissions", type: :request) do
       submission = hand_in(sheet_worth(20, title: "Homework 2"))
 
       sign_in tutor
-      patch reject_submission_path(submission, format: :js)
-      patch accept_submission_path(submission, format: :js)
+      patch reject_submission_path(submission), as: :turbo_stream
+      patch accept_submission_path(submission), as: :turbo_stream
 
       expect(due_points.marked_max_for(user.id)).to eq(20)
       expect(due_points.pending_count_for(user.id)).to eq(1)
+    end
+
+    # The refused row turns into "not submitted"; the line above the table
+    # must stop counting it as a hand-in in the same answer.
+    it "brings the summary along with the refused row" do
+      submission = hand_in(sheet_worth(20, title: "Homework 2"))
+
+      sign_in tutor
+      patch reject_submission_path(submission), as: :turbo_stream
+
+      summary = Nokogiri::HTML(response.body).at_css("turbo-stream[target=marking-summary]")
+      expect(summary.text).to include(
+        I18n.t("assessment.grading_tutorial.summary.not_submitted", count: 1)
+      )
+      expect(summary.text).not_to include(
+        I18n.t("assessment.grading_tutorial.summary.pending_grading", count: 1)
+      )
+    end
+
+    it "answers with the row alone for a sheet from before there were points" do
+      legacy = create(:assignment, :expired, :without_assessment, lecture: lecture)
+      submission = create(:submission, :with_manuscript, assignment: legacy, tutorial: tutorial)
+      submission.users << user
+
+      sign_in tutor
+      patch reject_submission_path(submission), as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("submission-row-#{submission.id}")
+      expect(response.body).not_to include("marking-summary")
     end
   end
 
@@ -546,6 +594,27 @@ RSpec.describe("Submissions", type: :request) do
         get lecture_submissions_path(lecture)
 
         expect(response).to have_http_status(:success)
+      end
+
+      # A test sits in the one list with the sheets, marked as what it is,
+      # and the heading names both once there is one.
+      it "lists a marked test among the sheets, marked as a test" do
+        test = create(:assignment, :expired, lecture: lecture, title: "Test 1",
+                                             expired_since: 1.week, kind: :test)
+        create(:assessment_task, assessment: test.assessment, max_points: 10)
+        mark(test, [8])
+
+        get lecture_submissions_path(lecture)
+
+        page = Nokogiri::HTML(response.body)
+        expect(page.at_css("#sheets-heading").text.squish)
+          .to eq(I18n.t("submission.hub.heading_with_tests"))
+        row = page.at_css("details#sheet_assignment_#{test.id}")
+        expect(row.text).to include("Test 1")
+        expect(row.text).to include(I18n.t("assessment.test.badge"))
+        expect(row.text).to include("8")
+        expect(response.body).to include(I18n.t("submission.hub.test_count", count: 1))
+        expect(response.body).not_to include(I18n.t("submission.hub.sheet_count", count: 0))
       end
 
       it "turns a tutor of the lecture away" do
@@ -876,6 +945,96 @@ RSpec.describe("Submissions", type: :request) do
           .to include(SubmissionCardComponent.frame_id(later))
       end
     end
+
+    describe "what is new" do
+      let(:lead) { I18n.t("submission.hub.news.lead") }
+      let(:seen_all) { I18n.t("submission.hub.news.seen_all") }
+
+      it "names a corrected sheet the reader has not looked at, with a way to clear it" do
+        hand_in(sheet(title: "Homework 8"), correction: true)
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).to include(lead)
+        expect(response.body).to include(seen_all)
+        expect(response.body).to include(I18n.t("submission.hub.news.marker"))
+      end
+
+      it "says nothing once every sheet has been looked at" do
+        assignment = sheet(title: "Homework 8")
+        hand_in(assignment, correction: true)
+        AssignmentSighting.stamp!(user: user, assignment: assignment)
+
+        get lecture_submissions_path(lecture)
+
+        expect(response.body).not_to include(lead)
+        expect(response.body).not_to include(seen_all)
+      end
+
+      describe "POST /submissions/seen" do
+        let(:assignment) { sheet(title: "Homework 8") }
+
+        before { hand_in(assignment, correction: true) }
+
+        it "stamps the reader's look and takes the marker off the page" do
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          sighting = AssignmentSighting.find_by!(user: user, assignment: assignment)
+          expect(sighting.seen_at).to be_within(5.seconds).of(Time.current)
+          expect(response.body).to include("news_assignment_#{assignment.id}")
+          expect(response.body).not_to include(lead)
+        end
+
+        it "leaves a partner's marker standing" do
+          partner = create(:confirmed_user)
+          Submission.last.users << partner
+
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          expect(AssignmentSighting.where(user: partner)).to be_empty
+        end
+
+        it "turns a stranger away" do
+          sign_in create(:confirmed_user)
+
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          expect(response).to redirect_to(root_url)
+          expect(AssignmentSighting.count).to eq(0)
+        end
+      end
+
+      describe "POST /lectures/:id/submissions/seen_all" do
+        it "stamps every sheet with news and nothing else" do
+          fresh = sheet(title: "Homework 8")
+          hand_in(fresh, correction: true)
+          marked = sheet(title: "Homework 7")
+          mark(marked, [1.5, 2])
+          hand_in(sheet(title: "Homework 6"))
+
+          post lecture_sheets_seen_path(lecture), as: :turbo_stream
+
+          expect(AssignmentSighting.where(user: user).map(&:assignment))
+            .to contain_exactly(fresh, marked)
+          expect(response.body).to include("news_assignment_#{fresh.id}")
+          expect(response.body).to include("news_assignment_#{marked.id}")
+          expect(response.body).not_to include(seen_all)
+        end
+
+        it "turns a stranger away" do
+          hand_in(sheet(title: "Homework 8"), correction: true)
+          sign_in create(:confirmed_user)
+
+          post lecture_sheets_seen_path(lecture), as: :turbo_stream
+
+          expect(response).to redirect_to(root_url)
+          expect(AssignmentSighting.count).to eq(0)
+        end
+      end
+    end
   end
 
   # Every student action answers with the card's own Turbo frame. What matters
@@ -982,6 +1141,170 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
+    # The file checks answer with sentences by attribute, not error codes; the
+    # form shows them like any other refusal.
+    describe "a file the sheet does not take" do
+      it "is refused with the reason on the form" do
+        submission = hand_in
+        cached = SubmissionUploader.upload(File.open("spec/files/manuscript.pdf", "rb"),
+                                           :submission_cache,
+                                           metadata: { "filename" => "notes.zip" })
+
+        patch submission_path(submission), params: {
+          submission: { manuscript: cached.to_json, detach_user_manuscript: "false",
+                        known_file_at: submission.last_modification_by_users_at&.iso8601(6) }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        reason = CGI.escapeHTML(
+          I18n.t("submission.wrong_file_type", file_type: ".zip", accepted_file_type: ".pdf").strip
+        )
+        # once, next to the Save button, where every form puts what no field can show
+        expect(response.body.scan(reason).size).to eq(1)
+        expect(Nokogiri::HTML(response.body).at_css("input[type=submit] + .invalid-feedback").text)
+          .to include(CGI.unescapeHTML(reason))
+        expect(submission.reload.manuscript_filename).to eq("manuscript.pdf")
+      end
+    end
+
+    # Two team members with the form open: the second save must not overwrite
+    # what the first did unseen. The form carries the time of the file it
+    # shows, and a save from an older form is refused once.
+    describe "saving from a form older than the team's last change" do
+      def save(submission, known_file_at:, manuscript: "", remove: false)
+        patch(submission_path(submission), params: {
+                submission: { manuscript: manuscript,
+                              detach_user_manuscript: remove.to_s,
+                              known_file_at: known_file_at }
+              })
+      end
+
+      # Through the endpoint, so the file carries the scan and the intent the
+      # save checks; the answer is the cached data the form would post.
+      def cached_upload(submission, name)
+        file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
+                                            "application/pdf", original_filename: name)
+        post("/submissions/upload", params: { file: file },
+                                    headers: upload_intent_headers(SubmissionUploader,
+                                                                   user: user,
+                                                                   target: submission))
+        response.body
+      end
+
+      def news(key, **args)
+        CGI.escapeHTML(
+          I18n.t("activerecord.errors.models.submission.attributes.base.#{key}", **args).strip
+        )
+      end
+
+      def stale_hand_in
+        hand_in.tap do |submission|
+          submission.update!(last_modification_by_users_at: 5.minutes.ago)
+        end
+      end
+
+      let(:old_form) { 10.minutes.ago.iso8601(6) }
+
+      it "refuses a replacement, names the newer file, and keeps the reader's upload" do
+        submission = stale_hand_in
+        stored = submission.manuscript.id
+        cached = cached_upload(submission, "mine.pdf")
+
+        save(submission, known_file_at: old_form, manuscript: cached)
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(frame_id)
+        expect(response.body).to include(
+          news(:changed_meanwhile,
+               time: I18n.l(submission.last_modification_by_users_at, format: :short),
+               filename: submission.manuscript_filename)
+        )
+        expect(Nokogiri::HTML(response.body).at_css("input[name='submission[manuscript]']")["value"])
+          .to eq(cached)
+        expect(submission.reload.manuscript.id).to eq(stored)
+      end
+
+      it "takes the replacement from a form that knows the newer file" do
+        submission = stale_hand_in
+        stored = submission.manuscript.id
+
+        save(submission, known_file_at: submission.last_modification_by_users_at.iso8601(6),
+                         manuscript: cached_upload(submission, "mine.pdf"))
+
+        expect(response).to have_http_status(:success)
+        expect(submission.reload.manuscript.id).not_to eq(stored)
+        expect(submission.manuscript_filename).to eq("mine.pdf")
+      end
+
+      it "says so when the file was taken away meanwhile" do
+        submission = hand_in
+        submission.update!(manuscript: nil, last_modification_by_users_at: 5.minutes.ago)
+
+        save(submission, known_file_at: old_form,
+                         manuscript: cached_upload(submission, "mine.pdf"))
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(news(:removed_meanwhile))
+      end
+
+      # The form comes back showing the team's file, so the removal has to be
+      # asked for again - a save that just repeats the form must not delete.
+      it "refuses a removal, says the file has to be removed anew, and keeps it" do
+        submission = stale_hand_in
+
+        save(submission, known_file_at: old_form, remove: true)
+
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to include(
+          news(:changed_before_removal,
+               time: I18n.l(submission.last_modification_by_users_at, format: :short),
+               filename: submission.manuscript_filename)
+        )
+        expect(Nokogiri::HTML(response.body)
+                 .at_css("input[name='submission[detach_user_manuscript]']")["value"])
+          .to eq("false")
+        expect(submission.reload.manuscript).to be_present
+
+        save(submission, known_file_at: submission.last_modification_by_users_at.iso8601(6),
+                         remove: true)
+
+        expect(response).to have_http_status(:success)
+        expect(submission.reload.manuscript).to be_nil
+      end
+
+      it "lets a removal of a file the team removed already pass as done" do
+        submission = hand_in
+        submission.update!(manuscript: nil, last_modification_by_users_at: 5.minutes.ago)
+
+        expect do
+          save(submission, known_file_at: old_form, remove: true)
+        end.not_to have_enqueued_mail
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include(I18n.t("submission.hub.chips.nothing_handed_in"))
+      end
+
+      it "refuses whatever is not the time of the file, whatever shape it has" do
+        submission = stale_hand_in
+
+        ["2026-99-99", "garbage", ["2026-09-19"], { "at" => "2026-09-19" },
+         1.day.from_now.iso8601(6)].each do |value|
+          save(submission, known_file_at: value, remove: true)
+
+          expect(response).to have_http_status(:conflict), value.inspect
+        end
+        expect(submission.reload.manuscript).to be_present
+      end
+
+      it "treats a form from before there was a file as older" do
+        submission = stale_hand_in
+
+        save(submission, known_file_at: "", remove: true)
+
+        expect(response).to have_http_status(:conflict)
+        expect(submission.reload.manuscript).to be_present
+      end
+    end
+
     # The gate is the ability, not the controller: `SubmissionAbility` allows
     # these actions only while `Submission#not_updatable?` is false, and once the
     # grace period is over that is what a closed sheet is.
@@ -1009,6 +1332,86 @@ RSpec.describe("Submissions", type: :request) do
 
         expect(response).to redirect_to(root_url)
         expect(Submission.exists?(submission.id)).to be(true)
+      end
+
+      # The deadline closes the upload, not the team: whoever forgot to join
+      # still may with the code, until the team has been marked - and a
+      # closed sheet has no card, so the whole page is asked for again.
+      describe "joining late" do
+        let(:partner) { create(:confirmed_user, name_in_tutorials: "Ada") }
+        let(:team) do
+          create(:tutorial_membership, tutorial: tutorial, user: partner)
+          partner.lectures << lecture
+          submission = create(:submission, :with_manuscript,
+                              assignment: closed_assignment, tutorial: tutorial,
+                              last_modification_by_users_at: closed_assignment.deadline - 1.hour)
+          submission.users << partner
+          submission
+        end
+
+        # Rows are seeded for members of the lecture, not for subscribers.
+        before { create(:lecture_membership, lecture: lecture, user: user) }
+
+        def join_late
+          post(join_submission_path, params: {
+                 join: { code: team.token, assignment_id: closed_assignment.id }
+               })
+        end
+
+        it "takes the reader in with the team's code and sends them back to the hub" do
+          join_late
+
+          expect(response).to redirect_to(lecture_submissions_path(lecture))
+          expect(flash[:notice]).to be_present
+          expect(team.reload.users).to include(user)
+          expect(closed_assignment.assessment.assessment_participations.find_by(user: user))
+            .to be_present
+        end
+
+        # The file and its time are the team's; a join changes neither.
+        it "leaves the hand-in in time" do
+          expect(team).to be_in_time
+
+          join_late
+
+          expect(team.reload).to be_in_time
+        end
+
+        it "refuses once the team has been marked, and says whom to ask" do
+          task = create(:assessment_task, assessment: closed_assignment.assessment)
+          row = create(:assessment_participation, assessment: closed_assignment.assessment,
+                                                  user: partner, submitted_at: 2.days.ago)
+          create(:assessment_task_point, assessment_participation: row, task: task, points: 3)
+
+          join_late
+
+          expect(response).to redirect_to(lecture_submissions_path(lecture))
+          expect(flash[:alert]).to eq(I18n.t("submission.team_marked"))
+          expect(team.reload.users).not_to include(user)
+        end
+
+        # The same boundary from the other side: a row of one's own with marks
+        # on it would be wiped by the join.
+        it "refuses somebody marked on a row of their own" do
+          task = create(:assessment_task, assessment: closed_assignment.assessment)
+          own = create(:assessment_participation, assessment: closed_assignment.assessment,
+                                                  user: user, submitted_at: 2.days.ago)
+          create(:assessment_task_point, assessment_participation: own, task: task, points: 2)
+
+          join_late
+
+          expect(flash[:alert]).to eq(I18n.t("submission.marked_on_own"))
+          expect(team.reload.users).not_to include(user)
+          expect(own.reload.task_points.sole.points).to eq(2)
+        end
+
+        it "offers the code on the closed sheet's row" do
+          team
+
+          get lecture_submissions_path(lecture)
+
+          expect(response.body).to include(I18n.t("submission.hub.fold.join_late").strip)
+        end
       end
     end
 
@@ -1174,10 +1577,8 @@ RSpec.describe("Submissions", type: :request) do
       end
     end
 
-    # `clear_submitted_at` writes with `update_all`, which skips the callback
-    # that keeps the materialized record honest. Everything downstream reads
-    # that record - the performance table, the admission rule - so what is
-    # checked here is that the record is put back in step.
+    # What is with the tutor is read off the participations' stamp, so taking
+    # a file back has to take the stamp with it.
     describe "the standing when a hand-in stops waiting to be marked" do
       # Something marked, so the block has a total to talk about.
       def a_marked_sheet
@@ -1206,34 +1607,34 @@ RSpec.describe("Submissions", type: :request) do
         hand_in
       end
 
-      def pending_points
-        lecture.student_performance_records.find_by(user_id: user.id)
-               .points_max_pending_materialized
+      def handed_in?
+        assignment.assessment.assessment_participations.find_by(user: user)
+                  .submitted_at.present?
       end
 
-      it "stops counting the points of a hand-in the reader deleted" do
+      it "takes the stamp off a hand-in the reader deleted" do
         submission = waiting_beside_a_marked_sheet
 
         expect { delete(submission_path(submission)) }
-          .to change { pending_points }.from(8).to(0)
+          .to change { handed_in? }.from(true).to(false)
       end
 
-      it "stops counting them when the reader leaves the team instead" do
+      it "takes it off when the reader leaves the team instead" do
         submission = waiting_beside_a_marked_sheet
         submission.users << create(:confirmed_user)
 
         expect { delete(leave_submission_path(submission)) }
-          .to change { pending_points }.from(8).to(0)
+          .to change { handed_in? }.from(true).to(false)
       end
 
-      it "stops counting them when the file is taken back out" do
+      it "takes it off when the file is taken back out" do
         submission = waiting_beside_a_marked_sheet
 
         expect do
           patch(submission_path(submission), params: {
                   submission: { manuscript: "", detach_user_manuscript: "true" }
                 })
-        end.to change { pending_points }.from(8).to(0)
+        end.to change { handed_in? }.from(true).to(false)
       end
 
       # A closed sheet is in the reckoning, so this is the one the page itself
@@ -1280,7 +1681,7 @@ RSpec.describe("Submissions", type: :request) do
         it "stops naming it once the tutor has rejected the hand-in" do
           submission = closed_sheet_waiting
 
-          as_tutor { patch reject_submission_path(submission, format: :js) }
+          as_tutor { patch reject_submission_path(submission), as: :turbo_stream }
           get lecture_submissions_path(lecture)
 
           expect(response.body).to include(StandingComponent::TARGET)
@@ -1294,8 +1695,8 @@ RSpec.describe("Submissions", type: :request) do
           submission = closed_sheet_waiting
 
           as_tutor do
-            patch reject_submission_path(submission, format: :js)
-            patch accept_submission_path(submission, format: :js)
+            patch reject_submission_path(submission), as: :turbo_stream
+            patch accept_submission_path(submission), as: :turbo_stream
           end
           get lecture_submissions_path(lecture)
 

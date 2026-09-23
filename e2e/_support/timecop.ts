@@ -6,25 +6,44 @@ import { callBackend } from "./backend";
  * time - so use it for what the backend decides (a deadline passing, a grace
  * period running out), not for anything the page works out in JavaScript.
  *
- * Always pair a `travelTo` with a `resetClock`, or every test after it inherits
- * the new date.
+ * Reach it through the `timeCop` fixture, which puts the clock back when the
+ * test ends - however it ends. A `finally` in the test cannot: after a timeout
+ * the browser contexts are gone before it runs, and every test after inherits
+ * the date.
  */
-export async function travelTo(
-  context: APIRequestContext, when: Date,
-): Promise<void> {
-  // Sent as UTC parts: the runner and the server need not agree on a zone, and
-  // an hour's difference is exactly the kind that makes a deadline test lie.
-  await callBackend(context, "timecop/travel", {
-    year: when.getUTCFullYear(),
-    month: when.getUTCMonth() + 1,
-    day: when.getUTCDate(),
-    hours: when.getUTCHours(),
-    minutes: when.getUTCMinutes(),
-    seconds: when.getUTCSeconds(),
-    use_utc: "true",
-  });
-}
+export class TimeCop {
+  private readonly context: APIRequestContext;
+  private travelled?: Date;
 
-export async function resetClock(context: APIRequestContext): Promise<void> {
-  await callBackend(context, "timecop/reset", {});
+  constructor(context: APIRequestContext) {
+    this.context = context;
+  }
+
+  async travelToDate(when: Date): Promise<void> {
+    this.travelled = when;
+    // Sent as UTC parts: the runner and the server need not agree on a zone, and
+    // an hour's difference is exactly the kind that makes a deadline test lie.
+    await callBackend(this.context, "timecop/travel", {
+      year: when.getUTCFullYear(),
+      month: when.getUTCMonth() + 1,
+      day: when.getUTCDate(),
+      hours: when.getUTCHours(),
+      minutes: when.getUTCMinutes(),
+      seconds: when.getUTCSeconds(),
+      use_utc: "true",
+    });
+  }
+
+  // Counted from where the server's clock stands: the date travelled to
+  // last, or now - so two calls move two steps, not one twice.
+  async moveAheadDays(days: number): Promise<void> {
+    const when = new Date(this.travelled ?? Date.now());
+    when.setUTCDate(when.getUTCDate() + days);
+    await this.travelToDate(when);
+  }
+
+  async reset(): Promise<void> {
+    this.travelled = undefined;
+    await callBackend(this.context, "timecop/reset", {});
+  }
 }

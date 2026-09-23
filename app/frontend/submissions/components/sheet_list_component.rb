@@ -14,7 +14,16 @@ class SheetListComponent < ViewComponent::Base
   end
 
   def count_label
-    t("submission.hub.sheet_count", count: sheets.size)
+    tests, homework = sheets.partition { |sheet| sheet.assignment.kind_test? }
+    parts = []
+    parts << t("submission.hub.sheet_count", count: homework.size) if homework.any? || tests.empty?
+    parts << t("submission.hub.test_count", count: tests.size) if tests.any?
+    parts.join(", ")
+  end
+
+  def heading
+    with_tests = (sheets + due).any? { |sheet| sheet.assignment.kind_test? }
+    t("submission.hub.#{with_tests ? "heading_with_tests" : "heading"}")
   end
 
   # Before the first sheet has come back there is nothing to list, and saying

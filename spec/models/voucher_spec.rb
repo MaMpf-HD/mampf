@@ -32,11 +32,16 @@ RSpec.describe(Voucher, type: :model) do
       end
 
       it "sets the expiration date correctly based on the role" do
-        Voucher::ROLE_HASH.each_key do |role|
+        Voucher.roles_for_lecture(lecture).each do |role|
           voucher = build(:voucher, lecture: lecture, role: role)
           voucher.save
           expect(voucher.expires_at).to eq(voucher.created_at + expiration_days(role).days)
         end
+      end
+
+      it "gives a speaker voucher its longer run" do
+        voucher = create(:voucher, :speaker, lecture: seminar)
+        expect(voucher.expires_at).to eq(voucher.created_at + Voucher::SPEAKER_EXPIRATION_DAYS.days)
       end
     end
 
@@ -53,36 +58,23 @@ RSpec.describe(Voucher, type: :model) do
       end
     end
 
-    describe "#ensure_speaker_vouchers_only_for_seminars" do
-      context "when the lecture is a seminar" do
-        let(:voucher) { build(:voucher, :speaker, lecture: seminar) }
-
-        it "does not add an error" do
-          expect(voucher).to be_valid
-          expect(voucher.save).to be_truthy
-          expect(voucher.errors[:role]).to be_empty
-        end
-      end
-
-      context "when the lecture is not a seminar" do
-        let(:voucher) { build(:voucher, :speaker, lecture: lecture) }
-
-        it "rolls back and adds an error" do
-          expect(voucher.save).to be_falsey
-          expect(voucher.errors[:role]).to(
-            include(I18n.t("activerecord.errors.models.voucher.attributes." \
-                           "role.speaker_vouchers_only_for_seminars"))
-          )
-        end
-      end
-    end
-
     describe "#ensure_role_valid_for_lecture" do
       context "when the role is not offered for the lecture" do
         # a seminar's groups are talks, so it offers no tutor role
         let(:voucher) { build(:voucher, :tutor, lecture: seminar) }
 
         it "rolls back and adds an error" do
+          expect(voucher.save).to be_falsey
+          expect(voucher.errors[:role]).to(
+            include(I18n.t("activerecord.errors.models.voucher.attributes." \
+                           "role.invalid_for_lecture"))
+          )
+        end
+      end
+
+      context "when the role is speaker" do
+        it "refuses even for a seminar, where talks come through registration" do
+          voucher = build(:voucher, :speaker, lecture: seminar)
           expect(voucher.save).to be_falsey
           expect(voucher.errors[:role]).to(
             include(I18n.t("activerecord.errors.models.voucher.attributes." \
@@ -129,14 +121,14 @@ RSpec.describe(Voucher, type: :model) do
   describe "class methods" do
     describe ".roles_for_lecture" do
       context "when lecture is a seminar" do
-        it "returns all roles except :tutor" do
-          expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys - [:tutor])
+        it "returns the staff roles except :tutor" do
+          expect(Voucher.roles_for_lecture(seminar)).to eq([:editor, :teacher])
         end
       end
 
       context "when lecture is not a seminar" do
-        it "returns all roles except :speaker" do
-          expect(Voucher.roles_for_lecture(lecture)).to eq(Voucher::ROLE_HASH.keys - [:speaker])
+        it "returns the staff roles" do
+          expect(Voucher.roles_for_lecture(lecture)).to eq([:tutor, :editor, :teacher])
         end
       end
     end

@@ -90,6 +90,52 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
     end
   end
 
+  # The deadline is what the reader needs from this card; every action on it
+  # would fail, because the sheet is collected outside MaMpf.
+  describe "a sheet that is not handed in via MaMpf" do
+    let(:assignment) do
+      create(:assignment, lecture: lecture, title: "Homework 11",
+                          deadline: 3.days.from_now, requires_submission: false)
+    end
+
+    it "keeps the deadline and the worth, and offers nothing to do" do
+      create(:assessment_task, assessment: assignment.assessment, max_points: 6)
+
+      content = render_card
+
+      expect(content).to include("Homework 11")
+      expect(content).to include(I18n.t("submission.hub.card.hand_in_elsewhere"))
+      expect(content).to include(I18n.t("submission.hub.card.worth", count: 1, points: "6"))
+      expect(content).not_to include("PDF")
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
+      expect(content).not_to include(I18n.t("submission.hub.card.join"))
+      expect(content).not_to include(I18n.t("submission.hub.chips.nothing_handed_in"))
+    end
+  end
+
+  # A test names its week and the tutorial; there is nothing to do on the
+  # card, and no sentence about MaMpf - the tutorial says where it happens.
+  describe "a test" do
+    let(:assignment) do
+      create(:assignment, lecture: lecture, title: "Test 1",
+                          deadline: 2.weeks.from_now, kind: :test)
+    end
+
+    it "shows its week, the tutorial and the worth, and nothing to do" do
+      create(:assessment_task, assessment: assignment.assessment, max_points: 10)
+
+      content = render_card
+
+      expect(content).to include("Test 1")
+      expect(content).to include(I18n.t("assessment.test.week"))
+      expect(content).to include(I18n.t("submission.hub.card.in_tutorial"))
+      expect(content).to include(I18n.t("submission.hub.card.worth", count: 1, points: "10"))
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in_elsewhere"))
+      expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
+      expect(content).not_to include("PDF")
+    end
+  end
+
   describe "a sheet nothing has been handed in for" do
     it "offers both ways to start and says how they work" do
       content = render_card
@@ -223,6 +269,24 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       expect(content).to include(
         "aria-label=\"#{I18n.t("submission.hub.fold.correction_label")}: manuscript.pdf\""
       )
+    end
+
+    it "names both files for the eye once a correction is back" do
+      hand_in([:with_manuscript, :with_correction])
+
+      content = Nokogiri::HTML.fragment(render_card)
+      roles = content.css(".file-pill .file-role").map { |node| node.text.strip }
+
+      expect(roles).to eq([I18n.t("submission.hub.fold.handed_in_label"),
+                           I18n.t("submission.hub.fold.correction_label")])
+    end
+
+    it "leaves a lone hand-in unlabelled" do
+      hand_in
+
+      content = Nokogiri::HTML.fragment(render_card)
+
+      expect(content.css(".file-pill .file-role")).to be_empty
     end
 
     it "offers to delete a hand-in the reader made alone, and says what that does" do

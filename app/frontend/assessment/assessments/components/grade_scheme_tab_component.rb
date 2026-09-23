@@ -67,6 +67,19 @@ class GradeSchemeTabComponent < ViewComponent::Base
               .count
   end
 
+  # Rows the scheme graded whose points moved since: a re-apply brings them
+  # up to date, where a grade entered by hand stays.
+  def changed_since_graded_count
+    return 0 unless scheme_applied?
+
+    @changed_since_graded_count ||=
+      Assessment::GradeSchemeApplier.new(assessment.grade_scheme).changed_since_scheme_graded.size
+  end
+
+  def reapply_count
+    ungraded_reviewed_count + changed_since_graded_count
+  end
+
   def graded_count
     @graded_count ||= assessment.assessment_participations
                                 .where.not(grade_numeric: nil)

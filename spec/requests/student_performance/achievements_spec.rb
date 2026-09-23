@@ -156,7 +156,7 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
 
   describe "PATCH /lectures/:lecture_id/performance/achievements/:id" do
     let!(:achievement) do
-      FactoryBot.create(:achievement, lecture: lecture)
+      FactoryBot.create(:achievement, :percentage, lecture: lecture, threshold: 80)
     end
 
     context "as an editor" do
@@ -191,8 +191,6 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
       end
 
       it "returns an unprocessable turbo response for blank threshold" do
-        achievement.update!(value_type: :percentage, threshold: 80.0)
-
         patch lecture_student_performance_achievement_path(lecture, achievement),
               params: {
                 achievement: {
@@ -212,6 +210,27 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         expect(response.body).to include(
           %(data-achievement-form-original-threshold-value="80.0")
         )
+      end
+
+      it "keeps the type once a value has been entered, and says so" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { value_type: "boolean", threshold: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(achievement.reload).to be_percentage
+        assert_flash_error
+        expect(response.body).to include(
+          I18n.t("activerecord.errors.models.achievement.attributes.value_type.fixed_by_values")
+        )
+      end
+
+      it "moves the threshold with values entered" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { threshold: "90" } },
+              as: :turbo_stream
+
+        expect(achievement.reload.threshold).to eq(90)
       end
 
       it "renders validation errors only through invalid-feedback" do
@@ -252,22 +271,24 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
         end.to change(Achievement, :count).by(-1)
       end
 
-      it "explains a refused destroy in words a teacher can act on" do
-        allow_any_instance_of(Achievement).to receive(:destroy) do |record|
-          record.errors.add(:base, "Achievement is still in use")
-          false
-        end
+      it "keeps an achievement somebody has a value on, and says so in words" do
+        student = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: student)
+        achievement.assessment.assessment_participations.find_by!(user: student)
+                   .update!(grade_text: Achievement::PASSED)
 
-        delete lecture_student_performance_achievement_path(
-          lecture, achievement
-        ), as: :turbo_stream
+        expect do
+          delete(lecture_student_performance_achievement_path(
+                   lecture, achievement
+                 ), as: :turbo_stream)
+        end.not_to change(Achievement, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
         assert_flash_error
         expect(response.body).to include(
-          I18n.t("assessment.achievements.errors.referenced_by_rules")
+          I18n.t("assessment.achievement_not_destructible.has_values")
         )
-        expect(response.body).not_to include("Achievement is still in use")
+        expect(response.body).not_to include("rule_achievements")
       end
 
       context "when referenced by a rule" do
@@ -285,11 +306,14 @@ RSpec.describe("StudentPerformance::Achievements", type: :request) do
           end.not_to change(Achievement, :count)
         end
 
-        it "returns unprocessable_content for turbo requests" do
+        it "returns unprocessable_content for turbo requests, naming the rule" do
           delete lecture_student_performance_achievement_path(
             lecture, achievement
           ), as: :turbo_stream
           expect(response).to have_http_status(:unprocessable_content)
+          expect(response.body).to include(
+            I18n.t("assessment.achievement_not_destructible.referenced_by_rules")
+          )
         end
       end
     end

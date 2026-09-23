@@ -47,6 +47,7 @@ $container-max-widths: (
 @import "~/styles/thyme_feedback.scss";
 @import "~/styles/users.scss";
 @import "~/styles/submissions.scss";
+@import "~/styles/assessment_table.scss";
 @import "~/styles/vertices.scss";
 @import "~/styles/link.scss";
 @import "trix";
@@ -297,6 +298,10 @@ a {
 
 .small-width {
   max-width: $small-width;
+}
+
+.medium-width {
+  max-width: $medium-width;
 }
 
 .subtle-background {

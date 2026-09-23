@@ -50,9 +50,12 @@ test.describe("exam eligibility decisions", () => {
 
     await expect(teacher.page.getByRole("link", { name: "Undecided" }))
       .toBeVisible();
+    // nothing to accept while sheets may still come: the card says so, and
+    // no sweep is offered
+    await expect(teacher.page.getByText("Assignment list still open")).toBeVisible();
     await expect(teacher.page.getByRole("button", {
-      name: "Accept Open Proposals",
-    })).toBeVisible();
+      name: "Accept proposals",
+    })).toHaveCount(0);
     expect(await lecture.__call("student_performance_certifications"))
       .toHaveLength(0);
   });
@@ -70,8 +73,12 @@ test.describe("exam eligibility decisions", () => {
 
     const page = new AssessmentDashboardPage(teacher.page, lecture.id);
     await openEligibility(page);
-    await teacher.page.getByRole("button", { name: "Accept Open Proposals" })
-      .click();
+    // the sweep asks back with what it would decide
+    teacher.page.on("dialog", (dialog) => {
+      expect(dialog.message()).toContain("1 eligible, 1 not eligible");
+      dialog.accept();
+    });
+    await teacher.page.getByRole("button", { name: "Accept proposals" }).click();
 
     await expect(teacher.page.getByText("decisions accepted.")).toBeVisible();
     expect(await lecture.__call("student_performance_certifications"))
@@ -138,7 +145,7 @@ test.describe("exam eligibility decisions", () => {
     await expect(teacher.page.getByText("No active eligibility rule configured"))
       .toBeVisible();
     await expect(teacher.page.getByRole("button", {
-      name: "Accept Open Proposals",
+      name: "Accept proposals",
     })).toHaveCount(0);
   });
 

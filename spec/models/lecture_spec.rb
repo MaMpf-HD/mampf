@@ -12,11 +12,6 @@ RSpec.describe(Lecture, type: :model) do
   describe "lecture home page content" do
     let(:lecture) { create(:lecture) }
 
-    def pdf_upload(content = "%PDF-1.4 demo", name = "program.pdf")
-      Rack::Test::UploadedFile.new(StringIO.new(content), "application/pdf",
-                                   original_filename: name)
-    end
-
     describe "#home_content?" do
       it "is false when neither intro nor attachment is set" do
         expect(lecture.home_content?).to be(false)
@@ -28,7 +23,7 @@ RSpec.describe(Lecture, type: :model) do
       end
 
       it "is true with an attachment" do
-        lecture.home_attachment = pdf_upload
+        attach_home_pdf(lecture)
         expect(lecture.home_content?).to be(true)
       end
 
@@ -52,19 +47,19 @@ RSpec.describe(Lecture, type: :model) do
       end
 
       it "returns the uploaded filename" do
-        lecture.update!(home_attachment: pdf_upload("%PDF-1.4 demo", "seminar.pdf"))
-        expect(lecture.home_attachment_filename).to eq("seminar.pdf")
+        attach_home_pdf(lecture, "%PDF-1.4 demo", "seminar.pdf").save!
+        expect(lecture.reload.home_attachment_filename).to eq("seminar.pdf")
       end
     end
 
     describe "home_attachment validation" do
       it "accepts a pdf" do
-        lecture.home_attachment = pdf_upload
+        attach_home_pdf(lecture)
         expect(lecture).to be_valid
       end
 
       it "rejects a non-pdf (content-sniffed, not by extension)" do
-        lecture.home_attachment = pdf_upload("just some text", "program.pdf")
+        attach_home_pdf(lecture, "just some text", "program.pdf")
         expect(lecture).to be_invalid
       end
     end
@@ -148,6 +143,22 @@ RSpec.describe(Lecture, type: :model) do
     end
     it "has one sections in each chapter" do
       expect(@lecture.chapters.map { |c| c.sections.size }).to eq([1])
+    end
+  end
+
+  describe "#graders_with_inheritance" do
+    let(:lecture) { create(:lecture) }
+    let(:lecture_editor) { create(:confirmed_user) }
+    let(:module_editor) { create(:confirmed_user) }
+
+    before do
+      lecture.editors << lecture_editor
+      lecture.course.editors << module_editor
+    end
+
+    it "lists the teacher and the editors of lecture and module" do
+      expect(lecture.graders_with_inheritance)
+        .to contain_exactly(lecture.teacher, lecture_editor, module_editor)
     end
   end
 

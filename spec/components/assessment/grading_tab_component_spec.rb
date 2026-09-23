@@ -15,7 +15,9 @@ RSpec.describe(GradingTabComponent, type: :component) do
 
       it "renders the scheme section" do
         render_inline(component)
-        expect(rendered_content).to include("data-cy=\"grade-scheme-tab\"")
+        expect(rendered_content).to include(
+          I18n.t("assessment.grade_scheme.create_button")
+        )
       end
 
       it "renders the roster heading and table" do

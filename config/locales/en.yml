@@ -50,7 +50,6 @@ en:
       singular: 'Quiz Remark'
       plural: 'Quiz Remarks'
       short: 'Rem'
-    muesli: 'MUESLI'
     board: 'Board'
     comments: 'Comments'
     organizational_html: 'General Information'
@@ -393,6 +392,10 @@ en:
           homepage. This can be useful if it is an announcement of a server
           downtime.
     lecture:
+      tutors_overview:
+        hint_html: "Students become tutors by redeeming a tutor voucher (see below); editors and the teacher can be picked right away. On the %{link} tab tutors are put on their tutorials. This is who tutors what."
+        none_yet: "No tutors yet. Create a tutor voucher below and send it to the people who are to become tutors."
+        no_tutorial_yet: "redeemed a voucher, not on a tutorial yet"
       updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
@@ -596,10 +599,6 @@ en:
         organizational_on_top: >
           If you check this box, the page for general information will be the
           starting page for this event series.
-        muesli: >
-          If you check this box, the link to MUESLI will be activated in the
-          sidebar for this event series.
-          their profile settings.
         vignettes: >
           If you check this box, the vignettes of this event series appear in
           the sidebar for everyone who can see its contents.
@@ -697,9 +696,6 @@ en:
           status for this event series. The previous teacher will be demoted
           and becomes an editor. Such a voucher will be invalidated directly
           after its redemption.
-        voucher_for_speaker: >
-          Vouchers for speakers can be redeemed by users to obtain speaker
-          status for this seminar and to directly take over talks.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -730,7 +726,6 @@ en:
       imported_media: 'Imported Media'
       organizational_visible: 'General information visible'
       organizational_on_top: 'General Information as start page'
-      uses_muesli: 'Event series uses MUESLI'
       uses_vignettes: 'Event series uses vignettes'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'
@@ -957,11 +952,9 @@ en:
         speakers: >
           Here you can select the speakers of the talk. They can edit the talk
           and add media to it. You can only select users who have the status of
-          speaker in the seminar, or editors or yourself. In order to grant
-          students the status of speaker, you have to create a voucher in
-          the "People/Tutorials" tab. You have to communicate the voucher to
-          the students outside of MaMpf. The voucher can then be redeemed by the
-          students.
+          speaker in the seminar, or editors or yourself. Students become
+          speakers through a registration process for the talks, set up on the
+          "Groups" tab.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -1328,11 +1321,13 @@ en:
           The publication will not precisely occur at the right second, but it
           should not be later than around a minute after the given time.
         assignment_settings: >
-          Settings that will hold for <i>all</i> assignments in this lecture
-          can be adjusted on the lecture page under "Assignments".
+          Settings that hold for <i>all</i> assignments in this lecture, such
+          as the team size and the grace period, are on the lecture page under
+          "Assessments".
         assignment_further_settings: >-
-          Further settings such as tasks and points can be configured
-          on the lecture page under "Assessment".
+          Tasks and points are set on the lecture page under "Assessments"
+          once the assignment exists, which is when the medium is released.
+          Until then it is listed there as scheduled.
     tag:
       index: 'Search Tags'
       related_tags: 'Related Tags'
@@ -1912,6 +1907,9 @@ en:
         create a voucher. This is a special code that the person can redeem in
         their profile to get the role, e.g. to become a tutor for your lecture.
         You should send the code to the person via a different medium, e.g. email.
+      speakers_by_registration: >
+        Speakers are no longer assigned by voucher: set up a registration
+        process for the talks on the "Groups" tab.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1987,6 +1985,7 @@ en:
     email_for_submission_decision: >
       acceptance or rejection of a late submission
     delete_account: Delete Account
+    password: Password
     stored_submissions: >
       There are %{submissions} submissions to assignments from you in the
       system.
@@ -2045,9 +2044,9 @@ en:
       After having redeemed the voucher, the teacher can assign you
       to the tutorials.
     select_tutorials: Select Tutorials
-    all_tutorials_taken: >
-      There are no more tutorials available for this lecture that you can take
-      over.
+    own_tutorial_not_offered: >
+      The tutorial you are enrolled in is not on offer: a tutor voucher does not
+      make you the tutor of your own group.
     already_tutor_by_redemption: >
       You have already redeemed this voucher to become a tutor.
     become_editor_html: >
@@ -2139,13 +2138,6 @@ en:
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
-    create_tutorials: Create tutorial groups
-    no_tutorials_yet: >
-      For this event series, no tutorials have been created yet.
-    tutorials: >
-      For this event series there are the following tutorials:
-    no_submissions_yet: >
-      No assignments have been due yet.
   sure: 'Are you sure?'
   details: 'Details'
   none: 'none'
@@ -2671,6 +2663,8 @@ en:
   date:
     formats:
       concise: '%Y-%m-%d'
+      test_week_start: '%b %-d'
+      test_week_end: '%b %-d, %Y'
   datetimepicker:
     invalid_date: 'Invalid date time format.'
   time:
@@ -2812,6 +2806,7 @@ en:
     hub:
       page_title: "Submissions - %{lecture}"
       heading: Earlier sheets
+      heading_with_tests: Earlier sheets and tests
       standing:
         mark_percentage: "%{percentage} %"
         heading: Exam admission
@@ -2821,11 +2816,11 @@ en:
         nothing_marked: Nothing has been marked yet.
         awaiting_marks:
           one: >-
-            1 sheet worth %{points} points is still with your tutor and is not
+            1 result worth %{points} points is still with your tutor and is not
             counted above.
           other: >-
-            %{count} sheets worth %{points} points in total are still with your
-            tutor and are not counted above.
+            %{count} results worth %{points} points in total are still with
+            your tutor and are not counted above.
         needed: "%{points} needed"
         bar_plain: "%{percentage} percent of the points earned"
         bar_absolute: "%{points} of the %{needed} points needed"
@@ -2865,9 +2860,14 @@ en:
         due: "Due %{time}"
         in_time: "in %{time}"
         worth:
-          one: "%{count} problem, %{points} points"
-          other: "%{count} problems, %{points} points"
+          one: "%{count} problem, %{points} points possible"
+          other: "%{count} problems, %{points} points possible"
         hand_in: Hand in
+        in_tutorial: in your tutorial
+        hand_in_elsewhere: >-
+          Not handed in via MaMpf. Your tutor records what arrived and enters
+          the points.
+        no_digital_hand_in: This sheet is not handed in via MaMpf.
         replace: Replace file
         invite: Invite someone
         join: Join with a code
@@ -2900,10 +2900,24 @@ en:
       sheet_count:
         one: "%{count} sheet"
         other: "%{count} sheets"
+      test_count:
+        one: "%{count} test"
+        other: "%{count} tests"
       column_sheet: Sheet
       column_status: Status
       column_points: Your points
       old_style: old-style sheet
+      news:
+        lead: "New since you last looked:"
+        marker: New since you last looked.
+        prefix: "New —"
+        correction_html: "%{sheet} (correction)"
+        points_html: "%{sheet} (points)"
+        both_html: "%{sheet} (correction and points)"
+        more:
+          one: "and %{count} more"
+          other: "and %{count} more"
+        seen_all: mark all as seen
       fold:
         handed_in_label: Hand-in
         not_uploaded_yet: not uploaded yet
@@ -2917,6 +2931,9 @@ en:
         team: "Team: you and %{names}"
         team_with_points: >
           Team: you and %{names} - these %{points} points are yours
+        join_late: >
+          Handed in with a team after all? Its code still gets you on it, until
+          the team has been marked; after that your tutor can still add you.
         no_points:
           nothing_yet: Nothing has been entered yet.
           on_the_correction: >
@@ -2950,6 +2967,7 @@ en:
         grace_period: "%{time} left"
         tutor_decides: Your tutor decides
         awaiting_marks: Waiting to be marked
+        awaiting_record: Not yet recorded
         correction_uploaded: Correction uploaded
         exempt: Excused
       notes:
@@ -2958,6 +2976,8 @@ en:
         rejected: handed in late, your tutor did not let it count
         partially_marked: not every problem has been marked yet
         missed: nothing arrived by the deadline
+        awaiting_record: handed in on paper or by other means - your tutor records what arrived
+        awaiting_record_test: no result entered yet - your tutor enters the points, or records you as absent
         absent: recorded as absent
         exempt: not counted for you
         not_recorded: >
@@ -2968,9 +2988,11 @@ en:
     invalid_code_for_assignment: >
       The code you entered is invalid for %{assignment}.
     invalid_code: The code you entered is invalid.
-    assignment_expired: >
-      The due date for this homework assignment has already
-      expired.
+    team_marked: >
+      This team has already been marked; ask your tutor to add you.
+    marked_on_own: >
+      You have already been marked for this sheet on your own; ask your tutor
+      if you should be on the team.
     already_in: You are already a partner for this assignment.
     lecture_not_subscribed: >
       You are not subscribed to the corresponding event series.
@@ -3071,7 +3093,6 @@ en:
     already_rejected: >
       This submission was rejected, so it can no longer be joined.
     late: late submission
-    late_submissions: late submissions
     rejected: rejected
     bulk_download_submissions: Bulk download of submissions
     bulk_download_corrections: Bulk download of corrections
@@ -3094,8 +3115,17 @@ en:
         In order to change things please edit the publication settings for the
         medium.
   tutorial:
+    title_placeholder: "e.g. Mon 14–16"
+    location_placeholder: "e.g. SR 3"
+    no_tutorials_yet: >
+      This lecture has no tutorials yet, so there is no table of points to
+      enter into.
     no_submissions_for_assignment: >
       There are no submissions for this assignment.
+    no_submissions: >
+      No submissions
+    no_submission: >
+      No submission
     destruction_info: >
       <i>
       Note.
@@ -3108,8 +3138,7 @@ en:
       Own Tutorials
     other_tutorials: 'Other Tutorials'
     deadline_warning: >
-      The deadline for submission is still %{deadline}. Only after the deadline
-      corrections can be uploaded.
+      The deadline for submission is still %{deadline}. Only after the deadline, the grading process can take place and the corrections can be uploaded by the tutors.
     grace_period_warning: >
       The grace period lasts until %{friendly_deadline}. Within the grace
       period, submisions and retrospective changes by the students are possible
@@ -3130,7 +3159,7 @@ en:
         the submissions and upload corrections.
         You can only select users who have the status of tutor in the
         event series, or editors or yourself. In order to grant students the
-        status of tutor, you have to create a voucher.
+        status of tutor, you have to create a voucher on the "Personnel" tab.
         You have to communicate the voucher to the students outside
         of MaMpf. The students can then redeem the voucher.
     bulk_upload:
@@ -3211,9 +3240,12 @@ en:
       browser and open it afterwards.
     announcement_subject: 'New announcement'
     student_message_footer: >-
-      This message was sent by %{sender} via MaMpf to the registered
-      students of %{lecture}. Replies to this email go directly to the
+      This message was sent by %{sender} (%{email}, %{role}) via MaMpf to
+      %{audiences} in %{lecture}. Replies to this email go directly to the
       sender.
+    student_message_role:
+      staff: "lecture staff"
+      tutor: "tutor"
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'
@@ -3271,6 +3303,12 @@ en:
       %{user} has joined the submission for %{assignment} in %{lecture}
     submission_join: >
       %{user} has joined the submission for %{assignment} in %{lecture}.
+    submission_added_subject: >
+      You are on the team for %{assignment} in %{lecture} now
+    submission_added: >
+      %{tutor} has put you on the team of %{team} for %{assignment} in
+      %{lecture}. Their hand-in counts for you now, and so do the points it
+      gets.
     submission_leave_subject: >
       %{user} has left the submission for %{assignment} in %{lecture}
     submission_leave: >
@@ -3625,6 +3663,7 @@ en:
       <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
+    voucher_code: Voucher code
     speaker: Speaker
     speakers: Speakers
     mode: "Allocation Mode"
@@ -3667,6 +3706,7 @@ en:
     create_cohort: 'Create Group'
     edit_cohort: 'Edit Group'
     save: 'Save'
+    refresh: 'Refresh'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'
@@ -4130,6 +4170,19 @@ en:
               invalid: >
                 There is already a submission from you or the team has already
                 reached its maximal size.
+            base:
+              changed_meanwhile: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. To look at it, cancel here; you will
+                then have to upload your file again. Or save once more right
+                away if your file is the right one.
+              removed_meanwhile: >
+                Since you opened this page, somebody on your team removed the
+                file. Save again if your file is the one to hand in.
+              changed_before_removal: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. If that one is to go as well, remove
+                it here and save again.
         tag:
           attributes:
             notions:
@@ -4140,6 +4193,14 @@ en:
           attributes:
             lecture:
               must_be_seminar: "Talks can only be created for seminars."
+            speaker_ids:
+              graded:
+                one: >-
+                  %{names} stays on the talk: it has already been graded for
+                  them. Clear the grade first.
+                other: >-
+                  %{names} stay on the talk: it has already been graded for
+                  them. Clear the grade first.
             title:
               blank: You need to give a title.
         term:
@@ -4192,8 +4253,6 @@ en:
             role:
               only_one_active: >
                 There can be only one active voucher of this type for the lecture.
-              speaker_vouchers_only_for_seminars: >
-                Speaker vouchers are only allowed for seminars.
               invalid_for_lecture: >
                 This role is not available for this lecture.
         watchlist_entry:

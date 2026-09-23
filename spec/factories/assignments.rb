@@ -10,7 +10,10 @@ FactoryBot.define do
     # Assignments from before the assessment system exist in the data and
     # still render through the legacy path.
     trait :without_assessment do
-      after(:create) { |assignment| assignment.assessment&.destroy }
+      after(:create) do |assignment|
+        assignment.assessment&.destroy
+        assignment.reload
+      end
     end
 
     trait :with_lecture do

@@ -2,14 +2,27 @@ en:
   assessment:
     tabs:
       assessments: "Assessments"
-      assignments: "Assignments"
+      assignments: "Assignments & Tests"
       talks: "Talks"
       performance: "Performance"
       achievements: "Achievements"
       certifications: "Exam Eligibility"
     assessments: 'Assessments'
+    test:
+      new: 'Add test'
+      heading: 'Tests'
+      homework_heading: 'Homework'
+      week: 'Test week'
+      sheet_or_test: 'Sheet or test'
+      title_placeholder: 'e.g. Test 1'
+      week_hint: 'Students take the test in their tutorial that week; tutors can enter points from the Monday on.'
+      week_label: '%{from} – %{to}'
+      badge: 'Test'
+    scheduled_sheet:
+      appears_on: 'appears on %{date}'
+      overdue: 'was to appear on %{date} – the release is still pending'
     subtitle:
-      assignments: 'Manage homework sheets, grading, and point allocation.'
+      assignments: 'Manage homework sheets and in-tutorial tests, grading, and point allocation.'
     achievements:
       placeholder: 'Achievements will be displayed here in a later step.'
       flash:
@@ -18,7 +31,6 @@ en:
       errors:
         destroy_failed: 'Failed to delete achievement.'
         not_found: 'Achievement not found.'
-        referenced_by_rules: 'Cannot delete: Achievement is referenced by a rule.'
       subtitle: 'Define additional criteria students must fulfill beyond points.'
       new: 'New Achievement'
       edit: 'Edit Achievement'
@@ -34,14 +46,22 @@ en:
       no_achievements_yet: 'No achievements defined yet.'
       confirm_delete: 'Really delete this achievement?'
       marking:
-        marked: 'graded'
-        met_label: 'met'
         value: 'Value'
-        status: 'Status'
         met: 'Met'
         not_met: 'Not met'
-        unmarked: 'Not yet graded'
-        no_participations: 'No participations yet.'
+        unmarked: 'No value yet'
+        exempt: 'Excused'
+        threshold: 'threshold'
+        value_for: 'Value for %{name}'
+        select_label: 'Sheet, test or achievement'
+        exempt_title: 'Excuse from the achievement'
+        save_row: "Save this row's value"
+        reload_row: 'Reload the saved value; unsaved changes are lost'
+        pass: 'met'
+        fail: 'not met'
+        saved: 'Value saved.'
+        invalid_value: '"%{value}" is not a value for a %{kind} achievement.'
+        no_members: 'Nobody to enter a value for yet.'
     assignment: 'Assignment'
     assignments: 'Assignments'
     exam: 'Exam'
@@ -54,31 +74,24 @@ en:
     points: 'Points'
     grades: 'Grades'
     grade: 'Grade'
+    speakers: 'Speakers'
+    date: 'Date'
     participants: 'Participants'
     grading: 'Grading'
     graded_by: 'Graded by'
     graded_at: 'Graded at'
-    no_grades_yet: 'No grades have been entered yet.'
-    grade_table:
-      absent: 'absent'
-      exempt: 'exempt'
-      not_submitted: 'not submitted'
-      excluded_heading: 'Special Cases'
-      reason: 'Reason'
-      roster_heading: 'Roster'
-      status: 'Status'
-      all_graded_by: 'All grades by %{grader}.'
-      proposed_tooltip: 'Proposal from the current grade scheme (not yet applied).'
-      proposed_tooltip_with_current: 'Proposal from the current grade scheme (not yet applied). Currently: %{current}.'
     statistics: 'Statistics'
     updated: 'Assessment updated successfully.'
-    requires_submission: 'Requires digital submission'
-    requires_submission_hint: 'Students must upload a file'
+    requires_submission: 'Digital submission via MaMpf'
+    requires_submission_hint: 'Students upload their hand-in in MaMpf.'
     locked_after_deadline: 'Locked (deadline has passed)'
-    no_submission_required: 'No digital submission'
+    no_submission_required: 'Not handed in via MaMpf'
     not_destructible:
       has_submissions: 'Cannot delete: Submissions exist'
       has_grading_data: 'Cannot delete: Grading data exists'
+    achievement_not_destructible:
+      has_values: 'Cannot delete: Values or exemptions have been entered'
+      referenced_by_rules: 'Cannot delete: A rule requires this achievement'
     exam_not_destructible:
       roster_not_empty: 'Cannot delete: Registered participants exist'
       in_campaign: 'Cannot delete: Registration is already open or completed'
@@ -99,13 +112,16 @@ en:
       description_placeholder: 'e.g., Problem 1'
       default_name: 'T%{number}'
       description_hint: 'Columns in the points table default to T1, T2, ... – changeable via the task name when editing.'
+      total_points: 'Total points'
+      count:
+        one: '1 task'
+        other: '%{count} tasks'
       max_points_precision_hint: 'Stored with 2 decimal places.'
       max_points_precision_warning: 'Only 2 decimal places are stored.'
       missing_warning: 'No tasks yet. Points cannot be entered by tutors.'
     no_tasks_yet: 'No tasks created yet.'
+    no_grades_yet: 'No grades have been entered yet.'
     position: 'Position'
-    speakers: 'Speakers'
-    date: 'Date'
     edit_grades: 'Edit grades'
     visible_from: 'Visible from'
     due_at: 'Due'
@@ -126,6 +142,8 @@ en:
     legacy_talks: 'Talks (no grading)'
     legacy_talks_info: 'These talks were created before the grading feature was added.'
     legacy_description: 'Created before assessment system'
+    no_talks_yet: 'No talks created yet.'
+    no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
     no_assignments_yet: 'No assignments created yet.'
     no_exams_yet: 'No exams created yet.'
     exam_created: 'Exam created successfully'
@@ -148,8 +166,8 @@ en:
       registration_not_open: 'Registration not yet open.'
       go_to_registration: 'Go to Registration →'
     assignments_complete:
-      label: 'The assignment list is complete'
-      hint: 'Tick this once every assignment of the term exists. Until then, exam eligibility defers every verdict — each assignment still to come can overturn it. Creating a new assignment clears the tick again.'
+      label: 'The list of sheets and tests is complete'
+      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
       cancel: 'Cancel'
       close_dialog:
         title: 'Tick the box'
@@ -233,24 +251,155 @@ en:
       removed_from_roster_reason: 'Manually removed from the exam roster'
       finalized_on: 'Finalized on %{date}'
       rejected_heading: 'Rejected registrations'
-    no_talks_yet: 'No talks created yet.'
-    no_talks_with_speakers_yet: 'All talks have no speakers assigned yet.'
     no_assessables_yet: 'No assessments created yet.'
     submission_settings: 'Submission Settings'
+    talk_grader:
+      user_not_speaker: 'User is not a speaker for this talk.'
+    grades_updated: 'Changes saved.'
+    task_points:
+      update: 'Task points updated successfully.'
+      submission_missing_assessment: 'This assignment has no assessment configured.'
+      unsupported_assessment_type: 'Points for this kind of assessment cannot be entered here.'
+      participation_missing_assignment: 'This assessment has no assignment configured.'
+      assignment_missing_assessment: 'This assignment has no assessment configured.'
+      init_participation_missing_args: 'Assessment and user must be present.'
+      assessment_does_not_require_points: 'Assessment %{assessment_id} does not accept points.'
+      invalid_task_id: 'Invalid task %{task_id}.'
+      invalid_points_value: 'Invalid points value for task %{task_id}.'
+      assessment_not_found: 'Assessment for this assignment not found.'
+      cannot_score_not_grading_open_assignment: 'Points cannot be entered for this assignment.'
+      not_required_points: 'Points cannot be entered for assignments that do not require points.'
+      participation_id_tutorial_id_mismatch: 'Participation %{participation_id} does not belong to tutorial %{tutorial_id}'
+      submission_id_assignment_id_mismatch: 'Submission %{submission_id} does not belong to assignment %{assignment_id}.'
+      submission_id_has_no_assignment: 'Submission %{submission_id} has no associated assignment.'
+      assignment_id_has_no_assessment: 'Assignment %{assignment_id} has no associated assessment.'
+      participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
+      participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
+      not_in_group: 'Only a member of the group can be put on one of its teams.'
+      team_rejected: 'A rejected hand-in takes nobody.'
+      joined_late: 'Joined the team after the deadline, on %{time}.'
+      marked_on_own: >-
+        %{name} is already marked for this sheet on a row of their own. Clear
+        that first.
+      member_added: '%{name} is on the team now.'
+      add_member: 'Put somebody on this team'
+      add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
     errors:
       feature_not_available: 'Assessment feature is not available.'
       no_assessable: 'Assignment or talk not found.'
       no_assessment: 'Assessment not found for this item.'
       no_task: 'Task not found.'
+      no_submission: 'Submission not found.'
+      no_assignment: 'Assignment not found.'
+      no_tutorial: 'Tutorial not found.'
+      user_not_found: 'User not found.'
+      no_participation: 'Participation not found.'
+      user_cannot_enter_points: 'You may not enter points here.'
+      not_gradable: 'This assessment is not gradable.'
+      invalid_grade: 'Invalid grade value'
+      invalid_request_params: 'Invalid request parameters.'
+      invalid_assessable_type: 'Invalid assessable type.'
     info:
       talks_created_in_roster: 'Talks with assigned speakers are listed here for grading purposes. Creation of talks happens in the Roster tab.'
+    grade_table:
+      roster_heading: 'Grading'
+      proposed_tooltip: 'Proposal from the current grade scheme (not yet applied).'
+    grading_tutorial:
+      save_all: 'Save all changes'
+      task: 'Task'
+      total_points: 'Total Points'
+      status: 'Status'
+      max_points: 'pts'
+      no_submissions: 'No submissions for this assignment.'
+      no_tutorial_badge: 'No tutorial'
+      paper_hand_in: 'Record a hand-in on paper or by other means'
+      paper_hand_in_remove: 'Take the hand-in record back'
+      paper_hand_in_kept: 'Handed in on paper or by other means; with points entered the record stays'
+      held_by: 'Hand-in held by %{tutorial}'
+      test_not_yet_open: 'The test week has not begun yet.'
+      record_first: 'Record the hand-in first'
+      download_hand_in: 'Download hand-in'
+      show_hand_in: 'View hand-in'
+      download_correction: 'Download correction'
+      show_correction: 'View correction'
+      upload_correction: 'Upload correction'
+      upload_correction_closed: 'Corrections can be uploaded once the deadline has passed'
+      delete_correction: 'Delete correction'
+      confirm_delete_correction: 'Delete the correction? The file is gone then, the points stay.'
+      accept_late: 'Accept the late hand-in'
+      reject_late: 'Reject the late hand-in'
+      confirm_accept_late: 'Accept the late hand-in? It then counts like one handed in on time.'
+      confirm_reject_late: 'Reject the late hand-in? It then counts as not submitted.'
+      save_row: "Save this row's points"
+      reload_row: 'Reload the saved points; unsaved changes are lost'
+      points_input_label: '%{task} for %{name}'
+      point_below_minimum: "Must be higher than %{min}"
+      point_over_maximum: "More than the task's %{max} points"
+      filter_name: 'Name'
+      filter_all: 'All'
+      filter_reset: 'Reset filters'
+      filter_count: '%{shown} of %{total} rows'
+      filter_no_match: 'No matching rows.'
+      page_range: 'Rows %{from}–%{to} of %{total}'
+      page_previous: 'Previous'
+      page_next: 'Next'
+      page_size_label: 'Per page'
+      pager_label: 'Pages'
+      more_actions: 'More actions'
+      summary:
+        handed_in:
+          one: '1 hand-in'
+          other: '%{count} hand-ins'
+        reviewed: '%{count} reviewed'
+        pending_grading: '%{count} pending grading'
+        not_submitted: '%{count} not submitted'
+        awaiting_record: '%{count} not yet recorded'
+        met: '%{count} met'
+        not_met: '%{count} not met'
+        unmarked: '%{count} without a value'
+        exempt: '%{count} exempt'
+        absent: '%{count} absent'
+      no_user_for_config: 'No user for participation %{participation_id}'
+      user_moved_tutorial: 'Handed in in %{old_tutorial}, since then in %{new_tutorial}.'
+      user_left_tutorials: 'Handed in in %{old_tutorial}, since then in no tutorial.'
+      user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
+    grading_talk:
+      no_talks_gradable: 'No talks that can be graded.'
+    grading_exam:
+      no_candidates: 'Nobody is on the exam roster yet.'
+      mark_absent: 'Record as absent'
+      remove_absent: 'Take the absence back'
+      mark_exempt: 'Excuse with a certificate'
+      remove_exempt: 'Take the exemption back'
+      user_not_candidate: 'This person is not on the exam roster.'
+      not_scorable: 'A candidate recorded as %{status} gets no points.'
+      not_gradable: 'A candidate recorded as %{status} gets no grade.'
+      not_recorded_as: 'This person is not recorded as %{status}.'
+      reviewed_stays: 'A reviewed row cannot be recorded as %{status}; its grading would be lost.'
+      status_word:
+        absent: 'absent'
+        exempt: 'exempt'
+      scheme_now_gives: 'What the applied scheme gives for the points as they are now.'
+      points_changed_since: 'Points changed on %{points_at}, grade from %{graded_at}'
+      points_missing: 'a task without points'
+      grade_by_hand: 'grade entered by hand, re-applying the scheme leaves it'
+      summary_points_changed: '%{count} with points changed since grading'
+      filter_points_changed: 'Points changed since grading'
+      points_changed_alert:
+        one: 'For one candidate the points changed after the grade was given; the grade may no longer fit.'
+        other: 'For %{count} candidates the points changed after the grade was given; the grades may no longer fit.'
+      show_points_changed: 'Show only these'
+      exempt_modal:
+        title: 'Excuse from the exam'
+        note_label: 'Reason (optional, teaching staff only)'
+        save: 'Excuse'
     grading_overview:
       submission_progress: 'Submissions'
       submitted: 'Submitted'
       missing: 'Missing'
       not_submitted: 'Not submitted'
       progress: 'Progress'
-      no_submission_required: 'No digital submission required for this assessment.'
+      no_submission_required: 'The hand-in is not via MaMpf.'
       no_participants_yet: 'No participants have been added yet. Participants are seeded from lecture subscriptions.'
       deadline:
         due_in: 'Due in %{time} (%{date})'
@@ -262,9 +411,6 @@ en:
     registrations_label: 'Registrations'
     roster: 'Roster'
     points_grid_placeholder: 'The per-task points grid will be available here in a future update.'
-    no_points_yet: 'No points have been entered yet.'
-    point_grid:
-      total: 'Total'
     grade_scheme:
       label: 'Grade Scheme'
       unsupported_pct_format: 'Percentage-based grade schemes are not yet supported in this editor.'
@@ -297,23 +443,30 @@ en:
         zero: 'No changes compared to current grades.'
         one: '1 grade would change compared to the current state.'
         other: '%{count} grades would change compared to the current state.'
-      edit_button: 'Edit Scheme'
-      apply_button: 'Apply Scheme'
-      discard_button: 'Discard Scheme'
-      discard_confirm: 'The grade scheme will be deleted. Existing grades will be kept. Continue?'
-      discarded: 'Grade scheme discarded.'
+      edit_button: 'Edit draft'
+      apply_button: 'Apply draft'
+      discard_button: 'Discard draft'
+      discard_confirm: 'The draft will be deleted. Grades and any scheme already applied stay as they are. Continue?'
+      discarded: 'Draft discarded.'
       discard_blocked_applied: 'An already-applied scheme cannot be discarded.'
-      apply_confirm: 'This will assign grades to all reviewed students and 5.0 to absent students. Continue?'
+      apply_confirm: 'The draft is applied: every reviewed student gets its grade, absent students get 5.0. Existing grades, from the old scheme or entered by hand, are overwritten. Continue?'
       applied_title: 'Grade scheme applied!'
       applied_message: 'Grades recorded on %{time} for %{count} students.'
       ungraded_warning:
         one: '1 student has no grade yet.'
         other: '%{count} students have no grade yet.'
+      changed_warning:
+        one: '1 grade from the scheme was given for points that have changed since.'
+        other: '%{count} grades from the scheme were given for points that have changed since.'
+      regraded:
+        one: '1 grade recomputed from the changed points.'
+        other: '%{count} grades recomputed from the changed points.'
       revise_button: 'Revise Scheme'
-      reapply_button: 'Re-apply to New'
+      reapply_button: 'Apply to new and changed'
       reapply_confirm: >-
-        This will apply the current scheme to any students not yet graded.
-        Already assigned grades will not be changed. Continue?
+        This applies the current scheme to students not yet graded, and again
+        to those it graded whose points changed since. Grades entered by hand
+        are not changed. Continue?
       summary:
         title: 'Grade Bands'
         pass_rate: 'Pass rate'
@@ -388,20 +541,44 @@ en:
     statistics_analysis: 'Statistics & Analysis'
     statistics_placeholder: 'Statistics are not yet available'
     statistics_description: 'Here you can view statistics and analysis for this exam.'
+    grade_talk_row:
+      speaker: "Speaker"
+      grade: "Grade"
+      note: "Internal note (teaching staff only)"
+      graded: "Graded"
+      graded_ago: "%{time} ago"
+      save_row: "Save this row's grade"
+      reload_row: "Reload the saved grade; unsaved changes are lost"
+      grade_for: 'Grade for %{name}'
+      note_for: 'Internal note on %{name}'
 
   activerecord:
+    attributes:
+      assignment:
+        kind: "Kind"
+      achievement:
+        value_type: "Type"
     errors:
       messages:
         immutable: "cannot be changed after creation"
       models:
+        achievement:
+          attributes:
+            value_type:
+              fixed_by_values: "cannot be changed once values have been entered"
         assessment/task:
           attributes:
+            max_points:
+              blank: "You need to give the maximum points."
+              greater_than_or_equal_to: "Maximum points can't be negative."
             base:
               requires_points_true: "can only be created for assessments with requires_points: true"
         assessment/participation:
           attributes:
             grade_numeric:
               not_gradable: "cannot be set on a non-gradable assessment"
+            status:
+              handed_in: "cannot be exempt or absent: this sheet was handed in"
             base:
               early_grading_not_allowed: "Grading is not permitted before the deadline"
         assessment/task_point:
@@ -424,3 +601,4 @@ en:
           attributes:
             requires_submission:
               locked_after_deadline: "can't be changed after the deadline has passed"
+              not_for_a_test: "is not possible for a test written in the tutorial"

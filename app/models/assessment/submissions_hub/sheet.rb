@@ -4,7 +4,8 @@ module Assessment
     # model because a row's state is the assignment, the participation and the
     # submission read together, and no one of the three knows the other two.
     Sheet = Struct.new(:assignment, :assessment, :participation, :submission,
-                       :tasks, :points_by_task_id, :user, keyword_init: true) do
+                       :tasks, :points_by_task_id, :user, :sighting,
+                       keyword_init: true) do
       # The first line that applies wins, and the order is the whole content of
       # this method. Entered points come before everything below them: sheets
       # have no release step, so a value a tutor wrote shows as soon as it is
@@ -24,6 +25,13 @@ module Assessment
         return closed_state if assignment.totally_expired?
 
         open_state
+      end
+
+      # A sheet that closed without the reader on any team: the team may still
+      # take them in with its code, until it has been marked - which is asked
+      # when the code arrives.
+      def joinable_late?
+        state == :missed && assessment&.requires_submission
       end
 
       # Whatever the participation carries is shown. The 0 the other states read
@@ -83,6 +91,22 @@ module Assessment
         participation.grader || latest_task_point&.grader
       end
 
+      def new_correction?
+        newer_than?(submission&.corrected_at, sighting&.seen_at)
+      end
+
+      # Participation#update_status_if_all_scored! refreshes graded_at on each
+      # complete point entry, so editing reviewed points makes them new again.
+      def new_points?
+        return false unless state == :marked
+
+        newer_than?(participation.graded_at, sighting&.seen_at)
+      end
+
+      def news?
+        new_correction? || new_points?
+      end
+
       def team
         submission ? submission.users.to_a : []
       end
@@ -93,21 +117,37 @@ module Assessment
 
       private
 
+        def newer_than?(happened_at, seen_at)
+          return false unless happened_at
+
+          seen_at.nil? || seen_at < happened_at
+        end
+
         def latest_task_point
           task_points.select(&:updated_at).max_by(&:updated_at)
         end
 
         # A file without a `submitted_at` costs points without anybody having done
-        # anything wrong, which is why it has a state of its own.
+        # anything wrong, which is why it has a state of its own. A sheet that
+        # comes in on paper is with the tutor until they record it, so nothing
+        # is missing yet. Missing test points do not prove absence either;
+        # tutors record it, and an unrecorded test stays open like the sheet.
         def closed_state
+          return :awaiting_record if assignment.kind_test? && participation&.submitted_at.nil?
+
           if participation&.submitted_at
             return submission&.correction.present? ? :correction_uploaded : :awaiting_marks
           end
+          return :not_recorded if submission&.manuscript.present?
 
-          submission&.manuscript.present? ? :not_recorded : :missed
+          assessment.requires_submission ? :missed : :awaiting_record
         end
 
+        # A sheet that is not handed in through MaMpf has nothing to say about
+        # files or the grace period while it is open; what it says is the
+        # deadline.
         def open_state
+          return :hand_in_elsewhere unless assessment.requires_submission
           return :tutor_decides if submission&.too_late? && submission.accepted.nil?
           return :grace_period if assignment.in_grace_period?
 

@@ -10,7 +10,7 @@
 
     <!-- 🌟 Voucher -->
     <div class="d-flex justify-content-center">
-      <div class="card profile-card voucher-card" data-cy="redeem-voucher-card">
+      <div class="card profile-card voucher-card">
         <div class="voucher-redemption-pattern"></div>
         <div class="card-body">
           <h5 class="card-title">
@@ -38,8 +38,7 @@
       <%= f.submit t('profile.changes_made_btn'),
             class: 'btn btn-warning mt-3 w-100 d-none text-wrap',
             id: "profileChange",
-          data: { profile_target: 'changeButton' },
-            "data-cy": "profile-change-submit" %>
+          data: { profile_target: 'changeButton' } %>
     </div>
 
     <!-- 🌟 Account -->
@@ -58,8 +57,7 @@
                   class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_information'), true) %>
             <%= f.text_field_without_bootstrap :name,
-                                               class: 'form-control',
-                                               "data-cy": "display-name" %>
+                                               class: 'form-control' %>
             <div class="invalid-feedback"
                 id="username-error">
             </div>
@@ -71,8 +69,7 @@
                         class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
             <%= f.text_field_without_bootstrap :name_in_tutorials,
-                                              class: 'form-control',
-                                              "data-cy": "display-name-tutorials" %>
+                                              class: 'form-control' %>
           </div>
 
           <%= render partial: 'profile/subscription_type', locals: { f: f } %>
@@ -103,7 +100,7 @@
     <!-- 🌟 Courses -->
     <div class="col">
       <div class="card profile-card" id="courses-accordion"
-           data-cy="courses-accordion" data-testid="courses-accordion">
+           data-testid="courses-accordion">
         <div class="card-header">
           <h5 class="mb-0">
             <%= t('profile.courses') %>

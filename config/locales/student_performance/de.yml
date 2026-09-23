@@ -20,6 +20,7 @@ de:
     errors:
       no_record: "Leistungsdatensatz nicht gefunden."
       no_member: "Nutzer/in ist kein Mitglied dieser Veranstaltung."
+      no_sheet: "Dieses Blatt gibt es in dieser Veranstaltung nicht."
     records:
       tooltip_points: "Punkte"
       percentage_unavailable: "Prozent nicht verfügbar"
@@ -31,8 +32,13 @@ de:
         of_due_points: "von den bisher korrigierten Punkten"
         due_so_far: "Bisher korrigiert"
         due_so_far_hint: "Punkte und Prozent zählen, was für die Studierende feststeht: Blätter, deren Frist samt Nachfrist vorbei ist, und bereits korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        due_so_far_hint_with_tests: "Punkte und Prozent zählen, was für die Studierende feststeht, Blätter und Tests zusammen: Blätter, deren Frist samt Nachfrist vorbei ist, Tests, deren Woche vorbei ist, und alles bereits Korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
+        sheets_and_tests: "Blätter und Tests"
         maximum: "Maximum"
         assignments: "Übungsblätter"
+        tests: "Tests"
+        tests_hint: 'Testpunkte stecken auch in den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
+        test_share: "Anteil in den Tests"
         not_due_count: "%{count} noch nicht fällig"
         achievements: "Zusatzkriterien"
         assessments: "Bewertungen"
@@ -42,6 +48,7 @@ de:
         pending_grading: "Noch nicht bewertet"
         not_due: "Noch nicht fällig"
         not_submitted: "Nicht abgegeben"
+        awaiting_record: "Noch nicht erfasst"
         absent: "Abwesend"
         exempt: "Befreit"
         achievement_met: "Erfüllt"
@@ -52,15 +59,14 @@ de:
         all_participants: "Alle Teilnehmenden"
         without_tutorial: "Ohne Übungsgruppe"
         awaiting_marking:
-          one: "1 Abgabe ist noch nicht bewertet"
-          other: "%{count} Abgaben sind noch nicht bewertet"
+          one: "1 noch nicht bewertet"
+          other: "%{count} noch nicht bewertet"
         empty: "Es wurden noch keine Leistungsdaten berechnet."
-        details: "Details"
       show:
         back: "Zurück zur Übersicht"
         recompute: "Datensatz neu berechnen"
         recompute_hint: "Nur als Fallback: Verwende dies, wenn die angezeigten Daten veraltet oder fehlerhaft wirken."
-        review_proposal: "Vorschlag prüfen"
+        review_proposal: "Zulassungsvorschlag ansehen"
         total_points: "Gesamtpunkte"
         out_of: "von %{max} bisher korrigierten"
         percentage: "Prozent"
@@ -75,6 +81,13 @@ de:
         total_row: "Gesamt"
         total_row_hint: "über alle Blätter des Semesters"
         last_computed: "Zuletzt berechnet vor %{time}."
+        exempt: "Befreiung eintragen"
+        exempt_column: "Befreiung"
+        unexempt: "Befreiung aufheben"
+        note_placeholder: "Notiz (optional)"
+        note_label: "Notiz zur Befreiung für %{sheet}"
+        exempted: "%{sheet} ist für diesen Studi befreit und zählt nicht mehr."
+        unexempted: "Die Befreiung für %{sheet} wurde aufgehoben; das Blatt zählt wieder."
 
       recompute:
         single: "Neuberechnung für diese/n Studierende/n abgeschlossen."
@@ -133,12 +146,16 @@ de:
         inconclusive: "Zurückgestellt"
       deferral:
         assignments_incomplete: "Die Blätterliste ist noch offen"
-        points_not_due:
-          one: "1 Blatt noch nicht fällig"
-          other: "%{count} Blätter noch nicht fällig"
+        points_not_due: "%{what} noch nicht fällig"
+        sheet_count:
+          one: "1 Blatt"
+          other: "%{count} Blätter"
+        test_count:
+          one: "1 Test"
+          other: "%{count} Tests"
         points_pending:
-          one: "1 Abgabe noch nicht bewertet"
-          other: "%{count} Abgaben noch nicht bewertet"
+          one: "1 noch nicht bewertet"
+          other: "%{count} noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
       missed:
@@ -156,21 +173,18 @@ de:
         result: "Ergebnis"
         achievements_check: "Zusatzkriterien-Prüfung"
         no_achievements_required: "Die aktuelle Regel erfordert keine Zusatzkriterien."
-        info: "Dieser Vorschlag ist eine schreibgeschützte Vorschau. Zulassungen werden in einem zukünftigen Update erstellt."
+        info: "Dieser Vorschlag ist nur eine Ansicht; entschieden wird unter Prüfungszulassungen."
     certifications:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
         subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
-        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter an und setze im Reiter %{tab} das Häkchen „Die Blätterliste ist vollständig“."
-        total: "Studierende gesamt"
-        passed: "Zugelassen"
-        failed: "Nicht zugelassen"
-        uncertified: "Offen"
+        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter und Tests an und setze im Reiter %{tab} das Häkchen „Die Liste der Blätter und Tests ist vollständig“."
         list_open: "Blätterliste noch offen — die Regel entscheidet derzeit nichts."
         list_open_link: "Zum Reiter %{tab}"
         todo_title: "Zu klären"
-        bulk_accept: "Offene Vorschläge akzeptieren"
+        bulk_accept: "Vorschläge übernehmen"
         bulk_accept_hint: "Übernimmt den Vorschlag für alle Studierenden ohne Entscheidung. Zurückgestellte Vorschläge bleiben offen."
+        bulk_accept_confirm: "Übernimmt den Vorschlag für alle Studierenden ohne Entscheidung: %{forecast}. Fortfahren?"
         bulk_reset:
           one: "%{count} berechnete Zulassung zurücksetzen"
           other: "%{count} berechnete Zulassungen zurücksetzen"
@@ -196,8 +210,8 @@ de:
         no_rule_hint: "Du kannst Zulassungen jederzeit manuell pro Studierende:r erfassen — auch ohne Regel."
         required_achievements_label: "Zusatzkriterien"
         disagreeing_warning:
-          one: "%{count} Zulassung widerspricht der aktuellen Regel."
-          other: "%{count} Zulassungen widersprechen der aktuellen Regel."
+          one: "%{count} Zulassung weicht von der aktuellen Regel ab."
+          other: "%{count} Zulassungen weichen von der aktuellen Regel ab."
         stale_manual_warning:
           one: "%{count} manuelle Entscheidung: Regel oder Leistungsdaten haben sich seither geändert."
           other: "%{count} manuelle Entscheidungen: Regel oder Leistungsdaten haben sich seither geändert."
@@ -219,12 +233,12 @@ de:
       rule_today:
         passed: "zugelassen"
         failed: "nicht zugelassen"
-        inconclusive: "kann nicht entscheiden"
+        inconclusive: "kein Ergebnis"
       filters:
         all: "Alle"
         passed: "Zugelassen"
         failed: "Nicht zugelassen"
-        flagged: "Auffällig"
+        flagged: "Zu klären"
         uncertified: "Offen"
       override:
         title: "Manuell überschreiben"
@@ -234,9 +248,6 @@ de:
         cancel: "Abbrechen"
         save: "Überschreibung speichern"
       flash:
-        created: "Zulassung gespeichert."
-        updated: "Zulassung aktualisiert."
-        reset_one: "Zulassung zurückgesetzt."
         reset:
           one: "%{count} Zulassung zurückgesetzt."
           other: "%{count} Zulassungen zurückgesetzt."

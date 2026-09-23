@@ -8,7 +8,8 @@ module StudentPerformance
     # as 0 % — the filter is how staff find them, not a tutorial id.
     NO_TUTORIAL = "none".freeze
 
-    before_action :set_record, only: :show
+    before_action :set_record, only: [:show, :exempt, :unexempt]
+    before_action :set_sheet, only: [:exempt, :unexempt]
 
     rescue_from CanCan::AccessDenied do |exception|
       redirect_to main_app.root_url, alert: exception.message
@@ -22,21 +23,46 @@ module StudentPerformance
       @due_points = due_points
       scope = filter_by_tutorial(filter_by_name(records_scope))
 
+      sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
+      load_test_share(scope, tests) if tests.any?
       @pagy, @records = pagy(sorted(scope))
-      assessments = assignment_assessments
-      # A sheet nobody could hand in yet counts towards none of the figures in
-      # this table, so it gets no column of its own — the detail page lists it.
-      # The heading says how many were left out.
-      @assessments = assessments.select { |a| due_points.due?(a.id) }
-      @not_due_count = assessments.size - @assessments.size
+      # Test results become visible during the week, as each tutorial is graded.
+      @sheets = sheets.select { |a| due_points.due?(a.id) }
+      @tests = tests.select(&:grading_open?)
+      @sheets_not_due = sheets.size - @sheets.size
+      @tests_not_due = tests.size - @tests.size
+      @assessments = @sheets + @tests
       load_assessment_statuses
-      @awaiting_marking = awaiting_marking_counts(scope, assessments)
+      @awaiting_marking = awaiting_marking_counts(scope, sheets + tests)
       @achievements = @lecture.achievements.order(:title)
+      @achievement_headings = Achievement.short_titles(@achievements)
     end
 
     def show
       @due_points = due_points
       load_show_data
+    end
+
+    # Exemptions require :edit on the lecture: :enter_points alone must not let
+    # tutors change which assignments count towards a student's required points.
+    def exempt
+      participation = participation_for(@sheet)
+      begin
+        Assessment::AbsenceHandling.mark_exempt(participation, note: params[:note])
+      rescue ActiveRecord::RecordInvalid => e
+        return redirect_to_record(alert: e.record.errors.full_messages.to_sentence)
+      end
+
+      redirect_to_record(notice: I18n.t("student_performance.records.show.exempted",
+                                        sheet: @sheet.title))
+    end
+
+    def unexempt
+      participation = @sheet.assessment_participations.find_by(user_id: @record.user_id)
+      participation.update!(status: :pending, note: nil) if participation&.exempt?
+
+      redirect_to_record(notice: I18n.t("student_performance.records.show.unexempted",
+                                        sheet: @sheet.title))
     end
 
     def recompute
@@ -109,6 +135,8 @@ module StudentPerformance
           ->(record) { due_points.marked_max_for(record.user_id).to_f }
         when "percentage"
           ->(record) { due_points.marked_percentage_for(record)&.to_f || -1 }
+        when "test_share"
+          ->(record) { test_share_for(record)&.to_f || -1 } if @test_points
         end
       end
 
@@ -116,15 +144,12 @@ module StudentPerformance
         TutorialMembership.where(tutorial: @lecture.tutorials).select(:user_id)
       end
 
-      # Per assignment, how many of the listed students handed in without being
-      # marked yet. Counted over the whole filtered set rather than the current
-      # page, because the number describes the sheet, not the page.
-      #
-      # Only over sheets that are due: nobody may mark before the grace period
-      # is over, so an early hand-in is waiting for the deadline, not for a
-      # tutor, and counting it claims a backlog nobody could work off.
+      # Count across the filtered roster so pagination does not change the backlog.
+      # Exclude assignments whose grading has not opened yet.
       def awaiting_marking_counts(scope, assessments)
-        ids = assessments.select { |a| due_points.due?(a.id) }.map(&:id)
+        ids = assessments.select do |a|
+          a.assessable.kind_test? ? a.grading_open? : due_points.due?(a.id)
+        end.map(&:id)
         return {} if ids.empty?
 
         Assessment::Participation
@@ -142,6 +167,25 @@ module StudentPerformance
 
         redirect_to lecture_student_performance_records_path(@lecture),
                     alert: I18n.t("student_performance.errors.no_record")
+      end
+
+      def set_sheet
+        @sheet = assignment_assessments.find { |a| a.id == params[:assessment_id] }
+        return if @sheet
+
+        redirect_to_record(alert: I18n.t("student_performance.errors.no_sheet"))
+      end
+
+      # AssessmentBackfillWorker may not have created this participation yet;
+      # mark_exempt still needs one to store the exemption.
+      def participation_for(sheet)
+        sheet.assessment_participations.find_or_initialize_by(user_id: @record.user_id) do |p|
+          p.tutorial_id = Assessment::Participation.tutorial_for(@record.user, @lecture)
+        end
+      end
+
+      def redirect_to_record(**flash)
+        redirect_to lecture_student_performance_record_path(@lecture, @record), **flash
       end
 
       def recompute_single(user_id)
@@ -169,7 +213,7 @@ module StudentPerformance
       def assignment_assessments
         Assessment::Assessment
           .where(lecture_id: @lecture.id, assessable_type: "Assignment")
-          .includes(:tasks)
+          .includes(:tasks, :assessable)
           .joins("JOIN assignments ON assignments.id = " \
                  "assessment_assessments.assessable_id")
           .order("assignments.deadline ASC")
@@ -184,7 +228,7 @@ module StudentPerformance
         participations = Assessment::Participation
                          .where(assessment_id: @assessments.map(&:id),
                                 user_id: @record.user_id)
-                         .select(:id, :assessment_id, :status, :submitted_at)
+                         .select(:id, :assessment_id, :status, :submitted_at, :note)
 
         @participation_by_assessment = participations.index_by(&:assessment_id)
 
@@ -212,6 +256,21 @@ module StudentPerformance
                                     .index_by(&:assignment_id)
       end
 
+      # Sorting by test percentage needs totals for the entire filtered roster.
+      def load_test_share(scope, tests)
+        @test_points = due_points.of_kind(:test)
+        @test_points_by_user = Assessment::Participation
+                               .where(assessment_id: tests.map(&:id),
+                                      user_id: scope.reorder(nil).select(:user_id),
+                                      status: :reviewed)
+                               .group(:user_id).sum(:points_total)
+      end
+
+      def test_share_for(record)
+        @test_points.marked_percentage_of(record.user_id,
+                                          @test_points_by_user.fetch(record.user_id, 0))
+      end
+
       def load_assessment_statuses
         user_ids = @records.map(&:user_id)
         return if user_ids.empty?
@@ -219,6 +278,7 @@ module StudentPerformance
         participations = Assessment::Participation
                          .where(assessment_id: @assessments.map(&:id),
                                 user_id: user_ids)
+                         .includes(:assessment)
                          .select(:id, :assessment_id, :user_id,
                                  :status, :submitted_at)
 

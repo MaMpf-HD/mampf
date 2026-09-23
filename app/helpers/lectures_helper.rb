@@ -145,6 +145,20 @@ module LecturesHelper
     "text-primary"
   end
 
+  def tutors_with_tutorials(lecture)
+    by_tutor = lecture.tutorials.includes(:tutors).each_with_object({}) do |tutorial, hash|
+      tutorial.tutors.each { |tutor| (hash[tutor] ||= []) << tutorial }
+    end
+    by_tutor.sort_by { |tutor, _| tutor.tutorial_name.to_s.downcase }
+  end
+
+  # Redeemed a tutor voucher, not put on a tutorial yet - listed so the
+  # lecturer sees who is waiting.
+  def tutors_without_tutorial(lecture)
+    (Redemption.tutors_by_redemption_in(lecture) - lecture.tutors)
+      .sort_by { |tutor| tutor.tutorial_name.to_s.downcase }
+  end
+
   def lecture_header_color(subscribed, lecture)
     return "" unless subscribed
 
@@ -243,8 +257,7 @@ module LecturesHelper
         concat(t("basics.teacher"))
         concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
       end
-      p2 = content_tag(:p, lecture.teacher&.info || "",
-                       "data-cy": "teacher-info", "data-testid": "teacher-info")
+      p2 = content_tag(:p, lecture.teacher&.info || "", "data-testid": "teacher-info")
     end
 
     p1 + p2
@@ -270,7 +283,6 @@ module LecturesHelper
                   class: "selectize",
                   multiple: true,
                   data: {
-                    cy: "lecture-editors-select",
                     testid: "lecture-editors-select",
                     no_results: t("basics.no_results_editor")
                   })

@@ -2,6 +2,8 @@
 class User < ApplicationRecord
   include ApplicationHelper
 
+  class IncompatibleTypeError < StandardError; end
+
   CURRENT_PASSWORD_POLICY_VERSION = 1
 
   # use devise for authentification, include the following modules
@@ -14,6 +16,7 @@ class User < ApplicationRecord
 
   # Roster memberships
   has_many :lecture_memberships, dependent: :destroy
+  has_many :assignment_sightings, dependent: :destroy
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 
   has_many :tutorial_memberships, dependent: :destroy
@@ -21,6 +24,11 @@ class User < ApplicationRecord
 
   has_many :cohort_memberships, dependent: :destroy
   has_many :cohorts, through: :cohort_memberships
+
+  has_many :assessment_participations,
+           dependent: :destroy,
+           class_name: "Assessment::Participation",
+           inverse_of: :user
 
   # a user has many favorite lectures
   has_many :user_favorite_lecture_joins, dependent: :destroy
@@ -621,6 +629,24 @@ class User < ApplicationRecord
             .natural_sort_by(&:title)
   end
 
+  # Teachers and editors see their lectures on the start page without
+  # subscribing. As with the subscriptions, the current fold takes the
+  # lectures without a term along.
+  def current_staff_lectures
+    staff_lectures_in([Term.active, nil])
+  end
+
+  def next_term_staff_lectures
+    coming = Term.active&.next
+    return [] if coming.blank?
+
+    staff_lectures_in(coming)
+  end
+
+  def staff_lecture?(lecture)
+    lecture.teacher == self || edited_lectures.include?(lecture)
+  end
+
   # Cohorts with propagate_to_lecture: false do not create lecture memberships.
   # Include them directly so their lectures remain visible on the start page.
   def next_term_seated_lectures
@@ -753,6 +779,14 @@ class User < ApplicationRecord
     given_tutorials.any?
   end
 
+  def tutor_in?(tutorial)
+    given_tutorials.include?(tutorial)
+  end
+
+  def teacher_in?(lecture)
+    given_lectures.include?(lecture)
+  end
+
   def editor_or_teacher_in?(lecture)
     in?(lecture.editors) || self == lecture.teacher
   end
@@ -834,6 +868,24 @@ class User < ApplicationRecord
     in?(something.editors_with_inheritance.to_a)
   end
 
+  def can_enter_points_in?(something)
+    unless something.is_a?(Lecture) || something.is_a?(Tutorial)
+      raise(IncompatibleTypeError, "can_enter_points_in? was called with incompatible class")
+    end
+    return true if admin
+
+    in?(something.graders_with_inheritance.to_a)
+  end
+
+  def can_enter_grades_in?(something)
+    unless something.is_a?(Lecture)
+      raise(IncompatibleTypeError, "can_enter_grades_in? was called with incompatible class")
+    end
+    return true if admin
+
+    in?(something.graders_with_inheritance.to_a)
+  end
+
   def speaker?
     talks.any?
   end
@@ -904,6 +956,12 @@ class User < ApplicationRecord
            .natural_sort_by(&:title) +
         scope.where(term: nil).includes(:course, :teacher)
              .natural_sort_by(&:title)
+    end
+
+    def staff_lectures_in(terms)
+      given = given_lectures.where(term: terms).includes(:course, :term)
+      edited = edited_lectures.where(term: terms).includes(:course, :term, :teacher)
+      (given + edited).uniq.natural_sort_by(&:title)
     end
 
     def password_differs_from_current

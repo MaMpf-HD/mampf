@@ -1,0 +1,25 @@
+<% if achievement.persisted? %>
+  <div id="achievement-delete-button" class="text-end mt-3">
+    <% if achievement.destructible? %>
+      <%= button_to t("basics.delete"),
+                    lecture_student_performance_achievement_path(lecture, achievement),
+                    method: :delete,
+                    class: "btn btn-outline-danger btn-sm",
+                    data: { turbo_confirm: t("assessment.achievements.confirm_delete") } %>
+    <% else %>
+      <span
+        class="d-inline-block"
+        tabindex="0"
+        title="<%= achievement.destruction_blockers
+                              .map { |blocker| t("assessment.achievement_not_destructible.#{blocker}") }
+                              .to_sentence %>"
+        data-bs-toggle="tooltip"
+      >
+        <button class="btn btn-outline-secondary btn-sm" disabled>
+          <i class="bi bi-lock-fill me-1"></i>
+          <%= t("basics.delete") %>
+        </button>
+      </span>
+    <% end %>
+  </div>
+<% end %>

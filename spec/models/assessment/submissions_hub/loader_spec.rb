@@ -328,6 +328,38 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet_for(assignment).state).to eq(:missed)
     end
 
+    # A sheet collected on paper is with the tutor until they record it, so
+    # nothing is missing yet.
+    it "is :awaiting_record when a sheet collected on paper has no record yet" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Homework",
+                                                 expired_since: 1.week,
+                                                 requires_submission: false)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_record)
+      expect(sheet_for(assignment).points).to be_nil
+    end
+
+    # Nobody can say yet whether the reader sat the test: the tutor may be
+    # about to enter the points, or to record them as absent.
+    it "is :awaiting_record once a test's week is over with nothing entered" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Test 1",
+                                                 expired_since: 1.week, kind: :test)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_record)
+      expect(sheet_for(assignment).points).to be_nil
+    end
+
+    it "is :awaiting_marks for a test row the tutor has started on" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Test 1",
+                                                 expired_since: 1.week, kind: :test)
+      create(:assessment_task, assessment: assignment.assessment, max_points: 4)
+      participate(assignment, submitted_at: 2.days.ago)
+
+      expect(sheet_for(assignment).state).to eq(:awaiting_marks)
+    end
+
     it "is :tutor_decides for a late hand-in nobody has ruled on" do
       assignment = create_assignment(deadline: 10.minutes.ago)
       hand_in(assignment)
@@ -353,6 +385,16 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
       expect(sheet_for(assignment).state).to eq(:nothing_handed_in)
     end
+
+    # Nothing is handed in through MaMpf, so neither the file nor the grace
+    # period has anything to say while such a sheet is open.
+    it "is :hand_in_elsewhere while a sheet collected on paper is open, grace period included" do
+      assignment = create(:assignment, :expired, lecture: lecture, title: "Homework",
+                                                 expired_since: 10.minutes,
+                                                 requires_submission: false)
+
+      expect(sheet_for(assignment).state).to eq(:hand_in_elsewhere)
+    end
   end
 
   describe "who marked a sheet and when" do
@@ -366,9 +408,9 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet.marked_at).to be_within(1.second).of(participation.graded_at)
     end
 
-    # Nothing in the app stamps the participation yet, so the task points are
-    # what actually carries the marking.
-    it "falls back to the task points while it is not" do
+    # Rows marked before the stamp existed carry none; the task points then
+    # say when and by whom.
+    it "falls back to the task points where there is no stamp" do
       participation = mark(assignment, [1.5, 2])
       participation.update!(graded_at: nil, grader: nil)
 
@@ -381,6 +423,102 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     it "is nil for a sheet with no participation at all" do
       expect(sheet_for(assignment).marked_at).to be_nil
       expect(sheet_for(assignment).marked_by).to be_nil
+    end
+  end
+
+  describe "what is new since the reader last looked" do
+    let(:assignment) { create_assignment(deadline: 1.week.ago) }
+
+    def look(at:, by: user)
+      AssignmentSighting.create!(user: by, assignment: assignment, seen_at: at)
+    end
+
+    it "is nothing on a sheet with neither correction nor marks" do
+      hand_in(assignment)
+
+      expect(sheet_for(assignment).news?).to be(false)
+    end
+
+    it "is the correction the reader has never looked at" do
+      hand_in(assignment, correction: true)
+
+      sheet = sheet_for(assignment)
+      expect(sheet.new_correction?).to be(true)
+      expect(sheet.news?).to be(true)
+    end
+
+    it "is no longer the correction once they looked after it was uploaded" do
+      hand_in(assignment, correction: true)
+      look(at: Time.current)
+
+      expect(sheet_for(assignment).new_correction?).to be(false)
+    end
+
+    it "is the correction again when a fresh one replaced it after their look" do
+      submission = hand_in(assignment, correction: true)
+      look(at: 1.day.ago)
+      submission.update!(corrected_at: 1.hour.ago)
+
+      expect(sheet_for(assignment).new_correction?).to be(true)
+    end
+
+    it "is the marks the reader has never looked at" do
+      mark(assignment, [1.5, 2])
+
+      sheet = sheet_for(assignment)
+      expect(sheet.new_points?).to be(true)
+      expect(sheet.news?).to be(true)
+    end
+
+    it "is no longer the marks once they looked after the stamp" do
+      mark(assignment, [1.5, 2])
+      look(at: 1.day.ago)
+
+      expect(sheet_for(assignment).new_points?).to be(false)
+    end
+
+    it "is the marks again when they were saved anew after the look" do
+      mark(assignment, [1.5, 2])
+      look(at: 3.days.ago)
+
+      expect(sheet_for(assignment).new_points?).to be(true)
+    end
+
+    # Only a complete save stamps the participation, and the fold shows the
+    # values as they come; the dot waits for the tutor to finish the row.
+    it "is not a half-marked sheet" do
+      mark_partially(assignment, [1.5, nil])
+
+      expect(sheet_for(assignment).new_points?).to be(false)
+    end
+
+    # Marks with no hand-in behind them still land on the reader's row, which
+    # is why the look is keyed by the sheet rather than the hand-in.
+    it "is the marks on a sheet that was never handed in here" do
+      mark(assignment, [1.5, 2])
+
+      expect(sheet_for(assignment).submission).to be_nil
+      expect(sheet_for(assignment).new_points?).to be(true)
+    end
+
+    it "does not count a partner's look as the reader's" do
+      hand_in(assignment, correction: true)
+      look(at: Time.current, by: create(:confirmed_user))
+
+      expect(sheet_for(assignment).new_correction?).to be(true)
+    end
+
+    # One look, two facts: the correction was there at the look, the marks
+    # came after it.
+    it "tells the correction from the marks" do
+      hand_in(assignment, correction: true)
+      look(at: Time.current)
+      mark(assignment, [1.5, 2])
+      assignment.assessment.assessment_participations.first.update!(graded_at: Time.current)
+
+      sheet = sheet_for(assignment)
+      expect(sheet.new_correction?).to be(false)
+      expect(sheet.new_points?).to be(true)
     end
   end
 
@@ -424,6 +562,33 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       hand_in(assignment)
 
       expect(result.open_sheets.map(&:assignment)).to eq([assignment])
+    end
+
+    # The week runs on for the other groups; this reader has written the test
+    # and has points to look at, which is the list's business, not a card's.
+    # Points are refused before the test's week, so a day offset fails from
+    # Friday on; the test is pinned to the current week.
+    it "moves a test to the list the moment its points are in, week or no week" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: Time.zone.now.end_of_week)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      expect(result.open_sheets.map(&:assignment)).to eq([test])
+
+      mark(test, [8])
+
+      fresh = described_class.new(lecture: lecture, user: user).call
+      expect(fresh.open_sheets).to be_empty
+      expect(fresh.sheets.find { |sheet| sheet.assignment == test }.state).to eq(:marked)
+    end
+
+    it "moves a test to the list the moment the reader is recorded absent" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: Time.zone.now.end_of_week)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      participate(test, status: :absent)
+
+      expect(result.open_sheets).to be_empty
+      expect(sheet_for(test).state).to eq(:absent)
     end
   end
 
@@ -530,6 +695,18 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       # rubocop:enable Rails/SkipsModelValidations
 
       expect(result.standing.points_marked_so_far).to eq(10)
+    end
+
+    # Absent is lost, not excused: the test stays in the base with nothing
+    # earned on it, from the moment the absence is recorded in its week.
+    it "counts a test the reader was recorded absent from, in its week already" do
+      test = create(:assignment, lecture: lecture, kind: :test, title: "Test 1",
+                                 deadline: Time.zone.now.end_of_week)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      participate(test, status: :absent)
+
+      expect(result.standing.points_marked_so_far).to eq(10)
+      expect(result.standing.points_still_open).to eq(0)
     end
   end
 
@@ -663,7 +840,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       record = create(:student_performance_record, lecture: lecture, user: user,
                                                    points_total_materialized: 32.5,
                                                    points_max_materialized: 176,
-                                                   points_max_pending_materialized: 16,
                                                    percentage_materialized: 18.47)
 
       standing = result.standing
@@ -843,7 +1019,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
 
     it "stays in the low teens" do
-      expect(queries_for(12)).to be <= 15
+      expect(queries_for(12)).to be <= 16
     end
   end
 end

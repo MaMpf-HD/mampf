@@ -224,6 +224,19 @@ RSpec.describe(Exam, type: :model) do
       end.to raise_error(Exam::ParticipantRemovalNotAllowedError)
       expect(roster_entry.reload.excluded_at).to be_nil
     end
+
+    # The allocation removes in bulk, past the single removal's guard.
+    it "keeps a graded participant through an allocation run again without them" do
+      campaign = exam.registration_campaign
+      assessment = create(:assessment, :with_points, assessable: exam, lecture: exam.lecture)
+      create(:assessment_participation, assessment: assessment, user: user, status: :reviewed,
+                                        grade_numeric: 2.0)
+      exam.all_exam_roster_entries.find_by!(user: user).update!(source_campaign: campaign)
+
+      exam.materialize_allocation!(user_ids: [], campaign: campaign)
+
+      expect(exam.exam_roster_entries.where(user: user)).to exist
+    end
   end
 
   describe "#status_phase" do

@@ -1,12 +1,20 @@
 class Assignment < ApplicationRecord
   include Assessment::Pointable
 
-  attr_writer :requires_submission
+  # Prefix the enum methods to avoid colliding with Kernel#test.
+  enum :kind, { homework: 0, test: 1 }, prefix: true
+
+  # The form posts "1"/"0"; as strings both would count as true.
+  def requires_submission=(value)
+    @requires_submission = ActiveModel::Type::Boolean.new.cast(value)
+  end
 
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
+  has_many :sightings, class_name: "AssignmentSighting", dependent: :destroy
 
+  before_validation :end_test_week, if: -> { kind_test? && deadline_changed? }
   before_save :inherit_deletion_date_from_lecture
   after_create :setup_assessment
   before_destroy :check_destructibility, prepend: true
@@ -26,6 +34,7 @@ class Assignment < ApplicationRecord
   after_rollback :forget_deadline_move
 
   def requires_submission
+    return false if kind_test?
     return assessment.requires_submission if assessment
 
     @requires_submission.nil? || @requires_submission
@@ -34,6 +43,11 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
   validate :deadline_not_in_past, if: -> { deadline_changed? }
+  # Changing kind would reinterpret existing submissions and grading data.
+  validate :kind_immutable, if: -> { persisted? && kind_changed? }
+  # The form offers a test no sheet to attach; a request that names one
+  # anyway is refused rather than quietly obeyed.
+  validates :medium_id, absence: true, if: :kind_test?
 
   scope :active, -> { where(deadline: Time.zone.now..) }
 
@@ -53,12 +67,38 @@ class Assignment < ApplicationRecord
                       &.first&.submission
   end
 
+  # A team formed without a file has handed nothing in; its members still
+  # need their row in the tutor's table.
   def submitter_ids
-    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
+    UserSubmissionJoin.where(submission: submissions.proper).pluck(:user_id).uniq
   end
 
   def submitters
     User.where(id: submitter_ids)
+  end
+
+  def user_ids_in_lecture_from_memberships
+    lecture.lecture_memberships.pluck(:user_id).uniq
+  end
+
+  def applicable_users_not_in_tutorials
+    User.where(id: applicable_user_ids_not_in_tutorials_from_memberships)
+  end
+
+  def non_submitters_in_tutorials
+    if past_deadline?
+      non_submitters_in_tutorials_postdeadline
+    else
+      non_submitters_in_tutorials_predeadline
+    end
+  end
+
+  def non_submitters_in_tutorial(tutorial)
+    if past_deadline?
+      non_submitters_in_tutorial_postdeadline(tutorial)
+    else
+      non_submitters_in_tutorial_predeadline(tutorial)
+    end
   end
 
   def past_deadline?
@@ -67,6 +107,43 @@ class Assignment < ApplicationRecord
 
   def active?
     Time.zone.now <= deadline
+  end
+
+  # A test's deadline is the end of its week; the groups write it during that
+  # week, each in its own session, so marking opens with the week and not
+  # after it. Homework is marked once its deadline and grace period are over.
+  def grading_open?
+    return Time.zone.now >= deadline.beginning_of_week if kind_test?
+
+    totally_expired?
+  end
+
+  def test_week
+    return unless deadline
+
+    deadline.beginning_of_week.to_date..deadline.to_date
+  end
+
+  # Invalid dates must reach the deadline presence validation, not raise.
+  def test_week=(monday)
+    self.deadline = Time.zone.parse(monday.to_s)&.end_of_week
+  rescue ArgumentError
+    self.deadline = nil
+  end
+
+  # Lecture#begin_date falls back to Term.active, which may also be absent.
+  def test_week_choices
+    first = [lecture.term&.begin_date, Time.zone.today].compact.max.beginning_of_week
+    term_end = lecture.term&.end_date
+    last = (term_end && term_end >= first ? term_end : first + 6.months).beginning_of_week
+    weeks = []
+    monday = first
+    while monday <= last
+      weeks << monday
+      monday += 7
+    end
+    weeks |= [deadline.to_date.beginning_of_week] if deadline
+    weeks.sort
   end
 
   def semiactive?
@@ -80,14 +157,18 @@ class Assignment < ApplicationRecord
   def totally_expired?
     !semiactive?
   end
-  alias grading_open? totally_expired?
+
+  def assessable?
+    assessment != nil
+  end
 
   def in_grace_period?
     semiactive? && !active?
   end
 
+  # No grace period for a test: nothing is handed in late.
   def friendly_deadline
-    return deadline unless lecture.submission_grace_period
+    return deadline if kind_test? || lecture.submission_grace_period.nil?
 
     deadline + lecture.submission_grace_period.minutes
   end
@@ -189,6 +270,14 @@ class Assignment < ApplicationRecord
       errors.add(:deadline, :in_past) if deadline < Time.zone.now
     end
 
+    def kind_immutable
+      errors.add(:kind, :immutable)
+    end
+
+    def end_test_week
+      self.deadline = deadline.end_of_week if deadline
+    end
+
     def inherit_deletion_date_from_lecture
       self.deletion_date = lecture.submission_deletion_date
     end
@@ -228,6 +317,74 @@ class Assignment < ApplicationRecord
 
     def setup_assessment
       ensure_pointbook!(requires_submission: requires_submission)
+    end
+
+    def non_submitters_in_tutorial_predeadline(tutorial)
+      User.where(id: non_submitter_ids_in_tutorial_from_memberships(tutorial))
+    end
+
+    def non_submitters_in_tutorial_postdeadline(tutorial)
+      ids = non_submitter_ids_in_tutorial_from_participations(tutorial) |
+            non_submitter_ids_in_tutorial_from_memberships(tutorial)
+      User.where(id: ids)
+    end
+
+    def non_submitters_in_tutorials_predeadline
+      User.where(id: non_submitter_ids_in_tutorials_from_memberships)
+    end
+
+    def non_submitters_in_tutorials_postdeadline
+      ids = non_submitter_ids_in_tutorials_from_participations |
+            non_submitter_ids_in_tutorials_from_memberships
+      User.where(id: ids)
+    end
+
+    def applicable_user_ids_not_in_tutorials_from_memberships
+      user_ids_in_lecture_from_memberships - user_ids_in_tutorials_from_memberships
+    end
+
+    def non_submitter_ids_in_tutorials_from_memberships
+      user_ids_in_tutorials_from_memberships - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorials_from_participations
+      user_ids_in_tutorials_from_participations - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorial_from_memberships(tutorial)
+      user_ids_in_tutorial_from_memberships(tutorial) - submitter_ids
+    end
+
+    def non_submitter_ids_in_tutorial_from_participations(tutorial)
+      user_ids_in_tutorial_from_participations(tutorial) - submitter_ids
+    end
+
+    def user_ids_in_tutorials_from_memberships
+      lecture.tutorials.joins(:tutorial_memberships)
+             .pluck("tutorial_memberships.user_id").uniq
+    end
+
+    def user_ids_in_tutorials_from_participations
+      return [] if assessment.blank?
+
+      tutorial_ids = lecture.tutorials.pluck(:id)
+      Assessment::Participation
+        .where(assessment_id: assessment.id, tutorial_id: tutorial_ids)
+        .distinct
+        .pluck(:user_id)
+    end
+
+    def user_ids_in_tutorial_from_memberships(tutorial)
+      tutorial.tutorial_memberships.pluck("user_id").uniq
+    end
+
+    def user_ids_in_tutorial_from_participations(tutorial)
+      return [] if assessment.blank?
+
+      Assessment::Participation
+        .where(assessment_id: assessment.id, tutorial_id: tutorial.id)
+        .distinct
+        .pluck(:user_id)
     end
 
     # Skip Lecture validations so an unrelated validation error cannot

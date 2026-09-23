@@ -59,4 +59,14 @@
   .due-group-end {
     border-right: 2px solid var(--bs-border-color);
   }
+
+  // Separate the test percentage from the achievement columns.
+  .test-share {
+    border-left: var(--bs-border-width) solid var(--bs-border-color);
+    border-right: 2px solid var(--bs-border-color);
+  }
+
+  .tests-start {
+    border-left: 2px solid var(--bs-border-color);
+  }
 }

@@ -3,6 +3,13 @@
     <i class="<%= icon_class %>"></i>
     <%= label %>
   </span>
+<% elsif variant == :icon %>
+  <i
+    class="bi <%= config[:icon] %> <%= text_class %>"
+    role="img"
+    title="<%= icon_title %>"
+    aria-label="<%= icon_title %>"
+  ></i>
 <% else %>
   <%= render_compact %>
 <% end %>
