@@ -667,6 +667,21 @@ RSpec.describe("Lectures", type: :request) do
       expect(flash[:alert]).to eq(I18n.t("submission.upload_failure_scanner_unavailable"))
     end
 
+    it "tells no new editor about a save the scan refused" do
+      editor = create(:confirmed_user)
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
+
+      expect do
+        patch(lecture_path(lecture),
+              params: { lecture: { home_attachment: pdf_upload, editor_ids: [editor.id] },
+                        subpage: "home" })
+      end.not_to have_enqueued_mail(LectureNotificationMailer, :new_editor_email)
+      expect(lecture.reload.editors).not_to include(editor)
+    end
+
     it "answers a crafted scalar attachment with 400, not a crash" do
       patch lecture_path(lecture),
             params: { lecture: { home_attachment: "text" }, subpage: "home" }

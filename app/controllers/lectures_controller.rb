@@ -105,9 +105,10 @@ class LecturesController < ApplicationController
   def update
     return unless @lecture.valid_annotations_status?
 
-    notify_new_editors
     attach_scanned_home_attachment
+    new_editors = editors_to_notify
     update_lecture_and_forum
+    notify_new_editors(new_editors) if @errors.empty?
     handle_update_response
   rescue MalwareScanGate::InfectedUploadError
     redirect_to edit_lecture_path(@lecture, tab: "home"),
@@ -508,13 +509,16 @@ class LecturesController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_test")
     end
 
-    def notify_new_editors
+    # Reads the new editors before the update, which makes them editors already.
+    def editors_to_notify
       editor_ids = lecture_params[:editor_ids]
-      return if editor_ids.nil?
+      return User.none if editor_ids.nil?
 
       all_ids = editor_ids.map(&:to_i) - [0]
-      new_ids = all_ids - @lecture.editor_ids
-      recipients = User.where(id: new_ids)
+      User.where(id: all_ids - @lecture.editor_ids).to_a
+    end
+
+    def notify_new_editors(recipients)
       recipients.each { |r| LectureNotifier.notify_new_editor_by_mail(r, @lecture) }
     end
 
