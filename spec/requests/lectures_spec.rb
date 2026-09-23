@@ -704,6 +704,12 @@ RSpec.describe("Lectures", type: :request) do
       expect(lecture.reload.home_attachment).to be_nil
     end
 
+    it "answers a crafted scalar lecture with 400, not a crash" do
+      patch lecture_path(lecture), params: { lecture: "text", subpage: "home" }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+
     it "removes the pdf when the remove control is submitted" do
       attach_home_pdf(lecture).save!
 

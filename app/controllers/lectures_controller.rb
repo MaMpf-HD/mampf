@@ -402,9 +402,13 @@ class LecturesController < ApplicationController
         Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
 
-    # Permits :home_attachment so a file-only request passes expect, and leaves it
-    # out of the mass assignment: attach_scanned_home_attachment attaches it.
     def lecture_params
+      permitted_lecture_params.except(:home_attachment)
+    end
+
+    # Permits :home_attachment so a file-only request passes expect;
+    # lecture_params leaves it out, attach_scanned_home_attachment attaches it.
+    def permitted_lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
                         :organizational_concept, :vignettes,
@@ -419,7 +423,7 @@ class LecturesController < ApplicationController
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
-      params.expect(lecture: allowed_params).except(:home_attachment)
+      params.expect(lecture: allowed_params)
     end
 
     def import_toc_params
@@ -527,7 +531,7 @@ class LecturesController < ApplicationController
     # Caches the form's file through the malware scan; the attacher refuses it
     # as a mass-assigned attribute.
     def attach_scanned_home_attachment
-      upload = params.dig(:lecture, :home_attachment)
+      upload = permitted_lecture_params[:home_attachment]
       return if upload.blank?
       raise(ActionController::BadRequest) unless upload.respond_to?(:tempfile)
 
