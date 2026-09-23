@@ -541,17 +541,17 @@ RSpec.describe("Assignments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
-      it "uses lecture locale for new" do
+      it "answers a German lecture in the teacher's English for new" do
         get new_assignment_path(lecture_id: german_lecture.id), as: :turbo_stream
-        expect(I18n.locale).to eq(:de)
+        expect(I18n.locale).to eq(:en)
       end
 
-      it "uses lecture locale for edit" do
+      it "answers a German lecture in the teacher's English for edit" do
         get edit_assignment_path(german_assignment), xhr: true
-        expect(I18n.locale).to eq(:de)
+        expect(I18n.locale).to eq(:en)
       end
 
-      it "uses lecture locale for create" do
+      it "answers a German lecture in the teacher's English for create" do
         post assignments_path,
              params: {
                assignment: {
@@ -562,14 +562,14 @@ RSpec.describe("Assignments", type: :request) do
                }
              },
              as: :turbo_stream
-        expect(I18n.locale).to eq(:de)
+        expect(I18n.locale).to eq(:en)
       end
 
-      it "uses lecture locale for update" do
+      it "answers a German lecture in the teacher's English for update" do
         patch assignment_path(german_assignment),
               params: { assignment: { title: "Updated" } },
               xhr: true
-        expect(I18n.locale).to eq(:de)
+        expect(I18n.locale).to eq(:en)
       end
     end
   end

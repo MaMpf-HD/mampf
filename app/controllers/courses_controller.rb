@@ -21,7 +21,6 @@ class CoursesController < ApplicationController
   end
 
   def edit
-    I18n.locale = @course.locale || I18n.default_locale
   end
 
   def create
@@ -56,7 +55,6 @@ class CoursesController < ApplicationController
   end
 
   def update
-    I18n.locale = @course.locale || I18n.default_locale
     old_image_data = @course.image_data
     @course.update(course_params)
     if @course.errors.present?

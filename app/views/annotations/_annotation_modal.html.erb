@@ -5,14 +5,10 @@
       <div class="modal-header">
         <h5 class="modal-title">
           <span id="modal-title-create-annotation">
-            <% I18n.with_locale(current_user.locale) do %>
-              <%= t('admin.annotation.annotation_modal_head_create_annotation') %>
-            <% end %>
+            <%= t('admin.annotation.annotation_modal_head_create_annotation') %>
           </span>
           <span id="modal-title-edit-annotation">
-            <% I18n.with_locale(current_user.locale) do %>
-              <%= t('admin.annotation.annotation_modal_head_edit_annotation') %>
-            <% end %>
+            <%= t('admin.annotation.annotation_modal_head_edit_annotation') %>
           </span>
         </h5>
         <button type="button"

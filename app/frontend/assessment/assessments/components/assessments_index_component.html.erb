@@ -1,4 +1,3 @@
-<% I18n.with_locale(lecture.locale_with_inheritance || I18n.default_locale) do %>
   <% assessables_by_type.each do |(type, assessables)| %>
     <% assessables_with_assessment = assessables.select(&:assessment) %>
 
@@ -277,4 +276,3 @@
       </table>
     <% end %>
   <% end %>
-<% end %>

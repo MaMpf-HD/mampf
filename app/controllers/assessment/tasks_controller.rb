@@ -5,7 +5,6 @@ module Assessment
     # endpoint open, and nothing fails to remind you.
     before_action :authorize_assessment_update!
     before_action :set_task, only: [:edit, :update, :destroy, :cancel]
-    before_action :set_locale
     before_action :require_turbo_stream, only: [:create, :update]
 
     def current_ability
@@ -115,12 +114,6 @@ module Assessment
         return if @task
 
         redirect_to_dashboard(tab: "tasks", alert: I18n.t("assessment.errors.no_task"))
-      end
-
-      def set_locale
-        I18n.locale = @assessment&.assessable&.lecture&.locale_with_inheritance ||
-                      current_user.locale ||
-                      I18n.default_locale
       end
 
       def task_params

@@ -4,7 +4,6 @@ module Registration
 
     helper RegistrationPolicyHelper
     before_action :set_campaign
-    before_action :set_locale
     before_action :set_policy, only: [:edit, :update, :destroy, :move_up, :move_down]
     authorize_resource class: "Registration::Policy",
                        except: [:new, :create, :reorder]
@@ -89,10 +88,6 @@ module Registration
                            redirect_path: registration_campaign_path(
                              @campaign, anchor: "policies-tab"
                            ))
-      end
-
-      def set_locale
-        I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
       end
 
       def policy_params

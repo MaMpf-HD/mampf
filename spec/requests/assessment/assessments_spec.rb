@@ -459,9 +459,9 @@ RSpec.describe("Assessment::Assessments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
-      it "uses lecture locale for index" do
+      it "answers a German lecture in the teacher's English for index" do
         get assessment_assessments_path(lecture_id: german_lecture.id)
-        expect(I18n.locale).to eq(:de)
+        expect(I18n.locale).to eq(:en)
       end
     end
   end

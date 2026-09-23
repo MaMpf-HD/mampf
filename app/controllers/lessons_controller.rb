@@ -9,13 +9,11 @@ class LessonsController < ApplicationController
   end
 
   def show
-    I18n.locale = @lesson.locale_with_inheritance
     render layout: "application_no_sidebar"
   end
 
   def new
     @lecture = Lecture.find_by(id: params[:lecture_id])
-    I18n.locale = @lecture.locale_with_inheritance if @lecture
     @lesson = Lesson.new(lecture: @lecture)
     section = Section.find_by(id: params[:section_id])
     @lesson.sections << section if section
@@ -23,13 +21,11 @@ class LessonsController < ApplicationController
   end
 
   def edit
-    I18n.locale = @lesson.locale_with_inheritance
   end
 
   def create
     @lesson = Lesson.new(lesson_params)
     authorize! :create, @lesson
-    I18n.locale = @lesson.lecture.locale_with_inheritance if @lesson.lecture
     # add all tags from sections associated to this lesson
     @lesson.tags = @lesson.sections.map(&:tags).flatten
     @lesson.save
@@ -42,7 +38,6 @@ class LessonsController < ApplicationController
   end
 
   def update
-    I18n.locale = @lesson.lecture.locale_with_inheritance
     @lesson.update(lesson_params)
     @errors = @lesson.errors
     return if @errors.present?
@@ -57,7 +52,6 @@ class LessonsController < ApplicationController
 
   def destroy
     lecture = @lesson.lecture
-    I18n.locale = lecture.locale_with_inheritance
     media = @lesson.media
     # move all of the lessons's media to the level of the lesson's lecture
     media.each do |m|

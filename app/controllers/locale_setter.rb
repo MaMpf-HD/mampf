@@ -10,7 +10,7 @@ module LocaleSetter
 
     def set_locale
       I18n.locale = locale_param || current_user.try(:locale) ||
-                    cookie_locale_param || I18n.default_locale
+                    cookie_locale_param || browser_locale || I18n.default_locale
       set_pagy_locale
 
       return if respond_to?(:user_signed_in?) && user_signed_in?
@@ -36,6 +36,13 @@ module LocaleSetter
       return unless cookies[:locale].in?(available_locales)
 
       cookies[:locale]
+    end
+
+    # Ignores the q-values: browsers list the languages in order of preference.
+    def browser_locale
+      request.headers["Accept-Language"].to_s.split(",")
+             .map { |entry| entry.strip[0, 2].to_s.downcase }
+             .find { |code| code.in?(available_locales) }
     end
 
     def available_locales

@@ -15,7 +15,6 @@ class CohortsController < ApplicationController
     @cohort = Cohort.new(context: @lecture)
     @cohort.assign_attributes(cohort_params) if params[:cohort].present?
     authorize! :new, @cohort
-    set_cohort_locale
 
     respond_to do |format|
       format.turbo_stream do
@@ -29,7 +28,6 @@ class CohortsController < ApplicationController
   end
 
   def edit
-    set_cohort_locale
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.update(
@@ -46,7 +44,6 @@ class CohortsController < ApplicationController
     @cohort.skip_campaigns = true if registration_section_no_campaign?
     @cohort.context = @lecture
     authorize! :create, @cohort
-    set_cohort_locale
 
     persisted = false
     Cohort.transaction do
@@ -72,8 +69,6 @@ class CohortsController < ApplicationController
   end
 
   def update
-    set_cohort_locale
-
     if @cohort.update(cohort_params)
       flash.now[:notice] = t("controllers.cohorts.updated")
     else
@@ -101,7 +96,6 @@ class CohortsController < ApplicationController
   end
 
   def destroy
-    set_cohort_locale
     if @cohort.destroy
       flash.now[:notice] = t("controllers.cohorts.destroyed")
     else
@@ -124,11 +118,9 @@ class CohortsController < ApplicationController
     def set_lecture
       lecture_id = params[:lecture_id] || params.dig(:cohort, :lecture_id)
       @lecture = Lecture.find_by(id: lecture_id)
-      if @lecture
-        set_cohort_locale
-      else
-        redirect_to :root, alert: I18n.t("controllers.no_lecture")
-      end
+      return if @lecture
+
+      redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_cohort
@@ -138,11 +130,6 @@ class CohortsController < ApplicationController
       else
         redirect_to :root, alert: I18n.t("controllers.no_cohort")
       end
-    end
-
-    def set_cohort_locale
-      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     end
 
     def cohort_params

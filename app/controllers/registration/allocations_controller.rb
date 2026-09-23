@@ -4,7 +4,6 @@ module Registration
     include Registration::RosterStreamRefreshable
 
     before_action :set_campaign
-    before_action :set_locale
 
     def current_ability
       @current_ability ||= RegistrationCampaignAbility.new(current_user)
@@ -242,10 +241,6 @@ module Registration
         return if @campaign
 
         respond_with_flash(:alert, t("registration.campaign.not_found"), redirect_path: root_path)
-      end
-
-      def set_locale
-        I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
       end
 
       def exam_workspace?

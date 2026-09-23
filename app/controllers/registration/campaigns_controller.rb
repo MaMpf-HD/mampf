@@ -5,7 +5,6 @@ module Registration
 
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :set_campaign, except: [:index, :new, :create]
-    before_action :set_locale
     authorize_resource class: "Registration::Campaign", except: [:index, :new, :create]
 
     # set_campaign finds without locking, so a campaign deleted in between
@@ -258,12 +257,6 @@ module Registration
 
         respond_with_flash(:alert, t("registration.campaign.not_found"),
                            redirect_path: root_path)
-      end
-
-      def set_locale
-        I18n.locale = @campaign&.locale_with_inheritance ||
-                      @lecture&.locale_with_inheritance ||
-                      I18n.locale
       end
 
       def campaign_params
