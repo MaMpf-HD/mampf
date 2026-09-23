@@ -106,8 +106,15 @@ class LecturesController < ApplicationController
     return unless @lecture.valid_annotations_status?
 
     notify_new_editors
+    attach_scanned_home_attachment
     update_lecture_and_forum
     handle_update_response
+  rescue MalwareScanGate::InfectedUploadError
+    redirect_to edit_lecture_path(@lecture, tab: "home"),
+                alert: t("submission.upload_failure_malware")
+  rescue MalwareScanGate::ScannerUnavailableError
+    redirect_to edit_lecture_path(@lecture, tab: "home"),
+                alert: t("submission.upload_failure_scanner_unavailable")
   end
 
   def publish
@@ -409,7 +416,7 @@ class LecturesController < ApplicationController
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
-      params.expect(lecture: allowed_params)
+      params.expect(lecture: allowed_params).except(:home_attachment)
     end
 
     def import_toc_params
@@ -509,6 +516,20 @@ class LecturesController < ApplicationController
       new_ids = all_ids - @lecture.editor_ids
       recipients = User.where(id: new_ids)
       recipients.each { |r| LectureNotifier.notify_new_editor_by_mail(r, @lecture) }
+    end
+
+    # Caches the form's file through the malware scan; the attacher refuses it
+    # as a mass-assigned attribute.
+    def attach_scanned_home_attachment
+      upload = params.dig(:lecture, :home_attachment)
+      return if upload.blank?
+      raise(ActionController::BadRequest) unless upload.respond_to?(:tempfile)
+
+      File.open(upload.tempfile.path) do |file|
+        @lecture.home_attachment_attacher.attach_cached(
+          file, metadata: { "filename" => upload.original_filename }
+        )
+      end
     end
 
     def update_lecture_and_forum
