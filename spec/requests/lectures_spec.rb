@@ -613,7 +613,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "shows the attached pdf with a control to remove it" do
-      lecture.update!(home_attachment: pdf_upload)
+      attach_home_pdf(lecture).save!
 
       get edit_lecture_path(lecture, tab: "home")
 
@@ -630,15 +630,88 @@ RSpec.describe("Lectures", type: :request) do
       expect(response).to redirect_to(edit_lecture_path(lecture, tab: "home"))
     end
 
-    it "stores a pdf program" do
+    it "stores a pdf program, scanned" do
       patch lecture_path(lecture),
             params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
 
-      expect(lecture.reload.home_attachment_filename).to eq("program.pdf")
+      attachment = lecture.reload.home_attachment
+      expect(attachment.metadata["filename"]).to eq("program.pdf")
+      expect(attachment.metadata.dig(MalwareScanGate::METADATA_KEY, "status"))
+        .to eq(MalwareScanGate::CLEAN_STATUS)
+    end
+
+    it "stores nothing when the scan finds malware" do
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
+
+      patch lecture_path(lecture),
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
+
+      expect(lecture.reload.home_attachment).to be_nil
+      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "home"))
+      expect(flash[:alert]).to eq(I18n.t("submission.upload_failure_malware"))
+    end
+
+    it "stores nothing when the scanner is not there" do
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.unavailable("down"))
+
+      patch lecture_path(lecture),
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
+
+      expect(lecture.reload.home_attachment).to be_nil
+      expect(flash[:alert]).to eq(I18n.t("submission.upload_failure_scanner_unavailable"))
+    end
+
+    it "tells no new editor about a save the scan refused" do
+      editor = create(:confirmed_user)
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
+
+      expect do
+        patch(lecture_path(lecture),
+              params: { lecture: { home_attachment: pdf_upload, editor_ids: [editor.id] },
+                        subpage: "home" })
+      end.not_to have_enqueued_mail(LectureNotificationMailer, :new_editor_email)
+      expect(lecture.reload.editors).not_to include(editor)
+    end
+
+    it "keeps the previous program when a replacement is refused by validation" do
+      attach_home_pdf(lecture, "%PDF-1.4 demo", "first.pdf").save!
+      not_a_pdf = Rack::Test::UploadedFile.new(StringIO.new("just some text"),
+                                               "application/pdf",
+                                               original_filename: "second.pdf")
+
+      patch lecture_path(lecture),
+            params: { lecture: { home_attachment: not_a_pdf }, subpage: "home" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(lecture.reload.home_attachment_filename).to eq("first.pdf")
+    end
+
+    it "answers a crafted scalar attachment with 400, not a crash" do
+      patch lecture_path(lecture),
+            params: { lecture: { home_attachment: "text" }, subpage: "home" }
+
+      expect(response).to have_http_status(:bad_request)
+      expect(lecture.reload.home_attachment).to be_nil
+    end
+
+    it "answers a crafted scalar lecture with 400, not a crash" do
+      patch lecture_path(lecture), params: { lecture: "text", subpage: "home" }
+
+      expect(response).to have_http_status(:bad_request)
     end
 
     it "removes the pdf when the remove control is submitted" do
-      lecture.update!(home_attachment: pdf_upload)
+      attach_home_pdf(lecture).save!
 
       patch lecture_path(lecture),
             params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
