@@ -26,6 +26,7 @@ en:
     attachment: "Attachment (optional)"
     attachment_hint: "One PDF file, at most 10 MB — e.g. a course program."
     attachment_must_be_pdf: "must be a PDF file"
+    attachment_too_large: "The file is larger than %{max}."
     send:
       zero: "Send"
       one: "Send to 1 student"
