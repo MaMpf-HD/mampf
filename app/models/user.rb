@@ -5,6 +5,7 @@ class User < ApplicationRecord
   class IncompatibleTypeError < StandardError; end
 
   CURRENT_PASSWORD_POLICY_VERSION = 1
+  PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number, :uni_id].freeze
 
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
@@ -123,6 +124,22 @@ class User < ApplicationRecord
 
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
+
+  normalizes :first_name, :last_name, with: ->(value) { value.squish.presence }
+  normalizes :matriculation_number, with: ->(value) { value.gsub(/\s/, "").presence }
+  normalizes :uni_id, with: ->(value) { value.strip.downcase.presence }
+
+  validates :matriculation_number, uniqueness: true, format: { with: /\A\d+\z/ },
+                                   allow_nil: true
+  validates :uni_id, uniqueness: true, format: { with: /\A[a-z0-9]+\z/ }, allow_nil: true
+  validates :first_name, :last_name, presence: true, on: :personal_data
+  validates :matriculation_number, presence: true, on: :personal_data,
+                                   unless: :no_matriculation_number
+  validates :personal_data_confirmation, acceptance: { allow_nil: false }, on: :personal_data
+
+  # The student has no matriculation number yet (first weeks, guest student);
+  # the empty field may be filled in later.
+  attribute :no_matriculation_number, :boolean, default: false
 
   before_save :track_password_change
 
@@ -405,7 +422,25 @@ class User < ApplicationRecord
   end
 
   def tutorial_name
-    name_in_tutorials.presence || name
+    full_name || name_in_tutorials.presence || name
+  end
+
+  def full_name
+    [first_name, last_name].compact_blank.join(" ").presence
+  end
+
+  # Neither given nor declined: the login asks for it.
+  def personal_data_pending?
+    personal_data_confirmed_at.nil? && personal_data_declined_at.nil?
+  end
+
+  def personal_data_declined?
+    personal_data_declined_at.present? && personal_data_confirmed_at.nil?
+  end
+
+  # The fields the user may still fill in: those not yet saved.
+  def open_personal_data_fields
+    PERSONAL_DATA_FIELDS.select { |field| attribute_in_database(field).blank? }
   end
 
   def short_info
