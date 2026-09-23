@@ -30,14 +30,12 @@ class StudentMessage < ApplicationRecord
     @labels = labels
   end
 
-  # A message saved before the labels were kept in every language has only
-  # the one it was sent in.
+  # Some saved audiences have `label` but no `labels`; keep `label` as the
+  # fallback so those messages remain readable.
   def audience_labels
     audiences.map { |audience| audience.dig("labels", I18n.locale.to_s) || audience["label"] }
   end
 
-  # Groups the saved addresses by their owner's language; an address no
-  # account has any more gets the default.
   def recipient_emails_by_locale
     locales = User.where(email: recipient_emails).pluck(:email, :locale).to_h
     recipient_emails.group_by { |email| (locales[email].presence || I18n.default_locale).to_s }

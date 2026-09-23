@@ -3,9 +3,8 @@
 # Note that this deliberately does not respect the email_for_announcement
 # opt-out: these are operational emails tied to a group the student is in.
 class StudentMessageMailer < ApplicationMailer
-  # Sends one mail per language the recipients read. Only the mail in the
-  # sender's language carries the sender's copy and the staff's cc, and it
-  # goes out even without recipients: nobody gets the message twice.
+  # Sends one mail per locale the students use. The sender and staff need one
+  # copy even when no student uses the sender's locale.
   def self.deliver_by_locale(message)
     groups = message.recipient_emails_by_locale
     sender_locale = (message.sender.locale.presence || I18n.default_locale).to_s

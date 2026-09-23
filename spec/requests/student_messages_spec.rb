@@ -146,8 +146,6 @@ RSpec.describe("StudentMessages", type: :request) do
         expect(StudentMessage.count).to eq(0)
       end
 
-      # The labels a record keeps are what each mail prints, in its
-      # recipient's language, whatever the sender's page spoke.
       it "keeps the labels in every language" do
         lecture.update!(locale: "de")
         teacher.update!(locale: "en")

@@ -58,8 +58,6 @@ class StudentMessagesController < ApplicationController
     end
 
     # Whoever may write to nothing in this lecture has no business here.
-    # The labels this catalog makes are in the sender's language; the record
-    # keeps them in every language, for recipients reading another.
     def set_catalog
       @catalog = StudentMessages::Catalog.new(@lecture, current_user).tap(&:audiences)
       return if @catalog.audiences.any?
