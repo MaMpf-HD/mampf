@@ -455,6 +455,16 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                                                 "registration_success"))
       end
 
+      it "sends a user who declined to give name and matriculation number to the support" do
+        user.update!(personal_data_confirmed_at: nil, personal_data_declined_at: Time.current)
+        expect(UserRegistrations::LectureFirstComeFirstServedEditService).not_to receive(:new)
+
+        post register_item_path(campaign_id: campaign.id, item_id: item.id)
+
+        expect(flash[:alert]).to eq(I18n.t("personal_data.needed_to_register",
+                                           support: DefaultSetting::PROJECT_EMAIL))
+      end
+
       context "when the user is not allowed to enroll" do
         let(:lecture) { create(:lecture, teacher: user) }
         let(:campaign) do
