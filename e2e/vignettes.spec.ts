@@ -276,7 +276,7 @@ test.describe("Vignettes", () => {
       });
 
       const posted: string[] = [];
-      student.page.on("request", request => {
+      student.page.on("request", (request) => {
         if (request.method() === "POST") posted.push(request.url());
       });
 
