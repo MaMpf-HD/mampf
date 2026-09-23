@@ -402,6 +402,8 @@ class LecturesController < ApplicationController
         Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
 
+    # Permits :home_attachment so a file-only request passes expect, and leaves it
+    # out of the mass assignment: attach_scanned_home_attachment attaches it.
     def lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
