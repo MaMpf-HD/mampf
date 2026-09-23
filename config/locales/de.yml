@@ -540,6 +540,9 @@ de:
       no_active_voucher: >
         Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
+        language: >
+          Die Sprache, in der diese Veranstaltung gehalten wird. Die Oberfläche ändert sie nicht: Alle sehen MaMpf in der Sprache
+          ihrer eigenen Einstellungen.
         home_intro: >
           Wird oben auf der Startseite der Veranstaltung angezeigt, über der
           Anmeldung. Begrüße hier die Studierenden, erkläre das Anmeldeverfahren
@@ -855,6 +858,9 @@ de:
         Es wurde noch kein Bild hochgeladen. Deshalb wird für die
         Veranstaltungs-Cards das Standard-Bild verwendet.
       info:
+        language: >
+          Die Sprache, in der das Modul unterrichtet wird. Die Oberfläche ändert sie nicht: Alle sehen MaMpf in der Sprache
+          ihrer eigenen Einstellungen.
         title: >
           Hier musst Du den Titel des Moduls eintragen.
           Typischerweise sollte das der Titel aus dem Modulhandbuch sein.
@@ -1398,9 +1404,9 @@ de:
           </li>
           </ul>
         language: >
-          Hier kannst Du die Sprache für das Medium festelegen. Standardmäßig
-          ist das die Sprache der zugehörigen Veranstaltung bzw. des zugehörigen
-          Moduls.
+          Die Sprache des Mediums; standardmäßig die der zugehörigen
+          Veranstaltung bzw. des Moduls. Die Oberfläche ändert sie nicht: Alle sehen MaMpf in der Sprache
+          ihrer eigenen Einstellungen.
         video: >
           Das Video sollte im mp4-Format vorliegen.
           Die empfohlene horizontale Auflösung ist 1080 Pixel, um eine
@@ -3735,6 +3741,8 @@ de:
     email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
+    teaching_language: 'Unterrichtssprache'
+    material_language: 'Sprache des Materials'
     date: 'Datum'
     location: 'Ort'
     not_specified: 'Nicht angegeben'
