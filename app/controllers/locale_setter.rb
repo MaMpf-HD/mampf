@@ -38,11 +38,15 @@ module LocaleSetter
       cookies[:locale]
     end
 
-    # Ignores the q-values: browsers list the languages in order of preference.
     def browser_locale
-      request.headers["Accept-Language"].to_s.split(",")
-             .map { |entry| entry.strip[0, 2].to_s.downcase }
-             .find { |code| code.in?(available_locales) }
+      offered = request.headers["Accept-Language"].to_s.split(",").filter_map do |entry|
+        tag, *parameters = entry.split(";").map(&:strip)
+        weight = parameters.find { |p| p.start_with?("q=") }&.delete_prefix("q=")
+        weight = weight ? weight.to_f : 1.0
+        code = tag.to_s.downcase.split("-").first
+        [code, weight] if weight.positive? && code.in?(available_locales)
+      end
+      offered.max_by { |_code, weight| weight }&.first
     end
 
     def available_locales

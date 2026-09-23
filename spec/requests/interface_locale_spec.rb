@@ -39,6 +39,18 @@ RSpec.describe("Interface language", type: :request) do
     expect(response.body).to include('<html lang="en">')
   end
 
+  {
+    "en;q=0,de;q=1" => "de",
+    "de;q=0.2,en;q=0.9" => "en",
+    "english" => "de"
+  }.each do |header, locale|
+    it "answers a guest whose browser sends #{header} in #{locale}" do
+      get new_user_session_path, headers: { "Accept-Language" => header }
+
+      expect(response.body).to include(%(<html lang="#{locale}">))
+    end
+  end
+
   it "answers a guest whose browser asks for no language it offers in German" do
     get new_user_session_path, headers: { "Accept-Language" => "fr-FR,fr;q=0.9" }
 
