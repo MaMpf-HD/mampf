@@ -23,10 +23,16 @@ test("can sign up and confirm the account", async ({ page, request }) => {
 
   await new LoginPage(page).login(email, "correct-horse-battery-staple");
 
+  // a new account is asked for its name and matriculation number first
+  await expect(page).toHaveURL(/\/personal_data/);
+  await page.getByLabel("First name").fill("Ada");
+  await page.getByLabel("Last name").fill("Lovelace");
+  await page.getByLabel("I do not have a matriculation number yet").check();
+  await page.getByLabel(/I have checked these details/).check();
+  await page.getByRole("button", { name: "Save" }).click();
+
   await expect(page).toHaveURL(/\/profile\/edit/);
-  await expect(page.getByRole("alert")).toContainText(
-    "Please take some time to edit your profile settings.",
-  );
+  await expect(page.getByText("Thank you, your details are saved.")).toBeVisible();
 });
 
 test("shows an altcha error and blocks signup when auto verification fails", async ({ page }) => {
