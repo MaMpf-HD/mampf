@@ -536,10 +536,13 @@ class LecturesController < ApplicationController
       end
     end
 
+    # Touches only after a successful update: a touch after a failed one still
+    # commits, and promotes the attachment the validation refused.
     def update_lecture_and_forum
-      @lecture.update(lecture_params)
-      @lecture.touch
-      @lecture.forum&.update(name: @lecture.forum_title)
+      if @lecture.update(lecture_params)
+        @lecture.touch
+        @lecture.forum&.update(name: @lecture.forum_title)
+      end
       @errors = @lecture.errors
     end
 

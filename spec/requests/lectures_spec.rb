@@ -682,6 +682,20 @@ RSpec.describe("Lectures", type: :request) do
       expect(lecture.reload.editors).not_to include(editor)
     end
 
+    it "keeps the previous program when a replacement is refused by validation" do
+      attach_home_pdf(lecture, "%PDF-1.4 demo", "first.pdf").save!
+      not_a_pdf = Rack::Test::UploadedFile.new(StringIO.new("just some text"),
+                                               "application/pdf",
+                                               original_filename: "second.pdf")
+
+      patch lecture_path(lecture),
+            params: { lecture: { home_attachment: not_a_pdf }, subpage: "home" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(lecture.reload.home_attachment_filename).to eq("first.pdf")
+    end
+
     it "answers a crafted scalar attachment with 400, not a crash" do
       patch lecture_path(lecture),
             params: { lecture: { home_attachment: "text" }, subpage: "home" }
