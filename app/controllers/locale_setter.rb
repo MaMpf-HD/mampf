@@ -14,8 +14,9 @@ module LocaleSetter
       set_pagy_locale
 
       return if respond_to?(:user_signed_in?) && user_signed_in?
+      return unless locale_param
 
-      cookies[:locale] = I18n.locale.to_s
+      cookies[:locale] = locale_param
     end
 
     def set_pagy_locale

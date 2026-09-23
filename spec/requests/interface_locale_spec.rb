@@ -51,6 +51,20 @@ RSpec.describe("Interface language", type: :request) do
     end
   end
 
+  it "does not keep a browser's language as the guest's choice" do
+    get new_user_session_path, headers: { "Accept-Language" => "en" }
+    get new_user_session_path, headers: { "Accept-Language" => "de" }
+
+    expect(response.body).to include('<html lang="de">')
+  end
+
+  it "keeps the language a guest picks" do
+    get new_user_session_path, params: { locale: "en" }
+    get new_user_session_path, headers: { "Accept-Language" => "de" }
+
+    expect(response.body).to include('<html lang="en">')
+  end
+
   it "answers a guest whose browser asks for no language it offers in German" do
     get new_user_session_path, headers: { "Accept-Language" => "fr-FR,fr;q=0.9" }
 
