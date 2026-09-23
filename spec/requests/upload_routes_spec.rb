@@ -144,6 +144,48 @@ RSpec.describe("UploadRoutes", type: :request) do
       end
     end
 
+    describe "the program and the student mail attachment, sent with their forms" do
+      ["lecture_home_attachment", "student_message"].each do |key|
+        it "asks for a login before #{key}" do
+          get "/internal/upload-authorizations/#{key}"
+
+          expect(response).to have_http_status(:unauthorized)
+        end
+
+        it "turns a student away from #{key}" do
+          sign_in user
+
+          get "/internal/upload-authorizations/#{key}", params: { locale: user.locale }
+
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+
+      it "lets an editor send a program" do
+        editor = create(:confirmed_user, locale: "en")
+        create(:course, :with_editor_by_id, editor_id: editor.id)
+        sign_in editor.reload
+
+        get "/internal/upload-authorizations/lecture_home_attachment",
+            params: { locale: editor.locale }
+
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it "lets a tutor send a mail attachment, but not a program" do
+        tutor = create(:confirmed_user, locale: "en")
+        create(:tutorial, tutors: [tutor])
+        sign_in tutor
+
+        get "/internal/upload-authorizations/student_message", params: { locale: tutor.locale }
+        expect(response).to have_http_status(:no_content)
+
+        get "/internal/upload-authorizations/lecture_home_attachment",
+            params: { locale: tutor.locale }
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
     context "when the user is an editor" do
       let(:user) do
         create(:confirmed_user, locale: "en").tap do |editor|

@@ -2,9 +2,11 @@ class UploadEndpointAuthorization
   UPLOADERS = {
     "correction" => CorrectionUploader,
     "geogebra" => GeogebraUploader,
+    "lecture_home_attachment" => LectureHomeAttachmentUploader,
     "pdf" => PdfUploader,
     "profile_image" => ProfileimageUploader,
     "screenshot" => ScreenshotUploader,
+    "student_message" => StudentMessageUploader,
     "submission" => SubmissionUploader,
     "video" => VideoUploader
   }.freeze
@@ -33,9 +35,9 @@ class UploadEndpointAuthorization
         # must still be able to replace the video on that medium.
         content_editor?(user) || user&.speaker?
       when "PdfUploader", "GeogebraUploader", "ScreenshotUploader",
-           "ProfileimageUploader"
+           "ProfileimageUploader", "LectureHomeAttachmentUploader"
         content_editor?(user)
-      when "CorrectionUploader"
+      when "CorrectionUploader", "StudentMessageUploader"
         content_editor?(user) || user&.tutor?
       when "SubmissionUploader"
         # Manuscript submissions are open to any authenticated user (and sit
