@@ -406,8 +406,9 @@ class LecturesController < ApplicationController
       permitted_lecture_params.except(:home_attachment)
     end
 
-    # Permits :home_attachment so a file-only request passes expect;
+    # Permits :home_attachment on update so a file-only request passes expect;
     # lecture_params leaves it out, attach_scanned_home_attachment attaches it.
+    # The new-lecture form has no such field.
     def permitted_lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
@@ -417,9 +418,10 @@ class LecturesController < ApplicationController
                         :submission_max_team_size, :submission_grace_period,
                         :submission_deletion_date, :uses_exam_eligibility,
                         :annotations_status,
-                        :home_intro, :home_attachment, :remove_home_attachment]
-      if action_name == "update" && current_user.can_update_personell?(@lecture)
-        allowed_params.push({ editor_ids: [] })
+                        :home_intro, :remove_home_attachment]
+      if action_name == "update"
+        allowed_params.push(:home_attachment)
+        allowed_params.push({ editor_ids: [] }) if current_user.can_update_personell?(@lecture)
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
