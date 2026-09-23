@@ -2,7 +2,7 @@ module Dashboard
   # Loads the dashboard's term-dependent lecture bands (`load_board`, shared
   # with MainController#start) and re-renders them as a Turbo Stream
   # (`render_board`, used after bookmarking or dismissing a notice).
-  module RendersBoard
+  module BoardRenderer
     extend ActiveSupport::Concern
 
     private

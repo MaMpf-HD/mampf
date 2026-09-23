@@ -1,7 +1,7 @@
 module Dashboard
   # Switches the dashboard to a different term.
   class TermsController < ApplicationController
-    include Dashboard::RendersBoard
+    include Dashboard::BoardRenderer
 
     def show
       @available_terms = Dashboard::TermSelector.terms

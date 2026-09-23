@@ -1,7 +1,7 @@
 module Dashboard
   # Bookmarks (= lecture subscriptions) a lecture from the dashboard search.
   class BookmarksController < ApplicationController
-    include Dashboard::RendersBoard
+    include Dashboard::BoardRenderer
 
     before_action :set_lecture
 

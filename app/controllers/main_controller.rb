@@ -1,5 +1,5 @@
 class MainController < ApplicationController
-  include Dashboard::RendersBoard
+  include Dashboard::BoardRenderer
 
   before_action :check_for_consent
   authorize_resource class: false, only: :start

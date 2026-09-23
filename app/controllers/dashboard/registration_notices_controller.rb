@@ -3,7 +3,7 @@ module Dashboard
   # card. The registration itself is kept for auditing - only the notice
   # about it is hidden, optionally in exchange for a plain bookmark.
   class RegistrationNoticesController < ApplicationController
-    include Dashboard::RendersBoard
+    include Dashboard::BoardRenderer
 
     before_action :set_lecture
 
