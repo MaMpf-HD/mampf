@@ -182,7 +182,7 @@ class ProfileController < ApplicationController
     def set_basics
       @subscription_type = params[:user][:subscription_type].to_i
       @name = params[:user][:name]
-      @name_in_tutorials = params[:user][:name_in_tutorials]
+      @name_in_tutorials = params[:user].fetch(:name_in_tutorials, @user.name_in_tutorials)
       @lectures = Lecture.where(id: lecture_ids)
       @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
       @locale = params[:user][:locale]

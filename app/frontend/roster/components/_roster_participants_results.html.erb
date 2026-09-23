@@ -3,6 +3,9 @@
     <thead class="table-light">
       <tr>
         <th scope="col" class="border-top-0"><%= t("basics.name") %></th>
+        <th scope="col" class="border-top-0">
+          <%= User.human_attribute_name(:matriculation_number) %>
+        </th>
         <th scope="col" class="border-top-0"><%= t("basics.email") %></th>
 
         <th scope="col" class="border-top-0">
@@ -18,7 +21,7 @@
     <tbody>
       <% if component.participants.empty? %>
         <tr>
-          <td colspan="4" class="text-center py-4 text-muted border-bottom-0">
+          <td colspan="5" class="text-center py-4 text-muted border-bottom-0">
             <%= t("roster.details.empty") %>
           </td>
         </tr>
@@ -28,6 +31,7 @@
 
           <tr>
             <td><%= user.tutorial_name %></td>
+            <td><%= user.matriculation_number %></td>
             <td><%= user.email %></td>
 
             <td>
