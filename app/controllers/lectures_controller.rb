@@ -111,11 +111,9 @@ class LecturesController < ApplicationController
     notify_new_editors(new_editors) if @errors.empty?
     handle_update_response
   rescue MalwareScanGate::InfectedUploadError
-    redirect_to edit_lecture_path(@lecture, tab: "home"),
-                alert: t("submission.upload_failure_malware")
+    refuse_home_attachment(t("submission.upload_failure_malware"))
   rescue MalwareScanGate::ScannerUnavailableError
-    redirect_to edit_lecture_path(@lecture, tab: "home"),
-                alert: t("submission.upload_failure_scanner_unavailable")
+    refuse_home_attachment(t("submission.upload_failure_scanner_unavailable"))
   end
 
   def publish
@@ -544,6 +542,14 @@ class LecturesController < ApplicationController
       end
     end
 
+    # Hands the typed intro back unsaved: the scan refuses before the update
+    # would have assigned it.
+    def refuse_home_attachment(message)
+      @lecture.assign_attributes(lecture_params.slice(:home_intro))
+      @lecture.errors.add(:home_attachment, message)
+      handle_failed_update
+    end
+
     # Touches only after a successful update: a touch after a failed one still
     # commits, and promotes the attachment the validation refused.
     def update_lecture_and_forum
@@ -599,10 +605,10 @@ class LecturesController < ApplicationController
     def handle_failed_update
       @terms = Term.select_terms
 
-      pane, partial = if params[:subpage] == "people"
-        ["edit_people", "lectures/edit/people"]
-      else
-        ["edit_preferences", "lectures/edit/preferences"]
+      pane, partial = case params[:subpage]
+                      when "people" then ["edit_people", "lectures/edit/people"]
+                      when "home" then ["edit_home", "lectures/edit/home"]
+                      else ["edit_preferences", "lectures/edit/preferences"]
       end
 
       render turbo_stream: turbo_stream.update(pane, partial: partial,

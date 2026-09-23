@@ -493,6 +493,8 @@ de:
         Optional. Nur PDF, bis 10 MB — z.B. ein Seminar- oder Veranstaltungsprogramm.
       home_attachment_remove: 'Angehängtes PDF entfernen'
       home_attachment_must_be_pdf: 'Der Anhang muss ein PDF sein.'
+      home_attachment_too_large: 'Die Datei ist größer als %{max}.'
+      home_save_failed: 'Das Speichern hat nicht geklappt. Bitte versuche es noch einmal.'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'

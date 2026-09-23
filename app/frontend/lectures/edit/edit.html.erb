@@ -42,7 +42,7 @@
       <% end %>
 
       <% component.with_tab(name: "home", label: t("admin.lecture.home_tab")) do %>
-        <div class="container small-width lecture-pane">
+        <div class="container small-width lecture-pane" id="edit_home">
           <%= render partial: 'lectures/edit/home', locals: { lecture: @lecture } %>
         </div>
       <% end %>
