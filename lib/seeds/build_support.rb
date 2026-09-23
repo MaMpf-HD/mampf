@@ -11,6 +11,10 @@ module Seeds
     # Two accounts keep an outdated password policy so that the forced password
     # change can be tried out; everyone else gets in without the detour.
     STALE_PASSWORD_ACCOUNTS = ["student5@mampf.edu", "moded@mampf.edu"].freeze
+    # A few accounts are still asked for name and matriculation number, so that
+    # the question after sign-in can be tried out, by a student and by staff.
+    PERSONAL_DATA_PENDING_ACCOUNTS = ["student2@mampf.edu", "student3@mampf.edu",
+                                      "ed@mampf.edu"].freeze
     ENROLMENT_DESCRIPTION = "Anmeldung zur Veranstaltung".freeze
     TUTORIAL_DESCRIPTION = "Anmeldung zu den Übungsgruppen".freeze
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
@@ -41,6 +45,7 @@ module Seeds
         # last, so that the accounts the demo scenarios create are usable too
         reset_passwords!
         stage_password_policy!
+        stage_personal_data!
       end
       report!
     end
@@ -116,6 +121,18 @@ module Seeds
       # rubocop:disable Rails/SkipsModelValidations
       User.where(email: STALE_PASSWORD_ACCOUNTS)
           .update_all(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    def stage_personal_data!
+      ensure_development!
+      return unless User.column_names.include?("personal_data_confirmed_at")
+
+      # rubocop:disable Rails/SkipsModelValidations
+      User.where.not(email: PERSONAL_DATA_PENDING_ACCOUNTS)
+          .update_all(personal_data_confirmed_at: Time.current, personal_data_declined_at: nil)
+      User.where(email: PERSONAL_DATA_PENDING_ACCOUNTS)
+          .update_all(personal_data_confirmed_at: nil, personal_data_declined_at: nil)
       # rubocop:enable Rails/SkipsModelValidations
     end
 
