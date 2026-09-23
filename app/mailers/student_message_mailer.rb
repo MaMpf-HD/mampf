@@ -42,10 +42,11 @@ class StudentMessageMailer < ApplicationMailer
     I18n.with_locale(locale) do
       # The sender goes into "to" so that they get a copy of their own
       # message (and so that the mail has a proper To: header despite all
-      # students being in bcc).
+      # students being in bcc). A mail in another language carries no copy
+      # and goes out in bcc alone.
       mail(from: "#{t("mailer.notification")} " \
                  "<#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>",
-           to: copies ? @message.sender.email : DefaultSetting::PROJECT_NOTIFICATION_EMAIL,
+           to: (@message.sender.email if copies),
            cc: staff_cc,
            reply_to: @message.sender.email,
            bcc: recipients,

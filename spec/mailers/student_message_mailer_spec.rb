@@ -232,8 +232,9 @@ RSpec.describe(StudentMessageMailer) do
 
       mails = deliveries
 
-      expect(mails.map(&:to)).to contain_exactly([teacher.email],
-                                                 [DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+      expect(mails.map(&:to)).to contain_exactly([teacher.email], nil)
+      expect(mails.flat_map(&:destinations))
+        .not_to include(DefaultSetting::PROJECT_NOTIFICATION_EMAIL)
       expect(mails.find { |mail| mail.to == [teacher.email] }.bcc.to_a).to be_empty
     end
   end
