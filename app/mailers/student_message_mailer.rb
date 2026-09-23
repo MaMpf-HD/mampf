@@ -11,7 +11,7 @@ class StudentMessageMailer < ApplicationMailer
     sender_locale = (message.sender.locale.presence || I18n.default_locale).to_s
     groups[sender_locale] ||= []
     groups.each do |locale, emails|
-      with(message: message, locale: locale, recipients: emails,
+      with(message: message, locale: locale, recipients: emails - message.copy_emails,
            copies: locale == sender_locale).student_message_email.deliver_later
     end
   end
@@ -37,11 +37,7 @@ class StudentMessageMailer < ApplicationMailer
     # The whole lecture staff (teacher and editors) is kept in the loop
     # via cc; the sender is already in "to" and is not cc'd twice. A
     # tutor's mail to their group is theirs alone.
-    staff_cc = if @message.staff? && copies
-      ([@lecture.teacher] + @lecture.editors).uniq.map(&:email) - [@message.sender.email]
-    else
-      []
-    end
+    staff_cc = copies ? @message.copy_emails - [@message.sender.email] : []
 
     I18n.with_locale(locale) do
       # The sender goes into "to" so that they get a copy of their own

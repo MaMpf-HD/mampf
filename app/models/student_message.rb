@@ -50,6 +50,12 @@ class StudentMessage < ApplicationRecord
       I18n.t("student_message.everyone_registered_then")
   end
 
+  # The sender's own copy and, on a staff message, the lecture staff's cc.
+  def copy_emails
+    staff = staff? ? [lecture.teacher, *lecture.editors].map(&:email) : []
+    [sender.email, *staff].uniq
+  end
+
   def attachment_filename
     attachment&.metadata&.fetch("filename", nil)
   end

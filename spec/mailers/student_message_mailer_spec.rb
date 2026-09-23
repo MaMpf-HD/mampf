@@ -214,6 +214,19 @@ RSpec.describe(StudentMessageMailer) do
         .to eq([german_student.email])
     end
 
+    it "gives an editor who also registered one copy, in the cc" do
+      editor = create(:confirmed_user, locale: "en")
+      lecture.editors << editor
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, user: editor)
+
+      mails = deliveries
+
+      addressed = mails.flat_map { |mail| mail.to.to_a + mail.cc.to_a + mail.bcc.to_a }
+      expect(addressed.count(editor.email)).to eq(1)
+      expect(mails.find { |mail| mail.to == [teacher.email] }.cc).to eq([editor.email])
+    end
+
     it "sends the sender a copy when no student reads their language" do
       german_student.update!(locale: "en")
 
