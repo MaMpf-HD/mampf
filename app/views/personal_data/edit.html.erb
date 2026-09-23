@@ -7,7 +7,8 @@
   <p class="form-text"><%= t("personal_data.saved_by_support_html", support: support) %></p>
 <% end %>
 
-<%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch do |f| %>
+<%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch,
+              local: true do |f| %>
   <% [:first_name, :last_name].each do |field| %>
     <div class="mb-3">
       <%= f.label field, class: "form-label" %>

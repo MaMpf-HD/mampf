@@ -18,7 +18,7 @@ test("asks once for the name and matriculation number after sign-in",
 
     await page.getByLabel("First name").fill("Ada");
     await page.getByLabel("Last name").fill("Lovelace");
-    await page.getByLabel("Matriculation number").fill("3456789");
+    await page.getByLabel("Matriculation number", { exact: true }).fill("3456789");
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("must be accepted")).toBeVisible();
 
