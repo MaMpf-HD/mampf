@@ -37,6 +37,6 @@ class PersonalDataController < ApplicationController
     end
 
     def after_personal_data_path
-      stored_location_for(:user).presence || start_path
+      session.delete(:after_personal_data).presence || start_path
     end
 end

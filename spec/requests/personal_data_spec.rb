@@ -16,6 +16,16 @@ RSpec.describe("Personal data", type: :request) do
       expect(response).to redirect_to(edit_personal_data_path)
     end
 
+    it "lets the sign-in finish before it asks" do
+      sign_out(user)
+
+      post user_session_path, params: { user: { email: user.email, password: user.password } }
+
+      expect(response).not_to redirect_to(edit_personal_data_path)
+      follow_redirect!
+      expect(response).to redirect_to(edit_personal_data_path)
+    end
+
     it "asks for a due password change first" do
       # rubocop:disable Rails/SkipsModelValidations
       user.update_columns(password_policy_version: 0, password_changed_at: nil)

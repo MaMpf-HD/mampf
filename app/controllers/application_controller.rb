@@ -216,7 +216,9 @@ class ApplicationController < ActionController::Base
     def enforce_personal_data
       return unless user_signed_in?
       return unless current_user.personal_data_pending?
-      return if controller_name == "personal_data" || password_change_request_allowed?
+      return if controller_name == "personal_data" || devise_controller?
+
+      session[:after_personal_data] ||= request.fullpath if request.get?
       return redirect_to(edit_personal_data_path) unless turbo_frame_request?
 
       render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
