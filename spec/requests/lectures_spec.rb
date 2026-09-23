@@ -713,6 +713,8 @@ RSpec.describe("Lectures", type: :request) do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(lecture.reload.home_attachment_filename).to eq("first.pdf")
+      expect(response.body).to include("first.pdf")
+      expect(response.body).not_to include("second.pdf")
     end
 
     it "names a refused program on the home tab, not on another" do

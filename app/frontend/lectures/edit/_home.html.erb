@@ -67,10 +67,10 @@
                   t("admin.lecture.home_attachment_label"),
                   class: "form-label" %>
 
-      <% if lecture.home_attachment_attacher.stored? %>
+      <% if (stored_filename = lecture.stored_home_attachment_filename) %>
         <div class="mb-2 d-flex align-items-center gap-2">
           <i class="fas fa-paperclip" aria-hidden="true"></i>
-          <%= link_to lecture.home_attachment_filename,
+          <%= link_to stored_filename,
                       lecture_home_attachment_path(lecture),
                       target: "_blank",
                       rel: "noopener" %>
