@@ -3,6 +3,8 @@
 # a field left empty may be filled in later.
 class PersonalDataController < ApplicationController
   layout "devise"
+  # The page is where the user goes before going back, not where to return to.
+  skip_before_action :store_user_location!
 
   def edit
     @user = current_user

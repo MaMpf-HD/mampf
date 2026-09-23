@@ -32,6 +32,14 @@ RSpec.describe("Personal data", type: :request) do
       expect(response).to have_http_status(:no_content)
     end
 
+    it "goes back to the page the user asked for, not to the question" do
+      get lecture_path(create(:lecture, :released_for_all))
+      get edit_personal_data_path
+      post decline_personal_data_path
+
+      expect(response).not_to redirect_to(edit_personal_data_path)
+    end
+
     it "lets a user through who has declined" do
       post decline_personal_data_path
       get start_path
