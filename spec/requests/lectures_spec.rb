@@ -673,7 +673,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "saves the home intro and returns to the home tab" do
-      patch lecture_path(lecture),
+      patch lecture_home_content_path(lecture),
             params: { lecture: { home_intro: "<div>Welcome</div>" },
                       subpage: "home" }
 
@@ -682,7 +682,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "stores a pdf program, scanned" do
-      patch lecture_path(lecture),
+      patch lecture_home_content_path(lecture),
             params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
 
       attachment = lecture.reload.home_attachment
@@ -697,12 +697,30 @@ RSpec.describe("Lectures", type: :request) do
       allow(MalwareScanMetrics).to receive(:record_scan)
       allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
 
-      patch lecture_path(lecture),
-            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" },
+            as: :turbo_stream
 
       expect(lecture.reload.home_attachment).to be_nil
-      expect(response).to redirect_to(edit_lecture_path(lecture, tab: "home"))
-      expect(flash[:alert]).to eq(I18n.t("submission.upload_failure_malware"))
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('target="edit_home"')
+      expect(response.body).to include(I18n.t("submission.upload_failure_malware"))
+    end
+
+    it "hands the typed intro back when the scan refuses the program" do
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.unavailable("down"))
+
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_intro: "<div>Draft welcome</div>",
+                                 home_attachment: pdf_upload },
+                      subpage: "home" },
+            as: :turbo_stream
+
+      expect(response.body).to include("Draft welcome")
+      expect(lecture.reload.home_intro.to_s).not_to include("Draft welcome")
     end
 
     it "stores nothing when the scanner is not there" do
@@ -711,11 +729,12 @@ RSpec.describe("Lectures", type: :request) do
       allow(MalwareScanMetrics).to receive(:record_scan)
       allow(scanner).to receive(:scan).and_return(UploadScanResult.unavailable("down"))
 
-      patch lecture_path(lecture),
-            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" },
+            as: :turbo_stream
 
       expect(lecture.reload.home_attachment).to be_nil
-      expect(flash[:alert]).to eq(I18n.t("submission.upload_failure_scanner_unavailable"))
+      expect(response.body).to include(I18n.t("submission.upload_failure_scanner_unavailable"))
     end
 
     it "tells no new editor about a save the scan refused" do
@@ -726,7 +745,7 @@ RSpec.describe("Lectures", type: :request) do
       allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
 
       expect do
-        patch(lecture_path(lecture),
+        patch(lecture_home_content_path(lecture),
               params: { lecture: { home_attachment: pdf_upload, editor_ids: [editor.id] },
                         subpage: "home" })
       end.not_to have_enqueued_mail(LectureNotificationMailer, :new_editor_email)
@@ -739,16 +758,32 @@ RSpec.describe("Lectures", type: :request) do
                                                "application/pdf",
                                                original_filename: "second.pdf")
 
-      patch lecture_path(lecture),
+      patch lecture_home_content_path(lecture),
             params: { lecture: { home_attachment: not_a_pdf }, subpage: "home" },
             as: :turbo_stream
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(lecture.reload.home_attachment_filename).to eq("first.pdf")
+      expect(response.body).to include("first.pdf")
+      expect(response.body).not_to include("second.pdf")
+    end
+
+    it "names a refused program on the home tab, not on another" do
+      not_a_pdf = Rack::Test::UploadedFile.new(StringIO.new("just some text"),
+                                               "application/pdf",
+                                               original_filename: "notes.pdf")
+
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: not_a_pdf }, subpage: "home" },
+            as: :turbo_stream
+
+      expect(response.body).to include('target="edit_home"')
+      expect(response.body).to include(I18n.t("admin.lecture.home_attachment_must_be_pdf"))
+      expect(response.body).not_to include("notes.pdf")
     end
 
     it "answers a crafted scalar attachment with 400, not a crash" do
-      patch lecture_path(lecture),
+      patch lecture_home_content_path(lecture),
             params: { lecture: { home_attachment: "text" }, subpage: "home" }
 
       expect(response).to have_http_status(:bad_request)
@@ -756,7 +791,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "answers a crafted scalar lecture with 400, not a crash" do
-      patch lecture_path(lecture), params: { lecture: "text", subpage: "home" }
+      patch lecture_home_content_path(lecture), params: { lecture: "text", subpage: "home" }
 
       expect(response).to have_http_status(:bad_request)
     end
@@ -764,7 +799,7 @@ RSpec.describe("Lectures", type: :request) do
     it "removes the pdf when the remove control is submitted" do
       attach_home_pdf(lecture).save!
 
-      patch lecture_path(lecture),
+      patch lecture_home_content_path(lecture),
             params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
 
       expect(lecture.reload.home_attachment).to be_nil

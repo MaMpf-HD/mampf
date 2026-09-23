@@ -331,6 +331,12 @@ Rails.application.routes.draw do
       as: "lecture_home",
       defaults: { project: "home" }
 
+  # nginx gives this path a larger client_max_body_size for home_attachment;
+  # ordinary lecture requests keep the default limit.
+  patch "lectures/:id/home_content",
+        to: "lectures#update",
+        as: "lecture_home_content"
+
   get "lectures/:id/home_attachment",
       to: "lectures/home#attachment",
       as: "lecture_home_attachment",

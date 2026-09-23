@@ -48,6 +48,32 @@ test.describe("email to students", () => {
       await expect(sent).toContainText("2 recipients");
     });
 
+  test("keeps an attachment above the limit in the browser",
+    async ({ factory, teacher, tutor }) => {
+      const { lecture } = await lectureWithTwoGroups(factory, teacher.user.id, tutor.user.id);
+      const { page } = teacher;
+      const sent: string[] = [];
+      page.on("request", (request) => {
+        if (request.method() !== "GET" && request.url().includes("/student_messages")) {
+          sent.push(request.url());
+        }
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=communication`);
+      await page.getByLabel("Subject").fill("Program");
+      await page.getByLabel("Message").fill("The program is attached.");
+      const attachment = page.getByLabel("Attachment (optional)");
+      await attachment.setInputFiles({
+        name: "program.pdf", mimeType: "application/pdf",
+        buffer: Buffer.alloc(10 * 1024 * 1024 + 1, "%"),
+      });
+      await page.getByRole("button", { name: "Send to 2 students" }).click();
+
+      await expect(attachment)
+        .toHaveJSProperty("validationMessage", "The file is larger than 10 MB.");
+      expect(sent).toHaveLength(0);
+    });
+
   test("a tutor writes to their own group from the page they grade it on",
     async ({ factory, teacher, tutor }) => {
       const { lecture, monday } = await lectureWithTwoGroups(factory, teacher.user.id,

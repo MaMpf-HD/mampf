@@ -26,6 +26,7 @@ de:
     attachment: "Anhang (optional)"
     attachment_hint: "Eine PDF-Datei, maximal 10 MB — z. B. ein Kursprogramm."
     attachment_must_be_pdf: "muss eine PDF-Datei sein"
+    attachment_too_large: "Die Datei ist größer als %{max}."
     send:
       zero: "Senden"
       one: "An 1 Person senden"

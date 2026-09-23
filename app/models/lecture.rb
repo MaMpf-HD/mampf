@@ -589,6 +589,13 @@ class Lecture < ApplicationRecord
     home_attachment&.metadata&.fetch("filename", nil)
   end
 
+  # Reads the saved program: a refused replacement waits in the attacher
+  # until the form is answered, and must not stand in for it.
+  def stored_home_attachment_filename
+    data = home_attachment_data_in_database
+    data && JSON.parse(data).dig("metadata", "filename")
+  end
+
   # returns path for show action of the lecture's course,
   def path(user)
     return unless user.lectures.include?(self)

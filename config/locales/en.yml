@@ -429,6 +429,8 @@ en:
         Optional. PDF only, up to 10 MB — e.g. a seminar or course program.
       home_attachment_remove: 'Remove the attached PDF'
       home_attachment_must_be_pdf: 'The attachment must be a PDF.'
+      home_attachment_too_large: 'The file is larger than %{max}.'
+      home_save_failed: 'Saving did not work. Please try again.'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'
       no_terms_yet: 'You have to create a term first.'
