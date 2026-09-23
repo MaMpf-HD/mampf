@@ -49,6 +49,39 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
       expect(user.current_bookmarked_lectures(lecture.term)).to include(lecture)
     end
 
+    it "removes an existing bookmark when removing the lecture entirely" do
+      user.subscribe_lecture!(lecture)
+
+      delete dashboard_registration_notice_path(lecture),
+             params: { keep_bookmarked: false }, as: :turbo_stream
+
+      expect(lecture.in?(user.reload.lectures)).to be(false)
+      expect(user.current_bookmarked_lectures(lecture.term))
+        .not_to include(lecture)
+    end
+
+    it "refuses to keep a lecture behind a passphrase bookmarked" do
+      lecture.update!(passphrase: "secret")
+
+      delete dashboard_registration_notice_path(lecture),
+             params: { keep_bookmarked: true }, as: :turbo_stream
+
+      expect(response).to have_http_status(:forbidden)
+      expect(lecture.in?(user.reload.lectures)).to be(false)
+      expect(registration.reload.dismissed_at).to be_nil
+    end
+
+    it "scopes the re-rendered bands to the given term" do
+      other_term = create(:term)
+      other_lecture = create(:lecture, :released_for_all, term: other_term)
+      user.subscribe_lecture!(other_lecture)
+
+      delete dashboard_registration_notice_path(lecture),
+             params: { term: other_term.id }, as: :turbo_stream
+
+      expect(response.body).to include(other_lecture.title_no_term)
+    end
+
     it "404s for an unknown lecture" do
       delete dashboard_registration_notice_path(0), as: :turbo_stream
 

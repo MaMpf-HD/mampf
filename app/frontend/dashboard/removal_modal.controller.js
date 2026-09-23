@@ -50,7 +50,7 @@ export default class extends Controller {
   async confirmRemoval(url, detail) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
-    const response = await fetch(url, {
+    const response = await fetch(this.termScopedUrl(url), {
       method: "DELETE",
       headers: {
         "Accept": "text/vnd.turbo-stream.html",
@@ -71,6 +71,15 @@ export default class extends Controller {
       window.Turbo.renderStreamMessage(html);
       window.dispatchEvent(new CustomEvent("bookmark:changed", { detail }));
     });
+  }
+
+  // Scopes the re-rendered board to the semester the dashboard is showing, so
+  // it matches the picker (see bookmark.controller.js).
+  termScopedUrl(url) {
+    const scoped = new URL(url, window.location.origin);
+    const term = document.getElementById("lecture-search-term-field")?.value;
+    if (term) scoped.searchParams.set("term", term);
+    return scoped;
   }
 
   applyOnceHidden(callback) {

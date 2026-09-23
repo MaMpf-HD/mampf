@@ -61,4 +61,51 @@ RSpec.describe(Dashboard::LectureActivity) do
       expect(digest).to be_any(lecture)
     end
   end
+
+  describe "#unread_forum_topics" do
+    it "is zero for a lecture without a forum" do
+      expect(digest.unread_forum_topics(lecture)).to eq(0)
+    end
+
+    it "matches Lecture#unread_forum_topics_count" do
+      board = Thredded::Messageboard.create!(name: "Forum #{lecture.id}")
+      lecture.update!(forum_id: board.id)
+      Thredded::Topic.create!(messageboard: board, user: other,
+                              last_user: other, title: "Question")
+
+      expect(digest.unread_forum_topics(lecture))
+        .to eq(lecture.unread_forum_topics_count(user))
+    end
+  end
+
+  describe "#registration_status" do
+    it "matches Lecture#registration_status_for" do
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: user, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(digest.registration_status(lecture)).to eq(:pending)
+    end
+
+    it "is nil for a lecture without registration" do
+      expect(digest.registration_status(lecture)).to be_nil
+    end
+  end
+
+  describe "#card_style" do
+    it "finds the user's style for the lecture" do
+      style = Dashboard::CardStyle.create!(user: user, lecture: lecture,
+                                           tape_color: "mint")
+
+      expect(digest.card_style(lecture)).to eq(style)
+    end
+
+    it "ignores other users' styles" do
+      Dashboard::CardStyle.create!(user: other, lecture: lecture,
+                                   tape_color: "mint")
+
+      expect(digest.card_style(lecture)).to be_nil
+    end
+  end
 end

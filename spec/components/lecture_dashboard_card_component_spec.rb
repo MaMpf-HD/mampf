@@ -125,5 +125,21 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       expect(control["data-registration-notice-removal-url-value"])
         .to eq("/dashboard/registration_notice/#{lecture.id}")
     end
+
+    it "offers to keep the lecture bookmarked only if that needs no passphrase" do
+      closed_campaign = create(:registration_campaign, :closed,
+                               campaignable: lecture)
+      create(:registration_user_registration, :rejected,
+             user: user, registration_campaign: closed_campaign,
+             registration_item: closed_campaign.registration_items.first)
+      keep = "[data-registration-notice-removal-keep-bookmarked]"
+
+      expect(render_card.at_css(keep)).to be_present
+
+      user.unsubscribe_lecture!(lecture)
+      lecture.update!(passphrase: "secret")
+
+      expect(render_card.at_css(keep)).to be_nil
+    end
   end
 end

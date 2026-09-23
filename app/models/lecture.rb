@@ -281,6 +281,16 @@ class Lecture < ApplicationRecord
     passphrase.present?
   end
 
+  # Whether the user may bookmark (= subscribe to) this lecture without
+  # entering its passphrase. Mirrors ProfileController#subscribe_lecture's
+  # guard: roster members need no passphrase.
+  def bookmarkable_by?(user)
+    return true if in?(user.lectures)
+    return false unless published? || user.admin || edited_by?(user)
+
+    passphrase.blank? || LectureMembership.exists?(user: user, lecture: self)
+  end
+
   def visible_for_user?(user)
     return true if user.admin
     return true if edited_by?(user)

@@ -33,14 +33,19 @@ module LecturesHelper
     # bookmarking it too would be redundant. Only a lecture with no
     # application at all (or one still open, not yet applied to) can be
     # bookmarked.
-    bookmarkable = marker_status.nil? && !rosterized
+    # A lecture behind a passphrase cannot be bookmarked from here (see
+    # Lecture#bookmarkable_by?), so it gets no toggle unless it already is.
+    bookmarked = ids.subscribed_lecture_ids&.include?(lecture.id) || false
+    bookmarkable = marker_status.nil? && !rosterized &&
+                   (bookmarked || !lecture.restricted? ||
+                    lecture.bookmarkable_by?(current_user))
 
     SearchResultStatus.new(
       marker_status: marker_status,
       registered: registered,
       registration_possible: registration_possible,
       bookmarkable: bookmarkable,
-      bookmarked: ids.subscribed_lecture_ids&.include?(lecture.id) || false,
+      bookmarked: bookmarked,
       show_term: show_term
     )
   end

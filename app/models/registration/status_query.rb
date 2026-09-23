@@ -9,7 +9,9 @@ module Registration
     end
 
     # lecture_id => :confirmed / :pending / :open / :rejected, or absent
-    # when the lecture has no non-draft registration campaign at all.
+    # when the lecture has no non-draft registration campaign at all. Exam
+    # campaigns are left out: registering for an exam is not registering for
+    # the lecture (see Lecture#open_exam_registration_for for those).
     def statuses
       return {} if @lecture_ids.empty?
 
@@ -38,6 +40,7 @@ module Registration
                                   .where(campaignable_type: "Lecture",
                                          campaignable_id: @lecture_ids)
                                   .where.not(status: :draft)
+                                  .non_exam
                                   .group_by(&:campaignable_id)
       end
 

@@ -252,6 +252,14 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include("lecture-search-bookmark-button")
         expect(response.body).to include('aria-pressed="false"')
       end
+
+      it "offers no bookmark button for a lecture behind a passphrase" do
+        lecture_algebra.update!(passphrase: "secret")
+
+        search_algebra
+
+        expect(response.body).not_to include("lecture-search-bookmark-button")
+      end
     end
 
     context "with an HTML request" do

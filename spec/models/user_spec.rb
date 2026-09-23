@@ -207,6 +207,29 @@ RSpec.describe(User, type: :model) do
       expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
     end
 
+    it "includes lectures the user is only in a non-propagating cohort of" do
+      lecture = create(:lecture, term: term)
+      cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+      create(:cohort_membership, user: user, cohort: cohort)
+
+      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
+    end
+
+    it "does not count an exam registration as registering for the lecture" do
+      lecture = create(:lecture, term: term)
+      exam = create(:exam, :without_campaign, lecture: lecture)
+      campaign = create(:registration_campaign, campaignable: lecture)
+      item = create(:registration_item, registration_campaign: campaign,
+                                        registerable: exam)
+      campaign.update!(status: :open)
+      create(:registration_user_registration, :pending,
+             user: user, registration_campaign: campaign,
+             registration_item: item)
+
+      expect(user.current_enrolled_lectures(term)).to be_empty
+      expect(lecture.registration_status_for(user)).to be_nil
+    end
+
     it "includes lectures the user is only in a tutorial group of" do
       lecture = create(:lecture, term: term)
       tutorial = create(:tutorial, lecture: lecture)

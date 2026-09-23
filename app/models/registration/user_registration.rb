@@ -136,7 +136,8 @@ module Registration
         ),
         rejection_policy_id: rejection_policy_id,
         rejected_at: rejected_at,
-        rejection_overridden_at: nil
+        rejection_overridden_at: nil,
+        dismissed_at: nil
       )
     end
 
@@ -147,12 +148,16 @@ module Registration
         rejection_reason_label: nil,
         rejection_policy_id: nil,
         rejected_at: nil,
-        rejection_overridden_at: nil
+        rejection_overridden_at: nil,
+        dismissed_at: nil
       )
     end
 
     # Hides a rejected registration from the dashboard without deleting it, so
     # the application stays around for auditing but no longer nags the user.
+    # A dismissal only covers the rejection it was made for: every new or
+    # reset decision clears it again (see #reject! and
+    # Registration::Campaign#reset_registrations_to_pending!).
     def dismiss!
       update!(dismissed_at: Time.current)
     end

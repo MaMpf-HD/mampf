@@ -1,6 +1,8 @@
 module Dashboard
   # Unread forum topics and media comments across a set of lectures, gathered
-  # once for the whole board rather than once per card.
+  # once for the whole board rather than once per card. Also carries the other
+  # per-card lookups (registration status, washi tape style) for the same
+  # reason.
   class LectureActivity
     IGNORED_MEDIA_SORTS = ["RandomQuiz", "Question", "Remark"].freeze
 
@@ -23,12 +25,45 @@ module Dashboard
       unread_forum_topics(lecture).positive? || unread_comments(lecture).positive?
     end
 
+    # See Lecture#registration_status_for.
+    def registration_status(lecture)
+      registration_statuses[lecture.id]
+    end
+
+    def card_style(lecture)
+      card_styles[lecture.id]
+    end
+
     private
 
+      def registration_statuses
+        @registration_statuses ||=
+          Registration::StatusQuery.new(user, lectures.map(&:id)).statuses
+      end
+
+      def card_styles
+        @card_styles ||= Dashboard::CardStyle.where(user: user, lecture: lectures)
+                                             .index_by(&:lecture_id)
+      end
+
+      # One query for all forums, the same count Lecture#unread_forum_topics_count
+      # asks for one.
       def forum_topic_counts
-        @forum_topic_counts ||= lectures.to_h do |lecture|
-          [lecture.id, lecture.unread_forum_topics_count(user).to_i]
+        @forum_topic_counts ||= begin
+          by_forum = unread_topics_by_forum
+          lectures.to_h do |lecture|
+            [lecture.id, by_forum.fetch(lecture.forum_id, 0)]
+          end
         end
+      end
+
+      def unread_topics_by_forum
+        forum_ids = lectures.filter_map(&:forum_id)
+        return {} if forum_ids.empty?
+
+        topics = Thredded::TopicPolicy::Scope.new(user, Thredded::Topic.all).resolve
+        Thredded::Messageboard.where(id: forum_ids)
+                              .unread_topics_counts(user: user, topics_scope: topics)
       end
 
       # Counts when someone else commented after this user's last read (missing
@@ -45,13 +80,19 @@ module Dashboard
       end
 
       def unread_comment?(medium)
+        # compared by id so as not to load every comment's creator
         latest = medium.commontator_thread.comments
-                       .reject { |comment| comment.creator == user }
+                       .reject { |comment| own_comment?(comment) }
                        .max_by(&:created_at)
         return false unless latest
 
         (read_at.fetch(medium.commontator_thread.id, nil) || Time.zone.at(0)) <
           latest.created_at
+      end
+
+      def own_comment?(comment)
+        comment.creator_type == user.class.base_class.name &&
+          comment.creator_id == user.id
       end
 
       # Excludes course-level media, which can't be attributed to one lecture.

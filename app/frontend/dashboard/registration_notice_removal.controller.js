@@ -14,7 +14,8 @@ export default class extends RemovalModalController {
   }
 
   confirm(keepBookmarked) {
-    const url = `${this.urlValue}?keep_bookmarked=${keepBookmarked}`;
+    const url = new URL(this.urlValue, window.location.origin);
+    url.searchParams.set("keep_bookmarked", keepBookmarked);
     this.confirmRemoval(url, {
       lectureId: this.lectureIdValue,
       bookmarked: keepBookmarked,

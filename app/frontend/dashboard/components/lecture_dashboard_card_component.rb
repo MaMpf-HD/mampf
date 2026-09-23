@@ -28,7 +28,11 @@ class LectureDashboardCardComponent < ViewComponent::Base
   def card_style
     return @card_style if defined?(@card_style)
 
-    @card_style = Dashboard::CardStyle.find_by(user: user, lecture: lecture)
+    @card_style = if activity
+      activity.card_style(lecture)
+    else
+      Dashboard::CardStyle.find_by(user: user, lecture: lecture)
+    end
   end
 
   def tape
@@ -36,8 +40,15 @@ class LectureDashboardCardComponent < ViewComponent::Base
                                        color: card_style&.tape_color)
   end
 
+  # `defined?` rather than `||=`, as nil (no registration) is a common answer.
   def registration_status
-    @registration_status ||= lecture.registration_status_for(user)
+    return @registration_status if defined?(@registration_status)
+
+    @registration_status = if activity
+      activity.registration_status(lecture)
+    else
+      lecture.registration_status_for(user)
+    end
   end
 
   # Confirmed is the default state of this band, so only show flux states.

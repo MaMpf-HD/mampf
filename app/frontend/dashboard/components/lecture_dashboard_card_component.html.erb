@@ -37,13 +37,14 @@
                  modal_body: t("main.start.remove_registration_notice_body",
                                lecture: lecture.title_no_term),
                  buttons: [
-                   { action: "keep-bookmarked",
-                     css_class: "btn btn-outline-secondary",
-                     label: t("main.start.remove_registration_notice_keep_bookmarked") },
+                   ({ action: "keep-bookmarked",
+                      css_class: "btn btn-outline-secondary",
+                      label: t("main.start.remove_registration_notice_keep_bookmarked") } if
+                     lecture.bookmarkable_by?(user)),
                    { action: "remove-entirely",
                      css_class: "btn btn-danger",
                      label: t("main.start.remove_registration_notice_remove_entirely") }
-                 ] %>
+                 ].compact %>
     <% end %>
   <% end %>
 

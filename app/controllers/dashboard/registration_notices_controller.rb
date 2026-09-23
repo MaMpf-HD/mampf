@@ -9,9 +9,15 @@ module Dashboard
 
     def destroy
       return head(:not_found) unless @lecture
+      # same guard as Dashboard::BookmarksController#create
+      return head(:forbidden) if keep_bookmarked? && !@lecture.bookmarkable_by?(current_user)
 
       rejected_registrations.find_each(&:dismiss!)
-      current_user.subscribe_lecture!(@lecture) if keep_bookmarked?
+      if keep_bookmarked?
+        current_user.subscribe_lecture!(@lecture)
+      else
+        current_user.unsubscribe_lecture!(@lecture)
+      end
       current_user.touch
       render_board
     end
@@ -29,7 +35,7 @@ module Dashboard
       def rejected_registrations
         Registration::UserRegistration.where(
           user: current_user,
-          registration_campaign: @lecture.registration_campaigns
+          registration_campaign: @lecture.registration_campaigns.non_exam
         ).rejected.not_dismissed
       end
   end

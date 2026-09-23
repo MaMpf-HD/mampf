@@ -498,6 +498,7 @@ module Registration
           rejection_policy_id: nil,
           rejected_at: nil,
           rejection_overridden_at: nil,
+          dismissed_at: nil,
           updated_at: Time.current
         )
         # rubocop:enable Rails/SkipsModelValidations
@@ -518,6 +519,7 @@ module Registration
           ),
           rejected_at: now,
           rejection_overridden_at: nil,
+          dismissed_at: nil,
           updated_at: now
         )
         # rubocop:enable Rails/SkipsModelValidations
