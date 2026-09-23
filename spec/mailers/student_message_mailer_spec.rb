@@ -207,11 +207,16 @@ RSpec.describe(StudentMessageMailer) do
     end
 
     it "gives the sender and the staff their copy only once" do
+      editor = create(:confirmed_user, locale: "en")
+      lecture.editors << editor
+
       mails = deliveries
 
-      expect(mails.flat_map { |mail| mail.to.to_a }.count(teacher.email)).to eq(1)
-      expect(mails.find { |mail| mail.to == [teacher.email] }.bcc)
-        .to eq([german_student.email])
+      expect(mails.flat_map(&:destinations).count(teacher.email)).to eq(1)
+      expect(mails.flat_map(&:destinations).count(editor.email)).to eq(1)
+      copy = mails.find { |mail| mail.to == [teacher.email] }
+      expect(copy.cc).to eq([editor.email])
+      expect(copy.bcc).to eq([german_student.email])
     end
 
     it "gives an editor who also registered one copy, in the cc" do
