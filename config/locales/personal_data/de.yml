@@ -1,0 +1,33 @@
+de:
+  personal_data:
+    title: "Dein Name und Deine Matrikelnummer"
+    lead: >-
+      Für Übungen, Klausuren und Seminare brauchen wir den Namen und die
+      Matrikelnummer, unter denen die Universität Dich kennt. Dein Anzeigename
+      bleibt für alles andere, wie er ist.
+    saved_by_support_html: >-
+      Gespeicherte Angaben ändert nur der Support: %{support}.
+    no_matriculation_number: "Ich habe noch keine Matrikelnummer"
+    uni_id_hint: "Optional, z. B. ab123."
+    confirmation_html: >-
+      Ich habe die Angaben geprüft. Nach dem Speichern kann sie nur noch der
+      Support (%{support}) ändern.
+    save: "Speichern"
+    saved: "Danke, Deine Angaben sind gespeichert."
+    decline_explanation: >-
+      Du nutzt MaMpf nur für die Materialien und nimmst an keiner Übung,
+      Klausur und keinem Seminar teil? Dann kannst Du das überspringen. Willst
+      Du später doch teilnehmen, schreib dem Support.
+    decline: "Ich nehme an keinen Übungen oder Klausuren teil"
+    needed_to_register: >-
+      Für die Anmeldung brauchen wir Deinen Namen und Deine Matrikelnummer.
+      Schreib dafür bitte an den Support: %{support}.
+    edit_link: "Ansehen oder ergänzen"
+  activerecord:
+    attributes:
+      user:
+        first_name: "Vorname"
+        last_name: "Nachname"
+        matriculation_number: "Matrikelnummer"
+        uni_id: "Uni-ID"
+        personal_data_confirmation: "Bestätigung"

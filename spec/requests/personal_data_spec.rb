@@ -1,0 +1,117 @@
+require "rails_helper"
+
+RSpec.describe("Personal data", type: :request) do
+  let(:user) { create(:confirmed_user, personal_data_confirmed_at: nil) }
+  let(:complete) do
+    { first_name: "Ada", last_name: "Lovelace", matriculation_number: "3456789",
+      personal_data_confirmation: "1" }
+  end
+
+  before { sign_in(user) }
+
+  describe "the question after sign-in" do
+    it "sends a user who has neither given nor declined their data to the page" do
+      get start_path
+
+      expect(response).to redirect_to(edit_personal_data_path)
+    end
+
+    it "asks for a due password change first" do
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+
+      get start_path
+
+      expect(response).to redirect_to(edit_user_registration_path)
+    end
+
+    it "does not stand in the way of the upload check nginx asks for" do
+      get "/internal/upload-authorizations/submission", params: { locale: user.locale }
+
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it "lets a user through who has declined" do
+      post decline_personal_data_path
+      get start_path
+
+      expect(user.reload).to be_personal_data_declined
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe "PATCH /personal_data" do
+    it "saves the data once the user confirms it" do
+      patch personal_data_path, params: { user: complete }
+
+      user.reload
+      expect(user.full_name).to eq("Ada Lovelace")
+      expect(user.matriculation_number).to eq("3456789")
+      expect(user.personal_data_confirmed_at).to be_present
+      expect(user.tutorial_name).to eq("Ada Lovelace")
+    end
+
+    it "saves nothing without the confirmation" do
+      patch personal_data_path, params: { user: complete.except(:personal_data_confirmation) }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.first_name).to be_nil
+      expect(user.personal_data_confirmed_at).to be_nil
+    end
+
+    it "wants a matriculation number unless the user has none yet" do
+      patch personal_data_path, params: { user: complete.except(:matriculation_number) }
+      expect(response).to have_http_status(:unprocessable_content)
+
+      patch personal_data_path,
+            params: { user: complete.except(:matriculation_number)
+                                    .merge(no_matriculation_number: "1") }
+      expect(user.reload.personal_data_confirmed_at).to be_present
+      expect(user.matriculation_number).to be_nil
+    end
+
+    it "refuses a matriculation number somebody else has saved" do
+      create(:confirmed_user, matriculation_number: "3456789")
+
+      patch personal_data_path, params: { user: complete }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.personal_data_confirmed_at).to be_nil
+    end
+
+    it "keeps what is saved and fills in only what is still empty" do
+      patch personal_data_path,
+            params: { user: complete.except(:matriculation_number)
+                                    .merge(no_matriculation_number: "1") }
+
+      patch personal_data_path,
+            params: { user: { first_name: "Grace", matriculation_number: "1234567",
+                              personal_data_confirmation: "1" } }
+
+      user.reload
+      expect(user.first_name).to eq("Ada")
+      expect(user.matriculation_number).to eq("1234567")
+    end
+  end
+
+  describe "the admin's user form" do
+    let(:account) { create(:confirmed_user, first_name: "Ada", last_name: "Lovelace") }
+
+    it "lets an admin correct the data" do
+      sign_in(create(:confirmed_user, admin: true))
+
+      patch user_path(account), params: { user: { first_name: "Augusta" } }, xhr: true
+
+      expect(account.reload.first_name).to eq("Augusta")
+    end
+
+    it "does not let a user change their own data through it" do
+      sign_in(account)
+
+      patch user_path(account), params: { user: { name: "Ada", first_name: "Grace" } }, xhr: true
+
+      expect(account.reload.first_name).to eq("Ada")
+    end
+  end
+end

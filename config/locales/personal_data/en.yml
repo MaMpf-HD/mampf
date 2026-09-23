@@ -1,0 +1,33 @@
+en:
+  personal_data:
+    title: "Your name and matriculation number"
+    lead: >-
+      Exercise classes, exams and seminars need the name and matriculation
+      number the university knows you by. Your display name stays as it is for
+      everything else.
+    saved_by_support_html: >-
+      What you have saved can only be changed by the support: %{support}.
+    no_matriculation_number: "I do not have a matriculation number yet"
+    uni_id_hint: "Optional, e.g. ab123."
+    confirmation_html: >-
+      I have checked these details. After saving, only the support
+      (%{support}) can change them.
+    save: "Save"
+    saved: "Thank you, your details are saved."
+    decline_explanation: >-
+      You only use MaMpf for its materials and take part in no exercise class,
+      exam or seminar? Then you can skip this. Should you want to take part
+      later, write to the support.
+    decline: "I do not take part in exercise classes or exams"
+    needed_to_register: >-
+      To register, we need your name and matriculation number. Please write to
+      the support: %{support}.
+    edit_link: "Show or complete"
+  activerecord:
+    attributes:
+      user:
+        first_name: "First name"
+        last_name: "Last name"
+        matriculation_number: "Matriculation number"
+        uni_id: "Uni ID"
+        personal_data_confirmation: "Confirmation"

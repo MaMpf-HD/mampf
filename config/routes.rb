@@ -627,6 +627,20 @@ Rails.application.routes.draw do
 
   resources :notifications, only: [:index, :destroy]
 
+  # personal data routes
+
+  get "personal_data",
+      to: "personal_data#edit",
+      as: "edit_personal_data"
+
+  patch "personal_data",
+        to: "personal_data#update",
+        as: "personal_data"
+
+  post "personal_data/decline",
+       to: "personal_data#decline",
+       as: "decline_personal_data"
+
   # profile routes
 
   get "profile/edit",

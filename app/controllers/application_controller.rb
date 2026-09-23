@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_current_user
   before_action :enforce_password_change
+  before_action :enforce_personal_data
 
   include LocaleSetter
 
@@ -206,6 +207,18 @@ class ApplicationController < ActionController::Base
       # Turbo looks for its frame in the answer and the password page has none,
       # so a redirect would only leave "Content missing" behind. This sends
       # Turbo out of the frame; the reload then meets the redirect above.
+      render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
+             layout: false
+    end
+
+    # Asks once for the name and matriculation number, after any password
+    # change: nothing else opens until the page is answered or declined.
+    def enforce_personal_data
+      return unless user_signed_in?
+      return unless current_user.personal_data_pending?
+      return if controller_name == "personal_data" || password_change_request_allowed?
+      return redirect_to(edit_personal_data_path) unless turbo_frame_request?
+
       render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
              layout: false
     end
