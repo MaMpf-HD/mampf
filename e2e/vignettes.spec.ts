@@ -10,7 +10,6 @@ test.describe("Vignettes", () => {
   async function createLecture(factory: FactoryBot, teacherId: number, studentId: number,
     usesVignettes: boolean): Promise<FactoryBotObject> {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      locale: "en",
       teacher_id: teacherId,
       vignettes: usesVignettes,
     });

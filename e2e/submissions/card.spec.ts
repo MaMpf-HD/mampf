@@ -19,7 +19,6 @@ test.describe("the card for a sheet that is due", () => {
   ): Promise<{ lecture: FactoryBotObject; assignment: FactoryBotObject }> {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacherId,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id,
@@ -57,7 +56,6 @@ test.describe("the card for a sheet that is due", () => {
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id, title: "Monday group",
@@ -354,7 +352,6 @@ test.describe("the card for a sheet that is due", () => {
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
       lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Tuesday group",

@@ -13,7 +13,7 @@ async function visitEdit(page: Page, lectureId: number, tab: string) {
 test.describe("the lecture edit page", () => {
   test("announces unsaved changes on every tab that has a form",
     async ({ factory, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
 
       for (const [tab, form, warning] of [
         ["people", "#lecture-form", "#lecture-basics-warning"],
@@ -31,7 +31,7 @@ test.describe("the lecture edit page", () => {
 
   test("puts the settings tab back when the change is discarded",
     async ({ factory, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await visitEdit(page, lecture.id, "settings");
       const startSection = page.getByLabel("Nummer of the first section");
       const saved = await startSection.inputValue();
@@ -49,7 +49,7 @@ test.describe("the lecture edit page", () => {
 
   test("only lets the start section be picked with absolute numbering on",
     async ({ factory, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await visitEdit(page, lecture.id, "settings");
       const startSection = page.getByLabel("Nummer of the first section");
 
@@ -64,7 +64,7 @@ test.describe("the lecture edit page", () => {
 
   test("fills the subscriber list on the way in",
     async ({ factory, student, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await factory.create("lecture_user_join", [], {
         lecture_id: lecture.id, user_id: student.user.id,
       });
@@ -76,7 +76,7 @@ test.describe("the lecture edit page", () => {
     });
 
   test("folds the media column away and back", async ({ factory, admin: { page } }) => {
-    const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+    const lecture = await factory.create("lecture", ["released_for_all"]);
     await visitEdit(page, lecture.id, "content");
     const mediaCard = page.locator("#lecture-media-card");
     const showButton = page.getByTitle("Show media");

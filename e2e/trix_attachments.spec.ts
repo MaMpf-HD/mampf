@@ -11,7 +11,7 @@ interface TrixElement extends HTMLElement {
 // not offer one either.
 test("a plain Trix editor neither shows nor accepts an attachment",
   async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "Kaviar" });
 
@@ -35,7 +35,7 @@ test("a plain Trix editor neither shows nor accepts an attachment",
 
 test("an editor Action Text wired keeps taking files",
   async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "Kaviar" });
 

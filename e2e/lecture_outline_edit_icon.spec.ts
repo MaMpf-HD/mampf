@@ -5,7 +5,7 @@ import { expect, test } from "./_support/fixtures";
 test.describe("the edit icon on the outline", () => {
   test("shows it to the teacher of a lecture", async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      teacher_id: user.id, locale: "en",
+      teacher_id: user.id,
     });
 
     await page.goto(`/lectures/${lecture.id}/outline`);
@@ -16,7 +16,7 @@ test.describe("the edit icon on the outline", () => {
   test("puts it beside the heading, at the heading's size",
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], {
-        teacher_id: user.id, locale: "en",
+        teacher_id: user.id,
       });
 
       await page.goto(`/lectures/${lecture.id}/outline`);
@@ -38,7 +38,7 @@ test.describe("the edit icon on the outline", () => {
 
   test("shows it to the teacher of a seminar", async ({ factory, teacher: { page, user } }) => {
     const seminar = await factory.create("lecture", ["released_for_all", "is_seminar"], {
-      teacher_id: user.id, locale: "en",
+      teacher_id: user.id,
     });
 
     await page.goto(`/lectures/${seminar.id}/outline`);
