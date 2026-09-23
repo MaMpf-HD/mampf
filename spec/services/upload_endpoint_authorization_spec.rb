@@ -23,6 +23,24 @@ RSpec.describe(UploadEndpointAuthorization) do
                                          user: admin)).to be(true)
     end
 
+    it "lets only content editors send a lecture program past the edge" do
+      admin = create(:confirmed_user, admin: true)
+
+      expect(described_class.authorized?(uploader_class: LectureHomeAttachmentUploader,
+                                         user: user)).to be(false)
+      expect(described_class.authorized?(uploader_class: LectureHomeAttachmentUploader,
+                                         user: admin)).to be(true)
+    end
+
+    it "lets tutors, too, send a student mail attachment past the edge" do
+      tutor = create(:tutorial, :with_tutors).tutors.first
+
+      expect(described_class.authorized?(uploader_class: StudentMessageUploader,
+                                         user: user)).to be(false)
+      expect(described_class.authorized?(uploader_class: StudentMessageUploader,
+                                         user: tutor)).to be(true)
+    end
+
     it "fails closed (raises) for an unhandled uploader class" do
       unknown = Class.new do
         def self.name
