@@ -169,4 +169,59 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.message).to be_a(ActionMailer::Base::NullMail)
     end
   end
+
+  describe ".deliver_by_locale" do
+    include ActiveJob::TestHelper
+
+    let(:teacher) { create(:confirmed_user, locale: "de") }
+    let(:student) { create(:confirmed_user, locale: "en") }
+    let(:german_student) { create(:confirmed_user, locale: "de") }
+    let(:message) do
+      message = StudentMessage.new(lecture: lecture, sender: teacher, subject: "First session",
+                                   body: "We start on Monday.")
+      message.address_to(catalog.pick(["lecture:all"]),
+                         labels: catalog.labels_by_locale(["lecture:all"]))
+      message.save!
+      message
+    end
+
+    before do
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, user: german_student)
+    end
+
+    def deliveries
+      ActionMailer::Base.deliveries.clear
+      perform_enqueued_jobs { described_class.deliver_by_locale(message) }
+      ActionMailer::Base.deliveries
+    end
+
+    it "writes to each student in their own language" do
+      english, german = deliveries.partition { |mail| mail.bcc.to_a.include?(student.email) }
+
+      expect(english.sole.from_addrs.join).to eq(DefaultSetting::PROJECT_NOTIFICATION_EMAIL)
+      expect(english.sole.header["From"].to_s).to include("MaMpf notification")
+      expect(english.sole.text_part.body.to_s).to include("Everybody in the lecture")
+      expect(german.sole.bcc).to eq([german_student.email])
+      expect(german.sole.text_part.body.to_s).to include("Alle Studierenden der Veranstaltung")
+    end
+
+    it "gives the sender and the staff their copy only once" do
+      mails = deliveries
+
+      expect(mails.flat_map { |mail| mail.to.to_a }.count(teacher.email)).to eq(1)
+      expect(mails.find { |mail| mail.to == [teacher.email] }.bcc)
+        .to eq([german_student.email])
+    end
+
+    it "sends the sender a copy when no student reads their language" do
+      german_student.update!(locale: "en")
+
+      mails = deliveries
+
+      expect(mails.map(&:to)).to contain_exactly([teacher.email],
+                                                 [DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+      expect(mails.find { |mail| mail.to == [teacher.email] }.bcc.to_a).to be_empty
+    end
+  end
 end

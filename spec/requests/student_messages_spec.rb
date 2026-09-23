@@ -146,15 +146,16 @@ RSpec.describe("StudentMessages", type: :request) do
         expect(StudentMessage.count).to eq(0)
       end
 
-      # The labels a record keeps are what the mail prints, in the mail's
-      # language, whatever the sender's page spoke.
-      it "keeps the labels in the lecture's language" do
+      # The labels a record keeps are what each mail prints, in its
+      # recipient's language, whatever the sender's page spoke.
+      it "keeps the labels in every language" do
         lecture.update!(locale: "de")
         teacher.update!(locale: "en")
         send_message
 
-        expect(StudentMessage.last.audience_labels)
-          .to eq([I18n.t("student_message.audiences.everyone", locale: :de)])
+        expect(StudentMessage.last.audiences.sole["labels"])
+          .to eq("de" => I18n.t("student_message.audiences.everyone", locale: :de),
+                 "en" => I18n.t("student_message.audiences.everyone", locale: :en))
       end
 
       it "rejects a message without a body" do

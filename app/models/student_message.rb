@@ -25,12 +25,22 @@ class StudentMessage < ApplicationRecord
 
   # The groups the message goes to, as StudentMessages::Audience objects the
   # catalog resolved; what is stored is their keys, labels and addresses.
-  def address_to(audiences)
+  def address_to(audiences, labels: {})
     @addressed = audiences
+    @labels = labels
   end
 
+  # A message saved before the labels were kept in every language has only
+  # the one it was sent in.
   def audience_labels
-    audiences.pluck("label")
+    audiences.map { |audience| audience.dig("labels", I18n.locale.to_s) || audience["label"] }
+  end
+
+  # Groups the saved addresses by their owner's language; an address no
+  # account has any more gets the default.
+  def recipient_emails_by_locale
+    locales = User.where(email: recipient_emails).pluck(:email, :locale).to_h
+    recipient_emails.group_by { |email| (locales[email].presence || I18n.default_locale).to_s }
   end
 
   # A row from before groups could be picked has no labels; the audit and
@@ -51,7 +61,9 @@ class StudentMessage < ApplicationRecord
     def snapshot_audiences
       return if @addressed.blank?
 
-      self.audiences = @addressed.map { |audience| { key: audience.key, label: audience.label } }
+      self.audiences = @addressed.map do |audience|
+        { key: audience.key, label: audience.label, labels: @labels[audience.key] }.compact
+      end
       self.recipient_emails = StudentMessages::Audience.recipients(@addressed).pluck(:email)
       self.recipients_count = recipient_emails.size
     end
