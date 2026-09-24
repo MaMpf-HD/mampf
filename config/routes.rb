@@ -337,6 +337,10 @@ Rails.application.routes.draw do
         to: "lectures#update",
         as: "lecture_home_content"
 
+  get "lectures/:id/home/campaigns/:campaign_id",
+      to: "lectures/home#campaign",
+      as: "lecture_home_campaign"
+
   get "lectures/:id/home_attachment",
       to: "lectures/home#attachment",
       as: "lecture_home_attachment",

@@ -17,32 +17,62 @@ de:
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
   lecture_home:
-    jump_links:
-      label: "Offene Anmeldungen"
-      open: "Anmeldung offen: %{title}, bis %{deadline} ↓"
-    paths:
-      label: "Material der Veranstaltung"
-      next_deadline: "Als Nächstes: %{title}, Abgabe %{deadline}"
-      script_edited: "Aktualisiert am %{date}"
+    subscribe: "Veranstaltung abonnieren"
+    focus:
+      campaign: "Anmeldung offen"
+      sheet: "Deine nächste Abgabe"
+      exam: "Deine nächste Klausur"
+      open_sheet: "Zur Abgabe"
+    work:
+      title: "Deine Abgaben"
+      due: "Abgabe bis %{deadline}"
+      new_correction: "Die Korrektur zu %{sheet} ist da"
+      new_points: "Die Punkte zu %{sheet} sind da"
+      news_many: "Neues zu %{count} Blättern: %{sheets}"
+      show: "Ansehen"
+      standing: "Punkte und Klausurzulassung"
+      points: "%{points} von %{max} bisher bewerteten Punkten"
+      details: "Details"
+      admission:
+        open: "Zulassung noch nicht entschieden"
+        pending: "Zulassung noch nicht entschieden"
+        passed: "Zur Klausur zugelassen"
+        failed: "Nicht zur Klausur zugelassen"
+    news:
+      title: "Aktuelles"
+      by: "%{author}, %{date}"
+      more:
+        one: "1 weitere Mitteilung"
+        other: "%{count} weitere Mitteilungen"
+      forum:
+        one: "1 ungelesenes Thema im Forum"
+        other: "%{count} ungelesene Themen im Forum"
+    history:
+      title: "Frühere Anmeldungen (%{count})"
+      completed: "Abgeschlossen · Frist war %{deadline}"
+      ended: "Anmeldung beendet am %{deadline}"
     tutor:
       title: "Deine Tutorien"
+      to_mark: "Zu korrigieren"
       members:
         one: "1 Person"
         other: "%{count} Personen"
-      open: "Tutorien öffnen"
+      open: "Gruppe öffnen"
+    marking:
+      waiting:
+        one: "1 Person wartet auf Punkte"
+        other: "%{count} Personen warten auf Punkte"
+      open: "Korrigieren"
     teacher:
-      title: "Anmeldungen in dieser Veranstaltung"
+      title: "Deine Veranstaltung"
+      marking: "Korrekturstand"
       registered:
         one: "1 Person angemeldet"
         other: "%{count} Personen angemeldet"
       with_preferences:
         one: "1 Person hat Wünsche abgegeben"
         other: "%{count} Personen haben Wünsche abgegeben"
+      on_roster:
+        one: "1 Person auf der Liste"
+        other: "%{count} Personen auf der Liste"
       deadline: "bis %{deadline}"
-    closed:
-      title: "Geschlossene Verfahren"
-      completed: "Abgeschlossen"
-      not_finalized: "Noch nicht abgeschlossen"
-      deadline: "Anmeldung endete am %{deadline}"
-      your_entries: "Deine Einträge: %{entries}"
-    organizational: "Organisatorisches"

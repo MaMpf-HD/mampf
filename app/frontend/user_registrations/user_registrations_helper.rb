@@ -87,15 +87,17 @@ module UserRegistrationsHelper
       count: preference_rank_count(items))
   end
 
-  # Whether an open campaign still waits for the student: nothing registered or
-  # chosen yet, and nothing standing in the way.
+  # Whether an open campaign waits for the student and lets them act: nothing
+  # registered or chosen yet, the rules met, and a place left to take.
   def registration_needs_action?(details)
     campaign = details.campaign
-    return false unless campaign.policies_satisfied?(current_user, phase: :registration)
+    return false if Array(details.own_registrations).any? do |registration|
+      registration.confirmed? || (registration.pending? && registration.preference_rank)
+    end
+    return false unless Array(details.eligibility).all? { |policy| policy.dig(:outcome, :pass) }
     return false if registration_campaign_blocked?(campaign, details.items)
-    return Array(details.item_preferences).none? if campaign.preference_based?
 
-    details.items.none? { |item| item.user_registered?(current_user) }
+    campaign.preference_based? || details.items.any?(&:still_has_capacity?)
   end
 
   def student_visible_campaign?(campaign)

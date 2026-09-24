@@ -1,24 +1,16 @@
-<section
-  class="card lecture-home-section"
-  aria-labelledby="participation-heading"
->
-  <div class="card-header">
-    <h2 class="lecture-home-section-title" id="participation-heading">
-      <%= t("registration.user_registration.participation.title") %>
-    </h2>
-  </div>
+<section class="lecture-home-block" aria-labelledby="participation-heading">
+  <h2 class="lecture-home-label" id="participation-heading">
+    <%= t("registration.user_registration.participation.title") %>
+  </h2>
 
-  <div class="card-body lecture-home-rows">
+  <div class="lecture-home-rows">
     <% rows.each do |row| %>
-      <div
-        class="lecture-home-row lecture-home-row--labelled"
-        data-testid="participation-row"
-      >
-        <div class="lecture-home-row-label"><%= row.label %></div>
-
+      <div class="lecture-home-row" data-testid="participation-row">
         <div class="lecture-home-row-content">
+          <span class="lecture-home-row-kicker"><%= row.label %></span>
+
           <div class="lecture-home-row-title">
-            <span class="fw-semibold"><%= row.title %></span>
+            <span><%= row.title %></span>
 
             <% if row.badge %>
               <span class="<%= lecture_home_badge_class(row.badge.first) %>">
@@ -36,7 +28,9 @@
           <% end %>
         </div>
 
-        <div class="lecture-home-row-actions"><%= row.actions %></div>
+        <% if row.actions.present? %>
+          <div class="lecture-home-row-actions"><%= row.actions %></div>
+        <% end %>
       </div>
     <% end %>
   </div>

@@ -2,16 +2,25 @@
 
 .registration-folds {
   display: grid;
-  gap: 0.75rem;
 }
 
 .registration-fold {
-  border: 1px solid var(--bs-border-color);
-  border-radius: var(--bs-border-radius-lg);
-  background: var(--bs-body-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+}
 
-  &[open] > .registration-fold-summary {
-    border-bottom: 1px solid var(--bs-border-color);
+.registration-fold--focus {
+  border-bottom: 0;
+
+  .registration-fold-summary {
+    padding-inline: 0;
+  }
+
+  .registration-fold-title {
+    font-size: 1.35rem;
+  }
+
+  .registration-fold-body {
+    padding-inline: 0;
   }
 }
 
@@ -20,7 +29,7 @@
   align-items: center;
   gap: 0.75rem;
   min-height: 44px;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0;
   cursor: pointer;
   list-style: none;
 
@@ -88,7 +97,12 @@
 .registration-fold-body {
   display: grid;
   gap: 0.75rem;
-  padding: 1rem;
+  padding: 0 0 1rem;
+}
+
+.registration-fold-loading {
+  color: var(--bs-secondary-color);
+  font-size: 0.875rem;
 }
 
 .registration-fold-notice {
@@ -137,6 +151,7 @@
 
 .registration-options-more {
   justify-self: start;
+  min-height: 44px;
 }
 
 .registration-option {

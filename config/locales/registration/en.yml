@@ -361,7 +361,6 @@ en:
       register_now: "Register now"
       registration_blocked: "Unavailable"
       withdraw: "Withdraw"
-      closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
       ineligible_notice:
         title: "Registration unavailable"
       finalization_policy_notice:
@@ -478,7 +477,6 @@ en:
         allocation_pending: "Waiting for allocation"
         registered: "Registered"
         checked_at_finalization: "The requirements are checked again when the process is finalized."
-        changeable_until_html: 'You can <a href="%{anchor}">change this</a> until %{deadline}.'
         no_place: "No place"
         your_preferences: "Your preferences: %{preferences}"
         rejected: "Rejected"
@@ -492,6 +490,10 @@ en:
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:
+        registered: "Registered"
+        preferences_saved: "Preferences saved"
+        full: "No places left"
+        loading: "Loading …"
         blocked: "Not available"
         requirement_missing: "Requirement missing"
         no_preferences: "No preferences yet"
@@ -506,7 +508,7 @@ en:
           zero: "ends today"
           one: "1 day left"
           other: "%{count} days left"
-        deadline: "Until %{deadline}"
+        deadline: "Registration until %{deadline}"
         preference_mode:
           one: "Rank %{count} of %{options} options"
           other: "Rank %{count} of %{options} options"

@@ -1,11 +1,14 @@
 # Lists a student's own standing in a lecture, one row per thing they take part
 # in or tried to: their groups, talks and exams, registrations that count but
 # are not finalized yet, preferences waiting for the allocation, and the
-# rejections that ended one. Each of these is shown here and nowhere else on
-# the lecture home page, so a deadline passing moves nothing out of sight.
+# rejections that ended one. A campaign still open for registration says the
+# same in its own row, so its standing is left out here; once the deadline
+# passes it shows up here, and nothing moves out of sight.
 class ParticipationComponent < ViewComponent::Base
   include EligibilityHelper
   include UserRegistrationsHelper
+
+  TARGET = "student_registration_participation".freeze
 
   Row = Struct.new(:label, :title, :lines, :badge, :note, :actions, keyword_init: true)
 
@@ -46,14 +49,15 @@ class ParticipationComponent < ViewComponent::Base
     end
 
     def standing_rows
-      @overview.standings.flat_map do |standing|
+      @overview.standings.reject { |standing| standing.campaign.open_for_registrations? }
+               .flat_map do |standing|
         next [preferences_row(standing)] if standing.kind == :preferences
 
         standing.registrations.filter_map do |registration|
           registerable = registration.registration_item.registerable
           next if registerable.in?(rosterables)
 
-          registered_row(standing.campaign, registration)
+          registered_row(registration)
         end
       end
     end
@@ -66,28 +70,16 @@ class ParticipationComponent < ViewComponent::Base
       Row.new(label: campaign.student_facing_title,
               title: t("registration.user_registration.participation.preferences_title"),
               lines: [wishes.join(" · ")],
-              badge: [:info, t("registration.user_registration.participation.allocation_pending")],
-              note: change_note(campaign))
+              badge: [:info, t("registration.user_registration.participation.allocation_pending")])
     end
 
-    def registered_row(campaign, registration)
+    def registered_row(registration)
       registerable = registration.registration_item.registerable
       Row.new(label: helpers.roster_type_text(registerable),
               title: registerable.title,
               lines: meta_lines(registerable),
               badge: [:ok, t("registration.user_registration.participation.registered")],
-              note: safe_join(
-                [t("registration.user_registration.participation.checked_at_finalization"),
-                 change_note(campaign)].compact, " "
-              ))
-    end
-
-    def change_note(campaign)
-      return unless campaign.open_for_registrations?
-
-      t("registration.user_registration.participation.changeable_until_html",
-        deadline: format_date(campaign.registration_deadline),
-        anchor: "##{dom_id(campaign, :student_registration)}")
+              note: t("registration.user_registration.participation.checked_at_finalization"))
     end
 
     def rejection_rows

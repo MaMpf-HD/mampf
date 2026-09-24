@@ -140,6 +140,8 @@ import RegistrationFoldController from "~/user_registrations/registration_fold.c
 window.Stimulus.register("registration-fold", RegistrationFoldController);
 import OptionFilterController from "~/user_registrations/option_filter.controller.js";
 window.Stimulus.register("option-filter", OptionFilterController);
+import LectureNewsController from "~/lectures/home/lecture_news.controller.js";
+window.Stimulus.register("lecture-news", LectureNewsController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);

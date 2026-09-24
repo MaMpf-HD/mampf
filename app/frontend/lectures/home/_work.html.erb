@@ -1,0 +1,55 @@
+<%# locals: (lecture:, work:, focus:, certification:) %>
+<% due = lecture_home_due_sheets(work, focus) %>
+<% news = lecture_home_news_sheets(work) %>
+<% standing = work && lecture_home_standing_line(work.standing, certification) %>
+<% if due.any? || news.any? || standing %>
+  <section class="lecture-home-block" aria-labelledby="work-heading"
+           data-testid="lecture-home-work">
+    <h2 class="lecture-home-label" id="work-heading"><%= t("lecture_home.work.title") %></h2>
+    <div class="lecture-home-rows">
+      <% due.each do |sheet| %>
+        <div class="lecture-home-row">
+          <div class="lecture-home-row-content">
+            <div class="lecture-home-row-title">
+              <span><%= sheet.assignment.title %></span>
+              <%= render SheetChipComponent.new(sheet: sheet) %>
+            </div>
+            <div class="lecture-home-row-line"><%= lecture_home_sheet_deadline(sheet) %></div>
+          </div>
+          <div class="lecture-home-row-actions">
+            <%= link_to t("lecture_home.focus.open_sheet"), lecture_submissions_path(lecture),
+                        class: "btn btn-sm btn-outline-primary",
+                        data: { turbo_frame: "main" } %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if news.any? %>
+        <div class="lecture-home-row">
+          <div class="lecture-home-row-content">
+            <div class="lecture-home-row-title"><span><%= lecture_home_sheet_news(news) %></span></div>
+          </div>
+          <div class="lecture-home-row-actions">
+            <%= link_to t("lecture_home.work.show"), lecture_submissions_path(lecture),
+                        class: "btn btn-sm btn-outline-primary",
+                        data: { turbo_frame: "main" } %>
+          </div>
+        </div>
+      <% end %>
+
+      <% if standing %>
+        <div class="lecture-home-row">
+          <div class="lecture-home-row-content">
+            <span class="lecture-home-row-kicker"><%= t("lecture_home.work.standing") %></span>
+            <div class="lecture-home-row-title"><span><%= standing %></span></div>
+          </div>
+          <div class="lecture-home-row-actions">
+            <%= link_to t("lecture_home.work.details"), lecture_submissions_path(lecture),
+                        class: "btn btn-sm btn-outline-secondary",
+                        data: { turbo_frame: "main" } %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

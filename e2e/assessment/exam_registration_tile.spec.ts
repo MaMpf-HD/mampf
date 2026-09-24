@@ -34,10 +34,11 @@ test.describe("registering for an exam", () => {
       .toBeVisible();
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
-    await student.page.getByRole("heading", { name: "Exam registration" }).click();
+    await student.page.getByRole("heading", { name: "Main Exam" }).click();
 
-    await expect(student.page.getByText("Main Exam")).toBeVisible();
-    await expect(student.page.getByText("Lecture Hall 1")).toBeVisible();
+    const option = student.page.getByTestId("registration-option");
+    await expect(option).toContainText("Main Exam");
+    await expect(option).toContainText("Lecture Hall 1");
     await expect(student.page.getByText(
       "Register for this exam. Your place is confirmed right away.",
     )).toBeVisible();

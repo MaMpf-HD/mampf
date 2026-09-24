@@ -1,0 +1,32 @@
+<%# locals: (lecture:, focus:, certification:) %>
+<% if focus.kind == :campaign %>
+  <section class="lecture-home-focus" aria-labelledby="focus-heading"
+           data-testid="lecture-home-focus">
+    <h2 class="lecture-home-kicker" id="focus-heading">
+      <%= t("lecture_home.focus.campaign") %>
+    </h2>
+    <%= render CampaignCardComponent.new(details: focus.subject,
+                                         campaign: focus.subject.campaign, focus: true) %>
+  </section>
+<% elsif focus.kind == :sheet %>
+  <% sheet = focus.subject %>
+  <section class="lecture-home-focus" aria-labelledby="focus-heading"
+           data-testid="lecture-home-focus">
+    <h2 class="lecture-home-kicker" id="focus-heading"><%= t("lecture_home.focus.sheet") %></h2>
+    <div class="lecture-home-focus-title">
+      <span><%= sheet.assignment.title %></span>
+      <%= render SheetChipComponent.new(sheet: sheet) %>
+    </div>
+    <p class="lecture-home-focus-line"><%= lecture_home_sheet_deadline(sheet) %></p>
+    <%= link_to t("lecture_home.focus.open_sheet"), lecture_submissions_path(lecture),
+                class: "btn btn-primary", data: { turbo_frame: "main" } %>
+  </section>
+<% else %>
+  <% exam = focus.subject %>
+  <section class="lecture-home-focus" aria-labelledby="focus-heading"
+           data-testid="lecture-home-focus">
+    <h2 class="lecture-home-kicker" id="focus-heading"><%= t("lecture_home.focus.exam") %></h2>
+    <div class="lecture-home-focus-title"><span><%= exam.title %></span></div>
+    <p class="lecture-home-focus-line"><%= lecture_home_exam_line(exam, certification) %></p>
+  </section>
+<% end %>

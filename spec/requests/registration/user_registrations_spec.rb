@@ -264,9 +264,9 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_home_path(seminar)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('data-testid="lecture-home-registrations"')
+        expect(response.body).to include('data-testid="registration-campaign"')
         expect(response.body)
-          .not_to include(I18n.t("registration.user_registration.blocked_tooltip"))
+          .not_to include(I18n.t("registration.user_registration.summary.blocked"))
       end
 
       it "blocks a tutorial campaign for a student stuck in an unremovable tutorial" do
@@ -274,18 +274,21 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                                   self_materialization_mode: :add_only,
                                   skip_campaigns: true)
         create(:tutorial_membership, user: user, tutorial: stuck)
-        create(:registration_campaign, :preference_based, :open,
-               :with_items, campaignable: lecture, items_count: 2)
+        campaign = create(:registration_campaign, :preference_based, :open,
+                          :with_items, campaignable: lecture, items_count: 2)
 
         get lecture_home_path(lecture)
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
           .to include(I18n.t("registration.user_registration.summary.blocked"))
+        expect(response.body).not_to include('data-testid="lecture-home-focus"')
+
+        get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
         expect(response.body).to include(
           I18n.t("registration.user_registration.messages.unremovable_assignment")
         )
-        expect(response.body).not_to include('data-testid="lecture-home-jump-links"')
       end
     end
 
@@ -346,11 +349,11 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                self_materialization_mode: :add_only)
       end
 
-      it "offers them in the registrations section" do
+      it "offers them in the self-enrollment row" do
         get lecture_home_path(lecture)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('data-testid="lecture-home-registrations"')
+        expect(response.body).to include('data-testid="self-enrollment"')
         expect(response.body.squish).to include("Tutorial 7")
       end
     end
@@ -368,11 +371,11 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                status: :pending)
       end
 
-      it "shows that the allocation is still pending" do
+      it "says in the campaign row that the preferences are saved" do
         get lecture_home_path(lecture)
 
         expect(response.body.squish).to include(
-          I18n.t("registration.user_registration.participation.allocation_pending")
+          I18n.t("registration.user_registration.summary.preferences_saved")
         )
       end
     end
@@ -614,7 +617,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           expect(response).to have_http_status(:bad_request)
         end
 
-        it "updates the participation section via turbo stream" do
+        it "updates the campaign row and the participation section via turbo stream" do
           post save_preferences_path(campaign),
                params: { preferences: preferences },
                as: :turbo_stream
@@ -623,7 +626,11 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           expect(response.media_type).to eq(Mime[:turbo_stream])
           expect(response.body).to include('target="student_registration_participation"')
           expect(response.body).to include(
-            I18n.t("registration.user_registration.participation.allocation_pending")
+            %(target="#{ActionView::RecordIdentifier
+                          .dom_id(campaign, :student_registration_summary)}")
+          )
+          expect(response.body).to include(
+            I18n.t("registration.user_registration.summary.preferences_saved")
           )
         end
 

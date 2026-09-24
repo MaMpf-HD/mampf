@@ -246,10 +246,6 @@ module Registration
                 class: "btn allocation-action-secondary")
     end
 
-    def closed_early?(campaign)
-      !campaign.open_for_registrations? && campaign.registration_deadline > Time.current
-    end
-
     # Options for the post-finalization "open for self-service" select.
     # Phrased as permissions ("Allow …"), with the group's current mode
     # flagged so the teacher sees what is in effect right now.

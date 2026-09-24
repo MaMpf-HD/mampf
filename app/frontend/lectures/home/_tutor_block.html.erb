@@ -1,27 +1,50 @@
-<%# locals: (lecture:, tutorials:) %>
-<section class="card lecture-home-section" aria-labelledby="tutor-heading"
+<%# locals: (lecture:, tutorials:, member_counts:, backlog:) %>
+<section class="lecture-home-block" aria-labelledby="tutor-heading"
          data-testid="lecture-home-tutor">
-  <div class="card-header">
-    <h2 class="lecture-home-section-title" id="tutor-heading">
-      <%= t("lecture_home.tutor.title") %>
-    </h2>
-  </div>
-  <ul class="lecture-home-rows list-unstyled mb-0">
+  <h2 class="lecture-home-label" id="tutor-heading"><%= t("lecture_home.tutor.title") %></h2>
+
+  <% if backlog.entries.any? %>
+    <div class="lecture-home-focus">
+      <p class="lecture-home-kicker"><%= t("lecture_home.tutor.to_mark") %></p>
+      <div class="lecture-home-rows">
+        <% backlog.entries.each do |entry| %>
+          <div class="lecture-home-row">
+            <div class="lecture-home-row-content">
+              <div class="lecture-home-row-title">
+                <span><%= entry.assignment.title %> · <%= entry.tutorial&.title %></span>
+              </div>
+              <div class="lecture-home-row-line">
+                <%= t("lecture_home.marking.waiting", count: entry.people) %>
+              </div>
+            </div>
+            <div class="lecture-home-row-actions">
+              <%= link_to t("lecture_home.marking.open"),
+                          lecture_tutorials_path(lecture, assignment: entry.assignment.id,
+                                                          tutorial: entry.tutorial&.id),
+                          class: "btn btn-sm btn-primary", data: { turbo_frame: "main" } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="lecture-home-rows">
     <% tutorials.each do |tutorial| %>
-      <li class="lecture-home-row">
+      <div class="lecture-home-row">
         <div class="lecture-home-row-content">
-          <span class="lecture-home-row-title"><%= tutorial.title %></span>
-          <span class="lecture-home-row-line">
-            <%= t("lecture_home.tutor.members", count: tutorial.members.size) %>
+          <div class="lecture-home-row-title"><span><%= tutorial.title %></span></div>
+          <div class="lecture-home-row-line">
+            <%= t("lecture_home.tutor.members", count: member_counts.fetch(tutorial.id, 0)) %>
             <% if tutorial.location.present? %>· <%= tutorial.location %><% end %>
-          </span>
+          </div>
         </div>
-      </li>
+        <div class="lecture-home-row-actions">
+          <%= link_to t("lecture_home.tutor.open"),
+                      lecture_tutorials_path(lecture, tutorial: tutorial.id),
+                      class: "btn btn-sm btn-outline-primary", data: { turbo_frame: "main" } %>
+        </div>
+      </div>
     <% end %>
-  </ul>
-  <div class="card-footer">
-    <%= link_to t("lecture_home.tutor.open"), lecture_tutorials_path(lecture),
-                class: "btn btn-sm btn-outline-primary",
-                data: { turbo_frame: "main" } %>
   </div>
 </section>

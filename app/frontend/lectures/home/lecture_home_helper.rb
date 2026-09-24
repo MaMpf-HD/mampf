@@ -1,66 +1,88 @@
-# Builds what the lecture home page shows besides the registrations: the
-# links into the lecture's material and the counts on the staff block.
+# Builds what the lecture home page says besides the registration rows: the one
+# thing that is due first, the student's work in the lecture and the counts in
+# the staff blocks.
 module LectureHomeHelper
-  Path = Struct.new(:title, :subtitle, :url, :icon, keyword_init: true)
+  Focus = Struct.new(:kind, :subject, keyword_init: true)
 
-  # Lists the material a student starts from, each with a subtitle only when
-  # the lecture has data for it.
-  def lecture_home_paths(lecture, tutor:, staff:)
-    paths = []
-    if lecture.exercise?(current_user)
-      paths << Path.new(title: t("categories.exercise.plural"),
-                        subtitle: lecture_home_next_deadline(lecture),
-                        url: lecture_exercises_path(lecture), icon: "bi bi-pencil")
+  SHEET_STATES_TO_ACT_ON = [:nothing_handed_in, :grace_period, :tutor_decides].freeze
+  NEWS_SHOWN = 2
+
+  # Picks what the page leads with: of an open campaign the student still has
+  # to register in and a sheet they still have to hand in, whichever is due
+  # first; otherwise their next exam. Nothing when nothing is due.
+  def lecture_home_focus(campaigns:, work:, next_exam:)
+    campaign = Array(campaigns).find { |details| registration_needs_action?(details) }
+    sheet = work&.due&.find { |due| due.state.in?(SHEET_STATES_TO_ACT_ON) }
+    candidates = []
+    if campaign
+      candidates << [campaign.campaign.registration_deadline,
+                     Focus.new(kind: :campaign, subject: campaign)]
     end
-    if lecture.script?(current_user)
-      paths << Path.new(title: t("categories.script.singular"),
-                        subtitle: lecture_home_script_edited(lecture),
-                        url: lecture_script_path(lecture), icon: "bi bi-file-earmark")
-    end
-    if tutor
-      paths << Path.new(title: t("categories.tutorials"),
-                        url: lecture_tutorials_path(lecture), icon: "bi bi-people")
-    elsif !staff && lecture.assignments.exists?
-      paths << Path.new(title: t("categories.submissions"),
-                        url: lecture_submissions_path(lecture), icon: "bi bi-people")
-    end
-    paths
+    candidates << [sheet.assignment.deadline, Focus.new(kind: :sheet, subject: sheet)] if sheet
+    return candidates.min_by(&:first).last if candidates.any?
+
+    Focus.new(kind: :exam, subject: next_exam) if next_exam
   end
 
-  # Counts the people a campaign has in its current state: those holding a
-  # place in a first come, first served campaign, those who handed in
-  # preferences in a preference-based one.
-  def lecture_home_campaign_count_text(campaign)
-    users = campaign.user_registrations.reject(&:rejected?).map(&:user_id).uniq.size
-    if campaign.first_come_first_served?
-      t("lecture_home.teacher.registered", count: users)
-    else
-      t("lecture_home.teacher.with_preferences", count: users)
-    end
+  # The sheets that are due next, unless the page leads with them already.
+  def lecture_home_due_sheets(work, focus)
+    sheets = Array(work&.due)
+    return sheets unless focus&.kind == :sheet
+
+    sheets - [focus.subject]
   end
 
-  def lecture_home_closed_status(campaign)
+  # Sheets with a correction or points the student has not looked at yet.
+  def lecture_home_news_sheets(work)
+    Array(work&.sheets).select(&:news?)
+  end
+
+  def lecture_home_sheet_deadline(sheet)
+    t("lecture_home.work.due", deadline: format_date(sheet.assignment.deadline))
+  end
+
+  # One line for everything new, however many sheets came back since the
+  # student last looked.
+  def lecture_home_sheet_news(sheets)
+    if sheets.one?
+      key = sheets.first.new_correction? ? "new_correction" : "new_points"
+      return t("lecture_home.work.#{key}", sheet: sheets.first.assignment.title)
+    end
+
+    titles = sheets.first(3).map { |sheet| sheet.assignment.title }
+    titles << "…" if sheets.size > 3
+    t("lecture_home.work.news_many", count: sheets.size, sheets: titles.join(", "))
+  end
+
+  # Points so far against what has been marked, as the submissions page counts
+  # them, and the admission decision where the lecture makes one.
+  def lecture_home_standing_line(standing, certification)
+    parts = []
+    if standing.points_total
+      parts << t("lecture_home.work.points",
+                 points: number_with_delimiter(standing.points_total),
+                 max: number_with_delimiter(standing.points_marked_so_far))
+    end
+    if standing.uses_exam_eligibility
+      parts << t("lecture_home.work.admission.#{certification&.status || "open"}")
+    end
+    parts.join(" · ").presence
+  end
+
+  def lecture_home_campaign_count_text(campaign, count)
     if campaign.completed?
-      t("lecture_home.closed.completed")
+      t("lecture_home.teacher.on_roster", count: count)
+    elsif campaign.first_come_first_served?
+      t("lecture_home.teacher.registered", count: count)
     else
-      t("lecture_home.closed.not_finalized")
+      t("lecture_home.teacher.with_preferences", count: count)
     end
   end
 
-  private
-
-    def lecture_home_next_deadline(lecture)
-      assignment = lecture.current_assignments.min_by(&:deadline)
-      return unless assignment
-
-      t("lecture_home.paths.next_deadline", title: assignment.title,
-                                            deadline: format_date(assignment.deadline))
-    end
-
-    def lecture_home_script_edited(lecture)
-      edited = lecture.manuscript&.file_last_edited
-      return unless edited
-
-      t("lecture_home.paths.script_edited", date: l(edited.to_date, format: :long))
-    end
+  # Where the exam stands for the student: the list they are on, and the
+  # admission when the lecture decides one.
+  def lecture_home_exam_line(exam, certification)
+    admission = certification && t("lecture_home.work.admission.#{certification.status}")
+    [exam.date && format_date(exam.date), exam.location.presence, admission].compact.join(" · ")
+  end
 end

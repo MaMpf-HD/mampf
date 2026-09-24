@@ -17,32 +17,62 @@ en:
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
   lecture_home:
-    jump_links:
-      label: "Open registrations"
-      open: "Registration open: %{title}, until %{deadline} ↓"
-    paths:
-      label: "Lecture material"
-      next_deadline: "Next: %{title}, due %{deadline}"
-      script_edited: "Updated on %{date}"
+    subscribe: "Subscribe to this course"
+    focus:
+      campaign: "Registration open"
+      sheet: "Your next hand-in"
+      exam: "Your next exam"
+      open_sheet: "Go to your hand-in"
+    work:
+      title: "Your work"
+      due: "Due %{deadline}"
+      new_correction: "The correction for %{sheet} is back"
+      new_points: "The points for %{sheet} are in"
+      news_many: "News on %{count} sheets: %{sheets}"
+      show: "View"
+      standing: "Points and exam admission"
+      points: "%{points} of %{max} points marked so far"
+      details: "Details"
+      admission:
+        open: "Admission not decided yet"
+        pending: "Admission not decided yet"
+        passed: "Admitted to the exam"
+        failed: "Not admitted to the exam"
+    news:
+      title: "News"
+      by: "%{author}, %{date}"
+      more:
+        one: "1 more announcement"
+        other: "%{count} more announcements"
+      forum:
+        one: "1 unread topic in the board"
+        other: "%{count} unread topics in the board"
+    history:
+      title: "Past registrations (%{count})"
+      completed: "Finalized · deadline was %{deadline}"
+      ended: "Registration ended on %{deadline}"
     tutor:
       title: "Your tutorials"
+      to_mark: "To mark"
       members:
         one: "1 person"
         other: "%{count} people"
-      open: "Open tutorials"
+      open: "Open group"
+    marking:
+      waiting:
+        one: "1 person waiting for points"
+        other: "%{count} people waiting for points"
+      open: "Mark"
     teacher:
-      title: "Registrations in this lecture"
+      title: "Your lecture"
+      marking: "Marking"
       registered:
         one: "1 person registered"
         other: "%{count} people registered"
       with_preferences:
         one: "1 person handed in preferences"
         other: "%{count} people handed in preferences"
+      on_roster:
+        one: "1 person on the list"
+        other: "%{count} people on the list"
       deadline: "until %{deadline}"
-    closed:
-      title: "Closed registrations"
-      completed: "Finalized"
-      not_finalized: "Not finalized yet"
-      deadline: "Registration ended on %{deadline}"
-      your_entries: "Your entries: %{entries}"
-    organizational: "Organizational matters"

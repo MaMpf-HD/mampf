@@ -1,16 +1,19 @@
+# One open registration campaign on the lecture home page: a collapsed row
+# that says where the student stands in it, and the options to change that
+# once it is opened. The options are loaded only then, unless the page already
+# has them; `part` renders the summary or the body alone for a Turbo Stream.
 class CampaignCardComponent < ViewComponent::Base
   include EligibilityHelper
 
-  # `part` renders only the summary or only the body, so a Turbo Stream can
-  # refresh one campaign without closing it or touching the others.
-  def initialize(details:, campaign:, part: nil)
+  def initialize(details:, campaign:, part: nil, focus: false)
     super()
     @details = details
     @campaign = campaign
     @part = part
+    @focus = focus
   end
 
-  attr_reader :details, :campaign, :part
+  attr_reader :details, :campaign, :part, :focus
 
   def anchor_id
     dom_id(campaign, :student_registration)
@@ -24,41 +27,80 @@ class CampaignCardComponent < ViewComponent::Base
     dom_id(campaign, :student_registration_body)
   end
 
+  def lazy?
+    details.summary_only
+  end
+
+  def body_url
+    helpers.lecture_home_campaign_path(campaign.campaignable, campaign_id: campaign.id)
+  end
+
+  # The options, or a placeholder until the row is first opened and the
+  # options are fetched.
+  def body_element(content)
+    placeholder = tag.p(t("registration.user_registration.summary.loading"),
+                        class: "registration-fold-loading mb-0")
+    tag.div(lazy? ? placeholder : content,
+            class: "registration-fold-body", id: body_id,
+            data: { registration_fold_target: "body", loaded: !lazy? })
+  end
+
+  def own_registrations
+    Array(details.own_registrations)
+  end
+
   def registered_items
-    @registered_items ||= items.select { |item| item.user_registered?(helpers.current_user) }
+    @registered_items ||= own_registrations.select(&:confirmed?).map(&:registration_item)
+  end
+
+  def saved_preferences
+    @saved_preferences ||= own_registrations.select { |r| r.pending? && r.preference_rank }
+                                            .sort_by(&:preference_rank)
   end
 
   def preferences_saved?
-    Array(item_preferences).any? { |pref| pref.respond_to?(:item) }
+    saved_preferences.any?
   end
 
-  # Says in the collapsed row what the student still has to do; once they have
-  # registered or chosen, the participation section reports it instead.
+  def full?
+    campaign.first_come_first_served? && registered_items.empty? &&
+      items.none?(&:still_has_capacity?)
+  end
+
+  # The student's state in this campaign, which the row leads with.
   def summary_badge
     return [:bad, t("registration.user_registration.summary.requirement_missing")] if ineligible?
     return [:bad, t("registration.user_registration.summary.blocked")] if blocked?
-    return if registered_items.any? || preferences_saved?
+    return [:ok, t("registration.user_registration.summary.registered")] if registered_items.any?
+    return [:info, t("registration.user_registration.summary.preferences_saved")] if
+      preferences_saved?
+    return [:info, t("registration.user_registration.summary.full")] if full?
 
     key = campaign.preference_based? ? "no_preferences" : "not_registered"
     [:warn, t("registration.user_registration.summary.#{key}")]
   end
 
   def summary_lines
-    [deadline_line, ineligible? ? ineligible_line : mode_line].compact
+    [own_line || (ineligible? ? ineligible_line : mode_line), deadline_line].compact
   end
 
   def cta_label
-    return t("registration.user_registration.summary.details") if ineligible? || blocked?
+    return t("registration.user_registration.summary.details") if
+      ineligible? || blocked? || full?
     return t("registration.user_registration.summary.change") if registered_items.any?
     return t("registration.user_registration.summary.change_preferences") if preferences_saved?
     return t("registration.user_registration.summary.choose") if campaign.preference_based?
-    return t("registration.user_registration.summary.register") if campaign.exam_campaign?
+    return t("registration.user_registration.summary.register") if exam_campaign?
 
     t("registration.user_registration.summary.show_and_register")
   end
 
   def cta_primary?
     summary_badge&.first == :warn
+  end
+
+  def exam_campaign?
+    items.any? && items.all? { |item| item.registerable_type == "Exam" }
   end
 
   delegate :eligibility, :finalization_eligibility, :items, :item_preferences,
@@ -148,6 +190,25 @@ class CampaignCardComponent < ViewComponent::Base
 
   private
 
+    def own_line
+      if registered_items.any?
+        return exam_line(registered_items.first.registerable) if exam_campaign?
+
+        return registered_items.map { |item| item.registerable.title }.join(", ")
+      end
+      return unless preferences_saved?
+
+      saved_preferences.map do |registration|
+        rank = t("registration.user_registration.preference_rank_options." \
+                 "#{registration.preference_rank}")
+        "#{rank} #{registration.registration_item.registerable.title}"
+      end.join(" · ")
+    end
+
+    def exam_line(exam)
+      [exam.date && helpers.format_date(exam.date), exam.location.presence].compact.join(" · ")
+    end
+
     def deadline_line
       deadline = campaign.registration_deadline
       days = (deadline.to_date - Time.zone.today).to_i
@@ -166,7 +227,7 @@ class CampaignCardComponent < ViewComponent::Base
       if campaign.preference_based?
         t("registration.user_registration.summary.preference_mode",
           count: helpers.preference_rank_count(items), options: items.size)
-      elsif campaign.exam_campaign?
+      elsif exam_campaign?
         item = items.first
         free = item&.capacity && [item.capacity - item.item_capacity_used, 0].max
         free ? t("registration.user_registration.summary.exam_places", count: free) : nil

@@ -361,7 +361,6 @@ de:
       register_now: "Jetzt anmelden"
       registration_blocked: "Nicht verfügbar"
       withdraw: "Zurückziehen"
-      closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
         title: "Anmeldung derzeit nicht möglich"
       finalization_policy_notice:
@@ -479,7 +478,6 @@ de:
         allocation_pending: "Zuteilung ausstehend"
         registered: "Angemeldet"
         checked_at_finalization: "Die Voraussetzungen werden beim Abschluss erneut geprüft."
-        changeable_until_html: 'Du kannst das bis %{deadline} <a href="%{anchor}">ändern</a>.'
         no_place: "Kein Platz"
         your_preferences: "Deine Wünsche: %{preferences}"
         rejected: "Abgelehnt"
@@ -493,6 +491,10 @@ de:
         preference_fulfilled: "Dein %{rank} Wunsch."
         outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
       summary:
+        registered: "Angemeldet"
+        preferences_saved: "Wünsche gespeichert"
+        full: "Keine Plätze frei"
+        loading: "Wird geladen …"
         blocked: "Nicht verfügbar"
         requirement_missing: "Voraussetzung fehlt"
         no_preferences: "Noch keine Wünsche"
@@ -507,7 +509,7 @@ de:
           zero: "endet heute"
           one: "noch 1 Tag"
           other: "noch %{count} Tage"
-        deadline: "Bis %{deadline}"
+        deadline: "Anmeldung bis %{deadline}"
         preference_mode:
           one: "%{count} von %{options} Optionen reihen"
           other: "%{count} von %{options} Optionen reihen"

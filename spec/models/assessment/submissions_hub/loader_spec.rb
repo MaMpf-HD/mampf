@@ -951,6 +951,19 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
   # The one assurance that keeps a later `includes` from being dropped by
   # somebody who cannot see what it was for.
+  describe "#summary" do
+    it "keeps the sheets and leaves out the team-up lists" do
+      assignment = create_assignment(title: "Homework 3")
+
+      summary = described_class.new(lecture: lecture, user: user).summary
+
+      expect(summary.due.map(&:assignment)).to eq([assignment])
+      expect(summary.sheets.map(&:assignment)).to eq(result.sheets.map(&:assignment))
+      expect(summary.invitations).to eq({})
+      expect(summary.possible_partners).to eq([])
+    end
+  end
+
   describe "the number of queries" do
     def count_queries
       count = 0

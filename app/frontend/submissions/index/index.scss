@@ -1,3 +1,5 @@
+@import "../components/sheet_chip_component";
+
 /* One scale for the whole page, each step bound to a role rather than picked
    per component. Two weights, and no step within 10 % of its neighbour - a
    difference nobody reads as a decision reads as a mistake.
@@ -371,33 +373,6 @@ details[open] > summary .news-marker {
   font-size: var(--hub-rubric);
   color: #4977a8;
   text-decoration: underline;
-}
-
-/* Badges only where no number can stand; SheetChipComponent says which tone
-   means what. */
-/* A pill with a ground of its own; a weight on top would say the same thing
-   twice. */
-.chip {
-  font-size: var(--hub-rubric);
-  font-weight: 400;
-  padding: 0.18rem 0.5rem;
-  border-radius: 1rem;
-  white-space: nowrap;
-}
-
-.chip-wait {
-  background: #e9ecef;
-  color: #495057;
-}
-
-.chip-act {
-  background: #fff3cd;
-  color: #7a5b00;
-}
-
-.chip-done {
-  background: #d1e7dd;
-  color: #0f5132;
 }
 
 /* One number language: tabular figures, "points / max", two decimals at most. */

@@ -65,9 +65,8 @@ test.describe("campaign registration", () => {
     await student.page.getByRole("link", { name: "Home" }).click();
 
     const home = new CampaignRegistrationPage(student.page, lecture.id);
-    await expect(student.page.getByRole("link", {
-      name: /Registration open: Tutorial registration/,
-    })).toBeVisible();
+    await expect(student.page.getByRole("region", { name: "Registration open" })
+      .getByRole("heading", { name: "Tutorial registration" })).toBeVisible();
     await expect(home.campaign("Tutorial registration")).toContainText("Not registered yet");
     await expect(student.page.getByText("Register for a group.")).toBeHidden();
 
@@ -98,16 +97,14 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
     await expect(student.page.getByRole("button", { name: /^Withdraw from / })).toHaveCount(1);
     await expect(student.page.getByRole("button", { name: /^Switch to / })).toHaveCount(2);
-    await expect(home.participation("Registered")).toHaveCount(1);
-    await expect(student.page.getByRole("link", {
-      name: /Registration open: Tutorial registration/,
-    })).toHaveCount(0);
+    await expect(home.campaign("Tutorial registration")).toContainText("Registered");
+    await expect(home.campaign("Tutorial registration").locator("summary")).toBeFocused();
 
     await home.withdraw();
 
     await expect(student.page.getByText("You have withdrawn your registration.")).toBeVisible();
     await expect(home.registerButtons()).toHaveCount(3);
-    await expect(home.participation("Registered")).toHaveCount(0);
+    await expect(home.campaign("Tutorial registration")).toContainText("Not registered yet");
   });
 
   test("switches a first come, first served registration to another group", async ({
@@ -134,16 +131,17 @@ test.describe("campaign registration", () => {
     await switchButton.click();
 
     await expect(student.page.getByText("You have switched groups.")).toBeVisible();
-    await expect(home.participation("Registered")).toHaveCount(1);
-    await expect(home.participation("Registered")).toContainText(target || "");
+    await expect(home.campaign("Tutorial registration")).toContainText("Registered");
+    await expect(home.campaign("Tutorial registration").locator("summary"))
+      .toContainText(target || "");
     await expect(student.page.getByRole("button", { name: `Withdraw from ${target}` }))
       .toBeVisible();
   });
 
-  test("opens a campaign from its jump link", async ({ factory, student }) => {
+  test("opens a campaign that a link points at", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
-    await createTutorialItemsCampaign(
+    const { campaign } = await createTutorialItemsCampaign(
       factory,
       lecture,
       "first_come_first_served",
@@ -154,9 +152,9 @@ test.describe("campaign registration", () => {
     await home.goto();
     await expect(home.campaign("Tutorial registration")).not.toHaveAttribute("open", "");
 
-    await student.page.getByRole("link", {
-      name: /Registration open: Tutorial registration/,
-    }).click();
+    await student.page.goto(
+      `/lectures/${lecture.id}/home#student_registration_registration_campaign_${campaign.id}`,
+    );
 
     await expect(home.campaign("Tutorial registration")).toHaveAttribute("open", "");
     await expect(home.registerButtons()).toHaveCount(3);
@@ -211,9 +209,10 @@ test.describe("campaign registration", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    const closed = student.page.getByRole("region", { name: "Closed registrations" });
-    await expect(closed.getByText("Closed tutorial registration")).toBeVisible();
-    await expect(closed.getByText("Not finalized yet")).toBeVisible();
+    await student.page.getByText("Past registrations (1)").click();
+    await expect(student.page.getByText("Closed tutorial registration")).toBeVisible();
+    await expect(student.page.getByTestId("lecture-home-history"))
+      .toContainText("Registration ended on");
     await expect(student.page.getByRole("button", { name: /^Register/ })).toHaveCount(0);
   });
 
@@ -710,7 +709,8 @@ test.describe("campaign registration", () => {
     await expect(student.page.getByText("Your preferences have been saved.")).toBeVisible();
     await expect(saveButton).toBeDisabled();
     await expect(fold).toHaveAttribute("open", "");
-    await expect(home.participation("Waiting for allocation")).toContainText(thirdTitle);
+    await expect(fold.locator("summary")).toContainText("Preferences saved");
+    await expect(fold.locator("summary")).toContainText(`1st ${thirdTitle}`);
     expect(saveRequests).toBe(1);
     expect(submittedBody).toContain("preferences%5B1%5D");
     expect(submittedBody).toContain("preferences%5B2%5D");
@@ -785,7 +785,7 @@ test.describe("campaign registration", () => {
       .toHaveCount(0);
   });
 
-  test("shows saved preferences as waiting for the allocation", async ({
+  test("says in the campaign row which preferences are saved", async ({
     factory,
     student,
   }) => {
@@ -819,13 +819,10 @@ test.describe("campaign registration", () => {
     const home = new CampaignRegistrationPage(student.page, lecture.id);
     await home.goto();
 
-    const standing = home.participation("Waiting for allocation");
-    await expect(standing).toContainText("1st Pending Preference Tutorial");
+    const row = home.campaign("Preference tutorial registration");
+    await expect(row).toContainText("Preferences saved");
+    await expect(row).toContainText("1st Pending Preference Tutorial");
     await expect(home.participation("Assigned")).toHaveCount(0);
-
-    await standing.getByRole("link", { name: "change this" }).click();
-    await expect(home.campaign("Preference tutorial registration"))
-      .toHaveAttribute("open", "");
   });
 
   test("shows an assignment next to a campaign that is still open", async ({
@@ -899,9 +896,8 @@ test.describe("campaign registration", () => {
     const blockedTooltip
       = "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way.";
     await expect(home.campaign("Late tutorial registration")).toContainText("Not available");
-    await expect(student.page.getByRole("link", {
-      name: /Registration open: Late tutorial registration/,
-    })).toHaveCount(0);
+    await expect(student.page.getByRole("region", { name: "Registration open" }))
+      .toHaveCount(0);
     const campaign = await home.openCampaign("Late tutorial registration");
     await expect(campaign.getByText(
       "You cannot register for another group because you cannot leave your current tutorial.",

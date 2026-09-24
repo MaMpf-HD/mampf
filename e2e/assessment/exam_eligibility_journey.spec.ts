@@ -47,7 +47,7 @@ test.describe("eligibility decides the exam place", () => {
       .getByRole("button", { name: "End Registration" })).toBeVisible();
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
-    await student.page.getByRole("heading", { name: "Exam registration" }).click();
+    await student.page.getByRole("heading", { name: "Main Exam" }).click();
     await expect(student.page.getByText(
       "Your registration would currently fail at finalization",
     )).toBeVisible();
@@ -71,7 +71,7 @@ test.describe("eligibility decides the exam place", () => {
     });
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
-    await student.page.getByRole("heading", { name: "Exam registration" }).click();
+    await student.page.getByRole("heading", { name: "Main Exam" }).click();
     await expect(student.page.getByText(
       "Your registration would currently fail at finalization",
     )).toHaveCount(0);

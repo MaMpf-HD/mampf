@@ -29,7 +29,7 @@
                aria: { hidden: true } %>
 <% end %>
 
-<% body_html = capture do %>
+<% body_html = lazy? ? nil : capture do %>
   <% if ineligible? %>
     <div class="registration-fold-notice registration-fold-notice--bad">
       <p class="mb-1 fw-semibold">
@@ -135,21 +135,20 @@
 <% when :summary %>
   <%= summary_html %>
 <% when :body %>
-  <%= body_html %>
+  <%= body_element(body_html) %>
 <% else %>
   <details
-    class="registration-fold"
+    class="<%= class_names("registration-fold", "registration-fold--focus": focus) %>"
     id="<%= anchor_id %>"
     data-controller="registration-fold"
-    data-action="preference-choices:changed->registration-fold#markUnsaved"
+    data-registration-fold-url-value="<%= body_url %>"
+    data-action="toggle->registration-fold#load preference-choices:changed->registration-fold#markUnsaved"
     data-testid="registration-campaign"
   >
     <summary class="registration-fold-summary" id="<%= summary_id %>">
       <%= summary_html %>
     </summary>
 
-    <div class="registration-fold-body" id="<%= body_id %>">
-      <%= body_html %>
-    </div>
+    <%= body_element(body_html) %>
   </details>
 <% end %>

@@ -172,9 +172,58 @@ RSpec.describe("Lectures::Home", type: :request) do
 
       get lecture_home_path(lecture)
 
-      expect(response.body).to include('data-testid="lecture-home-closed-campaigns"')
+      expect(response.body).to include('data-testid="lecture-home-history"')
       expect(response.body).to include("Late tutorial registration")
       expect(response.body).not_to include('data-testid="lecture-home-registrations"')
+    end
+  end
+
+  describe "an open campaign on the page" do
+    let!(:campaign) do
+      create(:registration_campaign, :open, :first_come_first_served,
+             campaignable: lecture, description: "Tutorial registration")
+    end
+
+    before { lecture.update!(home_intro: "<div>Welcome</div>") }
+
+    it "leads with the campaign the student still has to register in" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      focus = Nokogiri::HTML(response.body).at_css('[data-testid="lecture-home-focus"]')
+      expect(focus.text).to include("Tutorial registration")
+    end
+
+    it "loads the options only when the row is opened" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+      expect(response.body)
+        .not_to include(campaign.registration_items.first.registerable.title)
+
+      get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+      expect(response.body)
+        .to include(campaign.registration_items.first.registerable.title)
+    end
+
+    it "answers not found for a campaign that is closed" do
+      campaign.update!(status: :closed)
+      sign_in student
+
+      get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "answers not found for the lecture's teacher" do
+      sign_in editor
+
+      get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
