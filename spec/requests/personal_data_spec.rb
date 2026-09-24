@@ -36,6 +36,22 @@ RSpec.describe("Personal data", type: :request) do
       expect(response).to redirect_to(edit_user_registration_path)
     end
 
+    it "returns to a page, not to a background request" do
+      get start_path(format: :json)
+
+      patch personal_data_path, params: { participation: "no" }
+
+      expect(response).to redirect_to(start_path)
+    end
+
+    it "leaves account deletion and the consent to the terms open" do
+      get delete_account_path, xhr: true
+      expect(response).to have_http_status(:ok)
+
+      get consent_profile_path
+      expect(response).not_to redirect_to(edit_personal_data_path)
+    end
+
     it "does not stand in the way of the upload check nginx asks for" do
       get "/internal/upload-authorizations/submission", params: { locale: user.locale }
 
@@ -286,12 +302,15 @@ RSpec.describe("Personal data", type: :request) do
       expect(account.reload.first_name).to eq("Augusta")
     end
 
-    it "does not let a user change their own data through it" do
+    it "does not let a teacher change their own data through it" do
+      create(:lecture, teacher: account)
       sign_in(account)
 
-      patch user_path(account), params: { user: { name: "Ada", first_name: "Grace" } }, xhr: true
+      patch user_path(account), params: { user: { name: "Ada L.", first_name: "Grace" } },
+                                xhr: true
 
-      expect(account.reload.first_name).to eq("Ada")
+      expect(account.reload.name).to eq("Ada L.")
+      expect(account.first_name).to eq("Ada")
     end
   end
 end

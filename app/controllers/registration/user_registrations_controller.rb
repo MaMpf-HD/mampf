@@ -64,15 +64,6 @@ module Registration
 
     private
 
-      # Somebody who declined to give a name and matriculation number has
-      # nothing a group or an exam could list them by.
-      def require_personal_data
-        return unless current_user.personal_data_declined?
-
-        respond_with_flash(:alert, t("personal_data.needed_to_register"),
-                           fallback_location: lecture_home_path(@campaign.campaignable))
-      end
-
       def respond_to_student_registration(result, success_message)
         if result.success?
           flash.now[:notice] = success_message

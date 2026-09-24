@@ -455,13 +455,22 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                                                 "registration_success"))
       end
 
-      it "sends a user who declined to give name and matriculation number to their profile" do
+      it "sends a user who declined to give their data to the form, and back afterwards" do
         user.update!(personal_data_confirmed_at: nil, personal_data_declined_at: Time.current)
         expect(UserRegistrations::LectureFirstComeFirstServedEditService).not_to receive(:new)
+        lecture_page = lecture_home_path(campaign.campaignable)
 
-        post register_item_path(campaign_id: campaign.id, item_id: item.id)
+        post register_item_path(campaign_id: campaign.id, item_id: item.id),
+             headers: { "Referer" => "http://www.example.com#{lecture_page}" }
 
+        expect(response).to redirect_to(edit_personal_data_path)
         expect(flash[:alert]).to eq(I18n.t("personal_data.needed_to_register"))
+
+        patch personal_data_path,
+              params: { user: { first_name: "Ada", last_name: "Lovelace",
+                                matriculation_number: "3456789",
+                                personal_data_confirmation: "1" } }
+        expect(response).to redirect_to("http://www.example.com#{lecture_page}")
       end
 
       context "when the user is not allowed to enroll" do
