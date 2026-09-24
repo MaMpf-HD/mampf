@@ -26,10 +26,28 @@ RSpec.describe(I18n) do
   #   expect(non_normalized).to be_empty, error_message
   # end
 
+  # An empty key loads as nil and replaces what other files put under it.
+  it "does not have empty keys" do
+    empty = Dir.glob("config/locales/**/*.yml").flat_map do |file|
+      nil_paths(YAML.load_file(file, aliases: true)).map { |path| "#{file}: #{path}" }
+    end
+
+    expect(empty).to be_empty, "Empty i18n keys:\n#{empty.join("\n")}"
+  end
+
   it "does not have inconsistent interpolations" do
     error_message = "#{inconsistent_interpolations.leaves.count} i18n keys " \
                     "have inconsistent interpolations.\n" \
                     "Run `i18n-tasks check-consistent-interpolations' to show them"
     expect(inconsistent_interpolations).to be_empty, error_message
+  end
+
+  def nil_paths(tree, prefix = nil)
+    tree.flat_map do |key, value|
+      path = [prefix, key].compact.join(".")
+      next [path] if value.nil?
+
+      value.is_a?(Hash) ? nil_paths(value, path) : []
+    end
   end
 end
