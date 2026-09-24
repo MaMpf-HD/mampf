@@ -15,7 +15,7 @@ module Rosters
       base_scope =
         @lecture.lecture_memberships
                 .joins(:user)
-                .includes(user: { program: [:translations, { subject: :translations }] })
+                .includes(user: User::PROGRAM_PRELOAD)
                 .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
 
       if search

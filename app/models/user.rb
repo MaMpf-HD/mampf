@@ -149,6 +149,8 @@ class User < ApplicationRecord
   # Empty for a program not on offer ("other program") and for everybody not
   # asked yet.
   belongs_to :program, optional: true
+  # What a participant list preloads to show each program with its subject.
+  PROGRAM_PRELOAD = { program: [:translations, { subject: :translations }] }.freeze
   validate :program_offered_to_students
 
   before_save :track_password_change

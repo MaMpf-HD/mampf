@@ -83,6 +83,7 @@
             <tr>
               <th><%= t("basics.name") %></th>
               <th><%= User.human_attribute_name(:matriculation_number) %></th>
+              <th><%= User.human_attribute_name(:program_id) %></th>
               <th><%= t("basics.email") %></th>
               <th class="text-end"><%= t("basics.actions") %></th>
             </tr>
@@ -99,6 +100,7 @@
               >
                 <td><%= user.tutorial_name.presence || user.email %></td>
                 <td><%= user.matriculation_number %></td>
+                <td><%= user.program&.name_with_subject %></td>
                 <td class="text-muted"><%= user.email %></td>
 
                 <td class="text-end">
@@ -171,6 +173,7 @@
         <tr>
           <th><%= t("basics.name") %></th>
           <th><%= User.human_attribute_name(:matriculation_number) %></th>
+          <th><%= User.human_attribute_name(:program_id) %></th>
           <th><%= t("basics.email") %></th>
         </tr>
       </thead>
@@ -182,6 +185,7 @@
           <tr>
             <td><%= user.tutorial_name %></td>
             <td><%= user.matriculation_number %></td>
+            <td><%= user.program&.name_with_subject %></td>
             <td class="text-muted"><%= user.email %></td>
           </tr>
         <% end %>
