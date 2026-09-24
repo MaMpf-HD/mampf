@@ -9,7 +9,6 @@ class SectionsController < ApplicationController
   end
 
   def show
-    I18n.locale = @section.lecture.locale_with_inheritance
     render layout: "application_no_sidebar"
   end
 
@@ -17,11 +16,9 @@ class SectionsController < ApplicationController
     @chapter = Chapter.find_by(id: params[:chapter_id])
     @section = Section.new(chapter: @chapter)
     authorize! :new, @section
-    I18n.locale = @section.lecture.locale_with_inheritance
   end
 
   def edit
-    I18n.locale = @section.lecture.locale_with_inheritance
   end
 
   def create
@@ -32,7 +29,6 @@ class SectionsController < ApplicationController
   end
 
   def update
-    I18n.locale = @section.lecture.locale_with_inheritance
     @old_chapter = @section.chapter
     @section.update(section_params)
     if @section.valid?
@@ -51,7 +47,6 @@ class SectionsController < ApplicationController
   end
 
   def display
-    I18n.locale = @section.lecture.locale_with_inheritance
   end
 
   private

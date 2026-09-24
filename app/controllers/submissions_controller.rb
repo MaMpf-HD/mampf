@@ -60,7 +60,6 @@ class SubmissionsController < ApplicationController
   def new
     @submission = Submission.new
     @submission.assignment = @assignment
-    set_submission_locale
     render_form
   end
 
@@ -79,7 +78,6 @@ class SubmissionsController < ApplicationController
     # enrollment check in SubmissionAbility.
     authorize! :create, @submission
     @lecture = @submission.assignment.lecture
-    set_submission_locale
     @assignment = @submission.assignment
     return render_card(status: :unprocessable_content) if @submission.not_updatable?
 
@@ -426,7 +424,6 @@ class SubmissionsController < ApplicationController
       @submission = Submission.find_by(id: params[:id])
       @assignment = @submission&.assignment
       @lecture = @assignment&.lecture
-      set_submission_locale
       return if @submission
 
       # No card to put a message in, so the frame says what happened and offers
@@ -519,7 +516,6 @@ class SubmissionsController < ApplicationController
     def set_assignment
       @assignment = Assignment.find_by(id: assignment_id)
       @lecture = @assignment&.lecture
-      set_submission_locale
       return if @assignment
 
       render_sheet_gone
@@ -560,14 +556,9 @@ class SubmissionsController < ApplicationController
 
     def set_lecture
       @lecture = Lecture.find_by(id: params[:id])
-      set_submission_locale and return if @lecture
+      return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_submission_locale
-      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     end
 
     def join_params

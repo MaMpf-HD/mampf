@@ -7,7 +7,6 @@ test.describe("talk grading", () => {
   }) => {
     const seminar = await factory.create("lecture", ["released_for_all", "is_seminar"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const speakers = [];
     for (const name of ["Ada Lovelace", "Grace Hopper"]) {

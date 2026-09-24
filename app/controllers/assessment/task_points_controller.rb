@@ -9,7 +9,6 @@ module Assessment
                          :refresh_participation, :mark_as_participated,
                          :remove_participated, :mark_as_absent, :remove_absent,
                          :mark_as_exempt, :remove_exempt]
-    before_action :set_locale
     before_action :authorize_assessment!, only: [:update_team_multi,
                                                  :update_exam_multi,
                                                  :update_team,
@@ -525,14 +524,6 @@ module Assessment
 
       def current_ability
         @current_ability ||= AssessmentAbility.new(current_user)
-      end
-
-      def set_locale
-        I18n.locale = @lecture&.locale_with_inheritance ||
-                      @assessable&.lecture&.locale_with_inheritance ||
-                      @assessment&.assessable&.lecture&.locale_with_inheritance ||
-                      current_user.locale ||
-                      I18n.default_locale
       end
   end
 end

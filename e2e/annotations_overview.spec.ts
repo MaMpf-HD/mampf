@@ -44,10 +44,10 @@ async function annotationScenario(
   factory: FactoryBot, user: User, teacherId: number,
 ): Promise<Scenario> {
   const lectureSage = await factory.create("lecture_with_sparse_toc", ["with_title"], {
-    title: LECTURE_TITLE_1, teacher_id: teacherId, locale: "en",
+    title: LECTURE_TITLE_1, teacher_id: teacherId,
   });
   const lectureLean = await factory.create("lecture_with_sparse_toc", ["with_title"], {
-    title: LECTURE_TITLE_2, teacher_id: teacherId, locale: "en",
+    title: LECTURE_TITLE_2, teacher_id: teacherId,
   });
 
   const lessons = [];
@@ -91,7 +91,7 @@ test.describe("the annotation sections", () => {
   test("show both own and students' annotations for a teacher",
     async ({ factory, teacher: { page, user } }) => {
       // The students' section is for people who have given a lecture.
-      await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+      await factory.create("lecture", [], { teacher_id: user.id });
       const overview = new AnnotationsOverviewPage(page);
       await overview.goto();
 

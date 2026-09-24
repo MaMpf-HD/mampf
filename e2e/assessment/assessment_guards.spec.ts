@@ -90,7 +90,6 @@ test.describe("guards and empty states", () => {
   }) => {
     const empty = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
 
     const emptyLecture = new AssessmentDashboardPage(teacher.page, empty.id);

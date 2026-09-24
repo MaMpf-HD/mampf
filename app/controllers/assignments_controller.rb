@@ -12,7 +12,6 @@ class AssignmentsController < ApplicationController
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @assignment.lecture = @lecture
     authorize! :new, @assignment
-    set_assignment_locale
 
     respond_to do |format|
       format.js
@@ -26,14 +25,12 @@ class AssignmentsController < ApplicationController
   end
 
   def edit
-    set_assignment_locale
   end
 
   def create
     @assignment = Assignment.new(assignment_params.merge(kind: kind_param))
     authorize! :create, @assignment
     @lecture = @assignment.lecture
-    set_assignment_locale
 
     if @assignment.save
       @assignment.reload
@@ -69,8 +66,6 @@ class AssignmentsController < ApplicationController
   end
 
   def update
-    set_assignment_locale
-
     unless @assignment.update(assignment_params)
       @errors = @assignment.errors
       return
@@ -81,7 +76,6 @@ class AssignmentsController < ApplicationController
   end
 
   def destroy
-    set_assignment_locale
     @lecture = @assignment.lecture
 
     if @assignment.destroy
@@ -112,7 +106,6 @@ class AssignmentsController < ApplicationController
     @lecture = Lecture.find_by(id: params[:lecture])
     assignment = Assignment.new(lecture: @lecture)
     authorize! :cancel_new, assignment
-    set_assignment_locale
     @none_left = @lecture&.assignments&.none?
   end
 
@@ -121,7 +114,7 @@ class AssignmentsController < ApplicationController
     def set_assignment
       @assignment = Assignment.find_by(id: params[:id])
       @lecture = @assignment&.lecture
-      set_assignment_locale and return if @assignment
+      return if @assignment
 
       redirect_to :root, alert: I18n.t("controllers.no_assignment")
     end
@@ -131,11 +124,6 @@ class AssignmentsController < ApplicationController
       return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_assignment_locale
-      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     end
 
     def assignment_params

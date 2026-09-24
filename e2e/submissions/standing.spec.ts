@@ -14,7 +14,7 @@ test.describe("the standing beside the card", () => {
     studentId: number,
   ): Promise<FactoryBotObject> {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      teacher_id: teacherId, locale: "en", uses_exam_eligibility: true,
+      teacher_id: teacherId, uses_exam_eligibility: true,
     });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id, title: "Monday group",

@@ -12,7 +12,6 @@ test.describe("homework sheets", () => {
   test("creates one and lands on its dashboard", async ({ factory, teacher }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
 
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
@@ -138,7 +137,6 @@ test.describe("homework sheets", () => {
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"], {
       lecture_id: lecture.id,

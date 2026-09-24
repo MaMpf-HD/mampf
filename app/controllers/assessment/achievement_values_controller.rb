@@ -6,7 +6,6 @@ module Assessment
     include AchievementStreams
 
     before_action :set_resources
-    before_action :set_locale
     before_action :authorize_entry!
 
     rescue_from ActiveRecord::RecordNotFound do
@@ -41,11 +40,6 @@ module Assessment
 
       def current_ability
         @current_ability ||= AssessmentAbility.new(current_user)
-      end
-
-      def set_locale
-        I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                      I18n.default_locale
       end
 
       def set_resources

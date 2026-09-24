@@ -40,7 +40,6 @@ class LecturesController < ApplicationController
       # if new action was triggered from inside a course view, add the course
       # info to the lecture
       @lecture.course = Course.find_by(id: params[:course])
-      I18n.locale = @lecture.course.locale
       @lecture.annotations_status = 0
     end
 
@@ -177,13 +176,11 @@ class LecturesController < ApplicationController
     @announcements = @lecture.announcements.order(:created_at).reverse
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
-    I18n.locale = @lecture.locale_with_inheritance
     render template: "lectures/announcements/show_announcements",
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def organizational
-    I18n.locale = @lecture.locale_with_inheritance
     render template: "lectures/organizational/_organizational",
            locals: { lecture: @lecture },
            layout: turbo_frame_request? ? "turbo_frame" : "application"
@@ -315,7 +312,6 @@ class LecturesController < ApplicationController
 
   def display_course
     @course = @lecture.course
-    I18n.locale = @course.locale || @lecture.locale
     render template: "lectures/course/display_course",
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
@@ -340,11 +336,6 @@ class LecturesController < ApplicationController
 
     def set_lecture_cookie
       cookies[:current_lecture_id] = @lecture.id
-    end
-
-    def set_view_locale
-      I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     end
 
     def check_for_consent

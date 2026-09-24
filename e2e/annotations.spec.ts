@@ -5,7 +5,7 @@ test.describe("annotations visibility", () => {
   test("keeps an annotation shared before the teacher stopped sharing visible to the teacher",
     async ({ factory, teacher, student }) => {
       const lecture = await factory.create("lecture_with_sparse_toc", ["with_title"], {
-        title: "Groundbreaking lecture", teacher_id: teacher.user.id, locale: "en",
+        title: "Groundbreaking lecture", teacher_id: teacher.user.id,
       });
       const lesson = await factory.create("valid_lesson", [], { lecture_id: lecture.id });
       const medium = await factory.create("lesson_medium",

@@ -2,7 +2,6 @@
 class ChaptersController < ApplicationController
   before_action :set_chapter, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  before_action :set_view_locale, only: [:edit]
   layout "administration"
 
   def current_ability
@@ -13,8 +12,6 @@ class ChaptersController < ApplicationController
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @chapter = Chapter.new(lecture: @lecture)
     authorize! :new, @chapter
-    I18n.locale = @chapter.lecture.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
   end
 
   def edit
@@ -24,8 +21,6 @@ class ChaptersController < ApplicationController
   def create
     @chapter = Chapter.new(chapter_params)
     authorize! :create, @chapter
-    I18n.locale = @chapter&.lecture&.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
     position = params[:chapter][:predecessor]
     # place the chapter in the correct position
     if position.present?
@@ -38,8 +33,6 @@ class ChaptersController < ApplicationController
   end
 
   def update
-    I18n.locale = @chapter.lecture.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
     @chapter.update(chapter_params)
     if @chapter.valid?
       predecessor = params[:chapter][:predecessor]
@@ -78,10 +71,5 @@ class ChaptersController < ApplicationController
     def chapter_params
       params.expect(chapter: [:title, :display_number, :lecture_id,
                               :hidden, :details])
-    end
-
-    def set_view_locale
-      I18n.locale = @chapter.lecture.locale_with_inheritance ||
-                    current_user.locale || I18n.default_locale
     end
 end

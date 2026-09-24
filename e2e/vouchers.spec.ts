@@ -18,7 +18,7 @@ const CARD_TITLES: Record<Role, string> = {
 async function openPeopleTab(
   factory: FactoryBot, teacher: { page: Page; user: User }, sort: "lecture" | "seminar",
 ) {
-  const lecture = await factory.create(sort, [], { teacher_id: teacher.user.id, locale: "en" });
+  const lecture = await factory.create(sort, [], { teacher_id: teacher.user.id });
   await teacher.page.goto(`/lectures/${lecture.id}/edit?tab=people`);
   await expect(teacher.page.getByRole("heading", { name: "Vouchers" })).toBeVisible();
   return lecture;

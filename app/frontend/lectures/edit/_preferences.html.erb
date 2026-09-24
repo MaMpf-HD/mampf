@@ -103,7 +103,8 @@
     </div>
   </div>
   <div class="mb-3">
-    <%= t('basics.language') %>
+    <%= t('basics.teaching_language') %>
+    <%= helpdesk(t('admin.lecture.info.language'), false) %>
     <div class="row ms-2">
     <% I18n.available_locales.each do |locale| %>
       <div class="form-check form-check-inline">

@@ -22,7 +22,6 @@ test.describe("a homework sheet from the teacher to the student and back", () =>
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
       lecture_id: lecture.id,

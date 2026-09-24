@@ -19,7 +19,6 @@ test.describe("getting out of a registration process", () => {
   ): Promise<Setup> {
     const lecture = await factory.create("lecture", [], {
       teacher_id: teacherId,
-      locale: "en",
     });
     const campaign = await factory.create(
       "registration_campaign", ["first_come_first_served"],
@@ -220,7 +219,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const talks = [];
       for (const title of ["First Talk", "Second Talk"]) {
@@ -291,7 +289,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const talk = await factory.create("talk", [], {
         lecture_id: lecture.id, title: "Nobody's Talk",
@@ -334,7 +331,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const campaign = await factory.create(
         "registration_campaign", ["first_come_first_served"],

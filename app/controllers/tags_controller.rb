@@ -16,7 +16,6 @@ class TagsController < ApplicationController
   end
 
   def show
-    I18n.locale = params[:locale] if params[:locale].in?(I18n.available_locales.map(&:to_s))
     set_related_tags_for_user
     @lectures = current_user.filter_lectures(@tag.lectures)
     # first, filter the media according to the users subscription type
@@ -114,7 +113,6 @@ class TagsController < ApplicationController
   end
 
   def fill_tag_select
-    I18n.locale = params[:locale] if params[:locale].in?(I18n.available_locales.map(&:to_s))
     if params[:q]
       result = Tag.select_with_substring(params[:q])
       render json: result
@@ -245,14 +243,12 @@ class TagsController < ApplicationController
       return unless section
 
       @tag.sections << section
-      I18n.locale = section.lecture.locale || current_user.locale
     end
 
     def add_medium
       medium = Medium.find_by(id: params[:medium])
       return unless medium
 
-      I18n.locale = medium.locale_with_inheritance || current_user.locale
       @tag.media << medium
     end
 
@@ -261,7 +257,6 @@ class TagsController < ApplicationController
       return unless lesson
 
       @tag.lessons << lesson
-      I18n.locale = lesson.lecture.locale || current_user.locale
     end
 
     def add_talk
@@ -269,7 +264,6 @@ class TagsController < ApplicationController
       return unless talk
 
       @tag.talks << talk
-      I18n.locale = talk.lecture.locale || current_user.locale
     end
 
     def check_for_consent

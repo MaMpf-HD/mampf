@@ -21,7 +21,8 @@
     <%= f.text_field :short_title, { class: 'form-control' } %>
   </div>
   <div class="mb-3">
-    <%= t('basics.language') %>
+    <%= t('basics.teaching_language') %>
+    <%= helpdesk(t('admin.course.info.language'), false) %>
     <div class="ms-2">
     <% I18n.available_locales.each do |locale| %>
       <div class="form-check form-check-inline">
