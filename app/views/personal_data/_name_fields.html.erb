@@ -1,11 +1,13 @@
-<% [:first_name, :last_name].each do |field| %>
-  <div class="mb-3">
-    <%= f.label field, class: "form-label" %>
-    <%= f.text_field field, class: "form-control", disabled: open_fields.exclude?(field),
-                            required: true, aria: { describedby: "name-hint" },
-                            autocomplete: field == :first_name ? "given-name" : "family-name" %>
-  </div>
-<% end %>
+<div class="row g-3 mb-3">
+  <% [:first_name, :last_name].each do |field| %>
+    <div class="col-md-6">
+      <%= f.label field, class: "form-label" %>
+      <%= f.text_field field, class: "form-control", disabled: open_fields.exclude?(field),
+                              required: true, aria: { describedby: "name-hint" },
+                              autocomplete: field == :first_name ? "given-name" : "family-name" %>
+    </div>
+  <% end %>
+</div>
 <% if open_fields.intersect?([:first_name, :last_name]) %>
   <p class="form-text mt-n2" id="name-hint"><%= t("personal_data.locked_hint") %></p>
 <% end %>

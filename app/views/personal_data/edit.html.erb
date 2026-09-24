@@ -2,6 +2,7 @@
 <% steps = personal_data_steps(open_fields) %>
 <% support = mail_to(DefaultSetting::PROJECT_EMAIL) %>
 <% asking = @asking %>
+<% content_for :landing_box_class, "landing-box-wide" %>
 
 <h2><%= t("personal_data.title") %></h2>
 <p><%= t("personal_data.lead") %></p>
