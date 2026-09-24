@@ -119,7 +119,7 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
 
       it "evaluates date and location fields" do
         expect(config["Exam"][0][:header]).to eq("basics.date")
-        expect(config["Exam"][0][:field].call(exam)).to include("9h30")
+        expect(config["Exam"][0][:field].call(exam)).to include("09:30")
         expect(config["Exam"][1][:header]).to eq("basics.location")
         expect(config["Exam"][1][:field].call(exam)).to eq("Lecture Hall 1")
       end
@@ -185,13 +185,13 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
 
     it "uses the English student registration format" do
       I18n.with_locale(:en) do
-        expect(helper.format_date(timestamp)).to eq("May 2, 17h45")
+        expect(helper.format_date(timestamp)).to eq("May 2, 2026, 17:45")
       end
     end
 
     it "uses the German student registration format" do
       I18n.with_locale(:de) do
-        expect(helper.format_date(timestamp)).to eq("2. Mai, 17h45")
+        expect(helper.format_date(timestamp)).to eq("2. Mai 2026, 17:45")
       end
     end
   end

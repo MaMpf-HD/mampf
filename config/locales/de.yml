@@ -2914,7 +2914,7 @@ de:
       # zur Frist, wo der Wochentag das ist, wonach man plant.
       file_time: "%d.%m.%Y, %H:%M"
       concise: '%d.%m.%Y'
-      student_registration: '%-d. %B, %Hh%M'
+      student_registration: '%-d. %B %Y, %H:%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
   thyme:
