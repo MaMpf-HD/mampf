@@ -85,8 +85,11 @@ RSpec.describe(SearchForm::Fields::ProgramField, type: :component) do
     let!(:program_b) { create(:program, name: "Program 1", subject: subject_b) }
 
     before do
-      [program_a, program_b, program_c].each { |program| create(:division, program: program) }
-      create(:program, name: "Program 3", subject: subject_b, degree: :msc)
+      [program_a, program_b, program_c].each do |program|
+        create(:division_course_join, division: create(:division, program: program))
+      end
+      create(:division, program: create(:program, name: "Program 3", subject: subject_b))
+      create(:program, name: "Program 4", subject: subject_b, degree: :msc)
     end
 
     it "returns a naturally sorted list of programs with courses and their subjects" do
