@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe("Auth registrations", type: :request) do
+  include ActiveSupport::Testing::TimeHelpers
+
   before do
     ActionMailer::Base.deliveries.clear
   end
@@ -54,6 +56,26 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
       expect(response.body).to include(I18n.t("devise.registrations.user.captcha_error"))
+      expect(response.body).to include('target="registration-captcha"')
+    end
+
+    it "lets a sign-up through when the page was open longer than a challenge lasts" do
+      get new_user_registration_path
+      travel 10.minutes
+
+      get captcha_challenge_path
+      challenge = response.parsed_body
+      number = (0..challenge["maxnumber"]).find do |n|
+        Digest::SHA256.hexdigest("#{challenge["salt"]}#{n}") == challenge["challenge"]
+      end
+      solution = Base64.strict_encode64(
+        challenge.slice("algorithm", "challenge", "salt", "signature")
+                 .merge("number" => number).to_json
+      )
+
+      expect do
+        post(user_registration_path, params: base_params.merge(altcha: solution))
+      end.to change(User, :count).by(1)
     end
 
     it "blocks sign up when the registration limit is exceeded" do
