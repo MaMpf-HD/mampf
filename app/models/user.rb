@@ -132,9 +132,9 @@ class User < ApplicationRecord
   normalizes :matriculation_number, with: ->(value) { value.gsub(/\s/, "").presence }
   normalizes :uni_id, with: ->(value) { value.strip.downcase.presence }
 
-  validates :matriculation_number, uniqueness: true, format: { with: /\A\d+\z/ },
+  validates :matriculation_number, uniqueness: true, format: { with: /\A\d{7}\z/ },
                                    allow_nil: true
-  validates :uni_id, uniqueness: true, format: { with: /\A[a-z0-9]+\z/ }, allow_nil: true
+  validates :uni_id, uniqueness: true, format: { with: /\A[a-z]{2}\d{3}\z/ }, allow_nil: true
   validates :first_name, :last_name, presence: true, on: :personal_data
   validates :matriculation_number, presence: true, on: :personal_data,
                                    unless: :no_matriculation_number

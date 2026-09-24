@@ -1,6 +1,8 @@
 <div class="mb-3">
   <%= f.label :uni_id, class: "form-label" %>
   <%= f.text_field :uni_id, class: "form-control", aria: { describedby: "uni-id-hint" },
+                            pattern: '\s*[A-Za-z]{2}\d{3}\s*',
+                            title: t("personal_data.uni_id_format"),
                             disabled: open_fields.exclude?(:uni_id) %>
   <div class="form-text" id="uni-id-hint"><%= t("personal_data.uni_id_hint") %></div>
 </div>

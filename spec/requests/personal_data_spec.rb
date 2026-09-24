@@ -103,6 +103,16 @@ RSpec.describe("Personal data", type: :request) do
       expect(user.matriculation_number).to be_nil
     end
 
+    it "wants the matriculation number as seven digits" do
+      patch personal_data_path, params: { user: complete.merge(matriculation_number: "345678") }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("must be seven digits")
+
+      patch personal_data_path, params: { user: complete.merge(matriculation_number: "345 6789") }
+      expect(user.reload.matriculation_number).to eq("3456789")
+    end
+
     it "refuses a matriculation number somebody else has saved" do
       create(:confirmed_user, matriculation_number: "3456789")
 
@@ -169,6 +179,16 @@ RSpec.describe("Personal data", type: :request) do
   end
 
   describe "the Uni ID" do
+    it "takes two letters and three digits, not an email address" do
+      patch personal_data_path, params: { user: complete.merge(uni_id: "ada@uni-heidelberg.de") }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("must be two letters followed by three digits")
+
+      patch personal_data_path, params: { user: complete.merge(uni_id: " AB123 ") }
+      expect(user.reload.uni_id).to eq("ab123")
+    end
+
     it "stays the user's to change, without the confirmation" do
       patch personal_data_path, params: { user: complete.merge(uni_id: "ab123") }
       patch personal_data_path, params: { user: { uni_id: "cd456" } }

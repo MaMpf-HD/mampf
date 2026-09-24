@@ -1,13 +1,14 @@
 en:
   personal_data:
-    title: "Your name and matriculation number"
+    title: >-
+      Your study details
     lead: >-
       MaMpf now includes what Müsli used to do: exercise classes, exams and
       seminars of the Faculty of Mathematics and Computer Science at Heidelberg
-      University are organised here.
+      University are organized here.
     why: >-
-      For them we need the name and matriculation number Heidelberg University
-      knows you by.
+      For them we need your real name and matriculation number, so that
+      teachers and tutors find you in exercise classes and exams.
     display_name_current_html: >-
       In the forum and in comments, you appear as <strong>%{name}</strong>.
       If you teach, this name also appears with your event series – in their
@@ -22,7 +23,12 @@ en:
       support: %{support}.
     locked_hint: "Once saved, only the support can change this."
     no_matriculation_number: "I do not have a matriculation number yet"
-    uni_id_hint: "Optional, e.g. ab123. You can change it yourself at any time."
+    matriculation_number_format: "Seven digits"
+    uni_id_format: "Two letters and three digits"
+    uni_id_hint: >-
+      Optional. You sign in to the university's services with it, such as
+      heiCO: two letters and three digits, not your email address.
+      You can change it yourself at any time.
     confirmation_html: >-
       I have checked these details. After saving, only the support
       (%{support}) can change my name and matriculation number.
@@ -45,7 +51,7 @@ en:
     participation_no: "No"
     continue: "Continue"
     change: "Change"
-    change_step: "Change: %{step}"
+    change_field: "Change: %{field}"
     no_matriculation_number_yet: "none yet"
     step_heading: "Step %{current} of %{total}: %{title}"
     steps:
@@ -54,6 +60,14 @@ en:
       uni_id: "Uni ID"
       check: "Check your details"
   activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            matriculation_number:
+              invalid: "must be seven digits"
+            uni_id:
+              invalid: "must be two letters followed by three digits"
     attributes:
       user:
         first_name: "First name"

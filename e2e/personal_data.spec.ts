@@ -17,10 +17,13 @@ test("asks once for the name and matriculation number after sign-in",
     await signInAsking(page, request);
 
     await page.getByRole("radio", { name: "Yes" }).check();
-    await page.getByLabel("First name").fill("Ada");
-    await page.getByLabel("Last name").fill("Lovelace");
+    await page.getByLabel("First name", { exact: true }).fill("Ada");
+    await page.getByLabel("Last name", { exact: true }).fill("Lovelace");
     await page.getByRole("button", { name: "Continue" }).click();
 
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByText("Step 2 of 4: Matriculation number")).toBeVisible();
+    await page.getByLabel("Matriculation number", { exact: true }).fill("345678");
     await page.getByRole("button", { name: "Continue" }).click();
     await expect(page.getByText("Step 2 of 4: Matriculation number")).toBeVisible();
     await page.getByLabel("Matriculation number", { exact: true }).fill("3456789");
@@ -28,12 +31,12 @@ test("asks once for the name and matriculation number after sign-in",
     await page.getByRole("button", { name: "Continue" }).click();
 
     await expect(page.getByText("Step 4 of 4: Check your details")).toBeVisible();
-    await page.getByRole("button", { name: "Change: Name" }).click();
-    await page.getByLabel("First name").fill("Augusta Ada");
+    await page.getByRole("button", { name: "Change: Last name" }).click();
+    await page.getByLabel("Last name", { exact: true }).fill("King");
     await page.getByRole("button", { name: "Continue" }).click();
     await page.getByRole("button", { name: "Continue" }).click();
     await page.getByRole("button", { name: "Continue" }).click();
-    await expect(page.getByText("Augusta Ada")).toBeVisible();
+    await expect(page.getByText("King", { exact: true })).toBeVisible();
     await expect(page.getByText("3456789")).toBeVisible();
 
     await page.getByRole("button", { name: "Save" }).click();
@@ -51,7 +54,7 @@ test("lets a user who takes part in no exercise class skip it",
   async ({ page, request }) => {
     await signInAsking(page, request);
 
-    await expect(page.getByLabel("First name")).toBeHidden();
+    await expect(page.getByLabel("First name", { exact: true })).toBeHidden();
     await page.getByRole("radio", { name: "No" }).check();
     await page.getByText("Change display name").click();
     await page.getByLabel("Display name").fill("Ada L.");

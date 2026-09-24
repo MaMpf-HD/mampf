@@ -2,6 +2,7 @@
   <%= f.label :matriculation_number, class: "form-label" %>
   <%= f.text_field :matriculation_number,
                    class: "form-control", inputmode: "numeric",
+                   pattern: '\s*(\d\s*){7}', title: t("personal_data.matriculation_number_format"),
                    disabled: open_fields.exclude?(:matriculation_number),
                    aria: { describedby: "matriculation-number-hint" },
                    data: { personal_data_form_target: "matriculationNumber" } %>

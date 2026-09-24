@@ -26,8 +26,8 @@ test("can sign up and confirm the account", async ({ page, request }) => {
   // a new account is asked for its name and matriculation number first
   await expect(page).toHaveURL(/\/personal_data/);
   await page.getByRole("radio", { name: "Yes" }).check();
-  await page.getByLabel("First name").fill("Ada");
-  await page.getByLabel("Last name").fill("Lovelace");
+  await page.getByLabel("First name", { exact: true }).fill("Ada");
+  await page.getByLabel("Last name", { exact: true }).fill("Lovelace");
   await page.getByRole("button", { name: "Continue" }).click();
   await page.getByLabel("I do not have a matriculation number yet").check();
   await page.getByRole("button", { name: "Continue" }).click();

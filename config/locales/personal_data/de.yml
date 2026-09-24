@@ -1,13 +1,15 @@
 de:
   personal_data:
-    title: "Dein Name und Deine Matrikelnummer"
+    title: >-
+      Deine Angaben zum Studium
     lead: >-
       MaMpf übernimmt jetzt, was bisher Müsli gemacht hat: Übungsgruppen,
       Klausuren und Seminare der Fakultät für Mathematik und Informatik der
       Universität Heidelberg werden hier organisiert.
     why: >-
-      Dafür brauchen wir den Namen und die Matrikelnummer, unter denen die
-      Universität Heidelberg Dich kennt.
+      Dafür brauchen wir Deinen richtigen Namen und Deine Matrikelnummer: So
+      finden Dich Lehrende, Tutorinnen und Tutoren in Übungsgruppen und bei
+      Klausuren.
     display_name_current_html: >-
       Im Forum und bei Kommentaren erscheinst Du als <strong>%{name}</strong>.
       Wenn Du lehrst, steht dieser Name auch bei Deinen Veranstaltungen – im
@@ -21,7 +23,12 @@ de:
       Gespeicherten Namen und Matrikelnummer ändert nur der Support: %{support}.
     locked_hint: "Nach dem Speichern kann das nur noch der Support ändern."
     no_matriculation_number: "Ich habe noch keine Matrikelnummer"
-    uni_id_hint: "Optional, z. B. ab123. Du kannst sie jederzeit selbst ändern."
+    matriculation_number_format: "Sieben Ziffern"
+    uni_id_format: "Zwei Buchstaben und drei Ziffern"
+    uni_id_hint: >-
+      Optional. Mit ihr meldest Du Dich bei den Diensten der Universität an,
+      etwa bei heiCO: zwei Buchstaben und drei Ziffern, nicht Deine
+      E-Mail-Adresse. Du kannst sie jederzeit selbst ändern.
     confirmation_html: >-
       Ich habe die Angaben geprüft. Nach dem Speichern kann nur noch der
       Support (%{support}) meinen Namen und meine Matrikelnummer ändern.
@@ -44,7 +51,7 @@ de:
     participation_no: "Nein"
     continue: "Weiter"
     change: "Ändern"
-    change_step: "Ändern: %{step}"
+    change_field: "Ändern: %{field}"
     no_matriculation_number_yet: "noch keine"
     step_heading: "Schritt %{current} von %{total}: %{title}"
     steps:
@@ -53,6 +60,14 @@ de:
       uni_id: "Uni-ID"
       check: "Angaben prüfen"
   activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            matriculation_number:
+              invalid: "muss aus sieben Ziffern bestehen"
+            uni_id:
+              invalid: "muss aus zwei Buchstaben und drei Ziffern bestehen"
     attributes:
       user:
         first_name: "Vorname"
