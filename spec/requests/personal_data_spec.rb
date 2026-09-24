@@ -232,6 +232,16 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "the logs" do
+    it "leave out every personal detail" do
+      filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+      details = { "first_name" => "Ada", "last_name" => "Lovelace",
+                  "matriculation_number" => "3456789", "uni_id" => "ab123", "program_id" => "4" }
+
+      expect(filter.filter("user" => details)["user"].values).to all(eq("[FILTERED]"))
+    end
+  end
+
   describe "the profile" do
     it "lists all details the user has given" do
       program = create(:program, subject: create(:subject, name: "Mathematik"), name: "M.Sc.",
