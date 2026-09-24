@@ -59,15 +59,7 @@
   </div>
 
   <%= f.hidden_field :locale, value: I18n.locale %>
-  <altcha-widget
-    class="d-flex mb-3"
-    display="bar"
-    type="native"
-    barPlacement="bottom"
-    language="<%= I18n.locale %>"
-    style="--altcha-border-radius:5px;"
-    challenge="<%= Altcha.create_challenge.to_json %>">
-  </altcha-widget>
+  <%= render "devise/registrations/captcha" %>
 
   <div class="mb-3">
     <%= f.submit t('.sign_up'), class: "devise-button btn btn-primary", id: 'register-user' %>
