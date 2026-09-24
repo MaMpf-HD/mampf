@@ -1,0 +1,19 @@
+<%# locals: (lecture:, tutor:, staff:) %>
+<% paths = lecture_home_paths(lecture, tutor: tutor, staff: staff) %>
+<% if paths.any? %>
+  <nav class="lecture-home-paths" aria-label="<%= t("lecture_home.paths.label") %>"
+       data-testid="lecture-home-paths">
+    <% paths.each do |path| %>
+      <%= link_to path.url, class: "lecture-home-path",
+                            data: { turbo_frame: "main" } do %>
+        <i class="<%= path.icon %>" aria-hidden="true"></i>
+        <span class="lecture-home-path-text">
+          <span class="lecture-home-path-title"><%= path.title %></span>
+          <% if path.subtitle.present? %>
+            <span class="lecture-home-path-subtitle"><%= path.subtitle %></span>
+          <% end %>
+        </span>
+      <% end %>
+    <% end %>
+  </nav>
+<% end %>

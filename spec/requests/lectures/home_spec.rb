@@ -121,7 +121,21 @@ RSpec.describe("Lectures::Home", type: :request) do
 
       expect(response.body)
         .to include('data-testid="lecture-home-staff-registration-note"')
-      expect(response.body).not_to include('data-testid="registration-group-tile"')
+      expect(response.body).not_to include('data-testid="self-enrollment"')
+    end
+
+    it "counts the people registered in a first come, first served campaign" do
+      item = campaign.registration_items.first
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: item)
+      create(:registration_user_registration, :rejected, registration_campaign: campaign,
+                                                         registration_item: item)
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .to include(I18n.t("lecture_home.teacher.registered", count: 1))
     end
 
     it "is not shown to staff when the lecture has no campaigns" do
@@ -132,6 +146,35 @@ RSpec.describe("Lectures::Home", type: :request) do
 
       expect(response.body)
         .not_to include('data-testid="lecture-home-staff-registration-note"')
+    end
+  end
+
+  describe "the tutor block" do
+    it "lists the tutorials the user teaches" do
+      tutor = create(:confirmed_user)
+      create(:tutorial, lecture: lecture, title: "Thursday Tutorial", tutors: [tutor])
+      create(:tutorial, lecture: lecture, title: "Friday Tutorial")
+      sign_in tutor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-tutor"')
+      expect(response.body).to include("Thursday Tutorial")
+      expect(response.body).not_to include("Friday Tutorial")
+    end
+  end
+
+  describe "the closed campaigns" do
+    it "lists a campaign past its deadline for a student who missed it" do
+      create(:registration_campaign, :closed, campaignable: lecture,
+                                              description: "Late tutorial registration")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-closed-campaigns"')
+      expect(response.body).to include("Late tutorial registration")
+      expect(response.body).not_to include('data-testid="lecture-home-registrations"')
     end
   end
 
@@ -178,7 +221,7 @@ RSpec.describe("Lectures::Home", type: :request) do
       { "teacher" => editor, "tutor" => tutor, "student" => student }.each do |role, user|
         sign_in user
         get lecture_home_path(lecture)
-        offered = response.body.include?('data-testid="registration-group-tile"')
+        offered = response.body.include?('data-testid="self-enrollment"')
         accepted = LectureAbility.new(user).can?(:self_materialize, lecture)
         sign_out user
 

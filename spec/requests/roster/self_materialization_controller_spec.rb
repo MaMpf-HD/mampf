@@ -67,16 +67,16 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
-    it "updates the rosterized entries turbo frame" do
+    it "updates the participation section" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
-      expect(response.body).to include('target="student_registration_rosterized_entries"')
+      expect(response.body).to include('target="student_registration_participation"')
     end
 
-    it "updates the self materialization zone turbo frame" do
+    it "updates the self-enrollment row" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
-      expect(response.body).to include('target="student_registration_options"')
+      expect(response.body).to include('target="self_enrollment_body"')
     end
 
     context "when user is already in another tutorial of the same lecture" do
@@ -207,7 +207,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         post self_add_tutorial_path(tutorial), as: :turbo_stream
 
         expect(response.body).to include(
-          I18n.t("registration.user_registration.index.confirmed_cases", locale: :en)
+          I18n.t("registration.user_registration.participation.title", locale: :en)
         )
       end
     end
@@ -244,10 +244,10 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
-    it "updates the rosterized entries turbo frame" do
+    it "updates the participation section" do
       delete self_remove_tutorial_path(tutorial), as: :turbo_stream
 
-      expect(response.body).to include('target="student_registration_rosterized_entries"')
+      expect(response.body).to include('target="student_registration_participation"')
     end
 
     context "when the tutorial is locked" do

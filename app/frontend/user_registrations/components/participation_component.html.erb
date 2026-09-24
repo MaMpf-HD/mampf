@@ -1,0 +1,43 @@
+<section
+  class="card lecture-home-section"
+  aria-labelledby="participation-heading"
+>
+  <div class="card-header">
+    <h2 class="lecture-home-section-title" id="participation-heading">
+      <%= t("registration.user_registration.participation.title") %>
+    </h2>
+  </div>
+
+  <div class="card-body lecture-home-rows">
+    <% rows.each do |row| %>
+      <div
+        class="lecture-home-row lecture-home-row--labelled"
+        data-testid="participation-row"
+      >
+        <div class="lecture-home-row-label"><%= row.label %></div>
+
+        <div class="lecture-home-row-content">
+          <div class="lecture-home-row-title">
+            <span class="fw-semibold"><%= row.title %></span>
+
+            <% if row.badge %>
+              <span class="<%= lecture_home_badge_class(row.badge.first) %>">
+                <%= row.badge.last %>
+              </span>
+            <% end %>
+          </div>
+
+          <% row.lines.each do |line| %>
+            <div class="lecture-home-row-line"><%= line %></div>
+          <% end %>
+
+          <% if row.note.present? %>
+            <div class="lecture-home-row-note"><%= row.note %></div>
+          <% end %>
+        </div>
+
+        <div class="lecture-home-row-actions"><%= row.actions %></div>
+      </div>
+    <% end %>
+  </div>
+</section>

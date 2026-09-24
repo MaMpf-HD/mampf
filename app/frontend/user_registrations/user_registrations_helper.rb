@@ -46,6 +46,22 @@ module UserRegistrationsHelper
     ]
   }.freeze
 
+  OPTIONS_SHOWN_AT_FIRST = 8
+
+  def option_seats_text(capacity, used)
+    return t("registration.user_registration.options.unlimited") if capacity.nil?
+
+    free = capacity - used
+    return t("registration.user_registration.options.full") unless free.positive?
+
+    t("registration.user_registration.options.free", free: free, capacity: capacity)
+  end
+
+  # Status badges on the lecture home page: ok, info, warn, bad.
+  def lecture_home_badge_class(kind)
+    "lecture-home-badge lecture-home-badge--#{kind}"
+  end
+
   def format_date(time)
     return "" if time.nil?
 
@@ -71,6 +87,16 @@ module UserRegistrationsHelper
       count: preference_rank_count(items))
   end
 
+  # Whether an open campaign still waits for the student: nothing registered or
+  # chosen yet, and nothing standing in the way.
+  def registration_needs_action?(details)
+    campaign = details.campaign
+    return false unless campaign.policies_satisfied?(current_user, phase: :registration)
+    return Array(details.item_preferences).none? if campaign.preference_based?
+
+    details.items.none? { |item| item.user_registered?(current_user) }
+  end
+
   def student_visible_campaign?(campaign)
     campaign.open? || campaign.closed? || campaign.processing?
   end
@@ -79,25 +105,19 @@ module UserRegistrationsHelper
     student_visible_campaign?(campaign) && !campaign.open_for_registrations?
   end
 
-  def sorted_student_visible_campaigns(campaigns_details)
-    visible_campaigns = campaigns_details.select do |campaign_details|
-      student_visible_campaign?(campaign_details.campaign)
-    end
-
-    readonly_campaigns, open_campaigns = visible_campaigns.partition do |campaign_details|
-      student_registration_readonly?(campaign_details.campaign)
-    end
-
-    readonly_campaigns.sort_by do |campaign_details|
-      -student_registration_readonly_changed_at(campaign_details.campaign).to_i
-    end + open_campaigns
-  end
-
   def sorted_student_registration_items(campaign, items, user)
     items.sort_by do |item|
       [student_registration_item_priority(campaign, item, user),
        item_display_type(item).to_s,
-       item.registerable.title.to_s]
+       item.registerable.try(:position).to_i,
+       natural_sort_key(item.registerable.title)]
+    end
+  end
+
+  # Sorts "Tutorial 2" before "Tutorial 10".
+  def natural_sort_key(text)
+    text.to_s.split(/(\d+)/).map do |part|
+      part.match?(/\A\d+\z/) ? [0, part.to_i] : [1, part.downcase]
     end
   end
 
@@ -111,16 +131,6 @@ module UserRegistrationsHelper
 
   def preference_ranks_for(items)
     1..preference_rank_count(items)
-  end
-
-  def preference_rank_button_tooltip(rank)
-    rank_label = t("registration.user_registration.preference_rank_options.#{rank}")
-    t("registration.user_registration.actions.rank_option_tooltip",
-      rank: rank_label)
-  end
-
-  def item_capacity_row(item)
-    "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}"
   end
 
   def item_tile_metadata_rows(item)
@@ -146,10 +156,6 @@ module UserRegistrationsHelper
     group_type == "Cohort"
   end
 
-  def nullable_capacity_display(capacity)
-    capacity.nil? ? "\u221E" : capacity.to_s
-  end
-
   def registration_blocked_by_unremovable_assignment?(lecture)
     return false if lecture.blank?
     return @registration_blocked_by_unremovable_assignment \
@@ -164,27 +170,7 @@ module UserRegistrationsHelper
     t("registration.user_registration.blocked_tooltip")
   end
 
-  def registration_blocked_tile_locals(blocked, tile_variant_class: "tutorial-gtile--campaign")
-    {
-      tile_tooltip_text: (registration_blocked_tooltip if blocked),
-      tile_variant_class: class_names(
-        tile_variant_class,
-        "tutorial-gtile--blocked": blocked
-      )
-    }
-  end
-
-  def registration_blocked_action
-    render partial: "user_registrations/registration_blocked_action"
-  end
-
   private
-
-    def student_registration_readonly_changed_at(campaign)
-      return campaign.last_allocation_calculated_at || campaign.updated_at if campaign.processing?
-
-      campaign.updated_at
-    end
 
     def student_registration_item_priority(campaign, item, user)
       return 0 if item.user_registered?(user)

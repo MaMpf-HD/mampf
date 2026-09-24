@@ -16,3 +16,33 @@ en:
       subscribed: Subscribed
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
+  lecture_home:
+    jump_links:
+      label: "Open registrations"
+      open: "Registration open: %{title}, until %{deadline} ↓"
+    paths:
+      label: "Lecture material"
+      next_deadline: "Next: %{title}, due %{deadline}"
+      script_edited: "Updated on %{date}"
+    tutor:
+      title: "Your tutorials"
+      members:
+        one: "1 person"
+        other: "%{count} people"
+      open: "Open tutorials"
+    teacher:
+      title: "Registrations in this lecture"
+      registered:
+        one: "1 person registered"
+        other: "%{count} people registered"
+      with_preferences:
+        one: "1 person handed in preferences"
+        other: "%{count} people handed in preferences"
+      deadline: "until %{deadline}"
+    closed:
+      title: "Closed registrations"
+      completed: "Finalized"
+      not_finalized: "Not finalized yet"
+      deadline: "Registration ended on %{deadline}"
+      your_entries: "Your entries: %{entries}"
+    organizational: "Organizational matters"

@@ -1,0 +1,27 @@
+<%# locals: (lecture:, tutorials:) %>
+<section class="card lecture-home-section" aria-labelledby="tutor-heading"
+         data-testid="lecture-home-tutor">
+  <div class="card-header">
+    <h2 class="lecture-home-section-title" id="tutor-heading">
+      <%= t("lecture_home.tutor.title") %>
+    </h2>
+  </div>
+  <ul class="lecture-home-rows list-unstyled mb-0">
+    <% tutorials.each do |tutorial| %>
+      <li class="lecture-home-row">
+        <div class="lecture-home-row-content">
+          <span class="lecture-home-row-title"><%= tutorial.title %></span>
+          <span class="lecture-home-row-line">
+            <%= t("lecture_home.tutor.members", count: tutorial.members.size) %>
+            <% if tutorial.location.present? %>· <%= tutorial.location %><% end %>
+          </span>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <div class="card-footer">
+    <%= link_to t("lecture_home.tutor.open"), lecture_tutorials_path(lecture),
+                class: "btn btn-sm btn-outline-primary",
+                data: { turbo_frame: "main" } %>
+  </div>
+</section>

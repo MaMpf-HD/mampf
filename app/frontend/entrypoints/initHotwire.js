@@ -136,6 +136,10 @@ window.Stimulus.register("sheet-news", SheetNewsController);
 
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
+import RegistrationFoldController from "~/user_registrations/registration_fold.controller.js";
+window.Stimulus.register("registration-fold", RegistrationFoldController);
+import OptionFilterController from "~/user_registrations/option_filter.controller.js";
+window.Stimulus.register("option-filter", OptionFilterController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);

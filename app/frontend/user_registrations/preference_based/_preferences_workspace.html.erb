@@ -3,6 +3,7 @@
 <% ranks = preference_ranks_for(sorted_items) %>
 <% preferences_by_rank = item_preferences.index_by(&:rank) %>
 <% disabled = local_assigns.fetch(:disabled, false) %>
+<% readonly = disabled || !campaign.open_for_registrations? %>
 
 <%= form_with url: save_preferences_path(campaign), method: :post,
               data: {
@@ -14,83 +15,110 @@
                 preference_choices_incomplete_tooltip_value: t(
                   "registration.user_registration.save_choices_incomplete_tooltip"
                 ),
-                preference_choices_readonly_value: disabled ||
-                  !campaign.open_for_registrations?
+                preference_choices_readonly_value: readonly,
+                preference_choices_saved_label_value: t(
+                  "registration.user_registration.options.saved"
+                ),
+                preference_choices_unsaved_label_value: t(
+                  "registration.user_registration.options.unsaved"
+                )
               } do %>
-  <div class="student-registration-preference-workspace">
-    <div
-      class="
-        row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4
-        row-cols-xxl-5
-        student-registration-tile-grid student-registration-podium
-      "
+  <div class="d-grid gap-3">
+    <p
+      class="registration-choice-summary mb-0"
       role="group"
       data-testid="preference-podium"
       aria-label="<%= t("registration.user_registration.preference_podium.label") %>"
     >
       <% ranks.each do |rank| %>
         <% preference = preferences_by_rank[rank] %>
-        <% selected_title = preference&.item&.registerable&.title %>
 
-        <div
-          class="
-            col registration-group-tile-col
-            registration-group-tile-col--student
-          "
+        <span
+          class="registration-choice"
+          data-testid="preference-podium-spot"
+          data-preference-choices-target="podiumSpot"
+          data-rank="<%= rank %>"
         >
-          <div
-            class="student-registration-podium-spot <%= "student-registration-podium-spot--filled" if selected_title.present? %>"
-            data-testid="preference-podium-spot"
-            data-preference-choices-target="podiumSpot"
+          <%= t("registration.user_registration.preference_rank_options.#{rank}") %>
+
+          <span
+            data-preference-choices-target="podiumName"
             data-rank="<%= rank %>"
           >
-            <div class="student-registration-podium-rank">
-              <%= t("registration.user_registration.preference_rank_options.#{rank}") %>
-            </div>
-
-            <div
-              class="student-registration-podium-name"
-              data-preference-choices-target="podiumName"
-              data-rank="<%= rank %>"
-            >
-              <%= selected_title.presence ||
-                  t("registration.user_registration.preference_podium.empty") %>
-            </div>
-          </div>
-        </div>
+            <%= preference&.item&.registerable&.title.presence ||
+                t("registration.user_registration.preference_podium.empty") %>
+          </span>
+        </span>
 
         <%= hidden_field_tag "preferences[#{rank}]", preference&.item&.id,
+                             data: { preference_choices_target: "input", rank: rank } %>
+      <% end %>
+    </p>
+
+    <%= render layout: "user_registrations/option_list", locals: { count: sorted_items.size } do %>
+      <% sorted_items.each do |item| %>
+        <% title = item.registerable.title %>
+        <% selected_rank = preference_rank_for(item, item_preferences) %>
+
+        <% actions = capture do %>
+          <div class="registration-rank-buttons">
+            <% ranks.each do |rank| %>
+              <%= button_tag t("registration.user_registration.preference_rank_options.#{rank}"),
+                             type: "button",
+                             disabled: readonly,
+                             class: class_names("btn btn-sm",
+                                                "btn-primary": selected_rank == rank,
+                                                "btn-outline-primary": selected_rank != rank),
+                             aria: {
+                               pressed: selected_rank == rank,
+                               label: t("registration.user_registration.options.rank_for",
+                                        title: title,
+                                        rank: t("registration.user_registration." \
+                                                "preference_rank_options.#{rank}"))
+                             },
                              data: {
-                               preference_choices_target: "input",
+                               action: "preference-choices#choose",
+                               preference_choices_target: "button",
+                               item_id: item.id,
+                               item_title: title,
                                rank: rank
                              } %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%= render "user_registrations/option_row",
+                   title: title,
+                   type_label: item_display_type(item),
+                   meta: item_tile_metadata_rows(item).map { |row| row[:value] },
+                   keep: selected_rank.present?,
+                   actions: actions %>
       <% end %>
-    </div>
+    <% end %>
 
-    <%= render partial: "user_registrations/preference_based/options_table",
-               locals: { campaign: campaign,
-                         disabled: disabled,
-                         item_preferences: item_preferences,
-                         sorted_items: sorted_items,
-                         ranks: ranks } %>
+    <% unless readonly %>
+      <div class="registration-savebar" data-testid="preference-savebar">
+        <span
+          class="registration-savebar-status"
+          data-preference-choices-target="status"
+          role="status"
+        >
+          <%= t("registration.user_registration.options.saved") %>
+        </span>
 
-    <div
-      class="student-registration-preference-submit"
-      data-preference-choices-target="savePrompt"
-      hidden
-    >
-      <span
-        class="d-inline-block w-100"
-        data-testid="preference-save-tooltip"
-        data-bs-toggle="tooltip"
-        data-preference-choices-target="saveTooltip"
-        tabindex="-1"
-      >
-        <%= submit_tag t("registration.user_registration.save_choices"),
-                       class: "btn btn-warning w-100 text-wrap",
-                       disabled: disabled || !campaign.open_for_registrations?,
-                       data: { preference_choices_target: "saveButton" } %>
-      </span>
-    </div>
+        <span
+          class="d-inline-block"
+          data-testid="preference-save-tooltip"
+          data-bs-toggle="tooltip"
+          data-preference-choices-target="saveTooltip"
+          tabindex="-1"
+        >
+          <%= submit_tag t("registration.user_registration.save_choices"),
+                         class: "btn btn-primary btn-sm",
+                         disabled: true,
+                         data: { preference_choices_target: "saveButton" } %>
+        </span>
+      </div>
+    <% end %>
   </div>
 <% end %>

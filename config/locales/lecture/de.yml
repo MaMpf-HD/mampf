@@ -16,3 +16,33 @@ de:
       subscribed: Abonniert
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
+  lecture_home:
+    jump_links:
+      label: "Offene Anmeldungen"
+      open: "Anmeldung offen: %{title}, bis %{deadline} ↓"
+    paths:
+      label: "Material der Veranstaltung"
+      next_deadline: "Als Nächstes: %{title}, Abgabe %{deadline}"
+      script_edited: "Aktualisiert am %{date}"
+    tutor:
+      title: "Deine Tutorien"
+      members:
+        one: "1 Person"
+        other: "%{count} Personen"
+      open: "Tutorien öffnen"
+    teacher:
+      title: "Anmeldungen in dieser Veranstaltung"
+      registered:
+        one: "1 Person angemeldet"
+        other: "%{count} Personen angemeldet"
+      with_preferences:
+        one: "1 Person hat Wünsche abgegeben"
+        other: "%{count} Personen haben Wünsche abgegeben"
+      deadline: "bis %{deadline}"
+    closed:
+      title: "Geschlossene Verfahren"
+      completed: "Abgeschlossen"
+      not_finalized: "Noch nicht abgeschlossen"
+      deadline: "Anmeldung endete am %{deadline}"
+      your_entries: "Deine Einträge: %{entries}"
+    organizational: "Organisatorisches"

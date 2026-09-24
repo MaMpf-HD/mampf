@@ -1,20 +1,67 @@
 class CampaignCardComponent < ViewComponent::Base
   include EligibilityHelper
 
-  def initialize(details:, campaign:)
+  # `part` renders only the summary or only the body, so a Turbo Stream can
+  # refresh one campaign without closing it or touching the others.
+  def initialize(details:, campaign:, part: nil)
     super()
     @details = details
     @campaign = campaign
+    @part = part
   end
 
-  attr_reader :details, :campaign
+  attr_reader :details, :campaign, :part
+
+  def anchor_id
+    dom_id(campaign, :student_registration)
+  end
+
+  def summary_id
+    dom_id(campaign, :student_registration_summary)
+  end
+
+  def body_id
+    dom_id(campaign, :student_registration_body)
+  end
+
+  def registered_items
+    @registered_items ||= items.select { |item| item.user_registered?(helpers.current_user) }
+  end
+
+  def preferences_saved?
+    Array(item_preferences).any? { |pref| pref.respond_to?(:item) }
+  end
+
+  # Says in the collapsed row what the student still has to do; once they have
+  # registered or chosen, the participation section reports it instead.
+  def summary_badge
+    return [:bad, t("registration.user_registration.summary.requirement_missing")] if ineligible?
+    return if registered_items.any? || preferences_saved?
+
+    key = campaign.preference_based? ? "no_preferences" : "not_registered"
+    [:warn, t("registration.user_registration.summary.#{key}")]
+  end
+
+  def summary_lines
+    [deadline_line, ineligible? ? ineligible_line : mode_line].compact
+  end
+
+  def cta_label
+    return t("registration.user_registration.summary.details") if ineligible?
+    return t("registration.user_registration.summary.change") if registered_items.any?
+    return t("registration.user_registration.summary.change_preferences") if preferences_saved?
+    return t("registration.user_registration.summary.choose") if campaign.preference_based?
+    return t("registration.user_registration.summary.register") if campaign.exam_campaign?
+
+    t("registration.user_registration.summary.show_and_register")
+  end
+
+  def cta_primary?
+    summary_badge&.first == :warn
+  end
 
   delegate :eligibility, :finalization_eligibility, :items, :item_preferences,
            to: :details
-
-  def readonly_description_key
-    campaign.exam_campaign? ? "description_exam" : "description"
-  end
 
   def readonly?
     helpers.student_registration_readonly?(campaign)
@@ -79,14 +126,6 @@ class CampaignCardComponent < ViewComponent::Base
     readonly? || ineligible?
   end
 
-  def notices_present?
-    readonly? || ineligible? || finalization_policy_warning?
-  end
-
-  def closed_early?
-    helpers.closed_early?(campaign)
-  end
-
   def campaign_title
     campaign.student_facing_title
   end
@@ -100,6 +139,34 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   private
+
+    def deadline_line
+      deadline = campaign.registration_deadline
+      days = (deadline.to_date - Time.zone.today).to_i
+      soon = t("registration.user_registration.summary.days_left", count: days) if
+        days.between?(0, 6)
+      [t("registration.user_registration.summary.deadline",
+         deadline: helpers.format_date(deadline)), soon].compact.join(" · ")
+    end
+
+    def ineligible_line
+      policy = failed_ineligible_policies.first
+      eligibility_failure_message(policy, user: helpers.current_user, context: :registration)
+    end
+
+    def mode_line
+      if campaign.preference_based?
+        t("registration.user_registration.summary.preference_mode",
+          count: helpers.preference_rank_count(items), options: items.size)
+      elsif campaign.exam_campaign?
+        item = items.first
+        free = item&.capacity && [item.capacity - item.item_capacity_used, 0].max
+        free ? t("registration.user_registration.summary.exam_places", count: free) : nil
+      else
+        open = items.count(&:still_has_capacity?)
+        t("registration.user_registration.summary.fcfs_mode", open: open, total: items.size)
+      end
+    end
 
     def failed_eligibility_policies(policies)
       policies.reject { |policy| policy.dig(:outcome, :pass) }

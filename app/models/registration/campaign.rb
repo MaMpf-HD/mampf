@@ -93,7 +93,7 @@ module Registration
 
     def student_facing_title
       description.to_s.strip.presence ||
-        I18n.t("registration.user_registration.campaign_main")
+        I18n.t("registration.user_registration.campaign_title.#{roster_group_type}")
     end
 
     def evaluate_policies_for(user, phase: :registration)

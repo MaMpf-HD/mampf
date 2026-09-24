@@ -1,0 +1,50 @@
+<%#
+  Rows of registration options; long lists get a search field and show the
+  first few until asked for all.
+%>
+<% searchable = count > UserRegistrationsHelper::OPTIONS_SHOWN_AT_FIRST %>
+
+<div
+  class="registration-options"
+  data-controller="option-filter"
+  data-option-filter-limit-value="<%= UserRegistrationsHelper::OPTIONS_SHOWN_AT_FIRST %>"
+>
+  <% if searchable %>
+    <label class="registration-options-search">
+      <span class="visually-hidden">
+        <%= t("registration.user_registration.options.search_label") %>
+      </span>
+
+      <input
+        type="search"
+        autocomplete="off"
+        class="form-control form-control-sm"
+        placeholder="<%= t("registration.user_registration.options.search_placeholder") %>"
+        data-option-filter-target="query"
+        data-action="input->option-filter#filter"
+      >
+    </label>
+  <% end %>
+
+  <div class="registration-options-rows" role="list">
+    <%= yield %>
+  </div>
+
+  <% if searchable %>
+    <p
+      class="registration-options-empty"
+      data-option-filter-target="empty"
+      hidden
+    >
+      <%= t("registration.user_registration.options.no_match") %>
+    </p>
+    <button
+      type="button"
+      class="btn btn-link btn-sm p-0 registration-options-more"
+      data-option-filter-target="more"
+      data-action="option-filter#showAll"
+    >
+      <%= t("registration.user_registration.options.show_all", count: count) %>
+    </button>
+  <% end %>
+</div>

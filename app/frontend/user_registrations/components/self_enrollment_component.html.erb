@@ -1,0 +1,101 @@
+<% summary_html = capture do %>
+  <div class="registration-fold-summary-text">
+    <div class="registration-fold-summary-line">
+      <h3 class="registration-fold-title">
+        <%= t("registration.user_registration.self_enrollment.title") %>
+      </h3>
+    </div>
+
+    <span class="registration-fold-meta">
+      <%= t("registration.user_registration.self_enrollment.meta", count: rosterables.size) %>
+    </span>
+  </div>
+
+  <span class="registration-fold-cta" aria-hidden="true">
+    <%= t("registration.user_registration.self_enrollment.show") %>
+  </span>
+<% end %>
+
+<% body_html = capture do %>
+  <p class="registration-fold-instruction mb-0">
+    <%= t("registration.user_registration.self_enrollment.instruction") %>
+  </p>
+
+  <%= render layout: "user_registrations/option_list", locals: { count: rosterables.size } do %>
+    <% rosterables.each do |rosterable| %>
+      <% mine = rosterable.user_allocated?(user) %>
+      <% from = switch_from(rosterable) %>
+      <% reason = nil %>
+
+      <% actions = capture do %>
+        <% if mine %>
+          <span class="registration-option-reason">
+            <%= t("registration.user_registration.self_enrollment.joined") %>
+          </span>
+        <% elsif blocked?(rosterable) %>
+          <%= button_tag t("registration.user_registration.registration_blocked"),
+                         type: "button", disabled: true,
+                         class: "btn btn-outline-secondary btn-sm" %>
+          <% reason = helpers.registration_blocked_tooltip %>
+        <% elsif rosterable.config_allow_self_add? && !rosterable.locked? && rosterable.full? %>
+          <%= button_tag t("basics.full"), type: "button", disabled: true,
+                                           class: "btn btn-outline-secondary btn-sm" %>
+          <% reason = t("registration.user_registration.options.no_places") %>
+        <% elsif from %>
+          <%= button_to t("registration.user_registration.options.switch"),
+                        path_for(:self_switch, rosterable),
+                        method: :patch,
+                        class: "btn btn-outline-primary btn-sm",
+                        "aria-label": t("registration.user_registration.options.switch_to",
+                                        title: rosterable.title) %>
+        <% elsif rosterable.allow_self_add?(user) %>
+          <%= button_to t("registration.user_registration.self_enrollment.join"),
+                        path_for(:self_add, rosterable),
+                        method: :post,
+                        class: "btn btn-primary btn-sm",
+                        "aria-label": t("registration.user_registration.options.register_for",
+                                        title: rosterable.title) %>
+        <% end %>
+      <% end %>
+
+      <%= render "user_registrations/option_row",
+                 title: rosterable.title,
+                 type_label: helpers.self_rosterable_display_type(rosterable),
+                 meta: helpers.self_rosterable_tile_metadata_rows(rosterable)
+                              .map { |row| row[:value] },
+                 seats: helpers.option_seats_text(rosterable.capacity,
+                                                  rosterable.roster_entries_count),
+                 mine: mine,
+                 actions: actions,
+                 reason: reason %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% case part %>
+<% when :summary %>
+  <%= summary_html %>
+<% when :body %>
+  <%= body_html %>
+<% else %>
+  <details
+    class="registration-fold"
+    id="<%= SelfEnrollmentComponent::ID %>"
+    data-controller="registration-fold"
+    data-testid="self-enrollment"
+  >
+    <summary
+      class="registration-fold-summary"
+      id="<%= SelfEnrollmentComponent::SUMMARY_ID %>"
+    >
+      <%= summary_html %>
+    </summary>
+
+    <div
+      class="registration-fold-body"
+      id="<%= SelfEnrollmentComponent::BODY_ID %>"
+    >
+      <%= body_html %>
+    </div>
+  </details>
+<% end %>

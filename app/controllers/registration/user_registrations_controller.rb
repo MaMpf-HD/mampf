@@ -1,5 +1,7 @@
 module Registration
   class UserRegistrationsController < ApplicationController
+    include Lectures::HomeStreams
+
     helper ::UserRegistrationsHelper,
            ItemsHelper, CampaignsHelper
     before_action :set_campaign,
@@ -84,20 +86,8 @@ module Registration
           flash.now[:notice] = success_message
           respond_to do |format|
             format.turbo_stream do
-              @details = ::UserRegistrations::CampaignDetailsService
-                         .new(@campaign, current_user)
-                         .call
-              render turbo_stream: [
-                turbo_stream.replace("flash-messages", partial: "flash/messages"),
-                turbo_stream.update(
-                  view_context.dom_id(@campaign, :main_student_registration_campaign),
-                  html: CampaignCardComponent.new(
-                    details: @details,
-                    campaign: @campaign
-                  ).render_in(view_context)
-                ),
-                rosterized_entries_stream
-              ]
+              render turbo_stream: lecture_home_streams(student_registration_lecture,
+                                                        campaign: @campaign)
             end
             format.html do
               redirect_to lecture_home_path(@campaign.campaignable),
@@ -111,19 +101,6 @@ module Registration
             fallback_location: lecture_home_path(@campaign.campaignable)
           )
         end
-      end
-
-      def rosterized_entries_stream
-        turbo_stream.update(
-          "student_registration_rosterized_entries",
-          html: RosterizedEntriesComponent.new(
-            rosterized_entries: Rosters::StudentMaterializedResultResolver
-                                 .new(current_user)
-                                 .all_rosterized_for_lecture(student_registration_lecture),
-            lecture: student_registration_lecture,
-            user: current_user
-          ).render_in(view_context)
-        )
       end
 
       def preference_params

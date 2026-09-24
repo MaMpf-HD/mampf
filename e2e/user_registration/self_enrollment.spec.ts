@@ -1,9 +1,13 @@
-import { test, expect } from "../_support/fixtures";
+import { Page, test, expect } from "../_support/fixtures";
 import {
   createReleasedLecture,
   subscribeToLecture,
 } from "./helpers";
 import { CampaignRegistrationPage } from "../page-objects/campaign_registrations_page";
+
+async function openSelfEnrollment(page: Page): Promise<void> {
+  await page.getByRole("heading", { name: "Join a group yourself" }).click();
+}
 
 test.describe("student self-enrollment", () => {
   test("adds and removes the student from a self-managed tutorial", async ({
@@ -20,24 +24,23 @@ test.describe("student self-enrollment", () => {
       self_materialization_mode: "add_and_remove",
     });
 
-    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    await openSelfEnrollment(student.page);
 
-    const tutorialTile = student.page.locator(".tutorial-gtile", {
-      hasText: "Self-managed Tutorial",
-    });
-    await expect(tutorialTile.getByRole("button", { name: "Register now" })).toBeVisible();
+    await student.page.getByRole("button", { name: "Register for Self-managed Tutorial" })
+      .click();
 
-    await tutorialTile.getByRole("button", { name: "Register now" }).click();
+    await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
+    await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
 
-    const confirmedRegistrations = student.page.locator(".student-registration-rosterized-notice");
-    await expect(confirmedRegistrations).toContainText("Your registration is confirmed for");
-    await expect(confirmedRegistrations).toContainText("Self-managed Tutorial");
-    await expect(tutorialTile.getByRole("button", { name: "Withdraw" })).toBeVisible();
+    await home.participation("Self-managed Tutorial")
+      .getByRole("button", { name: "Leave" }).click();
 
-    await tutorialTile.getByRole("button", { name: "Withdraw" }).click();
-
-    await expect(student.page.getByText("Your registration is confirmed for")).toHaveCount(0);
-    await expect(tutorialTile.getByRole("button", { name: "Register now" })).toBeVisible();
+    await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
+    await expect(student.page.getByRole("button", {
+      name: "Register for Self-managed Tutorial",
+    })).toBeVisible();
   });
 
   test("shows a full self-managed tutorial without an unsafe action", async ({
@@ -60,16 +63,16 @@ test.describe("student self-enrollment", () => {
     });
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await openSelfEnrollment(student.page);
 
-    const tutorialTile = student.page.locator(".tutorial-gtile", {
-      hasText: "Full Self-managed Tutorial",
-    });
-    await expect(tutorialTile.getByText("1 / 1")).toBeVisible();
-    await expect(tutorialTile.getByText("Full", { exact: true })).toBeVisible();
-    await expect(tutorialTile.getByRole("button", { name: "Register now" })).toHaveCount(0);
+    const option = student.page.getByTestId("registration-option")
+      .filter({ hasText: "Full Self-managed Tutorial" });
+    await expect(option.getByText("No places left.")).toBeVisible();
+    await expect(option.getByRole("button", { name: "Full" })).toBeDisabled();
+    await expect(option.getByRole("button", { name: /^Register for / })).toHaveCount(0);
   });
 
-  test("renders the empty enrollment state when no campaigns or free groups exist", async ({
+  test("leaves out the registrations when no campaigns or free groups exist", async ({
     factory,
     student,
   }) => {
@@ -78,9 +81,39 @@ test.describe("student self-enrollment", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    await expect(student.page.getByText(
-      "There are currently no tutorials or groups available for registration.",
-    )).toBeVisible();
+    await expect(student.page.getByRole("heading", { name: "Registrations" })).toHaveCount(0);
+  });
+
+  test("switches from one self-managed tutorial to another", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const current = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Monday Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: current.id,
+      user_id: student.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Friday Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    await openSelfEnrollment(student.page);
+    await student.page.getByRole("button", { name: "Switch to Friday Tutorial" }).click();
+
+    await expect(home.participation("Friday Tutorial")).toContainText("Assigned");
+    await expect(home.participation("Monday Tutorial")).toHaveCount(0);
   });
 
   test("blocks joining an exclusive tutorial while stuck in an unremovable "
@@ -115,16 +148,17 @@ test.describe("student self-enrollment", () => {
     });
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await openSelfEnrollment(student.page);
 
-    const tile = (title: string) =>
-      student.page.getByTestId("registration-group-tile").filter({ hasText: title });
+    const option = (title: string) =>
+      student.page.getByTestId("registration-option").filter({ hasText: title });
 
-    await expect(tile("Switchable Tutorial")
-      .getByTestId("registration-blocked-action")).toBeVisible();
-    await expect(tile("Switchable Tutorial")
-      .getByRole("button", { name: "Register now" })).toHaveCount(0);
+    await expect(option("Switchable Tutorial").getByRole("button", { name: "Unavailable" }))
+      .toBeDisabled();
+    await expect(option("Switchable Tutorial")
+      .getByRole("button", { name: /^(Register|Switch) / })).toHaveCount(0);
 
-    await expect(tile("Deepening Group")
-      .getByRole("button", { name: "Register now" })).toBeVisible();
+    await expect(option("Deepening Group")
+      .getByRole("button", { name: "Register for Deepening Group" })).toBeVisible();
   });
 });

@@ -47,9 +47,11 @@ test.describe("eligibility decides the exam place", () => {
       .getByRole("button", { name: "End Registration" })).toBeVisible();
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
+    await student.page.getByRole("heading", { name: "Exam registration" }).click();
     await expect(student.page.getByText(
       "Your registration would currently fail at finalization",
     )).toBeVisible();
+    await student.page.getByText("Policy checks for this registration").click();
     // the lecture title sits in its own <em>, so the sentence is matched as a
     // whole rather than as one string
     const requirement = student.page
@@ -69,10 +71,11 @@ test.describe("eligibility decides the exam place", () => {
     });
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
+    await student.page.getByRole("heading", { name: "Exam registration" }).click();
     await expect(student.page.getByText(
       "Your registration would currently fail at finalization",
     )).toHaveCount(0);
-    await expect(student.page.getByRole("button", { name: "Register now" }))
+    await expect(student.page.getByRole("button", { name: /^Register for / }))
       .toBeEnabled();
   });
 });

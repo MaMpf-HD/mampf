@@ -34,6 +34,7 @@ test.describe("registering for an exam", () => {
       .toBeVisible();
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
+    await student.page.getByRole("heading", { name: "Exam registration" }).click();
 
     await expect(student.page.getByText("Main Exam")).toBeVisible();
     await expect(student.page.getByText("Lecture Hall 1")).toBeVisible();
@@ -60,9 +61,7 @@ test.describe("registering for an exam", () => {
     });
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
-    await expect(
-      student.page.getByText("You have not been assigned to a group yet."),
-    ).toBeVisible();
+    await expect(student.page.getByTestId("participation-row")).toHaveCount(0);
 
     // a seat is what an entry in the exam's roster means
     await factory.create("exam_roster_entry", [], {
@@ -71,12 +70,9 @@ test.describe("registering for an exam", () => {
     });
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
-    const held = student.page.locator("#student_registration_rosterized_entries");
+    const held = student.page.getByTestId("participation-row").filter({ hasText: "Main Exam" });
     await expect(held.getByText("Exam", { exact: true })).toBeVisible();
-    await expect(held.getByText("Main Exam")).toBeVisible();
+    await expect(held.getByText("On the exam list")).toBeVisible();
     await expect(held.getByText("Lecture Hall 1")).toBeVisible();
-    await expect(
-      student.page.getByText("You have not been assigned to a group yet."),
-    ).toHaveCount(0);
   });
 });

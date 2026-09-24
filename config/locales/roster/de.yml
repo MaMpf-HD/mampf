@@ -324,9 +324,6 @@ de:
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
-    self_enrollment:
-      no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."
-
     no_participants_yet: 'Es haben sich noch keine Teilnehmer registriert.'
     registered: 'Registriert'
     mailer:

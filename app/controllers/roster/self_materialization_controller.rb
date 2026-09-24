@@ -2,6 +2,8 @@ module Roster
   # For students to add/remove themselves from tutorial/talk/cohort rosters
   # Guarded by config_allow_self_add/config_allow_self_remove on the rosterable and locked? status
   class SelfMaterializationController < ApplicationController
+    include Lectures::HomeStreams
+
     helper ::UserRegistrationsHelper
     before_action :set_rosterable, only: [:self_add, :self_remove, :self_switch]
     before_action :authorize_lecture
@@ -89,34 +91,7 @@ module Roster
         flash.now[:notice] = message
         respond_to do |format|
           format.turbo_stream do
-            rosterized_entries = Rosters::StudentMaterializedResultResolver
-                                 .new(current_user)
-                                 .all_rosterized_for_lecture(@lecture)
-            render turbo_stream: [
-              stream_flash,
-              turbo_stream.update(
-                "student_registration_rosterized_entries",
-                html: RosterizedEntriesComponent.new(
-                  rosterized_entries: rosterized_entries,
-                  lecture: @lecture,
-                  user: current_user
-                ).render_in(view_context)
-              ),
-              turbo_stream.update(
-                "student_registration_options",
-                partial: "user_registrations/registration_options",
-                locals: {
-                  campaigns_details: ::UserRegistrations::LectureCampaignsService
-                                     .new(@lecture, current_user)
-                                     .call,
-                  self_rosterables: Rosters::SelfRosterOptionsQuery
-                                    .new(@lecture, current_user)
-                                    .call,
-                  rosterized_entries: rosterized_entries,
-                  lecture: @lecture
-                }
-              )
-            ]
+            render turbo_stream: lecture_home_streams(@lecture, self_enrollment: true)
           end
         end
       end

@@ -9,11 +9,11 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
         .to eq("Localized description")
     end
 
-    it "falls back to the default title when the description is blank" do
+    it "falls back to a title naming what the campaign allocates" do
       campaign = build(:registration_campaign, description: "  ")
 
       expect(helper.student_registration_campaign_title(campaign))
-        .to eq(I18n.t("registration.user_registration.campaign_main"))
+        .to eq(I18n.t("registration.user_registration.campaign_title.tutorials"))
     end
   end
 
@@ -136,11 +136,6 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
 
       expect(config.keys).to match_array(registerable)
     end
-  end
-
-  describe "#nullable_capacity_display" do
-    it { expect(helper.nullable_capacity_display(nil)).to eq("∞") }
-    it { expect(helper.nullable_capacity_display(10)).to eq("10") }
   end
 
   describe "metadata icons" do

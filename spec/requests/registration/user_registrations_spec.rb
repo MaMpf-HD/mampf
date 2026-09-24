@@ -225,7 +225,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         campaign
         get lecture_home_path(lecture)
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('id="student_registration_options"')
+        expect(response.body).to include('data-testid="lecture-home-registrations"')
       end
 
       it "renders available options" do
@@ -265,9 +265,9 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_home_path(seminar)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('id="student_registration_options"')
+        expect(response.body).to include('data-testid="lecture-home-registrations"')
         expect(response.body)
-          .not_to include('data-testid="registration-blocked-action"')
+          .not_to include(I18n.t("registration.user_registration.blocked_tooltip"))
       end
 
       it "does not block a tutorial campaign for a student stuck in an " \
@@ -283,7 +283,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .not_to include('data-testid="registration-blocked-action"')
+          .not_to include(I18n.t("registration.user_registration.blocked_tooltip"))
       end
     end
 
@@ -309,7 +309,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_home_path(lecture)
 
         expect(response.body)
-          .to include('data-testid="registration-blocked-action"')
+          .to include(I18n.t("registration.user_registration.blocked_tooltip"))
       end
 
       it "does not block self-enrolling into a cohort (cohorts coexist with " \
@@ -322,19 +322,16 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
         expect(response.body).to include("Deepening group")
         expect(response.body)
-          .not_to include('data-testid="registration-blocked-action"')
+          .not_to include(I18n.t("registration.user_registration.blocked_tooltip"))
       end
     end
 
     context "when no registration options are available" do
-      it "renders the empty registration state" do
+      it "leaves out the registrations section" do
         get lecture_home_path(lecture)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('id="student_registration_options"')
-        expect(response.body.squish).to include(
-          I18n.t("roster.self_enrollment.no_registration_options")
-        )
+        expect(response.body).not_to include('data-testid="lecture-home-registrations"')
       end
     end
 
@@ -347,18 +344,16 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                self_materialization_mode: :add_only)
       end
 
-      it "does not show the empty state message" do
+      it "offers them in the registrations section" do
         get lecture_home_path(lecture)
 
         expect(response).to have_http_status(:ok)
+        expect(response.body).to include('data-testid="lecture-home-registrations"')
         expect(response.body.squish).to include("Tutorial 7")
-        expect(response.body.squish).not_to include(
-          I18n.t("roster.self_enrollment.no_registration_options")
-        )
       end
     end
 
-    context "when the user has submitted preferences but is not yet rosterized" do
+    context "when the user has submitted preferences but is not yet assigned" do
       before do
         campaign = create(:registration_campaign, :preference_based, :open,
                           campaignable: lecture)
@@ -371,35 +366,30 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
                status: :pending)
       end
 
-      it "shows that they will be assigned after the registration period" do
+      it "shows that the allocation is still pending" do
         get lecture_home_path(lecture)
 
         expect(response.body.squish).to include(
-          I18n.t("registration.user_registration.index.pending_preference_notice")
+          I18n.t("registration.user_registration.participation.allocation_pending")
         )
-        expect(response.body).to include("student-registration-rosterized-notice--neutral")
       end
     end
 
-    context "when the user is already rosterized" do
+    context "when the user is already assigned" do
       before do
         tutorial = create(:tutorial, lecture: lecture, title: "Tutorial 2")
         create(:tutorial_membership, tutorial: tutorial, user: user)
       end
 
-      it "does not show the empty state message" do
+      it "lists the tutorial under their participation" do
         get lecture_home_path(lecture)
 
         expect(response.body.squish).to include(
-          I18n.t("registration.user_registration.index.confirmed_cases")
+          I18n.t("registration.user_registration.participation.assigned")
         )
         expect(response.body.squish).to include("Tutorial 2")
-        expect(response.body).not_to include("student-registration-rosterized-notice--neutral")
         expect(response.body.squish).not_to include(
-          I18n.t("registration.user_registration.index.unassigned_notice")
-        )
-        expect(response.body.squish).not_to include(
-          I18n.t("roster.self_enrollment.no_registration_options")
+          I18n.t("registration.user_registration.participation.allocation_pending")
         )
       end
     end
@@ -415,11 +405,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         get lecture_home_path(lecture)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).not_to include('id="student_registration_options"')
-        expect(response.body.squish).not_to include(
-          I18n.t("registration.user_registration.index.unassigned_notice")
-        )
-        expect(response.body).not_to include(I18n.t("registration.user_registration.register_now"))
+        expect(response.body).not_to include('data-testid="lecture-home-registrations"')
+        expect(response.body).not_to include('data-testid="registration-campaign"')
       end
     end
 
@@ -625,16 +612,16 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           expect(response).to have_http_status(:bad_request)
         end
 
-        it "updates the rosterized notice box via turbo stream" do
+        it "updates the participation section via turbo stream" do
           post save_preferences_path(campaign),
                params: { preferences: preferences },
                as: :turbo_stream
 
           expect(response).to have_http_status(:success)
           expect(response.media_type).to eq(Mime[:turbo_stream])
-          expect(response.body).to include('target="student_registration_rosterized_entries"')
+          expect(response.body).to include('target="student_registration_participation"')
           expect(response.body).to include(
-            I18n.t("registration.user_registration.index.pending_preference_notice")
+            I18n.t("registration.user_registration.participation.allocation_pending")
           )
         end
 

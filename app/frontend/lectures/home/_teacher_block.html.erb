@@ -1,0 +1,33 @@
+<%# locals: (lecture:, campaigns:) %>
+<section class="card lecture-home-section" aria-labelledby="teacher-heading"
+         data-testid="lecture-home-staff-registration-note">
+  <div class="card-header">
+    <h2 class="lecture-home-section-title" id="teacher-heading">
+      <%= t("lecture_home.teacher.title") %>
+    </h2>
+  </div>
+  <ul class="lecture-home-rows list-unstyled mb-0">
+    <% campaigns.each do |campaign| %>
+      <li class="lecture-home-row">
+        <div class="lecture-home-row-content">
+          <span class="lecture-home-row-title">
+            <%= student_registration_campaign_title(campaign) %>
+            <span class="<%= lecture_home_badge_class(:info) %>">
+              <%= t("registration.campaign.status.#{campaign.status}") %>
+            </span>
+          </span>
+          <span class="lecture-home-row-line">
+            <%= lecture_home_campaign_count_text(campaign) %>
+            · <%= t("lecture_home.teacher.deadline",
+                    deadline: format_date(campaign.registration_deadline)) %>
+          </span>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <div class="card-footer">
+    <%= link_to t("registration.lecture.home.staff_registration_manage"),
+                edit_lecture_path(lecture, tab: "groups"),
+                class: "btn btn-sm btn-outline-primary" %>
+  </div>
+</section>

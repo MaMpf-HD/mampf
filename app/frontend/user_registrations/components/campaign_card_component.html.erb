@@ -1,186 +1,149 @@
-<div>
-  <% if notices_present? %>
-    <div class="student-registration-campaign-notices d-flex flex-column gap-2">
-      <% if readonly? %>
-        <div
-          class="
-            p-3 rounded <%= "pb-4" unless ineligible? %>
-            student-registration-campaign-notice
-            student-registration-campaign-notice--readonly
-          "
-        >
-          <div class="student-registration-campaign-notice-title">
-            <%= t("registration.user_registration.readonly_notice.title") %>
-          </div>
+<% summary_html = capture do %>
+  <div class="registration-fold-summary-text">
+    <div class="registration-fold-summary-line">
+      <h3 class="registration-fold-title"><%= campaign_title %></h3>
 
-          <p class="student-registration-campaign-notice-body mb-0">
-            <%= t("registration.user_registration.readonly_notice.#{readonly_description_key}") %>
-          </p>
-        </div>
+      <% if summary_badge %>
+        <span class="<%= helpers.lecture_home_badge_class(summary_badge.first) %>">
+          <%= summary_badge.last %>
+        </span>
       <% end %>
 
-      <% if ineligible? %>
-        <div
-          class="
-            p-3 pb-4 rounded
-            student-registration-campaign-notice
-            student-registration-campaign-notice--ineligible
-          "
-        >
-          <div class="student-registration-campaign-notice-title">
-            <%= t("registration.user_registration.ineligible_notice.title") %>
-          </div>
+      <span
+        class="lecture-home-badge lecture-home-badge--warn"
+        data-registration-fold-target="unsaved"
+        hidden
+      >
+        <%= t("registration.user_registration.summary.unsaved") %>
+      </span>
+    </div>
 
-          <p class="student-registration-campaign-notice-body mb-2">
-            <%= t("registration.user_registration.ineligible_notice.description") %>
-          </p>
+    <% summary_lines.each do |line| %>
+      <span class="registration-fold-meta"><%= line %></span>
+    <% end %>
+  </div>
 
-          <ul class="student-registration-campaign-notice-body mb-0 ps-3">
-            <% failed_ineligible_policies.each do |policy| %>
-              <li class="mb-1">
-                <%= eligibility_failure_message(policy,
-                                                user: helpers.current_user,
-                                                context: :registration) %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
+  <%= tag.span cta_label,
+               class: class_names("registration-fold-cta",
+                                  "registration-fold-cta--primary": cta_primary?),
+               aria: { hidden: true } %>
+<% end %>
 
-      <% if finalization_policy_warning? %>
-        <div
-          class="
-            p-3 rounded
-            student-registration-campaign-notice
-            student-registration-campaign-notice--ineligible
-          "
-        >
-          <div class="student-registration-campaign-notice-title">
-            <%= t("registration.user_registration.finalization_policy_notice.title") %>
-          </div>
+<% body_html = capture do %>
+  <% if ineligible? %>
+    <div class="registration-fold-notice registration-fold-notice--bad">
+      <p class="mb-1 fw-semibold">
+        <%= t("registration.user_registration.ineligible_notice.title") %>
+      </p>
 
-          <p class="student-registration-campaign-notice-body mb-2">
-            <%= t("registration.user_registration.finalization_policy_notice.description") %>
-          </p>
-        </div>
-      <% end %>
+      <ul class="mb-0 ps-3">
+        <% failed_ineligible_policies.each do |policy| %>
+          <li>
+            <%= eligibility_failure_message(policy,
+                                            user: helpers.current_user,
+                                            context: :registration) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% elsif finalization_policy_warning? %>
+    <div class="registration-fold-notice registration-fold-notice--warn">
+      <p class="mb-1 fw-semibold">
+        <%= t("registration.user_registration.finalization_policy_notice.title") %>
+      </p>
+
+      <p class="mb-0">
+        <%= t("registration.user_registration.finalization_policy_notice.description") %>
+      </p>
     </div>
   <% end %>
 
-  <div
-    class="
-      card campaign-section registration-campaign-card
-      student-registration-campaign-card
-      <%= "student-registration-campaign-card--with-notice" if notices_present? %>
-      <%= "student-registration-campaign-card--inactive" if registration_actions_disabled? %>
-    "
-  >
-    <div class="card-header registration-campaign-card-header">
-      <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
-        <div>
-          <h6 class="mb-0 fw-semibold">
-            <%= campaign_title %>
-          </h6>
-        </div>
+  <% if policy_overview? %>
+    <%= tag.details class: "registration-fold-policies", open: ineligible? do %>
+      <summary>
+        <%= t("registration.user_registration.policy_overview.title") %>
+      </summary>
 
-        <div>
-          <div
-            class="
-              d-flex align-items-baseline justify-content-start
-              justify-content-md-end flex-nowrap text-start text-md-end
-              text-muted small
-            "
-          >
-            <span class="me-2">
-              <%= t("registration.campaign.index.columns.deadline") %>
-            </span>
+      <div class="student-registration-policy-overview-sections">
+        <% policy_overview_sections.each do |section| %>
+          <% next if section[:policies].blank? %>
 
-            <span class="fw-semibold text-body">
-              <%= helpers.format_date(campaign.registration_deadline) %>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+          <section class="student-registration-policy-overview-section">
+            <div class="student-registration-policy-overview-section-title">
+              <%= section[:title] %>
+            </div>
 
-    <div class="card-body">
-      <% if closed_early? %>
-        <div class="alert alert-warning py-2 mb-3">
-          <%= t("registration.user_registration.closed_before_deadline") %>
-        </div>
-      <% end %>
+            <div class="student-registration-policy-overview-section-description">
+              <%= section[:description] %>
+            </div>
 
-      <% if policy_overview? %>
-        <div class="student-registration-policy-overview mb-3">
-          <div class="student-registration-policy-overview-title">
-            <%= t("registration.user_registration.policy_overview.title") %>
-          </div>
+            <ul class="student-registration-policy-overview-list list-unstyled mb-0">
+              <% section[:policies].each do |policy| %>
+                <li class="student-registration-policy-overview-item">
+                  <div class="student-registration-policy-overview-copy">
+                    <div class="student-registration-policy-overview-rule">
+                      <%= eligibility_policy_summary(policy) %>
+                    </div>
 
-          <div class="student-registration-policy-overview-sections">
-            <% policy_overview_sections.each do |section| %>
-              <section class="student-registration-policy-overview-section">
-                <div class="student-registration-policy-overview-section-title">
-                  <%= section[:title] %>
-                </div>
+                    <% hint = policy_overview_hint(policy, context: section[:context]) %>
 
-                <% if section[:policies].present? %>
-                  <div class="student-registration-policy-overview-section-description">
-                    <%= section[:description] %>
-                  </div>
-                  <ul class="student-registration-policy-overview-list list-unstyled mb-0">
-                    <% section[:policies].each do |policy| %>
-                      <li class="student-registration-policy-overview-item">
-                        <div class="student-registration-policy-overview-copy">
-                          <div class="student-registration-policy-overview-rule">
-                            <%= eligibility_policy_summary(policy) %>
-                          </div>
-
-                          <% hint = policy_overview_hint(policy,
-                                                         context: section[:context]) %>
-
-                          <% if hint.present? %>
-                            <div class="student-registration-policy-overview-hint">
-                              <%= hint %>
-                            </div>
-                          <% end %>
-                        </div>
-
-                        <span class="badge student-registration-policy-overview-status <%= eligibility_policy_status_badge_class(policy) %>">
-                          <%= eligibility_policy_status_label(policy) %>
-                        </span>
-                      </li>
+                    <% if hint.present? %>
+                      <div class="student-registration-policy-overview-hint">
+                        <%= hint %>
+                      </div>
                     <% end %>
-                  </ul>
-                <% else %>
-                  <div class="student-registration-policy-overview-empty">
-                    <%= section[:empty_text] %>
                   </div>
-                <% end %>
-              </section>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
 
-      <% unless registration_actions_disabled? %>
-        <div class="student-registration-campaign-instruction fw-semibold mb-3">
-          <%= instruction %>
-        </div>
-      <% end %>
+                  <span class="badge student-registration-policy-overview-status <%= eligibility_policy_status_badge_class(policy) %>">
+                    <%= eligibility_policy_status_label(policy) %>
+                  </span>
+                </li>
+              <% end %>
+            </ul>
+          </section>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
 
-      <% if campaign.first_come_first_served? %>
-        <%= render partial: "user_registrations/first_come_first_served/" \
-                           "select_first_come_first_served",
-                   locals: { campaign: campaign,
-                             disabled: registration_actions_disabled?,
-                             items: items } %>
-      <% else %>
-        <%= render partial: "user_registrations/preference_based/select_preference",
-                   locals: { campaign: campaign,
-                             disabled: registration_actions_disabled?,
-                             item_preferences: item_preferences,
-                             items: items } %>
-      <% end %>
+  <% unless registration_actions_disabled? %>
+    <p class="registration-fold-instruction mb-0"><%= instruction %></p>
+  <% end %>
+
+  <% if campaign.first_come_first_served? %>
+    <%= render partial: "user_registrations/first_come_first_served/select_first_come_first_served",
+               locals: { campaign: campaign,
+                         disabled: registration_actions_disabled?,
+                         items: items,
+                         registered_items: registered_items } %>
+  <% else %>
+    <%= render partial: "user_registrations/preference_based/select_preference",
+               locals: { campaign: campaign,
+                         disabled: registration_actions_disabled?,
+                         item_preferences: item_preferences,
+                         items: items } %>
+  <% end %>
+<% end %>
+
+<% case part %>
+<% when :summary %>
+  <%= summary_html %>
+<% when :body %>
+  <%= body_html %>
+<% else %>
+  <details
+    class="registration-fold"
+    id="<%= anchor_id %>"
+    data-controller="registration-fold"
+    data-action="preference-choices:changed->registration-fold#markUnsaved"
+    data-testid="registration-campaign"
+  >
+    <summary class="registration-fold-summary" id="<%= summary_id %>">
+      <%= summary_html %>
+    </summary>
+
+    <div class="registration-fold-body" id="<%= body_id %>">
+      <%= body_html %>
     </div>
-  </div>
-</div>
+  </details>
+<% end %>
