@@ -129,6 +129,14 @@ RSpec.describe("Personal data", type: :request) do
       expect(user.reload.matriculation_number).to eq("3456789")
     end
 
+    it "saves no number when the user ticked that they have none yet" do
+      patch personal_data_path,
+            params: { user: complete.merge(no_matriculation_number: "1") }
+
+      expect(user.reload.personal_data_confirmed_at).to be_present
+      expect(user.matriculation_number).to be_nil
+    end
+
     it "refuses a matriculation number somebody else has saved" do
       create(:confirmed_user, matriculation_number: "3456789")
 
@@ -236,6 +244,21 @@ RSpec.describe("Personal data", type: :request) do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(user.reload.program).to be_nil
+    end
+
+    it "is the mathematics one for a student of two subjects who says so" do
+      patch personal_data_path,
+            params: { study_degree: "bsc50", study_math: "yes",
+                      user: complete.merge(program_id: "") }
+
+      expect(user.reload.program).to eq(program)
+    end
+
+    it "does not stand in the way once its program is no longer offered" do
+      patch personal_data_path, params: { user: complete.merge(program_id: program.id) }
+      program.update!(degree: nil)
+
+      expect(user.reload.update(locale: "de")).to be(true)
     end
 
     it "stays the user's to change, without the confirmation" do

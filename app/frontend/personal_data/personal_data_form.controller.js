@@ -1,9 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
 
-/**
- * Shows what belongs to the answer picked and walks through the open fields
- * one step at a time, starting on the first step the server found an error in.
- */
 export default class extends Controller {
   static targets = [
     "choice", "yes", "no", "answered", "step", "summary",
@@ -64,10 +60,11 @@ export default class extends Controller {
   requireMatriculationNumber() {
     if (!this.hasNoMatriculationNumberTarget) return;
 
-    this.matriculationNumberTarget.required = !this.noMatriculationNumberTarget.checked;
+    const none = this.noMatriculationNumberTarget.checked;
+    this.matriculationNumberTarget.required = !none;
+    this.matriculationNumberTarget.disabled = none;
   }
 
-  /** Copies what the steps before hold into the check, leaving saved values. */
   summarize() {
     for (const summary of this.summaryTargets) {
       const field = [...this.element.querySelectorAll(`input[name="user[${summary.dataset.field}]"]`)]

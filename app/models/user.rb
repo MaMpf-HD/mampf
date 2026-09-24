@@ -146,12 +146,11 @@ class User < ApplicationRecord
   # the empty field may be filled in later.
   attribute :no_matriculation_number, :boolean, default: false
 
-  # Empty for a program not on offer ("other program") and for everybody not
-  # asked yet.
+  # Empty for "Other degree" or "Other subject", or while the user has not
+  # answered yet.
   belongs_to :program, optional: true
-  # What a participant list preloads to show each program with its subject.
   PROGRAM_PRELOAD = { program: [:translations, { subject: :translations }] }.freeze
-  validate :program_offered_to_students
+  validate :program_offered_to_students, if: :program_id_changed?
 
   before_save :track_password_change
 
@@ -441,7 +440,6 @@ class User < ApplicationRecord
     [first_name, last_name].compact_blank.join(" ").presence
   end
 
-  # Neither given nor declined: the login asks for it.
   def personal_data_pending?
     personal_data_confirmed_at.nil? && personal_data_declined_at.nil?
   end
@@ -450,8 +448,6 @@ class User < ApplicationRecord
     personal_data_declined_at.present? && personal_data_confirmed_at.nil?
   end
 
-  # The fields the user may still fill in: the Uni ID, and the locked ones
-  # not yet saved.
   def open_personal_data_fields
     LOCKED_PERSONAL_DATA_FIELDS.select { |field| attribute_in_database(field).blank? } +
       [:program_id, :uni_id]
