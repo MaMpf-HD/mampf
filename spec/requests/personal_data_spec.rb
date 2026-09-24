@@ -232,6 +232,19 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "the profile" do
+    it "lists all details the user has given" do
+      program = create(:program, subject: create(:subject, name: "Mathematik"), name: "M.Sc.",
+                                 degree: :msc)
+      patch personal_data_path,
+            params: { user: complete.merge(program_id: program.id, uni_id: "ab123") }
+
+      get edit_profile_path
+
+      expect(response.body).to include("Ada Lovelace", "3456789", "Mathematik: M.Sc.", "ab123")
+    end
+  end
+
   describe "the Uni ID" do
     it "takes two letters and three digits, not an email address" do
       patch personal_data_path, params: { user: complete.merge(uni_id: "ada@uni-heidelberg.de") }

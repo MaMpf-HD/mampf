@@ -75,13 +75,20 @@
           <% end %>
 
           <div class="mb-3">
-            <div class="fw-bold"><%= t("personal_data.title") %></div>
-            <% if @user.full_name %>
-              <div><%= @user.full_name %></div>
-              <div class="text-muted small">
-                <%= User.human_attribute_name(:matriculation_number) %>:
-                <%= @user.matriculation_number.presence || "–" %>
-              </div>
+            <div class="fw-bold mb-1"><%= t("personal_data.title") %></div>
+            <% if @user.personal_data_confirmed_at %>
+              <% details = { t("personal_data.steps.name") => @user.full_name,
+                             User.human_attribute_name(:matriculation_number) =>
+                               @user.matriculation_number,
+                             User.human_attribute_name(:program_id) =>
+                               @user.program&.name_with_subject,
+                             User.human_attribute_name(:uni_id) => @user.uni_id } %>
+              <dl class="row mb-1">
+                <% details.each do |label, value| %>
+                  <dt class="col-5 fw-normal text-muted"><%= label %></dt>
+                  <dd class="col-7 mb-1"><%= value.presence || "–" %></dd>
+                <% end %>
+              </dl>
             <% end %>
             <%= link_to t("personal_data.edit_link"), edit_personal_data_path %>
           </div>
