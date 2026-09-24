@@ -2,16 +2,18 @@ en:
   personal_data:
     title: "Your name and matriculation number"
     lead: >-
-      Exercise classes, exams and seminars need the name and matriculation
+      MaMpf now includes what Müsli used to do: exercise classes, exams and
+      seminars are organised here. For them we need the name and matriculation
       number the university knows you by. Your display name stays as it is for
       everything else.
     saved_by_support_html: >-
-      What you have saved can only be changed by the support: %{support}.
+      Your saved name and matriculation number can only be changed by the
+      support: %{support}.
     no_matriculation_number: "I do not have a matriculation number yet"
-    uni_id_hint: "Optional, e.g. ab123."
+    uni_id_hint: "Optional, e.g. ab123. You can change it yourself at any time."
     confirmation_html: >-
       I have checked these details. After saving, only the support
-      (%{support}) can change them.
+      (%{support}) can change my name and matriculation number.
     save: "Save"
     saved: "Thank you, your details are saved."
     decline_explanation: >-

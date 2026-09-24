@@ -6,6 +6,9 @@ class User < ApplicationRecord
 
   CURRENT_PASSWORD_POLICY_VERSION = 1
   PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number, :uni_id].freeze
+  # What a group or an exam lists a student by: once saved, only the support
+  # changes it. The Uni ID stays the user's to change.
+  LOCKED_PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number].freeze
 
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
@@ -135,7 +138,8 @@ class User < ApplicationRecord
   validates :first_name, :last_name, presence: true, on: :personal_data
   validates :matriculation_number, presence: true, on: :personal_data,
                                    unless: :no_matriculation_number
-  validates :personal_data_confirmation, acceptance: { allow_nil: false }, on: :personal_data
+  validates :personal_data_confirmation, acceptance: { allow_nil: false }, on: :personal_data,
+                                         if: :locked_personal_data_changed?
 
   # The student has no matriculation number yet (first weeks, guest student);
   # the empty field may be filled in later.
@@ -438,9 +442,15 @@ class User < ApplicationRecord
     personal_data_declined_at.present? && personal_data_confirmed_at.nil?
   end
 
-  # The fields the user may still fill in: those not yet saved.
+  # The fields the user may still fill in: the Uni ID, and the locked ones
+  # not yet saved.
   def open_personal_data_fields
-    PERSONAL_DATA_FIELDS.select { |field| attribute_in_database(field).blank? }
+    LOCKED_PERSONAL_DATA_FIELDS.select { |field| attribute_in_database(field).blank? } +
+      [:uni_id]
+  end
+
+  def locked_personal_data_changed?
+    LOCKED_PERSONAL_DATA_FIELDS.any? { |field| attribute_changed?(field) }
   end
 
   def short_info

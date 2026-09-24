@@ -2,16 +2,17 @@ de:
   personal_data:
     title: "Dein Name und Deine Matrikelnummer"
     lead: >-
-      Für Übungen, Klausuren und Seminare brauchen wir den Namen und die
-      Matrikelnummer, unter denen die Universität Dich kennt. Dein Anzeigename
-      bleibt für alles andere, wie er ist.
+      MaMpf übernimmt jetzt, was bisher Müsli gemacht hat: Übungsgruppen,
+      Klausuren und Seminare werden hier organisiert. Dafür brauchen wir den
+      Namen und die Matrikelnummer, unter denen die Universität Dich kennt. Dein
+      Anzeigename bleibt für alles andere, wie er ist.
     saved_by_support_html: >-
-      Gespeicherte Angaben ändert nur der Support: %{support}.
+      Gespeicherten Namen und Matrikelnummer ändert nur der Support: %{support}.
     no_matriculation_number: "Ich habe noch keine Matrikelnummer"
-    uni_id_hint: "Optional, z. B. ab123."
+    uni_id_hint: "Optional, z. B. ab123. Du kannst sie jederzeit selbst ändern."
     confirmation_html: >-
-      Ich habe die Angaben geprüft. Nach dem Speichern kann sie nur noch der
-      Support (%{support}) ändern.
+      Ich habe die Angaben geprüft. Nach dem Speichern kann nur noch der
+      Support (%{support}) meinen Namen und meine Matrikelnummer ändern.
     save: "Speichern"
     saved: "Danke, Deine Angaben sind gespeichert."
     decline_explanation: >-

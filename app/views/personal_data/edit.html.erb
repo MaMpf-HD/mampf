@@ -37,16 +37,16 @@
     <div class="form-text" id="uni-id-hint"><%= t("personal_data.uni_id_hint") %></div>
   </div>
 
-  <% if open_fields.any? %>
+  <% if open_fields.intersect?(User::LOCKED_PERSONAL_DATA_FIELDS) %>
     <div class="form-check mb-3">
       <%= f.check_box :personal_data_confirmation, class: "form-check-input" %>
       <%= f.label :personal_data_confirmation,
                   t("personal_data.confirmation_html", support: support),
                   class: "form-check-label" %>
     </div>
-
-    <%= f.submit t("personal_data.save"), class: "btn btn-primary" %>
   <% end %>
+
+  <%= f.submit t("personal_data.save"), class: "btn btn-primary" %>
 <% end %>
 
 <% if @user.personal_data_pending? %>

@@ -113,6 +113,16 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "the Uni ID" do
+    it "stays the user's to change, without the confirmation" do
+      patch personal_data_path, params: { user: complete.merge(uni_id: "ab123") }
+      patch personal_data_path, params: { user: { uni_id: "cd456" } }
+
+      expect(user.reload.uni_id).to eq("cd456")
+      expect(user.first_name).to eq("Ada")
+    end
+  end
+
   describe "the admin's user form" do
     let(:account) { create(:confirmed_user, first_name: "Ada", last_name: "Lovelace") }
 
