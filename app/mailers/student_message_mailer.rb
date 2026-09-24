@@ -10,8 +10,12 @@ class StudentMessageMailer < ApplicationMailer
     sender_locale = (message.sender.locale.presence || I18n.default_locale).to_s
     groups[sender_locale] ||= []
     groups.each do |locale, emails|
-      with(message: message, locale: locale, recipients: emails - message.copy_emails,
-           copies: locale == sender_locale).student_message_email.deliver_later
+      recipients = emails - message.copy_emails
+      copies = locale == sender_locale
+      next if recipients.empty? && !copies
+
+      with(message: message, locale: locale, recipients: recipients,
+           copies: copies).student_message_email.deliver_later
     end
   end
 

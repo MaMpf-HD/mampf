@@ -232,6 +232,19 @@ RSpec.describe(StudentMessageMailer) do
       expect(mails.find { |mail| mail.to == [teacher.email] }.cc).to eq([editor.email])
     end
 
+    it "queues no mail for a language only the staff read" do
+      student.update!(locale: "de")
+      editor = create(:confirmed_user, locale: "en")
+      lecture.editors << editor
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, user: editor)
+
+      mails = deliveries
+
+      expect(mails.size).to eq(1)
+      expect(mails.sole.cc).to eq([editor.email])
+    end
+
     it "sends the sender a copy when no student reads their language" do
       german_student.update!(locale: "en")
 
