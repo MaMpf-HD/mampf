@@ -18,7 +18,9 @@ class RegistrationsController < Devise::RegistrationsController
       clean_up_passwords(resource)
       log_rejected_sign_up("captcha verification failed")
       flash.now[:alert] = I18n.t("devise.registrations.user.captcha_error")
-      render_flash
+      render turbo_stream: [stream_flash,
+                            turbo_stream.replace("registration-captcha",
+                                                 partial: "devise/registrations/captcha")]
     end
   end
 
