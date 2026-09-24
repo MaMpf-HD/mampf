@@ -116,6 +116,9 @@ window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 import FileSizeController from "~/controllers/file_size.controller.js";
 window.Stimulus.register("file-size", FileSizeController);
 
+import ParticipationChoiceController from "~/personal_data/participation_choice.controller.js";
+window.Stimulus.register("participation-choice", ParticipationChoiceController);
+
 import ClipboardController from "~/controllers/clipboard.controller.js";
 window.Stimulus.register("clipboard", ClipboardController);
 

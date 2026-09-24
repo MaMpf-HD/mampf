@@ -1,64 +1,89 @@
 <% open_fields = @user.open_personal_data_fields %>
 <% support = mail_to(DefaultSetting::PROJECT_EMAIL) %>
+<% asking = @asking %>
 
 <h2><%= t("personal_data.title") %></h2>
 <p><%= t("personal_data.lead") %></p>
-<% if open_fields.size < User::PERSONAL_DATA_FIELDS.size %>
-  <p class="form-text"><%= t("personal_data.saved_by_support_html", support: support) %></p>
-<% end %>
 
 <%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch,
-              local: true do |f| %>
-  <% [:first_name, :last_name].each do |field| %>
-    <div class="mb-3">
-      <%= f.label field, class: "form-label" %>
-      <%= f.text_field field, class: "form-control", disabled: open_fields.exclude?(field),
-                              autocomplete: field == :first_name ? "given-name" : "family-name" %>
-    </div>
+              local: true, data: { controller: asking ? "participation-choice" : nil } do |f| %>
+  <% if asking %>
+    <fieldset class="mb-3">
+      <legend class="h6"><%= t("personal_data.participation_question") %></legend>
+      <p class="form-text"><%= t("personal_data.participation_hint") %></p>
+      <% ["yes", "no"].each do |answer| %>
+        <div class="form-check">
+          <%= radio_button_tag :participation, answer, @participation == answer,
+                               class: "form-check-input",
+                               data: { participation_choice_target: "choice",
+                                       action: "participation-choice#show" } %>
+          <%= label_tag "participation_#{answer}", t("personal_data.participation_#{answer}"),
+                        class: "form-check-label" %>
+        </div>
+      <% end %>
+    </fieldset>
   <% end %>
 
-  <div class="mb-3">
-    <%= f.label :matriculation_number, class: "form-label" %>
-    <%= f.text_field :matriculation_number, class: "form-control", inputmode: "numeric",
-                                            disabled: open_fields.exclude?(:matriculation_number) %>
-    <% if open_fields.include?(:matriculation_number) %>
-      <div class="form-check mt-2">
-        <%= f.check_box :no_matriculation_number, class: "form-check-input" %>
-        <%= f.label :no_matriculation_number, t("personal_data.no_matriculation_number"),
+  <div data-participation-choice-target="yes">
+    <p><%= t("personal_data.why") %></p>
+    <% if open_fields.size < User::PERSONAL_DATA_FIELDS.size %>
+      <p class="form-text"><%= t("personal_data.saved_by_support_html", support: support) %></p>
+    <% end %>
+
+    <% [:first_name, :last_name].each do |field| %>
+      <div class="mb-3">
+        <%= f.label field, class: "form-label" %>
+        <%= f.text_field field, class: "form-control", disabled: open_fields.exclude?(field),
+                                autocomplete: field == :first_name ? "given-name" : "family-name" %>
+      </div>
+    <% end %>
+
+    <div class="mb-3">
+      <%= f.label :matriculation_number, class: "form-label" %>
+      <%= f.text_field :matriculation_number, class: "form-control", inputmode: "numeric",
+                                              disabled: open_fields.exclude?(:matriculation_number) %>
+      <% if open_fields.include?(:matriculation_number) %>
+        <div class="form-check mt-2">
+          <%= f.check_box :no_matriculation_number, class: "form-check-input" %>
+          <%= f.label :no_matriculation_number, t("personal_data.no_matriculation_number"),
+                      class: "form-check-label" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mb-3">
+      <%= f.label :uni_id, class: "form-label" %>
+      <%= f.text_field :uni_id, class: "form-control", aria: { describedby: "uni-id-hint" },
+                                disabled: open_fields.exclude?(:uni_id) %>
+      <div class="form-text" id="uni-id-hint"><%= t("personal_data.uni_id_hint") %></div>
+    </div>
+
+    <% if open_fields.intersect?(User::LOCKED_PERSONAL_DATA_FIELDS) %>
+      <div class="form-check mb-3">
+        <%= f.check_box :personal_data_confirmation, class: "form-check-input" %>
+        <%= f.label :personal_data_confirmation,
+                    t("personal_data.confirmation_html", support: support),
                     class: "form-check-label" %>
       </div>
     <% end %>
+
+    <div class="d-flex gap-2">
+      <%= f.submit t("personal_data.save"), class: "btn btn-primary" %>
+      <% unless asking %>
+        <%= link_to t("back"), edit_profile_path, class: "btn btn-secondary" %>
+      <% end %>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <%= f.label :uni_id, class: "form-label" %>
-    <%= f.text_field :uni_id, class: "form-control", aria: { describedby: "uni-id-hint" },
-                              disabled: open_fields.exclude?(:uni_id) %>
-    <div class="form-text" id="uni-id-hint"><%= t("personal_data.uni_id_hint") %></div>
-  </div>
-
-  <% if open_fields.intersect?(User::LOCKED_PERSONAL_DATA_FIELDS) %>
-    <div class="form-check mb-3">
-      <%= f.check_box :personal_data_confirmation, class: "form-check-input" %>
-      <%= f.label :personal_data_confirmation,
-                  t("personal_data.confirmation_html", support: support),
-                  class: "form-check-label" %>
+  <% if asking %>
+    <div data-participation-choice-target="no">
+      <p class="form-text"><%= t("personal_data.decline_explanation") %></p>
+      <%= f.submit t("personal_data.continue"), class: "btn btn-primary" %>
     </div>
   <% end %>
-
-  <div class="d-flex gap-2">
-    <%= f.submit t("personal_data.save"), class: "btn btn-primary" %>
-    <% unless @user.personal_data_pending? %>
-      <%= link_to t("back"), edit_profile_path, class: "btn btn-secondary" %>
-    <% end %>
-  </div>
 <% end %>
 
-<% if @user.personal_data_pending? %>
-  <hr>
-  <p class="form-text"><%= t("personal_data.decline_explanation") %></p>
-  <%= button_to t("personal_data.decline"), decline_personal_data_path,
-                class: "btn btn-outline-secondary" %>
+<% if asking %>
   <%= button_to t("navbar.logout"), destroy_user_session_path(locale: I18n.locale),
                 method: :delete, class: "btn btn-link p-0 mt-3" %>
 <% end %>

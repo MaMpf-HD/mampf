@@ -637,10 +637,6 @@ Rails.application.routes.draw do
         to: "personal_data#update",
         as: "personal_data"
 
-  post "personal_data/decline",
-       to: "personal_data#decline",
-       as: "decline_personal_data"
-
   # profile routes
 
   get "profile/edit",

@@ -16,6 +16,7 @@ test("asks once for the name and matriculation number after sign-in",
   async ({ page, request }) => {
     await signInAsking(page, request);
 
+    await page.getByRole("radio", { name: "Yes" }).check();
     await page.getByLabel("First name").fill("Ada");
     await page.getByLabel("Last name").fill("Lovelace");
     await page.getByLabel("Matriculation number", { exact: true }).fill("3456789");
@@ -34,8 +35,9 @@ test("lets a user who takes part in no exercise class skip it",
   async ({ page, request }) => {
     await signInAsking(page, request);
 
-    await page.getByRole("button", { name: "I do not take part in exercise classes or exams" })
-      .click();
+    await expect(page.getByLabel("First name")).toBeHidden();
+    await page.getByRole("radio", { name: "No" }).check();
+    await page.getByRole("button", { name: "Continue" }).click();
 
     await expect(page).not.toHaveURL(/\/personal_data/);
     await page.goto("/main/start");

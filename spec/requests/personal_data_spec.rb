@@ -45,13 +45,13 @@ RSpec.describe("Personal data", type: :request) do
     it "goes back to the page the user asked for, not to the question" do
       get lecture_path(create(:lecture, :released_for_all))
       get edit_personal_data_path
-      post decline_personal_data_path
+      patch personal_data_path, params: { participation: "no" }
 
       expect(response).not_to redirect_to(edit_personal_data_path)
     end
 
     it "lets a user through who has declined" do
-      post decline_personal_data_path
+      patch personal_data_path, params: { participation: "no" }
       get start_path
 
       expect(user.reload).to be_personal_data_declined
@@ -60,6 +60,20 @@ RSpec.describe("Personal data", type: :request) do
   end
 
   describe "PATCH /personal_data" do
+    it "takes a no to the question as declining, whatever the fields say" do
+      patch personal_data_path, params: { participation: "no", user: complete }
+
+      expect(user.reload).to be_personal_data_declined
+      expect(user.first_name).to be_nil
+    end
+
+    it "keeps the answer yes when the form comes back with errors" do
+      patch personal_data_path,
+            params: { participation: "yes", user: complete.except(:personal_data_confirmation) }
+
+      expect(response.body).to match(/value="yes"[^>]*checked|checked[^>]*value="yes"/)
+    end
+
     it "saves the data once the user confirms it" do
       patch personal_data_path, params: { user: complete }
 
@@ -121,7 +135,7 @@ RSpec.describe("Personal data", type: :request) do
     end
 
     it "offers a way back to someone who declined, who may still fill it in" do
-      post decline_personal_data_path
+      patch personal_data_path, params: { participation: "no" }
       get edit_personal_data_path
 
       expect(response.body).to include(%(href="#{edit_profile_path}"))

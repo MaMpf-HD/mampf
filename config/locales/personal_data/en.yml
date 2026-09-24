@@ -3,9 +3,11 @@ en:
     title: "Your name and matriculation number"
     lead: >-
       MaMpf now includes what Müsli used to do: exercise classes, exams and
-      seminars are organised here. For them we need the name and matriculation
-      number the university knows you by. Your display name stays as it is for
-      everything else.
+      seminars of the Faculty of Mathematics and Computer Science at Heidelberg
+      University are organised here.
+    why: >-
+      For them we need the name and matriculation number Heidelberg University
+      knows you by. Your display name stays as it is for everything else.
     saved_by_support_html: >-
       Your saved name and matriculation number can only be changed by the
       support: %{support}.
@@ -17,14 +19,21 @@ en:
     save: "Save"
     saved: "Thank you, your details are saved."
     decline_explanation: >-
-      You only use MaMpf for its materials and take part in no exercise class,
-      exam or seminar? Then you can skip this. Should you want to take part
-      later, you can enter the details on your profile page.
-    decline: "I do not take part in exercise classes or exams"
+      Then we need nothing from you. Should you take part later, you can enter
+      the details on your profile page.
     needed_to_register: >-
       To register, we need your name and matriculation number. Please enter
       them on your profile page first.
     edit_link: "Show or complete"
+    participation_question: >-
+      Do you take part, as a student, in exercise classes, exams or seminars of
+      the Faculty of Mathematics and Computer Science at Heidelberg University?
+    participation_hint: >-
+      Teachers and staff choose "No". Tutors who are students themselves choose
+      "Yes".
+    participation_yes: "Yes"
+    participation_no: "No"
+    continue: "Continue"
   activerecord:
     attributes:
       user:

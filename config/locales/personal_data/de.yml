@@ -3,9 +3,12 @@ de:
     title: "Dein Name und Deine Matrikelnummer"
     lead: >-
       MaMpf übernimmt jetzt, was bisher Müsli gemacht hat: Übungsgruppen,
-      Klausuren und Seminare werden hier organisiert. Dafür brauchen wir den
-      Namen und die Matrikelnummer, unter denen die Universität Dich kennt. Dein
-      Anzeigename bleibt für alles andere, wie er ist.
+      Klausuren und Seminare der Fakultät für Mathematik und Informatik der
+      Universität Heidelberg werden hier organisiert.
+    why: >-
+      Dafür brauchen wir den Namen und die Matrikelnummer, unter denen die
+      Universität Heidelberg Dich kennt. Dein Anzeigename bleibt für alles
+      andere, wie er ist.
     saved_by_support_html: >-
       Gespeicherten Namen und Matrikelnummer ändert nur der Support: %{support}.
     no_matriculation_number: "Ich habe noch keine Matrikelnummer"
@@ -16,15 +19,21 @@ de:
     save: "Speichern"
     saved: "Danke, Deine Angaben sind gespeichert."
     decline_explanation: >-
-      Du nutzt MaMpf nur für die Materialien und nimmst an keiner Übung,
-      Klausur und keinem Seminar teil? Dann kannst Du das überspringen. Willst
-      Du später doch teilnehmen, kannst Du die Angaben in Deinem Profil
-      nachtragen.
-    decline: "Ich nehme an keinen Übungen oder Klausuren teil"
+      Dann brauchen wir nichts von Dir. Nimmst Du später doch teil, kannst Du die
+      Angaben in Deinem Profil nachtragen.
     needed_to_register: >-
       Für die Anmeldung brauchen wir Deinen Namen und Deine Matrikelnummer. Trag
       sie bitte zuerst in Deinem Profil ein.
     edit_link: "Ansehen oder ergänzen"
+    participation_question: >-
+      Nimmst Du als Studentin oder Student an Übungen, Klausuren oder Seminaren
+      der Fakultät für Mathematik und Informatik der Universität Heidelberg teil?
+    participation_hint: >-
+      Lehrende und Mitarbeitende wählen „Nein“. Tutorinnen und Tutoren, die
+      selbst studieren, wählen „Ja“.
+    participation_yes: "Ja"
+    participation_no: "Nein"
+    continue: "Weiter"
   activerecord:
     attributes:
       user:

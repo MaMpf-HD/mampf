@@ -8,10 +8,15 @@ class PersonalDataController < ApplicationController
 
   def edit
     @user = current_user
+    @asking = @user.personal_data_pending?
   end
 
   def update
     @user = current_user
+    @asking = @user.personal_data_pending?
+    @participation = params[:participation]
+    return decline if @asking && @participation == "no"
+
     @user.assign_attributes(personal_data_params)
     @user.personal_data_confirmed_at ||= Time.current
     if @user.save(context: :personal_data)
@@ -21,14 +26,12 @@ class PersonalDataController < ApplicationController
     end
   end
 
-  def decline
-    if current_user.personal_data_pending?
-      current_user.update!(personal_data_declined_at: Time.current)
-    end
-    redirect_to after_personal_data_path
-  end
-
   private
+
+    def decline
+      @user.update!(personal_data_declined_at: Time.current)
+      redirect_to after_personal_data_path
+    end
 
     # Only the fields still empty: what is saved is the support's to change.
     def personal_data_params
