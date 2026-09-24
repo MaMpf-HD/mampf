@@ -13,7 +13,7 @@ export async function subscribeToLecture(
   lecture: FactoryBotObject,
   userId: number,
 ): Promise<void> {
-  await factory.create("lecture_user_join", [], {
+  await factory.create("lecture_bookmark", [], {
     lecture_id: lecture.id,
     user_id: userId,
   });

@@ -1,5 +1,5 @@
 module Dashboard
-  # Bookmarks (= lecture subscriptions) a lecture from the dashboard search.
+  # Bookmarks a lecture from the dashboard search (stored as a LectureBookmark).
   class BookmarksController < ApplicationController
     include Dashboard::BoardRenderer
 
@@ -9,7 +9,7 @@ module Dashboard
       return head(:not_found) unless @lecture
       return head(:forbidden) unless @lecture.bookmarkable_by?(current_user)
 
-      current_user.subscribe_lecture!(@lecture)
+      current_user.bookmark_lecture!(@lecture)
       current_user.touch # busts the cached navbar/favorites (see ProfileController#star_lecture)
       render_board
     end
@@ -17,7 +17,7 @@ module Dashboard
     def destroy
       return head(:not_found) unless @lecture
 
-      current_user.unsubscribe_lecture!(@lecture)
+      current_user.unbookmark_lecture!(@lecture)
       current_user.touch
       render_board
     end

@@ -27,7 +27,7 @@ de:
         Hier kannst Du Text eingeben, nach dem gesucht werden soll.
       lecture_scope_field: >
         Hier kannst Du bestimmen, zu welcher Veranstaltung eine Assoziation bestehen soll.
-        Dabei kannst Du alle, nur die von Dir abonnierten oder eine eigene Auswahl an Veranstaltungen berücksichtigen lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator <i>ODER</i> verwendet.
+        Dabei kannst Du alle, nur die von Dir gemerkten oder eine eigene Auswahl an Veranstaltungen berücksichtigen lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator <i>ODER</i> verwendet.
       lecture_type_field: >
         Hier kannst Du einen, mehrere oder alle der folgenden Veranstaltungstypen auswählen: <i>Lektion</i>, <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i>. Dabei wird der Operator <i>ODER</i> verwendet.
       medium_access_field: >
@@ -74,7 +74,7 @@ de:
         Hier kannst du auswählen, ob es sich um ein semesterunabhängiges Modul handelt.
     radio_buttons:
       lecture_scope_field:
-        subscribed: 'abonnierte'
+        subscribed: 'gemerkte'
         all: 'alle'
         own_selection: 'eigene Auswahl'
       tag_field:

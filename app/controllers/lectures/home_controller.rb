@@ -34,10 +34,12 @@ module Lectures
         (@can_register || @rosterized_entries.any? || @self_rosterables.any?)
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-      @subscribed = @lecture.in?(current_user.lectures)
-      # Roster members may subscribe without the passphrase, see
-      # ProfileController#subscribe_lecture.
-      @passphrase_required = @lecture.restricted? &&
+      @content_accessible = @lecture.content_accessible_by?(current_user)
+      @locked = !@lecture.unlocked_for?(current_user) &&
+                !current_user.can_edit?(@lecture)
+      # Roster members may unlock without the passphrase, see
+      # Lectures::UnlocksController#create.
+      @passphrase_required = @locked &&
                              !LectureMembership.exists?(user: current_user,
                                                         lecture: @lecture)
 

@@ -79,9 +79,9 @@ module Seeds
     end
 
     def subscribe!(lecture, student)
-      return if LectureUserJoin.exists?(lecture: lecture, user: student)
+      return if LectureBookmark.exists?(lecture: lecture, user: student)
 
-      LectureUserJoin.create!(lecture: lecture, user: student)
+      LectureBookmark.create!(lecture: lecture, user: student)
     end
 
     def tutorial_handed_in_to(lecture, student)

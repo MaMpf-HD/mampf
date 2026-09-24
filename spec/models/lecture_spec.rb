@@ -376,22 +376,22 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
 
-    it "subscribes roster members to the lecture" do
+    it "bookmarks the lecture for roster members" do
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(3)
+      end.to change(LectureBookmark, :count).by(3)
 
       expect(lecture.users).to include(*users)
     end
 
-    it "keeps existing subscriptions intact" do
-      create(:lecture_user_join, user: users.first, lecture: lecture)
+    it "keeps existing bookmarks intact" do
+      create(:lecture_bookmark, user: users.first, lecture: lecture)
 
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(2) # Only 2 new ones
+      end.to change(LectureBookmark, :count).by(2) # Only 2 new ones
 
-      expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
+      expect(LectureBookmark.where(lecture: lecture, user: users.first).count)
         .to eq(1)
     end
 

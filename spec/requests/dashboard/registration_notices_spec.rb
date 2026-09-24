@@ -50,7 +50,7 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
     end
 
     it "removes an existing bookmark when removing the lecture entirely" do
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
 
       delete dashboard_registration_notice_path(lecture),
              params: { keep_bookmarked: false }, as: :turbo_stream
@@ -74,7 +74,7 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
     it "scopes the re-rendered bands to the given term" do
       other_term = create(:term)
       other_lecture = create(:lecture, :released_for_all, term: other_term)
-      user.subscribe_lecture!(other_lecture)
+      user.bookmark_lecture!(other_lecture)
 
       delete dashboard_registration_notice_path(lecture),
              params: { term: other_term.id }, as: :turbo_stream

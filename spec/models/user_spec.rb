@@ -157,17 +157,17 @@ RSpec.describe(User, type: :model) do
     end
   end
 
-  describe "user with subscribed lectures" do
+  describe "user with bookmarked lectures" do
     before :each do
       @user = FactoryBot.build(:user, :with_lectures)
     end
     it "has a valid factory" do
       expect(@user).to be_valid
     end
-    it "has subscribed lectures" do
+    it "has bookmarked lectures" do
       expect(@user.lectures).not_to be_nil
     end
-    it "has 2 subscribed lectures when called without lecture_count param" do
+    it "has 2 bookmarked lectures when called without lecture_count param" do
       expect(@user.lectures.size).to eq(2)
     end
     it "has correct number of lectures when called with lecture_count param" do
@@ -242,7 +242,7 @@ RSpec.describe(User, type: :model) do
       lecture = create(:lecture, term: term)
       tutorial = create(:tutorial, lecture: lecture)
       create(:tutorial_membership, user: user, tutorial: tutorial)
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
 
       expect(user.current_bookmarked_lectures(term)).to be_empty
     end
@@ -463,17 +463,17 @@ RSpec.describe(User, type: :model) do
     end
   end
 
-  describe "#subscribe_lecture!" do
+  describe "#bookmark_lecture!" do
     it "creates at most one join under concurrent calls" do
       user = create(:confirmed_user)
       lecture = create(:lecture)
 
       values = run_concurrently do
-        User.find(user.id).subscribe_lecture!(Lecture.find(lecture.id))
+        User.find(user.id).bookmark_lecture!(Lecture.find(lecture.id))
       end
 
       expect(values).to contain_exactly(true, false)
-      expect(LectureUserJoin.where(user: user, lecture: lecture).count).to eq(1)
+      expect(LectureBookmark.where(user: user, lecture: lecture).count).to eq(1)
     end
   end
 

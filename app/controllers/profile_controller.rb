@@ -72,32 +72,22 @@ class ProfileController < ApplicationController
     if !@lecture.published? && !current_user.admin &&
        !@lecture.edited_by?(current_user)
       @unpublished = true
-      if html_redirect_flow?
-        return redirect_to root_path,
-                           alert: t("admin.lecture.no_rights")
-      end
       return
     end
-    # Roster members may subscribe without the passphrase: a roster seat is
+    # Roster members may bookmark without the passphrase: a roster seat is
     # a stronger credential than a shared passphrase.
     if @lecture.passphrase.present? &&
-       !@lecture.in?(current_user.lectures) &&
+       !@lecture.bookmarked_by?(current_user) &&
        !LectureMembership.exists?(user: current_user, lecture: @lecture) &&
        @lecture.passphrase != @passphrase
-      if html_redirect_flow?
-        return redirect_to lecture_home_path(@lecture),
-                           alert: t("errors.profile.passphrase")
-      end
       return
     end
 
-    @success = current_user.subscribe_lecture!(@lecture)
-
-    redirect_to lecture_path(@lecture) if @parent == "redirect"
+    @success = current_user.bookmark_lecture!(@lecture)
   end
 
   def unsubscribe_lecture
-    @success = current_user.unsubscribe_lecture!(@lecture)
+    @success = current_user.unbookmark_lecture!(@lecture)
   end
 
   def star_lecture
@@ -133,19 +123,6 @@ class ProfileController < ApplicationController
   end
 
   private
-
-    # The subscribe form on the lecture home page submits as a plain HTML
-    # or Turbo request, in contrast to the legacy JS-driven subscribe flows
-    # (dashboard cards, subscribe page), which expect a JS response.
-    #
-    # NOTE: request.format.html? alone would actually suffice even for Turbo
-    # submissions (Mime::Type#html? matches any MIME string containing
-    # "html", which includes text/vnd.turbo-stream.html) — but we spell out
-    # the Turbo case so correctness does not hinge on that subtlety.
-    def html_redirect_flow?
-      @parent == "redirect" &&
-        (request.format.html? || request.format.turbo_stream?)
-    end
 
     def set_user
       @user = current_user

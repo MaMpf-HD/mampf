@@ -17,7 +17,7 @@ test.describe("the student's sheet list", () => {
     });
     // The subscription is what `proper_student_in?` reads; the roster
     // membership beside it is what the gradebook counts.
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: studentId,
     });
@@ -47,7 +47,7 @@ test.describe("the student's sheet list", () => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id, locale: "en",
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id, user_id: student.user.id,
     });
     await factory.create("assignment", [], {
@@ -284,7 +284,7 @@ test.describe("the student's sheet list", () => {
     const lecture = await enrolledLecture(factory, teacher.user.id, student.user.id);
     const assignment = await closedSheet(factory, lecture.id, "Homework 1");
     const partner = student2.user;
-    await factory.create("lecture_user_join", [], { lecture_id: lecture.id, user_id: partner.id });
+    await factory.create("lecture_bookmark", [], { lecture_id: lecture.id, user_id: partner.id });
     await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: partner.id });
     const group = (await factory.create("tutorial", [], {
       lecture_id: lecture.id, title: "Tuesday group",

@@ -2948,9 +2948,6 @@ de:
       Du hast das Formular korrekt ausgefüllt, aber leider ist auf dem Server
       ein Fehler aufgetreten. Bitte versuche es später erneut und kontaktiere
       uns, wenn das Problem weiterhin besteht.
-    not_subscribed: >
-      Aktuell hast Du diese Veranstaltung nicht abonniert.
-      Um sie betrachten zu können, musst Du sie vorher abonnieren.
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
     thyme:
@@ -3219,7 +3216,7 @@ de:
       Du bist für dieses Blatt schon eigenständig bewertet; frag Deinen Tutor,
       ob Du ins Team gehörst.
     already_in: Bei dieser Abgabe bist Du schon dabei.
-    lecture_not_subscribed: Du hast die zugehörige Veranstaltung icht abonniert.
+    lecture_not_unlocked: Du hast keinen Zugriff auf die zugehörige Veranstaltung.
     no_partners_no_leave: >
       Du kannst nicht austreten, da Du die einzige Person in der Abgabegruppe
       bist. Dafür kannst Du die Abgabe löschen.

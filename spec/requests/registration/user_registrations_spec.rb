@@ -128,8 +128,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   let(:stub_success) { UserRegistrations::Handler::Result.new(true, []) }
 
   before do
-    create(:lecture_user_join, user: user, lecture: lecture)
-    create(:lecture_user_join, user: user, lecture: seminar)
+    create(:lecture_bookmark, user: user, lecture: lecture)
+    create(:lecture_bookmark, user: user, lecture: seminar)
     sign_in user
   end
 
@@ -140,23 +140,25 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   end
 
   describe "GET lecture home page (access)" do
-    it "is accessible for students who are not subscribed and offers them " \
-       "the subscription page" do
-      unsubscribed_student = create(:confirmed_user)
-      sign_in unsubscribed_student
+    it "does not ask students who have not bookmarked an unprotected " \
+       "lecture to unlock it" do
+      student = create(:confirmed_user)
+      sign_in student
 
       get lecture_home_path(lecture)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("lecture-home-subscribe-button")
-      expect(response.body).to include(subscribe_lecture_path)
+      expect(response.body).not_to include("lecture-home-unlock-button")
     end
 
-    it "greys out every sidebar entry except Home for unsubscribed students" do
-      unsubscribed_student = create(:confirmed_user)
-      sign_in unsubscribed_student
+    it "greys out every sidebar entry except Home for students who have " \
+       "not unlocked a protected lecture" do
+      passphrase_lecture = create(:lecture, :released_for_all,
+                                  passphrase: "secret")
+      student = create(:confirmed_user)
+      sign_in student
 
-      get lecture_home_path(lecture)
+      get lecture_home_path(passphrase_lecture)
 
       expect(response).to have_http_status(:ok)
 
@@ -172,12 +174,14 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     it "shows a passphrase field for passphrase-protected lectures" do
       passphrase_lecture = create(:lecture, :released_for_all,
                                   passphrase: "secret")
-      unsubscribed_student = create(:confirmed_user)
-      sign_in unsubscribed_student
+      student = create(:confirmed_user)
+      sign_in student
 
       get lecture_home_path(passphrase_lecture)
 
       expect(response.body).to include("lecture-home-passphrase")
+      expect(response.body).to include("lecture-home-unlock-button")
+      expect(response.body).to include(lecture_unlock_path(passphrase_lecture))
     end
 
     it "does not show a passphrase field to roster members" do
@@ -189,7 +193,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
       get lecture_home_path(passphrase_lecture)
 
-      expect(response.body).to include("lecture-home-subscribe-button")
+      expect(response.body).to include("lecture-home-unlock-button")
       expect(response.body).not_to include("lecture-home-passphrase")
     end
 

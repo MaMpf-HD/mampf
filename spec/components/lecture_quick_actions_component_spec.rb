@@ -4,7 +4,7 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
   let(:user) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all) }
 
-  before { user.subscribe_lecture!(lecture) }
+  before { user.bookmark_lecture!(lecture) }
 
   def render_actions
     render_inline(described_class.new(lecture: lecture, user: user))

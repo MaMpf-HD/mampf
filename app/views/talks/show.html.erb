@@ -24,7 +24,7 @@
                     style: 'text-decoration: none;' %>
       <% end %>
       <%= t('in') %>
-      <% if current_user.lectures.include?(@talk.lecture) %>
+      <% if @talk.lecture.content_accessible_by?(current_user) %>
         <%= link_to @talk.lecture.title,
                     @talk.lecture.path(current_user),
                     class: 'text-dark' %>

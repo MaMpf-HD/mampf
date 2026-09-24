@@ -19,7 +19,7 @@
   </div>
   <div class="col-10 col-xl-5 pt-2">
     (<%= t('from') %>
-    <% if current_user.lectures.include?(@section.lecture) %>
+    <% if @section.lecture.content_accessible_by?(current_user) %>
       <%= link_to @section.lecture.to_label,
                   @section.lecture.path(current_user) %>
     <% else %>

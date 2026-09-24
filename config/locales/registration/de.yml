@@ -602,13 +602,13 @@ de:
       not_found: "Veranstaltung nicht gefunden."
       home:
         empty_title: "Starte hier"
-        empty_subscribed: >-
+        empty_accessible: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
           dieser Seite. Materialien findest du in der Navigation der
           Veranstaltung.
-        empty_unsubscribed: >-
+        empty_locked: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Abonniere die Veranstaltung, um Materialien zu sehen.
+          dieser Seite. Entsperre die Veranstaltung, um Materialien zu sehen.
         news_indicator: "Neue Updates auf Home"
         attachment_download: "Programm herunterladen (PDF)"
         attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
@@ -627,9 +627,13 @@ de:
           Für diese Veranstaltung läuft eine Anmeldung, aber Deine Startseite hat
           keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
           Füge eine kurze Einführung und Dein Programm hinzu.
-        subscribe_prompt: >-
-          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
-          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
+        unlock_prompt: >-
+          Diese Veranstaltung ist passwortgeschützt. Du musst das Passwort
+          eingeben, um ihre Materialien zu entsperren.
+        unlock_prompt_member: >-
+          Diese Veranstaltung ist passwortgeschützt. Als Mitglied der
+          Veranstaltung kannst du ihre Materialien ohne Passwort entsperren.
+        unlock: "Entsperren"
   activerecord:
     attributes:
     errors:

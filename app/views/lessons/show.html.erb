@@ -6,7 +6,7 @@
       </span>
       <%= @lesson.to_label %>
       <%= t('from') %>
-      <% if current_user.lectures.include?(@lesson.lecture) %>
+      <% if @lesson.lecture.content_accessible_by?(current_user) %>
         <%= link_to @lesson.lecture.title,
                     @lesson.lecture.path(current_user),
                     class: 'text-dark' %>

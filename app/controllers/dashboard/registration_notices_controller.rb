@@ -14,9 +14,9 @@ module Dashboard
 
       rejected_registrations.find_each(&:dismiss!)
       if keep_bookmarked?
-        current_user.subscribe_lecture!(@lecture)
+        current_user.bookmark_lecture!(@lecture)
       else
-        current_user.unsubscribe_lecture!(@lecture)
+        current_user.unbookmark_lecture!(@lecture)
       end
       current_user.touch
       render_board

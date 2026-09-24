@@ -25,7 +25,7 @@ en:
         Here you can enter text that will be searched for.
       lecture_scope_field: >
         Select the event series you want to search. You can choose all event series, the
-        ones you are subscribed to, or make up your own selection. If you opt for your own
+        ones you have bookmarked, or make up your own selection. If you opt for your own
         selection, you can choose one or several event series. The operator used is the
         inclusive <i>OR</i>.
       lecture_type_field: >
@@ -75,7 +75,7 @@ en:
         Here you can choose whether the course is independent of terms.
     radio_buttons:
       lecture_scope_field:
-        subscribed: 'subscribed'
+        subscribed: 'bookmarked'
         all: 'all'
         own_selection: 'custom selection'
       tag_field:

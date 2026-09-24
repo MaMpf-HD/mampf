@@ -5,7 +5,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
   let(:lecture) { create(:lecture) }
 
   before do
-    user.subscribe_lecture!(lecture)
+    user.bookmark_lecture!(lecture)
   end
 
   def render_card(**)
@@ -136,7 +136,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
       expect(render_card.at_css(keep)).to be_present
 
-      user.unsubscribe_lecture!(lecture)
+      user.unbookmark_lecture!(lecture)
       lecture.update!(passphrase: "secret")
 
       expect(render_card.at_css(keep)).to be_nil

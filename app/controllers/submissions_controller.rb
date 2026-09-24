@@ -677,7 +677,7 @@ class SubmissionsController < ApplicationController
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
       elsif !current_user.proper_student_in?(@submission.tutorial.lecture)
-        @error = I18n.t("submission.lecture_not_subscribed")
+        @error = I18n.t("submission.lecture_not_unlocked")
       end
     end
 

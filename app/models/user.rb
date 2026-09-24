@@ -10,9 +10,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
-  # a user has many subscribed lectures
-  has_many :lecture_user_joins, dependent: :destroy
-  has_many :lectures, -> { distinct }, through: :lecture_user_joins
+  # a user has many bookmarked lectures (formerly: subscribed lectures)
+  has_many :lecture_bookmarks, dependent: :destroy
+  has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
   # Roster memberships
   has_many :lecture_memberships, dependent: :destroy
@@ -473,23 +473,23 @@ class User < ApplicationRecord
   # defines which messageboards a user can read:
   # - all boards if the user is an admin
   # - all boards that belong to teaching related lectures (see above)
-  #   together with all boards belonging to subscribed lectures if the user
-  #   is course or lecture editor or teacher and all boards not belonging
-  #   to lectures
-  # - all boards that belong to subscribed lectures otherwise and all
+  #   together with all boards belonging to unlocked lectures (see
+  #   `unlocked_lectures`) if the user is course or lecture editor or teacher
+  #   and all boards not belonging to lectures
+  # - all boards that belong to unlocked lectures otherwise and all
   #    boards not belonging to lectures
   def thredded_can_read_messageboards
     return Thredded::Messageboard.all if admin?
 
-    subscribed_forums =
-      Thredded::Messageboard.where(id: lectures.map(&:forum_id))
+    unlocked_forums =
+      Thredded::Messageboard.where(id: unlocked_lectures.pluck(:forum_id))
                             .or(Thredded::Messageboard.where.not(id: Lecture.all.map(&:forum_id)))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
                                                   .map(&:forum_id))
-                                   .or(subscribed_forums)
+                                   .or(unlocked_forums)
     end
-    subscribed_forums
+    unlocked_forums
   end
 
   # defines which messageboards a user can write to:
@@ -498,14 +498,14 @@ class User < ApplicationRecord
   def thredded_can_write_messageboards
     return Thredded::Messageboard.all if admin?
 
-    subscribed_forums =
-      Thredded::Messageboard.where(id: lectures.map(&:forum_id))
+    unlocked_forums =
+      Thredded::Messageboard.where(id: unlocked_lectures.pluck(:forum_id))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
                                                   .map(&:forum_id))
-                                   .or(subscribed_forums)
+                                   .or(unlocked_forums)
     end
-    subscribed_forums
+    unlocked_forums
   end
 
   # defines which messageboards a user can moderate:
@@ -532,13 +532,13 @@ class User < ApplicationRecord
   def filter_visible_media(media)
     nonsubscribed_courses =
       Course.where(id: Course.pluck(:id) - courses.pluck(:id))
+    unlocked = unlocked_lectures
     nonsubscribed_lectures =
-      Lecture.where(id: Lecture.pluck(:id) - lectures.pluck(:id),
-                    released: ["all"])
-    lessons = Lesson.where(lecture: lectures)
+      Lecture.where.not(id: unlocked.select(:id)).where(released: ["all"])
+    lessons = Lesson.where(lecture: unlocked)
     nonsubscribed_lessons = Lesson.where(lecture: nonsubscribed_lectures)
     edited_lessons = Lesson.where(lecture: teaching_related_lectures)
-    talks = Talk.where(lecture: lectures)
+    talks = Talk.where(lecture: unlocked)
     nonsubscribed_talks = Talk.where(lecture: nonsubscribed_lectures)
     edited_talks = Talk.where(lecture: teaching_related_lectures)
     return media if admin
@@ -546,7 +546,7 @@ class User < ApplicationRecord
     media.where(teachable: courses, released: ["all", "subscribers", "users"])
          .or(media.where(teachable: nonsubscribed_courses,
                          released: ["all", "users"]))
-         .or(media.where(teachable: lectures,
+         .or(media.where(teachable: unlocked,
                          released: ["all", "subscribers", "users"]))
          .or(media.where(teachable: nonsubscribed_lectures,
                          released: ["all", "users"]))
@@ -612,7 +612,7 @@ class User < ApplicationRecord
     lectures.where(term: Term.active).includes(:course, :term)
   end
 
-  # A subscription (LectureUserJoin), a seat (LectureMembership,
+  # A bookmark (LectureBookmark), a seat (LectureMembership,
   # CohortMembership) and an application (Registration::UserRegistration) exist
   # independently of each other, which is why the start page asks
   # `next_term_lectures`, `next_term_seated_lectures` and
@@ -677,18 +677,26 @@ class User < ApplicationRecord
            .includes(:course, :term).natural_sort_by(&:title)
   end
 
+  # The published lectures whose content this user gets to see as a student:
+  # those without a passphrase, and those unlocked via a bookmark. Scope
+  # counterpart of Lecture#unlocked_for? (staff access is not included).
+  def unlocked_lectures
+    Lecture.published.where(passphrase: [nil, ""])
+           .or(Lecture.published.where(id: lecture_bookmarks.select(:lecture_id)))
+  end
+
   def nonsubscribed_lectures
     Lecture.where.not(id: lectures.pluck(:id))
   end
 
-  def subscribe_lecture!(lecture)
+  def bookmark_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
 
-    lecture_user_joins.create_or_find_by(lecture: lecture)
-                      .previously_new_record?
+    lecture_bookmarks.create_or_find_by(lecture: lecture)
+                     .previously_new_record?
   end
 
-  def unsubscribe_lecture!(lecture)
+  def unbookmark_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
     return false unless lecture.in?(lectures)
 
@@ -696,10 +704,6 @@ class User < ApplicationRecord
     favorite_lectures.delete(lecture)
 
     true
-  end
-
-  def current_subscribed_lectures(term = Term.active)
-    lectures_of_term(lectures, term)
   end
 
   # Every lecture this user holds a place in: a seat on the lecture roster, or
@@ -748,7 +752,7 @@ class User < ApplicationRecord
   # `enrolled` when the caller already computed it, to avoid recomputing it.
   def current_bookmarked_lectures(term = Term.active,
                                   enrolled: current_enrolled_lectures(term))
-    current_subscribed_lectures(term) - enrolled
+    lectures_of_term(lectures, term) - enrolled
   end
 
   def submission_partners(lecture)
@@ -829,8 +833,8 @@ class User < ApplicationRecord
   end
 
   def proper_student_in?(lecture)
-    lecture.in?(lectures) && !in?(lecture.tutors) && !in?(lecture.editors) &&
-      self != lecture.teacher
+    lecture.published? && lecture.unlocked_for?(self) &&
+      !in?(lecture.tutors) && !in?(lecture.editors) && self != lecture.teacher
   end
 
   def original_image_file

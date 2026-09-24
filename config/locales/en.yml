@@ -2728,7 +2728,6 @@ en:
     unknown: >
       You filled out the form correctly, but unfortunately something went wrong
       on the server. Please try again later and contact us if the problem persists.
-    not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
     thyme:
@@ -2996,8 +2995,8 @@ en:
       You have already been marked for this sheet on your own; ask your tutor
       if you should be on the team.
     already_in: You are already a partner for this assignment.
-    lecture_not_subscribed: >
-      You are not subscribed to the corresponding event series.
+    lecture_not_unlocked: >
+      You do not have access to the corresponding event series.
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).

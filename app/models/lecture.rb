@@ -47,9 +47,9 @@ class Lecture < ApplicationRecord
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
 
-  # a lecture has many users who have subscribed it in their profile
-  has_many :lecture_user_joins, dependent: :destroy
-  has_many :users, -> { distinct }, through: :lecture_user_joins
+  # a lecture has many users who have bookmarked it (formerly: subscribed it)
+  has_many :lecture_bookmarks, dependent: :destroy
+  has_many :users, -> { distinct }, through: :lecture_bookmarks
 
   # Roster associations
   has_many :lecture_memberships, dependent: :destroy
@@ -268,7 +268,7 @@ class Lecture < ApplicationRecord
   end
 
   def card_header_path(user)
-    return unless user.lectures.include?(self)
+    return unless content_accessible_by?(user)
 
     lecture_path
   end
@@ -281,23 +281,37 @@ class Lecture < ApplicationRecord
     passphrase.present?
   end
 
-  # Whether the user may bookmark (= subscribe to) this lecture without
-  # entering its passphrase. Mirrors ProfileController#subscribe_lecture's
-  # guard: roster members need no passphrase.
+  # Whether the user may bookmark this lecture without entering its
+  # passphrase. Mirrors Lectures::UnlocksController#create's guard: roster
+  # members need no passphrase.
   def bookmarkable_by?(user)
-    return true if in?(user.lectures)
+    return true if bookmarked_by?(user)
     return false unless published? || user.admin || edited_by?(user)
 
     passphrase.blank? || LectureMembership.exists?(user: user, lecture: self)
+  end
+
+  # Whether the user got past the passphrase, if the lecture has one.
+  # For now, entering the passphrase bookmarks the lecture, so a bookmark is
+  # what unlocks it (see Lectures::UnlocksController).
+  def unlocked_for?(user)
+    !restricted? || bookmarked_by?(user)
   end
 
   def visible_for_user?(user)
     return true if user.admin
     return true if edited_by?(user)
     return false unless published?
-    return false if restricted? && !in?(user.lectures)
+    return false unless unlocked_for?(user)
 
     true
+  end
+
+  # Whether the user gets to see the lecture's content (outline, media,
+  # forum, ...): its staff always, everybody else once it is published and
+  # unlocked (see #unlocked_for?).
+  def content_accessible_by?(user)
+    user.can_edit?(self) || visible_for_user?(user)
   end
 
   # the next methods deal with the lecture's tags
@@ -608,7 +622,7 @@ class Lecture < ApplicationRecord
 
   # returns path for show action of the lecture's course,
   def path(user)
-    return unless user.lectures.include?(self)
+    return unless content_accessible_by?(user)
 
     Rails.application.routes.url_helpers
          .lecture_path(self)
@@ -729,7 +743,7 @@ class Lecture < ApplicationRecord
     -1
   end
 
-  def subscribed_by?(user)
+  def bookmarked_by?(user)
     in?(user.lectures)
   end
 
@@ -938,10 +952,10 @@ class Lecture < ApplicationRecord
         unique_by: [:user_id, :lecture_id]
       )
 
-      # Roster membership implies a subscription: members need access to the
-      # lecture's content, even when subscribing is gated by a passphrase
-      # (a roster seat is a stronger credential than a shared passphrase).
-      LectureUserJoin.insert_all(
+      # Roster membership implies a bookmark: members need access to the
+      # lecture's content, even when it is locked by a passphrase (a roster
+      # seat is a stronger credential than a shared passphrase).
+      LectureBookmark.insert_all(
         attributes,
         unique_by: [:lecture_id, :user_id]
       )

@@ -331,7 +331,7 @@ module Vignettes
       def content_accessible?
         return true if current_user.can_edit?(@lecture)
 
-        @lecture.vignettes? && @lecture.in?(current_user.lectures)
+        @lecture.vignettes? && @lecture.content_accessible_by?(current_user)
       end
 
       def check_index_accessibility

@@ -43,7 +43,7 @@ test("removes a bookmark after navigating to the lecture and back",
       course_id: course.id,
       term_id: term.id,
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: user.id,
     });
@@ -68,7 +68,7 @@ test("picks a washi tape color for a card and keeps it across a reload",
       course_id: course.id,
       term_id: term.id,
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: user.id,
     });
@@ -326,7 +326,7 @@ test("remembers a folded dashboard section across a reload",
       course_id: course.id,
       term_id: term.id,
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: user.id,
     });

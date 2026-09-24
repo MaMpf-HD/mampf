@@ -238,7 +238,7 @@ RSpec.describe("Lectures", type: :request) do
       end
 
       it "shows the bookmark button pressed on a bookmarked lecture" do
-        create(:lecture_user_join, user: user, lecture: lecture_algebra)
+        create(:lecture_bookmark, user: user, lecture: lecture_algebra)
 
         search_algebra
 
@@ -311,7 +311,7 @@ RSpec.describe("Lectures", type: :request) do
     let(:lecture) { create(:lecture, :released_for_all, locale: "en") }
 
     before do
-      create(:lecture_user_join, user: user, lecture: lecture)
+      create(:lecture_bookmark, user: user, lecture: lecture)
       create(:lecture_medium,
              teachable: lecture,
              sort: "Script",
@@ -352,7 +352,7 @@ RSpec.describe("Lectures", type: :request) do
     let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
 
     before do
-      create(:lecture_user_join, user: user, lecture: lecture)
+      create(:lecture_bookmark, user: user, lecture: lecture)
     end
 
     it "renders an edit affordance on the content page" do
@@ -483,7 +483,7 @@ RSpec.describe("Lectures", type: :request) do
     let!(:xss_section) { create(:section, chapter: xss_chapter, details: xss_payload) }
 
     before do
-      create(:lecture_user_join, user: user, lecture: xss_lecture)
+      create(:lecture_bookmark, user: user, lecture: xss_lecture)
     end
 
     it "escapes or strips script tags from lecture organizational concept, chapters, and sections in edit view" do # rubocop:disable Layout/LineLength
@@ -509,21 +509,21 @@ RSpec.describe("Lectures", type: :request) do
     context "when the lecture's term uses home as its landing page" do
       before { Flipper.enable_actor(:lecture_home_landing, term) }
 
-      it "sends subscribers to the lecture home page" do
-        create(:lecture_user_join, user: user, lecture: lecture)
+      it "sends users who bookmarked it to the lecture home page" do
+        create(:lecture_bookmark, user: user, lecture: lecture)
 
         get lecture_path(lecture)
 
         expect(response).to redirect_to(lecture_home_path(lecture))
       end
 
-      it "sends non-subscribers to the lecture home page" do
+      it "sends users who have not bookmarked it to the lecture home page" do
         get lecture_path(lecture)
 
         expect(response).to redirect_to(lecture_home_path(lecture))
       end
 
-      it "sends teachers to the lecture home page without a subscription" do
+      it "sends teachers to the lecture home page without a bookmark" do
         teacher_lecture = create(:lecture, :released_for_all,
                                  term: term, teacher: user)
 
@@ -535,15 +535,15 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     context "when the lecture's term keeps the outline landing page" do
-      it "sends subscribers to the stable outline page" do
-        create(:lecture_user_join, user: user, lecture: lecture)
+      it "sends users who bookmarked it to the stable outline page" do
+        create(:lecture_bookmark, user: user, lecture: lecture)
 
         get lecture_path(lecture)
 
         expect(response).to redirect_to(lecture_outline_path(lecture))
       end
 
-      it "sends non-subscribers to the stable outline page" do
+      it "sends users who have not bookmarked it to the stable outline page" do
         get lecture_path(lecture)
 
         expect(response).to redirect_to(lecture_outline_path(lecture))
@@ -564,8 +564,8 @@ RSpec.describe("Lectures", type: :request) do
     let(:user) { create(:confirmed_user) }
     let(:lecture) { create(:lecture, :released_for_all) }
 
-    it "serves the outline content page to subscribers" do
-      create(:lecture_user_join, user: user, lecture: lecture)
+    it "serves the outline content page to users who bookmarked it" do
+      create(:lecture_bookmark, user: user, lecture: lecture)
 
       get lecture_outline_path(lecture)
 
@@ -580,10 +580,31 @@ RSpec.describe("Lectures", type: :request) do
       expect(response).to have_http_status(:success)
     end
 
-    it "sends non-subscribers to the lecture home page" do
+    it "serves the outline content page of an unprotected lecture to " \
+       "users who have not bookmarked it" do
       get lecture_outline_path(lecture)
 
-      expect(response).to redirect_to(lecture_home_path(lecture))
+      expect(response).to have_http_status(:success)
+    end
+
+    context "with a passphrase-protected lecture" do
+      let(:lecture) do
+        create(:lecture, :released_for_all, passphrase: "secret")
+      end
+
+      it "serves the outline content page to users who unlocked it" do
+        create(:lecture_bookmark, user: user, lecture: lecture)
+
+        get lecture_outline_path(lecture)
+
+        expect(response).to have_http_status(:success)
+      end
+
+      it "sends users who have not unlocked it to the lecture home page" do
+        get lecture_outline_path(lecture)
+
+        expect(response).to redirect_to(lecture_home_path(lecture))
+      end
     end
 
     context "when the lecture's term uses home as its landing page" do
@@ -594,8 +615,8 @@ RSpec.describe("Lectures", type: :request) do
 
       after { Flipper.disable(:lecture_home_landing) }
 
-      it "still serves the stable outline page to subscribers" do
-        create(:lecture_user_join, user: user, lecture: lecture)
+      it "still serves the stable outline page to users who bookmarked it" do
+        create(:lecture_bookmark, user: user, lecture: lecture)
 
         get lecture_outline_path(lecture)
 

@@ -318,10 +318,6 @@ Rails.application.routes.draw do
       to: "tutorials#index",
       as: "lecture_tutorials"
 
-  get "lectures/:id/subscribe",
-      to: "lectures#subscribe_page",
-      as: "subscribe_lecture_page"
-
   post "lectures/:id/import_toc",
        to: "lectures#import_toc",
        as: "import_lecture_toc"
@@ -336,6 +332,11 @@ Rails.application.routes.draw do
   patch "lectures/:id/home_content",
         to: "lectures#update",
         as: "lecture_home_content"
+
+  # enter the passphrase of a protected lecture to access its content
+  post "lectures/:lecture_id/unlock",
+       to: "lectures/unlocks#create",
+       as: "lecture_unlock"
 
   get "lectures/:id/home_attachment",
       to: "lectures/home#attachment",

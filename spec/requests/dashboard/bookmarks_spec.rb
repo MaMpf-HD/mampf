@@ -18,7 +18,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
     end
 
     it "is idempotent" do
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
 
       post dashboard_bookmark_path(lecture), as: :turbo_stream
 
@@ -29,7 +29,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
     it "scopes the re-rendered bands to the given term" do
       other_term = create(:term)
       other_lecture = create(:lecture, :released_for_all, term: other_term)
-      user.subscribe_lecture!(other_lecture)
+      user.bookmark_lecture!(other_lecture)
 
       post dashboard_bookmark_path(lecture),
            params: { term: other_term.id }, as: :turbo_stream
@@ -64,7 +64,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
 
   describe "DELETE /dashboard/bookmarks/:lecture_id" do
     it "removes a bookmark and re-renders the dashboard bands" do
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
 
       delete dashboard_bookmark_path(lecture), as: :turbo_stream
 
@@ -74,7 +74,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
     end
 
     it "also drops the lecture from favorites" do
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
       user.favorite_lectures << lecture
 
       delete dashboard_bookmark_path(lecture), as: :turbo_stream

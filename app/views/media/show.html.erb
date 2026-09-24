@@ -43,7 +43,7 @@
       <% end %>
     <% end %>
     <% if @medium.teachable.is_a?(Lecture) %>
-      <% if current_user.lectures.include?(@medium.teachable) %>
+      <% if @medium.teachable.content_accessible_by?(current_user) %>
         <%= link_to @medium.teachable.to_label,
                     @medium.teachable.path(current_user),
                     class: 'text-dark' %>
@@ -54,7 +54,7 @@
       <% end %>
     <% end %>
     <% if @medium.teachable.is_a?(Lesson) || @medium.teachable.is_a?(Talk) %>
-      <% if current_user.lectures.include?(@medium.teachable.lecture) %>
+      <% if @medium.teachable.lecture.content_accessible_by?(current_user) %>
         <%= link_to @medium.teachable.lecture.title_for_viewers,
                     @medium.teachable.lecture.path(current_user),
                     class: 'text-dark' %>,

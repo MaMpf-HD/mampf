@@ -93,17 +93,18 @@
     </div>
   <% end %>
 
-  <% unless @subscribed || current_user.can_edit?(@lecture) %>
+  <% if @locked %>
     <div class="alert alert-light border mt-3"
-         data-testid="lecture-home-subscribe-hint">
-      <p class="mb-2"><%= t("registration.lecture.home.subscribe_prompt") %></p>
-      <%= form_with url: subscribe_lecture_path,
-                    method: :patch,
+         data-testid="lecture-home-unlock-hint">
+      <p class="mb-2">
+        <%= @passphrase_required ?
+              t("registration.lecture.home.unlock_prompt") :
+              t("registration.lecture.home.unlock_prompt_member") %>
+      </p>
+      <%= form_with url: lecture_unlock_path(@lecture),
+                    method: :post,
                     local: true,
-                    scope: "lecture",
                     class: "d-flex align-items-center flex-wrap gap-2" do |f| %>
-        <%= f.hidden_field :id, value: @lecture.id %>
-        <%= f.hidden_field :parent, value: "redirect" %>
         <% if @passphrase_required %>
           <%= f.password_field :passphrase,
                                class: "form-control w-auto",
@@ -111,9 +112,9 @@
                                "aria-label": t("profile.passphrase"),
                                data: { testid: "lecture-home-passphrase" } %>
         <% end %>
-        <%= f.submit t("profile.subscribe_lecture"),
+        <%= f.submit t("registration.lecture.home.unlock"),
                      class: "btn btn-outline-primary text-nowrap",
-                     data: { testid: "lecture-home-subscribe-button" } %>
+                     data: { testid: "lecture-home-unlock-button" } %>
       <% end %>
     </div>
   <% end %>
@@ -164,13 +165,13 @@
       <div class="alert alert-light border mt-3"
            data-testid="lecture-home-fallback-card">
         <h5 class="mb-2"><%= t("registration.lecture.home.empty_title") %></h5>
-        <% if @subscribed %>
-          <p class="mb-3"><%= t("registration.lecture.home.empty_subscribed") %></p>
+        <% if @content_accessible %>
+          <p class="mb-3"><%= t("registration.lecture.home.empty_accessible") %></p>
           <%= link_to t("basics.outline"),
                       lecture_outline_path(@lecture),
                       class: "btn btn-outline-primary btn-sm" %>
         <% else %>
-          <p class="mb-0"><%= t("registration.lecture.home.empty_unsubscribed") %></p>
+          <p class="mb-0"><%= t("registration.lecture.home.empty_locked") %></p>
         <% end %>
       </div>
     <% end %>

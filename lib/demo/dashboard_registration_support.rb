@@ -138,7 +138,7 @@ module Demo
       def bookmark!(student, lecture)
         return if student.lectures.include?(lecture)
 
-        student.subscribe_lecture!(lecture)
+        student.bookmark_lecture!(lecture)
       end
 
       # Rebuilt from scratch on every build, like the other demo scenarios:

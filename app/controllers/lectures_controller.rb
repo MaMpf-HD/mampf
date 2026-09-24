@@ -7,8 +7,8 @@ class LecturesController < ApplicationController
                                             :show_announcements]
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
-  before_action :check_for_subscribe, only: [:outline]
-  before_action :set_view_locale, only: [:edit, :update, :show, :outline, :subscribe_page,
+  before_action :check_for_unlock, only: [:outline]
+  before_action :set_view_locale, only: [:edit, :update, :show, :outline,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   before_action :require_turbo_frame, only: [:new]
@@ -268,7 +268,7 @@ class LecturesController < ApplicationController
     self_enrollment = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
     @search_result_ids = LecturesHelper::SearchResultIds.new(
       subscribed_lecture_ids:
-        current_user.lecture_user_joins
+        current_user.lecture_bookmarks
                     .where(lecture_id: page_lecture_ids)
                     .pluck(:lecture_id).to_set,
       registration_status_by_lecture_id:
@@ -320,11 +320,6 @@ class LecturesController < ApplicationController
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
-  def subscribe_page
-    render template: "lectures/subscribe/subscribe_page",
-           layout: "application_no_sidebar"
-  end
-
   def import_toc
     imported_lecture = Lecture
                        .find_by(id: import_toc_params[:imported_lecture_id])
@@ -356,15 +351,13 @@ class LecturesController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    def check_for_subscribe
-      # Staff bypass the subscription gate for content.
-      return if current_user.can_edit?(@lecture)
+    def check_for_unlock
+      # Staff bypass the passphrase gate for content.
+      return if @lecture.content_accessible_by?(current_user)
 
-      return if @lecture.in?(current_user.lectures)
-
-      # Non-subscribers are sent to the lecture's home page (its
-      # organizational front door), which offers registration (if the
-      # lecture uses it) as well as a link to the subscription page.
+      # Users who have not unlocked the lecture are sent to its home page
+      # (its organizational front door), which offers registration (if the
+      # lecture uses it) as well as the passphrase form to unlock it.
       redirect_to lecture_home_path(@lecture)
     end
 

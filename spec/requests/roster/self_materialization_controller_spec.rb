@@ -22,7 +22,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
   end
 
   before do
-    create(:lecture_user_join, user: user, lecture: lecture)
+    create(:lecture_bookmark, user: user, lecture: lecture)
     sign_in user
   end
 

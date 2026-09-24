@@ -16,7 +16,7 @@ module Redeemer
 
       redemption = create_redemption(params)
       create_notifications!(redemption)
-      Current.user.subscribe_lecture!(lecture)
+      Current.user.bookmark_lecture!(lecture)
     end
   end
 

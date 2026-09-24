@@ -570,7 +570,7 @@ class Medium < ApplicationRecord
 
     return false if teachable_type == "Course" && restricted? && !teachable.in?(user.courses)
     if teachable_type.in?(["Lecture", "Lesson",
-                           "Talk"]) && restricted? && !teachable.lecture.in?(user.lectures)
+                           "Talk"]) && restricted? && !teachable.lecture.unlocked_for?(user)
       return false
     end
 

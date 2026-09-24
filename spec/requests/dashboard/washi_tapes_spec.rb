@@ -15,7 +15,7 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
   describe "PATCH /dashboard/washi_tape/:lecture_id" do
     context "when the user has bookmarked the lecture" do
       before do
-        user.subscribe_lecture!(lecture)
+        user.bookmark_lecture!(lecture)
       end
 
       it "saves the chosen color" do

@@ -23,7 +23,7 @@ RSpec.describe("Main", type: :request) do
       enrolled = lecture_with_title("Roster Topology")
       bookmarked = lecture_with_title("Bookmarked Geometry")
       enrolled.lecture_memberships.create!(user: user)
-      user.subscribe_lecture!(bookmarked)
+      user.bookmark_lecture!(bookmarked)
 
       get root_path
 
@@ -36,7 +36,7 @@ RSpec.describe("Main", type: :request) do
     it "does not list an enrolled lecture a second time as bookmarked" do
       lecture = lecture_with_title("Roster Topology")
       lecture.lecture_memberships.create!(user: user)
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
 
       get root_path
 
@@ -58,7 +58,7 @@ RSpec.describe("Main", type: :request) do
       lecture = lecture_with_title("Tutorial Topology")
       tutorial = create(:tutorial, lecture: lecture)
       create(:tutorial_membership, user: user, tutorial: tutorial)
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
 
       get root_path
 
