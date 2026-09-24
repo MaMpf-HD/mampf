@@ -558,51 +558,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
     end
 
-    describe "capacity rejection notification" do
-      let(:campaign) { create(:registration_campaign, :with_items, status: :processing) }
-      let(:user) { create(:confirmed_user, locale: "en") }
-
-      it "sends a rejection email to pending users rejected for capacity" do
-        create(:registration_user_registration, registration_campaign: campaign,
-                                                user: user, status: :pending)
-
-        perform_enqueued_jobs do
-          expect do
-            campaign.finalize!
-          end.to change { ActionMailer::Base.deliveries.count }.by(1)
-        end
-
-        email = ActionMailer::Base.deliveries.last
-        expect(email.to).to eq([user.email])
-      end
-
-      it "passes the solver_unassigned reason_code to the mailer" do
-        create(:registration_user_registration, registration_campaign: campaign,
-                                                user: user, status: :pending)
-
-        expect(RosterNotificationMailer).to receive(:rejected).with(user, anything)
-
-        campaign.finalize!
-      end
-
-      it "sends one email per pending user, not per registration" do
-        other_user = create(:confirmed_user, locale: "en")
-        create(:registration_user_registration, registration_campaign: campaign,
-                                                user: user, status: :pending)
-        create(:registration_user_registration, registration_campaign: campaign,
-                                                user: other_user, status: :pending)
-
-        perform_enqueued_jobs do
-          expect do
-            campaign.finalize!
-          end.to change { ActionMailer::Base.deliveries.count }.by(2)
-        end
-
-        recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:to)
-        expect(recipients).to contain_exactly(user.email, other_user.email)
-      end
-    end
-
     context "with preference-based allocation across three items and four students" do
       let(:seminar) { create(:seminar) }
       let(:campaign) do
@@ -719,6 +674,103 @@ RSpec.describe(Registration::Campaign, type: :model) do
                                  ])
 
       expect(registration.reload).to be_rejected
+    end
+  end
+
+  describe "#reject_notify reasons" do
+    let(:user) { create(:confirmed_user, locale: "en") }
+
+    before do
+      allow(RosterNotificationMailer).to receive(:rejected).and_call_original
+    end
+
+    context "when finalizing" do
+      it "passes the capacity reason for pending users the solver left unassigned" do
+        campaign = create(:registration_campaign, :with_items, status: :processing)
+        create(:registration_user_registration,
+               registration_campaign: campaign, user: user, status: :pending)
+
+        campaign.finalize!
+
+        expect(RosterNotificationMailer).to have_received(:rejected).with(
+          user, campaign,
+          reasons: [I18n.t("registration.user_registration.reason_labels.solver_unassigned")]
+        )
+      end
+
+      it "passes the translated email policy reason for institutional_email_mismatch" do
+        campaign = create(:registration_campaign, :with_items, :first_come_first_served)
+        create(:registration_policy, :institutional_email, :for_finalization,
+               registration_campaign: campaign,
+               config: { "allowed_domains" => "uni.edu" })
+        campaign.update!(status: :closed)
+        invalid_user = create(:confirmed_user, email: "invalid@other.test", locale: "en")
+        create(:registration_user_registration, :pending,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: invalid_user)
+
+        campaign.finalize!
+
+        # The code is aliased to email_domain_not_allowed, then translated.
+        expect(RosterNotificationMailer).to have_received(:rejected).with(
+          invalid_user, campaign,
+          reasons: [I18n.t("registration.policy.errors.email_domain_not_allowed")]
+        )
+      end
+
+      it "passes the stored manual rejection label" do
+        campaign = create(:registration_campaign, :with_items, :preference_based)
+        create(:registration_user_registration, :rejected,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: user, preference_rank: 1,
+               rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+               rejection_reason_code: "manual_rejected")
+
+        campaign.reject_notify
+
+        expect(RosterNotificationMailer).to have_received(:rejected).with(
+          user, campaign,
+          reasons: [I18n.t("registration.user_registration.reason_labels.manual_rejected")]
+        )
+      end
+
+      it "sends the reject mail to student who lost seat and accept mail to one who got it" do
+        campaign = create(:registration_campaign, :preference_based, :with_items,
+                          items_count: 1, status: :processing)
+        item = campaign.registration_items.first
+        tutorial = item.registerable
+        tutorial.update!(capacity: 1)
+
+        winner = create(:confirmed_user, locale: "en")
+        loser = create(:confirmed_user, locale: "en")
+
+        # State after the solver ran: one seat, two applicants, one placed.
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign, registration_item: item,
+               user: winner, preference_rank: 1)
+        create(:registration_user_registration, :pending,
+               registration_campaign: campaign, registration_item: item,
+               user: loser, preference_rank: 1)
+
+        allow(RosterNotificationMailer).to receive(:finalized).and_call_original
+
+        campaign.finalize!
+
+        # Reject mail
+        expect(RosterNotificationMailer).to have_received(:rejected).once
+        expect(RosterNotificationMailer).to have_received(:rejected).with(
+          loser, campaign,
+          reasons: [I18n.t("registration.user_registration.reason_labels.solver_unassigned")]
+        )
+
+        # Accept mail
+        expect(RosterNotificationMailer).to have_received(:finalized).once do |registerable, users|
+          expect(registerable).to eq(tutorial)
+          expect(users.to_a).to contain_exactly(winner)
+        end
+      end
     end
   end
 

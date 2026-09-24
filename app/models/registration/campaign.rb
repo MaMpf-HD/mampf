@@ -293,18 +293,29 @@ module Registration
           reason_type: violation[:reason_type] || default_reason_type,
           reason_code: violation[:reason_code].to_s,
           reason_label: violation[:reason_label] || violation[:message],
+          rejection_policy_id: violation[:policy_id],
           rejected_at: now
         )
       end
     end
 
     def reject_notify
-      rejected_registrations = user_registrations.where(status: :rejected)
+      rejected_registrations = user_registrations.where(status: :rejected).includes(:user)
+      user_ids = rejected_registrations.map(&:user_id).uniq
+
+      confirmed_user_ids = user_registrations
+                           .where(user_id: user_ids, status: :confirmed)
+                           .distinct.pluck(:user_id).to_set
+      pending_user_ids = user_registrations
+                         .pending
+                         .where(user_id: user_ids)
+                         .distinct.pluck(:user_id).to_set
+
       rejected_to_notify = rejected_registrations
                            .group_by(&:user)
                            .filter_map do |user, regs|
-        next if user_registration_confirmed?(user)
-        next if user_registrations.pending.exists?(user_id: user.id)
+        next if confirmed_user_ids.include?(user.id)
+        next if pending_user_ids.include?(user.id)
 
         reasons = regs.map(&:resolved_rejection_reason_label).uniq
 

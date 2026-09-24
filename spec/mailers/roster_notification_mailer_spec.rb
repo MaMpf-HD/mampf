@@ -393,70 +393,77 @@ describe RosterNotificationMailer do
   end
 
   describe ".rejected" do
+    let(:reasons) { ["Email domain not allowed."] }
+    let(:campaign) { create(:registration_campaign) }
+
+    def add_item(registerable)
+      create(:registration_item, registration_campaign: campaign, registerable: registerable)
+    end
+
     context "with a supported rosterable" do
-      it "enqueues an email for a Tutorial" do
+      it "enqueues a group rejection email with the reasons for a Tutorial" do
         tutorial = create(:tutorial)
+        add_item(tutorial)
 
         expect do
-          described_class.rejected(user, tutorial)
-        end.to have_enqueued_mail(described_class, :rejected_from_group_email)
+          described_class.rejected(user, campaign, reasons: reasons)
+        end.to have_enqueued_mail(described_class, :rejected_from_group_email).with(
+          a_hash_including(
+            params: a_hash_including(rosterable: tutorial, recipient: user, reasons: reasons)
+          )
+        )
       end
 
-      it "enqueues an email for an Exam" do
-        exam = create(:exam, :written)
+      it "enqueues an exam rejection email with the reasons for an Exam" do
+        exam = create(:exam, :written, :without_campaign)
+        add_item(exam)
 
         expect do
-          described_class.rejected(user, exam)
-        end.to have_enqueued_mail(described_class, :rejected_from_exam_email)
+          described_class.rejected(user, campaign, reasons: reasons)
+        end.to have_enqueued_mail(described_class, :rejected_from_exam_email).with(
+          a_hash_including(
+            params: a_hash_including(rosterable: exam, recipient: user, reasons: reasons)
+          )
+        )
       end
     end
 
-    context "with a Lecture" do
-      it "enqueues no email" do
-        lecture = create(:lecture)
-
-        expect do
-          described_class.rejected(user, lecture)
-        end.not_to have_enqueued_mail
-      end
-    end
-
-    context "with an unsupported rosterable" do
+    context "with a campaign that has no supported rosterable" do
       it "does not enqueue an email and logs instead" do
-        unsupported = create(:registration_campaign)
+        # No items, so there is no rosterable to resolve.
         expect(Rails.logger).to receive(:error)
-          .with(/Unsupported rosterable type: Registration::Campaign/)
+          .with(/Unsupported rosterable type: NilClass/)
 
         expect do
-          described_class.rejected(user, unsupported)
+          described_class.rejected(user, campaign, reasons: reasons)
         end.not_to have_enqueued_mail
       end
     end
+  end
 
-    describe "reason link" do
-      let(:lecture) { create(:lecture) }
+  describe "reason link" do
+    let(:lecture) { create(:lecture) }
 
-      context "when the rosterable has no page of its own (Tutorial/Cohort)" do
-        let(:tutorial) { create(:tutorial, lecture: lecture, title: "Übung 3") }
+    context "when the rosterable has no page of its own (Tutorial/Cohort)" do
+      let(:tutorial) { create(:tutorial, lecture: lecture, title: "Übung 3") }
 
-        it "falls back to the lecture home link" do
-          email = described_class.with(rosterable: tutorial,
-                                       recipient: user).rejected_from_group_email
-          delivered = deliver(email)
+      it "falls back to the lecture home link" do
+        email = described_class.with(rosterable: tutorial,
+                                     recipient: user).rejected_from_group_email
+        delivered = deliver(email)
 
-          expect(delivered_body(delivered)).to match(%r{https?://\S*})
-        end
+        expect(delivered_body(delivered)).to match(%r{https?://\S*})
       end
+    end
 
-      context "when the rosterable is an Exam" do
-        let(:exam) { create(:exam, :written, lecture: lecture) }
+    context "when the rosterable is an Exam" do
+      let(:exam) { create(:exam, :written, lecture: lecture) }
 
-        it "includes a link" do
-          email = described_class.with(rosterable: exam, recipient: user).rejected_from_exam_email
-          delivered = deliver(email)
+      it "includes a link" do
+        email = described_class.with(rosterable: exam, recipient: user).rejected_from_exam_email
+        delivered = deliver(email)
 
-          expect(delivered_body(delivered)).to match(%r{https?://\S*})
-        end
+        expect(delivered_body(delivered)).to match(%r{https?://\S*})
       end
     end
   end
