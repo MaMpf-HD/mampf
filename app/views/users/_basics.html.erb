@@ -18,30 +18,32 @@
        id="user-email-error">
   </div>
 </div>
-<div class="mb-3">
-  <%= f.label :first_name, class: "form-label" %>
-  <%= f.text_field :first_name, { class: 'form-control' } %>
-  <div class="invalid-feedback" id="user-first-name-error">
+<% if current_user.admin? %>
+  <div class="mb-3">
+    <%= f.label :first_name, class: "form-label" %>
+    <%= f.text_field :first_name, { class: 'form-control' } %>
+    <div class="invalid-feedback" id="user-first-name-error">
+    </div>
   </div>
-</div>
-<div class="mb-3">
-  <%= f.label :last_name, class: "form-label" %>
-  <%= f.text_field :last_name, { class: 'form-control' } %>
-  <div class="invalid-feedback" id="user-last-name-error">
+  <div class="mb-3">
+    <%= f.label :last_name, class: "form-label" %>
+    <%= f.text_field :last_name, { class: 'form-control' } %>
+    <div class="invalid-feedback" id="user-last-name-error">
+    </div>
   </div>
-</div>
-<div class="mb-3">
-  <%= f.label :matriculation_number, class: "form-label" %>
-  <%= f.text_field :matriculation_number, { class: 'form-control' } %>
-  <div class="invalid-feedback" id="user-matriculation-number-error">
+  <div class="mb-3">
+    <%= f.label :matriculation_number, class: "form-label" %>
+    <%= f.text_field :matriculation_number, { class: 'form-control' } %>
+    <div class="invalid-feedback" id="user-matriculation-number-error">
+    </div>
   </div>
-</div>
-<div class="mb-3">
-  <%= f.label :uni_id, class: "form-label" %>
-  <%= f.text_field :uni_id, { class: 'form-control' } %>
-  <div class="invalid-feedback" id="user-uni-id-error">
+  <div class="mb-3">
+    <%= f.label :uni_id, class: "form-label" %>
+    <%= f.text_field :uni_id, { class: 'form-control' } %>
+    <div class="invalid-feedback" id="user-uni-id-error">
+    </div>
   </div>
-</div>
+<% end %>
 <div class="form-group">
   <%= f.label :current_lecture_id,
               t('admin.user.current_lecture'),
