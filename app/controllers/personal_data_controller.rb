@@ -6,6 +6,7 @@ class PersonalDataController < ApplicationController
   helper PersonalDataHelper
   # The page is where the user goes before going back, not where to return to.
   skip_before_action :store_user_location!
+  before_action :remember_locale_choice, only: :edit
 
   def edit
     @user = current_user

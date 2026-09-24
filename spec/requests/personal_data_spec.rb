@@ -137,6 +137,18 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "the language chosen on the page" do
+    it "becomes the user's language, so an error or the way back keeps it" do
+      user.update!(locale: "en")
+
+      get edit_personal_data_path(locale: "de")
+      patch personal_data_path, params: { user: complete.except(:first_name) }
+
+      expect(user.reload.locale).to eq("de")
+      expect(response.body).to include("Vorname")
+    end
+  end
+
   describe "ways off the page" do
     it "offers to sign out while the question is open" do
       get edit_personal_data_path
