@@ -3,7 +3,8 @@ module Rosters
   class ParticipantQuery
     Result = Struct.new(:scope, :total_count, :unassigned_count, :filter_mode, keyword_init: true)
     # The name a row shows first, see User#tutorial_name.
-    FULL_NAME = "CONCAT_WS(' ', users.first_name, users.last_name)".freeze
+    FULL_NAME = "CONCAT_WS(' ', NULLIF(users.first_name, ''), NULLIF(users.last_name, ''))"
+                .freeze
 
     def initialize(lecture, params)
       @lecture = lecture
