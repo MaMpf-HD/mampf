@@ -33,6 +33,15 @@ RSpec.describe("Interface language", type: :request) do
     expect(response.body).to include("Gliederung")
   end
 
+  it "follows a language the reader picks for the page, also on the lecture home" do
+    lecture = lecture_in("en")
+    sign_in_subscriber("en", lecture)
+
+    get lecture_home_path(lecture), params: { locale: "de" }
+
+    expect(response.body).to include('<html lang="de">')
+  end
+
   it "answers a guest in the language of their browser" do
     get new_user_session_path, headers: { "Accept-Language" => "en-US,en;q=0.9,de;q=0.8" }
 

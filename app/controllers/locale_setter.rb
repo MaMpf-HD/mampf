@@ -23,10 +23,6 @@ module LocaleSetter
       Pagy::I18n.locale = I18n.locale.to_s
     end
 
-    def set_user_locale
-      I18n.locale = current_user&.locale.presence || I18n.default_locale
-    end
-
     def locale_param
       return unless params[:locale].in?(available_locales)
 

@@ -4,7 +4,6 @@ module Registration
            ItemsHelper, CampaignsHelper
     before_action :set_campaign,
                   only: [:create, :destroy, :reject_for_user, :save_preferences]
-    before_action :set_user_locale
     before_action :set_item, only: [:create, :destroy]
 
     def current_ability

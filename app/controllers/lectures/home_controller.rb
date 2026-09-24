@@ -5,7 +5,6 @@ module Lectures
            ::Registration::CampaignsHelper
 
     before_action :set_lecture
-    before_action :set_user_locale
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
