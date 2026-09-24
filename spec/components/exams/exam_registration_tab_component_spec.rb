@@ -195,7 +195,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     render_inline(described_class.new(exam: exam))
 
     document = Nokogiri::HTML.fragment(rendered_content)
-    remove_action = document.at_css("button[title]")
+    remove_action = document.at_css("button.btn-outline-danger[title]")
     filter_label = document.at_css('label[for="exam-participants-filter"]')
     add_toggle = document.at_css(
       "button[data-bs-toggle='collapse'][aria-controls='exam-#{exam.id}-participants-add-form']"

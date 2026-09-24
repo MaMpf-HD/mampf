@@ -84,7 +84,6 @@
               <th><%= t("basics.name") %></th>
               <th><%= User.human_attribute_name(:matriculation_number) %></th>
               <th><%= User.human_attribute_name(:program_id) %></th>
-              <th><%= t("basics.email") %></th>
               <th class="text-end"><%= t("basics.actions") %></th>
             </tr>
           </thead>
@@ -98,10 +97,13 @@
                 data-exams--registration-list-target="entry"
                 data-student-search="<%= "#{user.tutorial_name} #{user.matriculation_number} #{user.email}".downcase %>"
               >
-                <td><%= user.tutorial_name.presence || user.email %></td>
+                <td>
+                  <%= user.tutorial_name.presence || user.email %>
+                  <%= render "shared/copy_email_button", email: user.email %>
+                </td>
+
                 <td><%= user.matriculation_number %></td>
                 <td><%= user.program&.name_with_subject %></td>
-                <td class="text-muted"><%= user.email %></td>
 
                 <td class="text-end">
                   <% if removable %>
@@ -174,7 +176,6 @@
           <th><%= t("basics.name") %></th>
           <th><%= User.human_attribute_name(:matriculation_number) %></th>
           <th><%= User.human_attribute_name(:program_id) %></th>
-          <th><%= t("basics.email") %></th>
         </tr>
       </thead>
 
@@ -183,10 +184,13 @@
           <% user = entry.user %>
 
           <tr>
-            <td><%= user.tutorial_name %></td>
+            <td>
+              <%= user.tutorial_name %>
+              <%= render "shared/copy_email_button", email: user.email %>
+            </td>
+
             <td><%= user.matriculation_number %></td>
             <td><%= user.program&.name_with_subject %></td>
-            <td class="text-muted"><%= user.email %></td>
           </tr>
         <% end %>
       </tbody>
