@@ -130,8 +130,8 @@ class UsersController < ApplicationController
       params.expect(generic_user: [:id, :admin, :editor, :teacher, :name])
     end
 
-    # A user may update their own account here too, so the personal data,
-    # which only the support changes once saved, is an admin's alone.
+    # Teachers and editors update their own account here too; only admins
+    # change the personal data.
     def user_params
       allowed = [:name, :email, :homepage, :current_lecture_id, :image]
       allowed += User::PERSONAL_DATA_FIELDS if current_user.admin?

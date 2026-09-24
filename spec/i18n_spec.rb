@@ -26,7 +26,8 @@ RSpec.describe(I18n) do
   #   expect(non_normalized).to be_empty, error_message
   # end
 
-  # An empty key loads as nil and replaces what other files put under it.
+  # An empty YAML value becomes nil and overwrites translations loaded from
+  # other files.
   it "does not have empty keys" do
     empty = Dir.glob("config/locales/**/*.yml").flat_map do |file|
       nil_paths(YAML.load_file(file, aliases: true)).map { |path| "#{file}: #{path}" }

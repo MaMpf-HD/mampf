@@ -23,7 +23,6 @@ test("can sign up and confirm the account", async ({ page, request }) => {
 
   await new LoginPage(page).login(email, "correct-horse-battery-staple");
 
-  // a new account is asked for its name and matriculation number first
   await expect(page).toHaveURL(/\/personal_data/);
   await page.getByRole("radio", { name: "Yes" }).check();
   await page.getByLabel("First name", { exact: true }).fill("Ada");

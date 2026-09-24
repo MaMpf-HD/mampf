@@ -1,6 +1,6 @@
 module PersonalDataHelper
-  # Lists the steps through the fields still open, ending on a check of all of
-  # them. The Uni ID alone needs no steps: it is the user's to change anyway.
+  # Users with LOCKED_PERSONAL_DATA_FIELDS still empty go through the steps and
+  # confirm; program and Uni ID alone stay editable without them.
   def personal_data_steps(open_fields)
     return [] unless open_fields.intersect?(User::LOCKED_PERSONAL_DATA_FIELDS)
 
@@ -11,7 +11,6 @@ module PersonalDataHelper
     steps + [:uni_id, :check]
   end
 
-  # Lists the programs students may pick, by degree, mathematics first.
   def study_programs
     @study_programs ||=
       Program.offered_to_students

@@ -1,13 +1,10 @@
-# Lets students pick the program they study: programs get the degree they
-# lead to, named the way Heidelberg abbreviates it, and the faculty's programs
-# MaMpf had no course for yet are added. Mathematics is marked, since a student
-# of two subjects is asked whether it is one of them.
+# Lets students pick their study program. Mathematics gets a key because the
+# question to two-subject students needs it, and subject names are translations.
 class AddStudyPrograms < ActiveRecord::Migration[8.0]
   DEGREES = ["bsc100", "bsc50", "msc", "med", "med_extension", "phd"].freeze
 
-  # subject, degree, German name before, German name, English name. Programs are
-  # found by their German names because ids differ between environments; a
-  # program without a name before is added unless it exists.
+  # Columns: subject, degree, old German name, new German name, English name.
+  # Match by subject and German name because ids differ between environments.
   PROGRAMS = [
     ["Mathematik", "bsc100", "BSc 100%", "B.Sc. 100%", "B.Sc. 100%"],
     ["Mathematik", "bsc50", "BSc 50%", "B.Sc. 50%", "B.Sc. 50%"],

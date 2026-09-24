@@ -19,9 +19,8 @@ module LocaleSetter
       cookies[:locale] = locale_param
     end
 
-    # Saves a language picked on the personal data page, which asks everybody
-    # at their first sign-in and has no navbar: the switch in its corner is the
-    # only one a signed-in user sees there.
+    # Saves the language picked on the personal data page, so that a form
+    # error and the next page stay in it.
     def remember_locale_choice
       return unless user_signed_in? && locale_param && request.get?
       return if current_user.locale == locale_param

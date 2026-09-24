@@ -1,9 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Leads from the degree to the program: a student of two subjects who has
- * mathematics among them gets its program without picking, everybody else
- * picks among the programs of the degree.
+ * Records mathematics for a two-subject degree whenever it is one of the
+ * subjects, so nobody picks the other subject because they like it better.
  */
 export default class extends Controller {
   static targets = ["degree", "mathQuestion", "math", "choice", "option", "other"];

@@ -13,7 +13,7 @@ class SessionsController < Devise::SessionsController
     super
     session[:show_login_transition] = true
     flash.clear
-    # The personal data page comes first and leads to the profile anyway.
+    # The personal data page replaces the first-sign-in profile notice.
     return unless first_sign_in?(current_user) && !current_user.personal_data_pending?
 
     flash[:notice] = t("profile.please_update")
