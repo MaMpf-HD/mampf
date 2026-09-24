@@ -8,8 +8,6 @@ class LecturesController < ApplicationController
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
   before_action :check_for_unlock, only: [:outline]
-  before_action :set_view_locale, only: [:edit, :update, :show, :outline,
-                                         :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   before_action :require_turbo_frame, only: [:new]
   layout "administration"
