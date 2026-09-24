@@ -11,7 +11,6 @@ class ExamsController < ApplicationController
 
   def index
     authorize! :index, Exam.new(lecture: @lecture)
-    set_exam_locale
     @exams = @lecture.exams.order(date: :asc)
 
     respond_to do |format|
@@ -27,7 +26,6 @@ class ExamsController < ApplicationController
   def show
     authorize! :show, @exam
     @active_tab = params[:tab] || "settings"
-    set_exam_locale
 
     respond_to do |format|
       # The dashboard is streamed into the lecture's exam tab and has no page of
@@ -48,7 +46,6 @@ class ExamsController < ApplicationController
     @exam = Exam.new
     @exam.lecture = @lecture
     authorize! :new, @exam
-    set_exam_locale
 
     respond_to do |format|
       format.turbo_stream do
@@ -77,7 +74,6 @@ class ExamsController < ApplicationController
     @exam = Exam.new(exam_params)
     @lecture = @exam.lecture
     authorize! :create, @exam
-    set_exam_locale
 
     respond_to do |format|
       if @exam.save
@@ -254,7 +250,6 @@ class ExamsController < ApplicationController
       @exam = Exam.find(params[:id])
       @exam.load_registration_deadline
       @lecture = @exam.lecture
-      set_exam_locale
     end
 
     def set_lecture
@@ -262,11 +257,6 @@ class ExamsController < ApplicationController
       return if @lecture
 
       redirect_to root_path, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_exam_locale
-      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     end
 
     def exam_params

@@ -56,7 +56,7 @@ async function lectureWithVoucher(
     title: COURSE_TITLE, short_title: COURSE_SHORT_TITLE,
   });
   const lecture = await factory.create("lecture", [], {
-    course_id: course.id, teacher_id: teacherId, sort, locale: "en",
+    course_id: course.id, teacher_id: teacherId, sort,
   });
   // The role goes in as a trait: speaker vouchers are no longer issued, and
   // the trait builds one that is still in circulation.

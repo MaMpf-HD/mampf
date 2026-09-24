@@ -57,7 +57,6 @@ class MediaController < ApplicationController
     # destroy the notifications related to the medium
     current_user.notifications.where(notifiable_type: "Medium",
                                      notifiable_id: @medium.id).find_each(&:destroy)
-    I18n.locale = @medium.locale_with_inheritance
     commontator_thread_show(@medium)
     render layout: "application_no_sidebar"
   end
@@ -67,12 +66,10 @@ class MediaController < ApplicationController
     @medium = Medium.new(teachable: @teachable,
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
-    I18n.locale = @teachable.locale_with_inheritance
     @medium.sort = params[:sort] || "LessonMaterial"
   end
 
   def edit
-    I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
     render layout: current_user.layout
   end
@@ -121,7 +118,6 @@ class MediaController < ApplicationController
   end
 
   def update
-    I18n.locale = @medium.locale_with_inheritance
     old_manuscript_data = @medium.manuscript_data
     old_video_data = @medium.video_data
     old_geogebra_data = @medium.geogebra_data
@@ -265,7 +261,6 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_video")
       return
     end
-    I18n.locale = @medium.locale_with_inheritance
     @time = params[:time]
     render layout: "thyme"
   end
@@ -348,7 +343,6 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_geogebra")
       return
     end
-    I18n.locale = @medium.locale_with_inheritance
     render layout: "geogebra"
     prevent_caching unless @medium.free?
   end
@@ -391,7 +385,6 @@ class MediaController < ApplicationController
 
   # add a toc item for the video
   def add_item
-    I18n.locale = @medium.locale_with_inheritance
     @time = params[:time].to_f
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
@@ -403,7 +396,6 @@ class MediaController < ApplicationController
 
   # add a reference for the video
   def add_reference
-    I18n.locale = @medium.locale_with_inheritance
     @time = params[:time].to_f
     @end_time = [@time + 60, @medium.video_duration].min
     @referral = Referral.new(medium: @medium,
@@ -437,7 +429,6 @@ class MediaController < ApplicationController
 
   # start the thyme editor
   def enrich
-    I18n.locale = @medium.locale_with_inheritance
     render layout: "enrich"
   end
 
@@ -485,7 +476,6 @@ class MediaController < ApplicationController
   end
 
   def statistics
-    I18n.locale = @medium.locale || I18n.default_locale
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption
@@ -546,13 +536,11 @@ class MediaController < ApplicationController
   end
 
   def fill_medium_preview
-    I18n.locale = current_user.locale
     @medium = Medium.find_by(id: params[:id])&.becomes(Medium) || Medium.new
     authorize! :fill_medium_preview, @medium
   end
 
   def render_medium_actions
-    I18n.locale = current_user.locale
     @medium = Medium.find_by(id: params[:id])&.becomes(Medium) || Medium.new
     authorize! :render_medium_actions, @medium
   end
@@ -565,8 +553,6 @@ class MediaController < ApplicationController
 
   def render_import_vertex
     @id = params[:id]
-    quiz_id = params[:quiz_id]
-    I18n.locale = Quiz.find_by(id: quiz_id)&.locale_with_inheritance
     @purpose = "quiz"
     authorize! :render_import_vertex, Medium.new
     render :render_import_media
@@ -582,24 +568,20 @@ class MediaController < ApplicationController
 
   def cancel_import_vertex
     authorize! :cancel_import_vertex, Medium.new
-    I18n.locale = Quiz.find_by(id: params[:quiz_id])&.locale_with_inheritance
     render :cancel_import_media
   end
 
   def fill_quizzable_area
     @vertex_id = params[:vertex]
     @quizzable = @medium.becomes_quizzable
-    I18n.locale = @quizzable.locale_with_inheritance
   end
 
   def fill_quizzable_preview
     @quizzable = @medium.becomes_quizzable
-    I18n.locale = @quizzable.locale_with_inheritance
   end
 
   def fill_reassign_modal
     @quizzable = @medium.becomes_quizzable
-    I18n.locale = @quizzable.locale_with_inheritance
     @in_quiz = params[:in_quiz] == "true"
     @quiz_id = params[:quiz_id].to_i
     @no_rights = params[:rights] == "none"
@@ -614,7 +596,6 @@ class MediaController < ApplicationController
   # Renders the feedback player. Do not confuse with the feedback button
   # which has nothing to do with the thyme player(s).
   def feedback
-    I18n.locale = @medium.locale_with_inheritance
     @time = params[:time]
     render layout: "feedback"
   end

@@ -6,7 +6,6 @@ import { expect, test } from "./_support/fixtures";
 test.describe("lecture content for an editor who is not subscribed", () => {
   test("opens the general information", async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      locale: "en",
       teacher_id: user.id,
       organizational: true,
       organizational_concept: "<p>Exercise sheets appear on Wednesdays</p>",
@@ -22,7 +21,6 @@ test.describe("lecture content for an editor who is not subscribed", () => {
 
   test("opens the course page", async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      locale: "en",
       teacher_id: user.id,
     });
 

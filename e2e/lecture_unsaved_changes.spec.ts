@@ -4,7 +4,7 @@ import { expect, test } from "./_support/fixtures";
 // loads them, Turbo has announced turbo:load long before they are evaluated.
 test("shows the save bar after arriving through an in-app visit",
   async ({ factory, admin: { page } }) => {
-    const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+    const lecture = await factory.create("lecture", ["released_for_all"]);
     const warning = page.locator("#lecture-basics-warning");
 
     await page.goto(`/lectures/${lecture.id}/home`);

@@ -1,6 +1,5 @@
 <%= vite_stylesheet_tag "styles/sidebar.scss" %>
 
-<% I18n.with_locale(lecture&.locale_with_inheritance) do %>
 <%# Content is only accessible to subscribers and staff (mirrors the
         redirect in LecturesController#check_for_subscribe). %>
 <% content_accessible = lecture &&
@@ -245,4 +244,3 @@
     </li>
   <% end %>
 </ul>
-<% end %>

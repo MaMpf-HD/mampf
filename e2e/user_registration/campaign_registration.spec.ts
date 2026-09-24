@@ -15,12 +15,10 @@ async function createTeacherOwnedReleasedLecture(
 ): Promise<FactoryBotObject> {
   const course = await factory.create("course", [], {
     title: "Advanced Calculus",
-    locale: "en",
   });
   return factory.create("lecture", ["released_for_all"], {
     course_id: course.id,
     teacher_id: teacherId,
-    locale: "en",
   });
 }
 

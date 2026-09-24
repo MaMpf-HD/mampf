@@ -73,7 +73,6 @@ class VouchersController < ApplicationController
     def set_related_data
       @lecture = @voucher.lecture
       @role = @voucher.role
-      I18n.locale = @lecture.locale
     end
 
     def success_message(voucher)
@@ -105,7 +104,6 @@ class VouchersController < ApplicationController
     end
 
     def handle_voucher_not_found
-      I18n.locale = current_user.locale
       error_message = I18n.t("controllers.no_voucher")
       respond_to do |format|
         format.html do

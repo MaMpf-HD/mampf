@@ -4,7 +4,7 @@ import { attachToUploadArea } from "./_support/uploads";
 test("can upload a manuscript and extract structure from it",
   async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", [],
-      { teacher_id: user.id, content_mode: "manuscript", locale: "en" });
+      { teacher_id: user.id, content_mode: "manuscript" });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "Script" });
 

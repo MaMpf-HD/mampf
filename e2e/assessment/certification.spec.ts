@@ -76,7 +76,7 @@ test.describe("exam eligibility decisions", () => {
     // the sweep asks back with what it would decide
     teacher.page.on("dialog", (dialog) => {
       expect(dialog.message()).toContain("1 eligible, 1 not eligible");
-      dialog.accept();
+      void dialog.accept();
     });
     await teacher.page.getByRole("button", { name: "Accept proposals" }).click();
 

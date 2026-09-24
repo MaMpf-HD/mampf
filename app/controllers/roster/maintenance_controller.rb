@@ -11,7 +11,6 @@ module Roster
                          :update_self_materialization, :bulk_update_self_materialization]
     before_action :build_maintenance_params
     before_action :authorize_lecture
-    before_action :use_lecture_locale
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_flash(:alert, t("roster.errors.user_already_in_bundle",
@@ -368,11 +367,6 @@ module Roster
 
       def build_maintenance_params
         @mparams = Rosters::MaintenanceParams.new(params, lecture: @lecture)
-      end
-
-      def use_lecture_locale
-        locale = @lecture&.locale_with_inheritance || I18n.default_locale
-        I18n.locale = locale
       end
   end
 end

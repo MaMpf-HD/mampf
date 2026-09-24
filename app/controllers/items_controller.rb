@@ -7,15 +7,10 @@ class ItemsController < ApplicationController
   end
 
   def edit
-    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
   end
 
   def create
-    if params[:item][:locale].in?(I18n.available_locales.map(&:to_s))
-      I18n.locale = params[:item][:locale]
-    end
     @item = Item.new(item_params)
-    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
     authorize! :create, @item
     @item.save
     @errors = @item.errors unless @item.valid?
@@ -28,7 +23,6 @@ class ItemsController < ApplicationController
   end
 
   def update
-    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
     @item.update(item_params)
     @errors = @item.errors unless @item.valid?
   end

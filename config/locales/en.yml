@@ -476,6 +476,9 @@ en:
       no_active_voucher: >
         There is no active %{role} for this event series.
       info:
+        language: >
+          The language this event series is taught in. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         home_intro: >
           Shown at the top of the lecture home page, above the registration.
           Use it to welcome students, explain the registration process, and
@@ -756,6 +759,9 @@ en:
         No image has been uploaded yet. Therefore, the generic image will be
         used for event cards.
       info:
+        language: >
+          The language the course is taught in. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         title: >
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
@@ -1260,8 +1266,9 @@ en:
           </li>
           </ul>
         language: >
-          Here you can select the language for this medium. By default,
-          it is the language of the associated event series/course.
+          The language of this medium; by default that of the associated
+          event series/course. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         video: >
           The video should be in mp4 format. The recommended horizontal
           resolution is 1080 Pixel for future compatibility.
@@ -3498,6 +3505,8 @@ en:
     email: 'Email'
     preferences: 'Preferences'
     language: 'Language'
+    teaching_language: 'Language of instruction'
+    material_language: 'Language of the material'
     date: 'Date'
     location: 'Location'
     not_specified: 'Not specified'

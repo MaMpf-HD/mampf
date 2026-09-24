@@ -2,7 +2,6 @@ module Registration
   class ItemsController < ApplicationController
     helper RosterHelper
     before_action :set_campaign
-    before_action :set_locale
     before_action :set_item, only: [:destroy, :destroy_with_registerable,
                                     :update, :roster]
     authorize_resource class: "Registration::Item", except: [:create]
@@ -159,10 +158,6 @@ module Registration
         return if @campaign
 
         respond_with_flash(:alert, t("registration.campaign.not_found"), redirect_path: root_path)
-      end
-
-      def set_locale
-        I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
       end
 
       def set_item

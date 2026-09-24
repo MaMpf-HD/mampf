@@ -4,7 +4,6 @@ module Roster
   class SelfMaterializationController < ApplicationController
     helper ::UserRegistrationsHelper
     before_action :set_rosterable, only: [:self_add, :self_remove]
-    before_action :set_user_locale
     before_action :authorize_lecture
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|

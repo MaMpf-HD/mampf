@@ -56,7 +56,6 @@ class TutorialsController < ApplicationController
   def new
     @tutorial = Tutorial.new
     @lecture = Lecture.find_by(id: params[:lecture_id])
-    set_tutorial_locale
     @tutorial.lecture = @lecture
     authorize! :new, @tutorial
 
@@ -98,7 +97,6 @@ class TutorialsController < ApplicationController
     @tutorial.skip_campaigns = true if registration_section_no_campaign?
     authorize! :create, @tutorial
     @lecture = @tutorial.lecture
-    set_tutorial_locale
 
     persisted = false
     Tutorial.transaction do
@@ -190,7 +188,6 @@ class TutorialsController < ApplicationController
   def cancel_new
     @lecture = Lecture.find_by(id: params[:lecture])
     authorize! :cancel_new, Tutorial.new(lecture: @lecture)
-    set_tutorial_locale
     @none_left = @lecture&.tutorials&.none?
   end
 
@@ -216,7 +213,6 @@ class TutorialsController < ApplicationController
   def validate_certificate
     authorize! :validate_certificate, Tutorial.new
     @lecture = Lecture.find_by(id: params[:lecture_id])
-    set_tutorial_locale
   end
 
   def export_teams
@@ -241,7 +237,7 @@ class TutorialsController < ApplicationController
     def set_tutorial
       @tutorial = Tutorial.find_by(id: params[:id])
       @lecture = @tutorial&.lecture
-      set_tutorial_locale and return if @tutorial
+      return if @tutorial
 
       redirect_to :root, alert: I18n.t("controllers.no_tutorial")
     end
@@ -255,7 +251,7 @@ class TutorialsController < ApplicationController
 
     def set_lecture
       @lecture = Lecture.find_by(id: params[:id])
-      set_tutorial_locale and return if @lecture
+      return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
@@ -265,11 +261,6 @@ class TutorialsController < ApplicationController
       return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_tutorial_locale
-      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     end
 
     def can_view_index

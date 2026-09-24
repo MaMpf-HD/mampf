@@ -4,7 +4,6 @@ class TalksController < ApplicationController
 
   before_action :set_talk, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  before_action :set_view_locale, only: [:edit]
   layout "administration"
 
   def current_ability
@@ -19,8 +18,6 @@ class TalksController < ApplicationController
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @talk = Talk.new(lecture: @lecture)
     authorize! :new, @talk
-    I18n.locale = @talk.lecture.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
 
     respond_to do |format|
       format.js do
@@ -58,8 +55,6 @@ class TalksController < ApplicationController
     dates = parse_talk_dates(params[:talk][:dates])
     @talk.dates = dates
 
-    I18n.locale = @talk&.lecture&.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
     position = params[:talk][:predecessor]
 
     saved = false
@@ -98,8 +93,6 @@ class TalksController < ApplicationController
   end
 
   def update
-    I18n.locale = @talk.lecture.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
     if @talk.update(talk_params) && @talk.valid?
       dates = parse_talk_dates(params[:talk][:dates])
       @talk.update(dates: dates)
@@ -200,11 +193,6 @@ class TalksController < ApplicationController
     def modify_params
       params.expect(talk: [:description, :display_description,
                            { tag_ids: [] }])
-    end
-
-    def set_view_locale
-      I18n.locale = @talk.lecture.locale_with_inheritance ||
-                    current_user.locale || I18n.default_locale
     end
 
     def parse_talk_dates(dates_param)

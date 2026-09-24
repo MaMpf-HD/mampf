@@ -33,11 +33,11 @@ class StudentMessagesController < ApplicationController
     @message.lecture = @lecture
     @message.sender = current_user
     @message.sender_role = @catalog.staff? ? :staff : :tutor
-    @message.address_to(audiences)
+    @message.address_to(audiences, labels: @catalog.labels_by_locale(audiences.map(&:key)))
     attach_scanned(message_params[:attachment])
 
     if @message.save
-      StudentMessageMailer.with(message: @message).student_message_email.deliver_later
+      StudentMessageMailer.deliver_by_locale(@message)
       redirect_to return_path, notice: t("student_message.sent", count: @message.recipients_count)
     else
       redirect_to return_path, alert: @message.errors.full_messages.to_sentence
@@ -58,13 +58,8 @@ class StudentMessagesController < ApplicationController
     end
 
     # Whoever may write to nothing in this lecture has no business here.
-    # The labels this catalog makes are what the record keeps and the mail
-    # prints, so they are made in the lecture's language, not the sender's;
-    # the picker on the page makes its own.
     def set_catalog
-      @catalog = I18n.with_locale(@lecture.locale_with_inheritance || I18n.default_locale) do
-        StudentMessages::Catalog.new(@lecture, current_user).tap(&:audiences)
-      end
+      @catalog = StudentMessages::Catalog.new(@lecture, current_user).tap(&:audiences)
       return if @catalog.audiences.any?
 
       redirect_to root_path, alert: t("student_message.not_allowed")

@@ -14,7 +14,7 @@ async function openBulkUpload(page: Page) {
 // shape: hand over a file, see it named on the page, save, see it survive.
 test.describe("uploading through Uppy", () => {
   test("a video on a medium", async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "Kaviar" });
 
@@ -33,7 +33,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a second video, without reloading the page in between",
     async ({ factory, teacher: { page, user } }) => {
-      const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
       const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
         { lecture_id: lecture.id, sort: "Kaviar" });
 
@@ -50,7 +50,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a rejected file, with the reason the server gave",
     async ({ factory, teacher: { page, user } }) => {
-      const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
       const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
         { lecture_id: lecture.id, sort: "Kaviar" });
 
@@ -85,7 +85,7 @@ test.describe("uploading through Uppy", () => {
     });
 
   test("a geogebra applet on a medium", async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "WorkedExample" });
 
@@ -97,7 +97,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a submission, once the assurance is given",
     async ({ factory, student: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await factory.create("assignment", [], { lecture_id: lecture.id });
       const tutorial = await factory.create("tutorial", [],
         { lecture_id: lecture.id, title: "Mo 10" });
@@ -138,7 +138,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a submission, up to the moment the file is taken back out",
     async ({ factory, student: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await factory.create("assignment", [], { lecture_id: lecture.id });
       const tutorial = await factory.create("tutorial", [],
         { lecture_id: lecture.id, title: "Mo 10" });
@@ -167,7 +167,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a submission, with the box ticked before the file is chosen",
     async ({ factory, student: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await factory.create("assignment", [], { lecture_id: lecture.id });
       const tutorial = await factory.create("tutorial", [],
         { lecture_id: lecture.id, title: "Mo 10" });
@@ -196,7 +196,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a correction, once the deadline has passed",
     async ({ factory, student, tutor: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       // The trait rather than a date in the past: an assignment refuses a
       // deadline that has already gone by, and writes it afterwards instead.
       const assignment = await factory.create("assignment", ["expired"], {
@@ -233,7 +233,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a stack of corrections, each named after its submission",
     async ({ factory, student, tutor: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       // The trait rather than a date in the past: an assignment refuses a
       // deadline that has already gone by, and writes it afterwards instead.
       const assignment = await factory.create("assignment", ["expired"], {
@@ -273,7 +273,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a stack of corrections the tutor changes their mind about",
     async ({ factory, student, tutor: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       // The trait rather than a date in the past: an assignment refuses a
       // deadline that has already gone by, and writes it afterwards instead.
       const assignment = await factory.create("assignment", ["expired"], {

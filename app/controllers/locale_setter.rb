@@ -10,20 +10,17 @@ module LocaleSetter
 
     def set_locale
       I18n.locale = locale_param || current_user.try(:locale) ||
-                    cookie_locale_param || I18n.default_locale
+                    cookie_locale_param || browser_locale || I18n.default_locale
       set_pagy_locale
 
       return if respond_to?(:user_signed_in?) && user_signed_in?
+      return unless locale_param && request.get?
 
-      cookies[:locale] = I18n.locale.to_s
+      cookies[:locale] = locale_param
     end
 
     def set_pagy_locale
       Pagy::I18n.locale = I18n.locale.to_s
-    end
-
-    def set_user_locale
-      I18n.locale = current_user&.locale.presence || I18n.default_locale
     end
 
     def locale_param
@@ -36,6 +33,17 @@ module LocaleSetter
       return unless cookies[:locale].in?(available_locales)
 
       cookies[:locale]
+    end
+
+    def browser_locale
+      offered = request.headers["Accept-Language"].to_s.split(",").filter_map do |entry|
+        tag, *parameters = entry.split(";").map(&:strip)
+        weight = parameters.find { |p| p.start_with?("q=") }&.delete_prefix("q=")
+        weight = weight ? weight.to_f : 1.0
+        code = tag.to_s.downcase.split("-").first
+        [code, weight] if weight.positive? && code.in?(available_locales)
+      end
+      offered.max_by { |_code, weight| weight }&.first
     end
 
     def available_locales

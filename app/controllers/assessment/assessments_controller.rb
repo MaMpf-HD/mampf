@@ -3,7 +3,6 @@ module Assessment
     before_action :set_lecture, only: [:index, :assignments_complete]
     before_action :set_assessable, only: [:show]
     before_action :set_assessment, only: [:update]
-    before_action :set_locale
 
     def current_ability
       @current_ability ||= AssessmentAbility.new(current_user)
@@ -142,14 +141,6 @@ module Assessment
         return if @assessable
 
         redirect_to root_path, alert: I18n.t("assessment.errors.no_assessable")
-      end
-
-      def set_locale
-        I18n.locale = @lecture&.locale_with_inheritance ||
-                      @assessable&.lecture&.locale_with_inheritance ||
-                      @assessment&.assessable&.lecture&.locale_with_inheritance ||
-                      current_user.locale ||
-                      I18n.default_locale
       end
 
       def set_assessment

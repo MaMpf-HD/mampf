@@ -12,7 +12,6 @@ test("teacher puts a program on the home page and a student can open it", async 
 }) => {
   const lecture = await factory.create("lecture", ["released_for_all"], {
     teacher_id: teacher.user.id,
-    locale: "en",
   });
 
   const editPage = new LectureEditPage(teacher.page, lecture.id);

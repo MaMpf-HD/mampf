@@ -11,7 +11,6 @@ class QuestionsController < ApplicationController
   end
 
   def edit
-    I18n.locale = @question.locale_with_inheritance
   end
 
   def update
@@ -39,13 +38,11 @@ class QuestionsController < ApplicationController
   def reassign
     question_old = Question.find_by(id: params[:id])
     authorize! :reassign, question_old
-    I18n.locale = question_old.locale_with_inheritance
     @question, answer_map = question_old.duplicate
     @question.editors = [current_user]
     @quizzes.each do |q|
       Quiz.find_by(id: q).replace_reference!(question_old, @question, answer_map)
     end
-    I18n.locale = @question.locale_with_inheritance
     if question_params[:type] == "edit"
       redirect_to edit_question_path(@question)
       return

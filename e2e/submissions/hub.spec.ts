@@ -13,7 +13,6 @@ test.describe("the student's sheet list", () => {
   ): Promise<FactoryBotObject> {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacherId,
-      locale: "en",
     });
     // The subscription is what `proper_student_in?` reads; the roster
     // membership beside it is what the gradebook counts.
@@ -45,7 +44,7 @@ test.describe("the student's sheet list", () => {
     student,
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      teacher_id: teacher.user.id, locale: "en",
+      teacher_id: teacher.user.id,
     });
     await factory.create("lecture_user_join", [], {
       lecture_id: lecture.id, user_id: student.user.id,
