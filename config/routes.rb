@@ -1116,6 +1116,10 @@ Rails.application.routes.draw do
       to: "users#list_generic_users",
       as: "list_generic_users"
 
+  get "captcha_challenge",
+      to: "captcha_challenges#show",
+      as: "captcha_challenge"
+
   get "users/fill_user_select",
       to: "users#fill_user_select",
       as: "fill_user_select"
