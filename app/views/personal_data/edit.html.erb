@@ -7,6 +7,12 @@
 
 <%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch,
               local: true, data: { controller: asking ? "participation-choice" : nil } do |f| %>
+  <div class="mb-4">
+    <%= f.label :name, t("basics.display_name"), class: "form-label" %>
+    <%= f.text_field :name, class: "form-control", aria: { describedby: "display-name-hint" } %>
+    <div class="form-text" id="display-name-hint"><%= t("personal_data.display_name_hint") %></div>
+  </div>
+
   <% if asking %>
     <fieldset class="mb-3">
       <legend class="h6"><%= t("personal_data.participation_question") %></legend>

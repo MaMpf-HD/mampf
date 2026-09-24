@@ -29,13 +29,18 @@ class PersonalDataController < ApplicationController
   private
 
     def decline
-      @user.update!(personal_data_declined_at: Time.current)
-      redirect_to after_personal_data_path
+      @user.assign_attributes(name: params.dig(:user, :name) || @user.name,
+                              personal_data_declined_at: Time.current)
+      if @user.save
+        redirect_to after_personal_data_path
+      else
+        render :edit, status: :unprocessable_content
+      end
     end
 
     # Only the fields still empty: what is saved is the support's to change.
     def personal_data_params
-      params.fetch(:user, {}).permit(*current_user.open_personal_data_fields,
+      params.fetch(:user, {}).permit(:name, *current_user.open_personal_data_fields,
                                      :no_matriculation_number, :personal_data_confirmation)
     end
 

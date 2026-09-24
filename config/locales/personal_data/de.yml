@@ -7,8 +7,12 @@ de:
       Universität Heidelberg werden hier organisiert.
     why: >-
       Dafür brauchen wir den Namen und die Matrikelnummer, unter denen die
-      Universität Heidelberg Dich kennt. Dein Anzeigename bleibt für alles
-      andere, wie er ist.
+      Universität Heidelberg Dich kennt.
+    display_name_hint: >-
+      So erscheinst Du im Forum, bei Kommentaren und überall dort, wo Dein Name
+      aus der Universität nicht gebraucht wird. Bei vielen steht hier noch der
+      Anfang ihrer E-Mail-Adresse – eine gute Gelegenheit, ihn zu ändern. Du
+      kannst ihn jederzeit in Deinem Profil ändern.
     saved_by_support_html: >-
       Gespeicherten Namen und Matrikelnummer ändert nur der Support: %{support}.
     no_matriculation_number: "Ich habe noch keine Matrikelnummer"

@@ -145,6 +145,29 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "the display name" do
+    it "changes with a yes" do
+      patch personal_data_path,
+            params: { participation: "yes", user: complete.merge(name: "Ada L.") }
+
+      expect(user.reload.name).to eq("Ada L.")
+    end
+
+    it "changes with a no as well" do
+      patch personal_data_path, params: { participation: "no", user: { name: "Ada L." } }
+
+      expect(user.reload.name).to eq("Ada L.")
+      expect(user).to be_personal_data_declined
+    end
+
+    it "may not be left empty" do
+      patch personal_data_path, params: { participation: "no", user: { name: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload).to be_personal_data_pending
+    end
+  end
+
   describe "the Uni ID" do
     it "stays the user's to change, without the confirmation" do
       patch personal_data_path, params: { user: complete.merge(uni_id: "ab123") }

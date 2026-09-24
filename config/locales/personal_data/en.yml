@@ -7,7 +7,12 @@ en:
       University are organised here.
     why: >-
       For them we need the name and matriculation number Heidelberg University
-      knows you by. Your display name stays as it is for everything else.
+      knows you by.
+    display_name_hint: >-
+      This is how you appear in the forum, in comments and wherever your
+      university name is not needed. Many still have the start of their email
+      address here - a good moment to change it. You can change it at any time
+      on your profile page.
     saved_by_support_html: >-
       Your saved name and matriculation number can only be changed by the
       support: %{support}.
