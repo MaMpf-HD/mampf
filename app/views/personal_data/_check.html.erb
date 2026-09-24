@@ -1,0 +1,27 @@
+<dl class="row">
+  <% User::PERSONAL_DATA_FIELDS.each do |field| %>
+    <% step = field.in?([:first_name, :last_name]) ? :name : field %>
+    <dt class="col-sm-4"><%= User.human_attribute_name(field) %></dt>
+    <dd class="col-sm-8 d-flex gap-2">
+      <span data-personal-data-form-target="summary" data-field="<%= field %>">
+        <%= f.object.public_send(field).presence || "–" %>
+      </span>
+      <% if steps.include?(step) && field != :last_name %>
+        <button type="button" class="btn btn-link p-0"
+                aria-label="<%= t("personal_data.change_step",
+                                  step: t("personal_data.steps.#{step}")) %>"
+                data-action="personal-data-form#change"
+                data-personal-data-form-step-param="<%= steps.index(step) %>">
+          <%= t("personal_data.change") %>
+        </button>
+      <% end %>
+    </dd>
+  <% end %>
+</dl>
+
+<div class="form-check mb-3">
+  <%= f.check_box :personal_data_confirmation, class: "form-check-input" %>
+  <%= f.label :personal_data_confirmation,
+              t("personal_data.confirmation_html", support: support),
+              class: "form-check-label" %>
+</div>

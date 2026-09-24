@@ -19,6 +19,7 @@ de:
       kannst ihn auch später in Deinem Profil ändern.
     saved_by_support_html: >-
       Gespeicherten Namen und Matrikelnummer ändert nur der Support: %{support}.
+    locked_hint: "Nach dem Speichern kann das nur noch der Support ändern."
     no_matriculation_number: "Ich habe noch keine Matrikelnummer"
     uni_id_hint: "Optional, z. B. ab123. Du kannst sie jederzeit selbst ändern."
     confirmation_html: >-
@@ -42,6 +43,15 @@ de:
     participation_yes: "Ja"
     participation_no: "Nein"
     continue: "Weiter"
+    change: "Ändern"
+    change_step: "Ändern: %{step}"
+    no_matriculation_number_yet: "noch keine"
+    step_heading: "Schritt %{current} von %{total}: %{title}"
+    steps:
+      name: "Name"
+      matriculation_number: "Matrikelnummer"
+      uni_id: "Uni-ID"
+      check: "Angaben prüfen"
   activerecord:
     attributes:
       user:

@@ -19,7 +19,23 @@ test("asks once for the name and matriculation number after sign-in",
     await page.getByRole("radio", { name: "Yes" }).check();
     await page.getByLabel("First name").fill("Ada");
     await page.getByLabel("Last name").fill("Lovelace");
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByText("Step 2 of 4: Matriculation number")).toBeVisible();
     await page.getByLabel("Matriculation number", { exact: true }).fill("3456789");
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect(page.getByText("Step 4 of 4: Check your details")).toBeVisible();
+    await page.getByRole("button", { name: "Change: Name" }).click();
+    await page.getByLabel("First name").fill("Augusta Ada");
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByText("Augusta Ada")).toBeVisible();
+    await expect(page.getByText("3456789")).toBeVisible();
+
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("must be accepted")).toBeVisible();
 
@@ -46,8 +62,9 @@ test("lets a user who takes part in no exercise class skip it",
     await expect(page).toHaveURL(/\/main\/start/);
 
     await page.goto("/profile/edit");
+    await expect(page.getByLabel("Display name")).toHaveValue("Ada L.");
     await page.getByRole("link", { name: "Show or complete" }).click();
-    await expect(page.getByText("you appear as Ada L.")).toBeVisible();
+    await expect(page.getByText("Step 1 of 4: Name")).toBeVisible();
     await page.getByRole("link", { name: "Back", exact: true }).click();
     await expect(page).toHaveURL(/\/profile\/edit/);
   });

@@ -20,6 +20,7 @@ en:
     saved_by_support_html: >-
       Your saved name and matriculation number can only be changed by the
       support: %{support}.
+    locked_hint: "Once saved, only the support can change this."
     no_matriculation_number: "I do not have a matriculation number yet"
     uni_id_hint: "Optional, e.g. ab123. You can change it yourself at any time."
     confirmation_html: >-
@@ -43,6 +44,15 @@ en:
     participation_yes: "Yes"
     participation_no: "No"
     continue: "Continue"
+    change: "Change"
+    change_step: "Change: %{step}"
+    no_matriculation_number_yet: "none yet"
+    step_heading: "Step %{current} of %{total}: %{title}"
+    steps:
+      name: "Name"
+      matriculation_number: "Matriculation number"
+      uni_id: "Uni ID"
+      check: "Check your details"
   activerecord:
     attributes:
       user:

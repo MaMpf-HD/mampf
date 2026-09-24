@@ -1,12 +1,16 @@
 <% open_fields = @user.open_personal_data_fields %>
+<% steps = personal_data_steps(open_fields) %>
 <% support = mail_to(DefaultSetting::PROJECT_EMAIL) %>
 <% asking = @asking %>
 
 <h2><%= t("personal_data.title") %></h2>
 <p><%= t("personal_data.lead") %></p>
 
-<%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch,
-              local: true, data: { controller: asking ? "participation-choice" : nil } do |f| %>
+<% form_data = { controller: "personal-data-form",
+                 personal_data_form_no_matriculation_number_value:
+                   t("personal_data.no_matriculation_number_yet") } %>
+<%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch, local: true,
+              data: asking || steps.any? ? form_data : {} do |f| %>
   <% if asking %>
     <fieldset class="mb-3">
       <legend class="h6"><%= t("personal_data.participation_question") %></legend>
@@ -15,8 +19,8 @@
         <div class="form-check">
           <%= radio_button_tag :participation, answer, @participation == answer,
                                class: "form-check-input",
-                               data: { participation_choice_target: "choice",
-                                       action: "participation-choice#show" } %>
+                               data: { personal_data_form_target: "choice",
+                                       action: "personal-data-form#show" } %>
           <%= label_tag "participation_#{answer}", t("personal_data.participation_#{answer}"),
                         class: "form-check-label" %>
         </div>
@@ -24,57 +28,50 @@
     </fieldset>
   <% end %>
 
-  <div data-participation-choice-target="yes">
+  <div data-personal-data-form-target="yes">
     <p><%= t("personal_data.why") %></p>
     <% if open_fields.size < User::PERSONAL_DATA_FIELDS.size %>
       <p class="form-text"><%= t("personal_data.saved_by_support_html", support: support) %></p>
     <% end %>
 
-    <% [:first_name, :last_name].each do |field| %>
-      <div class="mb-3">
-        <%= f.label field, class: "form-label" %>
-        <%= f.text_field field, class: "form-control", disabled: open_fields.exclude?(field),
-                                autocomplete: field == :first_name ? "given-name" : "family-name" %>
-      </div>
-    <% end %>
-
-    <div class="mb-3">
-      <%= f.label :matriculation_number, class: "form-label" %>
-      <%= f.text_field :matriculation_number, class: "form-control", inputmode: "numeric",
-                                              disabled: open_fields.exclude?(:matriculation_number) %>
-      <% if open_fields.include?(:matriculation_number) %>
-        <div class="form-check mt-2">
-          <%= f.check_box :no_matriculation_number, class: "form-check-input" %>
-          <%= f.label :no_matriculation_number, t("personal_data.no_matriculation_number"),
-                      class: "form-check-label" %>
-        </div>
+    <% if steps.empty? %>
+      <% [:name, :matriculation_number, :uni_id].each do |part| %>
+        <%= render "personal_data/#{part}_fields", f: f, open_fields: open_fields %>
       <% end %>
-    </div>
-
-    <div class="mb-3">
-      <%= f.label :uni_id, class: "form-label" %>
-      <%= f.text_field :uni_id, class: "form-control", aria: { describedby: "uni-id-hint" },
-                                disabled: open_fields.exclude?(:uni_id) %>
-      <div class="form-text" id="uni-id-hint"><%= t("personal_data.uni_id_hint") %></div>
-    </div>
-
-    <% if open_fields.intersect?(User::LOCKED_PERSONAL_DATA_FIELDS) %>
-      <div class="form-check mb-3">
-        <%= f.check_box :personal_data_confirmation, class: "form-check-input" %>
-        <%= f.label :personal_data_confirmation,
-                    t("personal_data.confirmation_html", support: support),
-                    class: "form-check-label" %>
-      </div>
+    <% else %>
+      <% steps.each_with_index do |step, index| %>
+        <% enter = "keydown.enter->personal-data-form#next" unless step == :check %>
+        <%= tag.section data: { personal_data_form_target: "step", action: enter } do %>
+          <h3 class="h6" tabindex="-1">
+            <%= t("personal_data.step_heading", current: index + 1, total: steps.size,
+                                                title: t("personal_data.steps.#{step}")) %>
+          </h3>
+          <% if step == :check %>
+            <%= render "personal_data/check", f: f, steps: steps, support: support %>
+          <% else %>
+            <%= render "personal_data/#{step}_fields", f: f, open_fields: open_fields %>
+            <div class="d-flex gap-2 mb-3">
+              <% if index.positive? %>
+                <button type="button" class="btn btn-secondary"
+                        data-action="personal-data-form#back"><%= t("back") %></button>
+              <% end %>
+              <button type="button" class="btn btn-primary" data-action="personal-data-form#next">
+                <%= t("personal_data.continue") %>
+              </button>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
     <% end %>
   </div>
 
   <% if asking %>
-    <p class="form-text" data-participation-choice-target="no">
+    <p class="form-text" data-personal-data-form-target="no">
       <%= t("personal_data.decline_explanation") %>
     </p>
   <% end %>
 
-  <div data-participation-choice-target="answered">
+  <div data-personal-data-form-target="answered">
     <p class="mb-1">
       <%= t("personal_data.display_name_current_html", name: @user.name_in_database) %>
     </p>
@@ -89,12 +86,10 @@
 
     <div class="d-flex gap-2">
       <%= f.submit t("personal_data.save"), class: "btn btn-primary",
-                                            data: { participation_choice_target: "yes" } %>
+                                            data: { personal_data_form_target: "yes" } %>
       <% if asking %>
-        <%= f.submit t("personal_data.continue"), class: "btn btn-primary",
-                                                  data: { participation_choice_target: "no" } %>
-      <% else %>
-        <%= link_to t("back"), edit_profile_path, class: "btn btn-secondary" %>
+        <%= f.submit t("personal_data.continue"), class: "btn btn-primary", formnovalidate: true,
+                                                  data: { personal_data_form_target: "no" } %>
       <% end %>
     </div>
   </div>
@@ -103,4 +98,6 @@
 <% if asking %>
   <%= button_to t("navbar.logout"), destroy_user_session_path(locale: I18n.locale),
                 method: :delete, class: "btn btn-link p-0 mt-3" %>
+<% else %>
+  <%= link_to t("back"), edit_profile_path, class: "btn btn-link p-0 mt-3" %>
 <% end %>

@@ -28,7 +28,11 @@ test("can sign up and confirm the account", async ({ page, request }) => {
   await page.getByRole("radio", { name: "Yes" }).check();
   await page.getByLabel("First name").fill("Ada");
   await page.getByLabel("Last name").fill("Lovelace");
+  await page.getByRole("button", { name: "Continue" }).click();
   await page.getByLabel("I do not have a matriculation number yet").check();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByText("none yet")).toBeVisible();
   await page.getByLabel(/I have checked these details/).check();
   await page.getByRole("button", { name: "Save" }).click();
 

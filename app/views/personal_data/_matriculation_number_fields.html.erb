@@ -1,0 +1,21 @@
+<div class="mb-3">
+  <%= f.label :matriculation_number, class: "form-label" %>
+  <%= f.text_field :matriculation_number,
+                   class: "form-control", inputmode: "numeric",
+                   disabled: open_fields.exclude?(:matriculation_number),
+                   aria: { describedby: "matriculation-number-hint" },
+                   data: { personal_data_form_target: "matriculationNumber" } %>
+  <% if open_fields.include?(:matriculation_number) %>
+    <div class="form-text" id="matriculation-number-hint">
+      <%= t("personal_data.locked_hint") %>
+    </div>
+    <div class="form-check mt-2">
+      <%= f.check_box :no_matriculation_number,
+                      class: "form-check-input",
+                      data: { personal_data_form_target: "noMatriculationNumber",
+                              action: "personal-data-form#requireMatriculationNumber" } %>
+      <%= f.label :no_matriculation_number, t("personal_data.no_matriculation_number"),
+                  class: "form-check-label" %>
+    </div>
+  <% end %>
+</div>
