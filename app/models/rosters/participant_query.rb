@@ -2,6 +2,8 @@ module Rosters
   # Service object to query participants of a Lecture with filtering options.
   class ParticipantQuery
     Result = Struct.new(:scope, :total_count, :unassigned_count, :filter_mode, keyword_init: true)
+    # The name a row shows first, see User#tutorial_name.
+    FULL_NAME = "CONCAT_WS(' ', users.first_name, users.last_name)".freeze
 
     def initialize(lecture, params)
       @lecture = lecture
@@ -16,11 +18,13 @@ module Rosters
         @lecture.lecture_memberships
                 .joins(:user)
                 .includes(user: User::PROGRAM_PRELOAD)
-                .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+                .order(Arel.sql("COALESCE(NULLIF(#{FULL_NAME}, ''), " \
+                                "NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
 
       if search
         base_scope = base_scope.where(
-          "users.name ILIKE :q OR users.email ILIKE :q OR users.name_in_tutorials ILIKE :q",
+          "users.name ILIKE :q OR users.email ILIKE :q OR users.name_in_tutorials ILIKE :q " \
+          "OR #{FULL_NAME} ILIKE :q OR users.matriculation_number ILIKE :q",
           q: "%#{search}%"
         )
       end
