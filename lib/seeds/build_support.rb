@@ -15,6 +15,10 @@ module Seeds
     # the question after sign-in can be tried out, by a student and by staff.
     PERSONAL_DATA_PENDING_ACCOUNTS = ["student2@mampf.edu", "student3@mampf.edu",
                                       "ed@mampf.edu"].freeze
+    SEED_FIRST_NAMES = ["Anna", "Ben", "Clara", "David", "Emma", "Felix", "Greta", "Hannes",
+                        "Ida", "Jonas", "Klara", "Leon", "Mia", "Noah", "Paula"].freeze
+    SEED_LAST_NAMES = ["Albrecht", "Bauer", "Fischer", "Hoffmann", "Keller", "Lang",
+                       "Meyer", "Neumann", "Schmitt", "Wagner", "Weber", "Zimmermann"].freeze
     ENROLMENT_DESCRIPTION = "Anmeldung zur Veranstaltung".freeze
     TUTORIAL_DESCRIPTION = "Anmeldung zu den Übungsgruppen".freeze
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
@@ -124,15 +128,22 @@ module Seeds
       # rubocop:enable Rails/SkipsModelValidations
     end
 
+    # Students answer yes with a name, a number and a program, so rosters and
+    # exam lists look like the real thing; staff answer no, as they would.
     def stage_personal_data!
       ensure_development!
       return unless User.column_names.include?("personal_data_confirmed_at")
 
+      programs = Program.offered_to_students.order(:id).to_a
       # rubocop:disable Rails/SkipsModelValidations
-      User.where.not(email: PERSONAL_DATA_PENDING_ACCOUNTS)
-          .update_all(personal_data_confirmed_at: Time.current, personal_data_declined_at: nil)
+      User.where.not(email: PERSONAL_DATA_PENDING_ACCOUNTS).order(:id)
+          .each_with_index do |user, index|
+        user.update_columns(personal_data_for(user, index, programs))
+      end
       User.where(email: PERSONAL_DATA_PENDING_ACCOUNTS)
-          .update_all(personal_data_confirmed_at: nil, personal_data_declined_at: nil)
+          .update_all(personal_data_confirmed_at: nil, personal_data_declined_at: nil,
+                      first_name: nil, last_name: nil, matriculation_number: nil,
+                      uni_id: nil, program_id: nil)
       # rubocop:enable Rails/SkipsModelValidations
     end
 
@@ -146,6 +157,18 @@ module Seeds
     end
 
     private
+
+      def personal_data_for(user, index, programs)
+        if user.admin? || user.teacher?
+          return { personal_data_confirmed_at: nil, personal_data_declined_at: Time.current }
+        end
+
+        { personal_data_confirmed_at: Time.current, personal_data_declined_at: nil,
+          first_name: SEED_FIRST_NAMES[index % SEED_FIRST_NAMES.size],
+          last_name: SEED_LAST_NAMES[(index / SEED_FIRST_NAMES.size) % SEED_LAST_NAMES.size],
+          matriculation_number: (4_000_000 + user.id).to_s,
+          program_id: programs.empty? ? nil : programs[index % programs.size].id }
+      end
 
       # rubocop:disable Rails/Exit
       def ensure_development!
