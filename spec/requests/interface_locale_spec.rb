@@ -74,6 +74,13 @@ RSpec.describe("Interface language", type: :request) do
     expect(response.body).to include('<html lang="en">')
   end
 
+  it "does not keep the language a guest's form carried along" do
+    post user_password_path(locale: "en"), params: { user: { email: "nobody@example.com" } }
+    get new_user_session_path, headers: { "Accept-Language" => "de" }
+
+    expect(response.body).to include('<html lang="de">')
+  end
+
   it "answers a guest whose browser asks for no language it offers in German" do
     get new_user_session_path, headers: { "Accept-Language" => "fr-FR,fr;q=0.9" }
 
