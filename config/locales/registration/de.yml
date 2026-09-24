@@ -471,6 +471,7 @@ de:
       messages:
         campaign_unavailable: "Dieses Anmeldeverfahren ist derzeit nicht verfügbar."
         campaign_not_opened: "Die Registrierung für dieses Anmeldeverfahren ist geschlossen."
+        switched: "Du hast die Gruppe gewechselt."
         registration_success: "Registrierung erfolgreich abgeschlossen."
         registration_failed: "Registrierung konnte nicht abgeschlossen werden."
         already_registered: "Du bist bereits für dieses Anmeldeverfahren registriert."

@@ -24,6 +24,18 @@ module Rosters
       Rosters::MaintenanceService.new.remove_user!(@user, @rosterable)
     end
 
+    # Leaves `from` for this rosterable in one step, so the old place is kept
+    # when the new one cannot be taken.
+    def self_switch!(from)
+      ensure_rosterable_unlocked!
+      ensure_rosterable_not_full!
+      ensure_rosterable_allow_self_add!
+      raise(RosterLockedError) if from.locked?
+      raise(SelfRemoveNotAllowedError) unless from.allow_self_remove?(@user)
+
+      Rosters::MaintenanceService.new.move_user!(@user, from, @rosterable, force: false)
+    end
+
     private
 
       def ensure_rosterable_unlocked!

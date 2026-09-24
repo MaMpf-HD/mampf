@@ -3,7 +3,7 @@ module Roster
   # Guarded by config_allow_self_add/config_allow_self_remove on the rosterable and locked? status
   class SelfMaterializationController < ApplicationController
     helper ::UserRegistrationsHelper
-    before_action :set_rosterable, only: [:self_add, :self_remove]
+    before_action :set_rosterable, only: [:self_add, :self_remove, :self_switch]
     before_action :authorize_lecture
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
@@ -33,6 +33,10 @@ module Roster
                            type: @rosterable.class.model_name.human))
     end
 
+    rescue_from "Rosters::MaintenanceService::GradingDataPresentError" do
+      respond_with_error(t("roster.errors.switch_failed"))
+    end
+
     rescue_from "Rosters::SelfMaterializationService::SelfRemoveNotAllowedError" do
       respond_with_error(t("roster.errors.self_remove_not_allowed",
                            type: @rosterable.class.model_name.human))
@@ -48,6 +52,15 @@ module Roster
       respond_with_success(t("roster.messages.user_added",
                              user: roster_message_user,
                              group: @rosterable.title))
+    end
+
+    def self_switch
+      from = @rosterable.conflicting_lecture_membership(current_user)
+      moved = from && Rosters::SelfMaterializationService.new(@rosterable, current_user)
+                                                         .self_switch!(from)
+      return respond_with_error(t("roster.errors.switch_failed")) unless moved
+
+      respond_with_success(t("roster.messages.user_switched", group: @rosterable.title))
     end
 
     def self_remove

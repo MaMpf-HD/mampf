@@ -440,6 +440,21 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
              campaignable: lecture)
     end
     let(:item) { campaign.registration_items.first }
+
+    describe "PATCH campaign_registrations/:campaign_id/items/:item_id/switch" do
+      it "moves the user's place to the other item" do
+        UserRegistrations::LectureFirstComeFirstServedEditService.new(campaign, user)
+                                                                 .register!(item)
+        other = campaign.registration_items.second
+
+        patch switch_item_path(campaign_id: campaign.id, item_id: other.id),
+              params: { from_item_id: item.id }
+
+        expect(campaign.user_registrations.confirmed.where(user: user)
+                       .map(&:registration_item)).to eq([other])
+      end
+    end
+
     describe "POST campaign_registrations/:campaign_id/items/:item_id/register" do
       it "creates a registration and redirects" do
         service_double = instance_double(UserRegistrations::LectureFirstComeFirstServedEditService)

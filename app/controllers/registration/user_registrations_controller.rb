@@ -3,8 +3,8 @@ module Registration
     helper ::UserRegistrationsHelper,
            ItemsHelper, CampaignsHelper
     before_action :set_campaign,
-                  only: [:create, :destroy, :reject_for_user, :save_preferences]
-    before_action :set_item, only: [:create, :destroy]
+                  only: [:create, :destroy, :switch, :reject_for_user, :save_preferences]
+    before_action :set_item, only: [:create, :destroy, :switch]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
@@ -45,6 +45,22 @@ module Registration
                .new(@campaign, current_user).withdraw!(@item)
       respond_to_student_registration(result,
                                       I18n.t("registration.user_registration.messages.withdrawn"))
+    end
+
+    def switch
+      authorize! :create, @item.registration_campaign.campaignable
+
+      from_item = @campaign.registration_items.find_by(id: params[:from_item_id])
+      service = ::UserRegistrations::LectureFirstComeFirstServedEditService
+                .new(@campaign, current_user)
+      result = if from_item
+        service.switch!(from_item, @item)
+      else
+        ::UserRegistrations::Handler::Result.new(false,
+                                                 [t("registration.user_registration.none")])
+      end
+      respond_to_student_registration(result,
+                                      t("registration.user_registration.messages.switched"))
     end
 
     def save_preferences

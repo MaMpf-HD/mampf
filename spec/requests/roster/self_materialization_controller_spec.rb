@@ -26,6 +26,33 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
     sign_in user
   end
 
+  describe "PATCH /tutorials/:id/roster/self_switch" do
+    let(:other) do
+      create(:tutorial, lecture: lecture, skip_campaigns: true,
+                        self_materialization_mode: :add_and_remove)
+    end
+
+    before { create(:tutorial_membership, tutorial: tutorial, user: user) }
+
+    it "moves the user from their tutorial to this one" do
+      patch self_switch_tutorial_path(other), as: :turbo_stream
+
+      expect(other.reload.members).to include(user)
+      expect(tutorial.reload.members).not_to include(user)
+      expect(response.body).to include(I18n.t("roster.messages.user_switched", group: other.title))
+    end
+
+    it "keeps the user in their tutorial when this one is full" do
+      other.update!(capacity: 1)
+      create(:tutorial_membership, tutorial: other, user: create(:confirmed_user))
+
+      patch self_switch_tutorial_path(other), as: :turbo_stream
+
+      expect(tutorial.reload.members).to include(user)
+      expect(other.reload.members).not_to include(user)
+    end
+  end
+
   describe "POST /tutorials/:id/roster/self_add" do
     it "adds the user to the tutorial" do
       expect do

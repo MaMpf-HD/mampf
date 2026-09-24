@@ -36,7 +36,47 @@ module UserRegistrations
       Result.new(true, [])
     end
 
+    # Moves the user's confirmed place to another item in one step: the old place
+    # is only given up once the new one is secured, so nobody ends up with none.
+    def switch!(from_item, to_item)
+      ActiveRecord::Base.transaction do
+        @campaign.lock!
+        [from_item, to_item].sort_by(&:id).each(&:lock!)
+        registration = from_item.user_registrations.find_by(user: @user, status: :confirmed)
+        errors = validate_switch(from_item, to_item, registration)
+        return Result.new(false, errors) unless errors.empty?
+
+        registration.destroy!
+        Registration::UserRegistration.create!(
+          registration_campaign: @campaign,
+          registration_item: to_item,
+          user: @user,
+          status: :confirmed
+        )
+      end
+      Result.new(true, [])
+    end
+
     private
+
+      def validate_switch(from_item, to_item, registration)
+        [
+          check_first_come_first_served_mode,
+          check_campaign_open_for_registrations,
+          (I18n.t("registration.user_registration.none") unless registration),
+          check_same_type(from_item, to_item),
+          check_unremovable_roster_assignment(joining: to_item.registerable),
+          check_capacity(to_item),
+          check_policies,
+          check_items([from_item, to_item])
+        ].compact
+      end
+
+      def check_same_type(from_item, to_item)
+        return if from_item != to_item && from_item.registerable_type == to_item.registerable_type
+
+        I18n.t("registration.user_registration.messages.invalid_options")
+      end
 
       def validate_register(item)
         [

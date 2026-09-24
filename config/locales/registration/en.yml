@@ -470,6 +470,7 @@ en:
       messages:
         campaign_unavailable: "This registration process is not accessible right now."
         campaign_not_opened: "Registration is not opened."
+        switched: "You have switched groups."
         registration_success: "Registration completed successfully."
         registration_failed: "Registration could not be completed."
         already_registered: "You are already registered for this registration process."
