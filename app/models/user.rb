@@ -5,9 +5,10 @@ class User < ApplicationRecord
   class IncompatibleTypeError < StandardError; end
 
   CURRENT_PASSWORD_POLICY_VERSION = 1
-  PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number, :uni_id].freeze
+  PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number, :program_id,
+                          :uni_id].freeze
   # What a group or an exam lists a student by: once saved, only the support
-  # changes it. The Uni ID stays the user's to change.
+  # changes it. Program and Uni ID stay the user's to change.
   LOCKED_PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number].freeze
 
   # use devise for authentification, include the following modules
@@ -144,6 +145,11 @@ class User < ApplicationRecord
   # The student has no matriculation number yet (first weeks, guest student);
   # the empty field may be filled in later.
   attribute :no_matriculation_number, :boolean, default: false
+
+  # Empty for a program not on offer ("other program") and for everybody not
+  # asked yet.
+  belongs_to :program, optional: true
+  validate :program_offered_to_students
 
   before_save :track_password_change
 
@@ -446,7 +452,7 @@ class User < ApplicationRecord
   # not yet saved.
   def open_personal_data_fields
     LOCKED_PERSONAL_DATA_FIELDS.select { |field| attribute_in_database(field).blank? } +
-      [:uni_id]
+      [:program_id, :uni_id]
   end
 
   def locked_personal_data_changed?
@@ -967,6 +973,12 @@ class User < ApplicationRecord
   end
 
   private
+
+    def program_offered_to_students
+      return if program.nil? || program.degree.present?
+
+      errors.add(:program_id, :inclusion)
+    end
 
     def staff_lectures_in(terms)
       given = given_lectures.where(term: terms).includes(:course, :term)

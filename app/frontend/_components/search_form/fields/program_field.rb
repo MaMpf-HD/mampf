@@ -50,8 +50,10 @@ module SearchForm
           )
         end
 
+        # Leaves out programs without courses, which exist for students to pick.
         def program_options
-          Program.includes(:subject, :translations, subject: :translations)
+          Program.where(id: Division.select(:program_id))
+                 .includes(:subject, :translations, subject: :translations)
                  .map { |p| [p.name_with_subject, p.id] }
                  .natural_sort_by(&:first)
         end

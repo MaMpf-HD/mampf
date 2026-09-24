@@ -84,7 +84,12 @@ RSpec.describe(SearchForm::Fields::ProgramField, type: :component) do
     let!(:program_a) { create(:program, name: "Program 2", subject: subject_a) }
     let!(:program_b) { create(:program, name: "Program 1", subject: subject_b) }
 
-    it "returns a naturally sorted list of programs with their subjects" do
+    before do
+      [program_a, program_b, program_c].each { |program| create(:division, program: program) }
+      create(:program, name: "Program 3", subject: subject_b, degree: :msc)
+    end
+
+    it "returns a naturally sorted list of programs with courses and their subjects" do
       expected_collection = [
         ["Computer Science: Program 2", program_a.id],
         ["Computer Science: Program 10", program_c.id],

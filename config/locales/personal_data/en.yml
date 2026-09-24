@@ -7,8 +7,9 @@ en:
       seminars of the Faculty of Mathematics and Computer Science at Heidelberg
       University are organized here.
     why: >-
-      For them we need your real name and matriculation number, so that
-      teachers and tutors find you in exercise classes and exams.
+      For them we need your real name and matriculation number: only then can
+      your results in exercise classes, exams and seminars be credited to you
+      without doubt.
     display_name_current_html: >-
       In the forum and in comments, you appear as <strong>%{name}</strong>.
       If you teach, this name also appears with your event series – in their
@@ -57,8 +58,33 @@ en:
     steps:
       name: "Name"
       matriculation_number: "Matriculation number"
+      program: "Study program"
       uni_id: "Uni ID"
       check: "Check your details"
+    degree_question: "Which degree are you studying for?"
+    other_degree: "Other degree"
+    other_subject: "Other subject"
+    other_program: "Other program"
+    math_question: "Is mathematics one of your two subjects?"
+    program_question: "Which program?"
+    program_hint: >-
+      Only teachers see it, for instance to know which programs their
+      participants come from. You can change it yourself at any time.
+  programs:
+    degrees:
+      bsc100: "B.Sc. 100%"
+      bsc50: "B.Sc. 50%"
+      msc: "M.Sc."
+      med: "M.Ed."
+      med_extension: "M.Ed. extension subject"
+      phd: "Doctorate"
+    degree_choices:
+      bsc100: "Bachelor of Science, 100% (B.Sc. 100%)"
+      bsc50: "Bachelor of Science, 50% (B.Sc. 50%)"
+      msc: "Master of Science (M.Sc.)"
+      med: "Master of Education (M.Ed.)"
+      med_extension: "Master of Education, extension subject (M.Ed. extension subject)"
+      phd: "Doctorate"
   activerecord:
     errors:
       models:
@@ -73,5 +99,8 @@ en:
         first_name: "First name"
         last_name: "Last name"
         matriculation_number: "Matriculation number"
+        program_id: "Study program"
         uni_id: "Uni ID"
         personal_data_confirmation: "Confirmation"
+      program:
+        degree: "Degree"

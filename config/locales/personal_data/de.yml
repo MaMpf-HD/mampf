@@ -7,9 +7,9 @@ de:
       Klausuren und Seminare der Fakultät für Mathematik und Informatik der
       Universität Heidelberg werden hier organisiert.
     why: >-
-      Dafür brauchen wir Deinen richtigen Namen und Deine Matrikelnummer: So
-      finden Dich Lehrende, Tutorinnen und Tutoren in Übungsgruppen und bei
-      Klausuren.
+      Dafür brauchen wir Deinen richtigen Namen und Deine Matrikelnummer: Nur so
+      lassen sich Deine Leistungen in Übungen, Klausuren und Seminaren eindeutig
+      Dir zuordnen.
     display_name_current_html: >-
       Im Forum und bei Kommentaren erscheinst Du als <strong>%{name}</strong>.
       Wenn Du lehrst, steht dieser Name auch bei Deinen Veranstaltungen – im
@@ -57,8 +57,33 @@ de:
     steps:
       name: "Name"
       matriculation_number: "Matrikelnummer"
+      program: "Studiengang"
       uni_id: "Uni-ID"
       check: "Angaben prüfen"
+    degree_question: "Welchen Abschluss strebst Du an?"
+    other_degree: "Anderer Abschluss"
+    other_subject: "Anderes Fach"
+    other_program: "Sonstiger Studiengang"
+    math_question: "Ist Mathematik eines Deiner beiden Fächer?"
+    program_question: "Welcher Studiengang?"
+    program_hint: >-
+      Nur Lehrende sehen ihn, etwa um zu wissen, aus welchen Studiengängen
+      ihre Teilnehmenden kommen. Du kannst ihn jederzeit selbst ändern.
+  programs:
+    degrees:
+      bsc100: "B.Sc. 100%"
+      bsc50: "B.Sc. 50%"
+      msc: "M.Sc."
+      med: "M.Ed."
+      med_extension: "M.Ed. Erweiterungsfach"
+      phd: "Promotion"
+    degree_choices:
+      bsc100: "Bachelor of Science, 100% (B.Sc. 100%)"
+      bsc50: "Bachelor of Science, 50% (B.Sc. 50%)"
+      msc: "Master of Science (M.Sc.)"
+      med: "Master of Education (M.Ed.)"
+      med_extension: "Master of Education, Erweiterungsfach (M.Ed. Erweiterungsfach)"
+      phd: "Promotion"
   activerecord:
     errors:
       models:
@@ -73,5 +98,8 @@ de:
         first_name: "Vorname"
         last_name: "Nachname"
         matriculation_number: "Matrikelnummer"
+        program_id: "Studiengang"
         uni_id: "Uni-ID"
         personal_data_confirmation: "Bestätigung"
+      program:
+        degree: "Abschluss"

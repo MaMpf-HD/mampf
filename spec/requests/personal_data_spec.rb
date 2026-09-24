@@ -178,6 +178,48 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "the study program" do
+    let(:math) { create(:subject, name: "Mathematik", key: Subject::MATH) }
+    let!(:program) { create(:program, subject: math, name: "B.Sc. 50%", degree: :bsc50) }
+
+    it "comes as a step of its own once there are programs to pick" do
+      get edit_personal_data_path
+
+      expect(response.body).to include("Step 3 of 5: Study program")
+    end
+
+    it "is saved with the rest" do
+      patch personal_data_path, params: { user: complete.merge(program_id: program.id) }
+
+      expect(user.reload.program).to eq(program)
+    end
+
+    it "stays empty for another program" do
+      patch personal_data_path, params: { user: complete.merge(program_id: "") }
+
+      expect(user.reload.personal_data_confirmed_at).to be_present
+      expect(user.program).to be_nil
+    end
+
+    it "refuses a program that only classifies courses" do
+      sorting = create(:program, subject: math, name: "Seminare")
+
+      patch personal_data_path, params: { user: complete.merge(program_id: sorting.id) }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(user.reload.program).to be_nil
+    end
+
+    it "stays the user's to change, without the confirmation" do
+      master = create(:program, subject: math, name: "M.Sc.", degree: :msc)
+      patch personal_data_path, params: { user: complete.merge(program_id: program.id) }
+
+      patch personal_data_path, params: { user: { program_id: master.id } }
+
+      expect(user.reload.program).to eq(master)
+    end
+  end
+
   describe "the Uni ID" do
     it "takes two letters and three digits, not an email address" do
       patch personal_data_path, params: { user: complete.merge(uni_id: "ada@uni-heidelberg.de") }

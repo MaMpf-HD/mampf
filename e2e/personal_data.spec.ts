@@ -71,3 +71,46 @@ test("lets a user who takes part in no exercise class skip it",
     await page.getByRole("link", { name: "Back", exact: true }).click();
     await expect(page).toHaveURL(/\/profile\/edit/);
   });
+
+test("leads a student of two subjects to mathematics without a list",
+  async ({ page, request, factory }) => {
+    const math = await factory.create("subject", [], { name: "Mathematik", key: "math" });
+    const physics = await factory.create("subject", [], { name: "Physik" });
+    for (const subject of [math, physics]) {
+      await factory.create("program", [], { subject_id: subject.id, name: "B.Sc. 50%",
+        degree: "bsc50" });
+    }
+    await factory.create("program", [], { subject_id: math.id, name: "M.Sc.", degree: "msc" });
+    await signInAsking(page, request);
+
+    await page.getByRole("radio", { name: "Yes" }).check();
+    await page.getByLabel("First name", { exact: true }).fill("Ada");
+    await page.getByLabel("Last name", { exact: true }).fill("Lovelace");
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByLabel("Matriculation number", { exact: true }).fill("3456789");
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect(page.getByText("Step 3 of 5: Study program")).toBeVisible();
+    await page.getByRole("radio", { name: "B.Sc. 50%" }).check();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByText("Step 3 of 5: Study program")).toBeVisible();
+    await page.getByRole("group", { name: "Is mathematics one of your two subjects?" })
+      .getByRole("radio", { name: "Yes" }).check();
+    await expect(page.getByRole("radio", { name: "Physik: B.Sc. 50%" })).toBeHidden();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByRole("definition").getByText("Mathematik: B.Sc. 50%")).toBeVisible();
+
+    await page.getByRole("button", { name: "Change: Study program" }).click();
+    await page.getByRole("group", { name: "Is mathematics one of your two subjects?" })
+      .getByRole("radio", { name: "No" }).check();
+    await expect(page.getByRole("radio", { name: "Other subject" })).toBeVisible();
+    await page.getByRole("radio", { name: "Physik: B.Sc. 50%" }).check();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByRole("definition").getByText("Physik: B.Sc. 50%")).toBeVisible();
+
+    await page.getByLabel(/I have checked these details/).check();
+    await page.getByRole("button", { name: "Save" }).click();
+    await expect(page.getByText("Thank you, your details are saved.")).toBeVisible();
+  });

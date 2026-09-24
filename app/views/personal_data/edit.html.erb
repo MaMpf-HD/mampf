@@ -36,7 +36,9 @@
     <% end %>
 
     <% if steps.empty? %>
-      <% [:name, :matriculation_number, :uni_id].each do |part| %>
+      <% parts = [:name, :matriculation_number, :program, :uni_id] %>
+      <% parts.delete(:program) if study_programs.none? %>
+      <% parts.each do |part| %>
         <%= render "personal_data/#{part}_fields", f: f, open_fields: open_fields %>
       <% end %>
     <% else %>

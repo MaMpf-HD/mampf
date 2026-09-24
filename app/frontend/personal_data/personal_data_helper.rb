@@ -7,6 +7,18 @@ module PersonalDataHelper
     steps = []
     steps << :name if open_fields.intersect?([:first_name, :last_name])
     steps << :matriculation_number if open_fields.include?(:matriculation_number)
+    steps << :program if study_programs.any?
     steps + [:uni_id, :check]
+  end
+
+  # Lists the programs students may pick, by degree, mathematics first.
+  def study_programs
+    @study_programs ||=
+      Program.offered_to_students
+             .includes(:translations, subject: :translations)
+             .sort_by do |program|
+               [Program.degrees.keys.index(program.degree), program.subject.math? ? 0 : 1,
+                program.name_with_subject]
+             end
   end
 end

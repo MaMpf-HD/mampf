@@ -118,6 +118,8 @@ window.Stimulus.register("file-size", FileSizeController);
 
 import PersonalDataFormController from "~/personal_data/personal_data_form.controller.js";
 window.Stimulus.register("personal-data-form", PersonalDataFormController);
+import StudyProgramController from "~/personal_data/study_program.controller.js";
+window.Stimulus.register("study-program", StudyProgramController);
 
 import ClipboardController from "~/controllers/clipboard.controller.js";
 window.Stimulus.register("clipboard", ClipboardController);

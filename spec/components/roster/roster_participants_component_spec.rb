@@ -298,6 +298,22 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
+  describe "the study program column" do
+    let(:math) { create(:subject, name: "Mathematik") }
+    let(:program) { create(:program, subject: math, name: "M.Sc.", degree: :msc) }
+    let(:pagy) { double("Pagy", pages: 1, page: 1) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: create(:user, program: program))
+    end
+
+    it "shows each participant's program to the teacher" do
+      render_inline(component)
+
+      expect(rendered_content).to include("Mathematik: M.Sc.")
+    end
+  end
+
   describe "search field rendering" do
     it "keeps the search form in the header cluster and streams updates" do
       render_inline(component)

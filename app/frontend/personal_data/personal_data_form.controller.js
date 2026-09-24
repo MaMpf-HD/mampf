@@ -39,8 +39,9 @@ export default class extends Controller {
     if (event.type === "keydown" && !(event.target instanceof HTMLInputElement)) return;
 
     event.preventDefault();
-    const fields = this.stepTargets[this.index].querySelectorAll("input:not([type=hidden])");
-    if (![...fields].every(field => field.reportValidity())) return;
+    const fields = [...this.stepTargets[this.index].querySelectorAll("input")]
+      .filter(field => field.checkVisibility());
+    if (!fields.every(field => field.reportValidity())) return;
 
     this.moveTo(this.index + 1);
   }
@@ -68,10 +69,11 @@ export default class extends Controller {
   /** Copies what the steps before hold into the check, leaving saved values. */
   summarize() {
     for (const summary of this.summaryTargets) {
-      const field = this.element.querySelector(`input[name="user[${summary.dataset.field}]"]`);
+      const field = [...this.element.querySelectorAll(`input[name="user[${summary.dataset.field}]"]`)]
+        .find(input => input.type !== "radio" || input.checked);
       if (!field || field.disabled) continue;
 
-      summary.textContent = field.value.trim() || "–";
+      summary.textContent = field.dataset.summary ?? (field.value.trim() || "–");
     }
     if (this.hasNoMatriculationNumberTarget && this.noMatriculationNumberTarget.checked) {
       const summary = this.summaryTargets
