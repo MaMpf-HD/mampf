@@ -23,9 +23,21 @@
   <% end %>
 </dl>
 
+<%# Rendered by hand: the global field error markup would colour the whole
+    label and put the message in front of it. %>
+<% missing = f.object.errors.include?(:personal_data_confirmation) %>
 <div class="form-check mb-3">
-  <%= f.check_box :personal_data_confirmation, class: "form-check-input" %>
-  <%= f.label :personal_data_confirmation,
-              t("personal_data.confirmation_html", support: support),
-              class: "form-check-label" %>
+  <%= check_box_tag "user[personal_data_confirmation]", "1", false,
+                    id: "user_personal_data_confirmation",
+                    class: ["form-check-input", { "border-danger": missing }],
+                    aria: { invalid: missing,
+                            describedby: ("confirmation-missing" if missing) } %>
+  <%= label_tag "user_personal_data_confirmation",
+                t("personal_data.confirmation_html", support: support),
+                class: "form-check-label" %>
+  <% if missing %>
+    <div class="invalid-feedback d-block" id="confirmation-missing">
+      <%= t("personal_data.confirmation_missing") %>
+    </div>
+  <% end %>
 </div>

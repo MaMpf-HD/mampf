@@ -13,7 +13,8 @@ export default class extends Controller {
   static values = { noMatriculationNumber: String };
 
   connect() {
-    const invalid = this.stepTargets.findIndex(step => step.querySelector(".is-invalid"));
+    const invalid = this.stepTargets
+      .findIndex(step => step.querySelector(".is-invalid, [aria-invalid=true]"));
     this.index = Math.max(invalid, 0);
     this.requireMatriculationNumber();
     this.show();

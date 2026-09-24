@@ -40,7 +40,8 @@ test("asks once for the name and matriculation number after sign-in",
     await expect(page.getByText("3456789")).toBeVisible();
 
     await page.getByRole("button", { name: "Save" }).click();
-    await expect(page.getByText("must be accepted")).toBeVisible();
+    await expect(page.getByText("Please confirm that you have checked your details."))
+      .toBeVisible();
 
     await page.getByLabel(/I have checked these details/).check();
     await page.getByRole("button", { name: "Save" }).click();

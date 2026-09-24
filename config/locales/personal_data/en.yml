@@ -33,6 +33,7 @@ en:
     confirmation_html: >-
       I have checked these details. After saving, only the support
       (%{support}) can change my name and matriculation number.
+    confirmation_missing: "Please confirm that you have checked your details."
     save: "Save"
     saved: "Thank you, your details are saved."
     decline_explanation: >-

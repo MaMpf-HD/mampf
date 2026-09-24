@@ -32,6 +32,7 @@ de:
     confirmation_html: >-
       Ich habe die Angaben geprüft. Nach dem Speichern kann nur noch der
       Support (%{support}) meinen Namen und meine Matrikelnummer ändern.
+    confirmation_missing: "Bitte bestätige, dass Du die Angaben geprüft hast."
     save: "Speichern"
     saved: "Danke, Deine Angaben sind gespeichert."
     decline_explanation: >-
