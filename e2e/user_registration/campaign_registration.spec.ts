@@ -857,8 +857,8 @@ test.describe("campaign registration", () => {
     await expect(home.campaign("Late tutorial registration")).toBeVisible();
   });
 
-  test("keeps campaign registration open for a join-only assigned tutorial, "
-    + "but still blocks self-enrollment", async ({
+  test("blocks tutorial registration and self-enrollment for a join-only "
+    + "assigned tutorial", async ({
     factory,
     student,
   }) => {
@@ -894,15 +894,20 @@ test.describe("campaign registration", () => {
 
     await expect(home.participation("Join-Only Assigned Tutorial"))
       .toContainText("You cannot leave this group yourself.");
-    // Registering never touches the roster -- the group assignment happens at
-    // finalization -- so an unremovable assignment does not block a campaign.
-    await home.openCampaign("Late tutorial registration");
-    await expect(home.registerButtons()).toHaveCount(3);
-
-    // Immediate self-enrollment stays blocked: joining another tutorial would
-    // mean leaving the one the student cannot leave.
+    // Another tutorial would mean leaving the one the student cannot leave,
+    // through the campaign as much as through self-enrollment.
     const blockedTooltip
       = "You cannot join this tutorial since you cannot leave your tutorial. This was set up by your lecturer this way.";
+    await expect(home.campaign("Late tutorial registration")).toContainText("Not available");
+    await expect(student.page.getByRole("link", {
+      name: /Registration open: Late tutorial registration/,
+    })).toHaveCount(0);
+    const campaign = await home.openCampaign("Late tutorial registration");
+    await expect(campaign.getByText(
+      "You cannot register for another group because you cannot leave your current tutorial.",
+    )).toBeVisible();
+    await expect(home.registerButtons()).toHaveCount(0);
+    await expect(campaign.getByRole("button", { name: "Unavailable" })).toHaveCount(3);
     const selfEnrollment = student.page.getByTestId("self-enrollment");
     await selfEnrollment.getByRole("heading", { name: "Join a group yourself" }).click();
     const alternativeOption = selfEnrollment.getByTestId("registration-option").filter({

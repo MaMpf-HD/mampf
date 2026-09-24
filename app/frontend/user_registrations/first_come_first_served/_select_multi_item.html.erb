@@ -10,6 +10,7 @@
       <% full = !mine && !item.still_has_capacity? %>
       <% held = registered_items.find { |r| r.registerable_type == item.registerable_type } %>
       <% switchable = !mine && held && !freely_registerable?(item.registerable_type) %>
+      <% blocked = !mine && registration_item_blocked?(item, campaign.campaignable) %>
       <% reason = nil %>
 
       <% actions = capture do %>
@@ -26,6 +27,11 @@
           <%= button_tag t("basics.full"), type: "button", disabled: true,
                                            class: "btn btn-outline-secondary btn-sm" %>
           <% reason = t("registration.user_registration.options.no_places") %>
+        <% elsif blocked %>
+          <%= button_tag t("registration.user_registration.registration_blocked"),
+                         type: "button", disabled: true,
+                         class: "btn btn-outline-secondary btn-sm" %>
+          <% reason = registration_blocked_tooltip %>
         <% elsif disabled %>
           <%= button_tag t("registration.user_registration.register_now"),
                          type: "button", disabled: true,

@@ -492,6 +492,7 @@ en:
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:
+        blocked: "Not available"
         requirement_missing: "Requirement missing"
         no_preferences: "No preferences yet"
         not_registered: "Not registered yet"

@@ -493,6 +493,7 @@ de:
         preference_fulfilled: "Dein %{rank} Wunsch."
         outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
       summary:
+        blocked: "Nicht verfügbar"
         requirement_missing: "Voraussetzung fehlt"
         no_preferences: "Noch keine Wünsche"
         not_registered: "Noch nicht angemeldet"

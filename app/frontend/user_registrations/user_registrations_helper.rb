@@ -92,6 +92,7 @@ module UserRegistrationsHelper
   def registration_needs_action?(details)
     campaign = details.campaign
     return false unless campaign.policies_satisfied?(current_user, phase: :registration)
+    return false if registration_campaign_blocked?(campaign, details.items)
     return Array(details.item_preferences).none? if campaign.preference_based?
 
     details.items.none? { |item| item.user_registered?(current_user) }
@@ -164,6 +165,19 @@ module UserRegistrationsHelper
     @registration_blocked_by_unremovable_assignment =
       Rosters::SelfRosterAvailability.new(lecture, current_user)
                                      .blocked_by_unremovable_assignment?
+  end
+
+  # Whether the student may not register for this item: it is a tutorial and
+  # they sit in one they are not allowed to leave. The edit services refuse
+  # the same registration.
+  def registration_item_blocked?(item, lecture)
+    item.registerable.roster_exclusive_within_lecture? &&
+      registration_blocked_by_unremovable_assignment?(lecture)
+  end
+
+  def registration_campaign_blocked?(campaign, items)
+    items = Array(items)
+    items.any? && items.all? { |item| registration_item_blocked?(item, campaign.campaignable) }
   end
 
   def registration_blocked_tooltip

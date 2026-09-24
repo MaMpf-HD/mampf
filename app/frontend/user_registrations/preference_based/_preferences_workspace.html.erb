@@ -59,13 +59,14 @@
       <% sorted_items.each do |item| %>
         <% title = item.registerable.title %>
         <% selected_rank = preference_rank_for(item, item_preferences) %>
+        <% blocked = registration_item_blocked?(item, campaign.campaignable) %>
 
         <% actions = capture do %>
           <div class="registration-rank-buttons">
             <% ranks.each do |rank| %>
               <%= button_tag t("registration.user_registration.preference_rank_options.#{rank}"),
                              type: "button",
-                             disabled: readonly,
+                             disabled: readonly || blocked,
                              class: class_names("btn btn-sm",
                                                 "btn-primary": selected_rank == rank,
                                                 "btn-outline-primary": selected_rank != rank),
@@ -92,7 +93,8 @@
                    type_label: item_display_type(item),
                    meta: item_tile_metadata_rows(item).map { |row| row[:value] },
                    keep: selected_rank.present?,
-                   actions: actions %>
+                   actions: actions,
+                   reason: (registration_blocked_tooltip if blocked && !readonly) %>
       <% end %>
     <% end %>
 

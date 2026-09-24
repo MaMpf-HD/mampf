@@ -250,10 +250,9 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
 
     context "when the student holds an unremovable roster slot" do
-      # Campaign registration never touches the roster; conflicts are settled
-      # by the materializer at finalization (which can move the student). So a
-      # campaign's tiles are never gated by an unremovable existing membership,
-      # regardless of pool.
+      # Only a tutorial takes the student out of the tutorial they may not
+      # leave, so only a campaign for tutorials is blocked, as the edit
+      # services refuse it.
       it "does not block a talk campaign for a student in an interest cohort" do
         interest_group = create(:cohort, context: seminar,
                                          self_materialization_mode: :add_only,
@@ -270,8 +269,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           .not_to include(I18n.t("registration.user_registration.blocked_tooltip"))
       end
 
-      it "does not block a tutorial campaign for a student stuck in an " \
-         "unremovable tutorial" do
+      it "blocks a tutorial campaign for a student stuck in an unremovable tutorial" do
         stuck = create(:tutorial, lecture: lecture,
                                   self_materialization_mode: :add_only,
                                   skip_campaigns: true)
@@ -283,7 +281,11 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
         expect(response).to have_http_status(:ok)
         expect(response.body)
-          .not_to include(I18n.t("registration.user_registration.blocked_tooltip"))
+          .to include(I18n.t("registration.user_registration.summary.blocked"))
+        expect(response.body).to include(
+          I18n.t("registration.user_registration.messages.unremovable_assignment")
+        )
+        expect(response.body).not_to include('data-testid="lecture-home-jump-links"')
       end
     end
 

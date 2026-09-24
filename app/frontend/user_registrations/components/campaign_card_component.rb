@@ -36,6 +36,7 @@ class CampaignCardComponent < ViewComponent::Base
   # registered or chosen, the participation section reports it instead.
   def summary_badge
     return [:bad, t("registration.user_registration.summary.requirement_missing")] if ineligible?
+    return [:bad, t("registration.user_registration.summary.blocked")] if blocked?
     return if registered_items.any? || preferences_saved?
 
     key = campaign.preference_based? ? "no_preferences" : "not_registered"
@@ -47,7 +48,7 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def cta_label
-    return t("registration.user_registration.summary.details") if ineligible?
+    return t("registration.user_registration.summary.details") if ineligible? || blocked?
     return t("registration.user_registration.summary.change") if registered_items.any?
     return t("registration.user_registration.summary.change_preferences") if preferences_saved?
     return t("registration.user_registration.summary.choose") if campaign.preference_based?
@@ -123,7 +124,14 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def registration_actions_disabled?
-    readonly? || ineligible?
+    readonly? || ineligible? || blocked?
+  end
+
+  # Every option is a tutorial and the student may not leave theirs.
+  def blocked?
+    return @blocked if defined?(@blocked)
+
+    @blocked = !ineligible? && helpers.registration_campaign_blocked?(campaign, items)
   end
 
   def campaign_title
