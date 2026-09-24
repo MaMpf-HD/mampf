@@ -7,12 +7,6 @@
 
 <%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch,
               local: true, data: { controller: asking ? "participation-choice" : nil } do |f| %>
-  <div class="mb-4">
-    <%= f.label :name, t("basics.display_name"), class: "form-label" %>
-    <%= f.text_field :name, class: "form-control", aria: { describedby: "display-name-hint" } %>
-    <div class="form-text" id="display-name-hint"><%= t("personal_data.display_name_hint") %></div>
-  </div>
-
   <% if asking %>
     <fieldset class="mb-3">
       <legend class="h6"><%= t("personal_data.participation_question") %></legend>
@@ -72,21 +66,38 @@
                     class: "form-check-label" %>
       </div>
     <% end %>
+  </div>
+
+  <% if asking %>
+    <p class="form-text" data-participation-choice-target="no">
+      <%= t("personal_data.decline_explanation") %>
+    </p>
+  <% end %>
+
+  <div data-participation-choice-target="answered">
+    <p class="mb-1">
+      <%= t("personal_data.display_name_current_html", name: @user.name_in_database) %>
+    </p>
+    <%= tag.details class: "mb-3", open: @user.errors.include?(:name) do %>
+      <summary><%= t("personal_data.display_name_change") %></summary>
+      <%= f.label :name, t("basics.display_name"), class: "form-label mt-2" %>
+      <%= f.text_field :name, class: "form-control", aria: { describedby: "display-name-hint" } %>
+      <div class="form-text" id="display-name-hint">
+        <%= t("personal_data.display_name_hint") %>
+      </div>
+    <% end %>
 
     <div class="d-flex gap-2">
-      <%= f.submit t("personal_data.save"), class: "btn btn-primary" %>
-      <% unless asking %>
+      <%= f.submit t("personal_data.save"), class: "btn btn-primary",
+                                            data: { participation_choice_target: "yes" } %>
+      <% if asking %>
+        <%= f.submit t("personal_data.continue"), class: "btn btn-primary",
+                                                  data: { participation_choice_target: "no" } %>
+      <% else %>
         <%= link_to t("back"), edit_profile_path, class: "btn btn-secondary" %>
       <% end %>
     </div>
   </div>
-
-  <% if asking %>
-    <div data-participation-choice-target="no">
-      <p class="form-text"><%= t("personal_data.decline_explanation") %></p>
-      <%= f.submit t("personal_data.continue"), class: "btn btn-primary" %>
-    </div>
-  <% end %>
 <% end %>
 
 <% if asking %>

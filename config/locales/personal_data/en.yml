@@ -8,11 +8,15 @@ en:
     why: >-
       For them we need the name and matriculation number Heidelberg University
       knows you by.
+    display_name_current_html: >-
+      In the forum and in comments, you appear as <strong>%{name}</strong>.
+      If you teach, this name also appears with your event series – in their
+      titles, on their pages and in the search.
+    display_name_change: "Change display name"
     display_name_hint: >-
-      This is how you appear in the forum, in comments and wherever your
-      university name is not needed. Many still have the start of their email
-      address here - a good moment to change it. You can change it at any time
-      on your profile page.
+      Your display name is deliberately up to you and need not be your real
+      name. Many still have the start of their email address here. You can
+      also change it later on your profile page.
     saved_by_support_html: >-
       Your saved name and matriculation number can only be changed by the
       support: %{support}.

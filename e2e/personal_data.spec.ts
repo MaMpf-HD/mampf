@@ -37,6 +37,8 @@ test("lets a user who takes part in no exercise class skip it",
 
     await expect(page.getByLabel("First name")).toBeHidden();
     await page.getByRole("radio", { name: "No" }).check();
+    await page.getByText("Change display name").click();
+    await page.getByLabel("Display name").fill("Ada L.");
     await page.getByRole("button", { name: "Continue" }).click();
 
     await expect(page).not.toHaveURL(/\/personal_data/);
@@ -45,6 +47,7 @@ test("lets a user who takes part in no exercise class skip it",
 
     await page.goto("/profile/edit");
     await page.getByRole("link", { name: "Show or complete" }).click();
+    await expect(page.getByText("you appear as Ada L.")).toBeVisible();
     await page.getByRole("link", { name: "Back", exact: true }).click();
     await expect(page).toHaveURL(/\/profile\/edit/);
   });
