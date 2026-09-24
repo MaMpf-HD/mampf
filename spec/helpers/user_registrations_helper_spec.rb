@@ -175,6 +175,22 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     end
   end
 
+  describe "#sorted_student_registration_items" do
+    it "puts talk 2 before talk 10" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :preference_based, campaignable: seminar)
+      talks = (1..10).map { |position| create(:talk, lecture: seminar, position: position) }
+      items = talks.reverse.map do |talk|
+        create(:registration_item, registration_campaign: campaign, registerable: talk)
+      end
+      user = create(:confirmed_user)
+
+      sorted = helper.sorted_student_registration_items(campaign, items, user)
+
+      expect(sorted.map { |item| item.registerable.position }).to eq((1..10).to_a)
+    end
+  end
+
   describe "#format_date" do
     let(:timestamp) { Time.zone.local(2026, 5, 2, 17, 45) }
 

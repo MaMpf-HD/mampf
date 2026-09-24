@@ -106,19 +106,29 @@ module UserRegistrationsHelper
     student_visible_campaign?(campaign) && !campaign.open_for_registrations?
   end
 
+  # The student's own options first, then those they can still take, then
+  # the ones they cannot, full ones last; "Talk 2" before "Talk 10".
   def sorted_student_registration_items(campaign, items, user)
-    items.sort_by do |item|
-      [student_registration_item_priority(campaign, item, user),
-       item_display_type(item).to_s,
-       item.registerable.try(:position).to_i,
-       natural_sort_key(item.registerable.title)]
-    end
-  end
+    registered = Registration::UserRegistration.confirmed
+                                               .where(user_id: user.id,
+                                                      registration_item_id: items.map(&:id))
+                                               .joins(:registration_item)
+                                               .pluck(:registration_item_id,
+                                                      "registration_items.registerable_type")
+    registered_ids = registered.map(&:first)
+    registered_types = registered.map(&:second)
 
-  # Sorts "Tutorial 2" before "Tutorial 10".
-  def natural_sort_key(text)
-    text.to_s.split(/(\d+)/).map do |part|
-      part.match?(/\A\d+\z/) ? [0, part.to_i] : [1, part.downcase]
+    items.natural_sort_by do |item|
+      priority = if item.id.in?(registered_ids)
+        0
+      elsif !item.still_has_capacity?
+        3
+      elsif registrable_now?(campaign, item, registered_types)
+        1
+      else
+        2
+      end
+      [priority, item_display_type(item), item.registerable.title].join(" | ")
     end
   end
 
@@ -186,23 +196,11 @@ module UserRegistrationsHelper
 
   private
 
-    def student_registration_item_priority(campaign, item, user)
-      return 0 if item.user_registered?(user)
-      return 1 if student_registration_item_available?(campaign, item, user)
-      return 3 unless item.still_has_capacity?
-
-      2
-    end
-
-    def student_registration_item_available?(campaign, item, user)
+    def registrable_now?(campaign, item, registered_types)
       return false unless campaign.open_for_registrations?
-      return false unless item.still_has_capacity?
       return true if freely_registerable?(item.registerable_type)
 
-      !campaign.user_registration_confirmed_for_group_type?(
-        user,
-        item.registerable_type
-      )
+      !item.registerable_type.in?(registered_types)
     end
 
     def metadata_label_for(col)
