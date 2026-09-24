@@ -541,7 +541,7 @@ de:
         Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
         language: >
-          Die Sprache, in der diese Veranstaltung gehalten wird. Die Oberfläche ändert sie nicht: Alle sehen MaMpf in der Sprache
+          Die Sprache, in der diese Veranstaltung gehalten wird. Sie ändert die Oberfläche nicht: Alle sehen MaMpf in der Sprache
           ihrer eigenen Einstellungen.
         home_intro: >
           Wird oben auf der Startseite der Veranstaltung angezeigt, über der
@@ -859,7 +859,7 @@ de:
         Veranstaltungs-Cards das Standard-Bild verwendet.
       info:
         language: >
-          Die Sprache, in der das Modul unterrichtet wird. Die Oberfläche ändert sie nicht: Alle sehen MaMpf in der Sprache
+          Die Sprache, in der das Modul unterrichtet wird. Sie ändert die Oberfläche nicht: Alle sehen MaMpf in der Sprache
           ihrer eigenen Einstellungen.
         title: >
           Hier musst Du den Titel des Moduls eintragen.
@@ -1405,7 +1405,7 @@ de:
           </ul>
         language: >
           Die Sprache des Mediums; standardmäßig die der zugehörigen
-          Veranstaltung bzw. des Moduls. Die Oberfläche ändert sie nicht: Alle sehen MaMpf in der Sprache
+          Veranstaltung bzw. des Moduls. Sie ändert die Oberfläche nicht: Alle sehen MaMpf in der Sprache
           ihrer eigenen Einstellungen.
         video: >
           Das Video sollte im mp4-Format vorliegen.
