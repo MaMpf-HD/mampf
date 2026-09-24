@@ -694,7 +694,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
         expect(RosterNotificationMailer).to have_received(:rejected).with(
           user, campaign,
-          reasons: [I18n.t("registration.user_registration.reason_labels.solver_unassigned")]
+          reasons: [I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                           locale: user.locale)]
         )
       end
 
@@ -715,7 +716,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
         # The code is aliased to email_domain_not_allowed, then translated.
         expect(RosterNotificationMailer).to have_received(:rejected).with(
           invalid_user, campaign,
-          reasons: [I18n.t("registration.policy.errors.email_domain_not_allowed")]
+          reasons: [I18n.t("registration.policy.errors.email_domain_not_allowed",
+                           locale: user.locale)]
         )
       end
 
@@ -732,7 +734,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
         expect(RosterNotificationMailer).to have_received(:rejected).with(
           user, campaign,
-          reasons: [I18n.t("registration.user_registration.reason_labels.manual_rejected")]
+          reasons: [I18n.t("registration.user_registration.reason_labels.manual_rejected",
+                           locale: user.locale)]
         )
       end
 
@@ -762,7 +765,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(RosterNotificationMailer).to have_received(:rejected).once
         expect(RosterNotificationMailer).to have_received(:rejected).with(
           loser, campaign,
-          reasons: [I18n.t("registration.user_registration.reason_labels.solver_unassigned")]
+          reasons: [I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                           locale: user.locale)]
         )
 
         # Accept mail

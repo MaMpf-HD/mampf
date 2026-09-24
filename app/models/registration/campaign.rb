@@ -317,7 +317,9 @@ module Registration
         next if confirmed_user_ids.include?(user.id)
         next if pending_user_ids.include?(user.id)
 
-        reasons = regs.map(&:resolved_rejection_reason_label).uniq
+        reasons = I18n.with_locale(user.locale.presence || I18n.default_locale) do
+          regs.map(&:resolved_rejection_reason_label).uniq
+        end
 
         [user, reasons, self]
       end
