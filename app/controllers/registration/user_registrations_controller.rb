@@ -69,9 +69,7 @@ module Registration
       def require_personal_data
         return unless current_user.personal_data_declined?
 
-        respond_with_flash(:alert,
-                           t("personal_data.needed_to_register",
-                             support: DefaultSetting::PROJECT_EMAIL),
+        respond_with_flash(:alert, t("personal_data.needed_to_register"),
                            fallback_location: lecture_home_path(@campaign.campaignable))
       end
 

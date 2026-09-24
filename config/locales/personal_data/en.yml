@@ -19,11 +19,11 @@ en:
     decline_explanation: >-
       You only use MaMpf for its materials and take part in no exercise class,
       exam or seminar? Then you can skip this. Should you want to take part
-      later, write to the support.
+      later, you can enter the details on your profile page.
     decline: "I do not take part in exercise classes or exams"
     needed_to_register: >-
-      To register, we need your name and matriculation number. Please write to
-      the support: %{support}.
+      To register, we need your name and matriculation number. Please enter
+      them on your profile page first.
     edit_link: "Show or complete"
   activerecord:
     attributes:

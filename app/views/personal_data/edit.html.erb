@@ -46,7 +46,12 @@
     </div>
   <% end %>
 
-  <%= f.submit t("personal_data.save"), class: "btn btn-primary" %>
+  <div class="d-flex gap-2">
+    <%= f.submit t("personal_data.save"), class: "btn btn-primary" %>
+    <% unless @user.personal_data_pending? %>
+      <%= link_to t("back"), edit_profile_path, class: "btn btn-secondary" %>
+    <% end %>
+  </div>
 <% end %>
 
 <% if @user.personal_data_pending? %>
@@ -54,4 +59,6 @@
   <p class="form-text"><%= t("personal_data.decline_explanation") %></p>
   <%= button_to t("personal_data.decline"), decline_personal_data_path,
                 class: "btn btn-outline-secondary" %>
+  <%= button_to t("navbar.logout"), destroy_user_session_path(locale: I18n.locale),
+                method: :delete, class: "btn btn-link p-0 mt-3" %>
 <% end %>

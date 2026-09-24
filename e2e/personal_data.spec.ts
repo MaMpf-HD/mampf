@@ -40,4 +40,9 @@ test("lets a user who takes part in no exercise class skip it",
     await expect(page).not.toHaveURL(/\/personal_data/);
     await page.goto("/main/start");
     await expect(page).toHaveURL(/\/main\/start/);
+
+    await page.goto("/profile/edit");
+    await page.getByRole("link", { name: "Show or complete" }).click();
+    await page.getByRole("link", { name: "Back", exact: true }).click();
+    await expect(page).toHaveURL(/\/profile\/edit/);
   });

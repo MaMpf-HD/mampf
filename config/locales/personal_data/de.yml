@@ -18,11 +18,12 @@ de:
     decline_explanation: >-
       Du nutzt MaMpf nur für die Materialien und nimmst an keiner Übung,
       Klausur und keinem Seminar teil? Dann kannst Du das überspringen. Willst
-      Du später doch teilnehmen, schreib dem Support.
+      Du später doch teilnehmen, kannst Du die Angaben in Deinem Profil
+      nachtragen.
     decline: "Ich nehme an keinen Übungen oder Klausuren teil"
     needed_to_register: >-
-      Für die Anmeldung brauchen wir Deinen Namen und Deine Matrikelnummer.
-      Schreib dafür bitte an den Support: %{support}.
+      Für die Anmeldung brauchen wir Deinen Namen und Deine Matrikelnummer. Trag
+      sie bitte zuerst in Deinem Profil ein.
     edit_link: "Ansehen oder ergänzen"
   activerecord:
     attributes:

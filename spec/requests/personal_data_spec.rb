@@ -113,6 +113,24 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "ways off the page" do
+    it "offers to sign out while the question is open" do
+      get edit_personal_data_path
+
+      expect(response.body).to include(destroy_user_session_path(locale: user.locale))
+    end
+
+    it "offers a way back to someone who declined, who may still fill it in" do
+      post decline_personal_data_path
+      get edit_personal_data_path
+
+      expect(response.body).to include(%(href="#{edit_profile_path}"))
+
+      patch personal_data_path, params: { user: complete }
+      expect(user.reload.full_name).to eq("Ada Lovelace")
+    end
+  end
+
   describe "the Uni ID" do
     it "stays the user's to change, without the confirmation" do
       patch personal_data_path, params: { user: complete.merge(uni_id: "ab123") }
