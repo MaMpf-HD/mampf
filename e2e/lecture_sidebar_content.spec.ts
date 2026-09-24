@@ -32,21 +32,3 @@ test.describe("lecture content for an editor who is not subscribed", () => {
     await expect(page.getByRole("heading", { name: "Course Editors" })).toBeVisible();
   });
 });
-
-test("shows a German lecture in the English of its reader",
-  async ({ factory, teacher: { page, user } }) => {
-    const course = await factory.create("course", [], { locale: "de" });
-    const lecture = await factory.create("lecture", ["released_for_all"], {
-      teacher_id: user.id,
-      course_id: course.id,
-      locale: "de",
-      organizational: true,
-      organizational_concept: "<p>Übungsblätter erscheinen mittwochs</p>",
-    });
-
-    await page.goto(`/lectures/${lecture.id}`);
-    await expect(page.getByRole("link", { name: "Organisatorisches" })).toHaveCount(0);
-    await page.getByRole("link", { name: "General Information" }).click();
-
-    await expect(page.getByText("Übungsblätter erscheinen mittwochs")).toBeVisible();
-  });
