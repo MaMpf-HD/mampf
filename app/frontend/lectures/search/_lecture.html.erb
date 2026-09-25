@@ -95,7 +95,8 @@
                   class: "lecture-search-result-control " \
                          "lecture-search-result-register",
                   title: t("lecture.search.go_register"),
-                  "aria-label": t("lecture.search.go_register"),
+                  "aria-label": t("lecture.search.go_register_for",
+                                  lecture: lecture.title_no_term),
                   data: { testid: "lecture-search-register-link" } do %>
         <i class="fas fa-plus" aria-hidden="true"></i>
       <% end %>
@@ -107,7 +108,8 @@
               data-bookmark-target="button"
               data-action="bookmark#toggle"
               aria-pressed="<%= bookmarked %>"
-              aria-label="<%= t('lecture.search.bookmark') %>"
+              aria-label="<%= t('lecture.search.bookmark_lecture',
+                                lecture: lecture.title_no_term) %>"
               title="<%= t('lecture.search.bookmark') %>"
               data-testid="lecture-search-bookmark-button">
         <i class="<%= bookmarked ? 'fas' : 'far' %> fa-bookmark"

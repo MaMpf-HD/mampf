@@ -9,9 +9,11 @@ de:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
       bookmark: Merken
+      bookmark_lecture: "%{lecture} merken"
       registration_open: Anmeldung offen
       registered_status: Du bist für diese Veranstaltung angemeldet
       go_register: Anmeldung offen — zur Veranstaltungsseite, um Dich anzumelden
+      go_register_for: "Anmeldung für %{lecture} offen — zur Veranstaltungsseite, um Dich anzumelden"
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
   lecture_home:

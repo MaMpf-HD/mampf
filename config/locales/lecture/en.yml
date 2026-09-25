@@ -9,9 +9,11 @@ en:
       go_to_search: Search lectures
       placeholder: Search for lectures...
       bookmark: Bookmark
+      bookmark_lecture: "Bookmark %{lecture}"
       registration_open: Registration open
       registered_status: You are registered for this lecture
       go_register: Registration open — go to the lecture page to register
+      go_register_for: "Registration open for %{lecture} — go to its page to register"
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
   lecture_home:
