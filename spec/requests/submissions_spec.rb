@@ -224,6 +224,10 @@ RSpec.describe("Submissions", type: :request) do
   # before_action gates them all with the rule handing in uses, and the group is
   # walked here on purpose - four gates is how the fifth gets forgotten.
   describe "the actions that take a sheet, asked by somebody not in the lecture" do
+    # An open lecture is every student's; a stranger is somebody its
+    # passphrase keeps out.
+    before { lecture.update!(passphrase: "open sesame") }
+
     let(:submission) do
       create(:submission, assignment: assignment, tutorial: tutorial)
         .tap { |record| record.users << create(:confirmed_user) }
@@ -625,8 +629,9 @@ RSpec.describe("Submissions", type: :request) do
         expect(response).to redirect_to(:root)
       end
 
-      it "turns away somebody who is not in the lecture" do
+      it "turns away somebody the passphrase keeps out" do
         user.lectures.delete(lecture)
+        lecture.update!(passphrase: "open sesame")
 
         get lecture_submissions_path(lecture)
 
@@ -1018,6 +1023,7 @@ RSpec.describe("Submissions", type: :request) do
         end
 
         it "turns a stranger away" do
+          lecture.update!(passphrase: "open sesame")
           sign_in create(:confirmed_user)
 
           post sheet_seen_path, params: { assignment_id: assignment.id },
@@ -1047,6 +1053,7 @@ RSpec.describe("Submissions", type: :request) do
 
         it "turns a stranger away" do
           hand_in(sheet(title: "Homework 8"), correction: true)
+          lecture.update!(passphrase: "open sesame")
           sign_in create(:confirmed_user)
 
           post lecture_sheets_seen_path(lecture), as: :turbo_stream
