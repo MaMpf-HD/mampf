@@ -442,6 +442,20 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         expect(campaign.user_registrations.confirmed.where(user: user)
                        .map(&:registration_item)).to eq([other])
       end
+
+      it "sends a user who declined to give their data to the form instead" do
+        UserRegistrations::LectureFirstComeFirstServedEditService.new(campaign, user)
+                                                                 .register!(item)
+        user.update!(personal_data_confirmed_at: nil, personal_data_declined_at: Time.current)
+        other = campaign.registration_items.second
+
+        patch switch_item_path(campaign_id: campaign.id, item_id: other.id),
+              params: { from_item_id: item.id }
+
+        expect(response).to redirect_to(edit_personal_data_path)
+        expect(campaign.user_registrations.confirmed.where(user: user)
+                       .map(&:registration_item)).to eq([item])
+      end
     end
 
     describe "a step that changes another campaign" do

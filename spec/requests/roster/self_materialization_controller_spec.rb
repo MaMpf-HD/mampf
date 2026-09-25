@@ -42,6 +42,16 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       expect(response.body).to include(I18n.t("roster.messages.user_switched", group: other.title))
     end
 
+    it "sends a user who declined to give their data to the form instead" do
+      user.update!(personal_data_confirmed_at: nil, personal_data_declined_at: Time.current)
+
+      patch self_switch_tutorial_path(other), as: :turbo_stream
+
+      expect(response).to redirect_to(edit_personal_data_path)
+      expect(tutorial.reload.members).to include(user)
+      expect(other.reload.members).not_to include(user)
+    end
+
     it "keeps the user in their tutorial when this one is full" do
       other.update!(capacity: 1)
       create(:tutorial_membership, tutorial: other, user: create(:confirmed_user))
