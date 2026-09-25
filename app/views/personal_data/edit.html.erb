@@ -15,13 +15,13 @@
 <%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch, local: true,
               data: asking || steps.any? ? form_data : {} do |f| %>
   <% if choosing %>
+    <%= hidden_field_tag :give_up_places, place_lecture_ids if places %>
     <fieldset class="mb-3">
       <% if places %>
         <legend class="h6">
           <%= t("personal_data.places_question",
                 lectures: @place_lectures.map(&:title).to_sentence) %>
         </legend>
-        <%= hidden_field_tag :give_up_places, place_lecture_ids %>
       <% else %>
         <legend class="h6"><%= t("personal_data.participation_question") %></legend>
         <p class="form-text"><%= t("personal_data.participation_hint") %></p>

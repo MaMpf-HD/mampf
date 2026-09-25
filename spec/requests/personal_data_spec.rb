@@ -189,6 +189,18 @@ RSpec.describe("Personal data", type: :request) do
       expect(response).to redirect_to(edit_personal_data_path)
     end
 
+    it "leaves out the first-sign-in profile notice when it asks again after a no" do
+      get start_path
+      sign_out(user)
+      user.update!(personal_data_declined_at: Time.current, sign_in_count: 0)
+
+      post user_session_path, params: { user: { email: user.email, password: user.password } }
+
+      expect(flash[:notice]).to be_nil
+      follow_redirect!
+      expect(response).to redirect_to(edit_personal_data_path)
+    end
+
     it "gives the places up with the no, once the form has named them" do
       patch personal_data_path, params: { participation: "no", give_up_places: lecture.id.to_s }
 
