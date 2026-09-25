@@ -261,8 +261,8 @@ class LecturesController < ApplicationController
     # trigger per-lecture queries and the cost is bounded by the page size)
     page_lecture_ids = @lectures.map(&:id)
     self_enrollment = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
-    @search_result_ids = LecturesHelper::SearchResultIds.new(
-      subscribed_lecture_ids:
+    @search_result_ids = LectureSearchResultComponent::PageIds.new(
+      bookmarked_lecture_ids:
         current_user.lecture_bookmarks
                     .where(lecture_id: page_lecture_ids)
                     .pluck(:lecture_id).to_set,
@@ -290,9 +290,7 @@ class LecturesController < ApplicationController
             turbo_stream.replace("pagy-nav-next",
                                  partial: "lectures/search/nav",
                                  locals: { pagy: @pagy }),
-            turbo_stream.append("lecture-search-results",
-                                partial: "lectures/search/lecture",
-                                collection: @lectures)
+            turbo_stream.append("lecture-search-results", search_result_cards)
           ]
         end
       end
@@ -324,6 +322,12 @@ class LecturesController < ApplicationController
   end
 
   private
+
+    def search_result_cards
+      LectureSearchResultComponent.with_collection(
+        @lectures, ids: @search_result_ids, user: current_user, show_term: @show_term
+      )
+    end
 
     def set_lecture
       @lecture = Lecture.find_by(id: params[:id])

@@ -1,37 +1,12 @@
-<% status = lecture_search_result_status(lecture, @search_result_ids,
-                                         show_term: @show_term != false) %>
-<% marker_status = status.marker_status %>
-<% bookmarked = status.bookmarked %>
-<% registration_possible = status.registration_possible %>
-<% bookmarkable = status.bookmarkable %>
-<% show_term = status.show_term %>
-
-<% wrap_attributes = {
-     class: ["lecture-search-result-wrap",
-             ("is-bookmarked" if bookmarkable && bookmarked)],
-   } %>
-<% if bookmarkable %>
-  <% wrap_attributes[:data] = {
-       controller: "bookmark",
-       bookmark_url_value: dashboard_bookmark_path(lecture),
-       bookmark_bookmarked_value: bookmarked,
-       bookmark_lecture_id_value: lecture.id,
-     } %>
-<% end %>
-
-<%= tag.div(**wrap_attributes) do %>
+<%= tag.div(**wrapper_attributes) do %>
 
   <%= link_to lecture, class: "lecture-search-result-link",
                        "data-testid": "lecture-search-result-card" do %>
     <div class="lecture-search-result glass row g-0">
 
       <div class="col-md-3">
-        <%= image_tag(lecture.course.normalized_image_file ?
-                        image_course_path(lecture.course,
-                                          variant: "normalized") :
-                        "/no_course_information.png",
-                      class: "lecture-search-result-image",
-                      alt: lecture.title_no_term) %>
+        <%= image_tag(image_url, class: "lecture-search-result-image",
+                                 alt: lecture.title_no_term) %>
       </div>
 
       <div class="col-md-9">
@@ -42,13 +17,13 @@
           <div class="lecture-search-result-info">
             <%# "Registered" is already carried by the marker on the right edge;
                 only the open-registration hint stays as a badge here. %>
-            <% if registration_possible %>
+            <% if registration_possible? %>
               <span class="badge bg-primary lecture-search-result-registration"
                     data-testid="lecture-search-registration-badge">
-                <%= t('lecture.search.registration_open') %>
+                <%= t("lecture.search.registration_open") %>
               </span>
             <% end %>
-            <% if lecture.term && show_term %>
+            <% if show_term? %>
               <span class="lecture-search-result-term">
                 <%= lecture.term.to_label_short %>
               </span>
@@ -71,26 +46,17 @@
       room for the bookmark toggle next to it, only a confirmed seat or
       group membership replaces it entirely. %>
   <div class="lecture-search-result-controls">
-    <% if status.registered %>
-      <%# A self-enrolled group membership with no formal application of its
-          own (marker_status nil) keeps the plain "registered" wording; the
-          other three statuses get the same icon/label as the dashboard. %>
-      <% label = marker_status ?
-                   registration_status_label(marker_status) :
-                   t('lecture.search.registered_status') %>
+    <% if registered? %>
       <span class="lecture-search-result-control is-registered"
             role="img"
-            aria-label="<%= label %>"
-            title="<%= label %>"
+            aria-label="<%= registered_label %>"
+            title="<%= registered_label %>"
             data-testid="lecture-search-registered-control">
-        <i class="bi <%= marker_status ?
-                            registration_status_icon(marker_status) :
-                            'bi-check-circle-fill text-success' %>"
-           aria-hidden="true"></i>
+        <i class="bi <%= registered_icon %>" aria-hidden="true"></i>
       </span>
     <% end %>
 
-    <% if registration_possible %>
+    <% if registration_possible? %>
       <%= link_to lecture_home_path(lecture),
                   class: "lecture-search-result-control " \
                          "lecture-search-result-register",
@@ -102,17 +68,17 @@
       <% end %>
     <% end %>
 
-    <% if bookmarkable %>
+    <% if bookmarkable? %>
       <button type="button"
               class="lecture-search-result-control lecture-search-result-bookmark"
               data-bookmark-target="button"
               data-action="bookmark#toggle"
-              aria-pressed="<%= bookmarked %>"
-              aria-label="<%= t('lecture.search.bookmark_lecture',
+              aria-pressed="<%= bookmarked? %>"
+              aria-label="<%= t("lecture.search.bookmark_lecture",
                                 lecture: lecture.title_no_term) %>"
-              title="<%= t('lecture.search.bookmark') %>"
+              title="<%= t("lecture.search.bookmark") %>"
               data-testid="lecture-search-bookmark-button">
-        <i class="<%= bookmarked ? 'fas' : 'far' %> fa-bookmark"
+        <i class="<%= bookmarked? ? "fas" : "far" %> fa-bookmark"
            data-bookmark-target="icon"
            aria-hidden="true"></i>
       </button>

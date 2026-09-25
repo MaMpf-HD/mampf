@@ -1,7 +1,10 @@
 <div id="lecture-search-results-wrapper">
   <div id="lecture-search-results" data-testid="lecture-search-results">
     <% if @lectures.any? %>
-      <%= render partial: "lectures/search/lecture", collection: @lectures %>
+      <%= render LectureSearchResultComponent.with_collection(
+            @lectures, ids: @search_result_ids, user: current_user,
+                       show_term: @show_term
+          ) %>
     <% else %>
       <div class="text-center text-muted my-4">
       <%= t("lecture.search.no_results") %>
