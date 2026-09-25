@@ -26,6 +26,7 @@ de:
       exam: "Deine nächste Klausur"
       open_sheet: "Zur Abgabe"
     work:
+      admission_details: "Details"
       all: "Alle Abgaben"
       nothing_due: "Gerade ist kein Blatt offen."
       title: "Deine Abgaben"

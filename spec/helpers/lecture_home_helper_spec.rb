@@ -4,10 +4,6 @@ RSpec.describe(LectureHomeHelper, type: :helper) do
   let(:campaign) { double(campaign: double) }
   let(:exam) { double }
 
-  def work(*states)
-    double(due: states.map { |state| double(state: state) })
-  end
-
   before do
     helper.extend(UserRegistrationsHelper)
   end
@@ -29,16 +25,6 @@ RSpec.describe(LectureHomeHelper, type: :helper) do
 
     it "leads with nothing when nothing is due" do
       expect(helper.lecture_home_focus(campaigns: [], next_exam: nil)).to be_nil
-    end
-  end
-
-  describe "#lecture_home_sheet_due?" do
-    it "is true while the sheet due next is not handed in" do
-      expect(helper.lecture_home_sheet_due?(work(:nothing_handed_in))).to be(true)
-    end
-
-    it "is false once it is handed in" do
-      expect(helper.lecture_home_sheet_due?(work(:handed_in))).to be(false)
     end
   end
 end

@@ -117,6 +117,14 @@ class StandingComponent < ViewComponent::Base
   # only has to say what is outstanding and that it is not in there. Naming a
   # second number here would put two maxima next to each other and leave the
   # reader to work out which of them they are being measured against.
+  # The compact form on the lecture home leaves out what is still with the
+  # tutor and links to the hand-ins page for it instead.
+  def aside_line
+    return pending_line unless compact
+
+    pending_line unless marked?
+  end
+
   def pending_line
     return t("submission.hub.standing.nothing_marked") unless marked?
     return unless points_awaiting_marks.to_f.positive?

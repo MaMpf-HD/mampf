@@ -1,4 +1,4 @@
-<%# locals: (lecture:, work:, certification:, sheet_due:) %>
+<%# locals: (lecture:, work:, certification:) %>
 <% due = Array(work.due) %>
 <section class="lecture-home-work" aria-labelledby="work-heading"
          data-testid="lecture-home-work">
@@ -22,7 +22,7 @@
           <p class="lecture-home-focus-line"><%= lecture_home_sheet_deadline(sheet) %></p>
         <% end %>
         <%= link_to t("lecture_home.focus.open_sheet"), lecture_submissions_path(lecture),
-                    class: sheet_due ? "btn btn-primary" : "btn btn-outline-primary",
+                    class: "btn btn-outline-primary btn-sm",
                     data: { turbo_frame: "main" } %>
       <% else %>
         <p class="lecture-home-focus-line mb-0"><%= t("lecture_home.work.nothing_due") %></p>
@@ -34,6 +34,9 @@
       <% if admission %>
         <p class="hub-aside mt-2 mb-0"><%= admission %></p>
       <% end %>
+      <%= link_to t("lecture_home.work.admission_details"),
+                  lecture_submissions_path(lecture),
+                  class: "hub-aside d-inline-block mt-2", data: { turbo_frame: "main" } %>
     <% end %>
   </div>
 </section>

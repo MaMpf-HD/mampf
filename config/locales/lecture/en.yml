@@ -26,6 +26,7 @@ en:
       exam: "Your next exam"
       open_sheet: "Go to your hand-in"
     work:
+      admission_details: "Details"
       all: "All hand-ins"
       nothing_due: "No sheet is open right now."
       title: "Your hand-ins"

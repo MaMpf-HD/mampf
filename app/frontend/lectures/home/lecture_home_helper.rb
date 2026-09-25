@@ -1,7 +1,6 @@
 module LectureHomeHelper
   Focus = Struct.new(:kind, :subject, keyword_init: true)
 
-  SHEET_STATES_TO_ACT_ON = [:nothing_handed_in, :grace_period, :tutor_decides].freeze
   NEWS_SHOWN = 3
 
   def lecture_home_focus(campaigns:, next_exam:)
@@ -9,10 +8,6 @@ module LectureHomeHelper
     return Focus.new(kind: :campaign, subject: campaign) if campaign
 
     Focus.new(kind: :exam, subject: next_exam) if next_exam
-  end
-
-  def lecture_home_sheet_due?(work)
-    Array(work&.due).any? { |sheet| sheet.state.in?(SHEET_STATES_TO_ACT_ON) }
   end
 
   def lecture_home_sheet_deadline(sheet)
