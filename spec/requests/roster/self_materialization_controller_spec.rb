@@ -26,6 +26,43 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
     sign_in user
   end
 
+  describe "PATCH /tutorials/:id/roster/self_switch" do
+    let(:other) do
+      create(:tutorial, lecture: lecture, skip_campaigns: true,
+                        self_materialization_mode: :add_and_remove)
+    end
+
+    before { create(:tutorial_membership, tutorial: tutorial, user: user) }
+
+    it "moves the user from their tutorial to this one" do
+      patch self_switch_tutorial_path(other), as: :turbo_stream
+
+      expect(other.reload.members).to include(user)
+      expect(tutorial.reload.members).not_to include(user)
+      expect(response.body).to include(I18n.t("roster.messages.user_switched", group: other.title))
+    end
+
+    it "sends a user who declined to give their data to the form instead" do
+      user.update!(personal_data_confirmed_at: nil, personal_data_declined_at: Time.current)
+
+      patch self_switch_tutorial_path(other), as: :turbo_stream
+
+      expect(response).to redirect_to(edit_personal_data_path)
+      expect(tutorial.reload.members).to include(user)
+      expect(other.reload.members).not_to include(user)
+    end
+
+    it "keeps the user in their tutorial when this one is full" do
+      other.update!(capacity: 1)
+      create(:tutorial_membership, tutorial: other, user: create(:confirmed_user))
+
+      patch self_switch_tutorial_path(other), as: :turbo_stream
+
+      expect(tutorial.reload.members).to include(user)
+      expect(other.reload.members).not_to include(user)
+    end
+  end
+
   describe "POST /tutorials/:id/roster/self_add" do
     it "adds the user to the tutorial" do
       expect do
@@ -40,16 +77,26 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
-    it "updates the rosterized entries turbo frame" do
-      post self_add_tutorial_path(tutorial), as: :turbo_stream
+    it "sends a user who declined to give their data to the form instead" do
+      user.update!(personal_data_confirmed_at: nil, personal_data_declined_at: Time.current)
 
-      expect(response.body).to include('target="student_registration_rosterized_entries"')
+      expect do
+        post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+      end.not_to(change { tutorial.members.count })
+
+      expect(response).to redirect_to(edit_personal_data_path)
     end
 
-    it "updates the self materialization zone turbo frame" do
+    it "updates the participation section" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
-      expect(response.body).to include('target="student_registration_options"')
+      expect(response.body).to include('target="student_registration_participation"')
+    end
+
+    it "updates the self-enrollment row" do
+      post self_add_tutorial_path(tutorial), as: :turbo_stream
+
+      expect(response.body).to include('target="self_enrollment_body"')
     end
 
     context "when user is already in another tutorial of the same lecture" do
@@ -180,7 +227,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         post self_add_tutorial_path(tutorial), as: :turbo_stream
 
         expect(response.body).to include(
-          I18n.t("registration.user_registration.index.confirmed_cases", locale: :en)
+          I18n.t("registration.user_registration.participation.title", locale: :en)
         )
       end
     end
@@ -217,10 +264,19 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
-    it "updates the rosterized entries turbo frame" do
+    it "updates the participation section" do
       delete self_remove_tutorial_path(tutorial), as: :turbo_stream
 
-      expect(response.body).to include('target="student_registration_rosterized_entries"')
+      expect(response.body).to include('target="student_registration_participation"')
+    end
+
+    it "takes the self-enrollment row off once no group is left on offer" do
+      tutorial.update!(self_materialization_mode: :remove_only)
+
+      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+      expect(response.body)
+        .to include(%(action="remove" target="#{SelfEnrollmentComponent::BLOCK_ID}"))
     end
 
     context "when the tutorial is locked" do

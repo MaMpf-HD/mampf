@@ -20,6 +20,16 @@ RSpec.describe("Auth sessions", type: :request) do
       expect(flash[:notice]).to eq(I18n.t("profile.please_update"))
     end
 
+    it "leaves the profile notice out while the personal data question is open" do
+      user.update!(personal_data_confirmed_at: nil)
+
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+
+      expect(flash[:notice]).to be_nil
+    end
+
     it "redirects returning users to the start page" do
       post user_session_path, params: {
         user: { email: user.email, password: password }

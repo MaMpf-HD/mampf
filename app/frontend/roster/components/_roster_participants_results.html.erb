@@ -3,7 +3,14 @@
     <thead class="table-light">
       <tr>
         <th scope="col" class="border-top-0"><%= t("basics.name") %></th>
-        <th scope="col" class="border-top-0"><%= t("basics.email") %></th>
+
+        <th scope="col" class="border-top-0">
+          <%= User.human_attribute_name(:matriculation_number) %>
+        </th>
+
+        <th scope="col" class="border-top-0">
+          <%= User.human_attribute_name(:program_id) %>
+        </th>
 
         <th scope="col" class="border-top-0">
           <%= t("roster.columns.groups") %>
@@ -18,7 +25,7 @@
     <tbody>
       <% if component.participants.empty? %>
         <tr>
-          <td colspan="4" class="text-center py-4 text-muted border-bottom-0">
+          <td colspan="5" class="text-center py-4 text-muted border-bottom-0">
             <%= t("roster.details.empty") %>
           </td>
         </tr>
@@ -27,8 +34,13 @@
           <% user = membership.user %>
 
           <tr>
-            <td><%= user.tutorial_name %></td>
-            <td><%= user.email %></td>
+            <td>
+              <%= user.tutorial_name %>
+              <%= render "shared/copy_email_button", email: user.email %>
+            </td>
+
+            <td><%= user.matriculation_number %></td>
+            <td><%= user.program&.name_with_subject %></td>
 
             <td>
               <% groups = component.participant_groups(user) %>

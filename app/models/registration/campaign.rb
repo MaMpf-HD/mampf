@@ -101,9 +101,12 @@ module Registration
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
     end
 
+    # An exam campaign without a description is named after its exam, since a
+    # lecture has several of them; the others after what they allocate.
     def student_facing_title
       description.to_s.strip.presence ||
-        I18n.t("registration.user_registration.campaign_main")
+        (roster_group_type == "exams" && titled_exam&.title) ||
+        I18n.t("registration.user_registration.campaign_title.#{roster_group_type}")
     end
 
     def evaluate_policies_for(user, phase: :registration)
@@ -440,6 +443,15 @@ module Registration
     end
 
     private
+
+      def titled_exam
+        item = if association(:registration_items).loaded?
+          registration_items.detect { |i| i.registerable_type == "Exam" }
+        else
+          registration_items.find_by(registerable_type: "Exam")
+        end
+        item&.registerable
+      end
 
       def data_blocker
         return :registrations if user_registrations.exists?

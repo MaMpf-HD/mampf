@@ -302,20 +302,6 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
-        confirmed_cases: "Your registration is confirmed for"
-        unassigned_notice: "You have not been assigned to a group yet."
-        pending_preference_notice: "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences."
-        fulfilled_preference_notice_html: "We could fulfill your <em>%{rank}</em> preference."
-        fulfilled_preference_ranks:
-          "1": "1st"
-          "2": "2nd"
-          "3": "3rd"
-        unfulfilled_preferences_notice_html: "Unfortunately, your preferences (<em>%{preferences}</em>) could not be fulfilled."
-        unallocated_preference_notice_html: "Unfortunately, your registration for <em>%{campaign}</em> could not be considered because there were more registrations than available places. We received your preferences: <em>%{preferences}</em>."
-        policy_rejection_notice_html: >-
-          Your registration for <em>%{campaign}</em> was rejected for the following reasons:
-        unknown_tutor: "A tutor has not been assigned yet."
-        unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
         rejected_title: "Rejected Registrations"
@@ -341,12 +327,15 @@ en:
       actions:
         reject_user: "Reject registrations"
         defer_due_to_blocker: "Reject for now"
-        rank_option_tooltip: "Set as %{rank} preference"
       registrations: "Registrations"
       title: "Your Registration"
       planning: "Planning"
       course_code: "Course code"
-      campaign_main: "Registration process"
+      campaign_title:
+        tutorials: "Tutorial registration"
+        talks: "Talk assignment"
+        cohorts: "Registration process"
+        exams: "Exam registration"
       eligibility_title: "Eligibility"
       first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
       first_come_first_served_instruction_exam: "Register for this exam. Your place is confirmed right away."
@@ -372,14 +361,8 @@ en:
       register_now: "Register now"
       registration_blocked: "Unavailable"
       withdraw: "Withdraw"
-      closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
       ineligible_notice:
         title: "Registration unavailable"
-        description: "You cannot register for this campaign right now for the following reasons:"
-      readonly_notice:
-        title: "Registration closed"
-        description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
-        description_exam: "Your registration stays visible here while the teacher confirms the list of participants. You can no longer withdraw."
       finalization_policy_notice:
         title: "Your registration would currently fail at finalization"
         description: >-
@@ -389,10 +372,8 @@ en:
         title: "Policy checks for this registration"
         registration_title: "Checked at registration"
         registration_description: "These checks must be fulfilled before you can register."
-        registration_empty: "There are no additional rules or restrictions for registration."
         finalization_title: "Checked again at finalization"
         finalization_description: "These checks are evaluated again when the registration process is finalized."
-        finalization_empty: "There are no additional checks at finalization."
         status:
           fulfilled: "Currently fulfilled"
           not_fulfilled: "Currently not fulfilled"
@@ -448,7 +429,6 @@ en:
         generic_html: "You do not currently meet the <em>%{requirement}</em> requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
         generic_finalization_warning_html: "You do not currently meet the <em>%{requirement}</em> requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
         generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the <em>%{requirement}</em> requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
-      withdraw_first: "Withdraw first"
       filter_placeholder: "Filter by weekday, time, tutor"
       status_for_registration: "Current statuses of your submitted options"
       submitted_pref: "Your submitted choice(s)"
@@ -470,6 +450,7 @@ en:
       messages:
         campaign_unavailable: "This registration process is not accessible right now."
         campaign_not_opened: "Registration is not opened."
+        switched: "You have switched groups."
         registration_success: "Registration completed successfully."
         registration_failed: "Registration could not be completed."
         already_registered: "You are already registered for this registration process."
@@ -486,6 +467,80 @@ en:
         cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
         course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
         campaign_not_found: "Registration process not found."
+      registrations_title: "Registrations"
+      participation:
+        title: "Your participation"
+        preferences_title: "Your preferences"
+        allocation_pending: "Waiting for allocation"
+        registered: "Registered"
+        checked_at_finalization: "The requirements are checked again when the process is finalized."
+        no_place: "No place"
+        your_preferences: "Your preferences: %{preferences}"
+        rejected: "Rejected"
+        rejected_by_teacher: "The lecture staff rejected this registration."
+        excluded_from_exam: "Removed from the exam list"
+        on_exam_list: "On the exam list"
+        enrolled: "Enrolled"
+        assigned: "Assigned"
+        leave: "Leave"
+        preference_fulfilled: "Your %{rank} choice."
+        outside_preferences: "Assigned outside your preferences."
+      summary:
+        load_failed: "The options could not be loaded."
+        retry: "Try again"
+        registered: "Registered"
+        preferences_saved: "Preferences saved"
+        full: "No places left"
+        loading: "Loading …"
+        blocked: "Not available"
+        requirement_missing: "Requirement missing"
+        no_preferences: "No preferences yet"
+        not_registered: "Not registered yet"
+        details: "Details"
+        change: "Change"
+        change_preferences: "Change preferences"
+        choose: "Choose preferences"
+        register: "Register"
+        show_and_register: "Show groups"
+        days_left:
+          zero: "ends today"
+          one: "1 day left"
+          other: "%{count} days left"
+        deadline: "Registration until %{deadline}"
+        preference_mode:
+          one: "Rank %{count} of %{options} options"
+          other: "Rank %{count} of %{options} options"
+        exam_places:
+          zero: "No places left"
+          one: "1 place left"
+          other: "%{count} places left"
+        fcfs_mode: "First come, first served · %{open} of %{total} with free places"
+        unsaved: "Unsaved changes"
+      options:
+        search_label: "Search options"
+        search_placeholder: "Weekday, time, tutor, room"
+        no_match: "No option matches your search."
+        show_all: "Show all %{count}"
+        withdraw_from: "Withdraw from %{title}"
+        no_places: "No places left."
+        switch: "Switch here"
+        switch_to: "Switch to %{title}"
+        register_for: "Register for %{title}"
+        unlimited: "No limit"
+        full: "Full"
+        free: "%{free} of %{capacity} places free"
+        rank_for: "%{title} as %{rank} choice"
+        saved: "All changes saved"
+        unsaved: "Unsaved changes"
+      self_enrollment:
+        title: "Join a group yourself"
+        meta:
+          one: "%{count} group, no deadline"
+          other: "%{count} groups, no deadline"
+        show: "Show groups"
+        instruction: "You join these groups right away, without a registration period."
+        joined: "Joined"
+        join: "Join"
     allocation:
       violations_table:
         override_pass: "Override to passed"
@@ -607,14 +662,9 @@ en:
         empty_locked: >-
           Lecture news and updates appear on this page. Unlock the lecture to
           access the materials.
-        news_indicator: "New updates on Home"
+        news_indicator: "Unread announcements and forum topics"
         attachment_download: "Download program (PDF)"
         attachment_missing: "No program is attached to this lecture."
-        staff_registration_title: "What students see here"
-        staff_registration_hint: >-
-          Below your intro, students see the registration process and their own
-          status (open registrations, the group they were assigned to). That
-          view is personal to each student, so it is not shown to you here.
         staff_registration_manage: "Manage registration processes"
         intro_empty: >-
           Your lecture home page has no welcome text or program yet. Add a short
@@ -631,7 +681,6 @@ en:
           you can unlock its materials without entering it.
         unlock: "Unlock"
   activerecord:
-    attributes:
     errors:
       models:
         registration/campaign:

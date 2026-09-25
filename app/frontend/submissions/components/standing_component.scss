@@ -1,0 +1,77 @@
+/* The standing: grey and unframed, so it reads as ground rather than a second
+   card competing with the one thing there is to do. */
+.standing-panel {
+  background: #f5f7f9;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  height: 100%;
+}
+
+/* The one number the standing is about. Size sets it apart; the weight is the
+   second of the two places size alone cannot carry a heading. */
+.num-total {
+  font-size: var(--hub-figure);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+/* One bar in two sizes, and the size is the hierarchy: the standing is 8px and
+   saturated, a sheet or a problem is 3px and pale. */
+.standing-bar {
+  position: relative;
+  height: 8px;
+  background: #dce1e6;
+  border-radius: 4px;
+
+  > span {
+    display: block;
+    height: 100%;
+    background: #4977a8;
+    border-radius: 4px;
+  }
+}
+
+.standing-bar-wrap {
+  position: relative;
+  padding-bottom: 1.3rem;
+}
+
+.standing-mark {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: #212529;
+}
+
+.standing-mark-label {
+  position: absolute;
+  top: 14px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.requirements {
+  border-top: 1px solid #d8dee4;
+  margin-top: 1rem;
+  padding-top: 0.6rem;
+}
+
+.requirement {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.18rem 0;
+}
+
+/* The words say whether a condition is settled or still open; the colour says
+   one thing only, once per block: this is what ends the matter. */
+.req-open,
+.req-settled {
+  color: #66717c;
+}
+
+.req-lost {
+  color: #b02a37;
+}

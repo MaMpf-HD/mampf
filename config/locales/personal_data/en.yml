@@ -1,0 +1,126 @@
+en:
+  personal_data:
+    title: >-
+      Your study details
+    lead: >-
+      MaMpf now includes what Müsli used to do: exercise classes, exams and
+      seminars of the Faculty of Mathematics and Computer Science at Heidelberg
+      University are organized here.
+    why: >-
+      For them we need your real name and matriculation number: only then can
+      your results in exercise classes, exams and seminars be credited to you
+      without doubt.
+    display_name_current_html: >-
+      In the forum and in comments, you appear as <strong>%{name}</strong>.
+      If you teach, this name also appears with your event series – in their
+      titles, on their pages and in the search.
+    display_name_change: "Change display name"
+    display_name_hint: >-
+      Your display name is deliberately up to you and need not be your real
+      name. Many still have the start of their email address here. You can
+      also change it later on your profile page.
+    saved_by_support_html: >-
+      Your saved name and matriculation number can only be changed by the
+      support: %{support}.
+    locked_hint: "Once saved, only the support can change this."
+    no_matriculation_number: "I do not have a matriculation number yet"
+    matriculation_number_format: "Seven digits"
+    uni_id_format: "Two letters and three digits"
+    uni_id_hint: >-
+      Optional. You sign in to the university's services with it, such as
+      heiCO: two letters and three digits, not your email address.
+      You can change it yourself at any time.
+    confirmation_html: >-
+      I have checked these details. After saving, only the support
+      (%{support}) can change my name and matriculation number.
+    confirmation_missing: "Please confirm that you have checked your details."
+    save: "Save"
+    saved: "Thank you, your details are saved."
+    decline_explanation: >-
+      Then we need nothing from you. Should you take part later, you can enter
+      the details on your profile page.
+    places_question: >-
+      You take part in %{lectures}. For this we need your real name and
+      matriculation number.
+    places_yes: "Enter my details"
+    places_no: "Give up my places"
+    places_give_up_explanation: >-
+      You leave the groups, talks, exams and registrations of these event
+      series. You can register again as long as the registration is still
+      open and places are left; after that, it is up to the teachers.
+    places_results: >-
+      Results have already been recorded for you. So that they are credited
+      to you, we need your details.
+    places_give_up: "Give up places and continue"
+    places_changed: >-
+      Your places have changed in the meantime. Please check them and decide
+      again.
+    places_graded: >-
+      Results have already been recorded for you, so your places cannot be
+      given up. Please enter your details.
+    needed_to_register: >-
+      To register, we need your name and matriculation number. Please enter
+      them here; afterwards you go back.
+    edit_link: "Show or complete"
+    participation_question: >-
+      Do you take part, as a student, in exercise classes, exams or seminars of
+      the Faculty of Mathematics and Computer Science at Heidelberg University?
+    participation_hint: >-
+      Teachers and staff choose "No". Tutors who are students themselves choose
+      "Yes".
+    participation_yes: "Yes"
+    participation_no: "No"
+    continue: "Continue"
+    change: "Change"
+    change_field: "Change: %{field}"
+    no_matriculation_number_yet: "none yet"
+    step_heading: "Step %{current} of %{total}: %{title}"
+    steps:
+      name: "Name"
+      matriculation_number: "Matriculation number"
+      program: "Study program"
+      uni_id: "Uni ID"
+      check: "Check your details"
+    degree_question: "Which degree are you studying for?"
+    other_degree: "Other degree"
+    other_subject: "Other subject"
+    other_program: "Other program"
+    math_question: "Is mathematics one of your two subjects?"
+    program_question: "Which program?"
+    program_hint: >-
+      Only teachers see it, for instance to know which programs their
+      participants come from. You can change it yourself at any time.
+  programs:
+    degrees:
+      bsc100: "B.Sc. 100%"
+      bsc50: "B.Sc. 50%"
+      msc: "M.Sc."
+      med: "M.Ed."
+      med_extension: "M.Ed. extension subject"
+      phd: "Doctorate"
+    degree_choices:
+      bsc100: "Bachelor of Science, 100% (B.Sc. 100%)"
+      bsc50: "Bachelor of Science, 50% (B.Sc. 50%)"
+      msc: "Master of Science (M.Sc.)"
+      med: "Master of Education (M.Ed.)"
+      med_extension: "Master of Education, extension subject (M.Ed. extension subject)"
+      phd: "Doctorate"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            matriculation_number:
+              invalid: "must be seven digits"
+            uni_id:
+              invalid: "must be two letters followed by three digits"
+    attributes:
+      user:
+        first_name: "First name"
+        last_name: "Last name"
+        matriculation_number: "Matriculation number"
+        program_id: "Study program"
+        uni_id: "Uni ID"
+        personal_data_confirmation: "Confirmation"
+      program:
+        degree: "Degree"

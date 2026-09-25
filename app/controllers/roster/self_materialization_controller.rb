@@ -2,9 +2,12 @@ module Roster
   # For students to add/remove themselves from tutorial/talk/cohort rosters
   # Guarded by config_allow_self_add/config_allow_self_remove on the rosterable and locked? status
   class SelfMaterializationController < ApplicationController
+    include Lectures::HomeStreams
+
     helper ::UserRegistrationsHelper
-    before_action :set_rosterable, only: [:self_add, :self_remove]
+    before_action :set_rosterable, only: [:self_add, :self_remove, :self_switch]
     before_action :authorize_lecture
+    before_action :require_personal_data, only: [:self_add, :self_switch]
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_error(t("roster.errors.user_already_in_bundle",
@@ -33,6 +36,10 @@ module Roster
                            type: @rosterable.class.model_name.human))
     end
 
+    rescue_from "Rosters::MaintenanceService::GradingDataPresentError" do
+      respond_with_error(t("roster.errors.switch_failed"))
+    end
+
     rescue_from "Rosters::SelfMaterializationService::SelfRemoveNotAllowedError" do
       respond_with_error(t("roster.errors.self_remove_not_allowed",
                            type: @rosterable.class.model_name.human))
@@ -48,6 +55,15 @@ module Roster
       respond_with_success(t("roster.messages.user_added",
                              user: roster_message_user,
                              group: @rosterable.title))
+    end
+
+    def self_switch
+      from = @rosterable.conflicting_lecture_membership(current_user)
+      moved = from && Rosters::SelfMaterializationService.new(@rosterable, current_user)
+                                                         .self_switch!(from)
+      return respond_with_error(t("roster.errors.switch_failed")) unless moved
+
+      respond_with_success(t("roster.messages.user_switched", group: @rosterable.title))
     end
 
     def self_remove
@@ -76,34 +92,7 @@ module Roster
         flash.now[:notice] = message
         respond_to do |format|
           format.turbo_stream do
-            rosterized_entries = Rosters::StudentMaterializedResultResolver
-                                 .new(current_user)
-                                 .all_rosterized_for_lecture(@lecture)
-            render turbo_stream: [
-              stream_flash,
-              turbo_stream.update(
-                "student_registration_rosterized_entries",
-                html: RosterizedEntriesComponent.new(
-                  rosterized_entries: rosterized_entries,
-                  lecture: @lecture,
-                  user: current_user
-                ).render_in(view_context)
-              ),
-              turbo_stream.update(
-                "student_registration_options",
-                partial: "user_registrations/registration_options",
-                locals: {
-                  campaigns_details: ::UserRegistrations::LectureCampaignsService
-                                     .new(@lecture, current_user)
-                                     .call,
-                  self_rosterables: Rosters::SelfRosterOptionsQuery
-                                    .new(@lecture, current_user)
-                                    .call,
-                  rosterized_entries: rosterized_entries,
-                  lecture: @lecture
-                }
-              )
-            ]
+            render turbo_stream: lecture_home_streams(@lecture, self_enrollment: true)
           end
         end
       end

@@ -302,20 +302,6 @@ de:
       forced_assignment: "Zwangszuweisung"
       index:
         title: "Anmeldungen"
-        confirmed_cases: "Deine Anmeldung ist bestätigt für"
-        unassigned_notice: "Du wurdest noch keiner Gruppe zugeteilt."
-        pending_preference_notice: "Du wurdest noch keiner Gruppe zugeteilt. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
-        fulfilled_preference_notice_html: "Wir konnten Deinen <em>%{rank}</em>-Wunsch erfüllen."
-        fulfilled_preference_ranks:
-          "1": "Erst"
-          "2": "Zweit"
-          "3": "Dritt"
-        unfulfilled_preferences_notice_html: "Leider konnten Deine Wünsche (<em>%{preferences}</em>) nicht berücksichtigt werden."
-        unallocated_preference_notice_html: "Leider konnte Deine Anmeldung für <em>%{campaign}</em> nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: <em>%{preferences}</em>."
-        policy_rejection_notice_html: >-
-          Deine Anmeldung für <em>%{campaign}</em> wurde aus folgenden Gründen abgelehnt:
-        unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
-        unremovable_assignment_notice: "Du kannst dieses Tutorium nicht verlassen, weil der Dozent es so eingerichtet hat."
         first_choice_title: "Erstwahl-Anmeldungen"
         allocated_title: "Zugeteilte Studierende"
         rejected_title: "Abgelehnte Anmeldungen"
@@ -341,12 +327,15 @@ de:
       actions:
         reject_user: "Anmeldungen ablehnen"
         defer_due_to_blocker: "Für jetzt ablehnen"
-        rank_option_tooltip: "Als %{rank} Präferenz setzen"
       registrations: "Anmeldungen"
       title: "Deine Anmeldung"
       planning: "Planung"
       course_code: "Kurscode"
-      campaign_main: "Anmeldeverfahren"
+      campaign_title:
+        tutorials: "Tutoriumsanmeldung"
+        talks: "Vortragsvergabe"
+        cohorts: "Anmeldeverfahren"
+        exams: "Klausuranmeldung"
       eligibility_title: "Berechtigung"
       first_come_first_served_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
       first_come_first_served_instruction_exam: "Melde Dich für diese Prüfung an. Dein Platz steht sofort fest."
@@ -372,14 +361,8 @@ de:
       register_now: "Jetzt anmelden"
       registration_blocked: "Nicht verfügbar"
       withdraw: "Zurückziehen"
-      closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
         title: "Anmeldung derzeit nicht möglich"
-        description: "Du kannst Dich für dieses Anmeldeverfahren derzeit aus folgenden Gründen nicht anmelden:"
-      readonly_notice:
-        title: "Anmeldung geschlossen"
-        description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die endgültige Zuteilung vorbereitet. Änderungen sind nicht mehr möglich."
-        description_exam: "Deine Anmeldung bleibt hier sichtbar, während die Lehrperson die Teilnehmendenliste bestätigt. Du kannst sie nicht mehr zurückziehen."
       finalization_policy_notice:
         title: "Deine Anmeldung würde derzeit bei der endgültigen Zuteilung abgelehnt"
         description: >-
@@ -389,10 +372,8 @@ de:
         title: "Regeln für dieses Anmeldeverfahren"
         registration_title: "Voraussetzungen für die Anmeldung"
         registration_description: "Diese Regeln müssen erfüllt sein, damit Du Dich anmelden kannst."
-        registration_empty: "Für die Anmeldung gibt es keine zusätzlichen Regeln oder Einschränkungen."
         finalization_title: "Voraussetzungen für die endgültige Zuteilung"
         finalization_description: "Diese Regeln werden bei der endgültigen Zuteilung geprüft."
-        finalization_empty: "Für die endgültige Zuteilung gibt es keine zusätzlichen Prüfungen."
         status:
           fulfilled: "Derzeit erfüllt"
           not_fulfilled: "Derzeit nicht erfüllt"
@@ -449,7 +430,6 @@ de:
         generic_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_finalization_warning_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
         generic_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hast Du die Voraussetzung <em>%{requirement}</em> nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
-      withdraw_first: "Zuerst zurückziehen"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
       submitted_pref: "Deine eingereichte Auswahl"
@@ -471,6 +451,7 @@ de:
       messages:
         campaign_unavailable: "Dieses Anmeldeverfahren ist derzeit nicht verfügbar."
         campaign_not_opened: "Die Registrierung für dieses Anmeldeverfahren ist geschlossen."
+        switched: "Du hast die Gruppe gewechselt."
         registration_success: "Registrierung erfolgreich abgeschlossen."
         registration_failed: "Registrierung konnte nicht abgeschlossen werden."
         already_registered: "Du bist bereits für dieses Anmeldeverfahren registriert."
@@ -487,6 +468,80 @@ de:
         cannot_secure_slot: "Leider konnte keine Deiner gewählten Optionen zugeteilt werden."
         course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wende Dich an den Kursadministrator, um Alternativen zu besprechen."
         campaign_not_found: "Anmeldeverfahren nicht gefunden."
+      registrations_title: "Anmeldungen"
+      participation:
+        title: "Deine Teilnahme"
+        preferences_title: "Deine Wünsche"
+        allocation_pending: "Zuteilung ausstehend"
+        registered: "Angemeldet"
+        checked_at_finalization: "Die Voraussetzungen werden beim Abschluss erneut geprüft."
+        no_place: "Kein Platz"
+        your_preferences: "Deine Wünsche: %{preferences}"
+        rejected: "Abgelehnt"
+        rejected_by_teacher: "Die Veranstaltungsleitung hat diese Anmeldung abgelehnt."
+        excluded_from_exam: "Von der Klausurliste entfernt"
+        on_exam_list: "Auf der Klausurliste"
+        enrolled: "Eingeschrieben"
+        assigned: "Zugeteilt"
+        leave: "Verlassen"
+        preference_fulfilled: "Dein %{rank} Wunsch."
+        outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
+      summary:
+        load_failed: "Die Optionen konnten nicht geladen werden."
+        retry: "Erneut versuchen"
+        registered: "Angemeldet"
+        preferences_saved: "Wünsche gespeichert"
+        full: "Keine Plätze frei"
+        loading: "Wird geladen …"
+        blocked: "Nicht verfügbar"
+        requirement_missing: "Voraussetzung fehlt"
+        no_preferences: "Noch keine Wünsche"
+        not_registered: "Noch nicht angemeldet"
+        details: "Details"
+        change: "Ändern"
+        change_preferences: "Wünsche ändern"
+        choose: "Wünsche wählen"
+        register: "Anmelden"
+        show_and_register: "Gruppen ansehen"
+        days_left:
+          zero: "endet heute"
+          one: "noch 1 Tag"
+          other: "noch %{count} Tage"
+        deadline: "Anmeldung bis %{deadline}"
+        preference_mode:
+          one: "%{count} von %{options} Optionen reihen"
+          other: "%{count} von %{options} Optionen reihen"
+        exam_places:
+          zero: "Keine Plätze frei"
+          one: "1 Platz frei"
+          other: "%{count} Plätze frei"
+        fcfs_mode: "Wer zuerst kommt · %{open} von %{total} mit freien Plätzen"
+        unsaved: "Nicht gespeichert"
+      options:
+        search_label: "Optionen durchsuchen"
+        search_placeholder: "Wochentag, Uhrzeit, Tutor, Raum"
+        no_match: "Keine Option passt zu Deiner Suche."
+        show_all: "Alle %{count} zeigen"
+        withdraw_from: "Von %{title} abmelden"
+        no_places: "Keine Plätze mehr frei."
+        switch: "Hierhin wechseln"
+        switch_to: "Zu %{title} wechseln"
+        register_for: "Für %{title} anmelden"
+        unlimited: "Unbegrenzt"
+        full: "Voll"
+        free: "%{free} von %{capacity} Plätzen frei"
+        rank_for: "%{title} als %{rank} Wunsch"
+        saved: "Alles gespeichert"
+        unsaved: "Nicht gespeicherte Änderungen"
+      self_enrollment:
+        title: "Selbst eintragen"
+        meta:
+          one: "%{count} Gruppe, ohne Frist"
+          other: "%{count} Gruppen, ohne Frist"
+        show: "Gruppen ansehen"
+        instruction: "In diese Gruppen trägst Du Dich sofort ein, ohne Anmeldezeitraum."
+        joined: "Eingetragen"
+        join: "Eintragen"
     allocation:
       violations_table:
         override_pass: "Auf bestanden setzen"
@@ -609,15 +664,9 @@ de:
         empty_locked: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
           dieser Seite. Entsperre die Veranstaltung, um Materialien zu sehen.
-        news_indicator: "Neue Updates auf Home"
+        news_indicator: "Ungelesene Ankündigungen und Forenthemen"
         attachment_download: "Programm herunterladen (PDF)"
         attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
-        staff_registration_title: "Was Studierende hier sehen"
-        staff_registration_hint: >-
-          Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und
-          ihren eigenen Status (offene Anmeldungen, zugeteilte Gruppe). Diese
-          Ansicht ist für jede Person individuell und wird Dir deshalb hier
-          nicht angezeigt.
         staff_registration_manage: "Anmeldeverfahren verwalten"
         intro_empty: >-
           Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und
@@ -635,7 +684,6 @@ de:
           Veranstaltung kannst du ihre Materialien ohne Passwort entsperren.
         unlock: "Entsperren"
   activerecord:
-    attributes:
     errors:
       models:
         registration/campaign:

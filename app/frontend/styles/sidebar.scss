@@ -69,3 +69,29 @@
 .nav-link.disabled a {
     color: #cacaca;
 }
+// On phones the sidebar sits above the content, so it becomes one scrollable
+// row of the entries that lead somewhere.
+@media (max-width: 575.98px) {
+    #sidebar-container {
+        padding: 0.5rem;
+        border-radius: 0;
+
+        .nav {
+            flex-direction: row !important;
+            flex-wrap: nowrap;
+            gap: 0.25rem;
+            overflow-x: auto;
+        }
+
+        .nav > span,
+        .sidebar-item.disabled {
+            display: none;
+        }
+
+        .sidebar-item {
+            flex-shrink: 0;
+            margin: 0;
+            white-space: nowrap;
+        }
+    }
+}

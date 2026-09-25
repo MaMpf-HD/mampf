@@ -21,10 +21,17 @@ module E2e
                          password: PASSWORD,
                          consents: true,
                          admin: is_admin,
-                         locale: :en)
+                         locale: :en,
+                         personal_data_confirmed_at: pending_personal_data? ? nil : Time.current)
       user.confirm
 
       render json: user.as_json.merge({ password: PASSWORD }), status: :created
     end
+
+    private
+
+      def pending_personal_data?
+        params[:personal_data_pending].to_s == "true"
+      end
   end
 end

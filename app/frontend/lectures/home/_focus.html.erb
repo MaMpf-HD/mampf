@@ -1,0 +1,19 @@
+<%# locals: (focus:, certification:) %>
+<% if focus.kind == :campaign %>
+  <section class="lecture-home-focus" aria-labelledby="focus-heading"
+           data-testid="lecture-home-focus">
+    <h2 class="lecture-home-kicker" id="focus-heading">
+      <%= t("lecture_home.focus.campaign") %>
+    </h2>
+    <%= render CampaignCardComponent.new(details: focus.subject,
+                                         campaign: focus.subject.campaign, focus: true) %>
+  </section>
+<% else %>
+  <% exam = focus.subject %>
+  <section class="lecture-home-focus" aria-labelledby="focus-heading"
+           data-testid="lecture-home-focus">
+    <h2 class="lecture-home-kicker" id="focus-heading"><%= t("lecture_home.focus.exam") %></h2>
+    <div class="lecture-home-focus-title"><span><%= exam.title %></span></div>
+    <p class="lecture-home-focus-line"><%= lecture_home_exam_line(exam, certification) %></p>
+  </section>
+<% end %>

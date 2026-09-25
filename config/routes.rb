@@ -338,6 +338,10 @@ Rails.application.routes.draw do
        to: "lectures/unlocks#create",
        as: "lecture_unlock"
 
+  get "lectures/:id/home/campaigns/:campaign_id",
+      to: "lectures/home#campaign",
+      as: "lecture_home_campaign"
+
   get "lectures/:id/home_attachment",
       to: "lectures/home#attachment",
       as: "lecture_home_attachment",
@@ -627,6 +631,16 @@ Rails.application.routes.draw do
        as: "destroy_news_notifications"
 
   resources :notifications, only: [:index, :destroy]
+
+  # personal data routes
+
+  get "personal_data",
+      to: "personal_data#edit",
+      as: "edit_personal_data"
+
+  patch "personal_data",
+        to: "personal_data#update",
+        as: "personal_data"
 
   # profile routes
 
@@ -1027,6 +1041,7 @@ Rails.application.routes.draw do
       scope "roster", controller: "roster/self_materialization", defaults: { type: "Talk" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -1078,6 +1093,7 @@ Rails.application.routes.draw do
                       defaults: { type: "Tutorial" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -1098,6 +1114,7 @@ Rails.application.routes.draw do
       scope "roster", controller: "roster/self_materialization", defaults: { type: "Cohort" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -1205,6 +1222,9 @@ Rails.application.routes.draw do
     delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
            to: "user_registrations#destroy",
            as: :withdraw_item
+    patch "campaign_registrations/:campaign_id/items/:item_id/switch",
+          to: "user_registrations#switch",
+          as: :switch_item
 
     post "campaign_registrations/:campaign_id/preferences",
          to: "user_registrations#save_preferences",

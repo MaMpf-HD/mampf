@@ -12,6 +12,7 @@ module E2e
     respond_to :json
     rescue_from Exception, with: :show_errors
     skip_before_action :authenticate_user!
+    skip_before_action :enforce_personal_data
 
     ATTEMPTS = 3
 

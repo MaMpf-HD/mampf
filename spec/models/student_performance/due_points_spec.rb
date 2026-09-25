@@ -195,7 +195,7 @@ RSpec.describe(StudentPerformance::DuePoints) do
     end
 
     it "counts a test marked in its week, before its deadline" do
-      marked = test(deadline: 3.days.from_now, points: 10)
+      marked = test(deadline: Time.zone.now.end_of_week, points: 10)
       FactoryBot.create(:assessment_participation, :reviewed, assessment: marked,
                                                               user: student)
 
@@ -215,7 +215,7 @@ RSpec.describe(StudentPerformance::DuePoints) do
     end
 
     it "counts a test the student was absent from as lost, in its week already" do
-      absent = test(deadline: 3.days.from_now, points: 10)
+      absent = test(deadline: Time.zone.now.end_of_week, points: 10)
       FactoryBot.create(:assessment_participation, :absent, assessment: absent, user: student)
       sat_out = test(deadline: 2.days.ago, points: 10)
       FactoryBot.create(:assessment_participation, :absent, assessment: sat_out, user: student)

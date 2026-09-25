@@ -9,11 +9,11 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
         .to eq("Localized description")
     end
 
-    it "falls back to the default title when the description is blank" do
+    it "falls back to a title naming what the campaign allocates" do
       campaign = build(:registration_campaign, description: "  ")
 
       expect(helper.student_registration_campaign_title(campaign))
-        .to eq(I18n.t("registration.user_registration.campaign_main"))
+        .to eq(I18n.t("registration.user_registration.campaign_title.tutorials"))
     end
   end
 
@@ -119,7 +119,7 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
 
       it "evaluates date and location fields" do
         expect(config["Exam"][0][:header]).to eq("basics.date")
-        expect(config["Exam"][0][:field].call(exam)).to include("9h30")
+        expect(config["Exam"][0][:field].call(exam)).to include("09:30")
         expect(config["Exam"][1][:header]).to eq("basics.location")
         expect(config["Exam"][1][:field].call(exam)).to eq("Lecture Hall 1")
       end
@@ -136,11 +136,6 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
 
       expect(config.keys).to match_array(registerable)
     end
-  end
-
-  describe "#nullable_capacity_display" do
-    it { expect(helper.nullable_capacity_display(nil)).to eq("∞") }
-    it { expect(helper.nullable_capacity_display(10)).to eq("10") }
   end
 
   describe "metadata icons" do
@@ -180,18 +175,34 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     end
   end
 
+  describe "#sorted_student_registration_items" do
+    it "puts talk 2 before talk 10" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :preference_based, campaignable: seminar)
+      talks = (1..10).map { |position| create(:talk, lecture: seminar, position: position) }
+      items = talks.reverse.map do |talk|
+        create(:registration_item, registration_campaign: campaign, registerable: talk)
+      end
+      user = create(:confirmed_user)
+
+      sorted = helper.sorted_student_registration_items(campaign, items, user)
+
+      expect(sorted.map { |item| item.registerable.position }).to eq((1..10).to_a)
+    end
+  end
+
   describe "#format_date" do
     let(:timestamp) { Time.zone.local(2026, 5, 2, 17, 45) }
 
     it "uses the English student registration format" do
       I18n.with_locale(:en) do
-        expect(helper.format_date(timestamp)).to eq("May 2, 17h45")
+        expect(helper.format_date(timestamp)).to eq("May 2, 2026, 17:45")
       end
     end
 
     it "uses the German student registration format" do
       I18n.with_locale(:de) do
-        expect(helper.format_date(timestamp)).to eq("2. Mai, 17h45")
+        expect(helper.format_date(timestamp)).to eq("2. Mai 2026, 17:45")
       end
     end
   end

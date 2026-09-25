@@ -1,0 +1,26 @@
+<%# locals: (overview:) %>
+<% campaigns = overview.closed_campaigns %>
+<% if campaigns.any? %>
+  <details class="lecture-home-history" data-testid="lecture-home-history">
+    <summary><%= t("lecture_home.history.title", count: campaigns.size) %></summary>
+    <div class="lecture-home-rows">
+      <% campaigns.each do |campaign| %>
+        <div class="lecture-home-row" id="<%= dom_id(campaign, :student_registration) %>">
+          <div class="lecture-home-row-content">
+            <div class="lecture-home-row-title">
+              <span><%= student_registration_campaign_title(campaign) %></span>
+            </div>
+            <div class="lecture-home-row-line">
+              <% key = if campaign.completed? then "completed"
+                       elsif campaign.registration_deadline.future? then "closed_early"
+                       else "ended"
+                       end %>
+              <%= t("lecture_home.history.#{key}",
+                    deadline: format_date(campaign.registration_deadline)) %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </details>
+<% end %>

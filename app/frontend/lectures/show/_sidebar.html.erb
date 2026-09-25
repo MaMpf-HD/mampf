@@ -18,12 +18,9 @@
         <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
         <%= t("basics.home") %>
       </span>
-      <% if home_updates_count.positive? %>
-        <span class="sidebar-item__badge"
-              title="<%= t("registration.lecture.home.news_indicator") %>">
-          <%= home_updates_count %>
-        </span>
-      <% end %>
+      <%= render SidebarBadgeComponent.new(id: SidebarBadgeComponent::HOME_ID,
+                                           count: home_updates_count,
+                                           title: t("registration.lecture.home.news_indicator")) %>
     <% end %>
   </li>
 
@@ -102,8 +99,17 @@
         <%= content_accessible ? "" : "disabled" %>">
       <%= link_to url_for(path),
           data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-        <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= link_text %>
+        <span class="sidebar-item__label">
+          <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
+          <%= link_text %>
+        </span>
+        <% if content_accessible && !current_user.in?(lecture.tutors) %>
+          <% work = @work || Assessment::SubmissionsHub::Loader.new(lecture: lecture,
+                                                                    user: current_user).summary %>
+          <%= render SidebarBadgeComponent.new(id: SidebarBadgeComponent::SUBMISSIONS_ID,
+                                               count: work.news_count,
+                                               title: t("submission.hub.news.indicator")) %>
+        <% end %>
       <% end %>
     </li>
   <% end %>

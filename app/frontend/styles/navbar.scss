@@ -62,3 +62,41 @@
         color: #ffe5ed;
     }
 }
+
+// On phones the icons, the lecture switcher and the search wrap into rows
+// instead of widening the page.
+@media (max-width: 575.98px) {
+    .navbar {
+        flex-wrap: wrap;
+        row-gap: 0.5rem;
+
+        .navbar-nav {
+            flex-wrap: wrap;
+            row-gap: 0.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            padding: 0 6px;
+        }
+    }
+
+    #mampfbrand {
+        display: none;
+    }
+
+    #lecturesDropdown {
+        order: 10;
+        width: 100%;
+        margin: 0 !important;
+
+        .btn-group {
+            max-width: 100%;
+        }
+
+        .btn:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

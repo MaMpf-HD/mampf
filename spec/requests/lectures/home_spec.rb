@@ -121,7 +121,21 @@ RSpec.describe("Lectures::Home", type: :request) do
 
       expect(response.body)
         .to include('data-testid="lecture-home-staff-registration-note"')
-      expect(response.body).not_to include('data-testid="registration-group-tile"')
+      expect(response.body).not_to include('data-testid="self-enrollment"')
+    end
+
+    it "counts the people registered in a first come, first served campaign" do
+      item = campaign.registration_items.first
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: item)
+      create(:registration_user_registration, :rejected, registration_campaign: campaign,
+                                                         registration_item: item)
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body)
+        .to include(I18n.t("lecture_home.teacher.registered", count: 1))
     end
 
     it "is not shown to staff when the lecture has no campaigns" do
@@ -132,6 +146,141 @@ RSpec.describe("Lectures::Home", type: :request) do
 
       expect(response.body)
         .not_to include('data-testid="lecture-home-staff-registration-note"')
+    end
+  end
+
+  describe "the tutor block" do
+    it "lists the tutorials the user teaches" do
+      tutor = create(:confirmed_user)
+      create(:tutorial, lecture: lecture, title: "Thursday Tutorial", tutors: [tutor])
+      create(:tutorial, lecture: lecture, title: "Friday Tutorial")
+      sign_in tutor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-tutor"')
+      expect(response.body).to include("Thursday Tutorial")
+      expect(response.body).not_to include("Friday Tutorial")
+    end
+  end
+
+  describe "the closed campaigns" do
+    it "lists a campaign past its deadline for a student who missed it" do
+      create(:registration_campaign, :closed, campaignable: lecture,
+                                              description: "Late tutorial registration")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-history"')
+      expect(response.body).to include("Late tutorial registration")
+      expect(response.body).not_to include('data-testid="lecture-home-registrations"')
+    end
+  end
+
+  describe "an open campaign on the page" do
+    let!(:campaign) do
+      create(:registration_campaign, :open, :first_come_first_served,
+             campaignable: lecture, description: "Tutorial registration")
+    end
+
+    before { lecture.update!(home_intro: "<div>Welcome</div>") }
+
+    it "leads with the campaign the student still has to register in" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      focus = Nokogiri::HTML(response.body).at_css('[data-testid="lecture-home-focus"]')
+      expect(focus.text).to include("Tutorial registration")
+    end
+
+    it "loads the options only when the row is opened" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+      expect(response.body)
+        .not_to include(campaign.registration_items.first.registerable.title)
+
+      get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+      expect(response.body)
+        .to include(campaign.registration_items.first.registerable.title)
+    end
+
+    it "answers not found for a campaign that is closed" do
+      campaign.update!(status: :closed)
+      sign_in student
+
+      get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "answers not found for the lecture's teacher" do
+      sign_in editor
+
+      get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "a registration whose requirement fails" do
+    it "says so in the campaign row next to the registration" do
+      campaign = create(:registration_campaign, :open, :first_come_first_served,
+                        :with_finalization_policy, campaignable: lecture,
+                                                   description: "Tutorial registration")
+      other = create(:confirmed_user, email: "someone@elsewhere.org")
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first, user: other)
+      sign_in other
+
+      get lecture_home_path(lecture)
+
+      row = Nokogiri::HTML(response.body).at_css("summary.registration-fold-summary")
+      expect(row.text).to include(I18n.t("registration.user_registration.summary.registered"))
+      expect(row.text)
+        .to include(I18n.t("registration.user_registration.summary.requirement_missing"))
+      expect(row.text).to include("example.com")
+    end
+  end
+
+  describe "saved preferences whose requirement fails" do
+    it "names the preferences as the standing and the requirement once" do
+      campaign = create(:registration_campaign, :open, :preference_based, :with_items,
+                        :with_policies, campaignable: lecture,
+                                        description: "Tutorial registration")
+      other = create(:confirmed_user, email: "someone@elsewhere.org")
+      create(:registration_user_registration, :preference_based,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first, user: other)
+      sign_in other
+
+      get lecture_home_path(lecture)
+
+      row = Nokogiri::HTML(response.body).at_css("summary.registration-fold-summary")
+      missing = I18n.t("registration.user_registration.summary.requirement_missing")
+      expect(row.text)
+        .to include(I18n.t("registration.user_registration.summary.preferences_saved"))
+      expect(row.text.scan(missing).size).to eq(1)
+    end
+  end
+
+  describe "a campaign closed before its deadline" do
+    it "says so instead of naming the deadline as its end" do
+      create(:registration_campaign, :closed, campaignable: lecture,
+                                              registration_deadline: 1.week.from_now,
+                                              description: "Early tutorial registration")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include(
+        I18n.t("lecture_home.history.closed_early", deadline: "DEADLINE").split("DEADLINE").first
+      )
     end
   end
 
@@ -178,7 +327,7 @@ RSpec.describe("Lectures::Home", type: :request) do
       { "teacher" => editor, "tutor" => tutor, "student" => student }.each do |role, user|
         sign_in user
         get lecture_home_path(lecture)
-        offered = response.body.include?('data-testid="registration-group-tile"')
+        offered = response.body.include?('data-testid="self-enrollment"')
         accepted = LectureAbility.new(user).can?(:self_materialize, lecture)
         sign_out user
 
