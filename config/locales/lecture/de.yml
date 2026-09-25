@@ -16,3 +16,61 @@ de:
       subscribed: Abonniert
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
+  lecture_home:
+    subscribe: "Veranstaltung abonnieren"
+    intro:
+      more: "Weiterlesen"
+      less: "Weniger anzeigen"
+    focus:
+      campaign: "Anmeldung offen"
+      exam: "Deine nächste Klausur"
+      open_sheet: "Zur Abgabe"
+    work:
+      admission_details: "Details"
+      all: "Alle Abgaben"
+      nothing_due: "Gerade ist kein Blatt offen."
+      title: "Deine Abgaben"
+      due: "Abgabe bis %{deadline}"
+      admission:
+        open: "Zulassung noch nicht entschieden"
+        pending: "Zulassung noch nicht entschieden"
+        passed: "Zur Klausur zugelassen"
+        failed: "Nicht zur Klausur zugelassen"
+    news:
+      title: "Neu in dieser Veranstaltung"
+      by: "%{author}, %{date}"
+      more:
+        one: "1 weitere Mitteilung"
+        other: "%{count} weitere Mitteilungen"
+      forum:
+        one: "1 ungelesenes Thema im Forum"
+        other: "%{count} ungelesene Themen im Forum"
+    history:
+      title: "Frühere Anmeldungen (%{count})"
+      completed: "Abgeschlossen · Frist war %{deadline}"
+      ended: "Anmeldung beendet am %{deadline}"
+      closed_early: "Anmeldung vor der geplanten Frist (%{deadline}) beendet"
+    tutor:
+      title: "Deine Tutorien"
+      members:
+        one: "1 Person"
+        other: "%{count} Personen"
+      open: "Gruppe öffnen"
+    marking:
+      title: "Zu korrigieren"
+      waiting:
+        one: "1 Person wartet auf Punkte"
+        other: "%{count} Personen warten auf Punkte"
+      open: "Korrigieren"
+    teacher:
+      title: "Anmeldeverfahren"
+      registered:
+        one: "1 Person angemeldet"
+        other: "%{count} Personen angemeldet"
+      with_preferences:
+        one: "1 Person hat Wünsche abgegeben"
+        other: "%{count} Personen haben Wünsche abgegeben"
+      on_roster:
+        one: "1 Person auf der Liste"
+        other: "%{count} Personen auf der Liste"
+      deadline: "bis %{deadline}"

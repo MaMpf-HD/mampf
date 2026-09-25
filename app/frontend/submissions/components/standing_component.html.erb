@@ -45,44 +45,47 @@
     </div>
   <% end %>
 
-  <% if pending_line %>
-    <div class="hub-aside text-muted mt-2"><%= pending_line %></div>
+  <% if aside_line %>
+    <div class="hub-aside text-muted mt-2"><%= aside_line %></div>
   <% end %>
 
-  <div class="requirements">
-    <% if conditions? %>
-      <% if points_condition %>
-        <div class="requirement">
-          <span><%= points_condition %></span>
+  <% if compact %>
+    <%= content %>
+  <% else %>
+    <div class="requirements">
+      <% if conditions? %>
+        <% if points_condition %>
+          <div class="requirement">
+            <span><%= points_condition %></span>
 
-          <span class="hub-aside <%= points_class %>">
-            <%= points_standing %>
-          </span>
-        </div>
-      <% end %>
-      <% required_achievements.each do |achievement| %>
-        <div class="requirement">
-          <span><%= achievement_label(achievement) %></span>
+            <span class="hub-aside <%= points_class %>">
+              <%= points_standing %>
+            </span>
+          </div>
+        <% end %>
+        <% required_achievements.each do |achievement| %>
+          <div class="requirement">
+            <span><%= achievement_label(achievement) %></span>
 
-          <span class="hub-aside <%= achievement_class(achievement) %>">
-            <%= achievement_standing(achievement) %>
-          </span>
-        </div>
+            <span class="hub-aside <%= achievement_class(achievement) %>">
+              <%= achievement_standing(achievement) %>
+            </span>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="hub-aside req-open mb-0">
+          <%= t("submission.hub.standing.no_conditions") %>
+        </p>
       <% end %>
-    <% else %>
-      <p class="hub-aside req-open mb-0">
-        <%= t("submission.hub.standing.no_conditions") %>
-      </p>
+    </div>
+    <% if explanation %>
+      <details class="mt-2">
+        <summary class="hub-aside">
+          <%= t("submission.hub.standing.what_this_means") %>
+        </summary>
+
+        <p class="hub-aside text-muted mt-2 mb-0"><%= explanation %></p>
+      </details>
     <% end %>
-  </div>
-
-  <% if explanation %>
-    <details class="mt-2">
-      <summary class="hub-aside">
-        <%= t("submission.hub.standing.what_this_means") %>
-      </summary>
-
-      <p class="hub-aside text-muted mt-2 mb-0"><%= explanation %></p>
-    </details>
   <% end %>
 </aside>

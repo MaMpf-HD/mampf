@@ -40,6 +40,14 @@ RSpec.describe(SheetNewsComponent, type: :component) do
     expect(content).to include("action=\"/lectures/#{lecture.id}/submissions/seen_all\"")
   end
 
+  it "links to the sheet's row on the hub when shown elsewhere" do
+    render_inline(described_class.new(sheets: [sheet("Homework 8", id: 8, points: true)],
+                                      lecture: lecture, on_hub: false))
+
+    expect(rendered_content)
+      .to include("href=\"/lectures/#{lecture.id}/submissions#sheet_assignment_8\"")
+  end
+
   it "tells points from a correction, and names both when both are new" do
     content = render_news(sheet("Homework 8", id: 8, points: true),
                           sheet("Homework 7", id: 7, correction: true, points: true))

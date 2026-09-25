@@ -33,11 +33,21 @@ module UserRegistrations
           check_preference_based_mode,
           check_campaign_open_for_registrations,
           check_campaign_open_for_withdraw,
-          check_unremovable_roster_assignment,
+          check_unremovable_for_chosen(pref_items),
           check_policies,
           check_items(pref_items),
           check_preferences(pref_items)
         ].compact
+      end
+
+      # Only tutorials are exclusive within a lecture, so only a chosen tutorial
+      # conflicts with a tutorial the student may not leave.
+      def check_unremovable_for_chosen(pref_items)
+        chosen = @campaign.registration_items.where(id: pref_items.map(&:id))
+                          .includes(:registerable)
+        return unless chosen.any? { |item| item.registerable.roster_exclusive_within_lecture? }
+
+        check_unremovable_roster_assignment
       end
 
       def check_preference_based_mode

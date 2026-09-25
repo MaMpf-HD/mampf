@@ -146,12 +146,15 @@ module Assessment
         # A sheet that is not handed in through MaMpf has nothing to say about
         # files or the grace period while it is open; what it says is the
         # deadline.
+        #
+        # The grace period is for those who have not handed in yet: a file that
+        # arrived in time is handed in, whatever the clock says now.
         def open_state
           return :hand_in_elsewhere unless assessment.requires_submission
           return :tutor_decides if submission&.too_late? && submission.accepted.nil?
-          return :grace_period if assignment.in_grace_period?
+          return :handed_in if submission&.manuscript.present?
 
-          submission&.manuscript.present? ? :handed_in : :nothing_handed_in
+          assignment.in_grace_period? ? :grace_period : :nothing_handed_in
         end
     end
   end

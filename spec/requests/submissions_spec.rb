@@ -960,6 +960,16 @@ RSpec.describe("Submissions", type: :request) do
         expect(response.body).to include(I18n.t("submission.hub.news.marker"))
       end
 
+      it "counts the sheet beside Submissions in the sidebar" do
+        hand_in(sheet(title: "Homework 8"), correction: true)
+
+        get lecture_submissions_path(lecture)
+
+        badge = Nokogiri::HTML(response.body).at_css("##{SidebarBadgeComponent::SUBMISSIONS_ID}")
+        expect(badge.text).to eq("1")
+        expect(badge["hidden"]).to be_nil
+      end
+
       it "says nothing once every sheet has been looked at" do
         assignment = sheet(title: "Homework 8")
         hand_in(assignment, correction: true)
@@ -984,6 +994,17 @@ RSpec.describe("Submissions", type: :request) do
           expect(sighting.seen_at).to be_within(5.seconds).of(Time.current)
           expect(response.body).to include("news_assignment_#{assignment.id}")
           expect(response.body).not_to include(lead)
+        end
+
+        it "counts the sidebar number down with it" do
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          stream = Nokogiri::HTML(response.body)
+                           .at_css("turbo-stream[target='#{SidebarBadgeComponent::SUBMISSIONS_ID}']")
+          badge = stream.at_css("template").inner_html
+          expect(badge).to include('data-count="0"')
+          expect(badge).to include("hidden")
         end
 
         it "leaves a partner's marker standing" do

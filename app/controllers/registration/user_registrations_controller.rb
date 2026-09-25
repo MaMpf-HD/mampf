@@ -1,11 +1,13 @@
 module Registration
   class UserRegistrationsController < ApplicationController
+    include Lectures::HomeStreams
+
     helper ::UserRegistrationsHelper,
            ItemsHelper, CampaignsHelper
     before_action :set_campaign,
-                  only: [:create, :destroy, :reject_for_user, :save_preferences]
-    before_action :set_item, only: [:create, :destroy]
-    before_action :require_personal_data, only: [:create, :save_preferences]
+                  only: [:create, :destroy, :switch, :reject_for_user, :save_preferences]
+    before_action :set_item, only: [:create, :destroy, :switch]
+    before_action :require_personal_data, only: [:create, :switch, :save_preferences]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
@@ -48,6 +50,22 @@ module Registration
                                       I18n.t("registration.user_registration.messages.withdrawn"))
     end
 
+    def switch
+      authorize! :create, @item.registration_campaign.campaignable
+
+      from_item = @campaign.registration_items.find_by(id: params[:from_item_id])
+      service = ::UserRegistrations::LectureFirstComeFirstServedEditService
+                .new(@campaign, current_user)
+      result = if from_item
+        service.switch!(from_item, @item)
+      else
+        ::UserRegistrations::Handler::Result.new(false,
+                                                 [t("registration.user_registration.none")])
+      end
+      respond_to_student_registration(result,
+                                      t("registration.user_registration.messages.switched"))
+    end
+
     def save_preferences
       authorize! :add, @campaign.campaignable
 
@@ -69,20 +87,8 @@ module Registration
           flash.now[:notice] = success_message
           respond_to do |format|
             format.turbo_stream do
-              @details = ::UserRegistrations::CampaignDetailsService
-                         .new(@campaign, current_user)
-                         .call
-              render turbo_stream: [
-                turbo_stream.replace("flash-messages", partial: "flash/messages"),
-                turbo_stream.update(
-                  view_context.dom_id(@campaign, :main_student_registration_campaign),
-                  html: CampaignCardComponent.new(
-                    details: @details,
-                    campaign: @campaign
-                  ).render_in(view_context)
-                ),
-                rosterized_entries_stream
-              ]
+              render turbo_stream: lecture_home_streams(student_registration_lecture,
+                                                        campaign: @campaign)
             end
             format.html do
               redirect_to lecture_home_path(@campaign.campaignable),
@@ -96,19 +102,6 @@ module Registration
             fallback_location: lecture_home_path(@campaign.campaignable)
           )
         end
-      end
-
-      def rosterized_entries_stream
-        turbo_stream.update(
-          "student_registration_rosterized_entries",
-          html: RosterizedEntriesComponent.new(
-            rosterized_entries: Rosters::StudentMaterializedResultResolver
-                                 .new(current_user)
-                                 .all_rosterized_for_lecture(student_registration_lecture),
-            lecture: student_registration_lecture,
-            user: current_user
-          ).render_in(view_context)
-        )
       end
 
       def preference_params

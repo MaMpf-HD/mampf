@@ -282,10 +282,17 @@ RSpec.describe("Lectures", type: :request) do
       get lecture_script_path(lecture)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("sidebar-item__badge")
-      expect(response.body).to include(
-        I18n.t("registration.lecture.home.news_indicator")
-      )
+      badge = Nokogiri::HTML(response.body).at_css("##{SidebarBadgeComponent::HOME_ID}")
+      expect(badge.text).to eq("1")
+      expect(badge["hidden"]).to be_nil
+      expect(badge["title"]).to eq(I18n.t("registration.lecture.home.news_indicator"))
+    end
+
+    it "keeps the Home marker hidden without updates" do
+      get lecture_script_path(lecture)
+
+      badge = Nokogiri::HTML(response.body).at_css("##{SidebarBadgeComponent::HOME_ID}")
+      expect(badge["hidden"]).not_to be_nil
     end
   end
 

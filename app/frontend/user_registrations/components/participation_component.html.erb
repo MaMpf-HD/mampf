@@ -1,0 +1,40 @@
+<section class="lecture-home-block" aria-labelledby="participation-heading">
+  <h2 class="lecture-home-label" id="participation-heading" tabindex="-1">
+    <%= t("registration.user_registration.participation.title") %>
+  </h2>
+
+  <div class="lecture-home-rows">
+    <% rows.each do |row| %>
+      <% badge_text = row.badge&.last %>
+
+      <div
+        class="lecture-home-row lecture-home-row--compact"
+        data-testid="participation-row"
+      >
+        <div class="lecture-home-row-content">
+          <div class="lecture-home-row-title">
+            <span><%= row.label %> · <%= row.title %></span>
+
+            <% if badge_text && badge_text != row.title %>
+              <span class="<%= lecture_home_badge_class(row.badge.first) %>">
+                <%= badge_text %>
+              </span>
+            <% end %>
+          </div>
+
+          <% details = [*row.lines, row.note.presence].compact %>
+
+          <% if details.any? %>
+            <div class="lecture-home-row-line">
+              <%= safe_join(details, " · ") %>
+            </div>
+          <% end %>
+        </div>
+
+        <% if row.actions.present? %>
+          <div class="lecture-home-row-actions"><%= row.actions %></div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>

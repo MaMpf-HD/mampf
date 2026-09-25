@@ -1,0 +1,58 @@
+/* One scale for the whole page, each step bound to a role rather than picked
+   per component. Two weights, and no step within 10 % of its neighbour - a
+   difference nobody reads as a decision reads as a mistake.
+
+   rubric   what a thing is called: eyebrows, field labels, column headers
+   aside    what is worth saying quietly: notes, times, counts
+   body     the thing itself: values, names, prose
+   section  a heading over a part of the page
+   figure   the one number the standing is about
+
+   Size, weight and colour are three axes and one of them is enough for a
+   difference: hierarchy is carried by size, weight marks only the two places
+   size cannot reach, and colour is left to say what something means. */
+:root {
+  --hub-rubric: 0.75rem;
+  --hub-aside: 0.875rem;
+  --hub-body: 1rem;
+  --hub-section: 1.3rem;
+  --hub-figure: 1.9rem;
+}
+
+/* What a thing is called. Upper case and the small size do the work; a weight
+   on top would be a third axis for one difference. */
+.eyebrow,
+.field-label,
+.standing-mark-label {
+  font-size: var(--hub-rubric);
+  font-weight: 400;
+  color: #66717c;
+}
+
+.eyebrow,
+.field-label {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Said quietly, beside something that carries the meaning. */
+.hub-aside {
+  font-size: var(--hub-aside);
+}
+
+.hub-body {
+  font-size: var(--hub-body);
+}
+
+/* One number language: tabular figures, "points / max", two decimals at most. */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.num-zero {
+  color: #b02a37;
+}
+
+.num-none {
+  color: #adb5bd;
+}

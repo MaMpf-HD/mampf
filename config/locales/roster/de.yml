@@ -293,6 +293,7 @@ de:
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
+      switch_failed: "Der Wechsel hat nicht geklappt; Du bist in Deiner bisherigen Gruppe geblieben."
       self_add_not_allowed: "Die Selbstanmeldung zu diesem %{type} ist für Studierende nicht erlaubt."
       self_remove_not_allowed: "Das selbstständige Verlassen dieses %{type} ist für Studierende nicht erlaubt."
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
@@ -318,13 +319,11 @@ de:
       user_moved: "%{user} wurde nach %{target} verschoben."
       user_moved_between_tutorials: "%{user} wurde nach %{target} verschoben. Bereits in %{source} eingereichte Abgaben bleiben dort, sofern sie nicht vor Fristende noch einmal bearbeitet werden."
       user_not_moved: "%{user} wurde nicht verschoben: die Person ist bereits in %{target} oder nicht mehr in der Gruppe, aus der Du sie verschoben hast."
+      user_switched: "Du bist jetzt in %{group}."
       user_added: "%{user} wurde zu %{group} hinzugefügt."
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
-    self_enrollment:
-      no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."
-
     no_participants_yet: 'Es haben sich noch keine Teilnehmer registriert.'
     registered: 'Registriert'
     mailer:

@@ -23,7 +23,7 @@ export class LecturePage {
 
   async subscribe() {
     await this.goto();
-    const subscribeButton = this.page.getByRole("button", { name: "subscribe lecture" });
+    const subscribeButton = this.page.getByRole("button", { name: "Subscribe to this course" });
     await subscribeButton.click();
     await expect(subscribeButton).toHaveCount(0);
   }
