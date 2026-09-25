@@ -11,7 +11,7 @@ de:
         enrolled: "Für diese bist Du angemeldet"
         bookmarked: "Diese hast Du Dir gemerkt"
       registration_open: "Anmeldung offen — jetzt anmelden"
-      remove_bookmark: "Merkung entfernen"
+      remove_bookmark: "Nicht mehr merken"
       remove_bookmark_title: "Nicht mehr merken?"
       remove_bookmark_body: >-
         „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Du kannst
@@ -21,9 +21,9 @@ de:
       remove_registration_notice_title: "Entfernen?"
       remove_registration_notice_body: >-
         Deine Anmeldung für „%{lecture}“ wurde abgelehnt. Du kannst die
-        Veranstaltung als Merkung behalten oder ganz von Deinem Dashboard
+        Veranstaltung weiter gemerkt lassen oder ganz von Deinem Dashboard
         entfernen.
-      remove_registration_notice_keep_bookmarked: "Als Merkung behalten"
+      remove_registration_notice_keep_bookmarked: "Weiter merken"
       remove_registration_notice_remove_entirely: "Ganz entfernen"
     next_term_banner:
       heading:

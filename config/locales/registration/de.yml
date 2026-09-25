@@ -659,7 +659,7 @@ de:
         empty_title: "Starte hier"
         empty_accessible: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Materialien findest du in der Navigation der
+          dieser Seite. Materialien findest Du in der Navigation der
           Veranstaltung.
         empty_locked: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
@@ -677,11 +677,12 @@ de:
           keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
           Füge eine kurze Einführung und Dein Programm hinzu.
         unlock_prompt: >-
-          Diese Veranstaltung ist passwortgeschützt. Du musst das Passwort
-          eingeben, um ihre Materialien zu entsperren.
+          Diese Veranstaltung ist durch einen Zugangsschlüssel geschützt. Gib
+          ihn ein, um ihre Materialien zu entsperren.
         unlock_prompt_member: >-
-          Diese Veranstaltung ist passwortgeschützt. Als Mitglied der
-          Veranstaltung kannst du ihre Materialien ohne Passwort entsperren.
+          Diese Veranstaltung ist durch einen Zugangsschlüssel geschützt. Als
+          Mitglied der Veranstaltung kannst Du ihre Materialien ohne ihn
+          entsperren.
         unlock: "Entsperren"
         unlock_too_many_attempts: >-
           Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.

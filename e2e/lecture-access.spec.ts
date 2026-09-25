@@ -22,7 +22,7 @@ test.describe("student", () => {
     const lecturePage = new LecturePage(page, lecture.id);
     await lecturePage.goto();
     await expect(page).toHaveURL(/\/home$/);
-    await expect(page.getByText("You have to enter the password")).toBeVisible();
+    await expect(page.getByText("This lecture is protected by a pass phrase")).toBeVisible();
 
     await lecturePage.unlock("secret");
     await lecturePage.goto();
