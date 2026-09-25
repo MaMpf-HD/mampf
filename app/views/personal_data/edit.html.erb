@@ -13,16 +13,26 @@
 <%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch, local: true,
               data: asking || steps.any? ? form_data : {} do |f| %>
   <% if asking %>
+    <% places = @place_lectures.any? %>
     <fieldset class="mb-3">
-      <legend class="h6"><%= t("personal_data.participation_question") %></legend>
-      <p class="form-text"><%= t("personal_data.participation_hint") %></p>
+      <% if places %>
+        <legend class="h6">
+          <%= t("personal_data.places_question",
+                lectures: @place_lectures.map(&:title).to_sentence) %>
+        </legend>
+        <%= hidden_field_tag :give_up_places, place_lecture_ids %>
+      <% else %>
+        <legend class="h6"><%= t("personal_data.participation_question") %></legend>
+        <p class="form-text"><%= t("personal_data.participation_hint") %></p>
+      <% end %>
       <% ["yes", "no"].each do |answer| %>
         <div class="form-check">
           <%= radio_button_tag :participation, answer, @participation == answer,
                                class: "form-check-input",
                                data: { personal_data_form_target: "choice",
                                        action: "personal-data-form#show" } %>
-          <%= label_tag "participation_#{answer}", t("personal_data.participation_#{answer}"),
+          <% label = places ? "places_#{answer}" : "participation_#{answer}" %>
+          <%= label_tag "participation_#{answer}", t("personal_data.#{label}"),
                         class: "form-check-label" %>
         </div>
       <% end %>
@@ -70,7 +80,8 @@
 
   <% if asking %>
     <p class="form-text" data-personal-data-form-target="no">
-      <%= t("personal_data.decline_explanation") %>
+      <% explanation = places ? "places_give_up_explanation" : "decline_explanation" %>
+      <%= t("personal_data.#{explanation}") %>
     </p>
   <% end %>
 
@@ -91,8 +102,9 @@
       <%= f.submit t("personal_data.save"), class: "btn btn-primary",
                                             data: { personal_data_form_target: "yes" } %>
       <% if asking %>
-        <%= f.submit t("personal_data.continue"), class: "btn btn-primary", formnovalidate: true,
-                                                  data: { personal_data_form_target: "no" } %>
+        <%= f.submit t(places ? "personal_data.places_give_up" : "personal_data.continue"),
+                     class: "btn btn-primary", formnovalidate: true,
+                     data: { personal_data_form_target: "no" } %>
       <% end %>
     </div>
   </div>

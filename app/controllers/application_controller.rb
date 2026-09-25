@@ -213,7 +213,7 @@ class ApplicationController < ActionController::Base
 
     def enforce_personal_data
       return unless user_signed_in?
-      return unless current_user.personal_data_pending?
+      return unless personal_data_due?
       return if personal_data_request_allowed?
 
       session[:after_personal_data] ||= request.fullpath if navigational_get?
@@ -221,6 +221,14 @@ class ApplicationController < ActionController::Base
 
       render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
              layout: false
+    end
+
+    # Asks again after a no once the user has a place on a roster or in a
+    # running registration, since the roster needs their details.
+    def personal_data_due?
+      return true if current_user.personal_data_pending?
+
+      current_user.personal_data_declined? && Rosters::UserPlaces.new(current_user).any?
     end
 
     # Devise must finish signing the user in before this redirect can run, and

@@ -115,3 +115,30 @@ test("leads a student of two subjects to mathematics without a list",
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("Thank you, your details are saved.")).toBeVisible();
   });
+
+test("lets a student with a place give it up instead of entering the details",
+  async ({ page, request, factory }) => {
+    const user = await callBackend(request, "user_creator",
+      { role: "student", personal_data_pending: true }) as User;
+    const lecture = await factory.create("lecture", ["released_for_all"]);
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Mo 10",
+    });
+    await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: user.id });
+    await factory.create("tutorial_membership", [], { tutorial_id: tutorial.id, user_id: user.id });
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(user.email, user.password);
+    await expect(page).toHaveURL(/\/personal_data/);
+
+    await expect(page.getByRole("group", { name: /^You take part in/ })).toBeVisible();
+    await expect(page.getByRole("radio", { name: "No", exact: true })).toHaveCount(0);
+    await page.getByRole("radio", { name: "Give up my places" }).check();
+    await expect(page.getByText(/You leave the groups, talks, exams and registrations/))
+      .toBeVisible();
+    await page.getByRole("button", { name: "Give up places and continue" }).click();
+
+    await expect(page).not.toHaveURL(/\/personal_data/);
+    await page.goto("/main/start");
+    await expect(page).toHaveURL(/\/main\/start/);
+  });
