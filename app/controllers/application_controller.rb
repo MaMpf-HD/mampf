@@ -223,8 +223,9 @@ class ApplicationController < ActionController::Base
              layout: false
     end
 
-    # Asks again after a no once the user has a place on a roster or in a
-    # running registration, since the roster needs their details.
+    # Asks again after a no once the user has a place on a roster, a running
+    # registration or a recorded result, since rosters and marking tables
+    # need their details.
     def personal_data_due?
       return @personal_data_due if defined?(@personal_data_due)
 

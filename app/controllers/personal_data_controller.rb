@@ -32,7 +32,7 @@ class PersonalDataController < ApplicationController
       @asking = personal_data_due?
       @places = Rosters::UserPlaces.new(@user)
       @place_lectures = @asking ? @places.lectures : []
-      @results_recorded = @place_lectures.any? && @places.results?
+      @results_recorded = @asking && @places.results?
     end
 
     # A no from a student with places gives the places up, but only those of
@@ -54,7 +54,7 @@ class PersonalDataController < ApplicationController
       redirect_to after_personal_data_path
     rescue Rosters::UserPlaces::PlacesChangedError
       ask
-      render_places_changed
+      @results_recorded ? render_places_graded : render_places_changed
     rescue Rosters::MaintenanceService::GradingDataPresentError
       render_places_graded
     end

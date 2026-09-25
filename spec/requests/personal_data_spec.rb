@@ -229,6 +229,19 @@ RSpec.describe("Personal data", type: :request) do
       expect(response.body).not_to include(I18n.t("personal_data.places_no"))
     end
 
+    it "asks again after a no when a result is recorded later, with the fields only" do
+      tutorial.remove_user_from_roster!(user)
+      lecture.remove_user_from_roster!(user)
+      patch personal_data_path, params: { participation: "no" }
+      create(:assessment_participation, :reviewed, user: user)
+
+      get start_path
+      follow_redirect!
+
+      expect(response.body).to include(I18n.t("personal_data.places_results"))
+      expect(response.body).not_to include('name="participation"')
+    end
+
     it "keeps the places and the question when a no comes despite recorded results" do
       create(:assessment_participation, :reviewed, user: user)
 

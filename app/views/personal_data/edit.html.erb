@@ -39,9 +39,12 @@
       <% end %>
     </fieldset>
   <% elsif asking %>
-    <p class="fw-semibold">
-      <%= t("personal_data.places_question", lectures: @place_lectures.map(&:title).to_sentence) %>
-    </p>
+    <% if places %>
+      <p class="fw-semibold">
+        <%= t("personal_data.places_question",
+              lectures: @place_lectures.map(&:title).to_sentence) %>
+      </p>
+    <% end %>
     <p><%= t("personal_data.places_results") %></p>
   <% end %>
 

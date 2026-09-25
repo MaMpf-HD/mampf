@@ -40,6 +40,18 @@ RSpec.describe(Rosters::UserPlaces) do
       end
     end
 
+    it "is true with a recorded result, even without a roster" do
+      create(:assessment_participation, :reviewed, user: student)
+
+      expect(places.any?).to be(true)
+    end
+
+    it "leaves out a cohort outside a lecture, which names no lecture to give up" do
+      create(:cohort, context: create(:course)).add_user_to_roster!(student)
+
+      expect(places.any?).to be(false)
+    end
+
     it "is false for a rejected registration or one in a finished campaign" do
       open_campaign = create(:registration_campaign, :open)
       finished = create(:registration_campaign, :completed)
