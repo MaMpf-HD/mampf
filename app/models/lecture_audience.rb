@@ -25,6 +25,29 @@ module LectureAudience
      running_registrations(lecture_ids).select(:user_id)]
   end
 
+  # The other direction: the lectures this user belongs to the audience of.
+  def lectures_of(user)
+    lecture_id_scopes(user).map { |ids| Lecture.where(id: ids) }.reduce(:or)
+  end
+
+  def lecture_id_scopes(user)
+    running = Registration::Campaign.where(
+      id: Registration::UserRegistration.where(user: user).where.not(status: :rejected)
+                                        .select(:registration_campaign_id),
+      status: RUNNING_CAMPAIGN_STATUSES, campaignable_type: "Lecture"
+    )
+    [LectureBookmark.where(user: user).select(:lecture_id),
+     LectureMembership.where(user: user).select(:lecture_id),
+     TutorialMembership.where(user: user).select(:lecture_id),
+     Cohort.where(context_type: "Lecture",
+                  id: CohortMembership.where(user: user).select(:cohort_id))
+           .select(:context_id),
+     Talk.where(id: SpeakerTalkJoin.where(speaker: user).select(:talk_id)).select(:lecture_id),
+     Exam.where(id: ExamRosterEntry.active.where(user: user).select(:exam_id))
+         .select(:lecture_id),
+     running.select(:campaignable_id)]
+  end
+
   def running_registrations(lecture_ids)
     Registration::UserRegistration
       .where.not(status: :rejected)

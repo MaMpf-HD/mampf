@@ -202,7 +202,7 @@ de:
         free_medium: 'Dieses Medium ist frei zugänglich.'
         user_medium: 'Dieses Medium ist nur für MaMpf-NutzerInnen zugänglich.'
         subscriber_medium: >
-          Dieses Medium ist nur für AbonnentInnen der entsprechenden
+          Dieses Medium ist nur für Teilnehmende der entsprechenden
           Lehrveranstaltung zugänglich.
     teachables:
       teachables: Veranstaltungssuche
@@ -1392,11 +1392,11 @@ de:
           Zugriff.
           </li>
           <li>
-          nur AbonnentInnen: Registrierte MaMpf-NutzerInnen, die das
-          assoziierte Modul/die assoziierte Veranstaltung/die zur assoziierten
-          Sitzung gehörige Veranstaltung abonniert haben,
-          können das Medium sehen. Sonstige MaMpf-NutzerInnen können
-          das Medium nicht sehen.
+          nur Teilnehmende: Wer sich die zugehörige Veranstaltung gemerkt hat,
+          auf einer ihrer Listen steht (Tutorien, Vorträge, Klausuren) oder
+          eine laufende Anmeldung hat, kann das Medium sehen; bei einem
+          Medium eines Moduls die Teilnehmenden einer seiner Veranstaltungen.
+          Sonstige MaMpf-NutzerInnen können das Medium nicht sehen.
           </li>
           <li>
           gesperrt: Generische MaMpf-NutzerInnen können das Medium nicht mehr
@@ -2031,8 +2031,8 @@ de:
         veröffentliche alle zum Quiz gehörigen Quiz-Fragen und
         Quiz-Erläuterungen
       restricted_vertex: >
-        Diese %{sort} ist nur für AbonnentInnen von %{teachable} aufrufbar.
-        NutzerInnen ohne das Abonnement können das Quiz nicht spielen.
+        Diese %{sort} ist nur für Teilnehmende von %{teachable} aufrufbar.
+        Andere NutzerInnen können das Quiz nicht spielen.
       no_editor_rights: >
         Für diese %{sort} hast Du keine Editorenrechte.
       dependent_quizzable: >
@@ -3941,7 +3941,7 @@ de:
     unpublished: 'unveröffentlicht'
     all: 'frei'
     users: 'nur registrierte MaMpf-NutzerInnen'
-    subscribers: 'nur AbonnentInnen'
+    subscribers: 'nur Teilnehmende'
     locked: 'gesperrt'
     referenced_from: 'referenziert in'
     irrelevant: 'egal'

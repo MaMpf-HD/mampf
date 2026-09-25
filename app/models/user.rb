@@ -580,38 +580,32 @@ class User < ApplicationRecord
   # this method is more efficient than
   # media.select { |m| m.visible_for_user?(self)}
   def filter_visible_media(media)
-    nonsubscribed_courses =
-      Course.where(id: Course.pluck(:id) - courses.pluck(:id))
-    unlocked = unlocked_lectures
-    nonsubscribed_lectures =
-      Lecture.where.not(id: unlocked.select(:id)).where(released: ["all"])
-    lessons = Lesson.where(lecture: unlocked)
-    nonsubscribed_lessons = Lesson.where(lecture: nonsubscribed_lectures)
-    edited_lessons = Lesson.where(lecture: teaching_related_lectures)
-    talks = Talk.where(lecture: unlocked)
-    nonsubscribed_talks = Talk.where(lecture: nonsubscribed_lectures)
-    edited_talks = Talk.where(lecture: teaching_related_lectures)
     return media if admin
 
-    media.where(teachable: courses, released: ["all", "subscribers", "users"])
-         .or(media.where(teachable: nonsubscribed_courses,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: unlocked,
-                         released: ["all", "subscribers", "users"]))
-         .or(media.where(teachable: nonsubscribed_lectures,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: lessons,
-                         released: ["all", "subscribers", "users"]))
-         .or(media.where(teachable: nonsubscribed_lessons,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: talks,
-                         released: ["all", "subscribers", "users"]))
-         .or(media.where(teachable: nonsubscribed_talks,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: edited_courses))
-         .or(media.where(teachable: teaching_related_lectures))
-         .or(media.where(teachable: edited_lessons))
-         .or(media.where(teachable: edited_talks))
+    # "subscribers" media ("only participants") need the user in the audience
+    # of the lecture, or of one of the course's lectures (see LectureAudience).
+    participating = LectureAudience.lectures_of(self)
+    unlocked = unlocked_lectures
+    locked_but_open = Lecture.where.not(id: unlocked.select(:id)).where(released: ["all"])
+    open_levels = ["all", "users"]
+    participant_levels = ["all", "subscribers", "users"]
+
+    visible = media.where(teachable_type: "Course", released: open_levels)
+                   .or(media.where(teachable: Course.where(id: participating.select(:course_id)),
+                                   released: participant_levels))
+    [[unlocked, open_levels], [locked_but_open, open_levels],
+     [participating, participant_levels]]
+      .each do |lectures, released|
+        visible = visible.or(media.where(teachable: lectures, released: released))
+                         .or(media.where(teachable: Lesson.where(lecture: lectures),
+                                         released: released))
+                         .or(media.where(teachable: Talk.where(lecture: lectures),
+                                         released: released))
+      end
+    visible.or(media.where(teachable: edited_courses))
+           .or(media.where(teachable: teaching_related_lectures))
+           .or(media.where(teachable: Lesson.where(lecture: teaching_related_lectures)))
+           .or(media.where(teachable: Talk.where(lecture: teaching_related_lectures)))
   end
 
   def subscribed_commentable_media_with_comments

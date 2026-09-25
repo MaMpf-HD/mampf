@@ -44,8 +44,8 @@ RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
         expect(filtered_scope).to include(media_in_bookmarked_lecture)
       end
 
-      it "includes media from unprotected lectures that are not bookmarked" do
-        expect(filtered_scope).to include(media_in_other_lecture)
+      it "excludes participants-only media of an open lecture the user does not take part in" do
+        expect(filtered_scope).not_to include(media_in_other_lecture)
       end
 
       it "includes media released for 'all' or 'users'" do
