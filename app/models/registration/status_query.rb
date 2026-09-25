@@ -1,8 +1,16 @@
 module Registration
-  # Bulk equivalent of Lecture#registration_status_for: one fixed number of
-  # queries for a whole page of lectures instead of one per lecture. Mirrors
-  # that method's precedence rules exactly - keep the two in sync.
+  # A student's registration status for a whole page of lectures in one fixed
+  # number of queries instead of one per lecture; Lecture#registration_status_for
+  # asks it for a single lecture.
   class StatusQuery
+    # Sort order for the "You are registered for these" section: settled
+    # statuses first, then still-open ones, rejected last.
+    SORT_PRIORITY = { nil => 0, confirmed: 0, open: 1, pending: 1, rejected: 2 }.freeze
+
+    def self.sort_priority(status)
+      SORT_PRIORITY.fetch(status, 0)
+    end
+
     def initialize(user, lecture_ids)
       @user = user
       @lecture_ids = lecture_ids.to_a

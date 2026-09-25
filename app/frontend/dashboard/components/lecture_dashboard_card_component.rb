@@ -57,10 +57,10 @@ class LectureDashboardCardComponent < ViewComponent::Base
   end
 
   def registration_status_label
-    Registration::StatusPresenter.label(registration_status)
+    helpers.registration_status_label(registration_status)
   end
 
   def registration_status_icon
-    Registration::StatusPresenter.icon(registration_status)
+    helpers.registration_status_icon(registration_status)
   end
 end

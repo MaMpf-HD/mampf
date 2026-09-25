@@ -76,7 +76,7 @@
           own (marker_status nil) keeps the plain "registered" wording; the
           other three statuses get the same icon/label as the dashboard. %>
       <% label = marker_status ?
-                   Registration::StatusPresenter.label(marker_status) :
+                   registration_status_label(marker_status) :
                    t('lecture.search.registered_status') %>
       <span class="lecture-search-result-control is-registered"
             role="img"
@@ -84,7 +84,7 @@
             title="<%= label %>"
             data-testid="lecture-search-registered-control">
         <i class="bi <%= marker_status ?
-                            Registration::StatusPresenter.icon(marker_status) :
+                            registration_status_icon(marker_status) :
                             'bi-check-circle-fill text-success' %>"
            aria-hidden="true"></i>
       </span>

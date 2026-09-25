@@ -1,0 +1,56 @@
+require "rails_helper"
+
+# Who gets a lecture's content: an open lecture is every student's, one behind
+# a passphrase only after unlocking it, and staff always.
+RSpec.describe(Lecture) do
+  let(:student) { create(:confirmed_user) }
+  let(:open_lecture) { create(:lecture, :released_for_all) }
+  let(:locked_lecture) { create(:lecture, :released_for_all, passphrase: "open sesame") }
+  let(:unpublished) { create(:lecture) }
+
+  describe "#unlocked_for? and User#unlocked_lectures" do
+    it "agree on an open, a locked and an unlocked lecture" do
+      unlocked = create(:lecture, :released_for_all, passphrase: "open sesame")
+      student.bookmark_lecture!(unlocked)
+
+      expect(open_lecture.unlocked_for?(student)).to be(true)
+      expect(locked_lecture.unlocked_for?(student)).to be(false)
+      expect(unlocked.unlocked_for?(student)).to be(true)
+      expect(student.unlocked_lectures).to include(open_lecture, unlocked)
+      expect(student.unlocked_lectures).not_to include(locked_lecture)
+    end
+  end
+
+  describe "#content_accessible_by?" do
+    it "lets a student into a published open lecture only" do
+      expect(open_lecture.content_accessible_by?(student)).to be(true)
+      expect(locked_lecture.content_accessible_by?(student)).to be(false)
+      expect(unpublished.content_accessible_by?(student)).to be(false)
+    end
+
+    it "lets the lecture's editors in, whatever it is" do
+      expect(locked_lecture.content_accessible_by?(locked_lecture.teacher)).to be(true)
+      expect(unpublished.content_accessible_by?(unpublished.teacher)).to be(true)
+    end
+  end
+
+  describe "#bookmarkable_by?" do
+    it "needs no passphrase for an open lecture" do
+      expect(open_lecture.bookmarkable_by?(student)).to be(true)
+    end
+
+    it "needs the passphrase for a locked lecture" do
+      expect(locked_lecture.bookmarkable_by?(student)).to be(false)
+    end
+
+    it "needs no passphrase from a member of the lecture's roster" do
+      locked_lecture.add_user_to_roster!(student)
+
+      expect(locked_lecture.bookmarkable_by?(student)).to be(true)
+    end
+
+    it "is refused for an unpublished lecture" do
+      expect(unpublished.bookmarkable_by?(student)).to be(false)
+    end
+  end
+end

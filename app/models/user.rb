@@ -786,7 +786,7 @@ class User < ApplicationRecord
 
   # The lectures this user holds a place in for the given term, or has an
   # open application for (see `lectures_with_registration_application`).
-  # Sorted by Registration::StatusPresenter.sort_priority (settled first,
+  # Sorted by Registration::StatusQuery.sort_priority (settled first,
   # rejected last), ties kept in `lectures_of_term`'s title order.
   def current_enrolled_lectures(term = Term.active)
     combined = roster_lectures.or(lectures_with_registration_application)
@@ -794,7 +794,7 @@ class User < ApplicationRecord
     statuses = Registration::StatusQuery.new(self, enrolled.map(&:id)).statuses
 
     enrolled.sort_by.with_index do |lecture, index|
-      [Registration::StatusPresenter.sort_priority(statuses[lecture.id]), index]
+      [Registration::StatusQuery.sort_priority(statuses[lecture.id]), index]
     end
   end
 
