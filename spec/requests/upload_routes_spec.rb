@@ -312,6 +312,7 @@ RSpec.describe("UploadRoutes", type: :request) do
                                             "application/pdf")
       assignment = create(:assignment, :with_lecture)
       assignment.lecture.users << user
+      create(:tutorial, lecture: assignment.lecture).add_user_to_roster!(user)
 
       post "/submissions/upload",
            params: { file: upload },
@@ -444,6 +445,17 @@ RSpec.describe("UploadRoutes", type: :request) do
 
         expect(response).to have_http_status(:ok)
       end
+
+      it "refuses /videos/upload for another talk of the same seminar" do
+        other = create(:talk, lecture: talk.lecture)
+        user.reload
+
+        post "/videos/upload",
+             params: { file: restricted_uploads.fetch("/videos/upload") },
+             headers: intent_header(VideoUploader, target: Medium.new(teachable: other))
+
+        expect(response).to have_http_status(:forbidden)
+      end
     end
   end
 
@@ -534,8 +546,17 @@ RSpec.describe("UploadRoutes", type: :request) do
         expect(response).to have_http_status(:forbidden)
       end
 
-      it "allows a student of the lecture" do
+      it "refuses a student of the lecture without a seat in a tutorial" do
         assignment.lecture.users << user
+
+        post_submission
+
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "allows a student with a seat in a tutorial of the lecture" do
+        assignment.lecture.users << user
+        create(:tutorial, lecture: assignment.lecture).add_user_to_roster!(user)
 
         post_submission
 

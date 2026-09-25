@@ -105,6 +105,12 @@ RSpec.describe(UploadEndpointAuthorization) do
 
       expect(described_class.intent_authorized?(intent: submitting,
                                                 uploader_class: SubmissionUploader,
+                                                user: user)).to be(false)
+
+      create(:tutorial, lecture: assignment.lecture).add_user_to_roster!(user)
+
+      expect(described_class.intent_authorized?(intent: submitting,
+                                                uploader_class: SubmissionUploader,
                                                 user: user)).to be(true)
     end
 
