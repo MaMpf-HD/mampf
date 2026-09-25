@@ -19,6 +19,19 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
     expect(card.text).to include(lecture.title_no_term)
   end
 
+  it "warns before removing the bookmark that unlocked a pass-phrase lecture" do
+    lecture.update!(passphrase: "open sesame")
+
+    expect(render_card(bookmarked: true).text)
+      .to include(I18n.t("main.start.remove_bookmark_body_locked",
+                         lecture: lecture.title_no_term))
+  end
+
+  it "does not warn for an open lecture" do
+    expect(render_card(bookmarked: true).text)
+      .to include(I18n.t("main.start.remove_bookmark_body", lecture: lecture.title_no_term))
+  end
+
   it "dyes the card in the tape color, so the border can follow it" do
     Dashboard::CardStyle.create!(user: user, lecture: lecture,
                                  tape_color: "mint")

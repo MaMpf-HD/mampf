@@ -16,6 +16,12 @@ en:
       remove_bookmark_body: >-
         Remove “%{lecture}” from your bookmarks? You can bookmark it again from
         the lecture search.
+      remove_bookmark_body_locked: >-
+        Remove “%{lecture}” from your bookmarks? It is protected by a pass
+        phrase, so you will need to enter it again on the lecture page to open
+        it.
+      remove_entirely_relocks: >-
+        Removing it entirely means entering its pass phrase again to open it.
       remove_bookmark_confirm: "Remove"
       remove_registration_notice: "Dismiss"
       remove_registration_notice_title: "Remove?"

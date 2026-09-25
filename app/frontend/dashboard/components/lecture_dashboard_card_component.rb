@@ -63,4 +63,22 @@ class LectureDashboardCardComponent < ViewComponent::Base
   def registration_status_icon
     helpers.registration_status_icon(registration_status)
   end
+
+  # The bookmark is what unlocked a lecture behind a pass phrase, so removing
+  # it locks the lecture again, unless a roster seat lets the student in.
+  def relocked_by_removal?
+    lecture.restricted? && !LectureMembership.exists?(user: user, lecture: lecture)
+  end
+
+  def remove_bookmark_body
+    key = relocked_by_removal? ? "remove_bookmark_body_locked" : "remove_bookmark_body"
+    t("main.start.#{key}", lecture: lecture.title_no_term)
+  end
+
+  def remove_registration_notice_body
+    body = t("main.start.remove_registration_notice_body", lecture: lecture.title_no_term)
+    return body unless relocked_by_removal? && lecture.bookmarked_by?(user)
+
+    "#{body} #{t("main.start.remove_entirely_relocks")}"
+  end
 end

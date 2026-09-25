@@ -16,6 +16,13 @@ de:
       remove_bookmark_body: >-
         „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Du kannst
         sie über die Vorlesungssuche erneut merken.
+      remove_bookmark_body_locked: >-
+        „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Sie ist
+        durch einen Zugangsschlüssel geschützt, Du musst ihn dann auf der
+        Veranstaltungsseite erneut eingeben, um sie zu öffnen.
+      remove_entirely_relocks: >-
+        Entfernst Du sie ganz, musst Du ihren Zugangsschlüssel erneut eingeben,
+        um sie zu öffnen.
       remove_bookmark_confirm: "Entfernen"
       remove_registration_notice: "Ausblenden"
       remove_registration_notice_title: "Entfernen?"

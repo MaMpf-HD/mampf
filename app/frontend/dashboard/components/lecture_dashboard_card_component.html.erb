@@ -20,8 +20,7 @@
                  lecture_id: lecture.id,
                  icon_title: t("main.start.remove_bookmark"),
                  modal_title: t("main.start.remove_bookmark_title"),
-                 modal_body: t("main.start.remove_bookmark_body",
-                               lecture: lecture.title_no_term),
+                 modal_body: remove_bookmark_body,
                  buttons: [{ action: "confirm",
                             css_class: "btn btn-danger",
                             label: t("main.start.remove_bookmark_confirm") }] %>
@@ -34,8 +33,7 @@
                  lecture_id: lecture.id,
                  icon_title: t("main.start.remove_registration_notice"),
                  modal_title: t("main.start.remove_registration_notice_title"),
-                 modal_body: t("main.start.remove_registration_notice_body",
-                               lecture: lecture.title_no_term),
+                 modal_body: remove_registration_notice_body,
                  buttons: [
                    ({ action: "keep-bookmarked",
                       css_class: "btn btn-outline-secondary",
