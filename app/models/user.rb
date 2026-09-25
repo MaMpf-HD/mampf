@@ -608,12 +608,18 @@ class User < ApplicationRecord
            .or(media.where(teachable: Talk.where(lecture: teaching_related_lectures)))
   end
 
+  # The commented media whose notices reach this user (see LectureAudience,
+  # as in Commontator::CommentsController#update_unread_status), so the
+  # comments page shows every thread the unread flag was raised for.
   def subscribed_commentable_media_with_comments
-    lessons = Lesson.where(lecture: lectures)
-    filter_media(Medium.where.not(sort: ["RandomQuiz", "Question", "Remark"])
-                       .where(teachable: courses + lectures + lessons))
-      .includes(commontator_thread: :comments)
-      .select { |m| m.commontator_thread.comments.any? }
+    audience = LectureAudience.lectures_of(self)
+    media = Medium.where.not(sort: ["RandomQuiz", "Question", "Remark"])
+    commentable = media.where(teachable: audience)
+                       .or(media.where(teachable: Course.where(id: audience.select(:course_id))))
+                       .or(media.where(teachable: Lesson.where(lecture: audience)))
+                       .or(media.where(teachable: Talk.where(lecture: audience)))
+    filter_visible_media(commentable).includes(commontator_thread: :comments)
+                                     .select { |m| m.commontator_thread&.comments&.any? }
   end
 
   # Returns the media that the user has subscribed to and that have been
