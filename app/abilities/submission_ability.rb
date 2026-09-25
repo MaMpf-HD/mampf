@@ -24,12 +24,12 @@ class SubmissionAbility
     # seat that `rostered_tutorial!` asks for later: without one, the file
     # could never become a hand-in and is not taken at all.
     can :upload_manuscript, Submission do |submission|
+      lecture = submission.assignment&.lecture
+      seated = lecture.present? && user.rostered_tutorial_in(lecture).present?
       if submission.persisted?
-        user.in?(submission.users) && !submission.not_updatable?
+        seated && user.in?(submission.users) && !submission.not_updatable?
       else
-        lecture = submission.assignment&.lecture
-        lecture.present? && user.proper_student_in?(lecture) &&
-          user.rostered_tutorial_in(lecture).present?
+        seated && user.proper_student_in?(lecture)
       end
     end
 

@@ -382,10 +382,18 @@ RSpec.describe("Submissions", type: :request) do
         expect(submission.reload.tutorial).to eq(tutorial)
       end
 
-      # The card offers to replace the file; the form behind that offer must
-      # open. A seat is what a new hand-in needs, not what replacing a file on
-      # one that exists needs.
-      it "still opens the form to replace the file without a seat" do
+      # Replacing the file is an upload, and an upload needs a seat in the
+      # lecture; the form says so rather than failing at the upload.
+      it "does not open the form to replace the file without a seat" do
+        get edit_submission_path(submission)
+
+        expect(response).to redirect_to(:start)
+        expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
+      end
+
+      it "opens it with a seat in another group of the lecture" do
+        create(:tutorial_membership, tutorial: other_tutorial, user: user)
+
         get edit_submission_path(submission)
 
         expect(response).to have_http_status(:success)
