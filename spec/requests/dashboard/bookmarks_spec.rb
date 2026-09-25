@@ -28,13 +28,16 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
 
     it "scopes the re-rendered bands to the given term" do
       other_term = create(:term)
-      other_lecture = create(:lecture, :released_for_all, term: other_term)
+      # An apostrophe in the title is escaped in the HTML, as a random title's
+      # may be; the fixed one keeps that case in every run.
+      course = create(:course, title: "O'Brien's Algebra")
+      other_lecture = create(:lecture, :released_for_all, term: other_term, course: course)
       user.bookmark_lecture!(other_lecture)
 
       post dashboard_bookmark_path(lecture),
            params: { term: other_term.id }, as: :turbo_stream
 
-      expect(response.body).to include(other_lecture.title_no_term)
+      expect(response.body).to include(ERB::Util.html_escape(other_lecture.title_no_term))
     end
 
     it "refuses a lecture behind a passphrase" do
