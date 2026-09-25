@@ -43,6 +43,20 @@ RSpec.describe(StudentPerformance::DuePoints) do
       expect(scoped.pending_points_for(student.id))
         .to eq(due_points.pending_points_for(student.id))
     end
+
+    it "refuses to answer for anybody else, also per kind" do
+      other = FactoryBot.create(:confirmed_user)
+      scoped = described_class.new(lecture: lecture, user_id: student.id)
+      questions = [:marked_max_for, :not_yet_due_for, :not_yet_due_count_for,
+                   :pending_points_for, :pending_count_for]
+
+      [scoped, scoped.of_kind(:test)].each do |points|
+        questions.each do |question|
+          expect { points.public_send(question, other.id) }.to raise_error(ArgumentError)
+        end
+        expect { points.marked_percentage_of(other.id, 5) }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   describe "#total" do

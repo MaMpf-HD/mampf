@@ -3,8 +3,8 @@ module StudentPerformance
   # without a record change that would trigger recomputation.
   class DuePoints
     # With user_id, only that student's rows are read, for a page that asks
-    # about one student in many lectures; the *_for methods then answer for
-    # that student alone.
+    # about one student in many lectures; asked about anybody else, the *_for
+    # methods raise rather than count that student's missing rows as zero.
     def initialize(lecture:, kind: nil, user_id: nil)
       @lecture = lecture
       @kind = kind
@@ -40,6 +40,7 @@ module StudentPerformance
     # nobody has entered anything on is in that queue too: whether the student
     # sat it is known only once points or an absence are recorded.
     def marked_max_for(user_id)
+      check_scope!(user_id)
       max_for(user_id) - awaiting_marks_points.fetch(user_id, 0) -
         unrecorded_test_points(user_id) + settled_coming_points.fetch(user_id, 0)
     end
@@ -60,6 +61,7 @@ module StudentPerformance
     # An early submission remains not yet due because it can still be replaced
     # or withdrawn until the deadline and submission_grace_period have passed.
     def not_yet_due_for(user_id)
+      check_scope!(user_id)
       coming_total -
         exempted_coming_points.fetch(user_id, 0) -
         settled_coming_points.fetch(user_id, 0)
@@ -69,6 +71,7 @@ module StudentPerformance
     # page says how many sheets it is about; the points beside it say what they
     # are worth, and one without the other leaves the reader guessing.
     def not_yet_due_count_for(user_id)
+      check_scope!(user_id)
       coming_assessments.size -
         exempted_coming_counts.fetch(user_id, 0) -
         settled_coming_counts.fetch(user_id, 0)
@@ -77,10 +80,12 @@ module StudentPerformance
     # Early submissions are not awaiting points: tutors cannot enter points
     # until the deadline and submission_grace_period have passed.
     def pending_points_for(user_id)
+      check_scope!(user_id)
       awaiting_marks_points.fetch(user_id, 0) + unrecorded_test_points(user_id)
     end
 
     def pending_count_for(user_id)
+      check_scope!(user_id)
       pending_counts.fetch(user_id, 0) + unrecorded_test_count(user_id)
     end
 
@@ -101,6 +106,12 @@ module StudentPerformance
         participations
           .where(assessment_id: due_assessments.map(&:id), status: :pending)
           .where.not(submitted_at: nil)
+      end
+
+      def check_scope!(user_id)
+        return if @user_id.nil? || @user_id == user_id
+
+        raise(ArgumentError, "DuePoints is scoped to user #{@user_id}, not #{user_id}")
       end
 
       def participations
