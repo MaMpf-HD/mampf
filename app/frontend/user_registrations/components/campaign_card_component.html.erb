@@ -9,6 +9,12 @@
         </span>
       <% end %>
 
+      <% if risk_badge %>
+        <span class="<%= helpers.lecture_home_badge_class(risk_badge.first) %>">
+          <%= risk_badge.last %>
+        </span>
+      <% end %>
+
       <span
         class="lecture-home-badge lecture-home-badge--warn"
         data-registration-fold-target="unsaved"

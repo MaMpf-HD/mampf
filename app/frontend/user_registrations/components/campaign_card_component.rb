@@ -78,7 +78,19 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def summary_lines
-    [own_line || (ineligible? ? ineligible_line : mode_line), deadline_line].compact
+    [own_line || (ineligible? ? ineligible_line : mode_line), risk_line, deadline_line].compact
+  end
+
+  # A registration or preferences the student holds while a requirement fails:
+  # the row says so next to the student's state, since finalization would
+  # reject them.
+  def at_risk?
+    (registered_items.any? || preferences_saved?) &&
+      (ineligible? || finalization_policy_warning?)
+  end
+
+  def risk_badge
+    [:bad, t("registration.user_registration.summary.requirement_missing")] if at_risk?
   end
 
   def cta_label
@@ -181,6 +193,14 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   private
+
+    def risk_line
+      return unless at_risk?
+      return ineligible_line if ineligible?
+
+      eligibility_failure_message(failed_finalization_policies.first,
+                                  user: helpers.current_user, context: :finalization_warning)
+    end
 
     def own_line
       if registered_items.any?

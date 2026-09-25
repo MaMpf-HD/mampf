@@ -315,6 +315,8 @@ test.describe("campaign registration", () => {
 
     await home.register();
     await expect(student.page.getByText("Registration completed successfully.")).toBeVisible();
+    await expect(home.campaign("Email checked tutorial registration").locator(":scope > summary"))
+      .toContainText("Requirement missing");
 
     await campaign.__call("finalize!");
     await home.goto();

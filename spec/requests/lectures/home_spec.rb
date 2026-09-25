@@ -227,6 +227,27 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  describe "a registration whose requirement fails" do
+    it "says so in the campaign row next to the registration" do
+      campaign = create(:registration_campaign, :open, :first_come_first_served,
+                        :with_finalization_policy, campaignable: lecture,
+                                                   description: "Tutorial registration")
+      other = create(:confirmed_user, email: "someone@elsewhere.org")
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first, user: other)
+      sign_in other
+
+      get lecture_home_path(lecture)
+
+      row = Nokogiri::HTML(response.body).at_css("summary.registration-fold-summary")
+      expect(row.text).to include(I18n.t("registration.user_registration.summary.registered"))
+      expect(row.text)
+        .to include(I18n.t("registration.user_registration.summary.requirement_missing"))
+      expect(row.text).to include("example.com")
+    end
+  end
+
   describe "a campaign closed before its deadline" do
     it "says so instead of naming the deadline as its end" do
       create(:registration_campaign, :closed, campaignable: lecture,

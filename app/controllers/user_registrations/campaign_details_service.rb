@@ -22,15 +22,16 @@ module UserRegistrations
     end
 
     # What the collapsed row needs: the registration rules and the student's
-    # own registrations, which the lecture home has loaded already. The options,
-    # the finalization rules and the preferences wait until the row is opened.
+    # own registrations, which the lecture home has loaded already. The options
+    # and the preferences wait until the row is opened; the finalization rules
+    # are checked only for a student with something to lose at finalization.
     def summary(own_registrations:)
       Result.new(
         campaign: @campaign,
         eligibility: eligibility,
         items: @campaign.registration_items.to_a,
         item_preferences: nil,
-        finalization_eligibility: [],
+        finalization_eligibility: own_registrations.any? ? finalization_eligibility : [],
         own_registrations: own_registrations,
         summary_only: true
       )
