@@ -1,18 +1,19 @@
 class PersonalDataController < ApplicationController
   layout "devise"
   helper PersonalDataHelper
+  helper_method :place_lecture_ids
   # Keeps Devise's stored return path from pointing at this page.
   skip_before_action :store_user_location!
   before_action :remember_locale_choice, only: :edit
 
   def edit
     @user = current_user
-    @asking = @user.personal_data_pending?
+    ask
   end
 
   def update
     @user = current_user
-    @asking = @user.personal_data_pending?
+    ask
     @participation = params[:participation]
     return decline if @asking && @participation == "no"
 
@@ -27,14 +28,50 @@ class PersonalDataController < ApplicationController
 
   private
 
+    def ask
+      @asking = personal_data_due?
+      @places = Rosters::UserPlaces.new(@user)
+      @place_lectures = @asking ? @places.lectures : []
+      @results_recorded = @asking && @places.results?
+    end
+
+    # A no from a student with places gives the places up, but only those of
+    # the lectures the form named. The ids it sends back are compared with the
+    # student's current lectures, and a place that is not among them makes
+    # the form come back with the new list rather than go unseen.
     def decline
+      return render_places_graded if @results_recorded
+
       @user.assign_attributes(name: params.dig(:user, :name) || @user.name,
                               personal_data_declined_at: Time.current)
-      if @user.save
-        redirect_to after_personal_data_path
-      else
-        render :edit, status: :unprocessable_content
+      return render_places_changed if params[:give_up_places].to_s != place_lecture_ids
+      return render(:edit, status: :unprocessable_content) unless @user.valid?
+
+      ActiveRecord::Base.transaction do
+        @places.give_up!(@place_lectures) if @place_lectures.any?
+        @user.save!
       end
+      redirect_to after_personal_data_path
+    rescue Rosters::UserPlaces::PlacesChangedError
+      ask
+      @results_recorded ? render_places_graded : render_places_changed
+    rescue Rosters::MaintenanceService::GradingDataPresentError
+      render_places_graded
+    end
+
+    def place_lecture_ids
+      @place_lectures.map(&:id).join(",")
+    end
+
+    def render_places_changed
+      flash.now[:alert] = t("personal_data.places_changed")
+      render :edit, status: :unprocessable_content
+    end
+
+    def render_places_graded
+      @results_recorded = true
+      flash.now[:alert] = t("personal_data.places_graded")
+      render :edit, status: :unprocessable_content
     end
 
     def personal_data_params

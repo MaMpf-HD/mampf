@@ -38,6 +38,26 @@ de:
     decline_explanation: >-
       Dann brauchen wir nichts von Dir. Nimmst Du später doch teil, kannst Du die
       Angaben in Deinem Profil nachtragen.
+    places_question: >-
+      Du nimmst an %{lectures} teil. Dafür brauchen wir Deinen echten Namen
+      und Deine Matrikelnummer.
+    places_yes: "Meine Angaben eintragen"
+    places_no: "Meine Plätze aufgeben"
+    places_give_up_explanation: >-
+      Du verlässt die Gruppen, Vorträge, Klausuren und Anmeldungen dieser
+      Veranstaltungen. Wieder anmelden kannst Du Dich, solange die Anmeldung
+      noch offen ist und Plätze frei sind; danach entscheidet die
+      Veranstaltungsleitung.
+    places_results: >-
+      Für Dich sind schon Ergebnisse eingetragen. Damit sie Dir zugeordnet
+      werden können, brauchen wir Deine Angaben.
+    places_give_up: "Plätze aufgeben und weiter"
+    places_changed: >-
+      Deine Plätze haben sich inzwischen geändert. Bitte sieh sie Dir an und
+      entscheide noch einmal.
+    places_graded: >-
+      Für Dich sind schon Ergebnisse eingetragen, darum lassen sich Deine
+      Plätze nicht aufgeben. Bitte trag Deine Angaben ein.
     needed_to_register: >-
       Für die Anmeldung brauchen wir Deinen Namen und Deine Matrikelnummer. Trag
       sie bitte hier ein, danach geht es zurück.

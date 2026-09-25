@@ -14,14 +14,26 @@ module Seeds
     # A few accounts are still asked for name and matriculation number, so that
     # the question after sign-in can be tried out.
     PERSONAL_DATA_PENDING_ACCOUNTS = ["ask-data@mampf.edu", "ask-both@mampf.edu",
-                                      "ask-teacher@mampf.edu"].freeze
+                                      "ask-teacher@mampf.edu", "ask-data-registered@mampf.edu",
+                                      "ask-data-roster@mampf.edu"].freeze
+    # This account answered no and was put on a roster afterwards, as when
+    # staff add someone. It is asked again, and a plain no is not offered.
+    PERSONAL_DATA_DECLINED_ACCOUNTS = ["ask-declined-roster@mampf.edu"].freeze
+    # With a registration still running, and on a tutorial roster: the two
+    # kinds of place that keep a student from simply answering no.
+    PERSONAL_DATA_REGISTERED = "ask-data-registered@mampf.edu".freeze
+    PERSONAL_DATA_ON_ROSTER = ["ask-data-roster@mampf.edu",
+                               "ask-declined-roster@mampf.edu"].freeze
     # Gets a lecture of its own, so that the question can be tried out as a
     # lecturer as well.
     PERSONAL_DATA_PENDING_TEACHER = "ask-teacher@mampf.edu".freeze
     SEED_FIRST_NAMES = ["Anna", "Ben", "Clara", "David", "Emma", "Felix", "Greta", "Hannes",
                         "Ida", "Jonas", "Klara", "Leon", "Mia", "Noah", "Paula"].freeze
+    # 15 and 13 are coprime, so cycling 15 first names and 13 last names side
+    # by side repeats a full name only after 195 accounts.
     SEED_LAST_NAMES = ["Albrecht", "Bauer", "Fischer", "Hoffmann", "Keller", "Lang",
-                       "Meyer", "Neumann", "Schmitt", "Wagner", "Weber", "Zimmermann"].freeze
+                       "Meyer", "Neumann", "Richter", "Schmitt", "Wagner", "Weber",
+                       "Zimmermann"].freeze
     ENROLMENT_DESCRIPTION = "Anmeldung zur Veranstaltung".freeze
     TUTORIAL_DESCRIPTION = "Anmeldung zu den Übungsgruppen".freeze
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
@@ -54,6 +66,7 @@ module Seeds
         reset_passwords!
         stage_password_policy!
         stage_personal_data!
+        skip_first_sign_in!
       end
       report!
     end
@@ -82,7 +95,7 @@ module Seeds
     def create_sign_in_question_accounts!
       ensure_development!
 
-      (STALE_PASSWORD_ACCOUNTS | PERSONAL_DATA_PENDING_ACCOUNTS).each do |email|
+      sign_in_question_accounts.each do |email|
         next if User.exists?(email: email)
 
         FactoryBot.create(:confirmed_user, email: email, name: email.split("@").first)
@@ -91,6 +104,19 @@ module Seeds
         term: current_term, teacher: User.find_by!(email: PERSONAL_DATA_PENDING_TEACHER),
         course_title: "Algebraische Zahlentheorie", short_title: "AZT"
       )
+      register_for_next_term!(User.find_by!(email: PERSONAL_DATA_REGISTERED))
+      PERSONAL_DATA_ON_ROSTER.each { |email| seat_in_demo_tutorial!(User.find_by!(email: email)) }
+    end
+
+    # A seed account has never signed in, so its first sign-in would open the
+    # profile page with a notice; only the accounts that are asked something
+    # keep that first time.
+    def skip_first_sign_in!
+      ensure_development!
+      # rubocop:disable Rails/SkipsModelValidations
+      User.where(sign_in_count: 0).where.not(email: sign_in_question_accounts)
+          .update_all(sign_in_count: 1)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     # The password ships with the dump, so it has to pass the policy. A lock
@@ -156,14 +182,16 @@ module Seeds
 
       programs = Program.offered_to_students.order(:id).to_a
       # rubocop:disable Rails/SkipsModelValidations
-      User.where.not(email: PERSONAL_DATA_PENDING_ACCOUNTS).order(:id)
-          .each_with_index do |user, index|
+      unanswered = PERSONAL_DATA_PENDING_ACCOUNTS + PERSONAL_DATA_DECLINED_ACCOUNTS
+      User.where.not(email: unanswered).order(:id).each_with_index do |user, index|
         user.update_columns(personal_data_for(user, index, programs))
       end
+      no_data = { personal_data_confirmed_at: nil, first_name: nil, last_name: nil,
+                  matriculation_number: nil, uni_id: nil, program_id: nil }
       User.where(email: PERSONAL_DATA_PENDING_ACCOUNTS)
-          .update_all(personal_data_confirmed_at: nil, personal_data_declined_at: nil,
-                      first_name: nil, last_name: nil, matriculation_number: nil,
-                      uni_id: nil, program_id: nil)
+          .update_all(no_data.merge(personal_data_declined_at: nil))
+      User.where(email: PERSONAL_DATA_DECLINED_ACCOUNTS)
+          .update_all(no_data.merge(personal_data_declined_at: Time.current))
       # rubocop:enable Rails/SkipsModelValidations
     end
 
@@ -185,9 +213,30 @@ module Seeds
 
         { personal_data_confirmed_at: Time.current, personal_data_declined_at: nil,
           first_name: SEED_FIRST_NAMES[index % SEED_FIRST_NAMES.size],
-          last_name: SEED_LAST_NAMES[(index / SEED_FIRST_NAMES.size) % SEED_LAST_NAMES.size],
+          last_name: SEED_LAST_NAMES[index % SEED_LAST_NAMES.size],
           matriculation_number: (4_000_000 + user.id).to_s,
           program_id: programs.empty? ? nil : programs[index % programs.size].id }
+      end
+
+      def sign_in_question_accounts
+        STALE_PASSWORD_ACCOUNTS | PERSONAL_DATA_PENDING_ACCOUNTS | PERSONAL_DATA_DECLINED_ACCOUNTS
+      end
+
+      def register_for_next_term!(user)
+        campaign = Registration::Campaign.find_by!(campaignable: lecture_for(next_term),
+                                                   description: TUTORIAL_DESCRIPTION)
+        return if campaign.user_registrations.exists?(user: user)
+
+        FactoryBot.create(:registration_user_registration, :confirmed,
+                          user: user, registration_campaign: campaign,
+                          registration_item: campaign.registration_items.order(:id).first)
+      end
+
+      def seat_in_demo_tutorial!(user)
+        lecture = Seeds::CourseworkSupport.demo_lecture
+        tutorial = lecture.tutorials.order(:id).first
+        tutorial.add_user_to_roster!(user) unless tutorial.members.include?(user)
+        lecture.ensure_roster_membership!([user.id])
       end
 
       # rubocop:disable Rails/Exit

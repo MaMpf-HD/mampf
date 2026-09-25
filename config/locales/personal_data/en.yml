@@ -39,6 +39,25 @@ en:
     decline_explanation: >-
       Then we need nothing from you. Should you take part later, you can enter
       the details on your profile page.
+    places_question: >-
+      You take part in %{lectures}. For this we need your real name and
+      matriculation number.
+    places_yes: "Enter my details"
+    places_no: "Give up my places"
+    places_give_up_explanation: >-
+      You leave the groups, talks, exams and registrations of these event
+      series. You can register again as long as the registration is still
+      open and places are left; after that, it is up to the teachers.
+    places_results: >-
+      Results have already been recorded for you. So that they are credited
+      to you, we need your details.
+    places_give_up: "Give up places and continue"
+    places_changed: >-
+      Your places have changed in the meantime. Please check them and decide
+      again.
+    places_graded: >-
+      Results have already been recorded for you, so your places cannot be
+      given up. Please enter your details.
     needed_to_register: >-
       To register, we need your name and matriculation number. Please enter
       them here; afterwards you go back.
