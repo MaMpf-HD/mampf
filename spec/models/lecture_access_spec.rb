@@ -1,7 +1,5 @@
 require "rails_helper"
 
-# Who gets a lecture's content: an open lecture is every student's, one behind
-# a passphrase only after unlocking it, and staff always.
 RSpec.describe(Lecture) do
   let(:student) { create(:confirmed_user) }
   let(:open_lecture) { create(:lecture, :released_for_all) }

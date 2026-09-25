@@ -675,7 +675,6 @@ Rails.application.routes.draw do
   patch "profile/unstar_lecture",
         as: "unstar_lecture"
 
-  # the tape color of a lecture's dashboard card
   patch "dashboard/washi_tape/:lecture_id",
         to: "dashboard/washi_tapes#update",
         as: "dashboard_washi_tape"

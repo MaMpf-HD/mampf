@@ -1,5 +1,3 @@
-# Washi tape strip across the top of a dashboard card, and the button that
-# opens its color picker.
 class WashiTapeComponent < ViewComponent::Base
   def initialize(tape:, update_url:, label: nil)
     super()

@@ -171,7 +171,6 @@ class Course < ApplicationRecord
                                   .pluck(:user_id).uniq)
   end
 
-  # Who hears about the course's media and comments; see LectureAudience.
   def audience
     LectureAudience.users(lectures.select(:id))
   end

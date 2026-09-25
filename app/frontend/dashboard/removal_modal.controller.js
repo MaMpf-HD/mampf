@@ -37,8 +37,9 @@ export default class extends Controller {
   }
 
   /**
-   * Takes the dialog out of <body> again: back to its card while the card is
-   * still on the page, gone with it when a Turbo Stream replaced the card.
+   * Takes the dialog out of <body> again. A Turbo Stream that replaces the
+   * card disconnects this controller without a turbo:before-cache, so the
+   * dialog would otherwise outlive its card.
    */
   releaseDialog() {
     if (this.dialog?.parentElement !== document.body) return;

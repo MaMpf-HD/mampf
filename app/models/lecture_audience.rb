@@ -1,7 +1,8 @@
-# The people a lecture's announcements, new media and comment notices go to:
-# who bookmarked it, who is on one of its rosters, and who has a registration
-# for it still running. Reading an open lecture needs none of these, so a
-# reader who wants its news bookmarks it.
+# Decides who takes part in a lecture: who bookmarked it, who is on one of its
+# rosters, and who has a registration for it still running. Its announcements,
+# new media and comment notices go to them, and only they see media released
+# to participants. Reading an open lecture needs none of these, so a reader
+# who wants its news bookmarks it.
 module LectureAudience
   RUNNING_CAMPAIGN_STATUSES = [:open, :closed, :processing].freeze
 
@@ -25,7 +26,6 @@ module LectureAudience
      running_registrations(lecture_ids).select(:user_id)]
   end
 
-  # The other direction: the lectures this user belongs to the audience of.
   def lectures_of(user)
     lecture_id_scopes(user).map { |ids| Lecture.where(id: ids) }.reduce(:or)
   end

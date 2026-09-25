@@ -216,8 +216,6 @@ class Lecture < ApplicationRecord
     self
   end
 
-  # Who hears about the lecture's announcements, media and comments; see
-  # LectureAudience.
   def audience
     LectureAudience.users(id)
   end

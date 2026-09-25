@@ -64,8 +64,9 @@ class LectureDashboardCardComponent < ViewComponent::Base
     helpers.registration_status_icon(registration_status)
   end
 
-  # The bookmark is what unlocked a lecture behind a pass phrase, so removing
-  # it locks the lecture again, unless a roster seat lets the student in.
+  # Removing the bookmark locks a lecture behind a pass phrase again. A student
+  # on its roster can unlock it without the pass phrase, so only the others are
+  # warned.
   def relocked_by_removal?
     lecture.restricted? && !LectureMembership.exists?(user: user, lecture: lecture)
   end

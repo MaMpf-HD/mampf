@@ -1,6 +1,6 @@
-# Progress bar under a lecture's title showing points collected out of the
-# points marked so far (assignments not yet expired are excluded from both
-# numbers). Only for a student on the lecture's roster, who has a record.
+# Shows under a lecture's title how many of the marked points a student has
+# collected, counted as the hand-ins hub counts them. It needs the student's
+# StudentPerformance::Record, which only students on the lecture's roster have.
 class DashboardPointsProgressComponent < ViewComponent::Base
   def initialize(lecture:, user:)
     super()

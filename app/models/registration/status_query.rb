@@ -3,8 +3,6 @@ module Registration
   # number of queries instead of one per lecture; Lecture#registration_status_for
   # asks it for a single lecture.
   class StatusQuery
-    # Sort order for the "You are registered for these" section: settled
-    # statuses first, then still-open ones, rejected last.
     SORT_PRIORITY = { nil => 0, confirmed: 0, open: 1, pending: 1, rejected: 2 }.freeze
 
     def self.sort_priority(status)

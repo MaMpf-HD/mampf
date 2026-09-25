@@ -728,10 +728,9 @@ class User < ApplicationRecord
     Lecture.where.not(id: lectures.pluck(:id))
   end
 
-  # The one rule for bookmarking a lecture by hand, and so for unlocking one:
-  # it has to be published (or edited by this user), and a pass phrase has to
-  # be given unless the lecture has none or a roster seat lets the user in.
-  # Returns whether the lecture is bookmarked afterwards.
+  # The one rule for bookmarking a lecture by hand, which is also how a lecture
+  # behind a pass phrase is unlocked. Returns whether the lecture is bookmarked
+  # afterwards.
   def unlock_lecture!(lecture, passphrase: nil)
     return false unless may_unlock_lecture?(lecture, passphrase: passphrase)
 
@@ -795,7 +794,7 @@ class User < ApplicationRecord
 
   # The lectures this user holds a place in for the given term, or has an
   # open application for (see `lectures_with_registration_application`).
-  # Sorted by Registration::StatusQuery.sort_priority (settled first,
+  # Sorted by Registration::StatusQuery.sort_priority (confirmed first,
   # rejected last), ties kept in `lectures_of_term`'s title order.
   def current_enrolled_lectures(term = Term.active)
     combined = roster_lectures.or(lectures_with_registration_application)
