@@ -582,26 +582,15 @@ class User < ApplicationRecord
   def filter_visible_media(media)
     return media if admin
 
-    # "subscribers" media ("only participants") need the user in the audience
-    # of the lecture, or of one of the course's lectures (see LectureAudience).
+    # The same rule as Medium#visible_for_user?: "all" and "users" media are
+    # everybody's, "subscribers" media ("only participants") need the user in
+    # the audience of the lecture, or of one of the course's lectures.
     participating = LectureAudience.lectures_of(self)
-    unlocked = unlocked_lectures
-    locked_but_open = Lecture.where.not(id: unlocked.select(:id)).where(released: ["all"])
-    open_levels = ["all", "users"]
-    participant_levels = ["all", "subscribers", "users"]
-
-    visible = media.where(teachable_type: "Course", released: open_levels)
-                   .or(media.where(teachable: Course.where(id: participating.select(:course_id)),
-                                   released: participant_levels))
-    [[unlocked, open_levels], [locked_but_open, open_levels],
-     [participating, participant_levels]]
-      .each do |lectures, released|
-        visible = visible.or(media.where(teachable: lectures, released: released))
-                         .or(media.where(teachable: Lesson.where(lecture: lectures),
-                                         released: released))
-                         .or(media.where(teachable: Talk.where(lecture: lectures),
-                                         released: released))
-      end
+    visible = media.where(released: ["all", "users"])
+    [participating, Lesson.where(lecture: participating), Talk.where(lecture: participating),
+     Course.where(id: participating.select(:course_id))].each do |teachables|
+      visible = visible.or(media.where(teachable: teachables, released: "subscribers"))
+    end
     visible.or(media.where(teachable: edited_courses))
            .or(media.where(teachable: teaching_related_lectures))
            .or(media.where(teachable: Lesson.where(lecture: teaching_related_lectures)))
