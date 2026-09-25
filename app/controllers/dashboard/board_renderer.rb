@@ -10,6 +10,7 @@ module Dashboard
       # Populates the board's term-dependent instance variables:
       # @enrolled_lectures, @bookmarked_lectures, @talks, @lecture_activity.
       def load_board(term)
+        @selected_term = term
         @enrolled_lectures = current_user.current_enrolled_lectures(term)
         @bookmarked_lectures = current_user.current_bookmarked_lectures(
           term, enrolled: @enrolled_lectures

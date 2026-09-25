@@ -47,9 +47,16 @@ RSpec.describe(DashboardPointsProgressComponent, type: :component) do
 
   it "starts at zero for a student nobody has marked yet" do
     expired_assignment(20)
+    create(:student_performance_record, lecture: lecture, user: user)
 
     expect(render_bar.at_css(".dashboard-progress__fill")["style"])
       .to eq("width: 0%")
+  end
+
+  it "renders nothing for a student who only bookmarked the lecture" do
+    expired_assignment(20)
+
+    expect(render_bar.css(".dashboard-progress")).to be_empty
   end
 
   it "keeps the bar inside the track when bonus points overshoot it" do

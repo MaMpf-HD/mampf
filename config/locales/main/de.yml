@@ -2,9 +2,11 @@ de:
   main:
     start:
       no_lectures: >-
-        Du bist noch zu keiner Veranstaltung des aktuellen Semesters angemeldet
-        und hast Dir auch keine gemerkt. Scrolle nach unten, um neue
-        Veranstaltungen zu entdecken.
+        Du bist zu keiner Veranstaltung im %{term} angemeldet und hast Dir auch
+        keine gemerkt. Scrolle nach unten, um neue Veranstaltungen zu entdecken.
+      no_lectures_any_term: >-
+        Du bist noch zu keiner Veranstaltung angemeldet und hast Dir auch keine
+        gemerkt. Scrolle nach unten, um neue Veranstaltungen zu entdecken.
       sections:
         enrolled: "Für diese bist Du angemeldet"
         bookmarked: "Diese hast Du Dir gemerkt"

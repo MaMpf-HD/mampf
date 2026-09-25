@@ -22,6 +22,26 @@ RSpec.describe(Dashboard::LectureActivity) do
       expect(digest.unread_comments(lecture)).to eq(1)
     end
 
+    it "counts each comment, not each medium" do
+      medium = commented_medium(creator: other)
+      Commontator::Comment.create!(thread: medium.commontator_thread, creator: other,
+                                   body: Faker::Lorem.sentence)
+
+      expect(digest.unread_comments(lecture)).to eq(2)
+    end
+
+    it "counts comments on the lecture's lessons too" do
+      medium = create(:lesson_medium)
+      medium.teachable.lecture.update!(released: "all")
+      medium.update!(released: "all", released_at: Time.zone.now)
+      Commontator::Comment.create!(thread: medium.commontator_thread, creator: other,
+                                   body: Faker::Lorem.sentence)
+      lesson_lecture = medium.teachable.lecture
+      lesson_digest = described_class.new(user: user, lectures: [lesson_lecture])
+
+      expect(lesson_digest.unread_comments(lesson_lecture)).to eq(1)
+    end
+
     it "ignores the user's own comments" do
       commented_medium(creator: user)
 

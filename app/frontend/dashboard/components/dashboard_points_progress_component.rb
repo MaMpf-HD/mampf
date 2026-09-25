@@ -1,5 +1,6 @@
-# Progress bar under a lecture's title showing points collected out of points
-# due so far (assignments not yet expired are excluded from both numbers).
+# Progress bar under a lecture's title showing points collected out of the
+# points marked so far (assignments not yet expired are excluded from both
+# numbers). Only for a student on the lecture's roster, who has a record.
 class DashboardPointsProgressComponent < ViewComponent::Base
   def initialize(lecture:, user:)
     super()
@@ -10,7 +11,7 @@ class DashboardPointsProgressComponent < ViewComponent::Base
   attr_reader :lecture, :user
 
   def render?
-    lecture.assignments.expired.exists? && max_points.positive?
+    record.present? && lecture.assignments.expired.exists? && max_points.positive?
   end
 
   def max_points
@@ -18,7 +19,7 @@ class DashboardPointsProgressComponent < ViewComponent::Base
   end
 
   def points
-    @points ||= record&.points_total_materialized || 0
+    @points ||= record.points_total_materialized || 0
   end
 
   def percentage

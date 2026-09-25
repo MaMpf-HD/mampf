@@ -2,8 +2,11 @@ en:
   main:
     start:
       no_lectures: >-
-        You are not enrolled in any event series of the current term yet, and
-        have not bookmarked any. Scroll down to discover new event series.
+        You are not enrolled in any event series of %{term}, and have not
+        bookmarked any. Scroll down to discover new event series.
+      no_lectures_any_term: >-
+        You are not enrolled in any event series yet, and have not bookmarked
+        any. Scroll down to discover new event series.
       sections:
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"

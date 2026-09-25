@@ -1,6 +1,7 @@
-<%# The term-dependent dashboard sections. Rendered on the initial page and,
-    when the semester picker changes, swapped in place via Turbo Stream
-    (see main/start.turbo_stream.erb), so the wrapper keeps its id. %>
+<%# The term-dependent dashboard sections. Rendered on the initial page and
+    swapped in place via Turbo Stream when the semester picker changes
+    (dashboard/terms/show.turbo_stream.erb) or a card is removed
+    (BoardRenderer#render_board), so the wrapper keeps its id. %>
 <div id="dashboardLectureCards" class="container-md small-width mb-3">
   <%= render(DashboardSectionComponent.new(
                title: t("main.start.sections.enrolled"),
@@ -32,7 +33,10 @@
     <%= tag.div id: "dashboardEmptyState",
                 class: "text-center text-muted my-5",
                 data: { testid: "dashboard-empty-state" } do %>
-      <p class="mb-0"><%= t("main.start.no_lectures") %></p>
+      <p class="mb-0">
+        <%= @selected_term ? t("main.start.no_lectures", term: @selected_term.to_label) :
+                             t("main.start.no_lectures_any_term") %>
+      </p>
     <% end %>
   <% end %>
 </div>

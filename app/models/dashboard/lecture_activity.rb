@@ -66,63 +66,59 @@ module Dashboard
                               .unread_topics_counts(user: user, topics_scope: topics)
       end
 
-      # Counts when someone else commented after this user's last read (missing
-      # `Reader` means never read, so every foreign comment counts as new).
+      # Comments somebody else wrote after this user last opened the thread (no
+      # `Reader` row means never opened), counted per lecture in one query.
       def comment_counts
-        @comment_counts ||= commentable_media.each_with_object({}) do |medium, counts|
-          lecture_id = lecture_id_of(medium)
-          next unless lecture_id
-
-          next unless unread_comment?(medium)
-
-          counts[lecture_id] = counts.fetch(lecture_id, 0) + 1
+        @comment_counts ||= unread_comments_by_teachable
+                            .each_with_object(Hash.new(0)) do |((type, id), count), result|
+          lecture_id = type == "Lecture" ? id : lecture_ids_by_teachable.dig(type, id)
+          result[lecture_id] += count if lecture_id
         end
       end
 
-      def unread_comment?(medium)
-        # compared by id so as not to load every comment's creator
-        latest = medium.commontator_thread.comments
-                       .reject { |comment| own_comment?(comment) }
-                       .max_by(&:created_at)
-        return false unless latest
-
-        (read_at.fetch(medium.commontator_thread.id, nil) || Time.zone.at(0)) <
-          latest.created_at
-      end
-
-      def own_comment?(comment)
-        comment.creator_type == user.class.base_class.name &&
-          comment.creator_id == user.id
+      def unread_comments_by_teachable
+        reader = ActiveRecord::Base.sanitize_sql_array(
+          ["LEFT JOIN readers ON readers.thread_id = commontator_threads.id " \
+           "AND readers.user_id = ?", user.id]
+        )
+        Commontator::Comment
+          .joins(:thread)
+          .joins("INNER JOIN media ON media.id = commontator_threads.commontable_id")
+          .joins(reader)
+          .where(commontator_threads: { commontable_type: "Medium" })
+          .where(media: { id: commentable_media.select(:id) })
+          .where(deleted_at: nil)
+          .where.not("commontator_comments.creator_type = ? AND " \
+                     "commontator_comments.creator_id = ?",
+                     user.class.base_class.name, user.id)
+          .where("readers.updated_at IS NULL OR " \
+                 "readers.updated_at < commontator_comments.created_at")
+          .group("media.teachable_type", "media.teachable_id")
+          .count
       end
 
       # Excludes course-level media, which can't be attributed to one lecture.
       def commentable_media
-        @commentable_media ||=
-          Medium.published
-                .where.not(sort: IGNORED_MEDIA_SORTS)
-                .where.not(released: "locked")
-                .where(teachable: teachables)
-                .includes(:teachable, commontator_thread: :comments)
-                .select { |medium| medium.commontator_thread&.comments&.any? }
+        media = Medium.published.where.not(sort: IGNORED_MEDIA_SORTS)
+                      .where.not(released: "locked")
+        media.where(teachable: lectures)
+             .or(media.where(teachable_type: "Lesson", teachable_id: lessons.select(:id)))
+             .or(media.where(teachable_type: "Talk", teachable_id: talks.select(:id)))
       end
 
-      def teachables
-        lectures + Lesson.where(lecture: lectures).to_a +
-          Talk.where(lecture: lectures).to_a
+      def lecture_ids_by_teachable
+        @lecture_ids_by_teachable ||= {
+          "Lesson" => lessons.pluck(:id, :lecture_id).to_h,
+          "Talk" => talks.pluck(:id, :lecture_id).to_h
+        }
       end
 
-      def lecture_id_of(medium)
-        case medium.teachable
-        when Lecture then medium.teachable.id
-        else medium.teachable.lecture_id
-        end
+      def lessons
+        Lesson.where(lecture: lectures)
       end
 
-      def read_at
-        @read_at ||= Reader.where(user: user,
-                                  thread: commentable_media
-                                            .map(&:commontator_thread))
-                           .pluck(:thread_id, :updated_at).to_h
+      def talks
+        Talk.where(lecture: lectures)
       end
   end
 end

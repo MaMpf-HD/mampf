@@ -1010,10 +1010,12 @@ class User < ApplicationRecord
     # Term-independent lectures belong to every term, so they follow the ones
     # of the selected term rather than being left out.
     def lectures_of_term(scope, term)
+      independent = scope.where(term: nil).includes(:course, :teacher)
+                         .natural_sort_by(&:title)
+      return independent if term.nil?
+
       scope.where(term: term).includes(:course, :term, :teacher)
-           .natural_sort_by(&:title) +
-        scope.where(term: nil).includes(:course, :teacher)
-             .natural_sort_by(&:title)
+           .natural_sort_by(&:title) + independent
     end
 
     def program_offered_to_students
