@@ -63,14 +63,14 @@ class CampaignCardComponent < ViewComponent::Base
       items.none?(&:still_has_capacity?)
   end
 
-  # A registration the student holds comes first; a requirement that no longer
-  # holds is explained when the row is opened, next to the option to withdraw.
+  # What the student holds comes first, a registration or saved preferences;
+  # a requirement that fails for them is added beside it by risk_badge.
   def summary_badge
     return [:ok, t("registration.user_registration.summary.registered")] if registered_items.any?
-    return [:bad, t("registration.user_registration.summary.requirement_missing")] if ineligible?
-    return [:bad, t("registration.user_registration.summary.blocked")] if blocked?
     return [:info, t("registration.user_registration.summary.preferences_saved")] if
       preferences_saved?
+    return [:bad, t("registration.user_registration.summary.requirement_missing")] if ineligible?
+    return [:bad, t("registration.user_registration.summary.blocked")] if blocked?
     return [:info, t("registration.user_registration.summary.full")] if full?
 
     key = campaign.preference_based? ? "no_preferences" : "not_registered"

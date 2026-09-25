@@ -248,6 +248,27 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  describe "saved preferences whose requirement fails" do
+    it "names the preferences as the standing and the requirement once" do
+      campaign = create(:registration_campaign, :open, :preference_based, :with_items,
+                        :with_policies, campaignable: lecture,
+                                        description: "Tutorial registration")
+      other = create(:confirmed_user, email: "someone@elsewhere.org")
+      create(:registration_user_registration, :preference_based,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first, user: other)
+      sign_in other
+
+      get lecture_home_path(lecture)
+
+      row = Nokogiri::HTML(response.body).at_css("summary.registration-fold-summary")
+      missing = I18n.t("registration.user_registration.summary.requirement_missing")
+      expect(row.text)
+        .to include(I18n.t("registration.user_registration.summary.preferences_saved"))
+      expect(row.text.scan(missing).size).to eq(1)
+    end
+  end
+
   describe "a campaign closed before its deadline" do
     it "says so instead of naming the deadline as its end" do
       create(:registration_campaign, :closed, campaignable: lecture,
