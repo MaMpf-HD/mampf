@@ -27,7 +27,8 @@ class SelfEnrollmentComponent < ViewComponent::Base
   end
 
   def switch_from(rosterable)
-    return if rosterable.user_allocated?(user) || !rosterable.config_allow_self_add?
+    return if rosterable.user_allocated?(user) || !rosterable.config_allow_self_add? ||
+              rosterable.locked?
 
     from = rosterable.conflicting_lecture_membership(user)
     from if from&.allow_self_remove?(user)
