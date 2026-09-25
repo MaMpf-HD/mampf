@@ -60,6 +60,34 @@ test("removes a bookmark after navigating to the lecture and back",
     await expect(dashboard.bookmarkedSection).not.toBeVisible();
   });
 
+test("leaves no removal dialog behind once its card is gone",
+  async ({ factory, student: { page, user } }) => {
+    const term = await createActiveTerm(factory);
+    const lectures = [];
+    for (const title of ["Topology", "Number Theory"]) {
+      const course = await factory.create("course", [], { title });
+      const lecture = await factory.create("lecture", ["released_for_all"], {
+        course_id: course.id,
+        term_id: term.id,
+      });
+      await factory.create("lecture_bookmark", [], {
+        lecture_id: lecture.id,
+        user_id: user.id,
+      });
+      lectures.push(lecture);
+    }
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    const dialogs = page.getByRole("dialog", { includeHidden: true });
+    const before = await dialogs.count();
+
+    await dashboard.removeBookmark(lectures[0].id);
+
+    await expect(dashboard.dashboardCard(lectures[0].id)).toHaveCount(0);
+    await expect(dialogs).toHaveCount(before - 1);
+  });
+
 test("picks a washi tape color for a card and keeps it across a reload",
   async ({ factory, student: { page, user } }) => {
     const term = await createActiveTerm(factory);

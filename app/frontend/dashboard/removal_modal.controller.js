@@ -31,8 +31,25 @@ export default class extends Controller {
     this.boundBindings?.forEach(([button, handler]) => {
       button?.removeEventListener("click", handler);
     });
+    this.releaseDialog();
 
     this.dialog = null;
+  }
+
+  /**
+   * Takes the dialog out of <body> again: back to its card while the card is
+   * still on the page, gone with it when a Turbo Stream replaced the card.
+   */
+  releaseDialog() {
+    if (this.dialog?.parentElement !== document.body) return;
+
+    Modal.getInstance(this.dialog)?.dispose();
+    if (this.dialogPlaceholder?.isConnected) {
+      this.dialogPlaceholder.replaceWith(this.dialog);
+    }
+    else {
+      this.dialog.remove();
+    }
   }
 
   open() {
