@@ -540,18 +540,24 @@ RSpec.describe("UploadRoutes", type: :request) do
              })
       end
 
-      it "refuses a student who does not attend the lecture" do
+      it "refuses a student who has not unlocked the lecture" do
+        assignment.lecture.update!(passphrase: "secret")
+
         post_submission
 
         expect(response).to have_http_status(:forbidden)
+        expect(response.body).to include(
+          I18n.t("submission.upload_failure_unauthorized", locale: user.locale).strip
+        )
       end
 
-      it "refuses a student of the lecture without a seat in a tutorial" do
-        assignment.lecture.users << user
-
+      it "tells a reader of the open lecture that the tutorial seat is missing" do
         post_submission
 
         expect(response).to have_http_status(:forbidden)
+        expect(response.body).to include(
+          I18n.t("submission.upload_failure_no_tutorial", locale: user.locale).strip
+        )
       end
 
       it "allows a student with a seat in a tutorial of the lecture" do
@@ -561,6 +567,49 @@ RSpec.describe("UploadRoutes", type: :request) do
         post_submission
 
         expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when the student has lost the tutorial seat since the form opened" do
+      let(:assignment) { create(:assignment, :with_lecture) }
+      let(:tutorial) { create(:tutorial, lecture: assignment.lecture) }
+      let(:submission) { create(:submission, assignment: assignment, tutorial: tutorial) }
+      let(:manuscript) do
+        Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
+                                     "application/pdf")
+      end
+
+      before do
+        assignment.lecture.users << user
+        tutorial.add_user_to_roster!(user)
+      end
+
+      def post_after_seat_loss
+        token = UploadIntent.mint(user: user, uploader_class: SubmissionUploader,
+                                  target: submission)
+        tutorial.remove_user_from_roster!(user)
+        post("/submissions/upload", params: { file: manuscript },
+                                    headers: { "X-Upload-Intent" => token })
+      end
+
+      it "tells a member of the hand-in that the seat is missing" do
+        submission.users << user
+
+        post_after_seat_loss
+
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to include(
+          I18n.t("submission.upload_failure_no_tutorial", locale: user.locale).strip
+        )
+      end
+
+      it "keeps the plain refusal for a hand-in of other students" do
+        post_after_seat_loss
+
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to include(
+          I18n.t("submission.upload_failure_unauthorized", locale: user.locale).strip
+        )
       end
     end
 

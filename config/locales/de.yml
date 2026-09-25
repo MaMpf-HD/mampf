@@ -3267,6 +3267,10 @@ de:
     upload_failure_scan_required: >
       Für die hochgeladene Datei fehlt ein erforderlicher Malware-Scan.
       Bitte lade die Datei erneut hoch.
+    upload_failure_no_tutorial: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb keine
+      Abgabe hochladen. Wende Dich bitte an Deine DozentIn, wenn Du denkst, dass
+      hier ein Fehler vorliegt.
     upload_failure_unauthorized: >
       Du darfst diese Datei hier nicht hochladen.
     upload_failure_wrong_target: >

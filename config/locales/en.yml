@@ -3050,6 +3050,10 @@ en:
     upload_failure_scan_required: >
       The uploaded file is missing a required malware scan.
       Please upload the file again.
+    upload_failure_no_tutorial: >
+      You are not in a tutorial for this event series, so you cannot upload a
+      hand-in. Please contact your teacher if you think this happened by
+      mistake.
     upload_failure_unauthorized: >
       You are not allowed to upload this file here.
     upload_failure_wrong_target: >
