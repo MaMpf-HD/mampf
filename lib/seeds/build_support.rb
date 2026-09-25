@@ -10,11 +10,14 @@ module Seeds
     PASSWORD = "lemon-floppy-curtain-42".freeze
     # Two accounts keep an outdated password policy so that the forced password
     # change can be tried out; everyone else gets in without the detour.
-    STALE_PASSWORD_ACCOUNTS = ["student5@mampf.edu", "moded@mampf.edu"].freeze
+    STALE_PASSWORD_ACCOUNTS = ["ask-password@mampf.edu", "ask-both@mampf.edu"].freeze
     # A few accounts are still asked for name and matriculation number, so that
-    # the question after sign-in can be tried out, by a student and by staff.
-    PERSONAL_DATA_PENDING_ACCOUNTS = ["student2@mampf.edu", "student3@mampf.edu",
-                                      "ed@mampf.edu"].freeze
+    # the question after sign-in can be tried out.
+    PERSONAL_DATA_PENDING_ACCOUNTS = ["ask-data@mampf.edu", "ask-both@mampf.edu",
+                                      "ask-teacher@mampf.edu"].freeze
+    # Gets a lecture of its own, so that the question can be tried out as a
+    # lecturer as well.
+    PERSONAL_DATA_PENDING_TEACHER = "ask-teacher@mampf.edu".freeze
     SEED_FIRST_NAMES = ["Anna", "Ben", "Clara", "David", "Emma", "Felix", "Greta", "Hannes",
                         "Ida", "Jonas", "Klara", "Leon", "Mia", "Noah", "Paula"].freeze
     SEED_LAST_NAMES = ["Albrecht", "Bauer", "Fischer", "Hoffmann", "Keller", "Lang",
@@ -46,6 +49,7 @@ module Seeds
         # produces on it.
         Demo::SetupSupport.setup_homework_submissions!
         Seeds::EnrichSupport.enrich!
+        create_sign_in_question_accounts!
         # last, so that the accounts the demo scenarios create are usable too
         reset_passwords!
         stage_password_policy!
@@ -71,6 +75,22 @@ module Seeds
       Submission.update_all(shift(months, :last_modification_by_users_at))
       Voucher.update_all(shift(months, :expires_at, :invalidated_at))
       # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    # Creates the accounts that are asked something after sign-in, so that the
+    # accounts developers work with every day sign in without a detour.
+    def create_sign_in_question_accounts!
+      ensure_development!
+
+      (STALE_PASSWORD_ACCOUNTS | PERSONAL_DATA_PENDING_ACCOUNTS).each do |email|
+        next if User.exists?(email: email)
+
+        FactoryBot.create(:confirmed_user, email: email, name: email.split("@").first)
+      end
+      Demo::TermSupport.find_or_create_lecture!(
+        term: current_term, teacher: User.find_by!(email: PERSONAL_DATA_PENDING_TEACHER),
+        course_title: "Algebraische Zahlentheorie", short_title: "AZT"
+      )
     end
 
     # The password ships with the dump, so it has to pass the policy. A lock
