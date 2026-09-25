@@ -3165,6 +3165,7 @@ de:
         lead: "Neu seit Deinem letzten Blick:"
         marker: Neu seit Deinem letzten Blick.
         prefix: "Neu —"
+        indicator: "Blätter mit neuer Korrektur oder neuen Punkten"
         correction_html: "%{sheet} (Korrektur)"
         points_html: "%{sheet} (Punkte)"
         both_html: "%{sheet} (Korrektur und Punkte)"

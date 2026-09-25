@@ -12,5 +12,20 @@ export default class extends Controller {
   dismiss(event) {
     event.currentTarget.closest("[data-lecture-news-target='row']")?.remove();
     if (!this.hasRowTarget && !this.hasMoreTarget) this.element.remove();
+    this.countDownSidebarBadge();
+  }
+
+  /**
+   * Keeps the number beside "Home" in the sidebar, which sits outside the
+   * frame and is not rendered again, in step with the announcements read.
+   */
+  countDownSidebarBadge() {
+    const badge = document.getElementById("sidebar-home-badge");
+    if (!badge) return;
+
+    const count = Math.max(Number(badge.dataset.count) - 1, 0);
+    badge.dataset.count = count;
+    badge.textContent = count;
+    badge.hidden = count === 0;
   }
 }

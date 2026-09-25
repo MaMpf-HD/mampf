@@ -662,7 +662,7 @@ en:
         empty_unsubscribed: >-
           Lecture news and updates appear on this page. Subscribe to access
           the materials.
-        news_indicator: "New updates on Home"
+        news_indicator: "Unread announcements and forum topics"
         attachment_download: "Download program (PDF)"
         attachment_missing: "No program is attached to this lecture."
         staff_registration_manage: "Manage registration processes"

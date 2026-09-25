@@ -49,6 +49,8 @@ test.describe("lecture home", () => {
 
     const news = student.page.getByRole("region", { name: "New in this course" });
     await expect(news).toContainText("The exercise class has moved to room 5.");
+    const badge = student.page.getByTitle("Unread announcements and forum topics");
+    await expect(badge).toHaveText("1");
 
     const markedRead = student.page.waitForResponse(
       response => response.url().includes("/notifications/"),
@@ -57,6 +59,7 @@ test.describe("lecture home", () => {
     await markedRead;
 
     await expect(student.page.getByRole("region", { name: "New in this course" })).toHaveCount(0);
+    await expect(badge).toBeHidden();
     await home.goto();
     await expect(student.page.getByText("The exercise class has moved to room 5."))
       .toHaveCount(0);

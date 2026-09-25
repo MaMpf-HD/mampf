@@ -41,7 +41,8 @@ class SubmissionsController < ApplicationController
   def seen
     AssignmentSighting.stamp!(user: current_user, assignment: @assignment)
 
-    render turbo_stream: [*clear_marker(@assignment), replace_news(history)]
+    render turbo_stream: [*clear_marker(@assignment), replace_news(history),
+                          replace_news_badge(hub.news_count)]
   end
 
   # Same gate as #index, by the same before_actions.
@@ -52,7 +53,7 @@ class SubmissionsController < ApplicationController
     end
 
     render turbo_stream: [*assignments.flat_map { |assignment| clear_marker(assignment) },
-                          replace_news([])]
+                          replace_news([]), replace_news_badge(0)]
   end
 
   # `new` and `edit` are the same frame with the same form in it; only the
@@ -418,6 +419,13 @@ class SubmissionsController < ApplicationController
     def replace_news(sheets)
       turbo_stream.replace("sheet-news",
                            SheetNewsComponent.new(sheets: sheets, lecture: @lecture))
+    end
+
+    def replace_news_badge(count)
+      turbo_stream.replace(SidebarBadgeComponent::SUBMISSIONS_ID,
+                           SidebarBadgeComponent.new(id: SidebarBadgeComponent::SUBMISSIONS_ID,
+                                                     count: count,
+                                                     title: t("submission.hub.news.indicator")))
     end
 
     def set_submission

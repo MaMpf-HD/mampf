@@ -2942,6 +2942,7 @@ en:
         lead: "New since you last looked:"
         marker: New since you last looked.
         prefix: "New —"
+        indicator: "Sheets with a new correction or new points"
         correction_html: "%{sheet} (correction)"
         points_html: "%{sheet} (points)"
         both_html: "%{sheet} (correction and points)"
