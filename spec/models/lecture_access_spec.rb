@@ -34,6 +34,31 @@ RSpec.describe(Lecture) do
     end
   end
 
+  describe "User#unlock_lecture!" do
+    it "bookmarks an open lecture" do
+      expect(student.unlock_lecture!(open_lecture)).to be(true)
+      expect(student.lectures).to include(open_lecture)
+    end
+
+    it "bookmarks a locked lecture with its pass phrase only" do
+      expect(student.unlock_lecture!(locked_lecture, passphrase: "wrong")).to be(false)
+      expect(student.unlock_lecture!(locked_lecture, passphrase: "open sesame")).to be(true)
+      expect(student.lectures).to include(locked_lecture)
+    end
+
+    it "lets a member of the lecture's roster in without the pass phrase" do
+      locked_lecture.add_user_to_roster!(student)
+
+      expect(student.unlock_lecture!(locked_lecture)).to be(true)
+    end
+
+    it "refuses an unpublished lecture, pass phrase or not" do
+      unpublished.update!(passphrase: "open sesame")
+
+      expect(student.unlock_lecture!(unpublished, passphrase: "open sesame")).to be(false)
+    end
+  end
+
   describe "#bookmarkable_by?" do
     it "needs no passphrase for an open lecture" do
       expect(open_lecture.bookmarkable_by?(student)).to be(true)

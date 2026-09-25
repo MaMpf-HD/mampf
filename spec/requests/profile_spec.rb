@@ -26,6 +26,15 @@ RSpec.describe("Profile", type: :request) do
         expect(user.reload.lectures).to include(lecture)
       end
 
+      it "stops guessing the passphrase after ten attempts a minute" do
+        10.times { subscribe(lecture, passphrase: "wrong") }
+
+        subscribe(lecture, passphrase: "secret")
+
+        expect(response).to have_http_status(:too_many_requests)
+        expect(user.reload.lectures).not_to include(lecture)
+      end
+
       it "does not bookmark the lecture without the passphrase" do
         subscribe(lecture)
 

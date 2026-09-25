@@ -298,6 +298,13 @@ class Lecture < ApplicationRecord
     passphrase.blank? || LectureMembership.exists?(user: user, lecture: self)
   end
 
+  # Compared in constant time, since the pass phrase is shared by everyone
+  # who is meant to use it.
+  def passphrase_matches?(given)
+    passphrase.present? &&
+      ActiveSupport::SecurityUtils.secure_compare(passphrase, given.to_s)
+  end
+
   # Whether the user got past the passphrase, if the lecture has one.
   # Entering the passphrase bookmarks the lecture, so a bookmark is what
   # unlocks it (see Lectures::UnlocksController).

@@ -5,6 +5,11 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
                                      :star_lecture, :unstar_lecture]
+  # Both take lecture pass phrases, so guessing them is throttled as in
+  # Lectures::UnlocksController.
+  rate_limit to: 10, within: 1.minute, only: [:subscribe_lecture, :update],
+             by: -> { current_user&.id || request.remote_ip },
+             with: -> { head :too_many_requests }
 
   def current_ability
     @current_ability ||= ProfileAbility.new(current_user)
@@ -75,15 +80,8 @@ class ProfileController < ApplicationController
       return
     end
     # Roster members may bookmark without the passphrase: a roster seat is
-    # a stronger credential than a shared passphrase.
-    if @lecture.passphrase.present? &&
-       !@lecture.bookmarked_by?(current_user) &&
-       !LectureMembership.exists?(user: current_user, lecture: @lecture) &&
-       @lecture.passphrase != @passphrase
-      return
-    end
-
-    @success = current_user.bookmark_lecture!(@lecture)
+    # a stronger credential than a shared passphrase (see User#unlock_lecture!).
+    @success = current_user.unlock_lecture!(@lecture, passphrase: @passphrase)
   end
 
   def unsubscribe_lecture
@@ -198,7 +196,7 @@ class ProfileController < ApplicationController
       end
       restricted_lectures.each do |l|
         given_passphrase = params[:user][:lecture][l.id.to_s][:passphrase]
-        unless given_passphrase == l.passphrase
+        unless l.passphrase_matches?(given_passphrase)
           @errors[:passphrase] ||= []
           @errors[:passphrase].push(l.id)
         end

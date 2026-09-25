@@ -739,6 +739,19 @@ class User < ApplicationRecord
     Lecture.where.not(id: lectures.pluck(:id))
   end
 
+  # The one rule for bookmarking a lecture by hand, and so for unlocking one:
+  # it has to be published (or edited by this user), and a pass phrase has to
+  # be given unless the lecture has none or a roster seat lets the user in.
+  # Returns whether the lecture is bookmarked afterwards.
+  def unlock_lecture!(lecture, passphrase: nil)
+    return false unless lecture.published? || admin || lecture.edited_by?(self)
+    return false unless lecture.bookmarkable_by?(self) || lecture.passphrase_matches?(passphrase)
+
+    bookmark_lecture!(lecture)
+    touch # the cached navbar lists the bookmarked lectures
+    true
+  end
+
   def bookmark_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
 

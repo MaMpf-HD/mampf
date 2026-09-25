@@ -7,10 +7,8 @@ module Dashboard
 
     def create
       return head(:not_found) unless @lecture
-      return head(:forbidden) unless @lecture.bookmarkable_by?(current_user)
+      return head(:forbidden) unless current_user.unlock_lecture!(@lecture)
 
-      current_user.bookmark_lecture!(@lecture)
-      current_user.touch # busts the cached navbar/favorites (see ProfileController#star_lecture)
       render_board
     end
 

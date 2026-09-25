@@ -20,14 +20,12 @@ module Lectures
                                       status: :see_other)
       end
 
-      unless @lecture.bookmarkable_by?(current_user) || passphrase_matches?
+      unless current_user.unlock_lecture!(@lecture, passphrase: params[:passphrase])
         return redirect_to(lecture_home_path(@lecture),
                            alert: t("errors.profile.passphrase"),
                            status: :see_other)
       end
 
-      current_user.bookmark_lecture!(@lecture)
-      current_user.touch # busts the cached navbar/favorites
       redirect_to lecture_path(@lecture), status: :see_other
     end
 
@@ -38,12 +36,6 @@ module Lectures
         return if @lecture
 
         redirect_to root_path, alert: t("controllers.no_lecture"), status: :see_other
-      end
-
-      def passphrase_matches?
-        @lecture.passphrase.present? &&
-          ActiveSupport::SecurityUtils.secure_compare(@lecture.passphrase,
-                                                      params[:passphrase].to_s)
       end
   end
 end
