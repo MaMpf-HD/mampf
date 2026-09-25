@@ -5,9 +5,11 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
                                      :star_lecture, :unstar_lecture]
-  # Both take lecture pass phrases, so guessing them is throttled as in
-  # Lectures::UnlocksController.
-  rate_limit to: 10, within: 1.minute, only: [:subscribe_lecture, :update],
+  # A pass phrase is shared by the whole lecture, so guessing it is throttled
+  # as in Lectures::UnlocksController; #update counts only the saves that
+  # check one (see #check_passphrases).
+  PASSPHRASE_ATTEMPTS = 10
+  rate_limit to: PASSPHRASE_ATTEMPTS, within: 1.minute, only: :subscribe_lecture,
              by: -> { current_user&.id || request.remote_ip },
              with: -> { head :too_many_requests }
 
@@ -187,19 +189,31 @@ class ProfileController < ApplicationController
 
     # stop the update if any of passphrases for newly subscribed
     # lectures is incorrect
+    # Every lecture the save would newly bookmark goes through the rule of
+    # User#unlock_lecture!, before anything is saved, so a refused one leaves
+    # the whole profile unchanged.
     def check_passphrases
       @errors = {}
-      restricted_lectures = Lecture.where(id: lecture_ids)
-                                   .select do |l|
-        l.in?(l.course
-               .to_be_authorized_lectures(current_user))
-      end
-      restricted_lectures.each do |l|
-        given_passphrase = params[:user][:lecture][l.id.to_s][:passphrase]
-        unless l.passphrase_matches?(given_passphrase)
-          @errors[:passphrase] ||= []
-          @errors[:passphrase].push(l.id)
+      bookmarked = current_user.lecture_bookmarks.pluck(:lecture_id)
+      new_lectures = Lecture.where(id: lecture_ids - bookmarked).to_a
+      return if new_lectures.empty?
+
+      refused = if new_lectures.any?(&:restricted?) && passphrase_attempts_exhausted?
+        new_lectures
+      else
+        new_lectures.reject do |lecture|
+          current_user.may_unlock_lecture?(lecture, passphrase: passphrase_for(lecture))
         end
       end
+      @errors[:passphrase] = refused.map(&:id) if refused.any?
+    end
+
+    def passphrase_for(lecture)
+      params.dig(:user, :lecture, lecture.id.to_s, :passphrase)
+    end
+
+    def passphrase_attempts_exhausted?
+      key = "profile-passphrase-attempts/#{current_user.id}"
+      Rails.cache.increment(key, 1, expires_in: 1.minute).to_i > PASSPHRASE_ATTEMPTS
     end
 end

@@ -7,6 +7,69 @@ RSpec.describe("Profile", type: :request) do
     sign_in user
   end
 
+  describe "POST /profile/update" do
+    def save_profile(lectures = {})
+      post("/profile/update",
+           params: { user: { name: user.name, subscription_type: 1, locale: "en",
+                             email_for_news: "0",
+                             lecture: lectures.transform_keys(&:to_s) } },
+           xhr: true)
+    end
+
+    def choosing(lecture, passphrase: nil)
+      { lecture.id => { subscribed: "1", passphrase: passphrase } }
+    end
+
+    it "does not bookmark an unpublished lecture sent along with the form" do
+      draft = create(:lecture, passphrase: "secret")
+
+      save_profile(choosing(draft))
+
+      expect(user.reload.lectures).not_to include(draft)
+    end
+
+    it "bookmarks a pass-phrase lecture with its pass phrase only" do
+      lecture = create(:lecture, :released_for_all, passphrase: "secret")
+
+      save_profile(choosing(lecture, passphrase: "wrong"))
+      expect(user.reload.lectures).not_to include(lecture)
+
+      save_profile(choosing(lecture, passphrase: "secret"))
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.lectures).to include(lecture)
+    end
+
+    it "saves nothing when one of the chosen lectures is refused" do
+      open_lecture = create(:lecture, :released_for_all)
+      locked = create(:lecture, :released_for_all, passphrase: "secret")
+
+      save_profile(choosing(open_lecture).merge(choosing(locked, passphrase: "wrong")))
+
+      expect(user.reload.lectures).to be_empty
+    end
+
+    it "stops guessing pass phrases after ten saves a minute" do
+      lecture = create(:lecture, :released_for_all, passphrase: "secret")
+      10.times { save_profile(choosing(lecture, passphrase: "wrong")) }
+
+      save_profile(choosing(lecture, passphrase: "secret"))
+
+      expect(user.reload.lectures).not_to include(lecture)
+    end
+
+    it "is not throttled by pass-phrase attempts on the lecture icons" do
+      lecture = create(:lecture, :released_for_all, passphrase: "secret")
+      10.times do
+        patch(subscribe_lecture_path,
+              params: { lecture: { id: lecture.id, passphrase: "wrong" } }, xhr: true)
+      end
+
+      save_profile
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "PATCH /profile/subscribe_lecture" do
     def subscribe(lecture, passphrase: nil)
       patch(subscribe_lecture_path,

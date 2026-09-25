@@ -738,12 +738,19 @@ class User < ApplicationRecord
   # be given unless the lecture has none or a roster seat lets the user in.
   # Returns whether the lecture is bookmarked afterwards.
   def unlock_lecture!(lecture, passphrase: nil)
-    return false unless lecture.published? || admin || lecture.edited_by?(self)
-    return false unless lecture.bookmarkable_by?(self) || lecture.passphrase_matches?(passphrase)
+    return false unless may_unlock_lecture?(lecture, passphrase: passphrase)
 
     bookmark_lecture!(lecture)
     touch # the cached navbar lists the bookmarked lectures
     true
+  end
+
+  # The check of unlock_lecture! without the bookmark, for a form that must
+  # vet every lecture before it saves any of them.
+  def may_unlock_lecture?(lecture, passphrase: nil)
+    return false unless lecture.published? || admin || lecture.edited_by?(self)
+
+    lecture.bookmarkable_by?(self) || lecture.passphrase_matches?(passphrase)
   end
 
   def bookmark_lecture!(lecture)
