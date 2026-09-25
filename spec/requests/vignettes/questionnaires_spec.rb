@@ -1,7 +1,11 @@
 require "rails_helper"
 
 RSpec.describe("Vignettes::Questionnaires", type: :request) do
-  let(:lecture) { create(:lecture, :with_vignettes) }
+  # Published and behind a passphrase: the student has unlocked it, the
+  # outsider has not, since an open lecture would be the outsider's too.
+  let(:lecture) do
+    create(:lecture, :with_vignettes, :released_for_all, passphrase: "open sesame")
+  end
   let(:student) { create(:confirmed_user) }
   let(:outsider) { create(:confirmed_user) }
   let(:questionnaire) { create(:vignettes_questionnaire, lecture: lecture) }
