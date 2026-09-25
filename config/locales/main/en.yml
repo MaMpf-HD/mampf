@@ -12,6 +12,7 @@ en:
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"
       remove_bookmark: "Remove bookmark"
+      remove_bookmark_for: "Remove bookmark: %{lecture}"
       remove_bookmark_title: "Remove bookmark?"
       remove_bookmark_body: >-
         Remove “%{lecture}” from your bookmarks? You can bookmark it again from
@@ -24,6 +25,7 @@ en:
         Removing it entirely means entering its pass phrase again to open it.
       remove_bookmark_confirm: "Remove"
       remove_registration_notice: "Dismiss"
+      remove_registration_notice_for: "Dismiss the notice for %{lecture}"
       remove_registration_notice_title: "Remove?"
       remove_registration_notice_body: >-
         Your registration for “%{lecture}” was rejected. You can keep the

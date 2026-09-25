@@ -19,6 +19,8 @@
                  url: dashboard_bookmark_path(lecture),
                  lecture_id: lecture.id,
                  icon_title: t("main.start.remove_bookmark"),
+                 icon_label: t("main.start.remove_bookmark_for",
+                               lecture: lecture.title_no_term),
                  modal_title: t("main.start.remove_bookmark_title"),
                  modal_body: remove_bookmark_body,
                  buttons: [{ action: "confirm",
@@ -32,6 +34,8 @@
                  url: dashboard_registration_notice_path(lecture),
                  lecture_id: lecture.id,
                  icon_title: t("main.start.remove_registration_notice"),
+                 icon_label: t("main.start.remove_registration_notice_for",
+                               lecture: lecture.title_no_term),
                  modal_title: t("main.start.remove_registration_notice_title"),
                  modal_body: remove_registration_notice_body,
                  buttons: [

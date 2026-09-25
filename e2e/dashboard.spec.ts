@@ -79,13 +79,15 @@ test("leaves no removal dialog behind once its card is gone",
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
-    const dialogs = page.getByRole("dialog", { includeHidden: true });
-    const before = await dialogs.count();
+    const removalDialogs = page.getByRole("dialog", {
+      name: "Remove bookmark?", includeHidden: true,
+    });
+    await expect(removalDialogs).toHaveCount(2);
 
     await dashboard.removeBookmark(lectures[0].id);
 
     await expect(dashboard.dashboardCard(lectures[0].id)).toHaveCount(0);
-    await expect(dialogs).toHaveCount(before - 1);
+    await expect(removalDialogs).toHaveCount(1);
   });
 
 test("picks a washi tape color for a card and keeps it across a reload",
