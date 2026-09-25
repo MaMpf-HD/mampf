@@ -2,9 +2,11 @@ de:
   lecture:
     edit:
       announcements_audience_hint: >-
-        Mitteilungen erreichen alle, die diese Veranstaltung abonniert haben —
-        als Benachrichtigung in MaMpf immer, per E-Mail jedoch nur diejenigen,
-        die E-Mail-Benachrichtigungen für Mitteilungen aktiviert haben.
+        Mitteilungen erreichen alle, die sich diese Veranstaltung gemerkt haben,
+        auf einer ihrer Listen stehen (Tutorien, Vorträge, Klausuren) oder eine
+        laufende Anmeldung haben — als Benachrichtigung in MaMpf immer, per
+        E-Mail jedoch nur diejenigen, die E-Mail-Benachrichtigungen für
+        Mitteilungen aktiviert haben.
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...

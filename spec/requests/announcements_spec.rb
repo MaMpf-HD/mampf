@@ -52,6 +52,22 @@ RSpec.describe("Announcements", type: :request) do
       expect(Announcement.last.on_main_page).to be_falsey
     end
 
+    it "notifies who bookmarked, sits on a roster or has a registration running" do
+      bookmarker, member, applicant, reader = create_list(:confirmed_user, 4)
+      bookmarker.bookmark_lecture!(lecture)
+      create(:tutorial, lecture: lecture).add_user_to_roster!(member)
+      campaign = create(:registration_campaign, :open, :with_items, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: applicant, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      post announcements_path, params: { announcement: { details: "Hi", lecture_id: lecture.id } }
+
+      recipients = Notification.where(notifiable: Announcement.last).map(&:recipient)
+      expect(recipients).to contain_exactly(bookmarker, member, applicant)
+      expect(recipients).not_to include(reader)
+    end
+
     it "lets an admin set on_main_page" do
       sign_in create(:confirmed_user, admin: true)
       post announcements_path,

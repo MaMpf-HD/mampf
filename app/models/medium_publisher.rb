@@ -122,8 +122,8 @@ class MediumPublisher
     # to the medium's teachable's media_scope
     def create_notifications!
       @medium.teachable&.media_scope&.touch
-      @medium.teachable.media_scope.users.touch_all
-      notifications = @medium.teachable.media_scope.users.map do |u|
+      @medium.teachable.media_scope.audience.touch_all
+      notifications = @medium.teachable.media_scope.audience.map do |u|
         Notification.new(recipient: u,
                          notifiable_id: @medium.id,
                          notifiable_type: "Medium",
@@ -133,7 +133,7 @@ class MediumPublisher
     end
 
     def send_notification_email!
-      recipients = @medium.teachable.media_scope.users
+      recipients = @medium.teachable.media_scope.audience
                           .where(email_for_medium: true)
       I18n.available_locales.each do |l|
         local_recipients = recipients.where(locale: l)
