@@ -42,7 +42,7 @@ class DashboardPointsProgressComponent < ViewComponent::Base
     end
 
     def due_points
-      @due_points ||= StudentPerformance::DuePoints.new(lecture: lecture)
+      @due_points ||= StudentPerformance::DuePoints.new(lecture: lecture, user_id: user.id)
     end
 
     def format_points(value)

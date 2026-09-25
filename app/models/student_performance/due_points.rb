@@ -2,9 +2,13 @@ module StudentPerformance
   # Compute due points on each request because deadlines can pass
   # without a record change that would trigger recomputation.
   class DuePoints
-    def initialize(lecture:, kind: nil)
+    # With user_id, only that student's rows are read, for a page that asks
+    # about one student in many lectures; the *_for methods then answer for
+    # that student alone.
+    def initialize(lecture:, kind: nil, user_id: nil)
       @lecture = lecture
       @kind = kind
+      @user_id = user_id
     end
 
     def total
@@ -13,7 +17,7 @@ module StudentPerformance
 
     def of_kind(kind)
       @of_kind ||= {}
-      @of_kind[kind] ||= self.class.new(lecture: @lecture, kind: kind)
+      @of_kind[kind] ||= self.class.new(lecture: @lecture, kind: kind, user_id: @user_id)
     end
 
     def due?(assessment_id)
@@ -94,9 +98,15 @@ module StudentPerformance
       end
 
       def awaiting_marks
-        Assessment::Participation
+        participations
           .where(assessment_id: due_assessments.map(&:id), status: :pending)
           .where.not(submitted_at: nil)
+      end
+
+      def participations
+        return Assessment::Participation.all unless @user_id
+
+        Assessment::Participation.where(user_id: @user_id)
       end
 
       def assignment_assessments
@@ -158,7 +168,7 @@ module StudentPerformance
       end
 
       def exempt_participations(assessments)
-        Assessment::Participation
+        participations
           .where(assessment_id: assessments.map(&:id), status: :exempt)
       end
 
@@ -177,7 +187,7 @@ module StudentPerformance
       # A test's row with anything on it: points started, reviewed, absent or
       # excused. The rest of the roster, row or no row, is unrecorded.
       def recorded_test_rows
-        Assessment::Participation
+        participations
           .where(assessment_id: due_tests.map(&:id))
           .where("submitted_at IS NOT NULL OR status <> :pending",
                  pending: Assessment::Participation.statuses[:pending])
@@ -202,7 +212,7 @@ module StudentPerformance
       # they are in the base, and they are not still to be had, which is what
       # `not_yet_due_for` would otherwise say about them.
       def settled_coming
-        Assessment::Participation
+        participations
           .where(assessment_id: coming_assessments.map(&:id), status: [:reviewed, :absent])
       end
 

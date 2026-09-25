@@ -27,6 +27,24 @@ RSpec.describe(StudentPerformance::DuePoints) do
                       points_max_materialized: max)
   end
 
+  describe "scoped to one student" do
+    it "answers for that student as the lecture-wide count does" do
+      other = FactoryBot.create(:confirmed_user)
+      waiting = sheet(deadline: 2.days.ago, points: 20)
+      excused = sheet(deadline: 2.days.ago, points: 10)
+      sheet(deadline: 2.days.ago, points: 6)
+      [student, other].each do |user|
+        FactoryBot.create(:assessment_participation, :submitted, assessment: waiting, user: user)
+      end
+      FactoryBot.create(:assessment_participation, :exempt, assessment: excused, user: student)
+      scoped = described_class.new(lecture: lecture, user_id: student.id)
+
+      expect(scoped.marked_max_for(student.id)).to eq(due_points.marked_max_for(student.id))
+      expect(scoped.pending_points_for(student.id))
+        .to eq(due_points.pending_points_for(student.id))
+    end
+  end
+
   describe "#total" do
     it "counts a sheet whose deadline has passed" do
       sheet(deadline: 2.days.ago, points: 20)
