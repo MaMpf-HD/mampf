@@ -94,6 +94,12 @@
   color: var(--bs-white);
 }
 
+// The label only says what opening the row leads to; once it is open, the
+// options below carry the action and the chevron closes it again.
+.registration-fold[open] > .registration-fold-summary .registration-fold-cta {
+  visibility: hidden;
+}
+
 .registration-fold-body {
   display: grid;
   gap: 0.75rem;
