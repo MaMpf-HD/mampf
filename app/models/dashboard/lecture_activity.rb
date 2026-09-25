@@ -97,13 +97,16 @@ module Dashboard
           .count
       end
 
-      # Excludes course-level media, which can't be attributed to one lecture.
+      # Excludes course-level media, which can't be attributed to one lecture,
+      # and media the user may not see, whose comments they cannot read.
       def commentable_media
         media = Medium.published.where.not(sort: IGNORED_MEDIA_SORTS)
                       .where.not(released: "locked")
-        media.where(teachable: lectures)
-             .or(media.where(teachable_type: "Lesson", teachable_id: lessons.select(:id)))
-             .or(media.where(teachable_type: "Talk", teachable_id: talks.select(:id)))
+        user.filter_visible_media(
+          media.where(teachable: lectures)
+               .or(media.where(teachable_type: "Lesson", teachable_id: lessons.select(:id)))
+               .or(media.where(teachable_type: "Talk", teachable_id: talks.select(:id)))
+        )
       end
 
       def lecture_ids_by_teachable

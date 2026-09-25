@@ -42,6 +42,12 @@ RSpec.describe(Dashboard::LectureActivity) do
       expect(lesson_digest.unread_comments(lesson_lecture)).to eq(1)
     end
 
+    it "ignores comments on media only the lecture's participants may see" do
+      commented_medium(creator: other, released: "subscribers")
+
+      expect(digest.unread_comments(lecture)).to eq(0)
+    end
+
     it "ignores the user's own comments" do
       commented_medium(creator: user)
 
