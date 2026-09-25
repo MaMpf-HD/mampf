@@ -32,25 +32,31 @@ class PersonalDataController < ApplicationController
       @asking = personal_data_due?
       @places = Rosters::UserPlaces.new(@user)
       @place_lectures = @asking ? @places.lectures : []
+      @results_recorded = @place_lectures.any? && @places.results?
     end
 
-    # A no from a student with places gives the places up. The form names
-    # their lectures; if it named others, it was shown before a place came or
-    # went, and it comes back instead of taking a place away unseen.
+    # A no from a student with places gives the places up, but only those of
+    # the lectures the form named. The ids it sends back are compared with the
+    # student's current lectures, and a place that is not among them makes
+    # the form come back with the new list rather than go unseen.
     def decline
+      return render_places_graded if @results_recorded
+
       @user.assign_attributes(name: params.dig(:user, :name) || @user.name,
                               personal_data_declined_at: Time.current)
       return render_places_changed if params[:give_up_places].to_s != place_lecture_ids
       return render(:edit, status: :unprocessable_content) unless @user.valid?
 
       ActiveRecord::Base.transaction do
-        @places.give_up! if @place_lectures.any?
+        @places.give_up!(@place_lectures) if @place_lectures.any?
         @user.save!
       end
       redirect_to after_personal_data_path
+    rescue Rosters::UserPlaces::PlacesChangedError
+      ask
+      render_places_changed
     rescue Rosters::MaintenanceService::GradingDataPresentError
-      flash.now[:alert] = t("personal_data.places_graded")
-      render :edit, status: :unprocessable_content
+      render_places_graded
     end
 
     def place_lecture_ids
@@ -59,6 +65,12 @@ class PersonalDataController < ApplicationController
 
     def render_places_changed
       flash.now[:alert] = t("personal_data.places_changed")
+      render :edit, status: :unprocessable_content
+    end
+
+    def render_places_graded
+      @results_recorded = true
+      flash.now[:alert] = t("personal_data.places_graded")
       render :edit, status: :unprocessable_content
     end
 

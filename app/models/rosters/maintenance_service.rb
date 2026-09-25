@@ -20,12 +20,15 @@ module Rosters
       added
     end
 
-    def remove_user!(user, rosterable)
+    # A caller that removes the user within a larger transaction passes
+    # notify: false, since the mail job is enqueued even if that transaction
+    # rolls back.
+    def remove_user!(user, rosterable, notify: true)
       removed = rosterable.with_lock do
         ensure_no_grading_data!(user, rosterable)
         remove_user_without_lock!(user, rosterable)
       end
-      RosterNotificationMailer.removed(user, rosterable) if removed
+      RosterNotificationMailer.removed(user, rosterable) if removed && notify
       removed
     end
 

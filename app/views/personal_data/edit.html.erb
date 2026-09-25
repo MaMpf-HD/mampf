@@ -2,6 +2,8 @@
 <% steps = personal_data_steps(open_fields) %>
 <% support = mail_to(DefaultSetting::PROJECT_EMAIL) %>
 <% asking = @asking %>
+<% places = @place_lectures.any? %>
+<% choosing = asking && !@results_recorded %>
 <% content_for :landing_box_class, "landing-box-wide" %>
 
 <h2><%= t("personal_data.title") %></h2>
@@ -12,8 +14,7 @@
                    t("personal_data.no_matriculation_number_yet") } %>
 <%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch, local: true,
               data: asking || steps.any? ? form_data : {} do |f| %>
-  <% if asking %>
-    <% places = @place_lectures.any? %>
+  <% if choosing %>
     <fieldset class="mb-3">
       <% if places %>
         <legend class="h6">
@@ -37,6 +38,11 @@
         </div>
       <% end %>
     </fieldset>
+  <% elsif asking %>
+    <p class="fw-semibold">
+      <%= t("personal_data.places_question", lectures: @place_lectures.map(&:title).to_sentence) %>
+    </p>
+    <p><%= t("personal_data.places_results") %></p>
   <% end %>
 
   <div data-personal-data-form-target="yes">
@@ -78,7 +84,7 @@
     <% end %>
   </div>
 
-  <% if asking %>
+  <% if choosing %>
     <p class="form-text" data-personal-data-form-target="no">
       <% explanation = places ? "places_give_up_explanation" : "decline_explanation" %>
       <%= t("personal_data.#{explanation}") %>
@@ -101,7 +107,7 @@
     <div class="d-flex gap-2">
       <%= f.submit t("personal_data.save"), class: "btn btn-primary",
                                             data: { personal_data_form_target: "yes" } %>
-      <% if asking %>
+      <% if choosing %>
         <%= f.submit t(places ? "personal_data.places_give_up" : "personal_data.continue"),
                      class: "btn btn-primary", formnovalidate: true,
                      data: { personal_data_form_target: "no" } %>

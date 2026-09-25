@@ -208,19 +208,37 @@ RSpec.describe("Personal data", type: :request) do
       expect(tutorial.reload.members).to include(user)
     end
 
-    it "keeps the places and the question when a result is already recorded" do
-      talk = create(:talk)
-      talk.add_user_to_roster!(user)
-      talk.ensure_assessment!(requires_points: false)
-      Assessment::Participation.create!(assessment: talk.assessment, user: user)
-                               .update!(grade_numeric: 2.0, grader: create(:confirmed_user),
-                                        graded_at: Time.current, status: :reviewed)
-      named = Rosters::UserPlaces.new(user).lectures.map(&:id).join(",")
+    it "asks for the details without offering to give up once results are recorded" do
+      create(:assessment_participation, :reviewed, user: user)
 
-      patch personal_data_path, params: { participation: "no", give_up_places: named }
+      get edit_personal_data_path
+
+      expect(response.body).to include(I18n.t("personal_data.places_results"))
+      expect(response.body).not_to include(I18n.t("personal_data.places_no"))
+    end
+
+    it "keeps the places and the question when a no comes despite recorded results" do
+      create(:assessment_participation, :reviewed, user: user)
+
+      patch personal_data_path, params: { participation: "no", give_up_places: lecture.id.to_s }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include(I18n.t("personal_data.places_graded"))
+      expect(user.reload).to be_personal_data_pending
+      expect(tutorial.reload.members).to include(user)
+    end
+
+    it "keeps every place when one was added after the form named the others" do
+      other = create(:lecture)
+      allow(Rosters::MaintenanceService).to receive(:new).and_wrap_original do |original|
+        other.add_user_to_roster!(user) unless other.members.include?(user)
+        original.call
+      end
+
+      patch personal_data_path, params: { participation: "no", give_up_places: lecture.id.to_s }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("personal_data.places_changed"))
       expect(user.reload).to be_personal_data_pending
       expect(tutorial.reload.members).to include(user)
     end
