@@ -21,9 +21,11 @@
           </div>
           <p class="lecture-home-focus-line"><%= lecture_home_sheet_deadline(sheet) %></p>
         <% end %>
-        <%= link_to t("lecture_home.focus.open_sheet"), lecture_submissions_path(lecture),
-                    class: "btn btn-outline-primary btn-sm",
-                    data: { turbo_frame: "main" } %>
+        <%= link_to lecture_submissions_path(lecture), class: "lecture-home-action-link",
+                                                       data: { turbo_frame: "main" } do %>
+          <%= t("lecture_home.focus.open_sheet") %>
+          <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+        <% end %>
       <% else %>
         <p class="lecture-home-focus-line mb-0"><%= t("lecture_home.work.nothing_due") %></p>
       <% end %>

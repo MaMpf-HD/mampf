@@ -60,7 +60,7 @@
       <% end %>
       <% if @lecture.home_attachment.present? %>
         <%= link_to lecture_home_attachment_path(@lecture),
-                    class: "btn btn-outline-primary btn-sm mt-2",
+                    class: "lecture-home-action-link d-inline-block mt-2",
                     target: "_blank", rel: "noopener",
                     data: { testid: "lecture-home-attachment" } do %>
           <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>
