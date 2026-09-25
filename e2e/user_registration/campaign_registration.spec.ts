@@ -889,8 +889,7 @@ test.describe("campaign registration", () => {
     const home = new CampaignRegistrationPage(student.page, lecture.id);
     await home.goto();
 
-    await expect(home.participation("Join-Only Assigned Tutorial"))
-      .toContainText("You cannot leave this group yourself.");
+    await expect(home.participation("Join-Only Assigned Tutorial")).toContainText("Assigned");
     // Another tutorial would mean leaving the one the student cannot leave,
     // through the campaign as much as through self-enrollment.
     const blockedTooltip

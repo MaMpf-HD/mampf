@@ -18,28 +18,26 @@ en:
       no_results: No lectures found, try a different search term.
   lecture_home:
     subscribe: "Subscribe to this course"
+    intro:
+      more: "Read more"
+      less: "Show less"
     focus:
       campaign: "Registration open"
       sheet: "Your next hand-in"
       exam: "Your next exam"
       open_sheet: "Go to your hand-in"
     work:
+      all: "All hand-ins"
+      nothing_due: "No sheet is open right now."
       title: "Your work"
       due: "Due %{deadline}"
-      new_correction: "The correction for %{sheet} is back"
-      new_points: "The points for %{sheet} are in"
-      news_many: "News on %{count} sheets: %{sheets}"
-      show: "View"
-      standing: "Points and exam admission"
-      points: "%{points} of %{max} points marked so far"
-      details: "Details"
       admission:
         open: "Admission not decided yet"
         pending: "Admission not decided yet"
         passed: "Admitted to the exam"
         failed: "Not admitted to the exam"
     news:
-      title: "News"
+      title: "New in this course"
       by: "%{author}, %{date}"
       more:
         one: "1 more announcement"
@@ -53,19 +51,18 @@ en:
       ended: "Registration ended on %{deadline}"
     tutor:
       title: "Your tutorials"
-      to_mark: "To mark"
       members:
         one: "1 person"
         other: "%{count} people"
       open: "Open group"
     marking:
+      title: "To mark"
       waiting:
         one: "1 person waiting for points"
         other: "%{count} people waiting for points"
       open: "Mark"
     teacher:
-      title: "Your lecture"
-      marking: "Marking"
+      title: "Registration processes"
       registered:
         one: "1 person registered"
         other: "%{count} people registered"

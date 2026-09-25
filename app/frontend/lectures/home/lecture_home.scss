@@ -1,7 +1,10 @@
+@import "../../submissions/hub_scale";
 @import "../../submissions/components/sheet_chip_component";
+@import "../../submissions/components/sheet_news_component";
+@import "../../submissions/components/standing_component";
 
-// The lecture home page: one highlighted thing at most, everything else as
-// rows under a small label, no cards.
+// The lecture home page in three weights: at most one highlighted thing, what
+// is new on a tinted ground, and everything else as rows under a small label.
 
 .lecture-home {
   display: grid;
@@ -35,6 +38,20 @@
 
 .lecture-home-intro {
   max-width: 70ch;
+}
+
+.lecture-home-intro-text {
+  max-height: 6em;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.lecture-home-intro--expanded .lecture-home-intro-text {
+  max-height: none;
+}
+
+.lecture-home-intro .lecture-home-intro-toggle {
+  min-height: auto;
 }
 
 .lecture-home-intro--empty {
@@ -153,12 +170,17 @@
   color: var(--bs-danger-text-emphasis);
 }
 
+// What is due now, whether a registration, a sheet or marking, is marked the
+// same way everywhere: the rule on top, the blue kicker and a filled button.
+.lecture-home-focus,
+.lecture-home-work--focus {
+  padding-top: 1rem;
+  border-top: 3px solid var(--bs-primary);
+}
+
 .lecture-home-focus {
   display: grid;
   gap: 0.5rem;
-  padding: 1.25rem;
-  border-top: 3px solid var(--bs-primary);
-  background: var(--bs-tertiary-bg);
 }
 
 .lecture-home-kicker {
@@ -188,6 +210,62 @@
   justify-self: start;
 }
 
+.lecture-home-row--compact {
+  padding: 0.5rem 0;
+}
+
+.lecture-home-news {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem 1rem 1.75rem;
+  border-left: 3px solid #4977a8;
+  background: #edf3f9;
+}
+
+.lecture-home-news-item {
+  position: relative;
+
+  .new-dot {
+    position: absolute;
+    top: 0.5em;
+    left: -1rem;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.lecture-home-news-more {
+  margin: 0;
+}
+
+.lecture-home-work {
+  display: grid;
+  gap: 0.5rem;
+
+  .news-row {
+    margin-bottom: 0;
+  }
+}
+
+.lecture-home-work-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1rem;
+}
+
+.lecture-home-work-due {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+
+  .btn {
+    justify-self: start;
+    margin-top: 0.5rem;
+  }
+}
+
 .lecture-home-history > summary {
   padding-block: 0.6rem;
   color: var(--bs-secondary-color);
@@ -202,8 +280,9 @@
   padding: 1rem 0;
 }
 
-@media (max-width: 575.98px) {
-  .lecture-home-focus {
-    padding: 1rem;
+@media (max-width: 767.98px) {
+  .lecture-home-work-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
+

@@ -5,26 +5,29 @@
 
   <div class="lecture-home-rows">
     <% rows.each do |row| %>
-      <div class="lecture-home-row" data-testid="participation-row">
+      <% badge_text = row.badge&.last %>
+
+      <div
+        class="lecture-home-row lecture-home-row--compact"
+        data-testid="participation-row"
+      >
         <div class="lecture-home-row-content">
-          <span class="lecture-home-row-kicker"><%= row.label %></span>
-
           <div class="lecture-home-row-title">
-            <span><%= row.title %></span>
+            <span><%= row.label %> · <%= row.title %></span>
 
-            <% if row.badge %>
+            <% if badge_text && badge_text != row.title %>
               <span class="<%= lecture_home_badge_class(row.badge.first) %>">
-                <%= row.badge.last %>
+                <%= badge_text %>
               </span>
             <% end %>
           </div>
 
-          <% row.lines.each do |line| %>
-            <div class="lecture-home-row-line"><%= line %></div>
-          <% end %>
+          <% details = [*row.lines, row.note.presence].compact %>
 
-          <% if row.note.present? %>
-            <div class="lecture-home-row-note"><%= row.note %></div>
+          <% if details.any? %>
+            <div class="lecture-home-row-line">
+              <%= safe_join(details, " · ") %>
+            </div>
           <% end %>
         </div>
 

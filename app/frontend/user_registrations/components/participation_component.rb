@@ -42,8 +42,7 @@ class ParticipationComponent < ViewComponent::Base
                 title: rosterable.title,
                 lines: meta_lines(rosterable),
                 badge: roster_badge(rosterable),
-                note: safe_join([preference_note(rosterable), lock_note(rosterable)].compact,
-                                " "),
+                note: preference_note(rosterable),
                 actions: leave_action(rosterable))
       end
     end
@@ -186,13 +185,6 @@ class ParticipationComponent < ViewComponent::Base
       when Cohort then [:info, t("registration.user_registration.participation.enrolled")]
       else [:ok, t("registration.user_registration.participation.assigned")]
       end
-    end
-
-    def lock_note(rosterable)
-      return unless rosterable.roster_exclusive_within_lecture?
-      return if rosterable.config_allow_self_remove?
-
-      t("registration.user_registration.participation.locked")
     end
 
     def leave_action(rosterable)

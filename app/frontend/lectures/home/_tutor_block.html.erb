@@ -1,42 +1,15 @@
-<%# locals: (lecture:, tutorials:, member_counts:, backlog:) %>
+<%# locals: (lecture:, tutorials:, member_counts:) %>
 <section class="lecture-home-block" aria-labelledby="tutor-heading"
          data-testid="lecture-home-tutor">
   <h2 class="lecture-home-label" id="tutor-heading"><%= t("lecture_home.tutor.title") %></h2>
-
-  <% if backlog.entries.any? %>
-    <div class="lecture-home-focus">
-      <p class="lecture-home-kicker"><%= t("lecture_home.tutor.to_mark") %></p>
-      <div class="lecture-home-rows">
-        <% backlog.entries.each do |entry| %>
-          <div class="lecture-home-row">
-            <div class="lecture-home-row-content">
-              <div class="lecture-home-row-title">
-                <span><%= entry.assignment.title %> · <%= entry.tutorial&.title %></span>
-              </div>
-              <div class="lecture-home-row-line">
-                <%= t("lecture_home.marking.waiting", count: entry.people) %>
-              </div>
-            </div>
-            <div class="lecture-home-row-actions">
-              <%= link_to t("lecture_home.marking.open"),
-                          lecture_tutorials_path(lecture, assignment: entry.assignment.id,
-                                                          tutorial: entry.tutorial&.id),
-                          class: "btn btn-sm btn-primary", data: { turbo_frame: "main" } %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
   <div class="lecture-home-rows">
     <% tutorials.each do |tutorial| %>
-      <div class="lecture-home-row">
+      <div class="lecture-home-row lecture-home-row--compact">
         <div class="lecture-home-row-content">
           <div class="lecture-home-row-title"><span><%= tutorial.title %></span></div>
           <div class="lecture-home-row-line">
-            <%= t("lecture_home.tutor.members", count: member_counts.fetch(tutorial.id, 0)) %>
-            <% if tutorial.location.present? %>· <%= tutorial.location %><% end %>
+            <%= [t("lecture_home.tutor.members", count: member_counts.fetch(tutorial.id, 0)),
+                 tutorial.location.presence].compact.join(" · ") %>
           </div>
         </div>
         <div class="lecture-home-row-actions">

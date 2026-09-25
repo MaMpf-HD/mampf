@@ -43,7 +43,7 @@ test.describe("lecture home", () => {
     const home = new CampaignRegistrationPage(student.page, lecture.id);
     await home.goto();
 
-    const news = student.page.getByRole("region", { name: "News" });
+    const news = student.page.getByRole("region", { name: "New in this course" });
     await expect(news).toContainText("The exercise class has moved to room 5.");
 
     const markedRead = student.page.waitForResponse(
@@ -52,7 +52,7 @@ test.describe("lecture home", () => {
     await news.getByRole("link", { name: "Mark as read" }).click();
     await markedRead;
 
-    await expect(student.page.getByRole("region", { name: "News" })).toHaveCount(0);
+    await expect(student.page.getByRole("region", { name: "New in this course" })).toHaveCount(0);
     await home.goto();
     await expect(student.page.getByText("The exercise class has moved to room 5."))
       .toHaveCount(0);

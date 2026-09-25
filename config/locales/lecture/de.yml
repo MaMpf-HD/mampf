@@ -18,28 +18,26 @@ de:
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
   lecture_home:
     subscribe: "Veranstaltung abonnieren"
+    intro:
+      more: "Weiterlesen"
+      less: "Weniger anzeigen"
     focus:
       campaign: "Anmeldung offen"
       sheet: "Deine nächste Abgabe"
       exam: "Deine nächste Klausur"
       open_sheet: "Zur Abgabe"
     work:
+      all: "Alle Abgaben"
+      nothing_due: "Gerade ist kein Blatt offen."
       title: "Deine Abgaben"
       due: "Abgabe bis %{deadline}"
-      new_correction: "Die Korrektur zu %{sheet} ist da"
-      new_points: "Die Punkte zu %{sheet} sind da"
-      news_many: "Neues zu %{count} Blättern: %{sheets}"
-      show: "Ansehen"
-      standing: "Punkte und Klausurzulassung"
-      points: "%{points} von %{max} bisher bewerteten Punkten"
-      details: "Details"
       admission:
         open: "Zulassung noch nicht entschieden"
         pending: "Zulassung noch nicht entschieden"
         passed: "Zur Klausur zugelassen"
         failed: "Nicht zur Klausur zugelassen"
     news:
-      title: "Aktuelles"
+      title: "Neu in dieser Veranstaltung"
       by: "%{author}, %{date}"
       more:
         one: "1 weitere Mitteilung"
@@ -53,19 +51,18 @@ de:
       ended: "Anmeldung beendet am %{deadline}"
     tutor:
       title: "Deine Tutorien"
-      to_mark: "Zu korrigieren"
       members:
         one: "1 Person"
         other: "%{count} Personen"
       open: "Gruppe öffnen"
     marking:
+      title: "Zu korrigieren"
       waiting:
         one: "1 Person wartet auf Punkte"
         other: "%{count} Personen warten auf Punkte"
       open: "Korrigieren"
     teacher:
-      title: "Deine Veranstaltung"
-      marking: "Korrekturstand"
+      title: "Anmeldeverfahren"
       registered:
         one: "1 Person angemeldet"
         other: "%{count} Personen angemeldet"

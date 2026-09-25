@@ -1,57 +1,28 @@
-<%# locals: (lecture:, campaigns:, counts:, backlog:) %>
+<%# locals: (lecture:, campaigns:, counts:) %>
 <section class="lecture-home-block" aria-labelledby="teacher-heading"
          data-testid="lecture-home-staff-registration-note">
   <h2 class="lecture-home-label" id="teacher-heading"><%= t("lecture_home.teacher.title") %></h2>
-
-  <% if backlog.entries.any? %>
-    <div class="lecture-home-focus">
-      <p class="lecture-home-kicker"><%= t("lecture_home.teacher.marking") %></p>
-      <div class="lecture-home-rows">
-        <% backlog.entries.group_by(&:assignment).each do |assignment, entries| %>
-          <div class="lecture-home-row">
-            <div class="lecture-home-row-content">
-              <div class="lecture-home-row-title"><span><%= assignment.title %></span></div>
-              <div class="lecture-home-row-line">
-                <%= [t("lecture_home.marking.waiting", count: entries.sum(&:people)),
-                     entries.filter_map { |entry| entry.tutorial&.title }.join(", ").presence]
-                      .compact.join(" · ") %>
-              </div>
-            </div>
-            <div class="lecture-home-row-actions">
-              <%= link_to t("lecture_home.marking.open"),
-                          lecture_tutorials_path(lecture, assignment: assignment.id),
-                          class: "btn btn-sm btn-outline-primary",
-                          data: { turbo_frame: "main" } %>
-            </div>
+  <div class="lecture-home-rows">
+    <% campaigns.each do |campaign| %>
+      <div class="lecture-home-row lecture-home-row--compact">
+        <div class="lecture-home-row-content">
+          <div class="lecture-home-row-title">
+            <span><%= student_registration_campaign_title(campaign) %></span>
+            <span class="<%= lecture_home_badge_class(campaign.open? ? :warn : :info) %>">
+              <%= t("registration.campaign.status.#{campaign.status}") %>
+            </span>
           </div>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
-  <% if campaigns.any? %>
-    <div class="lecture-home-rows">
-      <% campaigns.each do |campaign| %>
-        <div class="lecture-home-row">
-          <div class="lecture-home-row-content">
-            <div class="lecture-home-row-title">
-              <span><%= student_registration_campaign_title(campaign) %></span>
-              <span class="<%= lecture_home_badge_class(campaign.open? ? :warn : :info) %>">
-                <%= t("registration.campaign.status.#{campaign.status}") %>
-              </span>
-            </div>
-            <div class="lecture-home-row-line">
-              <%= lecture_home_campaign_count_text(campaign, counts.fetch(campaign.id, 0)) %>
-              · <%= t("lecture_home.teacher.deadline",
-                      deadline: format_date(campaign.registration_deadline)) %>
-            </div>
+          <div class="lecture-home-row-line">
+            <%= lecture_home_campaign_count_text(campaign, counts.fetch(campaign.id, 0)) %>
+            · <%= t("lecture_home.teacher.deadline",
+                    deadline: format_date(campaign.registration_deadline)) %>
           </div>
         </div>
-      <% end %>
-    </div>
-    <p class="lecture-home-more">
-      <%= link_to t("registration.lecture.home.staff_registration_manage"),
-                  edit_lecture_path(lecture, tab: "groups") %>
-    </p>
-  <% end %>
+      </div>
+    <% end %>
+  </div>
+  <p class="lecture-home-more">
+    <%= link_to t("registration.lecture.home.staff_registration_manage"),
+                edit_lecture_path(lecture, tab: "groups") %>
+  </p>
 </section>

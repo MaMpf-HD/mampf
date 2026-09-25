@@ -485,7 +485,6 @@ en:
         on_exam_list: "On the exam list"
         enrolled: "Enrolled"
         assigned: "Assigned"
-        locked: "You cannot leave this group yourself."
         leave: "Leave"
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."

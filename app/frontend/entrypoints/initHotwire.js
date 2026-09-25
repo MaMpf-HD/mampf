@@ -142,6 +142,8 @@ import OptionFilterController from "~/user_registrations/option_filter.controlle
 window.Stimulus.register("option-filter", OptionFilterController);
 import LectureNewsController from "~/lectures/home/lecture_news.controller.js";
 window.Stimulus.register("lecture-news", LectureNewsController);
+import LectureIntroController from "~/lectures/home/lecture_intro.controller.js";
+window.Stimulus.register("lecture-intro", LectureIntroController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);

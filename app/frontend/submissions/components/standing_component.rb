@@ -12,7 +12,7 @@ class StandingComponent < ViewComponent::Base
   # matching updates nothing and reports nothing.
   TARGET = "exam_standing".freeze
 
-  attr_reader :standing
+  attr_reader :standing, :compact
 
   delegate :rule, :record, :points_total, :points_marked_so_far,
            :points_awaiting_marks,
@@ -20,9 +20,12 @@ class StandingComponent < ViewComponent::Base
            :required_points_at_end, :reachable_points, :points_out_of_reach?,
            :required_achievements, to: :standing
 
-  def initialize(standing:)
+  # `compact` leaves out the conditions, which the lecture home page leaves to
+  # the hub; what is passed as content stands at the end.
+  def initialize(standing:, compact: false)
     super()
     @standing = standing
+    @compact = compact
   end
 
   def target

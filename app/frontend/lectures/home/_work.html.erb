@@ -1,55 +1,40 @@
-<%# locals: (lecture:, work:, focus:, certification:) %>
-<% due = lecture_home_due_sheets(work, focus) %>
-<% news = lecture_home_news_sheets(work) %>
-<% standing = work && lecture_home_standing_line(work.standing, certification) %>
-<% if due.any? || news.any? || standing %>
-  <section class="lecture-home-block" aria-labelledby="work-heading"
-           data-testid="lecture-home-work">
-    <h2 class="lecture-home-label" id="work-heading"><%= t("lecture_home.work.title") %></h2>
-    <div class="lecture-home-rows">
-      <% due.each do |sheet| %>
-        <div class="lecture-home-row">
-          <div class="lecture-home-row-content">
-            <div class="lecture-home-row-title">
-              <span><%= sheet.assignment.title %></span>
-              <%= render SheetChipComponent.new(sheet: sheet) %>
-            </div>
-            <div class="lecture-home-row-line"><%= lecture_home_sheet_deadline(sheet) %></div>
-          </div>
-          <div class="lecture-home-row-actions">
-            <%= link_to t("lecture_home.focus.open_sheet"), lecture_submissions_path(lecture),
-                        class: "btn btn-sm btn-outline-primary",
-                        data: { turbo_frame: "main" } %>
-          </div>
-        </div>
-      <% end %>
+<%# locals: (lecture:, work:, certification:, highlighted:) %>
+<% due = Array(work.due) %>
+<section class="<%= class_names("lecture-home-work", "lecture-home-work--focus": highlighted) %>"
+         aria-labelledby="work-heading" data-testid="lecture-home-work">
+  <div class="lecture-home-label-line">
+    <h2 class="<%= highlighted ? "lecture-home-kicker" : "lecture-home-label" %>" id="work-heading">
+      <%= highlighted ? t("lecture_home.focus.sheet") : t("lecture_home.work.title") %>
+    </h2>
+    <%= link_to t("lecture_home.work.all"), lecture_submissions_path(lecture),
+                class: "lecture-home-quiet-link", data: { turbo_frame: "main" } %>
+  </div>
 
-      <% if news.any? %>
-        <div class="lecture-home-row">
-          <div class="lecture-home-row-content">
-            <div class="lecture-home-row-title"><span><%= lecture_home_sheet_news(news) %></span></div>
-          </div>
-          <div class="lecture-home-row-actions">
-            <%= link_to t("lecture_home.work.show"), lecture_submissions_path(lecture),
-                        class: "btn btn-sm btn-outline-primary",
-                        data: { turbo_frame: "main" } %>
-          </div>
-        </div>
-      <% end %>
+  <%= render SheetNewsComponent.new(sheets: work.sheets, lecture: lecture, on_hub: false) %>
 
-      <% if standing %>
-        <div class="lecture-home-row">
-          <div class="lecture-home-row-content">
-            <span class="lecture-home-row-kicker"><%= t("lecture_home.work.standing") %></span>
-            <div class="lecture-home-row-title"><span><%= standing %></span></div>
+  <div class="lecture-home-work-grid">
+    <div class="lecture-home-work-due">
+      <% if due.any? %>
+        <% due.each do |sheet| %>
+          <div class="lecture-home-focus-title">
+            <span><%= sheet.assignment.title %></span>
+            <%= render SheetChipComponent.new(sheet: sheet) %>
           </div>
-          <div class="lecture-home-row-actions">
-            <%= link_to t("lecture_home.work.details"), lecture_submissions_path(lecture),
-                        class: "btn btn-sm btn-outline-secondary",
-                        data: { turbo_frame: "main" } %>
-          </div>
-        </div>
+          <p class="lecture-home-focus-line"><%= lecture_home_sheet_deadline(sheet) %></p>
+        <% end %>
+        <%= link_to t("lecture_home.focus.open_sheet"), lecture_submissions_path(lecture),
+                    class: highlighted ? "btn btn-primary" : "btn btn-outline-primary",
+                    data: { turbo_frame: "main" } %>
+      <% else %>
+        <p class="lecture-home-focus-line mb-0"><%= t("lecture_home.work.nothing_due") %></p>
       <% end %>
     </div>
-  </section>
-<% end %>
+
+    <%= render StandingComponent.new(standing: work.standing, compact: true) do %>
+      <% admission = lecture_home_admission(work.standing, certification) %>
+      <% if admission %>
+        <p class="hub-aside mt-2 mb-0"><%= admission %></p>
+      <% end %>
+    <% end %>
+  </div>
+</section>

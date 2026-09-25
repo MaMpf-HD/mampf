@@ -31,7 +31,10 @@
   </header>
 
   <% if @lecture.home_content? %>
-    <div class="lecture-home-intro" data-testid="lecture-home-intro">
+    <div class="lecture-home-intro" data-testid="lecture-home-intro"
+         data-controller="lecture-intro"
+         data-lecture-intro-more-label-value="<%= t("lecture_home.intro.more") %>"
+         data-lecture-intro-less-label-value="<%= t("lecture_home.intro.less") %>">
       <% if @can_edit %>
         <%= link_to edit_lecture_path(@lecture, tab: "home"),
                     class: "float-end text-muted ms-2",
@@ -41,7 +44,14 @@
         <% end %>
       <% end %>
       <% if @lecture.home_intro_present? %>
-        <div class="lecture-home-intro-text"><%= sanitize(@lecture.home_intro) %></div>
+        <div class="lecture-home-intro-text" data-lecture-intro-target="text">
+          <%= sanitize(@lecture.home_intro) %>
+        </div>
+        <button type="button" class="btn btn-link p-0 lecture-home-intro-toggle"
+                data-lecture-intro-target="toggle" data-action="lecture-intro#toggle"
+                aria-expanded="false" hidden>
+          <%= t("lecture_home.intro.more") %>
+        </button>
       <% end %>
       <% if @lecture.home_attachment.present? %>
         <%= link_to lecture_home_attachment_path(@lecture),
@@ -82,22 +92,34 @@
     </div>
   <% end %>
 
+  <% backlog = @tutor_backlog || @lecture_backlog %>
+  <% if backlog&.entries&.any? %>
+    <%= render "lectures/home/marking", lecture: @lecture, backlog: backlog,
+                                        per_tutorial: @tutor_backlog.present? %>
+  <% elsif focus && focus.kind != :sheet %>
+    <%= render "lectures/home/focus", focus: focus, certification: @certification %>
+  <% end %>
+
+  <% if @work %>
+    <%= render "lectures/home/work", lecture: @lecture, work: @work,
+                                     certification: @certification,
+                                     highlighted: focus&.kind == :sheet %>
+  <% end %>
+
+  <% if @notifications.present? || (@lecture.forum? && @new_topics_count.positive?) %>
+    <%= render "lectures/home/news", lecture: @lecture, notifications: @notifications,
+                                     posts_count: @new_topics_count %>
+  <% end %>
+
   <% if @tutorials_given.any? %>
     <%= render "lectures/home/tutor_block", lecture: @lecture, tutorials: @tutorials_given,
-                                            member_counts: @member_counts,
-                                            backlog: @tutor_backlog %>
+                                            member_counts: @member_counts %>
   <% end %>
 
-  <% if @can_edit && (@managed_campaigns.any? || @lecture_backlog.entries.any?) %>
+  <% if @can_edit && @managed_campaigns.any? %>
     <%= render "lectures/home/teacher_block", lecture: @lecture,
                                               campaigns: @managed_campaigns,
-                                              counts: @campaign_counts,
-                                              backlog: @lecture_backlog %>
-  <% end %>
-
-  <% if focus %>
-    <%= render "lectures/home/focus", lecture: @lecture, focus: focus,
-                                      certification: @certification %>
+                                              counts: @campaign_counts %>
   <% end %>
 
   <% if listed_campaigns.any? %>
@@ -112,14 +134,6 @@
         <% end %>
       </div>
     </section>
-  <% end %>
-
-  <%= render "lectures/home/work", lecture: @lecture, work: @work, focus: focus,
-                                   certification: @certification %>
-
-  <% if @notifications.present? || (@lecture.forum? && @new_topics_count.positive?) %>
-    <%= render "lectures/home/news", lecture: @lecture, notifications: @notifications,
-                                     posts_count: @new_topics_count %>
   <% end %>
 
   <% if @overview %>

@@ -1,52 +1,13 @@
+@import "../hub_scale";
 @import "../components/sheet_chip_component";
-
-/* One scale for the whole page, each step bound to a role rather than picked
-   per component. Two weights, and no step within 10 % of its neighbour - a
-   difference nobody reads as a decision reads as a mistake.
-
-   rubric   what a thing is called: eyebrows, field labels, column headers
-   aside    what is worth saying quietly: notes, times, counts
-   body     the thing itself: values, names, prose
-   section  a heading over a part of the page
-   figure   the one number the standing is about
-
-   Size, weight and colour are three axes and one of them is enough for a
-   difference: hierarchy is carried by size, weight marks only the two places
-   size cannot reach, and colour is left to say what something means. */
-:root {
-  --hub-rubric: 0.75rem;
-  --hub-aside: 0.875rem;
-  --hub-body: 1rem;
-  --hub-section: 1.3rem;
-  --hub-figure: 1.9rem;
-}
-
-/* What a thing is called. Upper case and the small size do the work; a weight
-   on top would be a third axis for one difference. */
-.eyebrow,
-.field-label,
-.standing-mark-label {
-  font-size: var(--hub-rubric);
-  font-weight: 400;
-  color: #66717c;
-}
-
-.eyebrow,
-.field-label {
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
+@import "../components/standing_component";
+@import "../components/sheet_news_component";
 
 /* Said quietly, beside something that carries the meaning. */
-.hub-aside,
 .sheet-note,
 .sheet-note-bad,
 .task-name {
   font-size: var(--hub-aside);
-}
-
-.hub-body {
-  font-size: var(--hub-body);
 }
 
 .hub-title {
@@ -70,84 +31,6 @@
   border-radius: 0.5rem;
   padding: 1.25rem;
   height: 100%;
-}
-
-/* The standing: grey and unframed, so it reads as ground rather than a second
-   card competing with the one thing there is to do. */
-.standing-panel {
-  background: #f5f7f9;
-  border-radius: 0.5rem;
-  padding: 1.25rem;
-  height: 100%;
-}
-
-/* The one number the standing is about. Size sets it apart; the weight is the
-   second of the two places size alone cannot carry a heading. */
-.num-total {
-  font-size: var(--hub-figure);
-  font-weight: 600;
-  line-height: 1.1;
-}
-
-/* One bar in two sizes, and the size is the hierarchy: the standing is 8px and
-   saturated, a sheet or a problem is 3px and pale. */
-.standing-bar {
-  position: relative;
-  height: 8px;
-  background: #dce1e6;
-  border-radius: 4px;
-
-  > span {
-    display: block;
-    height: 100%;
-    background: #4977a8;
-    border-radius: 4px;
-  }
-}
-
-.standing-bar-wrap {
-  position: relative;
-  padding-bottom: 1.3rem;
-}
-
-.standing-mark {
-  position: absolute;
-  top: -4px;
-  bottom: -4px;
-  width: 2px;
-  background: #212529;
-}
-
-.standing-mark-label {
-  position: absolute;
-  top: 14px;
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-
-.requirements {
-  border-top: 1px solid #d8dee4;
-  margin-top: 1rem;
-  padding-top: 0.6rem;
-}
-
-.requirement {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
-  align-items: baseline;
-  padding: 0.18rem 0;
-}
-
-/* The words say whether a condition is settled or still open; the colour says
-   one thing only, once per block: this is what ends the matter. */
-.req-open,
-.req-settled {
-  color: #66717c;
-}
-
-.req-lost {
-  color: #b02a37;
 }
 
 /* A code somebody may end up typing out: body size at least, and spaced so an
@@ -316,18 +199,6 @@ details[open] .chev {
   color: #98a2ab;
 }
 
-/* Something arrived since the reader last opened the row. The dot sits in the
-   row's left margin so it never stands next to a badge and the names keep
-   their line, and it goes when the row is opened. The blue is the page's own,
-   so it cannot be read as one of the three status colours. */
-.new-dot {
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: #4977a8;
-}
-
 .sheet-name {
   position: relative;
 }
@@ -342,50 +213,6 @@ details[open] .chev {
 
 details[open] > summary .news-marker {
   visibility: hidden;
-}
-
-/* The news belongs to the list, not to the standing: it is an event, the
-   standing is a state, and a pointer belongs beside what it points at. Its dot
-   sits in the same gutter as the row markers, so the eye joins them. */
-.news-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1rem;
-  align-items: baseline;
-  justify-content: space-between;
-  font-size: var(--hub-aside);
-  padding: 0.5rem 0.75rem 0.5rem 1.25rem;
-  background: #f5f7f9;
-  border-radius: 0.4rem;
-  margin-bottom: 0.75rem;
-
-  .new-dot {
-    margin-left: -1rem;
-    margin-right: 0.5rem;
-    vertical-align: 0.1em;
-  }
-}
-
-.seen-all {
-  background: none;
-  border: 0;
-  padding: 0;
-  font-size: var(--hub-rubric);
-  color: #4977a8;
-  text-decoration: underline;
-}
-
-/* One number language: tabular figures, "points / max", two decimals at most. */
-.num {
-  font-variant-numeric: tabular-nums;
-}
-
-.num-zero {
-  color: #b02a37;
-}
-
-.num-none {
-  color: #adb5bd;
 }
 
 /* The bar is an underline under its number, not an object beside it. */

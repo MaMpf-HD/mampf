@@ -72,7 +72,7 @@ test.describe("registering for an exam", () => {
 
     await student.page.goto(`/lectures/${lecture.id}/home`);
     const held = student.page.getByTestId("participation-row").filter({ hasText: "Main Exam" });
-    await expect(held.getByText("Exam", { exact: true })).toBeVisible();
+    await expect(held.getByText("Exam · Main Exam")).toBeVisible();
     await expect(held.getByText("On the exam list")).toBeVisible();
     await expect(held.getByText("Lecture Hall 1")).toBeVisible();
   });

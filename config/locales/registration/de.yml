@@ -486,7 +486,6 @@ de:
         on_exam_list: "Auf der Klausurliste"
         enrolled: "Eingeschrieben"
         assigned: "Zugeteilt"
-        locked: "Aus dieser Gruppe kannst Du Dich nicht selbst austragen."
         leave: "Verlassen"
         preference_fulfilled: "Dein %{rank} Wunsch."
         outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
