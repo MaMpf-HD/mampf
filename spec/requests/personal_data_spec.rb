@@ -161,6 +161,121 @@ RSpec.describe("Personal data", type: :request) do
     end
   end
 
+  describe "a student with places" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:tutorial) { create(:tutorial, lecture: lecture) }
+
+    before do
+      tutorial.add_user_to_roster!(user)
+      lecture.add_user_to_roster!(user)
+    end
+
+    it "is shown the lectures instead of a plain no" do
+      get edit_personal_data_path
+
+      expect(response.body).to include(lecture.title)
+      expect(response.body).to include(I18n.t("personal_data.places_no"))
+      expect(response.body).not_to include(I18n.t("personal_data.participation_question"))
+    end
+
+    it "is asked again after a no, for a place that came afterwards" do
+      tutorial.remove_user_from_roster!(user)
+      lecture.remove_user_from_roster!(user)
+      patch personal_data_path, params: { participation: "no" }
+      tutorial.add_user_to_roster!(user)
+
+      get start_path
+
+      expect(response).to redirect_to(edit_personal_data_path)
+    end
+
+    it "leaves out the first-sign-in profile notice when it asks again after a no" do
+      get start_path
+      sign_out(user)
+      user.update!(personal_data_declined_at: Time.current, sign_in_count: 0)
+
+      post user_session_path, params: { user: { email: user.email, password: user.password } }
+
+      expect(flash[:notice]).to be_nil
+      follow_redirect!
+      expect(response).to redirect_to(edit_personal_data_path)
+    end
+
+    it "gives the places up with the no, once the form has named them" do
+      patch personal_data_path, params: { participation: "no", give_up_places: lecture.id.to_s }
+
+      expect(user.reload).to be_personal_data_declined
+      expect(tutorial.reload.members).not_to include(user)
+      expect(lecture.reload.members).not_to include(user)
+      get start_path
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "keeps the places when the form did not name them" do
+      patch personal_data_path, params: { participation: "no" }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("personal_data.places_changed"))
+      expect(user.reload).to be_personal_data_pending
+      expect(tutorial.reload.members).to include(user)
+    end
+
+    it "asks for the details without offering to give up once results are recorded" do
+      create(:assessment_participation, :reviewed, user: user)
+
+      get edit_personal_data_path
+
+      expect(response.body).to include(I18n.t("personal_data.places_results"))
+      expect(response.body).not_to include(I18n.t("personal_data.places_no"))
+    end
+
+    it "asks again after a no when a result is recorded later, with the fields only" do
+      tutorial.remove_user_from_roster!(user)
+      lecture.remove_user_from_roster!(user)
+      patch personal_data_path, params: { participation: "no" }
+      create(:assessment_participation, :reviewed, user: user)
+
+      get start_path
+      follow_redirect!
+
+      expect(response.body).to include(I18n.t("personal_data.places_results"))
+      expect(response.body).not_to include('name="participation"')
+    end
+
+    it "keeps the places and the question when a no comes despite recorded results" do
+      create(:assessment_participation, :reviewed, user: user)
+
+      patch personal_data_path, params: { participation: "no", give_up_places: lecture.id.to_s }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("personal_data.places_graded"))
+      expect(user.reload).to be_personal_data_pending
+      expect(tutorial.reload.members).to include(user)
+    end
+
+    it "keeps every place when one was added after the form named the others" do
+      other = create(:lecture)
+      allow(Rosters::MaintenanceService).to receive(:new).and_wrap_original do |original|
+        other.add_user_to_roster!(user) unless other.members.include?(user)
+        original.call
+      end
+
+      patch personal_data_path, params: { participation: "no", give_up_places: lecture.id.to_s }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("personal_data.places_changed"))
+      expect(user.reload).to be_personal_data_pending
+      expect(tutorial.reload.members).to include(user)
+    end
+
+    it "keeps the places with a yes" do
+      patch personal_data_path, params: { participation: "yes", user: complete }
+
+      expect(user.reload.personal_data_confirmed_at).to be_present
+      expect(tutorial.reload.members).to include(user)
+    end
+  end
+
   describe "the language chosen on the page" do
     it "becomes the user's language, so an error or the way back keeps it" do
       user.update!(locale: "en")
