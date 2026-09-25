@@ -686,7 +686,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.bigint "subject_id"
     t.string "degree"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
-    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying, 'bsc50'::character varying, 'msc'::character varying, 'med'::character varying, 'med_extension'::character varying, 'phd'::character varying]::text[])", name: "programs_degree_check"
+    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying::text, 'bsc50'::character varying::text, 'msc'::character varying::text, 'med'::character varying::text, 'med_extension'::character varying::text, 'phd'::character varying::text])", name: "programs_degree_check"
   end
 
   create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
