@@ -5,7 +5,10 @@ module Dashboard
     belongs_to :user
     belongs_to :lecture
 
-    enum :tape_color, WashiTape::COLORS.each_with_index.to_h, prefix: :tape
+    # Stored as integers, so each color keeps its number however
+    # WashiTape::COLORS is reordered.
+    enum :tape_color, { butter: 0, rose: 1, mint: 2, sky: 3, lavender: 4, peach: 5 },
+         prefix: :tape, validate: true
 
     validates :lecture_id, uniqueness: { scope: :user_id }
   end

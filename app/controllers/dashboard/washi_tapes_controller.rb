@@ -5,13 +5,9 @@ module Dashboard
       lecture = dashboard_lecture
       return head(:not_found) unless lecture
 
-      # An unknown value would make the enum raise rather than refuse, so it is
-      # turned away before it reaches the record.
       color = params.expect(washi_tape: [:tape_color])[:tape_color]
-      return head(:unprocessable_content) unless color.in?(WashiTape::COLORS)
-
-      CardStyle.find_or_initialize_by(user: current_user, lecture: lecture)
-               .update!(tape_color: color)
+      style = CardStyle.find_or_initialize_by(user: current_user, lecture: lecture)
+      return head(:unprocessable_content) unless style.update(tape_color: color)
 
       head :no_content
     end

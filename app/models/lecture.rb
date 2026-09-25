@@ -49,6 +49,7 @@ class Lecture < ApplicationRecord
 
   # a lecture has many users who have bookmarked it (formerly: subscribed it)
   has_many :lecture_bookmarks, dependent: :destroy
+  has_many :dashboard_card_styles, class_name: "Dashboard::CardStyle", dependent: :delete_all
   has_many :users, -> { distinct }, through: :lecture_bookmarks
 
   # Roster associations
