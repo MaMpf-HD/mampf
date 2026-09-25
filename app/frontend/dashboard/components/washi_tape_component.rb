@@ -1,7 +1,7 @@
-# Washi tape strip across the top of a dashboard card. With an `update_url`
-# it becomes a color picker button; without one it's decoration (talk cards).
+# Washi tape strip across the top of a dashboard card, and the button that
+# opens its color picker.
 class WashiTapeComponent < ViewComponent::Base
-  def initialize(tape:, label: nil, update_url: nil)
+  def initialize(tape:, update_url:, label: nil)
     super()
     @tape = tape
     @label = label
@@ -12,13 +12,7 @@ class WashiTapeComponent < ViewComponent::Base
 
   delegate :seed, :color, to: :tape
 
-  def editable?
-    update_url.present?
-  end
-
   def wrapper_data
-    return {} unless editable?
-
     { data: { controller: "washi-tape",
               washi_tape_url_value: update_url,
               testid: "washi-tape" } }
