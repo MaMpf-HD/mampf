@@ -7,7 +7,7 @@ module Roster
     helper ::UserRegistrationsHelper
     before_action :set_rosterable, only: [:self_add, :self_remove, :self_switch]
     before_action :authorize_lecture
-    before_action :require_personal_data, only: :self_add
+    before_action :require_personal_data, only: [:self_add, :self_switch]
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_error(t("roster.errors.user_already_in_bundle",
