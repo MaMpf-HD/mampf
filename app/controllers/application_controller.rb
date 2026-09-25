@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_current_user
   before_action :enforce_password_change
+  before_action :enforce_personal_data
 
   include LocaleSetter
 
@@ -208,6 +209,41 @@ class ApplicationController < ActionController::Base
       # Turbo out of the frame; the reload then meets the redirect above.
       render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
              layout: false
+    end
+
+    def enforce_personal_data
+      return unless user_signed_in?
+      return unless current_user.personal_data_pending?
+      return if personal_data_request_allowed?
+
+      session[:after_personal_data] ||= request.fullpath if navigational_get?
+      return redirect_to(edit_personal_data_path) unless turbo_frame_request?
+
+      render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
+             layout: false
+    end
+
+    # Devise must finish signing the user in before this redirect can run, and
+    # leaving MaMpf or consenting to its terms comes before any question.
+    def personal_data_request_allowed?
+      return true if controller_name == "personal_data" || devise_controller?
+      return true if controller_name == "users" && action_name == "delete_account"
+
+      controller_name == "profile" && action_name.in?(["check_for_consent", "add_consent"])
+    end
+
+    def navigational_get?
+      request.get? && request.format.html? && !request.xhr?
+    end
+
+    # Registration requires personal data even when the user declined the
+    # sign-in question.
+    def require_personal_data
+      return unless current_user.personal_data_declined?
+
+      session[:after_personal_data] = url_from(request.referer)
+      redirect_to edit_personal_data_path, alert: t("personal_data.needed_to_register"),
+                                           status: :see_other
     end
 
     def password_change_request_allowed?

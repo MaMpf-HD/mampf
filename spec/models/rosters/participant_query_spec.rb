@@ -23,6 +23,28 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
       expect(subject.filter_mode).to eq("all")
     end
 
+    describe "searching" do
+      before do
+        user2.update!(first_name: "Ada", last_name: "Lovelace", matriculation_number: "3456789")
+      end
+
+      it "finds a participant by the real name the row shows" do
+        result = described_class.new(lecture, search: "Ada Lovelace").call
+
+        expect(result.scope.map(&:user)).to eq([user2])
+      end
+
+      it "finds a participant by matriculation number" do
+        result = described_class.new(lecture, search: "3456789").call
+
+        expect(result.scope.map(&:user)).to eq([user2])
+      end
+
+      it "sorts by the name the row shows" do
+        expect(subject.scope.map(&:user)).to eq([user2, user3, user1])
+      end
+    end
+
     describe "counts" do
       # We need separate tests or separate lectures for tutorials and talks
       # because a seminar cannot have tutorials, and a lecture cannot have talks

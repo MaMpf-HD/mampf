@@ -19,6 +19,15 @@ module LocaleSetter
       cookies[:locale] = locale_param
     end
 
+    # Saves the language picked on the personal data page, so that a form
+    # error and the next page stay in it.
+    def remember_locale_choice
+      return unless user_signed_in? && locale_param && request.get?
+      return if current_user.locale == locale_param
+
+      current_user.update(locale: locale_param)
+    end
+
     def set_pagy_locale
       Pagy::I18n.locale = I18n.locale.to_s
     end

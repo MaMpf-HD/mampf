@@ -3,6 +3,18 @@ require "rails_helper"
 RSpec.describe(ExamRegistrationTabComponent, type: :component) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
+
+  it "shows each participant's study program" do
+    exam = create(:exam, :with_date, lecture: lecture, skip_campaigns: true)
+    program = create(:program, subject: create(:subject, name: "Physik"), name: "B.Sc. 100%",
+                               degree: :bsc100)
+    create(:exam_roster_entry, exam: exam, user: create(:confirmed_user, program: program))
+
+    render_inline(described_class.new(exam: exam))
+
+    expect(rendered_content).to include("Physik: B.Sc. 100%")
+  end
+
   it "renders a disabled deadline field for a closed campaign" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :closed)
@@ -183,7 +195,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     render_inline(described_class.new(exam: exam))
 
     document = Nokogiri::HTML.fragment(rendered_content)
-    remove_action = document.at_css("button[title]")
+    remove_action = document.at_css("button.btn-outline-danger[title]")
     filter_label = document.at_css('label[for="exam-participants-filter"]')
     add_toggle = document.at_css(
       "button[data-bs-toggle='collapse'][aria-controls='exam-#{exam.id}-participants-add-form']"

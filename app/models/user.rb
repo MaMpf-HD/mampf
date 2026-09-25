@@ -5,6 +5,11 @@ class User < ApplicationRecord
   class IncompatibleTypeError < StandardError; end
 
   CURRENT_PASSWORD_POLICY_VERSION = 1
+  PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number, :program_id,
+                          :uni_id].freeze
+  # What a group or an exam lists a student by: once saved, only the support
+  # changes it. Program and Uni ID stay the user's to change.
+  LOCKED_PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number].freeze
 
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
@@ -123,6 +128,29 @@ class User < ApplicationRecord
 
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
+
+  normalizes :first_name, :last_name, with: ->(value) { value.squish.presence }
+  normalizes :matriculation_number, with: ->(value) { value.gsub(/\s/, "").presence }
+  normalizes :uni_id, with: ->(value) { value.strip.downcase.presence }
+
+  validates :matriculation_number, uniqueness: true, format: { with: /\A\d{7}\z/ },
+                                   allow_nil: true
+  validates :uni_id, uniqueness: true, format: { with: /\A[a-z]{2}\d{3}\z/ }, allow_nil: true
+  validates :first_name, :last_name, presence: true, on: :personal_data
+  validates :matriculation_number, presence: true, on: :personal_data,
+                                   unless: :no_matriculation_number
+  validates :personal_data_confirmation, acceptance: { allow_nil: false }, on: :personal_data,
+                                         if: :locked_personal_data_changed?
+
+  # The student has no matriculation number yet (first weeks, guest student);
+  # the empty field may be filled in later.
+  attribute :no_matriculation_number, :boolean, default: false
+
+  # Empty for "Other degree" or "Other subject", or while the user has not
+  # answered yet.
+  belongs_to :program, optional: true
+  PROGRAM_PRELOAD = { program: [:translations, { subject: :translations }] }.freeze
+  validate :program_offered_to_students, if: :program_id_changed?
 
   before_save :track_password_change
 
@@ -405,7 +433,28 @@ class User < ApplicationRecord
   end
 
   def tutorial_name
-    name_in_tutorials.presence || name
+    full_name || name_in_tutorials.presence || name
+  end
+
+  def full_name
+    [first_name, last_name].compact_blank.join(" ").presence
+  end
+
+  def personal_data_pending?
+    personal_data_confirmed_at.nil? && personal_data_declined_at.nil?
+  end
+
+  def personal_data_declined?
+    personal_data_declined_at.present? && personal_data_confirmed_at.nil?
+  end
+
+  def open_personal_data_fields
+    LOCKED_PERSONAL_DATA_FIELDS.select { |field| attribute_in_database(field).blank? } +
+      [:program_id, :uni_id]
+  end
+
+  def locked_personal_data_changed?
+    LOCKED_PERSONAL_DATA_FIELDS.any? { |field| attribute_changed?(field) }
   end
 
   def short_info
@@ -922,6 +971,12 @@ class User < ApplicationRecord
   end
 
   private
+
+    def program_offered_to_students
+      return if program.nil? || program.degree.present?
+
+      errors.add(:program_id, :inclusion)
+    end
 
     def staff_lectures_in(terms)
       given = given_lectures.where(term: terms).includes(:course, :term)

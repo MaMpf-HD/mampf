@@ -1,0 +1,17 @@
+<span
+  data-controller="clipboard"
+  data-clipboard-text-value="<%= email %>"
+  data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
+  data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
+>
+  <button
+    type="button"
+    class="btn btn-link btn-sm p-0 border-0 align-baseline text-muted ms-1"
+    data-action="clipboard#copy"
+    title="<%= t("buttons.copy_email_address") %>"
+    aria-label="<%= t("buttons.copy_email_address") %>"
+  >
+    <i class="bi bi-envelope" data-clipboard-target="icon"></i>
+  </button>
+  <span class="visually-hidden" role="status" data-clipboard-target="status"></span>
+</span>

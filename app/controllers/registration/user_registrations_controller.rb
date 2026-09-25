@@ -5,6 +5,7 @@ module Registration
     before_action :set_campaign,
                   only: [:create, :destroy, :reject_for_user, :save_preferences]
     before_action :set_item, only: [:create, :destroy]
+    before_action :require_personal_data, only: [:create, :save_preferences]
 
     def current_ability
       @current_ability ||= RegistrationUserRegistrationAbility.new(current_user)
