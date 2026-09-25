@@ -9,11 +9,11 @@ module Dashboard
 
     def destroy
       return head(:not_found) unless @lecture
-      return head(:forbidden) if keep_bookmarked? && !@lecture.bookmarkable_by?(current_user)
+      return head(:forbidden) if keep_bookmarked? && !current_user.may_unlock_lecture?(@lecture)
 
       rejected_registrations.find_each(&:dismiss!)
       if keep_bookmarked?
-        current_user.bookmark_lecture!(@lecture)
+        current_user.unlock_lecture!(@lecture)
       else
         current_user.unbookmark_lecture!(@lecture)
       end
