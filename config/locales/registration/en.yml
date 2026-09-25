@@ -677,7 +677,6 @@ en:
           You have not subscribed to this lecture yet. Subscribing gives you
           access to its materials — it is not a binding course registration.
   activerecord:
-    attributes:
     errors:
       models:
         registration/campaign:

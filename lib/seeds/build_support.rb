@@ -10,7 +10,18 @@ module Seeds
     PASSWORD = "lemon-floppy-curtain-42".freeze
     # Two accounts keep an outdated password policy so that the forced password
     # change can be tried out; everyone else gets in without the detour.
-    STALE_PASSWORD_ACCOUNTS = ["student5@mampf.edu", "moded@mampf.edu"].freeze
+    STALE_PASSWORD_ACCOUNTS = ["ask-password@mampf.edu", "ask-both@mampf.edu"].freeze
+    # A few accounts are still asked for name and matriculation number, so that
+    # the question after sign-in can be tried out.
+    PERSONAL_DATA_PENDING_ACCOUNTS = ["ask-data@mampf.edu", "ask-both@mampf.edu",
+                                      "ask-teacher@mampf.edu"].freeze
+    # Gets a lecture of its own, so that the question can be tried out as a
+    # lecturer as well.
+    PERSONAL_DATA_PENDING_TEACHER = "ask-teacher@mampf.edu".freeze
+    SEED_FIRST_NAMES = ["Anna", "Ben", "Clara", "David", "Emma", "Felix", "Greta", "Hannes",
+                        "Ida", "Jonas", "Klara", "Leon", "Mia", "Noah", "Paula"].freeze
+    SEED_LAST_NAMES = ["Albrecht", "Bauer", "Fischer", "Hoffmann", "Keller", "Lang",
+                       "Meyer", "Neumann", "Schmitt", "Wagner", "Weber", "Zimmermann"].freeze
     ENROLMENT_DESCRIPTION = "Anmeldung zur Veranstaltung".freeze
     TUTORIAL_DESCRIPTION = "Anmeldung zu den Übungsgruppen".freeze
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
@@ -38,9 +49,11 @@ module Seeds
         # produces on it.
         Demo::SetupSupport.setup_homework_submissions!
         Seeds::EnrichSupport.enrich!
+        create_sign_in_question_accounts!
         # last, so that the accounts the demo scenarios create are usable too
         reset_passwords!
         stage_password_policy!
+        stage_personal_data!
       end
       report!
     end
@@ -62,6 +75,22 @@ module Seeds
       Submission.update_all(shift(months, :last_modification_by_users_at))
       Voucher.update_all(shift(months, :expires_at, :invalidated_at))
       # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    # Creates the accounts that are asked something after sign-in, so that the
+    # accounts developers work with every day sign in without a detour.
+    def create_sign_in_question_accounts!
+      ensure_development!
+
+      (STALE_PASSWORD_ACCOUNTS | PERSONAL_DATA_PENDING_ACCOUNTS).each do |email|
+        next if User.exists?(email: email)
+
+        FactoryBot.create(:confirmed_user, email: email, name: email.split("@").first)
+      end
+      Demo::TermSupport.find_or_create_lecture!(
+        term: current_term, teacher: User.find_by!(email: PERSONAL_DATA_PENDING_TEACHER),
+        course_title: "Algebraische Zahlentheorie", short_title: "AZT"
+      )
     end
 
     # The password ships with the dump, so it has to pass the policy. A lock
@@ -119,6 +148,25 @@ module Seeds
       # rubocop:enable Rails/SkipsModelValidations
     end
 
+    # Students answer yes with a name, a number and a program, so rosters and
+    # exam lists look like the real thing; staff answer no, as they would.
+    def stage_personal_data!
+      ensure_development!
+      return unless User.column_names.include?("personal_data_confirmed_at")
+
+      programs = Program.offered_to_students.order(:id).to_a
+      # rubocop:disable Rails/SkipsModelValidations
+      User.where.not(email: PERSONAL_DATA_PENDING_ACCOUNTS).order(:id)
+          .each_with_index do |user, index|
+        user.update_columns(personal_data_for(user, index, programs))
+      end
+      User.where(email: PERSONAL_DATA_PENDING_ACCOUNTS)
+          .update_all(personal_data_confirmed_at: nil, personal_data_declined_at: nil,
+                      first_name: nil, last_name: nil, matriculation_number: nil,
+                      uni_id: nil, program_id: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
     # The demo scenarios set their deadlines a week out, which is useless in a
     # dump someone restores months later.
     def extend_open_deadlines!
@@ -129,6 +177,18 @@ module Seeds
     end
 
     private
+
+      def personal_data_for(user, index, programs)
+        if user.admin? || user.teacher?
+          return { personal_data_confirmed_at: nil, personal_data_declined_at: Time.current }
+        end
+
+        { personal_data_confirmed_at: Time.current, personal_data_declined_at: nil,
+          first_name: SEED_FIRST_NAMES[index % SEED_FIRST_NAMES.size],
+          last_name: SEED_LAST_NAMES[(index / SEED_FIRST_NAMES.size) % SEED_LAST_NAMES.size],
+          matriculation_number: (4_000_000 + user.id).to_s,
+          program_id: programs.empty? ? nil : programs[index % programs.size].id }
+      end
 
       # rubocop:disable Rails/Exit
       def ensure_development!

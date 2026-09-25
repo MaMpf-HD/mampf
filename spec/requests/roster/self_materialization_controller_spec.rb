@@ -67,6 +67,16 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
+    it "sends a user who declined to give their data to the form instead" do
+      user.update!(personal_data_confirmed_at: nil, personal_data_declined_at: Time.current)
+
+      expect do
+        post(self_add_tutorial_path(tutorial), as: :turbo_stream)
+      end.not_to(change { tutorial.members.count })
+
+      expect(response).to redirect_to(edit_personal_data_path)
+    end
+
     it "updates the participation section" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 

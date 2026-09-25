@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_24_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -673,7 +673,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "subject_id"
+    t.string "degree"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
+    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying, 'bsc50'::character varying, 'msc'::character varying, 'med'::character varying, 'med_extension'::character varying, 'phd'::character varying]::text[])", name: "programs_degree_check"
   end
 
   create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
@@ -916,6 +918,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   create_table "subjects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "key"
+    t.index ["key"], name: "index_subjects_on_key", unique: true
   end
 
   create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
@@ -1311,9 +1315,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.string "unlock_token"
     t.integer "password_policy_version", default: 0, null: false
     t.datetime "password_changed_at"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "matriculation_number"
+    t.string "uni_id"
+    t.datetime "personal_data_confirmed_at"
+    t.datetime "personal_data_declined_at"
+    t.bigint "program_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"
+    t.index ["program_id"], name: "index_users_on_program_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uni_id"], name: "index_users_on_uni_id", unique: true, where: "(uni_id IS NOT NULL)"
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
@@ -1570,6 +1584,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "users", "programs", on_delete: :nullify
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"

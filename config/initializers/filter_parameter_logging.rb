@@ -6,5 +6,6 @@
 Rails.application.config.filter_parameters += [
   :passw, :email, :secret, :token, :_key, :crypt, :salt, :certificate, :otp, :ssn, :cvv, :cvc,
   # What a lecturer or tutor writes to their students is theirs, not the log's.
-  "student_message.subject", "student_message.body"
+  "student_message.subject", "student_message.body",
+  :first_name, :last_name, :matriculation_number, :uni_id, :program_id
 ]

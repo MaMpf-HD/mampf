@@ -680,7 +680,6 @@ de:
           Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
           Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
   activerecord:
-    attributes:
     errors:
       models:
         registration/campaign:
