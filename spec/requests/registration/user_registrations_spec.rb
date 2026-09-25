@@ -250,9 +250,6 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
 
     context "when the student holds an unremovable roster slot" do
-      # Only a tutorial takes the student out of the tutorial they may not
-      # leave, so only a campaign for tutorials is blocked, as the edit
-      # services refuse it.
       it "does not block a talk campaign for a student in an interest cohort" do
         interest_group = create(:cohort, context: seminar,
                                          self_materialization_mode: :add_only,
@@ -444,6 +441,31 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
         expect(campaign.user_registrations.confirmed.where(user: user)
                        .map(&:registration_item)).to eq([other])
+      end
+    end
+
+    describe "a step that changes another campaign" do
+      it "replaces the options of a campaign that has this one as prerequisite" do
+        dependent = create(:registration_campaign, :open, :first_come_first_served,
+                           :with_prerequisite_policy, parent_campaign: campaign,
+                                                      campaignable: lecture)
+        unrelated = create(:registration_campaign, :open, :first_come_first_served,
+                           campaignable: lecture)
+
+        post register_item_path(campaign_id: campaign.id, item_id: item.id),
+             as: :turbo_stream
+
+        body_target = ActionView::RecordIdentifier.dom_id(dependent,
+                                                          :student_registration_body)
+        expect(response.body).to include(%(action="replace" target="#{body_target}"))
+        expect(response.body).to include(
+          %(target="#{ActionView::RecordIdentifier.dom_id(unrelated,
+                                                          :student_registration_summary)}")
+        )
+        expect(response.body).not_to include(
+          %(target="#{ActionView::RecordIdentifier.dom_id(unrelated,
+                                                          :student_registration_body)}")
+        )
       end
     end
 

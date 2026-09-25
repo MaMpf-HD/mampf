@@ -2,15 +2,13 @@ import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 
 /**
- * Opens a campaign when a link on the page points at it, loads its options
- * the first time it opens, and says in its collapsed row when its choices are
- * not saved yet. When a registration step replaces the options, the button
- * that was pressed is gone, so focus moves to the campaign's row instead of
- * falling back to the top of the page.
+ * When a registration step replaces a campaign's options, the button that was
+ * pressed is gone; focus moves to the campaign's row instead of the top of
+ * the page.
  */
 export default class extends Controller {
   static targets = ["unsaved", "body"];
-  static values = { url: String };
+  static values = { url: String, failedLabel: String, retryLabel: String };
 
   connect() {
     this.openFromHash = this.openFromHash.bind(this);
@@ -63,10 +61,29 @@ export default class extends Controller {
         credentials: "same-origin",
       });
       if (response.ok) Turbo.renderStreamMessage(await response.text());
+      else this.showFailure();
+    }
+    catch {
+      this.showFailure();
     }
     finally {
       this.loading = false;
     }
+  }
+
+  // Says so when the options did not arrive, for instance because the
+  // campaign closed since the page was loaded, and offers to try again.
+  showFailure() {
+    const message = document.createElement("p");
+    message.className = "registration-fold-loading mb-0";
+    message.textContent = `${this.failedLabelValue} `;
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "btn btn-link btn-sm p-0 align-baseline";
+    retry.textContent = this.retryLabelValue;
+    retry.addEventListener("click", () => this.load());
+    message.append(retry);
+    this.bodyTarget.replaceChildren(message);
   }
 
   markUnsaved(event) {

@@ -20,17 +20,12 @@ class SelfEnrollmentComponent < ViewComponent::Base
     rosterables.any?
   end
 
-  def joined_count
-    rosterables.count { |rosterable| rosterable.user_allocated?(user) }
-  end
-
   def blocked?(rosterable)
     helpers.registration_blocked_by_unremovable_assignment?(lecture) &&
       rosterable.roster_exclusive_within_lecture? &&
       !rosterable.user_allocated?(user)
   end
 
-  # The group the student would leave by joining this one, when they may.
   def switch_from(rosterable)
     return if rosterable.user_allocated?(user) || !rosterable.config_allow_self_add?
 

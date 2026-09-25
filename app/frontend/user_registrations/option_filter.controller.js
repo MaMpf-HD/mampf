@@ -1,9 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Shows the first rows of a long option list, all of them on request, and
- * those matching the search field while something is typed. A row the
- * student already holds or ranked stays visible either way.
+ * Keeps an option the student already holds or ranked visible while the list
+ * is shortened or searched; `data-keep` marks it as rendered by the server.
  */
 export default class extends Controller {
   static targets = ["row", "query", "more", "empty"];

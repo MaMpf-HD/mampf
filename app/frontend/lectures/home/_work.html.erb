@@ -8,7 +8,8 @@
                 class: "lecture-home-quiet-link", data: { turbo_frame: "main" } %>
   </div>
 
-  <%= render SheetNewsComponent.new(sheets: work.sheets, lecture: lecture, on_hub: false) %>
+  <%= render SheetNewsComponent.new(sheets: work.sheets - work.open_sheets, lecture: lecture,
+                                    on_hub: false) %>
 
   <div class="lecture-home-work-grid">
     <div class="lecture-home-work-due">

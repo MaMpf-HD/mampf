@@ -48,6 +48,7 @@ de:
       title: "Frühere Anmeldungen (%{count})"
       completed: "Abgeschlossen · Frist war %{deadline}"
       ended: "Anmeldung beendet am %{deadline}"
+      closed_early: "Anmeldung vor der geplanten Frist (%{deadline}) beendet"
     tutor:
       title: "Deine Tutorien"
       members:

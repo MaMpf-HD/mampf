@@ -48,6 +48,7 @@ en:
       title: "Past registrations (%{count})"
       completed: "Finalized · deadline was %{deadline}"
       ended: "Registration ended on %{deadline}"
+      closed_early: "Registration closed before its deadline of %{deadline}"
     tutor:
       title: "Your tutorials"
       members:

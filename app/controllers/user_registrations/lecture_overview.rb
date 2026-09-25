@@ -1,8 +1,7 @@
 module UserRegistrations
-  # Sorts a lecture's registration campaigns for one student into three places
-  # on the lecture home page: what they can still act on, their own standing,
-  # and what is over. A campaign moves between them as its deadline passes, so
-  # nothing the student did disappears with the registration block.
+  # Sorts a lecture's registration campaigns for one student into those still
+  # open, their standing in the others before finalization, and those past
+  # their deadline.
   class LectureOverview
     Standing = Struct.new(:campaign, :kind, :registrations, keyword_init: true)
 
@@ -19,7 +18,6 @@ module UserRegistrations
                                            .to_a
     end
 
-    # Campaigns the student can still register or change in, soonest first.
     def open_campaigns
       campaigns.select(&:open_for_registrations?)
     end
@@ -34,16 +32,18 @@ module UserRegistrations
       registrations_by_campaign.fetch(campaign.id, [])
     end
 
-    # What the student has in a campaign before it is finalized: a registration
-    # that counts from the moment it was made, or preferences still waiting for
-    # the allocation. After finalization the roster and the rejections speak.
+    # A preference campaign keeps showing the ranked choices until it is
+    # finalized: the allocation already marks the chosen one confirmed, but that
+    # is a proposal, not a place, and the roster only follows at finalization.
+    # A first come, first served registration counts from the moment it is made.
     def standings
       campaigns.reject(&:completed?).filter_map do |campaign|
-        registrations = registrations_for(campaign)
+        registrations = registrations_for(campaign).reject(&:rejected?)
+        next if registrations.empty?
+
         if campaign.preference_based?
-          pending = registrations.select(&:pending?).sort_by(&:preference_rank)
-          Standing.new(campaign: campaign, kind: :preferences, registrations: pending) if
-            pending.any?
+          ranked = registrations.select(&:preference_rank).sort_by(&:preference_rank)
+          Standing.new(campaign: campaign, kind: :preferences, registrations: ranked)
         else
           confirmed = registrations.select(&:confirmed?)
           Standing.new(campaign: campaign, kind: :registered, registrations: confirmed) if

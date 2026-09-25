@@ -142,6 +142,8 @@
     id="<%= anchor_id %>"
     data-controller="registration-fold"
     data-registration-fold-url-value="<%= body_url %>"
+    data-registration-fold-failed-label-value="<%= t("registration.user_registration.summary.load_failed") %>"
+    data-registration-fold-retry-label-value="<%= t("registration.user_registration.summary.retry") %>"
     data-action="toggle->registration-fold#load preference-choices:changed->registration-fold#markUnsaved"
     data-testid="registration-campaign"
   >

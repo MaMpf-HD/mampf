@@ -17,27 +17,18 @@ export class CampaignRegistrationPage {
     await this.page.goto(this.link);
   }
 
-  /**
-   * Returns the collapsed row of an open campaign.
-   */
   campaign(title: string): Locator {
     return this.page.getByTestId("registration-campaign").filter({
       has: this.page.getByRole("heading", { name: title }),
     });
   }
 
-  /**
-   * Unfolds an open campaign by clicking its summary.
-   */
   async openCampaign(title: string): Promise<Locator> {
     const campaign = this.campaign(title);
     await campaign.getByRole("heading", { name: title }).click();
     return campaign;
   }
 
-  /**
-   * Returns the rows under "Your participation" that mention the text.
-   */
   participation(text: string | RegExp): Locator {
     return this.page.getByTestId("participation-row").filter({ hasText: text });
   }

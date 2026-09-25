@@ -5,6 +5,10 @@
 <% campaigns = Array(@campaign_summaries) %>
 <% focus = lecture_home_focus(campaigns: campaigns, next_exam: @next_exam) %>
 <% listed_campaigns = campaigns.reject { |details| focus&.subject == details } %>
+<% participation_html = if @overview
+     render(ParticipationComponent.new(lecture: @lecture, user: current_user,
+                                       overview: @overview))
+   end %>
 
 <div class="container-md small-width lecture-home" data-testid="lecture-home">
   <header class="lecture-home-header">
@@ -31,10 +35,7 @@
   </header>
 
   <% if @lecture.home_content? %>
-    <div class="lecture-home-intro" data-testid="lecture-home-intro"
-         data-controller="lecture-intro"
-         data-lecture-intro-more-label-value="<%= t("lecture_home.intro.more") %>"
-         data-lecture-intro-less-label-value="<%= t("lecture_home.intro.less") %>">
+    <div class="lecture-home-intro" data-testid="lecture-home-intro">
       <% if @can_edit %>
         <%= link_to edit_lecture_path(@lecture, tab: "home"),
                     class: "float-end text-muted ms-2",
@@ -44,14 +45,18 @@
         <% end %>
       <% end %>
       <% if @lecture.home_intro_present? %>
-        <div class="lecture-home-intro-text" data-lecture-intro-target="text">
-          <%= sanitize(@lecture.home_intro) %>
+        <div data-controller="lecture-intro"
+             data-lecture-intro-more-label-value="<%= t("lecture_home.intro.more") %>"
+             data-lecture-intro-less-label-value="<%= t("lecture_home.intro.less") %>">
+          <div class="lecture-home-intro-text" data-lecture-intro-target="text">
+            <%= sanitize(@lecture.home_intro) %>
+          </div>
+          <button type="button" class="btn btn-link p-0 lecture-home-intro-toggle"
+                  data-lecture-intro-target="toggle" data-action="lecture-intro#toggle"
+                  aria-expanded="false" hidden>
+            <%= t("lecture_home.intro.more") %>
+          </button>
         </div>
-        <button type="button" class="btn btn-link p-0 lecture-home-intro-toggle"
-                data-lecture-intro-target="toggle" data-action="lecture-intro#toggle"
-                aria-expanded="false" hidden>
-          <%= t("lecture_home.intro.more") %>
-        </button>
       <% end %>
       <% if @lecture.home_attachment.present? %>
         <%= link_to lecture_home_attachment_path(@lecture),
@@ -92,10 +97,10 @@
     </div>
   <% end %>
 
-  <% backlog = @tutor_backlog || @lecture_backlog %>
+  <% backlog = @lecture_backlog || @tutor_backlog %>
   <% if backlog&.entries&.any? %>
     <%= render "lectures/home/marking", lecture: @lecture, backlog: backlog,
-                                        per_tutorial: @tutor_backlog.present? %>
+                                        per_tutorial: @lecture_backlog.nil? %>
   <% elsif focus %>
     <%= render "lectures/home/focus", focus: focus, certification: @certification %>
   <% end %>
@@ -137,9 +142,9 @@
   <% end %>
 
   <% if @overview %>
-    <div id="<%= ParticipationComponent::TARGET %>">
-      <%= render ParticipationComponent.new(lecture: @lecture, user: current_user,
-                                            overview: @overview) %>
+    <div id="<%= ParticipationComponent::TARGET %>" data-controller="participation-focus"
+         data-participation-focus-fallback-value="<%= SelfEnrollmentComponent::ID %>">
+      <%= participation_html %>
     </div>
 
     <% if @self_rosterables.any? %>
@@ -154,7 +159,8 @@
 
   <% if !@lecture.home_content? && !@can_edit && focus.nil? && @notifications.blank? &&
         @new_topics_count.zero? && @tutorials_given.empty? && campaigns.empty? &&
-        Array(@self_rosterables).empty? %>
+        Array(@self_rosterables).empty? && @work.nil? && participation_html.blank? &&
+        Array(@overview&.closed_campaigns).empty? %>
     <div class="lecture-home-empty" data-testid="lecture-home-fallback-card">
       <h2 class="h5 mb-2"><%= t("registration.lecture.home.empty_title") %></h2>
       <% if @subscribed %>

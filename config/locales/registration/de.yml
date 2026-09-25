@@ -372,10 +372,8 @@ de:
         title: "Regeln für dieses Anmeldeverfahren"
         registration_title: "Voraussetzungen für die Anmeldung"
         registration_description: "Diese Regeln müssen erfüllt sein, damit Du Dich anmelden kannst."
-        registration_empty: "Für die Anmeldung gibt es keine zusätzlichen Regeln oder Einschränkungen."
         finalization_title: "Voraussetzungen für die endgültige Zuteilung"
         finalization_description: "Diese Regeln werden bei der endgültigen Zuteilung geprüft."
-        finalization_empty: "Für die endgültige Zuteilung gibt es keine zusätzlichen Prüfungen."
         status:
           fulfilled: "Derzeit erfüllt"
           not_fulfilled: "Derzeit nicht erfüllt"
@@ -432,7 +430,6 @@ de:
         generic_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_finalization_warning_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
         generic_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hast Du die Voraussetzung <em>%{requirement}</em> nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
-      withdraw_first: "Zuerst zurückziehen"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
       submitted_pref: "Deine eingereichte Auswahl"
@@ -490,6 +487,8 @@ de:
         preference_fulfilled: "Dein %{rank} Wunsch."
         outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
       summary:
+        load_failed: "Die Optionen konnten nicht geladen werden."
+        retry: "Erneut versuchen"
         registered: "Angemeldet"
         preferences_saved: "Wünsche gespeichert"
         full: "Keine Plätze frei"
@@ -668,11 +667,6 @@ de:
         news_indicator: "Neue Updates auf Home"
         attachment_download: "Programm herunterladen (PDF)"
         attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
-        staff_registration_hint: >-
-          Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und
-          ihren eigenen Status (offene Anmeldungen, zugeteilte Gruppe). Diese
-          Ansicht ist für jede Person individuell und wird Dir deshalb hier
-          nicht angezeigt.
         staff_registration_manage: "Anmeldeverfahren verwalten"
         intro_empty: >-
           Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und

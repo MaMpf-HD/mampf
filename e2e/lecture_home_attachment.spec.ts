@@ -22,9 +22,12 @@ test("teacher puts a program on the home page and a student can open it", async 
 
   await expect(teacher.page.getByRole("link", { name: "manuscript.pdf" })).toBeVisible();
 
+  const errors: string[] = [];
+  student.page.on("pageerror", error => errors.push(error.message));
   await new CampaignRegistrationPage(student.page, lecture.id).goto();
   const offer = student.page.getByRole("link", { name: "Download program (PDF)" });
   await expect(offer).toBeVisible();
+  expect(errors).toEqual([]);
   const response = await student.page.request.get(await offer.getAttribute("href") ?? "");
   expect(response.ok()).toBe(true);
   expect((await response.body()).equals(readFileSync("e2e/files/manuscript.pdf")))

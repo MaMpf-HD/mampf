@@ -231,6 +231,36 @@ RSpec.describe(ParticipationComponent, type: :component) do
         .to include("1st #{second.title} · 2nd #{first.title}")
     end
 
+    it "keeps every ranked choice while the allocation awaits finalization" do
+      campaign = create(:registration_campaign, :preference_based, :processing,
+                        campaignable: lecture, items_count: 2)
+      first, second = campaign.registration_items.order(:id).to_a
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: first,
+                                                          user: user, preference_rank: 1)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: second, user: user,
+                                              preference_rank: 2)
+
+      rendered = render_inline(described_class.new(lecture: lecture, user: user))
+
+      expect(rendered.text).to include("Waiting for allocation")
+      expect(rendered.text.squish).to include("1st #{first.title} · 2nd #{second.title}")
+    end
+
+    it "keeps the allocation pending for a place assigned outside the choices" do
+      campaign = create(:registration_campaign, :preference_based, :processing,
+                        campaignable: lecture, items_count: 1)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first,
+             user: user, preference_rank: nil)
+
+      rendered = render_inline(described_class.new(lecture: lecture, user: user))
+
+      expect(rendered.text).to include("Waiting for allocation")
+    end
+
     it "says that a first come, first served place is checked again" do
       campaign = create(:registration_campaign, :first_come_first_served, :closed,
                         campaignable: lecture, items_count: 1)

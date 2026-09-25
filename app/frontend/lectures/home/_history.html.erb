@@ -11,7 +11,11 @@
               <span><%= student_registration_campaign_title(campaign) %></span>
             </div>
             <div class="lecture-home-row-line">
-              <%= t("lecture_home.history.#{campaign.completed? ? "completed" : "ended"}",
+              <% key = if campaign.completed? then "completed"
+                       elsif campaign.registration_deadline.future? then "closed_early"
+                       else "ended"
+                       end %>
+              <%= t("lecture_home.history.#{key}",
                     deadline: format_date(campaign.registration_deadline)) %>
             </div>
           </div>

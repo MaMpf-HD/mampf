@@ -70,8 +70,6 @@ module Lectures
           current_ability.can?(:create, @lecture)
       end
 
-      # Open campaigns come as collapsed rows: their rules and the student's own
-      # registrations, not their options.
       def load_student_registration
         @overview = ::UserRegistrations::LectureOverview.new(@lecture, current_user)
         @campaign_summaries = if current_ability.can?(:create, @lecture)
@@ -113,26 +111,8 @@ module Lectures
         @managed_campaigns = Registration::Campaign.where(campaignable: @lecture)
                                                    .includes(registration_items: :registerable)
                                                    .order(:registration_deadline).to_a
-        @campaign_counts = campaign_counts
+        @campaign_counts = CampaignCounts.new(@managed_campaigns).to_h
         @lecture_backlog = MarkingBacklog.new(@lecture)
-      end
-
-      # People per campaign in the terms of its state: registered or with
-      # preferences while it runs, on the roster once it is finalized.
-      def campaign_counts
-        registered = Registration::UserRegistration
-                     .where(registration_campaign_id: @managed_campaigns.map(&:id))
-                     .where.not(status: :rejected)
-                     .group(:registration_campaign_id)
-                     .distinct.count(:user_id)
-        @managed_campaigns.to_h do |campaign|
-          count = if campaign.completed?
-            campaign.registration_items.sum { |item| item.registerable.roster_entries_count }
-          else
-            registered.fetch(campaign.id, 0)
-          end
-          [campaign.id, count]
-        end
       end
 
       def next_exam

@@ -40,8 +40,8 @@ module UserRegistrations
         ].compact
       end
 
-      # Only a chosen tutorial would take the student out of one they may not
-      # leave; a talk or a cohort sits next to it.
+      # Only tutorials are exclusive within a lecture, so only a chosen tutorial
+      # conflicts with a tutorial the student may not leave.
       def check_unremovable_for_chosen(pref_items)
         chosen = @campaign.registration_items.where(id: pref_items.map(&:id))
                           .includes(:registerable)

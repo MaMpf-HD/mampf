@@ -57,7 +57,6 @@ module UserRegistrationsHelper
     t("registration.user_registration.options.free", free: free, capacity: capacity)
   end
 
-  # Status badges on the lecture home page: ok, info, warn, bad.
   def lecture_home_badge_class(kind)
     "lecture-home-badge lecture-home-badge--#{kind}"
   end
@@ -87,8 +86,6 @@ module UserRegistrationsHelper
       count: preference_rank_count(items))
   end
 
-  # Whether an open campaign waits for the student and lets them act: nothing
-  # registered or chosen yet, the rules met, and a place left to take.
   def registration_needs_action?(details)
     campaign = details.campaign
     return false if Array(details.own_registrations).any? do |registration|
@@ -108,8 +105,6 @@ module UserRegistrationsHelper
     student_visible_campaign?(campaign) && !campaign.open_for_registrations?
   end
 
-  # The student's own options first, then those they can still take, then
-  # the ones they cannot, full ones last; "Talk 2" before "Talk 10".
   def sorted_student_registration_items(campaign, items, user)
     registered = Registration::UserRegistration.confirmed
                                                .where(user_id: user.id,

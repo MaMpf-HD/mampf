@@ -227,6 +227,21 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  describe "a campaign closed before its deadline" do
+    it "says so instead of naming the deadline as its end" do
+      create(:registration_campaign, :closed, campaignable: lecture,
+                                              registration_deadline: 1.week.from_now,
+                                              description: "Early tutorial registration")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include(
+        I18n.t("lecture_home.history.closed_early", deadline: "DEADLINE").split("DEADLINE").first
+      )
+    end
+  end
+
   describe "GET /lectures/:id/home_attachment" do
     it "streams the pdf to anyone who may see the home page" do
       attach_home_pdf(lecture).save!

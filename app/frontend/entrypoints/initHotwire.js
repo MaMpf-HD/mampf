@@ -144,6 +144,8 @@ import LectureNewsController from "~/lectures/home/lecture_news.controller.js";
 window.Stimulus.register("lecture-news", LectureNewsController);
 import LectureIntroController from "~/lectures/home/lecture_intro.controller.js";
 window.Stimulus.register("lecture-intro", LectureIntroController);
+import ParticipationFocusController from "~/lectures/home/participation_focus.controller.js";
+window.Stimulus.register("participation-focus", ParticipationFocusController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);

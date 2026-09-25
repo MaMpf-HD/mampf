@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = [
-    "button", "input", "podiumName", "podiumSpot", "saveButton", "savePrompt",
+    "button", "input", "podiumName", "podiumSpot", "saveButton",
     "saveTooltip", "status",
   ];
 
@@ -99,10 +99,6 @@ export default class extends Controller {
         Boolean(preferences[Number(spot.dataset.rank)]),
       );
     });
-
-    if (this.hasSavePromptTarget) {
-      this.savePromptTarget.hidden = !changed;
-    }
 
     if (this.hasStatusTarget) {
       this.statusTarget.textContent = changed ? this.unsavedLabelValue : this.savedLabelValue;

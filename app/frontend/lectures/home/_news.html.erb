@@ -27,14 +27,14 @@
                       class: "lecture-home-quiet-link removeLectureNotification",
                       remote: true, method: :delete,
                       data: { id: notification.id, lecture: lecture.id,
-                              action: "lecture-news#dismiss" } %>
+                              action: "ajax:success->lecture-news#dismiss" } %>
         </div>
       </div>
     </div>
   <% end %>
 
   <% if notifications.size > shown.size %>
-    <p class="lecture-home-news-more">
+    <p class="lecture-home-news-more" data-lecture-news-target="more">
       <%= link_to t("lecture_home.news.more", count: notifications.size - shown.size),
                   lecture_announcements_path(lecture), data: { turbo_frame: "main" } %>
     </p>

@@ -1,9 +1,6 @@
-# Lists a student's own standing in a lecture, one row per thing they take part
-# in or tried to: their groups, talks and exams, registrations that count but
-# are not finalized yet, preferences waiting for the allocation, and the
-# rejections that ended one. A campaign still open for registration says the
-# same in its own row, so its standing is left out here; once the deadline
-# passes it shows up here, and nothing moves out of sight.
+# Lists a student's groups, exams, pending allocations and rejections in a
+# lecture. A campaign still open for registration shows the student's
+# standing in its own row, so that standing is left out here.
 class ParticipationComponent < ViewComponent::Base
   include EligibilityHelper
   include UserRegistrationsHelper
@@ -68,7 +65,7 @@ class ParticipationComponent < ViewComponent::Base
       end
       Row.new(label: campaign.student_facing_title,
               title: t("registration.user_registration.participation.preferences_title"),
-              lines: [wishes.join(" · ")],
+              lines: [wishes.join(" · ").presence].compact,
               badge: [:info, t("registration.user_registration.participation.allocation_pending")])
     end
 
@@ -124,8 +121,8 @@ class ParticipationComponent < ViewComponent::Base
       end
     end
 
-    # Finalized campaigns in which this kind of rejection still stands and
-    # nothing else gave the student a place.
+    # Finalized campaigns in which this kind of rejection is not overridden and
+    # the student has no pending or confirmed registration.
     def rejected_campaigns(scope)
       active_ids = Registration::UserRegistration.where(user_id: @user.id,
                                                         status: [:confirmed, :pending])
@@ -202,9 +199,8 @@ class ParticipationComponent < ViewComponent::Base
       campaign = membership&.source_campaign
       return unless campaign&.preference_based?
 
-      registrations = campaign.user_registrations.where(user_id: @user.id)
-                              .where.not(preference_rank: nil).order(:preference_rank)
-                              .includes(registration_item: :registerable).to_a
+      registrations = @overview.registrations_for(campaign).select(&:preference_rank)
+                               .sort_by(&:preference_rank)
       return if registrations.empty?
 
       fulfilled = registrations.find { |r| r.registration_item.registerable == rosterable }

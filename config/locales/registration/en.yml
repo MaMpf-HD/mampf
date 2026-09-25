@@ -372,10 +372,8 @@ en:
         title: "Policy checks for this registration"
         registration_title: "Checked at registration"
         registration_description: "These checks must be fulfilled before you can register."
-        registration_empty: "There are no additional rules or restrictions for registration."
         finalization_title: "Checked again at finalization"
         finalization_description: "These checks are evaluated again when the registration process is finalized."
-        finalization_empty: "There are no additional checks at finalization."
         status:
           fulfilled: "Currently fulfilled"
           not_fulfilled: "Currently not fulfilled"
@@ -431,7 +429,6 @@ en:
         generic_html: "You do not currently meet the <em>%{requirement}</em> requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
         generic_finalization_warning_html: "You do not currently meet the <em>%{requirement}</em> requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
         generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the <em>%{requirement}</em> requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
-      withdraw_first: "Withdraw first"
       filter_placeholder: "Filter by weekday, time, tutor"
       status_for_registration: "Current statuses of your submitted options"
       submitted_pref: "Your submitted choice(s)"
@@ -489,6 +486,8 @@ en:
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:
+        load_failed: "The options could not be loaded."
+        retry: "Try again"
         registered: "Registered"
         preferences_saved: "Preferences saved"
         full: "No places left"
@@ -666,10 +665,6 @@ en:
         news_indicator: "New updates on Home"
         attachment_download: "Download program (PDF)"
         attachment_missing: "No program is attached to this lecture."
-        staff_registration_hint: >-
-          Below your intro, students see the registration process and their own
-          status (open registrations, the group they were assigned to). That
-          view is personal to each student, so it is not shown to you here.
         staff_registration_manage: "Manage registration processes"
         intro_empty: >-
           Your lecture home page has no welcome text or program yet. Add a short

@@ -153,10 +153,14 @@ RSpec.describe(StandingComponent, type: :component) do
   describe "the compact form" do
     it "keeps the points and the bar and leaves the conditions out" do
       render_inline(described_class.new(standing: standing(rule: rule(:percentage,
-                                                                      percentage: 50)),
+                                                                      percentage: 50),
+                                                           total: 34, due: 36),
                                         compact: true).with_content("Admission open"))
 
-      expect(rendered_content).to include("width: ")
+      expect(rendered_content).to include("34")
+      expect(rendered_content)
+        .to include(I18n.t("submission.hub.standing.of_marked", max: "36"))
+      expect(rendered_content).to include('aria-valuenow="94.44"')
       expect(rendered_content).to include("Admission open")
       expect(rendered_content).not_to include(
         I18n.t("submission.hub.standing.condition_percentage", percentage: "50")

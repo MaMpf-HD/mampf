@@ -1,7 +1,5 @@
-# One open registration campaign on the lecture home page: a collapsed row
-# that says where the student stands in it, and the options to change that
-# once it is opened. The options are loaded only then, unless the page already
-# has them; `part` renders the summary or the body alone for a Turbo Stream.
+# Renders an open campaign as a collapsed row whose options are only loaded
+# when it is opened, so the page does not carry every campaign's options.
 class CampaignCardComponent < ViewComponent::Base
   include EligibilityHelper
 
@@ -35,8 +33,6 @@ class CampaignCardComponent < ViewComponent::Base
     helpers.lecture_home_campaign_path(campaign.campaignable, campaign_id: campaign.id)
   end
 
-  # The options, or a placeholder until the row is first opened and the
-  # options are fetched.
   def body_element(content)
     placeholder = tag.p(t("registration.user_registration.summary.loading"),
                         class: "registration-fold-loading mb-0")
@@ -67,11 +63,12 @@ class CampaignCardComponent < ViewComponent::Base
       items.none?(&:still_has_capacity?)
   end
 
-  # The student's state in this campaign, which the row leads with.
+  # A registration the student holds comes first; a requirement that no longer
+  # holds is explained when the row is opened, next to the option to withdraw.
   def summary_badge
+    return [:ok, t("registration.user_registration.summary.registered")] if registered_items.any?
     return [:bad, t("registration.user_registration.summary.requirement_missing")] if ineligible?
     return [:bad, t("registration.user_registration.summary.blocked")] if blocked?
-    return [:ok, t("registration.user_registration.summary.registered")] if registered_items.any?
     return [:info, t("registration.user_registration.summary.preferences_saved")] if
       preferences_saved?
     return [:info, t("registration.user_registration.summary.full")] if full?
@@ -85,9 +82,9 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def cta_label
+    return t("registration.user_registration.summary.change") if registered_items.any?
     return t("registration.user_registration.summary.details") if
       ineligible? || blocked? || full?
-    return t("registration.user_registration.summary.change") if registered_items.any?
     return t("registration.user_registration.summary.change_preferences") if preferences_saved?
     return t("registration.user_registration.summary.choose") if campaign.preference_based?
     return t("registration.user_registration.summary.register") if exam_campaign?
@@ -142,8 +139,6 @@ class CampaignCardComponent < ViewComponent::Base
                           "registration_title"),
             description: I18n.t("registration.user_registration.policy_overview." \
                                 "registration_description"),
-            empty_text: I18n.t("registration.user_registration.policy_overview." \
-                               "registration_empty"),
             context: :registration,
             policies: eligibility
           ),
@@ -152,8 +147,6 @@ class CampaignCardComponent < ViewComponent::Base
                           "finalization_title"),
             description: I18n.t("registration.user_registration.policy_overview." \
                                 "finalization_description"),
-            empty_text: I18n.t("registration.user_registration.policy_overview." \
-                               "finalization_empty"),
             context: :finalization_warning,
             policies: finalization_eligibility
           )
@@ -169,7 +162,6 @@ class CampaignCardComponent < ViewComponent::Base
     readonly? || ineligible? || blocked?
   end
 
-  # Every option is a tutorial and the student may not leave theirs.
   def blocked?
     return @blocked if defined?(@blocked)
 
@@ -241,11 +233,10 @@ class CampaignCardComponent < ViewComponent::Base
       policies.reject { |policy| policy.dig(:outcome, :pass) }
     end
 
-    def policy_section(title:, description:, empty_text:, context:, policies:)
+    def policy_section(title:, description:, context:, policies:)
       {
         title: title,
         description: description,
-        empty_text: empty_text,
         context: context,
         policies: policies
       }

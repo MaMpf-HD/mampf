@@ -20,8 +20,8 @@ export default class extends Controller {
     this.observer.disconnect();
   }
 
-  // Measured again whenever the text changes size: loaded into the page's
-  // frame, the introduction is laid out before its stylesheet clips it.
+  // Measured again whenever the text changes size: loaded through the
+  // sidebar's frame, the text is laid out before the stylesheet that clips it.
   measure() {
     if (this.element.classList.contains("lecture-home-intro--expanded")) return;
 

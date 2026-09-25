@@ -3,8 +3,8 @@
 @import "../../submissions/components/sheet_news_component";
 @import "../../submissions/components/standing_component";
 
-// The lecture home page in three weights: at most one highlighted thing, what
-// is new on a tinted ground, and everything else as rows under a small label.
+// The lecture home page: at most one focus block, the news block on a tinted
+// background, and every other section as rows under a small label.
 
 .lecture-home {
   display: grid;
@@ -170,9 +170,9 @@
   color: var(--bs-danger-text-emphasis);
 }
 
-// A block lifted to the top because it is due, a registration or marking, is
-// marked the same way everywhere: the rule on top, the blue kicker and a
-// filled button. The hand-ins keep their place and say it with their chip.
+// The focus block (an open campaign, the next exam or marking) has the top
+// border, the blue kicker and a filled button. The hand-ins block stays in
+// place and shows its state through the sheet chip instead.
 .lecture-home-focus {
   display: grid;
   gap: 0.5rem;

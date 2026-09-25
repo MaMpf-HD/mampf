@@ -20,8 +20,6 @@ class StandingComponent < ViewComponent::Base
            :required_points_at_end, :reachable_points, :points_out_of_reach?,
            :required_achievements, to: :standing
 
-  # `compact` leaves out the conditions, which the lecture home page leaves to
-  # the hub; what is passed as content stands at the end.
   def initialize(standing:, compact: false)
     super()
     @standing = standing
