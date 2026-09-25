@@ -50,8 +50,10 @@ module Rosters
     private
 
       def exists?(scopes)
-        union = scopes.map { |scope| scope.select("1").to_sql }.join(" UNION ALL ")
-        ActiveRecord::Base.connection.select_value("SELECT EXISTS (#{union})")
+        union = scopes.map { |scope| scope.select(Arel.sql("1")).arel }
+                      .reduce { |left, right| Arel::Nodes::UnionAll.new(left, right) }
+        query = Arel::SelectManager.new.project(Arel::Nodes::Exists.new(union))
+        ActiveRecord::Base.connection.select_value(query)
       end
 
       def result_scopes
