@@ -6,8 +6,8 @@ class UploadIntent
   LIFETIME = 24.hours
   PURPOSE = "upload_intent".freeze
   HEADER = "HTTP_X_UPLOAD_INTENT".freeze
-  # A manuscript is asked for the seat a hand-in needs, whichever form mints
-  # the intent and whatever action it names (see SubmissionAbility).
+  # Every SubmissionUploader intent asks :upload_manuscript, whatever action
+  # the minting form names, so the upload needs the hand-in's tutorial seat.
   UPLOADER_ACTIONS = { "SubmissionUploader" => :upload_manuscript }.freeze
 
   attr_reader :user_id, :uploader, :target_type, :target_id, :attributes, :action

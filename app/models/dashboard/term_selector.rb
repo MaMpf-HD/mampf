@@ -1,6 +1,5 @@
 module Dashboard
   class TermSelector
-    # Every term there is, oldest first.
     def self.terms
       Term.chronological.to_a
     end

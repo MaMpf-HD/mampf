@@ -9,7 +9,6 @@ module Dashboard
 
     def destroy
       return head(:not_found) unless @lecture
-      # same guard as Dashboard::BookmarksController#create
       return head(:forbidden) if keep_bookmarked? && !@lecture.bookmarkable_by?(current_user)
 
       rejected_registrations.find_each(&:dismiss!)

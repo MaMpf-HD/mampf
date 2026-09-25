@@ -341,7 +341,7 @@ class LecturesController < ApplicationController
     end
 
     def check_for_unlock
-      # Staff bypass the passphrase gate for content.
+      # Students of an open or unlocked lecture pass, and so does its staff.
       return if @lecture.content_accessible_by?(current_user)
 
       # Users who have not unlocked the lecture are sent to its home page

@@ -47,7 +47,7 @@ class Lecture < ApplicationRecord
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
 
-  # a lecture has many users who have bookmarked it (formerly: subscribed it)
+  # a lecture has many users who have bookmarked it
   has_many :lecture_bookmarks, dependent: :destroy
   has_many :dashboard_card_styles, class_name: "Dashboard::CardStyle", dependent: :delete_all
   has_many :users, -> { distinct }, through: :lecture_bookmarks
@@ -283,8 +283,8 @@ class Lecture < ApplicationRecord
   end
 
   # Whether the user may bookmark this lecture without entering its
-  # passphrase. Mirrors Lectures::UnlocksController#create's guard: roster
-  # members need no passphrase.
+  # passphrase. A seat on the lecture's roster outranks the passphrase shared
+  # with everyone.
   def bookmarkable_by?(user)
     return true if bookmarked_by?(user)
     return false unless published? || user.admin || edited_by?(user)
@@ -293,8 +293,8 @@ class Lecture < ApplicationRecord
   end
 
   # Whether the user got past the passphrase, if the lecture has one.
-  # For now, entering the passphrase bookmarks the lecture, so a bookmark is
-  # what unlocks it (see Lectures::UnlocksController).
+  # Entering the passphrase bookmarks the lecture, so a bookmark is what
+  # unlocks it (see Lectures::UnlocksController).
   def unlocked_for?(user)
     !restricted? || bookmarked_by?(user)
   end
