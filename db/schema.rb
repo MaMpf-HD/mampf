@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_25_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1242,6 +1242,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "lecture_id", null: false
+    t.index ["lecture_id"], name: "index_tutorial_memberships_on_lecture_id"
     t.index ["source_campaign_id"], name: "index_tutorial_memberships_on_source_campaign_id"
     t.index ["tutorial_id"], name: "index_tutorial_memberships_on_tutorial_id"
     t.index ["user_id", "lecture_id"], name: "index_tutorial_memberships_on_user_id_and_lecture_id", unique: true
