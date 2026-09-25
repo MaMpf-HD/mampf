@@ -270,6 +270,15 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       expect(response.body).to include('target="student_registration_participation"')
     end
 
+    it "takes the self-enrollment row off once no group is left on offer" do
+      tutorial.update!(self_materialization_mode: :remove_only)
+
+      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+      expect(response.body)
+        .to include(%(action="remove" target="#{SelfEnrollmentComponent::BLOCK_ID}"))
+    end
+
     context "when the tutorial is locked" do
       it "returns a locked error flash" do
         delete self_remove_tutorial_path(camp_tutorial), as: :turbo_stream

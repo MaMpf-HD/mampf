@@ -3,6 +3,7 @@
 # campaigns; `part` renders only the summary or the body for a Turbo Stream.
 class SelfEnrollmentComponent < ViewComponent::Base
   ID = "self_enrollment".freeze
+  BLOCK_ID = "self_enrollment_block".freeze
   SUMMARY_ID = "self_enrollment_summary".freeze
   BODY_ID = "self_enrollment_body".freeze
 

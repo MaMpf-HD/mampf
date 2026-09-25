@@ -147,7 +147,8 @@
     </div>
 
     <% if @self_rosterables.any? %>
-      <div class="registration-folds lecture-home-block">
+      <div id="<%= SelfEnrollmentComponent::BLOCK_ID %>"
+           class="registration-folds lecture-home-block">
         <%= render SelfEnrollmentComponent.new(lecture: @lecture, user: current_user,
                                                rosterables: @self_rosterables) %>
       </div>

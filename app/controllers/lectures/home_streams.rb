@@ -64,8 +64,11 @@ module Lectures
          turbo_stream.replace(body.body_id, html: body.render_in(view_context))]
       end
 
+      # Leaving the last group on offer empties the row, and the row goes.
       def self_enrollment_streams(lecture)
         rosterables = Array(Rosters::SelfRosterOptionsQuery.new(lecture, current_user).call)
+        return [turbo_stream.remove(SelfEnrollmentComponent::BLOCK_ID)] if rosterables.empty?
+
         { summary: SelfEnrollmentComponent::SUMMARY_ID,
           body: SelfEnrollmentComponent::BODY_ID }.map do |part, id|
           turbo_stream.update(
