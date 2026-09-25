@@ -31,7 +31,7 @@
     <div class="row">
       <div class="col-12">
         <%= render partial: 'items/items_list',
-                   locals: { items: @section.visible_items,
+                   locals: { items: @section.visible_items(current_user),
                              section_links: false,
                              content: [] } %>
       </div>

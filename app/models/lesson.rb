@@ -185,19 +185,24 @@ class Lesson < ApplicationRecord
     media.map(&:proper_items_by_time).flatten
   end
 
-  def visible_items
-    media.select(&:visible?)
-         .map(&:proper_items_by_time).flatten.reject(&:hidden)
+  # The lesson's media this user may see; the outline shows their items and
+  # content, so media only for participants stay out of it for everyone else.
+  def visible_media(user)
+    media.select { |medium| medium.visible_for_user?(user) }
   end
 
-  def content_items
-    return visible_items if lecture.content_mode == "video"
+  def visible_items(user)
+    visible_media(user).map(&:proper_items_by_time).flatten.reject(&:hidden)
+  end
+
+  def content_items(user)
+    return visible_items(user) if lecture.content_mode == "video"
 
     script_items
   end
 
-  def content
-    ([details] + media.potentially_visible.map(&:content)).compact - [""]
+  def content(user)
+    ([details] + visible_media(user).map(&:content)).compact - [""]
   end
 
   def singular_medium
