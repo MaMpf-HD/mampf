@@ -7,21 +7,18 @@ module LectureHomeHelper
   SHEET_STATES_TO_ACT_ON = [:nothing_handed_in, :grace_period, :tutor_decides].freeze
   NEWS_SHOWN = 3
 
-  # Picks what the page leads with: of an open campaign the student still has
-  # to register in and a sheet they still have to hand in, whichever is due
-  # first; otherwise their next exam. Nothing when nothing is due.
-  def lecture_home_focus(campaigns:, work:, next_exam:)
+  # Picks what the page leads with: an open campaign the student still has to
+  # register in, else their next exam. Nothing when neither is there.
+  def lecture_home_focus(campaigns:, next_exam:)
     campaign = Array(campaigns).find { |details| registration_needs_action?(details) }
-    sheet = work&.due&.find { |due| due.state.in?(SHEET_STATES_TO_ACT_ON) }
-    candidates = []
-    if campaign
-      candidates << [campaign.campaign.registration_deadline,
-                     Focus.new(kind: :campaign, subject: campaign)]
-    end
-    candidates << [sheet.assignment.deadline, Focus.new(kind: :sheet, subject: sheet)] if sheet
-    return candidates.min_by(&:first).last if candidates.any?
+    return Focus.new(kind: :campaign, subject: campaign) if campaign
 
     Focus.new(kind: :exam, subject: next_exam) if next_exam
+  end
+
+  # Whether the sheet due next still waits for the student.
+  def lecture_home_sheet_due?(work)
+    Array(work&.due).any? { |sheet| sheet.state.in?(SHEET_STATES_TO_ACT_ON) }
   end
 
   def lecture_home_sheet_deadline(sheet)

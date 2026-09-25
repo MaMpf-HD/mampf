@@ -10,6 +10,21 @@ export default class extends Controller {
   static values = { moreLabel: String, lessLabel: String };
 
   connect() {
+    this.measure = this.measure.bind(this);
+    this.observer = new ResizeObserver(this.measure);
+    this.observer.observe(this.textTarget);
+    this.measure();
+  }
+
+  disconnect() {
+    this.observer.disconnect();
+  }
+
+  // Measured again whenever the text changes size: loaded into the page's
+  // frame, the introduction is laid out before its stylesheet clips it.
+  measure() {
+    if (this.element.classList.contains("lecture-home-intro--expanded")) return;
+
     const clipped = this.textTarget.scrollHeight > this.textTarget.clientHeight + 1;
     this.toggleTarget.hidden = !clipped;
   }

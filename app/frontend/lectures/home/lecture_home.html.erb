@@ -3,7 +3,7 @@
 
 <% content_accessible = @subscribed || @can_edit %>
 <% campaigns = Array(@campaign_summaries) %>
-<% focus = lecture_home_focus(campaigns: campaigns, work: @work, next_exam: @next_exam) %>
+<% focus = lecture_home_focus(campaigns: campaigns, next_exam: @next_exam) %>
 <% listed_campaigns = campaigns.reject { |details| focus&.subject == details } %>
 
 <div class="container-md small-width lecture-home" data-testid="lecture-home">
@@ -96,14 +96,14 @@
   <% if backlog&.entries&.any? %>
     <%= render "lectures/home/marking", lecture: @lecture, backlog: backlog,
                                         per_tutorial: @tutor_backlog.present? %>
-  <% elsif focus && focus.kind != :sheet %>
+  <% elsif focus %>
     <%= render "lectures/home/focus", focus: focus, certification: @certification %>
   <% end %>
 
   <% if @work %>
     <%= render "lectures/home/work", lecture: @lecture, work: @work,
                                      certification: @certification,
-                                     highlighted: focus&.kind == :sheet %>
+                                     sheet_due: lecture_home_sheet_due?(@work) %>
   <% end %>
 
   <% if @notifications.present? || (@lecture.forum? && @new_topics_count.positive?) %>

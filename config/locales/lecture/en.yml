@@ -23,13 +23,12 @@ en:
       less: "Show less"
     focus:
       campaign: "Registration open"
-      sheet: "Your next hand-in"
       exam: "Your next exam"
       open_sheet: "Go to your hand-in"
     work:
       all: "All hand-ins"
       nothing_due: "No sheet is open right now."
-      title: "Your work"
+      title: "Your hand-ins"
       due: "Due %{deadline}"
       admission:
         open: "Admission not decided yet"

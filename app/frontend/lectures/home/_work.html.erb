@@ -1,11 +1,9 @@
-<%# locals: (lecture:, work:, certification:, highlighted:) %>
+<%# locals: (lecture:, work:, certification:, sheet_due:) %>
 <% due = Array(work.due) %>
-<section class="<%= class_names("lecture-home-work", "lecture-home-work--focus": highlighted) %>"
-         aria-labelledby="work-heading" data-testid="lecture-home-work">
+<section class="lecture-home-work" aria-labelledby="work-heading"
+         data-testid="lecture-home-work">
   <div class="lecture-home-label-line">
-    <h2 class="<%= highlighted ? "lecture-home-kicker" : "lecture-home-label" %>" id="work-heading">
-      <%= highlighted ? t("lecture_home.focus.sheet") : t("lecture_home.work.title") %>
-    </h2>
+    <h2 class="lecture-home-label" id="work-heading"><%= t("lecture_home.work.title") %></h2>
     <%= link_to t("lecture_home.work.all"), lecture_submissions_path(lecture),
                 class: "lecture-home-quiet-link", data: { turbo_frame: "main" } %>
   </div>
@@ -23,7 +21,7 @@
           <p class="lecture-home-focus-line"><%= lecture_home_sheet_deadline(sheet) %></p>
         <% end %>
         <%= link_to t("lecture_home.focus.open_sheet"), lecture_submissions_path(lecture),
-                    class: highlighted ? "btn btn-primary" : "btn btn-outline-primary",
+                    class: sheet_due ? "btn btn-primary" : "btn btn-outline-primary",
                     data: { turbo_frame: "main" } %>
       <% else %>
         <p class="lecture-home-focus-line mb-0"><%= t("lecture_home.work.nothing_due") %></p>

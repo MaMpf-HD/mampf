@@ -3,7 +3,7 @@ import { createReleasedLecture, subscribeToLecture } from "./user_registration/h
 import { CampaignRegistrationPage } from "./page-objects/campaign_registrations_page";
 
 test.describe("lecture home", () => {
-  test("leads with the sheet the student still has to hand in", async ({
+  test("says which sheet the student still has to hand in", async ({
     factory,
     student,
   }) => {
@@ -17,10 +17,10 @@ test.describe("lecture home", () => {
 
     await new CampaignRegistrationPage(student.page, lecture.id).goto();
 
-    const focus = student.page.getByRole("region", { name: "Your next hand-in" });
-    await expect(focus).toContainText("Sheet 3");
-    await expect(focus).toContainText("Nothing handed in yet");
-    await expect(focus.getByRole("link", { name: "Go to your hand-in" })).toBeVisible();
+    const handIns = student.page.getByRole("region", { name: "Your hand-ins" });
+    await expect(handIns).toContainText("Sheet 3");
+    await expect(handIns).toContainText("Nothing handed in yet");
+    await expect(handIns.getByRole("link", { name: "Go to your hand-in" })).toBeVisible();
   });
 
   test("takes an announcement off the page once it is read", async ({

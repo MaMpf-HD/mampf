@@ -1,49 +1,44 @@
 require "rails_helper"
 
 RSpec.describe(LectureHomeHelper, type: :helper) do
-  let(:campaign) { double(campaign: double(registration_deadline: 5.days.from_now)) }
+  let(:campaign) { double(campaign: double) }
   let(:exam) { double }
 
-  def sheet(state, due_in)
-    double(state: state, assignment: double(deadline: due_in.from_now))
-  end
-
-  def work(*due)
-    double(due: due)
+  def work(*states)
+    double(due: states.map { |state| double(state: state) })
   end
 
   before do
     helper.extend(UserRegistrationsHelper)
-    allow(helper).to receive(:registration_needs_action?).and_return(true)
   end
 
-  it "leads with the campaign when it is due before the sheet" do
-    focus = helper.lecture_home_focus(campaigns: [campaign],
-                                      work: work(sheet(:nothing_handed_in, 7.days)),
-                                      next_exam: exam)
+  describe "#lecture_home_focus" do
+    it "leads with a campaign the student still has to register in" do
+      allow(helper).to receive(:registration_needs_action?).and_return(true)
 
-    expect(focus.kind).to eq(:campaign)
+      expect(helper.lecture_home_focus(campaigns: [campaign], next_exam: exam).kind)
+        .to eq(:campaign)
+    end
+
+    it "leads with the next exam when no campaign waits" do
+      allow(helper).to receive(:registration_needs_action?).and_return(false)
+
+      expect(helper.lecture_home_focus(campaigns: [campaign], next_exam: exam).kind)
+        .to eq(:exam)
+    end
+
+    it "leads with nothing when nothing is due" do
+      expect(helper.lecture_home_focus(campaigns: [], next_exam: nil)).to be_nil
+    end
   end
 
-  it "leads with the sheet when it is due first" do
-    focus = helper.lecture_home_focus(campaigns: [campaign],
-                                      work: work(sheet(:nothing_handed_in, 2.days)),
-                                      next_exam: exam)
+  describe "#lecture_home_sheet_due?" do
+    it "is true while the sheet due next is not handed in" do
+      expect(helper.lecture_home_sheet_due?(work(:nothing_handed_in))).to be(true)
+    end
 
-    expect(focus.kind).to eq(:sheet)
-  end
-
-  it "passes over a sheet that is handed in already" do
-    allow(helper).to receive(:registration_needs_action?).and_return(false)
-
-    focus = helper.lecture_home_focus(campaigns: [campaign],
-                                      work: work(sheet(:handed_in, 2.days)),
-                                      next_exam: exam)
-
-    expect(focus.kind).to eq(:exam)
-  end
-
-  it "leads with nothing when nothing is due" do
-    expect(helper.lecture_home_focus(campaigns: [], work: nil, next_exam: nil)).to be_nil
+    it "is false once it is handed in" do
+      expect(helper.lecture_home_sheet_due?(work(:handed_in))).to be(false)
+    end
   end
 end

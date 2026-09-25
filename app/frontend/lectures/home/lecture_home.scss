@@ -170,17 +170,14 @@
   color: var(--bs-danger-text-emphasis);
 }
 
-// What is due now, whether a registration, a sheet or marking, is marked the
-// same way everywhere: the rule on top, the blue kicker and a filled button.
-.lecture-home-focus,
-.lecture-home-work--focus {
-  padding-top: 1rem;
-  border-top: 3px solid var(--bs-primary);
-}
-
+// A block lifted to the top because it is due, a registration or marking, is
+// marked the same way everywhere: the rule on top, the blue kicker and a
+// filled button. The hand-ins keep their place and say it with their chip.
 .lecture-home-focus {
   display: grid;
   gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 3px solid var(--bs-primary);
 }
 
 .lecture-home-kicker {
