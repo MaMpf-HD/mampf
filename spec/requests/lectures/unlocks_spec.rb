@@ -27,6 +27,15 @@ RSpec.describe("Lectures::Unlocks", type: :request) do
     expect(lecture.unlocked_for?(user.reload)).to be(false)
   end
 
+  it "stops guessing the passphrase after ten attempts a minute" do
+    10.times { unlock(lecture, passphrase: "wrong") }
+
+    unlock(lecture, passphrase: "secret")
+
+    expect(flash[:alert]).to eq(I18n.t("registration.lecture.home.unlock_too_many_attempts"))
+    expect(lecture.unlocked_for?(user.reload)).to be(false)
+  end
+
   it "redirects with an alert also for Turbo form submissions" do
     post(lecture_unlock_path(lecture),
          params: { passphrase: "wrong" },

@@ -683,6 +683,8 @@ de:
           Diese Veranstaltung ist passwortgeschützt. Als Mitglied der
           Veranstaltung kannst du ihre Materialien ohne Passwort entsperren.
         unlock: "Entsperren"
+        unlock_too_many_attempts: >-
+          Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.
   activerecord:
     errors:
       models:

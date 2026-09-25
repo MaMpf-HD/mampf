@@ -8,6 +8,14 @@ RSpec.describe("Dashboard::Terms", type: :request) do
   end
 
   describe "GET /dashboard/term" do
+    it "sends a plain page request to the start page for that term" do
+      term = create(:term, :winter, year: 2025)
+
+      get dashboard_term_path(term: term.dashboard_param)
+
+      expect(response).to redirect_to(root_path(term: term.dashboard_param))
+    end
+
     it "swaps the term-dependent regions in place for the given term" do
       other_term = create(:term, :winter, year: 2025)
       here = create(:lecture, :released_for_all,

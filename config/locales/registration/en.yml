@@ -680,6 +680,8 @@ en:
           This lecture is protected by a password. As a member of the lecture,
           you can unlock its materials without entering it.
         unlock: "Unlock"
+        unlock_too_many_attempts: >-
+          Too many attempts. Please wait a moment and try again.
   activerecord:
     errors:
       models:

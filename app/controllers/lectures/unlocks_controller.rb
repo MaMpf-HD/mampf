@@ -1,7 +1,16 @@
 module Lectures
-  # Unlocks a passphrase-protected lecture from its home page. For now, the
-  # unlock is stored as a bookmark (see Lecture#unlocked_for?).
+  # Unlocks a passphrase-protected lecture from its home page. The unlock is
+  # stored as a bookmark (see Lecture#unlocked_for?).
   class UnlocksController < ApplicationController
+    # A passphrase is shared by the whole lecture, so guessing it is throttled.
+    rate_limit to: 10, within: 1.minute, only: :create,
+               by: -> { current_user&.id || request.remote_ip },
+               with: lambda {
+                 redirect_to(lecture_home_path(params[:lecture_id]),
+                             alert: t("registration.lecture.home.unlock_too_many_attempts"),
+                             status: :see_other)
+               }
+
     before_action :set_lecture
 
     def create
@@ -11,7 +20,6 @@ module Lectures
                                       status: :see_other)
       end
 
-      # Roster members need no passphrase, see Lecture#bookmarkable_by?.
       unless @lecture.bookmarkable_by?(current_user) || passphrase_matches?
         return redirect_to(lecture_home_path(@lecture),
                            alert: t("errors.profile.passphrase"),
@@ -29,11 +37,13 @@ module Lectures
         @lecture = Lecture.find_by(id: params[:lecture_id])
         return if @lecture
 
-        redirect_to root_path, alert: t("controllers.no_lecture")
+        redirect_to root_path, alert: t("controllers.no_lecture"), status: :see_other
       end
 
       def passphrase_matches?
-        @lecture.passphrase == params[:passphrase]
+        @lecture.passphrase.present? &&
+          ActiveSupport::SecurityUtils.secure_compare(@lecture.passphrase,
+                                                      params[:passphrase].to_s)
       end
   end
 end
