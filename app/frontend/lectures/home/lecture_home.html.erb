@@ -23,14 +23,6 @@
           <%= @lecture.teacher.name %>
         <% end %>
       <% end %>
-      <% if current_user.admin || current_user.in?(@lecture.editors_with_inheritance) %>
-        <%= link_to edit_lecture_path(@lecture), id: "lecture-edit", class: "text-reset ms-1",
-                                                 title: t("buttons.edit"),
-                                                 "aria-label": t("buttons.edit"),
-                                                 data: lecture_mode_switch_data do %>
-          <i class="far fa-edit" aria-hidden="true"></i>
-        <% end %>
-      <% end %>
     </p>
     <h1 class="lecture-home-title" id="lecture-title"><%= @lecture.title_term_info_no_type %></h1>
   </header>
