@@ -24,7 +24,7 @@
         padding: 0;
         border: 0;
         border-radius: 1px;
-        background-color: var(--washi-tape-color, #e9ecef);
+        background-color: var(--washi-tape-color, var(--bs-secondary-bg));
         background-image: linear-gradient(160deg, rgb(255 255 255 / 22%), transparent 60%); // sheen
         rotate: var(--washi-tape-tilt, 0deg);
         opacity: 0.88;
@@ -89,7 +89,7 @@
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: #6c757d;
+        color: var(--bs-secondary-color);
     }
 
     &__swatches {
@@ -116,7 +116,7 @@
         height: 1.75rem;
         border: 2px solid transparent;
         border-radius: 0.3rem;
-        background-color: var(--washi-tape-color, #e9ecef);
+        background-color: var(--washi-tape-color, var(--bs-secondary-bg));
         box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
         transition: scale 0.15s ease, border-color 0.15s ease;
     }

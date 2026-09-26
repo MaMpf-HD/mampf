@@ -29,7 +29,7 @@ $quick-action-tail-offset: -0.3rem; // half the tail's diagonal, tucked under th
     border: 1px solid var(--quick-action-border);
     border-radius: 0.6rem 0.6rem 0.6rem 0.15rem;
     background: var(--quick-action-bg);
-    color: #343a40;
+    color: var(--bs-gray-800);
     font-size: 0.85rem;
     line-height: 1.4;
     text-decoration: none;
@@ -60,7 +60,7 @@ $quick-action-tail-offset: -0.3rem; // half the tail's diagonal, tucked under th
     &:focus-visible {
         rotate: 0deg;
         translate: 0 -2px;
-        color: #343a40;
+        color: var(--bs-gray-800);
         box-shadow:
             0 1px 2px rgb(0 0 0 / 8%),
             0 8px 18px rgb(0 0 0 / 10%);

@@ -107,18 +107,27 @@
 // The controls pinned to the right edge of a result, over the card's own link.
 // A registered lecture shows only .is-registered; everyone else gets the
 // bookmark toggle, plus a register shortcut while a registration is open.
+// The controls pinned to a result's right edge; the result's text leaves
+// room for up to two of them.
+$result-control-size: 2.25rem;
+$result-control-size-sm: 1.85rem;
+$result-controls-inset: 1.15rem;
+$result-controls-inset-sm: 0.65rem;
+$result-controls-gap: 0.4rem;
+$result-controls-gap-sm: 0.25rem;
+
 .lecture-search-result-controls {
     position: absolute;
     top: 50%;
-    right: 1.15rem;
+    right: $result-controls-inset;
     transform: translateY(-50%);
     z-index: 2;
     display: flex;
-    gap: 0.4rem;
+    gap: $result-controls-gap;
 
     @include media-breakpoint-down(sm) {
-        right: 0.65rem;
-        gap: 0.25rem;
+        right: $result-controls-inset-sm;
+        gap: $result-controls-gap-sm;
     }
 }
 
@@ -131,8 +140,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: $result-control-size;
+    height: $result-control-size;
     padding: 0;
     border: 0;
     border-radius: 50%;
@@ -145,8 +154,8 @@
     transition: color 150ms ease, transform 150ms ease;
 
     @include media-breakpoint-down(sm) {
-        width: 1.85rem;
-        height: 1.85rem;
+        width: $result-control-size-sm;
+        height: $result-control-size-sm;
         font-size: 0.9rem;
     }
 
@@ -223,10 +232,11 @@
 .lecture-search-result-body {
     padding: 1.5em;
     // room for the (up to two) controls pinned to the right edge
-    padding-right: 7em;
+    padding-right: $result-controls-inset + 2 * $result-control-size + $result-controls-gap + 1rem;
 
     @include media-breakpoint-down(sm) {
-        padding-right: 5em;
+        padding-right: $result-controls-inset-sm + 2 * $result-control-size-sm +
+            $result-controls-gap-sm + 0.5rem;
     }
 }
 

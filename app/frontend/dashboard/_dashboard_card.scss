@@ -6,6 +6,7 @@
 $card-border-tint: 78%; // border toned down from the tape color, kept subtler than the strip
 $card-ring-tint: 38%; // hover ring, paler still so it reads as a halo
 $card-ring-width: 5px;
+$card-tape-color: var(--washi-tape-color, var(--bs-border-color));
 $card-rail-width: 12rem;
 
 .dashboard-cards {
@@ -72,7 +73,7 @@ $card-rail-width: 12rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.06em;
-        color: #868e96;
+        color: var(--bs-secondary-color);
     }
 
     &__toggle {
@@ -90,7 +91,7 @@ $card-rail-width: 12rem;
         cursor: pointer;
 
         &:hover {
-            color: #5c636a;
+            color: var(--bs-body-color);
         }
 
         &:focus-visible {
@@ -126,7 +127,7 @@ $card-rail-width: 12rem;
     display: flex;
     flex-direction: column;
     padding: 0.5rem 0.5rem 1rem;
-    border: 2px solid color-mix(in srgb, var(--washi-tape-color, #dee2e6) #{$card-border-tint}, #fff);
+    border: 2px solid color-mix(in srgb, #{$card-tape-color} #{$card-border-tint}, #fff);
     border-radius: 0.75rem;
     background: #fff;
     rotate: var(--dashboard-card-tilt, 0deg);
@@ -147,7 +148,7 @@ $card-rail-width: 12rem;
         // first shadow is the ring, animated in via the transition above
         box-shadow:
             0 0 0 #{$card-ring-width}
-                color-mix(in srgb, var(--washi-tape-color, #dee2e6) #{$card-ring-tint}, #fff),
+                color-mix(in srgb, #{$card-tape-color} #{$card-ring-tint}, #fff),
             0 2px 4px rgb(0 0 0 / 10%),
             0 12px 26px rgb(0 0 0 / 12%);
     }
@@ -161,7 +162,7 @@ $card-rail-width: 12rem;
     &__photo {
         overflow: hidden; // clips the photo, not the tape hanging over the top edge
         border-radius: 0.45rem;
-        background: #f1f3f5;
+        background: var(--bs-tertiary-bg);
     }
 
     &__image {
@@ -188,7 +189,7 @@ $card-rail-width: 12rem;
     }
 
     &__link {
-        color: #212529;
+        color: var(--bs-body-color);
         text-decoration: none;
         transition: color 0.2s ease;
 
@@ -209,7 +210,7 @@ $card-rail-width: 12rem;
     &__subtitle {
         margin-bottom: 0;
         font-size: 0.85rem;
-        color: #6c757d;
+        color: var(--bs-secondary-color);
     }
 
     &__notes {
@@ -223,7 +224,7 @@ $card-rail-width: 12rem;
         align-items: baseline;
         gap: 0.4rem;
         font-size: 0.8rem;
-        color: #495057;
+        color: var(--bs-gray-700);
 
         + .dashboard-card__note {
             margin-top: 0.2rem;
@@ -244,7 +245,7 @@ $card-rail-width: 12rem;
         border: 0;
         border-radius: 50%;
         background: rgb(255 255 255 / 85%);
-        color: #868e96;
+        color: var(--bs-secondary-color);
         line-height: 1;
         text-decoration: none;
         cursor: pointer;
@@ -253,8 +254,8 @@ $card-rail-width: 12rem;
 
         &:hover,
         &:focus-visible {
-            background: #e9ecef;
-            color: #343a40;
+            background: var(--bs-secondary-bg);
+            color: var(--bs-gray-800);
             text-decoration: none; // overrides the global a:hover underline
         }
 

@@ -8,16 +8,13 @@
 @import "./dashboard_progress";
 @import "./dashboard_term_select";
 
-.link-icon {
-    text-decoration: none;
-}
-
-// Fills the first viewport (minus the 56px navbar and main's pt-3); the
-// go-to-search link sticks to its bottom edge via margin-top: auto.
+// Fills the first viewport below the navbar (one nav link high plus its
+// padding) and main's pt-3; the go-to-search link sticks to its bottom edge
+// via margin-top: auto.
 .dashboard-hero {
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 56px - 1rem);
+    min-height: calc(100vh - #{$nav-link-height + 2 * $navbar-padding-y} - #{$spacer});
     padding-left: 1em;
     padding-right: 1em;
 }
