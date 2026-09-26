@@ -3,7 +3,9 @@ import { expect, test } from "./_support/fixtures";
 
 // A lecturer's lecture is theirs on the start page without a subscription;
 // when the term turns, it moves from one fold to the other on its own.
-test("shows a lecturer their lectures of both terms, without subscribing",
+// The dashboard replaced these folds and does not list a lecturer's own
+// lectures yet; the follow-up that brings them back rewrites this test.
+test.fixme("shows a lecturer their lectures of both terms, without subscribing",
   async ({ factory, teacher: { page, user } }) => {
     const currentTerm = await factory.create("term", ["summer", "active"], { year: 2025 });
     const nextTerm = await factory.create("term", ["winter"], { year: 2025 });

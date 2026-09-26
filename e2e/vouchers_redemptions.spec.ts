@@ -122,10 +122,11 @@ async function expectCancelBringsFormBack(page: Page) {
   await expect(page.getByRole("textbox", { name: "Voucher code" })).toBeVisible();
 }
 
-async function expectLectureSubscribed(page: Page) {
-  await page.goto("/main/start");
-  const subscribed = page.getByRole("region", { name: "Further subscribed event series" });
-  await expect(subscribed.getByRole("link", { name: COURSE_TITLE })).toBeVisible();
+/** Opens the dashboard on the lecture's own term, which the factory picks at random. */
+async function expectLectureBookmarked(page: Page, lecture: FactoryBotObject) {
+  await page.goto(`/?term=${lecture.term_id ?? ""}`);
+  const bookmarked = page.getByRole("region", { name: "You bookmarked these" });
+  await expect(bookmarked.getByRole("link", { name: COURSE_TITLE })).toBeVisible();
 }
 
 function notificationList(page: Page): Locator {
@@ -184,7 +185,7 @@ async function redeemWithNothingToClaim(
   await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGES[type])).toBeVisible();
   await expect(student.page.getByRole("link", { name: "Redeem Voucher" })).toBeVisible();
   await redeemVoucher(student.page, role);
-  await expectLectureSubscribed(student.page);
+  await expectLectureBookmarked(student.page, lecture);
 
   if (type === "talk") {
     await teacher.page.goto(`/lectures/${lecture.id}/edit`);
@@ -208,7 +209,7 @@ async function redeemWithSomethingClaimed(
 
   await submitVoucher(student.page, voucher.secure_hash as string);
   await claimAndRedeem(student.page, role, type, [first.title, second.title]);
-  await expectLectureSubscribed(student.page);
+  await expectLectureBookmarked(student.page, lecture);
 
   if (type === "talk") {
     await teacher.page.goto(`/lectures/${lecture.id}/edit`);
@@ -313,7 +314,7 @@ test.describe("editor voucher redemption", () => {
       await submitVoucher(student.page, voucher.secure_hash as string);
       await expect(student.page.getByText(REDEMPTION_TEXTS.editor)).toBeVisible();
       await redeemVoucher(student.page, "editor");
-      await expectLectureSubscribed(student.page);
+      await expectLectureBookmarked(student.page, lecture);
 
       await student.page.goto(peopleTabLink(lecture.id));
       await expect(editorOption(student.page, student.user)).toHaveCount(1);
@@ -349,7 +350,7 @@ test.describe("teacher voucher redemption", () => {
       await submitVoucher(student.page, voucher.secure_hash as string);
       await expect(student.page.getByText(REDEMPTION_TEXTS.teacher)).toBeVisible();
       await redeemVoucher(student.page, "teacher");
-      await expectLectureSubscribed(student.page);
+      await expectLectureBookmarked(student.page, lecture);
 
       await student.page.goto(peopleTabLink(lecture.id));
       await expect(student.page.getByText(
