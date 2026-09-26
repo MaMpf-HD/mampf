@@ -1,11 +1,6 @@
 <%= vite_stylesheet_tag "dashboard/dashboard.scss" %>
 
 <div class="dashboard-hero">
-  <% if @next_term_lecture_count.to_i.positive? %>
-    <%= render partial: "main/start/next_term_banner",
-               locals: { next_term: @next_term,
-                         lecture_count: @next_term_lecture_count } %>
-  <% end %>
   <div class="container-md small-width mt-4">
     <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
                                                 selected: @selected_term,
