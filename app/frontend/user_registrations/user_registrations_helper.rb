@@ -74,6 +74,8 @@ module UserRegistrationsHelper
   def student_registration_instruction(campaign, items = [])
     key = if campaign.exam_campaign?
       "first_come_first_served_instruction_exam"
+    elsif campaign.first_come_first_served? && campaign.roster_group_type == "talks"
+      "first_come_first_served_instruction_talk"
     elsif campaign.first_come_first_served?
       "first_come_first_served_instruction"
     else
@@ -105,27 +107,12 @@ module UserRegistrationsHelper
     student_visible_campaign?(campaign) && !campaign.open_for_registrations?
   end
 
-  def sorted_student_registration_items(campaign, items, user)
-    registered = Registration::UserRegistration.confirmed
-                                               .where(user_id: user.id,
-                                                      registration_item_id: items.map(&:id))
-                                               .joins(:registration_item)
-                                               .pluck(:registration_item_id,
-                                                      "registration_items.registerable_type")
-    registered_ids = registered.map(&:first)
-    registered_types = registered.map(&:second)
-
+  # Keeps the options in the order of the program, the student's own and full
+  # ones included, so a talk's place tells when it is given: "Talk N" carries
+  # the talk's position.
+  def sorted_student_registration_items(items)
     items.natural_sort_by do |item|
-      priority = if item.id.in?(registered_ids)
-        0
-      elsif !item.still_has_capacity?
-        3
-      elsif registrable_now?(campaign, item, registered_types)
-        1
-      else
-        2
-      end
-      [priority, item_display_type(item), item.registerable.title].join(" | ")
+      [item_display_type(item), item.registerable.title].join(" | ")
     end
   end
 
@@ -192,13 +179,6 @@ module UserRegistrationsHelper
   end
 
   private
-
-    def registrable_now?(campaign, item, registered_types)
-      return false unless campaign.open_for_registrations?
-      return true if freely_registerable?(item.registerable_type)
-
-      !item.registerable_type.in?(registered_types)
-    end
 
     def metadata_label_for(col)
       t(col[:header])

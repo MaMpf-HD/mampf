@@ -338,6 +338,7 @@ en:
         exams: "Exam registration"
       eligibility_title: "Eligibility"
       first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
+      first_come_first_served_instruction_talk: "Register for a talk. Final allocation will automatically take place after the registration deadline."
       first_come_first_served_instruction_exam: "Register for this exam. Your place is confirmed right away."
       preference_instruction:
         one: "Rank %{count} option. Allocation is calculated after the deadline."
@@ -502,6 +503,7 @@ en:
         choose: "Choose preferences"
         register: "Register"
         show_and_register: "Show groups"
+        show_talks: "Show talks"
         days_left:
           zero: "ends today"
           one: "1 day left"
@@ -541,6 +543,13 @@ en:
         instruction: "You join these groups right away, without a registration period."
         joined: "Joined"
         join: "Join"
+      self_enrollment_talks:
+        title: "Take a talk yourself"
+        meta:
+          one: "%{count} talk, no deadline"
+          other: "%{count} talks, no deadline"
+        show: "Show talks"
+        instruction: "You take these talks right away, without a registration period."
     allocation:
       violations_table:
         override_pass: "Override to passed"

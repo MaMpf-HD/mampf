@@ -183,11 +183,37 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
       items = talks.reverse.map do |talk|
         create(:registration_item, registration_campaign: campaign, registerable: talk)
       end
-      user = create(:confirmed_user)
 
-      sorted = helper.sorted_student_registration_items(campaign, items, user)
+      sorted = helper.sorted_student_registration_items(items)
 
       expect(sorted.map { |item| item.registerable.position }).to eq((1..10).to_a)
+    end
+
+    it "keeps a full talk in its place" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, :open,
+                        campaignable: seminar)
+      items = [nil, 0, nil].each_with_index.map do |capacity, index|
+        talk = create(:talk, lecture: seminar, position: index + 1, capacity: capacity)
+        create(:registration_item, registration_campaign: campaign, registerable: talk)
+      end
+
+      sorted = helper.sorted_student_registration_items(items.reverse)
+
+      expect(items.second.still_has_capacity?).to be(false)
+      expect(sorted.map { |item| item.registerable.position }).to eq([1, 2, 3])
+    end
+  end
+
+  describe "#student_registration_instruction" do
+    it "asks for a talk in a first come, first served talk campaign" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: seminar)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:talk, lecture: seminar))
+
+      expect(helper.student_registration_instruction(campaign))
+        .to eq(I18n.t("registration.user_registration.first_come_first_served_instruction_talk"))
     end
   end
 

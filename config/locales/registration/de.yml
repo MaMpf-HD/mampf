@@ -338,6 +338,7 @@ de:
         exams: "Klausuranmeldung"
       eligibility_title: "Berechtigung"
       first_come_first_served_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
+      first_come_first_served_instruction_talk: "Melde Dich für einen Vortrag an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
       first_come_first_served_instruction_exam: "Melde Dich für diese Prüfung an. Dein Platz steht sofort fest."
       preference_instruction:
         one: "Ordne %{count} Option nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
@@ -503,6 +504,7 @@ de:
         choose: "Wünsche wählen"
         register: "Anmelden"
         show_and_register: "Gruppen ansehen"
+        show_talks: "Vorträge ansehen"
         days_left:
           zero: "endet heute"
           one: "noch 1 Tag"
@@ -542,6 +544,13 @@ de:
         instruction: "In diese Gruppen trägst Du Dich sofort ein, ohne Anmeldezeitraum."
         joined: "Eingetragen"
         join: "Eintragen"
+      self_enrollment_talks:
+        title: "Selbst einen Vortrag übernehmen"
+        meta:
+          one: "%{count} Vortrag, ohne Frist"
+          other: "%{count} Vorträge, ohne Frist"
+        show: "Vorträge ansehen"
+        instruction: "Diese Vorträge übernimmst Du sofort, ohne Anmeldezeitraum."
     allocation:
       violations_table:
         override_pass: "Auf bestanden setzen"

@@ -100,6 +100,7 @@ class CampaignCardComponent < ViewComponent::Base
     return t("registration.user_registration.summary.change_preferences") if preferences_saved?
     return t("registration.user_registration.summary.choose") if campaign.preference_based?
     return t("registration.user_registration.summary.register") if exam_campaign?
+    return t("registration.user_registration.summary.show_talks") if talk_campaign?
 
     t("registration.user_registration.summary.show_and_register")
   end
@@ -110,6 +111,10 @@ class CampaignCardComponent < ViewComponent::Base
 
   def exam_campaign?
     items.any? && items.all? { |item| item.registerable_type == "Exam" }
+  end
+
+  def talk_campaign?
+    items.any? && items.all? { |item| item.registerable_type == "Talk" }
   end
 
   delegate :eligibility, :finalization_eligibility, :items, :item_preferences,
