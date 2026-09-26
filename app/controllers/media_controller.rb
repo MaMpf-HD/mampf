@@ -34,9 +34,16 @@ class MediaController < ApplicationController
                               :cancel_import_media, :cancel_import_vertex]
   layout :staff_layout
 
-  # The media projects a lecture's sidebar leads to.
-  LECTURE_MEDIA_PROJECTS = ["lesson_material", "script", "exercise", "quiz",
-                            "worked_example", "repetition", "miscellaneous"].freeze
+  # The Lecture predicate telling whether a lecture has media of a project.
+  LECTURE_MEDIA_PREDICATES = {
+    "lesson_material" => :lesson_material?,
+    "script" => :script?,
+    "exercise" => :exercise?,
+    "quiz" => :quiz?,
+    "worked_example" => :worked_example?,
+    "repetition" => :repetition?,
+    "miscellaneous" => :miscellaneous?
+  }.freeze
 
   def current_ability
     @current_ability ||= MediumAbility.new(current_user)
@@ -641,13 +648,11 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
-    # A lecture's media page for a project without media sends to the
-    # lecture's home page, e.g. when the lecture switcher (see
-    # lectures/show/_switcher) leads to it.
+    # The lecture switcher (lectures/show/_switcher) keeps the project when
+    # switching, but the other lecture may have no media in it.
     def check_for_lecture_media
-      project = params[:project]
-      return unless project.in?(LECTURE_MEDIA_PROJECTS)
-      return if @lecture.public_send(:"#{project}?", current_user)
+      predicate = LECTURE_MEDIA_PREDICATES[params[:project]]
+      return if predicate.nil? || @lecture.public_send(predicate, current_user)
 
       redirect_to lecture_home_path(@lecture)
     end

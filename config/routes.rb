@@ -322,14 +322,14 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  # A lecture's home page is where every link to the lecture leads.
+  # GET lecture_path is the lecture home page, resources :lectures has no show.
   get "lectures/:id",
       to: "lectures/home#show",
       as: "lecture_home",
       constraints: { id: /\d+/ },
       defaults: { project: "home" }
 
-  # the former address of the lecture home page, kept for old links
+  # kept for old links to the lecture home page
   get "lectures/:id/home",
       constraints: { id: /\d+/ },
       to: redirect { |params, request|

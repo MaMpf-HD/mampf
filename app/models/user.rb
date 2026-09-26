@@ -654,9 +654,9 @@ class User < ApplicationRecord
     staff_lectures_in([Term.active, nil])
   end
 
-  # The lectures of the active term (and those without a term) the user has
-  # to do with: as staff, participant or via a bookmark. They are offered for
-  # quickly switching between lectures, see lectures/show/_title_bar.
+  # Lectures of the active term (and those without a term) the user teaches,
+  # edits, bookmarked, is on the roster of or applied to. Listed by
+  # lectures/show/_switcher.
   def current_lectures
     [given_lectures, edited_lectures, lectures,
      roster_lectures.or(lectures_with_registration_application)]

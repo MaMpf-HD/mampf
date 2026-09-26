@@ -1,7 +1,25 @@
-import { expect, test } from "./_support/fixtures";
+import { expect, Page, test } from "./_support/fixtures";
 
-// Staff have no administration area; they switch between viewing and editing
-// a lecture right on its pages.
+declare global {
+  interface Window {
+    stillSamePage?: boolean;
+  }
+}
+
+/**
+ * Marks the window. The mark survives only if the page is not loaded anew,
+ * see {@link isSamePage}.
+ */
+async function markPage(page: Page) {
+  await page.evaluate(() => {
+    window.stillSamePage = true;
+  });
+}
+
+async function isSamePage(page: Page) {
+  return page.evaluate(() => window.stillSamePage === true);
+}
+
 test.describe("switching between viewing and editing a lecture", () => {
   test("lets the teacher switch to the edit page and back",
     async ({ factory, teacher: { page, user } }) => {
@@ -18,14 +36,13 @@ test.describe("switching between viewing and editing a lecture", () => {
         .toHaveAttribute("aria-current", "page");
       await expect(sidebar).toBeVisible();
 
-      // a marker on the window survives only if the page is not loaded anew
-      await page.evaluate(() => { (window as any).stillSamePage = true; });
+      await markPage(page);
 
       await toggle.getByRole("link", { name: "Edit" }).click();
       await expect(page).toHaveURL(`/lectures/${lecture.id}/edit`);
       await expect(toggle.getByRole("link", { name: "Edit" }))
         .toHaveAttribute("aria-current", "page");
-      // the magenta of the edit page's tabs
+      // $lecture-edit-color, as on the edit page's tabs
       await expect(toggle.getByRole("link", { name: "Edit" }))
         .toHaveCSS("background-color", "rgb(130, 26, 59)");
       await expect(sidebar).toHaveCount(0);
@@ -38,7 +55,7 @@ test.describe("switching between viewing and editing a lecture", () => {
       await expect(sidebar).toBeVisible();
       await expect(page.locator(".admin-background")).toHaveCount(0);
 
-      expect(await page.evaluate(() => (window as any).stillSamePage)).toBe(true);
+      expect(await isSamePage(page)).toBe(true);
     });
 
   test("switches to editing in place from the pencil on the outline",
@@ -48,12 +65,12 @@ test.describe("switching between viewing and editing a lecture", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/outline`);
-      await page.evaluate(() => { (window as any).stillSamePage = true; });
+      await markPage(page);
       await page.getByRole("main").getByRole("link", { name: "Edit" }).click();
 
       await expect(page).toHaveURL(`/lectures/${lecture.id}/edit`);
       await expect(page.getByTestId("content-tab-btn")).toBeVisible();
-      expect(await page.evaluate(() => (window as any).stillSamePage)).toBe(true);
+      expect(await isSamePage(page)).toBe(true);
     });
 
   test("leads back to the dashboard", async ({ factory, student: { page, user } }) => {
@@ -91,12 +108,12 @@ test.describe("switching between viewing and editing a lecture", () => {
       await expect(bar.getByRole("link", { name: "Topology", exact: true })).toHaveCount(0);
       await bar.getByRole("link", { name: "Analysis", exact: true }).click();
 
-      // the outline is open in the other lecture too, so it stays
+      // the switcher keeps the current page
       await expect(page).toHaveURL(`/lectures/${other.id}/outline`);
       await expect(bar.getByRole("button", { name: /Analysis/ })).toBeVisible();
 
-      // while editing, the switch leads to editing the other lecture, in the
-      // same tab
+      // in edit mode, the switcher leads to the other lecture's edit page and
+      // keeps the edit tab
       await bar.getByRole("link", { name: "Edit" }).click();
       await expect(page).toHaveURL(`/lectures/${other.id}/edit`);
       await page.getByTestId("settings-tab-btn").click();

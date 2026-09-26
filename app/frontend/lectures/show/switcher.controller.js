@@ -1,12 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Keeps the place in the lecture when switching to another one: the same page
- * of the other lecture, e.g. /lectures/3/lesson_materials when on
- * /lectures/1/lesson_materials, along with the query (e.g. the edit page's
- * tab). Pages the other lecture has nothing on send to its home page by
- * themselves. The place lives only on the client (the sidebar and the tabs
- * update the URL), hence it is added to the link just when it is clicked.
+ * Points the clicked lecture link to the current page and query, e.g. from
+ * /lectures/1/outline to /lectures/3/outline. Done on click, since the sidebar
+ * and the edit tabs change the URL without a page load.
  */
 export default class extends Controller {
   keepPlace(event) {
@@ -16,7 +13,8 @@ export default class extends Controller {
     const page = current[1] || "";
     const link = event.currentTarget;
     const target = new URL(link.href);
-    // The link leads to viewing where the user may not edit the other lecture.
+    // In edit mode, the link leads to viewing if the user may not edit the
+    // other lecture. Then the current page does not apply.
     if ((page === "/edit") !== target.pathname.endsWith("/edit")) return;
 
     target.pathname = target.pathname.replace(/^(\/lectures\/\d+).*$/, `$1${page}`);

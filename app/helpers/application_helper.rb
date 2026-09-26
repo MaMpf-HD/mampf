@@ -6,8 +6,7 @@ module ApplicationHelper
     root_path(params: { locale: I18n.locale })
   end
 
-  # The media search for staff: admins have their own in the administration
-  # area, everybody else uses the regular search.
+  # Only admins have the administration area and its search.
   def staff_search_path
     current_user.admin? ? administration_search_path : search_index_path
   end

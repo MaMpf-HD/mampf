@@ -1,8 +1,5 @@
-<%# Everything below the navbar on a lecture's pages. It lives in its own
-    frame, so that staff switch between viewing and editing the lecture
-    without a page load. Viewing shows the sidebar, editing the full width on
-    a dotted background. Turbo swaps only the frame's content, hence the
-    background sits on a wrapper inside. %>
+<%# A frame, so that the mode toggle switches without a page load. Turbo
+    swaps only the frame's content, hence admin-background sits on a wrapper. %>
 <%= turbo_frame_tag "lecture-mode", target: "_top",
                                     class: "d-flex flex-column flex-grow-1" do %>
   <div class="<%= class_names("d-flex flex-column flex-grow-1",

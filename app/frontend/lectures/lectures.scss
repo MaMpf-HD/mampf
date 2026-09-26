@@ -163,8 +163,8 @@ h4.lecture-pane-subheader {
   display: none;
 }
 
-// Title, view/edit switch and actions: left, center and right, so that the
-// switch stays centered however long the title is.
+// Three columns, so that the mode toggle stays centered however long the
+// title is.
 .lecture-title-bar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);

@@ -23,9 +23,9 @@
         <%= page %>
       <% end %>
     <% else %>
-      <div class="d-flex container-fluid flex-grow-1 <%= 'admin-background' if staff_edit_mode %>">
+      <div class="<%= class_names("d-flex container-fluid flex-grow-1",
+                                  "admin-background": staff_edit_mode) %>">
         <div class="row" id="main-content-row">
-          <%# Pages without a lecture have no sidebar, so they use the full width. %>
           <main class="col-12 pt-3" role="main">
             <% if staff_edit_mode %>
               <%= page %>

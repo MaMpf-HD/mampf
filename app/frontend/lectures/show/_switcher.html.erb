@@ -1,7 +1,5 @@
-<%# The lecture's title, which opens a list of the user's other lectures of
-    the current term to switch to, on the same page (see
-    switcher.controller.js). While editing, it switches to editing the other
-    lecture, as far as the user may do so. %>
+<%# In edit mode, a lecture links to its edit page if the user may edit it.
+    switcher.controller.js keeps the current page when switching. %>
 <% lectures = current_user.current_lectures %>
 <% term = Term.active&.compact_title %>
 <div class="dropdown" data-controller="lecture-switcher">

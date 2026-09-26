@@ -488,8 +488,8 @@ class LecturesController < ApplicationController
       redirect_to lecture_home_path(@lecture), alert: I18n.t("controllers.no_test")
     end
 
-    # Pages with nothing to show send to the lecture's home page, e.g. when
-    # the lecture switcher (see lectures/show/_switcher) leads to them.
+    # The lecture switcher (lectures/show/_switcher) keeps the page when
+    # switching, but the other lecture may have nothing to show on it.
     def check_for_announcements
       return if @lecture.announcements.exists?
 
