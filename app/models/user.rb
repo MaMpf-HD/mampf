@@ -646,33 +646,14 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  # lecture that are in the active term
-  # Teachers and editors see their lectures on the start page without
-  # subscribing. As with the subscriptions, the current fold takes the
-  # lectures without a term along.
-  def current_staff_lectures
-    staff_lectures_in([Term.active, nil])
-  end
-
   # Lectures of the active term (and those without a term) the user teaches,
-  # edits, bookmarked, is on the roster of or applied to. Listed by
-  # lectures/show/_switcher.
+  # edits (also as editor of the course), bookmarked, is on the roster of or
+  # applied to. Listed by lectures/show/_switcher.
   def current_lectures
-    [given_lectures, edited_lectures, lectures,
-     roster_lectures.or(lectures_with_registration_application)]
+    [given_lectures, edited_lectures, Lecture.where(course: edited_courses),
+     lectures, roster_lectures.or(lectures_with_registration_application)]
       .flat_map { |scope| lectures_of_term(scope, Term.active) }
       .uniq.natural_sort_by(&:title)
-  end
-
-  def next_term_staff_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    staff_lectures_in(coming)
-  end
-
-  def staff_lecture?(lecture)
-    lecture.teacher == self || edited_lectures.include?(lecture)
   end
 
   # The published lectures whose content this user gets to see as a student:
@@ -976,12 +957,6 @@ class User < ApplicationRecord
       return if program.nil? || program.degree.present?
 
       errors.add(:program_id, :inclusion)
-    end
-
-    def staff_lectures_in(terms)
-      given = given_lectures.where(term: terms).includes(:course, :term)
-      edited = edited_lectures.where(term: terms).includes(:course, :term, :teacher)
-      (given + edited).uniq.natural_sort_by(&:title)
     end
 
     def password_differs_from_current

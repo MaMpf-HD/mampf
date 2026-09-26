@@ -313,6 +313,13 @@ RSpec.describe(User, type: :model) do
         .to contain_exactly(taught, edited, bookmarked, rostered)
     end
 
+    it "includes lectures the user edits as editor of their course" do
+      lecture = create(:lecture, term: term)
+      create(:editable_user_join, user: user, editable: lecture.course)
+
+      expect(user.current_lectures).to contain_exactly(lecture)
+    end
+
     it "leaves out lectures of other terms" do
       create(:lecture, term: create(:term, :winter, year: 2024), teacher: user)
 
