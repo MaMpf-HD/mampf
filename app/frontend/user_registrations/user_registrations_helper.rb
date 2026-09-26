@@ -105,27 +105,17 @@ module UserRegistrationsHelper
     student_visible_campaign?(campaign) && !campaign.open_for_registrations?
   end
 
-  def sorted_student_registration_items(campaign, items, user)
-    registered = Registration::UserRegistration.confirmed
-                                               .where(user_id: user.id,
-                                                      registration_item_id: items.map(&:id))
-                                               .joins(:registration_item)
-                                               .pluck(:registration_item_id,
-                                                      "registration_items.registerable_type")
-    registered_ids = registered.map(&:first)
-    registered_types = registered.map(&:second)
+  # Puts the student's own registration first and keeps the rest in the order
+  # of the program, full or not: "Talk N" carries the talk's position.
+  def sorted_student_registration_items(items, user)
+    registered_ids = Registration::UserRegistration.confirmed
+                                                   .where(user_id: user.id,
+                                                          registration_item_id: items.map(&:id))
+                                                   .pluck(:registration_item_id)
 
     items.natural_sort_by do |item|
-      priority = if item.id.in?(registered_ids)
-        0
-      elsif !item.still_has_capacity?
-        3
-      elsif registrable_now?(campaign, item, registered_types)
-        1
-      else
-        2
-      end
-      [priority, item_display_type(item), item.registerable.title].join(" | ")
+      own = item.id.in?(registered_ids) ? 0 : 1
+      [own, item_display_type(item), item.registerable.title].join(" | ")
     end
   end
 
@@ -192,13 +182,6 @@ module UserRegistrationsHelper
   end
 
   private
-
-    def registrable_now?(campaign, item, registered_types)
-      return false unless campaign.open_for_registrations?
-      return true if freely_registerable?(item.registerable_type)
-
-      !item.registerable_type.in?(registered_types)
-    end
 
     def metadata_label_for(col)
       t(col[:header])

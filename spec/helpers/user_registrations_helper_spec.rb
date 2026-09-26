@@ -185,9 +185,27 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
       end
       user = create(:confirmed_user)
 
-      sorted = helper.sorted_student_registration_items(campaign, items, user)
+      sorted = helper.sorted_student_registration_items(items, user)
 
       expect(sorted.map { |item| item.registerable.position }).to eq((1..10).to_a)
+    end
+
+    it "keeps a full talk in its place and puts the student's own talk first" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, :open,
+                        campaignable: seminar)
+      items = [0, nil, nil].each_with_index.map do |capacity, index|
+        talk = create(:talk, lecture: seminar, position: index + 1, capacity: capacity)
+        create(:registration_item, registration_campaign: campaign, registerable: talk)
+      end
+      user = create(:confirmed_user)
+      create(:registration_user_registration, :confirmed,
+             user: user, registration_campaign: campaign, registration_item: items.last)
+
+      sorted = helper.sorted_student_registration_items(items, user)
+
+      expect(items.first.still_has_capacity?).to be(false)
+      expect(sorted.map { |item| item.registerable.position }).to eq([3, 1, 2])
     end
   end
 
