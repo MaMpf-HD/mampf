@@ -4,9 +4,9 @@ RSpec.describe(LectureSearchResultComponent, type: :component) do
   let(:user) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all) }
 
-  def render_card(show_term: true, **ids)
+  def render_card(show_term: true, term: nil, **ids)
     render_inline(described_class.new(
-                    lecture: lecture, user: user, show_term: show_term,
+                    lecture: lecture, user: user, term: term, show_term: show_term,
                     ids: described_class::PageIds.new(**ids)
                   ))
   end
@@ -21,6 +21,13 @@ RSpec.describe(LectureSearchResultComponent, type: :component) do
     expect(bookmark_button(page)["aria-pressed"]).to eq("false")
     expect(page.css(".lecture-search-result-wrap").first["data-controller"])
       .to eq("bookmark")
+  end
+
+  it "bookmarks for the semester the search is scoped to" do
+    wrapper = render_card(term: create(:term, :summer, year: 2031))
+              .at_css(".lecture-search-result-wrap")
+
+    expect(wrapper["data-bookmark-url-value"]).to end_with("?term=SS31")
   end
 
   it "shows a bookmarked lecture as pressed" do

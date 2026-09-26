@@ -14,11 +14,14 @@ class LectureSearchResultComponent < ViewComponent::Base
 
   with_collection_parameter :lecture
 
-  def initialize(lecture:, ids:, user:, show_term: true)
+  # `term` is the semester the search is scoped to; bookmarking re-renders
+  # the dashboard's "Bookmarked" band for it.
+  def initialize(lecture:, ids:, user:, term:, show_term: true)
     super()
     @lecture = lecture
     @ids = ids
     @user = user
+    @term = term
     @show_term = show_term
   end
 
@@ -71,7 +74,9 @@ class LectureSearchResultComponent < ViewComponent::Base
 
     { class: classes,
       data: { controller: "bookmark",
-              bookmark_url_value: dashboard_bookmark_path(lecture),
+              bookmark_url_value: dashboard_bookmark_path(
+                lecture, term: @term&.dashboard_param
+              ),
               bookmark_bookmarked_value: bookmarked?,
               bookmark_lecture_id_value: lecture.id } }
   end

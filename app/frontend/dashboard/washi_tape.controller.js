@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { sendDashboardRequest } from "./dashboard_request";
 
 /** Opens the color picker for a dashboard card's washi tape and saves a choice. */
 export default class extends Controller {
@@ -53,18 +54,8 @@ export default class extends Controller {
   }
 
   async save(color) {
-    // absent where forgery protection is off, e.g. the test environment
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-    const response = await fetch(this.urlValue, {
-      method: "PATCH",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "X-CSRF-Token": csrfToken,
-      },
-      body: JSON.stringify({ washi_tape: { tape_color: color } }),
-    });
+    const response = await sendDashboardRequest(this.urlValue, "PATCH",
+      { washi_tape: { tape_color: color } });
 
     if (!response.ok) {
       console.error(`washi-tape: the color was not saved (${response.status})`);

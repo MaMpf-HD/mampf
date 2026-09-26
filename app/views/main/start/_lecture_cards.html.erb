@@ -10,6 +10,7 @@
       <%= render(LectureDashboardCardComponent.new(
                     lecture: lecture,
                     user: current_user,
+                    term: @selected_term,
                     activity: @lecture_activity)) %>
     <% end %>
     <% @talks.each do |talk| %>
@@ -24,6 +25,7 @@
       <%= render(LectureDashboardCardComponent.new(
                     lecture: lecture,
                     user: current_user,
+                    term: @selected_term,
                     activity: @lecture_activity,
                     bookmarked: true)) %>
     <% end %>

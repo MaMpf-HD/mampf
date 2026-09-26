@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { sendDashboardRequest } from "~/dashboard/dashboard_request";
 
 /**
  * The bookmark toggle on a lecture search result: adds or removes the lecture
@@ -57,16 +58,7 @@ export default class extends Controller {
   }
 
   async save(method) {
-    // absent where forgery protection is off, e.g. the test environment
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-    const response = await fetch(this.requestUrl(), {
-      method,
-      headers: {
-        "Accept": "text/vnd.turbo-stream.html",
-        "X-CSRF-Token": csrfToken,
-      },
-    });
+    const response = await sendDashboardRequest(this.urlValue, method);
 
     if (!response.ok) {
       this.bookmarkedValue = !this.bookmarkedValue;
@@ -83,14 +75,5 @@ export default class extends Controller {
         bookmarked: this.bookmarkedValue,
       },
     }));
-  }
-
-  // Scopes the change to the semester the dashboard is showing, so the
-  // refreshed band matches the picker above it.
-  requestUrl() {
-    const url = new URL(this.urlValue, window.location.origin);
-    const term = document.getElementById("lecture-search-term-field")?.value;
-    if (term) url.searchParams.set("term", term);
-    return url;
   }
 }

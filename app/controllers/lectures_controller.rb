@@ -276,6 +276,7 @@ class LecturesController < ApplicationController
     # the term on each result card is redundant there and switched off via a
     # hidden field. Other callers (e.g. /search/index) keep it.
     @show_term = params.dig(:search, :show_term) != "0"
+    @search_term = Term.from_dashboard_param(params.dig(:search, :term))
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
@@ -325,7 +326,8 @@ class LecturesController < ApplicationController
 
     def search_result_cards
       LectureSearchResultComponent.with_collection(
-        @lectures, ids: @search_result_ids, user: current_user, show_term: @show_term
+        @lectures, ids: @search_result_ids, user: current_user,
+                   term: @search_term, show_term: @show_term
       )
     end
 

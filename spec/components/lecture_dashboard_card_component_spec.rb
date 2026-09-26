@@ -8,8 +8,16 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
     user.bookmark_lecture!(lecture)
   end
 
-  def render_card(**)
-    render_inline(described_class.new(lecture: lecture, user: user, **))
+  def render_card(term: nil, **)
+    render_inline(described_class.new(lecture: lecture, user: user, term: term, **))
+  end
+
+  it "re-renders the board for its semester when the card is removed" do
+    term = create(:term, :summer, year: 2031)
+    removal = render_card(term: term, bookmarked: true)
+              .at_css("[data-controller='bookmark-removal']")
+
+    expect(removal["data-bookmark-removal-url-value"]).to end_with("?term=SS31")
   end
 
   it "renders the lecture on a tilted card" do

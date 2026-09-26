@@ -4,15 +4,18 @@
 class LectureDashboardCardComponent < ViewComponent::Base
   # `activity` lets the board gather the unread digest once for all cards.
   # `bookmarked` marks a card in the "Bookmarked" band, which gets a remove "x".
-  def initialize(lecture:, user:, activity: nil, bookmarked: false)
+  # `term` is the semester the board shows; removing the card re-renders the
+  # board for it.
+  def initialize(lecture:, user:, term:, activity: nil, bookmarked: false)
     super()
     @lecture = lecture
     @user = user
+    @term = term
     @activity = activity
     @bookmarked = bookmarked
   end
 
-  attr_reader :lecture, :user, :activity, :bookmarked
+  attr_reader :lecture, :user, :term, :activity, :bookmarked
   alias bookmarked? bookmarked
 
   def image_url

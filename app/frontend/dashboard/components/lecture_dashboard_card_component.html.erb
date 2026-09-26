@@ -16,7 +16,7 @@
     <% card.with_corner do %>
       <%= render "dashboard/components/removal_modal",
                  controller: "bookmark-removal",
-                 url: dashboard_bookmark_path(lecture),
+                 url: dashboard_bookmark_path(lecture, term: term&.dashboard_param),
                  lecture_id: lecture.id,
                  icon_title: t("main.start.remove_bookmark"),
                  icon_label: t("main.start.remove_bookmark_for",
@@ -31,7 +31,9 @@
     <% card.with_corner do %>
       <%= render "dashboard/components/removal_modal",
                  controller: "registration-notice-removal",
-                 url: dashboard_registration_notice_path(lecture),
+                 url: dashboard_registration_notice_path(
+                   lecture, term: term&.dashboard_param
+                 ),
                  lecture_id: lecture.id,
                  icon_title: t("main.start.remove_registration_notice"),
                  icon_label: t("main.start.remove_registration_notice_for",
