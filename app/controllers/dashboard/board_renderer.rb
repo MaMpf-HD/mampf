@@ -8,13 +8,15 @@ module Dashboard
     private
 
       # Populates the board's term-dependent instance variables:
-      # @enrolled_lectures, @bookmarked_lectures, @talks, @lecture_activity.
+      # @staff_lectures, @enrolled_lectures, @bookmarked_lectures, @talks,
+      # @lecture_activity.
       def load_board(term)
         @selected_term = term
+        @staff_lectures = current_user.current_staff_lectures(term)
         @enrolled_lectures = current_user.current_enrolled_lectures(term)
         @bookmarked_lectures = current_user.current_bookmarked_lectures(
           term, enrolled: @enrolled_lectures
-        )
+        ) - @staff_lectures
         @talks = current_user.talks.includes(lecture: :term)
                              .select do |talk|
                                talk.lecture.term_id == term&.id &&
@@ -27,7 +29,7 @@ module Dashboard
         # queries by the number of cards.
         @lecture_activity = Dashboard::LectureActivity.new(
           user: current_user,
-          lectures: @enrolled_lectures + @bookmarked_lectures
+          lectures: @staff_lectures + @enrolled_lectures + @bookmarked_lectures
         )
       end
 

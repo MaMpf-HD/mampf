@@ -8,6 +8,7 @@ en:
         You are not registered for any lecture yet, and have not bookmarked
         any. Scroll down to discover new lectures.
       sections:
+        staff: "You are staff in these"
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"

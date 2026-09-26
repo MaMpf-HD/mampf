@@ -650,8 +650,8 @@ class User < ApplicationRecord
   # Teachers and editors see their lectures on the start page without
   # subscribing. As with the subscriptions, the current fold takes the
   # lectures without a term along.
-  def current_staff_lectures
-    staff_lectures_in([Term.active, nil])
+  def current_staff_lectures(term = Term.active)
+    staff_lectures_in([term, nil].uniq)
   end
 
   def next_term_staff_lectures

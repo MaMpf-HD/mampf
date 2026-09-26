@@ -4,6 +4,18 @@
     (BoardRenderer#render_board), so the wrapper keeps its id. %>
 <div id="dashboardLectureCards" class="container-md small-width mb-3">
   <%= render(DashboardSectionComponent.new(
+               title: t("main.start.sections.staff"),
+               testid: "dashboard-staff-lectures")) do %>
+    <% @staff_lectures.each do |lecture| %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    term: @selected_term,
+                    activity: @lecture_activity)) %>
+    <% end %>
+  <% end %>
+
+  <%= render(DashboardSectionComponent.new(
                title: t("main.start.sections.enrolled"),
                testid: "dashboard-enrolled-lectures")) do %>
     <% @enrolled_lectures.each do |lecture| %>
@@ -31,7 +43,7 @@
     <% end %>
   <% end %>
 
-  <% if @enrolled_lectures.empty? && @bookmarked_lectures.empty? && @talks.empty? %>
+  <% if [@staff_lectures, @enrolled_lectures, @bookmarked_lectures, @talks].all?(&:empty?) %>
     <%= tag.div id: "dashboardEmptyState",
                 class: "text-center text-muted my-5",
                 data: { testid: "dashboard-empty-state" } do %>
