@@ -49,31 +49,6 @@
     transition: transform 0.3s ease;
 }
 
-.next-term-banner {
-    width: fit-content;
-    max-width: 100%;
-}
-
-.next-term-banner__content {
-    max-width: min(105ch, calc(100vw - 6rem));
-}
-
-// Top border when stacked (mobile), left border side-by-side (md+).
-.next-term-banner__transition {
-    border-top: var(--bs-border-width) solid var(--bs-border-color);
-    padding-top: 0.5rem;
-}
-
-@include media-breakpoint-up(md) {
-    .next-term-banner__transition {
-        flex: 0 0 30%;
-        border-top: 0;
-        border-left: var(--bs-border-width) solid var(--bs-border-color);
-        padding-top: 0;
-        padding-left: 1.5rem;
-    }
-}
-
 #arrow-go-to-lecture {
     font-size: 1.5em;
     animation: bounce-subtle 2s ease-in-out infinite;

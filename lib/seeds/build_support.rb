@@ -49,7 +49,6 @@ module Seeds
         advance!(semesters)
         Demo::SetupSupport.setup_from_scratch!(homework: false)
         Demo::CampaignSetupSupport.setup!
-        Demo::NextTermBannerSupport.setup!
         Demo::VignettesSupport.setup!
         Demo::DashboardRegistrationSupport.setup!
         add_running_campaigns!
