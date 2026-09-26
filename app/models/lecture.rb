@@ -1121,20 +1121,39 @@ class Lecture < ApplicationRecord
 
     # looks in the cache if there are any media associated *with inheritance*
     # to this lecture and a given project (lesson_material, worked_example etc.)
-    def project_as_user?(project)
-      Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
-        Medium.exists?(sort: medium_sort[project],
-                       released: ["all", "users", "subscribers"],
-                       teachable: self) ||
-          Medium.exists?(sort: medium_sort[project],
-                         released: ["all", "users", "subscribers"],
-                         teachable: lessons) ||
-          Medium.exists?(sort: medium_sort[project],
-                         released: ["all", "users", "subscribers"],
-                         teachable: talks) ||
-          Medium.exists?(sort: medium_sort[project],
-                         released: ["all", "users", "subscribers"],
-                         teachable: course)
+    # The cache answers per release level; whether the user sees media
+    # released to participants is decided outside it, since the cache key
+    # names the lecture and not the user.
+    def project_as_user?(project, user)
+      released_project_media?(project, [self, lessons, talks], "own",
+                              participant: participant?(user)) ||
+        released_project_media?(project, [course], "course",
+                                participant: course_participant?(user))
+    end
+
+    def released_project_media?(project, teachables, origin, participant:)
+      levels = participant ? ["all", "users", "subscribers"] : ["all", "users"]
+      Rails.cache.fetch("#{cache_key_with_version}/#{project}/#{origin}/#{levels.last}") do
+        teachables.any? do |teachable|
+          Medium.exists?(sort: medium_sort[project], released: levels,
+                         teachable: teachable)
+        end
+      end
+    end
+
+    # Memoized because the sidebar asks once per project.
+    def participant?(user)
+      @participant ||= {}
+      @participant.fetch(user.id) do
+        @participant[user.id] = LectureAudience.lectures_of(user).exists?(id: id)
+      end
+    end
+
+    def course_participant?(user)
+      @course_participant ||= {}
+      @course_participant.fetch(user.id) do
+        @course_participant[user.id] =
+          LectureAudience.lectures_of(user).exists?(course_id: course_id)
       end
     end
 
@@ -1146,7 +1165,7 @@ class Lecture < ApplicationRecord
     end
 
     def project?(project, user)
-      return project_as_user?(project) unless edited_by?(user) || user.admin
+      return project_as_user?(project, user) unless edited_by?(user) || user.admin
 
       course_media = if user.in?(course.editors) || user.admin
         Medium.exists?(sort: medium_sort[project],
