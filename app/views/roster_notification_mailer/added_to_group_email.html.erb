@@ -3,7 +3,7 @@
       lecture_title: @lecture&.title || '',
       rosterable_title: @rosterable.title) %>
 <% if @rosterable_link %>
-  <%= t('roster.mailer.link_text_html',
+  <%= t('roster.mailer.link_text_group_html',
         rosterable_link: link_to(t('basics.link'), @rosterable_link)) %>
 <% end %>
 <%= t('roster.mailer.end_mail_html') %>

@@ -1,7 +1,7 @@
 # Triggered whenever a user is added to / removed from / moved between group(s)
 # of a rosterable object
 class RosterNotificationMailer < ApplicationMailer
-  SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk].freeze
+  SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk, Exam].freeze
 
   class << self
     def added(user, rosterable)
@@ -10,17 +10,22 @@ class RosterNotificationMailer < ApplicationMailer
       # A bare lecture roster entry grants no access, so there is nothing to announce.
       return if rosterable.is_a?(Lecture)
 
+      template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
       with(
         rosterable: rosterable,
         recipient: user
-      ).added_to_group_email.deliver_later
+      ).public_send(template).deliver_later
     end
 
     def removed(user, rosterable)
       return log_unsupported(rosterable) unless supported?(rosterable)
 
-      template = rosterable.is_a?(Lecture) ? :removed_from_lecture_email : :removed_from_group_email
-
+      template =
+        case rosterable
+        when Lecture then :removed_from_lecture_email
+        when Exam    then :removed_from_exam_email
+        else              :removed_from_group_email
+        end
       with(
         rosterable: rosterable,
         recipient: user
@@ -30,6 +35,8 @@ class RosterNotificationMailer < ApplicationMailer
     def moved(user, old_rosterable, new_rosterable)
       return log_unsupported(old_rosterable) unless supported?(old_rosterable)
       return log_unsupported(new_rosterable) unless supported?(new_rosterable)
+      return log_unsupported(old_rosterable) if old_rosterable.is_a?(Exam)
+      return log_unsupported(new_rosterable) if new_rosterable.is_a?(Exam)
 
       with(
         old_rosterable: old_rosterable,
@@ -38,6 +45,44 @@ class RosterNotificationMailer < ApplicationMailer
       ).moved_between_groups_email.deliver_later
 
       notify_tutors(user, old_rosterable, new_rosterable)
+    end
+
+    def change_exam_schedule(rosterable)
+      return log_unsupported(rosterable) unless rosterable.is_a?(Exam)
+
+      rosterable.roster_entries.includes(:user).find_each do |entry|
+        with(
+          rosterable: rosterable,
+          recipient: entry.user
+        ).change_exam_schedule_email.deliver_later
+      end
+    end
+
+    def finalized(rosterable, users)
+      return log_unsupported(rosterable) unless supported?(rosterable)
+      # A bare lecture roster entry grants no access, so there is nothing to announce.
+      return if rosterable.is_a?(Lecture)
+
+      template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
+      users.each do |user|
+        with(rosterable: rosterable, recipient: user).public_send(template).deliver_later
+      end
+    end
+
+    def rejected(user, campaign, reasons:)
+      rosterable_of_campaign = campaign.registration_items.first&.registerable
+      return log_unsupported(rosterable_of_campaign) unless supported?(rosterable_of_campaign)
+      return if rosterable_of_campaign.is_a?(Lecture)
+
+      if rosterable_of_campaign.is_a?(Exam)
+        with(rosterable: rosterable_of_campaign,
+             reasons: reasons,
+             recipient: user).rejected_from_exam_email.deliver_later
+      else
+        with(rosterable: rosterable_of_campaign,
+             reasons: reasons,
+             recipient: user).rejected_from_group_email.deliver_later
+      end
     end
 
     def log_unsupported(rosterable)
@@ -75,8 +120,26 @@ class RosterNotificationMailer < ApplicationMailer
     email { t("roster.mailer.roster_added_to_group_email_subject", **subject_vars) }
   end
 
+  def added_to_exam_email
+    email do
+      if @rosterable.is_a?(Exam)
+        @info[:exam_date] = if @rosterable.date
+          I18n.l(@rosterable.date, format: :long)
+        else
+          t("basics.value_not_available")
+        end
+        @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
+      end
+      t("roster.mailer.roster_added_to_exam_email_subject", **subject_vars)
+    end
+  end
+
   def removed_from_group_email
     email { t("roster.mailer.roster_removed_from_group_email_subject", **subject_vars) }
+  end
+
+  def removed_from_exam_email
+    email { t("roster.mailer.roster_removed_from_exam_email_subject", **subject_vars) }
   end
 
   def moved_between_groups_email
@@ -87,12 +150,42 @@ class RosterNotificationMailer < ApplicationMailer
     email { t("roster.mailer.roster_removed_from_lecture_email_subject", **subject_vars) }
   end
 
+  def rejected_from_group_email
+    email do
+      @info[:reason_link] = lecture_home_url(@lecture) if @lecture
+      @info[:reasons] = rejection_reasons(params[:reasons])
+      t("roster.mailer.roster_rejected_from_group_email_subject", **subject_vars)
+    end
+  end
+
+  def rejected_from_exam_email
+    email do
+      @info[:reason_link] = lecture_home_url(@lecture) if @lecture
+      @info[:reasons] = rejection_reasons(params[:reasons])
+      t("roster.mailer.roster_rejected_from_exam_email_subject", **subject_vars)
+    end
+  end
+
   def participant_left_group_email
     email { t("roster.mailer.roster_participant_left_group_email_subject", **subject_vars) }
   end
 
   def participant_joined_group_email
     email { t("roster.mailer.roster_participant_joined_group_email_subject", **subject_vars) }
+  end
+
+  def change_exam_schedule_email
+    email do
+      if @rosterable.is_a?(Exam)
+        @info[:exam_date] = if @rosterable.date
+          I18n.l(@rosterable.date, format: :long)
+        else
+          t("basics.value_not_available")
+        end
+        @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
+      end
+      t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars)
+    end
   end
 
   private
@@ -105,7 +198,8 @@ class RosterNotificationMailer < ApplicationMailer
       @participant     = params[:participant]
       @username        = @recipient.tutorial_name
       @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable)
-      @lecture         = lecture_for_rosterable(@rosterable || @new_rosterable)
+      @lecture ||= lecture_for_rosterable(@rosterable || @new_rosterable)
+      @info = params[:info] || {}
     end
 
     def email
@@ -127,6 +221,10 @@ class RosterNotificationMailer < ApplicationMailer
       }
     end
 
+    def rejection_reasons(reasons)
+      reasons&.join(", ") || nil
+    end
+
     def lecture_for_rosterable(rosterable)
       if rosterable.is_a?(Lecture)
         rosterable
@@ -136,6 +234,8 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def url_for_rosterable(rosterable)
+      return nil if rosterable.nil?
+
       case rosterable
       when Lecture
         lecture_url(rosterable)
@@ -143,6 +243,8 @@ class RosterNotificationMailer < ApplicationMailer
         nil
       when Talk
         talk_url(rosterable)
+      when Exam
+        lecture_home_url(rosterable.lecture)
       else
         raise(ArgumentError,
               "Unknown rosterable type: #{rosterable.class.name}")

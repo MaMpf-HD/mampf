@@ -1,0 +1,11 @@
+<%= t('roster.mailer.roster_change_exam_schedule_email_body_html',
+      name: @username,
+      lecture_title: @lecture&.title || '',
+      rosterable_title: @rosterable.title,
+      exam_date: @info[:exam_date],
+      exam_location: @info[:exam_location]) %>
+<% if @rosterable_link %>
+  <%= t('roster.mailer.link_text_exam_html',
+        rosterable_link: link_to(t('basics.link'), @rosterable_link)) %>
+<% end %>
+<%= t('roster.mailer.end_mail_html') %>

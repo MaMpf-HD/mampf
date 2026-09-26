@@ -332,10 +332,22 @@ de:
       end_mail: |
         Mit freundlichen Grüßen,
         Dein MaMpf-Team
-      link_text_html: |
+      link_text_group_html: |
         <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
-      link_text: |
+      link_text_group: |
         Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}
+      link_text_exam_html: |
+        <p>Du kannst Deine neuen Prüfungsinformationen hier aufrufen: %{rosterable_link}</p>
+      link_text_exam: |
+        Du kannst Deine neuen Prüfungsinformationen hier aufrufen: %{rosterable_link}
+      link_reject_info_html: |
+        <p>Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}</p>
+      link_reject_info: |
+        Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}
+      reject_reasons_html: |
+        Leider konnte Deine Registrierung aus folgendem/folgenden Grund/Gründen nicht angenommen werden: %{reasons}
+      reject_reasons: |
+        Leider konnte Deine Registrierung aus folgendem/folgenden Grund/Gründen nicht angenommen werden: %{reasons}
       roster_added_to_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
@@ -353,6 +365,23 @@ de:
 
         Du nimmst nun an dieser Gruppe teil.
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
+      roster_added_to_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest zur Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
+        </p>
+        <p>
+          Die Prüfung findet am %{exam_date} in %{exam_location} statt.
+        </p>
+      roster_added_to_exam_email_body: |
+        Hallo %{name},
+
+        Du wurdest zur Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ hinzugefügt.
+
+        Die Prüfung findet am %{exam_date} in %{exam_location} statt.
+      roster_added_to_exam_email_subject: 'Zur Prüfung %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
@@ -377,6 +406,25 @@ de:
 
         Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
+      roster_removed_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest aus der Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+          wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_removed_from_exam_email_body: |
+        Hallo %{name},
+
+        Du wurdest aus der Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
+      roster_removed_from_exam_email_subject: 'Aus der Prüfung %{rosterable_title} in %{lecture_title} entfernt'
       roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
@@ -457,3 +505,54 @@ de:
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'
+      roster_change_exam_schedule_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Der Termin der Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> hat sich geändert.
+        </p>
+        <p>
+          Die Prüfung findet nun am <strong>%{exam_date}</strong>
+          in <strong>%{exam_location}</strong> statt.
+        </p>
+        <p>
+          Bitte notiere Dir die neuen Angaben.
+        </p>
+      roster_change_exam_schedule_email_body: |
+        Hallo %{name},
+
+        Der Termin der Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ hat sich geändert.
+
+        Die Prüfung findet nun am %{exam_date} in %{exam_location} statt.
+
+        Bitte notiere Dir die neuen Angaben.
+      roster_change_exam_schedule_email_subject: 'Terminänderung für Prüfung %{rosterable_title} in %{lecture_title}'
+      roster_rejected_from_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung für <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_group_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung für „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_group_email_subject: 'Anmeldung für %{lecture_title} nicht erfolgreich'
+
+      roster_rejected_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung zur Prüfung <strong>%{rosterable_title}</strong>
+          in der Vorlesung <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_exam_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung zur Prüfung „%{rosterable_title}“ in der Vorlesung
+        „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_exam_email_subject: 'Anmeldung zur Prüfung %{rosterable_title} in %{lecture_title} nicht erfolgreich'
+
+      rejected_reason_text_html: |
+        <p>Grund: %{reason}</p>
+      rejected_reason_text: |
+        Grund: %{reason}

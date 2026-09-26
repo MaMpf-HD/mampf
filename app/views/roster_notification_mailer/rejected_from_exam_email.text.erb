@@ -1,0 +1,11 @@
+<%= t('roster.mailer.roster_rejected_from_exam_email_body',
+      name: @username,
+      lecture_title: @lecture&.title || '',
+      rosterable_title: @rosterable.title) %>
+<% if @info[:reason_link].present? %>
+<%= t('roster.mailer.link_reject_info', rosterable_link: @info[:reason_link]) %>
+<% end %>
+<% if @info[:reasons].present? %>
+      <%= t('roster.mailer.reject_reasons',reasons: @info[:reasons]) %>
+<% end %>
+<%= t('roster.mailer.end_mail') %>

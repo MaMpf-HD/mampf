@@ -110,6 +110,8 @@ class ExamsController < ApplicationController
 
     respond_to do |format|
       if @exam.update(update_params)
+        schedule_changed = @exam.saved_change_to_date? || @exam.saved_change_to_location?
+        notify_participants_of_schedule_change if schedule_changed
         reopen_exam_campaign_after_deadline_fix if reopen_after_deadline_fix
         @exam.load_registration_deadline
         format.turbo_stream do
@@ -291,6 +293,10 @@ class ExamsController < ApplicationController
         tasks: tasks,
         task: task
       )
+    end
+
+    def notify_participants_of_schedule_change
+      RosterNotificationMailer.change_exam_schedule(@exam)
     end
 
     def reopen_exam_campaign_after_deadline_fix
