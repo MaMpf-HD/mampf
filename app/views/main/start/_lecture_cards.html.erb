@@ -48,8 +48,9 @@
                 class: "text-center text-muted my-5",
                 data: { testid: "dashboard-empty-state" } do %>
       <p class="mb-0">
-        <%= @selected_term ? t("main.start.no_lectures", term: @selected_term.to_label) :
-                             t("main.start.no_lectures_any_term") %>
+        <% key = current_user.teacher? ? "no_lectures_teacher" : "no_lectures" %>
+        <%= @selected_term ? t("main.start.#{key}", term: @selected_term.to_label) :
+                             t("main.start.#{key}_any_term") %>
       </p>
     <% end %>
   <% end %>
