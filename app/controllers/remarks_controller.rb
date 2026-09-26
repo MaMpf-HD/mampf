@@ -3,7 +3,7 @@ class RemarksController < MediaController
   before_action :set_remark, except: :reassign
   before_action :set_quizzes, only: [:reassign]
   authorize_resource except: :reassign
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= RemarkAbility.new(current_user)

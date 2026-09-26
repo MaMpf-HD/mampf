@@ -1,17 +1,16 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
+<% content_for :lecture_title_bar_actions do %>
+  <%= render partial: "lectures/edit/title_bar_actions",
+             locals: { lecture: @lecture } %>
+<% end %>
+
 <div data-controller="lecture-edit lecture-subscribers"
      data-lecture-subscribers-lecture-value="<%= @lecture.id %>">
 
   <%= turbo_frame_tag "lecture-area", target: "_top",
                       data: { controller: "lecture-highlights" } do %>
-    <!-- Header -->
-    <div class="container small-width">
-      <%= render partial: "lectures/edit/header",
-          locals: { lecture: @lecture } %>
-    </div>
-
     <% active_tab = params[:tab] || "content" %>
     <%= render LectureTabsComponent.new(active_tab) do |component| %>
 

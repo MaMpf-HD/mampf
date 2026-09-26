@@ -7,6 +7,12 @@ de:
         laufende Anmeldung haben — als Benachrichtigung in MaMpf immer, per
         E-Mail jedoch nur diejenigen, die E-Mail-Benachrichtigungen für
         Mitteilungen aktiviert haben.
+    title_bar:
+      back: Zurück zum Dashboard
+    mode_toggle:
+      label: Zwischen Ansehen und Bearbeiten der Veranstaltung wechseln
+      view: Ansehen
+      edit: Bearbeiten
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...

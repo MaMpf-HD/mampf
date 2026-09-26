@@ -139,6 +139,13 @@ class ApplicationController < ActionController::Base
 
   protected
 
+    # Layout for pages where content is edited. Admins keep their
+    # administration area, all other staff edit inside the regular layout
+    # (see layouts/staff).
+    def staff_layout
+      current_user&.admin? ? "administration" : "staff"
+    end
+
     def configure_permitted_parameters
       # add additional paramters to registration
       devise_parameter_sanitizer.permit(:sign_up, keys: [:locale, :consents])

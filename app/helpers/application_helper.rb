@@ -11,6 +11,12 @@ module ApplicationHelper
     Lecture.find_by(id: cookies[:current_lecture_id])
   end
 
+  # The media search for staff: admins have their own in the administration
+  # area, everybody else uses the regular search.
+  def staff_search_path
+    current_user.admin? ? administration_search_path : search_index_path
+  end
+
   # Returns the full title on a per-page basis.
   def full_title(page_title = "")
     return page_title if action_name == "play" && controller_name == "media"

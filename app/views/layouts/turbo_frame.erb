@@ -1,4 +1,14 @@
 <% turbo_frame_id = request.headers["Turbo-Frame"] %>
-<%= turbo_frame_tag(turbo_frame_id =~ /\A[\w-]+\z/ ? turbo_frame_id : nil) do %>
-  <%= yield %>
+<%# Switching from editing back to viewing a lecture replaces the whole
+    "lecture-mode" frame, sidebar included. %>
+<% if turbo_frame_id == "lecture-mode" && @lecture %>
+  <% page = yield %>
+  <%= render layout: "layouts/lecture_mode",
+             locals: { lecture: @lecture, edit_mode: false } do %>
+    <%= page %>
+  <% end %>
+<% else %>
+  <%= turbo_frame_tag(turbo_frame_id =~ /\A[\w-]+\z/ ? turbo_frame_id : nil) do %>
+    <%= yield %>
+  <% end %>
 <% end %>

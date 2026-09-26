@@ -26,7 +26,8 @@
       <% if current_user.admin || current_user.in?(@lecture.editors_with_inheritance) %>
         <%= link_to edit_lecture_path(@lecture), id: "lecture-edit", class: "text-reset ms-1",
                                                  title: t("buttons.edit"),
-                                                 "aria-label": t("buttons.edit") do %>
+                                                 "aria-label": t("buttons.edit"),
+                                                 data: lecture_mode_switch_data do %>
           <i class="far fa-edit" aria-hidden="true"></i>
         <% end %>
       <% end %>
@@ -40,7 +41,8 @@
         <%= link_to edit_lecture_path(@lecture, tab: "home"),
                     class: "float-end text-muted ms-2",
                     title: t("buttons.edit"),
-                    "aria-label": t("buttons.edit") do %>
+                    "aria-label": t("buttons.edit"),
+                    data: lecture_mode_switch_data do %>
           <i class="far fa-edit" aria-hidden="true"></i>
         <% end %>
       <% end %>
@@ -72,7 +74,8 @@
     <p class="lecture-home-intro lecture-home-intro--empty" data-testid="lecture-home-intro-empty">
       <%= Array(@managed_campaigns).any? ? t("registration.lecture.home.intro_empty_campaign") :
                                            t("registration.lecture.home.intro_empty") %>
-      <%= link_to t("admin.lecture.home_intro_add"), edit_lecture_path(@lecture, tab: "home") %>
+      <%= link_to t("admin.lecture.home_intro_add"), edit_lecture_path(@lecture, tab: "home"),
+                  data: lecture_mode_switch_data %>
     </p>
   <% end %>
 

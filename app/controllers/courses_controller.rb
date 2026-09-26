@@ -6,7 +6,7 @@ class CoursesController < ApplicationController
   before_action :check_for_consent, except: [:image]
   before_action :redirect_direct_search_visits, only: [:search]
   authorize_resource except: [:create, :search]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= CourseAbility.new(current_user)

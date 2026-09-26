@@ -9,7 +9,7 @@ class QuizzesController < ApplicationController
   before_action :init_values, only: [:take, :proceed]
   after_action :store_access, only: [:take]
   authorize_resource except: [:new, :update_branching]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= QuizAbility.new(current_user)
@@ -22,7 +22,6 @@ class QuizzesController < ApplicationController
   def edit
     @graph_elements = @quiz.quiz_graph.to_cytoscape.to_json
     @linear = @quiz.quiz_graph.linear?
-    render layout: current_user.layout
   end
 
   def update

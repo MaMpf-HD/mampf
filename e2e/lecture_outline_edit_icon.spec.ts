@@ -10,7 +10,7 @@ test.describe("the edit icon on the outline", () => {
 
     await page.goto(`/lectures/${lecture.id}/outline`);
 
-    await expect(page.getByRole("link", { name: "Edit" })).toBeVisible();
+    await expect(page.getByRole("main").getByRole("link", { name: "Edit" })).toBeVisible();
   });
 
   test("puts it beside the heading, at the heading's size",
@@ -22,7 +22,7 @@ test.describe("the edit icon on the outline", () => {
       await page.goto(`/lectures/${lecture.id}/outline`);
 
       const heading = page.getByRole("heading", { name: "Lecture Contents" });
-      const icon = page.getByRole("link", { name: "Edit" });
+      const icon = page.getByRole("main").getByRole("link", { name: "Edit" });
       await expect(icon).toBeVisible();
 
       const headingBox = await heading.boundingBox();
@@ -43,6 +43,6 @@ test.describe("the edit icon on the outline", () => {
 
     await page.goto(`/lectures/${seminar.id}/outline`);
 
-    await expect(page.getByRole("link", { name: "Edit" })).toBeVisible();
+    await expect(page.getByRole("main").getByRole("link", { name: "Edit" })).toBeVisible();
   });
 });

@@ -1,0 +1,37 @@
+<%# Everything below the navbar on a lecture's pages. It lives in its own
+    frame, so that staff switch between viewing and editing the lecture
+    without a page load. Viewing shows the sidebar, editing the full width on
+    a dotted background. Turbo swaps only the frame's content, hence the
+    background sits on a wrapper inside. %>
+<%= turbo_frame_tag "lecture-mode", target: "_top",
+                                    class: "d-flex flex-column flex-grow-1" do %>
+  <div class="<%= class_names("d-flex flex-column flex-grow-1",
+                              "admin-background": edit_mode) %>">
+    <%= render partial: "lectures/show/title_bar",
+               locals: { lecture: lecture, edit_mode: edit_mode } %>
+
+    <div class="d-flex container-fluid flex-grow-1">
+      <div class="row" id="main-content-row">
+        <% if edit_mode %>
+          <main class="col-12 pt-3" role="main">
+            <%= yield %>
+          </main>
+        <% else %>
+          <div id="sidebar-container" class="col-sm-4 col-md-3 col-xl-2 mt-sm-3">
+            <nav id="sidebar">
+              <%= render partial: "lectures/show/sidebar",
+                         locals: { lecture: lecture } %>
+            </nav>
+          </div>
+
+          <main class="col-sm-8 ml-auto col-md-9 col-xl-10 pt-3" role="main">
+            <%= turbo_frame_tag "main", target: "_top",
+                                        data: { turbo_action: "advance" } do %>
+              <%= yield %>
+            <% end %>
+          </main>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

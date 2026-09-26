@@ -31,7 +31,7 @@ class MediaController < ApplicationController
                               :fill_medium_preview, :render_medium_actions,
                               :render_import_media, :render_import_vertex,
                               :cancel_import_media, :cancel_import_vertex]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= MediumAbility.new(current_user)
@@ -71,7 +71,6 @@ class MediaController < ApplicationController
 
   def edit
     @manuscript = Manuscript.new(@medium)
-    render layout: current_user.layout
   end
 
   def create

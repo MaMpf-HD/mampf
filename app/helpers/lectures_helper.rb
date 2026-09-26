@@ -1,5 +1,11 @@
 # Lectures Helper
 module LecturesHelper
+  # Data attributes for links that switch a lecture between viewing and
+  # editing in place, see layouts/_lecture_mode.
+  def lecture_mode_switch_data
+    { turbo_frame: "lecture-mode", turbo_action: "advance" }
+  end
+
   def registration_sidebar_visible?(lecture)
     return false unless lecture && user_signed_in?
 

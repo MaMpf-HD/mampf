@@ -898,12 +898,6 @@ class User < ApplicationRecord
     talks.any?
   end
 
-  def layout
-    return "administration" if admin_or_editor?
-
-    "application_no_sidebar"
-  end
-
   def course_editor?
     edited_courses.any?
   end

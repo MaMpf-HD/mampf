@@ -10,7 +10,7 @@ class LecturesController < ApplicationController
   before_action :check_for_unlock, only: [:outline]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   before_action :require_turbo_frame, only: [:new]
-  layout "administration"
+  layout "staff"
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
@@ -135,7 +135,8 @@ class LecturesController < ApplicationController
 
     # destroy all notifications related to this lecture
     destroy_notifications
-    redirect_to administration_path, status: :see_other
+    redirect_to current_user.admin? ? administration_path : start_path,
+                status: :see_other
   end
 
   # add forum for this lecture

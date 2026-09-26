@@ -6,6 +6,12 @@ en:
         its lists (tutorials, talks, exams) or has a registration running — as
         an in-app notification always, but by email only those who have
         enabled email notifications for announcements.
+    title_bar:
+      back: Back to the dashboard
+    mode_toggle:
+      label: Switch between viewing and editing the lecture
+      view: View
+      edit: Edit
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...
