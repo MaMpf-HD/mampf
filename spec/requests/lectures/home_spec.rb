@@ -85,6 +85,27 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  describe "a talk campaign" do
+    it "offers the student the talks rather than groups" do
+      seminar = create(:seminar, :released_for_all, teacher: editor)
+      campaign = create(:registration_campaign, :open, :first_come_first_served,
+                        campaignable: seminar)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:talk, lecture: seminar))
+      sign_in student
+
+      get lecture_home_path(seminar)
+
+      expect(response.body).to include(
+        I18n.t("registration.user_registration.summary.show_talks", locale: student.locale)
+      )
+      expect(response.body).not_to include(
+        I18n.t("registration.user_registration.summary.show_and_register",
+               locale: student.locale)
+      )
+    end
+  end
+
   describe "the staff note about the student registration view" do
     let!(:campaign) do
       create(:registration_campaign, :open, :with_items,

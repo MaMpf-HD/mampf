@@ -209,6 +209,18 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     end
   end
 
+  describe "#student_registration_instruction" do
+    it "asks for a talk in a first come, first served talk campaign" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: seminar)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:talk, lecture: seminar))
+
+      expect(helper.student_registration_instruction(campaign))
+        .to eq(I18n.t("registration.user_registration.first_come_first_served_instruction_talk"))
+    end
+  end
+
   describe "#format_date" do
     let(:timestamp) { Time.zone.local(2026, 5, 2, 17, 45) }
 

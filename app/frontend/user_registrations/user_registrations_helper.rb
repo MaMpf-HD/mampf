@@ -74,6 +74,8 @@ module UserRegistrationsHelper
   def student_registration_instruction(campaign, items = [])
     key = if campaign.exam_campaign?
       "first_come_first_served_instruction_exam"
+    elsif campaign.first_come_first_served? && campaign.roster_group_type == "talks"
+      "first_come_first_served_instruction_talk"
     elsif campaign.first_come_first_served?
       "first_come_first_served_instruction"
     else
