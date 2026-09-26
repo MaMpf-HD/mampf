@@ -105,7 +105,7 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
     end
 
     describe "sorting" do
-      # Without a last name: name_in_tutorials if present, otherwise name
+      # Without first and last name: name_in_tutorials if present, otherwise name
       # user1: Name "Alice", TutName "Zalice" -> Sort key "Zalice"
       # user2: Name "Bob", TutName nil -> Sort key "Bob"
       # user3: Name "Charlie", TutName nil -> Sort key "Charlie"
@@ -119,6 +119,14 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
       it "sorts by last name before first name, umlauts with their base letter" do
         user1.update!(first_name: "Zoe", last_name: "Özdemir")
         user2.update!(first_name: "Anna", last_name: "Peters")
+        user3.update!(first_name: "Ben", last_name: "Adams")
+
+        expect(subject.scope.map(&:user)).to eq([user3, user1, user2])
+      end
+
+      it "puts someone known by first name alone before a last name that equals it" do
+        user1.update!(first_name: "Max", last_name: nil)
+        user2.update!(first_name: "Ada", last_name: "Max")
         user3.update!(first_name: "Ben", last_name: "Adams")
 
         expect(subject.scope.map(&:user)).to eq([user3, user1, user2])

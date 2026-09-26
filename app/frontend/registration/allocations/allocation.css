@@ -29,7 +29,8 @@
     background-color: var(--bs-primary-bg-subtle, #cfe2ff) !important;
 }
 
-/* The title says the row opens a roster; the other tables have no such link. */
+/* The title button shows that the row opens its roster; the rejected and
+   unassigned tables have no such button. */
 .allocation-item-open {
     display: inline-flex;
     align-items: center;

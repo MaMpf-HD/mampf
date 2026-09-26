@@ -5,12 +5,15 @@ module Rosters
     # The name a row shows first, see User#tutorial_name.
     FULL_NAME = "CONCAT_WS(' ', NULLIF(users.first_name, ''), NULLIF(users.last_name, ''))"
                 .freeze
-    # By last name, and by the name the row shows for someone without one; the
-    # roster side panel sorts the same way.
+    # Matches RosterSidePanelComponent#last_name_key, so that the tab and the
+    # side panel list the same people in the same order; "C" compares bytes as
+    # Ruby does, whatever the database's collation.
     ORDER = Arel.sql(
       "LOWER(unaccent(COALESCE(NULLIF(users.last_name, ''), NULLIF(#{FULL_NAME}, ''), " \
-      "NULLIF(users.name_in_tutorials, ''), NULLIF(users.name, ''), users.email))), " \
-      "LOWER(unaccent(COALESCE(users.first_name, ''))), users.id"
+      "NULLIF(users.name_in_tutorials, ''), NULLIF(users.name, ''), users.email))) " \
+      "COLLATE \"C\", " \
+      "CASE WHEN NULLIF(users.last_name, '') IS NULL THEN '' " \
+      "ELSE LOWER(unaccent(COALESCE(users.first_name, ''))) END COLLATE \"C\", users.id"
     ).freeze
 
     def initialize(lecture, params)

@@ -1,7 +1,6 @@
 <li
   id="<%= dom_id(dom_target) %>"
   class="<%= row_classes %>"
-  data-testid="group-row"
   data-tutorial-roster-panel-target="trigger"
   data-action="
     click->tutorial-roster-panel#openFromTrigger
@@ -12,6 +11,7 @@
   data-roster-type="<%= registerable.class.name.underscore %>"
   data-roster-id="<%= registerable.id %>"
   data-roster-full="<%= registerable.full? %>"
+  data-roster-locked="<%= locked? %>"
   data-roster-title="<%= registerable.title %>"
   data-roster-count="<%= count_text %>"
   data-roster-add-member-path="<%= add_member_path %>"
@@ -102,11 +102,13 @@
 
   <div class="group-row__details">
     <div class="group-row__meta">
-      <span>
-        <i class="bi bi-person" aria-hidden="true"></i>
-        <span class="visually-hidden"><%= people_label %>:</span>
-        <%= tutors_text %>
-      </span>
+      <% if people_label %>
+        <span>
+          <i class="bi bi-person" aria-hidden="true"></i>
+          <span class="visually-hidden"><%= people_label %>:</span>
+          <%= tutors_text %>
+        </span>
+      <% end %>
 
       <% if location_text.present? %>
         <span>

@@ -278,6 +278,26 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
 
       expect(panel.students.map(&:id)).to eq([4, 3, 2, 1])
     end
+
+    it "puts someone known by first name alone before a last name that equals it" do
+      students = [
+        build(:confirmed_user, first_name: "Ada", last_name: "Max", id: 1),
+        build(:confirmed_user, first_name: "Max", last_name: nil, id: 2)
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(panel.students.map(&:id)).to eq([2, 1])
+    end
+
+    it "keeps letters of other scripts apart" do
+      students = [
+        build(:confirmed_user, first_name: "Eva", last_name: "Ωι", id: 1),
+        build(:confirmed_user, first_name: "Eva", last_name: "Άλφα", id: 2)
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(panel.students.map(&:id)).to eq([2, 1])
+    end
   end
 
   describe "#copy_email_label" do

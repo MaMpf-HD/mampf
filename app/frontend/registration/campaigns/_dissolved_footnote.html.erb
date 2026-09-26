@@ -45,7 +45,10 @@
           data-roster-open
           data-tutorial-roster-panel-target="trigger"
           data-roster-key="campaign_<%= campaign.id %>_rejected"
-          data-action="click->tutorial-roster-panel#openFromTrigger"
+          data-action="
+            click->tutorial-roster-panel#openFromTrigger
+            focusin->tutorial-roster-panel#rememberFocus
+          "
           data-roster-panel-path="<%= rejected_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
           <i class="bi bi-x-octagon-fill text-danger" aria-hidden="true"></i>
@@ -68,7 +71,10 @@
           data-roster-open
           data-tutorial-roster-panel-target="trigger"
           data-roster-key="campaign_<%= campaign.id %>_unassigned"
-          data-action="click->tutorial-roster-panel#openFromTrigger"
+          data-action="
+            click->tutorial-roster-panel#openFromTrigger
+            focusin->tutorial-roster-panel#rememberFocus
+          "
           data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
           <i

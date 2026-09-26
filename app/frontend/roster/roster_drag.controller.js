@@ -1,6 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
 import Sortable from "sortablejs";
 
+// Kept outside the controller: the response to a move replaces the panel and
+// its controller, and the new controller restores the focus from here.
+let focusAfterReplace = null;
+
 export default class extends Controller {
   static targets = ["studentList", "choiceDialog", "targetDialog", "targetList"];
 
@@ -17,10 +21,12 @@ export default class extends Controller {
   highlightedRow = null;
   pendingPick = null;
   pickOpener = null;
+  pickedIndex = null;
 
   connect() {
     this.initDraggable();
     this.initDropZones();
+    this.restoreFocusAfterReplace();
   }
 
   disconnect() {
@@ -58,7 +64,7 @@ export default class extends Controller {
     this.rowDropInstances.forEach(s => s.destroy());
     this.rowDropInstances = [];
 
-    this.targetRows().forEach((row) => {
+    this.targetRows().filter(row => !this.isLocked(row)).forEach((row) => {
       const dropZone = row.querySelector(".group-row__drop") || row;
 
       const instance = new Sortable(dropZone, {
@@ -75,7 +81,6 @@ export default class extends Controller {
     });
   }
 
-  /** The group rows a student of this panel can go to: every one but the source. */
   targetRows() {
     return Array.from(document.querySelectorAll(
       ".group-row[data-roster-type][data-roster-id]",
@@ -83,6 +88,10 @@ export default class extends Controller {
       row.dataset.rosterType === this.sourceTypeValue
       && row.dataset.rosterId === String(this.sourceIdValue)
     ));
+  }
+
+  isLocked(row) {
+    return row.dataset.rosterLocked === "true";
   }
 
   // Stimulus action, wired to our custom turbo:stream-render (see initHotwire.js)
@@ -114,22 +123,33 @@ export default class extends Controller {
 
   /**
    * The keyboard's and the touch screen's way to what a drop does: lists the
-   * same target rows as buttons, and a choice takes the drop's path.
+   * same rows as buttons, and a choice takes the drop's path. A group that a
+   * registration process manages stays in the list, disabled, with the reason.
    */
   pickTarget(event) {
     if (!this.hasTargetDialogTarget || !this.hasTargetListTarget) return;
 
-    const { userId, userName } = event.currentTarget.dataset;
-    this.pendingPick = userId;
-    this.pickOpener = event.currentTarget;
+    const opener = event.currentTarget;
+    this.pendingPick = opener.dataset.userId;
+    this.pickOpener = opener;
+    this.pickedIndex = this.studentIndexOf(opener);
 
     const dialog = this.targetDialogTarget;
     const titleEl = dialog.querySelector("[data-role='dialog-title']");
-    if (titleEl) titleEl.textContent = dialog.dataset.titleTemplate.replace("__NAME__", userName);
+    if (titleEl) {
+      titleEl.textContent = dialog.dataset.titleTemplate.replace("__NAME__", opener.dataset.userName);
+    }
 
+    this.renderPickList();
+    dialog.showModal();
+    this.targetListTarget.querySelector("button:not(:disabled)")?.focus();
+  }
+
+  renderPickList() {
+    const dialog = this.targetDialogTarget;
     const list = this.targetListTarget;
-    list.replaceChildren();
     const rows = this.targetRows();
+    list.replaceChildren();
     dialog.querySelector("[data-role='no-targets']")?.classList.toggle("d-none", rows.length > 0);
 
     rows.forEach((row) => {
@@ -137,36 +157,75 @@ export default class extends Controller {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "btn btn-sm btn-outline-secondary w-100 text-start";
-      button.dataset.rosterKey = row.dataset.rosterKey;
       const title = document.createElement("span");
       title.className = "fw-semibold";
       title.textContent = row.dataset.rosterTitle;
-      const count = document.createElement("span");
-      count.className = "d-block small text-muted";
-      count.textContent = row.dataset.rosterCount || "";
-      button.append(title, count);
-      button.addEventListener("click", () => this.choosePickedTarget(row));
+      const note = document.createElement("span");
+      note.className = "d-block small text-muted";
+      if (this.isLocked(row)) {
+        button.disabled = true;
+        note.textContent = dialog.dataset.lockedNote;
+      }
+      else {
+        note.textContent = row.dataset.rosterCount || "";
+      }
+      button.append(title, note);
+      const key = row.dataset.rosterKey;
+      button.addEventListener("click", () => this.choosePickedTarget(key));
       item.appendChild(button);
       list.appendChild(item);
     });
-
-    dialog.showModal();
-    list.querySelector("button")?.focus();
   }
 
-  choosePickedTarget(row) {
+  /**
+   * Looks the row up again: a stream may have replaced it while the dialog was
+   * open, and a full or locked group has to show as such.
+   */
+  choosePickedTarget(rosterKey) {
+    const row = this.targetRows().find(candidate => candidate.dataset.rosterKey === rosterKey);
+    if (!row || this.isLocked(row)) {
+      this.renderPickList();
+      this.targetListTarget.querySelector("button:not(:disabled)")?.focus();
+      return;
+    }
+
     const userId = this.pendingPick;
+    const index = this.pickedIndex;
     this.cancelPick();
+    this.pickedIndex = index;
     this.handleDrop(row, userId);
   }
 
   cancelPick() {
     this.pendingPick = null;
+    this.pickedIndex = null;
     if (this.hasTargetDialogTarget && this.targetDialogTarget.open) {
       this.targetDialogTarget.close();
     }
     this.pickOpener?.focus();
     this.pickOpener = null;
+  }
+
+  studentIndexOf(element) {
+    if (!this.hasStudentListTarget) return null;
+
+    const cards = Array.from(this.studentListTarget.querySelectorAll(".tutorial-roster-student"));
+    return cards.indexOf(element.closest(".tutorial-roster-student"));
+  }
+
+  /**
+   * Focuses the move button at the list position the keyboard left, which is
+   * the next student after a move, or the heading once the list is empty.
+   */
+  restoreFocusAfterReplace() {
+    if (focusAfterReplace === null) return;
+
+    const index = focusAfterReplace;
+    focusAfterReplace = null;
+    const buttons = this.element.querySelectorAll("[data-action~='roster-drag#pickTarget']");
+    const target = buttons[Math.min(index, buttons.length - 1)]
+      || this.element.querySelector("[data-roster-panel-heading]");
+    target?.focus();
   }
 
   handleDrop(row, userId) {
@@ -179,7 +238,7 @@ export default class extends Controller {
     const targetAddPath = row.dataset.rosterAddMemberPath;
 
     if (this.campaignSourceType()) {
-      if (targetFull && !confirm(this.overbookingWarningValue)) {
+      if (!this.confirmOverbooking(targetFull)) {
         return;
       }
       this.submitAdd(userId, targetAddPath);
@@ -189,7 +248,7 @@ export default class extends Controller {
     const alwaysMove = targetType === "tutorial";
 
     if (alwaysMove) {
-      if (targetFull && !confirm(this.overbookingWarningValue)) return;
+      if (!this.confirmOverbooking(targetFull)) return;
       this.submitMove(userId, targetId, targetType);
     }
     else {
@@ -220,7 +279,7 @@ export default class extends Controller {
     const { userId, targetId, targetType, targetFull } = this.pendingDrop;
 
     this.closeDialog();
-    if (targetFull && !confirm(this.overbookingWarningValue)) return;
+    if (!this.confirmOverbooking(targetFull)) return;
     this.submitMove(userId, targetId, targetType);
   }
 
@@ -229,20 +288,28 @@ export default class extends Controller {
     const { userId, targetFull, targetAddPath } = this.pendingDrop;
 
     this.closeDialog();
-    if (targetFull && !confirm(this.overbookingWarningValue)) return;
+    if (!this.confirmOverbooking(targetFull)) return;
     this.submitAdd(userId, targetAddPath);
   }
 
   cancelChoice() {
     this.pendingDrop = null;
+    this.pickedIndex = null;
     this.closeDialog();
   }
 
   closeDialog() {
-    if (this.hasChoiceDialogTarget) {
+    if (this.hasChoiceDialogTarget && this.choiceDialogTarget.open) {
       this.choiceDialogTarget.close();
     }
     this.pendingDrop = null;
+  }
+
+  confirmOverbooking(targetFull) {
+    if (!targetFull || confirm(this.overbookingWarningValue)) return true;
+
+    this.pickedIndex = null;
+    return false;
   }
 
   submitMove(userId, targetId, targetType) {
@@ -290,10 +357,14 @@ export default class extends Controller {
       form.appendChild(this.hiddenInput(key, value));
     }
 
+    focusAfterReplace = this.pickedIndex;
+    this.pickedIndex = null;
+
     document.body.appendChild(form);
-    form.addEventListener(
-      "turbo:submit-end", () => form.remove(), { once: true },
-    );
+    form.addEventListener("turbo:submit-end", (event) => {
+      if (!event.detail.success) focusAfterReplace = null;
+      form.remove();
+    }, { once: true });
     form.requestSubmit();
   }
 

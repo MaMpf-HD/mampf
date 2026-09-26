@@ -116,14 +116,29 @@
 }
 
 // The heading takes the focus when the keyboard opens the panel, so that
-// reading starts there; it is no control, so it needs no focus ring.
-[data-roster-panel-heading]:focus {
-  outline: none;
+// reading starts there. The ring hugs the text instead of the full width.
+[data-roster-panel-heading] {
+  display: inline-block;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--bs-primary-rgb), 0.5);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .tutorial-roster-student-main {
   flex: 1;
   min-width: 0;
+}
+
+.tutorial-roster-student-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 // The glyphs differ in size; equal boxes line the buttons up.

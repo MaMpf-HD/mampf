@@ -1,6 +1,5 @@
-# This component renders a row for a roster group (tutorial, talk or cohort)
-# in the Groups tab. A click on the row opens the group's roster in the side
-# panel, and the row is a drop target for students dragged out of it.
+# Shows a roster group (tutorial, talk or cohort) as a row in the Groups tab
+# of a lecture.
 require "view_component/base"
 class GroupRowComponent < ViewComponent::Base
   with_collection_parameter :registerable
@@ -149,8 +148,8 @@ class GroupRowComponent < ViewComponent::Base
     t("registration.item.actions.remove_from_campaign")
   end
 
-  # Every row carries the same three buttons, so their names say which group
-  # they act on.
+  # The rows repeat the same action buttons, so each button's name says which
+  # group it acts on.
   def edit_label
     "#{t("roster.tooltips.edit_settings")}: #{registerable.title}"
   end
@@ -163,7 +162,8 @@ class GroupRowComponent < ViewComponent::Base
     "#{remove_title}: #{registerable.title}"
   end
 
-  # The item recomputes on every call, and the row needs the answer thrice.
+  # Registration::Item#removal_blocker_message queries on every call, and the
+  # row asks for it several times.
   def remove_blocker_message
     return @remove_blocker_message if defined?(@remove_blocker_message)
 
@@ -184,10 +184,6 @@ class GroupRowComponent < ViewComponent::Base
       end
   end
 
-  # What the number in the row counts: the first choices of an open
-  # preference-based campaign, the confirmed registrations of a first come,
-  # first served one, and the roster otherwise. The first two are not a roster
-  # yet, and a preference is demand, not a seat.
   def count_kind
     return :members unless item
     return :confirmed if item.registration_campaign.first_come_first_served?
@@ -218,7 +214,6 @@ class GroupRowComponent < ViewComponent::Base
     I18n.t("roster.group_row.#{count_kind}", count: count, capacity: capacity)
   end
 
-  # [kind, text] for the line under the number, or nil.
   def count_state
     if count_kind == :first_choices
       return if capacity.nil? || count <= capacity
@@ -239,8 +234,8 @@ class GroupRowComponent < ViewComponent::Base
     "group-row__badge--#{kind}"
   end
 
-  # Demand has no bar: three and thirty first choices would fill it alike,
-  # and a full bar reads as filled seats.
+  # First choices get no bar: a bar reads as seats taken, and a first choice
+  # is a preference, not a seat.
   def bar?
     count_kind != :first_choices && capacity.present?
   end
@@ -259,8 +254,12 @@ class GroupRowComponent < ViewComponent::Base
     helpers.roster_tutors_text(registerable)
   end
 
+  # A flexible group has neither tutors nor speakers, so its row names none.
   def people_label
-    registerable.is_a?(Talk) ? t("basics.speakers") : t("basics.tutors")
+    case registerable
+    when Talk then t("basics.speakers")
+    when Tutorial then t("basics.tutors")
+    end
   end
 
   def location_text
@@ -275,6 +274,12 @@ class GroupRowComponent < ViewComponent::Base
       .filter_map { |d| d&.strftime("%b %d %Y") }
       .join(", ")
       .presence
+  end
+
+  def locked?
+    return @locked if defined?(@locked)
+
+    @locked = registerable.locked?
   end
 
   def sm_mode
@@ -292,7 +297,7 @@ class GroupRowComponent < ViewComponent::Base
   def show_self_enrollment_dropdown?
     !item &&
       registerable.respond_to?(:skip_campaigns) &&
-      !registerable.locked?
+      !locked?
   end
 
   def sm_icon_class
@@ -312,8 +317,8 @@ class GroupRowComponent < ViewComponent::Base
     sm_active? ? "text-success" : "text-muted"
   end
 
-  # The disabled mode's name already says what it is about; the others need
-  # the label in front of them.
+  # The translation of the disabled mode already reads "Self-Enrollment
+  # Disabled"; the other modes need the self-enrollment label in front.
   def sm_text
     mode_label = t("roster.self_materialization.modes.#{sm_mode}",
                    default: sm_mode.humanize)

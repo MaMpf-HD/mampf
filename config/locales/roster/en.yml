@@ -251,6 +251,7 @@ en:
         button: "Move or add %{name} to another group"
         title: "Move or add %{name} to …"
         none: "There is no other group to move to."
+        locked: "Managed by a registration process"
     self_materialization:
       modes:
         disabled: 'Self-Enrollment Disabled'

@@ -186,10 +186,9 @@ module Registration
       end
 
       def panel_students_for(item)
-        registrations = if @campaign.last_allocation_calculated_at.present?
+        registrations = if @campaign.last_allocation_calculated_at.present? ||
+                           @campaign.first_come_first_served?
           item.user_registrations.confirmed
-        elsif @campaign.first_come_first_served?
-          item.user_registrations
         else
           item.user_registrations.where(preference_rank: 1)
         end
@@ -197,7 +196,6 @@ module Registration
         registrations.includes(:user)
                      .filter_map(&:user)
                      .uniq(&:id)
-                     .sort_by { |user| [user.name.to_s.downcase, user.email.to_s.downcase] }
       end
 
       def preference_ranks_for(item)

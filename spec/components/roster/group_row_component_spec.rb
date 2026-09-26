@@ -152,6 +152,22 @@ RSpec.describe(GroupRowComponent, type: :component) do
     end
   end
 
+  describe "people line" do
+    it "names no tutors for a flexible group" do
+      cohort = create(:cohort, context: create(:lecture))
+      rendered = render_inline(described_class.new(registerable: cohort))
+
+      expect(rendered.css(".bi-person")).to be_empty
+    end
+
+    it "names the tutors of a tutorial" do
+      rendered = render_inline(described_class.new(registerable: create(:tutorial)))
+
+      expect(rendered.css(".visually-hidden").map(&:text))
+        .to include("#{I18n.t("basics.tutors")}:")
+    end
+  end
+
   describe "date line" do
     let(:lecture) { create(:seminar) }
     let(:talk) do

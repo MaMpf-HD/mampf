@@ -1,7 +1,3 @@
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/mixins";
-
 // A section's groups as rows that share one grid, so the counts and the
 // actions line up from row to row. The action column keeps a fixed width,
 // because the number of buttons differs between rows.
@@ -90,8 +86,8 @@ $group-row-actions-width: 8rem;
     background: var(--bs-tertiary-bg);
   }
 
-  // A pointer on one of the row's own controls aims at that control, not at
-  // the row, so the row keeps its resting background.
+  // A click on the self-enrollment menu or an action button does not open the
+  // roster, so hovering them does not highlight the row.
   &:not(.roster-trigger--selected):has(
     .group-row__self-enrollment:hover,
     .group-row__actions:hover
@@ -100,7 +96,6 @@ $group-row-actions-width: 8rem;
   }
 }
 
-// Marks the groups students can join or leave themselves.
 .group-row--self-enrollment {
   box-shadow: inset 4px 0 var(--bs-success);
 }
@@ -257,7 +252,8 @@ $group-row-actions-width: 8rem;
   }
 }
 
-// The badge carries the warning; the bar only shows the share.
+// Muted, so that a list of full groups does not read as a list of warnings;
+// the badge says when a group is over capacity.
 .group-row__bar--over > span {
   background: rgba(var(--bs-danger-rgb), 0.45);
 }

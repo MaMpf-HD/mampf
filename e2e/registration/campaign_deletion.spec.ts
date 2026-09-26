@@ -49,7 +49,8 @@ test.describe("getting out of a registration process", () => {
   }
 
   function groupRow(page: Page, title: string) {
-    return page.getByTestId("group-row").filter({ hasText: title });
+    return page.getByRole("listitem")
+      .filter({ has: page.getByRole("heading", { name: title, exact: true }) });
   }
 
   function noCampaignSection(page: Page) {

@@ -57,7 +57,6 @@
     &:hover { color: var(--bs-emphasis-color); }
   }
 
-  // Deleting is not louder than editing until it is aimed at.
   .policy-badge-action--delete:hover {
     color: var(--bs-danger);
   }
@@ -361,8 +360,8 @@
   opacity: 0.45;
 }
 
-// The pill around it is a static summary; the dotted underline and the own
-// color set the entries that open a roster apart from it.
+// The rest of the pill is a plain summary; the dotted underline and the color
+// mark the counts that open a roster.
 .campaign-panel-trigger {
   display: inline-flex;
   align-items: center;

@@ -3,6 +3,7 @@
 <aside
   id="tutorial-roster-side-panel"
   class="card tutorial-roster-side-panel"
+  aria-labelledby="tutorial-roster-panel-heading"
   data-tutorial-roster-panel-target="panelCard"
   <% if drag_controller? %>
     data-controller="roster-drag"
@@ -15,7 +16,12 @@
 >
   <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
     <div>
-      <h5 class="mb-1" tabindex="-1" data-roster-panel-heading>
+      <h5
+        class="mb-1"
+        id="tutorial-roster-panel-heading"
+        tabindex="-1"
+        data-roster-panel-heading
+      >
         <%= panel_title %>
       </h5>
 
@@ -148,8 +154,8 @@
               "
             >
               <div class="tutorial-roster-student-main">
-                <div class="d-flex align-items-center gap-2">
-                  <div class="fw-semibold text-truncate">
+                <div class="d-flex align-items-start gap-2">
+                  <div class="fw-semibold tutorial-roster-student-name">
                     <%= student_display_name(student) %>
                   </div>
 
@@ -274,6 +280,7 @@
       data-action="cancel->roster-drag#cancelPick"
       aria-labelledby="roster-drag-target-title"
       data-title-template="<%= t("roster.group_row.move.title", name: "__NAME__") %>"
+      data-locked-note="<%= t("roster.group_row.move.locked") %>"
     >
       <p
         class="fw-semibold mb-3"
@@ -306,8 +313,10 @@
     <dialog
       class="roster-drag-choice-dialog"
       data-roster-drag-target="choiceDialog"
+      data-action="cancel->roster-drag#cancelChoice"
+      aria-labelledby="roster-drag-choice-title"
     >
-      <p class="fw-semibold mb-3">
+      <p class="fw-semibold mb-3" id="roster-drag-choice-title">
         <%= t("roster.drag.choice_title") %>
         <span data-role="target-name" class="text-primary"></span>
       </p>

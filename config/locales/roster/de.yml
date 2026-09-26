@@ -251,8 +251,9 @@ de:
         actions: "Aktionen"
       move:
         button: "%{name} in eine andere Gruppe verschieben oder hinzufügen"
-        title: "%{name} verschieben oder hinzufügen nach …"
+        title: "Zielgruppe für %{name} auswählen"
         none: "Es gibt keine andere Gruppe, in die verschoben werden kann."
+        locked: "Wird über ein Anmeldeverfahren verwaltet"
     self_materialization:
       modes:
         disabled: 'Selbsteinschreibung deaktiviert'

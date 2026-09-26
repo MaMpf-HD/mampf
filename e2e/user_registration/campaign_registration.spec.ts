@@ -39,7 +39,7 @@ async function admitRejectedStudentThroughTeacherRoster(
   const rejectedStudent = page.locator(".tutorial-roster-student", {
     has: page.getByRole("button", { name: `Copy email address: ${studentEmail}` }),
   });
-  const targetTutorial = page.getByTestId("group-row").filter({
+  const targetTutorial = page.getByRole("listitem").filter({
     has: page.getByRole("heading", { name: tutorialTitle }),
   });
 

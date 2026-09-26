@@ -25,7 +25,9 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       get tutorial_roster_path(tutorial, source: "panel"),
           as: :turbo_stream
 
-      expect(response.body).to include("tutorial-roster-side-panel")
+      assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(tutorial),
+                          count: 0
     end
   end
 
@@ -182,7 +184,9 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
             as: :turbo_stream
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include("tutorial-roster-side-panel")
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(tutorial)
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(target)
+      assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
     end
   end
 end

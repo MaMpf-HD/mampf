@@ -3,10 +3,6 @@ import { Turbo } from "@hotwired/turbo-rails";
 
 const SELECTED = "roster-trigger--selected";
 
-/**
- * Opens a roster in the side panel from its trigger: a group row, a row of
- * the allocation table or a campaign's rejected/unassigned pill.
- */
 export default class extends Controller {
   static targets = [
     "trigger",
@@ -85,9 +81,9 @@ export default class extends Controller {
   }
 
   /**
-   * A click anywhere on the trigger opens its roster, except on its own
-   * buttons, links and forms; the title's button is the keyboard's way in.
-   * A click the keyboard sent (`detail` 0) moves the focus into the panel.
+   * Opens the roster on a click anywhere on the trigger except its own
+   * controls. Opened by keyboard, the panel takes the focus, so that reading
+   * continues there.
    */
   openFromTrigger(event) {
     const opener = event.target.closest("[data-roster-open]");
@@ -240,7 +236,6 @@ export default class extends Controller {
     this.openerOf(trigger)?.setAttribute("aria-expanded", String(selected));
   }
 
-  /** The trigger's button: its title in a row, the trigger itself in a pill. */
   openerOf(trigger) {
     return trigger.matches("[data-roster-open]")
       ? trigger

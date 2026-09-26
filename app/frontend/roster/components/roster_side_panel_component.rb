@@ -232,15 +232,20 @@ class RosterSidePanelComponent < ViewComponent::Base
     end
   end
 
-  # Sorts by last name, the way a list of people is read. Someone without one
-  # sorts by the name the panel shows for them.
+  # Someone without a last name sorts by the name the panel shows for them.
+  # Rosters::ParticipantQuery::ORDER sorts the participants tab the same way.
   def last_name_key(student)
     names = if student.last_name.present?
       [student.last_name, student.first_name.to_s]
     else
       [student_display_name(student), ""]
     end
-    names.map { |name| I18n.transliterate(name).downcase } + [student.id.to_i]
+    names.map { |name| fold_accents(name).downcase } + [student.id.to_i]
+  end
+
+  # Drops the accents and keeps every other letter, as unaccent does in SQL.
+  def fold_accents(name)
+    name.unicode_normalize(:nfkd).gsub(/\p{Mn}/, "")
   end
 
   def student_display_name(student)
