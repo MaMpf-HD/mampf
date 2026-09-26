@@ -152,7 +152,7 @@ RSpec.describe("Auth passwords", type: :request) do
       post user_session_path,
            params: { user: { email: user.email, password: new_password } }
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
     end
 
     it "rejects an invalid reset token" do

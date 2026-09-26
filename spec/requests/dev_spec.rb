@@ -40,7 +40,7 @@ RSpec.describe("Dev") do
       target_user = create(:confirmed_user_en, email: "student-1@play")
       sign_in(current_user)
 
-      get start_path
+      get root_path
 
       expect(response.body).to include(dev_impersonate_path(target_user.id))
     end
@@ -53,7 +53,7 @@ RSpec.describe("Dev") do
 
       post dev_impersonate_path(target_user.id)
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
       follow_redirect!
       expect(controller.current_user).to eq(target_user)
     end

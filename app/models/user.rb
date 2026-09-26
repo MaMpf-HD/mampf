@@ -646,12 +646,17 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  # lecture that are in the active term
-  # Teachers and editors see their lectures on the start page without
-  # subscribing. As with the subscriptions, the current fold takes the
-  # lectures without a term along.
-  def current_staff_lectures
-    staff_lectures_in([Term.active, nil])
+  # The lectures of the given term (plus those without a term) that this
+  # user teaches or edits.
+  def current_staff_lectures(term = Term.active)
+    staff_lectures_in([term, nil].uniq)
+  end
+
+  # The lectures of the given term (plus those without a term) in which this
+  # user tutors a tutorial.
+  def current_tutored_lectures(term = Term.active)
+    lectures_of_term(Lecture.where(id: given_tutorials.select(:lecture_id)),
+                     term)
   end
 
   def next_term_staff_lectures

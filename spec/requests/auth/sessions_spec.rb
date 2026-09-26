@@ -40,7 +40,7 @@ RSpec.describe("Auth sessions", type: :request) do
         user: { email: user.email, password: password }
       }
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
       expect(flash[:notice]).to be_nil
     end
 

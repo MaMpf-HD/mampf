@@ -1270,9 +1270,11 @@ Rails.application.routes.draw do
       to: "main#comments",
       as: "comments"
 
+  # Old dashboard URL, redirected to root so existing bookmarks still work.
   get "main/start",
-      to: "main#start",
-      as: "start"
+      to: redirect { |_params, req|
+        req.query_string.present? ? "/?#{req.query_string}" : "/"
+      }
 
   get "internal/upload-authorizations/:uploader",
       to: "internal/upload_authorizations#show",

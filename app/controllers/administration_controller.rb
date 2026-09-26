@@ -15,7 +15,7 @@ class AdministrationController < ApplicationController
   end
 
   def exit
-    redirect_to start_path
+    redirect_to root_path
   end
 
   def profile

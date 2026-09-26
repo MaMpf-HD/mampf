@@ -136,7 +136,7 @@ function notificationList(page: Page): Locator {
 // The bell's name carries the icon glyph in front of the count, so the count
 // is read off the text.
 async function expectOneNotification(page: Page) {
-  await page.goto("/main/start");
+  await page.goto("/");
   await expect(notificationList(page).getByRole("link", { name: "1" })).toHaveText("1");
 }
 
@@ -156,7 +156,7 @@ async function expectRoleNotification(page: Page, role: Role, user: User) {
 }
 
 async function expectNoNotification(page: Page) {
-  await page.goto("/main/start");
+  await page.goto("/");
   await expect(notificationList(page)).toHaveCount(0);
 }
 

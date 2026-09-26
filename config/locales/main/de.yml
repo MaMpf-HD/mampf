@@ -7,7 +7,15 @@ de:
       no_lectures_any_term: >-
         Du bist noch zu keiner Veranstaltung angemeldet und hast Dir auch keine
         gemerkt. Scrolle nach unten, um neue Veranstaltungen zu entdecken.
+      no_lectures_teacher: >-
+        Du betreust im %{term} keine Veranstaltung. Wähle oben ein anderes
+        Semester oder scrolle nach unten, um Veranstaltungen zu suchen.
+      no_lectures_teacher_any_term: >-
+        Du betreust noch keine Veranstaltung. Scrolle nach unten, um
+        Veranstaltungen zu suchen.
       sections:
+        staff: "Diese betreust Du"
+        tutor: "In diesen bist Du Tutor:in"
         enrolled: "Für diese bist Du angemeldet"
         bookmarked: "Diese hast Du Dir gemerkt"
       registration_open: "Anmeldung offen — jetzt anmelden"
