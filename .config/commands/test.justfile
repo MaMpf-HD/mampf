@@ -14,6 +14,22 @@ rspec:
     cd {{justfile_directory()}}/docker/test
     docker compose run --entrypoint="" --rm mampf sh -c "bundle install && RAILS_ENV=test bundle exec rspec --format documentation"
 
+# Creates/refreshes one test database per worker (rerun after new migrations)
+rspec-parallel-setup processes="8":
+    #!/usr/bin/env bash
+    set -e
+    cd {{justfile_directory()}}
+    export RAILS_ENV=test VITE_RUBY_PORT=3036 PARALLEL_TEST_FIRST_IS_1=true
+    bundle exec rake "parallel:create[{{processes}}]"
+    bundle exec rake "parallel:load_schema[{{processes}}]"
+
+# Runs the RSpec tests in parallel, e.g. `just test rspec-parallel 8 spec/models`
+rspec-parallel processes="8" *paths="spec":
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}
+    export RAILS_ENV=test VITE_RUBY_PORT=3036 PARALLEL_TEST_FIRST_IS_1=true
+    bundle exec parallel_rspec -n {{processes}} {{paths}}
+
 # Opens Codecov in the default browser
 codecov:
     xdg-open https://app.codecov.io/gh/MaMpf-HD/mampf

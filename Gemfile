@@ -98,6 +98,7 @@ group :development, :test do
   gem "debug", "~> 1.8"
   gem "factory_bot_rails", "~> 6.4"
   gem "i18n-tasks", "~> 1.1"
+  gem "parallel_tests", "~> 5.0" # run specs across several CPU cores
   gem "rspec-github", "~> 3.0"
   gem "rspec-rails", "~> 8.0"
   gem "ruby-lsp-rspec", "~> 0.1.28", require: false
