@@ -1,5 +1,5 @@
 class MathiMailer < ApplicationMailer
-  default from: DefaultSetting::PROJECT_EMAIL
+  default from: DefaultSetting::FROM_ADDRESS
   layout false
 
   def data_request_email(user)
