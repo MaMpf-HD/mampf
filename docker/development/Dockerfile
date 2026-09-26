@@ -43,7 +43,7 @@ RUN which yarn; yarn --version
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         ffmpeg qpdf mupdf-tools shared-mime-info \
-        libarchive-tools wget wait-for-it graphviz libvips42 lsof \
+        libarchive-tools wget wait-for-it graphviz libvips42 lsof gnupg2 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN gem install bundler -v "${BUNDLER_VERSION}"
