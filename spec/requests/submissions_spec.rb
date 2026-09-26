@@ -140,7 +140,7 @@ RSpec.describe("Submissions", type: :request) do
       expect { post(submissions_path, params: create_params) }
         .not_to change(Submission, :count)
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
       follow_redirect!
       expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
     end
@@ -192,7 +192,7 @@ RSpec.describe("Submissions", type: :request) do
         expect { post(submissions_path(format: :js), params: create_params) }
           .not_to change(Submission, :count)
 
-        expect(response).to redirect_to(start_path)
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(flash[:alert]).to eq(
           I18n.t("submission.tutorial_not_assigned")
@@ -339,7 +339,7 @@ RSpec.describe("Submissions", type: :request) do
     it "is told what is missing rather than crashing on the form" do
       get new_submission_path(assignment_id: assignment.id)
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
       follow_redirect!
       expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
     end

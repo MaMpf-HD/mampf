@@ -3,7 +3,7 @@ class SubmissionsController < ApplicationController
   # Throttle group-join code entry so the short join token cannot be brute-forced.
   rate_limit to: 10, within: 1.minute, only: [:join, :redeem_code],
              by: -> { current_user&.id || request.remote_ip },
-             with: -> { redirect_to :start, alert: I18n.t("submission.too_many_attempts") }
+             with: -> { redirect_to :root, alert: I18n.t("submission.too_many_attempts") }
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
                                           :redeem_code, :join, :cancel_new,
@@ -22,7 +22,7 @@ class SubmissionsController < ApplicationController
 
   class TutorialNotRosteredError < StandardError; end
   rescue_from TutorialNotRosteredError do
-    redirect_to :start, alert: t("submission.tutorial_not_assigned")
+    redirect_to :root, alert: t("submission.tutorial_not_assigned")
   end
 
   def current_ability
@@ -158,8 +158,8 @@ class SubmissionsController < ApplicationController
                             assignment: @submission.assignment.title)
       return
     end
-    redirect_to :start, alert: t("submission.failed_redemption",
-                                 message: @error)
+    redirect_to :root, alert: t("submission.failed_redemption",
+                                message: @error)
   end
 
   def join
@@ -204,9 +204,9 @@ class SubmissionsController < ApplicationController
                        disposition: @disposition,
                        fallback: @submission.manuscript_filename || "manuscript")
     elsif @submission
-      redirect_to :start, alert: t("submission.no_manuscript_yet")
+      redirect_to :root, alert: t("submission.no_manuscript_yet")
     else
-      redirect_to :start, alert: t("submission.exists_no_longer")
+      redirect_to :root, alert: t("submission.exists_no_longer")
     end
   end
 
@@ -216,9 +216,9 @@ class SubmissionsController < ApplicationController
                        disposition: @disposition,
                        fallback: @submission.correction_filename || "correction")
     elsif @submission
-      redirect_to :start, alert: t("submission.no_correction_yet")
+      redirect_to :root, alert: t("submission.no_correction_yet")
     else
-      redirect_to :start, alert: t("submission.exists_no_longer")
+      redirect_to :root, alert: t("submission.exists_no_longer")
     end
   end
 
