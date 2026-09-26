@@ -34,17 +34,6 @@ class MediaController < ApplicationController
                               :cancel_import_media, :cancel_import_vertex]
   layout :staff_layout
 
-  # The Lecture predicate telling whether a lecture has media of a project.
-  LECTURE_MEDIA_PREDICATES = {
-    "lesson_material" => :lesson_material?,
-    "script" => :script?,
-    "exercise" => :exercise?,
-    "quiz" => :quiz?,
-    "worked_example" => :worked_example?,
-    "repetition" => :repetition?,
-    "miscellaneous" => :miscellaneous?
-  }.freeze
-
   def current_ability
     @current_ability ||= MediumAbility.new(current_user)
   end
@@ -651,8 +640,7 @@ class MediaController < ApplicationController
     # The lecture switcher (lectures/show/_switcher) keeps the project when
     # switching, but the other lecture may have no media in it.
     def check_for_lecture_media
-      predicate = LECTURE_MEDIA_PREDICATES[params[:project]]
-      return if predicate.nil? || @lecture.public_send(predicate, current_user)
+      return if @lecture.page_available?(params[:project], current_user)
 
       redirect_to lecture_home_path(@lecture)
     end

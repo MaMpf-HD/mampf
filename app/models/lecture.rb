@@ -330,6 +330,22 @@ class Lecture < ApplicationRecord
     user.can_edit?(self) || visible_for_user?(user)
   end
 
+  MEDIA_PAGES = ["lesson_material", "script", "exercise", "quiz",
+                 "worked_example", "repetition", "miscellaneous"].freeze
+
+  # Whether the lecture has something to show on the given page of its
+  # sidebar (lectures/show/_sidebar greys it out otherwise). Pages without
+  # such a condition are always available.
+  def page_available?(page, user)
+    case page
+    when *MEDIA_PAGES then public_send(:"#{page}?", user)
+    when "self_test" then course.enough_questions?
+    when "announcements" then announcements.exists?
+    when "organizational" then organizational?
+    else true
+    end
+  end
+
   # the next methods deal with the lecture's tags
   # tags are associated to courses, sections, media and lessons
   # in this context, tags associated to courses and to sections are relevant

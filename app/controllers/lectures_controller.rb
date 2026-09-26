@@ -482,7 +482,7 @@ class LecturesController < ApplicationController
     end
 
     def check_if_enough_questions
-      return if @lecture.course.enough_questions?
+      return if @lecture.page_available?("self_test", current_user)
 
       redirect_to lecture_home_path(@lecture), alert: I18n.t("controllers.no_test")
     end
@@ -490,13 +490,13 @@ class LecturesController < ApplicationController
     # The lecture switcher (lectures/show/_switcher) keeps the page when
     # switching, but the other lecture may have nothing to show on it.
     def check_for_announcements
-      return if @lecture.announcements.exists?
+      return if @lecture.page_available?("announcements", current_user)
 
       redirect_to lecture_home_path(@lecture)
     end
 
     def check_for_organizational
-      return if @lecture.organizational
+      return if @lecture.page_available?("organizational", current_user)
 
       redirect_to lecture_home_path(@lecture)
     end
