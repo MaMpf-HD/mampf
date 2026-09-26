@@ -8,10 +8,11 @@ export default class extends Controller {
     const { url } = event.target.selectedOptions[0].dataset;
     window.history.replaceState(window.history.state, "", url);
 
-    document.addEventListener("turbo:submit-end", () => {
+    const { form } = event.target;
+    form.addEventListener("turbo:submit-end", () => {
       this.dispatch("changed", { target: document });
     }, { once: true });
 
-    event.target.form.requestSubmit();
+    form.requestSubmit();
   }
 }
