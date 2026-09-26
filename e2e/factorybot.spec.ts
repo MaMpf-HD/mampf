@@ -42,7 +42,7 @@ test("can call methods that need a user as single parameter", async ({ factory, 
 
 test("can use factories and interact with page", async ({ factory, student: { page } }) => {
   const lecture = await factory.create("lecture", ["released_for_all", "with_sparse_toc"]);
-  await page.goto(`/lectures/${lecture.id}/home`);
+  await page.goto(`/lectures/${lecture.id}`);
 
   const title = await lecture.__call("title_term_info_no_type");
   await expect(page.getByRole("heading", { name: title })).toBeVisible();

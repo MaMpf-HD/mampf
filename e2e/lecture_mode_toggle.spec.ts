@@ -91,7 +91,7 @@ test.describe("switching between viewing and editing a lecture", () => {
       await expect(bar.getByRole("link", { name: "Topology", exact: true })).toHaveCount(0);
       await bar.getByRole("link", { name: "Analysis", exact: true }).click();
 
-      await expect(page).toHaveURL(new RegExp(`/lectures/${other.id}/`));
+      await expect(page).toHaveURL(`/lectures/${other.id}`);
       await expect(bar.getByRole("button", { name: /Analysis/ })).toBeVisible();
 
       // while editing, the switch leads to editing the other lecture, in the

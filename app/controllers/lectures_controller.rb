@@ -3,7 +3,7 @@ class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
 
   before_action :set_lecture, except: [:new, :create, :search]
-  before_action :set_lecture_cookie, only: [:show, :outline, :organizational,
+  before_action :set_lecture_cookie, only: [:outline, :organizational,
                                             :show_announcements]
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
@@ -14,14 +14,6 @@ class LecturesController < ApplicationController
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
-  end
-
-  def show
-    if lecture_home_landing_page?
-      redirect_to lecture_home_path(@lecture)
-    else
-      redirect_to lecture_outline_path(@lecture)
-    end
   end
 
   def outline
@@ -383,11 +375,6 @@ class LecturesController < ApplicationController
         render template: "lectures/show/show",
                layout: turbo_frame_request? ? "turbo_frame" : "application"
       end
-    end
-
-    def lecture_home_landing_page?
-      @lecture.term.present? &&
-        Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
 
     def lecture_params

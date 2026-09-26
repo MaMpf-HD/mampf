@@ -153,7 +153,7 @@ test.describe("campaign registration", () => {
     await expect(home.campaign("Tutorial registration")).not.toHaveAttribute("open", "");
 
     await student.page.goto(
-      `/lectures/${lecture.id}/home#student_registration_registration_campaign_${campaign.id}`,
+      `/lectures/${lecture.id}#student_registration_registration_campaign_${campaign.id}`,
     );
 
     await expect(home.campaign("Tutorial registration")).toHaveAttribute("open", "");
