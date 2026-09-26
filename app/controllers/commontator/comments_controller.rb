@@ -211,7 +211,7 @@ module Commontator
         medium = @commontator_thread.commontable
         return unless medium.released.in?(["all", "users", "subscribers"])
 
-        relevant_users = medium.teachable.media_scope.users
+        relevant_users = medium.teachable.media_scope.audience
         relevant_users.where.not(id: current_user.id)
                       .where(unread_comments: false)
                       .update(unread_comments: true)

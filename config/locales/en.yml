@@ -156,7 +156,7 @@ en:
         unpublished_medium: 'This medium is unpublished.'
         free_medium: 'This medium is free.'
         user_medium: 'This medium is only available for MaMpf users.'
-        subscriber_medium: 'This medium is only available for subscribers.'
+        subscriber_medium: 'This medium is only available for participants of the event series.'
     teachables:
       teachables: Lecture Search
       courses: Course Search
@@ -1257,9 +1257,11 @@ en:
           medium. Non-registered users do not have access to the medium.
           </li>
           <li>
-          only subscribers: Registered users of MaMpf who have subscribed to
-          the associated event series/course can see the medium. Other generic
-          MaMpf users cannot see the medium.
+          only participants: Users who have bookmarked the associated event
+          series, are on one of its lists (tutorials, talks, exams) or have a
+          registration for it running can see the medium; for a course
+          medium, the participants of one of the course's event series.
+          Other MaMpf users cannot see the medium.
           </li>
           <li>
           locked: generic MaMpf users cannot see the medium.
@@ -1853,8 +1855,8 @@ en:
       publish_vertices: >
         Publish all questions and remarks associated to the quiz
       restricted_vertex: >
-        This %{sort} is only accesible for subscribers of %{teachable}.
-        Users without subscription caanot play the quiz.
+        This %{sort} is only accessible for participants of %{teachable}.
+        Other users cannot play the quiz.
       no_editor_rights: >
         You do not have editor rights this %{sort}.
       dependent_quizzable: >
@@ -1971,27 +1973,10 @@ en:
     consent: >
       You consented to our privacy policy.
     locale: 'Language'
-    subscribe_lecture: 'Subscribe lecture'
+    subscribe_lecture: 'Bookmark event series'
     passphrase_required: >
-      You want to subscribe the event series %{lecture_title}. It is protected
+      You want to bookmark the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
-    my_term_html: My term &ndash; %{term}
-    my_next_term_html: My next term &ndash; %{term}
-    inactive_lectures: Further subscribed event series
-    active_nonsubscribed_lectures_html: >
-      Current event series &ndash; %{term}
-    no_current_stuff: >
-      You have not yet subscribed any event series of the current term.
-    no_inactive_stuff: >
-      You have not yet subscribed any event series outside of the current term.
-    no_next_term_stuff: >
-      You have not yet subscribed any event series of the coming term.
-    next_term_registrations: >
-      Applied for — places are allocated after the registration deadline.
-    next_term_seats: >
-      You are on a list for this lecture, but have not subscribed to it.
-    no_current_at_all: >
-      In the current term, no event series have yet been published.
     other_preferences: >
       Other Preferences
     changes_made: >
@@ -2046,7 +2031,6 @@ en:
     miscellaneous: Miscellaneous
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
-    my_talks: My talks
     media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
@@ -2757,7 +2741,6 @@ en:
     unknown: >
       You filled out the form correctly, but unfortunately something went wrong
       on the server. Please try again later and contact us if the problem persists.
-    not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
     thyme:
@@ -3026,8 +3009,8 @@ en:
       You have already been marked for this sheet on your own; ask your tutor
       if you should be on the team.
     already_in: You are already a partner for this assignment.
-    lecture_not_subscribed: >
-      You are not subscribed to the corresponding event series.
+    lecture_not_unlocked: >
+      You do not have access to the corresponding event series.
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).
@@ -3067,6 +3050,10 @@ en:
     upload_failure_scan_required: >
       The uploaded file is missing a required malware scan.
       Please upload the file again.
+    upload_failure_no_tutorial: >
+      You are not in a tutorial for this event series, so you cannot upload a
+      hand-in. Please contact your teacher if you think this happened by
+      mistake.
     upload_failure_unauthorized: >
       You are not allowed to upload this file here.
     upload_failure_wrong_target: >
@@ -3729,7 +3716,7 @@ en:
     locked: 'locked'
     all: 'free'
     users: 'only registered MaMpf users'
-    subscribers: 'only subscribers'
+    subscribers: 'only participants'
     referenced_from: 'referenced from'
     irrelevant: 'irrelevant'
   buttons:

@@ -64,8 +64,8 @@ test.describe("the lecture edit page", () => {
 
   test("fills the subscriber list on the way in",
     async ({ factory, student, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"]);
-      await factory.create("lecture_user_join", [], {
+      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: student.user.id,
       });
 

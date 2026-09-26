@@ -5,6 +5,13 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
                                      :star_lecture, :unstar_lecture]
+  # A pass phrase is shared by the whole lecture, so guessing it is throttled
+  # as in Lectures::UnlocksController; #update counts only the saves that
+  # check one (see #check_passphrases).
+  PASSPHRASE_ATTEMPTS = 10
+  rate_limit to: PASSPHRASE_ATTEMPTS, within: 1.minute, only: :subscribe_lecture,
+             by: -> { current_user&.id || request.remote_ip },
+             with: -> { head :too_many_requests }
 
   def current_ability
     @current_ability ||= ProfileAbility.new(current_user)
@@ -72,52 +79,15 @@ class ProfileController < ApplicationController
     if !@lecture.published? && !current_user.admin &&
        !@lecture.edited_by?(current_user)
       @unpublished = true
-      if html_redirect_flow?
-        return redirect_to root_path,
-                           alert: t("admin.lecture.no_rights")
-      end
       return
     end
-    # Roster members may subscribe without the passphrase: a roster seat is
-    # a stronger credential than a shared passphrase.
-    if @lecture.passphrase.present? &&
-       !@lecture.in?(current_user.lectures) &&
-       !LectureMembership.exists?(user: current_user, lecture: @lecture) &&
-       @lecture.passphrase != @passphrase
-      if html_redirect_flow?
-        return redirect_to lecture_home_path(@lecture),
-                           alert: t("errors.profile.passphrase")
-      end
-      return
-    end
-
-    @success = current_user.subscribe_lecture!(@lecture)
-
-    redirect_to lecture_path(@lecture) if @parent == "redirect"
+    # Roster members may bookmark without the passphrase: a roster seat is
+    # a stronger credential than a shared passphrase (see User#unlock_lecture!).
+    @success = current_user.unlock_lecture!(@lecture, passphrase: @passphrase)
   end
 
   def unsubscribe_lecture
-    @success = current_user.unsubscribe_lecture!(@lecture)
-    # A seat, an application or the lecturer's role outlives the
-    # subscription, so the card stays: the next load shows the lecture in
-    # the group that carries it.
-    @own = @parent.in?(["current_subscribed", "next_term_subscribed"]) &&
-           current_user.staff_lecture?(@lecture)
-    @place_left = @own ||
-                  (@parent == "next_term_subscribed" &&
-                   (current_user.next_term_seated_lectures +
-                    current_user.next_term_registered_lectures).include?(@lecture))
-    @none_left = case @parent
-                 when "current_subscribed"
-                   current_user.current_subscribed_lectures.empty? &&
-                   current_user.current_staff_lectures.empty?
-                 when "inactive" then current_user.inactive_lectures.empty?
-                 when "next_term_subscribed"
-                   current_user.next_term_lectures.empty? &&
-                   current_user.next_term_staff_lectures.empty? &&
-                   current_user.next_term_seated_lectures.empty? &&
-                   current_user.next_term_registered_lectures.empty?
-    end
+    @success = current_user.unbookmark_lecture!(@lecture)
   end
 
   def star_lecture
@@ -138,20 +108,12 @@ class ProfileController < ApplicationController
     current_user.touch
   end
 
+  # Firefox scrolls a newly-opened accordion fold out of view (see
+  # show_accordion.coffee); other browsers do not need this.
   def show_accordion
     @collapse_id = params[:id]
     redirect_to :root and return if @collapse_id.blank?
 
-    @lectures = case @collapse_id
-                when "collapseCurrentStuff" then current_user.current_subscribed_lectures
-                when "collapseInactiveLectures" then current_user.inactive_lectures
-                                                                 .includes(:course, :term)
-                                                                 .sort
-                when "collapseAllCurrent" then current_user.current_subscribable_lectures
-    end
-    if @collapse_id == "collapseCurrentStuff"
-      @own_lectures = current_user.current_staff_lectures - @lectures
-    end
     @link = "#{@collapse_id.remove("collapse").camelize(:lower)}Link"
   end
 
@@ -160,19 +122,6 @@ class ProfileController < ApplicationController
   end
 
   private
-
-    # The subscribe form on the lecture home page submits as a plain HTML
-    # or Turbo request, in contrast to the legacy JS-driven subscribe flows
-    # (dashboard cards, subscribe page), which expect a JS response.
-    #
-    # NOTE: request.format.html? alone would actually suffice even for Turbo
-    # submissions (Mime::Type#html? matches any MIME string containing
-    # "html", which includes text/vnd.turbo-stream.html) — but we spell out
-    # the Turbo case so correctness does not hinge on that subtlety.
-    def html_redirect_flow?
-      @parent == "redirect" &&
-        (request.format.html? || request.format.turbo_stream?)
-    end
 
     def set_user
       @user = current_user
@@ -239,19 +188,31 @@ class ProfileController < ApplicationController
 
     # stop the update if any of passphrases for newly subscribed
     # lectures is incorrect
+    # Every lecture the save would newly bookmark goes through the rule of
+    # User#unlock_lecture!, before anything is saved, so a refused one leaves
+    # the whole profile unchanged.
     def check_passphrases
       @errors = {}
-      restricted_lectures = Lecture.where(id: lecture_ids)
-                                   .select do |l|
-        l.in?(l.course
-               .to_be_authorized_lectures(current_user))
-      end
-      restricted_lectures.each do |l|
-        given_passphrase = params[:user][:lecture][l.id.to_s][:passphrase]
-        unless given_passphrase == l.passphrase
-          @errors[:passphrase] ||= []
-          @errors[:passphrase].push(l.id)
+      bookmarked = current_user.lecture_bookmarks.pluck(:lecture_id)
+      new_lectures = Lecture.where(id: lecture_ids - bookmarked).to_a
+      return if new_lectures.empty?
+
+      refused = if new_lectures.any?(&:restricted?) && passphrase_attempts_exhausted?
+        new_lectures
+      else
+        new_lectures.reject do |lecture|
+          current_user.may_unlock_lecture?(lecture, passphrase: passphrase_for(lecture))
         end
       end
+      @errors[:passphrase] = refused.map(&:id) if refused.any?
+    end
+
+    def passphrase_for(lecture)
+      params.dig(:user, :lecture, lecture.id.to_s, :passphrase)
+    end
+
+    def passphrase_attempts_exhausted?
+      key = "profile-passphrase-attempts/#{current_user.id}"
+      Rails.cache.increment(key, 1, expires_in: 1.minute).to_i > PASSPHRASE_ATTEMPTS
     end
 end

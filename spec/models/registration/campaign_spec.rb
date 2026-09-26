@@ -607,6 +607,19 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.user_registrations.reload).to all(be_pending)
     end
 
+    it "forgets a dismissed rejection, so a later one is shown again" do
+      registration = create(:registration_user_registration,
+                            registration_campaign: campaign,
+                            registration_item: item1, user: user,
+                            status: :rejected, preference_rank: 1)
+      registration.dismiss!
+
+      campaign.reset_allocation_results!
+
+      expect(registration.reload).to be_pending
+      expect(registration.dismissed_at).to be_nil
+    end
+
     it "deletes forced assignment records (rank nil) when user has other registrations" do
       create(:registration_user_registration,
              registration_campaign: campaign, registration_item: item1,

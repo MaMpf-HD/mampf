@@ -15,9 +15,10 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
-  # a user has many subscribed lectures
-  has_many :lecture_user_joins, dependent: :destroy
-  has_many :lectures, -> { distinct }, through: :lecture_user_joins
+  # a user has many bookmarked lectures (formerly: subscribed lectures)
+  has_many :lecture_bookmarks, dependent: :destroy
+  has_many :dashboard_card_styles, class_name: "Dashboard::CardStyle", dependent: :delete_all
+  has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
   # Roster memberships
   has_many :lecture_memberships, dependent: :destroy
@@ -522,23 +523,23 @@ class User < ApplicationRecord
   # defines which messageboards a user can read:
   # - all boards if the user is an admin
   # - all boards that belong to teaching related lectures (see above)
-  #   together with all boards belonging to subscribed lectures if the user
-  #   is course or lecture editor or teacher and all boards not belonging
-  #   to lectures
-  # - all boards that belong to subscribed lectures otherwise and all
+  #   together with all boards belonging to unlocked lectures (see
+  #   `unlocked_lectures`) if the user is course or lecture editor or teacher
+  #   and all boards not belonging to lectures
+  # - all boards that belong to unlocked lectures otherwise and all
   #    boards not belonging to lectures
   def thredded_can_read_messageboards
     return Thredded::Messageboard.all if admin?
 
-    subscribed_forums =
-      Thredded::Messageboard.where(id: lectures.map(&:forum_id))
+    unlocked_forums =
+      Thredded::Messageboard.where(id: unlocked_lectures.pluck(:forum_id))
                             .or(Thredded::Messageboard.where.not(id: Lecture.all.map(&:forum_id)))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
                                                   .map(&:forum_id))
-                                   .or(subscribed_forums)
+                                   .or(unlocked_forums)
     end
-    subscribed_forums
+    unlocked_forums
   end
 
   # defines which messageboards a user can write to:
@@ -547,14 +548,14 @@ class User < ApplicationRecord
   def thredded_can_write_messageboards
     return Thredded::Messageboard.all if admin?
 
-    subscribed_forums =
-      Thredded::Messageboard.where(id: lectures.map(&:forum_id))
+    unlocked_forums =
+      Thredded::Messageboard.where(id: unlocked_lectures.pluck(:forum_id))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
                                                   .map(&:forum_id))
-                                   .or(subscribed_forums)
+                                   .or(unlocked_forums)
     end
-    subscribed_forums
+    unlocked_forums
   end
 
   # defines which messageboards a user can moderate:
@@ -579,46 +580,35 @@ class User < ApplicationRecord
   # this method is more efficient than
   # media.select { |m| m.visible_for_user?(self)}
   def filter_visible_media(media)
-    nonsubscribed_courses =
-      Course.where(id: Course.pluck(:id) - courses.pluck(:id))
-    nonsubscribed_lectures =
-      Lecture.where(id: Lecture.pluck(:id) - lectures.pluck(:id),
-                    released: ["all"])
-    lessons = Lesson.where(lecture: lectures)
-    nonsubscribed_lessons = Lesson.where(lecture: nonsubscribed_lectures)
-    edited_lessons = Lesson.where(lecture: teaching_related_lectures)
-    talks = Talk.where(lecture: lectures)
-    nonsubscribed_talks = Talk.where(lecture: nonsubscribed_lectures)
-    edited_talks = Talk.where(lecture: teaching_related_lectures)
     return media if admin
 
-    media.where(teachable: courses, released: ["all", "subscribers", "users"])
-         .or(media.where(teachable: nonsubscribed_courses,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: lectures,
-                         released: ["all", "subscribers", "users"]))
-         .or(media.where(teachable: nonsubscribed_lectures,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: lessons,
-                         released: ["all", "subscribers", "users"]))
-         .or(media.where(teachable: nonsubscribed_lessons,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: talks,
-                         released: ["all", "subscribers", "users"]))
-         .or(media.where(teachable: nonsubscribed_talks,
-                         released: ["all", "users"]))
-         .or(media.where(teachable: edited_courses))
-         .or(media.where(teachable: teaching_related_lectures))
-         .or(media.where(teachable: edited_lessons))
-         .or(media.where(teachable: edited_talks))
+    # The same rule as Medium#visible_for_user?: "all" and "users" media are
+    # everybody's, "subscribers" media ("only participants") need the user in
+    # the audience of the lecture, or of one of the course's lectures.
+    participating = LectureAudience.lectures_of(self)
+    visible = media.where(released: ["all", "users"])
+    [participating, Lesson.where(lecture: participating), Talk.where(lecture: participating),
+     Course.where(id: participating.select(:course_id))].each do |teachables|
+      visible = visible.or(media.where(teachable: teachables, released: "subscribers"))
+    end
+    visible.or(media.where(teachable: edited_courses))
+           .or(media.where(teachable: teaching_related_lectures))
+           .or(media.where(teachable: Lesson.where(lecture: teaching_related_lectures)))
+           .or(media.where(teachable: Talk.where(lecture: teaching_related_lectures)))
   end
 
+  # The commented media whose notices reach this user (see LectureAudience,
+  # as in Commontator::CommentsController#update_unread_status), so the
+  # comments page shows every thread the unread flag was raised for.
   def subscribed_commentable_media_with_comments
-    lessons = Lesson.where(lecture: lectures)
-    filter_media(Medium.where.not(sort: ["RandomQuiz", "Question", "Remark"])
-                       .where(teachable: courses + lectures + lessons))
-      .includes(commontator_thread: :comments)
-      .select { |m| m.commontator_thread.comments.any? }
+    audience = LectureAudience.lectures_of(self)
+    media = Medium.where.not(sort: ["RandomQuiz", "Question", "Remark"])
+    commentable = media.where(teachable: audience)
+                       .or(media.where(teachable: Course.where(id: audience.select(:course_id))))
+                       .or(media.where(teachable: Lesson.where(lecture: audience)))
+                       .or(media.where(teachable: Talk.where(lecture: audience)))
+    filter_visible_media(commentable).includes(commontator_thread: :comments)
+                                     .select { |m| m.commontator_thread&.comments&.any? }
   end
 
   # Returns the media that the user has subscribed to and that have been
@@ -657,27 +647,6 @@ class User < ApplicationRecord
   end
 
   # lecture that are in the active term
-  def active_lectures
-    lectures.where(term: Term.active).includes(:course, :term)
-  end
-
-  # A subscription (LectureUserJoin), a seat (LectureMembership,
-  # CohortMembership) and an application (Registration::UserRegistration) exist
-  # independently of each other, which is why the start page asks
-  # `next_term_lectures`, `next_term_seated_lectures` and
-  # `next_term_registered_lectures` rather than one of them.
-  #
-  # What this user has subscribed for the term after the running one. Lectures
-  # without a term are not among them: they run always, and the fold of the
-  # running term carries them.
-  def next_term_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    lectures.where(term: coming).includes(:course, :term)
-            .natural_sort_by(&:title)
-  end
-
   # Teachers and editors see their lectures on the start page without
   # subscribing. As with the subscriptions, the current fold takes the
   # lectures without a term along.
@@ -696,78 +665,94 @@ class User < ApplicationRecord
     lecture.teacher == self || edited_lectures.include?(lecture)
   end
 
-  # Cohorts with propagate_to_lecture: false do not create lecture memberships.
-  # Include them directly so their lectures remain visible on the start page.
-  def next_term_seated_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    seat_ids = cohorts.where(context_type: "Lecture").pluck(:context_id) |
-               lecture_memberships.pluck(:lecture_id)
-
-    Lecture.where(id: seat_ids, term: coming)
-           .includes(:course, :term).natural_sort_by(&:title)
+  # The published lectures whose content this user gets to see as a student:
+  # those without a passphrase, and those unlocked via a bookmark. Scope
+  # counterpart of Lecture#unlocked_for? (staff access is not included).
+  def unlocked_lectures
+    Lecture.published.where(passphrase: [nil, ""])
+           .or(Lecture.published.where(id: lecture_bookmarks.select(:lecture_id)))
   end
 
-  # After Registration::Campaign#finalize! a confirmed registration has a seat,
-  # and the two methods above carry the lecture from then on.
-  def next_term_registered_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
+  # The one rule for bookmarking a lecture by hand, which is also how a lecture
+  # behind a pass phrase is unlocked. Returns whether the lecture is bookmarked
+  # afterwards.
+  def unlock_lecture!(lecture, passphrase: nil)
+    return false unless may_unlock_lecture?(lecture, passphrase: passphrase)
 
-    campaigns = Registration::UserRegistration
-                .where(user: self).where.not(status: :rejected)
-                .joins(:registration_campaign)
-                .merge(Registration::Campaign.where.not(status: :completed))
-                .where(registration_campaigns: { campaignable_type: "Lecture" })
-
-    Lecture.where(id: campaigns.select("registration_campaigns.campaignable_id"),
-                  term: coming)
-           .includes(:course, :term).natural_sort_by(&:title)
+    bookmark_lecture!(lecture)
+    true
   end
 
-  # The start page shows Term.active and Term.active.next separately, so
-  # exclude both here to avoid duplicate lecture cards.
-  def inactive_lectures
-    lectures.where.not(term: [Term.active, Term.active&.next])
+  # The check of unlock_lecture! without the bookmark, for a form that must
+  # vet every lecture before it saves any of them.
+  def may_unlock_lecture?(lecture, passphrase: nil)
+    return false unless lecture.published? || admin || lecture.edited_by?(self)
+
+    lecture.bookmarkable_by?(self) || lecture.passphrase_matches?(passphrase)
   end
 
-  def nonsubscribed_lectures
-    Lecture.where.not(id: lectures.pluck(:id))
-  end
-
-  def subscribe_lecture!(lecture)
+  def bookmark_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
 
-    lecture_user_joins.create_or_find_by(lecture: lecture)
-                      .previously_new_record?
+    lecture_bookmarks.create_or_find_by(lecture: lecture)
+                     .previously_new_record?
   end
 
-  def unsubscribe_lecture!(lecture)
+  def unbookmark_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
     return false unless lecture.in?(lectures)
 
-    lectures.delete(lecture)
+    lecture_bookmarks.where(lecture: lecture).destroy_all
     favorite_lectures.delete(lecture)
 
     true
   end
 
-  def current_subscribed_lectures
-    active_lectures.includes(:course, :term).natural_sort_by(&:title) +
-      lectures.where(term: nil).natural_sort_by(&:title)
+  # Every lecture this user holds a place in: a seat on the lecture roster,
+  # which every tutorial seat comes with, or a place in one of its cohorts
+  # (cohorts with propagate_to_lecture: false do not create a lecture seat).
+  def roster_lectures
+    Lecture.where(id: lecture_memberships.select(:lecture_id))
+           .or(Lecture.where(id: cohorts.where(context_type: "Lecture")
+                                        .select(:context_id)))
   end
 
-  def current_subscribable_lectures
-    current_lectures = Lecture.in_current_term.includes(:course, :term)
-    no_term_lectures = Lecture.no_term.includes(:course, :term)
-    return current_lectures.sort + no_term_lectures.sort if admin
-    unless editor? || teacher?
-      return current_lectures.published.sort + no_term_lectures.published.sort
-    end
+  # Lectures with a pending application, or a rejected one not yet dismissed
+  # (see Registration::UserRegistration#dismiss!). A confirmed application
+  # is normally already covered by `roster_lectures`; this catches it before
+  # rostering happens, or if the campaign never rosters the user at all.
+  def lectures_with_registration_application
+    campaign_ids = user_registrations
+                   .where(status: [:pending, :confirmed])
+                   .or(user_registrations.rejected.not_dismissed)
+                   .select(:registration_campaign_id)
+    Lecture.where(
+      id: Registration::Campaign.where(id: campaign_ids,
+                                       campaignable_type: "Lecture")
+                                .non_exam
+                                .select(:campaignable_id)
+    )
+  end
 
-    current_lectures.select { |l| l.edited_by?(self) || l.published? }.sort +
-      no_term_lectures.select { |l| l.edited_by?(self) || l.published? }.sort
+  # The lectures this user holds a place in for the given term, or has an
+  # open application for (see `lectures_with_registration_application`).
+  # Sorted by Registration::StatusQuery.sort_priority (confirmed first,
+  # rejected last), ties kept in `lectures_of_term`'s title order.
+  def current_enrolled_lectures(term = Term.active)
+    combined = roster_lectures.or(lectures_with_registration_application)
+    enrolled = lectures_of_term(combined, term)
+    statuses = Registration::StatusQuery.new(self, enrolled.map(&:id)).statuses
+
+    enrolled.sort_by.with_index do |lecture, index|
+      [Registration::StatusQuery.sort_priority(statuses[lecture.id]), index]
+    end
+  end
+
+  # Bookmarked but not already listed in `current_enrolled_lectures`. Pass
+  # `enrolled` when the caller already computed it, to avoid recomputing it.
+  def current_bookmarked_lectures(term = Term.active,
+                                  enrolled: current_enrolled_lectures(term))
+    lectures_of_term(lectures, term) - enrolled
   end
 
   def submission_partners(lecture)
@@ -848,8 +833,8 @@ class User < ApplicationRecord
   end
 
   def proper_student_in?(lecture)
-    lecture.in?(lectures) && !in?(lecture.tutors) && !in?(lecture.editors) &&
-      self != lecture.teacher
+    lecture.published? && lecture.unlocked_for?(self) &&
+      !in?(lecture.tutors) && !in?(lecture.editors) && self != lecture.teacher
   end
 
   def original_image_file
@@ -971,6 +956,17 @@ class User < ApplicationRecord
   end
 
   private
+
+    # Term-independent lectures belong to every term, so they follow the ones
+    # of the selected term rather than being left out.
+    def lectures_of_term(scope, term)
+      independent = scope.where(term: nil).includes(:course, :teacher)
+                         .natural_sort_by(&:title)
+      return independent if term.nil?
+
+      scope.where(term: term).includes(:course, :term, :teacher)
+           .natural_sort_by(&:title) + independent
+    end
 
     def program_offered_to_students
       return if program.nil? || program.degree.present?

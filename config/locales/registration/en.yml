@@ -656,12 +656,12 @@ en:
       not_found: "Lecture not found."
       home:
         empty_title: "Start here"
-        empty_subscribed: >-
+        empty_accessible: >-
           Lecture news and updates appear on this page. Materials are
           available from the lecture navigation.
-        empty_unsubscribed: >-
-          Lecture news and updates appear on this page. Subscribe to access
-          the materials.
+        empty_locked: >-
+          Lecture news and updates appear on this page. Unlock the lecture to
+          access the materials.
         news_indicator: "Unread announcements and forum topics"
         attachment_download: "Download program (PDF)"
         attachment_missing: "No program is attached to this lecture."
@@ -673,9 +673,15 @@ en:
           A registration is running for this lecture, but your home page has no
           welcome text — this is what students see before they register. Add a
           short intro and your program.
-        subscribe_prompt: >-
-          You have not subscribed to this lecture yet. Subscribing gives you
-          access to its materials — it is not a binding course registration.
+        unlock_prompt: >-
+          This lecture is protected by a pass phrase. Enter it to unlock its
+          materials.
+        unlock_prompt_member: >-
+          This lecture is protected by a pass phrase. As a member of the
+          lecture, you can unlock its materials without entering it.
+        unlock: "Unlock"
+        unlock_too_many_attempts: >-
+          Too many attempts. Please wait a moment and try again.
   activerecord:
     errors:
       models:

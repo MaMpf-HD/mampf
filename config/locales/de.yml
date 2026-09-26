@@ -202,7 +202,7 @@ de:
         free_medium: 'Dieses Medium ist frei zugänglich.'
         user_medium: 'Dieses Medium ist nur für MaMpf-NutzerInnen zugänglich.'
         subscriber_medium: >
-          Dieses Medium ist nur für AbonnentInnen der entsprechenden
+          Dieses Medium ist nur für Teilnehmende der entsprechenden
           Lehrveranstaltung zugänglich.
     teachables:
       teachables: Veranstaltungssuche
@@ -1392,11 +1392,11 @@ de:
           Zugriff.
           </li>
           <li>
-          nur AbonnentInnen: Registrierte MaMpf-NutzerInnen, die das
-          assoziierte Modul/die assoziierte Veranstaltung/die zur assoziierten
-          Sitzung gehörige Veranstaltung abonniert haben,
-          können das Medium sehen. Sonstige MaMpf-NutzerInnen können
-          das Medium nicht sehen.
+          nur Teilnehmende: Wer sich die zugehörige Veranstaltung gemerkt hat,
+          auf einer ihrer Listen steht (Tutorien, Vorträge, Klausuren) oder
+          eine laufende Anmeldung hat, kann das Medium sehen; bei einem
+          Medium eines Moduls die Teilnehmenden einer seiner Veranstaltungen.
+          Sonstige MaMpf-NutzerInnen können das Medium nicht sehen.
           </li>
           <li>
           gesperrt: Generische MaMpf-NutzerInnen können das Medium nicht mehr
@@ -2031,8 +2031,8 @@ de:
         veröffentliche alle zum Quiz gehörigen Quiz-Fragen und
         Quiz-Erläuterungen
       restricted_vertex: >
-        Diese %{sort} ist nur für AbonnentInnen von %{teachable} aufrufbar.
-        NutzerInnen ohne das Abonnement können das Quiz nicht spielen.
+        Diese %{sort} ist nur für Teilnehmende von %{teachable} aufrufbar.
+        Andere NutzerInnen können das Quiz nicht spielen.
       no_editor_rights: >
         Für diese %{sort} hast Du keine Editorenrechte.
       dependent_quizzable: >
@@ -2155,28 +2155,10 @@ de:
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
     locale: 'Sprache'
-    subscribe_lecture: 'Vorlesung abonnieren'
+    subscribe_lecture: 'Veranstaltung merken'
     passphrase_required: >
-      Du möchtest die Veranstaltung %{lecture_title} abonnieren. Diese ist
+      Du möchtest Dir die Veranstaltung %{lecture_title} merken. Diese ist
       durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
-    my_term_html: Mein Semester &ndash; %{term}
-    my_next_term_html: Mein nächstes Semester &ndash; %{term}
-    inactive_lectures: Weitere abonnierte Veranstaltungen
-    active_nonsubscribed_lectures_html: >
-      Aktuelle Veranstaltungen &ndash; %{term}
-    no_current_stuff: >
-      Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
-    no_inactive_stuff: >
-      Du hast keine Veranstaltungen außerhalb des aktuellen Semesters abonniert.
-    no_next_term_stuff: >
-      Du hast noch keine Veranstaltungen aus dem kommenden Semester abonniert.
-    next_term_registrations: >
-      Angemeldet — über die Plätze wird nach dem Anmeldeschluss entschieden.
-    next_term_seats: >
-      Du stehst auf einer Liste dieser Veranstaltung, hast sie aber nicht abonniert.
-    no_current_at_all: >
-      Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
-      worden.
     other_preferences: >
       Sonstige Einstellungen
     changes_made: >
@@ -2232,7 +2214,6 @@ de:
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
-    my_talks: Meine Vorträge
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
@@ -2977,9 +2958,6 @@ de:
       Du hast das Formular korrekt ausgefüllt, aber leider ist auf dem Server
       ein Fehler aufgetreten. Bitte versuche es später erneut und kontaktiere
       uns, wenn das Problem weiterhin besteht.
-    not_subscribed: >
-      Aktuell hast Du diese Veranstaltung nicht abonniert.
-      Um sie betrachten zu können, musst Du sie vorher abonnieren.
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
     thyme:
@@ -3249,7 +3227,7 @@ de:
       Du bist für dieses Blatt schon eigenständig bewertet; frag Deinen Tutor,
       ob Du ins Team gehörst.
     already_in: Bei dieser Abgabe bist Du schon dabei.
-    lecture_not_subscribed: Du hast die zugehörige Veranstaltung icht abonniert.
+    lecture_not_unlocked: Du hast keinen Zugriff auf die zugehörige Veranstaltung.
     no_partners_no_leave: >
       Du kannst nicht austreten, da Du die einzige Person in der Abgabegruppe
       bist. Dafür kannst Du die Abgabe löschen.
@@ -3289,6 +3267,10 @@ de:
     upload_failure_scan_required: >
       Für die hochgeladene Datei fehlt ein erforderlicher Malware-Scan.
       Bitte lade die Datei erneut hoch.
+    upload_failure_no_tutorial: >
+      Du bist in keinem Tutorium dieser Veranstaltung und kannst deshalb keine
+      Abgabe hochladen. Wende Dich bitte an Deine DozentIn, wenn Du denkst, dass
+      hier ein Fehler vorliegt.
     upload_failure_unauthorized: >
       Du darfst diese Datei hier nicht hochladen.
     upload_failure_wrong_target: >
@@ -3961,7 +3943,7 @@ de:
     unpublished: 'unveröffentlicht'
     all: 'frei'
     users: 'nur registrierte MaMpf-NutzerInnen'
-    subscribers: 'nur AbonnentInnen'
+    subscribers: 'nur Teilnehmende'
     locked: 'gesperrt'
     referenced_from: 'referenziert in'
     irrelevant: 'egal'

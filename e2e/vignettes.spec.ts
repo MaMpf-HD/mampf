@@ -13,7 +13,7 @@ test.describe("Vignettes", () => {
       teacher_id: teacherId,
       vignettes: usesVignettes,
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: studentId,
     });

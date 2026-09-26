@@ -15,10 +15,11 @@ module Lectures
       authorize! :index, @lecture
 
       @can_edit = current_user.can_edit?(@lecture)
-      @subscribed = @lecture.in?(current_user.lectures)
-      # Roster members may subscribe without the passphrase, see
-      # ProfileController#subscribe_lecture.
-      @passphrase_required = @lecture.restricted? &&
+      @content_accessible = @lecture.content_accessible_by?(current_user)
+      @locked = !@lecture.unlocked_for?(current_user) && !@can_edit
+      # Roster members may unlock without the passphrase, see
+      # Lectures::UnlocksController#create.
+      @passphrase_required = @locked &&
                              !LectureMembership.exists?(user: current_user,
                                                         lecture: @lecture)
       @notifications = current_user.active_notifications(@lecture)
@@ -86,7 +87,8 @@ module Lectures
       end
 
       def student_work?
-        @subscribed && !@can_edit && @tutorials_given.empty? && @lecture.assignments.exists?
+        @content_accessible && !@can_edit && @tutorials_given.empty? &&
+          @lecture.assignments.exists?
       end
 
       def load_student_work

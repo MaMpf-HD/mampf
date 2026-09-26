@@ -101,7 +101,7 @@ test.describe("uploading through Uppy", () => {
       await factory.create("assignment", [], { lecture_id: lecture.id });
       const tutorial = await factory.create("tutorial", [],
         { lecture_id: lecture.id, title: "Mo 10" });
-      await factory.create("lecture_user_join", [], {
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: user.id,
       });
       // A hand-in goes to the group one sits in, so there has to be a seat.
@@ -142,7 +142,7 @@ test.describe("uploading through Uppy", () => {
       await factory.create("assignment", [], { lecture_id: lecture.id });
       const tutorial = await factory.create("tutorial", [],
         { lecture_id: lecture.id, title: "Mo 10" });
-      await factory.create("lecture_user_join", [], {
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: user.id,
       });
       // A hand-in goes to the group one sits in, so there has to be a seat.
@@ -171,7 +171,7 @@ test.describe("uploading through Uppy", () => {
       await factory.create("assignment", [], { lecture_id: lecture.id });
       const tutorial = await factory.create("tutorial", [],
         { lecture_id: lecture.id, title: "Mo 10" });
-      await factory.create("lecture_user_join", [], {
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: user.id,
       });
       await factory.create("tutorial_membership", [], {

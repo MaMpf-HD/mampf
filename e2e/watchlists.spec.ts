@@ -221,7 +221,7 @@ test.describe("manage Watchlist entries", () => {
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
 
     const lecturePage = new LecturePage(page, lecture.id);
-    await lecturePage.subscribe();
+    await lecturePage.goto();
     await lecturePage.gotoManuscript();
     await lecturePage.addMediaToWatchlist(medium.id, watchlist.name);
     await expect(page.getByRole("alert").filter({ hasText: "The medium was added to" })).toBeVisible();
@@ -241,7 +241,7 @@ test.describe("manage Watchlist entries", () => {
     const watchlistsPage = new WatchlistsPage(page, `/watchlists/${watchlist.id}`);
 
     const lecturePage = new LecturePage(page, lecture.id);
-    await lecturePage.subscribe();
+    await lecturePage.goto();
     await lecturePage.gotoManuscript();
     await lecturePage.addMediaToWatchlist(medium.id, watchlist.name, false);
     await watchlistsPage.goto();
@@ -287,7 +287,7 @@ test.describe("watchlist entries without a watchlist", () => {
       { lecture_id: lecture.id, sort: "Script" });
 
     const lecturePage = new LecturePage(page, lecture.id);
-    await lecturePage.subscribe();
+    await lecturePage.goto();
     await lecturePage.gotoManuscript();
     await page.getByTitle("Add to my watchlist").click();
     await page.getByRole("button", { name: "Add to my watchlist" }).click();
@@ -310,7 +310,7 @@ test.describe("creating a watchlist from inside the add dialog", () => {
       { lecture_id: lecture.id, sort: "Script" });
 
     const lecturePage = new LecturePage(page, lecture.id);
-    await lecturePage.subscribe();
+    await lecturePage.goto();
     await lecturePage.gotoManuscript();
     await page.getByTitle("Add to my watchlist").click();
 

@@ -394,8 +394,9 @@ class SubmissionsController < ApplicationController
       # no name to print for somebody who has not been placed in one - the
       # refusal the save would give, before the page is built rather than
       # halfway through it. A hand-in that exists stays where it was filed,
-      # seat or no seat, so replacing its file asks for none.
-      rostered_tutorial!(@assignment.lecture) unless @submission&.persisted?
+      # but replacing its file, like any upload, needs a seat in the lecture
+      # (SubmissionAbility#upload_manuscript), so the form asks for one too.
+      rostered_tutorial!(@assignment.lecture)
       @partners = hub.possible_partners
       render :form, status: status
     end
@@ -676,7 +677,7 @@ class SubmissionsController < ApplicationController
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
       elsif !current_user.proper_student_in?(@submission.tutorial.lecture)
-        @error = I18n.t("submission.lecture_not_subscribed")
+        @error = I18n.t("submission.lecture_not_unlocked")
       end
     end
 

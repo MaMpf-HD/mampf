@@ -6,12 +6,6 @@ module LecturesHelper
     RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
   end
 
-  # Whether the lecture currently has an open registration campaign
-  # (one building block of the search-card badges, see _lecture.html.erb).
-  def registration_open?(lecture)
-    lecture.registration_campaigns.any?(&:open_for_registrations?)
-  end
-
   # Deleting a lecture deletes its campaigns and every registration in them,
   # so the confirmation counts both.
   def lecture_destruction_confirmation(lecture)

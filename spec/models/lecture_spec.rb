@@ -376,22 +376,22 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
 
-    it "subscribes roster members to the lecture" do
+    it "bookmarks the lecture for roster members" do
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(3)
+      end.to change(LectureBookmark, :count).by(3)
 
       expect(lecture.users).to include(*users)
     end
 
-    it "keeps existing subscriptions intact" do
-      create(:lecture_user_join, user: users.first, lecture: lecture)
+    it "keeps existing bookmarks intact" do
+      create(:lecture_bookmark, user: users.first, lecture: lecture)
 
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(2) # Only 2 new ones
+      end.to change(LectureBookmark, :count).by(2) # Only 2 new ones
 
-      expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
+      expect(LectureBookmark.where(lecture: lecture, user: users.first).count)
         .to eq(1)
     end
 
@@ -636,6 +636,40 @@ RSpec.describe(Lecture, type: :model) do
       policy.registration_campaign.update!(status: :closed)
 
       expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+    end
+  end
+
+  describe "#open_exam_registration_for" do
+    let(:student) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+    it "finds an exam campaign that is still open" do
+      exam.registration_campaign.update!(status: :open)
+
+      expect(lecture.open_exam_registration_for(student))
+        .to eq(exam.registration_campaign)
+    end
+
+    it "ignores a campaign that has not been opened yet" do
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign for anything but an exam" do
+      create(:registration_campaign, :open, campaignable: lecture)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign the student has already answered" do
+      campaign = exam.registration_campaign
+      campaign.update!(status: :open)
+      create(:registration_user_registration,
+             user: student,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
     end
   end
 end

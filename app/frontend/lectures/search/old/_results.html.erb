@@ -19,7 +19,7 @@
         <%= render partial: 'main/start/lecture',
                    locals: { lecture: l,
                              current: false,
-                             subscribed: l.subscribed_by?(current_user),
+                             subscribed: l.bookmarked_by?(current_user),
                              parent: 'lectureSearch' } %>
       <% end %>
     </div>

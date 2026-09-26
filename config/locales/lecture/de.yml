@@ -2,22 +2,23 @@ de:
   lecture:
     edit:
       announcements_audience_hint: >-
-        Mitteilungen erreichen alle, die diese Veranstaltung abonniert haben —
-        als Benachrichtigung in MaMpf immer, per E-Mail jedoch nur diejenigen,
-        die E-Mail-Benachrichtigungen für Mitteilungen aktiviert haben.
+        Mitteilungen erreichen alle, die sich diese Veranstaltung gemerkt haben,
+        auf einer ihrer Listen stehen (Tutorien, Vorträge, Klausuren) oder eine
+        laufende Anmeldung haben — als Benachrichtigung in MaMpf immer, per
+        E-Mail jedoch nur diejenigen, die E-Mail-Benachrichtigungen für
+        Mitteilungen aktiviert haben.
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
-      term_filter: Semesterfilter für Vorlesungen
-      current_term: Aktuelles Semester
-      next_term: Nächstes Semester
+      bookmark: Merken
+      bookmark_lecture: "%{lecture} merken"
       registration_open: Anmeldung offen
-      registered: Angemeldet
-      subscribed: Abonniert
+      registered_status: Du bist für diese Veranstaltung angemeldet
+      go_register: Anmeldung offen — zur Veranstaltungsseite, um Dich anzumelden
+      go_register_for: "Anmeldung für %{lecture} offen — zur Veranstaltungsseite, um Dich anzumelden"
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
   lecture_home:
-    subscribe: "Veranstaltung abonnieren"
     intro:
       more: "Weiterlesen"
       less: "Weniger anzeigen"

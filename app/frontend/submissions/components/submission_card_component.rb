@@ -125,8 +125,10 @@ class SubmissionCardComponent < ViewComponent::Base
     helpers.lecture_path(assignment.lecture)
   end
 
+  # Replacing the file is an upload, and an upload needs a seat (see
+  # SubmissionAbility#upload_manuscript), so without one the card offers none.
   def editable?
-    submission.present? && !submission.not_updatable?
+    submission.present? && !submission.not_updatable? && may_start?
   end
 
   def invitable?

@@ -13,7 +13,7 @@ test("can access tutorial submission page (only as tutor)",
       { lecture_id: lecture.id, tutor_id: tutorUser.id });
 
     // student should NOT see tutorials link
-    await new LecturePage(studentPage, lecture.id).subscribe();
+    await new LecturePage(studentPage, lecture.id).goto();
     const studentTutorialsLink = studentPage.locator('[data-controller="lecture-sidebar"]')
       .getByRole("link", {
         name: "Tutorials",
@@ -26,7 +26,7 @@ test("can access tutorial submission page (only as tutor)",
     await expect(teacherSidebar.getByRole("link", { name: "Submissions" })).toHaveCount(0);
 
     // tutor should see tutorials link
-    await new LecturePage(tutorPage, lecture.id).subscribe();
+    await new LecturePage(tutorPage, lecture.id).goto();
     const tutorTutorialsLink = tutorPage.locator('[data-controller="lecture-sidebar"]')
       .getByRole("link", {
         name: "Tutorials",

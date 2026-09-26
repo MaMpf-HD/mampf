@@ -70,7 +70,7 @@ RSpec.describe(UploadIntent) do
       )
 
       expect(intent).to be_targeted
-      expect(intent.action).to eq(:create)
+      expect(intent.action).to eq(:upload_manuscript)
       expect(intent.target).to have_attributes(class: Submission, id: nil,
                                                assignment_id: assignment.id)
     end

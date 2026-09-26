@@ -9,13 +9,19 @@ RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
     let(:course) { create(:course) }
     let(:lecture) { create(:lecture, :released_for_all, course: course) }
     let(:other_lecture) { create(:lecture, :released_for_all) }
+    let(:protected_lecture) do
+      create(:lecture, :released_for_all, passphrase: "secret")
+    end
 
     # Media setup
-    let!(:media_in_subscribed_lecture) do
+    let!(:media_in_bookmarked_lecture) do
       create(:valid_medium, teachable: lecture, released: "subscribers")
     end
     let!(:media_in_other_lecture) do
       create(:valid_medium, teachable: other_lecture, released: "subscribers")
+    end
+    let!(:media_in_protected_lecture) do
+      create(:valid_medium, teachable: protected_lecture, released: "subscribers")
     end
     let!(:free_media) { create(:valid_medium, teachable: other_lecture, released: "all") }
     let!(:users_media) { create(:valid_medium, teachable: other_lecture, released: "users") }
@@ -27,23 +33,27 @@ RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
     let(:scope) { Medium.all }
 
     before do
-      user.subscribe_lecture!(lecture)
+      user.bookmark_lecture!(lecture)
       other_lecture.editors << editor
     end
 
     context "for a regular user" do
       subject(:filtered_scope) { described_class.filter(scope: scope, params: {}, user: user) }
 
-      it "includes media from subscribed lectures" do
-        expect(filtered_scope).to include(media_in_subscribed_lecture)
+      it "includes media from bookmarked lectures" do
+        expect(filtered_scope).to include(media_in_bookmarked_lecture)
+      end
+
+      it "excludes participants-only media of an open lecture the user does not take part in" do
+        expect(filtered_scope).not_to include(media_in_other_lecture)
       end
 
       it "includes media released for 'all' or 'users'" do
         expect(filtered_scope).to include(free_media, users_media)
       end
 
-      it "excludes media from unsubscribed lectures" do
-        expect(filtered_scope).not_to include(media_in_other_lecture)
+      it "excludes media from protected lectures that are not unlocked" do
+        expect(filtered_scope).not_to include(media_in_protected_lecture)
       end
 
       it "excludes unpublished media" do

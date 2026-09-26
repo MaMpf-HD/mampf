@@ -1,7 +1,7 @@
 <%= vite_stylesheet_tag "user_registrations/index.scss" %>
 <%= vite_stylesheet_tag "lectures/home/lecture_home.scss" %>
 
-<% content_accessible = @subscribed || @can_edit %>
+<% content_accessible = @content_accessible %>
 <% campaigns = Array(@campaign_summaries) %>
 <% focus = lecture_home_focus(campaigns: campaigns, next_exam: @next_exam) %>
 <% listed_campaigns = campaigns.reject { |details| focus&.subject == details } %>
@@ -76,13 +76,15 @@
     </p>
   <% end %>
 
-  <% unless content_accessible %>
-    <div class="lecture-home-subscribe" data-testid="lecture-home-subscribe-hint">
-      <p class="mb-2"><%= t("registration.lecture.home.subscribe_prompt") %></p>
-      <%= form_with url: subscribe_lecture_path, method: :patch, local: true, scope: "lecture",
+  <% if @locked %>
+    <div class="lecture-home-unlock" data-testid="lecture-home-unlock-hint">
+      <p class="mb-2">
+        <%= @passphrase_required ?
+              t("registration.lecture.home.unlock_prompt") :
+              t("registration.lecture.home.unlock_prompt_member") %>
+      </p>
+      <%= form_with url: lecture_unlock_path(@lecture), method: :post, local: true,
                     class: "d-flex align-items-center flex-wrap gap-2" do |f| %>
-        <%= f.hidden_field :id, value: @lecture.id %>
-        <%= f.hidden_field :parent, value: "redirect" %>
         <% if @passphrase_required %>
           <%= f.password_field :passphrase,
                                class: "form-control w-auto",
@@ -90,9 +92,9 @@
                                "aria-label": t("profile.passphrase"),
                                data: { testid: "lecture-home-passphrase" } %>
         <% end %>
-        <%= f.submit t("lecture_home.subscribe"),
+        <%= f.submit t("registration.lecture.home.unlock"),
                      class: "btn btn-outline-primary text-nowrap",
-                     data: { testid: "lecture-home-subscribe-button" } %>
+                     data: { testid: "lecture-home-unlock-button" } %>
       <% end %>
     </div>
   <% end %>
@@ -163,12 +165,12 @@
         Array(@overview&.closed_campaigns).empty? %>
     <div class="lecture-home-empty" data-testid="lecture-home-fallback-card">
       <h2 class="h5 mb-2"><%= t("registration.lecture.home.empty_title") %></h2>
-      <% if @subscribed %>
-        <p class="mb-3"><%= t("registration.lecture.home.empty_subscribed") %></p>
+      <% if @content_accessible %>
+        <p class="mb-3"><%= t("registration.lecture.home.empty_accessible") %></p>
         <%= link_to t("basics.outline"), lecture_outline_path(@lecture),
                     class: "btn btn-outline-primary btn-sm" %>
       <% else %>
-        <p class="mb-0"><%= t("registration.lecture.home.empty_unsubscribed") %></p>
+        <p class="mb-0"><%= t("registration.lecture.home.empty_locked") %></p>
       <% end %>
     </div>
   <% end %>

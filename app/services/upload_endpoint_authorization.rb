@@ -69,6 +69,21 @@ class UploadEndpointAuthorization
       false
     end
 
+    # Tells a hand-in refused only for want of a tutorial seat apart from an
+    # upload the user had no business making: the student can get a seat, and
+    # should be told that rather than "not allowed".
+    def missing_tutorial_seat?(intent:, user:)
+      return false unless intent&.for_user?(user) && intent.for_uploader?(SubmissionUploader)
+
+      submission = intent.target
+      return false unless submission.is_a?(Submission)
+
+      lecture = submission.assignment&.lecture
+      return false if lecture.nil? || user.rostered_tutorial_in(lecture)
+
+      submission.persisted? ? user.in?(submission.users) : user.proper_student_in?(lecture)
+    end
+
     # Coarse authorization for the stock ActiveStorage direct-upload endpoint.
     # See ACTIVE_STORAGE_KEY for why this is gated to content editors.
     def active_storage_authorized?(user:)

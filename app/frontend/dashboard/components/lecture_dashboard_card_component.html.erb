@@ -1,0 +1,79 @@
+<%= render(DashboardCardComponent.new(
+      href: lecture_path(lecture),
+      image_url: image_url,
+      title: lecture.title_no_term,
+      tape: WashiTapeComponent.new(
+              tape: tape,
+              label: lecture.title_no_term,
+              update_url: dashboard_lecture_washi_tape_path(lecture)),
+      data: { lecture_id: lecture.id,
+              testid: "lecture-dashboard-card" })) do |card| %>
+  <% if show_teacher? %>
+    <% card.with_subtitle { lecture.teacher.name } %>
+  <% end %>
+
+  <% if bookmarked? %>
+    <% card.with_corner do %>
+      <%= render "dashboard/components/removal_modal",
+                 controller: "bookmark-removal",
+                 url: dashboard_lecture_bookmark_path(lecture, term: term&.dashboard_param),
+                 lecture_id: lecture.id,
+                 icon_title: t("main.start.remove_bookmark"),
+                 icon_label: t("main.start.remove_bookmark_for",
+                               lecture: lecture.title_no_term),
+                 modal_title: t("main.start.remove_bookmark_title"),
+                 modal_body: remove_bookmark_body,
+                 buttons: [{ action: "confirm",
+                            css_class: "btn btn-danger",
+                            label: t("main.start.remove_bookmark_confirm") }] %>
+    <% end %>
+  <% elsif registration_status == :rejected %>
+    <% card.with_corner do %>
+      <%= render "dashboard/components/removal_modal",
+                 controller: "registration-notice-removal",
+                 url: dashboard_lecture_registration_notice_path(
+                   lecture, term: term&.dashboard_param
+                 ),
+                 lecture_id: lecture.id,
+                 icon_title: t("main.start.remove_registration_notice"),
+                 icon_label: t("main.start.remove_registration_notice_for",
+                               lecture: lecture.title_no_term),
+                 modal_title: t("main.start.remove_registration_notice_title"),
+                 modal_body: remove_registration_notice_body,
+                 buttons: [
+                   ({ action: "keep-bookmarked",
+                      css_class: "btn btn-outline-secondary",
+                      label: t("main.start.remove_registration_notice_keep_bookmarked") } if
+                     lecture.bookmarkable_by?(user)),
+                   { action: "remove-entirely",
+                     css_class: "btn btn-danger",
+                     label: t("main.start.remove_registration_notice_remove_entirely") }
+                 ].compact %>
+    <% end %>
+  <% end %>
+
+  <% if show_registration_status? %>
+    <% card.with_note do %>
+      <% if registration_status == :open %>
+        <%= link_to lecture_home_path(lecture), class: "dashboard-card__note-link" do %>
+          <i class="bi <%= registration_status_icon %>" aria-hidden="true"></i>
+          <%= registration_status_label %>
+        <% end %>
+      <% else %>
+        <i class="bi <%= registration_status_icon %>" aria-hidden="true"></i>
+        <%= registration_status_label %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% card.with_progress do %>
+    <%= render(DashboardPointsProgressComponent.new(lecture: lecture,
+                                                    user: user)) %>
+  <% end %>
+
+  <% card.with_rail do %>
+    <%= render(LectureQuickActionsComponent.new(lecture: lecture,
+                                                user: user,
+                                                activity: activity)) %>
+  <% end %>
+<% end %>

@@ -12,6 +12,7 @@ RSpec.describe("SubmissionUploads", type: :request) do
 
   before do
     assignment.lecture.users << user
+    create(:tutorial, lecture: assignment.lecture).add_user_to_roster!(user)
     user.reload
     sign_in user
     allow(MalwareScanGate).to receive(:scanner).and_return(scanner)

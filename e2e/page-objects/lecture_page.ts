@@ -21,11 +21,17 @@ export class LecturePage {
     await this.page.goto(`${this.link}/script`);
   }
 
-  async subscribe() {
-    await this.goto();
-    const subscribeButton = this.page.getByRole("button", { name: "Subscribe to this course" });
-    await subscribeButton.click();
-    await expect(subscribeButton).toHaveCount(0);
+  /**
+   * Unlocks a password-protected lecture from its home page.
+   */
+  async unlock(passphrase?: string) {
+    await this.page.goto(`${this.link}/home`);
+    if (passphrase !== undefined) {
+      await this.page.getByLabel("Passphrase").fill(passphrase);
+    }
+    const unlockButton = this.page.getByRole("button", { name: "Unlock" });
+    await unlockButton.click();
+    await expect(unlockButton).toHaveCount(0);
   }
 
   async addMediaToWatchlist(mediumID: number, watchlistName: string, submit = true) {

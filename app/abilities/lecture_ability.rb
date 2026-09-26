@@ -20,19 +20,16 @@ class LectureAbility
       user.can_edit?(lecture)
     end
 
-    # there is a redirect to the subscription page inside the controller
-    # if the lecture is not a subscribed lecture of the user
+    # there is a redirect to the lecture's home page inside the controller
+    # if the lecture's content is not accessible to the user (see
+    # Lecture#content_accessible_by?)
     can :show, Lecture
 
     can :search, Lecture
 
     can [:show_announcements, :organizational, :show_random_quizzes,
          :display_course], Lecture do |lecture|
-      lecture.in?(user.lectures) || user.can_edit?(lecture)
-    end
-
-    can :subscribe_page, Lecture do |lecture|
-      lecture.published? || user.active_teachable_editor?
+      lecture.content_accessible_by?(user)
     end
 
     can [:self_materialize, :enroll], Lecture do |lecture|

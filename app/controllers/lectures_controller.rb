@@ -7,7 +7,7 @@ class LecturesController < ApplicationController
                                             :show_announcements]
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
-  before_action :check_for_subscribe, only: [:outline]
+  before_action :check_for_unlock, only: [:outline]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   before_action :require_turbo_frame, only: [:new]
   layout "administration"
@@ -260,21 +260,23 @@ class LecturesController < ApplicationController
     # per request and scoped to the current page, so the cards do not
     # trigger per-lecture queries and the cost is bounded by the page size)
     page_lecture_ids = @lectures.map(&:id)
-    @subscribed_lecture_ids =
-      current_user.lecture_user_joins
-                  .where(lecture_id: page_lecture_ids)
-                  .pluck(:lecture_id).to_set
-    @registered_lecture_ids =
-      Registration::UserRegistration
-      .where(user: current_user, status: [:pending, :confirmed])
-      .joins(:registration_campaign)
-      .where(registration_campaigns: { campaignable_type: "Lecture",
-                                       campaignable_id: page_lecture_ids })
-      .pluck("registration_campaigns.campaignable_id")
-      .to_set
-    status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
-    @rosterized_lecture_ids = status.rosterized_lecture_ids
-    @self_enrollable_lecture_ids = status.enrollable_lecture_ids
+    self_enrollment = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
+    @search_result_ids = LectureSearchResultComponent::PageIds.new(
+      bookmarked_lecture_ids:
+        current_user.lecture_bookmarks
+                    .where(lecture_id: page_lecture_ids)
+                    .pluck(:lecture_id).to_set,
+      registration_status_by_lecture_id:
+        Registration::StatusQuery.new(current_user, page_lecture_ids).statuses,
+      rosterized_lecture_ids: self_enrollment.rosterized_lecture_ids,
+      self_enrollable_lecture_ids: self_enrollment.enrollable_lecture_ids
+    )
+
+    # The dashboard search is scoped to one semester by the picker above it, so
+    # the term on each result card is redundant there and switched off via a
+    # hidden field. Other callers (e.g. /search/index) keep it.
+    @show_term = params.dig(:search, :show_term) != "0"
+    @search_term = Term.from_dashboard_param(params.dig(:search, :term))
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
@@ -289,9 +291,7 @@ class LecturesController < ApplicationController
             turbo_stream.replace("pagy-nav-next",
                                  partial: "lectures/search/nav",
                                  locals: { pagy: @pagy }),
-            turbo_stream.append("lecture-search-results",
-                                partial: "lectures/search/lecture",
-                                collection: @lectures)
+            turbo_stream.append("lecture-search-results", search_result_cards)
           ]
         end
       end
@@ -313,11 +313,6 @@ class LecturesController < ApplicationController
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
-  def subscribe_page
-    render template: "lectures/subscribe/subscribe_page",
-           layout: "application_no_sidebar"
-  end
-
   def import_toc
     imported_lecture = Lecture
                        .find_by(id: import_toc_params[:imported_lecture_id])
@@ -328,6 +323,13 @@ class LecturesController < ApplicationController
   end
 
   private
+
+    def search_result_cards
+      LectureSearchResultComponent.with_collection(
+        @lectures, ids: @search_result_ids, user: current_user,
+                   term: @search_term, show_term: @show_term
+      )
+    end
 
     def set_lecture
       @lecture = Lecture.find_by(id: params[:id])
@@ -344,15 +346,13 @@ class LecturesController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    def check_for_subscribe
-      # Staff bypass the subscription gate for content.
-      return if current_user.can_edit?(@lecture)
+    def check_for_unlock
+      # Students of an open or unlocked lecture pass, and so does its staff.
+      return if @lecture.content_accessible_by?(current_user)
 
-      return if @lecture.in?(current_user.lectures)
-
-      # Non-subscribers are sent to the lecture's home page (its
-      # organizational front door), which offers registration (if the
-      # lecture uses it) as well as a link to the subscription page.
+      # Users who have not unlocked the lecture are sent to its home page
+      # (its organizational front door), which offers registration (if the
+      # lecture uses it) as well as the passphrase form to unlock it.
       redirect_to lecture_home_path(@lecture)
     end
 
@@ -491,7 +491,7 @@ class LecturesController < ApplicationController
 
     def search_params
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per, :term_scope,
+                             :all_teachers, :fulltext, :per, :term,
                              { types: [],
                                term_ids: [],
                                program_ids: [],

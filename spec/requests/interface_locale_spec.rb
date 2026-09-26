@@ -6,15 +6,15 @@ RSpec.describe("Interface language", type: :request) do
                                         course: create(:course, locale: locale))
   end
 
-  def sign_in_subscriber(locale, lecture)
+  def sign_in_reader(locale, lecture)
     user = create(:confirmed_user, locale: locale)
-    create(:lecture_user_join, user: user, lecture: lecture)
+    create(:lecture_bookmark, user: user, lecture: lecture)
     sign_in(user)
   end
 
   it "shows a German lecture in the English of its reader" do
     lecture = lecture_in("de")
-    sign_in_subscriber("en", lecture)
+    sign_in_reader("en", lecture)
 
     get lecture_outline_path(lecture)
 
@@ -25,7 +25,7 @@ RSpec.describe("Interface language", type: :request) do
 
   it "shows an English lecture in the German of its reader" do
     lecture = lecture_in("en")
-    sign_in_subscriber("de", lecture)
+    sign_in_reader("de", lecture)
 
     get lecture_outline_path(lecture)
 
@@ -35,7 +35,7 @@ RSpec.describe("Interface language", type: :request) do
 
   it "follows a language the reader picks for the page, also on the lecture home" do
     lecture = lecture_in("en")
-    sign_in_subscriber("en", lecture)
+    sign_in_reader("en", lecture)
 
     get lecture_home_path(lecture), params: { locale: "de" }
 

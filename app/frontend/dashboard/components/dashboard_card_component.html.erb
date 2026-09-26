@@ -1,0 +1,37 @@
+<div class="dashboard-card-slot">
+  <%= tag.article class: "dashboard-card", style: style, **attributes do %>
+    <%= render(tape) %>
+
+    <% if corner? %>
+      <div class="dashboard-card__corner"><%= corner %></div>
+    <% end %>
+
+    <div class="dashboard-card__photo">
+      <%= image_tag image_url, class: "dashboard-card__image", alt: "", loading: "lazy" %>
+    </div>
+
+    <div class="dashboard-card__body">
+      <h3 class="dashboard-card__title">
+        <%= link_to title, href, class: "dashboard-card__link stretched-link" %>
+      </h3>
+
+      <% if subtitle? %>
+        <p class="dashboard-card__subtitle"><%= subtitle %></p>
+      <% end %>
+
+      <% if notes.any? %>
+        <ul class="dashboard-card__notes">
+          <% notes.each do |note| %>
+            <li class="dashboard-card__note"><%= note %></li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <%= progress %>
+    </div>
+  <% end %>
+
+  <% if rail? && rail.to_s.strip.present? %>
+    <div class="dashboard-card-slot__rail"><%= rail %></div>
+  <% end %>
+</div>

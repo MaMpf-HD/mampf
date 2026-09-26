@@ -20,6 +20,19 @@ class SubmissionAbility
       user.in?(submission.users) && !submission.not_updatable?
     end
 
+    # The file arrives before the hand-in is saved, so the upload asks for the
+    # seat that `rostered_tutorial!` asks for later: without one, the file
+    # could never become a hand-in and is not taken at all.
+    can :upload_manuscript, Submission do |submission|
+      lecture = submission.assignment&.lecture
+      seated = lecture.present? && user.rostered_tutorial_in(lecture).present?
+      if submission.persisted?
+        seated && user.in?(submission.users) && !submission.not_updatable?
+      else
+        seated && user.proper_student_in?(lecture)
+      end
+    end
+
     can [:add_correction, :delete_correction, :accept, :reject,
          :edit_correction, :cancel_edit_correction], Submission do |submission|
       user.in?(submission.tutorial.tutors)

@@ -1,10 +1,8 @@
 <%= vite_stylesheet_tag "styles/sidebar.scss" %>
 
-<%# Content is only accessible to subscribers and staff (mirrors the
-        redirect in LecturesController#check_for_subscribe). %>
-<% content_accessible = lecture &&
-                        (lecture.in?(current_user.lectures) ||
-                         current_user.can_edit?(lecture)) %>
+<%# Content is only accessible to staff and users who unlocked the lecture
+        (mirrors the redirect in LecturesController#check_for_unlock). %>
+<% content_accessible = lecture&.content_accessible_by?(current_user) %>
 <ul class="nav nav-pills flex-column" data-controller="lecture-sidebar">
 
   <%# Lecture Home %>

@@ -47,9 +47,10 @@ class Lecture < ApplicationRecord
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
 
-  # a lecture has many users who have subscribed it in their profile
-  has_many :lecture_user_joins, dependent: :destroy
-  has_many :users, -> { distinct }, through: :lecture_user_joins
+  # a lecture has many users who have bookmarked it
+  has_many :lecture_bookmarks, dependent: :destroy
+  has_many :dashboard_card_styles, class_name: "Dashboard::CardStyle", dependent: :delete_all
+  has_many :users, -> { distinct }, through: :lecture_bookmarks
 
   # Roster associations
   has_many :lecture_memberships, dependent: :destroy
@@ -103,6 +104,10 @@ class Lecture < ApplicationRecord
   has_many :vouchers, dependent: :destroy
 
   has_many :cohorts, as: :context, dependent: :destroy
+
+  # Stores a pass phrase of blanks as none, so that `restricted?` and the SQL
+  # scopes (`restricted`, User#unlocked_lectures) agree about it.
+  normalizes :passphrase, with: ->(value) { value.presence }
 
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
@@ -215,6 +220,10 @@ class Lecture < ApplicationRecord
     self
   end
 
+  def audience
+    LectureAudience.users(id)
+  end
+
   def selector_value
     "Lecture-#{id}"
   end
@@ -268,7 +277,7 @@ class Lecture < ApplicationRecord
   end
 
   def card_header_path(user)
-    return unless user.lectures.include?(self)
+    return unless content_accessible_by?(user)
 
     lecture_path
   end
@@ -281,13 +290,44 @@ class Lecture < ApplicationRecord
     passphrase.present?
   end
 
+  # Whether the user may bookmark this lecture without entering its
+  # passphrase. A seat on the lecture's roster outranks the passphrase shared
+  # with everyone.
+  def bookmarkable_by?(user)
+    return true if bookmarked_by?(user)
+    return false unless published? || user.admin || edited_by?(user)
+
+    passphrase.blank? || LectureMembership.exists?(user: user, lecture: self)
+  end
+
+  # Compared in constant time, since the pass phrase is shared by everyone
+  # who is meant to use it.
+  def passphrase_matches?(given)
+    passphrase.present? &&
+      ActiveSupport::SecurityUtils.secure_compare(passphrase, given.to_s)
+  end
+
+  # Whether the user got past the passphrase, if the lecture has one.
+  # Entering the passphrase bookmarks the lecture, so a bookmark is what
+  # unlocks it (see Lectures::UnlocksController).
+  def unlocked_for?(user)
+    !restricted? || bookmarked_by?(user)
+  end
+
   def visible_for_user?(user)
     return true if user.admin
     return true if edited_by?(user)
     return false unless published?
-    return false if restricted? && !in?(user.lectures)
+    return false unless unlocked_for?(user)
 
     true
+  end
+
+  # Whether the user gets to see the lecture's content (outline, media,
+  # forum, ...): its staff always, everybody else once it is published and
+  # unlocked (see #unlocked_for?).
+  def content_accessible_by?(user)
+    user.can_edit?(self) || visible_for_user?(user)
   end
 
   # the next methods deal with the lecture's tags
@@ -598,7 +638,7 @@ class Lecture < ApplicationRecord
 
   # returns path for show action of the lecture's course,
   def path(user)
-    return unless user.lectures.include?(self)
+    return unless content_accessible_by?(user)
 
     Rails.application.routes.url_helpers
          .lecture_path(self)
@@ -719,8 +759,39 @@ class Lecture < ApplicationRecord
     -1
   end
 
-  def subscribed_by?(user)
+  def bookmarked_by?(user)
     in?(user.lectures)
+  end
+
+  # This user's registration status for the lecture, nil if there is nothing
+  # to show. For a page of lectures at once, use Registration::StatusQuery
+  # instead - one query, not one per lecture.
+  def registration_status_for(user)
+    Registration::StatusQuery.new(user, [id]).statuses[id]
+  end
+
+  # The deadline of the next assignment the user has not yet submitted for,
+  # among this lecture's current assignments (the nearest upcoming deadline
+  # group). Returns nil if there is nothing pending.
+  def next_pending_assignment_deadline_for(user)
+    assignments = current_assignments
+    return if assignments.empty?
+    return if assignments.all? { |a| a.submission(user).present? }
+
+    assignments.first.deadline
+  end
+
+  # The open exam campaign this user has not answered yet, nil if there is
+  # nothing left to register for.
+  def open_exam_registration_for(user)
+    campaigns = registration_campaigns.exam.open
+                                      .where.not(
+                                        id: Registration::UserRegistration
+                                              .where(user: user)
+                                              .select(:registration_campaign_id)
+                                      )
+
+    campaigns.find(&:open_for_registrations?)
   end
 
   def term_to_label
@@ -897,10 +968,10 @@ class Lecture < ApplicationRecord
         unique_by: [:user_id, :lecture_id]
       )
 
-      # Roster membership implies a subscription: members need access to the
-      # lecture's content, even when subscribing is gated by a passphrase
-      # (a roster seat is a stronger credential than a shared passphrase).
-      LectureUserJoin.insert_all(
+      # Roster membership implies a bookmark: members need access to the
+      # lecture's content, even when it is locked by a passphrase (a roster
+      # seat is a stronger credential than a shared passphrase).
+      LectureBookmark.insert_all(
         attributes,
         unique_by: [:lecture_id, :user_id]
       )
@@ -1054,20 +1125,39 @@ class Lecture < ApplicationRecord
 
     # looks in the cache if there are any media associated *with inheritance*
     # to this lecture and a given project (lesson_material, worked_example etc.)
-    def project_as_user?(project)
-      Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
-        Medium.exists?(sort: medium_sort[project],
-                       released: ["all", "users", "subscribers"],
-                       teachable: self) ||
-          Medium.exists?(sort: medium_sort[project],
-                         released: ["all", "users", "subscribers"],
-                         teachable: lessons) ||
-          Medium.exists?(sort: medium_sort[project],
-                         released: ["all", "users", "subscribers"],
-                         teachable: talks) ||
-          Medium.exists?(sort: medium_sort[project],
-                         released: ["all", "users", "subscribers"],
-                         teachable: course)
+    # The cache answers per release level; whether the user sees media
+    # released to participants is decided outside it, since the cache key
+    # names the lecture and not the user.
+    def project_as_user?(project, user)
+      released_project_media?(project, [self, lessons, talks], "own",
+                              participant: participant?(user)) ||
+        released_project_media?(project, [course], "course",
+                                participant: course_participant?(user))
+    end
+
+    def released_project_media?(project, teachables, origin, participant:)
+      levels = participant ? ["all", "users", "subscribers"] : ["all", "users"]
+      Rails.cache.fetch("#{cache_key_with_version}/#{project}/#{origin}/#{levels.last}") do
+        teachables.any? do |teachable|
+          Medium.exists?(sort: medium_sort[project], released: levels,
+                         teachable: teachable)
+        end
+      end
+    end
+
+    # Memoized because the sidebar asks once per project.
+    def participant?(user)
+      @participant ||= {}
+      @participant.fetch(user.id) do
+        @participant[user.id] = LectureAudience.lectures_of(user).exists?(id: id)
+      end
+    end
+
+    def course_participant?(user)
+      @course_participant ||= {}
+      @course_participant.fetch(user.id) do
+        @course_participant[user.id] =
+          LectureAudience.lectures_of(user).exists?(course_id: course_id)
       end
     end
 
@@ -1079,7 +1169,7 @@ class Lecture < ApplicationRecord
     end
 
     def project?(project, user)
-      return project_as_user?(project) unless edited_by?(user) || user.admin
+      return project_as_user?(project, user) unless edited_by?(user) || user.admin
 
       course_media = if user.in?(course.editors) || user.admin
         Medium.exists?(sort: medium_sort[project],

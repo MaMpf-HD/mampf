@@ -657,13 +657,13 @@ de:
       not_found: "Veranstaltung nicht gefunden."
       home:
         empty_title: "Starte hier"
-        empty_subscribed: >-
+        empty_accessible: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Materialien findest du in der Navigation der
+          dieser Seite. Materialien findest Du in der Navigation der
           Veranstaltung.
-        empty_unsubscribed: >-
+        empty_locked: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Abonniere die Veranstaltung, um Materialien zu sehen.
+          dieser Seite. Entsperre die Veranstaltung, um Materialien zu sehen.
         news_indicator: "Ungelesene Ankündigungen und Forenthemen"
         attachment_download: "Programm herunterladen (PDF)"
         attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
@@ -676,9 +676,16 @@ de:
           Für diese Veranstaltung läuft eine Anmeldung, aber Deine Startseite hat
           keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
           Füge eine kurze Einführung und Dein Programm hinzu.
-        subscribe_prompt: >-
-          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
-          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
+        unlock_prompt: >-
+          Diese Veranstaltung ist durch einen Zugangsschlüssel geschützt. Gib
+          ihn ein, um ihre Materialien zu entsperren.
+        unlock_prompt_member: >-
+          Diese Veranstaltung ist durch einen Zugangsschlüssel geschützt. Als
+          Mitglied der Veranstaltung kannst Du ihre Materialien ohne ihn
+          entsperren.
+        unlock: "Entsperren"
+        unlock_too_many_attempts: >-
+          Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.
   activerecord:
     errors:
       models:

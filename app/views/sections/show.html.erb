@@ -19,7 +19,7 @@
   </div>
   <div class="col-10 col-xl-5 pt-2">
     (<%= t('from') %>
-    <% if current_user.lectures.include?(@section.lecture) %>
+    <% if @section.lecture.content_accessible_by?(current_user) %>
       <%= link_to @section.lecture.to_label,
                   @section.lecture.path(current_user) %>
     <% else %>
@@ -68,7 +68,7 @@
   </div>
   <div class="col-12 col-lg-8 col-xl-6 col-xxl-7 mb-2">
     <%= render partial: 'items/items',
-               locals: { items: @section.visible_items,
+               locals: { items: @section.visible_items(current_user),
                          small: false,
                          embedded: false,
                          section_links: false,

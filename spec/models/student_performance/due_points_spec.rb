@@ -27,6 +27,38 @@ RSpec.describe(StudentPerformance::DuePoints) do
                       points_max_materialized: max)
   end
 
+  describe "scoped to one student" do
+    it "answers for that student as the lecture-wide count does" do
+      other = FactoryBot.create(:confirmed_user)
+      waiting = sheet(deadline: 2.days.ago, points: 20)
+      excused = sheet(deadline: 2.days.ago, points: 10)
+      sheet(deadline: 2.days.ago, points: 6)
+      [student, other].each do |user|
+        FactoryBot.create(:assessment_participation, :submitted, assessment: waiting, user: user)
+      end
+      FactoryBot.create(:assessment_participation, :exempt, assessment: excused, user: student)
+      scoped = described_class.new(lecture: lecture, user_id: student.id)
+
+      expect(scoped.marked_max_for(student.id)).to eq(due_points.marked_max_for(student.id))
+      expect(scoped.pending_points_for(student.id))
+        .to eq(due_points.pending_points_for(student.id))
+    end
+
+    it "refuses to answer for anybody else, also per kind" do
+      other = FactoryBot.create(:confirmed_user)
+      scoped = described_class.new(lecture: lecture, user_id: student.id)
+      questions = [:marked_max_for, :not_yet_due_for, :not_yet_due_count_for,
+                   :pending_points_for, :pending_count_for]
+
+      [scoped, scoped.of_kind(:test)].each do |points|
+        questions.each do |question|
+          expect { points.public_send(question, other.id) }.to raise_error(ArgumentError)
+        end
+        expect { points.marked_percentage_of(other.id, 5) }.to raise_error(ArgumentError)
+      end
+    end
+  end
+
   describe "#total" do
     it "counts a sheet whose deadline has passed" do
       sheet(deadline: 2.days.ago, points: 20)

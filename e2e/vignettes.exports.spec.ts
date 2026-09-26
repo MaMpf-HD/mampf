@@ -18,7 +18,7 @@ test.describe("Vignettes Exports", () => {
     });
     lectureId = lecture.id;
 
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: student.user.id,
     });
