@@ -544,6 +544,13 @@ de:
         instruction: "In diese Gruppen trägst Du Dich sofort ein, ohne Anmeldezeitraum."
         joined: "Eingetragen"
         join: "Eintragen"
+      self_enrollment_talks:
+        title: "Selbst einen Vortrag übernehmen"
+        meta:
+          one: "%{count} Vortrag, ohne Frist"
+          other: "%{count} Vorträge, ohne Frist"
+        show: "Vorträge ansehen"
+        instruction: "Diese Vorträge übernimmst Du sofort, ohne Anmeldezeitraum."
     allocation:
       violations_table:
         override_pass: "Auf bestanden setzen"

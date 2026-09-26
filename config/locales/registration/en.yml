@@ -543,6 +543,13 @@ en:
         instruction: "You join these groups right away, without a registration period."
         joined: "Joined"
         join: "Join"
+      self_enrollment_talks:
+        title: "Take a talk yourself"
+        meta:
+          one: "%{count} talk, no deadline"
+          other: "%{count} talks, no deadline"
+        show: "Show talks"
+        instruction: "You take these talks right away, without a registration period."
     allocation:
       violations_table:
         override_pass: "Override to passed"
