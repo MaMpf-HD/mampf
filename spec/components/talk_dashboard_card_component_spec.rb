@@ -24,7 +24,7 @@ RSpec.describe(TalkDashboardCardComponent, type: :component) do
 
     expect(rendered.at_css("[data-testid='washi-tape-strip']")).to be_present
     expect(rendered.at_css("[data-testid='washi-tape']")["data-washi-tape-url-value"])
-      .to eq("/dashboard/washi_tape/#{seminar.id}")
+      .to eq("/dashboard/lectures/#{seminar.id}/washi_tape")
   end
 
   it "shows the color picked for the seminar" do

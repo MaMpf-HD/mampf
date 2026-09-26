@@ -61,7 +61,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
     expect(rendered.at_css("[data-testid='washi-tape-strip']")).to be_present
     expect(rendered.at_css("[data-testid='washi-tape']")["data-washi-tape-url-value"])
-      .to eq("/dashboard/washi_tape/#{lecture.id}")
+      .to eq("/dashboard/lectures/#{lecture.id}/washi_tape")
     expect(rendered.css(".washi-tape__swatch").size)
       .to eq(Dashboard::WashiTape::COLORS.size)
   end
@@ -95,7 +95,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
       control = rendered.at_css("[data-controller='bookmark-removal']")
       expect(control["data-bookmark-removal-url-value"])
-        .to eq("/dashboard/bookmarks/#{lecture.id}")
+        .to eq("/dashboard/lectures/#{lecture.id}/bookmark")
       expect(rendered.at_css("[data-action='bookmark-removal#open']"))
         .to be_present
     end
@@ -153,7 +153,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       )
       control = rendered.at_css("[data-controller='registration-notice-removal']")
       expect(control["data-registration-notice-removal-url-value"])
-        .to eq("/dashboard/registration_notice/#{lecture.id}")
+        .to eq("/dashboard/lectures/#{lecture.id}/registration_notice")
     end
 
     it "offers to keep the lecture bookmarked only if that needs no passphrase" do

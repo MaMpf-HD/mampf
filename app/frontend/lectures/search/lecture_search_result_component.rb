@@ -74,7 +74,7 @@ class LectureSearchResultComponent < ViewComponent::Base
 
     { class: classes,
       data: { controller: "bookmark",
-              bookmark_url_value: dashboard_bookmark_path(
+              bookmark_url_value: dashboard_lecture_bookmark_path(
                 lecture, term: @term&.dashboard_param
               ),
               bookmark_bookmarked_value: bookmarked?,

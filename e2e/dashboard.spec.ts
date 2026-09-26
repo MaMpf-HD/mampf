@@ -134,13 +134,13 @@ test("puts the saved washi tape color back when the server refuses a new one",
     await dashboard.goto();
     const card = dashboard.dashboardCard(lecture.id);
     const saved = page.waitForResponse(response =>
-      response.url().includes("/dashboard/washi_tape/") && response.ok());
+      response.url().endsWith("/washi_tape") && response.ok());
     await dashboard.chooseWashiTapeColor(lecture.id, "Mint");
     await saved;
 
-    await page.route("**/dashboard/washi_tape/**", route => route.fulfill({ status: 500 }));
+    await page.route("**/dashboard/lectures/*/washi_tape", route => route.fulfill({ status: 500 }));
     const refused = page.waitForResponse(response =>
-      response.url().includes("/dashboard/washi_tape/"));
+      response.url().endsWith("/washi_tape"));
     await card.getByRole("radio", { name: "Mint" }).focus();
     await page.keyboard.press("ArrowLeft");
     await refused;

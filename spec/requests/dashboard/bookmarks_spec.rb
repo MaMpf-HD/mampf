@@ -8,9 +8,9 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
     sign_in user
   end
 
-  describe "POST /dashboard/bookmarks/:lecture_id" do
+  describe "POST /dashboard/lectures/:lecture_id/bookmark" do
     it "bookmarks a published lecture and re-renders the dashboard bands" do
-      post dashboard_bookmark_path(lecture), as: :turbo_stream
+      post dashboard_lecture_bookmark_path(lecture), as: :turbo_stream
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("dashboardLectureCards")
@@ -20,7 +20,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
     it "is idempotent" do
       user.bookmark_lecture!(lecture)
 
-      post dashboard_bookmark_path(lecture), as: :turbo_stream
+      post dashboard_lecture_bookmark_path(lecture), as: :turbo_stream
 
       expect(response).to have_http_status(:ok)
       expect(user.reload.lectures.where(id: lecture.id).count).to eq(1)
@@ -34,7 +34,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
       other_lecture = create(:lecture, :released_for_all, term: other_term, course: course)
       user.bookmark_lecture!(other_lecture)
 
-      post dashboard_bookmark_path(lecture),
+      post dashboard_lecture_bookmark_path(lecture),
            params: { term: other_term.id }, as: :turbo_stream
 
       expect(response.body).to include(ERB::Util.html_escape(other_lecture.title_no_term))
@@ -43,7 +43,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
     it "refuses a lecture behind a passphrase" do
       lecture.update!(passphrase: "secret")
 
-      post dashboard_bookmark_path(lecture), as: :turbo_stream
+      post dashboard_lecture_bookmark_path(lecture), as: :turbo_stream
 
       expect(response).to have_http_status(:forbidden)
       expect(lecture.in?(user.reload.lectures)).to be(false)
@@ -52,24 +52,24 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
     it "refuses an unpublished lecture" do
       draft = create(:lecture)
 
-      post dashboard_bookmark_path(draft), as: :turbo_stream
+      post dashboard_lecture_bookmark_path(draft), as: :turbo_stream
 
       expect(response).to have_http_status(:forbidden)
       expect(draft.in?(user.reload.lectures)).to be(false)
     end
 
     it "404s for an unknown lecture" do
-      post dashboard_bookmark_path(0), as: :turbo_stream
+      post dashboard_lecture_bookmark_path(0), as: :turbo_stream
 
       expect(response).to have_http_status(:not_found)
     end
   end
 
-  describe "DELETE /dashboard/bookmarks/:lecture_id" do
+  describe "DELETE /dashboard/lectures/:lecture_id/bookmark" do
     it "removes a bookmark and re-renders the dashboard bands" do
       user.bookmark_lecture!(lecture)
 
-      delete dashboard_bookmark_path(lecture), as: :turbo_stream
+      delete dashboard_lecture_bookmark_path(lecture), as: :turbo_stream
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("dashboardLectureCards")
@@ -80,7 +80,7 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
       user.bookmark_lecture!(lecture)
       user.favorite_lectures << lecture
 
-      delete dashboard_bookmark_path(lecture), as: :turbo_stream
+      delete dashboard_lecture_bookmark_path(lecture), as: :turbo_stream
 
       expect(user.reload.favorite_lectures).not_to include(lecture)
     end
