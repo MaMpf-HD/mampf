@@ -17,7 +17,6 @@ module Dashboard
       else
         current_user.unbookmark_lecture!(@lecture)
       end
-      current_user.touch
       render_board
     end
 

@@ -16,7 +16,6 @@ module Dashboard
       return head(:not_found) unless @lecture
 
       current_user.unbookmark_lecture!(@lecture)
-      current_user.touch
       render_board
     end
 

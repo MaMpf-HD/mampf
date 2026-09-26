@@ -735,7 +735,6 @@ class User < ApplicationRecord
     return false unless may_unlock_lecture?(lecture, passphrase: passphrase)
 
     bookmark_lecture!(lecture)
-    touch # the cached navbar lists the bookmarked lectures
     true
   end
 
@@ -758,7 +757,7 @@ class User < ApplicationRecord
     return false unless lecture.is_a?(Lecture)
     return false unless lecture.in?(lectures)
 
-    lectures.delete(lecture)
+    lecture_bookmarks.where(lecture: lecture).destroy_all
     favorite_lectures.delete(lecture)
 
     true

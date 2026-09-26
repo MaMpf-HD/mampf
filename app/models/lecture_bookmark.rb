@@ -5,5 +5,6 @@
 # Lecture#unlocked_for?.
 class LectureBookmark < ApplicationRecord
   belongs_to :lecture
-  belongs_to :user
+  # The cached navbar lists the user's bookmarked lectures.
+  belongs_to :user, touch: true
 end
