@@ -1,8 +1,8 @@
 require "rails_helper"
 
 # Mail leaves from FROM_ADDRESS, notifications from PROJECT_NOTIFICATION_EMAIL.
-# PROJECT_EMAIL is where people write to, so nothing automatic may leave from it
-# or land in it.
+# PROJECT_EMAIL is where people write to: it never sends, and receives only
+# what a person asks for, such as a data request.
 RSpec.describe("Mail senders") do
   let(:user) { create(:confirmed_user) }
 
