@@ -177,14 +177,15 @@ h4.lecture-pane-subheader {
     max-width: 100%;
   }
 
-  > :nth-child(3) {
+  .lecture-title-bar-actions {
+    grid-column: 3;
     justify-content: flex-end;
   }
 
   @include media-breakpoint-down(md) {
     grid-template-columns: minmax(0, 1fr) auto;
 
-    > :nth-child(3) {
+    .lecture-title-bar-actions {
       grid-column: 1 / -1;
       justify-content: flex-start;
     }
