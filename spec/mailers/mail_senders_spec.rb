@@ -1,7 +1,8 @@
 require "rails_helper"
 
-# The machine sends from FROM_ADDRESS; PROJECT_EMAIL is where people write to,
-# so nothing automatic may leave from it or land in it.
+# Mail leaves from FROM_ADDRESS, notifications from PROJECT_NOTIFICATION_EMAIL.
+# PROJECT_EMAIL is where people write to, so nothing automatic may leave from it
+# or land in it.
 RSpec.describe("Mail senders") do
   let(:user) { create(:confirmed_user) }
 
@@ -30,9 +31,19 @@ RSpec.describe("Mail senders") do
   end
 
   it "sends the user cleaner's warnings from the sender address" do
-    email = UserCleanerMailer.pending_deletion_email(user.email, "en", 7)
+    warning = UserCleanerMailer.pending_deletion_email(user.email, "en", 7)
+    deletion = UserCleanerMailer.deletion_email(user.email, "en")
 
-    expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
+    expect(warning.from).to eq([DefaultSetting::FROM_ADDRESS])
+    expect(deletion.from).to eq([DefaultSetting::FROM_ADDRESS])
+  end
+
+  # Rendering the gem's mail needs its own exception record, built from a
+  # request; its defaults are what new_exception sends with.
+  it "reports an exception from the sender address to the error address" do
+    expect(ExceptionHandler::ExceptionMailer.default[:from])
+      .to eq(DefaultSetting::FROM_ADDRESS)
+    expect(ExceptionHandler.config.email).to eq(DefaultSetting::ERROR_EMAIL)
   end
 
   it "reports a user that could not be destroyed to the error address" do
