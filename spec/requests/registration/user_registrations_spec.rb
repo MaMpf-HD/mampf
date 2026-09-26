@@ -134,8 +134,8 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   end
 
   describe "lecture registration routes" do
-    it "uses the /home lecture path for registration" do
-      expect(lecture_home_path(lecture)).to eq("/lectures/#{lecture.id}/home")
+    it "uses the lecture's own address, its home page, for registration" do
+      expect(lecture_home_path(lecture)).to eq("/lectures/#{lecture.id}")
     end
   end
 

@@ -296,6 +296,37 @@ RSpec.describe(User, type: :model) do
     end
   end
 
+  describe "#current_lectures" do
+    let!(:term) { create(:term, :summer, :active, year: 2025) }
+    let(:user) { create(:confirmed_user) }
+
+    it "gathers taught, edited, bookmarked and rostered lectures of the active term" do
+      taught = create(:lecture, term: term, teacher: user)
+      edited = create(:lecture, term: term)
+      create(:editable_user_join, user: user, editable: edited)
+      bookmarked = create(:lecture, term: term)
+      user.bookmark_lecture!(bookmarked)
+      rostered = create(:lecture, term: term)
+      create(:lecture_membership, user: user, lecture: rostered)
+
+      expect(user.current_lectures)
+        .to contain_exactly(taught, edited, bookmarked, rostered)
+    end
+
+    it "includes lectures the user edits as editor of their course" do
+      lecture = create(:lecture, term: term)
+      create(:editable_user_join, user: user, editable: lecture.course)
+
+      expect(user.current_lectures).to contain_exactly(lecture)
+    end
+
+    it "leaves out lectures of other terms" do
+      create(:lecture, term: create(:term, :winter, year: 2024), teacher: user)
+
+      expect(user.current_lectures).to be_empty
+    end
+  end
+
   describe "#tutor_in?" do
     let(:lecture)   { create(:lecture) }
     let(:tutorial)  { create(:tutorial, lecture: lecture) }

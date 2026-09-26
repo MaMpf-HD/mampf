@@ -322,10 +322,19 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  get "lectures/:id/home",
+  # GET lecture_path is the lecture home page, resources :lectures has no show.
+  get "lectures/:id",
       to: "lectures/home#show",
       as: "lecture_home",
+      constraints: { id: /\d+/ },
       defaults: { project: "home" }
+
+  # kept for old links to the lecture home page
+  get "lectures/:id/home",
+      constraints: { id: /\d+/ },
+      to: redirect { |params, request|
+        ["/lectures/#{params[:id]}", request.query_string.presence].compact.join("?")
+      }
 
   # nginx gives this path a larger client_max_body_size for home_attachment;
   # ordinary lecture requests keep the default limit.
@@ -351,7 +360,7 @@ Rails.application.routes.draw do
       to: "lectures#outline",
       as: "lecture_outline"
 
-  resources :lectures, except: [:index] do
+  resources :lectures, except: [:index, :show] do
     get "roster", to: "roster/maintenance#index"
     get "roster/participants", to: "roster/maintenance#participants"
 

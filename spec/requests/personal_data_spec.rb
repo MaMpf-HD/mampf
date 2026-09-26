@@ -440,14 +440,13 @@ RSpec.describe("Personal data", type: :request) do
       expect(account.reload.first_name).to eq("Augusta")
     end
 
-    it "does not offer the fields to a teacher editing their own account" do
+    it "is not reachable for a teacher, since only admins have that area" do
       create(:lecture, teacher: account)
       sign_in(account)
 
       get elevated_profile_path
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).not_to include('name="user[first_name]"')
+      expect(response).to redirect_to(root_url)
     end
 
     it "does not let a teacher change their own data through it" do

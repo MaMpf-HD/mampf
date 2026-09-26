@@ -2,7 +2,7 @@
 class SectionsController < ApplicationController
   before_action :set_section, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= SectionAbility.new(current_user)

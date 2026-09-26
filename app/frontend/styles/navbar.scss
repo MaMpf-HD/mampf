@@ -1,9 +1,11 @@
+@import "~/styles/branding";
+
 .navbars-container {
     background: linear-gradient(110deg, #223e62 0%, #405d75 100%);
 }
 
 .admin-navbars-container {
-    background: linear-gradient(110deg, #821A3B 0%, #8d1c40 100%);
+    background: linear-gradient(110deg, $mampf-red 0%, #8d1c40 100%);
 }
 
 #mampfbrand {

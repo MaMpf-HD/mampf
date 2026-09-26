@@ -5,7 +5,7 @@ RSpec.describe("Lectures::Home", type: :request) do
   let(:student) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: editor) }
 
-  describe "GET /lectures/:id/home" do
+  describe "GET /lectures/:id" do
     it "renders the teacher's intro text" do
       lecture.update!(home_intro: "<div>Welcome to the seminar</div>")
       sign_in student

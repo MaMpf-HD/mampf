@@ -6,9 +6,9 @@ module ApplicationHelper
     root_path(params: { locale: I18n.locale })
   end
 
-  # get current lecture from session object
-  def current_lecture
-    Lecture.find_by(id: cookies[:current_lecture_id])
+  # Only admins have the administration area and its search.
+  def staff_search_path
+    current_user.admin? ? administration_search_path : search_index_path
   end
 
   # Returns the full title on a per-page basis.

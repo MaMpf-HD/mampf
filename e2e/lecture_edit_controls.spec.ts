@@ -3,7 +3,7 @@ import { Page, expect, test } from "./_support/fixtures";
 // Everything here is reached the way a person reaches it — through Turbo, not
 // through a reload — because that is where the page used to fall silent.
 async function visitEdit(page: Page, lectureId: number, tab: string) {
-  await page.goto(`/lectures/${lectureId}/home`);
+  await page.goto(`/lectures/${lectureId}`);
   await page.evaluate((url) => {
     window.Turbo.visit(url);
   }, `/lectures/${lectureId}/edit?tab=${tab}`);

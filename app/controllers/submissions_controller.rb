@@ -754,8 +754,11 @@ class SubmissionsController < ApplicationController
     def check_student_status
       return if current_user.proper_student_in?(@lecture)
 
-      redirect_to :root,
-                  alert: I18n.t("controllers.no_student_status_in_lecture")
+      if current_user.in?(@lecture.tutors)
+        redirect_to lecture_tutorials_path(@lecture)
+      else
+        redirect_to lecture_home_path(@lecture)
+      end
     end
 
     # DuePoints and SubmissionsHub read submitted_at on each request, so

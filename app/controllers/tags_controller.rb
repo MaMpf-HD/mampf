@@ -9,7 +9,7 @@ class TagsController < ApplicationController
   before_action :check_creation_permission, only: [:create]
   authorize_resource except: [:new, :modal, :search, :postprocess,
                               :render_tag_title]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= TagAbility.new(current_user)
@@ -87,7 +87,7 @@ class TagsController < ApplicationController
 
   def destroy
     @tag.destroy
-    redirect_to administration_path
+    redirect_to staff_home_path
   end
 
   # prepare new tag instance for modal

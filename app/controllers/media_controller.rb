@@ -17,6 +17,7 @@ class MediaController < ApplicationController
                                       :cancel_import_media,
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
+  before_action :check_for_lecture_media, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :check_for_consent, except: [:play, :screenshot,
                                              :chapters_vtt,
@@ -31,7 +32,7 @@ class MediaController < ApplicationController
                               :fill_medium_preview, :render_medium_actions,
                               :render_import_media, :render_import_vertex,
                               :cancel_import_media, :cancel_import_vertex]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= MediumAbility.new(current_user)
@@ -71,7 +72,6 @@ class MediaController < ApplicationController
 
   def edit
     @manuscript = Manuscript.new(@medium)
-    render layout: current_user.layout
   end
 
   def create
@@ -632,12 +632,17 @@ class MediaController < ApplicationController
 
     def set_lecture
       @lecture = Lecture.find_by(id: params[:id])
-      # store current lecture in cookie
-      if @lecture
-        cookies[:current_lecture_id] = @lecture.id
-        return
-      end
+      return if @lecture
+
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
+    end
+
+    # The lecture switcher (lectures/show/_switcher) keeps the project when
+    # switching, but the other lecture may have no media in it.
+    def check_for_lecture_media
+      return if @lecture.page_available?(params[:project], current_user)
+
+      redirect_to lecture_home_path(@lecture)
     end
 
     def set_teachable

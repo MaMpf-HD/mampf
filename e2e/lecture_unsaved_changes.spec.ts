@@ -7,7 +7,7 @@ test("shows the save bar after arriving through an in-app visit",
     const lecture = await factory.create("lecture", ["released_for_all"]);
     const warning = page.locator("#lecture-basics-warning");
 
-    await page.goto(`/lectures/${lecture.id}/home`);
+    await page.goto(`/lectures/${lecture.id}`);
     await page.evaluate((url) => {
       window.Turbo.visit(url);
     }, `/lectures/${lecture.id}/edit?tab=people`);

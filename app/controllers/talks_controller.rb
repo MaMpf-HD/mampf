@@ -4,7 +4,7 @@ class TalksController < ApplicationController
 
   before_action :set_talk, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= TalkAbility.new(current_user)

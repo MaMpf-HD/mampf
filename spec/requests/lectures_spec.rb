@@ -355,6 +355,37 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "lecture pages with nothing to show" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all, organizational: nil) }
+
+    before { create(:lecture_bookmark, user: user, lecture: lecture) }
+
+    it "send a media page without media to the lecture home page" do
+      get lecture_lesson_materials_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the announcements without any to the lecture home page" do
+      get lecture_announcements_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the organizational page without its text to the lecture home page" do
+      get lecture_organizational_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the self test without enough questions to the lecture home page" do
+      get show_random_quizzes_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+  end
+
   describe "GET /lectures/:id as staff" do
     let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
 
@@ -508,62 +539,37 @@ RSpec.describe("Lectures", type: :request) do
 
   describe "GET /lectures/:id" do
     let(:user) { create(:confirmed_user) }
-    let(:term) { create(:term, :winter, year: 2026) }
-    let(:lecture) { create(:lecture, :released_for_all, term: term) }
+    let(:lecture) { create(:lecture, :released_for_all) }
 
-    after { Flipper.disable(:lecture_home_landing) }
+    it "serves the lecture home page" do
+      create(:lecture_bookmark, user: user, lecture: lecture)
 
-    context "when the lecture's term uses home as its landing page" do
-      before { Flipper.enable_actor(:lecture_home_landing, term) }
+      get lecture_path(lecture)
 
-      it "sends users who bookmarked it to the lecture home page" do
-        create(:lecture_bookmark, user: user, lecture: lecture)
-
-        get lecture_path(lecture)
-
-        expect(response).to redirect_to(lecture_home_path(lecture))
-      end
-
-      it "sends users who have not bookmarked it to the lecture home page" do
-        get lecture_path(lecture)
-
-        expect(response).to redirect_to(lecture_home_path(lecture))
-      end
-
-      it "sends teachers to the lecture home page without a bookmark" do
-        teacher_lecture = create(:lecture, :released_for_all,
-                                 term: term, teacher: user)
-
-        get lecture_path(teacher_lecture)
-
-        expect(teacher_lecture.in?(user.lectures)).to be(false)
-        expect(response).to redirect_to(lecture_home_path(teacher_lecture))
-      end
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('data-testid="lecture-home"')
     end
 
-    context "when the lecture's term keeps the outline landing page" do
-      it "sends users who bookmarked it to the stable outline page" do
-        create(:lecture_bookmark, user: user, lecture: lecture)
+    it "serves the lecture home page to teachers" do
+      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
 
-        get lecture_path(lecture)
+      get lecture_path(teacher_lecture)
 
-        expect(response).to redirect_to(lecture_outline_path(lecture))
-      end
+      expect(response.body).to include('data-testid="lecture-home"')
+    end
 
-      it "sends users who have not bookmarked it to the stable outline page" do
-        get lecture_path(lecture)
+    it "is the address of the lecture home page" do
+      expect(lecture_home_path(lecture)).to eq(lecture_path(lecture))
+    end
+  end
 
-        expect(response).to redirect_to(lecture_outline_path(lecture))
-      end
+  describe "GET /lectures/:id/home" do
+    let(:lecture) { create(:lecture, :released_for_all) }
 
-      it "sends teachers to the stable outline page" do
-        teacher_lecture = create(:lecture, :released_for_all,
-                                 term: term, teacher: user)
+    it "leads to the lecture's address, keeping the query" do
+      get "/lectures/#{lecture.id}/home?locale=de"
 
-        get lecture_path(teacher_lecture)
-
-        expect(response).to redirect_to(lecture_outline_path(teacher_lecture))
-      end
+      expect(response).to redirect_to("/lectures/#{lecture.id}?locale=de")
     end
   end
 
@@ -611,23 +617,6 @@ RSpec.describe("Lectures", type: :request) do
         get lecture_outline_path(lecture)
 
         expect(response).to redirect_to(lecture_home_path(lecture))
-      end
-    end
-
-    context "when the lecture's term uses home as its landing page" do
-      let(:term) { create(:term, :winter, year: 2026) }
-      let(:lecture) { create(:lecture, :released_for_all, term: term) }
-
-      before { Flipper.enable_actor(:lecture_home_landing, term) }
-
-      after { Flipper.disable(:lecture_home_landing) }
-
-      it "still serves the stable outline page to users who bookmarked it" do
-        create(:lecture_bookmark, user: user, lecture: lecture)
-
-        get lecture_outline_path(lecture)
-
-        expect(response).to have_http_status(:success)
       end
     end
   end

@@ -4,6 +4,8 @@ window.Stimulus = Application.start();
 
 import LectureSidebarController from "~/lectures/show/_sidebar.controller.js";
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
+import LectureSwitcherController from "~/lectures/show/switcher.controller.js";
+window.Stimulus.register("lecture-switcher", LectureSwitcherController);
 
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);

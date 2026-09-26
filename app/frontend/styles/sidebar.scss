@@ -44,8 +44,10 @@
     height: fit-content;
     padding: 1rem 0.8rem;
     background-color: white;
-    box-shadow: 5px 6px 9px -6px #00000054;
-    border-radius: 0 0 10px 0;
+    border: 1px solid var(--bs-border-color-translucent);
+    border-left: 0;
+    border-radius: 0 10px 10px 0;
+    box-shadow: var(--bs-box-shadow-sm);
 
     .active-item {
         background-color: #EBF0FE;
@@ -74,7 +76,9 @@
 @media (max-width: 575.98px) {
     #sidebar-container {
         padding: 0.5rem;
+        border-width: 0 0 1px;
         border-radius: 0;
+        box-shadow: none;
 
         .nav {
             flex-direction: row !important;
