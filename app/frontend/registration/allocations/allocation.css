@@ -29,6 +29,34 @@
     background-color: var(--bs-primary-bg-subtle, #cfe2ff) !important;
 }
 
+/* The title says the row opens a roster; the other tables have no such link. */
+.allocation-item-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bs-link-color);
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+}
+
+.allocation-item-open .bi {
+    font-size: 0.75em;
+}
+
+.allocation-item-row:hover .allocation-item-open {
+    text-decoration: underline;
+}
+
+.allocation-item-open:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
 .allocation-pct-label {
     width: 3.5rem;
 }

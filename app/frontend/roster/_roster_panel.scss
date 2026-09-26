@@ -115,6 +115,12 @@
   }
 }
 
+// The heading takes the focus when the keyboard opens the panel, so that
+// reading starts there; it is no control, so it needs no focus ring.
+[data-roster-panel-heading]:focus {
+  outline: none;
+}
+
 .tutorial-roster-student-main {
   flex: 1;
   min-width: 0;

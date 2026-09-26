@@ -137,7 +137,7 @@ export default class extends Controller {
       return;
     }
 
-    trigger.querySelector("[data-roster-open]")?.focus();
+    this.openerOf(trigger)?.focus();
   }
 
   close() {
@@ -157,7 +157,7 @@ export default class extends Controller {
     this.activeRosterKey = null;
 
     if (wasOpen && trigger && this.panelHasFocus()) {
-      trigger.querySelector("[data-roster-open]")?.focus();
+      this.openerOf(trigger)?.focus();
     }
   }
 
@@ -237,8 +237,14 @@ export default class extends Controller {
 
   markSelected(trigger, selected) {
     trigger.classList.toggle(SELECTED, selected);
-    trigger.querySelector("[data-roster-open]")
-      ?.setAttribute("aria-expanded", String(selected));
+    this.openerOf(trigger)?.setAttribute("aria-expanded", String(selected));
+  }
+
+  /** The trigger's button: its title in a row, the trigger itself in a pill. */
+  openerOf(trigger) {
+    return trigger.matches("[data-roster-open]")
+      ? trigger
+      : trigger.querySelector("[data-roster-open]");
   }
 
   async requestPanel(panelPath) {

@@ -35,6 +35,27 @@ test.describe("the group rows", () => {
       await expect(title).toHaveAttribute("aria-expanded", "false");
     });
 
+  test("open an allocated group's roster from the allocation table with the keyboard",
+    async ({ factory, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
+      await factory.create("registration_campaign",
+        ["preference_based", "with_items", "processing"], {
+          campaignable_id: lecture.id,
+          campaignable_type: "Lecture",
+          last_allocation_calculated_at: new Date().toISOString(),
+        });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      const title = page.getByRole("table")
+        .filter({ hasText: "Count / Capacity" })
+        .getByRole("button").first();
+      await title.focus();
+      await page.keyboard.press("Enter");
+
+      await expect(page.getByRole("heading", { name: "Allocated Students" })).toBeFocused();
+      await expect(title).toHaveAttribute("aria-expanded", "true");
+    });
+
   test("move a student to another tutorial without dragging",
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });

@@ -23,7 +23,8 @@
                     t("registration.campaign.form.description"),
                     class: "form-label small text-muted mb-1" %>
 
-          <%= helpdesk(t("registration.campaign.helpdesk.description"), false) %>
+          <%= helpdesk(t("registration.campaign.helpdesk.description"), false,
+                     icon: "bi bi-question-circle text-muted") %>
 
           <%= f.text_field :description,
                          class: "form-control",
@@ -36,9 +37,11 @@
                     class: "form-label small text-muted mb-1" %>
 
           <% if campaign.draft? %>
-            <%= helpdesk(t("registration.campaign.helpdesk.allocation_mode"), false) %>
+            <%= helpdesk(t("registration.campaign.helpdesk.allocation_mode"), false,
+                     icon: "bi bi-question-circle text-muted") %>
           <% else %>
-            <%= helpdesk(t("registration.campaign.helpdesk.allocation_mode_frozen"), false) %>
+            <%= helpdesk(t("registration.campaign.helpdesk.allocation_mode_frozen"), false,
+                     icon: "bi bi-question-circle text-muted") %>
           <% end %>
 
           <%= f.select :allocation_mode,
@@ -53,7 +56,8 @@
                     t("registration.campaign.form.registration_deadline"),
                     class: "form-label small text-muted mb-1" %>
 
-          <%= helpdesk(t("registration.campaign.helpdesk.registration_deadline"), false) %>
+          <%= helpdesk(t("registration.campaign.helpdesk.registration_deadline"), false,
+                     icon: "bi bi-question-circle text-muted") %>
 
           <div
             class="input-group td-picker has-validation"

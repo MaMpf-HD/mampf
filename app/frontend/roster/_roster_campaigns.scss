@@ -29,14 +29,14 @@
     &:active { cursor: grabbing; }
   }
 
-  // Kept rendered and hidden by opacity: a display:none button cannot take
-  // focus, so :focus-within below could never fire on it.
+  // Dimmed rather than hidden, so a draft shows that its chips can be edited
+  // without hovering; a display:none button could not take focus either.
   .policy-badge-actions {
     margin-left: 0.35em;
     display: inline-flex;
-    gap: 0.2em;
+    gap: 0.35em;
     align-items: center;
-    opacity: 0;
+    opacity: 0.6;
     transition: opacity 0.1s ease-in-out;
   }
 
@@ -51,9 +51,15 @@
     padding: 0;
     line-height: 1;
     vertical-align: baseline;
+    color: var(--bs-secondary-color);
     cursor: pointer;
 
-    &:hover { opacity: 0.7; }
+    &:hover { color: var(--bs-emphasis-color); }
+  }
+
+  // Deleting is not louder than editing until it is aimed at.
+  .policy-badge-action--delete:hover {
+    color: var(--bs-danger);
   }
 
   &.sortable-ghost {
@@ -70,7 +76,7 @@
 
   .registration-campaign-card-header {
     padding: 1rem 1.15rem;
-    background: linear-gradient(160deg, mampf-blue(0.14), mampf-blue(0.05));
+    background: linear-gradient(160deg, mampf-blue(0.09), mampf-blue(0.03));
 
     .policy-form-panel {
       margin: 0.5rem -1.15rem -1rem;
@@ -86,6 +92,11 @@
     position: absolute;
     top: 0.65rem;
     right: 0.65rem;
+
+    // On the tinted header an outline button reads as disabled.
+    .btn:not(:hover) {
+      background-color: var(--bs-body-bg);
+    }
   }
 
   .card-body {
@@ -350,10 +361,39 @@
   opacity: 0.45;
 }
 
+// The pill around it is a static summary; the dotted underline and the own
+// color set the entries that open a roster apart from it.
 .campaign-panel-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: -0.1rem -0.35rem;
+  padding: 0.1rem 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
   cursor: pointer;
 
-  &:focus:not(:focus-visible) {
-    outline: none;
+  &--rejected {
+    color: var(--bs-danger-text-emphasis);
+  }
+
+  &--unassigned {
+    color: var(--bs-warning-text-emphasis);
+  }
+
+  &:hover,
+  &.roster-trigger--selected {
+    background: var(--bs-secondary-bg);
+    text-decoration-style: solid;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 1px;
   }
 }
