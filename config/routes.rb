@@ -1270,8 +1270,7 @@ Rails.application.routes.draw do
       to: "main#comments",
       as: "comments"
 
-  # Legacy dashboard URL (the dashboard now lives at the root), kept for
-  # bookmarks. Query params (e.g. the selected term) are carried along.
+  # Old dashboard URL, redirected to root so existing bookmarks still work.
   get "main/start",
       to: redirect { |_params, req|
         req.query_string.present? ? "/?#{req.query_string}" : "/"

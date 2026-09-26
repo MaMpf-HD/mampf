@@ -387,7 +387,7 @@ RSpec.describe("Submissions", type: :request) do
       it "does not open the form to replace the file without a seat" do
         get edit_submission_path(submission)
 
-        expect(response).to redirect_to(:start)
+        expect(response).to redirect_to(:root)
         expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
       end
 
