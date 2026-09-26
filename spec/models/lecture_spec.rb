@@ -162,6 +162,26 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#script?" do
+    let(:lecture) { create(:lecture) }
+    let(:user) { create(:confirmed_user) }
+
+    def import_medium(sort)
+      medium = create(:lecture_medium, :released, sort: sort)
+      create(:import, teachable: lecture, medium: medium)
+    end
+
+    it "is true for an imported script" do
+      import_medium("Script")
+      expect(lecture.script?(user)).to be(true)
+    end
+
+    it "is false for imported exercises only" do
+      import_medium("Exercise")
+      expect(lecture.script?(user)).to be(false)
+    end
+  end
+
   describe "#stale?" do
     context "when there is no active term" do
       it "returns false" do

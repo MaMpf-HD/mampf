@@ -445,7 +445,7 @@ class Lecture < ApplicationRecord
   end
 
   def script?(user)
-    project?("script", user) || imported_any?("exercise")
+    project?("script", user) || imported_any?("script")
   end
 
   def miscellaneous?(user)
