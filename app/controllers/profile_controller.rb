@@ -118,7 +118,6 @@ class ProfileController < ApplicationController
   end
 
   def request_data
-    MathiMailer.data_request_email(current_user).deliver_later
     MathiMailer.data_provide_email(current_user).deliver_later
   end
 

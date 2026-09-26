@@ -70,6 +70,14 @@ RSpec.describe("Profile", type: :request) do
     end
   end
 
+  describe "GET /profile/request_data" do
+    it "mails the user their data and nobody else" do
+      expect { get(request_data_path, xhr: true) }
+        .to have_enqueued_mail(MathiMailer, :data_provide_email).with(user)
+        .and(have_enqueued_mail.exactly(:once))
+    end
+  end
+
   describe "PATCH /profile/subscribe_lecture" do
     def subscribe(lecture, passphrase: nil)
       patch(subscribe_lecture_path,
