@@ -105,6 +105,10 @@ class Lecture < ApplicationRecord
 
   has_many :cohorts, as: :context, dependent: :destroy
 
+  # Stores a pass phrase of blanks as none, so that `restricted?` and the SQL
+  # scopes (`restricted`, User#unlocked_lectures) agree about it.
+  normalizes :passphrase, with: ->(value) { value.presence }
+
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
   validates :course_id, uniqueness: { scope: [:teacher_id, :term_id, :sort] }

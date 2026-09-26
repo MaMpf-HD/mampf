@@ -17,6 +17,14 @@ RSpec.describe(Lecture) do
       expect(student.unlocked_lectures).to include(open_lecture, unlocked)
       expect(student.unlocked_lectures).not_to include(locked_lecture)
     end
+
+    it "agree that a pass phrase of blanks locks nothing" do
+      blank = create(:lecture, :released_for_all, passphrase: "   ")
+
+      expect(blank.unlocked_for?(student)).to be(true)
+      expect(student.unlocked_lectures).to include(blank)
+      expect(Lecture.restricted).not_to include(blank)
+    end
   end
 
   describe "#content_accessible_by?" do
