@@ -6,13 +6,21 @@ module Dashboard
       return head(:not_found) unless lecture
 
       color = params.expect(washi_tape: [:tape_color])[:tape_color]
-      style = CardStyle.find_or_initialize_by(user: current_user, lecture: lecture)
-      return head(:unprocessable_content) unless style.update(tape_color: color)
+      return head(:unprocessable_content) unless save_color(lecture, color)
 
       head :no_content
     end
 
     private
+
+      # A double click sends two requests that both find no row yet; the
+      # second insert hits the unique index and updates the first one's row.
+      def save_color(lecture, color)
+        CardStyle.find_or_initialize_by(user: current_user, lecture: lecture)
+                 .update(tape_color: color)
+      rescue ActiveRecord::RecordNotUnique
+        CardStyle.find_by!(user: current_user, lecture: lecture).update(tape_color: color)
+      end
 
       def dashboard_lecture
         id = params[:lecture_id]
