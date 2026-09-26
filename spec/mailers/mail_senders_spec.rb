@@ -38,8 +38,8 @@ RSpec.describe("Mail senders") do
     expect(deletion.from).to eq([DefaultSetting::FROM_ADDRESS])
   end
 
-  # Rendering the gem's mail needs its own exception record, built from a
-  # request; its defaults are what new_exception sends with.
+  # Rendering the mail needs exception_handler's own exception record, built
+  # from a request; the mailer's defaults are what new_exception sends with.
   it "reports an exception from the sender address to the error address" do
     expect(ExceptionHandler::ExceptionMailer.default[:from])
       .to eq(DefaultSetting::FROM_ADDRESS)
