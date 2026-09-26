@@ -6,14 +6,6 @@
              locals: { lecture: @lecture } %>
 <% end %>
 
-<%# Admins edit in layouts/administration, which has no lecture title bar. %>
-<% if current_user.admin? %>
-  <div class="row mb-3">
-    <%= render partial: "lectures/show/title_bar",
-               locals: { lecture: @lecture, edit_mode: true } %>
-  </div>
-<% end %>
-
 <div data-controller="lecture-edit lecture-subscribers"
      data-lecture-subscribers-lecture-value="<%= @lecture.id %>">
 

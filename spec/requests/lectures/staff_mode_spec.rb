@@ -49,20 +49,26 @@ RSpec.describe("Lecture view and edit mode", type: :request) do
 
     before { sign_in(admin) }
 
-    it "edits the lecture in the administration layout with the title bar" do
+    it "edits the lecture in the regular layout with the administration navbar" do
       get edit_lecture_path(lecture)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('id="admin-navbar"',
-                                       'data-testid="lecture-title-bar"', toggle)
-      expect(response.body).not_to include('id="lecture-mode"')
+      expect(response.body).to include("admin-navbars-container", 'id="lecture-mode"',
+                                       toggle, "admin-background")
+      expect(response.body).not_to include('class="navbars-container"', 'id="sidebar"')
     end
 
-    it "switches between view and edit mode with full page loads" do
+    it "keeps the administration navbar while viewing the lecture" do
       get lecture_outline_path(lecture)
 
-      expect(response.body).to include(toggle, 'data-turbo-frame="_top"')
-      expect(response.body).not_to include('data-turbo-frame="lecture-mode"')
+      expect(response.body).to include("admin-navbars-container", 'id="sidebar"')
+      expect(response.body).not_to include('class="navbars-container"')
+    end
+
+    it "switches between view and edit mode in place" do
+      get lecture_outline_path(lecture)
+
+      expect(response.body).to include(toggle, 'data-turbo-frame="lecture-mode"')
     end
   end
 

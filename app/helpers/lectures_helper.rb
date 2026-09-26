@@ -2,11 +2,7 @@
 module LecturesHelper
   # Data attributes for links that switch a lecture between viewing and
   # editing in place, see layouts/_lecture_mode.
-  # Admins edit in layouts/administration, which has no "lecture-mode" frame,
-  # so for them the switch loads the whole page.
   def lecture_mode_switch_data
-    return { turbo_frame: "_top" } if current_user&.admin?
-
     { turbo_frame: "lecture-mode", turbo_action: "advance" }
   end
 

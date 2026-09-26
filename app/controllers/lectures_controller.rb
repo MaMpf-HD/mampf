@@ -10,7 +10,11 @@ class LecturesController < ApplicationController
   before_action :check_for_announcements, only: [:show_announcements]
   before_action :check_for_organizational, only: [:organizational]
   before_action :require_turbo_frame, only: [:new]
-  layout :staff_layout
+  # Unlike the other staff controllers, not staff_layout: admins edit a
+  # lecture in the regular layout too, so that switching between viewing and
+  # editing stays in place (see layouts/_lecture_mode). layouts/application
+  # gives them their administration navbar on lecture pages.
+  layout "staff"
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
