@@ -44,6 +44,28 @@ RSpec.describe("Lecture view and edit mode", type: :request) do
     end
   end
 
+  context "as an admin" do
+    let(:admin) { create(:confirmed_user, admin: true) }
+
+    before { sign_in(admin) }
+
+    it "edits the lecture in the administration layout with the title bar" do
+      get edit_lecture_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('id="admin-navbar"',
+                                       'data-testid="lecture-title-bar"', toggle)
+      expect(response.body).not_to include('id="lecture-mode"')
+    end
+
+    it "switches between view and edit mode with full page loads" do
+      get lecture_outline_path(lecture)
+
+      expect(response.body).to include(toggle, 'data-turbo-frame="_top"')
+      expect(response.body).not_to include('data-turbo-frame="lecture-mode"')
+    end
+  end
+
   context "as a student" do
     before { sign_in(student) }
 

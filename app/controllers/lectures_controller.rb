@@ -10,7 +10,7 @@ class LecturesController < ApplicationController
   before_action :check_for_announcements, only: [:show_announcements]
   before_action :check_for_organizational, only: [:organizational]
   before_action :require_turbo_frame, only: [:new]
-  layout "staff"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
