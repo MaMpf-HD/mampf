@@ -1,8 +1,7 @@
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/mixins";
-
-$lecture-edit-color: #821A3B;
+@import "~/styles/branding";
 
 .lecture-video-info {
   position: relative;
@@ -99,15 +98,15 @@ $lecture-edit-color: #821A3B;
   padding-bottom: 1em;
 
   box-shadow: 0px 2px 7px 0rem rgba(130,26,59,0.2);
-  border: $lecture-edit-color solid 1px;
+  border: $mampf-red solid 1px;
   border-radius: 0.4em;
   margin-bottom: 1.5em;
 }
 
 .lecture-nav-pill-button {
-  --bs-nav-link-color: #{$lecture-edit-color};
+  --bs-nav-link-color: #{$mampf-red};
   --bs-nav-link-hover-color: #8d1c40;
-  --bs-nav-pills-link-active-bg: #{$lecture-edit-color};
+  --bs-nav-pills-link-active-bg: #{$mampf-red};
 
   &:focus-visible {
     box-shadow: 0 0 0 0.25rem rgba(130, 26, 59, 0.25);
@@ -193,5 +192,5 @@ h4.lecture-pane-subheader {
 }
 
 .btn-outline-lecture-edit {
-  @include button-outline-variant($lecture-edit-color);
+  @include button-outline-variant($mampf-red);
 }
