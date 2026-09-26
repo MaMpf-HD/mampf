@@ -3630,8 +3630,6 @@ de:
       Mit dieser Email wird überprüft, ob Dein Emailkonto noch existiert. Da dies der Fall ist,
       werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.
       Hash:%{hash}
-    data_request_mail_body: >
-      %{mail} mit User-Id: %{id} hat ihre Daten angefordert.
     data_provide_mail_subject: Datenanfrage
     data_provide_mail_body: >
       Hallo, %{name}!<br>

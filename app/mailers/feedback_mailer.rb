@@ -1,5 +1,5 @@
 class FeedbackMailer < ApplicationMailer
-  default from: DefaultSetting::FEEDBACK_EMAIL
+  default from: DefaultSetting::FROM_ADDRESS
   layout false
 
   # Mail to the MaMpf developers including the new feedback of a user.

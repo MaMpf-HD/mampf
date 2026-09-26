@@ -3396,8 +3396,6 @@ en:
       This email is to check if your email account still exists. Since this is the case, no changes
       will be made to your account. You can therefore ignore this email.
       Hash:%{hash}
-    data_request_mail_body: >
-      %{mail} with user-id: %{id} has requested his data.
     data_provide_mail_subject: Data request
     data_provide_mail_body: >
       Hello, %{name}!<br>

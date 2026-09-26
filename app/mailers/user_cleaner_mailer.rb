@@ -6,7 +6,7 @@ class UserCleanerMailer < ApplicationMailer
   # @param [Integer] num_days_until_deletion:
   #  The number of days until the account will be deleted.
   def pending_deletion_email(user_email, user_locale, num_days_until_deletion)
-    sender = "#{t("mailer.warning")} <#{DefaultSetting::PROJECT_EMAIL}>"
+    sender = "#{t("mailer.warning")} <#{DefaultSetting::FROM_ADDRESS}>"
     I18n.locale = user_locale
 
     @num_days_until_deletion = num_days_until_deletion
@@ -17,7 +17,7 @@ class UserCleanerMailer < ApplicationMailer
 
   # Creates an email to inform a user that their account has been deleted.
   def deletion_email(user_email, user_locale)
-    sender = "#{t("mailer.warning")} <#{DefaultSetting::PROJECT_EMAIL}>"
+    sender = "#{t("mailer.warning")} <#{DefaultSetting::FROM_ADDRESS}>"
     I18n.locale = user_locale
 
     subject = t("mailer.deletion_subject")
@@ -25,12 +25,13 @@ class UserCleanerMailer < ApplicationMailer
   end
 
   # Creates an email to inform the MaMpf team that a user could not be destroyed.
+  # It goes to the error address: the project address is for people writing in.
   def destroy_failed_email(user)
-    sender = "UserCleaner <#{DefaultSetting::PROJECT_EMAIL}>"
+    sender = "UserCleaner <#{DefaultSetting::FROM_ADDRESS}>"
     subject = "User #{user.id} could not be destroyed"
 
     @user = user
-    mail(from: sender, to: DefaultSetting::PROJECT_EMAIL,
+    mail(from: sender, to: DefaultSetting::ERROR_EMAIL,
          content_type: "text/plain",
          subject: subject, priority: "high")
   end
