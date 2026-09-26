@@ -4,7 +4,7 @@ class MyMailer < Devise::Mailer
 
   layout "devise_mailer"
   default template_path: "devise/mailer" # to make sure that your mailer uses the devise views
-  default from: DefaultSetting::PROJECT_EMAIL
+  default from: DefaultSetting::FROM_ADDRESS
   default "Message-ID" => lambda {
                             "<#{rand.to_s.split(".")[1]}.#{Time.now.to_i}@#{ENV.fetch(
                               "MAILID_DOMAIN", nil
