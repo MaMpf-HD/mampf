@@ -1,36 +1,18 @@
-# This component renders a tile for a roster group (tutorial, talk or cohort).
+# This component renders a row for a roster group (tutorial, talk or cohort)
+# in the Groups tab. A click on the row opens the group's roster in the side
+# panel, and the row is a drop target for students dragged out of it.
 require "view_component/base"
-class GroupTileComponent < ViewComponent::Base
+class GroupRowComponent < ViewComponent::Base
   with_collection_parameter :registerable
 
-  attr_reader :registerable, :item, :tile_metadata_rows,
-              :tile_status_content, :tile_footer_content,
-              :tile_actions_content,
-              :tile_tooltip_text
+  attr_reader :registerable, :item
 
-  def initialize(registerable:, item: nil, lecture: nil, # rubocop:disable Metrics/ParameterLists
-                 student_tile: false, tile_title: nil, tile_type: nil,
-                 tile_metadata_rows: [],
-                 tile_tooltip_text: nil,
-                 tile_variant_class: nil,
-                 tile_top_bar_class: nil, tile_status_content: nil,
-                 tile_footer_content: nil, tile_actions_content: nil,
-                 tile_column_class: nil)
+  delegate :capacity, to: :registerable
+
+  def initialize(registerable:, item: nil)
     super()
     @registerable = registerable
     @item = item
-    @lecture = lecture
-    @student_tile = student_tile
-    @tile_title = tile_title
-    @tile_type = tile_type
-    @tile_metadata_rows = tile_metadata_rows
-    @tile_tooltip_text = tile_tooltip_text
-    @tile_variant_class = tile_variant_class
-    @tile_top_bar_class = tile_top_bar_class
-    @tile_status_content = tile_status_content
-    @tile_footer_content = tile_footer_content
-    @tile_actions_content = tile_actions_content
-    @tile_column_class = tile_column_class
   end
 
   def render?
@@ -41,35 +23,16 @@ class GroupTileComponent < ViewComponent::Base
     item || registerable
   end
 
-  def student_tile?
-    @student_tile
-  end
-
-  def column_classes
+  def row_classes
     [
-      "col",
-      "registration-group-tile-col",
-      @tile_column_class
+      "group-row",
+      ("group-row--self-enrollment" if !item && sm_active?),
+      ("group-row--without-enrollment" if cohort_without_enrollment?)
     ].compact.join(" ")
-  end
-
-  def card_classes
-    [
-      "card",
-      "h-100",
-      "tutorial-gtile",
-      ("tutorial-gtile--student" if student_tile?),
-      gtile_type_class,
-      ("tutorial-gtile--without-enrollment" if cohort_without_enrollment?)
-    ].compact.join(" ")
-  end
-
-  def title_text
-    @tile_title || registerable.title
   end
 
   def type_text
-    @tile_type || helpers.roster_type_text(registerable, item: item)
+    helpers.roster_type_text(registerable, item: item)
   end
 
   def roster_key
@@ -122,7 +85,7 @@ class GroupTileComponent < ViewComponent::Base
   # A blocked button keeps its place in the tab order, so its name has to
   # carry the reason - the tooltip on the wrapper is mouse-only.
   def delete_disabled_label
-    "#{delete_title}: #{delete_disabled_title}"
+    "#{delete_label}. #{delete_disabled_title}"
   end
 
   def remove_disabled?
@@ -134,7 +97,7 @@ class GroupTileComponent < ViewComponent::Base
   end
 
   def remove_disabled_label
-    "#{remove_title}: #{remove_disabled_title}"
+    "#{remove_label}. #{remove_disabled_title}"
   end
 
   def delete_data
@@ -186,7 +149,21 @@ class GroupTileComponent < ViewComponent::Base
     t("registration.item.actions.remove_from_campaign")
   end
 
-  # The item recomputes on every call, and the tile needs the answer thrice.
+  # Every row carries the same three buttons, so their names say which group
+  # they act on.
+  def edit_label
+    "#{t("roster.tooltips.edit_settings")}: #{registerable.title}"
+  end
+
+  def delete_label
+    "#{delete_title}: #{registerable.title}"
+  end
+
+  def remove_label
+    "#{remove_title}: #{registerable.title}"
+  end
+
+  # The item recomputes on every call, and the row needs the answer thrice.
   def remove_blocker_message
     return @remove_blocker_message if defined?(@remove_blocker_message)
 
@@ -207,19 +184,83 @@ class GroupTileComponent < ViewComponent::Base
       end
   end
 
-  def registration_count
-    return unless item
+  # What the number in the row counts: the first choices of an open
+  # preference-based campaign, the confirmed registrations of a first come,
+  # first served one, and the roster otherwise. The first two are not a roster
+  # yet, and a preference is demand, not a seat.
+  def count_kind
+    return :members unless item
+    return :confirmed if item.registration_campaign.first_come_first_served?
 
-    campaign = item.registration_campaign
-    if campaign.first_come_first_served?
-      item.user_registrations.count
-    else
-      item.first_choice_count
+    :first_choices
+  end
+
+  def count
+    @count ||= case count_kind
+               when :first_choices then item.first_choice_count
+               when :confirmed then item.confirmed_registrations_count
+               else registerable.roster_entries.count
     end
+  end
+
+  def count_text
+    if count_kind == :first_choices
+      seats = if capacity
+        I18n.t("roster.group_row.seats", count: capacity)
+      else
+        I18n.t("roster.group_row.no_limit")
+      end
+      return "#{I18n.t("roster.group_row.first_choices", count: count)} · #{seats}"
+    end
+
+    return I18n.t("roster.group_row.#{count_kind}_unlimited", count: count) if capacity.nil?
+
+    I18n.t("roster.group_row.#{count_kind}", count: count, capacity: capacity)
+  end
+
+  # [kind, text] for the line under the number, or nil.
+  def count_state
+    if count_kind == :first_choices
+      return if capacity.nil? || count <= capacity
+
+      return [:demand, I18n.t("roster.group_row.demand_exceeds_seats")]
+    end
+
+    return [:plain, I18n.t("roster.group_row.no_limit")] if capacity.nil?
+    if count > capacity
+      return [:over, I18n.t("roster.group_row.over_capacity", count: count - capacity)]
+    end
+    return [:full, I18n.t("roster.group_row.full")] if count == capacity
+
+    [:plain, I18n.t("roster.group_row.seats_available", count: capacity - count)]
+  end
+
+  def badge_class(kind)
+    "group-row__badge--#{kind}"
+  end
+
+  # Demand has no bar: three and thirty first choices would fill it alike,
+  # and a full bar reads as filled seats.
+  def bar?
+    count_kind != :first_choices && capacity.present?
+  end
+
+  def bar_percent
+    return 100 if capacity.zero?
+
+    [count * 100 / capacity, 100].min
+  end
+
+  def over_capacity?
+    capacity.present? && count > capacity
   end
 
   def tutors_text
     helpers.roster_tutors_text(registerable)
+  end
+
+  def people_label
+    registerable.is_a?(Talk) ? t("basics.speakers") : t("basics.tutors")
   end
 
   def location_text
@@ -242,39 +283,6 @@ class GroupTileComponent < ViewComponent::Base
 
   def sm_active?
     sm_mode != "disabled"
-  end
-
-  def gtile_type_class
-    return @tile_variant_class if @tile_variant_class.present?
-
-    if item
-      "tutorial-gtile--campaign"
-    elsif sm_active?
-      "tutorial-gtile--self-enrollment"
-    else
-      "tutorial-gtile--free"
-    end
-  end
-
-  def top_bar_class
-    return @tile_top_bar_class if @tile_top_bar_class.present?
-
-    if item
-      "tutorial-gtile-top-bar--campaign"
-    elsif sm_active?
-      "tutorial-gtile-top-bar--self-enrollment"
-    else
-      "tutorial-gtile-top-bar--free"
-    end
-  end
-
-  # Explains the top-bar color on hover. Campaign (blue) tiles describe the
-  # registration process; every other tile mirrors the self-enrollment icon's
-  # tooltip, since the bar color and that icon track the same mode.
-  def top_bar_tooltip
-    return t("roster.tooltips.top_bar_campaign") if item
-
-    sm_tooltip
   end
 
   def cohort_without_enrollment?
@@ -304,12 +312,14 @@ class GroupTileComponent < ViewComponent::Base
     sm_active? ? "text-success" : "text-muted"
   end
 
-  def sm_tooltip
-    label = t("roster.self_materialization.label",
-              default: "Self-Enrollment")
+  # The disabled mode's name already says what it is about; the others need
+  # the label in front of them.
+  def sm_text
     mode_label = t("roster.self_materialization.modes.#{sm_mode}",
                    default: sm_mode.humanize)
-    "#{label}: #{mode_label}"
+    return mode_label unless sm_active?
+
+    "#{t("roster.self_materialization.label", default: "Self-Enrollment")}: #{mode_label}"
   end
 
   def sm_modes

@@ -31,7 +31,7 @@ test("asks before a member of the group becomes its tutor",
     page.once("dialog", confirm => confirm.accept());
     await dialog.getByRole("button", { name: "Save" }).click();
     await expect(dialog).toBeHidden();
-    const tile = page.locator(".tutorial-gtile", { hasText: "Mo 10" });
+    const tile = page.getByTestId("group-row").filter({ hasText: "Mo 10" });
     await expect(tile).toContainText("student (public, 0)");
 
     // accepted once is accepted: an edit that leaves the tutors alone is not asked again
@@ -44,6 +44,6 @@ test("asks before a member of the group becomes its tutor",
     await dialog.getByRole("textbox", { name: "Title" }).fill("Mo 10-12");
     await dialog.getByRole("button", { name: "Save" }).click();
     await expect(dialog).toBeHidden();
-    await expect(page.locator(".tutorial-gtile", { hasText: "Mo 10-12" })).toBeVisible();
+    await expect(page.getByTestId("group-row").filter({ hasText: "Mo 10-12" })).toBeVisible();
     expect(askedAgain).toBe(false);
   });

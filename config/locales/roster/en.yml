@@ -217,6 +217,40 @@ en:
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
+    group_row:
+      room: "Room"
+      confirmed: "%{count} / %{capacity} confirmed"
+      confirmed_unlimited: "%{count} confirmed"
+      members: "%{count} / %{capacity} members"
+      members_unlimited: "%{count} members"
+      first_choices:
+        one: "%{count} first choice"
+        other: "%{count} first choices"
+      seats:
+        one: "%{count} seat"
+        other: "%{count} seats"
+      no_limit: "No seat limit"
+      full: "Full"
+      over_capacity:
+        one: "%{count} over capacity"
+        other: "%{count} over capacity"
+      seats_available:
+        one: "%{count} seat available"
+        other: "%{count} seats available"
+      demand_exceeds_seats: "Demand exceeds seats"
+      head:
+        group: "Group"
+        details:
+          tutors: "Tutors · Room"
+          speakers: "Speakers · Room"
+        confirmed: "Confirmed · Capacity"
+        members: "Members · Capacity"
+        first_choices: "First Choices · Seats"
+        actions: "Actions"
+      move:
+        button: "Move or add %{name} to another group"
+        title: "Move or add %{name} to …"
+        none: "There is no other group to move to."
     self_materialization:
       modes:
         disabled: 'Self-Enrollment Disabled'
@@ -254,7 +288,6 @@ en:
       locked_manage_no_campaign: "Roster is locked (enable skip registration processes to manage directly)"
       edit_settings: "Edit Settings"
       edit_disabled_campaign: "Cannot edit settings during active registration process"
-      top_bar_campaign: "This group is part of a registration process"
       delete: "Delete"
       delete_disabled: "Cannot delete group (has participants or in registration process)"
       self_materialization_disabled_campaign: "Self-enrollment is disabled during active registration processes"

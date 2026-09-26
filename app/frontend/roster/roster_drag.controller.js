@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 import Sortable from "sortablejs";
 
 export default class extends Controller {
-  static targets = ["studentList", "choiceDialog"];
+  static targets = ["studentList", "choiceDialog", "targetDialog", "targetList"];
 
   static values = {
     sourceType: String,
@@ -12,9 +12,11 @@ export default class extends Controller {
   };
 
   sortableInstance = null;
-  tileDropInstances = [];
+  rowDropInstances = [];
   pendingDrop = null;
-  highlightedTile = null;
+  highlightedRow = null;
+  pendingPick = null;
+  pickOpener = null;
 
   connect() {
     this.initDraggable();
@@ -23,9 +25,10 @@ export default class extends Controller {
 
   disconnect() {
     this.sortableInstance?.destroy();
-    this.tileDropInstances.forEach(s => s.destroy());
-    this.tileDropInstances = [];
+    this.rowDropInstances.forEach(s => s.destroy());
+    this.rowDropInstances = [];
     this.clearHighlight();
+    document.body.classList.remove("roster-dragging");
   }
 
   initDraggable() {
@@ -39,8 +42,10 @@ export default class extends Controller {
       chosenClass: "roster-drag-chosen",
       filter: ".tutorial-roster-student-remove, form, button, a",
       preventOnFilter: false,
+      onStart: () => document.body.classList.add("roster-dragging"),
       onMove: evt => this.updateHighlight(evt.to),
       onEnd: (evt) => {
+        document.body.classList.remove("roster-dragging");
         this.clearHighlight();
         if (evt.item.parentNode !== this.studentListTarget) {
           evt.item.remove();
@@ -50,23 +55,11 @@ export default class extends Controller {
   }
 
   initDropZones() {
-    this.tileDropInstances.forEach(s => s.destroy());
-    this.tileDropInstances = [];
+    this.rowDropInstances.forEach(s => s.destroy());
+    this.rowDropInstances = [];
 
-    const tiles = document.querySelectorAll(
-      ".tutorial-gtile[data-roster-type][data-roster-id]",
-    );
-
-    tiles.forEach((tile) => {
-      if (
-        tile.dataset.rosterType === this.sourceTypeValue
-        && tile.dataset.rosterId === String(this.sourceIdValue)
-      ) {
-        return;
-      }
-
-      const dropZone
-        = tile.querySelector(".card-body") || tile;
+    this.targetRows().forEach((row) => {
+      const dropZone = row.querySelector(".group-row__drop") || row;
 
       const instance = new Sortable(dropZone, {
         group: { name: "roster-drop", put: ["roster-students"] },
@@ -74,12 +67,22 @@ export default class extends Controller {
         ghostClass: "d-none",
         onAdd: (evt) => {
           evt.item.remove();
-          this.handleDrop(tile, evt);
+          this.handleDrop(row, evt.item?.dataset?.userId);
         },
       });
 
-      this.tileDropInstances.push(instance);
+      this.rowDropInstances.push(instance);
     });
+  }
+
+  /** The group rows a student of this panel can go to: every one but the source. */
+  targetRows() {
+    return Array.from(document.querySelectorAll(
+      ".group-row[data-roster-type][data-roster-id]",
+    )).filter(row => !(
+      row.dataset.rosterType === this.sourceTypeValue
+      && row.dataset.rosterId === String(this.sourceIdValue)
+    ));
   }
 
   // Stimulus action, wired to our custom turbo:stream-render (see initHotwire.js)
@@ -92,32 +95,88 @@ export default class extends Controller {
   }
 
   updateHighlight(dropZone) {
-    const tile = dropZone.closest(".tutorial-gtile");
-    if (tile === this.highlightedTile) return;
+    const row = dropZone.closest(".group-row");
+    if (row === this.highlightedRow) return;
 
     this.clearHighlight();
-    if (tile) {
-      tile.classList.add("tutorial-gtile--drop-target");
-      this.highlightedTile = tile;
+    if (row) {
+      row.classList.add("group-row--drop-target");
+      this.highlightedRow = row;
     }
   }
 
   clearHighlight() {
-    if (this.highlightedTile) {
-      this.highlightedTile.classList.remove("tutorial-gtile--drop-target");
-      this.highlightedTile = null;
+    if (this.highlightedRow) {
+      this.highlightedRow.classList.remove("group-row--drop-target");
+      this.highlightedRow = null;
     }
   }
 
-  handleDrop(tile, evt) {
-    const userId = evt.item?.dataset?.userId;
+  /**
+   * The keyboard's and the touch screen's way to what a drop does: lists the
+   * same target rows as buttons, and a choice takes the drop's path.
+   */
+  pickTarget(event) {
+    if (!this.hasTargetDialogTarget || !this.hasTargetListTarget) return;
+
+    const { userId, userName } = event.currentTarget.dataset;
+    this.pendingPick = userId;
+    this.pickOpener = event.currentTarget;
+
+    const dialog = this.targetDialogTarget;
+    const titleEl = dialog.querySelector("[data-role='dialog-title']");
+    if (titleEl) titleEl.textContent = dialog.dataset.titleTemplate.replace("__NAME__", userName);
+
+    const list = this.targetListTarget;
+    list.replaceChildren();
+    const rows = this.targetRows();
+    dialog.querySelector("[data-role='no-targets']")?.classList.toggle("d-none", rows.length > 0);
+
+    rows.forEach((row) => {
+      const item = document.createElement("li");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "btn btn-sm btn-outline-secondary w-100 text-start";
+      button.dataset.rosterKey = row.dataset.rosterKey;
+      const title = document.createElement("span");
+      title.className = "fw-semibold";
+      title.textContent = row.dataset.rosterTitle;
+      const count = document.createElement("span");
+      count.className = "d-block small text-muted";
+      count.textContent = row.dataset.rosterCount || "";
+      button.append(title, count);
+      button.addEventListener("click", () => this.choosePickedTarget(row));
+      item.appendChild(button);
+      list.appendChild(item);
+    });
+
+    dialog.showModal();
+    list.querySelector("button")?.focus();
+  }
+
+  choosePickedTarget(row) {
+    const userId = this.pendingPick;
+    this.cancelPick();
+    this.handleDrop(row, userId);
+  }
+
+  cancelPick() {
+    this.pendingPick = null;
+    if (this.hasTargetDialogTarget && this.targetDialogTarget.open) {
+      this.targetDialogTarget.close();
+    }
+    this.pickOpener?.focus();
+    this.pickOpener = null;
+  }
+
+  handleDrop(row, userId) {
     if (!userId) return;
 
-    const targetType = tile.dataset.rosterType;
-    const targetId = tile.dataset.rosterId;
-    const targetFull = tile.dataset.rosterFull === "true";
-    const targetTitle = tile.dataset.rosterTitle;
-    const targetAddPath = tile.dataset.rosterAddMemberPath;
+    const targetType = row.dataset.rosterType;
+    const targetId = row.dataset.rosterId;
+    const targetFull = row.dataset.rosterFull === "true";
+    const targetTitle = row.dataset.rosterTitle;
+    const targetAddPath = row.dataset.rosterAddMemberPath;
 
     if (this.campaignSourceType()) {
       if (targetFull && !confirm(this.overbookingWarningValue)) {

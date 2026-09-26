@@ -44,9 +44,9 @@
             p-0 text-decoration-none text-reset campaign-panel-trigger d-inline-flex
             align-items-center gap-1
           "
-          data-tutorial-roster-panel-target="tile"
+          data-tutorial-roster-panel-target="trigger"
           data-roster-key="campaign_<%= campaign.id %>_rejected"
-          data-action="click->tutorial-roster-panel#openFromTile"
+          data-action="click->tutorial-roster-panel#openFromTrigger"
           data-roster-panel-path="<%= rejected_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
           <i class="bi bi-x-octagon-fill text-danger"></i>
@@ -68,9 +68,9 @@
             p-0 text-decoration-none text-reset campaign-panel-trigger
             d-inline-flex align-items-center gap-1
           "
-          data-tutorial-roster-panel-target="tile"
+          data-tutorial-roster-panel-target="trigger"
           data-roster-key="campaign_<%= campaign.id %>_unassigned"
-          data-action="click->tutorial-roster-panel#openFromTile"
+          data-action="click->tutorial-roster-panel#openFromTrigger"
           data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
           <i class="bi bi-exclamation-triangle-fill text-warning"></i>

@@ -44,7 +44,7 @@ module Registration
                                        embedded: embedded
                                      }),
                 turbo_stream.replace(@item,
-                                     html: GroupTileComponent.new(
+                                     html: GroupRowComponent.new(
                                        registerable: @item.registerable,
                                        item: @item
                                      ).render_in(view_context)),
@@ -53,7 +53,7 @@ module Registration
             else
               [
                 turbo_stream.replace(@item,
-                                     html: GroupTileComponent.new(
+                                     html: GroupRowComponent.new(
                                        registerable: @item.registerable,
                                        item: @item
                                      ).render_in(view_context)),

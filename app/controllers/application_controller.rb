@@ -127,7 +127,7 @@ class ApplicationController < ActionController::Base
                         })
   end
 
-  # A seminar lists its talks twice on the edit page: as group tiles and in the
+  # A seminar lists its talks twice on the edit page: as group rows and in the
   # content card above them. Adding or deleting one has to reach both.
   def refresh_seminar_content_stream(lecture)
     return nil unless lecture&.seminar?

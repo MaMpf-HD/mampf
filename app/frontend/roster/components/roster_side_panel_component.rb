@@ -9,7 +9,7 @@ class RosterSidePanelComponent < ViewComponent::Base
                  allocated: false, preference_ranks: {})
     super()
     @registerable = registerable
-    @students = students
+    @students = students.sort_by { |student| last_name_key(student) }
     @read_only = read_only
     @panel_kind = panel_kind&.to_sym
     @campaign = campaign
@@ -232,8 +232,24 @@ class RosterSidePanelComponent < ViewComponent::Base
     end
   end
 
+  # Sorts by last name, the way a list of people is read. Someone without one
+  # sorts by the name the panel shows for them.
+  def last_name_key(student)
+    names = if student.last_name.present?
+      [student.last_name, student.first_name.to_s]
+    else
+      [student_display_name(student), ""]
+    end
+    names.map { |name| I18n.transliterate(name).downcase } + [student.id.to_i]
+  end
+
   def student_display_name(student)
     student.tutorial_name.presence || student.email
+  end
+
+  # The panel shows no address, so the copy button names the one it copies.
+  def copy_email_label(student)
+    "#{t("buttons.copy_email_address")}: #{student.email}"
   end
 
   def overbooking_warning

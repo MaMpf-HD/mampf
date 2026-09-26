@@ -219,6 +219,40 @@ de:
       preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
+    group_row:
+      room: "Raum"
+      confirmed: "%{count} / %{capacity} bestätigt"
+      confirmed_unlimited: "%{count} bestätigt"
+      members: "%{count} / %{capacity} Mitglieder"
+      members_unlimited: "%{count} Mitglieder"
+      first_choices:
+        one: "%{count} Erstwunsch"
+        other: "%{count} Erstwünsche"
+      seats:
+        one: "%{count} Platz"
+        other: "%{count} Plätze"
+      no_limit: "Keine Platzgrenze"
+      full: "Voll"
+      over_capacity:
+        one: "%{count} über der Kapazität"
+        other: "%{count} über der Kapazität"
+      seats_available:
+        one: "%{count} Platz frei"
+        other: "%{count} Plätze frei"
+      demand_exceeds_seats: "Mehr Nachfrage als Plätze"
+      head:
+        group: "Gruppe"
+        details:
+          tutors: "TutorInnen · Raum"
+          speakers: "Vortragende · Raum"
+        confirmed: "Bestätigt · Kapazität"
+        members: "Mitglieder · Kapazität"
+        first_choices: "Erstwünsche · Plätze"
+        actions: "Aktionen"
+      move:
+        button: "%{name} in eine andere Gruppe verschieben oder hinzufügen"
+        title: "%{name} verschieben oder hinzufügen nach …"
+        none: "Es gibt keine andere Gruppe, in die verschoben werden kann."
     self_materialization:
       modes:
         disabled: 'Selbsteinschreibung deaktiviert'
@@ -258,7 +292,6 @@ de:
       locked_manage_no_campaign: "Liste ist gesperrt (aktiviere Anmeldeverfahren überspringen für direkte Verwaltung)"
       edit_settings: "Einstellungen bearbeiten"
       edit_disabled_campaign: "Einstellungen können während eines laufenden Anmeldeverfahrens nicht bearbeitet werden"
-      top_bar_campaign: "Diese Gruppe ist Teil eines Anmeldeverfahrens"
       delete: "Löschen"
       delete_disabled: "Gruppe kann nicht gelöscht werden (hat Teilnehmer oder ist Teil eines Anmeldeverfahrens)"
       self_materialization_disabled_campaign: "Selbsteinschreibung ist während aktiver Anmeldeverfahren deaktiviert"

@@ -71,7 +71,7 @@ module Roster
 
     def show
       if @mparams.panel?
-        render_with_streams(stream_builder.streams(update_tiles: false))
+        render_with_streams(stream_builder.streams(update_rows: false))
       else
         redirect_to lecture_roster_path(@lecture)
       end
@@ -163,7 +163,7 @@ module Roster
       if @rosterable.update(self_materialization_mode: mode)
         render turbo_stream: turbo_stream.replace(
           @rosterable,
-          html: GroupTileComponent.new(
+          html: GroupRowComponent.new(
             registerable: @rosterable
           ).render_in(view_context)
         )

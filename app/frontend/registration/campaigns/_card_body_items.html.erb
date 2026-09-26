@@ -22,22 +22,27 @@
       </div>
     </div>
   <% else %>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3 registration-group-grid">
-      <% Rosters::RegisterableOrdering.sort_items(
-           campaign.registration_items.includes(:registerable)
-         ).each do |item| %>
-        <%= render GroupTileComponent.new(
-              registerable: item.registerable, item: item) %>
-      <% end %>
-
+    <% items = Rosters::RegisterableOrdering.sort_items(
+         campaign.registration_items.includes(:registerable)
+       ) %>
+    <% footer = capture do %>
       <% if can_add_groups %>
-        <div class="col registration-group-tile-col">
-          <%= render "registration/campaigns/add_group_tile",
-                       lecture: campaign.campaignable,
-                       section: :campaign,
-                       campaign: campaign %>
-        </div>
+        <%= render "registration/campaigns/add_group_links",
+                   lecture: campaign.campaignable,
+                   section: :campaign,
+                   campaign: campaign %>
       <% end %>
-    </div>
+    <% end %>
+    <%= render layout: "registration/campaigns/group_rows",
+               locals: {
+                 count_kind: campaign.first_come_first_served? ? "confirmed" : "first_choices",
+                 lecture: campaign.campaignable,
+                 with_head: items.any?,
+                 footer: footer
+               } do %>
+      <% items.each do |item| %>
+        <%= render GroupRowComponent.new(registerable: item.registerable, item: item) %>
+      <% end %>
+    <% end %>
   <% end %>
 </div>

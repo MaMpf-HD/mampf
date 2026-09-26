@@ -25,7 +25,7 @@
     background-color: var(--bs-light, #f8f9fa) !important;
 }
 
-.allocation-item-row.tutorial-gtile--selected > td {
+.allocation-item-row.roster-trigger--selected > td {
     background-color: var(--bs-primary-bg-subtle, #cfe2ff) !important;
 }
 

@@ -265,6 +265,32 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
+  describe "#students" do
+    it "sorts by last name, and by the shown name without one" do
+      students = [
+        build(:confirmed_user, first_name: "Anna", last_name: "Zimmer", id: 1),
+        build(:confirmed_user, first_name: "Ben", last_name: "Özdemir", id: 2),
+        build(:confirmed_user, first_name: nil, last_name: nil,
+                               name_in_tutorials: "Nick", id: 3),
+        build(:confirmed_user, first_name: "Clara", last_name: "Becker", id: 4)
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(panel.students.map(&:id)).to eq([4, 3, 2, 1])
+    end
+  end
+
+  describe "#copy_email_label" do
+    it "names the address the button copies" do
+      student = build(:confirmed_user, email: "alice@example.com")
+
+      I18n.with_locale(:en) do
+        expect(component.copy_email_label(student))
+          .to eq("Copy email address: alice@example.com")
+      end
+    end
+  end
+
   describe "#campaign_wishes" do
     let(:campaign) { double(id: 1) }
 

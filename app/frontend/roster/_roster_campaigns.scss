@@ -1,5 +1,19 @@
 @import '~/styles/branding';
 
+:root {
+  --section-header-border: #a8c5e6;
+}
+
+.campaign-section {
+  border: 1.5px solid transparent;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--bs-body-bg), var(--bs-body-bg)) padding-box,
+    linear-gradient(145deg, mampf-blue(0.7), mampf-blue(0.35)) border-box;
+  box-shadow: 0 0.3rem 0.9rem rgba(34, 62, 98, 0.08);
+}
+
 // The badges hang in two places: the header of a registration card and the
 // exam's registration tab, so they are styled here rather than inside the
 // card that holds one of them.
@@ -194,7 +208,7 @@
   }
 }
 
-@keyframes dissolved-tile-settle {
+@keyframes dissolved-row-settle {
   0% {
     opacity: 0;
     transform: translateY(-24px) scale(0.9);
@@ -236,12 +250,12 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-.dissolved-campaign-settling .registration-group-tile-col {
-  animation: dissolved-tile-settle 0.7s ease both;
+.dissolved-campaign-settling .group-row {
+  animation: dissolved-row-settle 0.7s ease both;
 }
 
 @for $i from 1 through 12 {
-  .dissolved-campaign-settling .registration-group-tile-col:nth-child(#{$i}) {
+  .dissolved-campaign-settling .group-row:nth-child(#{$i}) {
     animation-delay: #{500 + $i * 150}ms;
   }
 }
@@ -249,7 +263,7 @@
 @media (prefers-reduced-motion: reduce) {
   .campaign-dissolving,
   .dissolved-campaign-pill,
-  .dissolved-campaign-settling .registration-group-tile-col {
+  .dissolved-campaign-settling .group-row {
     animation: none;
   }
 }
