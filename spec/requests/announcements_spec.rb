@@ -55,7 +55,7 @@ RSpec.describe("Announcements", type: :request) do
     it "notifies who bookmarked, sits on a roster or has a registration running" do
       bookmarker, member, applicant, reader = create_list(:confirmed_user, 4)
       bookmarker.bookmark_lecture!(lecture)
-      create(:tutorial, lecture: lecture).add_user_to_roster!(member)
+      Rosters::MaintenanceService.new.add_user!(member, create(:tutorial, lecture: lecture))
       campaign = create(:registration_campaign, :open, :with_items, campaignable: lecture)
       create(:registration_user_registration, :pending,
              user: applicant, registration_campaign: campaign,

@@ -15,7 +15,6 @@ module LectureAudience
   def user_id_scopes(lecture_ids)
     [LectureBookmark.where(lecture_id: lecture_ids).select(:user_id),
      LectureMembership.where(lecture_id: lecture_ids).select(:user_id),
-     TutorialMembership.where(lecture_id: lecture_ids).select(:user_id),
      CohortMembership.joins(:cohort)
                      .where(cohorts: { context_type: "Lecture", context_id: lecture_ids })
                      .select(:user_id),
@@ -38,7 +37,6 @@ module LectureAudience
     )
     [LectureBookmark.where(user: user).select(:lecture_id),
      LectureMembership.where(user: user).select(:lecture_id),
-     TutorialMembership.where(user: user).select(:lecture_id),
      Cohort.where(context_type: "Lecture",
                   id: CohortMembership.where(user: user).select(:cohort_id))
            .select(:context_id),

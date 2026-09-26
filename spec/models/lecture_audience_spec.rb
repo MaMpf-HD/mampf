@@ -45,13 +45,6 @@ RSpec.describe(LectureAudience) do
     expect(in_audience?).to be(true)
   end
 
-  it "takes in a tutorial seat alone" do
-    create(:tutorial_membership, user: student, tutorial: create(:tutorial, lecture: lecture))
-
-    expect_no_other_tie
-    expect(in_audience?).to be(true)
-  end
-
   it "takes in a seat in a lecture cohort that does not reach the lecture roster" do
     cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
     create(:cohort_membership, user: student, cohort: cohort)

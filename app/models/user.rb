@@ -764,13 +764,11 @@ class User < ApplicationRecord
     true
   end
 
-  # Every lecture this user holds a place in: a seat on the lecture roster, or
-  # a place in one of the lecture's tutorial groups (a tutorial membership does
-  # not create a lecture membership of its own), or in one of its cohorts
-  # (cohorts with propagate_to_lecture: false do not create one either).
+  # Every lecture this user holds a place in: a seat on the lecture roster,
+  # which every tutorial seat comes with, or a place in one of its cohorts
+  # (cohorts with propagate_to_lecture: false do not create a lecture seat).
   def roster_lectures
     Lecture.where(id: lecture_memberships.select(:lecture_id))
-           .or(Lecture.where(id: tutorial_memberships.select(:lecture_id)))
            .or(Lecture.where(id: cohorts.where(context_type: "Lecture")
                                         .select(:context_id)))
   end

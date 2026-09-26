@@ -230,18 +230,9 @@ RSpec.describe(User, type: :model) do
       expect(lecture.registration_status_for(user)).to be_nil
     end
 
-    it "includes lectures the user is only in a tutorial group of" do
+    it "keeps such a lecture out of the bookmarked ones even when bookmarked" do
       lecture = create(:lecture, term: term)
-      tutorial = create(:tutorial, lecture: lecture)
-      create(:tutorial_membership, user: user, tutorial: tutorial)
-
-      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
-    end
-
-    it "keeps such a lecture out of the bookmarked ones even when subscribed" do
-      lecture = create(:lecture, term: term)
-      tutorial = create(:tutorial, lecture: lecture)
-      create(:tutorial_membership, user: user, tutorial: tutorial)
+      create(:lecture_membership, user: user, lecture: lecture)
       user.bookmark_lecture!(lecture)
 
       expect(user.current_bookmarked_lectures(term)).to be_empty

@@ -34,7 +34,7 @@ RSpec.describe(Medium) do
   end
 
   it "is shown to a member of a tutorial of the lecture" do
-    create(:tutorial, lecture: lecture).add_user_to_roster!(student)
+    Rosters::MaintenanceService.new.add_user!(student, create(:tutorial, lecture: lecture))
 
     expect(lecture_medium.visible_for_user?(student)).to be(true)
     expect(visible).to include(lecture_medium)
