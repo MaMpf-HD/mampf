@@ -1,6 +1,7 @@
 <%# The lecture's title, which opens a list of the user's other lectures of
-    the current term to switch to. While editing, it switches to editing the
-    other lecture in the same tab, as far as the user may do so. %>
+    the current term to switch to, on the same page (see
+    switcher.controller.js). While editing, it switches to editing the other
+    lecture, as far as the user may do so. %>
 <% lectures = current_user.current_lectures %>
 <% term = Term.active&.compact_title %>
 <div class="dropdown" data-controller="lecture-switcher">
@@ -29,7 +30,7 @@
                     class: ["dropdown-item", { active: other == lecture }],
                     aria: { current: other == lecture ? "page" : nil },
                     data: { turbo_frame: "_top",
-                            action: ("click->lecture-switcher#keepTab" if edit) } %>
+                            action: "click->lecture-switcher#keepPlace" } %>
       </li>
     <% end %>
     <% if term && (lectures - [lecture]).empty? %>

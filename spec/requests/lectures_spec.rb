@@ -355,6 +355,37 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "lecture pages with nothing to show" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all, organizational: nil) }
+
+    before { create(:lecture_bookmark, user: user, lecture: lecture) }
+
+    it "send a media page without media to the lecture home page" do
+      get lecture_lesson_materials_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the announcements without any to the lecture home page" do
+      get lecture_announcements_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the organizational page without its text to the lecture home page" do
+      get lecture_organizational_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the self test without enough questions to the lecture home page" do
+      get show_random_quizzes_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+  end
+
   describe "GET /lectures/:id as staff" do
     let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
 

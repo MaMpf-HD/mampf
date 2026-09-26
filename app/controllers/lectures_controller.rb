@@ -7,6 +7,8 @@ class LecturesController < ApplicationController
   before_action :check_for_consent
   before_action :check_for_unlock, only: [:outline]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
+  before_action :check_for_announcements, only: [:show_announcements]
+  before_action :check_for_organizational, only: [:organizational]
   before_action :require_turbo_frame, only: [:new]
   layout "staff"
 
@@ -483,7 +485,21 @@ class LecturesController < ApplicationController
     def check_if_enough_questions
       return if @lecture.course.enough_questions?
 
-      redirect_to :root, alert: I18n.t("controllers.no_test")
+      redirect_to lecture_home_path(@lecture), alert: I18n.t("controllers.no_test")
+    end
+
+    # Pages with nothing to show send to the lecture's home page, e.g. when
+    # the lecture switcher (see lectures/show/_switcher) leads to them.
+    def check_for_announcements
+      return if @lecture.announcements.exists?
+
+      redirect_to lecture_home_path(@lecture)
+    end
+
+    def check_for_organizational
+      return if @lecture.organizational
+
+      redirect_to lecture_home_path(@lecture)
     end
 
     # Reads the new editors before the update, which makes them editors already.

@@ -17,6 +17,7 @@ class MediaController < ApplicationController
                                       :cancel_import_media,
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
+  before_action :check_for_lecture_media, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :check_for_consent, except: [:play, :screenshot,
                                              :chapters_vtt,
@@ -32,6 +33,10 @@ class MediaController < ApplicationController
                               :render_import_media, :render_import_vertex,
                               :cancel_import_media, :cancel_import_vertex]
   layout :staff_layout
+
+  # The media projects a lecture's sidebar leads to.
+  LECTURE_MEDIA_PROJECTS = ["lesson_material", "script", "exercise", "quiz",
+                            "worked_example", "repetition", "miscellaneous"].freeze
 
   def current_ability
     @current_ability ||= MediumAbility.new(current_user)
@@ -634,6 +639,17 @@ class MediaController < ApplicationController
       return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
+    end
+
+    # A lecture's media page for a project without media sends to the
+    # lecture's home page, e.g. when the lecture switcher (see
+    # lectures/show/_switcher) leads to it.
+    def check_for_lecture_media
+      project = params[:project]
+      return unless project.in?(LECTURE_MEDIA_PROJECTS)
+      return if @lecture.public_send(:"#{project}?", current_user)
+
+      redirect_to lecture_home_path(@lecture)
     end
 
     def set_teachable

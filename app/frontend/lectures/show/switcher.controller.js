@@ -1,17 +1,26 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Carries the open tab of the lecture edit page over when switching to
- * another lecture's edit page. The tab lives only in the current URL, since
- * the tabs update it on the client (see lecture_tabs.controller.js).
+ * Keeps the place in the lecture when switching to another one: the same page
+ * of the other lecture, e.g. /lectures/3/lesson_materials when on
+ * /lectures/1/lesson_materials, along with the query (e.g. the edit page's
+ * tab). Pages the other lecture has nothing on send to its home page by
+ * themselves. The place lives only on the client (the sidebar and the tabs
+ * update the URL), hence it is added to the link just when it is clicked.
  */
 export default class extends Controller {
-  keepTab(event) {
-    const tab = new URL(window.location).searchParams.get("tab");
-    if (!tab) return;
+  keepPlace(event) {
+    const current = window.location.pathname.match(/^\/lectures\/\d+(\/.*)?$/);
+    if (!current) return;
 
-    const url = new URL(event.currentTarget.href);
-    url.searchParams.set("tab", tab);
-    event.currentTarget.href = url.toString();
+    const page = current[1] || "";
+    const link = event.currentTarget;
+    const target = new URL(link.href);
+    // The link leads to viewing where the user may not edit the other lecture.
+    if ((page === "/edit") !== target.pathname.endsWith("/edit")) return;
+
+    target.pathname = target.pathname.replace(/^(\/lectures\/\d+).*$/, `$1${page}`);
+    target.search = window.location.search;
+    link.href = target.toString();
   }
 }
