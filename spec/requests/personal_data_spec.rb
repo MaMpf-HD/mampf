@@ -173,7 +173,7 @@ RSpec.describe("Personal data", type: :request) do
     it "is shown the lectures instead of a plain no" do
       get edit_personal_data_path
 
-      expect(response.body).to include(lecture.title)
+      expect(response.body).to include(ERB::Util.html_escape(lecture.title))
       expect(response.body).to include(I18n.t("personal_data.places_no"))
       expect(response.body).not_to include(I18n.t("personal_data.participation_question"))
     end
