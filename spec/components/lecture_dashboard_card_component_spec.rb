@@ -118,6 +118,15 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       )
     end
 
+    it "links an open registration to the lecture's home page" do
+      campaign
+
+      link = render_card.at_css("a.dashboard-card__note-link")
+
+      expect(link["href"]).to eq("/lectures/#{lecture.id}/home")
+      expect(link.text).to include(I18n.t("main.start.registration_open"))
+    end
+
     it "shows a badge for a pending registration" do
       create(:registration_user_registration, :pending,
              user: user, registration_campaign: campaign,

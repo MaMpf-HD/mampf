@@ -7,7 +7,7 @@ en:
       assignment:
         label: "Assignment due %{date}"
       exam:
-        label: "Exam registration is open."
+        label: "Exam registration open"
       activity:
         forum:
           one: "1 new forum post"

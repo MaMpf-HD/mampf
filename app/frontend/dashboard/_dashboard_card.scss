@@ -231,6 +231,15 @@ $card-rail-width: 12rem;
         }
     }
 
+    // above the title's stretched link, like the corner
+    &__note-link {
+        position: relative;
+        z-index: 2;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4rem;
+    }
+
     &__corner {
         position: absolute;
         top: 0.75rem;

@@ -7,7 +7,7 @@ de:
       assignment:
         label: "Abgabe fällig am %{date}"
       exam:
-        label: "Die Klausuranmeldung ist offen."
+        label: "Klausuranmeldung offen"
       activity:
         forum:
           one: "1 neuer Forenbeitrag"

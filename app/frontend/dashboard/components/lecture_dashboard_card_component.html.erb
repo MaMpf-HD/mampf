@@ -54,8 +54,15 @@
 
   <% if show_registration_status? %>
     <% card.with_note do %>
-      <i class="bi <%= registration_status_icon %>" aria-hidden="true"></i>
-      <%= registration_status_label %>
+      <% if registration_status == :open %>
+        <%= link_to lecture_home_path(lecture), class: "dashboard-card__note-link" do %>
+          <i class="bi <%= registration_status_icon %>" aria-hidden="true"></i>
+          <%= registration_status_label %>
+        <% end %>
+      <% else %>
+        <i class="bi <%= registration_status_icon %>" aria-hidden="true"></i>
+        <%= registration_status_label %>
+      <% end %>
     <% end %>
   <% end %>
 

@@ -27,7 +27,7 @@ de:
       remove_bookmark_confirm: "Entfernen"
       remove_registration_notice: "Ausblenden"
       remove_registration_notice_for: "Hinweis zu %{lecture} ausblenden"
-      remove_registration_notice_title: "Entfernen?"
+      remove_registration_notice_title: "Hinweis ausblenden?"
       remove_registration_notice_body: >-
         Deine Anmeldung für „%{lecture}“ wurde abgelehnt. Du kannst die
         Veranstaltung weiter gemerkt lassen oder ganz von Deinem Dashboard

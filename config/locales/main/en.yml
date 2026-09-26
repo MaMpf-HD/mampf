@@ -2,11 +2,11 @@ en:
   main:
     start:
       no_lectures: >-
-        You are not enrolled in any event series of %{term}, and have not
-        bookmarked any. Scroll down to discover new event series.
+        You are not registered for any lecture of %{term}, and have not
+        bookmarked any. Scroll down to discover new lectures.
       no_lectures_any_term: >-
-        You are not enrolled in any event series yet, and have not bookmarked
-        any. Scroll down to discover new event series.
+        You are not registered for any lecture yet, and have not bookmarked
+        any. Scroll down to discover new lectures.
       sections:
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
@@ -26,7 +26,7 @@ en:
       remove_bookmark_confirm: "Remove"
       remove_registration_notice: "Dismiss"
       remove_registration_notice_for: "Dismiss the notice for %{lecture}"
-      remove_registration_notice_title: "Remove?"
+      remove_registration_notice_title: "Dismiss the notice?"
       remove_registration_notice_body: >-
         Your registration for “%{lecture}” was rejected. You can keep the
         lecture as a bookmark, or remove it from your dashboard entirely.
