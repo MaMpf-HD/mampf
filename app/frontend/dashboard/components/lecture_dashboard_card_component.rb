@@ -39,7 +39,7 @@ class LectureDashboardCardComponent < ViewComponent::Base
   end
 
   def tape
-    @tape ||= Dashboard::WashiTape.for(seed: lecture.id,
+    @tape ||= Dashboard::WashiTape.new(seed: lecture.id,
                                        color: card_style&.tape_color)
   end
 

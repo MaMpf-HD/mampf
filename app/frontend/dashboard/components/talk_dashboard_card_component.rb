@@ -28,7 +28,7 @@ class TalkDashboardCardComponent < ViewComponent::Base
   # seminar they are also enrolled in should see one color for it, and
   # changing it on either card should move the other.
   def tape
-    @tape ||= Dashboard::WashiTape.for(seed: lecture.id,
+    @tape ||= Dashboard::WashiTape.new(seed: lecture.id,
                                        color: card_style&.tape_color)
   end
 

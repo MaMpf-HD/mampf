@@ -30,7 +30,8 @@ class LectureQuickActionsComponent < ViewComponent::Base
   end
 
   def tilt(index)
-    magnitude = ((lecture.id + (index * 7)) % ((2 * MAX_TILT) + 1)) / 2.0
+    magnitude = Dashboard::Tilt.for(lecture.id + (index * 7), max: MAX_TILT,
+                                                              stride: 1, step: 0.5).abs
     magnitude * (index.even? ? 1 : -1)
   end
 

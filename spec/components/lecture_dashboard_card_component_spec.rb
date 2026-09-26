@@ -52,7 +52,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
   it "falls back to a seeded color when the user has not picked one" do
     card = render_card.at_css("[data-testid='lecture-dashboard-card']")
 
-    tape = Dashboard::WashiTape.for(seed: lecture.id)
+    tape = Dashboard::WashiTape.new(seed: lecture.id)
     expect(card["style"]).to include("var(--washi-tape-color-#{tape.color})")
   end
 

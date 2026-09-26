@@ -7,10 +7,6 @@ module Dashboard
     COLOR_STRIDE = 5 # coprime to COLORS.size, so consecutive seeds don't repeat
     MAX_TILT = 6
 
-    def self.for(seed:, color: nil)
-      new(seed: seed, color: color)
-    end
-
     def initialize(seed:, color: nil)
       @seed = seed.to_i.abs
       @color = color.presence_in(COLORS) || COLORS[@seed * COLOR_STRIDE % COLORS.size]
@@ -19,7 +15,7 @@ module Dashboard
     attr_reader :seed, :color
 
     def tilt
-      @tilt ||= (seed * 29 % ((2 * MAX_TILT) + 1)) - MAX_TILT
+      @tilt ||= Tilt.for(seed, max: MAX_TILT, stride: 29)
     end
   end
 end

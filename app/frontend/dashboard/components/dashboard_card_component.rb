@@ -21,7 +21,7 @@ class DashboardCardComponent < ViewComponent::Base
   attr_reader :href, :image_url, :title, :tape, :attributes
 
   def tilt
-    @tilt ||= ((tape.seed * 37 % ((4 * MAX_TILT) + 1)) - (2 * MAX_TILT)) / 2.0
+    @tilt ||= Dashboard::Tilt.for(tape.seed, max: MAX_TILT, stride: 37, step: 0.5)
   end
 
   def style
