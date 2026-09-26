@@ -1,8 +1,8 @@
 require "rails_helper"
 
 # Mail leaves from FROM_ADDRESS, notifications from PROJECT_NOTIFICATION_EMAIL.
-# PROJECT_EMAIL is where people write to: it never sends, and receives only
-# what a person asks for, such as a data request.
+# PROJECT_EMAIL is where people write to, so the app neither sends from it nor
+# to it.
 RSpec.describe("Mail senders") do
   let(:user) { create(:confirmed_user) }
 
@@ -23,11 +23,11 @@ RSpec.describe("Mail senders") do
     expect(email.reply_to).to eq([user.email])
   end
 
-  it "sends a data request from the sender address to the project address" do
-    email = MathiMailer.data_request_email(user)
+  it "sends a user's data from the sender address to that user alone" do
+    email = MathiMailer.data_provide_email(user)
 
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
-    expect(email.to).to eq([DefaultSetting::PROJECT_EMAIL])
+    expect(email.to).to eq([user.email])
   end
 
   it "sends the user cleaner's warnings from the sender address" do
