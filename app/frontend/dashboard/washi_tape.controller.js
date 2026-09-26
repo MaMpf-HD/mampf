@@ -8,6 +8,7 @@ export default class extends Controller {
 
   connect() {
     this.card = this.element.closest(".dashboard-card");
+    this.savedColor = this.pickerTarget.querySelector("input:checked")?.value;
     this.closeOnOutsideClick = (event) => {
       if (!this.element.contains(event.target)) this.close();
     };
@@ -48,17 +49,33 @@ export default class extends Controller {
 
   chooseColor(event) {
     const color = event.target.value;
-    this.card?.style.setProperty("--washi-tape-color",
-      `var(--washi-tape-color-${color})`);
+    this.paint(color);
     this.save(color);
   }
 
+  paint(color) {
+    this.card?.style.setProperty("--washi-tape-color",
+      `var(--washi-tape-color-${color})`);
+  }
+
+  /**
+   * Puts the saved color back when the server refuses the new one, so the
+   * card does not show a color that is gone after a reload.
+   */
   async save(color) {
     const response = await sendDashboardRequest(this.urlValue, "PATCH",
       { washi_tape: { tape_color: color } });
 
-    if (!response.ok) {
-      console.error(`washi-tape: the color was not saved (${response.status})`);
+    if (response.ok) {
+      this.savedColor = color;
+      return;
     }
+
+    console.error(`washi-tape: the color was not saved (${response.status})`);
+    if (!this.savedColor) return;
+
+    this.paint(this.savedColor);
+    const saved = this.pickerTarget.querySelector(`input[value="${this.savedColor}"]`);
+    if (saved) saved.checked = true;
   }
 }

@@ -119,6 +119,36 @@ test("picks a washi tape color for a card and keeps it across a reload",
       .getByRole("radio", { name: "Mint" })).toBeChecked();
   });
 
+test("puts the saved washi tape color back when the server refuses a new one",
+  async ({ factory, student: { page, user } }) => {
+    const term = await createActiveTerm(factory);
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      term_id: term.id,
+    });
+    await factory.create("lecture_bookmark", [], {
+      lecture_id: lecture.id,
+      user_id: user.id,
+    });
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    const card = dashboard.dashboardCard(lecture.id);
+    const saved = page.waitForResponse(response =>
+      response.url().includes("/dashboard/washi_tape/") && response.ok());
+    await dashboard.chooseWashiTapeColor(lecture.id, "Mint");
+    await saved;
+
+    await page.route("**/dashboard/washi_tape/**", route => route.fulfill({ status: 500 }));
+    const refused = page.waitForResponse(response =>
+      response.url().includes("/dashboard/washi_tape/"));
+    await card.getByRole("radio", { name: "Mint" }).focus();
+    await page.keyboard.press("ArrowLeft");
+    await refused;
+
+    await expect(card).toHaveAttribute("style", /--washi-tape-color-mint/);
+    await expect(card.getByRole("radio", { name: "Mint" })).toBeChecked();
+  });
+
 test("picks a washi tape color for a card shown only through a pending registration",
   async ({ factory, student: { page, user } }) => {
     const term = await createActiveTerm(factory);
