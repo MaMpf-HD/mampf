@@ -37,9 +37,9 @@ async function admitRejectedStudentThroughTeacherRoster(
     .toBeVisible();
 
   const rejectedStudent = page.locator(".tutorial-roster-student", {
-    hasText: studentEmail,
+    has: page.getByRole("button", { name: `Copy email address: ${studentEmail}` }),
   });
-  const targetTutorial = page.locator(".tutorial-gtile").filter({
+  const targetTutorial = page.getByRole("listitem").filter({
     has: page.getByRole("heading", { name: tutorialTitle }),
   });
 

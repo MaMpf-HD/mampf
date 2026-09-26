@@ -1,0 +1,326 @@
+// A section's groups as rows that share one grid, so the counts and the
+// actions line up from row to row. The action column keeps a fixed width,
+// because the number of buttons differs between rows.
+$group-row-count-width: 12rem;
+$group-row-actions-width: 8rem;
+
+.group-rows {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  background: #fff;
+  container-type: inline-size;
+}
+
+.group-rows__head,
+.group-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.2fr) minmax(0, 1fr) $group-row-count-width $group-row-actions-width;
+  grid-template-areas: "main details count actions";
+  gap: 0.25rem 1.25rem;
+  padding: 0.75rem 1rem;
+}
+
+.group-rows__head {
+  align-items: end;
+  font-size: 0.75rem;
+  color: var(--bs-secondary-color);
+  background: var(--bs-tertiary-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding-block: 0.4rem;
+
+  > :last-child {
+    text-align: right;
+  }
+}
+
+.group-rows__head-main,
+.group-row__main {
+  grid-area: main;
+}
+
+.group-rows__head-details,
+.group-row__details {
+  grid-area: details;
+}
+
+.group-rows__head-count,
+.group-row__count {
+  grid-area: count;
+}
+
+.group-rows__head-actions,
+.group-row__actions {
+  grid-area: actions;
+}
+
+.group-rows__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.group-rows__add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.group-rows__list + .group-rows__add {
+  border-top: 1px dashed var(--bs-border-color);
+}
+
+.group-row {
+  position: relative;
+  align-items: center;
+  border-top: 1px solid var(--bs-border-color);
+  cursor: pointer;
+
+  .group-rows__list > &:first-child {
+    border-top: 0;
+  }
+
+  &:hover {
+    background: var(--bs-tertiary-bg);
+  }
+
+  // A click on the self-enrollment menu or an action button does not open the
+  // roster, so hovering them does not highlight the row.
+  &:not(.roster-trigger--selected):has(
+    .group-row__self-enrollment:hover,
+    .group-row__actions:hover
+  ) {
+    background: transparent;
+  }
+}
+
+.group-row--self-enrollment {
+  box-shadow: inset 4px 0 var(--bs-success);
+}
+
+.group-row--without-enrollment {
+  border-left: 2px dashed var(--bs-border-color);
+}
+
+.group-row.roster-trigger--selected {
+  background: var(--bs-primary-bg-subtle);
+  box-shadow: inset 4px 0 var(--bs-primary);
+
+  &:hover {
+    background: var(--bs-primary-bg-subtle);
+  }
+}
+
+.group-row--drop-target {
+  outline: 2px dashed var(--bs-success);
+  outline-offset: -3px;
+  background: var(--bs-success-bg-subtle);
+}
+
+// Covers the row while a student is dragged, so the whole row takes the
+// drop; otherwise it lets clicks through to the row and its buttons.
+.group-row__drop {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  .roster-dragging & {
+    pointer-events: auto;
+  }
+}
+
+.group-row__main,
+.group-row__details,
+.group-row__count {
+  min-width: 0;
+}
+
+.group-row__type {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bs-secondary-color);
+  font-weight: 600;
+}
+
+.group-row__date {
+  margin-left: 0.25rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+
+  .bi {
+    margin-inline: 0.25rem;
+  }
+}
+
+.group-row__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.group-row__open {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  overflow-wrap: anywhere;
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.group-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1rem;
+  font-size: 0.875rem;
+  color: var(--bs-secondary-color);
+
+  .bi {
+    margin-right: 0.25rem;
+  }
+}
+
+.group-row__self-enrollment {
+  margin-top: 0.15rem;
+
+  > .btn {
+    margin-left: -0.375rem;
+    padding: 0.05rem 0.375rem;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    text-decoration: none;
+
+    &:hover,
+    &.show {
+      background: var(--bs-secondary-bg);
+    }
+
+    &::after {
+      vertical-align: 0.15em;
+    }
+  }
+}
+
+.group-row__self-enrollment-menu {
+  font-size: 0.875rem;
+}
+
+.group-row__count {
+  font-size: 0.8125rem;
+}
+
+.group-row__count-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.5rem;
+}
+
+.group-row__count-text {
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.group-row__count-note {
+  color: var(--bs-secondary-color);
+}
+
+.group-row__bar {
+  height: 4px;
+  margin-top: 0.35rem;
+  border-radius: 2px;
+  background: var(--bs-secondary-bg);
+  overflow: hidden;
+
+  > span {
+    display: block;
+    height: 100%;
+    background: rgba(var(--bs-primary-rgb), 0.4);
+  }
+}
+
+// Muted, so that a list of full groups does not read as a list of warnings;
+// the badge says when a group is over capacity.
+.group-row__bar--over > span {
+  background: rgba(var(--bs-danger-rgb), 0.45);
+}
+
+.group-row__badge {
+  font-weight: 600;
+}
+
+.group-row__badge--full {
+  background: var(--bs-secondary-bg);
+  color: var(--bs-emphasis-color);
+}
+
+.group-row__badge--over {
+  background: var(--bs-danger-bg-subtle);
+  color: var(--bs-danger-text-emphasis);
+}
+
+.group-row__badge--demand {
+  background: var(--bs-warning-bg-subtle);
+  color: var(--bs-warning-text-emphasis);
+}
+
+.group-row__actions {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: 0.375rem;
+  justify-content: flex-end;
+}
+
+// Medium: the details go under the title, so the counts keep their width.
+@container (max-width: 56rem) {
+  .group-rows__head,
+  .group-row {
+    grid-template-columns: minmax(0, 1fr) $group-row-count-width $group-row-actions-width;
+    grid-template-areas:
+      "main count actions"
+      "details count actions";
+  }
+
+  .group-rows__head {
+    grid-template-areas: "main count actions";
+  }
+
+  .group-rows__head-details {
+    display: none;
+  }
+}
+
+// Narrow: the side panel open next to the list, or a phone. The actions move
+// under the content so they cannot squeeze the title.
+@container (max-width: 40rem) {
+  .group-rows__head {
+    display: none;
+  }
+
+  .group-row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "main" "details" "count" "actions";
+  }
+
+  .group-row__actions {
+    justify-content: flex-start;
+  }
+}
+
+.tutorial-roster-wishes {
+  max-width: 250px;
+}

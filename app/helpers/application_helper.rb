@@ -283,8 +283,8 @@ module ApplicationHelper
     value ? "no_display" : ""
   end
 
-  def helpdesk(text, html, title = t("info"))
-    tag.i(class: "far fa-question-circle helpdesk ms-2",
+  def helpdesk(text, html, title = t("info"), icon: "far fa-question-circle")
+    tag.i(class: "#{icon} helpdesk ms-2",
           tabindex: -1,
           data: {
             controller: "bs-popover",

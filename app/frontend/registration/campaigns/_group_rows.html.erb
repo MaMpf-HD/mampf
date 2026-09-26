@@ -1,0 +1,34 @@
+<%#
+  The list around a section's group rows. The head only lines the columns
+  up for the eye; every row labels its own values.
+%>
+
+<% people = local_assigns[:lecture].try(:seminar?) ? "speakers" : "tutors" %>
+
+<div class="group-rows">
+  <% if local_assigns[:with_head] != false %>
+    <div class="group-rows__head" aria-hidden="true">
+      <span class="group-rows__head-main">
+        <%= t("roster.group_row.head.group") %>
+      </span>
+
+      <span class="group-rows__head-details">
+        <%= t("roster.group_row.head.details.#{people}") %>
+      </span>
+
+      <span class="group-rows__head-count">
+        <%= t("roster.group_row.head.#{count_kind}") %>
+      </span>
+
+      <span class="group-rows__head-actions">
+        <%= t("roster.group_row.head.actions") %>
+      </span>
+    </div>
+  <% end %>
+
+  <ul class="group-rows__list">
+    <%= yield %>
+  </ul>
+
+  <%= local_assigns[:footer] %>
+</div>

@@ -115,6 +115,53 @@
   }
 }
 
+// The heading takes the focus when the keyboard opens the panel, so that
+// reading starts there. The ring hugs the text instead of the full width.
+[data-roster-panel-heading] {
+  display: inline-block;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--bs-primary-rgb), 0.5);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+.tutorial-roster-student-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tutorial-roster-student-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+// The glyphs differ in size; equal boxes line the buttons up.
+.tutorial-roster-student-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--bs-secondary-color);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--bs-emphasis-color);
+    background: var(--bs-secondary-bg);
+  }
+}
+
 .tutorial-roster-student .card-body {
   position: relative;
   padding-right: 3.25rem;

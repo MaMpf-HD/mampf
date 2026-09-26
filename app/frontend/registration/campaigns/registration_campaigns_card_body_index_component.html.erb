@@ -51,13 +51,9 @@
               data-testid="registration-campaign-section-body"
             >
               <div class="pt-3">
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
-                  <div class="col registration-group-tile-col">
-                    <%= render "registration/campaigns/add_group_tile",
-                             lecture: lecture,
-                             section: :campaign %>
-                  </div>
-                </div>
+                <%= render "registration/campaigns/add_group_links",
+                         lecture: lecture,
+                         section: :campaign %>
               </div>
             </div>
           </div>
@@ -85,21 +81,18 @@
           data-testid="registration-no-campaign-section-body"
         >
           <div class="<%= 'pt-3' if collapse_no_campaign_section? %>">
-            <div
-              class="
-                row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3
-                registration-group-grid
-                <%= 'dissolved-campaign-ambient' if completed_campaigns.any? %>
-              "
-            >
-              <%= render GroupTileComponent.with_collection(
-                       no_campaign_groups) %>
-
-              <div class="col registration-group-tile-col">
-                <%= render "registration/campaigns/add_group_tile",
-                         lecture: lecture,
-                         section: :no_campaign %>
-              </div>
+            <div class="<%= 'dissolved-campaign-ambient' if completed_campaigns.any? %>">
+              <%= render layout: "registration/campaigns/group_rows",
+                         locals: {
+                           count_kind: "members",
+                           lecture: lecture,
+                           with_head: no_campaign_groups.any?,
+                           footer: render("registration/campaigns/add_group_links",
+                                          lecture: lecture,
+                                          section: :no_campaign)
+                         } do %>
+                <%= render GroupRowComponent.with_collection(no_campaign_groups) %>
+              <% end %>
             </div>
           </div>
         </div>

@@ -25,8 +25,37 @@
     background-color: var(--bs-light, #f8f9fa) !important;
 }
 
-.allocation-item-row.tutorial-gtile--selected > td {
+.allocation-item-row.roster-trigger--selected > td {
     background-color: var(--bs-primary-bg-subtle, #cfe2ff) !important;
+}
+
+/* The title button shows that the row opens its roster; the rejected and
+   unassigned tables have no such button. */
+.allocation-item-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bs-link-color);
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+}
+
+.allocation-item-open .bi {
+    font-size: 0.75em;
+}
+
+.allocation-item-row:hover .allocation-item-open {
+    text-decoration: underline;
+}
+
+.allocation-item-open:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
 }
 
 .allocation-pct-label {

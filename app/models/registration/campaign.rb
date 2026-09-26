@@ -354,8 +354,8 @@ module Registration
     # and shown in the rejected queue instead.
     #
     # When preload_registrations is true, the returned relation also eager-loads
-    # the registration data needed by the "unassigned side panel" and orders by
-    # name and email.
+    # the registration data needed by the "unassigned side panel", which sorts
+    # the users itself.
     def unassigned_users(preload_registrations: false)
       return User.none if draft?
 
@@ -372,7 +372,7 @@ module Registration
           :registration_campaign,
           { registration_item: :registerable }
         ]
-      ).order(:name, :email)
+      )
     end
 
     def rejected_users(preload_registrations: false)
@@ -388,7 +388,7 @@ module Registration
           :registration_campaign,
           { registration_item: :registerable }
         ]
-      ).order(:name, :email)
+      )
     end
 
     def open_rejected_registrations

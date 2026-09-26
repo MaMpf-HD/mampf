@@ -37,48 +37,55 @@
 
       <% if rejected > 0 %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
-        <span
-          role="button"
-          tabindex="0"
-          class="
-            p-0 text-decoration-none text-reset campaign-panel-trigger d-inline-flex
-            align-items-center gap-1
-          "
-          data-tutorial-roster-panel-target="tile"
+        <button
+          type="button"
+          class="campaign-panel-trigger campaign-panel-trigger--rejected"
+          aria-expanded="false"
+          aria-controls="tutorial-roster-side-panel"
+          data-roster-open
+          data-tutorial-roster-panel-target="trigger"
           data-roster-key="campaign_<%= campaign.id %>_rejected"
-          data-action="click->tutorial-roster-panel#openFromTile"
+          data-action="
+            click->tutorial-roster-panel#openFromTrigger
+            focusin->tutorial-roster-panel#rememberFocus
+          "
           data-roster-panel-path="<%= rejected_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
-          <i class="bi bi-x-octagon-fill text-danger"></i>
+          <i class="bi bi-x-octagon-fill text-danger" aria-hidden="true"></i>
 
           <span>
             <%= rejected %> <%= t("roster.candidates.rejected_short") %>
           </span>
-        </span>
+        </button>
       <% end %>
 
       <% unassigned = campaign.unassigned_users.count %>
 
       <% if unassigned > 0 %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
-        <span
-          role="button"
-          tabindex="0"
-          class="
-            p-0 text-decoration-none text-reset campaign-panel-trigger
-            d-inline-flex align-items-center gap-1
-          "
-          data-tutorial-roster-panel-target="tile"
+        <button
+          type="button"
+          class="campaign-panel-trigger campaign-panel-trigger--unassigned"
+          aria-expanded="false"
+          aria-controls="tutorial-roster-side-panel"
+          data-roster-open
+          data-tutorial-roster-panel-target="trigger"
           data-roster-key="campaign_<%= campaign.id %>_unassigned"
-          data-action="click->tutorial-roster-panel#openFromTile"
+          data-action="
+            click->tutorial-roster-panel#openFromTrigger
+            focusin->tutorial-roster-panel#rememberFocus
+          "
           data-roster-panel-path="<%= unassigned_registration_campaign_path(campaign, source: :panel, format: :turbo_stream) %>"
         >
-          <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+          <i
+            class="bi bi-exclamation-triangle-fill text-warning"
+            aria-hidden="true"
+          ></i>
 
           <span>
             <%= unassigned %> <%= t('roster.candidates.short_title') %>
           </span>
-        </span>
+        </button>
       <% end %>
 
       <% if summary.present? %>

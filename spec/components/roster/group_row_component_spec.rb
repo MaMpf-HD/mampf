@@ -1,6 +1,10 @@
 require "rails_helper"
 
-RSpec.describe(GroupTileComponent, type: :component) do
+RSpec.describe(GroupRowComponent, type: :component) do
+  around do |example|
+    I18n.with_locale(:en) { example.run }
+  end
+
   let(:tutorial) { build_stubbed(:tutorial, location: "INF 205") }
   let(:item) { nil }
   let(:component) { described_class.new(registerable: tutorial, item: item) }
@@ -13,23 +17,6 @@ RSpec.describe(GroupTileComponent, type: :component) do
     it "is false when registerable is nil" do
       c = described_class.new(registerable: nil)
       expect(c.render?).to be(false)
-    end
-  end
-
-  describe "rendering" do
-    it "adds tooltip attributes to student tiles" do
-      rendered = render_inline(
-        described_class.new(
-          registerable: tutorial,
-          student_tile: true,
-          tile_tooltip_text: "Blocked tooltip"
-        )
-      )
-      tile = rendered.css(".tutorial-gtile--student").first
-
-      expect(tile["title"]).to eq("Blocked tooltip")
-      expect(tile["data-bs-toggle"]).to eq("tooltip")
-      expect(tile["tabindex"]).to eq("0")
     end
   end
 
@@ -53,32 +40,75 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
-  describe "#registration_count" do
-    it "returns nil without an item" do
-      expect(component.registration_count).to be_nil
+  describe "the count" do
+    def fcfs_item(confirmed)
+      campaign = double(first_come_first_served?: true)
+      double("item", registration_campaign: campaign, confirmed_registrations_count: confirmed)
     end
 
-    context "with a first-come-first-served campaign" do
-      let(:campaign) { double(first_come_first_served?: true) }
-      let(:regs) { double(count: 5) }
-      let(:item) do
-        double(registration_campaign: campaign, user_registrations: regs)
-      end
-
-      it "counts user_registrations" do
-        expect(component.registration_count).to eq(5)
-      end
+    def preference_item(first_choices)
+      campaign = double(first_come_first_served?: false)
+      double("item", registration_campaign: campaign, first_choice_count: first_choices)
     end
 
-    context "with a preference-based campaign" do
-      let(:campaign) { double(first_come_first_served?: false) }
-      let(:item) do
-        double(registration_campaign: campaign, first_choice_count: 3)
-      end
+    def component_for(capacity:, item: nil, roster: 0)
+      tutorial.capacity = capacity
+      allow(tutorial).to receive(:roster_entries).and_return(double(count: roster))
+      described_class.new(registerable: tutorial, item: item)
+    end
 
-      it "returns first_choice_count" do
-        expect(component.registration_count).to eq(3)
-      end
+    it "counts the confirmed registrations of a first come, first served campaign" do
+      c = component_for(capacity: 12, item: fcfs_item(12))
+
+      expect(c.count_text).to eq("12 / 12 confirmed")
+      expect(c.count_state).to eq([:full, "Full"])
+      expect(c.bar?).to be(true)
+    end
+
+    it "counts first choices as demand, without a bar" do
+      c = component_for(capacity: 1, item: preference_item(3))
+
+      expect(c.count_text).to eq("3 first choices · 1 seat")
+      expect(c.count_state).to eq([:demand, "Demand exceeds seats"])
+      expect(c.bar?).to be(false)
+    end
+
+    it "says nothing more while demand fits the seats" do
+      c = component_for(capacity: 10, item: preference_item(1))
+
+      expect(c.count_text).to eq("1 first choice · 10 seats")
+      expect(c.count_state).to be_nil
+    end
+
+    it "counts the roster of a group without a campaign and marks it over capacity" do
+      c = component_for(capacity: 10, roster: 11)
+
+      expect(c.count_text).to eq("11 / 10 members")
+      expect(c.count_state).to eq([:over, "1 over capacity"])
+      expect(c.bar_percent).to eq(100)
+      expect(c.over_capacity?).to be(true)
+    end
+
+    it "tells the free seats" do
+      c = component_for(capacity: 8, roster: 7)
+
+      expect(c.count_state).to eq([:plain, "1 seat available"])
+      expect(c.bar_percent).to eq(87)
+    end
+
+    it "shows no bar and no limit without a capacity" do
+      c = component_for(capacity: nil, roster: 5)
+
+      expect(c.count_text).to eq("5 members")
+      expect(c.count_state).to eq([:plain, "No seat limit"])
+      expect(c.bar?).to be(false)
+    end
+
+    it "does not divide by a capacity of zero" do
+      c = component_for(capacity: 0, roster: 0)
+
+      expect(c.bar_percent).to eq(100)
+      expect(c.count_state).to eq([:full, "Full"])
     end
   end
 
@@ -122,14 +152,30 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
-  describe "teacher tile date line" do
+  describe "people line" do
+    it "names no tutors for a flexible group" do
+      cohort = create(:cohort, context: create(:lecture))
+      rendered = render_inline(described_class.new(registerable: cohort))
+
+      expect(rendered.css(".bi-person")).to be_empty
+    end
+
+    it "names the tutors of a tutorial" do
+      rendered = render_inline(described_class.new(registerable: create(:tutorial)))
+
+      expect(rendered.css(".visually-hidden").map(&:text))
+        .to include("#{I18n.t("basics.tutors")}:")
+    end
+  end
+
+  describe "date line" do
     let(:lecture) { create(:seminar) }
     let(:talk) do
       create(:talk, lecture: lecture, dates: [Time.zone.local(2026, 4, 10)])
     end
     let(:item) { create(:registration_item, registerable: talk) }
 
-    it "shows the talk date on the non-student tile" do
+    it "shows the talk date" do
       rendered = render_inline(described_class.new(registerable: talk, item: item))
       date_line = rendered.css(".bi-calendar-event").first
 
@@ -143,25 +189,6 @@ RSpec.describe(GroupTileComponent, type: :component) do
       expect(rendered.css(".bi-calendar-event").first["aria-hidden"]).to eq("true")
       expect(rendered.css(".visually-hidden").map(&:text))
         .to include("#{I18n.t("basics.date")}:")
-    end
-  end
-
-  describe "student tile metadata rows" do
-    let(:tutorial) { build_stubbed(:tutorial, location: "INF 205") }
-    let(:rows) do
-      [{ label: "Date", value: "Jul 11 2026", icon: "bi-calendar-event" }]
-    end
-
-    it "labels the value for screen readers and hides the icon from them" do
-      rendered = render_inline(
-        described_class.new(registerable: tutorial, student_tile: true,
-                            tile_metadata_rows: rows)
-      )
-      row = rendered.css(".student-registration-tile-meta > div").first
-
-      expect(row.css("i").first["aria-hidden"]).to eq("true")
-      expect(row.css(".visually-hidden").text).to eq("Date:")
-      expect(row["title"]).to eq("Date")
     end
   end
 
@@ -191,85 +218,79 @@ RSpec.describe(GroupTileComponent, type: :component) do
     end
   end
 
-  describe "#gtile_type_class" do
+  describe "#row_classes" do
+    it "marks a group students can enroll in themselves" do
+      tutorial.self_materialization_mode = "add_only"
+
+      expect(component.row_classes).to include("group-row--self-enrollment")
+    end
+
+    it "leaves a group without self-enrollment unmarked" do
+      expect(component.row_classes).to eq("group-row")
+    end
+
     context "with an item" do
       let(:item) { double("item") }
 
-      it { expect(component.gtile_type_class).to eq("tutorial-gtile--campaign") }
-    end
+      it "does not mark a campaign's group, whose self-enrollment is off" do
+        tutorial.self_materialization_mode = "add_only"
 
-    context "with self-enrollment active" do
-      before { tutorial.self_materialization_mode = "add_only" }
-
-      it do
-        expect(component.gtile_type_class)
-          .to eq("tutorial-gtile--self-enrollment")
+        expect(component.row_classes).not_to include("group-row--self-enrollment")
       end
-    end
-
-    it "returns free class by default" do
-      expect(component.gtile_type_class).to eq("tutorial-gtile--free")
     end
   end
 
-  describe "#top_bar_class" do
-    context "with an item" do
-      let(:item) { double("item") }
+  describe "the self-enrollment mode" do
+    let(:group) do
+      create(:tutorial, lecture: create(:lecture), skip_campaigns: true,
+                        self_materialization_mode: mode)
+    end
 
-      it do
-        expect(component.top_bar_class)
-          .to eq("tutorial-gtile-top-bar--campaign")
+    def mode_text
+      render_inline(described_class.new(registerable: group))
+        .css(".group-row__self-enrollment > button").first.text.squish
+    end
+
+    context "when it is off" do
+      let(:mode) { :disabled }
+
+      it "names the disabled mode on its own" do
+        expect(mode_text).to eq(I18n.t("roster.self_materialization.modes.disabled"))
       end
     end
 
-    context "with self-enrollment active" do
-      before { tutorial.self_materialization_mode = "add_only" }
+    context "when students join and leave" do
+      let(:mode) { :add_and_remove }
 
-      it do
-        expect(component.top_bar_class)
-          .to eq("tutorial-gtile-top-bar--self-enrollment")
+      it "puts the label before the mode" do
+        expect(mode_text).to eq(
+          "#{I18n.t("roster.self_materialization.label")}: " \
+          "#{I18n.t("roster.self_materialization.modes.add_and_remove")}"
+        )
       end
-    end
-
-    it "returns free class by default" do
-      expect(component.top_bar_class).to eq("tutorial-gtile-top-bar--free")
     end
   end
 
-  describe "top-bar tooltip" do
-    def bar_title(instance)
-      render_inline(instance).css("[data-testid='group-tile-top-bar']").first["title"]
+  describe "the rendered row" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, title: "Mo 10", capacity: 8) }
+
+    it "opens the roster from its title, a button the keyboard reaches" do
+      row = render_inline(described_class.new(registerable: tutorial)).css("li.group-row").first
+      opener = row.css("h6 button[data-roster-open]").first
+
+      expect(opener.text.strip).to eq("Mo 10")
+      expect(opener["aria-expanded"]).to eq("false")
+      expect(opener["aria-controls"]).to eq("tutorial-roster-side-panel")
+      expect(row["data-tutorial-roster-panel-target"]).to eq("trigger")
+      expect(row["data-roster-count"]).to eq("0 / 8 members")
     end
 
-    context "with an item" do
-      let(:lecture) { create(:lecture) }
-      let(:campaign) do
-        create(:registration_campaign, :first_come_first_served, :with_items,
-               campaignable: lecture, items_count: 1)
-      end
-      let(:campaign_item) { campaign.registration_items.first }
+    it "names the group on every action button" do
+      rendered = render_inline(described_class.new(registerable: tutorial))
+      labels = rendered.css(".group-row__actions [aria-label]").pluck("aria-label")
 
-      it "describes the registration process" do
-        instance = described_class.new(registerable: campaign_item.registerable,
-                                       item: campaign_item)
-        expect(bar_title(instance))
-          .to eq(I18n.t("roster.tooltips.top_bar_campaign"))
-      end
-    end
-
-    context "with self-enrollment active" do
-      before { tutorial.self_materialization_mode = "add_only" }
-
-      it "mirrors the self-enrollment icon tooltip" do
-        title = bar_title(described_class.new(registerable: tutorial))
-        expect(title).to include(I18n.t("roster.self_materialization.label"))
-        expect(title).to include(I18n.t("roster.self_materialization.modes.add_only"))
-      end
-    end
-
-    it "reports self-enrollment disabled by default" do
-      title = bar_title(described_class.new(registerable: tutorial))
-      expect(title).to include(I18n.t("roster.self_materialization.modes.disabled"))
+      expect(labels).to all(include("Mo 10"))
     end
   end
 
@@ -398,7 +419,7 @@ RSpec.describe(GroupTileComponent, type: :component) do
     let(:component) { described_class.new(registerable: talk) }
 
     def rendered_confirmation
-      render_inline(component).css("a.btn-danger[data-turbo-confirm]")
+      render_inline(component).css("a[data-turbo-method='delete'][data-turbo-confirm]")
                               .first["data-turbo-confirm"]
     end
 

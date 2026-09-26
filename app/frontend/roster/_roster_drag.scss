@@ -1,15 +1,3 @@
-.tutorial-gtile--drop-target {
-  border-color: var(--bs-success) !important;
-  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.25);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-span.tutorial-gtile--selected.campaign-panel-trigger {
-  border-color: transparent !important;
-  box-shadow: none !important;
-  text-decoration: underline !important;
-}
-
 .roster-drag-ghost {
   opacity: 0.5;
 }
@@ -41,4 +29,3 @@ span.tutorial-gtile--selected.campaign-panel-trigger {
   }
 }
 
-.tutorial-gtile:hover, .tutorial-gtile:focus-within { z-index: 10; }
