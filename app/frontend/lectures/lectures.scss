@@ -172,8 +172,10 @@ h4.lecture-pane-subheader {
   gap: 0.5rem 1rem;
 
   > :first-child,
-  > :first-child > span {
+  .dropdown,
+  .dropdown-toggle {
     min-width: 0;
+    max-width: 100%;
   }
 
   > :nth-child(3) {

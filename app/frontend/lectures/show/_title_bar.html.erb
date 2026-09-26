@@ -11,9 +11,8 @@
                 data: { turbo_frame: "_top" } do %>
       <i class="bi bi-arrow-left" aria-hidden="true"></i>
     <% end %>
-    <span class="fs-5 fw-semibold text-truncate" id="lecture-title-bar-title">
-      <%= lecture.title_term_info_no_type %>
-    </span>
+    <%= render partial: "lectures/show/switcher",
+               locals: { lecture: lecture, edit_mode: edit_mode } %>
     <% if edit_mode && (current_user.admin? || lecture.course.edited_by?(current_user)) %>
       <%= link_to t("buttons.parent_course"),
                   edit_course_path(lecture.course),

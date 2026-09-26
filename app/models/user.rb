@@ -654,6 +654,16 @@ class User < ApplicationRecord
     staff_lectures_in([Term.active, nil])
   end
 
+  # The lectures of the active term (and those without a term) the user has
+  # to do with: as staff, participant or via a bookmark. They are offered for
+  # quickly switching between lectures, see lectures/show/_title_bar.
+  def current_lectures
+    [given_lectures, edited_lectures, lectures,
+     roster_lectures.or(lectures_with_registration_application)]
+      .flat_map { |scope| lectures_of_term(scope, Term.active) }
+      .uniq.natural_sort_by(&:title)
+  end
+
   def next_term_staff_lectures
     coming = Term.active&.next
     return [] if coming.blank?

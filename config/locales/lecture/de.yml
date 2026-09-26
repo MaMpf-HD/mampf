@@ -9,6 +9,9 @@ de:
         Mitteilungen aktiviert haben.
     title_bar:
       back: Zurück zum Dashboard
+      switch: Zu einer anderen Veranstaltung wechseln
+      current_lectures: "Deine Veranstaltungen im %{term}"
+      no_other_lectures: "Keine weiteren Veranstaltungen im %{term}"
     mode_toggle:
       label: Zwischen Ansehen und Bearbeiten der Veranstaltung wechseln
       view: Ansehen

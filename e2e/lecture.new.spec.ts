@@ -78,15 +78,8 @@ test.describe("New lecture as admin", () => {
   });
 });
 
+// Only admins have the administration area with its index page.
 test.describe("New lecture as teacher (course editor)", () => {
-  test("Creates new lecture (via index page)", async ({ factory, teacher: { page, user } }) => {
-    const course = await factory.create("course", ["with_editor_by_id"], { editor_id: user.id });
-    const term = await factory.create("term");
-
-    await page.goto("/administration");
-    await testCreateNewLecture(page, user, course, term, false);
-  });
-
   test("Creates new lecture (via course edit page)", async ({ factory, teacher: { page, user } }) => {
     const course = await factory.create("course", ["with_editor_by_id"], { editor_id: user.id });
     const term = await factory.create("term");

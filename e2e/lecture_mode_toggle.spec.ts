@@ -68,6 +68,45 @@ test.describe("switching between viewing and editing a lecture", () => {
     await expect(page).toHaveURL(/\/main\/start$/);
   });
 
+  test("switches to another lecture of the term from the title",
+    async ({ factory, teacher: { page, user } }) => {
+      const term = await factory.create("term", ["summer", "active"], { year: 2025 });
+      const algebra = await factory.create("course", [], { title: "Linear Algebra" });
+      const analysis = await factory.create("course", [], { title: "Analysis" });
+      const older = await factory.create("course", [], { title: "Topology" });
+      const lecture = await factory.create("lecture", ["released_for_all"],
+        { teacher_id: user.id, term_id: term.id, course_id: algebra.id });
+      const other = await factory.create("lecture", ["released_for_all"],
+        { teacher_id: user.id, term_id: term.id, course_id: analysis.id });
+      const pastTerm = await factory.create("term", ["winter"], { year: 2023 });
+      await factory.create("lecture", ["released_for_all"],
+        { teacher_id: user.id, term_id: pastTerm.id, course_id: older.id });
+
+      await page.goto(`/lectures/${lecture.id}/outline`);
+      const bar = page.getByTestId("lecture-title-bar");
+      await bar.getByRole("button", { name: /Linear Algebra/ }).click();
+
+      await expect(bar.getByRole("link", { name: "Linear Algebra", exact: true }))
+        .toHaveAttribute("aria-current", "page");
+      await expect(bar.getByRole("link", { name: "Topology", exact: true })).toHaveCount(0);
+      await bar.getByRole("link", { name: "Analysis", exact: true }).click();
+
+      await expect(page).toHaveURL(new RegExp(`/lectures/${other.id}/`));
+      await expect(bar.getByRole("button", { name: /Analysis/ })).toBeVisible();
+
+      // while editing, the switch leads to editing the other lecture, in the
+      // same tab
+      await bar.getByRole("link", { name: "Edit" }).click();
+      await expect(page).toHaveURL(`/lectures/${other.id}/edit`);
+      await page.getByTestId("settings-tab-btn").click();
+      await expect(page).toHaveURL(`/lectures/${other.id}/edit?tab=settings`);
+      await bar.getByRole("button", { name: /Analysis/ }).click();
+      await expect(bar.getByText("Your lectures in SS25")).toBeVisible();
+      await bar.getByRole("link", { name: "Linear Algebra", exact: true }).click();
+      await expect(page).toHaveURL(`/lectures/${lecture.id}/edit?tab=settings`);
+      await expect(page.getByTestId("settings-tab-btn")).toHaveClass(/active/);
+    });
+
   test("gives teachers no administration icon", async ({ teacher: { page } }) => {
     await page.goto("/main/start");
 

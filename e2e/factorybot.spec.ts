@@ -45,5 +45,5 @@ test("can use factories and interact with page", async ({ factory, student: { pa
   await page.goto(`/lectures/${lecture.id}/home`);
 
   const title = await lecture.__call("title_term_info_no_type");
-  await expect(page.getByText(title)).toBeVisible();
+  await expect(page.getByRole("heading", { name: title })).toBeVisible();
 });

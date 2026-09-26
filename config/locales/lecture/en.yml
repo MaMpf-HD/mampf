@@ -8,6 +8,9 @@ en:
         enabled email notifications for announcements.
     title_bar:
       back: Back to the dashboard
+      switch: Switch to another lecture
+      current_lectures: "Your lectures in %{term}"
+      no_other_lectures: "No other lectures in %{term}"
     mode_toggle:
       label: Switch between viewing and editing the lecture
       view: View
