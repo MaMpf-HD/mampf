@@ -40,8 +40,6 @@ class ProfileController < ApplicationController
       @user.update(email_params)
       # remove notifications that have become obsolete
       clean_up_notifications
-      # update lecture cookie
-      update_lecture_cookie
       I18n.locale = @locale
       cookies[:locale] = @locale
       @user.touch
@@ -176,14 +174,6 @@ class ProfileController < ApplicationController
         n.teachable.present? && !n.teachable.in?(subscribed_teachables)
       end
       Notification.where(id: irrelevant_notifications.map(&:id)).delete_all
-    end
-
-    # if user unsubscribed the lecture the current lecture cookie refers to,
-    # set the lectures cookie to nil
-    def update_lecture_cookie
-      return if @current_lecture.in?(@user.lectures)
-
-      cookies[:current_lecture_id] = nil
     end
 
     # stop the update if any of passphrases for newly subscribed

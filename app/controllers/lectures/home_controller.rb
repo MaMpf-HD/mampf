@@ -13,7 +13,6 @@ module Lectures
 
     def show
       authorize! :index, @lecture
-      cookies[:current_lecture_id] = @lecture.id
 
       @can_edit = current_user.can_edit?(@lecture)
       @content_accessible = @lecture.content_accessible_by?(current_user)

@@ -6,11 +6,6 @@ module ApplicationHelper
     root_path(params: { locale: I18n.locale })
   end
 
-  # get current lecture from session object
-  def current_lecture
-    Lecture.find_by(id: cookies[:current_lecture_id])
-  end
-
   # The media search for staff: admins have their own in the administration
   # area, everybody else uses the regular search.
   def staff_search_path

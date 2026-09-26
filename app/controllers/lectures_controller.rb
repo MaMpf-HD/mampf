@@ -3,8 +3,6 @@ class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
 
   before_action :set_lecture, except: [:new, :create, :search]
-  before_action :set_lecture_cookie, only: [:outline, :organizational,
-                                            :show_announcements]
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
   before_action :check_for_unlock, only: [:outline]
@@ -329,10 +327,6 @@ class LecturesController < ApplicationController
       return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_lecture_cookie
-      cookies[:current_lecture_id] = @lecture.id
     end
 
     def check_for_consent

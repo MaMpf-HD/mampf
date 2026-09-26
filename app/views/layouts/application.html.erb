@@ -15,23 +15,18 @@
     <%= render partial: "flash/messages" %>
     <%= render partial: "shared/navbar" %>
 
-    <%# In edit mode, only the lecture that is edited counts, not the one
-        remembered from browsing. %>
-    <% lecture = staff_edit_mode ? @lecture : (@lecture || current_lecture) %>
     <% page = yield %>
 
-    <% if lecture %>
+    <% if @lecture %>
       <%= render layout: "layouts/lecture_mode",
-                 locals: { lecture: lecture, edit_mode: staff_edit_mode } do %>
+                 locals: { lecture: @lecture, edit_mode: staff_edit_mode } do %>
         <%= page %>
       <% end %>
     <% else %>
       <div class="d-flex container-fluid flex-grow-1 <%= 'admin-background' if staff_edit_mode %>">
         <div class="row" id="main-content-row">
-          <%# Staff pages without a lecture (e.g. editing a medium) use the
-              full width, like they did in the administration area. %>
-          <main class="<%= staff_edit_mode ? 'col-12' : 'col-sm-8 ml-auto col-md-9 col-xl-10' %> pt-3"
-                role="main">
+          <%# Pages without a lecture have no sidebar, so they use the full width. %>
+          <main class="col-12 pt-3" role="main">
             <% if staff_edit_mode %>
               <%= page %>
             <% else %>
