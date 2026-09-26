@@ -14,8 +14,11 @@ rspec:
     cd {{justfile_directory()}}/docker/test
     docker compose run --entrypoint="" --rm mampf sh -c "bundle install && RAILS_ENV=test bundle exec rspec --format documentation"
 
+# One core stays free as a spare
+default_workers := `echo $(( $(nproc) - 1 ))`
+
 # Creates/refreshes one test database per worker (rerun after new migrations)
-rspec-parallel-setup processes="8":
+rspec-parallel-setup processes=default_workers:
     #!/usr/bin/env bash
     set -e
     cd {{justfile_directory()}}
@@ -23,8 +26,8 @@ rspec-parallel-setup processes="8":
     bundle exec rake "parallel:create[{{processes}}]"
     bundle exec rake "parallel:load_schema[{{processes}}]"
 
-# Runs the RSpec tests in parallel, e.g. `just test rspec-parallel 8 spec/models`
-rspec-parallel processes="8" *paths="spec":
+# Runs the RSpec tests in parallel, e.g. `just test rspec-parallel 4 spec/models`
+rspec-parallel processes=default_workers *paths="spec":
     #!/usr/bin/env bash
     cd {{justfile_directory()}}
     export RAILS_ENV=test VITE_RUBY_PORT=3036 PARALLEL_TEST_FIRST_IS_1=true
