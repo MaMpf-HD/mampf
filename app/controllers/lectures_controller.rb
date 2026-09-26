@@ -127,8 +127,7 @@ class LecturesController < ApplicationController
 
     # destroy all notifications related to this lecture
     destroy_notifications
-    redirect_to current_user.admin? ? administration_path : start_path,
-                status: :see_other
+    redirect_to staff_home_path, status: :see_other
   end
 
   # add forum for this lecture

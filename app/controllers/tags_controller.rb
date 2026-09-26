@@ -87,7 +87,7 @@ class TagsController < ApplicationController
 
   def destroy
     @tag.destroy
-    redirect_to current_user.admin? ? administration_path : start_path
+    redirect_to staff_home_path
   end
 
   # prepare new tag instance for modal

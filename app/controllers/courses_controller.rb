@@ -150,7 +150,7 @@ class CoursesController < ApplicationController
       @course = Course.find_by(id: params[:id])
       return if @course.present?
 
-      redirect_to administration_path
+      redirect_to staff_home_path
     end
 
     def course_params
