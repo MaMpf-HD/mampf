@@ -107,17 +107,12 @@ module UserRegistrationsHelper
     student_visible_campaign?(campaign) && !campaign.open_for_registrations?
   end
 
-  # Puts the student's own registration first and keeps the rest in the order
-  # of the program, full or not: "Talk N" carries the talk's position.
-  def sorted_student_registration_items(items, user)
-    registered_ids = Registration::UserRegistration.confirmed
-                                                   .where(user_id: user.id,
-                                                          registration_item_id: items.map(&:id))
-                                                   .pluck(:registration_item_id)
-
+  # Keeps the options in the order of the program, the student's own and full
+  # ones included, so a talk's place tells when it is given: "Talk N" carries
+  # the talk's position.
+  def sorted_student_registration_items(items)
     items.natural_sort_by do |item|
-      own = item.id.in?(registered_ids) ? 0 : 1
-      [own, item_display_type(item), item.registerable.title].join(" | ")
+      [item_display_type(item), item.registerable.title].join(" | ")
     end
   end
 

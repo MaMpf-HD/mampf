@@ -183,29 +183,25 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
       items = talks.reverse.map do |talk|
         create(:registration_item, registration_campaign: campaign, registerable: talk)
       end
-      user = create(:confirmed_user)
 
-      sorted = helper.sorted_student_registration_items(items, user)
+      sorted = helper.sorted_student_registration_items(items)
 
       expect(sorted.map { |item| item.registerable.position }).to eq((1..10).to_a)
     end
 
-    it "keeps a full talk in its place and puts the student's own talk first" do
+    it "keeps a full talk in its place" do
       seminar = create(:seminar)
       campaign = create(:registration_campaign, :first_come_first_served, :open,
                         campaignable: seminar)
-      items = [0, nil, nil].each_with_index.map do |capacity, index|
+      items = [nil, 0, nil].each_with_index.map do |capacity, index|
         talk = create(:talk, lecture: seminar, position: index + 1, capacity: capacity)
         create(:registration_item, registration_campaign: campaign, registerable: talk)
       end
-      user = create(:confirmed_user)
-      create(:registration_user_registration, :confirmed,
-             user: user, registration_campaign: campaign, registration_item: items.last)
 
-      sorted = helper.sorted_student_registration_items(items, user)
+      sorted = helper.sorted_student_registration_items(items.reverse)
 
-      expect(items.first.still_has_capacity?).to be(false)
-      expect(sorted.map { |item| item.registerable.position }).to eq([3, 1, 2])
+      expect(items.second.still_has_capacity?).to be(false)
+      expect(sorted.map { |item| item.registerable.position }).to eq([1, 2, 3])
     end
   end
 
