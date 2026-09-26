@@ -15,6 +15,7 @@ en:
         lectures.
       sections:
         staff: "You are staff in these"
+        tutor: "You are tutor in these"
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"

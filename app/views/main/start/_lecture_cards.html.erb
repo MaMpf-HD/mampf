@@ -16,6 +16,18 @@
   <% end %>
 
   <%= render(DashboardSectionComponent.new(
+               title: t("main.start.sections.tutor"),
+               testid: "dashboard-tutored-lectures")) do %>
+    <% @tutored_lectures.each do |lecture| %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    term: @selected_term,
+                    activity: @lecture_activity)) %>
+    <% end %>
+  <% end %>
+
+  <%= render(DashboardSectionComponent.new(
                title: t("main.start.sections.enrolled"),
                testid: "dashboard-enrolled-lectures")) do %>
     <% @enrolled_lectures.each do |lecture| %>
@@ -43,7 +55,8 @@
     <% end %>
   <% end %>
 
-  <% if [@staff_lectures, @enrolled_lectures, @bookmarked_lectures, @talks].all?(&:empty?) %>
+  <% if [@staff_lectures, @tutored_lectures, @enrolled_lectures,
+         @bookmarked_lectures, @talks].all?(&:empty?) %>
     <%= tag.div id: "dashboardEmptyState",
                 class: "text-center text-muted my-5",
                 data: { testid: "dashboard-empty-state" } do %>
