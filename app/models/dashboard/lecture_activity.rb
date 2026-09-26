@@ -21,10 +21,6 @@ module Dashboard
       comment_counts.fetch(lecture.id, 0)
     end
 
-    def any?(lecture)
-      unread_forum_topics(lecture).positive? || unread_comments(lecture).positive?
-    end
-
     # See Lecture#registration_status_for.
     def registration_status(lecture)
       registration_statuses[lecture.id]

@@ -647,27 +647,6 @@ class User < ApplicationRecord
   end
 
   # lecture that are in the active term
-  def active_lectures
-    lectures.where(term: Term.active).includes(:course, :term)
-  end
-
-  # A bookmark (LectureBookmark), a seat (LectureMembership,
-  # CohortMembership) and an application (Registration::UserRegistration) exist
-  # independently of each other, which is why the start page asks
-  # `next_term_lectures`, `next_term_seated_lectures` and
-  # `next_term_registered_lectures` rather than one of them.
-  #
-  # What this user has subscribed for the term after the running one. Lectures
-  # without a term are not among them: they run always, and the fold of the
-  # running term carries them.
-  def next_term_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    lectures.where(term: coming).includes(:course, :term)
-            .natural_sort_by(&:title)
-  end
-
   # Teachers and editors see their lectures on the start page without
   # subscribing. As with the subscriptions, the current fold takes the
   # lectures without a term along.
@@ -686,46 +665,12 @@ class User < ApplicationRecord
     lecture.teacher == self || edited_lectures.include?(lecture)
   end
 
-  # Cohorts with propagate_to_lecture: false do not create lecture memberships.
-  # Include them directly so their lectures remain visible on the start page.
-  def next_term_seated_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    seat_ids = cohorts.where(context_type: "Lecture").pluck(:context_id) |
-               lecture_memberships.pluck(:lecture_id)
-
-    Lecture.where(id: seat_ids, term: coming)
-           .includes(:course, :term).natural_sort_by(&:title)
-  end
-
-  # After Registration::Campaign#finalize! a confirmed registration has a seat,
-  # and the two methods above carry the lecture from then on.
-  def next_term_registered_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    campaigns = Registration::UserRegistration
-                .where(user: self).where.not(status: :rejected)
-                .joins(:registration_campaign)
-                .merge(Registration::Campaign.where.not(status: :completed))
-                .where(registration_campaigns: { campaignable_type: "Lecture" })
-
-    Lecture.where(id: campaigns.select("registration_campaigns.campaignable_id"),
-                  term: coming)
-           .includes(:course, :term).natural_sort_by(&:title)
-  end
-
   # The published lectures whose content this user gets to see as a student:
   # those without a passphrase, and those unlocked via a bookmark. Scope
   # counterpart of Lecture#unlocked_for? (staff access is not included).
   def unlocked_lectures
     Lecture.published.where(passphrase: [nil, ""])
            .or(Lecture.published.where(id: lecture_bookmarks.select(:lecture_id)))
-  end
-
-  def nonsubscribed_lectures
-    Lecture.where.not(id: lectures.pluck(:id))
   end
 
   # The one rule for bookmarking a lecture by hand, which is also how a lecture

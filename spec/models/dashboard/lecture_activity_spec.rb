@@ -76,18 +76,6 @@ RSpec.describe(Dashboard::LectureActivity) do
     end
   end
 
-  describe "#any?" do
-    it "is false for a quiet lecture" do
-      expect(digest).not_to be_any(lecture)
-    end
-
-    it "is true as soon as there is something unread" do
-      commented_medium(creator: other)
-
-      expect(digest).to be_any(lecture)
-    end
-  end
-
   describe "#unread_forum_topics" do
     it "is zero for a lecture without a forum" do
       expect(digest.unread_forum_topics(lecture)).to eq(0)
