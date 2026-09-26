@@ -10,6 +10,29 @@ RSpec.describe("Tutorials", type: :request) do
     create(:editable_user_join, user: editor, editable: lecture)
   end
 
+  describe "GET /lectures/:id/tutorials for somebody who tutors no group" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    it "sends a student to their submissions" do
+      student = create(:confirmed_user)
+      create(:lecture_bookmark, user: student, lecture: lecture)
+      sign_in student
+
+      get lecture_tutorials_path(lecture)
+
+      expect(response).to redirect_to(lecture_submissions_path(lecture))
+    end
+
+    it "sends somebody the passphrase keeps out to the lecture home page" do
+      lecture.update!(passphrase: "open sesame")
+      sign_in create(:confirmed_user)
+
+      get lecture_tutorials_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+  end
+
   describe "GET /lectures/:id/tutorials" do
     let(:assignment) { create(:assignment, lecture: lecture, accepted_file_type: ".pdf") }
 

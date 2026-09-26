@@ -629,21 +629,21 @@ RSpec.describe("Submissions", type: :request) do
         expect(response.body).not_to include(I18n.t("submission.hub.sheet_count", count: 0))
       end
 
-      it "turns a tutor of the lecture away" do
+      it "sends a tutor of the lecture to the tutorials" do
         create(:tutor_tutorial_join, tutorial: tutorial, tutor: user)
 
         get lecture_submissions_path(lecture)
 
-        expect(response).to redirect_to(:root)
+        expect(response).to redirect_to(lecture_tutorials_path(lecture))
       end
 
-      it "turns away somebody the passphrase keeps out" do
+      it "sends somebody the passphrase keeps out to the lecture home page" do
         user.lectures.delete(lecture)
         lecture.update!(passphrase: "open sesame")
 
         get lecture_submissions_path(lecture)
 
-        expect(response).to redirect_to(:root)
+        expect(response).to redirect_to(lecture_home_path(lecture))
       end
 
       # A lecture without groups used to send everybody back to the start page,
@@ -1066,7 +1066,7 @@ RSpec.describe("Submissions", type: :request) do
 
           post lecture_sheets_seen_path(lecture), as: :turbo_stream
 
-          expect(response).to redirect_to(root_url)
+          expect(response).to redirect_to(lecture_home_path(lecture))
           expect(AssignmentSighting.count).to eq(0)
         end
       end

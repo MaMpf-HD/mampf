@@ -3941,11 +3941,8 @@ en:
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
-    no_tutor_in_this_lecture: You are not a tutor in this lecture.
     no_editor_or_teacher: >
       In this event series you are neither teacher nor editor.
-    no_student_status_in_lecture: >
-      In this event series you are allowed to submit.
     no_tutorials_in_lecture: >
       In this event series there are no tutorials, hence no submissions can be
       made.
