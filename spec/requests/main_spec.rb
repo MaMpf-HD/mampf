@@ -56,8 +56,7 @@ RSpec.describe("Main", type: :request) do
 
     it "counts a place in a tutorial group as being registered, not bookmarked" do
       lecture = lecture_with_title("Tutorial Topology")
-      tutorial = create(:tutorial, lecture: lecture)
-      create(:tutorial_membership, user: user, tutorial: tutorial)
+      Rosters::MaintenanceService.new.add_user!(user, create(:tutorial, lecture: lecture))
       user.bookmark_lecture!(lecture)
 
       get root_path
