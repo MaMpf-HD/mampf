@@ -616,6 +616,15 @@ class Lecture < ApplicationRecord
     ([teacher] + editors.to_a + course.editors).to_a
   end
 
+  # Loads what #editors_with_inheritance reads for all given lectures at once,
+  # so that User#can_edit? on each of them needs no further queries.
+  def self.preload_editors(lectures)
+    ActiveRecord::Associations::Preloader
+      .new(records: lectures, associations: [:teacher, :editors, { course: :editors }])
+      .call
+    lectures
+  end
+
   # Point entry follows edit rights, module editors included.
   alias graders_with_inheritance editors_with_inheritance
 

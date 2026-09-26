@@ -1,6 +1,7 @@
 <%# In edit mode, a lecture links to its edit page if the user may edit it.
     switcher.controller.js keeps the current page when switching. %>
 <% lectures = current_user.current_lectures %>
+<% Lecture.preload_editors(lectures) if edit_mode %>
 <% term = Term.active&.compact_title %>
 <div class="dropdown" data-controller="lecture-switcher">
   <button type="button"
