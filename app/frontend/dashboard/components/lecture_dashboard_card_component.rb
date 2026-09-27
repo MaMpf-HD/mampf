@@ -3,20 +3,29 @@
 # status and upcoming homework deadlines.
 class LectureDashboardCardComponent < ViewComponent::Base
   # `activity` lets the board gather the unread digest once for all cards.
-  # `bookmarked` marks a card in the "Bookmarked" band, which gets a remove "x".
+  # `section` is the board section the card sits in: a card in the
+  # :bookmarked section gets a remove "x", and cards in the :staff and :tutor
+  # sections leave out the student-only points progress and quick actions.
   # `term` is the semester the board shows; removing the card re-renders the
   # board for it.
-  def initialize(lecture:, user:, term:, activity: nil, bookmarked: false)
+  def initialize(lecture:, user:, term:, activity: nil, section: :enrolled)
     super()
     @lecture = lecture
     @user = user
     @term = term
     @activity = activity
-    @bookmarked = bookmarked
+    @section = section
   end
 
-  attr_reader :lecture, :user, :term, :activity, :bookmarked
-  alias bookmarked? bookmarked
+  attr_reader :lecture, :user, :term, :activity, :section
+
+  def bookmarked?
+    section == :bookmarked
+  end
+
+  def staff?
+    section.in?([:staff, :tutor])
+  end
 
   def image_url
     return "/no_course_information.png" unless lecture.course.normalized_image_file

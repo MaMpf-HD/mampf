@@ -43,7 +43,7 @@ class ProfileController < ApplicationController
       I18n.locale = @locale
       cookies[:locale] = @locale
       @user.touch
-      redirect_to :start, notice: t("profile.success")
+      redirect_to :root, notice: t("profile.success")
     else
       @errors = @user.errors
     end
@@ -151,7 +151,7 @@ class ProfileController < ApplicationController
       @parent = lecture_params[:parent]
       @current = !@parent.in?(["lectureSearch", "inactive",
                                "next_term_subscribed", "next_term_registered"])
-      redirect_to start_path unless @lecture
+      redirect_to root_path unless @lecture
     end
 
     def lecture_params

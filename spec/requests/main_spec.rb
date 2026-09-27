@@ -115,6 +115,16 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).not_to include("Here Now")
       end
 
+      it "shows talks of a seminar without a term in every semester" do
+        seminar = create(:seminar, :released_for_all, :term_independent)
+        talk = create(:talk, lecture: seminar, title: "Divisibility")
+        talk.speakers << user
+
+        get root_path(term: other_term.dashboard_param)
+
+        expect(response.body).to include("Divisibility")
+      end
+
       it "still understands a bare id" do
         there = create(:lecture, course: create(:course, title: "Over There"),
                                  term: other_term)

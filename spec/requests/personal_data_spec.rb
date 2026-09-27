@@ -11,7 +11,7 @@ RSpec.describe("Personal data", type: :request) do
 
   describe "the question after sign-in" do
     it "sends a user who has neither given nor declined their data to the page" do
-      get start_path
+      get root_path
 
       expect(response).to redirect_to(edit_personal_data_path)
     end
@@ -31,17 +31,17 @@ RSpec.describe("Personal data", type: :request) do
       user.update_columns(password_policy_version: 0, password_changed_at: nil)
       # rubocop:enable Rails/SkipsModelValidations
 
-      get start_path
+      get root_path
 
       expect(response).to redirect_to(edit_user_registration_path)
     end
 
     it "returns to a page, not to a background request" do
-      get start_path(format: :json)
+      get root_path(format: :json)
 
       patch personal_data_path, params: { participation: "no" }
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
     end
 
     it "leaves account deletion and the consent to the terms open" do
@@ -68,7 +68,7 @@ RSpec.describe("Personal data", type: :request) do
 
     it "lets a user through who has declined" do
       patch personal_data_path, params: { participation: "no" }
-      get start_path
+      get root_path
 
       expect(user.reload).to be_personal_data_declined
       expect(response).to have_http_status(:ok)
@@ -173,7 +173,7 @@ RSpec.describe("Personal data", type: :request) do
     it "is shown the lectures instead of a plain no" do
       get edit_personal_data_path
 
-      expect(response.body).to include(lecture.title)
+      expect(response.body).to include(ERB::Util.html_escape(lecture.title))
       expect(response.body).to include(I18n.t("personal_data.places_no"))
       expect(response.body).not_to include(I18n.t("personal_data.participation_question"))
     end
@@ -184,13 +184,13 @@ RSpec.describe("Personal data", type: :request) do
       patch personal_data_path, params: { participation: "no" }
       tutorial.add_user_to_roster!(user)
 
-      get start_path
+      get root_path
 
       expect(response).to redirect_to(edit_personal_data_path)
     end
 
     it "leaves out the first-sign-in profile notice when it asks again after a no" do
-      get start_path
+      get root_path
       sign_out(user)
       user.update!(personal_data_declined_at: Time.current, sign_in_count: 0)
 
@@ -207,7 +207,7 @@ RSpec.describe("Personal data", type: :request) do
       expect(user.reload).to be_personal_data_declined
       expect(tutorial.reload.members).not_to include(user)
       expect(lecture.reload.members).not_to include(user)
-      get start_path
+      get root_path
       expect(response).to have_http_status(:ok)
     end
 
@@ -235,7 +235,7 @@ RSpec.describe("Personal data", type: :request) do
       patch personal_data_path, params: { participation: "no" }
       create(:assessment_participation, :reviewed, user: user)
 
-      get start_path
+      get root_path
       follow_redirect!
 
       expect(response.body).to include(I18n.t("personal_data.places_results"))

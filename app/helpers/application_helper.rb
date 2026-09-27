@@ -1,7 +1,7 @@
 module ApplicationHelper
   # returns the path that is associated to the MaMpf brand in the navbar
   def home_path
-    return start_path if user_signed_in?
+    return root_path if user_signed_in?
 
     root_path(params: { locale: I18n.locale })
   end

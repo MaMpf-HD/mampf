@@ -105,6 +105,35 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
     end
   end
 
+  context "when the card belongs to staff or a tutor" do
+    let(:activity) do
+      instance_double(Dashboard::LectureActivity,
+                      unread_forum_topics: 1,
+                      unread_comments: 0)
+    end
+
+    def render_staff_actions
+      render_inline(described_class.new(lecture: lecture, user: user,
+                                        activity: activity, staff: true))
+    end
+
+    it "leaves out the student deadlines and exam registration" do
+      create(:assignment, lecture: lecture, deadline: 2.days.from_now)
+      exam = create(:exam, :with_date, lecture: lecture)
+      exam.registration_campaign.update!(status: :open)
+
+      rendered = render_staff_actions
+
+      expect(rendered.css("[data-testid='quick-action-assignment']")).to be_empty
+      expect(rendered.css("[data-testid='quick-action-exam']")).to be_empty
+    end
+
+    it "still shows unread discussion" do
+      expect(render_staff_actions.at_css("[data-testid='quick-action-activity']"))
+        .to be_present
+    end
+  end
+
   it "names the lecture inside each link, so it stands on its own" do
     create(:assignment, lecture: lecture, deadline: 2.days.from_now)
 
