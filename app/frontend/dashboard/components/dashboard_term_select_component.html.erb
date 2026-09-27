@@ -16,5 +16,7 @@
                    } %>
   <% end %>
 
-  <%= content %>
+  <%= render(NextTermNoticeComponent.new(selected: selected,
+                                         in_search: anchor.present?)) %>
+  <%= render(CurrentTermLinkComponent.new(selected: selected, anchor: anchor)) %>
 <% end %>

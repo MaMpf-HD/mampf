@@ -51,6 +51,12 @@ RSpec.describe(NextTermNoticeComponent, type: :component) do
       expect(link.at_css(".fa-chevron-down")).to be_nil
     end
 
+    it "does not render when another than the current term is selected" do
+      past = create(:term, :winter, year: 2024)
+
+      expect(render_notice(selected: past).to_html).to be_blank
+    end
+
     it "does not render when the next term is already selected" do
       expect(render_notice(selected: upcoming).to_html).to be_blank
     end

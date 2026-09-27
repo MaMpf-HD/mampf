@@ -7,6 +7,7 @@ en:
         one: "The first lecture for %{term} is online."
         other: "%{count} lectures for %{term} are already online."
       link: "Take a look"
+    current_term_link: "Jump to current semester (%{term})"
     quick_actions:
       list_label: "Things to do for %{lecture}"
       assignment:

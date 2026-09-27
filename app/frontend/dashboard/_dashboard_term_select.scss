@@ -52,3 +52,19 @@
         font-size: 0.7em;
     }
 }
+
+.current-term-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    .fa-undo {
+        font-size: 0.85em;
+        margin-right: 0.15rem;
+    }
+}

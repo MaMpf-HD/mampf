@@ -1,9 +1,7 @@
 <%= turbo_stream.replace "dashboard-term-select-wrapper" do %>
   <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
                                               selected: @selected_term,
-                                              id: "dashboard-term-select")) do %>
-    <%= render(NextTermNoticeComponent.new(selected: @selected_term)) %>
-  <% end %>
+                                              id: "dashboard-term-select")) %>
 <% end %>
 
 <%= turbo_stream.replace "dashboardLectureCards",
@@ -13,10 +11,7 @@
   <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
                                               selected: @selected_term,
                                               id: "lecture-search-term-select",
-                                              anchor: "lecture-search")) do %>
-    <%= render(NextTermNoticeComponent.new(selected: @selected_term,
-                                           in_search: true)) %>
-  <% end %>
+                                              anchor: "lecture-search")) %>
 <% end %>
 
 <%= turbo_stream.replace "lecture-search-term-field" do %>

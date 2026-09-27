@@ -1,8 +1,9 @@
 # Small hint next to the dashboard's term picker, pointing to the lectures
 # already published for the upcoming term. Shown only once at least one
-# lecture of that term is published and the dashboard doesn't already show
-# that term. The count also includes term-independent lectures, since the
-# search the hint links to lists them as well.
+# lecture of that term is published and the dashboard shows the current term
+# (other terms get CurrentTermLinkComponent instead). The count also includes
+# term-independent lectures, since the search the hint links to lists them as
+# well.
 #
 # With in_search: true, the hint sits next to the lecture search's own picker:
 # its link then just switches the picker to the upcoming term instead of
@@ -17,7 +18,7 @@ class NextTermNoticeComponent < ViewComponent::Base
   attr_reader :in_search
 
   def render?
-    next_term.present? && next_term != @selected &&
+    @selected.present? && @selected == Term.active && next_term.present? &&
       Lecture.published.exists?(term: next_term)
   end
 

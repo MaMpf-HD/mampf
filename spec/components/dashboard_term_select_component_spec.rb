@@ -61,10 +61,13 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
     expect(select["data-action"]).to eq("change->dashboard-term-select#change")
   end
 
-  it "renders block content next to the select" do
-    rendered = render_inline(described_class.new(terms: terms, selected: current,
-                                                 id: "x")) { "Extra hint" }
+  it "offers to jump back to the current semester when another one is selected" do
+    link = render_select(selected: past).at_css("[data-testid=current-term-link]")
 
-    expect(rendered.at_css("#x-wrapper").text).to include("Extra hint")
+    expect(link["data-dashboard-term-select-term-param"]).to eq("SS25")
+  end
+
+  it "does not offer to jump back when the current semester is selected" do
+    expect(render_select.at_css("[data-testid=current-term-link]")).to be_nil
   end
 end
