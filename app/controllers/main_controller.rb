@@ -34,6 +34,7 @@ class MainController < ApplicationController
   def start
     @available_terms = Dashboard::TermSelector.terms
     @selected_term = Dashboard::TermSelector.selected(params)
+    @next_term_lecture_count = Dashboard::TermSelector.next_term_lecture_count
 
     load_board(@selected_term)
   end
