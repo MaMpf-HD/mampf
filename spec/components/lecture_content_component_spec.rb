@@ -107,7 +107,7 @@ RSpec.describe(LectureContentComponent, type: :component) do
 
       html = render_for(user)
 
-      expect(html.text.squish).to include("For revision")
+      expect(html.text.squish).to include("For review")
       expect(html.css("a").map { |a| a.text.strip }).to include("Lessons (2)")
     end
   end

@@ -73,7 +73,7 @@ en:
       chapters:
         one: "1 chapter"
         other: "%{count} chapters"
-      revision: "For revision"
+      revision: "For review"
       materials: "Materials"
     history:
       title: "Past registrations (%{count})"
