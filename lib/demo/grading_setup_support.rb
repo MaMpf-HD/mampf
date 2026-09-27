@@ -104,9 +104,9 @@ module Demo
         end
       end
 
-      # The sum is written here, not left to the task points: they keep it
-      # after commit, and the seed build runs in one transaction, so the scheme
-      # applied next would find no total and grade everybody 5.0.
+      # The total is written here: a task point updates it only in an
+      # after_commit callback, and the seed build runs in one transaction, so
+      # the scheme applied next would find no total and grade everybody 5.0.
       def seed_demo_exam_points!(exam)
         assessment = exam.assessment
         tasks = assessment.tasks.order(:position).to_a

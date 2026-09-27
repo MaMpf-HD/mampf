@@ -1,8 +1,9 @@
 require "rails_helper"
 
 RSpec.describe(Demo::GradingSetupSupport, type: :model) do
-  # The seed build runs in one transaction, and the sum the task points keep
-  # only catches up when that commits.
+  # The seed build runs in one transaction, and a task point updates its
+  # participation's total only in an after_commit callback, which waits for
+  # that transaction to commit.
   it "grades the demo exam by its points inside the build's transaction" do
     exam = create(:exam, :with_date)
     create_list(:exam_roster_entry, 6, exam: exam)
