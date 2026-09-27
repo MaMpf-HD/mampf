@@ -35,33 +35,29 @@
     color: var(--bs-secondary-color);
 
     .fa-seedling {
-        color: var(--bs-primary);
+        color: $mampf-blue;
     }
 }
 
-.next-term-notice__link {
+.next-term-notice__link,
+.current-term-link {
     font-weight: 600;
     white-space: nowrap;
+    color: $mampf-blue;
     text-decoration: none;
 
     &:hover {
+        color: $mampf-blue-focus;
         text-decoration: underline;
     }
+}
 
-    .fa-chevron-down {
-        font-size: 0.7em;
-    }
+.next-term-notice__link .fa-chevron-down {
+    font-size: 0.7em;
 }
 
 .current-term-link {
     font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-    text-decoration: none;
-
-    &:hover {
-        text-decoration: underline;
-    }
 
     .fa-undo {
         font-size: 0.85em;
