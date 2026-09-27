@@ -1126,6 +1126,7 @@ class Lecture < ApplicationRecord
                        .or(Medium.where(teachable_type: "Talk",
                                         teachable_id: talks.select(:id)))
       MampfsearchMetadataSyncJob.enqueue_for(affected)
+    end
 
     def scheduled_release(medium)
       publisher = medium.publisher
