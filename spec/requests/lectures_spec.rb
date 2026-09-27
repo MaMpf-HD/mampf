@@ -419,6 +419,13 @@ RSpec.describe("Lectures", type: :request) do
       expect(response.body).to include("course_lectures")
     end
 
+    it "opens the new lecture when it was created from the dashboard" do
+      post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
+                          as: :turbo_stream)
+
+      expect(response).to redirect_to(edit_lecture_path(Lecture.last))
+    end
+
     context "when the teacher already gives that lecture in that term" do
       before { create(:lecture, **attributes.except(:from, :content_mode)) }
 

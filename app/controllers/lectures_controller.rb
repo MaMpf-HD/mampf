@@ -64,8 +64,14 @@ class LecturesController < ApplicationController
       # set language to default language
       set_language
 
-      flash.now[:notice] = I18n.t("controllers.created_lecture_success",
-                                  lecture: @lecture.title_with_teacher)
+      notice = I18n.t("controllers.created_lecture_success",
+                      lecture: @lecture.title_with_teacher)
+      # The dashboard has no list to update, so the new lecture opens.
+      if params.dig(:lecture, :from) == "dashboard"
+        return redirect_to(edit_lecture_path(@lecture), notice: notice, status: :see_other)
+      end
+
+      flash.now[:notice] = notice
 
       streams = []
 

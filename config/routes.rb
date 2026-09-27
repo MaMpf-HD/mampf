@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   # search routes
 
   get "search/index"
+  get "search/staff", to: "search#staff", as: "search_staff"
 
   # administration routes
 
