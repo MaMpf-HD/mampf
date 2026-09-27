@@ -48,7 +48,7 @@ test("asks once for the name and matriculation number after sign-in",
 
     await expect(page.getByText("Thank you, your details are saved.")).toBeVisible();
     await page.goto("/");
-    await expect(page).toHaveURL(/\/main\/start/);
+    await expect(page).toHaveURL(/\/$/);
   });
 
 test("lets a user who takes part in no exercise class skip it",
@@ -63,7 +63,7 @@ test("lets a user who takes part in no exercise class skip it",
 
     await expect(page).not.toHaveURL(/\/personal_data/);
     await page.goto("/");
-    await expect(page).toHaveURL(/\/main\/start/);
+    await expect(page).toHaveURL(/\/$/);
 
     await page.goto("/profile/edit");
     await expect(page.getByLabel("Display name")).toHaveValue("Ada L.");
@@ -140,5 +140,5 @@ test("lets a student with a place give it up instead of entering the details",
 
     await expect(page).not.toHaveURL(/\/personal_data/);
     await page.goto("/");
-    await expect(page).toHaveURL(/\/main\/start/);
+    await expect(page).toHaveURL(/\/$/);
   });
