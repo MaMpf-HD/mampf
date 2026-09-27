@@ -143,6 +143,34 @@
   font-size: 0.875rem;
 }
 
+.lecture-home-result-tasks {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+
+  summary {
+    color: var(--bs-link-color);
+    cursor: pointer;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: minmax(0, max-content) max-content;
+    justify-content: start;
+    gap: 0.15rem 1.5rem;
+    margin: 0.35rem 0 0;
+  }
+
+  dt {
+    font-weight: normal;
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
 .lecture-home-row-actions {
   flex-shrink: 0;
 

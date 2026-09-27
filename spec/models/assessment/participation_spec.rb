@@ -517,6 +517,32 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe "#result_released?" do
+    let(:assessment) { FactoryBot.create(:exam).assessment }
+
+    def released?(status)
+      FactoryBot.create(:assessment_participation, assessment: assessment, status: status)
+                .result_released?
+    end
+
+    it "is false before the results are published" do
+      expect(released?(:reviewed)).to be(false)
+    end
+
+    it "is true once they are, for every row with a result" do
+      assessment.update!(results_published_at: Time.current)
+
+      expect([:reviewed, :absent, :exempt].map { |status| released?(status) })
+        .to all(be(true))
+    end
+
+    it "is false for a row still waiting for its result" do
+      assessment.update!(results_published_at: Time.current)
+
+      expect(released?(:pending)).to be(false)
+    end
+  end
+
   describe "#results_visible?" do
     let(:participation) { FactoryBot.create(:assessment_participation, :marked) }
     let(:task_points) { participation.task_points }

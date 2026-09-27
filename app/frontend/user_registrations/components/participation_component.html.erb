@@ -29,6 +29,21 @@
               <%= safe_join(details, " · ") %>
             </div>
           <% end %>
+
+          <% if row.tasks.present? %>
+            <details class="lecture-home-result-tasks">
+              <summary>
+                <%= t("registration.user_registration.participation.points_per_problem") %>
+              </summary>
+
+              <dl>
+                <% row.tasks.each do |task| %>
+                  <dt><%= task.label %></dt>
+                  <dd><%= task.points || "—" %> / <%= task.max_points %></dd>
+                <% end %>
+              </dl>
+            </details>
+          <% end %>
         </div>
 
         <% if row.actions.present? %>

@@ -128,6 +128,14 @@ module Assessment
       task_points.where.not(points: nil).exists?
     end
 
+    # Whether the student may see this row's result on the lecture home:
+    # the results are published and the row carries one. Exams and talks have
+    # this release step; results_visible? only asks whether points were entered,
+    # which is all a sheet waits for.
+    def result_released?
+      assessment.results_published? && !pending?
+    end
+
     private
 
       # Nothing may be marked before the assessable says grading is open. Leaving
