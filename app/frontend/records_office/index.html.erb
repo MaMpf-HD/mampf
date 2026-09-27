@@ -1,0 +1,129 @@
+<div class="container py-3">
+  <h1 class="h3"><%= t("records_office.title") %></h1>
+
+  <p class="text-muted"><%= t("records_office.explainer") %></p>
+
+  <%= form_with url: records_office_path, method: :get, local: true,
+                data: { controller: "submit-on-change" },
+                class: "d-flex align-items-center gap-2 mb-4" do |f| %>
+    <%= f.label :term_id, t("records_office.term"), class: "form-label mb-0" %>
+
+    <%= f.select :term_id,
+                 options_for_select(Term.select_terms, @term&.id),
+                 {},
+                 class: "form-select w-auto",
+                 data: { action: "change->submit-on-change#change" } %>
+  <% end %>
+
+  <% if @overview.lectures.empty? %>
+    <p><%= t("records_office.no_lectures") %></p>
+  <% end %>
+
+  <% @overview.lectures.each do |lecture| %>
+    <section
+      class="card mb-3"
+      aria-labelledby="<%= dom_id(lecture, :records_office) %>"
+    >
+      <div
+        class="
+          card-header d-flex flex-wrap justify-content-between
+          align-items-center gap-2
+        "
+      >
+        <div>
+          <h2 class="h5 mb-0" id="<%= dom_id(lecture, :records_office) %>">
+            <%= lecture.title_no_term %>
+          </h2>
+
+          <span class="small text-muted">
+            <%= lecture.teacher.tutorial_name %> ·
+            <%= t("records_office.members", count: lecture.lecture_memberships.size) %>
+          </span>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <% if @overview.grades?(lecture) %>
+            <%= link_to records_office_grades_path(lecture),
+                        class: "btn btn-sm btn-outline-primary" do %>
+              <i class="bi bi-download" aria-hidden="true"></i>
+              <%= t("records_office.download_grades") %>
+            <% end %>
+          <% end %>
+
+          <% if @overview.admissions?(lecture) %>
+            <%= link_to records_office_admissions_path(lecture),
+                        class: "btn btn-sm btn-outline-primary" do %>
+              <i class="bi bi-download" aria-hidden="true"></i>
+              <%= t("records_office.download_admissions") %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <% groups = @overview.groups(lecture) %>
+
+      <% if groups.empty? %>
+        <p class="card-body text-muted mb-0">
+          <%= t("records_office.no_groups") %>
+        </p>
+      <% else %>
+        <div class="table-responsive">
+          <table class="table table-sm mb-0 align-middle">
+            <thead>
+              <tr>
+                <th scope="col"><%= t("records_office.group") %></th>
+                <th scope="col"><%= t("records_office.kind") %></th>
+
+                <th scope="col" class="w-25">
+                  <%= t("records_office.occupancy") %>
+                </th>
+
+                <th scope="col">
+                  <span class="visually-hidden">
+                    <%= t("records_office.emails") %>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% groups.each do |group| %>
+                <% title = RecordsOffice::Export.group_title(group) %>
+                <% count = group.roster_entries_count %>
+
+                <tr>
+                  <th scope="row" class="fw-normal"><%= title %></th>
+
+                  <td>
+                    <%= t("records_office.kinds.#{group.class.name.downcase}") %>
+                  </td>
+
+                  <td>
+                    <% if group.capacity %>
+                      <%= progress_bar(count, group.capacity,
+                                       classification: group.over_capacity? ? :danger : :neutral,
+                                       label: "#{count} / #{group.capacity}",
+                                       height: "1.25rem",
+                                       container_class: "progress") %>
+                    <% else %>
+                      <%= t("records_office.without_limit", count: count) %>
+                    <% end %>
+                  </td>
+
+                  <td class="text-end">
+                    <%= link_to records_office_emails_path(group.class.name.downcase, group),
+                                class: "btn btn-sm btn-link",
+                                "aria-label": t("records_office.emails_of", group: title) do %>
+                      <i class="bi bi-envelope" aria-hidden="true"></i>
+                      <%= t("records_office.emails") %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+</div>

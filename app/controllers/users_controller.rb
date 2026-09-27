@@ -134,7 +134,7 @@ class UsersController < ApplicationController
     # change the personal data.
     def user_params
       allowed = [:name, :email, :homepage, :current_lecture_id, :image]
-      allowed += User::PERSONAL_DATA_FIELDS if current_user.admin?
+      allowed += User::PERSONAL_DATA_FIELDS + [:records_office] if current_user.admin?
       params.expect(user: allowed)
     end
 
@@ -147,6 +147,6 @@ class UsersController < ApplicationController
 
     def set_elevated_users
       @elevated_users = User.where(admin: true).or(User.proper_editors)
-                            .or(User.teachers)
+                            .or(User.teachers).or(User.where(records_office: true))
     end
 end

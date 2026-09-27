@@ -1610,11 +1610,14 @@ en:
       edited_lectures: 'Additional Edited Event Series'
       edited_media: 'Edited Media'
       administration: 'User Administration'
-      sorts: 'Admins, Editors and Teachers'
+      sorts: 'Admins, Editors, Teachers and Records Office'
+      records_office: 'Records office'
       password_policy_progress: '%{current} of %{total} accounts currently meet the updated password standard.'
       edit_generics: 'Edit generic users'
       elevate: 'Promote to Administrator'
       info:
+        records_office: >
+          Sees every lecture's groups, published grades and exam admissions, read-only, for the examination office or the dean's office.
         display_name: >
           Here you can enter the display name. The display name
           is used for the display of teachers, editors, forum posts etc.

@@ -1,0 +1,52 @@
+en:
+  records_office:
+    title: 'Records office'
+    explainer: >-
+      Every lecture of a term with its groups and how full they are. The
+      downloads open in Excel: the published grades of exams and talks, the
+      exam admissions, and each group's email addresses.
+    term: 'Term'
+    no_lectures: 'There are no lectures in this term.'
+    no_groups: 'This lecture has no groups.'
+    members:
+      one: '1 member'
+      other: '%{count} members'
+    group: 'Group'
+    kind: 'Kind'
+    occupancy: 'Occupancy'
+    without_limit: '%{count}, no limit'
+    emails: 'Emails'
+    emails_of: 'Email addresses of %{group}'
+    download_grades: 'Grades'
+    download_admissions: 'Exam admissions'
+    decided_by_rule: 'Rule'
+    kinds:
+      tutorial: 'Tutorial'
+      talk: 'Talk'
+      cohort: 'Other group'
+      exam: 'Exam'
+    decisions:
+      passed: 'eligible'
+      failed: 'not eligible'
+      pending: 'open'
+    files:
+      grades: 'grades'
+      admissions: 'admissions'
+      emails: 'emails'
+    columns:
+      last_name: 'Last name'
+      first_name: 'First name'
+      matriculation_number: 'Matriculation number'
+      email: 'Email'
+      kind: 'Kind'
+      title: 'Title'
+      grade: 'Grade'
+      status: 'Status'
+      points: 'Points'
+      maximum: 'Maximum'
+      percentage: 'Percentage'
+      criteria_met: 'Criteria met'
+      decision: 'Decision'
+      decided_by: 'Decided by'
+      decided_at: 'Decided on'
+      note: 'Note'

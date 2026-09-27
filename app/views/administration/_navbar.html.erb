@@ -85,6 +85,13 @@
                   target: :_blank %>
         </li>
         <li>
+          <%= link_to '', records_office_path,
+                  class: 'nav-link bi bi-building ' + get_class_for_path(records_office_path),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('records_office.title'),
+                  'aria-label': t('records_office.title') %>
+        </li>
+        <li>
           <%= link_to '', sidekiq_web_path,
                   class: 'nav-link bi bi-bar-chart-fill',
                   data: { 'bs-toggle': 'tooltip' },

@@ -71,6 +71,25 @@ Rails.application.routes.draw do
       to: "administration#classification",
       as: "classification"
 
+  # records office routes
+
+  get "records_office",
+      to: "records_office#index",
+      as: "records_office"
+
+  get "records_office/lectures/:lecture_id/grades",
+      to: "records_office#grades",
+      as: "records_office_grades"
+
+  get "records_office/lectures/:lecture_id/admissions",
+      to: "records_office#admissions",
+      as: "records_office_admissions"
+
+  get "records_office/:group_type/:group_id/emails",
+      to: "records_office#emails",
+      as: "records_office_emails",
+      constraints: { group_type: /tutorial|talk|cohort|exam/ }
+
   # annotation routes
   get "annotations/update_annotations",
       to: "annotations#update_annotations",

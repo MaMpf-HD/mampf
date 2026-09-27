@@ -43,6 +43,14 @@
     <div class="invalid-feedback" id="user-uni-id-error">
     </div>
   </div>
+  <div class="form-check mb-3">
+    <%= f.check_box :records_office, class: 'form-check-input' %>
+    <%= f.label :records_office, t('admin.user.records_office'),
+                class: 'form-check-label' %>
+    <div class="form-text">
+      <%= t('admin.user.info.records_office') %>
+    </div>
+  </div>
 <% end %>
 <div class="form-group">
   <%= f.label :current_lecture_id,

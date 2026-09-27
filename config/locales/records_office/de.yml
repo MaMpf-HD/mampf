@@ -1,0 +1,53 @@
+de:
+  records_office:
+    title: 'Verwaltung'
+    explainer: >-
+      Alle Veranstaltungen eines Semesters mit ihren Gruppen und deren
+      Auslastung. Die Downloads öffnen sich in Excel: die veröffentlichten
+      Noten von Klausuren und Vorträgen, die Prüfungszulassungen und die
+      E-Mail-Adressen jeder Gruppe.
+    term: 'Semester'
+    no_lectures: 'In diesem Semester gibt es keine Veranstaltungen.'
+    no_groups: 'Diese Veranstaltung hat keine Gruppen.'
+    members:
+      one: '1 Mitglied'
+      other: '%{count} Mitglieder'
+    group: 'Gruppe'
+    kind: 'Art'
+    occupancy: 'Auslastung'
+    without_limit: '%{count}, ohne Obergrenze'
+    emails: 'E-Mails'
+    emails_of: 'E-Mail-Adressen von %{group}'
+    download_grades: 'Noten'
+    download_admissions: 'Prüfungszulassungen'
+    decided_by_rule: 'Regel'
+    kinds:
+      tutorial: 'Tutorium'
+      talk: 'Vortrag'
+      cohort: 'Weitere Gruppe'
+      exam: 'Klausur'
+    decisions:
+      passed: 'zugelassen'
+      failed: 'nicht zugelassen'
+      pending: 'offen'
+    files:
+      grades: 'noten'
+      admissions: 'zulassungen'
+      emails: 'emails'
+    columns:
+      last_name: 'Nachname'
+      first_name: 'Vorname'
+      matriculation_number: 'Matrikelnummer'
+      email: 'E-Mail'
+      kind: 'Art'
+      title: 'Titel'
+      grade: 'Note'
+      status: 'Status'
+      points: 'Punkte'
+      maximum: 'Maximum'
+      percentage: 'Prozent'
+      criteria_met: 'Erfüllte Kriterien'
+      decision: 'Entscheidung'
+      decided_by: 'Entschieden von'
+      decided_at: 'Entschieden am'
+      note: 'Notiz'

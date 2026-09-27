@@ -1770,11 +1770,14 @@ de:
       edited_lectures: 'Weitere editierte Veranstaltungen'
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
-      sorts: 'Admins, EditorInnen und DozentInnen'
+      sorts: 'Admins, EditorInnen, DozentInnen und Verwaltung'
+      records_office: 'Verwaltung'
       password_policy_progress: '%{current} von %{total} Accounts erfüllen derzeit den aktualisierten Passwortstandard.'
       edit_generics: 'Sonstige NutzerInnen bearbeiten'
       elevate: 'zum Administrator befördern'
       info:
+        records_office: >
+          Sieht Gruppen, veröffentlichte Noten und Prüfungszulassungen aller Veranstaltungen, nur lesend, für Prüfungssekretariat oder Dekanat.
         display_name: >
           Hier kannst Du den Anzeigename eingeben. Der Anzeigename
           wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.

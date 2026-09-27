@@ -24,6 +24,11 @@
                 <%= t('basics.teacher') %>
               </span>
             <% end %>
+            <% if user.records_office? %>
+              <span class="badge bg-info">
+                <%= t('admin.user.records_office') %>
+              </span>
+            <% end %>
           </div>
         </div>
       </div>
