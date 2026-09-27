@@ -321,7 +321,7 @@ test.describe("getting out of a registration process", () => {
       await page.getByRole("link", { name: "Delete", exact: true }).first().click();
 
       // a teacher is no admin, so they are sent to the start page
-      await expect(page).toHaveURL(/\/main\/start$/);
+      await expect(page).toHaveURL(/:3145\/$/);
       expect(confirmation).toContain("1 registration process with 1 registration");
     });
 

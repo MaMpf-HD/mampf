@@ -7,7 +7,15 @@ en:
       no_lectures_any_term: >-
         You are not registered for any lecture yet, and have not bookmarked
         any. Scroll down to discover new lectures.
+      no_lectures_teacher: >-
+        You are not teaching any lecture in %{term}. Choose another semester
+        above, or scroll down to search for lectures.
+      no_lectures_teacher_any_term: >-
+        You are not teaching any lecture yet. Scroll down to search for
+        lectures.
       sections:
+        staff: "You are staff in these"
+        tutor: "You are tutor in these"
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"
