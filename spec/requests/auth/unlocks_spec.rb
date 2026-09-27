@@ -13,6 +13,23 @@ RSpec.describe("Auth unlocks", type: :request) do
 
       expect(ActionMailer::Base.deliveries.count).to eq(5)
     end
+
+    it "stops sending unlock emails to one address after the daily limit" do
+      Rails.cache.clear
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      user.lock_access!
+      ActionMailer::Base.deliveries.clear # drop the mail sent on locking
+
+      params = { user: { email: user.email }, locale: "en" }
+      11.times do |i|
+        post(user_unlock_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.#{i}" })
+      end
+
+      expect(ActionMailer::Base.deliveries.count).to eq(10)
+      expect(flash[:alert]).to eq(
+        I18n.t("devise.failure.too_many_requests", wait: "1 day", locale: :en)
+      )
+    end
   end
 
   describe "GET /users/unlock" do
