@@ -2,7 +2,7 @@
 class LessonsController < ApplicationController
   before_action :set_lesson, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= LessonAbility.new(current_user)

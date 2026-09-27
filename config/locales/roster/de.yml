@@ -324,7 +324,7 @@ de:
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
-    no_participants_yet: 'Es haben sich noch keine Teilnehmer registriert.'
+    no_participants_yet: 'Noch niemand steht auf der Prüfungsliste.'
     registered: 'Registriert'
     mailer:
       end_mail_html: |

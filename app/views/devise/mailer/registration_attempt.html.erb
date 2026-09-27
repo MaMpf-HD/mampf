@@ -1,0 +1,19 @@
+<p class="h1">
+  <%= t(".greetings", name: @resource.name.presence || t(".no_name_fallback")) %>
+</p>
+
+<p><%= t(".instruction") %></p>
+
+<p>
+  <%= link_to t(".sign_in"),
+              new_user_session_url(locale: I18n.locale),
+              class: "btn btn-primary mt-3" %>
+</p>
+
+<p>
+  <%= t(".forgot_password_html",
+        link: link_to(t(".reset_password"),
+                      new_user_password_url(locale: I18n.locale))) %>
+</p>
+
+<p><%= t(".not_you") %></p>

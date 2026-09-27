@@ -646,6 +646,18 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
+  # Lectures of the active term (and those without a term) the user teaches,
+  # edits (also as editor of the course), bookmarked, is on the roster of or
+  # applied to. Listed by lectures/show/_switcher.
+  def current_lectures
+    [given_lectures, edited_lectures, Lecture.where(course: edited_courses),
+     lectures, roster_lectures.or(lectures_with_registration_application)]
+      .flat_map do |scope|
+        scope.where(term: [Term.active, nil]).includes(:course, :term, :teacher)
+      end
+      .uniq.natural_sort_by(&:title)
+  end
+
   # The published lectures whose content this user gets to see as a student:
   # those without a passphrase, and those unlocked via a bookmark. Scope
   # counterpart of Lecture#unlocked_for? (staff access is not included).
@@ -856,12 +868,6 @@ class User < ApplicationRecord
 
   def speaker?
     talks.any?
-  end
-
-  def layout
-    return "administration" if admin_or_editor?
-
-    "application_no_sidebar"
   end
 
   def course_editor?

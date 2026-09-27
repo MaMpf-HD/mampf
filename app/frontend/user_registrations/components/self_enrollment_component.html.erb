@@ -2,23 +2,23 @@
   <div class="registration-fold-summary-text">
     <div class="registration-fold-summary-line">
       <h3 class="registration-fold-title">
-        <%= t("registration.user_registration.self_enrollment.title") %>
+        <%= fold_text("title") %>
       </h3>
     </div>
 
     <span class="registration-fold-meta">
-      <%= t("registration.user_registration.self_enrollment.meta", count: rosterables.size) %>
+      <%= fold_text("meta", count: rosterables.size) %>
     </span>
   </div>
 
   <span class="registration-fold-cta" aria-hidden="true">
-    <%= t("registration.user_registration.self_enrollment.show") %>
+    <%= fold_text("show") %>
   </span>
 <% end %>
 
 <% body_html = capture do %>
   <p class="registration-fold-instruction mb-0">
-    <%= t("registration.user_registration.self_enrollment.instruction") %>
+    <%= fold_text("instruction") %>
   </p>
 
   <%= render layout: "user_registrations/option_list", locals: { count: rosterables.size } do %>
