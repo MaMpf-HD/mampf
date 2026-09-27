@@ -7,13 +7,10 @@ module Dashboard
 
     attr_reader :user, :term
 
-    # The lectures this user teaches or edits, either directly or as editor
-    # of the lecture's course.
     def staff_lectures
       @staff_lectures ||= lectures_of_term(
         Lecture.where(id: user.given_lectures.select(:id))
                .or(Lecture.where(id: user.edited_lectures.select(:id)))
-               .or(Lecture.where(course_id: user.edited_courses.select(:id)))
       )
     end
 
