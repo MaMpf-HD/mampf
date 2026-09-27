@@ -100,7 +100,7 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
 
         expect(link["href"]).to eq("/?term=WS25-26#lecture-search")
         expect(link["data-action"]).to be_nil
-        expect(link.at_css(".fa-chevron-down")).to be_present
+        expect(link.at_css(".bi-chevron-down")).to be_present
       end
 
       it "only switches the picker when it sits in the search" do
@@ -108,7 +108,7 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
 
         expect(link["data-action"]).to eq("dashboard-term-select#pick")
         expect(link["data-dashboard-term-select-term-param"]).to eq("WS25-26")
-        expect(link.at_css(".fa-chevron-down")).to be_nil
+        expect(link.at_css(".bi-chevron-down")).to be_nil
       end
 
       it "is hidden when another than the current semester is selected" do
