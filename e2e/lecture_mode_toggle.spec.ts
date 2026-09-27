@@ -82,7 +82,7 @@ test.describe("switching between viewing and editing a lecture", () => {
     await expect(page.getByTestId("lecture-title-bar")).toContainText("Linear Algebra");
     await page.getByRole("link", { name: "Back to the dashboard" }).click();
 
-    await expect(page).toHaveURL(/\/main\/start$/);
+    await expect(page).toHaveURL(/:3145\/$/);
   });
 
   test("switches to another lecture of the term from the title",
