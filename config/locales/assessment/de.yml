@@ -396,10 +396,10 @@ de:
     results_mailer:
       subject: "Ergebnisse von %{title} in %{lecture}"
       body_html: |
-        <p>Hallo %{name},</p>
+        <p>Hallo,</p>
         <p>Die Ergebnisse von <strong>%{title}</strong> in <strong>%{lecture}</strong> sind jetzt in MaMpf verfügbar.</p>
       body: |
-        Hallo %{name},
+        Hallo,
 
         die Ergebnisse von „%{title}“ in „%{lecture}“ sind jetzt in MaMpf verfügbar.
       link: "Zur Veranstaltung"

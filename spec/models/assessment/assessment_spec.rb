@@ -140,20 +140,26 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     let(:exam) { FactoryBot.create(:exam) }
     let(:assessment) { exam.assessment }
 
-    def row(status)
-      FactoryBot.create(:assessment_participation, assessment: assessment, status: status)
+    def row(status, locale)
+      user = FactoryBot.create(:confirmed_user, locale: locale)
+      FactoryBot.create(:assessment_participation, assessment: assessment, status: status,
+                                                   user: user)
+      user
     end
 
-    before do
-      row(:reviewed)
-      row(:absent)
-      row(:pending)
-    end
+    let!(:graded) { [row(:reviewed, "de"), row(:reviewed, "de")] }
+    let!(:absent) { row(:absent, "en") }
+    let!(:waiting) { row(:pending, "de") }
 
-    it "mails everyone who has a result, and nobody still waiting for one" do
-      expect { assessment.publish_results! }
-        .to have_enqueued_mail(Assessment::ResultsMailer, :published_email).twice
+    # The mail says nothing personal, so everybody of one language gets the
+    # same one.
+    it "mails everyone who has a result once per language, and nobody still waiting" do
+      perform_enqueued_jobs { assessment.publish_results! }
 
+      mails = ActionMailer::Base.deliveries.last(2)
+      expect(mails.map { |mail| mail.bcc.sort })
+        .to contain_exactly(graded.map(&:email).sort, [absent.email])
+      expect(mails.flat_map(&:bcc)).not_to include(waiting.email)
       expect(assessment.reload.results_published?).to be(true)
     end
 

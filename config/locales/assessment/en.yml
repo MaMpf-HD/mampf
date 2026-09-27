@@ -396,10 +396,10 @@ en:
     results_mailer:
       subject: "Results of %{title} in %{lecture}"
       body_html: |
-        <p>Hello %{name},</p>
+        <p>Hello,</p>
         <p>The results of <strong>%{title}</strong> in <strong>%{lecture}</strong> are now available in MaMpf.</p>
       body: |
-        Hello %{name},
+        Hello,
 
         The results of "%{title}" in "%{lecture}" are now available in MaMpf.
       link: "Go to the lecture"

@@ -69,16 +69,21 @@ module Assessment
     end
 
     # Shows the participants their results and, the first time, mails those
-    # who have one. Publishing again after taking them back is a correction,
-    # which a second mail would announce as news.
+    # who have one: one mail per language, everyone in bcc, as the mail says
+    # nothing personal. Publishing again after taking them back is a
+    # correction, which a second mail would announce as news.
     def publish_results!
       first_time = results_notified_at.nil?
       now = Time.current
       update!(results_published_at: now, results_notified_at: results_notified_at || now)
       return unless first_time
 
-      assessment_participations.with_result.includes(:user).find_each do |participation|
-        ResultsMailer.with(recipient: participation.user, assessment: self)
+      recipients = User.where(id: assessment_participations.with_result.select(:user_id))
+      I18n.available_locales.each do |locale|
+        ids = recipients.where(locale: locale).pluck(:id)
+        next if ids.empty?
+
+        ResultsMailer.with(recipients: ids, locale: locale, assessment: self)
                      .published_email.deliver_later
       end
     end
