@@ -66,7 +66,8 @@ RSpec.describe(ResultsReleaseComponent, type: :component) do
       create(:assessment_participation, assessment: talk.assessment, status: :reviewed,
                                         grade_numeric: 2.0)
     end
-    published.assessment.update!(results_published_at: Time.current)
+    published.assessment.update!(results_published_at: Time.current,
+                                 results_notified_at: Time.current)
 
     rendered = render_inline(described_class.new(seminar: seminar))
 
