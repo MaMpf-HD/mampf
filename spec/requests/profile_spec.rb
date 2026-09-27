@@ -16,6 +16,47 @@ RSpec.describe("Profile", type: :request) do
            xhr: true)
     end
 
+    def save_teacher_profile(**fields)
+      post("/profile/update",
+           params: { user: { name: user.name, subscription_type: 1, locale: "en",
+                             email_for_news: "0", **fields } },
+           xhr: true)
+    end
+
+    describe "the teacher's homepage and picture" do
+      it "are saved for a teacher" do
+        create(:lecture, teacher: user)
+
+        save_teacher_profile(homepage: "https://example.org/~ada")
+
+        expect(user.reload.homepage).to eq("https://example.org/~ada")
+      end
+
+      it "are left alone for someone who teaches nothing" do
+        save_teacher_profile(homepage: "https://example.org/~ada")
+
+        expect(user.reload.homepage).to be_blank
+      end
+
+      it "report an address that is no web address" do
+        create(:lecture, teacher: user)
+
+        save_teacher_profile(homepage: "not an address")
+
+        expect(user.reload.homepage).to be_blank
+        expect(response.body).to include("#homepage-error")
+      end
+
+      it "drop the picture when asked to" do
+        create(:lecture, teacher: user)
+        user.update!(image: Rails.public_path.join("unknown-person.gif").open)
+
+        save_teacher_profile(remove_image: "1")
+
+        expect(user.reload.image).to be_nil
+      end
+    end
+
     def choosing(lecture, passphrase: nil)
       { lecture.id => { subscribed: "1", passphrase: passphrase } }
     end

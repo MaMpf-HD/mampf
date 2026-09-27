@@ -32,12 +32,15 @@ class ProfileController < ApplicationController
     check_passphrases
     return if @errors.present?
 
+    previous_image = @user.image_data
+    assign_teacher_profile
     if @user.update(lectures: @lectures,
                     name: @name,
                     name_in_tutorials: @name_in_tutorials,
                     subscription_type: @subscription_type,
                     locale: @locale)
       @user.update(email_params)
+      derive_profile_image if @user.image_data != previous_image
       # remove notifications that have become obsolete
       clean_up_notifications
       I18n.locale = @locale
@@ -132,6 +135,25 @@ class ProfileController < ApplicationController
       @lectures = Lecture.where(id: lecture_ids)
       @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
       @locale = params[:user][:locale]
+    end
+
+    # A teacher's homepage and picture show on their teacher page; the
+    # administration's profile page, which used to hold them, is for admins
+    # only.
+    def assign_teacher_profile
+      return unless @user.teacher?
+
+      profile = params.fetch(:user, {}).permit(:homepage, :image, :remove_image)
+      @user.homepage = profile[:homepage] if profile.key?(:homepage)
+      @user.image = profile[:image] if profile[:image].present?
+      @user.image = nil if profile[:remove_image] == "1"
+    end
+
+    def derive_profile_image
+      return if @user.image.blank?
+
+      @user.image_derivatives!
+      @user.save
     end
 
     def email_params

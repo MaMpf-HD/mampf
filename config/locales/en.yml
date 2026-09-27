@@ -1982,6 +1982,10 @@ en:
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    teacher_profile:
+      title: "What students see about you"
+      explainer: "Your homepage and picture appear on your teacher page, which your lectures link to."
+      remove_image: "Remove the picture"
     changes_made_btn: >
       Click here to save your changes.
     email_for_submissions: >
