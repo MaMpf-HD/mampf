@@ -39,6 +39,19 @@ test("can sign up and confirm the account", async ({ page, request }) => {
   await expect(page.getByText("Thank you, your details are saved.")).toBeVisible();
 });
 
+test("answers a sign-up with a taken address like any other", async ({ page, factory }) => {
+  const email = `taken_${Date.now()}@example.com`;
+  await factory.create("confirmed_user", [], { email: email });
+
+  const signUpPage = new SignUpPage(page);
+  await signUpPage.goto();
+  await signUpPage.fillForm(email);
+  await signUpPage.submit();
+
+  await expect(page.getByText("activate your account")).toBeVisible();
+  await expect(page.getByText("has already been taken")).toHaveCount(0);
+});
+
 test("shows an altcha error and blocks signup when auto verification fails", async ({ page }) => {
   const signUpPage = new SignUpPage(page);
   await signUpPage.goto();

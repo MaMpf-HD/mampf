@@ -3,25 +3,21 @@ class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
 
   before_action :set_lecture, except: [:new, :create, :search]
-  before_action :set_lecture_cookie, only: [:show, :outline, :organizational,
-                                            :show_announcements]
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
   before_action :check_for_unlock, only: [:outline]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
+  before_action :check_for_announcements, only: [:show_announcements]
+  before_action :check_for_organizational, only: [:organizational]
   before_action :require_turbo_frame, only: [:new]
-  layout "administration"
+  # Unlike the other staff controllers, not staff_layout: admins edit a
+  # lecture in the regular layout too, so that switching between viewing and
+  # editing stays in place (see layouts/_lecture_mode). layouts/application
+  # gives them their administration navbar on lecture pages.
+  layout "staff"
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
-  end
-
-  def show
-    if lecture_home_landing_page?
-      redirect_to lecture_home_path(@lecture)
-    else
-      redirect_to lecture_outline_path(@lecture)
-    end
   end
 
   def outline
@@ -135,7 +131,7 @@ class LecturesController < ApplicationController
 
     # destroy all notifications related to this lecture
     destroy_notifications
-    redirect_to administration_path, status: :see_other
+    redirect_to staff_home_path, status: :see_other
   end
 
   # add forum for this lecture
@@ -338,10 +334,6 @@ class LecturesController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
-    def set_lecture_cookie
-      cookies[:current_lecture_id] = @lecture.id
-    end
-
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
     end
@@ -382,11 +374,6 @@ class LecturesController < ApplicationController
         render template: "lectures/show/show",
                layout: turbo_frame_request? ? "turbo_frame" : "application"
       end
-    end
-
-    def lecture_home_landing_page?
-      @lecture.term.present? &&
-        Flipper.enabled?(:lecture_home_landing, @lecture.term)
     end
 
     def lecture_params
@@ -499,9 +486,23 @@ class LecturesController < ApplicationController
     end
 
     def check_if_enough_questions
-      return if @lecture.course.enough_questions?
+      return if @lecture.page_available?("self_test", current_user)
 
-      redirect_to :root, alert: I18n.t("controllers.no_test")
+      redirect_to lecture_home_path(@lecture), alert: I18n.t("controllers.no_test")
+    end
+
+    # The lecture switcher (lectures/show/_switcher) keeps the page when
+    # switching, but the other lecture may have nothing to show on it.
+    def check_for_announcements
+      return if @lecture.page_available?("announcements", current_user)
+
+      redirect_to lecture_home_path(@lecture)
+    end
+
+    def check_for_organizational
+      return if @lecture.page_available?("organizational", current_user)
+
+      redirect_to lecture_home_path(@lecture)
     end
 
     # Reads the new editors before the update, which makes them editors already.

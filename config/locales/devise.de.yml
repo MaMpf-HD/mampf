@@ -54,6 +54,20 @@ de:
           Du hast diese Mail bekommen, weil kürzlich das Passwort eines ein
           MaMpf-Accounts, der auf diese Email registriert wurde, resetted
           wurde. Falls Du dies nicht getan hast, ignoriere diese Email bitte.
+      registration_attempt:
+        subject: "Du hast schon ein MaMpf-Konto"
+        greetings: "Hallo, %{name}!"
+        no_name_fallback: "Du"
+        instruction: >
+          Jemand wollte mit dieser E-Mail-Adresse ein neues MaMpf-Konto anlegen.
+          Für diese Adresse gibt es schon ein Konto, deshalb wurde kein neues
+          angelegt.
+        sign_in: "Anmelden"
+        forgot_password_html: "Passwort vergessen? %{link}."
+        reset_password: "Hier zurücksetzen"
+        not_you: >
+          Falls Du das nicht warst, kannst Du diese E-Mail ignorieren. An Deinem
+          Konto hat sich nichts geändert.
       unlock_instructions:
         subject: "Anleitung um Deinen Account freizuschalten"
         greeting: "Hallo %{recipient}"

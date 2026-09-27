@@ -5,7 +5,7 @@ RSpec.describe("Lectures::Home", type: :request) do
   let(:student) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, :released_for_all, teacher: editor) }
 
-  describe "GET /lectures/:id/home" do
+  describe "GET /lectures/:id" do
     it "renders the teacher's intro text" do
       lecture.update!(home_intro: "<div>Welcome to the seminar</div>")
       sign_in student
@@ -82,6 +82,27 @@ RSpec.describe("Lectures::Home", type: :request) do
         .not_to include('data-testid="lecture-home-fallback-card"')
       expect(response.body)
         .to include('data-testid="lecture-home-intro-empty"')
+    end
+  end
+
+  describe "a talk campaign" do
+    it "offers the student the talks rather than groups" do
+      seminar = create(:seminar, :released_for_all, teacher: editor)
+      campaign = create(:registration_campaign, :open, :first_come_first_served,
+                        campaignable: seminar)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:talk, lecture: seminar))
+      sign_in student
+
+      get lecture_home_path(seminar)
+
+      expect(response.body).to include(
+        I18n.t("registration.user_registration.summary.show_talks", locale: student.locale)
+      )
+      expect(response.body).not_to include(
+        I18n.t("registration.user_registration.summary.show_and_register",
+               locale: student.locale)
+      )
     end
   end
 

@@ -100,6 +100,7 @@ class CampaignCardComponent < ViewComponent::Base
     return t("registration.user_registration.summary.change_preferences") if preferences_saved?
     return t("registration.user_registration.summary.choose") if campaign.preference_based?
     return t("registration.user_registration.summary.register") if exam_campaign?
+    return t("registration.user_registration.summary.show_talks") if talk_campaign?
 
     t("registration.user_registration.summary.show_and_register")
   end
@@ -110,6 +111,10 @@ class CampaignCardComponent < ViewComponent::Base
 
   def exam_campaign?
     items.any? && items.all? { |item| item.registerable_type == "Exam" }
+  end
+
+  def talk_campaign?
+    helpers.talks_only?(items)
   end
 
   delegate :eligibility, :finalization_eligibility, :items, :item_preferences,
@@ -178,6 +183,14 @@ class CampaignCardComponent < ViewComponent::Base
     return @blocked if defined?(@blocked)
 
     @blocked = !ineligible? && helpers.registration_campaign_blocked?(campaign, items)
+  end
+
+  def blocked_notice
+    if items.any? { |item| helpers.exam_closed_to_current_user?(item) }
+      t("registration.user_registration.messages.not_on_lecture_roster")
+    else
+      t("registration.user_registration.messages.unremovable_assignment")
+    end
   end
 
   def campaign_title
