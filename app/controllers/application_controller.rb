@@ -149,8 +149,7 @@ class ApplicationController < ActionController::Base
     # Where staff land when the page they were on is gone, e.g. after
     # deleting the record. Only admins have the administration area.
     def staff_home_path
-      # TODO: change to "root_path" after #1317 is merged
-      current_user&.admin? ? administration_path : start_path
+      current_user&.admin? ? administration_path : root_path
     end
 
     def configure_permitted_parameters

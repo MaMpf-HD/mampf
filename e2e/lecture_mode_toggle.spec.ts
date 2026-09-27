@@ -148,7 +148,7 @@ test.describe("switching between viewing and editing a lecture", () => {
     });
 
   test("gives teachers no administration icon", async ({ teacher: { page } }) => {
-    await page.goto("/main/start");
+    await page.goto("/");
 
     await expect(page.getByTitle("administration")).toHaveCount(0);
   });
