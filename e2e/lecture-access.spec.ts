@@ -8,7 +8,7 @@ test.describe("student", () => {
         "lecture", ["released_for_all", "with_sparse_toc"],
       );
 
-      await new LecturePage(page, lecture.id).goto();
+      await new LecturePage(page, lecture.id).gotoOutline();
       await expect(page).toHaveURL(/\/outline$/);
       await expect(page.getByText("Lecture Contents")).toBeVisible();
       expect(await lecture.__call("bookmarked_by?", user)).toBe(false);
@@ -21,11 +21,11 @@ test.describe("student", () => {
 
     const lecturePage = new LecturePage(page, lecture.id);
     await lecturePage.goto();
-    await expect(page).toHaveURL(/\/home$/);
+    await expect(page).toHaveURL(`/lectures/${lecture.id}`);
     await expect(page.getByText("This lecture is protected by a pass phrase")).toBeVisible();
 
     await lecturePage.unlock("secret");
-    await lecturePage.goto();
+    await lecturePage.gotoOutline();
     await expect(page).toHaveURL(/\/outline$/);
     await expect(page.getByText("Lecture Contents")).toBeVisible();
   });

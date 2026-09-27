@@ -55,7 +55,9 @@ test.describe("a homework sheet from the teacher to the student and back", () =>
       .getByRole("gridcell", { name: dateLabel() }).click();
     await expect(modal.getByLabel("Due date")).not.toHaveValue("");
     await modal.getByRole("checkbox", { name: "I hereby confirm that" }).check();
+    const published = teacher.page.waitForResponse(`/media/${medium.id}/publish`);
     await modal.getByRole("button", { name: "Save" }).click();
+    await published;
 
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.open("Sheet 1");

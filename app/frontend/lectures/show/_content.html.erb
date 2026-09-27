@@ -9,8 +9,9 @@
                     edit_lecture_path(lecture),
                     class: "far fa-edit text-dark fs-5",
                     data: { toggle: "tooltip",
-                            placement: "bottom" },
-              "aria-label": t("buttons.edit"),
+                            placement: "bottom",
+                            **lecture_mode_switch_data },
+                    "aria-label": t("buttons.edit"),
                     title: t("buttons.edit"),
                     style: "text-decoration: none;" %>
       <% end %>

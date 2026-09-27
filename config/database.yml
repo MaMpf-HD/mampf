@@ -32,7 +32,7 @@ test:
     <<: *default
     adapter: <%= ENV['DATABASE_ADAPTER'] %>
     encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
-    database: <%= ENV['TEST_DATABASE_DATABASE'] %>
+    database: <%= ENV['TEST_DATABASE_DATABASE'] %><%= ENV['TEST_ENV_NUMBER'] %>
     username: <%= ENV['TEST_DATABASE_USERNAME'] %>
     password: <%= ENV['TEST_DATABASE_PASSWORD'] %>
     host: <%= ENV['TEST_DATABASE_HOST'] %>
@@ -41,7 +41,7 @@ test:
     <<: *default
     adapter: <%= ENV['DATABASE_ADAPTER'] %>
     encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
-    database: <%= ENV['TEST_DATABASE_INTERACTIONS'] %>
+    database: <%= ENV['TEST_DATABASE_INTERACTIONS'] %><%= ENV['TEST_ENV_NUMBER'] %>
     username: <%= ENV['TEST_DATABASE_USERNAME'] %>
     password: <%= ENV['TEST_DATABASE_PASSWORD'] %>
     host: <%= ENV['TEST_DATABASE_HOST'] %>

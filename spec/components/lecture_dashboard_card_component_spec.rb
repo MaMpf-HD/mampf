@@ -123,7 +123,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
       link = render_card.at_css("a.dashboard-card__note-link")
 
-      expect(link["href"]).to eq("/lectures/#{lecture.id}/home")
+      expect(link["href"]).to eq("/lectures/#{lecture.id}")
       expect(link.text).to include(I18n.t("main.start.registration_open"))
     end
 

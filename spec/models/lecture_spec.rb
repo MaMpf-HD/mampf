@@ -162,6 +162,48 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe ".preload_editors" do
+    let(:user) { create(:confirmed_user) }
+
+    it "lets can_edit? answer for all lectures without further queries" do
+      edited = create(:lecture)
+      edited.editors << user
+      course_edited = create(:lecture)
+      course_edited.course.editors << user
+      lectures = Lecture.where(id: [edited.id, course_edited.id, create(:lecture).id]).to_a
+
+      described_class.preload_editors(lectures)
+      queries = 0
+      counter = ->(*, payload) { queries += 1 unless payload[:name] == "SCHEMA" }
+      editable = ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
+        lectures.select { |lecture| user.can_edit?(lecture) }
+      end
+
+      expect(editable).to contain_exactly(edited, course_edited)
+      expect(queries).to eq(0)
+    end
+  end
+
+  describe "#script?" do
+    let(:lecture) { create(:lecture) }
+    let(:user) { create(:confirmed_user) }
+
+    def import_medium(sort)
+      medium = create(:lecture_medium, :released, sort: sort)
+      create(:import, teachable: lecture, medium: medium)
+    end
+
+    it "is true for an imported script" do
+      import_medium("Script")
+      expect(lecture.script?(user)).to be(true)
+    end
+
+    it "is false for imported exercises only" do
+      import_medium("Exercise")
+      expect(lecture.script?(user)).to be(false)
+    end
+  end
+
   describe "#stale?" do
     context "when there is no active term" do
       it "returns false" do

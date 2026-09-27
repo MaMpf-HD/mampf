@@ -13,6 +13,10 @@ export class LecturePage {
     await this.page.goto(this.link);
   }
 
+  async gotoOutline() {
+    await this.page.goto(`${this.link}/outline`);
+  }
+
   async gotoEdit() {
     await this.page.goto(`${this.link}/edit`);
   }
@@ -25,7 +29,7 @@ export class LecturePage {
    * Unlocks a password-protected lecture from its home page.
    */
   async unlock(passphrase?: string) {
-    await this.page.goto(`${this.link}/home`);
+    await this.page.goto(this.link);
     if (passphrase !== undefined) {
       await this.page.getByLabel("Passphrase").fill(passphrase);
     }

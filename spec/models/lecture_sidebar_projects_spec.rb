@@ -37,4 +37,35 @@ RSpec.describe(Lecture) do
     expect(lecture.worked_example?(student)).to be(true)
     expect(lecture.worked_example?(create(:confirmed_user))).to be(false)
   end
+
+  describe "#page_available?" do
+    it "follows the lecture's media of the project" do
+      expect(lecture.page_available?("worked_example", student)).to be(false)
+
+      release(create(:lecture_medium, teachable: lecture), "all")
+
+      expect(lecture.page_available?("worked_example", student)).to be(true)
+    end
+
+    it "needs announcements for the announcements page" do
+      expect(lecture.page_available?("announcements", student)).to be(false)
+
+      create(:announcement, lecture: lecture)
+
+      expect(lecture.page_available?("announcements", student)).to be(true)
+    end
+
+    it "needs the organizational flag for the organizational page" do
+      expect(lecture.page_available?("organizational", student)).to be(false)
+
+      lecture.update!(organizational: true)
+
+      expect(lecture.page_available?("organizational", student)).to be(true)
+    end
+
+    it "treats pages without a condition as available" do
+      expect(lecture.page_available?("outline", student)).to be(true)
+      expect(lecture.page_available?(nil, student)).to be(true)
+    end
+  end
 end

@@ -33,7 +33,7 @@ test.describe("registering for an exam", () => {
     await expect(page.pane.getByRole("button", { name: "End Registration" }))
       .toBeVisible();
 
-    await student.page.goto(`/lectures/${lecture.id}/home`);
+    await student.page.goto(`/lectures/${lecture.id}`);
     await student.page.getByRole("heading", { name: "Main Exam" }).click();
 
     const option = student.page.getByTestId("registration-option");
@@ -61,7 +61,7 @@ test.describe("registering for an exam", () => {
       location: "Lecture Hall 1",
     });
 
-    await student.page.goto(`/lectures/${lecture.id}/home`);
+    await student.page.goto(`/lectures/${lecture.id}`);
     await expect(student.page.getByTestId("participation-row")).toHaveCount(0);
 
     // a seat is what an entry in the exam's roster means
@@ -70,7 +70,7 @@ test.describe("registering for an exam", () => {
       user_id: student.user.id,
     });
 
-    await student.page.goto(`/lectures/${lecture.id}/home`);
+    await student.page.goto(`/lectures/${lecture.id}`);
     const held = student.page.getByTestId("participation-row").filter({ hasText: "Main Exam" });
     await expect(held.getByText("Exam · Main Exam")).toBeVisible();
     await expect(held.getByText("On the exam list")).toBeVisible();
