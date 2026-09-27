@@ -26,10 +26,6 @@
 }
 
 .dashboard-term-select__notice {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.25rem 0.4rem;
     margin: 0;
     font-size: 0.8rem;
     color: var(--bs-secondary-color);
@@ -44,11 +40,9 @@
     font-weight: 600;
     white-space: nowrap;
     color: $mampf-blue;
-    text-decoration: none;
 
     &:hover {
         color: $mampf-blue-focus;
-        text-decoration: underline;
     }
 
     .bi-chevron-down {
