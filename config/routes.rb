@@ -136,7 +136,9 @@ Rails.application.routes.draw do
           patch :apply
         end
       end
+      resource :results, only: [:update, :destroy]
     end
+    resource :talk_results, only: [:update, :destroy], controller: "results"
   end
 
   # chapters routes

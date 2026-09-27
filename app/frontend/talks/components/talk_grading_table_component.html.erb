@@ -1,5 +1,6 @@
 <%= helpers.turbo_frame_tag "grading-table" do %>
   <% if gradable_talks.any? %>
+    <%= render ResultsReleaseComponent.new(seminar: @seminar) %>
     <div data-controller="status-filter">
       <div class="my-3">
         <%= render summary %>

@@ -68,6 +68,35 @@ module Assessment
       results_published_at.present?
     end
 
+    # Shows the participants their results and, the first time, mails those
+    # who have one. Publishing again after taking them back is a correction,
+    # which a second mail would announce as news.
+    def publish_results!
+      first_time = results_notified_at.nil?
+      now = Time.current
+      update!(results_published_at: now, results_notified_at: results_notified_at || now)
+      return unless first_time
+
+      assessment_participations.with_result.includes(:user).find_each do |participation|
+        ResultsMailer.with(recipient: participation.user, assessment: self)
+                     .published_email.deliver_later
+      end
+    end
+
+    def withdraw_results!
+      update!(results_published_at: nil)
+    end
+
+    # A seminar's talks are published together from one table, and a talk
+    # only once each of its speakers has a result.
+    def self.complete_talk_gradebooks(seminar)
+      where(assessable: seminar.talks).includes(:assessable, :assessment_participations)
+                                      .select do |assessment|
+        rows = assessment.assessment_participations
+        rows.any? && rows.none?(&:pending?)
+      end
+    end
+
     def short_title
       parts = title.split(" ", 2)
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)

@@ -365,6 +365,39 @@ en:
       user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'No talks that can be graded.'
+    results_release:
+      exam_published: "Results published %{time}"
+      exam_published_detail: "Students see their grade and points on the lecture home page. Changes you make now show there at once."
+      exam_unpublished: "Results not published"
+      nobody_has_result: "Nobody has a result yet."
+      talks_status: "Talk results: %{published} published, %{ready} ready to publish"
+      talks_published: "Published: %{titles}"
+      talks_ready: "Ready: %{titles}"
+      no_talk_complete: "No talk has a grade for every speaker yet."
+      publish: "Publish results"
+      publish_talks:
+        one: "Publish 1 talk"
+        other: "Publish %{count} talks"
+      withdraw: "Take back"
+      publish_confirm:
+        one: "From now on, 1 person sees their result on the lecture home page."
+        other: "From now on, %{count} people see their result on the lecture home page."
+      mail: "They get an email saying so, without grade or points."
+      no_mail: "Nobody is emailed again, as they were told the first time."
+      withdraw_confirm: "Students will no longer see these results. Some may have seen them already."
+      flash:
+        published: "Results published."
+        withdrawn: "Results taken back."
+    results_mailer:
+      subject: "Results of %{title} in %{lecture}"
+      body_html: |
+        <p>Hello %{name},</p>
+        <p>The results of <strong>%{title}</strong> in <strong>%{lecture}</strong> are now available in MaMpf.</p>
+      body: |
+        Hello %{name},
+
+        The results of "%{title}" in "%{lecture}" are now available in MaMpf.
+      link: "Go to the lecture"
     grading_exam:
       no_candidates: 'Nobody is on the exam roster yet.'
       mark_absent: 'Record as absent'

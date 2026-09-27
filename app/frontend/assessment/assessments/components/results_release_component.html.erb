@@ -1,0 +1,32 @@
+<div
+  id="<%= ResultsReleaseComponent::ID %>"
+  class="
+    alert alert-light border d-flex flex-wrap align-items-center
+    justify-content-between gap-2
+  "
+  data-testid="results-release"
+>
+  <div>
+    <div class="fw-semibold"><%= status %></div>
+
+    <% if (text = detail) %>
+      <div class="small text-muted"><%= text %></div>
+    <% end %>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <% if published.any? %>
+      <%= button_to withdraw_label, path,
+                    method: :delete,
+                    class: "btn btn-sm btn-outline-secondary",
+                    form: { data: { turbo_confirm: withdraw_confirm } } %>
+    <% end %>
+
+    <% if to_publish.any? %>
+      <%= button_to publish_label, path,
+                    method: :patch,
+                    class: "btn btn-sm btn-primary",
+                    form: { data: { turbo_confirm: publish_confirm } } %>
+    <% end %>
+  </div>
+</div>

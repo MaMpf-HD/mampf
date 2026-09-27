@@ -1,0 +1,5 @@
+<%= t("assessment.results_mailer.body_html", name: @name, title: @assessment.title,
+                                              lecture: @lecture.title) %>
+
+<p><%= link_to t("assessment.results_mailer.link"), lecture_url(@lecture) %></p>
+<%= t("roster.mailer.end_mail_html") %>

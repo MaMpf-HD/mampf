@@ -25,6 +25,8 @@ module Assessment
     }
 
     scope :submitted, -> { where.not(submitted_at: nil) }
+    # The rows a published result shows something for: marked, absent or exempt.
+    scope :with_result, -> { where.not(status: :pending) }
     # The rows Assessment#grading_data_for? calls graded, as one query.
     scope :with_grading_data, lambda {
       where.not(status: :pending)

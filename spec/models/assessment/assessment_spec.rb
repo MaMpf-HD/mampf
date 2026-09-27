@@ -136,6 +136,73 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
+  describe "#publish_results!" do
+    let(:exam) { FactoryBot.create(:exam) }
+    let(:assessment) { exam.assessment }
+
+    def row(status)
+      FactoryBot.create(:assessment_participation, assessment: assessment, status: status)
+    end
+
+    before do
+      row(:reviewed)
+      row(:absent)
+      row(:pending)
+    end
+
+    it "mails everyone who has a result, and nobody still waiting for one" do
+      expect { assessment.publish_results! }
+        .to have_enqueued_mail(Assessment::ResultsMailer, :published_email).twice
+
+      expect(assessment.reload.results_published?).to be(true)
+    end
+
+    # Taking the results back is mostly a correction; the second publication
+    # would announce it as news.
+    it "mails nobody when the results are published again" do
+      assessment.publish_results!
+      assessment.withdraw_results!
+
+      expect { assessment.publish_results! }
+        .not_to have_enqueued_mail(Assessment::ResultsMailer, :published_email)
+      expect(assessment.reload.results_published?).to be(true)
+    end
+  end
+
+  describe "#withdraw_results!" do
+    it "hides the results and remembers that the participants were told" do
+      assessment = FactoryBot.create(:exam).assessment
+      assessment.publish_results!
+
+      assessment.withdraw_results!
+
+      expect(assessment.reload).to have_attributes(results_published_at: nil,
+                                                   results_notified_at: be_present)
+    end
+  end
+
+  describe ".complete_talk_gradebooks" do
+    let(:seminar) { FactoryBot.create(:lecture, sort: "seminar") }
+
+    def talk_with(*statuses)
+      talk = FactoryBot.create(:talk, lecture: seminar)
+      statuses.each do |status|
+        FactoryBot.create(:assessment_participation, assessment: talk.assessment,
+                                                     status: status)
+      end
+      talk
+    end
+
+    it "lists the talks whose speakers all have a result" do
+      graded = talk_with(:reviewed, :reviewed)
+      talk_with(:reviewed, :pending)
+      talk_with
+
+      expect(described_class.complete_talk_gradebooks(seminar).map(&:assessable))
+        .to eq([graded])
+    end
+  end
+
   describe "destroying" do
     # The active-only `has_one` cannot clean up superseded schemes, and the
     # foreign key refuses the delete without them.

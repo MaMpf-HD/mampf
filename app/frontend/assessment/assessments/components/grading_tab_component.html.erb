@@ -1,4 +1,6 @@
 <div>
+  <%= render ResultsReleaseComponent.new(exam: assessment.assessable) %>
+
   <% if full_width? %>
     <%= render scheme_component %>
   <% else %>

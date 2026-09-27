@@ -42,9 +42,11 @@ module Assessment
         row = ParticipationRowComponent.new(assessment: @assessment, grading_scope: @lecture,
                                             participation: @participation, table_option: :grading)
         summary = TalkGradingTableComponent.new(seminar: @lecture).summary
+        release = ResultsReleaseComponent.new(seminar: @lecture)
         [turbo_stream.replace("grading-participation-row-#{@participation.id}",
                               html: render_to_string(row)),
-         turbo_stream.replace("marking-summary", html: render_to_string(summary))]
+         turbo_stream.replace("marking-summary", html: render_to_string(summary)),
+         turbo_stream.replace(ResultsReleaseComponent::ID, html: render_to_string(release))]
       end
 
       def set_resources
