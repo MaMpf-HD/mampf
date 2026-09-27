@@ -348,8 +348,11 @@ de:
       more_actions: 'Weitere Aktionen'
       summary:
         handed_in:
-          one: '1 Abgabe'
-          other: '%{count} Abgaben'
+          one: '1 abgegeben'
+          other: '%{count} abgegeben'
+        teams:
+          one: '(1 Team)'
+          other: '(%{count} Teams)'
         reviewed: '%{count} bewertet'
         pending_grading: '%{count} noch nicht bewertet'
         not_submitted: '%{count} nicht abgegeben'
