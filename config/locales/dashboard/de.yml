@@ -5,7 +5,7 @@ de:
       next_term_notice:
         text:
           one: "Die erste Veranstaltung fürs %{term} ist online."
-          other: "Schon %{count} Veranstaltungen fürs %{term} sind online."
+          other: "%{count} Veranstaltungen fürs %{term} sind online."
         link: "Jetzt ansehen"
         link_label: "Jetzt ansehen: Veranstaltungen fürs %{term}"
       current_term_link: "Zum aktuellen Semester (%{term})"

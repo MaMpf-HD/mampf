@@ -5,7 +5,7 @@ en:
       next_term_notice:
         text:
           one: "The first lecture for %{term} is online."
-          other: "%{count} lectures for %{term} are already online."
+          other: "%{count} lectures for %{term} are online."
         link: "Take a look"
         link_label: "Take a look at the lectures for %{term}"
       current_term_link: "Jump to current semester (%{term})"
