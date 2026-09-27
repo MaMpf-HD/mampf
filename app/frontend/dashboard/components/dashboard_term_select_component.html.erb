@@ -28,6 +28,8 @@
 
       <%= link_to root_path(term: next_term.dashboard_param, anchor: "lecture-search"),
                   class: "dashboard-term-select__link",
+                  aria: { label: t("dashboard.term_select.next_term_notice.link_label",
+                                   term: next_term.to_label_short) },
                   data: next_term_link_data do %>
         <%= t("dashboard.term_select.next_term_notice.link") %>
 
