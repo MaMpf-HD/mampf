@@ -17,7 +17,6 @@ export async function createLecture(
 ): Promise<FactoryBotObject> {
   return factory.create("lecture", ["released_for_all"], {
     teacher_id: teacherId,
-    locale: "en",
   });
 }
 
@@ -29,7 +28,6 @@ export async function createEligibilityLecture(
 ): Promise<FactoryBotObject> {
   return factory.create("lecture", ["released_for_all"], {
     teacher_id: teacherId,
-    locale: "en",
     uses_exam_eligibility: true,
     ...attributes,
   });
@@ -43,7 +41,6 @@ export async function createAssessedAssignment(
 ): Promise<AssessedAssignment> {
   const lecture = await factory.create("lecture", ["released_for_all"], {
     teacher_id: teacherId,
-    locale: "en",
   });
   const assignment = await factory.create("assignment", traits, {
     lecture_id: lecture.id,
@@ -65,7 +62,6 @@ export async function createLegacyAssignment(
 ): Promise<{ lecture: FactoryBotObject; assignment: FactoryBotObject }> {
   const lecture = await factory.create("lecture", ["released_for_all"], {
     teacher_id: teacherId,
-    locale: "en",
   });
   const assignment = await factory.create("assignment", ["without_assessment"], {
     lecture_id: lecture.id,

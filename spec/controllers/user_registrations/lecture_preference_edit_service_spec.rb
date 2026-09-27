@@ -115,6 +115,23 @@ RSpec.describe(UserRegistrations::LecturePreferenceEditService, type: :service) 
       )
     end
 
+    it "accepts preferences for cohorts while the user cannot leave their tutorial" do
+      cohort_campaign = create(:registration_campaign, :preference_based, :open,
+                               campaignable: campaign.campaignable, for_cohorts: true)
+      add_only_tutorial = create(:tutorial,
+                                 lecture: campaign.campaignable,
+                                 skip_campaigns: true,
+                                 self_materialization_mode: :add_only)
+      add_only_tutorial.add_user_to_roster!(user)
+      prefs = cohort_campaign.registration_items.first(3).each_with_index.map do |item, index|
+        UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item.id, index + 1)
+      end
+
+      result = described_class.new(cohort_campaign, user).update!(prefs)
+
+      expect(result.success?).to be(true)
+    end
+
     it "rejects more ranks than available options" do
       extra = UserRegistrations::PreferencesHandler::SimpleItemPreference.new(item3.id, 4)
       service = described_class.new(campaign, user)

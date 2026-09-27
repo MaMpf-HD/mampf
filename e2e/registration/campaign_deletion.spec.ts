@@ -19,7 +19,6 @@ test.describe("getting out of a registration process", () => {
   ): Promise<Setup> {
     const lecture = await factory.create("lecture", [], {
       teacher_id: teacherId,
-      locale: "en",
     });
     const campaign = await factory.create(
       "registration_campaign", ["first_come_first_served"],
@@ -220,7 +219,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const talks = [];
       for (const title of ["First Talk", "Second Talk"]) {
@@ -291,7 +289,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const talk = await factory.create("talk", [], {
         lecture_id: lecture.id, title: "Nobody's Talk",
@@ -323,8 +320,8 @@ test.describe("getting out of a registration process", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("link", { name: "Delete", exact: true }).first().click();
 
-      // a teacher is no admin, so the administration path sends them to the start
-      await expect(page).toHaveURL(/:\d+\/$/);
+      // a teacher is no admin, so they are sent to the start page
+      await expect(page).toHaveURL(/\/main\/start$/);
       expect(confirmation).toContain("1 registration process with 1 registration");
     });
 
@@ -334,7 +331,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const campaign = await factory.create(
         "registration_campaign", ["first_come_first_served"],

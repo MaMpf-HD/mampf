@@ -12,11 +12,6 @@ RSpec.describe(Lecture, type: :model) do
   describe "lecture home page content" do
     let(:lecture) { create(:lecture) }
 
-    def pdf_upload(content = "%PDF-1.4 demo", name = "program.pdf")
-      Rack::Test::UploadedFile.new(StringIO.new(content), "application/pdf",
-                                   original_filename: name)
-    end
-
     describe "#home_content?" do
       it "is false when neither intro nor attachment is set" do
         expect(lecture.home_content?).to be(false)
@@ -28,7 +23,7 @@ RSpec.describe(Lecture, type: :model) do
       end
 
       it "is true with an attachment" do
-        lecture.home_attachment = pdf_upload
+        attach_home_pdf(lecture)
         expect(lecture.home_content?).to be(true)
       end
 
@@ -52,19 +47,19 @@ RSpec.describe(Lecture, type: :model) do
       end
 
       it "returns the uploaded filename" do
-        lecture.update!(home_attachment: pdf_upload("%PDF-1.4 demo", "seminar.pdf"))
-        expect(lecture.home_attachment_filename).to eq("seminar.pdf")
+        attach_home_pdf(lecture, "%PDF-1.4 demo", "seminar.pdf").save!
+        expect(lecture.reload.home_attachment_filename).to eq("seminar.pdf")
       end
     end
 
     describe "home_attachment validation" do
       it "accepts a pdf" do
-        lecture.home_attachment = pdf_upload
+        attach_home_pdf(lecture)
         expect(lecture).to be_valid
       end
 
       it "rejects a non-pdf (content-sniffed, not by extension)" do
-        lecture.home_attachment = pdf_upload("just some text", "program.pdf")
+        attach_home_pdf(lecture, "just some text", "program.pdf")
         expect(lecture).to be_invalid
       end
     end
@@ -164,6 +159,48 @@ RSpec.describe(Lecture, type: :model) do
     it "lists the teacher and the editors of lecture and module" do
       expect(lecture.graders_with_inheritance)
         .to contain_exactly(lecture.teacher, lecture_editor, module_editor)
+    end
+  end
+
+  describe ".preload_editors" do
+    let(:user) { create(:confirmed_user) }
+
+    it "lets can_edit? answer for all lectures without further queries" do
+      edited = create(:lecture)
+      edited.editors << user
+      course_edited = create(:lecture)
+      course_edited.course.editors << user
+      lectures = Lecture.where(id: [edited.id, course_edited.id, create(:lecture).id]).to_a
+
+      described_class.preload_editors(lectures)
+      queries = 0
+      counter = ->(*, payload) { queries += 1 unless payload[:name] == "SCHEMA" }
+      editable = ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
+        lectures.select { |lecture| user.can_edit?(lecture) }
+      end
+
+      expect(editable).to contain_exactly(edited, course_edited)
+      expect(queries).to eq(0)
+    end
+  end
+
+  describe "#script?" do
+    let(:lecture) { create(:lecture) }
+    let(:user) { create(:confirmed_user) }
+
+    def import_medium(sort)
+      medium = create(:lecture_medium, :released, sort: sort)
+      create(:import, teachable: lecture, medium: medium)
+    end
+
+    it "is true for an imported script" do
+      import_medium("Script")
+      expect(lecture.script?(user)).to be(true)
+    end
+
+    it "is false for imported exercises only" do
+      import_medium("Exercise")
+      expect(lecture.script?(user)).to be(false)
     end
   end
 
@@ -381,22 +418,22 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
 
-    it "subscribes roster members to the lecture" do
+    it "bookmarks the lecture for roster members" do
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(3)
+      end.to change(LectureBookmark, :count).by(3)
 
       expect(lecture.users).to include(*users)
     end
 
-    it "keeps existing subscriptions intact" do
-      create(:lecture_user_join, user: users.first, lecture: lecture)
+    it "keeps existing bookmarks intact" do
+      create(:lecture_bookmark, user: users.first, lecture: lecture)
 
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(2) # Only 2 new ones
+      end.to change(LectureBookmark, :count).by(2) # Only 2 new ones
 
-      expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
+      expect(LectureBookmark.where(lecture: lecture, user: users.first).count)
         .to eq(1)
     end
 
@@ -641,6 +678,40 @@ RSpec.describe(Lecture, type: :model) do
       policy.registration_campaign.update!(status: :closed)
 
       expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+    end
+  end
+
+  describe "#open_exam_registration_for" do
+    let(:student) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+    it "finds an exam campaign that is still open" do
+      exam.registration_campaign.update!(status: :open)
+
+      expect(lecture.open_exam_registration_for(student))
+        .to eq(exam.registration_campaign)
+    end
+
+    it "ignores a campaign that has not been opened yet" do
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign for anything but an exam" do
+      create(:registration_campaign, :open, campaignable: lecture)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign the student has already answered" do
+      campaign = exam.registration_campaign
+      campaign.update!(status: :open)
+      create(:registration_user_registration,
+             user: student,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
     end
   end
 end

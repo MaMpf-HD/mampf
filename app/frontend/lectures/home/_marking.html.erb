@@ -1,0 +1,31 @@
+<%# locals: (lecture:, backlog:, per_tutorial:) %>
+<section class="lecture-home-focus" aria-labelledby="marking-heading"
+         data-testid="lecture-home-marking">
+  <h2 class="lecture-home-kicker" id="marking-heading"><%= t("lecture_home.marking.title") %></h2>
+  <div class="lecture-home-rows">
+    <% entries = per_tutorial ? backlog.entries.map { |e| [e.assignment, [e]] } :
+                                backlog.entries.group_by(&:assignment) %>
+    <% entries.each do |assignment, group| %>
+      <% tutorial = per_tutorial ? group.first.tutorial : nil %>
+      <div class="lecture-home-row">
+        <div class="lecture-home-row-content">
+          <div class="lecture-home-row-title">
+            <span><%= [assignment.title, tutorial&.title].compact.join(" · ") %></span>
+          </div>
+          <div class="lecture-home-row-line">
+            <%= [t("lecture_home.marking.waiting", count: group.sum(&:people)),
+                 (per_tutorial ? nil :
+                   group.filter_map { |e| e.tutorial&.title }.join(", ").presence)]
+                  .compact.join(" · ") %>
+          </div>
+        </div>
+        <div class="lecture-home-row-actions">
+          <%= link_to t("lecture_home.marking.open"),
+                      lecture_tutorials_path(lecture, assignment: assignment.id,
+                                                      tutorial: tutorial&.id),
+                      class: "btn btn-sm btn-primary", data: { turbo_frame: "main" } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>

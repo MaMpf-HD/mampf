@@ -92,6 +92,12 @@ class Exam < ApplicationRecord
     end
   end
 
+  # Admission is decided for the lecture's members only, so nobody else can
+  # register; a repeater is put on the roster through a cohort.
+  def registrable_by?(user)
+    lecture.members.exists?(user.id)
+  end
+
   def participant_removable?(user)
     participants_with_grading_data.exclude?(user.id)
   end

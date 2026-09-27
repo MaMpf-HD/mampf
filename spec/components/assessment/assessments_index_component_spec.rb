@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe(AssessmentsIndexComponent, type: :component) do
+  around { |example| I18n.with_locale(:en) { example.run } }
+
   let(:teacher) { create(:confirmed_user) }
   context "with a lecture" do
     let(:lecture) { create(:lecture, teacher: teacher) }

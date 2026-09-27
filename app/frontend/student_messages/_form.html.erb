@@ -128,8 +128,18 @@
   <div class="mb-3">
     <%= f.label :attachment, t("student_message.attachment"), class: "form-label" %>
 
-    <%= f.file_field :attachment, class: "form-control", accept: "application/pdf",
-                                  data: { testid: "student-mail-attachment" } %>
+    <%= f.file_field :attachment,
+                     class: "form-control",
+                     accept: "application/pdf",
+                     data: {
+                       testid: "student-mail-attachment",
+                       controller: "file-size",
+                       action: "change->file-size#check",
+                       file_size_max_value: StudentMessageUploader::MAX_SIZE,
+                       file_size_message_value:
+                         t("student_message.attachment_too_large",
+                           max: number_to_human_size(StudentMessageUploader::MAX_SIZE))
+                     } %>
 
     <div class="form-text"><%= t("student_message.attachment_hint") %></div>
   </div>

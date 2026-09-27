@@ -156,7 +156,7 @@ en:
         unpublished_medium: 'This medium is unpublished.'
         free_medium: 'This medium is free.'
         user_medium: 'This medium is only available for MaMpf users.'
-        subscriber_medium: 'This medium is only available for subscribers.'
+        subscriber_medium: 'This medium is only available for participants of the event series.'
     teachables:
       teachables: Lecture Search
       courses: Course Search
@@ -429,6 +429,8 @@ en:
         Optional. PDF only, up to 10 MB — e.g. a seminar or course program.
       home_attachment_remove: 'Remove the attached PDF'
       home_attachment_must_be_pdf: 'The attachment must be a PDF.'
+      home_attachment_too_large: 'The file is larger than %{max}.'
+      home_save_failed: 'Saving did not work. Please try again.'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'
       no_terms_yet: 'You have to create a term first.'
@@ -474,6 +476,9 @@ en:
       no_active_voucher: >
         There is no active %{role} for this event series.
       info:
+        language: >
+          The language this event series is taught in. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         home_intro: >
           Shown at the top of the lecture home page, above the registration.
           Use it to welcome students, explain the registration process, and
@@ -754,6 +759,9 @@ en:
         No image has been uploaded yet. Therefore, the generic image will be
         used for event cards.
       info:
+        language: >
+          The language the course is taught in. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         title: >
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
@@ -1249,17 +1257,20 @@ en:
           medium. Non-registered users do not have access to the medium.
           </li>
           <li>
-          only subscribers: Registered users of MaMpf who have subscribed to
-          the associated event series/course can see the medium. Other generic
-          MaMpf users cannot see the medium.
+          only participants: Users who have bookmarked the associated event
+          series, are on one of its lists (tutorials, talks, exams) or have a
+          registration for it running can see the medium; for a course
+          medium, the participants of one of the course's event series.
+          Other MaMpf users cannot see the medium.
           </li>
           <li>
           locked: generic MaMpf users cannot see the medium.
           </li>
           </ul>
         language: >
-          Here you can select the language for this medium. By default,
-          it is the language of the associated event series/course.
+          The language of this medium; by default that of the associated
+          event series/course. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         video: >
           The video should be in mp4 format. The recommended horizontal
           resolution is 1080 Pixel for future compatibility.
@@ -1844,8 +1855,8 @@ en:
       publish_vertices: >
         Publish all questions and remarks associated to the quiz
       restricted_vertex: >
-        This %{sort} is only accesible for subscribers of %{teachable}.
-        Users without subscription caanot play the quiz.
+        This %{sort} is only accessible for participants of %{teachable}.
+        Other users cannot play the quiz.
       no_editor_rights: >
         You do not have editor rights this %{sort}.
       dependent_quizzable: >
@@ -1885,6 +1896,10 @@ en:
       name: 'Title'
       new: 'Create new program'
       no_courses: 'There are no courses in this program yet.'
+      no_degree: 'no degree'
+      degree_hint: >-
+        Without a degree, the program only classifies courses and students cannot
+        choose it.
     division:
       edit: 'Edit Division'
       name: 'Title'
@@ -1958,27 +1973,10 @@ en:
     consent: >
       You consented to our privacy policy.
     locale: 'Language'
-    subscribe_lecture: 'Subscribe lecture'
+    subscribe_lecture: 'Bookmark event series'
     passphrase_required: >
-      You want to subscribe the event series %{lecture_title}. It is protected
+      You want to bookmark the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
-    my_term_html: My term &ndash; %{term}
-    my_next_term_html: My next term &ndash; %{term}
-    inactive_lectures: Further subscribed event series
-    active_nonsubscribed_lectures_html: >
-      Current event series &ndash; %{term}
-    no_current_stuff: >
-      You have not yet subscribed any event series of the current term.
-    no_inactive_stuff: >
-      You have not yet subscribed any event series outside of the current term.
-    no_next_term_stuff: >
-      You have not yet subscribed any event series of the coming term.
-    next_term_registrations: >
-      Applied for — places are allocated after the registration deadline.
-    next_term_seats: >
-      You are on a list for this lecture, but have not subscribed to it.
-    no_current_at_all: >
-      In the current term, no event series have yet been published.
     other_preferences: >
       Other Preferences
     changes_made: >
@@ -2002,6 +2000,7 @@ en:
     email_for_submission_decision: >
       acceptance or rejection of a late submission
     delete_account: Delete Account
+    password: Password
     stored_submissions: >
       There are %{submissions} submissions to assignments from you in the
       system.
@@ -2032,7 +2031,6 @@ en:
     miscellaneous: Miscellaneous
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
-    my_talks: My talks
     media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
@@ -2691,7 +2689,7 @@ en:
       # to a deadline, where the day of the week is what people plan by.
       file_time: "%Y-%m-%d, %H:%M"
       concise: '%Y-%m-%d'
-      student_registration: '%B %-d, %Hh%M'
+      student_registration: '%B %-d, %Y, %H:%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
   thyme:
@@ -2743,7 +2741,6 @@ en:
     unknown: >
       You filled out the form correctly, but unfortunately something went wrong
       on the server. Please try again later and contact us if the problem persists.
-    not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
     thyme:
@@ -2928,6 +2925,7 @@ en:
         lead: "New since you last looked:"
         marker: New since you last looked.
         prefix: "New —"
+        indicator: "Sheets with a new correction or new points"
         correction_html: "%{sheet} (correction)"
         points_html: "%{sheet} (points)"
         both_html: "%{sheet} (correction and points)"
@@ -3011,8 +3009,8 @@ en:
       You have already been marked for this sheet on your own; ask your tutor
       if you should be on the team.
     already_in: You are already a partner for this assignment.
-    lecture_not_subscribed: >
-      You are not subscribed to the corresponding event series.
+    lecture_not_unlocked: >
+      You do not have access to the corresponding event series.
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).
@@ -3052,6 +3050,10 @@ en:
     upload_failure_scan_required: >
       The uploaded file is missing a required malware scan.
       Please upload the file again.
+    upload_failure_no_tutorial: >
+      You are not in a tutorial for this event series, so you cannot upload a
+      hand-in. Please contact your teacher if you think this happened by
+      mistake.
     upload_failure_unauthorized: >
       You are not allowed to upload this file here.
     upload_failure_wrong_target: >
@@ -3381,8 +3383,6 @@ en:
       This email is to check if your email account still exists. Since this is the case, no changes
       will be made to your account. You can therefore ignore this email.
       Hash:%{hash}
-    data_request_mail_body: >
-      %{mail} with user-id: %{id} has requested his data.
     data_provide_mail_subject: Data request
     data_provide_mail_body: >
       Hello, %{name}!<br>
@@ -3495,6 +3495,8 @@ en:
     email: 'Email'
     preferences: 'Preferences'
     language: 'Language'
+    teaching_language: 'Language of instruction'
+    material_language: 'Language of the material'
     date: 'Date'
     location: 'Location'
     not_specified: 'Not specified'
@@ -3680,6 +3682,7 @@ en:
       <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
+    voucher_code: Voucher code
     speaker: Speaker
     speakers: Speakers
     mode: "Allocation Mode"
@@ -3714,7 +3717,7 @@ en:
     locked: 'locked'
     all: 'free'
     users: 'only registered MaMpf users'
-    subscribers: 'only subscribers'
+    subscribers: 'only participants'
     referenced_from: 'referenced from'
     irrelevant: 'irrelevant'
   buttons:
@@ -3939,11 +3942,8 @@ en:
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
-    no_tutor_in_this_lecture: You are not a tutor in this lecture.
     no_editor_or_teacher: >
       In this event series you are neither teacher nor editor.
-    no_student_status_in_lecture: >
-      In this event series you are allowed to submit.
     no_tutorials_in_lecture: >
       In this event series there are no tutorials, hence no submissions can be
       made.

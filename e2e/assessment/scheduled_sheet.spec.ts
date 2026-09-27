@@ -6,7 +6,7 @@ import { pickDate } from "../page-objects/datepicker";
 test("shows a sheet scheduled with a medium before it exists",
   async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      teacher_id: user.id, locale: "en",
+      teacher_id: user.id,
     });
     await factory.create("assignment", [], { lecture_id: lecture.id, title: "Sheet 1" });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"], {

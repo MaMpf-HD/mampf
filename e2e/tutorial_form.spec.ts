@@ -2,7 +2,7 @@ import { expect, test } from "./_support/fixtures";
 
 test("asks before a member of the group becomes its tutor",
   async ({ factory, student, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id, title: "Mo 10",
     });

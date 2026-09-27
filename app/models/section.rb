@@ -150,13 +150,13 @@ class Section < ApplicationRecord
         .order(:position)
   end
 
-  def visible_items_by_time
-    lessons.order(:date).map(&:visible_items).flatten
+  def visible_items_by_time(user)
+    lessons.order(:date).map { |lesson| lesson.visible_items(user) }.flatten
            .select { |i| i.section == self }
   end
 
-  def visible_items
-    return visible_items_by_time if lecture.content_mode == "video"
+  def visible_items(user)
+    return visible_items_by_time(user) if lecture.content_mode == "video"
 
     script_items_by_position
   end

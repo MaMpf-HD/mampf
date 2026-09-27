@@ -1,0 +1,31 @@
+<div
+  class="<%= class_names("registration-option", "registration-option--mine": local_assigns[:mine]) %>"
+  role="listitem"
+  data-option-filter-target="row"
+  data-filter-text="<%= [title, type_label, *meta].compact.join(" ").downcase %>"
+  data-keep="<%= local_assigns[:mine] || local_assigns[:keep] ? "true" : "false" %>"
+  data-testid="registration-option"
+>
+  <div class="registration-option-main">
+    <span class="registration-option-type"><%= type_label %></span>
+    <span class="registration-option-title"><%= title %></span>
+
+    <% if meta.any? %>
+      <span class="registration-option-meta">
+        <%= safe_join(meta, " · ") %>
+      </span>
+    <% end %>
+  </div>
+
+  <% if local_assigns[:seats] %>
+    <div class="registration-option-seats"><%= seats %></div>
+  <% end %>
+
+  <div class="registration-option-actions">
+    <%= actions %>
+
+    <% if local_assigns[:reason] %>
+      <span class="registration-option-reason"><%= reason %></span>
+    <% end %>
+  </div>
+</div>

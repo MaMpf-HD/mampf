@@ -17,6 +17,15 @@ module Assessment
                    next_scheduled: next_scheduled)
       end
 
+      # What the lecture home page shows of the hub: the sheet due next, the
+      # sheets with news and the standing. The team-up lists and the scheduled
+      # sheet belong to the hub's card and are left out, with their queries.
+      def summary
+        Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
+                   due: due, latest_marked: nil, invitations: {},
+                   possible_partners: [], invited_users: {}, next_scheduled: nil)
+      end
+
       private
 
         attr_reader :lecture, :user

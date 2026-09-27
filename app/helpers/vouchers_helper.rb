@@ -24,14 +24,12 @@ module VouchersHelper
     link_to(t("profile.redeem_voucher"),
             redeem_voucher_path(params: { secure_hash: voucher.secure_hash }),
             class: "btn btn-primary",
-            data: { cy: "redeem-voucher-btn" },
             method: :post, remote: true)
   end
 
   def cancel_voucher_button
     link_to(t("buttons.cancel"), cancel_voucher_path,
-            class: "btn btn-secondary ms-2", data: { cy: "cancel-voucher-btn" },
-            remote: true)
+            class: "btn btn-secondary ms-2", remote: true)
   end
 
   def claim_select_field(form, user, voucher)
@@ -44,7 +42,6 @@ module VouchersHelper
     form.select(field_name,
                 options_for_select(options),
                 { prompt: prompt },
-                { multiple: true, class: "selectize me-2", style: "width: 20rem",
-                  data: { cy: "claim-select" } })
+                { multiple: true, class: "selectize me-2", style: "width: 20rem" })
   end
 end

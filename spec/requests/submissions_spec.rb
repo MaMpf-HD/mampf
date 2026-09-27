@@ -224,6 +224,10 @@ RSpec.describe("Submissions", type: :request) do
   # before_action gates them all with the rule handing in uses, and the group is
   # walked here on purpose - four gates is how the fifth gets forgotten.
   describe "the actions that take a sheet, asked by somebody not in the lecture" do
+    # An open lecture is every student's; a stranger is somebody its
+    # passphrase keeps out.
+    before { lecture.update!(passphrase: "open sesame") }
+
     let(:submission) do
       create(:submission, assignment: assignment, tutorial: tutorial)
         .tap { |record| record.users << create(:confirmed_user) }
@@ -378,10 +382,18 @@ RSpec.describe("Submissions", type: :request) do
         expect(submission.reload.tutorial).to eq(tutorial)
       end
 
-      # The card offers to replace the file; the form behind that offer must
-      # open. A seat is what a new hand-in needs, not what replacing a file on
-      # one that exists needs.
-      it "still opens the form to replace the file without a seat" do
+      # Replacing the file is an upload, and an upload needs a seat in the
+      # lecture; the form says so rather than failing at the upload.
+      it "does not open the form to replace the file without a seat" do
+        get edit_submission_path(submission)
+
+        expect(response).to redirect_to(:start)
+        expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
+      end
+
+      it "opens it with a seat in another group of the lecture" do
+        create(:tutorial_membership, tutorial: other_tutorial, user: user)
+
         get edit_submission_path(submission)
 
         expect(response).to have_http_status(:success)
@@ -617,20 +629,21 @@ RSpec.describe("Submissions", type: :request) do
         expect(response.body).not_to include(I18n.t("submission.hub.sheet_count", count: 0))
       end
 
-      it "turns a tutor of the lecture away" do
+      it "sends a tutor of the lecture to the tutorials" do
         create(:tutor_tutorial_join, tutorial: tutorial, tutor: user)
 
         get lecture_submissions_path(lecture)
 
-        expect(response).to redirect_to(:root)
+        expect(response).to redirect_to(lecture_tutorials_path(lecture))
       end
 
-      it "turns away somebody who is not in the lecture" do
+      it "sends somebody the passphrase keeps out to the lecture home page" do
         user.lectures.delete(lecture)
+        lecture.update!(passphrase: "open sesame")
 
         get lecture_submissions_path(lecture)
 
-        expect(response).to redirect_to(:root)
+        expect(response).to redirect_to(lecture_home_path(lecture))
       end
 
       # A lecture without groups used to send everybody back to the start page,
@@ -960,6 +973,16 @@ RSpec.describe("Submissions", type: :request) do
         expect(response.body).to include(I18n.t("submission.hub.news.marker"))
       end
 
+      it "counts the sheet beside Submissions in the sidebar" do
+        hand_in(sheet(title: "Homework 8"), correction: true)
+
+        get lecture_submissions_path(lecture)
+
+        badge = Nokogiri::HTML(response.body).at_css("##{SidebarBadgeComponent::SUBMISSIONS_ID}")
+        expect(badge.text).to eq("1")
+        expect(badge["hidden"]).to be_nil
+      end
+
       it "says nothing once every sheet has been looked at" do
         assignment = sheet(title: "Homework 8")
         hand_in(assignment, correction: true)
@@ -986,6 +1009,17 @@ RSpec.describe("Submissions", type: :request) do
           expect(response.body).not_to include(lead)
         end
 
+        it "counts the sidebar number down with it" do
+          post sheet_seen_path, params: { assignment_id: assignment.id },
+                                as: :turbo_stream
+
+          stream = Nokogiri::HTML(response.body)
+                           .at_css("turbo-stream[target='#{SidebarBadgeComponent::SUBMISSIONS_ID}']")
+          badge = stream.at_css("template").inner_html
+          expect(badge).to include('data-count="0"')
+          expect(badge).to include("hidden")
+        end
+
         it "leaves a partner's marker standing" do
           partner = create(:confirmed_user)
           Submission.last.users << partner
@@ -997,6 +1031,7 @@ RSpec.describe("Submissions", type: :request) do
         end
 
         it "turns a stranger away" do
+          lecture.update!(passphrase: "open sesame")
           sign_in create(:confirmed_user)
 
           post sheet_seen_path, params: { assignment_id: assignment.id },
@@ -1026,11 +1061,12 @@ RSpec.describe("Submissions", type: :request) do
 
         it "turns a stranger away" do
           hand_in(sheet(title: "Homework 8"), correction: true)
+          lecture.update!(passphrase: "open sesame")
           sign_in create(:confirmed_user)
 
           post lecture_sheets_seen_path(lecture), as: :turbo_stream
 
-          expect(response).to redirect_to(root_url)
+          expect(response).to redirect_to(lecture_home_path(lecture))
           expect(AssignmentSighting.count).to eq(0)
         end
       end

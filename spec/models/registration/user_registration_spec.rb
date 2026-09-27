@@ -575,6 +575,25 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       expect(registration.rejected_at).to be_nil
       expect(registration.rejection_overridden_at).to be_nil
     end
+
+    it "shows a new rejection again even if an earlier one was dismissed" do
+      registration.dismiss!
+
+      registration.reject!(
+        reason_type: described_class::REJECTION_REASON_TYPE_MANUAL,
+        reason_code: described_class::REJECTION_REASON_CODE_WITHDRAWN_BY_TEACHER
+      )
+
+      expect(registration.reload.dismissed_at).to be_nil
+    end
+
+    it "forgets the dismissal when clearing the rejection decision" do
+      registration.dismiss!
+
+      registration.clear_rejection_decision!
+
+      expect(registration.reload.dismissed_at).to be_nil
+    end
   end
 
   describe "counter cache callbacks" do

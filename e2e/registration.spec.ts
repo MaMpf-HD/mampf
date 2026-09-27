@@ -23,10 +23,33 @@ test("can sign up and confirm the account", async ({ page, request }) => {
 
   await new LoginPage(page).login(email, "correct-horse-battery-staple");
 
+  await expect(page).toHaveURL(/\/personal_data/);
+  await page.getByRole("radio", { name: "Yes" }).check();
+  await page.getByLabel("First name", { exact: true }).fill("Ada");
+  await page.getByLabel("Last name", { exact: true }).fill("Lovelace");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByLabel("I do not have a matriculation number yet").check();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByText("none yet")).toBeVisible();
+  await page.getByLabel(/I have checked these details/).check();
+  await page.getByRole("button", { name: "Save" }).click();
+
   await expect(page).toHaveURL(/\/profile\/edit/);
-  await expect(page.getByRole("alert")).toContainText(
-    "Please take some time to edit your profile settings.",
-  );
+  await expect(page.getByText("Thank you, your details are saved.")).toBeVisible();
+});
+
+test("answers a sign-up with a taken address like any other", async ({ page, factory }) => {
+  const email = `taken_${Date.now()}@example.com`;
+  await factory.create("confirmed_user", [], { email: email });
+
+  const signUpPage = new SignUpPage(page);
+  await signUpPage.goto();
+  await signUpPage.fillForm(email);
+  await signUpPage.submit();
+
+  await expect(page.getByText("activate your account")).toBeVisible();
+  await expect(page.getByText("has already been taken")).toHaveCount(0);
 });
 
 test("shows an altcha error and blocks signup when auto verification fails", async ({ page }) => {

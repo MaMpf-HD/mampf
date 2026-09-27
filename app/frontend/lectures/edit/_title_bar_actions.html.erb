@@ -1,0 +1,17 @@
+<%# Shown on the right of the lecture's title bar, see lectures/show/_title_bar. %>
+<% unless lecture.published? %>
+  <span class="badge text-bg-warning"><%= t('access.unpublished') %></span>
+  <button type="button"
+          class="btn btn-sm btn-outline-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#publishLectureModal">
+    <%= t('buttons.publish') %>
+  </button>
+<% end %>
+<% if lecture_deletable?(lecture) %>
+  <%= link_to t("buttons.delete"),
+              lecture_path(lecture),
+              data: { turbo_method: :delete,
+                      turbo_confirm: lecture_destruction_confirmation(lecture) },
+              class: "btn btn-sm btn-outline-danger" %>
+<% end %>

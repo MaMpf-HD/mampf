@@ -1,0 +1,126 @@
+de:
+  personal_data:
+    title: >-
+      Deine Angaben zum Studium
+    lead: >-
+      MaMpf übernimmt jetzt, was bisher Müsli gemacht hat: Übungsgruppen,
+      Klausuren und Seminare der Fakultät für Mathematik und Informatik der
+      Universität Heidelberg werden hier organisiert.
+    why: >-
+      Dafür brauchen wir Deinen richtigen Namen und Deine Matrikelnummer: Nur so
+      lassen sich Deine Leistungen in Übungen, Klausuren und Seminaren eindeutig
+      Dir zuordnen.
+    display_name_current_html: >-
+      Im Forum und bei Kommentaren erscheinst Du als <strong>%{name}</strong>.
+      Wenn Du lehrst, steht dieser Name auch bei Deinen Veranstaltungen – im
+      Titel, auf der Veranstaltungsseite und in der Suche.
+    display_name_change: "Anzeigenamen ändern"
+    display_name_hint: >-
+      Der Anzeigename ist bewusst frei wählbar und muss nicht Dein echter Name
+      sein. Bei vielen steht hier noch der Anfang ihrer E-Mail-Adresse. Du
+      kannst ihn auch später in Deinem Profil ändern.
+    saved_by_support_html: >-
+      Gespeicherten Namen und Matrikelnummer ändert nur der Support: %{support}.
+    locked_hint: "Nach dem Speichern kann das nur noch der Support ändern."
+    no_matriculation_number: "Ich habe noch keine Matrikelnummer"
+    matriculation_number_format: "Sieben Ziffern"
+    uni_id_format: "Zwei Buchstaben und drei Ziffern"
+    uni_id_hint: >-
+      Optional. Mit ihr meldest Du Dich bei den Diensten der Universität an,
+      etwa bei heiCO: zwei Buchstaben und drei Ziffern, nicht Deine
+      E-Mail-Adresse. Du kannst sie jederzeit selbst ändern.
+    confirmation_html: >-
+      Ich habe die Angaben geprüft. Nach dem Speichern kann nur noch der
+      Support (%{support}) meinen Namen und meine Matrikelnummer ändern.
+    confirmation_missing: "Bitte bestätige, dass Du die Angaben geprüft hast."
+    save: "Speichern"
+    saved: "Danke, Deine Angaben sind gespeichert."
+    decline_explanation: >-
+      Dann brauchen wir nichts von Dir. Nimmst Du später doch teil, kannst Du die
+      Angaben in Deinem Profil nachtragen.
+    places_question: >-
+      Du nimmst an %{lectures} teil. Dafür brauchen wir Deinen echten Namen
+      und Deine Matrikelnummer.
+    places_yes: "Meine Angaben eintragen"
+    places_no: "Meine Plätze aufgeben"
+    places_give_up_explanation: >-
+      Du verlässt die Gruppen, Vorträge, Klausuren und Anmeldungen dieser
+      Veranstaltungen. Wieder anmelden kannst Du Dich, solange die Anmeldung
+      noch offen ist und Plätze frei sind; danach entscheidet die
+      Veranstaltungsleitung.
+    places_results: >-
+      Für Dich sind schon Ergebnisse eingetragen. Damit sie Dir zugeordnet
+      werden können, brauchen wir Deine Angaben.
+    places_give_up: "Plätze aufgeben und weiter"
+    places_changed: >-
+      Deine Plätze haben sich inzwischen geändert. Bitte sieh sie Dir an und
+      entscheide noch einmal.
+    places_graded: >-
+      Für Dich sind schon Ergebnisse eingetragen, darum lassen sich Deine
+      Plätze nicht aufgeben. Bitte trag Deine Angaben ein.
+    needed_to_register: >-
+      Für die Anmeldung brauchen wir Deinen Namen und Deine Matrikelnummer. Trag
+      sie bitte hier ein, danach geht es zurück.
+    edit_link: "Ansehen oder ergänzen"
+    participation_question: >-
+      Nimmst Du als Studentin oder Student an Übungen, Klausuren oder Seminaren
+      der Fakultät für Mathematik und Informatik der Universität Heidelberg teil?
+    participation_hint: >-
+      Lehrende und Mitarbeitende wählen „Nein“. Tutorinnen und Tutoren, die
+      selbst studieren, wählen „Ja“.
+    participation_yes: "Ja"
+    participation_no: "Nein"
+    continue: "Weiter"
+    change: "Ändern"
+    change_field: "Ändern: %{field}"
+    no_matriculation_number_yet: "noch keine"
+    step_heading: "Schritt %{current} von %{total}: %{title}"
+    steps:
+      name: "Name"
+      matriculation_number: "Matrikelnummer"
+      program: "Studiengang"
+      uni_id: "Uni-ID"
+      check: "Angaben prüfen"
+    degree_question: "Welchen Abschluss strebst Du an?"
+    other_degree: "Anderer Abschluss"
+    other_subject: "Anderes Fach"
+    other_program: "Sonstiger Studiengang"
+    math_question: "Ist Mathematik eines Deiner beiden Fächer?"
+    program_question: "Welcher Studiengang?"
+    program_hint: >-
+      Nur Lehrende sehen ihn, etwa um zu wissen, aus welchen Studiengängen
+      ihre Teilnehmenden kommen. Du kannst ihn jederzeit selbst ändern.
+  programs:
+    degrees:
+      bsc100: "B.Sc. 100%"
+      bsc50: "B.Sc. 50%"
+      msc: "M.Sc."
+      med: "M.Ed."
+      med_extension: "M.Ed. Erweiterungsfach"
+      phd: "Promotion"
+    degree_choices:
+      bsc100: "Bachelor of Science, 100% (B.Sc. 100%)"
+      bsc50: "Bachelor of Science, 50% (B.Sc. 50%)"
+      msc: "Master of Science (M.Sc.)"
+      med: "Master of Education (M.Ed.)"
+      med_extension: "Master of Education, Erweiterungsfach (M.Ed. Erweiterungsfach)"
+      phd: "Promotion"
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            matriculation_number:
+              invalid: "muss aus sieben Ziffern bestehen"
+            uni_id:
+              invalid: "muss aus zwei Buchstaben und drei Ziffern bestehen"
+    attributes:
+      user:
+        first_name: "Vorname"
+        last_name: "Nachname"
+        matriculation_number: "Matrikelnummer"
+        program_id: "Studiengang"
+        uni_id: "Uni-ID"
+        personal_data_confirmation: "Bestätigung"
+      program:
+        degree: "Abschluss"

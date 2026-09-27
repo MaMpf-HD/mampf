@@ -25,6 +25,14 @@ module Assessment
     }
 
     scope :submitted, -> { where.not(submitted_at: nil) }
+    # The rows Assessment#grading_data_for? calls graded, as one query.
+    scope :with_grading_data, lambda {
+      where.not(status: :pending)
+           .or(where.not(points_total: nil))
+           .or(where.not(grade_numeric: nil))
+           .or(where.not(grade_text: nil))
+           .or(where(id: TaskPoint.select(:assessment_participation_id)))
+    }
 
     after_commit :recompute_performance_record,
                  if: :should_recompute_performance_record?

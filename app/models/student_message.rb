@@ -25,12 +25,20 @@ class StudentMessage < ApplicationRecord
 
   # The groups the message goes to, as StudentMessages::Audience objects the
   # catalog resolved; what is stored is their keys, labels and addresses.
-  def address_to(audiences)
+  def address_to(audiences, labels: {})
     @addressed = audiences
+    @labels = labels
   end
 
+  # Some saved audiences have `label` but no `labels`; keep `label` as the
+  # fallback so those messages remain readable.
   def audience_labels
-    audiences.pluck("label")
+    audiences.map { |audience| audience.dig("labels", I18n.locale.to_s) || audience["label"] }
+  end
+
+  def recipient_emails_by_locale
+    locales = User.where(email: recipient_emails).pluck(:email, :locale).to_h
+    recipient_emails.group_by { |email| (locales[email].presence || I18n.default_locale).to_s }
   end
 
   # A row from before groups could be picked has no labels; the audit and
@@ -38,6 +46,12 @@ class StudentMessage < ApplicationRecord
   def audience_sentence
     audience_labels.presence&.to_sentence ||
       I18n.t("student_message.everyone_registered_then")
+  end
+
+  # The sender's own copy and, on a staff message, the lecture staff's cc.
+  def copy_emails
+    staff = staff? ? [lecture.teacher, *lecture.editors].map(&:email) : []
+    [sender.email, *staff].uniq
   end
 
   def attachment_filename
@@ -51,7 +65,9 @@ class StudentMessage < ApplicationRecord
     def snapshot_audiences
       return if @addressed.blank?
 
-      self.audiences = @addressed.map { |audience| { key: audience.key, label: audience.label } }
+      self.audiences = @addressed.map do |audience|
+        { key: audience.key, label: audience.label, labels: @labels[audience.key] }.compact
+      end
       self.recipient_emails = StudentMessages::Audience.recipients(@addressed).pluck(:email)
       self.recipients_count = recipient_emails.size
     end

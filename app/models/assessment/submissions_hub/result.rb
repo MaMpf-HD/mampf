@@ -6,6 +6,12 @@ module Assessment
     Result = Struct.new(:sheets, :standing, :open_sheets, :due, :latest_marked,
                         :invitations, :possible_partners, :invited_users, :next_scheduled,
                         keyword_init: true) do
+      # The sheets with a new correction or new points, as the news line above
+      # the sheets names them.
+      def news_count
+        (sheets - open_sheets).count(&:news?)
+      end
+
       def invitations_for(assignment)
         invitations.fetch(assignment.id, [])
       end

@@ -46,6 +46,18 @@ module StudentMessages
       picked.include?(everyone) ? [everyone] : picked
     end
 
+    # { key => { locale => label } } for the picked keys: each recipient's
+    # mail names the groups in their own language.
+    def labels_by_locale(keys)
+      I18n.available_locales.each_with_object(Hash.new { |h, k| h[k] = {} }) do |locale, labels|
+        I18n.with_locale(locale) do
+          Catalog.new(@lecture, @sender).pick(keys).to_a.each do |audience|
+            labels[audience.key][locale.to_s] = audience.label
+          end
+        end
+      end
+    end
+
     # Whether an item of a preference campaign is on offer: before the
     # allocation such an item means everybody who listed it, at any rank.
     def preference_items_offered?

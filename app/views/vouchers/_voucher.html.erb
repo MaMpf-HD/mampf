@@ -2,7 +2,7 @@
 
 <div class="card-body">
 
-  <h4 class="card-title lecture-pane-subheader">
+  <h4 class="card-title lecture-pane-subheader" id="<%= role %>-voucher-title">
     <%= t("basics.voucher_for", role: t("basics.#{role}s")) %>
     <%= helpdesk(t("admin.lecture.info.voucher_for_#{role}"), html=false) %>
   </h4>
@@ -12,8 +12,8 @@
     <div class="input-group mb-3">
       <button class="btn btn-outline-secondary clipboard-btn clipboard-button"
               title="<%= t('buttons.copy_to_clipboard')%>"
-              data-clipboard-text="<%= voucher.secure_hash %>"
-              data-cy="copy-<%= role %>-voucher-btn">
+              aria-label="<%= t('buttons.copy_to_clipboard')%>"
+              data-clipboard-text="<%= voucher.secure_hash %>">
         <i class="bi bi-clipboard"></i>
         <!-- Currently just a workaround for the clipboard -->
         <div class="clipboardpopup" style="display: block;">
@@ -24,7 +24,7 @@
       </button>
       <input type="text" class="form-control" disabled
             value="<%= voucher.secure_hash %>"
-            data-cy='<%= "#{role}-voucher-secure-hash" %>'>
+            aria-label="<%= t('basics.voucher_code') %>">
     </div>
 
   <% else %>
@@ -40,8 +40,7 @@
     <%= link_to invalidate_voucher_path(voucher),
         class: 'btn btn-outline-danger',
         data: { toggle: 'tooltip', placement: 'bottom',
-                confirm: t('admin.voucher.sure_to_delete'),
-                cy: "invalidate-#{role}-voucher-btn" },
+                confirm: t('admin.voucher.sure_to_delete') },
         style: 'text-decoration: none;',
         method: :post, remote: true do %>
       <i class="bi bi-trash3"></i>
@@ -50,7 +49,7 @@
   <% else %>
     <%= link_to vouchers_path(params: { lecture_id: lecture.id, role: role }),
         class: 'btn btn-outline-primary',
-        data: {toggle: 'tooltip', placement: 'bottom', cy: "create-#{role}-voucher-btn"},
+        data: {toggle: 'tooltip', placement: 'bottom'},
         method: :post, remote: true do %>
       <i class="bi bi-plus-lg"></i>
       <%= t('buttons.create_voucher') %>
@@ -64,8 +63,5 @@
   <div class="card-footer p-3">
     <%= t('admin.voucher.expires_at') %>:
     <%= l(voucher.expires_at, format: :long) %>
-    <span data-cy='<%= "#{role}-voucher-expires-at" %>' style="display: none;">
-      <%= voucher.expires_at %>
-    </span>
   </div>
 <% end %>

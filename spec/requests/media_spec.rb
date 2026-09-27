@@ -33,6 +33,16 @@ RSpec.describe("Media", type: :request) do
       expect(response.body).to include(medium_in_lecture.description)
       expect(response.body).not_to include(medium_elsewhere.description)
     end
+
+    it "redirects to the lecture home page for a project without media" do
+      get media_path(id: lecture.id, project: "worked_example")
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "ignores an unknown project" do
+      get media_path(id: lecture.id, project: "destroy")
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe "GET /media/search" do

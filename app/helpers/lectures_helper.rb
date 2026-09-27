@@ -1,15 +1,15 @@
 # Lectures Helper
 module LecturesHelper
+  # Data attributes for links that switch a lecture between viewing and
+  # editing in place, see layouts/_lecture_mode.
+  def lecture_mode_switch_data
+    { turbo_frame: "lecture-mode", turbo_action: "advance" }
+  end
+
   def registration_sidebar_visible?(lecture)
     return false unless lecture && user_signed_in?
 
     RegistrationUserRegistrationAbility.new(current_user).can?(:index, lecture)
-  end
-
-  # Whether the lecture currently has an open registration campaign
-  # (one building block of the search-card badges, see _lecture.html.erb).
-  def registration_open?(lecture)
-    lecture.registration_campaigns.any?(&:open_for_registrations?)
   end
 
   # Deleting a lecture deletes its campaigns and every registration in them,
@@ -218,8 +218,7 @@ module LecturesHelper
         concat(t("basics.teacher"))
         concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
       end
-      p2 = content_tag(:p, lecture.teacher&.info || "",
-                       "data-cy": "teacher-info", "data-testid": "teacher-info")
+      p2 = content_tag(:p, lecture.teacher&.info || "", "data-testid": "teacher-info")
     end
 
     p1 + p2
@@ -245,7 +244,6 @@ module LecturesHelper
                   class: "selectize",
                   multiple: true,
                   data: {
-                    cy: "lecture-editors-select",
                     testid: "lecture-editors-select",
                     no_results: t("basics.no_results_editor")
                   })

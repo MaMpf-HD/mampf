@@ -6,7 +6,7 @@
       </span>
       <%= @lesson.to_label %>
       <%= t('from') %>
-      <% if current_user.lectures.include?(@lesson.lecture) %>
+      <% if @lesson.lecture.content_accessible_by?(current_user) %>
         <%= link_to @lesson.lecture.title,
                     @lesson.lecture.path(current_user),
                     class: 'text-dark' %>
@@ -65,11 +65,11 @@
   </div>
   <div class="col-12 col-lg-8 col-xl-6 col-xxl-7 mb-2">
     <%= render partial: 'items/items',
-               locals: { items: @lesson.content_items,
+               locals: { items: @lesson.content_items(current_user),
                          small: false,
                          embedded: false,
                          section_links: false,
-                         content: @lesson.content,
+                         content: @lesson.content(current_user),
                          singular_medium: @lesson.singular_medium } %>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">

@@ -203,7 +203,9 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
       row = described_class.add_member!(team, newcomer, scorer)
 
-      expect(team.users.first).to eq(partner)
+      # add_member! loads team.users without an ORDER BY, so a bare `first`
+      # would return whichever row Postgres happens to hand back first.
+      expect(team.users.order(:id).first).to eq(partner)
       expect(row.task_points.find_by(task: task).points).to eq(7)
     end
 

@@ -1,4 +1,3 @@
-<% I18n.with_locale(current_user.try(:locale)) do %>
 <%= vite_stylesheet_tag "styles/navbar.scss" %>
 
 <%= render partial: "shared/announcement_banner" %>
@@ -38,7 +37,7 @@
           </a>
         </li>
 
-        <% if current_user.admin || current_user.editor? || current_user.teacher? %>
+        <% if current_user.admin? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
               class="nav-link bi bi-tools"
@@ -108,7 +107,7 @@
 
       <ul class="navbar-nav ms-auto me-auto" id="lecturesDropdown">
         <%= render partial: 'shared/dropdown_lectures',
-                  locals: { lecture: @lecture || current_lecture } %>
+                  locals: { lecture: @lecture } %>
       </ul>
 
       <%= render partial: 'shared/dropdown_notifications' %>
@@ -135,4 +134,3 @@
       style="display: none;">
   </nav>
 </div>
-<% end %>

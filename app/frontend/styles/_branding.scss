@@ -1,5 +1,6 @@
 $mampf-blue: #223e62;
 $mampf-blue-focus: #3d5e8a;
+$mampf-red: #821A3B;
 
 @function mampf-blue($alpha) {
     @return rgba($mampf-blue, $alpha);

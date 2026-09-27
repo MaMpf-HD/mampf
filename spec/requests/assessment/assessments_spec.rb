@@ -459,9 +459,12 @@ RSpec.describe("Assessment::Assessments", type: :request) do
     context "as a teacher" do
       before { sign_in teacher }
 
-      it "uses lecture locale for index" do
+      around { |example| I18n.with_locale(I18n.locale) { example.run } }
+
+      it "answers a German lecture in the teacher's English for index" do
         get assessment_assessments_path(lecture_id: german_lecture.id)
-        expect(I18n.locale).to eq(:de)
+        expect(response.body).to include(I18n.t("buttons.cancel", locale: :en))
+        expect(response.body).not_to include(I18n.t("buttons.cancel", locale: :de))
       end
     end
   end

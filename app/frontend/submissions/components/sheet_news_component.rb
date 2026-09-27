@@ -7,10 +7,13 @@ class SheetNewsComponent < ViewComponent::Base
 
   attr_reader :lecture
 
-  def initialize(sheets:, lecture:)
+  # Away from the hub, as on the lecture home page, a sheet links to its row
+  # on the hub instead of within the page.
+  def initialize(sheets:, lecture:, on_hub: true)
     super()
     @sheets = sheets
     @lecture = lecture
+    @on_hub = on_hub
   end
 
   delegate :any?, to: :fresh
@@ -31,9 +34,15 @@ class SheetNewsComponent < ViewComponent::Base
   # that copy would land after the row's own report and put the marker back.
   # The browser's own jump does what is wanted here.
   def item(sheet)
-    t("submission.hub.news.#{what_is_new(sheet)}_html",
-      sheet: link_to(sheet.assignment.title, "##{dom_id(sheet.assignment, :sheet)}",
-                     data: { turbo: false, action: "sheet-news#open" }))
+    anchor = dom_id(sheet.assignment, :sheet)
+    link = if @on_hub
+      link_to(sheet.assignment.title, "##{anchor}",
+              data: { turbo: false, action: "sheet-news#open" })
+    else
+      link_to(sheet.assignment.title, lecture_submissions_path(lecture, anchor: anchor),
+              data: { turbo: false })
+    end
+    t("submission.hub.news.#{what_is_new(sheet)}_html", sheet: link)
   end
 
   private

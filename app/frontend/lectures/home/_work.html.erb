@@ -1,0 +1,44 @@
+<%# locals: (lecture:, work:, certification:) %>
+<% due = Array(work.due) %>
+<section class="lecture-home-work" aria-labelledby="work-heading"
+         data-testid="lecture-home-work">
+  <div class="lecture-home-label-line">
+    <h2 class="lecture-home-label" id="work-heading"><%= t("lecture_home.work.title") %></h2>
+    <%= link_to t("lecture_home.work.all"), lecture_submissions_path(lecture),
+                class: "lecture-home-quiet-link", data: { turbo_frame: "main" } %>
+  </div>
+
+  <%= render SheetNewsComponent.new(sheets: work.sheets - work.open_sheets, lecture: lecture,
+                                    on_hub: false) %>
+
+  <div class="lecture-home-work-grid">
+    <div class="lecture-home-work-due">
+      <% if due.any? %>
+        <% due.each do |sheet| %>
+          <div class="lecture-home-focus-title">
+            <span><%= sheet.assignment.title %></span>
+            <%= render SheetChipComponent.new(sheet: sheet) %>
+          </div>
+          <p class="lecture-home-focus-line"><%= lecture_home_sheet_deadline(sheet) %></p>
+        <% end %>
+        <%= link_to lecture_submissions_path(lecture), class: "lecture-home-action-link",
+                                                       data: { turbo_frame: "main" } do %>
+          <%= t("lecture_home.focus.open_sheet") %>
+          <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+        <% end %>
+      <% else %>
+        <p class="lecture-home-focus-line mb-0"><%= t("lecture_home.work.nothing_due") %></p>
+      <% end %>
+    </div>
+
+    <%= render StandingComponent.new(standing: work.standing, compact: true) do %>
+      <% admission = lecture_home_admission(work.standing, certification) %>
+      <% if admission %>
+        <p class="hub-aside mt-2 mb-0"><%= admission %></p>
+      <% end %>
+      <%= link_to t("lecture_home.work.admission_details"),
+                  lecture_submissions_path(lecture),
+                  class: "hub-aside d-inline-block mt-2", data: { turbo_frame: "main" } %>
+    <% end %>
+  </div>
+</section>

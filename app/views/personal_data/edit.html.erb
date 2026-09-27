@@ -1,0 +1,127 @@
+<% open_fields = @user.open_personal_data_fields %>
+<% steps = personal_data_steps(open_fields) %>
+<% support = mail_to(DefaultSetting::PROJECT_EMAIL) %>
+<% asking = @asking %>
+<% places = @place_lectures.any? %>
+<% choosing = asking && !@results_recorded %>
+<% content_for :landing_box_class, "landing-box-wide" %>
+
+<h2><%= t("personal_data.title") %></h2>
+<p><%= t("personal_data.lead") %></p>
+
+<% form_data = { controller: "personal-data-form",
+                 personal_data_form_no_matriculation_number_value:
+                   t("personal_data.no_matriculation_number_yet") } %>
+<%= form_with model: @user, scope: :user, url: personal_data_path, method: :patch, local: true,
+              data: asking || steps.any? ? form_data : {} do |f| %>
+  <% if choosing %>
+    <%= hidden_field_tag :give_up_places, place_lecture_ids if places %>
+    <fieldset class="mb-3">
+      <% if places %>
+        <legend class="h6">
+          <%= t("personal_data.places_question",
+                lectures: @place_lectures.map(&:title).to_sentence) %>
+        </legend>
+      <% else %>
+        <legend class="h6"><%= t("personal_data.participation_question") %></legend>
+        <p class="form-text"><%= t("personal_data.participation_hint") %></p>
+      <% end %>
+      <% ["yes", "no"].each do |answer| %>
+        <div class="form-check">
+          <%= radio_button_tag :participation, answer, @participation == answer,
+                               class: "form-check-input",
+                               data: { personal_data_form_target: "choice",
+                                       action: "personal-data-form#show" } %>
+          <% label = places ? "places_#{answer}" : "participation_#{answer}" %>
+          <%= label_tag "participation_#{answer}", t("personal_data.#{label}"),
+                        class: "form-check-label" %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% elsif asking %>
+    <% if places %>
+      <p class="fw-semibold">
+        <%= t("personal_data.places_question",
+              lectures: @place_lectures.map(&:title).to_sentence) %>
+      </p>
+    <% end %>
+    <p><%= t("personal_data.places_results") %></p>
+  <% end %>
+
+  <div data-personal-data-form-target="yes">
+    <p><%= t("personal_data.why") %></p>
+    <% if open_fields.size < User::PERSONAL_DATA_FIELDS.size %>
+      <p class="form-text"><%= t("personal_data.saved_by_support_html", support: support) %></p>
+    <% end %>
+
+    <% if steps.empty? %>
+      <% parts = [:name, :matriculation_number, :program, :uni_id] %>
+      <% parts.delete(:program) if study_programs.none? %>
+      <% parts.each do |part| %>
+        <%= render "personal_data/#{part}_fields", f: f, open_fields: open_fields %>
+      <% end %>
+    <% else %>
+      <% steps.each_with_index do |step, index| %>
+        <% enter = "keydown.enter->personal-data-form#next" unless step == :check %>
+        <%= tag.section data: { personal_data_form_target: "step", action: enter } do %>
+          <h3 class="h6" tabindex="-1">
+            <%= t("personal_data.step_heading", current: index + 1, total: steps.size,
+                                                title: t("personal_data.steps.#{step}")) %>
+          </h3>
+          <% if step == :check %>
+            <%= render "personal_data/check", f: f, steps: steps, support: support %>
+          <% else %>
+            <%= render "personal_data/#{step}_fields", f: f, open_fields: open_fields %>
+            <div class="d-flex gap-2 mb-3">
+              <% if index.positive? %>
+                <button type="button" class="btn btn-secondary"
+                        data-action="personal-data-form#back"><%= t("back") %></button>
+              <% end %>
+              <button type="button" class="btn btn-primary" data-action="personal-data-form#next">
+                <%= t("personal_data.continue") %>
+              </button>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if choosing %>
+    <p class="form-text" data-personal-data-form-target="no">
+      <% explanation = places ? "places_give_up_explanation" : "decline_explanation" %>
+      <%= t("personal_data.#{explanation}") %>
+    </p>
+  <% end %>
+
+  <div data-personal-data-form-target="answered">
+    <p class="mb-1">
+      <%= t("personal_data.display_name_current_html", name: @user.name_in_database) %>
+    </p>
+    <%= tag.details class: "mb-3", open: @user.errors.include?(:name) do %>
+      <summary><%= t("personal_data.display_name_change") %></summary>
+      <%= f.label :name, t("basics.display_name"), class: "form-label mt-2" %>
+      <%= f.text_field :name, class: "form-control", aria: { describedby: "display-name-hint" } %>
+      <div class="form-text" id="display-name-hint">
+        <%= t("personal_data.display_name_hint") %>
+      </div>
+    <% end %>
+
+    <div class="d-flex gap-2">
+      <%= f.submit t("personal_data.save"), class: "btn btn-primary",
+                                            data: { personal_data_form_target: "yes" } %>
+      <% if choosing %>
+        <%= f.submit t(places ? "personal_data.places_give_up" : "personal_data.continue"),
+                     class: "btn btn-primary", formnovalidate: true,
+                     data: { personal_data_form_target: "no" } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% if asking %>
+  <%= button_to t("navbar.logout"), destroy_user_session_path(locale: I18n.locale),
+                method: :delete, class: "btn btn-link p-0 mt-3" %>
+<% else %>
+  <%= link_to t("back"), edit_profile_path, class: "btn btn-link p-0 mt-3" %>
+<% end %>

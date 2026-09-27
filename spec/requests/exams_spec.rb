@@ -191,7 +191,7 @@ RSpec.describe("Exams", type: :request) do
       it "renders the assessment dashboard" do
         get exam_path(exam), as: :turbo_stream
         expect(response.body).to include("exams_container")
-        expect(response.body).to include("data-cy=\"assessment-dashboard\"")
+        expect(response.body).to include("id=\"dashboard-exam-#{exam.id}\"")
       end
 
       # The dashboard is a fragment of the lecture's exam tab, so a direct visit

@@ -9,7 +9,6 @@ class ReferralsController < ApplicationController
   end
 
   def edit
-    I18n.locale = @referral.medium.locale_with_inheritance
     # if referral's item is a link, load all other links,
     # otherwise load all items in the referral's item's medium scope
     # that the user can choose from in the item dropdown menu
@@ -42,7 +41,6 @@ class ReferralsController < ApplicationController
   end
 
   def update
-    I18n.locale = @referral.medium.locale_with_inheritance
     # if referral's item is a link, it is updated
     # this means in particular that *all referrals* that refer to it will
     # be affected; links are changed *globally*

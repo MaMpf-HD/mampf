@@ -8,17 +8,27 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     altcha_param = params.permit(:altcha)[:altcha]
     if altcha_param.present? && Altcha.verify(altcha_param)
-      super do |user|
-        next if user.persisted?
+      return answer_taken_address if address_taken?
 
-        log_rejected_sign_up(user.errors.full_messages.to_sentence)
+      begin
+        super do |user|
+          next if user.persisted?
+
+          log_rejected_sign_up(user.errors.full_messages.to_sentence)
+        end
+      rescue ActiveRecord::RecordNotUnique => e
+        raise unless e.message.include?("index_users_on_email")
+
+        answer_taken_address
       end
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
       clean_up_passwords(resource)
       log_rejected_sign_up("captcha verification failed")
       flash.now[:alert] = I18n.t("devise.registrations.user.captcha_error")
-      render_flash
+      render turbo_stream: [stream_flash,
+                            turbo_stream.replace("registration-captcha",
+                                                 partial: "devise/registrations/captcha")]
     end
   end
 
@@ -83,12 +93,54 @@ class RegistrationsController < Devise::RegistrationsController
       # Current number of new registrations is too high
       self.resource = resource_class.new(devise_parameter_sanitizer.sanitize(:sign_up))
       resource.validate # Look for any other validation errors besides reCAPTCHA
+      resource.errors.delete(:email, :taken)
       log_rejected_sign_up("registration limit reached: #{num_new_registrations} " \
                            "unconfirmed in the last #{minutes} min, " \
                            "max #{max_registrations}")
       set_flash_message(:alert, :too_many_registrations)
       set_minimum_password_length
       respond_with_navigational(resource) { render :new }
+    end
+
+    def address_taken?
+      build_resource(sign_up_params)
+      resource.validate
+      resource.errors.of_kind?(:email, :taken)
+    end
+
+    # Answers a sign-up with a taken address exactly like one with a new address,
+    # so that the form does not tell who has an account; the owner learns of the
+    # attempt by mail instead.
+    def answer_taken_address
+      resource.errors.delete(:email, :taken)
+      if resource.errors.any?
+        log_rejected_sign_up(resource.errors.full_messages.to_sentence)
+        clean_up_passwords(resource)
+        set_minimum_password_length
+        return respond_with(resource)
+      end
+
+      log_rejected_sign_up("the address already has an account")
+      notify_account_owner(resource_class.find_by(email: resource.email))
+      set_flash_message!(:notice, :signed_up_but_unconfirmed)
+      expire_data_after_sign_in!
+      respond_with(resource, location: after_inactive_sign_up_path_for(resource))
+    end
+
+    # Sends at most one notice a day per account, so that repeated sign-ups
+    # with somebody else's address cannot flood their inbox.
+    def notify_account_owner(owner)
+      return unless owner
+      return unless Rails.cache.write("registration-attempt:#{owner.id}", true,
+                                      expires_in: 1.day, unless_exist: true)
+
+      I18n.with_locale(owner.locale.presence || I18n.default_locale) do
+        if owner.confirmed?
+          MyMailer.registration_attempt(owner).deliver_now
+        else
+          owner.send_confirmation_instructions
+        end
+      end
     end
 
     # A rejected sign-up is ordinary control flow, so nothing else records why

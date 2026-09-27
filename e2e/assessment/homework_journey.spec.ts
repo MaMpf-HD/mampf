@@ -22,14 +22,13 @@ test.describe("a homework sheet from the teacher to the student and back", () =>
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
       lecture_id: lecture.id,
       tutor_id: tutor.user.id,
       title: "Monday group",
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id, user_id: student.user.id,
     });
     await factory.create("lecture_membership", [], {
@@ -56,7 +55,9 @@ test.describe("a homework sheet from the teacher to the student and back", () =>
       .getByRole("gridcell", { name: dateLabel() }).click();
     await expect(modal.getByLabel("Due date")).not.toHaveValue("");
     await modal.getByRole("checkbox", { name: "I hereby confirm that" }).check();
+    const published = teacher.page.waitForResponse(`/media/${medium.id}/publish`);
     await modal.getByRole("button", { name: "Save" }).click();
+    await published;
 
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.open("Sheet 1");
