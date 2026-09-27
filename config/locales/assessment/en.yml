@@ -366,11 +366,10 @@ en:
     grading_talk:
       no_talks_gradable: 'No talks that can be graded.'
     results_release:
-      exam_published: "Results published %{time}"
+      exam_published: "Published %{time}"
       exam_published_detail: "Students see their grade and points on the lecture home page. Changes you make now show there at once."
-      exam_unpublished: "Results not published"
+      exam_unpublished: "Not published"
       nobody_has_result: "Nobody has a result yet."
-      talks_status: "Talk results: %{published} published, %{ready} ready to publish"
       talks_published: "Published: %{titles}"
       talks_ready: "Ready: %{titles}"
       no_talk_complete: "No talk has a grade for every speaker yet."
@@ -384,6 +383,12 @@ en:
         other: "From now on, %{count} people see their result on the lecture home page."
       mail: "They get an email saying so, without grade or points."
       no_mail: "Nobody is emailed again, as they were told the first time."
+      grades_differ:
+        one: "Careful: 1 grade differs from what the scheme gives now."
+        other: "Careful: %{count} grades differ from what the scheme gives now."
+      ungraded:
+        one: "1 person has points but no grade."
+        other: "%{count} people have points but no grade."
       withdraw_confirm: "Students will no longer see these results. Some may have seen them already."
       flash:
         published: "Results published."

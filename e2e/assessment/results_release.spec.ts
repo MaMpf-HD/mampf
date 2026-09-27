@@ -37,7 +37,7 @@ test.describe("publishing results", () => {
     await expect(teacher.page.getByText("Changes saved.")).toBeVisible();
 
     const release = dashboard.pane.getByTestId("results-release");
-    await expect(release).toContainText("Results not published");
+    await expect(release).toContainText("Not published");
     await student.page.goto(`/lectures/${lecture.id}`);
     const examRow = student.page.getByTestId("participation-row").filter({ hasText: "Main Exam" });
     await expect(examRow).toContainText("On the exam list");
@@ -49,7 +49,7 @@ test.describe("publishing results", () => {
       void dialog.accept();
     });
     await release.getByRole("button", { name: "Publish results" }).click();
-    await expect(release).toContainText("Results published");
+    await expect(release).toContainText(/Published \d/);
     expect(question).toContain("From now on, 1 person sees their result");
 
     await student.page.reload();
@@ -61,7 +61,7 @@ test.describe("publishing results", () => {
 
     teacher.page.once("dialog", dialog => void dialog.accept());
     await release.getByRole("button", { name: "Take back" }).click();
-    await expect(release).toContainText("Results not published");
+    await expect(release).toContainText("Not published");
 
     await student.page.reload();
     await expect(examRow).toContainText("On the exam list");

@@ -1,6 +1,7 @@
 # Says whether the students see their results yet and lets the lecturer
-# publish or take them back: an exam's in its grading tab, a seminar's talks
-# above their table, where one button serves every talk that is fully graded.
+# publish or take them back: an exam's in the head of its grading card, a
+# seminar's talks beside their table's summary, where one button serves every
+# talk that is fully graded.
 class ResultsReleaseComponent < ViewComponent::Base
   ID = "results-release".freeze
 
@@ -40,23 +41,21 @@ class ResultsReleaseComponent < ViewComponent::Base
     @published ||= gradebooks.select(&:results_published?)
   end
 
+  # A seminar's talks are named, so the lecturer sees which ones went out.
   def status
-    if exam?
-      return t("assessment.results_release.exam_published", time: published_time) if published.any?
-
-      return t("assessment.results_release.exam_unpublished")
-    end
-    t("assessment.results_release.talks_status", published: published.size,
-                                                 ready: to_publish.size)
-  end
-
-  def detail
-    return exam_detail if exam?
+    return exam_status if exam?
 
     parts = [talk_titles(:published, published), talk_titles(:ready, to_publish)].compact
     return t("assessment.results_release.no_talk_complete") if parts.empty?
 
     parts.join(" · ")
+  end
+
+  def status_tooltip
+    return unless exam?
+    return t("assessment.results_release.exam_published_detail") if published.any?
+
+    t("assessment.results_release.nobody_has_result") if to_publish.empty?
   end
 
   def publish_label
@@ -72,7 +71,8 @@ class ResultsReleaseComponent < ViewComponent::Base
   def publish_confirm
     count = Assessment::Participation.with_result.where(assessment: to_publish).count
     [t("assessment.results_release.publish_confirm", count: count),
-     t("assessment.results_release.#{mails? ? "mail" : "no_mail"}")].join(" ")
+     t("assessment.results_release.#{mails? ? "mail" : "no_mail"}"),
+     *grade_warnings].join(" ")
   end
 
   def withdraw_confirm
@@ -89,15 +89,36 @@ class ResultsReleaseComponent < ViewComponent::Base
       end
     end
 
-    def published_time
-      l(published.first.results_published_at, format: :short)
+    def exam_status
+      return t("assessment.results_release.exam_unpublished") if published.empty?
+
+      t("assessment.results_release.exam_published",
+        time: l(published.first.results_published_at, format: :short))
     end
 
-    def exam_detail
-      return t("assessment.results_release.exam_published_detail") if published.any?
-      return t("assessment.results_release.nobody_has_result") if to_publish.empty?
+    # What the students would see and the lecturer might not mean: a grade
+    # the applied scheme no longer gives, or points with no grade at all.
+    def grade_warnings
+      return [] unless exam?
 
-      nil
+      warnings = []
+      differing = scheme_disagreements
+      if differing.positive?
+        warnings << t("assessment.results_release.grades_differ", count: differing)
+      end
+      ungraded = @exam.assessment.assessment_participations.reviewed
+                      .where(grade_numeric: nil, grade_text: [nil, ""]).count
+      warnings << t("assessment.results_release.ungraded", count: ungraded) if ungraded.positive?
+      warnings
+    end
+
+    def scheme_disagreements
+      scheme = @exam.assessment.grade_scheme
+      return 0 unless scheme&.persisted?
+
+      Assessment::GradeSchemeApplier.new(scheme).preview_all.count do |row|
+        row[:current_grade] && row[:current_grade] != row[:proposed_grade]
+      end
     end
 
     def talk_titles(state, gradebooks)

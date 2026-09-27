@@ -366,11 +366,10 @@ de:
     grading_talk:
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
     results_release:
-      exam_published: "Ergebnisse veröffentlicht %{time}"
+      exam_published: "Veröffentlicht %{time}"
       exam_published_detail: "Studierende sehen Note und Punkte auf der Startseite der Veranstaltung. Was Du jetzt änderst, erscheint dort sofort."
-      exam_unpublished: "Ergebnisse nicht veröffentlicht"
+      exam_unpublished: "Nicht veröffentlicht"
       nobody_has_result: "Noch niemand hat ein Ergebnis."
-      talks_status: "Vortragsergebnisse: %{published} veröffentlicht, %{ready} bereit"
       talks_published: "Veröffentlicht: %{titles}"
       talks_ready: "Bereit: %{titles}"
       no_talk_complete: "Noch kein Vortrag hat eine Note für alle Vortragenden."
@@ -384,6 +383,12 @@ de:
         other: "Ab jetzt sehen %{count} Personen ihr Ergebnis auf der Startseite der Veranstaltung."
       mail: "Sie bekommen dazu eine E-Mail, ohne Note und Punkte."
       no_mail: "Niemand bekommt erneut eine E-Mail, sie wurden beim ersten Mal benachrichtigt."
+      grades_differ:
+        one: "Achtung: 1 Note weicht davon ab, was das Schema jetzt vergibt."
+        other: "Achtung: %{count} Noten weichen davon ab, was das Schema jetzt vergibt."
+      ungraded:
+        one: "1 Person hat Punkte, aber keine Note."
+        other: "%{count} Personen haben Punkte, aber keine Note."
       withdraw_confirm: "Studierende sehen diese Ergebnisse dann nicht mehr. Manche haben sie vielleicht schon gesehen."
       flash:
         published: "Ergebnisse veröffentlicht."
