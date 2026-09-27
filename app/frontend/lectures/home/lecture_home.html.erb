@@ -107,13 +107,13 @@
                                      certification: @certification %>
   <% end %>
 
-  <% if @content&.render? %>
-    <%= render @content %>
-  <% end %>
-
   <% if @notifications.present? || (@lecture.forum? && @new_topics_count.positive?) %>
     <%= render "lectures/home/news", lecture: @lecture, notifications: @notifications,
                                      posts_count: @new_topics_count %>
+  <% end %>
+
+  <% if @content&.render? %>
+    <%= render @content %>
   <% end %>
 
   <% if @tutorials_given.any? %>
