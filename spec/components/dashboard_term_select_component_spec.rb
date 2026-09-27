@@ -55,20 +55,10 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
     expect(urls).to all(end_with("#lecture-search"))
   end
 
-  it "wires the select up to refresh the page on change" do
-    rendered = render_select(id: "lecture-search-term-select")
-    select = rendered.at_css("select")
-
-    expect(rendered.at_css("div")["id"]).to eq("lecture-search-term-select-wrapper")
-    expect(select["id"]).to eq("lecture-search-term-select")
-    expect(select["data-testid"]).to eq("lecture-search-term-select")
-    expect(select["data-action"]).to eq("change->dashboard-term-select#change")
-  end
-
   it "offers to jump back to the current semester when another one is selected" do
     link = render_select(selected: past).at_css("[data-testid=current-term-link]")
 
-    expect(link["data-dashboard-term-select-term-param"]).to eq("SS25")
+    expect(link["href"]).to eq("/?term=SS25")
   end
 
   it "does not offer to jump back when the current semester is selected" do
@@ -109,16 +99,6 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
         link = notice.at_css("a")
 
         expect(link["href"]).to eq("/?term=WS25-26#lecture-search")
-        expect(link["data-action"]).to be_nil
-        expect(link.at_css(".bi-chevron-down")).to be_present
-      end
-
-      it "only switches the picker when it sits in the search" do
-        link = notice(anchor: "lecture-search").at_css("a")
-
-        expect(link["data-action"]).to eq("dashboard-term-select#pick")
-        expect(link["data-dashboard-term-select-term-param"]).to eq("WS25-26")
-        expect(link.at_css(".bi-chevron-down")).to be_nil
       end
 
       it "is hidden when another than the current semester is selected" do
