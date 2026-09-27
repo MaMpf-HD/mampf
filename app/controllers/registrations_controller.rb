@@ -87,6 +87,7 @@ class RegistrationsController < Devise::RegistrationsController
       # Current number of new registrations is too high
       self.resource = resource_class.new(devise_parameter_sanitizer.sanitize(:sign_up))
       resource.validate # Look for any other validation errors besides reCAPTCHA
+      resource.errors.delete(:email, :taken)
       log_rejected_sign_up("registration limit reached: #{num_new_registrations} " \
                            "unconfirmed in the last #{minutes} min, " \
                            "max #{max_registrations}")

@@ -150,6 +150,21 @@ RSpec.describe("Auth registrations", type: :request) do
           .to eq(I18n.t("devise.mailer.confirmation_instructions.subject", locale: "en"))
       end
 
+      it "answers exactly as for a new address while the registration limit holds" do
+        allow(ENV).to receive(:fetch).and_call_original
+        allow(ENV).to receive(:fetch).with("MAMPF_MAX_REGISTRATION_PER_TIMEFRAME", 40)
+                                     .and_return("0")
+        create(:user, created_at: 1.minute.ago)
+
+        sign_up_with(email)
+        new_answer = [response.status, response.body.gsub(email, "ADDRESS")]
+        sign_up_with("owner@example.com")
+        taken_answer = [response.status, response.body.gsub("owner@example.com", "ADDRESS")]
+
+        expect(taken_answer).to eq(new_answer)
+        expect(ActionMailer::Base.deliveries.flat_map(&:to)).not_to include("owner@example.com")
+      end
+
       it "still names the other mistakes, but never the taken address" do
         sign_up_with("owner@example.com", password_confirmation: "something-else-entirely")
 
