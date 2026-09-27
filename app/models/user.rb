@@ -646,17 +646,6 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  def next_term_staff_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    staff_lectures_in(coming)
-  end
-
-  def staff_lecture?(lecture)
-    lecture.teacher == self || edited_lectures.include?(lecture)
-  end
-
   # The published lectures whose content this user gets to see as a student:
   # those without a passphrase, and those unlocked via a bookmark. Scope
   # counterpart of Lecture#unlocked_for? (staff access is not included).
@@ -932,12 +921,6 @@ class User < ApplicationRecord
       return if program.nil? || program.degree.present?
 
       errors.add(:program_id, :inclusion)
-    end
-
-    def staff_lectures_in(terms)
-      given = given_lectures.where(term: terms).includes(:course, :term)
-      edited = edited_lectures.where(term: terms).includes(:course, :term, :teacher)
-      (given + edited).uniq.natural_sort_by(&:title)
     end
 
     def password_differs_from_current
