@@ -11,7 +11,8 @@
                     lecture: lecture,
                     user: current_user,
                     term: @selected_term,
-                    activity: @board.lecture_activity)) %>
+                    activity: @board.lecture_activity,
+                    section: :staff)) %>
     <% end %>
   <% end %>
 
@@ -23,7 +24,8 @@
                     lecture: lecture,
                     user: current_user,
                     term: @selected_term,
-                    activity: @board.lecture_activity)) %>
+                    activity: @board.lecture_activity,
+                    section: :tutor)) %>
     <% end %>
   <% end %>
 
@@ -51,7 +53,7 @@
                     user: current_user,
                     term: @selected_term,
                     activity: @board.lecture_activity,
-                    bookmarked: true)) %>
+                    section: :bookmarked)) %>
     <% end %>
   <% end %>
 

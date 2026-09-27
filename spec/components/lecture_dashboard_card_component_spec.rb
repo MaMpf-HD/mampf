@@ -14,7 +14,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
   it "re-renders the board for its semester when the card is removed" do
     term = create(:term, :summer, year: 2031)
-    removal = render_card(term: term, bookmarked: true)
+    removal = render_card(term: term, section: :bookmarked)
               .at_css("[data-controller='bookmark-removal']")
 
     expect(removal["data-bookmark-removal-url-value"]).to end_with("?term=SS31")
@@ -30,13 +30,13 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
   it "warns before removing the bookmark that unlocked a pass-phrase lecture" do
     lecture.update!(passphrase: "open sesame")
 
-    expect(render_card(bookmarked: true).text)
+    expect(render_card(section: :bookmarked).text)
       .to include(I18n.t("main.start.remove_bookmark_body_locked",
                          lecture: lecture.title_no_term))
   end
 
   it "does not warn for an open lecture" do
-    expect(render_card(bookmarked: true).text)
+    expect(render_card(section: :bookmarked).text)
       .to include(I18n.t("main.start.remove_bookmark_body", lecture: lecture.title_no_term))
   end
 
@@ -81,6 +81,16 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
     expect(render_card.at_css(".dashboard-card-slot__rail")).to be_nil
   end
 
+  it "leaves the student points progress and deadlines off a staff card" do
+    create(:assignment, lecture: lecture, deadline: 2.days.from_now)
+    allow(DashboardPointsProgressComponent).to receive(:new).and_call_original
+
+    rendered = render_card(section: :staff)
+
+    expect(rendered.at_css(".dashboard-card-slot__rail")).to be_nil
+    expect(DashboardPointsProgressComponent).not_to have_received(:new)
+  end
+
   it "no longer carries a bookmark toggle" do
     expect(render_card.at_css(".bi-bookmark, .bi-bookmark-fill")).to be_nil
   end
@@ -91,7 +101,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
   context "when the card sits in the bookmarked band" do
     it "offers a remove-bookmark control wired to the lecture" do
-      rendered = render_card(bookmarked: true)
+      rendered = render_card(section: :bookmarked)
 
       control = rendered.at_css("[data-controller='bookmark-removal']")
       expect(control["data-bookmark-removal-url-value"])

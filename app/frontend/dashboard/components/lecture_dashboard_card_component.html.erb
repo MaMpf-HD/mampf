@@ -66,14 +66,17 @@
     <% end %>
   <% end %>
 
-  <% card.with_progress do %>
-    <%= render(DashboardPointsProgressComponent.new(lecture: lecture,
-                                                    user: user)) %>
+  <% unless staff? %>
+    <% card.with_progress do %>
+      <%= render(DashboardPointsProgressComponent.new(lecture: lecture,
+                                                      user: user)) %>
+    <% end %>
   <% end %>
 
   <% card.with_rail do %>
     <%= render(LectureQuickActionsComponent.new(lecture: lecture,
                                                 user: user,
-                                                activity: activity)) %>
+                                                activity: activity,
+                                                staff: staff?)) %>
   <% end %>
 <% end %>

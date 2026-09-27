@@ -7,22 +7,29 @@ class LectureQuickActionsComponent < ViewComponent::Base
 
   Action = Struct.new(:kind, :icon, :label, :href, keyword_init: true)
 
-  def initialize(lecture:, user:, activity: nil)
+  # `staff` keeps only the unread activity, since deadlines and exam
+  # registration are student actions.
+  def initialize(lecture:, user:, activity: nil, staff: false)
     super()
     @lecture = lecture
     @user = user
     @activity = activity
+    @staff = staff
   end
 
-  attr_reader :lecture, :user
+  attr_reader :lecture, :user, :staff
+  alias staff? staff
 
   def render?
     actions.any?
   end
 
   def actions
-    @actions ||= [assignment_action, exam_registration_action, activity_action]
-                 .compact
+    @actions ||= if staff?
+      [activity_action].compact
+    else
+      [assignment_action, exam_registration_action, activity_action].compact
+    end
   end
 
   def list_label
