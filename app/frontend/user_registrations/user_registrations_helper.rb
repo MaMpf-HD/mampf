@@ -74,7 +74,7 @@ module UserRegistrationsHelper
   def student_registration_instruction(campaign, items = [])
     key = if campaign.exam_campaign?
       "first_come_first_served_instruction_exam"
-    elsif campaign.first_come_first_served? && campaign.roster_group_type == "talks"
+    elsif campaign.first_come_first_served? && talks_only?(items)
       "first_come_first_served_instruction_talk"
     elsif campaign.first_come_first_served?
       "first_come_first_served_instruction"
@@ -111,9 +111,14 @@ module UserRegistrationsHelper
   # ones included, so a talk's place tells when it is given: "Talk N" carries
   # the talk's position.
   def sorted_student_registration_items(items)
-    items.natural_sort_by do |item|
-      [item_display_type(item), item.registerable.title].join(" | ")
-    end
+    Rosters::RegisterableOrdering.sort_items(items)
+  end
+
+  # A seminar campaign may mix talks and cohorts; only one of talks alone is
+  # spoken of as talks.
+  def talks_only?(items)
+    items = Array(items)
+    items.any? && items.all? { |item| item.registerable_type == "Talk" }
   end
 
   def preference_rank_for(item, item_preferences)

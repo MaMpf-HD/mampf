@@ -114,7 +114,7 @@ class CampaignCardComponent < ViewComponent::Base
   end
 
   def talk_campaign?
-    items.any? && items.all? { |item| item.registerable_type == "Talk" }
+    helpers.talks_only?(items)
   end
 
   delegate :eligibility, :finalization_eligibility, :items, :item_preferences,

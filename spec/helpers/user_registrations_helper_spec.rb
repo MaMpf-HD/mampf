@@ -203,6 +203,30 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
       expect(items.second.still_has_capacity?).to be(false)
       expect(sorted.map { |item| item.registerable.position }).to eq([1, 2, 3])
     end
+
+    it "puts talks before cohorts, whatever the labels are called" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: seminar)
+      cohort = create(:registration_item, registration_campaign: campaign,
+                                          registerable: create(:cohort, context: seminar))
+      talk = create(:registration_item, registration_campaign: campaign,
+                                        registerable: create(:talk, lecture: seminar, position: 1))
+
+      expect(helper.sorted_student_registration_items([cohort, talk])).to eq([talk, cohort])
+    end
+
+    it "puts tutorial 2 before tutorial 10" do
+      lecture = create(:lecture)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+      items = ["Gruppe 10", "Gruppe 2"].map do |title|
+        create(:registration_item, registration_campaign: campaign,
+                                   registerable: create(:tutorial, lecture: lecture, title: title))
+      end
+
+      sorted = helper.sorted_student_registration_items(items)
+
+      expect(sorted.map { |item| item.registerable.title }).to eq(["Gruppe 2", "Gruppe 10"])
+    end
   end
 
   describe "#student_registration_instruction" do
@@ -212,8 +236,20 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
       create(:registration_item, registration_campaign: campaign,
                                  registerable: create(:talk, lecture: seminar))
 
-      expect(helper.student_registration_instruction(campaign))
+      expect(helper.student_registration_instruction(campaign, campaign.registration_items))
         .to eq(I18n.t("registration.user_registration.first_come_first_served_instruction_talk"))
+    end
+
+    it "does not speak of talks when the campaign mixes talks and cohorts" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: seminar)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:talk, lecture: seminar))
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:cohort, context: seminar))
+
+      expect(helper.student_registration_instruction(campaign, campaign.registration_items))
+        .to eq(I18n.t("registration.user_registration.first_come_first_served_instruction"))
     end
   end
 
