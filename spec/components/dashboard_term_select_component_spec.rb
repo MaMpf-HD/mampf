@@ -7,13 +7,17 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
   let(:terms) { [past, current, future] }
 
   def render_select(selected: current, id: "dashboard-term-select", anchor: nil)
-    render_inline(described_class.new(terms: terms, selected: selected,
-                                      id: id, anchor: anchor))
+    render_inline(described_class.new(
+                    terms: terms, selected: selected, id: id, anchor: anchor,
+                    next_term_lecture_count:
+                      Dashboard::TermSelector.next_term_lecture_count
+                  ))
   end
 
   it "does not render for a single semester" do
     rendered = render_inline(described_class.new(terms: [current],
-                                                 selected: current, id: "x"))
+                                                 selected: current, id: "x",
+                                                 next_term_lecture_count: 0))
 
     expect(rendered.to_html).to be_blank
   end
@@ -51,13 +55,66 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
     expect(urls).to all(end_with("#lecture-search"))
   end
 
-  it "wires the select up to refresh the page on change" do
-    rendered = render_select(id: "lecture-search-term-select")
-    select = rendered.at_css("select")
+  it "offers to jump back to the current semester when another one is selected" do
+    link = render_select(selected: past).at_css("[data-testid=current-term-link]")
 
-    expect(rendered.at_css("div")["id"]).to eq("lecture-search-term-select-wrapper")
-    expect(select["id"]).to eq("lecture-search-term-select")
-    expect(select["data-testid"]).to eq("lecture-search-term-select")
-    expect(select["data-action"]).to eq("change->dashboard-term-select#change")
+    expect(link["href"]).to eq("/?term=SS25")
+  end
+
+  it "does not offer to jump back when the current semester is selected" do
+    expect(render_select.at_css("[data-testid=current-term-link]")).to be_nil
+  end
+
+  describe "next semester notice" do
+    around { |example| I18n.with_locale(:en) { example.run } }
+
+    def notice(**)
+      render_select(**).at_css("[data-testid=next-term-notice]")
+    end
+
+    it "is hidden while the next semester has no published lectures" do
+      create(:lecture, term: future)
+
+      expect(notice).to be_nil
+    end
+
+    it "is hidden while the next semester has only term-independent lectures" do
+      create(:lecture, :released_for_all, :term_independent)
+
+      expect(notice).to be_nil
+    end
+
+    context "with published lectures in the next semester" do
+      before do
+        create_list(:lecture, 2, :released_for_all, term: future)
+        create(:lecture, term: future)
+        create(:lecture, :released_for_all, :term_independent)
+      end
+
+      it "counts the published lectures the search shows for the next semester" do
+        expect(notice.text).to include("3 lectures for WS 25/26")
+      end
+
+      it "jumps down to the lecture search of the next semester" do
+        link = notice.at_css("a")
+
+        expect(link["href"]).to eq("/?term=WS25-26#lecture-search")
+      end
+
+      it "is hidden when another than the current semester is selected" do
+        expect(notice(selected: past)).to be_nil
+        expect(notice(selected: future)).to be_nil
+      end
+    end
+
+    context "without a next semester" do
+      let(:terms) { [past, current] }
+
+      it "is hidden even with published term-independent lectures" do
+        create(:lecture, :released_for_all, :term_independent)
+
+        expect(notice).to be_nil
+      end
+    end
   end
 end
