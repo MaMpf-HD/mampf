@@ -635,6 +635,10 @@ Rails.application.routes.draw do
        to: "notifications#destroy_lecture_notifications",
        as: "destroy_lecture_notifications"
 
+  post "notifications/destroy_lecture_media_notifications",
+       to: "notifications#destroy_lecture_media_notifications",
+       as: "destroy_lecture_media_notifications"
+
   post "notifications/destroy_news_notifications",
        to: "notifications#destroy_news_notifications",
        as: "destroy_news_notifications"

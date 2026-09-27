@@ -1,0 +1,135 @@
+<section
+  class="lecture-home-content"
+  aria-labelledby="lecture-content-heading"
+  data-testid="lecture-home-content"
+>
+  <div class="lecture-home-label-line">
+    <h2 class="lecture-home-label" id="lecture-content-heading">
+      <%= t("lecture_home.content.title") %>
+    </h2>
+
+    <%= link_to t("basics.outline"),
+                lecture_outline_path(lecture),
+                class: "lecture-home-quiet-link",
+                data: { turbo_frame: "main" } %>
+  </div>
+
+  <% if live? %>
+    <% if last_lesson %>
+      <div class="lecture-home-content-row">
+        <div class="lecture-home-content-key">
+          <%= t("lecture_home.content.last_lesson") %><br>
+          <%= l(last_lesson.date, format: :weekday_day) %>
+        </div>
+
+        <div class="lecture-home-content-main">
+          <div class="lecture-home-content-title"><%= last_lesson_title %></div>
+
+          <% if last_lesson_tags.present? %>
+            <div class="lecture-home-content-line"><%= last_lesson_tags %></div>
+          <% end %>
+
+          <% if last_lesson.details.present? %>
+            <details class="lecture-home-content-details">
+              <summary><%= t("lecture_home.content.what_we_did") %></summary>
+              <%= sanitize(last_lesson.details) %>
+            </details>
+          <% end %>
+        </div>
+
+        <div class="lecture-home-content-media">
+          <% last_lesson_links.each do |link| %>
+            <%= link_to link.path do %>
+              <i class="bi <%= link.icon %>" aria-hidden="true"></i>
+              <%= link.label %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if new_media.any? %>
+      <div class="lecture-home-content-row" id="lecture-home-new-media">
+        <div class="lecture-home-content-key">
+          <%= t("lecture_home.content.new_media") %>
+        </div>
+
+        <div class="lecture-home-content-main">
+          <span class="new-dot" aria-hidden="true"></span>
+
+          <%= new_media_links %>
+
+          <% if new_media.size > 2 %>
+            <%= t("lecture_home.content.more_media", count: new_media.size - 2) %>
+          <% end %>
+        </div>
+
+        <div>
+          <%= button_to t("lecture_home.content.mark_seen"),
+                        destroy_lecture_media_notifications_path(lecture_id: lecture.id),
+                        class: "lecture-home-quiet-link btn btn-link p-0",
+                        form: { data: { turbo_stream: true } } %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if last_lesson && current_section %>
+      <div class="lecture-home-content-row">
+        <div class="lecture-home-content-key">
+          <%= t("lecture_home.content.position") %>
+        </div>
+
+        <div class="lecture-home-content-main">
+          <div>
+            <%= t("chapter", number: current_section.chapter.displayed_number,
+                             title: current_section.chapter.title) %>,
+            <strong><%= current_section.displayed_number %></strong>
+          </div>
+
+          <div
+            class="lecture-home-content-progress"
+            role="img"
+            aria-label="<%= progress_label %>"
+          >
+            <% section_progress.each do |section, state| %>
+              <span
+                class="lecture-home-content-progress-<%= state %>"
+                title="<%= section.displayed_number %> <%= section.title %>"
+              ></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="lecture-home-content-row">
+      <div class="lecture-home-content-key"><%= overview_key %></div>
+
+      <div class="lecture-home-content-main">
+        <div class="lecture-home-content-title"><%= overview_title %></div>
+
+        <ol class="lecture-home-content-chapters">
+          <% chapters.each do |chapter| %>
+            <li value="<%= chapter.displayed_number.to_i %>">
+              <%= chapter.title %>
+
+              <% if (sections = section_list(chapter)) %>
+                — <%= sections %>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+    </div>
+
+    <% if revisions.any? %>
+      <div class="lecture-home-content-row">
+        <div class="lecture-home-content-key"><%= revisions_key %></div>
+
+        <div class="lecture-home-content-main">
+          <%= revision_links %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</section>

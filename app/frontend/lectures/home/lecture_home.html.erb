@@ -107,6 +107,10 @@
                                      certification: @certification %>
   <% end %>
 
+  <% if @content&.render? %>
+    <%= render @content %>
+  <% end %>
+
   <% if @notifications.present? || (@lecture.forum? && @new_topics_count.positive?) %>
     <%= render "lectures/home/news", lecture: @lecture, notifications: @notifications,
                                      posts_count: @new_topics_count %>
@@ -155,6 +159,7 @@
   <% end %>
 
   <% if !@lecture.home_content? && !@can_edit && focus.nil? && @notifications.blank? &&
+        !@content&.render? &&
         @new_topics_count.zero? && @tutorials_given.empty? && campaigns.empty? &&
         Array(@self_rosterables).empty? && @work.nil? && participation_html.blank? &&
         Array(@overview&.closed_campaigns).empty? %>

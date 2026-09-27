@@ -85,6 +85,40 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  describe "the block on what the lecture covers" do
+    before do
+      chapter = create(:chapter, lecture: lecture, title: "Ringe")
+      section = create(:section, chapter: chapter, title: "Ringe und Ideale")
+      Lesson.create!(lecture: lecture, date: lecture.term.begin_date, sections: [section])
+    end
+
+    it "shows the lecture's chapters to a student" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-content"')
+      expect(response.body).to include("Ringe und Ideale")
+    end
+
+    it "takes the place of the \"start here\" card" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).not_to include('data-testid="lecture-home-fallback-card"')
+    end
+
+    it "stays hidden while a passphrase keeps the content closed" do
+      lecture.update!(passphrase: "secret")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).not_to include('data-testid="lecture-home-content"')
+    end
+  end
+
   describe "the staff note about the student registration view" do
     let!(:campaign) do
       create(:registration_campaign, :open, :with_items,

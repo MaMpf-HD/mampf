@@ -2889,6 +2889,8 @@ de:
     formats:
       concise: '%d.%m.%Y'
       test_week_start: '%d.%m.'
+      day_month: '%-d. %b'
+      weekday_day: '%a, %-d. %b'
       test_week_end: '%d.%m.%Y'
   datetimepicker:
     invalid_date: 'Ungültiges Datums-Zeit-Format.'

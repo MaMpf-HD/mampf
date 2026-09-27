@@ -2679,6 +2679,8 @@ en:
     formats:
       concise: '%Y-%m-%d'
       test_week_start: '%b %-d'
+      day_month: '%b %-d'
+      weekday_day: '%a, %b %-d'
       test_week_end: '%b %-d, %Y'
   datetimepicker:
     invalid_date: 'Invalid date time format.'
