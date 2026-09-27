@@ -60,4 +60,11 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
     expect(select["data-testid"]).to eq("lecture-search-term-select")
     expect(select["data-action"]).to eq("change->dashboard-term-select#change")
   end
+
+  it "renders block content next to the select" do
+    rendered = render_inline(described_class.new(terms: terms, selected: current,
+                                                 id: "x")) { "Extra hint" }
+
+    expect(rendered.at_css("#x-wrapper").text).to include("Extra hint")
+  end
 end

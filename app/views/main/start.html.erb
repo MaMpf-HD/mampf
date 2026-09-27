@@ -4,7 +4,9 @@
   <div class="container-md small-width mt-4">
     <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
                                                 selected: @selected_term,
-                                                id: "dashboard-term-select")) %>
+                                                id: "dashboard-term-select")) do %>
+      <%= render(NextTermNoticeComponent.new(selected: @selected_term)) %>
+    <% end %>
   </div>
 
   <%= render "main/start/lecture_cards" %>

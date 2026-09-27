@@ -1,7 +1,9 @@
 <%= turbo_stream.replace "dashboard-term-select-wrapper" do %>
   <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
                                               selected: @selected_term,
-                                              id: "dashboard-term-select")) %>
+                                              id: "dashboard-term-select")) do %>
+    <%= render(NextTermNoticeComponent.new(selected: @selected_term)) %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.replace "dashboardLectureCards",

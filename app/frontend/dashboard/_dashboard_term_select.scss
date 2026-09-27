@@ -2,6 +2,7 @@
 
 .dashboard-term-select {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
@@ -22,4 +23,32 @@
     min-width: 8.5rem;
     max-width: 100%;
     font-variant-numeric: tabular-nums;
+}
+
+.next-term-notice {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.4rem;
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
+
+    .fa-seedling {
+        color: var(--bs-primary);
+    }
+}
+
+.next-term-notice__link {
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    .fa-chevron-down {
+        font-size: 0.7em;
+    }
 }
