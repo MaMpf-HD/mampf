@@ -156,10 +156,17 @@ export class DashboardLectureBrowsePage {
     await this.dashboardCard(lectureId).getByTestId("washi-tape-strip").click();
   }
 
+  /**
+   * Returns once the server has answered, since the card shows the new color
+   * before it is saved and a reload in between would bring back the old one.
+   */
   async chooseWashiTapeColor(lectureId: number, colorLabel: string) {
     await this.openWashiTapePicker(lectureId);
+    const answered = this.page.waitForResponse(response =>
+      response.url().endsWith("/washi_tape"));
     await this.dashboardCard(lectureId)
       .getByRole("radio", { name: colorLabel }).click();
+    await answered;
   }
 
   sectionToggle(sectionTestid: string, title: string) {
