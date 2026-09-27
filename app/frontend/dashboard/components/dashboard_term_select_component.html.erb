@@ -19,14 +19,17 @@
   <% if show_next_term_notice? %>
     <p class="dashboard-term-select__notice" data-testid="next-term-notice">
       <i class="bi bi-stars" aria-hidden="true"></i>
+
       <span>
         <%= t("dashboard.term_select.next_term_notice.text",
               count: next_term_lecture_count, term: next_term.to_label_short) %>
       </span>
+
       <%= link_to root_path(term: next_term.dashboard_param, anchor: "lecture-search"),
                   class: "dashboard-term-select__link",
                   data: next_term_link_data do %>
         <%= t("dashboard.term_select.next_term_notice.link") %>
+
         <% if anchor.blank? %>
           <i class="bi bi-chevron-down" aria-hidden="true"></i>
         <% end %>
@@ -39,6 +42,7 @@
                 class: "dashboard-term-select__link",
                 data: { testid: "current-term-link", **pick_data(active_term) } do %>
       <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+
       <%= t("dashboard.term_select.current_term_link",
             term: active_term.to_label_short) %>
     <% end %>
