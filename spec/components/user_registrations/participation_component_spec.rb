@@ -370,6 +370,19 @@ RSpec.describe(ParticipationComponent, type: :component) do
       expect(row.css("details dd").map { |value| value.text.squish }).to eq(["7.5 / 10", "12 / 20"])
     end
 
+    # A grade entered without any points is no score of zero.
+    it "shows a grade given without points, but no points" do
+      participation.task_points.destroy_all
+      participation.update!(points_total: nil)
+      assessment.update!(results_published_at: Time.current)
+
+      row = render_row
+
+      expect(row.text.squish).to include("Grade 2.3")
+      expect(row.text).not_to include("points")
+      expect(row.css("details")).to be_empty
+    end
+
     it "says so for a student who did not take part" do
       participation.update!(status: :absent, grade_numeric: 5.0)
       assessment.update!(results_published_at: Time.current)

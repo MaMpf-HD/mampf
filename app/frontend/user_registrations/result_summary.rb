@@ -35,12 +35,14 @@ class ResultSummary
     return unless tasks.any?
 
     I18n.t("registration.user_registration.participation.points",
-           points: format_points(participation.points_total || 0),
+           points: format_points(participation.points_total),
            total: format_points(participation.assessment.effective_total_points))
   end
 
+  # A grade given without any points entered has no points to show; an
+  # entered 0 does.
   def tasks
-    return [] unless participation.reviewed?
+    return [] unless participation.reviewed? && participation.results_visible?
 
     @tasks ||= begin
       points = participation.task_points.index_by(&:task_id)
