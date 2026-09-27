@@ -71,23 +71,16 @@ RSpec.describe(Rosters::SelfRosterOptionsQuery) do
       expect(described_class.new(lecture, user).call).to be_empty
     end
 
-    it "sorts registerable options before withdraw-only and full options" do
-      full_tutorial = create(:tutorial,
-                             lecture: lecture,
-                             title: "Tutorial Z",
-                             skip_campaigns: true,
-                             self_materialization_mode: :add_only,
-                             capacity: 1)
-      full_tutorial.add_user_to_roster!(create(:confirmed_user))
+    it "keeps the talks in program order, the user's own and full ones included" do
+      seminar = create(:seminar, :released_for_all)
+      talks = (1..3).map do |position|
+        create(:talk, lecture: seminar, position: position, capacity: 1,
+                      skip_campaigns: true, self_materialization_mode: :add_and_remove)
+      end
+      talks.first.add_user_to_roster!(create(:confirmed_user))
+      talks.second.add_user_to_roster!(user)
 
-      result = described_class.new(lecture, user).call
-
-      expect(result).to eq([
-                             add_only_tutorial,
-                             add_and_remove_tutorial,
-                             allocated_remove_only_tutorial,
-                             full_tutorial
-                           ])
+      expect(described_class.new(seminar, user).call).to eq(talks)
     end
 
     it "still returns visible options when the user is in a join-only tutorial" do
