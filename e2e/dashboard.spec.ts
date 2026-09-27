@@ -375,6 +375,28 @@ test.describe("a rejected registration's notice", () => {
     });
 });
 
+test("shows a student's talk on the seminar's card",
+  async ({ factory, student: { page, user } }) => {
+    const term = await createActiveTerm(factory);
+    const course = await factory.create("course", [], { title: "Group Theory Seminar" });
+    const seminar = await factory.create("lecture", ["released_for_all", "is_seminar"], {
+      course_id: course.id,
+      term_id: term.id,
+    });
+    await factory.create("talk", [], {
+      lecture_id: seminar.id, title: "Sylow theorems", speaker_ids: [user.id],
+    });
+
+    await new DashboardLectureBrowsePage(page).goto();
+
+    const registered = page.getByRole("region", { name: "You are registered for these" });
+    await expect(registered.getByRole("link", { name: "Group Theory Seminar" })).toBeVisible();
+    await expect(registered.getByRole("link", { name: "Sylow theorems", exact: true }))
+      .toHaveCount(0);
+    await registered.getByRole("link", { name: "Your talk: Sylow theorems" }).click();
+    await expect(page).toHaveURL(/\/talks\/\d+$/);
+  });
+
 test("remembers a folded dashboard section across a reload",
   async ({ factory, student: { page, user } }) => {
     const term = await createActiveTerm(factory);

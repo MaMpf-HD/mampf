@@ -118,4 +118,31 @@ RSpec.describe(Dashboard::Board) do
         .to eq([confirmed_lecture, pending_lecture, rejected_lecture])
     end
   end
+
+  describe "talks" do
+    let(:term) { create(:term, :summer, :active, year: 2025) }
+    let(:user) { create(:user) }
+    let(:board) { described_class.new(user: user, term: term) }
+    let(:seminar) { create(:lecture, :released_for_all, sort: "seminar", term: term) }
+    let!(:talk) { create(:talk, lecture: seminar, speaker_ids: [user.id]) }
+
+    it "sits on its seminar's card, not on a card of its own" do
+      create(:lecture_membership, user: user, lecture: seminar)
+
+      expect(board.enrolled_lectures).to contain_exactly(seminar)
+      expect(board.talks_for(seminar)).to eq([talk])
+    end
+
+    # Speakers of an older seminar may have no place on its roster.
+    it "brings its seminar onto the board without a roster seat" do
+      expect(board.enrolled_lectures).to contain_exactly(seminar)
+    end
+
+    it "does not show a seminar the user edits a second time" do
+      seminar.editors << user
+
+      expect(board.staff_lectures).to contain_exactly(seminar)
+      expect(board.enrolled_lectures).to be_empty
+    end
+  end
 end

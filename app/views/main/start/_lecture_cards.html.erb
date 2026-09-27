@@ -12,6 +12,7 @@
                     user: current_user,
                     term: @selected_term,
                     activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture),
                     section: :staff)) %>
     <% end %>
   <% end %>
@@ -25,6 +26,7 @@
                     user: current_user,
                     term: @selected_term,
                     activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture),
                     section: :tutor)) %>
     <% end %>
   <% end %>
@@ -37,10 +39,8 @@
                     lecture: lecture,
                     user: current_user,
                     term: @selected_term,
-                    activity: @board.lecture_activity)) %>
-    <% end %>
-    <% @board.talks.each do |talk| %>
-      <%= render(TalkDashboardCardComponent.new(talk: talk, user: current_user)) %>
+                    activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture))) %>
     <% end %>
   <% end %>
 
@@ -53,6 +53,7 @@
                     user: current_user,
                     term: @selected_term,
                     activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture),
                     section: :bookmarked)) %>
     <% end %>
   <% end %>

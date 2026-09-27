@@ -231,6 +231,15 @@ $card-rail-width: 12rem;
         }
     }
 
+    &__talk {
+        min-width: 0;
+    }
+
+    // lines up with the talk's title, past the microphone
+    &__talk-details {
+        padding-left: 1.2rem;
+    }
+
     // above the title's stretched link, like the corner
     &__note-link {
         position: relative;

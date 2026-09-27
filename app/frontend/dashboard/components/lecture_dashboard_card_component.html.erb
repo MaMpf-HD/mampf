@@ -66,6 +66,31 @@
     <% end %>
   <% end %>
 
+  <% talks.each do |talk| %>
+    <% card.with_note do %>
+      <div class="dashboard-card__talk">
+        <div>
+          <%= link_to talk_path(talk), class: "dashboard-card__note-link" do %>
+            <i class="bi bi-mic" aria-hidden="true"></i>
+            <%= t("main.start.your_talk", title: talk.title) %>
+          <% end %>
+
+          <%= link_to "",
+                      assemble_talk_path(talk),
+                      class: "bi bi-pencil text-muted dashboard-card__note-link ms-1",
+                      title: t("main.start.edit_talk", title: talk.title),
+                      "aria-label": t("main.start.edit_talk", title: talk.title) %>
+        </div>
+
+        <% if (details = talk_details(talk)).any? %>
+          <div class="dashboard-card__talk-details">
+            <%= safe_join(details, " · ") %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
   <% unless staff? %>
     <% card.with_progress do %>
       <%= render(DashboardPointsProgressComponent.new(lecture: lecture,
