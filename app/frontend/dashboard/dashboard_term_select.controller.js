@@ -15,4 +15,14 @@ export default class extends Controller {
 
     form.requestSubmit();
   }
+
+  /**
+   * Switches the picker to the given term, as if picked from the dropdown.
+   */
+  pick(event) {
+    event.preventDefault();
+    const select = this.element.querySelector("select");
+    select.value = event.params.term;
+    select.dispatchEvent(new Event("change"));
+  }
 }

@@ -4,9 +4,10 @@
     <%= t("dashboard.next_term_notice.text", count: lecture_count,
                                              term: next_term.to_label_short) %>
   </span>
-  <%= link_to target_path, class: "next-term-notice__link",
-                           data: { testid: "next-term-notice-link" } do %>
+  <%= link_to target_path, class: "next-term-notice__link", data: link_data do %>
     <%= t("dashboard.next_term_notice.link") %>
-    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    <% unless in_search %>
+      <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    <% end %>
   <% end %>
 </p>

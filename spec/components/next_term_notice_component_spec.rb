@@ -35,6 +35,22 @@ RSpec.describe(NextTermNoticeComponent, type: :component) do
       expect(link["href"]).to eq("/?term=WS25-26#lecture-search")
     end
 
+    it "jumps down to the search from the dashboard" do
+      link = render_notice.at_css("a")
+
+      expect(link["data-action"]).to be_nil
+      expect(link.at_css(".fa-chevron-down")).to be_present
+    end
+
+    it "only switches the picker when shown in the search" do
+      link = render_inline(described_class.new(selected: current,
+                                               in_search: true)).at_css("a")
+
+      expect(link["data-action"]).to eq("dashboard-term-select#pick")
+      expect(link["data-dashboard-term-select-term-param"]).to eq("WS25-26")
+      expect(link.at_css(".fa-chevron-down")).to be_nil
+    end
+
     it "does not render when the next term is already selected" do
       expect(render_notice(selected: upcoming).to_html).to be_blank
     end

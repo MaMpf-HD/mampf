@@ -9,7 +9,10 @@
       <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
                                                   selected: @selected_term,
                                                   id: "lecture-search-term-select",
-                                                  anchor: "lecture-search")) %>
+                                                  anchor: "lecture-search")) do %>
+        <%= render(NextTermNoticeComponent.new(selected: @selected_term,
+                                               in_search: true)) %>
+      <% end %>
     <% end %>
 
     <%= form_with url: search_lectures_path,
