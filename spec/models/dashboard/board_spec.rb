@@ -1,6 +1,27 @@
 require "rails_helper"
 
 RSpec.describe(Dashboard::Board) do
+  describe "#staff_lectures" do
+    let(:term) { create(:term, :summer, :active, year: 2025) }
+    let(:user) { create(:user) }
+    let(:board) { described_class.new(user: user, term: term) }
+
+    it "includes taught, edited and course-edited lectures of the term" do
+      taught = create(:lecture, term: term, teacher: user)
+      edited = create(:lecture, term: term)
+      edited.editors << user
+      course = create(:course)
+      course.editors << user
+      course_edited = create(:lecture, term: term, course: course)
+      create(:lecture, course: course,
+                       term: create(:term, :winter, year: 2025))
+      create(:lecture, term: term)
+
+      expect(board.staff_lectures)
+        .to contain_exactly(taught, edited, course_edited)
+    end
+  end
+
   describe "#enrolled_lectures" do
     let(:term) { create(:term, :summer, :active, year: 2025) }
     let(:user) { create(:user) }
