@@ -151,6 +151,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "grade_scheme_id"
+    t.datetime "result_seen_at"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
     t.index ["grade_scheme_id"], name: "index_assessment_participations_on_grade_scheme_id"

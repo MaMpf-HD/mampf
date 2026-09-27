@@ -9,7 +9,6 @@ class ParticipationComponent < ViewComponent::Base
 
   Row = Struct.new(:label, :title, :lines, :badge, :note, :actions, :tasks,
                    keyword_init: true)
-  TaskResult = Struct.new(:label, :points, :max_points, keyword_init: true)
 
   def initialize(lecture:, user:, overview: nil)
     super()
@@ -44,7 +43,7 @@ class ParticipationComponent < ViewComponent::Base
                 badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
                 actions: leave_action(rosterable),
-                tasks: result_tasks(result))
+                tasks: result&.tasks || [])
       end
     end
 
@@ -56,59 +55,20 @@ class ParticipationComponent < ViewComponent::Base
       participation = rosterable.assessment&.assessment_participations
                                 &.includes(:task_points, assessment: :tasks)
                                 &.find_by(user_id: @user.id)
-      participation if participation&.result_released?
+      ResultSummary.new(participation) if participation&.result_released?
     end
 
     def result_badge(result)
       return [:warn, t("registration.user_registration.participation.absent")] if result.absent?
       return [:info, t("registration.user_registration.participation.exempt")] if result.exempt?
-
-      grade = result_grade(result)
-      return [:info, t("registration.user_registration.participation.grade", grade: grade)] if grade
+      return [:info, result.grade_line] if result.grade
 
       [:info, t("registration.user_registration.participation.marked")]
     end
 
     # A no-show may carry a grade too, so the grade is named beside "absent".
     def result_lines(result)
-      return [] unless result
-
-      grade = result_grade(result)
-      lines = []
-      if result.absent? && grade
-        lines << t("registration.user_registration.participation.grade", grade: grade)
-      end
-      lines << points_line(result) if result.reviewed? && result.assessment.tasks.any?
-      lines
-    end
-
-    def result_grade(result)
-      return result.grade_text.presence unless result.grade_numeric
-
-      helpers.number_with_precision(result.grade_numeric, precision: 1)
-    end
-
-    def points_line(result)
-      t("registration.user_registration.participation.points",
-        points: format_points(result.points_total || 0),
-        total: format_points(result.assessment.effective_total_points))
-    end
-
-    def result_tasks(result)
-      return [] unless result&.reviewed?
-
-      points = result.task_points.index_by(&:task_id)
-      result.assessment.tasks.sort_by(&:position).each_with_index.map do |task, index|
-        TaskResult.new(label: task.description.presence ||
-                              t("registration.user_registration.participation.problem",
-                                number: index + 1),
-                       points: points[task.id]&.points&.then { |value| format_points(value) },
-                       max_points: format_points(task.max_points || 0))
-      end
-    end
-
-    def format_points(value)
-      helpers.number_with_precision(value, precision: 2, strip_insignificant_zeros: true)
+      result ? result.lines : []
     end
 
     def standing_rows

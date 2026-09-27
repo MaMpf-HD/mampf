@@ -50,6 +50,18 @@ module Assessment
     validate :absence_only_without_hand_in,
              if: -> { (absent? || exempt?) && status_changed? }
 
+    # A student's published exam and talk results in a lecture that they
+    # have not closed yet: the lecture home shows them up top, the
+    # dashboard points to them.
+    def self.new_results_for(user, lecture)
+      with_result.joins(:assessment)
+                 .preload(:task_points, assessment: [:tasks, :assessable])
+                 .where(user: user, result_seen_at: nil)
+                 .where(assessment_assessments: { lecture_id: lecture.id,
+                                                  assessable_type: ["Exam", "Talk"] })
+                 .where.not(assessment_assessments: { results_published_at: nil })
+    end
+
     def self.tutorial_for(user, lecture)
       TutorialMembership.joins(:tutorial)
                         .where(tutorials: { lecture_id: lecture.id },

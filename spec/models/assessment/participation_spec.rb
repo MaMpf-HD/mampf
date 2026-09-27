@@ -517,6 +517,42 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe ".new_results_for" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:exam) { FactoryBot.create(:exam, lecture: lecture) }
+
+    def result(assessable, status: :reviewed, published: true, owner: user)
+      assessable.assessment.update!(results_published_at: (Time.current if published))
+      FactoryBot.create(:assessment_participation, assessment: assessable.assessment,
+                                                   user: owner, status: status)
+    end
+
+    it "lists the student's published results that are not closed yet" do
+      shown = result(exam)
+
+      expect(described_class.new_results_for(user, lecture)).to eq([shown])
+    end
+
+    it "leaves out a result that is closed, unpublished, pending or someone else's" do
+      result(exam).update!(result_seen_at: Time.current)
+      result(FactoryBot.create(:exam, lecture: lecture), published: false)
+      result(FactoryBot.create(:exam, lecture: lecture), status: :pending)
+      result(FactoryBot.create(:exam, lecture: lecture), owner: FactoryBot.create(:confirmed_user))
+
+      expect(described_class.new_results_for(user, lecture)).to be_empty
+    end
+
+    # A sheet's points show as the tutor saves them; there is no news to
+    # announce.
+    it "leaves out assignments" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture, expired_since: 2.days)
+      result(assignment)
+
+      expect(described_class.new_results_for(user, lecture)).to be_empty
+    end
+  end
+
   describe "#result_released?" do
     let(:assessment) { FactoryBot.create(:exam).assessment }
 

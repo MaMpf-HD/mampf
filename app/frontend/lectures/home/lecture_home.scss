@@ -236,6 +236,32 @@
   font-weight: 600;
 }
 
+.lecture-home-new-result-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.lecture-home-new-result-grade {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.lecture-home-new-result-label {
+  color: var(--bs-secondary-color);
+}
+
+.lecture-home-new-result-value {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
 .lecture-home-focus-line {
   margin: 0;
   color: var(--bs-secondary-color);

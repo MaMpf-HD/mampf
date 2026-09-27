@@ -4,6 +4,10 @@ de:
       label: "Semester"
     quick_actions:
       list_label: "Zu erledigen für %{lecture}"
+      result:
+        label:
+          one: "Dein Ergebnis in %{title}"
+          other: "%{count} neue Ergebnisse"
       assignment:
         label: "Abgabe fällig am %{date}"
       exam:

@@ -94,6 +94,8 @@
     </div>
   <% end %>
 
+  <%= render NewResultsComponent.new(lecture: @lecture, user: current_user) %>
+
   <% backlog = @lecture_backlog || @tutor_backlog %>
   <% if backlog&.entries&.any? %>
     <%= render "lectures/home/marking", lecture: @lecture, backlog: backlog,

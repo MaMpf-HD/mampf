@@ -4,6 +4,10 @@ en:
       label: "Semester"
     quick_actions:
       list_label: "Things to do for %{lecture}"
+      result:
+        label:
+          one: "Your result in %{title}"
+          other: "%{count} new results"
       assignment:
         label: "Assignment due %{date}"
       exam:

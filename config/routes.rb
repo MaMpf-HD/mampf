@@ -1246,6 +1246,10 @@ Rails.application.routes.draw do
         to: "assessment/achievement_values#refresh",
         as: "refresh_achievement_value_participation"
 
+  patch "participations/:participation_id/result_seen",
+        to: "assessment/result_notices#update",
+        as: "result_seen_participation"
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not

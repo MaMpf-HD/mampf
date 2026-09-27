@@ -1,0 +1,13 @@
+<%# locals: (tasks:, open: false) %>
+<details class="lecture-home-result-tasks" <%= "open" if open %>>
+  <summary>
+    <%= t("registration.user_registration.participation.points_per_problem") %>
+  </summary>
+
+  <dl>
+    <% tasks.each do |task| %>
+      <dt><%= task.label %></dt>
+      <dd><%= task.points || "—" %> / <%= task.max_points %></dd>
+    <% end %>
+  </dl>
+</details>

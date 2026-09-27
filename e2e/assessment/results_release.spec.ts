@@ -1,6 +1,6 @@
 import { expect, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
-import { addTask, createLecture } from "./helpers";
+import { addTask } from "./helpers";
 
 /**
  * Exam and talk results stay with the teaching staff until the lecturer
@@ -12,7 +12,12 @@ test.describe("publishing results", () => {
     teacher,
     student,
   }) => {
-    const lecture = await createLecture(factory, teacher.user.id);
+    // the dashboard lists the lectures of the active term
+    const term = await factory.create("term", ["summer", "active"], { year: 2025 });
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+      term_id: term.id,
+    });
     const exam = await factory.create("exam", ["with_date"], {
       lecture_id: lecture.id,
       title: "Main Exam",
@@ -20,6 +25,7 @@ test.describe("publishing results", () => {
     const assessment = await exam.__call("assessment");
     await addTask(factory, assessment.id, "Prove it", 10);
     await factory.create("exam_roster_entry", [], { exam_id: exam.id, user_id: student.user.id });
+    await factory.create("lecture_bookmark", [], { lecture_id: lecture.id, user_id: student.user.id });
     const name = student.user.name_in_tutorials || student.user.name;
 
     const dashboard = new ExamDashboardPage(teacher.page, lecture.id);
@@ -52,12 +58,24 @@ test.describe("publishing results", () => {
     await expect(release).toContainText(/Published \d/);
     expect(question).toContain("From now on, 1 person sees their result");
 
+    // the dashboard points to the new result, and the lecture home puts it up top
+    await student.page.goto("/");
+    await student.page.getByRole("link", { name: /Your result in Main Exam/ }).click();
+    const block = student.page.getByRole("region", { name: "Your result in Main Exam" });
+    await expect(block).toContainText("2.0");
+    await expect(block).toContainText("7 of 10 points");
+    await expect(block.getByRole("definition")).toHaveText("7 / 10");
+    await expect(block.getByRole("term")).toHaveText("Prove it");
+
+    // closed, it leaves the result in the participation row
+    await block.getByRole("button", { name: "Close" }).click();
+    await expect(block).toBeHidden();
     await student.page.reload();
+    await expect(block).toBeHidden();
     await expect(examRow).toContainText("Grade 2.0");
     await expect(examRow).toContainText("7 of 10 points");
     await examRow.getByText("Points per problem").click();
     await expect(examRow.getByRole("definition")).toHaveText("7 / 10");
-    await expect(examRow.getByRole("term")).toHaveText("Prove it");
 
     teacher.page.once("dialog", dialog => void dialog.accept());
     await release.getByRole("button", { name: "Take back" }).click();
