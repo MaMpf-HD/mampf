@@ -36,14 +36,23 @@ class DashboardTermSelectComponent < ViewComponent::Base
     @next_term = active_term&.next
   end
 
-  def next_term_lecture_count
-    return 0 if next_term.blank?
+  # Whether the next term has lectures of its own. Term-independent lectures
+  # don't count here, as they show up in every term anyway.
+  def next_term_has_lectures?
+    return false if next_term.blank?
 
-    @next_term_lecture_count ||= Lecture.published.where(term: next_term).count
+    Lecture.published.exists?(term: next_term)
+  end
+
+  # Matches what the lecture search shows for the next term, i.e. includes
+  # term-independent lectures (see Search::Filters::DashboardTermFilter).
+  def next_term_lecture_count
+    @next_term_lecture_count ||=
+      Lecture.published.where(term: [next_term, nil]).count
   end
 
   def show_next_term_notice?
-    selected == active_term && next_term_lecture_count.positive?
+    selected == active_term && next_term_has_lectures?
   end
 
   def show_current_term_link?

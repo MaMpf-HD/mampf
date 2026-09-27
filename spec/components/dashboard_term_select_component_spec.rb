@@ -84,6 +84,12 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
       expect(notice).to be_nil
     end
 
+    it "is hidden while the next semester has only term-independent lectures" do
+      create(:lecture, :released_for_all, :term_independent)
+
+      expect(notice).to be_nil
+    end
+
     context "with published lectures in the next semester" do
       before do
         create_list(:lecture, 2, :released_for_all, term: future)
@@ -91,8 +97,8 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
         create(:lecture, :released_for_all, :term_independent)
       end
 
-      it "counts only the published lectures of the next semester" do
-        expect(notice.text).to include("2 lectures for WS 25/26")
+      it "counts the published lectures the search shows for the next semester" do
+        expect(notice.text).to include("3 lectures for WS 25/26")
       end
 
       it "jumps down to the lecture search of the next semester" do
