@@ -3931,7 +3931,6 @@ de:
     saved_at: "Gespeichert %{time}"
     last_saved_at: "Zuletzt gespeichert %{time}"
     available: "Verfügbar"
-    full: "Ausgebucht"
     position: "Position"
     room: "Raum"
     confirmed: "Bestätigt"

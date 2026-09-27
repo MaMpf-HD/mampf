@@ -38,9 +38,6 @@
                          class: "btn btn-outline-secondary btn-sm" %>
           <% reason = helpers.registration_blocked_tooltip %>
         <% elsif rosterable.config_allow_self_add? && !rosterable.locked? && rosterable.full? %>
-          <%= button_tag t("basics.full"), type: "button", disabled: true,
-                                           class: "btn btn-outline-secondary btn-sm" %>
-          <% reason = t("registration.user_registration.options.no_places") %>
         <% elsif from %>
           <%= button_to t("registration.user_registration.options.switch"),
                         path_for(:self_switch, rosterable),

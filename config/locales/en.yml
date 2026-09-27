@@ -3699,7 +3699,6 @@ en:
     saved_at: "Saved %{time}"
     last_saved_at: "Last saved %{time}"
     available: "Available"
-    full: "Full"
     position: "Position"
     room: "Room"
     confirmed: "Confirmed"
