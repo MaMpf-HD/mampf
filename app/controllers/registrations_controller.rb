@@ -10,10 +10,16 @@ class RegistrationsController < Devise::RegistrationsController
     if altcha_param.present? && Altcha.verify(altcha_param)
       return answer_taken_address if address_taken?
 
-      super do |user|
-        next if user.persisted?
+      begin
+        super do |user|
+          next if user.persisted?
 
-        log_rejected_sign_up(user.errors.full_messages.to_sentence)
+          log_rejected_sign_up(user.errors.full_messages.to_sentence)
+        end
+      rescue ActiveRecord::RecordNotUnique => e
+        raise unless e.message.include?("index_users_on_email")
+
+        answer_taken_address
       end
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))

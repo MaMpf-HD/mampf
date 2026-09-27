@@ -165,6 +165,16 @@ RSpec.describe("Auth registrations", type: :request) do
         expect(ActionMailer::Base.deliveries.flat_map(&:to)).not_to include("owner@example.com")
       end
 
+      it "answers as for a new address when a parallel sign-up takes it first" do
+        new_answer = sign_up_with(email)
+        collision = ActiveRecord::RecordNotUnique.new(
+          'duplicate key value violates unique constraint "index_users_on_email"'
+        )
+        allow_any_instance_of(User).to receive(:save).and_raise(collision)
+
+        expect(sign_up_with("late_#{email}")).to eq(new_answer)
+      end
+
       it "still names the other mistakes, but never the taken address" do
         sign_up_with("owner@example.com", password_confirmation: "something-else-entirely")
 
