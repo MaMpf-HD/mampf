@@ -1,0 +1,22 @@
+<%# The group and its mail belong to every state of the page, with a sheet to mark or without. %>
+<div class="col-12 col-md-4">
+  <label class="form-label fw-semibold mb-2" for="tutorial-select">
+    <%= t('basics.tutorial') %>
+  </label>
+
+  <% if tutorials.size > 1 %>
+    <%= render partial: 'tutorials/tutorial_dropdown' %>
+  <% else %>
+    <input id="tutorial-select" class="form-control form-control-sm" disabled value="<%= tutorial.title %>">
+  <% end %>
+</div>
+
+<% group_audience = StudentMessages::Catalog.new(@lecture, current_user)
+                                            .pick(["tutorial:#{tutorial.id}"])&.first %>
+<% if group_audience %>
+  <div class="col-12 col-md-3">
+    <%= render partial: 'student_messages/tutorial_modal',
+               locals: { lecture: @lecture, audience: group_audience,
+                         return_to: request.fullpath } %>
+  </div>
+<% end %>

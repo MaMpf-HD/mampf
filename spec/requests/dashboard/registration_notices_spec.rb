@@ -1,0 +1,118 @@
+require "rails_helper"
+
+RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
+  let(:user) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:campaign) do
+    create(:registration_campaign, :open, campaignable: lecture)
+  end
+  let!(:registration) do
+    create(:registration_user_registration, :rejected,
+           user: user,
+           registration_campaign: campaign,
+           registration_item: campaign.registration_items.first)
+  end
+
+  before do
+    sign_in user
+  end
+
+  describe "DELETE /dashboard/lectures/:lecture_id/registration_notice" do
+    it "dismisses the rejected registration and re-renders the dashboard bands" do
+      delete dashboard_lecture_registration_notice_path(lecture), as: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("dashboardLectureCards")
+      expect(registration.reload.dismissed_at).not_to be_nil
+    end
+
+    it "does not bookmark the lecture by default" do
+      delete dashboard_lecture_registration_notice_path(lecture), as: :turbo_stream
+
+      expect(lecture.in?(user.reload.lectures)).to be(false)
+    end
+
+    it "drops the lecture from the dashboard entirely once dismissed" do
+      delete dashboard_lecture_registration_notice_path(lecture), as: :turbo_stream
+
+      expect(user.reload.current_enrolled_lectures(lecture.term))
+        .not_to include(lecture)
+      expect(user.current_bookmarked_lectures(lecture.term))
+        .not_to include(lecture)
+    end
+
+    it "keeps the lecture bookmarked when asked to" do
+      delete dashboard_lecture_registration_notice_path(lecture),
+             params: { keep_bookmarked: true }, as: :turbo_stream
+
+      expect(lecture.in?(user.reload.lectures)).to be(true)
+      expect(user.current_bookmarked_lectures(lecture.term)).to include(lecture)
+    end
+
+    it "removes an existing bookmark when removing the lecture entirely" do
+      user.bookmark_lecture!(lecture)
+
+      delete dashboard_lecture_registration_notice_path(lecture),
+             params: { keep_bookmarked: false }, as: :turbo_stream
+
+      expect(lecture.in?(user.reload.lectures)).to be(false)
+      expect(user.current_bookmarked_lectures(lecture.term))
+        .not_to include(lecture)
+    end
+
+    it "refuses to keep a lecture behind a passphrase bookmarked" do
+      lecture.update!(passphrase: "secret")
+
+      delete dashboard_lecture_registration_notice_path(lecture),
+             params: { keep_bookmarked: true }, as: :turbo_stream
+
+      expect(response).to have_http_status(:forbidden)
+      expect(lecture.in?(user.reload.lectures)).to be(false)
+      expect(registration.reload.dismissed_at).to be_nil
+    end
+
+    it "scopes the re-rendered bands to the given term" do
+      other_term = create(:term)
+      # An apostrophe in the title is escaped in the HTML, as a random title's
+      # may be; the fixed one keeps that case in every run.
+      course = create(:course, title: "O'Brien's Algebra")
+      other_lecture = create(:lecture, :released_for_all, term: other_term, course: course)
+      user.bookmark_lecture!(other_lecture)
+
+      delete dashboard_lecture_registration_notice_path(lecture),
+             params: { term: other_term.id }, as: :turbo_stream
+
+      expect(response.body).to include(ERB::Util.html_escape(other_lecture.title_no_term))
+    end
+
+    it "404s for an unknown lecture" do
+      delete dashboard_lecture_registration_notice_path(0), as: :turbo_stream
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "is idempotent when the notice was already dismissed" do
+      registration.dismiss!
+
+      expect do
+        delete(dashboard_lecture_registration_notice_path(lecture), as: :turbo_stream)
+      end.not_to raise_error
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "leaves another user's rejected registration for the same lecture untouched" do
+      other_user = create(:confirmed_user)
+      other_registration = create(
+        :registration_user_registration, :rejected,
+        user: other_user,
+        registration_campaign: campaign,
+        registration_item: campaign.registration_items.first
+      )
+
+      delete dashboard_lecture_registration_notice_path(lecture), as: :turbo_stream
+
+      expect(other_registration.reload.dismissed_at).to be_nil
+    end
+  end
+end

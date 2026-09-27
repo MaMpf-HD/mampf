@@ -28,7 +28,6 @@ class Voucher < ApplicationRecord
   before_create :generate_secure_hash
   before_create :add_expiration_datetime
   before_create :ensure_no_other_active_voucher
-  before_create :ensure_speaker_vouchers_only_for_seminars
   before_create :ensure_role_valid_for_lecture
 
   scope :active, lambda {
@@ -41,10 +40,13 @@ class Voucher < ApplicationRecord
 
   self.implicit_order_column = :created_at
 
+  # Speakers come through a registration process now, which a voucher would
+  # bypass; the enum keeps :speaker for the vouchers still in circulation
+  # and the redemptions on record.
   def self.roles_for_lecture(lecture)
     # Seminars only have talk, not tutorials, so there is no point in creating
     # a tutor voucher for a seminar. That's why we exclude the tutor role here.
-    return ROLE_HASH.keys - [:tutor] if lecture.seminar?
+    return ROLE_HASH.keys - [:tutor, :speaker] if lecture.seminar?
 
     ROLE_HASH.keys - [:speaker]
   end
@@ -79,16 +81,6 @@ class Voucher < ApplicationRecord
       errors.add(:role,
                  I18n.t("activerecord.errors.models.voucher.attributes.role." \
                         "only_one_active"))
-      throw(:abort)
-    end
-
-    def ensure_speaker_vouchers_only_for_seminars
-      return unless speaker?
-      return if lecture.seminar?
-
-      errors.add(:role,
-                 I18n.t("activerecord.errors.models.voucher.attributes.role." \
-                        "speaker_vouchers_only_for_seminars"))
       throw(:abort)
     end
 

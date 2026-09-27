@@ -6,7 +6,7 @@ module ExceptionHandler
     # Defaults
     default subject: I18n.t("exception.exception",
                             host: ENV.fetch("URL_HOST"))
-    default from: ExceptionHandler.config.email
+    default from: DefaultSetting::FROM_ADDRESS
     default template_path: "exception_handler/mailers"
     # => http://stackoverflow.com/a/18579046/1143732
 

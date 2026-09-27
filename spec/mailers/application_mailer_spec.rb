@@ -76,7 +76,7 @@ RSpec.describe(ApplicationMailer, type: :mailer) do
 
     it "sets the default from address" do
       email = mailer_class.test_email
-      expect(email.from).to eq([DefaultSetting::PROJECT_EMAIL])
+      expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
     end
 
     it "sets a custom Message-ID with the configured domain" do

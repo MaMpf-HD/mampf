@@ -53,6 +53,19 @@ RSpec.describe(Redeemer, type: :model) do
         redemption = Redemption.last
         expect(redemption.claimed_tutorials).to include(tutorial1, tutorial2)
       end
+
+      # The tutorial the redeemer is in as a student is not theirs to take,
+      # whatever the request says.
+      it "leaves out the tutorial the redeemer is enrolled in" do
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+        FactoryBot.create(:tutorial_membership, tutorial: tutorial1, user: user)
+
+        voucher.redeem(params)
+
+        expect(user.given_tutorials).to include(tutorial2)
+        expect(user.given_tutorials).not_to include(tutorial1)
+        expect(Redemption.last.claimed_tutorials).to eq([tutorial2])
+      end
     end
 
     context "when the voucher is for an editor" do
@@ -167,9 +180,12 @@ RSpec.describe(Redeemer, type: :model) do
       end
     end
 
+    # Speaker vouchers are no longer issued; the ones still in circulation
+    # redeem until they expire.
     context "when the voucher is for a speaker" do
       let(:lecture) { FactoryBot.create(:lecture, :is_seminar) }
       let(:role) { :speaker }
+      let(:voucher) { FactoryBot.create(:voucher, :speaker, lecture: lecture) }
       let(:talk1) { FactoryBot.create(:talk, lecture: lecture) }
       let(:talk2) { FactoryBot.create(:talk, lecture: lecture) }
       let(:params) { { talk_ids: [talk1.id, talk2.id] } }

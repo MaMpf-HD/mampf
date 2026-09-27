@@ -2,14 +2,16 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   static targets = [
-    "button", "input", "podiumName", "podiumSpot", "saveButton", "savePrompt",
-    "saveTooltip",
+    "button", "input", "podiumName", "podiumSpot", "saveButton",
+    "saveTooltip", "status",
   ];
 
   static values = {
     emptyLabel: String,
     incompleteTooltip: String,
     readonly: Boolean,
+    savedLabel: String,
+    unsavedLabel: String,
   };
 
   connect() {
@@ -93,14 +95,16 @@ export default class extends Controller {
 
     this.podiumSpotTargets.forEach((spot) => {
       spot.classList.toggle(
-        "student-registration-podium-spot--filled",
+        "registration-choice--filled",
         Boolean(preferences[Number(spot.dataset.rank)]),
       );
     });
 
-    if (this.hasSavePromptTarget) {
-      this.savePromptTarget.hidden = !changed;
+    if (this.hasStatusTarget) {
+      this.statusTarget.textContent = changed ? this.unsavedLabelValue : this.savedLabelValue;
+      this.statusTarget.classList.toggle("registration-savebar-status--unsaved", changed);
     }
+    this.dispatch("changed", { detail: { changed } });
 
     if (this.hasSaveTooltipTarget) {
       this.saveTooltipTarget.tabIndex = showIncompleteTooltip ? 0 : -1;

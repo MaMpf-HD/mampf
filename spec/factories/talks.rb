@@ -27,6 +27,13 @@ FactoryBot.define do
       end
     end
 
+    trait :without_assessment do
+      after(:create) do |talk|
+        talk.assessment&.destroy
+        talk.reload
+      end
+    end
+
     transient do
       speaker_ids { [] }
     end

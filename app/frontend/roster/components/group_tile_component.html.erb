@@ -224,6 +224,7 @@
             <%= link_to edit_path,
                     class: "btn btn-sm btn-primary",
                     title: t("roster.tooltips.edit_settings"),
+                    aria: { label: t("roster.tooltips.edit_settings") },
                     data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
               <i class="bi bi-pencil"></i>
             <% end %>

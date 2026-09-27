@@ -1,0 +1,52 @@
+<%# Bootstrap colours table cells itself, so the row cannot mute them. %>
+<tr>
+  <td class="text-muted">
+    <i
+      class="bi bi-clock me-1"
+      title="<%= t('assignment.info.scheduled_assignment') %>"
+      data-bs-toggle="tooltip"
+    ></i>
+
+    <%= sheet.title %>
+
+    <div class="small <%= "text-warning" if sheet.overdue? %>">
+      <%= appears_on %>
+    </div>
+  </td>
+
+  <td class="text-muted">
+    <span
+      class="text-truncate d-inline-block"
+      style="max-width: 200px;"
+      title="<%= medium_title %>"
+    >
+      <%= link_to medium_title, edit_medium_path(sheet.medium),
+                  data: { turbo_frame: "_top" } %>
+    </span>
+  </td>
+
+  <td class="text-muted">
+    <% if sheet.accepted_file_type.present? %>
+      <%= content_tag(:code, sheet.accepted_file_type, class: "small") %>
+    <% end %>
+  </td>
+
+  <td class="text-center text-muted">&mdash;</td>
+  <td class="text-center text-muted">&mdash;</td>
+
+  <td class="text-center text-muted">
+    <% if sheet.requires_submission %>
+      <i
+        class="bi bi-check-lg"
+        title="<%= t('assessment.requires_submission') %>"
+      ></i>
+    <% else %>
+      <i
+        class="bi bi-x-lg"
+        title="<%= t('assessment.no_submission_required') %>"
+      ></i>
+    <% end %>
+  </td>
+
+  <td class="text-muted"><%= deadline_display %></td>
+</tr>

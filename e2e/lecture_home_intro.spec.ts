@@ -15,7 +15,6 @@ test("teacher authors a home intro and a student sees it", async ({
 }) => {
   const lecture = await factory.create("lecture", ["released_for_all"], {
     teacher_id: teacher.user.id,
-    locale: "en",
   });
 
   const editPage = new LectureEditPage(teacher.page, lecture.id);

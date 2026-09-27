@@ -1,7 +1,7 @@
 import { Page } from "./fixtures";
 
 /** A path below the repository root, or a file made up on the spot. */
-type UploadFile = string | { name: string; mimeType: string; buffer: Buffer };
+export type UploadFile = string | { name: string; mimeType: string; buffer: Buffer };
 
 /**
  * Hands a file to the Uppy drop zone inside the given area. Uppy hides its own

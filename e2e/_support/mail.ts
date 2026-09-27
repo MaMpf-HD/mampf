@@ -13,7 +13,7 @@ export async function latestMail(
   context: APIRequestContext,
   recipient: string,
 ): Promise<MailDelivery> {
-  return await callBackend(context, "mails_playwright", { recipient }) as MailDelivery;
+  return await callBackend(context, "mails", { recipient }) as MailDelivery;
 }
 
 function toRelativeAppUrl(url: string): string {

@@ -1,18 +1,21 @@
 <div class="col-sm-12 col-lg-6 p-2" >
-  <div class="card bg-mdb-color-lighten-5">
+  <section class="card bg-mdb-color-lighten-5"
+           aria-labelledby="<%= dom_id(talk, :title) %>">
     <div id="<%= dom_id(talk, :card) %>"
          class="card-header <%= talk_card_color(talk, current_user) %>"
-         data-cy="talk-header" data-id="<%= talk.id %>">
+         data-id="<%= talk.id %>">
       <div class="row">
         <div class="col-12 talkheader">
           <div>
           <% if edit %>
             <%= link_to talk.to_label,
                         edit_talk_path(talk),
+                        id: dom_id(talk, :title),
                         class: 'text-light' %>
           <% else %>
             <%= link_to talk.to_label,
                         talk_path(talk),
+                        id: dom_id(talk, :title),
                         class: 'text-light' %>
             <% if current_user.in?(talk.speakers) %>
               <%= link_to '',
@@ -55,5 +58,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </div>

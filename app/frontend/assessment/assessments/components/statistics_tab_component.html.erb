@@ -1,0 +1,15 @@
+<% if show_submissions? %>
+  <h6 class="fw-bold mb-3">
+    <i class="bi bi-cloud-upload me-1"></i>
+    <%= t("assessment.submissions") %>
+  </h6>
+  <%= render GradingOverviewComponent.new(assessment: assessment,
+                                          lecture: lecture) %>
+  <hr class="my-4">
+<% end %>
+
+<div class="alert alert-info" role="alert">
+  <i class="bi bi-info-circle me-2"></i>
+  <strong><%= t("basics.coming_soon") %>:</strong>
+  <%= t("assessment.statistics_placeholder") %>
+</div>

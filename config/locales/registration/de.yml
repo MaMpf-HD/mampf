@@ -1,6 +1,8 @@
 de:
   registration:
     campaign:
+      title: 'Anmeldeverfahren'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
@@ -96,6 +98,8 @@ de:
       allocation_mode:
         first_come_first_served: "Direktanmeldung"
         preference_based: "Präferenzbasiert"
+      type:
+        exam: "Klausur"
       status:
         draft: "Entwurf"
         open: "Offen"
@@ -205,10 +209,17 @@ de:
         prerequisite_not_configured: "Vorausgesetztes Anmeldeverfahren nicht konfiguriert."
         prerequisite_missing: "Vorausgesetztes Anmeldeverfahren nicht gefunden."
         prerequisite_not_met: "Vorausgesetztes Anmeldeverfahren nicht abgeschlossen."
+        certification_not_passed: "Prüfungszulassung nicht erteilt"
+        missing_lecture: "Es muss mindestens eine Veranstaltung ausgewählt werden."
+        lecture_not_found: "Mindestens eine ausgewählte Veranstaltung existiert nicht."
+        lecture_exam_eligibility_disabled: >-
+          Prüfungszulassung deaktiviert für: %{titles}
+        multiple_student_performance: "Es ist nur eine Richtlinie für Studierendenleistung erlaubt."
       configs:
         allowed_domains: "Erlaubte Domains"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
         lecture_id: "Veranstaltung"
+        lecture_ids: "Veranstaltungen"
       hints:
         allowed_domains: "z.B. uni-heidelberg.de (erlaubt auch stud.uni-heidelberg.de)"
         select_prerequisite: "— Anmeldeverfahren auswählen —"
@@ -252,10 +263,12 @@ de:
         tutorials: "Tutorien"
         talks: "Vorträge"
         cohorts: "Weitere Gruppen"
+        exams: "Klausuren"
         general: "Allgemein"
       types:
         tutorial: "Tutorium"
         talk: "Vortrag"
+        exam: "Klausur"
         cohort: "Sondergruppe"
         enrollment_group: "Anmeldungsgruppe"
         planning_survey: "Planungsgruppe"
@@ -275,34 +288,20 @@ de:
       select_type: "Gruppenart auswählen..."
       attributes:
         capacity_optional: "Kapazität (optional)"
-        propagate_to_lecture: "Studierende erscheinen in der Teilnehmerliste der Veranstaltung"
+        propagate_to_lecture: "Studierende erscheinen in der Teilnahmeliste der Veranstaltung"
       hints:
-        no_propagation: "Studierende in dieser Gruppe erscheinen nicht in der Teilnehmerliste der Veranstaltung"
+        no_propagation: "Studierende in dieser Gruppe erscheinen nicht in der Teilnahmeliste der Veranstaltung"
       help:
-        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnehmerliste der Veranstaltung aufgenommen."
-        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnehmerlisten statt."
-        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Du bestimmst, ob Studierende in der Teilnehmerliste der Veranstaltung erscheinen."
+        tutorial: "Wöchentliche Übungsgruppen mit festen Zeiten. Studierende bearbeiten Aufgaben, Tutor:innen korrigieren diese und können die Punkte in MaMpf eintragen und verwalten. Studierende, die nach Abschluss des Anmeldeverfahrens einen Tutoriumsplatz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        talk: "Seminarvorträge, bei denen Studierende Themen präsentieren. Noten für Seminarvorträge können in MaMpf verwaltet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Vortragsplatz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        enrollment: "Hat die Veranstaltung keine Tutorien oder Vorträge, kann eine Anmeldungsgruppe verwendet werden. Studierende, die nach Abschluss des Anmeldeverfahrens einen Platz erhalten, werden automatisch in die Teilnahmeliste der Veranstaltung aufgenommen."
+        planning: "Bedarfserhebung (häufig vor Semesterbeginn) zur Bedarfsermittlung. Es findet keine Übertragung in Teilnahmelisten statt."
+        other: "Flexible Gruppen für Wartelisten, Sonderprojekte oder Gasthörer. Du bestimmst, ob Studierende in der Teilnahmeliste der Veranstaltung erscheinen."
         propagate_to_lecture: "Wenn aktiviert, werden Studierende in dieser Gruppe automatisch auf die Teilnehmerlist der Veranstaltung aufgenommen. Deaktiviere dies für reine Wartelisten, die mit keiner Einschreibung in die Vorlesung verbunden sind."
     user_registration:
       forced_assignment: "Zwangszuweisung"
       index:
         title: "Anmeldungen"
-        confirmed_cases: "Deine Anmeldung ist bestätigt für"
-        unassigned_notice: "Du wurdest noch keiner Gruppe zugeteilt."
-        pending_preference_notice: "Du wurdest noch keiner Gruppe zugeteilt. Nach Ende des Anmeldezeitraums wirst Du auf Grundlage Deiner Präferenzen zugeteilt."
-        fulfilled_preference_notice_html: "Wir konnten Deinen <em>%{rank}</em>-Wunsch erfüllen."
-        fulfilled_preference_ranks:
-          "1": "Erst"
-          "2": "Zweit"
-          "3": "Dritt"
-        unfulfilled_preferences_notice_html: "Leider konnten Deine Wünsche (<em>%{preferences}</em>) nicht berücksichtigt werden."
-        unallocated_preference_notice_html: "Leider konnte Deine Anmeldung für <em>%{campaign}</em> nicht berücksichtigt werden, weil es mehr Anmeldungen als Plätze gab. Deine ausgewählten Präferenzen sind bei uns angekommen: <em>%{preferences}</em>."
-        policy_rejection_notice_html: >-
-          Deine Anmeldung für <em>%{campaign}</em> wurde aus folgenden Gründen abgelehnt:
-        unknown_tutor: "Ein:e Tutor:in wurde noch nicht zugewiesen."
-        unremovable_assignment_notice: "Du kannst dieses Tutorium nicht verlassen, weil der Dozent es so eingerichtet hat."
         first_choice_title: "Erstwahl-Anmeldungen"
         allocated_title: "Zugeteilte Studierende"
         rejected_title: "Abgelehnte Anmeldungen"
@@ -328,14 +327,18 @@ de:
       actions:
         reject_user: "Anmeldungen ablehnen"
         defer_due_to_blocker: "Für jetzt ablehnen"
-        rank_option_tooltip: "Als %{rank} Präferenz setzen"
       registrations: "Anmeldungen"
       title: "Deine Anmeldung"
       planning: "Planung"
       course_code: "Kurscode"
-      campaign_main: "Anmeldeverfahren"
+      campaign_title:
+        tutorials: "Tutoriumsanmeldung"
+        talks: "Vortragsvergabe"
+        cohorts: "Anmeldeverfahren"
+        exams: "Klausuranmeldung"
       eligibility_title: "Berechtigung"
       first_come_first_served_instruction: "Melde Dich für eine Gruppe an. Die endgültige Zuteilung erfolgt nach der Anmeldefrist."
+      first_come_first_served_instruction_exam: "Melde Dich für diese Prüfung an. Dein Platz steht sofort fest."
       preference_instruction:
         one: "Ordne %{count} Option nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
         other: "Ordne %{count} Optionen nach Präferenz. Die Zuteilung erfolgt nach Ablauf der Frist."
@@ -358,13 +361,8 @@ de:
       register_now: "Jetzt anmelden"
       registration_blocked: "Nicht verfügbar"
       withdraw: "Zurückziehen"
-      closed_before_deadline: Die Registrierungsphase wurde vor dem ursprünglich geplanten Termin beendet. Wenn Du Fragen zu dieser Änderung hast, wende Dich bitte an die Kursverwaltung.
       ineligible_notice:
         title: "Anmeldung derzeit nicht möglich"
-        description: "Du kannst Dich für dieses Anmeldeverfahren derzeit aus folgenden Gründen nicht anmelden:"
-      readonly_notice:
-        title: "Anmeldung geschlossen"
-        description: "Deine abgegebenen Auswahlentscheidungen bleiben hier sichtbar, während die Lehrperson die Anmeldungen prüft und die endgültige Zuteilung vorbereitet. Änderungen sind nicht mehr möglich."
       finalization_policy_notice:
         title: "Deine Anmeldung würde derzeit bei der endgültigen Zuteilung abgelehnt"
         description: >-
@@ -374,10 +372,8 @@ de:
         title: "Regeln für dieses Anmeldeverfahren"
         registration_title: "Voraussetzungen für die Anmeldung"
         registration_description: "Diese Regeln müssen erfüllt sein, damit Du Dich anmelden kannst."
-        registration_empty: "Für die Anmeldung gibt es keine zusätzlichen Regeln oder Einschränkungen."
         finalization_title: "Voraussetzungen für die endgültige Zuteilung"
         finalization_description: "Diese Regeln werden bei der endgültigen Zuteilung geprüft."
-        finalization_empty: "Für die endgültige Zuteilung gibt es keine zusätzlichen Prüfungen."
         status:
           fulfilled: "Derzeit erfüllt"
           not_fulfilled: "Derzeit nicht erfüllt"
@@ -385,7 +381,7 @@ de:
         policies:
           institutional_email_html: "E-Mail-Domain muss <em>%{domains}</em> sein"
           prerequisite_campaign_html: "Bestätigte Anmeldung in <em>%{campaign}</em>"
-          student_performance_html: "Status bei der Studierendenleistung muss <em>%{status}</em> sein"
+          student_performance_html: "Du musst in <em>%{lectures}</em> zur Prüfung zugelassen sein"
           generic_html: "Voraussetzung: <em>%{requirement}</em>"
         hints:
           institutional_email_registration_html: >-
@@ -428,13 +424,12 @@ de:
         prerequisite_not_met_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hattest Du keine bestätigte Anmeldung im Anmeldeverfahren <em>%{campaign}</em>. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
         prerequisite_campaign_not_found_html: "Das erforderliche vorausgesetzte Anmeldeverfahren <em>%{campaign}</em> ist derzeit nicht verfügbar. Bitte wende Dich an die Kursverwaltung."
         prerequisite_configuration_error: "Dieses Anmeldeverfahren hängt von einem vorausgesetzten Anmeldeverfahren ab, das nicht korrekt konfiguriert ist. Bitte wende Dich an die Kursverwaltung."
-        student_performance_failed_html: "Dein Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status <em>%{status}</em>. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
-        student_performance_failed_finalization_warning_html: "Dein aktueller Status bei der Studierendenleistung entspricht nicht dem erforderlichen Status <em>%{status}</em>. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
-        student_performance_failed_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens entsprach Dein Status bei der Studierendenleistung nicht dem erforderlichen Status <em>%{status}</em>. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
+        student_performance_failed_html: "Du bist in <em>%{lectures}</em> nicht zur Prüfung zugelassen. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
+        student_performance_failed_finalization_warning_html: "Du bist in <em>%{lectures}</em> noch nicht zur Prüfung zugelassen. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
+        student_performance_failed_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung warst Du in <em>%{lectures}</em> nicht zur Prüfung zugelassen. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn Du glaubst, diese Voraussetzung bereits zu erfüllen, wende Dich bitte an die Lehrperson oder die Assistenz."
         generic_finalization_warning_html: "Du erfüllst die Voraussetzung <em>%{requirement}</em> derzeit nicht. Wenn sich das bis zur endgültigen Zuteilung nicht ändert, wird Deine Anmeldung abgelehnt."
         generic_finalization_rejection_html: "Zum Zeitpunkt der endgültigen Zuteilung dieses Anmeldeverfahrens hast Du die Voraussetzung <em>%{requirement}</em> nicht erfüllt. Wenn Du glaubst, diese Voraussetzung erfüllt zu haben, wende Dich bitte an die Lehrperson oder die Assistenz."
-      withdraw_first: "Zuerst zurückziehen"
       filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
       status_for_registration: "Aktueller Status Deiner eingereichten Präferenzen"
       submitted_pref: "Deine eingereichte Auswahl"
@@ -456,6 +451,7 @@ de:
       messages:
         campaign_unavailable: "Dieses Anmeldeverfahren ist derzeit nicht verfügbar."
         campaign_not_opened: "Die Registrierung für dieses Anmeldeverfahren ist geschlossen."
+        switched: "Du hast die Gruppe gewechselt."
         registration_success: "Registrierung erfolgreich abgeschlossen."
         registration_failed: "Registrierung konnte nicht abgeschlossen werden."
         already_registered: "Du bist bereits für dieses Anmeldeverfahren registriert."
@@ -472,7 +468,107 @@ de:
         cannot_secure_slot: "Leider konnte keine Deiner gewählten Optionen zugeteilt werden."
         course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wende Dich an den Kursadministrator, um Alternativen zu besprechen."
         campaign_not_found: "Anmeldeverfahren nicht gefunden."
+      registrations_title: "Anmeldungen"
+      participation:
+        title: "Deine Teilnahme"
+        preferences_title: "Deine Wünsche"
+        allocation_pending: "Zuteilung ausstehend"
+        registered: "Angemeldet"
+        checked_at_finalization: "Die Voraussetzungen werden beim Abschluss erneut geprüft."
+        no_place: "Kein Platz"
+        your_preferences: "Deine Wünsche: %{preferences}"
+        rejected: "Abgelehnt"
+        rejected_by_teacher: "Die Veranstaltungsleitung hat diese Anmeldung abgelehnt."
+        excluded_from_exam: "Von der Klausurliste entfernt"
+        on_exam_list: "Auf der Klausurliste"
+        enrolled: "Eingeschrieben"
+        assigned: "Zugeteilt"
+        leave: "Verlassen"
+        preference_fulfilled: "Dein %{rank} Wunsch."
+        outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
+      summary:
+        load_failed: "Die Optionen konnten nicht geladen werden."
+        retry: "Erneut versuchen"
+        registered: "Angemeldet"
+        preferences_saved: "Wünsche gespeichert"
+        full: "Keine Plätze frei"
+        loading: "Wird geladen …"
+        blocked: "Nicht verfügbar"
+        requirement_missing: "Voraussetzung fehlt"
+        no_preferences: "Noch keine Wünsche"
+        not_registered: "Noch nicht angemeldet"
+        details: "Details"
+        change: "Ändern"
+        change_preferences: "Wünsche ändern"
+        choose: "Wünsche wählen"
+        register: "Anmelden"
+        show_and_register: "Gruppen ansehen"
+        days_left:
+          zero: "endet heute"
+          one: "noch 1 Tag"
+          other: "noch %{count} Tage"
+        deadline: "Anmeldung bis %{deadline}"
+        preference_mode:
+          one: "%{count} von %{options} Optionen reihen"
+          other: "%{count} von %{options} Optionen reihen"
+        exam_places:
+          zero: "Keine Plätze frei"
+          one: "1 Platz frei"
+          other: "%{count} Plätze frei"
+        fcfs_mode: "Wer zuerst kommt · %{open} von %{total} mit freien Plätzen"
+        unsaved: "Nicht gespeichert"
+      options:
+        search_label: "Optionen durchsuchen"
+        search_placeholder: "Wochentag, Uhrzeit, Tutor, Raum"
+        no_match: "Keine Option passt zu Deiner Suche."
+        show_all: "Alle %{count} zeigen"
+        withdraw_from: "Von %{title} abmelden"
+        no_places: "Keine Plätze mehr frei."
+        switch: "Hierhin wechseln"
+        switch_to: "Zu %{title} wechseln"
+        register_for: "Für %{title} anmelden"
+        unlimited: "Unbegrenzt"
+        full: "Voll"
+        free: "%{free} von %{capacity} Plätzen frei"
+        rank_for: "%{title} als %{rank} Wunsch"
+        saved: "Alles gespeichert"
+        unsaved: "Nicht gespeicherte Änderungen"
+      self_enrollment:
+        title: "Selbst eintragen"
+        meta:
+          one: "%{count} Gruppe, ohne Frist"
+          other: "%{count} Gruppen, ohne Frist"
+        show: "Gruppen ansehen"
+        instruction: "In diese Gruppen trägst Du Dich sofort ein, ohne Anmeldezeitraum."
+        joined: "Eingetragen"
+        join: "Eintragen"
     allocation:
+      violations_table:
+        override_pass: "Auf bestanden setzen"
+        confirm_override_pass: "Studierende:n als zugelassen markieren? Dies erzeugt eine manuelle Überschreibung der Zulassung, die nur im Zulassungs-Dashboard rückgängig gemacht werden kann."
+        go_to_certifications: "Im Zulassungs-Dashboard klären"
+        additional_blockers: "Weitere offene Punkte"
+        other_blockers: "Weitere offene Punkte"
+      student_performance:
+        unfulfilled: "Einige angemeldete Studierende haben keine bestandene Prüfungszulassung. Diese werden bei der Finalisierung gegen die Richtlinie verstoßen."
+      perf_evidence:
+        certified_by: "(von %{name})"
+        no_cert: "Kein Zulassungseintrag"
+        pts_abbr: "Pkt."
+        achievements_short: "%{met}/%{total} Krit."
+      cert_incomplete:
+        title: "Klausurzulassungen unvollständig"
+        desc:
+          one: "%{count} registrierter Studierender hat keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+          other: "%{count} registrierte Studierende haben keine entschiedene Klausurzulassung. Klausurzulassungen müssen vor der Finalisierung abgeschlossen werden."
+        missing_label:
+          one: "%{count} Studierender noch nicht bearbeitet"
+          other: "%{count} Studierende noch nicht bearbeitet"
+        pending_label:
+          one: "%{count} Studierender mit ausstehender Klausurzulassung"
+          other: "%{count} Studierende mit ausstehenden Klausurzulassungen"
+        go_to_certs: "Zu den Klausurzulassungen"
+        policy_reason: "Dieses Anmeldeverfahren hat eine Finalisierungsrichtlinie, die entschiedene Klausurzulassungen voraussetzt."
       started: "Zuteilung wurde berechnet."
       conflicts:
         title: "Konflikte bei Registrierungen"
@@ -492,8 +588,8 @@ de:
         finalization_status:
           blocked_title: "Finalisierung derzeit nicht möglich"
           blocked_desc:
-            one: "Es gibt %{count} Blocker. Diese Anmeldung muss zuerst geklärt werden."
-            other: "Es gibt %{count} Blocker. Diese Anmeldungen müssen zuerst geklärt werden."
+            one: "Es gibt %{count} offenen Fall. Diese Anmeldung muss zuerst geklärt werden."
+            other: "Es gibt %{count} offene Fälle. Diese Anmeldungen müssen zuerst geklärt werden."
           auto_rejections_title: "Automatische Ablehnungen"
           auto_rejections_desc:
             one: "Beim Zuteilen wird voraussichtlich %{count} Anmeldung aufgrund einer Finalisierungsrichtlinie automatisch abgelehnt; nachträgliches manuelles Hinzufügen bleibt möglich."
@@ -530,6 +626,7 @@ de:
       errors:
         already_completed: "Anmeldeverfahren ist bereits abgeschlossen."
         wrong_status: "Anmeldeverfahren hat den falschen Status für diese Aktion."
+        certification_incomplete: "Klausurzulassungen noch nicht für alle registrierten Studierenden abgeschlossen. Bitte zuerst auf dem Leistungs-Tab klären."
         policy_violation: "Zuteilung derzeit nicht möglich. Bitte überprüfe die Details unten."
         policy_violation_title: "Zuteilung derzeit nicht möglich"
         policy_violation_desc: "Für diese Anmeldungen kann mindestens eine Finalisierungsrichtlinie derzeit nicht abschließend geprüft werden. Kläre die Fälle, bevor Du die Zuteilung durchführen kannst."
@@ -538,7 +635,7 @@ de:
         policy_violation_user_title: "Blockierte Studierende:"
         policy_violation_user_desc: "Wenn Du einen Fall jetzt nicht klären kannst, lehne die Anmeldung vorerst ab. Nach der Zuteilung kannst Du betroffene Studierende bei Bedarf manuell in Gruppen aufnehmen."
         policy_violation_next_step_title: "Danach:"
-        policy_violation_next_step_desc: "Sobald die Blocker behoben sind, berechne die Zuteilung erneut."
+        policy_violation_next_step_desc: "Sobald die offenen Fälle geklärt sind, berechne die Zuteilung erneut."
         policy_violation_count:
           one: "Person betroffen"
           other: "Studierende betroffen"
@@ -560,22 +657,16 @@ de:
       not_found: "Veranstaltung nicht gefunden."
       home:
         empty_title: "Starte hier"
-        empty_subscribed: >-
+        empty_accessible: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Materialien findest du in der Navigation der
+          dieser Seite. Materialien findest Du in der Navigation der
           Veranstaltung.
-        empty_unsubscribed: >-
+        empty_locked: >-
           Neuigkeiten und Updates zu dieser Veranstaltung erscheinen auf
-          dieser Seite. Abonniere die Veranstaltung, um Materialien zu sehen.
-        news_indicator: "Neue Updates auf Home"
+          dieser Seite. Entsperre die Veranstaltung, um Materialien zu sehen.
+        news_indicator: "Ungelesene Ankündigungen und Forenthemen"
         attachment_download: "Programm herunterladen (PDF)"
         attachment_missing: "Für diese Veranstaltung ist kein Programm hinterlegt."
-        staff_registration_title: "Was Studierende hier sehen"
-        staff_registration_hint: >-
-          Unterhalb Deines Intros sehen Studierende das Anmeldeverfahren und
-          ihren eigenen Status (offene Anmeldungen, zugeteilte Gruppe). Diese
-          Ansicht ist für jede Person individuell und wird Dir deshalb hier
-          nicht angezeigt.
         staff_registration_manage: "Anmeldeverfahren verwalten"
         intro_empty: >-
           Die Startseite dieser Veranstaltung hat noch keinen Begrüßungstext und
@@ -585,40 +676,17 @@ de:
           Für diese Veranstaltung läuft eine Anmeldung, aber Deine Startseite hat
           keinen Begrüßungstext — genau das sehen Studierende vor der Anmeldung.
           Füge eine kurze Einführung und Dein Programm hinzu.
-        subscribe_prompt: >-
-          Du hast diese Veranstaltung noch nicht abonniert. Ein Abo gibt dir
-          Zugriff auf die Materialien — es ist keine verbindliche Anmeldung.
-    student_message:
-      title: "E-Mail an angemeldete Studierende"
-      audience:
-        zero: "Es haben sich noch keine Studierenden angemeldet."
-        one: "Geht an 1 angemeldete Person."
-        other: "Geht an %{count} angemeldete Personen."
-      copy_addresses: "E-Mail-Adressen kopieren"
-      addresses_copied: "Adressen in die Zwischenablage kopiert"
-      subject: "Betreff"
-      body: "Nachricht"
-      attachment: "Anhang (optional)"
-      attachment_hint: "Eine PDF-Datei, maximal 10 MB — z. B. ein Kursprogramm."
-      attachment_must_be_pdf: "muss eine PDF-Datei sein"
-      send:
-        one: "An 1 Person senden"
-        other: "An %{count} Personen senden"
-      sent:
-        one: "Deine Nachricht wird an 1 Person verschickt."
-        other: "Deine Nachricht wird an %{count} Personen verschickt."
-      no_recipients: "Es gibt noch keine angemeldeten Studierenden."
-      sent_messages: "Gesendete Nachrichten"
-      recipients:
-        one: "1 Empfänger(in)"
-        other: "%{count} Empfänger(innen)"
-      crosslink_html: >-
-        Du möchtest allen angemeldeten Studierenden eine E-Mail schreiben
-        (z. B. mit dem Kursprogramm)? Das geht im Tab %{link}.
+        unlock_prompt: >-
+          Diese Veranstaltung ist durch einen Zugangsschlüssel geschützt. Gib
+          ihn ein, um ihre Materialien zu entsperren.
+        unlock_prompt_member: >-
+          Diese Veranstaltung ist durch einen Zugangsschlüssel geschützt. Als
+          Mitglied der Veranstaltung kannst Du ihre Materialien ohne ihn
+          entsperren.
+        unlock: "Entsperren"
+        unlock_too_many_attempts: >-
+          Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.
   activerecord:
-    attributes:
-      registration/student_message:
-        attachment: "Anhang"
     errors:
       models:
         registration/campaign:
@@ -642,6 +710,7 @@ de:
               must_be_in_future: "muss in der Zukunft liegen"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
+              exams_are_first_come_first_served: "ist bei Klausuranmeldungen immer 'Direktanmeldung'"
         registration/policy:
           attributes:
             base:
@@ -660,6 +729,10 @@ de:
               cannot_remove_after_allocation: "Kann nicht entfernt werden, da bereits eine Zuteilung berechnet wurde."
               cannot_remove_last_item: "Kann nicht entfernt werden, da ein laufendes Anmeldeverfahren mindestens eine Gruppe braucht. Nimm das Verfahren zurück in den Entwurf, um die Gruppen zu ändern."
               registerable_not_managed_by_campaign: "Das Element ist für Anmeldeverfahren gesperrt."
+              cannot_add_exam_to_non_exam_campaign: "Klausuren können nicht zu Anmeldeverfahren hinzugefügt werden, die bereits Tutorien, Vorträge oder andere Gruppen enthalten."
+              cannot_add_non_exam_to_exam_campaign: "Tutorien, Vorträge und andere Gruppen können nicht zu Klausuranmeldungen hinzugefügt werden."
+              exam_requires_first_come_first_served_campaign: "Klausuren können nur zu Anmeldeverfahren mit Direktanmeldung hinzugefügt werden."
+              campaign_already_has_exam: "Das Anmeldeverfahren enthält bereits eine Klausur."
         registration/user_registration:
           attributes:
             registration_item:

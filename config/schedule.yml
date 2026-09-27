@@ -45,3 +45,8 @@ mampfsearch_sync_job:
   class: "MampfsearchSyncJob"
   queue: default
   description: "Syncs backlog media to MampfSearch and purges orphaned index entries"
+assessment_backfill_worker:
+  cron: "*/1 * * * *"
+  class: "AssessmentBackfillWorker"
+  queue: default
+  description: "Backfills participations for expired assignments"

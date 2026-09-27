@@ -31,7 +31,10 @@ module Flash
 
   # Renders a flash success message for turbo_stream and html formats.
   # Usage: respond_with_flash(:success, I18n.t("feedback.success"))
-  def respond_with_flash(flash_type, message, redirect_path: nil, fallback_location: root_path)
+  # Turbo renders responses with the Turbo Stream content type even on errors,
+  # so callers can preserve an HTTP error status while displaying a flash.
+  def respond_with_flash(flash_type, message, redirect_path: nil,
+                         fallback_location: root_path, status: :ok)
     respond_to do |format|
       format.turbo_stream do
         flash.now[flash_type] = message if message
@@ -42,7 +45,7 @@ module Flash
           streams += Array(custom_streams)
         end
 
-        render turbo_stream: streams.compact
+        render turbo_stream: streams.compact, status: status
       end
       format.html do
         flash[flash_type] = message if message

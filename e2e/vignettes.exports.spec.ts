@@ -13,13 +13,12 @@ test.describe("Vignettes Exports", () => {
     teacherVignettes = new VignettesPage(teacher.page);
 
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      locale: "en",
       teacher_id: teacher.user.id,
       vignettes: true,
     });
     lectureId = lecture.id;
 
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: student.user.id,
     });

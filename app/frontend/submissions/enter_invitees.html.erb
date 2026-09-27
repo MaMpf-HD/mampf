@@ -1,0 +1,7 @@
+<%= turbo_frame_tag SubmissionCardComponent.frame_id(@assignment) do %>
+  <div class="next-action">
+    <%= render partial: "submissions/enter_invitees",
+               locals: { submission: @submission, assignment: @assignment,
+                         partners: @partners } %>
+  </div>
+<% end %>

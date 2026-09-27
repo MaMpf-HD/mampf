@@ -6,6 +6,9 @@ class UploadIntent
   LIFETIME = 24.hours
   PURPOSE = "upload_intent".freeze
   HEADER = "HTTP_X_UPLOAD_INTENT".freeze
+  # Every SubmissionUploader intent asks :upload_manuscript, whatever action
+  # the minting form names, so the upload needs the hand-in's tutorial seat.
+  UPLOADER_ACTIONS = { "SubmissionUploader" => :upload_manuscript }.freeze
 
   attr_reader :user_id, :uploader, :target_type, :target_id, :attributes, :action
 
@@ -17,7 +20,8 @@ class UploadIntent
           id: target&.id,
           attributes: authorizing_attributes(target)
         },
-        action: action || default_action(target)).token
+        action: UPLOADER_ACTIONS[uploader_class.name] || action ||
+                default_action(target)).token
   end
 
   def self.parse(token)

@@ -1,0 +1,18 @@
+<%# Lets staff switch between the lecture as students see it and its edit
+    page. Both replace the "lecture-mode" frame, see layouts/_lecture_mode. %>
+<nav class="btn-group"
+     aria-label="<%= t("lecture.mode_toggle.label") %>"
+     data-testid="lecture-mode-toggle">
+  <%= link_to lecture_path(lecture),
+              class: ["btn btn-sm btn-outline-primary px-3", { active: !edit_mode }],
+              aria: { current: edit_mode ? nil : "page" },
+              data: lecture_mode_switch_data do %>
+    <i class="bi bi-eye me-1" aria-hidden="true"></i><%= t("lecture.mode_toggle.view") %>
+  <% end %>
+  <%= link_to edit_lecture_path(lecture),
+              class: ["btn btn-sm btn-outline-lecture-edit px-3", { active: edit_mode }],
+              aria: { current: edit_mode ? "page" : nil },
+              data: lecture_mode_switch_data do %>
+    <i class="bi bi-pencil me-1" aria-hidden="true"></i><%= t("lecture.mode_toggle.edit") %>
+  <% end %>
+</nav>

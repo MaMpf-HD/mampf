@@ -1,5 +1,37 @@
 en:
   main:
+    start:
+      no_lectures: >-
+        You are not registered for any lecture of %{term}, and have not
+        bookmarked any. Scroll down to discover new lectures.
+      no_lectures_any_term: >-
+        You are not registered for any lecture yet, and have not bookmarked
+        any. Scroll down to discover new lectures.
+      sections:
+        enrolled: "You are registered for these"
+        bookmarked: "You bookmarked these"
+      registration_open: "Registration open — register now"
+      remove_bookmark: "Remove bookmark"
+      remove_bookmark_for: "Remove bookmark: %{lecture}"
+      remove_bookmark_title: "Remove bookmark?"
+      remove_bookmark_body: >-
+        Remove “%{lecture}” from your bookmarks? You can bookmark it again from
+        the lecture search.
+      remove_bookmark_body_locked: >-
+        Remove “%{lecture}” from your bookmarks? It is protected by a pass
+        phrase, so you will need to enter it again on the lecture page to open
+        it.
+      remove_entirely_relocks: >-
+        Removing it entirely means entering its pass phrase again to open it.
+      remove_bookmark_confirm: "Remove"
+      remove_registration_notice: "Dismiss"
+      remove_registration_notice_for: "Dismiss the notice for %{lecture}"
+      remove_registration_notice_title: "Dismiss the notice?"
+      remove_registration_notice_body: >-
+        Your registration for “%{lecture}” was rejected. You can keep the
+        lecture as a bookmark, or remove it from your dashboard entirely.
+      remove_registration_notice_keep_bookmarked: "Keep in bookmarked lectures"
+      remove_registration_notice_remove_entirely: "Remove entirely"
     next_term_banner:
       heading:
         one: "Lectures for %{term} are being published — the first one is already in MaMpf."

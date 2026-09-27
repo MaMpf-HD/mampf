@@ -2,6 +2,10 @@ class Tutorial < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
 
+  def self.displaces_sibling_assignment?
+    true
+  end
+
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
@@ -92,6 +96,10 @@ class Tutorial < ApplicationRecord
     TutorialMembership.where(lecture: lecture, user: user)
                       .where.not(tutorial: self)
                       .first&.tutorial
+  end
+
+  def graders_with_inheritance
+    (tutors + lecture.graders_with_inheritance).uniq
   end
 
   private

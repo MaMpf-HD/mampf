@@ -1,0 +1,295 @@
+@import "../../submissions/hub_scale";
+@import "../../submissions/components/sheet_chip_component";
+@import "../../submissions/components/sheet_news_component";
+@import "../../submissions/components/standing_component";
+
+// The lecture home page: at most one focus block, the news block on a tinted
+// background, and every other section as rows under a small label.
+
+.lecture-home {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: 1rem 2rem;
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+}
+
+.lecture-home-header {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.lecture-home-meta {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: 0.875rem;
+}
+
+.lecture-home-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.lecture-home-intro {
+  max-width: 70ch;
+}
+
+.lecture-home-intro-text {
+  max-height: 6em;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.lecture-home-intro--expanded .lecture-home-intro-text {
+  max-height: none;
+}
+
+.lecture-home-intro .lecture-home-intro-toggle {
+  min-height: auto;
+}
+
+.lecture-home-intro--empty {
+  margin: 0;
+  color: var(--bs-secondary-color);
+}
+
+.lecture-home-unlock {
+  padding-left: 1rem;
+  border-left: 3px solid var(--bs-border-color);
+}
+
+.lecture-home-block {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.lecture-home-label-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lecture-home-label {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lecture-home-quiet-link {
+  color: var(--bs-secondary-color);
+  font-size: 0.875rem;
+}
+
+.lecture-home-action-link {
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+}
+
+.lecture-home-rows {
+  display: grid;
+}
+
+.lecture-home-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+.lecture-home-row-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.lecture-home-row-kicker {
+  color: var(--bs-secondary-color);
+  font-size: 0.8rem;
+}
+
+.lecture-home-row-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.lecture-home-row-text p:last-child {
+  margin-bottom: 0;
+}
+
+.lecture-home-row-line,
+.lecture-home-row-note {
+  color: var(--bs-secondary-color);
+  font-size: 0.875rem;
+}
+
+.lecture-home-row-actions {
+  flex-shrink: 0;
+
+  form {
+    margin: 0;
+  }
+}
+
+.lecture-home-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--bs-border-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lecture-home-badge--ok {
+  background: var(--bs-success-bg-subtle);
+  color: var(--bs-success-text-emphasis);
+}
+
+.lecture-home-badge--info {
+  background: var(--bs-secondary-bg-subtle);
+  color: var(--bs-secondary-text-emphasis);
+}
+
+.lecture-home-badge--warn {
+  background: var(--bs-warning-bg-subtle);
+  color: var(--bs-warning-text-emphasis);
+}
+
+.lecture-home-badge--bad {
+  background: var(--bs-danger-bg-subtle);
+  color: var(--bs-danger-text-emphasis);
+}
+
+// The focus block (an open campaign, the next exam or marking) has the top
+// border, the blue kicker and a filled button. The hand-ins block stays in
+// place and shows its state through the sheet chip instead.
+.lecture-home-focus {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 3px solid var(--bs-primary);
+}
+
+.lecture-home-kicker {
+  margin: 0;
+  color: var(--bs-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lecture-home-focus-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.lecture-home-focus-line {
+  margin: 0;
+  color: var(--bs-secondary-color);
+}
+
+.lecture-home-focus .btn {
+  justify-self: start;
+}
+
+.lecture-home-row--compact {
+  padding: 0.5rem 0;
+}
+
+.lecture-home-news {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem 1rem 1.75rem;
+  border-left: 3px solid #4977a8;
+  background: #edf3f9;
+}
+
+.lecture-home-news-item {
+  position: relative;
+
+  .new-dot {
+    position: absolute;
+    top: 0.5em;
+    left: -1rem;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.lecture-home-news-more {
+  margin: 0;
+}
+
+.lecture-home-work {
+  display: grid;
+  gap: 0.5rem;
+
+  .news-row {
+    margin-bottom: 0;
+  }
+}
+
+.lecture-home-work-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1rem;
+}
+
+.lecture-home-work-due {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+
+  .btn {
+    justify-self: start;
+    margin-top: 0.5rem;
+  }
+}
+
+.lecture-home-history > summary {
+  padding-block: 0.6rem;
+  color: var(--bs-secondary-color);
+  cursor: pointer;
+}
+
+.lecture-home-more {
+  margin: 0.5rem 0 0;
+}
+
+.lecture-home-empty {
+  padding: 1rem 0;
+}
+
+@media (max-width: 767.98px) {
+  .lecture-home-work-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+

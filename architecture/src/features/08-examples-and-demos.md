@@ -259,14 +259,22 @@ exam_campaign.registration_items.create!(registerable: exam)
 puts "\nExam campaign created: #{exam_campaign.title} (deadline: #{exam_campaign.registration_deadline})"
 
 # --- Phase 8: Teacher Certification ---
+# Nothing is decidable while assignments can still be added, so the lecturer
+# says the list is done before any proposal is generated.
+lecture.update!(assignments_complete: true)
+
 # Generate eligibility proposals using the Evaluator
-evaluator = StudentPerformance::Evaluator.new(rule)
+evaluator = StudentPerformance::Evaluator.new(
+  rule,
+  assignments_complete: lecture.assignments_complete?,
+  due_points: StudentPerformance::DuePoints.new(lecture: lecture)
+)
 proposals = {}
 
 lecture_students.each do |student|
   record = StudentPerformance::Record.find_by(lecture: lecture, user: student)
   result = evaluator.evaluate(record)
-  proposals[student.id] = result.status
+  proposals[student.id] = result.proposed_status
 end
 
 puts "\nProposals generated: #{proposals.values.count(:passed)} passed, #{proposals.values.count(:failed)} failed"

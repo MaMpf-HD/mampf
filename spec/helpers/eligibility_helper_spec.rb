@@ -190,11 +190,12 @@ RSpec.describe(EligibilityHelper, type: :helper) do
     it "renders advice for student performance failures" do
       policy = {
         kind: "student_performance",
-        config: { "certification_status" => "pending" },
+        config: { "lectures" => "Linear Algebra 2" },
         outcome: { pass: false, code: :student_performance_not_met }
       }
 
-      expect(helper.eligibility_failure_message(policy)).to include("Pending")
+      expect(helper.eligibility_failure_message(policy))
+        .to include("Linear Algebra 2")
     end
 
     it "falls back to a generic requirement message for unknown policies" do

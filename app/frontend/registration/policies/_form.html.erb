@@ -1,6 +1,16 @@
 <%= form_with(model: [campaign, policy],
               url: policy.persisted? ? registration_campaign_policy_path(campaign, policy) : registration_campaign_policies_path(campaign),
               data: { controller: "registration-policy-form" }) do |f| %>
+  <% course_lectures = Array(campaign.campaignable.try(:course)&.lectures)
+                         .select(&:uses_exam_eligibility?)
+                         .sort_by(&:title) %>
+
+  <% selected_lecture_ids = policy.lecture_ids.presence || Array(campaign.campaignable.try(:id)).compact %>
+
+  <% if params[:frame_id].present? %>
+    <%= hidden_field_tag :frame_id, params[:frame_id] %>
+  <% end %>
+
   <% if policy.errors[:base].present? %>
     <div class="alert alert-danger">
       <%= policy.errors[:base].join(", ") %>
@@ -90,21 +100,38 @@
     >
       <div class="mb-3">
         <label class="form-label">
-          <%= t("registration.policy.configs.lecture_id") %>
+          <%= t("registration.policy.configs.lecture_ids") %>
         </label>
 
-        <%= select_tag "registration_policy[config][lecture_id]",
-                         options_from_collection_for_select(Lecture.all, :id, :title, policy.config&.fetch("lecture_id", nil)),
-                         include_blank: true,
-                         class: "form-select" %>
+        <%= f.select :lecture_ids,
+                     options_for_select(
+                       course_lectures.map { |course_lecture| [course_lecture.title, course_lecture.id] },
+                       selected_lecture_ids
+                     ),
+                     {},
+                     {
+                       class: "form-select selectize",
+                       multiple: true,
+                       data: { controller: "selectize" }
+                     } %>
       </div>
     </div>
   </div>
 
   <%= f.submit t("buttons.save"), class: "btn btn-sm btn-primary" %>
 
-  <%= link_to t("buttons.cancel"),
-                registration_campaign_path(campaign),
-                class: "btn btn-sm btn-secondary",
-                data: { turbo_stream: true } %>
+  <% if params[:frame_id].present? %>
+    <button
+      type="button"
+      class="btn btn-sm btn-secondary"
+      onclick="this.closest('turbo-frame').innerHTML = ''"
+    >
+      <%= t("buttons.cancel") %>
+    </button>
+  <% else %>
+    <%= link_to t("buttons.cancel"),
+                  registration_campaign_path(campaign),
+                  class: "btn btn-sm btn-secondary",
+                  data: { turbo_stream: true } %>
+  <% end %>
 <% end %>

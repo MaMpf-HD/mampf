@@ -1,0 +1,430 @@
+require "rails_helper"
+
+RSpec.describe(StudentPerformance::Certification, type: :model) do
+  describe "factory" do
+    it "creates a valid pending certification" do
+      cert = FactoryBot.create(:student_performance_certification)
+      expect(cert).to be_valid
+      expect(cert).to be_pending
+      expect(cert).to be_computed
+    end
+
+    it "creates a valid passed certification" do
+      cert = FactoryBot.create(:student_performance_certification, :passed)
+      expect(cert).to be_valid
+      expect(cert).to be_passed
+      expect(cert.certified_by).to be_present
+      expect(cert.certified_at).to be_present
+    end
+
+    it "creates a valid failed certification" do
+      cert = FactoryBot.create(:student_performance_certification, :failed)
+      expect(cert).to be_valid
+      expect(cert).to be_failed
+    end
+
+    it "creates a valid manual certification" do
+      cert = FactoryBot.create(:student_performance_certification,
+                               :passed, :manual)
+      expect(cert).to be_valid
+      expect(cert).to be_manual
+    end
+  end
+
+  describe "associations" do
+    it "belongs to a lecture" do
+      cert = FactoryBot.build(:student_performance_certification,
+                              lecture: nil)
+      expect(cert).not_to be_valid
+    end
+
+    it "belongs to a user" do
+      cert = FactoryBot.build(:student_performance_certification,
+                              user: nil)
+      expect(cert).not_to be_valid
+    end
+
+    it "optionally belongs to certified_by" do
+      cert = FactoryBot.build(:student_performance_certification,
+                              certified_by: nil)
+      expect(cert).to be_valid
+    end
+
+    it "optionally belongs to a rule" do
+      cert = FactoryBot.build(:student_performance_certification,
+                              rule: nil)
+      expect(cert).to be_valid
+    end
+  end
+
+  describe "validations" do
+    it "enforces uniqueness of lecture/user pair" do
+      cert = FactoryBot.create(:student_performance_certification)
+      duplicate = FactoryBot.build(:student_performance_certification,
+                                   lecture: cert.lecture,
+                                   user: cert.user)
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:lecture_id]).to be_present
+    end
+
+    it "requires certified_by when passed" do
+      cert = FactoryBot.build(:student_performance_certification,
+                              status: :passed,
+                              certified_by: nil,
+                              certified_at: Time.current)
+      expect(cert).not_to be_valid
+      expect(cert.errors[:certified_by]).to be_present
+    end
+
+    it "requires certified_at when passed" do
+      certifier = FactoryBot.create(:confirmed_user)
+      cert = FactoryBot.build(:student_performance_certification,
+                              status: :passed,
+                              certified_by: certifier,
+                              certified_at: nil)
+      expect(cert).not_to be_valid
+      expect(cert.errors[:certified_at]).to be_present
+    end
+
+    it "does not require certified_by when pending" do
+      cert = FactoryBot.build(:student_performance_certification,
+                              status: :pending,
+                              certified_by: nil,
+                              certified_at: nil)
+      expect(cert).to be_valid
+    end
+
+    it "refuses a manual decision that decides nothing" do
+      cert = FactoryBot.build(:student_performance_certification, :manual,
+                              status: :pending)
+
+      expect(cert).not_to be_valid
+      expect(cert.errors[:status]).to include(
+        I18n.t("activerecord.errors.models.student_performance/certification" \
+               ".attributes.status.manual_cannot_be_pending")
+      )
+    end
+
+    it "requires certified_by when failed" do
+      cert = FactoryBot.build(:student_performance_certification,
+                              status: :failed,
+                              certified_by: nil,
+                              certified_at: Time.current)
+      expect(cert).not_to be_valid
+    end
+  end
+
+  describe "enums" do
+    it "defines status enum" do
+      expect(described_class.statuses).to eq(
+        "pending" => 0, "passed" => 1, "failed" => 2
+      )
+    end
+
+    it "defines source enum" do
+      expect(described_class.sources).to eq(
+        "computed" => 0, "manual" => 1
+      )
+    end
+  end
+
+  describe ".status_for_proposal" do
+    it "reads an inconclusive proposal as the pending status" do
+      expect(described_class.status_for_proposal(:inconclusive))
+        .to eq(:pending)
+    end
+
+    it "leaves a decided proposal as it is" do
+      expect(described_class.status_for_proposal(:passed)).to eq(:passed)
+      expect(described_class.status_for_proposal(:failed)).to eq(:failed)
+    end
+  end
+
+  describe ".reset_computed!" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    it "drops the computed decisions of the scope and keeps the manual ones" do
+      computed = FactoryBot.create(:student_performance_certification, :passed,
+                                   lecture: lecture)
+      pending = FactoryBot.create(:student_performance_certification, :pending,
+                                  lecture: lecture)
+      manual = FactoryBot.create(:student_performance_certification,
+                                 :failed, :manual, lecture: lecture)
+      elsewhere = FactoryBot.create(:student_performance_certification, :passed)
+
+      lecture.student_performance_certifications.reset_computed!
+
+      expect(described_class.where(id: [computed.id, pending.id])).to be_empty
+      expect(described_class.exists?(manual.id)).to be(true)
+      expect(described_class.exists?(elsewhere.id)).to be(true)
+    end
+
+    it "reports the decisions it dropped, not the rows" do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture)
+      FactoryBot.create(:student_performance_certification, :pending,
+                        lecture: lecture)
+
+      count = lecture.student_performance_certifications.reset_computed!
+
+      expect(count).to eq(1)
+    end
+  end
+
+  describe ".stale_manual" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:rule) { FactoryBot.create(:student_performance_rule, lecture: lecture) }
+
+    def manual_cert(user:, rule: nil, certified_at: 3.hours.ago)
+      FactoryBot.create(:student_performance_certification, :passed, :manual,
+                        lecture: lecture, user: user, rule: rule,
+                        certified_at: certified_at)
+    end
+
+    def touch_rule(time)
+      # rubocop:disable Rails/SkipsModelValidations
+      rule.update_columns(updated_at: time)
+      # rubocop:enable Rails/SkipsModelValidations
+    end
+
+    # `stale` inner-joins the records; a student who never got one drops out of
+    # it, and the rule reason with them.
+    it "keeps a rule-stale decision for a student without a record" do
+      user = FactoryBot.create(:confirmed_user)
+      cert = manual_cert(user: user, rule: rule)
+      touch_rule(1.hour.ago)
+
+      certifications = lecture.student_performance_certifications
+
+      expect(certifications.stale).to be_empty
+      expect(certifications.stale_manual).to contain_exactly(cert)
+    end
+
+    it "names a decision that is stale for both reasons once" do
+      user = FactoryBot.create(:confirmed_user)
+      cert = manual_cert(user: user, rule: rule)
+      touch_rule(1.hour.ago)
+      FactoryBot.create(:student_performance_record, lecture: lecture,
+                                                     user: user,
+                                                     computed_at: 1.hour.ago)
+
+      expect(lecture.student_performance_certifications.stale_manual)
+        .to contain_exactly(cert)
+    end
+
+    # Decided before the lecture had a rule, so the row names none: the rule it
+    # would be measured against today is the lecture's active one.
+    it "names a decision taken before the lecture had a rule" do
+      user = FactoryBot.create(:confirmed_user)
+      cert = manual_cert(user: user)
+      rule.update!(active: true)
+
+      expect(lecture.student_performance_certifications.stale_manual)
+        .to contain_exactly(cert)
+    end
+
+    it "lets confirming such a decision settle it" do
+      user = FactoryBot.create(:confirmed_user)
+      manual_cert(user: user, certified_at: Time.current)
+      rule.update!(active: true)
+      touch_rule(1.hour.ago)
+
+      expect(lecture.student_performance_certifications.stale_manual).to be_empty
+    end
+
+    it "leaves the computed decisions to their proposal" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture, user: user, rule: rule,
+                        certified_at: 3.hours.ago)
+      touch_rule(1.hour.ago)
+
+      expect(lecture.student_performance_certifications.stale_manual).to be_empty
+    end
+  end
+
+  describe "#disagrees_with?" do
+    it "sees no disagreement between pending and inconclusive" do
+      cert = FactoryBot.build(:student_performance_certification)
+      expect(cert).to be_pending
+      expect(cert.disagrees_with?(:inconclusive)).to be(false)
+    end
+
+    it "sees a disagreement when the rule would let a pending student pass" do
+      cert = FactoryBot.build(:student_performance_certification)
+      expect(cert.disagrees_with?(:passed)).to be(true)
+    end
+
+    it "sees a disagreement when the rule defers a decided student" do
+      cert = FactoryBot.build(:student_performance_certification, :passed)
+      expect(cert.disagrees_with?(:inconclusive)).to be(true)
+    end
+
+    it "sees no disagreement when both say the same" do
+      cert = FactoryBot.build(:student_performance_certification, :failed)
+      expect(cert.disagrees_with?(:failed)).to be(false)
+    end
+  end
+
+  describe ".stale" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:certifier) { FactoryBot.create(:confirmed_user) }
+
+    it "includes certifications where record was computed after certification" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 1.hour.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 2.hours.ago)
+
+      expect(described_class.stale).to include(cert)
+    end
+
+    it "excludes certifications where record was computed before certification" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 2.hours.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 1.hour.ago)
+
+      expect(described_class.stale).not_to include(cert)
+    end
+
+    # Nothing has ever been computed for such a row, so any proposal it carries
+    # rests on nothing. Leaving it out of the scope would hide it from every
+    # re-evaluation for good.
+    it "includes a certification that was never evaluated" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 1.hour.ago)
+      cert = FactoryBot.create(:student_performance_certification,
+                               lecture: lecture, user: user)
+
+      expect(cert.certified_at).to be_nil
+      expect(described_class.stale).to include(cert)
+    end
+
+    context "rule-change staleness" do
+      let!(:rule) do
+        FactoryBot.create(:student_performance_rule, :active,
+                          :with_percentage, lecture: lecture)
+      end
+
+      it "includes certs where rule was updated after certification" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: user,
+                          computed_at: 3.hours.ago)
+        cert = FactoryBot.create(:student_performance_certification, :passed,
+                                 lecture: lecture, user: user,
+                                 certified_by: certifier,
+                                 certified_at: 2.hours.ago,
+                                 rule: rule)
+        rule.update!(min_percentage: 70)
+
+        expect(described_class.stale).to include(cert)
+      end
+
+      it "excludes certs where rule was not updated after certification" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: user,
+                          computed_at: 3.hours.ago)
+        cert = FactoryBot.create(:student_performance_certification, :passed,
+                                 lecture: lecture, user: user,
+                                 certified_by: certifier,
+                                 certified_at: 1.minute.from_now,
+                                 rule: rule)
+
+        expect(described_class.stale).not_to include(cert)
+      end
+
+      it "excludes certs without a rule from rule-change staleness" do
+        FactoryBot.create(:student_performance_record,
+                          lecture: lecture, user: user,
+                          computed_at: 3.hours.ago)
+        cert = FactoryBot.create(:student_performance_certification, :passed,
+                                 lecture: lecture, user: user,
+                                 certified_by: certifier,
+                                 certified_at: 2.hours.ago,
+                                 rule: nil)
+
+        expect(described_class.stale).not_to include(cert)
+      end
+    end
+  end
+
+  describe ".stale_from_rule" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:certifier) { FactoryBot.create(:confirmed_user) }
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active,
+                        :with_percentage, lecture: lecture)
+    end
+
+    it "includes certs where rule was updated after certification" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 3.hours.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 2.hours.ago,
+                               rule: rule)
+      rule.update!(min_percentage: 70)
+
+      expect(described_class.stale_from_rule).to include(cert)
+    end
+
+    it "excludes certs where only data changed" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 1.hour.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 1.minute.from_now,
+                               rule: rule)
+
+      expect(described_class.stale_from_rule).not_to include(cert)
+    end
+  end
+
+  describe ".stale_from_data" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:certifier) { FactoryBot.create(:confirmed_user) }
+
+    it "includes certs where record was computed after certification" do
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 1.hour.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 2.hours.ago)
+
+      expect(described_class.stale_from_data).to include(cert)
+    end
+
+    it "excludes certs where only rule changed" do
+      rule = FactoryBot.create(:student_performance_rule, :active,
+                               :with_percentage, lecture: lecture)
+      FactoryBot.create(:student_performance_record,
+                        lecture: lecture, user: user,
+                        computed_at: 3.hours.ago)
+      cert = FactoryBot.create(:student_performance_certification, :passed,
+                               lecture: lecture, user: user,
+                               certified_by: certifier,
+                               certified_at: 2.hours.ago,
+                               rule: rule)
+      rule.update!(min_percentage: 70)
+
+      expect(described_class.stale_from_data).not_to include(cert)
+    end
+  end
+end

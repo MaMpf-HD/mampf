@@ -21,23 +21,19 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :cypress do
+    namespace :e2e do
       post "playwright_user_login", to: "playwright_user_sessions#create" if Rails.env.test?
     end
   end
 
   if Rails.env.test?
-    namespace :cypress do
+    namespace :e2e do
       resources :factories, only: :create
       post "factories/call_instance_method", to: "factories#call_instance_method"
-      resources :factories_playwright, only: :create
-      post "factories_playwright/call_instance_method",
-           to: "factories_playwright#call_instance_method"
+      post "factories/update_instance", to: "factories#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
-      resources :user_creator_playwright, only: :create
-      resources :mails_playwright, only: :create
-      resources :i18n, only: :create
+      resources :mails, only: :create
       post "feature_flags/enable", to: "feature_flags#enable"
       post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"
@@ -121,6 +117,28 @@ Rails.application.routes.draw do
 
   resources :assignments, only: [:new, :edit, :create, :update, :destroy]
 
+  # assessment routes
+  namespace :assessment do
+    resources :assessments, only: [:index, :show, :update] do
+      collection do
+        patch :assignments_complete
+      end
+      resources :tasks, except: [:index] do
+        member do
+          get :cancel
+        end
+        collection do
+          post :reorder
+        end
+      end
+      resources :grade_schemes, only: [:new, :create, :edit, :update, :destroy] do
+        member do
+          patch :apply
+        end
+      end
+    end
+  end
+
   # chapters routes
 
   get "chapters/:id/list_sections",
@@ -152,6 +170,16 @@ Rails.application.routes.draw do
   # divisions routes
 
   resources :divisions, except: [:show]
+
+  # exam routes
+  resources :exams, only: [:index, :new, :show, :edit, :create, :update,
+                           :destroy] do
+    member do
+      post "participants", action: :add_participant
+      delete "participants/:user_id", action: :remove_participant,
+                                      as: :remove_participant
+    end
+  end
 
   # feedback routes
   resources :feedbacks, only: [:new, :create]
@@ -282,26 +310,46 @@ Rails.application.routes.draw do
       to: "submissions#index",
       as: "lecture_submissions"
 
+  post "lectures/:id/submissions/seen_all",
+       to: "submissions#seen_all",
+       as: "lecture_sheets_seen"
+
   get "lectures/:id/tutorials",
       to: "tutorials#index",
       as: "lecture_tutorials"
-
-  get "lectures/:id/tutorial_overview",
-      to: "tutorials#overview",
-      as: "lecture_tutorial_overview"
-
-  get "lectures/:id/subscribe",
-      to: "lectures#subscribe_page",
-      as: "subscribe_lecture_page"
 
   post "lectures/:id/import_toc",
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  get "lectures/:id/home",
+  # GET lecture_path is the lecture home page, resources :lectures has no show.
+  get "lectures/:id",
       to: "lectures/home#show",
       as: "lecture_home",
+      constraints: { id: /\d+/ },
       defaults: { project: "home" }
+
+  # kept for old links to the lecture home page
+  get "lectures/:id/home",
+      constraints: { id: /\d+/ },
+      to: redirect { |params, request|
+        ["/lectures/#{params[:id]}", request.query_string.presence].compact.join("?")
+      }
+
+  # nginx gives this path a larger client_max_body_size for home_attachment;
+  # ordinary lecture requests keep the default limit.
+  patch "lectures/:id/home_content",
+        to: "lectures#update",
+        as: "lecture_home_content"
+
+  # enter the passphrase of a protected lecture to access its content
+  post "lectures/:lecture_id/unlock",
+       to: "lectures/unlocks#create",
+       as: "lecture_unlock"
+
+  get "lectures/:id/home/campaigns/:campaign_id",
+      to: "lectures/home#campaign",
+      as: "lecture_home_campaign"
 
   get "lectures/:id/home_attachment",
       to: "lectures/home#attachment",
@@ -312,7 +360,7 @@ Rails.application.routes.draw do
       to: "lectures#outline",
       as: "lecture_outline"
 
-  resources :lectures, except: [:index] do
+  resources :lectures, except: [:index, :show] do
     get "roster", to: "roster/maintenance#index"
     get "roster/participants", to: "roster/maintenance#participants"
 
@@ -328,13 +376,46 @@ Rails.application.routes.draw do
       end
     end
 
+    namespace :student_performance, path: "performance" do
+      resources :records, only: [:index, :show] do
+        collection do
+          post :recompute
+        end
+        member do
+          patch :exempt
+          patch :unexempt
+        end
+      end
+
+      resource :rules, only: [:edit, :update] do
+        patch :preview, on: :collection
+      end
+
+      resource :evaluator, only: [], controller: "evaluator" do
+        get :single_proposal, on: :member
+      end
+
+      resources :achievements,
+                only: [:index, :new, :show, :create, :update, :destroy]
+
+      resources :certifications,
+                only: [:index, :create, :update, :destroy] do
+        collection do
+          post :bulk_accept
+          post :bulk_reevaluate
+          post :bulk_confirm_manual
+          post :bulk_reset
+        end
+      end
+    end
+
     resources :campaigns,
               controller: "registration/campaigns",
               only: [:index, :new, :create],
               as: :registration_campaigns
-    resources :student_messages,
-              controller: "registration/student_messages",
-              only: [:create]
+    resources :student_messages, only: [:create] do
+      get :recipients, on: :collection
+    end
   end
 
   resources :campaigns,
@@ -580,6 +661,16 @@ Rails.application.routes.draw do
 
   resources :notifications, only: [:index, :destroy]
 
+  # personal data routes
+
+  get "personal_data",
+      to: "personal_data#edit",
+      as: "edit_personal_data"
+
+  patch "personal_data",
+        to: "personal_data#update",
+        as: "personal_data"
+
   # profile routes
 
   get "profile/edit",
@@ -612,6 +703,15 @@ Rails.application.routes.draw do
 
   patch "profile/unstar_lecture",
         as: "unstar_lecture"
+
+  namespace :dashboard do
+    resources :lectures, only: [] do
+      resource :bookmark, only: [:create, :destroy]
+      resource :registration_notice, only: :destroy
+      resource :washi_tape, only: :update
+    end
+    resource :term, only: :show
+  end
 
   get "profile/request_data",
       as: "request_data"
@@ -769,6 +869,10 @@ Rails.application.routes.draw do
        to: "submissions#join",
        as: "join_submission"
 
+  post "submissions/seen",
+       to: "submissions#seen",
+       as: "sheet_seen"
+
   get "submissions/enter_code",
       to: "submissions#enter_code",
       as: "enter_submission_code"
@@ -813,18 +917,6 @@ Rails.application.routes.draw do
       to: "submissions#show_correction",
       as: "show_correction"
 
-  get "submissions/:id/select_tutorial",
-      to: "submissions#select_tutorial",
-      as: "select_tutorial"
-
-  patch "submissions/:id/move",
-        to: "submissions#move",
-        as: "move_submission"
-
-  get "submissions/:id/cancel_action",
-      to: "submissions#cancel_action",
-      as: "cancel_submission_action"
-
   delete "submissions/:id/delete_correction",
          to: "submissions#delete_correction",
          as: "delete_correction"
@@ -836,6 +928,58 @@ Rails.application.routes.draw do
   patch "submissions/:id/reject",
         to: "submissions#reject",
         as: "reject_submission"
+
+  patch "participations/mark_as_participated",
+        to: "assessment/task_points#mark_as_participated",
+        as: "mark_user_as_participated"
+
+  patch "participations/:participation_id/remove_participated",
+        to: "assessment/task_points#remove_participated",
+        as: "remove_participation"
+
+  patch "submissions/:submission_id/point_submission",
+        to: "assessment/task_points#update_team",
+        as: "point_submission_tutorial"
+
+  patch "participations/:participation_id/point_participation",
+        to: "assessment/task_points#update_participation",
+        as: "point_participation"
+
+  patch "submissions/point_multi_submissions",
+        to: "assessment/task_points#update_team_multi",
+        as: "point_multi_submissions_tutorial"
+
+  patch "exams/:exam_id/point_multi_participations",
+        to: "assessment/task_points#update_exam_multi",
+        as: "point_multi_participations_exam"
+
+  patch "submissions/:submission_id/refresh_point_submission",
+        to: "assessment/task_points#refresh_submission",
+        as: "refresh_point_submission_tutorial"
+
+  patch "submissions/:submission_id/add_member",
+        to: "assessment/task_points#add_member",
+        as: "add_member_submission"
+
+  patch "participations/:participation_id/refresh_point_participation",
+        to: "assessment/task_points#refresh_participation",
+        as: "refresh_point_participation"
+
+  patch "participations/:participation_id/mark_as_absent",
+        to: "assessment/task_points#mark_as_absent",
+        as: "mark_as_absent"
+
+  patch "participations/:participation_id/remove_absent",
+        to: "assessment/task_points#remove_absent",
+        as: "remove_absent"
+
+  patch "participations/:participation_id/mark_as_exempt",
+        to: "assessment/task_points#mark_as_exempt",
+        as: "mark_as_exempt"
+
+  patch "participations/:participation_id/remove_exempt",
+        to: "assessment/task_points#remove_exempt",
+        as: "remove_exempt"
 
   get "submissions/:id/edit_correction",
       to: "submissions#edit_correction",
@@ -913,6 +1057,7 @@ Rails.application.routes.draw do
       scope "roster", controller: "roster/self_materialization", defaults: { type: "Talk" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -964,6 +1109,7 @@ Rails.application.routes.draw do
                       defaults: { type: "Tutorial" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -984,6 +1130,7 @@ Rails.application.routes.draw do
       scope "roster", controller: "roster/self_materialization", defaults: { type: "Cohort" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -1024,6 +1171,10 @@ Rails.application.routes.draw do
   get "users/list_generic_users",
       to: "users#list_generic_users",
       as: "list_generic_users"
+
+  get "captcha_challenge",
+      to: "captcha_challenges#show",
+      as: "captcha_challenge"
 
   get "users/fill_user_select",
       to: "users#fill_user_select",
@@ -1087,11 +1238,31 @@ Rails.application.routes.draw do
     delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
            to: "user_registrations#destroy",
            as: :withdraw_item
+    patch "campaign_registrations/:campaign_id/items/:item_id/switch",
+          to: "user_registrations#switch",
+          as: :switch_item
 
     post "campaign_registrations/:campaign_id/preferences",
          to: "user_registrations#save_preferences",
          as: :save_preferences
   end
+
+  # participations routes
+  patch "participations/:participation_id/grade_participation",
+        to: "assessment/grades#update",
+        as: "grade_participation"
+
+  patch "participations/:participation_id/refresh_grade_participation",
+        to: "assessment/grades#refresh",
+        as: "refresh_grade_participation"
+
+  patch "participations/:participation_id/achievement_value",
+        to: "assessment/achievement_values#update",
+        as: "achievement_value_participation"
+
+  patch "participations/:participation_id/refresh_achievement_value",
+        to: "assessment/achievement_values#refresh",
+        as: "refresh_achievement_value_participation"
 
   # main routes
 

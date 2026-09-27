@@ -160,6 +160,26 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
         )
       end
 
+      it "lets the same user register for an exam all the same" do
+        lecture = campaign.campaignable
+        add_only_tutorial = create(:tutorial,
+                                   lecture: lecture,
+                                   skip_campaigns: true,
+                                   self_materialization_mode: :add_only)
+        add_only_tutorial.add_user_to_roster!(user)
+
+        exam = create(:exam, :with_date, lecture: lecture)
+
+        exam_campaign = exam.registration_campaign
+        exam_campaign.update!(status: :open,
+                              registration_deadline: 1.week.from_now)
+        exam_item = exam_campaign.registration_items.first
+
+        result = described_class.new(exam_campaign, user).register!(exam_item)
+
+        expect(result.success?).to be(true)
+      end
+
       it "raises error if item has no capacity" do
         item.registerable.update!(capacity: 0)
         service = described_class.new(campaign, user)
@@ -336,6 +356,52 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
         .to include(item_cohort)
       expect(registration1.status).to eq("confirmed")
       expect(registration2.status).to eq("confirmed")
+    end
+  end
+
+  describe "#switch!" do
+    let(:campaign) { FactoryBot.create(:registration_campaign, :open) }
+    let(:from_item) { campaign.registration_items.first }
+    let(:to_item) { campaign.registration_items.second }
+    let(:service) { described_class.new(campaign, user) }
+
+    before { service.register!(from_item) }
+
+    def registered_items
+      Registration::UserRegistration.where(user: user, registration_campaign: campaign,
+                                           status: :confirmed).map(&:registration_item)
+    end
+
+    it "moves the place to the other item" do
+      result = service.switch!(from_item, to_item)
+
+      expect(result.success?).to be(true)
+      expect(registered_items).to eq([to_item])
+    end
+
+    it "keeps the old place when the other item is full" do
+      to_item.registerable.update!(capacity: 1)
+      described_class.new(campaign, create(:confirmed_user)).register!(to_item)
+
+      result = service.switch!(from_item, to_item)
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.user_registration.messages.no_slots"))
+      expect(registered_items).to eq([from_item])
+    end
+
+    it "keeps the old place once the deadline has passed" do
+      campaign.update_column(:registration_deadline, 1.minute.ago) # rubocop:disable Rails/SkipsModelValidations
+
+      expect(service.switch!(from_item, to_item).success?).to be(false)
+      expect(registered_items).to eq([from_item])
+    end
+
+    it "refuses to switch from an item the user holds no place in" do
+      result = described_class.new(campaign, create(:confirmed_user)).switch!(from_item, to_item)
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.user_registration.none"))
     end
   end
 end

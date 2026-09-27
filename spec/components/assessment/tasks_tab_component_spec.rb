@@ -1,0 +1,61 @@
+require "rails_helper"
+
+RSpec.describe(TasksTabComponent, type: :component) do
+  let(:teacher) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, :released_for_all, teacher: teacher) }
+  let(:assignment) { create(:valid_assignment, lecture: lecture) }
+  let(:assessment) { assignment.reload.assessment }
+
+  context "when assessment is present" do
+    let(:component) do
+      described_class.new(
+        assessment: assessment, assessable: assignment,
+        tasks: assessment.tasks.order(:position), task: nil
+      )
+    end
+
+    it "renders the tasks partial" do
+      render_inline(component)
+      expect(rendered_content).not_to include("alert-warning")
+    end
+
+    it "adds the tasks up under the list" do
+      create(:assessment_task, assessment: assessment, max_points: 4)
+      create(:assessment_task, assessment: assessment, max_points: 3.5)
+
+      total = I18n.with_locale(:en) { render_inline(component) }
+                  .css("#tasks-total").text.squish
+
+      expect(total).to include("7.5 pts")
+      expect(total).to include("2 tasks")
+    end
+
+    it "has no sum to show without tasks" do
+      fragment = render_inline(component)
+
+      expect(fragment.css("#tasks-total")).to be_empty
+    end
+  end
+
+  context "when assessment is nil" do
+    let(:component) do
+      described_class.new(
+        assessment: nil, assessable: assignment,
+        tasks: [], task: nil
+      )
+    end
+
+    it "renders the no-assessment warning" do
+      render_inline(component)
+      expect(rendered_content).to include("alert-warning")
+      expect(rendered_content).to include(
+        I18n.t("assessment.errors.no_assessment")
+      )
+    end
+
+    it "renders the warning icon" do
+      render_inline(component)
+      expect(rendered_content).to include("bi-exclamation-triangle")
+    end
+  end
+end

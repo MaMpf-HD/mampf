@@ -1,0 +1,5 @@
+<% ui_state = ExamCampaignUiState.new(exam: exam) %>
+
+<span class="<%= class_names("badge", ui_state.status_badge_class) %>">
+  <%= ui_state.status_label %>
+</span>

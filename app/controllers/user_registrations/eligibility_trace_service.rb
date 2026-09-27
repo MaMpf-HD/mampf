@@ -18,11 +18,14 @@ module UserRegistrations
 
       def decorate_prerequisite_campaigns(trace)
         trace.each do |policy_result|
-          kind = policy_result[:kind]
-          next unless kind == PrerequisiteCampaignDecoration::PREREQUISITE_CAMPAIGN_KIND
-
-          policy_result[:config] =
-            PrerequisiteCampaignDecoration.decorate_config(policy_result[:config])
+          case policy_result[:kind]
+          when PrerequisiteCampaignDecoration::PREREQUISITE_CAMPAIGN_KIND
+            policy_result[:config] =
+              PrerequisiteCampaignDecoration.decorate_config(policy_result[:config])
+          when StudentPerformanceDecoration::STUDENT_PERFORMANCE_KIND
+            policy_result[:config] =
+              StudentPerformanceDecoration.decorate_config(policy_result[:config])
+          end
         end
       end
   end

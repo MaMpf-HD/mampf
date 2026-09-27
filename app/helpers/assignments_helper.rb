@@ -11,4 +11,28 @@ module AssignmentsHelper
 
     I18n.t("basics.files")
   end
+
+  def test_week_label(assignment)
+    week_label(assignment.test_week)
+  end
+
+  def test_week_options(assignment)
+    choices = assignment.test_week_choices.map do |monday|
+      [week_label(monday..(monday + 6)), monday.iso8601]
+    end
+    options_for_select(choices, assignment.deadline&.to_date&.beginning_of_week&.iso8601)
+  end
+
+  def test_badge
+    tag.span(I18n.t("assessment.test.badge"),
+             class: "badge bg-secondary-subtle text-secondary-emphasis fw-normal ms-1")
+  end
+
+  private
+
+    def week_label(week)
+      I18n.t("assessment.test.week_label",
+             from: I18n.l(week.first, format: :test_week_start),
+             to: I18n.l(week.last, format: :test_week_end))
+    end
 end

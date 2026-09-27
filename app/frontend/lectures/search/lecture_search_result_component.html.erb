@@ -1,0 +1,87 @@
+<%= tag.div(**wrapper_attributes) do %>
+
+  <%= link_to lecture, class: "lecture-search-result-link",
+                       "data-testid": "lecture-search-result-card" do %>
+    <div class="lecture-search-result glass row g-0">
+
+      <div class="col-md-3">
+        <%= image_tag(image_url, class: "lecture-search-result-image",
+                                 alt: lecture.title_no_term) %>
+      </div>
+
+      <div class="col-md-9">
+        <div class="lecture-search-result-body">
+          <h5 class="lecture-search-result-title">
+            <%= lecture.title_no_term %>
+          </h5>
+          <div class="lecture-search-result-info">
+            <%# "Registered" is already carried by the marker on the right edge;
+                only the open-registration hint stays as a badge here. %>
+            <% if registration_possible? %>
+              <span class="badge bg-primary lecture-search-result-registration"
+                    data-testid="lecture-search-registration-badge">
+                <%= t("lecture.search.registration_open") %>
+              </span>
+            <% end %>
+            <% if show_term? %>
+              <span class="lecture-search-result-term">
+                <%= lecture.term.to_label_short %>
+              </span>
+            <% end %>
+            <% unless lecture.disable_teacher_display %>
+              <span class="lecture-search-result-teacher">
+                <%= lecture.teacher.name %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  <% end %>
+
+  <%# The controls on the right edge, over the card's own link. Whoever
+      already has a registration on record (or a self-enrolled group seat)
+      sees a marker for it; a pending or rejected application still leaves
+      room for the bookmark toggle next to it, only a confirmed seat or
+      group membership replaces it entirely. %>
+  <div class="lecture-search-result-controls">
+    <% if registered? %>
+      <span class="lecture-search-result-control is-registered"
+            role="img"
+            aria-label="<%= registered_label %>"
+            title="<%= registered_label %>"
+            data-testid="lecture-search-registered-control">
+        <i class="bi <%= registered_icon %>" aria-hidden="true"></i>
+      </span>
+    <% end %>
+
+    <% if registration_possible? %>
+      <%= link_to lecture_home_path(lecture),
+                  class: "lecture-search-result-control " \
+                         "lecture-search-result-register",
+                  title: t("lecture.search.go_register"),
+                  "aria-label": t("lecture.search.go_register_for",
+                                  lecture: lecture.title_no_term),
+                  data: { testid: "lecture-search-register-link" } do %>
+        <i class="fas fa-plus" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+
+    <% if bookmarkable? %>
+      <button type="button"
+              class="lecture-search-result-control lecture-search-result-bookmark"
+              data-bookmark-target="button"
+              data-action="bookmark#toggle"
+              aria-pressed="<%= bookmarked? %>"
+              aria-label="<%= t("lecture.search.bookmark_lecture",
+                                lecture: lecture.title_no_term) %>"
+              title="<%= t("lecture.search.bookmark") %>"
+              data-testid="lecture-search-bookmark-button">
+        <i class="<%= bookmarked? ? "fas" : "far" %> fa-bookmark"
+           data-bookmark-target="icon"
+           aria-hidden="true"></i>
+      </button>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,43 @@
+<dl class="mb-3">
+  <% User::PERSONAL_DATA_FIELDS.each do |field| %>
+    <% next if field == :program_id && study_programs.none? %>
+    <% step = { first_name: :name, last_name: :name, program_id: :program }.fetch(field, field) %>
+    <% value = field == :program_id ? f.object.program&.name_with_subject : f.object[field] %>
+    <div class="row g-0 py-1 border-bottom">
+      <dt class="col-5 col-sm-4"><%= User.human_attribute_name(field) %></dt>
+      <dd class="col-7 col-sm-8 mb-0 d-flex justify-content-between gap-2">
+        <span data-personal-data-form-target="summary" data-field="<%= field %>">
+          <%= value.presence || "–" %>
+        </span>
+        <% if steps.include?(step) %>
+          <button type="button" class="btn btn-link p-0"
+                  aria-label="<%= t("personal_data.change_field",
+                                    field: User.human_attribute_name(field)) %>"
+                  data-action="personal-data-form#change"
+                  data-personal-data-form-step-param="<%= steps.index(step) %>">
+            <%= t("personal_data.change") %>
+          </button>
+        <% end %>
+      </dd>
+    </div>
+  <% end %>
+</dl>
+
+<%# Rendered by hand: the global field error markup would colour the whole
+    label and put the message in front of it. %>
+<% missing = f.object.errors.include?(:personal_data_confirmation) %>
+<div class="form-check mb-3">
+  <%= check_box_tag "user[personal_data_confirmation]", "1", false,
+                    id: "user_personal_data_confirmation",
+                    class: ["form-check-input", { "border-danger": missing }],
+                    aria: { invalid: missing,
+                            describedby: ("confirmation-missing" if missing) } %>
+  <%= label_tag "user_personal_data_confirmation",
+                t("personal_data.confirmation_html", support: support),
+                class: "form-check-label" %>
+  <% if missing %>
+    <div class="invalid-feedback d-block" id="confirmation-missing">
+      <%= t("personal_data.confirmation_missing") %>
+    </div>
+  <% end %>
+</div>

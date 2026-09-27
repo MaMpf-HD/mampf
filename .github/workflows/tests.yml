@@ -93,12 +93,15 @@ jobs:
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
 
+      # One worker (and test database) per CPU core via parallel_tests;
+      # SimpleCov merges the coverage of all workers into one report.
       - name: Run unit tests
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run --entrypoint="" -e COVERAGE=true app-test sh -c
-          "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
+          run --entrypoint="" -e COVERAGE=true -e RAILS_ENV=test app-test sh -c
+          "bundle exec rake parallel:create parallel:load_schema &&
+          bundle exec parallel_rspec -o '--format RSpec::Github::Formatter' spec"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v6
@@ -150,47 +153,6 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-
-      - name: Show app-test logs on failure
-        if: failure()
-        working-directory: docker/development/
-        run: >
-          docker compose
-          -f ./compose.yml
-          -f ../cicd/compose.cicd.yml
-          logs app-test
-
-  # Cypress end-to-end (e2e) tests
-  e2e-tests:
-    name: e2e (Cypress)
-    environment: testing
-    runs-on: ubuntu-latest
-    permissions: write-all
-    needs: build-mampf
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pull MaMpf image (from GHCR)
-        working-directory: docker/development/
-        run: >
-          docker pull ghcr.io/mampf-hd/mampftest:image
-
-      - name: Run Cypress tests
-        working-directory: docker/development/
-        run: >
-          docker compose
-          -f ./compose.yml
-          -f ../cicd/compose.cicd.yml
-          -f ../cypress/compose.yml
-          run cypress
 
       - name: Show app-test logs on failure
         if: failure()

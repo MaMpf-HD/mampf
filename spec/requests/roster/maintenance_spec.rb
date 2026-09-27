@@ -583,6 +583,24 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         delete remove_member_lecture_path(lecture, user_id: 99_999), as: :turbo_stream
         expect(flash[:alert]).to be_present
       end
+
+      # Leaving the lecture would take the member off their talk, and a talk
+      # graded for them keeps them; the refusal is the roster's, in words.
+      it "keeps a member whose talk in the seminar has been graded, and says so" do
+        seminar = create(:lecture, :is_seminar)
+        create(:editable_user_join, user: editor, editable: seminar)
+        create(:lecture_membership, lecture: seminar, user: member)
+        talk = create(:talk, lecture: seminar)
+        talk.speakers << member
+        talk.assessment.assessment_participations.create!(user: member, status: :reviewed,
+                                                          grade_numeric: 2.0)
+
+        delete remove_member_lecture_path(seminar, user_id: member.id), as: :turbo_stream
+
+        expect(response.body).to include(I18n.t("roster.errors.grading_data_present"))
+        expect(seminar.reload.members).to include(member)
+        expect(talk.reload.speakers).to include(member)
+      end
     end
 
     context "as a student" do

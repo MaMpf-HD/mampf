@@ -25,7 +25,7 @@ RSpec.describe(RegistrationUserRegistrationAbility) do
 
   it "does not allow students to access unpublished lectures" do
     unpublished_lecture = create(:lecture)
-    create(:lecture_user_join, user: user, lecture: unpublished_lecture)
+    create(:lecture_bookmark, user: user, lecture: unpublished_lecture)
 
     expect(ability.can?(:index, unpublished_lecture)).to be(false)
     expect(ability.can?(:create, unpublished_lecture)).to be(false)

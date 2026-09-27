@@ -3,4 +3,7 @@
 --
 <%= t("mailer.student_message_footer",
       sender: @message.sender.name,
+      email: @message.sender.email,
+      role: t("mailer.student_message_role.#{@message.sender_role}"),
+      audiences: @message.audience_sentence,
       lecture: @lecture.title_for_viewers) %>

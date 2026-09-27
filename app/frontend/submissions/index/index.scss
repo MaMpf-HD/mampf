@@ -1,0 +1,288 @@
+@import "../hub_scale";
+@import "../components/sheet_chip_component";
+@import "../components/standing_component";
+@import "../components/sheet_news_component";
+
+/* Said quietly, beside something that carries the meaning. */
+.sheet-note,
+.sheet-note-bad,
+.task-name {
+  font-size: var(--hub-aside);
+}
+
+.hub-title {
+  font-size: var(--hub-section);
+  font-weight: 600;
+}
+
+/* The pane gives the page its white ground - the standing panel is grey and
+   the page background is a pattern - but not its frame: the sheet that is due
+   is a card, and a card inside a card reads as two. */
+.submissions-pane {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* The one bordered element on the page, and the only one carrying colour: what
+   can still be handed in is where reading starts. */
+.next-action {
+  border: 2px solid #4977a8;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  height: 100%;
+}
+
+/* A code somebody may end up typing out: body size at least, and spaced so an
+   l and a 1 are not the same shape at a glance. */
+.join-code {
+  font-size: var(--hub-body);
+  letter-spacing: 0.12em;
+  color: inherit;
+}
+
+/* Label and value in two columns, so the eye can run down the labels rather
+   than read a sentence to find the code. */
+.card-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  /* The label is smaller than what it labels, so the two have to be hung from
+     the same line rather than from the top of a cell they fill unequally. */
+  align-items: baseline;
+  gap: 0.1rem 0.75rem;
+  margin-top: 0.75rem;
+
+  dt {
+    padding-top: 0.15rem;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+@media (max-width: 567px) {
+  .card-facts {
+    grid-template-columns: 1fr;
+    gap: 0 0;
+
+    dd {
+      margin-bottom: 0.35rem;
+    }
+  }
+}
+
+.file-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  background: #f5f7f9;
+  border: 1px solid #d8dee4;
+  border-radius: 0.35rem;
+  padding: 0.6rem 0.75rem;
+}
+
+/* A long filename shortens rather than pushing its size and date off the pill. */
+.file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Wide enough for the longer of the two words, so the names line up. */
+.file-role {
+  flex: 0 0 auto;
+  min-width: 5.5rem;
+}
+
+/* Sheet | status (only where there is no number) | points. No deadline column:
+   three weeks on, the due date is noise - the sheet that is still open carries
+   it on its card instead. */
+.sheet-list {
+  border-top: 1px solid #e9ecef;
+}
+
+.sheet-entry {
+  border-bottom: 1px solid #e9ecef;
+}
+
+/* The whole row is the control; the triangle the browser draws next to it would
+   be a second one. */
+.sheet-list summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0;
+}
+
+.sheet-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.sheet-list summary:focus-visible {
+  outline: 3px solid rgba(73, 119, 168, 0.35);
+  outline-offset: -3px;
+}
+
+.sheet-list summary:hover .sheet-row {
+  background: #fbfcfd;
+}
+
+.sheet-row {
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0.5rem 0.6rem 1.25rem;
+  grid-template-columns: minmax(10rem, 1.6fr) minmax(7rem, 1fr) 6rem 1.25rem;
+}
+
+.sheet-row.sheet-head {
+  padding-bottom: 0.2rem;
+}
+
+.chev {
+  color: #98a2ab;
+  transition: transform 0.12s ease;
+}
+
+details[open] .chev {
+  transform: rotate(180deg);
+}
+
+/* The fold is the row continued and takes the whole width: two headed areas
+   rather than more columns squeezed into the row's grid. */
+.fold {
+  padding: 1.25rem 0.5rem 1.5rem 1.5rem;
+  border-top: 1px dotted #dee2e6;
+}
+
+.fold-grid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: minmax(15rem, 1fr) minmax(15rem, 1fr);
+}
+
+.task-line {
+  display: flex;
+  align-items: center;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #f1f3f5;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.task-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: 0.75rem;
+  color: #66717c;
+  overflow-wrap: anywhere;
+}
+
+.task-num {
+  flex: 0 0 5rem;
+  text-align: right;
+}
+
+.sheet-note {
+  color: #66717c;
+}
+
+.sheet-note-bad {
+  color: #b02a37;
+}
+
+.sheet-muted,
+.sheet-muted a {
+  color: #98a2ab;
+}
+
+.sheet-name {
+  position: relative;
+}
+
+.news-marker {
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  line-height: 0;
+}
+
+details[open] > summary .news-marker {
+  visibility: hidden;
+}
+
+/* The bar is an underline under its number, not an object beside it. */
+.spark {
+  width: 64px;
+  height: 3px;
+  background: #edf0f3;
+  border-radius: 2px;
+  margin: 4px 0 0 auto;
+
+  > span {
+    display: block;
+    height: 100%;
+    background: #9db3cd;
+    border-radius: 2px;
+  }
+}
+
+/* Capped, and the same width in every line: four problems compare better
+   against a short bar than a long one, and two bars that do not share a length
+   compare nothing at all. Past about 160 px it starts reading as a figure of
+   its own rather than as an underline. */
+.spark-wide {
+  flex: 0 0 150px;
+  width: auto;
+  margin: 0 0.75rem 0 0;
+}
+
+/* On a phone the name takes its own line and badge and number share the next,
+   rather than three columns squeezing into 390 px. */
+@media (max-width: 567px) {
+  .sheet-row {
+    grid-template-columns: auto 1fr 1.25rem;
+    gap: 0.25rem 1rem;
+    padding-left: 0.5rem;
+  }
+
+  /* The name takes its own line; badge, number and chevron share the next. */
+  .sheet-row > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .sheet-row.sheet-head {
+    display: none;
+  }
+
+  /* The row's padding is too narrow for a gutter, so the dot hangs just past
+     the row's edge. */
+  .news-marker {
+    left: -0.9rem;
+  }
+
+  .fold-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .fold {
+    padding-left: 0.75rem;
+  }
+
+  /* No room for a bar next to a name and a number, and the number is the part
+     that carries the meaning. */
+  .spark-wide {
+    display: none;
+  }
+
+  /* Let the filename have the width rather than clipping it to five letters;
+     its size and date move to the next line. */
+  .file-pill {
+    flex-wrap: wrap;
+  }
+}

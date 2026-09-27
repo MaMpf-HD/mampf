@@ -233,9 +233,7 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   def student_display_name(student)
-    student.name.presence ||
-      student.try(:tutorial_name).presence ||
-      student.email
+    student.tutorial_name.presence || student.email
   end
 
   def overbooking_warning

@@ -29,7 +29,12 @@ RSpec.shared_examples("a registerable model") do
   end
 
   describe "capacity validation via items" do
-    let(:registerable) { create(described_class.name.underscore.to_sym) }
+    # An exam builds its own campaign on create; this block supplies one itself.
+    let(:registerable) do
+      create(described_class.name.underscore.to_sym).tap do |record|
+        record.try(:registration_campaign)&.destroy
+      end
+    end
     let(:campaign) { create(:registration_campaign, :first_come_first_served) }
     let!(:item) do
       create(:registration_item, registration_campaign: campaign, registerable: registerable)
@@ -67,7 +72,13 @@ RSpec.shared_examples("a registerable model") do
   end
 
   describe "deletion while a campaign knows it" do
-    let(:registerable) { create(described_class.name.underscore.to_sym) }
+    # A model that brings its own campaign into the world (an exam does) would
+    # refuse a second item, so it starts here without one.
+    let(:registerable) do
+      create(described_class.name.underscore.to_sym).tap do |record|
+        record.try(:registration_campaign)&.destroy
+      end
+    end
     let(:campaign) { create(:registration_campaign, :first_come_first_served) }
     let!(:item) do
       create(:registration_item, registration_campaign: campaign, registerable: registerable)

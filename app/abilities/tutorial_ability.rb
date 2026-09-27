@@ -9,10 +9,6 @@ class TutorialAbility
       user.can_update_personell?(tutorial.lecture)
     end
 
-    can :overview, Tutorial do |_tutorial, lecture|
-      user.editor_or_teacher_in?(lecture)
-    end
-
     can :index, Tutorial do |_tutorial, lecture|
       user.in?(lecture.tutors) || user.editor_or_teacher_in?(lecture)
     end

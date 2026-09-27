@@ -23,6 +23,12 @@ export class MediumCommentsPage {
     const textarea = this.page.getByTestId("comment-new-textarea");
     await textarea.waitFor({ state: "visible" });
     await textarea.fill(comment);
+
+    // The form posts by XHR; a reload right after the click would cancel it.
+    const postedPromise = this.page.waitForResponse(response =>
+      response.url().includes("/comments") && response.request().method() === "POST",
+    );
     await this.page.getByRole("button", { name: "post comment" }).click();
+    await postedPromise;
   }
 }

@@ -1,0 +1,5 @@
+// The capacity's placeholder is the ∞ sign; at text size it cannot be read.
+.tutorial-capacity::placeholder {
+  font-size: 1.5em;
+  line-height: 1;
+}

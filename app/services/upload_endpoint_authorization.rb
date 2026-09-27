@@ -2,9 +2,11 @@ class UploadEndpointAuthorization
   UPLOADERS = {
     "correction" => CorrectionUploader,
     "geogebra" => GeogebraUploader,
+    "lecture_home_attachment" => LectureHomeAttachmentUploader,
     "pdf" => PdfUploader,
     "profile_image" => ProfileimageUploader,
     "screenshot" => ScreenshotUploader,
+    "student_message" => StudentMessageUploader,
     "submission" => SubmissionUploader,
     "video" => VideoUploader
   }.freeze
@@ -33,9 +35,9 @@ class UploadEndpointAuthorization
         # must still be able to replace the video on that medium.
         content_editor?(user) || user&.speaker?
       when "PdfUploader", "GeogebraUploader", "ScreenshotUploader",
-           "ProfileimageUploader"
+           "ProfileimageUploader", "LectureHomeAttachmentUploader"
         content_editor?(user)
-      when "CorrectionUploader"
+      when "CorrectionUploader", "StudentMessageUploader"
         content_editor?(user) || user&.tutor?
       when "SubmissionUploader"
         # Manuscript submissions are open to any authenticated user (and sit
@@ -65,6 +67,21 @@ class UploadEndpointAuthorization
                             context: { target_type: intent.target_type,
                                        action: intent.action })
       false
+    end
+
+    # Tells a hand-in refused only for want of a tutorial seat apart from an
+    # upload the user had no business making: the student can get a seat, and
+    # should be told that rather than "not allowed".
+    def missing_tutorial_seat?(intent:, user:)
+      return false unless intent&.for_user?(user) && intent.for_uploader?(SubmissionUploader)
+
+      submission = intent.target
+      return false unless submission.is_a?(Submission)
+
+      lecture = submission.assignment&.lecture
+      return false if lecture.nil? || user.rostered_tutorial_in(lecture)
+
+      submission.persisted? ? user.in?(submission.users) : user.proper_student_in?(lecture)
     end
 
     # Coarse authorization for the stock ActiveStorage direct-upload endpoint.

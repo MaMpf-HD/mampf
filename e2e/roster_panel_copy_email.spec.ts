@@ -8,7 +8,7 @@ test.describe("the roster panel's copy button", () => {
       await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
       const lecture = await factory.create("lecture", [], {
-        teacher_id: user.id, locale: "en",
+        teacher_id: user.id,
       });
       const tutorial = await factory.create("tutorial", [], {
         lecture_id: lecture.id, title: "Mo 10",
@@ -16,7 +16,7 @@ test.describe("the roster panel's copy button", () => {
       await tutorial.__call("add_user_to_roster!", student.user);
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      await page.getByText("Mo 10").click();
+      await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       await page.getByRole("button", ADDRESS_BUTTON).click();
 
       const copied = await page.evaluate(() => navigator.clipboard.readText());
@@ -32,7 +32,7 @@ test.describe("the roster panel's copy button", () => {
       });
 
       const lecture = await factory.create("lecture", [], {
-        teacher_id: user.id, locale: "en",
+        teacher_id: user.id,
       });
       const tutorial = await factory.create("tutorial", [], {
         lecture_id: lecture.id, title: "Mo 10",
@@ -40,7 +40,7 @@ test.describe("the roster panel's copy button", () => {
       await tutorial.__call("add_user_to_roster!", student.user);
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      await page.getByText("Mo 10").click();
+      await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       await page.getByRole("button", ADDRESS_BUTTON).click();
 
       await expect(page.getByRole("status"))

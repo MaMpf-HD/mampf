@@ -1,0 +1,50 @@
+<%# locals: (lecture:, notifications:, posts_count:) %>
+<% shown = notifications.first(LectureHomeHelper::NEWS_SHOWN) %>
+<section class="lecture-home-news" id="newsCard" aria-labelledby="news-heading"
+         data-controller="lecture-news" data-testid="lecture-home-news">
+  <div class="lecture-home-label-line">
+    <h2 class="lecture-home-kicker" id="news-heading"><%= t("lecture_home.news.title") %></h2>
+    <% if notifications.size > 1 %>
+      <%= link_to t("notifications.check_notifications"),
+                  destroy_lecture_notifications_path(params: { lecture_id: lecture.id }),
+                  class: "lecture-home-quiet-link",
+                  method: :post, remote: true %>
+    <% end %>
+  </div>
+
+  <% shown.each do |notification| %>
+    <% announcement = notification.notifiable %>
+    <div class="lecture-home-news-item" data-lecture-news-target="row">
+      <span class="new-dot" aria-hidden="true"></span>
+      <div class="lecture-home-news-text">
+        <div><%= sanitize(announcement.details) %></div>
+        <div class="lecture-home-row-line">
+          <%= t("lecture_home.news.by", author: announcement.announcer.name,
+                                        date: l(announcement.created_at.to_date,
+                                                format: :long)) %>
+          ·
+          <%= link_to t("basics.mark_as_read"), notification_path(notification),
+                      class: "lecture-home-quiet-link removeLectureNotification",
+                      remote: true, method: :delete,
+                      data: { id: notification.id, lecture: lecture.id,
+                              action: "ajax:success->lecture-news#dismiss" } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if notifications.size > shown.size %>
+    <p class="lecture-home-news-more" data-lecture-news-target="more">
+      <%= link_to t("lecture_home.news.more", count: notifications.size - shown.size),
+                  lecture_announcements_path(lecture), data: { turbo_frame: "main" } %>
+    </p>
+  <% end %>
+
+  <% if lecture.forum? && posts_count.positive? %>
+    <div class="lecture-home-news-item" id="unreadPosts" data-lecture-news-target="row">
+      <span class="new-dot" aria-hidden="true"></span>
+      <%= link_to t("lecture_home.news.forum", count: posts_count),
+                  "/forum/#{lecture.forum.slug}", target: "_blank", rel: "noopener" %>
+    </div>
+  <% end %>
+</section>

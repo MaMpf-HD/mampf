@@ -1,0 +1,32 @@
+<%# Pages add actions on the right via content_for(:lecture_title_bar_actions). %>
+<div class="lecture-title-bar bg-body border-bottom px-3 py-2"
+     data-testid="lecture-title-bar">
+  <div class="d-flex align-items-center gap-2 min-w-0">
+    <%= link_to start_path,
+                class: "btn btn-sm btn-light rounded-circle flex-shrink-0",
+                title: t("lecture.title_bar.back"),
+                aria: { label: t("lecture.title_bar.back") },
+                data: { turbo_frame: "_top" } do %>
+      <i class="bi bi-arrow-left" aria-hidden="true"></i>
+    <% end %>
+    <%= render partial: "lectures/show/switcher",
+               locals: { lecture: lecture, edit_mode: edit_mode } %>
+    <% if edit_mode && (current_user.admin? || lecture.course.edited_by?(current_user)) %>
+      <%= link_to t("buttons.parent_course"),
+                  edit_course_path(lecture.course),
+                  class: "btn btn-sm btn-outline-secondary flex-shrink-0",
+                  data: { turbo_frame: "_top" } %>
+    <% end %>
+  </div>
+
+  <% if current_user.can_edit?(lecture) %>
+    <%= render partial: "lectures/staff/mode_toggle",
+               locals: { lecture: lecture, edit_mode: edit_mode } %>
+  <% end %>
+
+  <% if content_for?(:lecture_title_bar_actions) %>
+    <div class="lecture-title-bar-actions d-flex flex-wrap align-items-center gap-2">
+      <%= yield :lecture_title_bar_actions %>
+    </div>
+  <% end %>
+</div>

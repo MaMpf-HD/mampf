@@ -154,6 +154,14 @@ footer {
     width: 100%;
 }
 
+.landing-box-wide {
+    max-width: 860px;
+
+    #login-form {
+        max-width: none;
+    }
+}
+
 #logo-area {
     color: inherit;
     text-decoration: none;
