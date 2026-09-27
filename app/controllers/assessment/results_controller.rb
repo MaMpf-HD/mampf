@@ -42,11 +42,17 @@ module Assessment
         @release ||= ResultsReleaseComponent.new(exam: @exam, seminar: @seminar)
       end
 
+      # A seminar's table comes along whole, as its rows mark which talks
+      # the speakers see.
       def render_release
-        fresh = ResultsReleaseComponent.new(exam: @exam, seminar: @seminar)
-        render turbo_stream: [turbo_stream.replace(ResultsReleaseComponent::ID,
-                                                   html: render_to_string(fresh)),
-                              stream_flash]
+        stream = if @seminar
+          table = TalkGradingTableComponent.new(seminar: @seminar)
+          turbo_stream.replace("grading-table", html: render_to_string(table))
+        else
+          turbo_stream.replace(ResultsReleaseComponent::ID,
+                               html: render_to_string(ResultsReleaseComponent.new(exam: @exam)))
+        end
+        render turbo_stream: [stream, stream_flash]
       end
   end
 end

@@ -368,10 +368,11 @@ en:
     results_release:
       exam_published: "Published %{time}"
       exam_published_detail: "Students see their grade and points on the lecture home page. Changes you make now show there at once."
-      exam_unpublished: "Not published"
+      unpublished: "Not published"
+      all_published: "Published"
+      partly_published: "%{published} of %{total} published"
+      shown_to_speaker: "The speaker sees this grade"
       nobody_has_result: "Nobody has a result yet."
-      talks_published: "Published: %{titles}"
-      talks_ready: "Ready: %{titles}"
       no_talk_complete: "No talk has a grade for every speaker yet."
       publish: "Publish results"
       publish_talks:

@@ -90,6 +90,7 @@ RSpec.describe(Assessment::ResultsController, type: :request) do
 
       expect(graded.assessment.reload.results_published?).to be(true)
       expect(open.assessment.reload.results_published?).to be(false)
+      expect(response.body).to include('action="replace" target="grading-table"')
     end
 
     it "are taken back together" do

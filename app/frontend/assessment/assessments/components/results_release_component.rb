@@ -1,7 +1,7 @@
 # Says whether the students see their results yet and lets the lecturer
 # publish or take them back: an exam's in the head of its grading card, a
 # seminar's talks beside their table's summary, where one button serves every
-# talk that is fully graded.
+# talk that is fully graded and each row marks the talks already published.
 class ResultsReleaseComponent < ViewComponent::Base
   ID = "results-release".freeze
 
@@ -41,21 +41,22 @@ class ResultsReleaseComponent < ViewComponent::Base
     @published ||= gradebooks.select(&:results_published?)
   end
 
-  # A seminar's talks are named, so the lecturer sees which ones went out.
   def status
     return exam_status if exam?
+    return t("assessment.results_release.unpublished") if published.empty?
+    return t("assessment.results_release.all_published") if published.size == gradebooks.size
 
-    parts = [talk_titles(:published, published), talk_titles(:ready, to_publish)].compact
-    return t("assessment.results_release.no_talk_complete") if parts.empty?
-
-    parts.join(" · ")
+    t("assessment.results_release.partly_published", published: published.size,
+                                                     total: gradebooks.size)
   end
 
   def status_tooltip
-    return unless exam?
-    return t("assessment.results_release.exam_published_detail") if published.any?
+    if exam?
+      return t("assessment.results_release.exam_published_detail") if published.any?
 
-    t("assessment.results_release.nobody_has_result") if to_publish.empty?
+      return (t("assessment.results_release.nobody_has_result") if to_publish.empty?)
+    end
+    t("assessment.results_release.no_talk_complete") if published.empty? && to_publish.empty?
   end
 
   def publish_label
@@ -90,7 +91,7 @@ class ResultsReleaseComponent < ViewComponent::Base
     end
 
     def exam_status
-      return t("assessment.results_release.exam_unpublished") if published.empty?
+      return t("assessment.results_release.unpublished") if published.empty?
 
       t("assessment.results_release.exam_published",
         time: l(published.first.results_published_at, format: :short))
@@ -119,13 +120,6 @@ class ResultsReleaseComponent < ViewComponent::Base
       Assessment::GradeSchemeApplier.new(scheme).preview_all.count do |row|
         row[:current_grade] && row[:current_grade] != row[:proposed_grade]
       end
-    end
-
-    def talk_titles(state, gradebooks)
-      return if gradebooks.empty?
-
-      t("assessment.results_release.talks_#{state}",
-        titles: gradebooks.map { |gradebook| gradebook.assessable.title }.join(", "))
     end
 
     # Only the first publication mails; see Assessment#publish_results!.

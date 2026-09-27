@@ -41,7 +41,7 @@ RSpec.describe(ResultsReleaseComponent, type: :component) do
     end
   end
 
-  it "names a seminar's talks by what is published and what is ready" do
+  it "counts a seminar's published talks and offers the ones that are ready" do
     seminar = create(:lecture, sort: "seminar")
     published = create(:talk, lecture: seminar, title: "Sylow theorems")
     ready = create(:talk, lecture: seminar, title: "Compilers")
@@ -53,7 +53,7 @@ RSpec.describe(ResultsReleaseComponent, type: :component) do
 
     rendered = render_inline(described_class.new(seminar: seminar))
 
-    expect(rendered.text.squish).to include("Published: Sylow theorems · Ready: Compilers")
+    expect(rendered.text.squish).to include("1 of 2 published")
     expect(rendered.css("button").map(&:text)).to eq(["Take back", "Publish 1 talk"])
   end
 end

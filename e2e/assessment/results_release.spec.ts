@@ -112,10 +112,13 @@ test.describe("publishing results", () => {
     await expect(row.getByText("Reviewed")).toBeVisible();
 
     const release = teacher.page.getByTestId("results-release");
-    await expect(release).toContainText("Ready: Sylow theorems");
+    await expect(release).toContainText("Not published");
     teacher.page.once("dialog", dialog => void dialog.accept());
     await release.getByRole("button", { name: "Publish 1 talk" }).click();
-    await expect(release).toContainText("Published: Sylow theorems");
+    await expect(release).toContainText("1 of 2 published");
+    await expect(row.getByRole("img", { name: "The speaker sees this grade" })).toBeVisible();
+    await expect(teacher.page.getByRole("row", { name: /Grace Hopper/ })
+      .getByRole("img", { name: "The speaker sees this grade" })).toHaveCount(0);
 
     await student.page.goto(`/lectures/${seminar.id}`);
     const talkRow = student.page.getByTestId("participation-row")

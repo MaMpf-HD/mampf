@@ -368,10 +368,11 @@ de:
     results_release:
       exam_published: "Veröffentlicht %{time}"
       exam_published_detail: "Studierende sehen Note und Punkte auf der Startseite der Veranstaltung. Was Du jetzt änderst, erscheint dort sofort."
-      exam_unpublished: "Nicht veröffentlicht"
+      unpublished: "Nicht veröffentlicht"
+      all_published: "Veröffentlicht"
+      partly_published: "%{published} von %{total} veröffentlicht"
+      shown_to_speaker: "Die vortragende Person sieht diese Note"
       nobody_has_result: "Noch niemand hat ein Ergebnis."
-      talks_published: "Veröffentlicht: %{titles}"
-      talks_ready: "Bereit: %{titles}"
       no_talk_complete: "Noch kein Vortrag hat eine Note für alle Vortragenden."
       publish: "Ergebnisse veröffentlichen"
       publish_talks:
