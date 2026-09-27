@@ -167,11 +167,24 @@ module UserRegistrationsHelper
   end
 
   # Whether the student may not register for this item: it is a tutorial and
-  # they sit in one they are not allowed to leave. The edit services refuse
-  # the same registration.
+  # they sit in one they are not allowed to leave, or an exam of a lecture
+  # they are not a member of. The edit services refuse the same registration.
   def registration_item_blocked?(item, lecture)
-    item.registerable.roster_exclusive_within_lecture? &&
-      registration_blocked_by_unremovable_assignment?(lecture)
+    exam_closed_to_current_user?(item) ||
+      (item.registerable.roster_exclusive_within_lecture? &&
+        registration_blocked_by_unremovable_assignment?(lecture))
+  end
+
+  def exam_closed_to_current_user?(item)
+    item.registerable.is_a?(Exam) && !item.registerable.registrable_by?(current_user)
+  end
+
+  def registration_blocked_reason(item)
+    if exam_closed_to_current_user?(item)
+      t("registration.user_registration.messages.not_on_lecture_roster")
+    else
+      registration_blocked_tooltip
+    end
   end
 
   def registration_campaign_blocked?(campaign, items)

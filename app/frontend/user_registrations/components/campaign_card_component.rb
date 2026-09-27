@@ -185,6 +185,14 @@ class CampaignCardComponent < ViewComponent::Base
     @blocked = !ineligible? && helpers.registration_campaign_blocked?(campaign, items)
   end
 
+  def blocked_notice
+    if items.any? { |item| helpers.exam_closed_to_current_user?(item) }
+      t("registration.user_registration.messages.not_on_lecture_roster")
+    else
+      t("registration.user_registration.messages.unremovable_assignment")
+    end
+  end
+
   def campaign_title
     campaign.student_facing_title
   end

@@ -31,7 +31,7 @@
           <%= button_tag t("registration.user_registration.registration_blocked"),
                          type: "button", disabled: true,
                          class: "btn btn-outline-secondary btn-sm" %>
-          <% reason = registration_blocked_tooltip %>
+          <% reason = registration_blocked_reason(item) %>
         <% elsif disabled %>
           <%= button_tag t("registration.user_registration.register_now"),
                          type: "button", disabled: true,
