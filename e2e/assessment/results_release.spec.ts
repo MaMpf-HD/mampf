@@ -2,10 +2,6 @@ import { expect, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { addTask } from "./helpers";
 
-/**
- * Exam and talk results stay with the teaching staff until the lecturer
- * publishes them; the student then finds them on the lecture home page.
- */
 test.describe("publishing results", () => {
   test("shows a student the exam result once published, and hides it once taken back", async ({
     factory,
@@ -42,8 +38,8 @@ test.describe("publishing results", () => {
     await gradeRow.getByRole("button", { name: "Save this row's grade" }).click();
     await expect(teacher.page.getByText("Changes saved.")).toBeVisible();
 
-    const release = dashboard.pane.getByTestId("results-release");
-    await expect(release).toContainText("Not published");
+    const pane = dashboard.pane;
+    await expect(pane.getByText("Not published")).toBeVisible();
     await student.page.goto(`/lectures/${lecture.id}`);
     const examRow = student.page.getByTestId("participation-row").filter({ hasText: "Main Exam" });
     await expect(examRow).toContainText("On the exam list");
@@ -54,11 +50,10 @@ test.describe("publishing results", () => {
       question = dialog.message();
       void dialog.accept();
     });
-    await release.getByRole("button", { name: "Publish results" }).click();
-    await expect(release).toContainText(/Published \d/);
+    await pane.getByRole("button", { name: "Publish results" }).click();
+    await expect(pane.getByText(/Published \d/)).toBeVisible();
     expect(question).toContain("From now on, 1 person sees their result");
 
-    // the dashboard points to the new result, and the lecture home puts it up top
     await student.page.goto("/");
     await student.page.getByRole("link", { name: /Your result in Main Exam/ }).click();
     const block = student.page.getByRole("region", { name: "Your result in Main Exam" });
@@ -67,7 +62,6 @@ test.describe("publishing results", () => {
     await expect(block.getByRole("definition")).toHaveText("7 / 10");
     await expect(block.getByRole("term")).toHaveText("Prove it");
 
-    // closed, it leaves the result in the participation row
     await block.getByRole("button", { name: "Close" }).click();
     await expect(block).toBeHidden();
     await student.page.reload();
@@ -78,8 +72,8 @@ test.describe("publishing results", () => {
     await expect(examRow.getByRole("definition")).toHaveText("7 / 10");
 
     teacher.page.once("dialog", dialog => void dialog.accept());
-    await release.getByRole("button", { name: "Take back" }).click();
-    await expect(release).toContainText("Not published");
+    await pane.getByRole("button", { name: "Take back", exact: true }).click();
+    await expect(pane.getByText("Not published")).toBeVisible();
 
     await student.page.reload();
     await expect(examRow).toContainText("On the exam list");
@@ -111,14 +105,19 @@ test.describe("publishing results", () => {
     await row.getByRole("button", { name: "Save this row's grade" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();
 
-    const release = teacher.page.getByTestId("results-release");
-    await expect(release).toContainText("Not published");
+    // what is typed but not saved in another row survives publishing
+    const graceRow = teacher.page.getByRole("row", { name: /Grace Hopper/ });
+    const graceNote = graceRow.getByRole("textbox", { name: "Internal note on Grace Hopper" });
+    await graceNote.fill("Draft, not saved");
+
+    await expect(teacher.page.getByText("Not published")).toBeVisible();
     teacher.page.once("dialog", dialog => void dialog.accept());
-    await release.getByRole("button", { name: "Publish 1 talk" }).click();
-    await expect(release).toContainText("1 of 2 published");
+    await teacher.page.getByRole("button", { name: "Publish 1 talk" }).click();
+    await expect(teacher.page.getByText("1 of 2 published")).toBeVisible();
     await expect(row.getByRole("img", { name: "The speaker sees this grade" })).toBeVisible();
-    await expect(teacher.page.getByRole("row", { name: /Grace Hopper/ })
-      .getByRole("img", { name: "The speaker sees this grade" })).toHaveCount(0);
+    await expect(graceRow.getByRole("img", { name: "The speaker sees this grade" }))
+      .toHaveCount(0);
+    await expect(graceNote).toHaveValue("Draft, not saved");
 
     await student.page.goto(`/lectures/${seminar.id}`);
     const talkRow = student.page.getByTestId("participation-row")

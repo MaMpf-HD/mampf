@@ -1,3 +1,4 @@
+<% content_for :footer_note, t("assessment.results_mailer.footer") %>
 <%= t("assessment.results_mailer.body", title: @assessment.title,
                                          lecture: @lecture.title) %>
 <%= t("assessment.results_mailer.link") %>: <%= lecture_url(@lecture) %>

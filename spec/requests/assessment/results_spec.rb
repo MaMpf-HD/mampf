@@ -90,7 +90,10 @@ RSpec.describe(Assessment::ResultsController, type: :request) do
 
       expect(graded.assessment.reload.results_published?).to be(true)
       expect(open.assessment.reload.results_published?).to be(false)
-      expect(response.body).to include('action="replace" target="grading-table"')
+      expect(response.body).not_to include('target="grading-table"')
+      participation = graded.assessment.assessment_participations.first
+      expect(response.body)
+        .to include(%(target="shown_to_speaker_assessment_participation_#{participation.id}"))
     end
 
     it "are taken back together" do

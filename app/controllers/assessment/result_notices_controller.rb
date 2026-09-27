@@ -4,6 +4,8 @@ module Assessment
   class ResultNoticesController < ApplicationController
     def update
       participation = Participation.find_by!(id: params[:participation_id], user: current_user)
+      raise(ActiveRecord::RecordNotFound) unless participation.result_released?
+
       participation.update!(result_seen_at: Time.current)
 
       respond_to do |format|

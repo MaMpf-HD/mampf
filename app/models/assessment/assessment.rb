@@ -68,23 +68,23 @@ module Assessment
       results_published_at.present?
     end
 
-    # Shows the participants their results and, the first time, mails those
-    # who have one: one mail per language, everyone in bcc, as the mail says
-    # nothing personal. Publishing again after taking them back is a
-    # correction, which a second mail would announce as news.
+    # Mails only the first time, as publishing again is a correction. That
+    # first mail is claimed under the row lock and given back if mailing
+    # fails, so a retry mails and a second click does not.
     def publish_results!
-      first_time = results_notified_at.nil?
-      now = Time.current
-      update!(results_published_at: now, results_notified_at: results_notified_at || now)
+      first_time = with_lock do
+        claim = results_notified_at.nil?
+        now = Time.current
+        update!(results_published_at: now, results_notified_at: results_notified_at || now)
+        claim
+      end
       return unless first_time
 
-      recipients = User.where(id: assessment_participations.with_result.select(:user_id))
-      I18n.available_locales.each do |locale|
-        ids = recipients.where(locale: locale).pluck(:id)
-        next if ids.empty?
-
-        ResultsMailer.with(recipients: ids, locale: locale, assessment: self)
-                     .published_email.deliver_later
+      begin
+        mail_results
+      rescue StandardError
+        update!(results_notified_at: nil)
+        raise
       end
     end
 
@@ -175,6 +175,19 @@ module Assessment
     end
 
     private
+
+      # One mail per language, everyone in bcc: the mail names nobody. A locale
+      # MaMpf does not offer counts as the default one.
+      def mail_results
+        offered = I18n.available_locales.map(&:to_s)
+        User.where(id: assessment_participations.with_result.select(:user_id))
+            .pluck(:id, :locale)
+            .group_by { |_, locale| locale.presence_in(offered) || I18n.default_locale.to_s }
+            .each do |locale, rows|
+              ResultsMailer.with(recipients: rows.map(&:first), locale: locale, assessment: self)
+                           .published_email.deliver_later
+            end
+      end
 
       def lecture_matches_assessable
         return unless lecture_id.present? && assessable&.lecture_id.present?

@@ -173,6 +173,37 @@ RSpec.describe(Assessment::Assessment, type: :model) do
         .not_to have_enqueued_mail(Assessment::ResultsMailer, :published_email)
       expect(assessment.reload.results_published?).to be(true)
     end
+
+    # Two clicks load the same unpublished assessment before either has saved.
+    it "mails once although a second, stale copy publishes too" do
+      stale = Assessment::Assessment.find(assessment.id)
+
+      expect do
+        assessment.publish_results!
+        stale.publish_results!
+      end.to have_enqueued_mail(Assessment::ResultsMailer, :published_email).twice
+    end
+
+    it "mails on the next try when the mail could not be queued" do
+      allow(Assessment::ResultsMailer).to receive(:with).and_raise(RedisClient::CannotConnectError)
+
+      expect { assessment.publish_results! }.to raise_error(RedisClient::CannotConnectError)
+      expect(assessment.reload).to have_attributes(results_published_at: be_present,
+                                                   results_notified_at: nil)
+
+      allow(Assessment::ResultsMailer).to receive(:with).and_call_original
+      expect { assessment.publish_results! }
+        .to have_enqueued_mail(Assessment::ResultsMailer, :published_email).twice
+    end
+
+    it "mails someone without a language of their own in the default one" do
+      nobody = row(:reviewed, "")
+
+      perform_enqueued_jobs { assessment.publish_results! }
+
+      mail = ActionMailer::Base.deliveries.last(2).find { |m| m.bcc.include?(nobody.email) }
+      expect(mail.bcc).to include(*graded.map(&:email))
+    end
   end
 
   describe "#withdraw_results!" do

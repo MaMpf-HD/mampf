@@ -38,4 +38,13 @@ describe Assessment::ResultsMailer do
     expect(bodies(mail)).to all(satisfy { |body| !body.match?(/2[.,]3|41[.,]5/) })
     expect(bodies(mail)).to all(satisfy { |body| students.none? { |s| body.include?(s.name) } })
   end
+
+  # It goes out whatever the profile says, so the footer must not offer to
+  # switch it off there.
+  it "does not point to the notification settings" do
+    mail = mail(:en)
+
+    expect(bodies(mail)).to all(include("whatever your notification settings are"))
+    expect(bodies(mail)).to all(satisfy { |body| body.exclude?("disable that feature") })
+  end
 end

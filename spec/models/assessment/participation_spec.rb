@@ -543,8 +543,6 @@ RSpec.describe(Assessment::Participation, type: :model) do
       expect(described_class.new_results_for(user, lecture)).to be_empty
     end
 
-    # A sheet's points show as the tutor saves them; there is no news to
-    # announce.
     it "leaves out assignments" do
       assignment = FactoryBot.create(:assignment, :expired, lecture: lecture, expired_since: 2.days)
       result(assignment)

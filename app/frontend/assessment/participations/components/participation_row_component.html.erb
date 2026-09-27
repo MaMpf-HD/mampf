@@ -125,13 +125,9 @@
       <td class="text-center <%= layout.column_class(:status) %>">
         <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
 
-        <% if shown_to_speaker? %>
-          <i
-            class="bi bi-eye ms-1 text-muted"
-            role="img"
-            aria-label="<%= t("assessment.results_release.shown_to_speaker") %>"
-            title="<%= t("assessment.results_release.shown_to_speaker") %>"
-          ></i>
+        <% if talk? %>
+          <%= render "assessment/participations/shown_to_speaker",
+                     participation: @participation %>
         <% end %>
 
         <% if locked_reason %>

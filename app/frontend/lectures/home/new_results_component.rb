@@ -25,8 +25,6 @@ class NewResultsComponent < ViewComponent::Base
     self.class.dom_id_for(result.participation)
   end
 
-  # The grade is the news; absence and exemption take its place when there is
-  # no grade to give.
   def headline(result)
     return t("registration.user_registration.participation.absent") if result.absent?
     return t("registration.user_registration.participation.exempt") if result.exempt?

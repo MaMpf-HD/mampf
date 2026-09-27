@@ -145,8 +145,6 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
     end
   end
 
-  # Talks are published one by one, so the row says whether its speaker sees
-  # the grade.
   it "marks the rows whose speaker sees the grade" do
     published, hidden = ["Sylow theorems", "Compilers"].map do |title|
       talk = create(:talk, lecture: seminar, title: title)

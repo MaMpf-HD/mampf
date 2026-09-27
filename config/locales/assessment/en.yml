@@ -390,6 +390,9 @@ en:
       ungraded:
         one: "1 person has points but no grade."
         other: "%{count} people have points but no grade."
+      some_mail:
+        one: "1 of them gets an email saying so; the others were told when their results first went out."
+        other: "%{count} of them get an email saying so; the others were told when their results first went out."
       withdraw_confirm: "Students will no longer see these results. Some may have seen them already."
       flash:
         published: "Results published."
@@ -404,6 +407,7 @@ en:
 
         The results of "%{title}" in "%{lecture}" are now available in MaMpf.
       link: "Go to the lecture"
+      footer: "You get this email about your own results whatever your notification settings are."
     grading_exam:
       no_candidates: 'Nobody is on the exam roster yet.'
       mark_absent: 'Record as absent'

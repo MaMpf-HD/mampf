@@ -390,6 +390,9 @@ de:
       ungraded:
         one: "1 Person hat Punkte, aber keine Note."
         other: "%{count} Personen haben Punkte, aber keine Note."
+      some_mail:
+        one: "1 davon bekommt dazu eine E-Mail; die anderen wurden beim ersten Veröffentlichen benachrichtigt."
+        other: "%{count} davon bekommen dazu eine E-Mail; die anderen wurden beim ersten Veröffentlichen benachrichtigt."
       withdraw_confirm: "Studierende sehen diese Ergebnisse dann nicht mehr. Manche haben sie vielleicht schon gesehen."
       flash:
         published: "Ergebnisse veröffentlicht."
@@ -404,6 +407,7 @@ de:
 
         die Ergebnisse von „%{title}“ in „%{lecture}“ sind jetzt in MaMpf verfügbar.
       link: "Zur Veranstaltung"
+      footer: "Diese E-Mail zu Deinen eigenen Ergebnissen bekommst Du unabhängig von Deinen Benachrichtigungseinstellungen."
     grading_exam:
       no_candidates: 'Noch niemand auf der Klausurliste.'
       mark_absent: 'Als abwesend vermerken'

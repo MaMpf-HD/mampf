@@ -46,8 +46,8 @@ class LectureQuickActionsComponent < ViewComponent::Base
                                                    lectures: [lecture])
     end
 
-    # Leads to the lecture home, whose block for the new result closes the
-    # bubble along with it.
+    # Leads to the lecture home. Once the student closes the result's block
+    # there (result_seen_at), the bubble is gone as well.
     def result_action
       titles = Assessment::Participation.new_results_for(user, lecture)
                                         .map { |participation| participation.assessment.title }

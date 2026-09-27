@@ -41,6 +41,23 @@ RSpec.describe(ResultsReleaseComponent, type: :component) do
     end
   end
 
+  it "says who is mailed when some talks were announced before" do
+    seminar = create(:lecture, sort: "seminar")
+    told = create(:talk, lecture: seminar)
+    fresh = create(:talk, lecture: seminar)
+    [told, fresh].each do |talk|
+      create(:assessment_participation, assessment: talk.assessment, status: :reviewed)
+    end
+    told.assessment.publish_results!
+    told.assessment.withdraw_results!
+
+    confirm = render_inline(described_class.new(seminar: seminar))
+              .at_css("form:has(button.btn-primary)")["data-turbo-confirm"]
+
+    expect(confirm).to include("2 people")
+    expect(confirm).to include("1 of them gets an email")
+  end
+
   it "counts a seminar's published talks and offers the ones that are ready" do
     seminar = create(:lecture, sort: "seminar")
     published = create(:talk, lecture: seminar, title: "Sylow theorems")

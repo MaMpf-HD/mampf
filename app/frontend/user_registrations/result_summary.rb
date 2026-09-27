@@ -1,6 +1,5 @@
-# What a student is told about their own published result of an exam or a
-# talk, the same in the lecture home's block for a new result and in their
-# participation row.
+# Presents a student's own published exam or talk result, so that the lecture
+# home's block for a new result and the participation row say the same.
 class ResultSummary
   Task = Struct.new(:label, :points, :max_points, keyword_init: true)
 
@@ -27,7 +26,7 @@ class ResultSummary
     I18n.t("registration.user_registration.participation.grade", grade: grade)
   end
 
-  # What goes under the headline: the grade a no-show was given, and the points.
+  # An absent student may still carry a grade, so it is named beside "absent".
   def lines
     [(grade_line if absent? && grade), points_line].compact
   end

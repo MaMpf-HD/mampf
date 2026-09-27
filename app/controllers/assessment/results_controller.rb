@@ -1,6 +1,4 @@
 module Assessment
-  # Publishes the results of an exam, or of a seminar's fully graded talks,
-  # to the students, and takes them back.
   class ResultsController < ApplicationController
     before_action :set_scope
 
@@ -9,13 +7,13 @@ module Assessment
     end
 
     def update
-      release.to_publish.each(&:publish_results!)
+      release.publish!
       flash.now[:success] = t("assessment.results_release.flash.published")
       render_release
     end
 
     def destroy
-      release.published.each(&:withdraw_results!)
+      release.withdraw!
       flash.now[:success] = t("assessment.results_release.flash.withdrawn")
       render_release
     end
@@ -39,20 +37,26 @@ module Assessment
       end
 
       def release
-        @release ||= ResultsReleaseComponent.new(exam: @exam, seminar: @seminar)
+        @release ||= ResultsRelease.new(exam: @exam, seminar: @seminar)
       end
 
-      # A seminar's table comes along whole, as its rows mark which talks
-      # the speakers see.
+      # A talk's row marks whether its speaker sees the grade. Only those
+      # marks are replaced, so grades and notes typed into other rows stay.
       def render_release
-        stream = if @seminar
-          table = TalkGradingTableComponent.new(seminar: @seminar)
-          turbo_stream.replace("grading-table", html: render_to_string(table))
-        else
-          turbo_stream.replace(ResultsReleaseComponent::ID,
-                               html: render_to_string(ResultsReleaseComponent.new(exam: @exam)))
+        control = ResultsReleaseComponent.new(exam: @exam, seminar: @seminar)
+        streams = [turbo_stream.replace(ResultsReleaseComponent::ID,
+                                        html: render_to_string(control))]
+        streams += speaker_mark_streams if @seminar
+        render turbo_stream: [*streams, stream_flash]
+      end
+
+      def speaker_mark_streams
+        Participation.where(assessment: release.gradebooks).includes(:assessment)
+                     .map do |participation|
+          turbo_stream.replace(helpers.dom_id(participation, :shown_to_speaker),
+                               partial: "assessment/participations/shown_to_speaker",
+                               locals: { participation: participation })
         end
-        render turbo_stream: [stream, stream_flash]
       end
   end
 end

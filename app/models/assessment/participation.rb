@@ -25,7 +25,6 @@ module Assessment
     }
 
     scope :submitted, -> { where.not(submitted_at: nil) }
-    # The rows a published result shows something for: marked, absent or exempt.
     scope :with_result, -> { where.not(status: :pending) }
     # The rows Assessment#grading_data_for? calls graded, as one query.
     scope :with_grading_data, lambda {
@@ -125,11 +124,11 @@ module Assessment
       task_ids.none? { |task_id| points_by_task_id[task_id].nil? }
     end
 
-    # The one place the student side asks whether marks may be shown. Sheets
-    # have no release step - what a tutor saves, the student sees - so the
-    # answer today is "somebody wrote a value on some task". Everything student
-    # facing reads it here, so should sheets ever get a release step, this is
-    # the single line that changes.
+    # The one place the student side asks whether a sheet's marks may be
+    # shown. Sheets have no release step - what a tutor saves, the student
+    # sees - so the answer today is "somebody wrote a value on some task".
+    # Everything student facing about sheets reads it here, so should sheets
+    # ever get a release step, this is the single line that changes.
     #
     # Deliberately not `points_total`: a row saved with every field left blank
     # creates task points of nil, and the sum `Assessment::TaskPoint` writes

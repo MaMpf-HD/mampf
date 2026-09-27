@@ -1,14 +1,16 @@
 # Says whether the students see their results yet and lets the lecturer
-# publish or take them back: an exam's in the head of its grading card, a
-# seminar's talks beside their table's summary, where one button serves every
-# talk that is fully graded and each row marks the talks already published.
+# publish or take them back. A seminar has one button for all its talks, so
+# the control counts them and each row marks its own.
 class ResultsReleaseComponent < ViewComponent::Base
   ID = "results-release".freeze
+
+  delegate :gradebooks, :published, :to_publish, to: :@release
 
   def initialize(exam: nil, seminar: nil)
     super()
     @exam = exam
     @seminar = seminar
+    @release = Assessment::ResultsRelease.new(exam: exam, seminar: seminar)
   end
 
   def render?
@@ -23,22 +25,6 @@ class ResultsReleaseComponent < ViewComponent::Base
     return helpers.assessment_assessment_results_path(@exam.assessment) if exam?
 
     helpers.assessment_talk_results_path(lecture_id: @seminar.id)
-  end
-
-  # The gradebooks the button publishes: the exam's once somebody has a
-  # result, a talk's once all its speakers have one.
-  def to_publish
-    @to_publish ||= if exam?
-      assessment = @exam.assessment
-      ready = assessment.assessment_participations.with_result.exists?
-      assessment.results_published? || !ready ? [] : [assessment]
-    else
-      Assessment::Assessment.complete_talk_gradebooks(@seminar).reject(&:results_published?)
-    end
-  end
-
-  def published
-    @published ||= gradebooks.select(&:results_published?)
   end
 
   def status
@@ -70,10 +56,8 @@ class ResultsReleaseComponent < ViewComponent::Base
   end
 
   def publish_confirm
-    count = Assessment::Participation.with_result.where(assessment: to_publish).count
-    [t("assessment.results_release.publish_confirm", count: count),
-     t("assessment.results_release.#{mails? ? "mail" : "no_mail"}"),
-     *grade_warnings].join(" ")
+    [t("assessment.results_release.publish_confirm", count: @release.people_count),
+     mail_sentence, *grade_warnings].join(" ")
   end
 
   def withdraw_confirm
@@ -81,14 +65,6 @@ class ResultsReleaseComponent < ViewComponent::Base
   end
 
   private
-
-    def gradebooks
-      @gradebooks ||= if exam?
-        [@exam.assessment]
-      else
-        Assessment::Assessment.where(assessable: @seminar.talks).includes(:assessable).to_a
-      end
-    end
 
     def exam_status
       return t("assessment.results_release.unpublished") if published.empty?
@@ -122,8 +98,11 @@ class ResultsReleaseComponent < ViewComponent::Base
       end
     end
 
-    # Only the first publication mails; see Assessment#publish_results!.
-    def mails?
-      to_publish.any? { |gradebook| gradebook.results_notified_at.nil? }
+    def mail_sentence
+      mailed = @release.mail_count
+      return t("assessment.results_release.no_mail") if mailed.zero?
+      return t("assessment.results_release.mail") if mailed == @release.people_count
+
+      t("assessment.results_release.some_mail", count: mailed)
     end
 end

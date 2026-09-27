@@ -47,8 +47,6 @@ class ParticipationComponent < ViewComponent::Base
       end
     end
 
-    # The student's own row of an exam or talk, once the lecturer has
-    # published the results.
     def released_result(rosterable)
       return unless rosterable.is_a?(Exam) || rosterable.is_a?(Talk)
 
@@ -66,7 +64,6 @@ class ParticipationComponent < ViewComponent::Base
       [:info, t("registration.user_registration.participation.marked")]
     end
 
-    # A no-show may carry a grade too, so the grade is named beside "absent".
     def result_lines(result)
       result ? result.lines : []
     end
