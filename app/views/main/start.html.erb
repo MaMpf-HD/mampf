@@ -2,9 +2,12 @@
 
 <div class="dashboard-hero">
   <div class="container-md small-width mt-4">
-    <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
-                                                selected: @selected_term,
-                                                id: "dashboard-term-select")) %>
+    <%= render(DashboardTermSelectComponent.new(
+      terms: @available_terms,
+      selected: @selected_term,
+      next_term_lecture_count: @next_term_lecture_count,
+      id: "dashboard-term-select"
+    )) %>
   </div>
 
   <%= render "main/start/lecture_cards" %>

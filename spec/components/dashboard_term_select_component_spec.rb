@@ -7,13 +7,17 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
   let(:terms) { [past, current, future] }
 
   def render_select(selected: current, id: "dashboard-term-select", anchor: nil)
-    render_inline(described_class.new(terms: terms, selected: selected,
-                                      id: id, anchor: anchor))
+    render_inline(described_class.new(
+                    terms: terms, selected: selected, id: id, anchor: anchor,
+                    next_term_lecture_count:
+                      Dashboard::TermSelector.next_term_lecture_count
+                  ))
   end
 
   it "does not render for a single semester" do
     rendered = render_inline(described_class.new(terms: [current],
-                                                 selected: current, id: "x"))
+                                                 selected: current, id: "x",
+                                                 next_term_lecture_count: 0))
 
     expect(rendered.to_html).to be_blank
   end
