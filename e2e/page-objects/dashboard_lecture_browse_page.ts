@@ -72,20 +72,6 @@ export class DashboardLectureBrowsePage {
     return this.page.getByTestId("lecture-search-results");
   }
 
-  get nextTermBanner() {
-    return this.page.getByTestId("next-term-banner");
-  }
-
-  async clickNextTermBannerCta() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    const termUrlPromise = this.page.waitForURL(url =>
-      url.searchParams.has("term"),
-    );
-
-    await this.page.getByTestId("next-term-banner-cta").click();
-    await Promise.all([lectureSearchPromise, termUrlPromise]);
-  }
-
   async getLectureCardCount() {
     const lectureCards = this.page.getByTestId("lecture-search-result-card");
     return await lectureCards.count();
