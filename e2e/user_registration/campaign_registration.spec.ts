@@ -61,8 +61,9 @@ test.describe("campaign registration", () => {
       "Tutorial registration",
     );
 
-    await student.page.goto(`/lectures/${lecture.id}`);
+    await student.page.goto(`/lectures/${lecture.id}/outline`);
     await student.page.getByRole("link", { name: "Home" }).click();
+    await expect(student.page).toHaveURL(`/lectures/${lecture.id}`);
 
     const home = new CampaignRegistrationPage(student.page, lecture.id);
     await expect(student.page.getByRole("region", { name: "Registration open" })
