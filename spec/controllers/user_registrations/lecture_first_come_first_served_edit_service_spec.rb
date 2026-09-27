@@ -160,8 +160,24 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
         )
       end
 
+      it "refuses an exam to somebody who is not a member of the lecture" do
+        exam = create(:exam, :with_date, lecture: campaign.campaignable)
+        exam_campaign = exam.registration_campaign
+        exam_campaign.update!(status: :open, registration_deadline: 1.week.from_now)
+
+        result = described_class.new(exam_campaign, user)
+                                .register!(exam_campaign.registration_items.first)
+
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(
+          I18n.t("registration.user_registration.messages.not_on_lecture_roster")
+        )
+      end
+
       it "lets the same user register for an exam all the same" do
         lecture = campaign.campaignable
+        # a tutorial seat comes with a place in the lecture, which the exam asks for
+        create(:lecture_membership, lecture: lecture, user: user)
         add_only_tutorial = create(:tutorial,
                                    lecture: lecture,
                                    skip_campaigns: true,

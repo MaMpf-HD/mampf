@@ -458,6 +458,7 @@ de:
         no_slots: "Keine Plätze verfügbar."
         requirements_not_met: "Du erfüllst die Voraussetzungen nicht."
         unremovable_assignment: "Du kannst Dich nicht für eine andere Gruppe anmelden, weil Du Dein aktuelles Tutorium nicht verlassen kannst."
+        not_on_lecture_roster: "Zur Klausur können sich nur Teilnehmende dieser Vorlesung anmelden. Falls Du sie schreiben sollst, wende Dich bitte an die Lehrenden."
         invalid_options: "Ungültige Optionen ausgewählt."
         preferences_saved: "Deine Einstellungen wurden gespeichert."
         withdrawn: "Du hast Deine Registrierung zurückgezogen."

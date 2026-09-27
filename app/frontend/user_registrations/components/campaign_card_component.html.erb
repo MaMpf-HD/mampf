@@ -54,9 +54,7 @@
     </div>
   <% elsif blocked? %>
     <div class="registration-fold-notice registration-fold-notice--bad">
-      <p class="mb-0">
-        <%= t("registration.user_registration.messages.unremovable_assignment") %>
-      </p>
+      <p class="mb-0"><%= blocked_notice %></p>
     </div>
   <% elsif finalization_policy_warning? %>
     <div class="registration-fold-notice registration-fold-notice--warn">
