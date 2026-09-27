@@ -104,6 +104,9 @@ module Demo
         end
       end
 
+      # The total is written here: a task point updates it only in an
+      # after_commit callback, and the seed build runs in one transaction, so
+      # the scheme applied next would find no total and grade everybody 5.0.
       def seed_demo_exam_points!(exam)
         assessment = exam.assessment
         tasks = assessment.tasks.order(:position).to_a
@@ -113,6 +116,7 @@ module Demo
                   .where(status: :pending)
                   .find_each do |participation|
           seed_exam_points_for!(participation, tasks, teacher)
+          participation.recompute_points_total!
           participation.update!(status: :reviewed)
         end
       end
