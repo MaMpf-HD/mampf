@@ -11,4 +11,9 @@ class MyMailer < Devise::Mailer
                             )}>"
                           }
   helper EmailHelper
+
+  # Tells the owner of an address that somebody tried to sign up with it.
+  def registration_attempt(record, opts = {})
+    devise_mail(record, :registration_attempt, opts)
+  end
 end

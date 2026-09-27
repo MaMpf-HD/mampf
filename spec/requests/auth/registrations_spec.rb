@@ -93,6 +93,97 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response.body).to include(I18n.t("devise.registrations.user.too_many_registrations"))
     end
 
+    describe "with an address that already has an account" do
+      let!(:owner) { create(:confirmed_user, email: "owner@example.com", locale: "en") }
+
+      before do
+        allow(Altcha).to receive(:verify).and_return(true)
+        Rails.cache.clear
+      end
+
+      def sign_up_with(address, **overrides)
+        params = base_params.merge(altcha: "valid")
+        params[:user] = params[:user].merge(email: address, **overrides)
+        post(user_registration_path, params: params)
+        [response.status, response.location, flash[:notice]]
+      end
+
+      it "answers exactly as for a new address" do
+        new_answer = sign_up_with(email)
+
+        expect do
+          expect(sign_up_with("Owner@example.com ")).to eq(new_answer)
+        end.not_to change(User, :count)
+      end
+
+      it "tells the owner by mail, in their language" do
+        owner.update!(locale: "de")
+
+        sign_up_with("owner@example.com")
+
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.to).to eq(["owner@example.com"])
+        expect(mail.subject).to eq("Du hast schon ein MaMpf-Konto")
+      end
+
+      it "sends the owner at most one notice a day" do
+        notices = -> { ActionMailer::Base.deliveries.count { |m| m.to == ["owner@example.com"] } }
+
+        3.times { sign_up_with("owner@example.com") }
+        expect(notices.call).to eq(1)
+
+        travel 23.hours
+        sign_up_with("owner@example.com")
+        expect(notices.call).to eq(1)
+
+        travel 2.hours
+        sign_up_with("owner@example.com")
+        expect(notices.call).to eq(2)
+      end
+
+      it "sends an owner who never confirmed the confirmation mail again" do
+        owner.update!(confirmed_at: nil)
+
+        sign_up_with("owner@example.com")
+
+        expect(ActionMailer::Base.deliveries.last.subject)
+          .to eq(I18n.t("devise.mailer.confirmation_instructions.subject", locale: "en"))
+      end
+
+      it "answers exactly as for a new address while the registration limit holds" do
+        allow(ENV).to receive(:fetch).and_call_original
+        allow(ENV).to receive(:fetch).with("MAMPF_MAX_REGISTRATION_PER_TIMEFRAME", 40)
+                                     .and_return("0")
+        create(:user, created_at: 1.minute.ago)
+
+        sign_up_with(email)
+        new_answer = [response.status, response.body.gsub(email, "ADDRESS")]
+        sign_up_with("owner@example.com")
+        taken_answer = [response.status, response.body.gsub("owner@example.com", "ADDRESS")]
+
+        expect(taken_answer).to eq(new_answer)
+        expect(ActionMailer::Base.deliveries.flat_map(&:to)).not_to include("owner@example.com")
+      end
+
+      it "answers as for a new address when a parallel sign-up takes it first" do
+        new_answer = sign_up_with(email)
+        collision = ActiveRecord::RecordNotUnique.new(
+          'duplicate key value violates unique constraint "index_users_on_email"'
+        )
+        allow_any_instance_of(User).to receive(:save).and_raise(collision)
+
+        expect(sign_up_with("late_#{email}")).to eq(new_answer)
+      end
+
+      it "still names the other mistakes, but never the taken address" do
+        sign_up_with("owner@example.com", password_confirmation: "something-else-entirely")
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).not_to include(I18n.t("errors.messages.taken"))
+        expect(ActionMailer::Base.deliveries).to be_empty
+      end
+    end
+
     describe "records why a sign-up was rejected" do
       # Nothing raises on a rejected sign-up and emails are filtered out of the
       # logs, so an operator can only see the reason if we log it on purpose.
