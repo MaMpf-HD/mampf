@@ -19,13 +19,11 @@ module Assessment
       gradebooks.select(&:results_published?)
     end
 
+    # Published results whose mail could not be queued are offered again, so
+    # publishing once more sends it.
     def to_publish
-      @to_publish ||= if @exam
-        gradebook = @exam.assessment
-        ready = gradebook.assessment_participations.with_result.exists?
-        gradebook.results_published? || !ready ? [] : [gradebook]
-      else
-        Assessment.complete_talk_gradebooks(@seminar).reject(&:results_published?)
+      @to_publish ||= ready.select do |gradebook|
+        !gradebook.results_published? || gradebook.results_notified_at.nil?
       end
     end
 
@@ -48,6 +46,13 @@ module Assessment
     end
 
     private
+
+      def ready
+        return Assessment.complete_talk_gradebooks(@seminar) unless @exam
+
+        gradebook = @exam.assessment
+        gradebook.assessment_participations.with_result.exists? ? [gradebook] : []
+      end
 
       def user_ids(gradebooks)
         Participation.with_result.where(assessment: gradebooks).distinct.pluck(:user_id)

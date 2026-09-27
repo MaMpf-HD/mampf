@@ -16,6 +16,16 @@ RSpec.describe(Assessment::ResultsRelease, type: :model) do
 
       expect(release.to_publish).to eq([exam.assessment])
     end
+
+    it "offers a published exam again while its mail was never queued" do
+      create(:assessment_participation, assessment: exam.assessment, status: :reviewed)
+      exam.assessment.update!(results_published_at: Time.current)
+
+      expect(release.to_publish).to eq([exam.assessment])
+
+      exam.assessment.update!(results_notified_at: Time.current)
+      expect(described_class.new(exam: exam).to_publish).to be_empty
+    end
   end
 
   describe "for a seminar" do

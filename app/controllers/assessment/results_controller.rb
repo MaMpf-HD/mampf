@@ -6,9 +6,15 @@ module Assessment
       @current_ability ||= AssessmentAbility.new(current_user)
     end
 
+    # The results are out even when their mail could not be queued; the
+    # control offers them again, and publishing once more sends it.
     def update
       release.publish!
       flash.now[:success] = t("assessment.results_release.flash.published")
+      render_release
+    rescue ActiveJob::EnqueueError, RedisClient::Error => e
+      Rails.logger.error("Results mail could not be queued: #{e.class}: #{e.message}")
+      flash.now[:alert] = t("assessment.results_release.flash.mail_failed")
       render_release
     end
 

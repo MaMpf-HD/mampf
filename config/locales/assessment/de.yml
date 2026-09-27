@@ -397,6 +397,7 @@ de:
       flash:
         published: "Ergebnisse veröffentlicht."
         withdrawn: "Ergebnisse zurückgenommen."
+        mail_failed: "Die Ergebnisse sind veröffentlicht, aber die E-Mail konnte nicht verschickt werden. Veröffentliche erneut, um sie zu senden."
     results_mailer:
       subject: "Ergebnisse von %{title} in %{lecture}"
       body_html: |

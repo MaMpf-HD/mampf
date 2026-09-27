@@ -30,6 +30,20 @@ RSpec.describe(Assessment::ResultsController, type: :request) do
       expect(release.text).to include("Take back")
     end
 
+    it "stay publishable when their mail cannot be queued, and mail on the next try" do
+      sign_in teacher
+      allow(Assessment::ResultsMailer).to receive(:with).and_raise(RedisClient::CannotConnectError)
+
+      publish
+
+      expect(response).to have_http_status(:ok)
+      expect(flash.now[:alert]).to eq(I18n.t("assessment.results_release.flash.mail_failed"))
+      expect(response.body).to include(I18n.t("assessment.results_release.publish"))
+
+      allow(Assessment::ResultsMailer).to receive(:with).and_call_original
+      expect { publish }.to have_enqueued_mail(Assessment::ResultsMailer, :published_email).once
+    end
+
     it "are taken back by the teacher" do
       assessment.publish_results!
       sign_in teacher
