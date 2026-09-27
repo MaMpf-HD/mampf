@@ -70,4 +70,61 @@ RSpec.describe(DashboardTermSelectComponent, type: :component) do
   it "does not offer to jump back when the current semester is selected" do
     expect(render_select.at_css("[data-testid=current-term-link]")).to be_nil
   end
+
+  describe "next semester notice" do
+    around { |example| I18n.with_locale(:en) { example.run } }
+
+    def notice(**)
+      render_select(**).at_css("[data-testid=next-term-notice]")
+    end
+
+    it "is hidden while the next semester has no published lectures" do
+      create(:lecture, term: future)
+
+      expect(notice).to be_nil
+    end
+
+    context "with published lectures in the next semester" do
+      before do
+        create_list(:lecture, 2, :released_for_all, term: future)
+        create(:lecture, term: future)
+        create(:lecture, :released_for_all, :term_independent)
+      end
+
+      it "counts only the published lectures of the next semester" do
+        expect(notice.text).to include("2 lectures for WS 25/26")
+      end
+
+      it "jumps down to the lecture search of the next semester" do
+        link = notice.at_css("a")
+
+        expect(link["href"]).to eq("/?term=WS25-26#lecture-search")
+        expect(link["data-action"]).to be_nil
+        expect(link.at_css(".fa-chevron-down")).to be_present
+      end
+
+      it "only switches the picker when it sits in the search" do
+        link = notice(anchor: "lecture-search").at_css("a")
+
+        expect(link["data-action"]).to eq("dashboard-term-select#pick")
+        expect(link["data-dashboard-term-select-term-param"]).to eq("WS25-26")
+        expect(link.at_css(".fa-chevron-down")).to be_nil
+      end
+
+      it "is hidden when another than the current semester is selected" do
+        expect(notice(selected: past)).to be_nil
+        expect(notice(selected: future)).to be_nil
+      end
+    end
+
+    context "without a next semester" do
+      let(:terms) { [past, current] }
+
+      it "is hidden even with published term-independent lectures" do
+        create(:lecture, :released_for_all, :term_independent)
+
+        expect(notice).to be_nil
+      end
+    end
+  end
 end

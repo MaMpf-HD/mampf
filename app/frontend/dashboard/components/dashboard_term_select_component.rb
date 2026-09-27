@@ -23,4 +23,42 @@ class DashboardTermSelectComponent < ViewComponent::Base
   def target_path(term)
     root_path(term: term.dashboard_param, anchor: anchor)
   end
+
+  def active_term
+    return @active_term if defined?(@active_term)
+
+    @active_term = Term.active
+  end
+
+  def next_term
+    return @next_term if defined?(@next_term)
+
+    @next_term = active_term&.next
+  end
+
+  def next_term_lecture_count
+    return 0 if next_term.blank?
+
+    @next_term_lecture_count ||= Lecture.published.where(term: next_term).count
+  end
+
+  def show_next_term_notice?
+    selected == active_term && next_term_lecture_count.positive?
+  end
+
+  def show_current_term_link?
+    active_term.present? && selected != active_term
+  end
+
+  # Without an anchor, the picker sits on the dashboard and the link jumps down
+  # to the lecture search. With one, the picker is already in the search.
+  def next_term_link_data
+    data = { testid: "next-term-notice-link" }
+    anchor.present? ? data.merge(pick_data(next_term)) : data
+  end
+
+  def pick_data(term)
+    { action: "dashboard-term-select#pick",
+      dashboard_term_select_term_param: term.dashboard_param }
+  end
 end

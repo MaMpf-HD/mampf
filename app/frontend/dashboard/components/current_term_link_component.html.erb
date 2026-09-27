@@ -1,8 +1,0 @@
-<%= link_to target_path,
-            class: "current-term-link",
-            data: { testid: "current-term-link",
-                    action: "dashboard-term-select#pick",
-                    dashboard_term_select_term_param: current_term.dashboard_param } do %>
-  <i class="fas fa-undo" aria-hidden="true"></i>
-  <%= t("dashboard.current_term_link", term: current_term.to_label_short) %>
-<% end %>
