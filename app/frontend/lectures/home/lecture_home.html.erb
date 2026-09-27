@@ -94,10 +94,8 @@
     </div>
   <% end %>
 
-  <% backlog = @lecture_backlog || @tutor_backlog %>
-  <% if backlog&.entries&.any? %>
-    <%= render "lectures/home/marking", lecture: @lecture, backlog: backlog,
-                                        per_tutorial: @lecture_backlog.nil? %>
+  <% if @tutor_backlog&.entries&.any? %>
+    <%= render "lectures/home/marking", lecture: @lecture, backlog: @tutor_backlog %>
   <% elsif focus %>
     <%= render "lectures/home/focus", focus: focus, certification: @certification %>
   <% end %>

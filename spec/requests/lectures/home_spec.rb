@@ -120,28 +120,39 @@ RSpec.describe("Lectures::Home", type: :request) do
   end
 
   describe "the hand-ins waiting for points" do
+    let(:tutor) { create(:confirmed_user) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, tutors: [tutor]) }
+
     before do
-      tutorial = create(:tutorial, lecture: lecture)
       sheet = create(:assignment, :expired, lecture: lecture, expired_since: 2.days)
       create(:assessment_participation, assessment: sheet.assessment,
                                         user: create(:confirmed_user), tutorial: tutorial,
                                         submitted_at: 3.days.ago)
     end
 
-    it "are offered to the lecture's teacher for marking" do
-      sign_in editor
+    it "are offered to the tutor of the group" do
+      sign_in tutor
 
       get lecture_home_path(lecture)
 
       expect(response.body).to include('data-testid="lecture-home-marking"')
     end
 
-    it "are not offered to an admin, whom the tutorials page would turn away" do
-      sign_in create(:confirmed_user, admin: true)
+    it "are not offered to the teacher, who does not mark other people's groups" do
+      sign_in editor
 
       get lecture_home_path(lecture)
 
       expect(response.body).not_to include('data-testid="lecture-home-marking"')
+    end
+
+    it "are offered to the teacher for a group the teacher tutors" do
+      tutorial.update!(tutors: [editor])
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-marking"')
     end
   end
 

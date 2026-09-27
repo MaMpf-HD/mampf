@@ -117,13 +117,6 @@ module Lectures
                                                    .includes(registration_items: :registerable)
                                                    .order(:registration_deadline).to_a
         @campaign_counts = CampaignCounts.new(@managed_campaigns).to_h
-        @lecture_backlog = MarkingBacklog.new(@lecture) if marks_whole_lecture?
-      end
-
-      # The tutorials page lets only the lecture's teacher and editors mark, so
-      # an admin or a course editor is not sent there to find it closed.
-      def marks_whole_lecture?
-        current_user.editor_or_teacher_in?(@lecture)
       end
 
       def next_exam
