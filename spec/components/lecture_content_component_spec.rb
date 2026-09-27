@@ -77,6 +77,26 @@ RSpec.describe(LectureContentComponent, type: :component) do
     end
   end
 
+  context "for a running lecture that keeps no sessions, only an outline" do
+    it "shows its contents" do
+      html = render_for(user)
+
+      expect(html.text.squish).to include("Contents")
+      expect(html.text.squish).to include("1 chapter")
+      expect(html.text.squish).not_to include("Lectures over")
+      expect(html.text.squish).not_to include("Last lecture")
+    end
+
+    it "still lists new media" do
+      medium = create(:lecture_medium, :released, teachable: lecture)
+      create(:notification, recipient: user, notifiable: medium)
+
+      html = render_for(user)
+
+      expect(html.text.squish).to include("New for you")
+    end
+  end
+
   context "once the sessions have stopped" do
     before do
       lesson_on(8.weeks.ago.to_date, ideals)
@@ -88,7 +108,9 @@ RSpec.describe(LectureContentComponent, type: :component) do
 
       expect(html.text.squish).to include("Lectures over")
       expect(html.text.squish).to include("2 lectures")
-      expect(html.text.squish).to include("Ringe — #{ideals.displayed_number} Ringe und Ideale")
+      summaries = html.css("summary").map { |summary| summary.text.squish }
+      expect(summaries).to include("Ringe · 2 sections")
+      expect(html.text.squish).to include("#{ideals.displayed_number} Ringe und Ideale")
       expect(html.text.squish).not_to include("Last lecture")
     end
 
@@ -98,7 +120,8 @@ RSpec.describe(LectureContentComponent, type: :component) do
 
       html = render_for(user)
 
-      expect(html.text.squish).not_to include("Einführung —")
+      expect(html.text.squish).to include("Einführung")
+      expect(html.text.squish).not_to include("Einführung · 1 section")
     end
 
     it "offers the materials for revision with how many there are" do

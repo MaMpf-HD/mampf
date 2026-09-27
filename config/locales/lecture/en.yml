@@ -68,11 +68,15 @@ en:
       position: "Where we are"
       progress: "Section %{reached} of %{total}"
       over: "Lectures over"
+      contents: "Contents"
       one_lesson: "1 lecture, %{date}"
       lessons: "%{count} lectures, %{from} – %{to}"
       chapters:
         one: "1 chapter"
         other: "%{count} chapters"
+      sections:
+        one: "1 section"
+        other: "%{count} sections"
       revision: "For review"
       materials: "Materials"
     history:

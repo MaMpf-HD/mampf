@@ -383,6 +383,14 @@
   li {
     margin-bottom: 0.15rem;
   }
+
+  summary {
+    cursor: pointer;
+  }
+
+  details[open] > summary {
+    margin-bottom: 0.15rem;
+  }
 }
 
 .lecture-home-content {

@@ -14,6 +14,33 @@
                 data: { turbo_frame: "main" } %>
   </div>
 
+  <% new_media_row = capture do %>
+    <% if new_media.any? %>
+      <div class="lecture-home-content-row" id="lecture-home-new-media">
+        <div class="lecture-home-content-key">
+          <%= t("lecture_home.content.new_media") %>
+        </div>
+
+        <div class="lecture-home-content-main">
+          <span class="new-dot" aria-hidden="true"></span>
+
+          <%= new_media_links %>
+
+          <% if new_media.size > 2 %>
+            <%= t("lecture_home.content.more_media", count: new_media.size - 2) %>
+          <% end %>
+        </div>
+
+        <div>
+          <%= button_to t("lecture_home.content.mark_seen"),
+                        destroy_lecture_media_notifications_path(lecture_id: lecture.id),
+                        class: "lecture-home-quiet-link btn btn-link p-0",
+                        form: { data: { turbo_stream: true } } %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
   <% if live? %>
     <% if last_lesson %>
       <div class="lecture-home-content-row">
@@ -48,30 +75,7 @@
       </div>
     <% end %>
 
-    <% if new_media.any? %>
-      <div class="lecture-home-content-row" id="lecture-home-new-media">
-        <div class="lecture-home-content-key">
-          <%= t("lecture_home.content.new_media") %>
-        </div>
-
-        <div class="lecture-home-content-main">
-          <span class="new-dot" aria-hidden="true"></span>
-
-          <%= new_media_links %>
-
-          <% if new_media.size > 2 %>
-            <%= t("lecture_home.content.more_media", count: new_media.size - 2) %>
-          <% end %>
-        </div>
-
-        <div>
-          <%= button_to t("lecture_home.content.mark_seen"),
-                        destroy_lecture_media_notifications_path(lecture_id: lecture.id),
-                        class: "lecture-home-quiet-link btn btn-link p-0",
-                        form: { data: { turbo_stream: true } } %>
-        </div>
-      </div>
-    <% end %>
+    <%= new_media_row %>
 
     <% if last_lesson && current_section %>
       <div class="lecture-home-content-row">
@@ -102,6 +106,8 @@
       </div>
     <% end %>
   <% else %>
+    <%= new_media_row %>
+
     <div class="lecture-home-content-row">
       <div class="lecture-home-content-key"><%= overview_key %></div>
 
@@ -111,10 +117,13 @@
         <ol class="lecture-home-content-chapters">
           <% chapters.each do |chapter| %>
             <li value="<%= chapter.displayed_number.to_i %>">
-              <%= chapter.title %>
-
               <% if (sections = section_list(chapter)) %>
-                — <%= sections %>
+                <details class="lecture-home-content-chapter">
+                  <summary><%= chapter_summary(chapter) %></summary>
+                  <%= sections %>
+                </details>
+              <% else %>
+                <%= chapter.title %>
               <% end %>
             </li>
           <% end %>

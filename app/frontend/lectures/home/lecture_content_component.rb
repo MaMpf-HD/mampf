@@ -29,15 +29,18 @@ class LectureContentComponent < ViewComponent::Base
   end
 
   # :live while sessions are recent, :over once they stopped in a running term,
-  # :archive for a past term; nil when there is nothing to show.
+  # :archive for a past term, :contents for a running lecture that keeps no
+  # sessions, only an outline; nil when there is nothing to show.
   def mode
     return @mode if defined?(@mode)
 
     @mode = if term_over?
       :archive if lessons.any? || chapters.any?
-    elsif last_lesson.nil? || last_lesson.date >= RECENT.ago.to_date
-      :live if last_lesson || new_media.any?
-    elsif lessons.any? || chapters.any?
+    elsif lessons.empty?
+      chapters.any? ? :contents : (:live if new_media.any?)
+    elsif last_lesson.date >= RECENT.ago.to_date
+      :live
+    else
       :over
     end
   end
@@ -98,9 +101,11 @@ class LectureContentComponent < ViewComponent::Base
   end
 
   def overview_key
-    return lecture.term.to_label if mode == :archive
-
-    t("lecture_home.content.over")
+    case mode
+    when :archive then lecture.term.to_label
+    when :contents then t("lecture_home.content.contents")
+    else t("lecture_home.content.over")
+    end
   end
 
   def overview_title
@@ -125,6 +130,11 @@ class LectureContentComponent < ViewComponent::Base
 
     sections.map { |section| "#{section.displayed_number} #{section.title}" }.join(", ")
             .presence
+  end
+
+  def chapter_summary(chapter)
+    count = t("lecture_home.content.sections", count: chapter.sections.size)
+    "#{chapter.title} · #{count}"
   end
 
   def progress_label
@@ -159,7 +169,7 @@ class LectureContentComponent < ViewComponent::Base
   end
 
   def revisions_key
-    mode == :archive ? t("lecture_home.content.materials") : t("lecture_home.content.revision")
+    mode == :over ? t("lecture_home.content.revision") : t("lecture_home.content.materials")
   end
 
   private
