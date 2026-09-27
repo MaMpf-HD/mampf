@@ -229,7 +229,7 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       it "counts no hand-ins and draws no file columns" do
         page = render_inline(component)
 
-        expect(page.css("#marking-summary").text).not_to include("hand-in")
+        expect(page.css("#marking-summary").text).not_to include("handed in")
         expect(page.css("th").map(&:text).join).not_to include(I18n.t("basics.submission"))
       end
     end
@@ -263,14 +263,33 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       let(:member) { create(:confirmed_user) }
       let(:partner) { create(:confirmed_user) }
 
-      it "reads a team row the way the row reads itself" do
+      it "reads a team row the way the row reads itself, once per member" do
         create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
                                               users: [member, partner])
         Timecop.travel(3.hours.from_now) do
           create(:assessment_participation, :reviewed, assessment: assessment, user: partner,
                                                        tutorial: tutorial)
-          expect(component.row_statuses).to eq([:reviewed])
+          expect(component.row_statuses).to eq([:reviewed, :reviewed])
         end
+      end
+
+      it "counts people and names the teams in the summary" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [member, partner])
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+
+        text = I18n.with_locale(:en) { render_inline(component.summary).text }
+        expect(text).to include("3 handed in (2 teams)")
+      end
+
+      it "leaves the teams out when everybody handed in alone" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [member])
+
+        text = I18n.with_locale(:en) { render_inline(component.summary).text }
+        expect(text).to include("1 handed in")
+        expect(text).not_to include("team")
       end
 
       it "reads a file without any participation as still to be marked" do
