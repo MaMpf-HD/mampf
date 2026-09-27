@@ -646,19 +646,6 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  # The lectures of the given term (plus those without a term) that this
-  # user teaches or edits.
-  def current_staff_lectures(term = Term.active)
-    staff_lectures_in([term, nil].uniq)
-  end
-
-  # The lectures of the given term (plus those without a term) in which this
-  # user tutors a tutorial.
-  def current_tutored_lectures(term = Term.active)
-    lectures_of_term(Lecture.where(id: given_tutorials.select(:lecture_id)),
-                     term)
-  end
-
   def next_term_staff_lectures
     coming = Term.active&.next
     return [] if coming.blank?
@@ -737,27 +724,6 @@ class User < ApplicationRecord
                                 .non_exam
                                 .select(:campaignable_id)
     )
-  end
-
-  # The lectures this user holds a place in for the given term, or has an
-  # open application for (see `lectures_with_registration_application`).
-  # Sorted by Registration::StatusQuery.sort_priority (confirmed first,
-  # rejected last), ties kept in `lectures_of_term`'s title order.
-  def current_enrolled_lectures(term = Term.active)
-    combined = roster_lectures.or(lectures_with_registration_application)
-    enrolled = lectures_of_term(combined, term)
-    statuses = Registration::StatusQuery.new(self, enrolled.map(&:id)).statuses
-
-    enrolled.sort_by.with_index do |lecture, index|
-      [Registration::StatusQuery.sort_priority(statuses[lecture.id]), index]
-    end
-  end
-
-  # Bookmarked but not already listed in `current_enrolled_lectures`. Pass
-  # `enrolled` when the caller already computed it, to avoid recomputing it.
-  def current_bookmarked_lectures(term = Term.active,
-                                  enrolled: current_enrolled_lectures(term))
-    lectures_of_term(lectures, term) - enrolled
   end
 
   def submission_partners(lecture)
@@ -961,17 +927,6 @@ class User < ApplicationRecord
   end
 
   private
-
-    # Term-independent lectures belong to every term, so they follow the ones
-    # of the selected term rather than being left out.
-    def lectures_of_term(scope, term)
-      independent = scope.where(term: nil).includes(:course, :teacher)
-                         .natural_sort_by(&:title)
-      return independent if term.nil?
-
-      scope.where(term: term).includes(:course, :term, :teacher)
-           .natural_sort_by(&:title) + independent
-    end
 
     def program_offered_to_students
       return if program.nil? || program.degree.present?

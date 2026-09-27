@@ -7,33 +7,10 @@ module Dashboard
 
     private
 
-      # Populates the board's term-dependent instance variables:
-      # @staff_lectures, @tutored_lectures, @enrolled_lectures,
-      # @bookmarked_lectures, @talks, @lecture_activity.
+      # Populates @selected_term and @board (see Dashboard::Board).
       def load_board(term)
         @selected_term = term
-        @staff_lectures = current_user.current_staff_lectures(term)
-        @tutored_lectures = current_user.current_tutored_lectures(term) -
-                            @staff_lectures
-        @enrolled_lectures = current_user.current_enrolled_lectures(term)
-        @bookmarked_lectures = current_user.current_bookmarked_lectures(
-          term, enrolled: @enrolled_lectures
-        ) - @staff_lectures - @tutored_lectures
-        @talks = current_user.talks.includes(lecture: :term)
-                             .select do |talk|
-                               talk.lecture.term_id == term&.id &&
-                                 talk.visible_for_user?(current_user)
-                             end
-                             .sort_by(&:position)
-
-        # Gathered once for the whole board: every card asks the same two
-        # questions of it, and asking them per card would multiply the
-        # queries by the number of cards.
-        @lecture_activity = Dashboard::LectureActivity.new(
-          user: current_user,
-          lectures: @staff_lectures + @tutored_lectures + @enrolled_lectures +
-                    @bookmarked_lectures
-        )
+        @board = Dashboard::Board.new(user: current_user, term: term)
       end
 
       def render_board
