@@ -120,12 +120,12 @@ class RegistrationsController < Devise::RegistrationsController
       respond_with(resource, location: after_inactive_sign_up_path_for(resource))
     end
 
-    # Sends at most one notice an hour per account, so that repeated sign-ups
+    # Sends at most one notice a day per account, so that repeated sign-ups
     # with somebody else's address cannot flood their inbox.
     def notify_account_owner(owner)
       return unless owner
       return unless Rails.cache.write("registration-attempt:#{owner.id}", true,
-                                      expires_in: 1.hour, unless_exist: true)
+                                      expires_in: 1.day, unless_exist: true)
 
       I18n.with_locale(owner.locale.presence || I18n.default_locale) do
         if owner.confirmed?

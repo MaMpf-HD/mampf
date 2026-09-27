@@ -126,11 +126,19 @@ RSpec.describe("Auth registrations", type: :request) do
         expect(mail.subject).to eq("Du hast schon ein MaMpf-Konto")
       end
 
-      it "sends the owner at most one notice an hour" do
-        3.times { sign_up_with("owner@example.com") }
+      it "sends the owner at most one notice a day" do
+        notices = -> { ActionMailer::Base.deliveries.count { |m| m.to == ["owner@example.com"] } }
 
-        expect(ActionMailer::Base.deliveries.count { |m| m.to == ["owner@example.com"] })
-          .to eq(1)
+        3.times { sign_up_with("owner@example.com") }
+        expect(notices.call).to eq(1)
+
+        travel 23.hours
+        sign_up_with("owner@example.com")
+        expect(notices.call).to eq(1)
+
+        travel 2.hours
+        sign_up_with("owner@example.com")
+        expect(notices.call).to eq(2)
       end
 
       it "sends an owner who never confirmed the confirmation mail again" do
