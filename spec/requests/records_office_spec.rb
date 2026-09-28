@@ -35,6 +35,12 @@ RSpec.describe("Records office", type: :request) do
 
         get records_office_emails_path("tutorial", tutorial)
         expect(response).to redirect_to(root_path)
+
+        get records_office_grades_path(lecture)
+        expect(response).to redirect_to(root_path)
+
+        get records_office_eligibility_path(lecture)
+        expect(response).to redirect_to(root_path)
       end
     end
   end
@@ -104,6 +110,17 @@ RSpec.describe("Records office", type: :request) do
       expect(rows.headers).to eq(["Last name", "First name", "Matriculation number", "Email"])
       expect(rows["Last name"]).to eq(["Noether", "Zuse"])
       expect(rows.first["Matriculation number"]).to eq("1234567")
+    end
+
+    it "lists an exam's active roster only" do
+      exam = create(:exam, lecture: lecture)
+      create(:exam_roster_entry, exam: exam, user: person("Noether", "Emmy"))
+      create(:exam_roster_entry, exam: exam, user: person("Zuse", "Konrad"),
+                                 excluded_at: 1.day.ago)
+
+      get records_office_emails_path("exam", exam)
+
+      expect(csv_rows["Last name"]).to eq(["Noether"])
     end
 
     it "gives the published grades of exams and talks, and nothing still being graded" do
@@ -183,6 +200,29 @@ RSpec.describe("Records office", type: :request) do
       rows = csv_rows
       expect(rows.first.fields("Last name", "Points", "Maximum", "Percentage", "Decision", "Note"))
         .to eq(["Noether", "42,5", "60", "70,83", "Eligible", "Certificate from the doctor"])
+    end
+
+    it "names the rule for a computed decision and leaves a deferred one undated" do
+      create(:student_performance_certification, :failed,
+             lecture: lecture, user: person("Noether", "Emmy"))
+      create(:student_performance_certification, :pending,
+             lecture: lecture, user: person("Zuse", "Konrad"))
+
+      get records_office_eligibility_path(lecture)
+
+      expect(csv_rows.map { |row| row.fields("Last name", "Decision", "Decided by", "Decided on") })
+        .to eq([["Noether", "Not Eligible", "Rule", I18n.l(Time.zone.today)],
+                ["Zuse", "Deferred", nil, nil]])
+    end
+
+    it "leaves the points blank when the student has no performance record" do
+      create(:student_performance_certification, :passed,
+             lecture: lecture, user: person("Noether", "Emmy"))
+
+      get records_office_eligibility_path(lecture)
+
+      expect(csv_rows.first.fields("Points", "Maximum", "Percentage", "Achievements met"))
+        .to eq([nil, nil, nil, nil])
     end
   end
 
