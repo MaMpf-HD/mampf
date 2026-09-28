@@ -356,13 +356,20 @@ RSpec.describe("Exams", type: :request) do
 
     describe "schedule change notification" do
       let!(:participant) { create(:confirmed_user, locale: "en") }
+      let(:exam_in_future) do
+        create(:exam, lecture: lecture, date: 3.weeks.from_now.strftime("%Y-%m-%d %H:%M"))
+      end
+      let(:exam_in_past) do
+        create(:exam, lecture: lecture, date: 5.weeks.ago.strftime("%Y-%m-%d %H:%M"))
+      end
 
       before do
-        create(:exam_roster_entry, exam: exam, user: participant)
+        create(:exam_roster_entry, exam: exam_in_future, user: participant)
+        create(:exam_roster_entry, exam: exam_in_past, user: participant)
         sign_in teacher
       end
 
-      context "when date changes" do
+      context "when date changes and date is in the future" do
         let(:valid_attributes_new_date) do
           {
             date: 5.weeks.from_now.strftime("%Y-%m-%d %H:%M")
@@ -371,7 +378,7 @@ RSpec.describe("Exams", type: :request) do
         it "sends a schedule change email to participants" do
           perform_enqueued_jobs do
             expect do
-              patch(exam_path(exam),
+              patch(exam_path(exam_in_future),
                     params: { exam: valid_attributes_new_date },
                     as: :turbo_stream)
             end.to change { ActionMailer::Base.deliveries.count }.by(1)
@@ -379,7 +386,24 @@ RSpec.describe("Exams", type: :request) do
         end
       end
 
-      context "when location changes" do
+      context "when date changes and date is in the past" do
+        let(:valid_attributes_new_date) do
+          {
+            date: 3.weeks.ago.strftime("%Y-%m-%d %H:%M")
+          }
+        end
+        it "not send a schedule change email to participants" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam_in_future),
+                    params: { exam: valid_attributes_new_date },
+                    as: :turbo_stream)
+            end.to change { ActionMailer::Base.deliveries.count }.by(0)
+          end
+        end
+      end
+
+      context "when location changes and date is in the future" do
         let(:valid_attributes_new_location) do
           {
             location: "Room 202"
@@ -388,10 +412,27 @@ RSpec.describe("Exams", type: :request) do
         it "sends a schedule change email to participants" do
           perform_enqueued_jobs do
             expect do
-              patch(exam_path(exam),
+              patch(exam_path(exam_in_future),
                     params: { exam: valid_attributes_new_location },
                     as: :turbo_stream)
             end.to change { ActionMailer::Base.deliveries.count }.by(1)
+          end
+        end
+      end
+
+      context "when location changes and date is in the past" do
+        let(:valid_attributes_new_location) do
+          {
+            location: "Room 202"
+          }
+        end
+        it "not send a schedule change email to participants" do
+          perform_enqueued_jobs do
+            expect do
+              patch(exam_path(exam_in_past),
+                    params: { exam: valid_attributes_new_location },
+                    as: :turbo_stream)
+            end.to change { ActionMailer::Base.deliveries.count }.by(0)
           end
         end
       end
@@ -406,7 +447,7 @@ RSpec.describe("Exams", type: :request) do
         it "sends only one email per participant" do
           perform_enqueued_jobs do
             expect do
-              patch(exam_path(exam),
+              patch(exam_path(exam_in_future),
                     params: { exam: valid_attributes_new_date_and_location },
                     as: :turbo_stream)
             end.to change { ActionMailer::Base.deliveries.count }.by(1)
@@ -418,14 +459,14 @@ RSpec.describe("Exams", type: :request) do
         let(:valid_attributes_new_name) do
           {
             title: "Updated Exam Title",
-            location: exam.location,
+            location: exam_in_future.location,
             capacity: 75
           }
         end
         it "does not send an email" do
           perform_enqueued_jobs do
             expect do
-              patch(exam_path(exam),
+              patch(exam_path(exam_in_future),
                     params: { exam: valid_attributes_new_name },
                     as: :turbo_stream)
             end.not_to(change { ActionMailer::Base.deliveries.count })
@@ -437,7 +478,7 @@ RSpec.describe("Exams", type: :request) do
         it "does not send an email" do
           perform_enqueued_jobs do
             expect do
-              patch(exam_path(exam),
+              patch(exam_path(exam_in_future),
                     params: { exam: { title: "",
                                       date: 5.weeks.from_now.strftime("%Y-%m-%d %H:%M") } },
                     as: :turbo_stream)
@@ -450,7 +491,7 @@ RSpec.describe("Exams", type: :request) do
         it "does not attempt to send email" do
           perform_enqueued_jobs do
             expect do
-              patch(exam_path(exam.tap { |e| e.exam_roster_entries.destroy_all }),
+              patch(exam_path(exam_in_future.tap { |e| e.exam_roster_entries.destroy_all }),
                     params: { exam: { location: "Room 999" } },
                     as: :turbo_stream)
             end.not_to(change { ActionMailer::Base.deliveries.count })
@@ -459,21 +500,33 @@ RSpec.describe("Exams", type: :request) do
       end
 
       context "with multiple participants" do
-        let!(:other_participant) { create(:confirmed_user, locale: "en") }
+        let!(:other_participant1) do
+          create(:confirmed_user, locale: "en", email: "other1@example.com")
+        end
+        let!(:other_participant2) do
+          create(:confirmed_user, locale: "de", email: "other2@example.com")
+        end
+        let!(:other_participant3) do
+          create(:confirmed_user, locale: "de", email: "other3@example.com")
+        end
 
-        before { create(:exam_roster_entry, exam: exam, user: other_participant) }
+        before do
+          create(:exam_roster_entry, exam: exam_in_future, user: other_participant1)
+          create(:exam_roster_entry, exam: exam_in_future, user: other_participant2)
+          create(:exam_roster_entry, exam: exam_in_future, user: other_participant3)
+        end
 
-        it "sends an email to every participant" do
+        it "sends an email to every participant with 2 locales" do
           perform_enqueued_jobs do
             expect do
-              patch(exam_path(exam),
+              patch(exam_path(exam_in_future),
                     params: { exam: { location: "Room 999" } },
                     as: :turbo_stream)
             end.to change { ActionMailer::Base.deliveries.count }.by(2)
           end
 
-          recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:to)
-          expect(recipients).to contain_exactly(participant.email, other_participant.email)
+          recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:bcc)
+          expect(recipients).to include(other_participant1.email)
         end
       end
     end

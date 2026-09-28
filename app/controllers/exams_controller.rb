@@ -115,7 +115,7 @@ class ExamsController < ApplicationController
     respond_to do |format|
       if @exam.update(update_params)
         schedule_changed = @exam.saved_change_to_date? || @exam.saved_change_to_location?
-        notify_participants_of_schedule_change if schedule_changed
+        notify_participants_of_schedule_change if schedule_changed && @exam.date&.future?
         reopen_exam_campaign_after_deadline_fix if reopen_after_deadline_fix
         @exam.load_registration_deadline
         format.turbo_stream do

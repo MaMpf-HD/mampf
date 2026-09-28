@@ -630,8 +630,61 @@ RSpec.describe(Registration::Campaign, type: :model) do
         end
 
         expect(acceptance_emails.size).to eq(3)
-        expect(acceptance_emails.map(&:to).flatten)
+        expect(acceptance_emails.flat_map(&:bcc))
           .to contain_exactly(student1.email, student2.email, student3.email)
+      end
+
+      it "sends one acceptance mail per language for the same group" do
+        campaign = create(:registration_campaign, :preference_based, :with_items,
+                          items_count: 1, status: :processing)
+        item = campaign.registration_items.first
+        item.registerable.update!(capacity: 3)
+
+        english_students = create_list(:confirmed_user, 2, locale: "en")
+        german_student = create(:confirmed_user, locale: "de")
+
+        (english_students + [german_student]).each do |student|
+          create(:registration_user_registration, :confirmed,
+                 registration_campaign: campaign, registration_item: item,
+                 user: student, preference_rank: 1)
+        end
+
+        perform_enqueued_jobs { campaign.finalize! }
+
+        mails = ActionMailer::Base.deliveries.select { |m| m.bcc.present? }
+        expect(mails.size).to eq(2)
+
+        recipients_per_mail = mails.map { |m| m.bcc.sort }
+        expect(recipients_per_mail).to contain_exactly(
+          english_students.map(&:email).sort,
+          [german_student.email]
+        )
+        expect(mails.map(&:to).flatten.compact).to be_empty
+        expect(mails.map(&:subject).uniq.size).to eq(2)
+      end
+
+      it "does not announce students who are already on the roster" do
+        campaign = create(:registration_campaign, :preference_based, :with_items,
+                          items_count: 1, status: :processing)
+        item = campaign.registration_items.first
+        tutorial = item.registerable
+        tutorial.update!(capacity: 2)
+        existing = create(:confirmed_user, locale: "en")
+        newcomer = create(:confirmed_user, locale: "en")
+        create(:tutorial_membership, tutorial: tutorial, user: existing)
+        [existing, newcomer].each do |student|
+          create(:registration_user_registration, :confirmed,
+                 registration_campaign: campaign, registration_item: item,
+                 user: student, preference_rank: 1)
+        end
+        allow(RosterNotificationMailer).to receive(:finalized).and_call_original
+
+        campaign.finalize!
+
+        expect(RosterNotificationMailer).to have_received(:finalized).once do |registerable, users|
+          expect(registerable).to eq(tutorial)
+          expect(users.to_a).to contain_exactly(newcomer)
+        end
       end
 
       it "does not send any rejection email to students confirmed on some item" do
@@ -677,7 +730,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
-  describe "#reject_notify reasons" do
+  describe "rejection mails on finalize" do
     let(:user) { create(:confirmed_user, locale: "en") }
 
     before do
@@ -713,7 +766,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
         campaign.finalize!
 
-        # The code is aliased to email_domain_not_allowed, then translated.
         expect(RosterNotificationMailer).to have_received(:rejected).with(
           invalid_user, campaign,
           reasons: [I18n.t("registration.policy.errors.email_domain_not_allowed",
@@ -722,7 +774,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
       end
 
       it "passes the stored manual rejection label" do
-        campaign = create(:registration_campaign, :with_items, :preference_based)
+        campaign = create(:registration_campaign, :with_items, :preference_based,
+                          status: :processing)
         create(:registration_user_registration, :rejected,
                registration_campaign: campaign,
                registration_item: campaign.registration_items.first,
@@ -730,7 +783,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
                rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
                rejection_reason_code: "manual_rejected")
 
-        campaign.reject_notify
+        campaign.finalize!
 
         expect(RosterNotificationMailer).to have_received(:rejected).with(
           user, campaign,
