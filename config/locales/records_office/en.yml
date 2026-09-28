@@ -16,7 +16,7 @@ en:
     occupancy: 'Occupancy'
     without_limit: '%{count}, no limit'
     emails: 'Emails'
-    emails_of: 'Email addresses of %{group}'
+    emails_of: 'Emails of %{group}'
     download_grades: 'Grades'
     download_eligibility: 'Exam admissions'
     decided_by_rule: 'Rule'

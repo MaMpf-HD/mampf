@@ -17,7 +17,7 @@ de:
     occupancy: 'Auslastung'
     without_limit: '%{count}, ohne Obergrenze'
     emails: 'E-Mails'
-    emails_of: 'E-Mail-Adressen von %{group}'
+    emails_of: 'E-Mails von %{group}'
     download_grades: 'Noten'
     download_eligibility: 'Prüfungszulassungen'
     decided_by_rule: 'Regel'

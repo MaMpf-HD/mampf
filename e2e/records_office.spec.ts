@@ -36,7 +36,7 @@ test.describe("records office", () => {
       await expect(row).toContainText("1 / 12");
 
       const downloadPromise = student.page.waitForEvent("download");
-      await row.getByRole("link", { name: "Email addresses of Tuesday group" }).click();
+      await row.getByRole("link", { name: "Emails of Tuesday group" }).click();
       const filePath = await (await downloadPromise).path();
       const rows = parseCsv((await readFile(filePath, "utf-8")).replace(/^\uFEFF/, ""));
 
