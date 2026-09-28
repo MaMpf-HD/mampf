@@ -2,6 +2,8 @@ module Support
   # Lets the support find a person and correct what they cannot change
   # themselves once saved: their name and matriculation number.
   class UsersController < ApplicationController
+    helper SupportUsersHelper
+
     before_action :authorize_support
     before_action :set_user, only: [:edit, :update]
 

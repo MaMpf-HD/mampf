@@ -39,10 +39,7 @@
           <tbody>
             <% @users.each do |user| %>
               <tr>
-                <th scope="row" class="fw-normal">
-                  <%= [user.last_name, user.first_name].compact.join(", ").presence ||
-                      user.name %>
-                </th>
+                <th scope="row" class="fw-normal"><%= listed_name(user) %></th>
 
                 <td><%= user.matriculation_number %></td>
                 <td><%= user.email %></td>
