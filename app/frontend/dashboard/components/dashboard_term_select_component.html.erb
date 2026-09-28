@@ -43,7 +43,8 @@
   <% if show_current_term_link? %>
     <%= link_to target_path(active_term),
                 class: "dashboard-term-select__link",
-                data: { testid: "current-term-link", **pick_data(active_term) } do %>
+                data: { testid: "current-term-link", turbo_prefetch: false,
+                        **pick_data(active_term) } do %>
       <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
 
       <%= t("dashboard.term_select.current_term_link",

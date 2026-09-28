@@ -21,11 +21,13 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       expect(response.body).to include("tutorial-roster-side-panel")
     end
 
-    it "skips tile DOM id when showing (update_tiles: false)" do
+    it "skips the row DOM id when showing (update_rows: false)" do
       get tutorial_roster_path(tutorial, source: "panel"),
           as: :turbo_stream
 
-      expect(response.body).to include("tutorial-roster-side-panel")
+      assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(tutorial),
+                          count: 0
     end
   end
 
@@ -176,13 +178,15 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       create(:tutorial_membership, tutorial: tutorial, user: member)
     end
 
-    it "returns tile updates for both source and target plus side panel" do
+    it "returns row updates for both source and target plus side panel" do
       patch move_member_tutorial_path(tutorial, user_id: member.id),
             params: { target_id: target.id, source: "panel" },
             as: :turbo_stream
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include("tutorial-roster-side-panel")
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(tutorial)
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(target)
+      assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
     end
   end
 end

@@ -2,7 +2,9 @@
   <table class="table table-hover mb-0 align-middle">
     <thead class="table-light">
       <tr>
-        <th scope="col" class="border-top-0"><%= t("basics.name") %></th>
+        <th scope="col" class="border-top-0 person-name-column">
+          <%= t("basics.name") %>
+        </th>
 
         <th scope="col" class="border-top-0">
           <%= User.human_attribute_name(:matriculation_number) %>
@@ -34,10 +36,7 @@
           <% user = membership.user %>
 
           <tr>
-            <td>
-              <%= user.tutorial_name %>
-              <%= render "shared/copy_email_button", email: user.email %>
-            </td>
+            <td><%= user.tutorial_name %></td>
 
             <td><%= user.matriculation_number %></td>
             <td><%= user.program&.name_with_subject %></td>
@@ -46,10 +45,11 @@
               <% groups = component.participant_groups(user) %>
 
               <% if groups.any? %>
-                <% groups.each do |group| %>
-                  <%= component.helpers.roster_group_badge(group,
-                                                           component.group_type) %>
-                <% end %>
+                <div class="d-flex flex-wrap gap-1">
+                  <% groups.each do |group| %>
+                    <%= component.helpers.roster_group_link(group) %>
+                  <% end %>
+                </div>
               <% else %>
                 <span class="text-muted small">
                   <%= t("roster.stats.status_unassigned") %>
@@ -58,18 +58,21 @@
             </td>
 
             <td class="text-end">
-              <div class="d-flex justify-content-end gap-2">
+              <div class="d-flex justify-content-end gap-1">
+                <%= render "shared/copy_email_button", email: user.email %>
+
                 <%= button_to component.helpers.remove_member_lecture_path(component.lecture,
                                                                            user),
                               method: :delete,
                               params: { source: :participants,
                                         group_type: component.group_type,
                                         page: component.pagy.page },
-                              class: "btn btn-sm btn-outline-danger",
+                              class: "btn icon-button icon-button--danger",
                               title: t('roster.tooltips.kick_from_lecture'),
+                              "aria-label": t('roster.tooltips.kick_from_lecture'),
                               data: { bs_toggle: "tooltip",
                                       turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
-                  <i class="bi bi-trash"></i>
+                  <i class="bi bi-trash" aria-hidden="true"></i>
                 <% end %>
               </div>
             </td>
