@@ -11,13 +11,11 @@ class AnswersController < ApplicationController
     question = Question.find_by(id: params[:question_id])
     @answer = Answer.new(value: true, question: question)
     authorize! :new, @answer
-    I18n.locale = question&.locale_with_inheritance
   end
 
   def create
     @answer = Answer.new(answer_params)
     authorize! :create, @answer
-    I18n.locale = @answer.question&.locale_with_inheritance
     return unless @answer.save
 
     @success = true
@@ -35,7 +33,6 @@ class AnswersController < ApplicationController
   end
 
   def cancel_edit
-    I18n.locale = @answer.question&.locale_with_inheritance
   end
 
   private

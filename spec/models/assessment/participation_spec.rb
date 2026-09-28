@@ -463,6 +463,24 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe ".with_grading_data" do
+    it "picks the rows Assessment#grading_data_for? calls graded" do
+      assessment = create(:assessment, :for_expired_assignment, :with_points)
+      empty = create(:assessment_participation, :submitted, assessment: assessment)
+      pointed = create(:assessment_participation, :submitted, assessment: assessment)
+      task = create(:assessment_task, assessment: assessment, max_points: 4)
+      create(:assessment_task_point, task: task, assessment_participation: pointed, points: 1)
+      reviewed = create(:assessment_participation, :reviewed)
+      absent = create(:assessment_participation, :absent, assessment: assessment)
+      rows = [empty, pointed, reviewed, absent].map(&:reload)
+
+      graded = rows.select { |row| row.assessment.grading_data_for?(row) }
+
+      expect(graded).to contain_exactly(pointed, reviewed, absent)
+      expect(described_class.with_grading_data.where(id: rows)).to match_array(graded)
+    end
+  end
+
   describe "#display_status" do
     # The enum has four values, the views need five: `pending` covers both
     # "has not handed in" and "waiting to be marked", told apart by submitted_at.

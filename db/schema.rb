@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -344,6 +344,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
+  create_table "dashboard_card_styles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "lecture_id", null: false
+    t.integer "tape_color", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_dashboard_card_styles_on_lecture_id"
+    t.index ["user_id", "lecture_id"], name: "index_dashboard_card_styles_on_user_id_and_lecture_id", unique: true
+    t.index ["user_id"], name: "index_dashboard_card_styles_on_user_id"
+  end
+
   create_table "division_course_joins", force: :cascade do |t|
     t.bigint "division_id", null: false
     t.bigint "course_id", null: false
@@ -483,6 +494,16 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.index ["section_id"], name: "index_items_on_section_id"
   end
 
+  create_table "lecture_bookmarks", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["lecture_id", "user_id"], name: "index_lecture_bookmarks_on_lecture_id_and_user_id", unique: true
+    t.index ["lecture_id"], name: "index_lecture_bookmarks_on_lecture_id"
+    t.index ["user_id"], name: "index_lecture_bookmarks_on_user_id"
+  end
+
   create_table "lecture_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "lecture_id", null: false
@@ -493,16 +514,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.index ["source_campaign_id"], name: "index_lecture_memberships_on_source_campaign_id"
     t.index ["user_id", "lecture_id"], name: "index_lecture_memberships_on_user_id_and_lecture_id", unique: true
     t.index ["user_id"], name: "index_lecture_memberships_on_user_id"
-  end
-
-  create_table "lecture_user_joins", force: :cascade do |t|
-    t.bigint "lecture_id", null: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["lecture_id", "user_id"], name: "index_lecture_user_joins_on_lecture_id_and_user_id", unique: true
-    t.index ["lecture_id"], name: "index_lecture_user_joins_on_lecture_id"
-    t.index ["user_id"], name: "index_lecture_user_joins_on_user_id"
   end
 
   create_table "lectures", force: :cascade do |t|
@@ -673,7 +684,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "subject_id"
+    t.string "degree"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
+    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying::text, 'bsc50'::character varying::text, 'msc'::character varying::text, 'med'::character varying::text, 'med_extension'::character varying::text, 'phd'::character varying::text])", name: "programs_degree_check"
   end
 
   create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
@@ -776,6 +789,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.datetime "rejected_at"
     t.datetime "rejection_overridden_at"
     t.uuid "rejection_policy_id"
+    t.datetime "dismissed_at"
     t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
     t.index ["registration_campaign_id", "user_id", "registration_item_id"], name: "index_reg_user_regs_unique_item_user", unique: true
     t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_exclusive_assignment_unranked", unique: true, where: "((exclusive_assignment = true) AND (preference_rank IS NULL))"
@@ -916,6 +930,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   create_table "subjects", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "key"
+    t.index ["key"], name: "index_subjects_on_key", unique: true
   end
 
   create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
@@ -1311,9 +1327,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
     t.string "unlock_token"
     t.integer "password_policy_version", default: 0, null: false
     t.datetime "password_changed_at"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "matriculation_number"
+    t.string "uni_id"
+    t.datetime "personal_data_confirmed_at"
+    t.datetime "personal_data_declined_at"
+    t.bigint "program_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"
+    t.index ["program_id"], name: "index_users_on_program_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uni_id"], name: "index_users_on_uni_id", unique: true, where: "(uni_id IS NOT NULL)"
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
@@ -1506,6 +1532,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "dashboard_card_styles", "lectures"
+  add_foreign_key "dashboard_card_styles", "users"
   add_foreign_key "divisions", "programs"
   add_foreign_key "exam_roster_entries", "exams"
   add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"
@@ -1515,11 +1543,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
+  add_foreign_key "lecture_bookmarks", "lectures"
+  add_foreign_key "lecture_bookmarks", "users"
   add_foreign_key "lecture_memberships", "lectures"
   add_foreign_key "lecture_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "lecture_memberships", "users"
-  add_foreign_key "lecture_user_joins", "lectures"
-  add_foreign_key "lecture_user_joins", "users"
   add_foreign_key "links", "media"
   add_foreign_key "links", "media", column: "linked_medium_id"
   add_foreign_key "medium_tag_joins", "media"
@@ -1570,6 +1598,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_21_000020) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "users", "programs", on_delete: :nullify
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"

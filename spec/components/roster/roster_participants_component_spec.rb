@@ -298,6 +298,31 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
+  describe "the study program column" do
+    let(:math) { create(:subject, name: "Mathematik") }
+    let(:program) { create(:program, subject: math, name: "M.Sc.", degree: :msc) }
+    let(:pagy) { double("Pagy", pages: 1, page: 1) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: create(:user, program: program))
+    end
+
+    it "shows each participant's program to the teacher" do
+      render_inline(component)
+
+      expect(rendered_content).to include("Mathematik: M.Sc.")
+    end
+
+    it "offers the address to copy instead of a column of its own" do
+      render_inline(component)
+
+      document = Nokogiri::HTML.fragment(rendered_content)
+      expect(document.css("th").map { |th| th.text.strip }).not_to include(I18n.t("basics.email"))
+      expect(document.at_css("button[aria-label='#{I18n.t("buttons.copy_email_address")}']"))
+        .to be_present
+    end
+  end
+
   describe "search field rendering" do
     it "keeps the search form in the header cluster and streams updates" do
       render_inline(component)

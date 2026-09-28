@@ -4,7 +4,7 @@ class ApplicationMailer < ActionMailer::Base
   append_view_path "app/frontend/"
 
   helper EmailHelper
-  default from: DefaultSetting::PROJECT_EMAIL
+  default from: DefaultSetting::FROM_ADDRESS
   default "Message-ID" => lambda {
                             "<#{rand.to_s.split(".")[1]}.#{Time.now.to_i}@#{ENV.fetch(
                               "MAILID_DOMAIN", nil

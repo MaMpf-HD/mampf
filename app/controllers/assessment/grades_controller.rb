@@ -3,7 +3,6 @@ module Assessment
     include ExamStreams
 
     before_action :set_resources, only: [:update, :refresh]
-    before_action :set_locale
     before_action :authorize_assessment!, only: [:update, :refresh]
     before_action :refuse_unless_gradable, only: [:update, :refresh]
 
@@ -79,13 +78,6 @@ module Assessment
 
       def current_ability
         @current_ability ||= AssessmentAbility.new(current_user)
-      end
-
-      def set_locale
-        I18n.locale = @lecture&.locale_with_inheritance ||
-                      @assessable&.lecture&.locale_with_inheritance ||
-                      current_user.locale ||
-                      I18n.default_locale
       end
   end
 end

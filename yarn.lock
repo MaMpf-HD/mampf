@@ -1643,17 +1643,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-cypress@npm:^3.3.0":
-  version: 3.6.0
-  resolution: "eslint-plugin-cypress@npm:3.6.0"
-  dependencies:
-    globals: "npm:^13.20.0"
-  peerDependencies:
-    eslint: ">=7"
-  checksum: 10c0/8e04baccbfdd6e255aa51ec5ecca29638387ec14833b33398009015bd220d5742c6cc3fea888f957832b00afd21dff1ef5d76ed5b3b69117e48acd45db8f8f1e
-  languageName: node
-  linkType: hard
-
 "eslint-plugin-erb@npm:^2.0.0":
   version: 2.1.1
   resolution: "eslint-plugin-erb@npm:2.1.1"
@@ -1991,15 +1980,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^13.20.0":
-  version: 13.24.0
-  resolution: "globals@npm:13.24.0"
-  dependencies:
-    type-fest: "npm:^0.20.2"
-  checksum: 10c0/d3c11aeea898eb83d5ec7a99508600fbe8f83d2cf00cbb77f873dbf2bcb39428eff1b538e4915c993d8a3b3473fa71eeebfe22c9bb3a3003d1e26b1f2c8a42cd
-  languageName: node
-  linkType: hard
-
 "globals@npm:^17.4.0":
   version: 17.11.0
   resolution: "globals@npm:17.11.0"
@@ -2267,7 +2247,6 @@ __metadata:
     bootstrap: "npm:^5.3.7"
     clipboard: "npm:^2.0.11"
     eslint: "npm:^10.2.0"
-    eslint-plugin-cypress: "npm:^3.3.0"
     eslint-plugin-erb: "npm:^2.0.0"
     globals: "npm:^17.4.0"
     jquery: "npm:^3.7.1"
@@ -3218,13 +3197,6 @@ __metadata:
   dependencies:
     prelude-ls: "npm:^1.2.1"
   checksum: 10c0/7b3fd0ed43891e2080bf0c5c504b418fbb3e5c7b9708d3d015037ba2e6323a28152ec163bcb65212741fa5d2022e3075ac3c76440dbd344c9035f818e8ecee58
-  languageName: node
-  linkType: hard
-
-"type-fest@npm:^0.20.2":
-  version: 0.20.2
-  resolution: "type-fest@npm:0.20.2"
-  checksum: 10c0/dea9df45ea1f0aaa4e2d3bed3f9a0bfe9e5b2592bddb92eb1bf06e50bcf98dbb78189668cd8bc31a0511d3fc25539b4cd5c704497e53e93e2d40ca764b10bfc3
   languageName: node
   linkType: hard
 

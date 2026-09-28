@@ -5,7 +5,7 @@ import { resetPasswordLinkFor } from "./_support/mail";
 import { LoginPage } from "./page-objects/login_page";
 
 test("can reset the password via the mailed reset link", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-reset" }) as User;
   const newPassword = "super-secure-horse-battery-staple";
 
@@ -40,7 +40,7 @@ test("can reset the password via the mailed reset link", async ({ page, request 
 });
 
 test("clears stale validation errors after correcting a rejected password", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-reset" }) as User;
   const newPassword = "super-secure-horse-battery-staple";
 
@@ -78,7 +78,7 @@ test("clears stale validation errors after correcting a rejected password", asyn
 });
 
 test("keeps helpdesk popovers working after a rejected account password change", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-change" }) as User;
 
   const loginPage = new LoginPage(page);
@@ -107,7 +107,7 @@ test("keeps helpdesk popovers working after a rejected account password change",
 });
 
 test("clears stale current password errors after correcting an account password change", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-change" }) as User;
   const newPassword = "super-secure-horse-battery-staple";
 

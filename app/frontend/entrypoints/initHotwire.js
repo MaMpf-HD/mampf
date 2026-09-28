@@ -4,6 +4,8 @@ window.Stimulus = Application.start();
 
 import LectureSidebarController from "~/lectures/show/_sidebar.controller.js";
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
+import LectureSwitcherController from "~/lectures/show/switcher.controller.js";
+window.Stimulus.register("lecture-switcher", LectureSwitcherController);
 
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
@@ -113,6 +115,14 @@ window.Stimulus.register("roster-drag", RosterDragController);
 import AutoSubmitFormController from "~/controllers/auto_submit_form.controller.js";
 window.Stimulus.register("auto-submit-form", AutoSubmitFormController);
 
+import FileSizeController from "~/controllers/file_size.controller.js";
+window.Stimulus.register("file-size", FileSizeController);
+
+import PersonalDataFormController from "~/personal_data/personal_data_form.controller.js";
+window.Stimulus.register("personal-data-form", PersonalDataFormController);
+import StudyProgramController from "~/personal_data/study_program.controller.js";
+window.Stimulus.register("study-program", StudyProgramController);
+
 import ClipboardController from "~/controllers/clipboard.controller.js";
 window.Stimulus.register("clipboard", ClipboardController);
 
@@ -133,6 +143,16 @@ window.Stimulus.register("sheet-news", SheetNewsController);
 
 import PreferenceChoicesController from "~/user_registrations/preference_choices.controller.js";
 window.Stimulus.register("preference-choices", PreferenceChoicesController);
+import RegistrationFoldController from "~/user_registrations/registration_fold.controller.js";
+window.Stimulus.register("registration-fold", RegistrationFoldController);
+import OptionFilterController from "~/user_registrations/option_filter.controller.js";
+window.Stimulus.register("option-filter", OptionFilterController);
+import LectureNewsController from "~/lectures/home/lecture_news.controller.js";
+window.Stimulus.register("lecture-news", LectureNewsController);
+import LectureIntroController from "~/lectures/home/lecture_intro.controller.js";
+window.Stimulus.register("lecture-intro", LectureIntroController);
+import ParticipationFocusController from "~/lectures/home/participation_focus.controller.js";
+window.Stimulus.register("participation-focus", ParticipationFocusController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
@@ -205,6 +225,24 @@ window.Stimulus.register("media-download-button", MediaDownloadButtonController)
 
 import LecturesNewFormController from "~/lectures/new/_form.controller.js";
 window.Stimulus.register("lectures-new-form", LecturesNewFormController);
+
+import WashiTapeController from "~/dashboard/washi_tape.controller.js";
+window.Stimulus.register("washi-tape", WashiTapeController);
+
+import DashboardTermSelectController from "~/dashboard/dashboard_term_select.controller.js";
+window.Stimulus.register("dashboard-term-select", DashboardTermSelectController);
+
+import DashboardSectionController from "~/dashboard/dashboard_section.controller.js";
+window.Stimulus.register("dashboard-section", DashboardSectionController);
+
+import BookmarkRemovalController from "~/dashboard/bookmark_removal.controller.js";
+window.Stimulus.register("bookmark-removal", BookmarkRemovalController);
+
+import RegistrationNoticeRemovalController from "~/dashboard/registration_notice_removal.controller.js";
+window.Stimulus.register("registration-notice-removal", RegistrationNoticeRemovalController);
+
+import BookmarkController from "~/lectures/search/bookmark.controller.js";
+window.Stimulus.register("bookmark", BookmarkController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

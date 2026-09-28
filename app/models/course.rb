@@ -167,12 +167,16 @@ class Course < ApplicationRecord
   end
 
   def users
-    User.where(id: LectureUserJoin.where(lecture: lectures)
+    User.where(id: LectureBookmark.where(lecture: lectures)
                                   .pluck(:user_id).uniq)
   end
 
+  def audience
+    LectureAudience.users(lectures.select(:id))
+  end
+
   def user_ids
-    User.where(id: LectureUserJoin.where(lecture: lectures)
+    User.where(id: LectureBookmark.where(lecture: lectures)
                                   .pluck(:user_id).uniq).pluck(:id)
   end
 

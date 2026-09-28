@@ -21,25 +21,19 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :cypress do
+    namespace :e2e do
       post "playwright_user_login", to: "playwright_user_sessions#create" if Rails.env.test?
     end
   end
 
   if Rails.env.test?
-    namespace :cypress do
+    namespace :e2e do
       resources :factories, only: :create
       post "factories/call_instance_method", to: "factories#call_instance_method"
-      resources :factories_playwright, only: :create
-      post "factories_playwright/call_instance_method",
-           to: "factories_playwright#call_instance_method"
-      post "factories_playwright/update_instance",
-           to: "factories_playwright#update_instance"
+      post "factories/update_instance", to: "factories#update_instance"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
-      resources :user_creator_playwright, only: :create
-      resources :mails_playwright, only: :create
-      resources :i18n, only: :create
+      resources :mails, only: :create
       post "feature_flags/enable", to: "feature_flags#enable"
       post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"
@@ -324,18 +318,38 @@ Rails.application.routes.draw do
       to: "tutorials#index",
       as: "lecture_tutorials"
 
-  get "lectures/:id/subscribe",
-      to: "lectures#subscribe_page",
-      as: "subscribe_lecture_page"
-
   post "lectures/:id/import_toc",
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  get "lectures/:id/home",
+  # GET lecture_path is the lecture home page, resources :lectures has no show.
+  get "lectures/:id",
       to: "lectures/home#show",
       as: "lecture_home",
+      constraints: { id: /\d+/ },
       defaults: { project: "home" }
+
+  # kept for old links to the lecture home page
+  get "lectures/:id/home",
+      constraints: { id: /\d+/ },
+      to: redirect { |params, request|
+        ["/lectures/#{params[:id]}", request.query_string.presence].compact.join("?")
+      }
+
+  # nginx gives this path a larger client_max_body_size for home_attachment;
+  # ordinary lecture requests keep the default limit.
+  patch "lectures/:id/home_content",
+        to: "lectures#update",
+        as: "lecture_home_content"
+
+  # enter the passphrase of a protected lecture to access its content
+  post "lectures/:lecture_id/unlock",
+       to: "lectures/unlocks#create",
+       as: "lecture_unlock"
+
+  get "lectures/:id/home/campaigns/:campaign_id",
+      to: "lectures/home#campaign",
+      as: "lecture_home_campaign"
 
   get "lectures/:id/home_attachment",
       to: "lectures/home#attachment",
@@ -346,7 +360,7 @@ Rails.application.routes.draw do
       to: "lectures#outline",
       as: "lecture_outline"
 
-  resources :lectures, except: [:index] do
+  resources :lectures, except: [:index, :show] do
     get "roster", to: "roster/maintenance#index"
     get "roster/participants", to: "roster/maintenance#participants"
 
@@ -627,6 +641,16 @@ Rails.application.routes.draw do
 
   resources :notifications, only: [:index, :destroy]
 
+  # personal data routes
+
+  get "personal_data",
+      to: "personal_data#edit",
+      as: "edit_personal_data"
+
+  patch "personal_data",
+        to: "personal_data#update",
+        as: "personal_data"
+
   # profile routes
 
   get "profile/edit",
@@ -659,6 +683,15 @@ Rails.application.routes.draw do
 
   patch "profile/unstar_lecture",
         as: "unstar_lecture"
+
+  namespace :dashboard do
+    resources :lectures, only: [] do
+      resource :bookmark, only: [:create, :destroy]
+      resource :registration_notice, only: :destroy
+      resource :washi_tape, only: :update
+    end
+    resource :term, only: :show
+  end
 
   get "profile/request_data",
       as: "request_data"
@@ -1004,6 +1037,7 @@ Rails.application.routes.draw do
       scope "roster", controller: "roster/self_materialization", defaults: { type: "Talk" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -1055,6 +1089,7 @@ Rails.application.routes.draw do
                       defaults: { type: "Tutorial" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -1075,6 +1110,7 @@ Rails.application.routes.draw do
       scope "roster", controller: "roster/self_materialization", defaults: { type: "Cohort" } do
         post "self_add", action: :self_add, as: :self_add
         delete "self_remove", action: :self_remove, as: :self_remove
+        patch "self_switch", action: :self_switch, as: :self_switch
       end
     end
   end
@@ -1115,6 +1151,10 @@ Rails.application.routes.draw do
   get "users/list_generic_users",
       to: "users#list_generic_users",
       as: "list_generic_users"
+
+  get "captcha_challenge",
+      to: "captcha_challenges#show",
+      as: "captcha_challenge"
 
   get "users/fill_user_select",
       to: "users#fill_user_select",
@@ -1178,6 +1218,9 @@ Rails.application.routes.draw do
     delete "campaign_registrations/:campaign_id/items/:item_id/withdraw",
            to: "user_registrations#destroy",
            as: :withdraw_item
+    patch "campaign_registrations/:campaign_id/items/:item_id/switch",
+          to: "user_registrations#switch",
+          as: :switch_item
 
     post "campaign_registrations/:campaign_id/preferences",
          to: "user_registrations#save_preferences",

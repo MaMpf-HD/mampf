@@ -259,17 +259,27 @@ RSpec.describe(Talk, type: :model) do
     end
 
     describe "#card_header_path" do
-      it "returns the path for the talk if the user is subscribed to the " \
-         "seminar" do
-        lecture = FactoryBot.build(:seminar)
+      it "returns the path for the talk if the user has access to the " \
+         "seminar's content" do
+        lecture = FactoryBot.build(:seminar, :released_for_all)
+        user = FactoryBot.create(:confirmed_user)
+        talk = FactoryBot.create(:valid_talk, lecture: lecture)
+        expect(talk.card_header_path(user)).to include("talks/")
+      end
+
+      it "returns the path for the talk if the user unlocked (bookmarked) " \
+         "the protected seminar" do
+        lecture = FactoryBot.build(:seminar, :released_for_all,
+                                   passphrase: "secret")
         user = FactoryBot.create(:confirmed_user)
         user.lectures << lecture
         talk = FactoryBot.create(:valid_talk, lecture: lecture)
         expect(talk.card_header_path(user)).to include("talks/")
       end
 
-      it "returns nil if user is not subscribed to the seminar" do
-        lecture = FactoryBot.build(:seminar)
+      it "returns nil if user has not unlocked the protected seminar" do
+        lecture = FactoryBot.build(:seminar, :released_for_all,
+                                   passphrase: "secret")
         user = FactoryBot.create(:confirmed_user)
         talk = FactoryBot.create(:valid_talk, lecture: lecture)
         expect(talk.card_header_path(user)).to be_nil

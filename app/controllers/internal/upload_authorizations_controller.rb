@@ -3,6 +3,7 @@ module Internal
     skip_before_action :store_user_location!
     skip_before_action :authenticate_user!
     skip_before_action :set_current_user
+    skip_before_action :enforce_personal_data
 
     def show
       authorize = authorization_for(params[:uploader])

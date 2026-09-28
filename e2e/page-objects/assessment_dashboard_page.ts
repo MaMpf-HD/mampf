@@ -38,18 +38,19 @@ export class AssessmentDashboardPage {
       .getByRole("tab", { name, exact: true });
   }
 
-  /** The lecture's own tabs wrap the dashboard's, so scope to the inner set. */
+  /** Only the dashboard is a region inside the container; the overview is not. */
   get dashboard(): Locator {
-    return this.page.locator("[data-cy='assessment-dashboard']");
+    return this.container.getByRole("region");
   }
 
+  /** The lecture's own tabs wrap the dashboard's, so scope to the inner set. */
   tab(name: string): Locator {
-    return this.dashboard.getByRole("tab", { name, exact: true });
+    return this.container.getByRole("tab", { name, exact: true });
   }
 
   /** Bootstrap keeps every pane in the DOM, so scope to the one on screen. */
   get pane(): Locator {
-    return this.dashboard.getByRole("tabpanel").filter({ visible: true });
+    return this.container.getByRole("tabpanel").filter({ visible: true });
   }
 
   get saveButton(): Locator {

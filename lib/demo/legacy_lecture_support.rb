@@ -88,9 +88,9 @@ module Demo
                                                name_in_tutorials: "Legacy Student #{number}")
         end
         students.each do |student|
-          next if LectureUserJoin.exists?(lecture: lecture, user: student)
+          next if LectureBookmark.exists?(lecture: lecture, user: student)
 
-          LectureUserJoin.create!(lecture: lecture, user: student)
+          LectureBookmark.create!(lecture: lecture, user: student)
         end
         students
       end

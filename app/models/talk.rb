@@ -91,7 +91,7 @@ class Talk < ApplicationRecord
   end
 
   def card_header_path(user)
-    return unless user.lectures.include?(lecture)
+    return unless lecture.content_accessible_by?(user)
 
     talk_path
   end

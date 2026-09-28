@@ -1,9 +1,3 @@
-include:
-  - path: 
-      # relative to docker/development/
-      - ../../docker/cypress/compose.yml
-      - ../../docker/cypress/compose.interactive.yml
-
 services:
   app:
     command: "sleep infinity"
@@ -20,15 +14,6 @@ services:
 
   app-test:
     command: "RUBY_DEBUG_ENABLE=0 /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"
-
-  xpra:
-    build:
-      context: ../../
-      dockerfile: docker/xpra/Dockerfile
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    ports:
-      - 8060:8060
 
 volumes:
   mampf-command-history:

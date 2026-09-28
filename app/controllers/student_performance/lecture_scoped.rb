@@ -8,7 +8,6 @@ module StudentPerformance
     included do
       before_action :set_lecture
       before_action :authorize_lecture
-      before_action :use_lecture_locale
     end
 
     private
@@ -47,10 +46,6 @@ module StudentPerformance
         Evaluator.new(rule,
                       assignments_complete: @lecture.assignments_complete?,
                       due_points: due_points)
-      end
-
-      def use_lecture_locale
-        I18n.locale = @lecture&.locale_with_inheritance || I18n.default_locale
       end
   end
 end

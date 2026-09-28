@@ -15,6 +15,12 @@
 										 { class: 'form-control mb-2',
 										 	 required: true } %>
 	<% end %>
+  <%= f.label :degree, class: "form-label fw-bold mt-2" %>
+  <%= f.select :degree,
+               Program.degrees.keys.map { |d| [t("programs.degrees.#{d}"), d] },
+               { include_blank: t("admin.program.no_degree") },
+               class: "form-select", aria: { describedby: "program-degree-hint" } %>
+  <div class="form-text" id="program-degree-hint"><%= t("admin.program.degree_hint") %></div>
   <div class="row mt-3">
     <div class="col-12 text-center">
       <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>

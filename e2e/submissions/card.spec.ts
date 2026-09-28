@@ -19,14 +19,13 @@ test.describe("the card for a sheet that is due", () => {
   ): Promise<{ lecture: FactoryBotObject; assignment: FactoryBotObject }> {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacherId,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id,
       title: "Monday group",
     });
     for (const id of studentIds) {
-      await factory.create("lecture_user_join", [], {
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: id,
       });
       await factory.create("tutorial_membership", [], {
@@ -57,12 +56,11 @@ test.describe("the card for a sheet that is due", () => {
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id, title: "Monday group",
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id, user_id: student.user.id,
     });
     await factory.create("tutorial_membership", [], {
@@ -354,12 +352,11 @@ test.describe("the card for a sheet that is due", () => {
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
-      locale: "en",
     });
     const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
       lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Tuesday group",
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id, user_id: student.user.id,
     });
     await factory.create("lecture_membership", [], {

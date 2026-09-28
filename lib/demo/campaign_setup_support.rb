@@ -425,7 +425,7 @@ module Demo
         output("Created Seminar Lecture")
       end
 
-      unless LectureUserJoin.exists?(lecture: seminar, user: teacher)
+      unless LectureBookmark.exists?(lecture: seminar, user: teacher)
         teacher.lectures << seminar
         output("Subscribed teacher to seminar")
       end

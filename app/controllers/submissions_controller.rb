@@ -41,7 +41,8 @@ class SubmissionsController < ApplicationController
   def seen
     AssignmentSighting.stamp!(user: current_user, assignment: @assignment)
 
-    render turbo_stream: [*clear_marker(@assignment), replace_news(history)]
+    render turbo_stream: [*clear_marker(@assignment), replace_news(history),
+                          replace_news_badge(hub.news_count)]
   end
 
   # Same gate as #index, by the same before_actions.
@@ -52,7 +53,7 @@ class SubmissionsController < ApplicationController
     end
 
     render turbo_stream: [*assignments.flat_map { |assignment| clear_marker(assignment) },
-                          replace_news([])]
+                          replace_news([]), replace_news_badge(0)]
   end
 
   # `new` and `edit` are the same frame with the same form in it; only the
@@ -60,7 +61,6 @@ class SubmissionsController < ApplicationController
   def new
     @submission = Submission.new
     @submission.assignment = @assignment
-    set_submission_locale
     render_form
   end
 
@@ -79,7 +79,6 @@ class SubmissionsController < ApplicationController
     # enrollment check in SubmissionAbility.
     authorize! :create, @submission
     @lecture = @submission.assignment.lecture
-    set_submission_locale
     @assignment = @submission.assignment
     return render_card(status: :unprocessable_content) if @submission.not_updatable?
 
@@ -395,8 +394,9 @@ class SubmissionsController < ApplicationController
       # no name to print for somebody who has not been placed in one - the
       # refusal the save would give, before the page is built rather than
       # halfway through it. A hand-in that exists stays where it was filed,
-      # seat or no seat, so replacing its file asks for none.
-      rostered_tutorial!(@assignment.lecture) unless @submission&.persisted?
+      # but replacing its file, like any upload, needs a seat in the lecture
+      # (SubmissionAbility#upload_manuscript), so the form asks for one too.
+      rostered_tutorial!(@assignment.lecture)
       @partners = hub.possible_partners
       render :form, status: status
     end
@@ -422,11 +422,17 @@ class SubmissionsController < ApplicationController
                            SheetNewsComponent.new(sheets: sheets, lecture: @lecture))
     end
 
+    def replace_news_badge(count)
+      turbo_stream.replace(SidebarBadgeComponent::SUBMISSIONS_ID,
+                           SidebarBadgeComponent.new(id: SidebarBadgeComponent::SUBMISSIONS_ID,
+                                                     count: count,
+                                                     title: t("submission.hub.news.indicator")))
+    end
+
     def set_submission
       @submission = Submission.find_by(id: params[:id])
       @assignment = @submission&.assignment
       @lecture = @assignment&.lecture
-      set_submission_locale
       return if @submission
 
       # No card to put a message in, so the frame says what happened and offers
@@ -519,7 +525,6 @@ class SubmissionsController < ApplicationController
     def set_assignment
       @assignment = Assignment.find_by(id: assignment_id)
       @lecture = @assignment&.lecture
-      set_submission_locale
       return if @assignment
 
       render_sheet_gone
@@ -560,14 +565,9 @@ class SubmissionsController < ApplicationController
 
     def set_lecture
       @lecture = Lecture.find_by(id: params[:id])
-      set_submission_locale and return if @lecture
+      return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
-    end
-
-    def set_submission_locale
-      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     end
 
     def join_params
@@ -677,7 +677,7 @@ class SubmissionsController < ApplicationController
       elsif current_user.in?(@submission.users)
         @error = I18n.t("submission.already_in")
       elsif !current_user.proper_student_in?(@submission.tutorial.lecture)
-        @error = I18n.t("submission.lecture_not_subscribed")
+        @error = I18n.t("submission.lecture_not_unlocked")
       end
     end
 
@@ -754,8 +754,11 @@ class SubmissionsController < ApplicationController
     def check_student_status
       return if current_user.proper_student_in?(@lecture)
 
-      redirect_to :root,
-                  alert: I18n.t("controllers.no_student_status_in_lecture")
+      if current_user.in?(@lecture.tutors)
+        redirect_to lecture_tutorials_path(@lecture)
+      else
+        redirect_to lecture_home_path(@lecture)
+      end
     end
 
     # DuePoints and SubmissionsHub read submitted_at on each request, so

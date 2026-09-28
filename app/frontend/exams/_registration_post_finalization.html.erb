@@ -6,7 +6,7 @@
 </div>
 
 <%= render "exams/participants_table",
-           entries: exam.exam_roster_entries.includes(:user)
+           entries: exam.exam_roster_entries.includes(user: User::PROGRAM_PRELOAD)
                         .joins(:user).merge(User.order(:name)),
            editable: true,
            exam: exam %>

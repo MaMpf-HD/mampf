@@ -1,0 +1,26 @@
+/* Badges only where no number can stand; SheetChipComponent says which tone
+   means what. */
+/* A pill with a ground of its own; a weight on top would say the same thing
+   twice. */
+.chip {
+  font-size: var(--hub-rubric, 0.75rem);
+  font-weight: 400;
+  padding: 0.18rem 0.5rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+}
+
+.chip-wait {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.chip-act {
+  background: #fff3cd;
+  color: #7a5b00;
+}
+
+.chip-done {
+  background: #d1e7dd;
+  color: #0f5132;
+}

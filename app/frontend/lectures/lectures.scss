@@ -1,6 +1,7 @@
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/mixins";
+@import "~/styles/branding";
 
 .lecture-video-info {
   position: relative;
@@ -97,15 +98,15 @@
   padding-bottom: 1em;
 
   box-shadow: 0px 2px 7px 0rem rgba(130,26,59,0.2);
-  border: #821A3B solid 1px;
+  border: $mampf-red solid 1px;
   border-radius: 0.4em;
   margin-bottom: 1.5em;
 }
 
 .lecture-nav-pill-button {
-  --bs-nav-link-color: #821A3B;
+  --bs-nav-link-color: #{$mampf-red};
   --bs-nav-link-hover-color: #8d1c40;
-  --bs-nav-pills-link-active-bg: #821A3B;
+  --bs-nav-pills-link-active-bg: #{$mampf-red};
 
   &:focus-visible {
     box-shadow: 0 0 0 0.25rem rgba(130, 26, 59, 0.25);
@@ -159,4 +160,38 @@ h4.lecture-pane-subheader {
 // nothing here. Scoped to this editor so vignette editors keep theirs.
 .lecture-home-trix trix-toolbar .trix-button-group--file-tools {
   display: none;
+}
+
+// Three columns, so that the mode toggle stays centered however long the
+// title is.
+.lecture-title-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem 1rem;
+
+  > :first-child,
+  .dropdown,
+  .dropdown-toggle {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .lecture-title-bar-actions {
+    grid-column: 3;
+    justify-content: flex-end;
+  }
+
+  @include media-breakpoint-down(md) {
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    .lecture-title-bar-actions {
+      grid-column: 1 / -1;
+      justify-content: flex-start;
+    }
+  }
+}
+
+.btn-outline-lecture-edit {
+  @include button-outline-variant($mampf-red);
 }

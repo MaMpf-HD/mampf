@@ -6,7 +6,7 @@ test("tag filter updates question counter when a tag is selected",
     const lecture = await factory.create("lecture", ["released_for_all"],
       { course_id: course.id });
 
-    await factory.create("lecture_user_join", [], { lecture_id: lecture.id, user_id: user.id });
+    await factory.create("lecture_bookmark", [], { lecture_id: lecture.id, user_id: user.id });
 
     const tagAlgebra = await factory.create("tag", [], { title: "Algebra" });
     const tagCalculus = await factory.create("tag", [], { title: "Calculus" });

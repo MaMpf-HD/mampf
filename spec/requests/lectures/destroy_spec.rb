@@ -15,7 +15,7 @@ RSpec.describe("Lecture deletion", type: :request) do
 
       expect { delete(lecture_path(lecture)) }.to change(Lecture, :count).by(-1)
 
-      expect(response).to redirect_to(administration_path)
+      expect(response).to redirect_to(start_path)
       expect(Notification.exists?(notification.id)).to be(false)
     end
   end
@@ -169,7 +169,7 @@ RSpec.describe("Lecture deletion", type: :request) do
     it "deletes the lecture together with them" do
       expect { delete(lecture_path(lecture)) }.to change(Lecture, :count).by(-1)
 
-      expect(response).to redirect_to(administration_path)
+      expect(response).to redirect_to(start_path)
       expect(Registration::Campaign.where(id: [draft.id, running.id])).to be_empty
     end
   end

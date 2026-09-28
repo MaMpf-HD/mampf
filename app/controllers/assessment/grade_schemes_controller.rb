@@ -2,7 +2,6 @@ module Assessment
   class GradeSchemesController < ApplicationController
     before_action :set_assessment
     before_action :set_grade_scheme, only: [:edit, :update, :apply, :destroy]
-    before_action :set_locale
 
     def current_ability
       @current_ability ||= AssessmentAbility.new(current_user)
@@ -151,12 +150,6 @@ module Assessment
           tab: "grades",
           alert: I18n.t("assessment.grade_scheme.not_found")
         )
-      end
-
-      def set_locale
-        I18n.locale = @assessment&.assessable&.lecture&.locale_with_inheritance ||
-                      current_user.locale ||
-                      I18n.default_locale
       end
 
       def grade_scheme_params

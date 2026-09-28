@@ -568,13 +568,14 @@ class Medium < ApplicationRecord
     return false unless published?
     return false if locked?
 
-    return false if teachable_type == "Course" && restricted? && !teachable.in?(user.courses)
-    if teachable_type.in?(["Lecture", "Lesson",
-                           "Talk"]) && restricted? && !teachable.lecture.in?(user.lectures)
-      return false
-    end
+    return true unless restricted?
 
-    true
+    # "only participants": the audience of the lecture, or for a course
+    # medium, of one of the course's lectures (see LectureAudience).
+    participating = LectureAudience.lectures_of(user)
+    return participating.exists?(course_id: teachable.id) if teachable_type == "Course"
+
+    participating.exists?(id: teachable.lecture.id)
   end
 
   def course

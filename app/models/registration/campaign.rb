@@ -53,6 +53,16 @@ module Registration
                               .select(:registration_campaign_id)
       )
     }
+
+    # The counterpart of `non_exam`, in one query rather than one `exam_campaign?`
+    # per campaign. An item of another kind cannot sit in the same campaign
+    # (see Registration::Item), so naming an exam item is enough.
+    scope :exam, lambda {
+      where(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
     DISCARDABLE_STATUSES = ["draft", "open", "closed", "completed"].freeze
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
@@ -91,9 +101,12 @@ module Registration
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
     end
 
+    # An exam campaign without a description is named after its exam, since a
+    # lecture has several of them; the others after what they allocate.
     def student_facing_title
       description.to_s.strip.presence ||
-        I18n.t("registration.user_registration.campaign_main")
+        (roster_group_type == "exams" && titled_exam&.title) ||
+        I18n.t("registration.user_registration.campaign_title.#{roster_group_type}")
     end
 
     def evaluate_policies_for(user, phase: :registration)
@@ -433,6 +446,15 @@ module Registration
 
     private
 
+      def titled_exam
+        item = if association(:registration_items).loaded?
+          registration_items.detect { |i| i.registerable_type == "Exam" }
+        else
+          registration_items.find_by(registerable_type: "Exam")
+        end
+        item&.registerable
+      end
+
       def data_blocker
         return :registrations if user_registrations.exists?
         # Not the allocation timestamps: with no registrations, an allocation
@@ -490,6 +512,7 @@ module Registration
           rejection_policy_id: nil,
           rejected_at: nil,
           rejection_overridden_at: nil,
+          dismissed_at: nil,
           updated_at: Time.current
         )
         # rubocop:enable Rails/SkipsModelValidations
@@ -510,6 +533,7 @@ module Registration
           ),
           rejected_at: now,
           rejection_overridden_at: nil,
+          dismissed_at: nil,
           updated_at: now
         )
         # rubocop:enable Rails/SkipsModelValidations

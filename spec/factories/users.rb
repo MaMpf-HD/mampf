@@ -5,6 +5,7 @@ FactoryBot.define do
     name { Faker::Name.name }
     locale { "en" }
     consents { true }
+    personal_data_confirmed_at { Time.current }
 
     transient do
       lecture_count { 2 }

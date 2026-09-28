@@ -8,7 +8,7 @@ test.describe("the roster panel's copy button", () => {
       await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
       const lecture = await factory.create("lecture", [], {
-        teacher_id: user.id, locale: "en",
+        teacher_id: user.id,
       });
       const tutorial = await factory.create("tutorial", [], {
         lecture_id: lecture.id, title: "Mo 10",
@@ -32,7 +32,7 @@ test.describe("the roster panel's copy button", () => {
       });
 
       const lecture = await factory.create("lecture", [], {
-        teacher_id: user.id, locale: "en",
+        teacher_id: user.id,
       });
       const tutorial = await factory.create("tutorial", [], {
         lecture_id: lecture.id, title: "Mo 10",

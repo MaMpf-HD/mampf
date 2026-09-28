@@ -6,7 +6,11 @@ class LectureHomeAttachmentUploader < Shrine
   plugin :remove_attachment
   plugin :validation_helpers
 
+  Attacher.prepend(MalwareScannableAttacher)
+
   Attacher.validate do
+    MalwareScanGate.validate_cached_file!(self)
+
     validate_min_size 1
     validate_max_size MAX_SIZE
     validate_mime_type_inclusion(
