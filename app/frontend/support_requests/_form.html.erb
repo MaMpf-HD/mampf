@@ -1,6 +1,7 @@
 <%# locals: (support_request:, throttled: nil) %>
 <%= form_with model: support_request, url: support_requests_path, local: true,
-              data: { action: "submit->support-widget#stampPage" } do |f| %>
+              data: { action: "submit->support-widget#stampPage",
+                      support_widget_target: "form" } do |f| %>
   <p class="small text-muted">
     <%= t(user_signed_in? ? "support_request.intro" : "support_request.intro_signed_out") %>
   </p>
@@ -19,7 +20,8 @@
                         class: class_names("form-control form-control-sm",
                                            "is-invalid": support_request.errors[:email].any?),
                         required: true,
-                        autocomplete: "email" %>
+                        autocomplete: "email",
+                        data: { support_widget_target: "email" } %>
 
       <% support_request.errors.full_messages_for(:email).each do |message| %>
         <div class="invalid-feedback"><%= message %></div>

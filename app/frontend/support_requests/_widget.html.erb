@@ -1,13 +1,16 @@
 <%= vite_stylesheet_tag "support_requests/widget.scss" %>
 
-<div class="support-widget d-print-none" data-controller="support-widget">
+<div
+  class="support-widget d-print-none"
+  data-controller="support-widget"
+  data-action="keydown.esc->support-widget#close"
+>
   <section
     id="support-widget-panel"
     class="support-widget__panel card shadow"
     aria-labelledby="support-widget-title"
     hidden
     data-support-widget-target="panel"
-    data-action="keydown.esc->support-widget#close"
   >
     <div class="card-header d-flex align-items-center justify-content-between">
       <h2 id="support-widget-title" class="h6 mb-0">
