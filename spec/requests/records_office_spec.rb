@@ -11,8 +11,8 @@ RSpec.describe("Records office", type: :request) do
   end
 
   def csv_rows
-    expect(response.body).to start_with("﻿")
-    CSV.parse(response.body.delete_prefix("﻿"), col_sep: ";")
+    expect(response.body).to start_with("\uFEFF")
+    CSV.parse(response.body.delete_prefix("\uFEFF"), col_sep: ";")
   end
 
   describe "who gets in" do

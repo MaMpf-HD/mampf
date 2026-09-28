@@ -3,7 +3,7 @@ module RecordsOffice
   # the fields, decimal commas, and a byte order mark, without which Excel
   # reads the file as Windows-1252 and garbles every umlaut.
   module Export
-    BOM = "﻿".freeze
+    BOM = "\uFEFF".freeze
     PERSON_COLUMNS = [:last_name, :first_name, :matriculation_number, :email].freeze
     COLUMNS = {
       grades: PERSON_COLUMNS + [:kind, :title, :grade, :status],
