@@ -4,11 +4,10 @@ module Dashboard
       Term.chronological.to_a
     end
 
-    # The term given via ?term=, else the one remembered from the user's last
-    # pick (see Dashboard::BoardRenderer), else the active term.
-    def self.selected(params, remembered = nil)
-      Term.from_dashboard_param(params[:term]) ||
-        Term.from_dashboard_param(remembered) || Term.active
+    # The term to show when no ?term= was picked: the one remembered from the
+    # user's last pick (see Dashboard::BoardRenderer), else the active term.
+    def self.fallback(remembered = nil)
+      Term.from_dashboard_param(remembered) || Term.active
     end
 
     # Matches what the lecture search shows for the next term, i.e. includes

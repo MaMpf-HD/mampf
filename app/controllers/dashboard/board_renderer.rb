@@ -9,13 +9,13 @@ module Dashboard
 
     private
 
-      # The term to show on the dashboard (see Dashboard::TermSelector.selected).
-      # An explicit ?term= pick is stored in a cookie, so the dashboard opens
-      # on that term next time.
+      # The term to show on the dashboard: the one picked via ?term=, else
+      # Dashboard::TermSelector.fallback. A valid ?term= pick is stored in a
+      # cookie, so the dashboard opens on that term next time.
       def selected_dashboard_term
-        term = Dashboard::TermSelector.selected(params, cookies[TERM_COOKIE])
-        remember_dashboard_term(term) if params[:term].present? && term
-        term
+        term_picked = Term.from_dashboard_param(params[:term])
+        remember_dashboard_term(term_picked) if term_picked
+        term_picked || Dashboard::TermSelector.fallback(cookies[TERM_COOKIE])
       end
 
       def remember_dashboard_term(term)
