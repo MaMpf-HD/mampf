@@ -26,11 +26,11 @@ module Dashboard
     # talk has a card to sit on.
     def enrolled_lectures
       @enrolled_lectures ||= begin
-        enrolled = lectures_of_term(
-          user.roster_lectures.or(user.lectures_with_registration_application)
-        )
-        enrolled += talks.map(&:lecture).uniq - enrolled - staff_lectures -
-                    tutored_lectures
+        seated = user.roster_lectures.or(user.lectures_with_registration_application)
+        speaking = talks.map(&:lecture_id).uniq -
+                   (staff_lectures + tutored_lectures).map(&:id)
+        enrolled = lectures_of_term(Lecture.where(id: seated.select(:id))
+                                           .or(Lecture.where(id: speaking)))
         statuses = Registration::StatusQuery.new(user, enrolled.map(&:id))
                                             .statuses
 

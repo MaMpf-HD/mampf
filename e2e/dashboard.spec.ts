@@ -385,6 +385,7 @@ test("shows a student's talk on the seminar's card",
     });
     await factory.create("talk", [], {
       lecture_id: seminar.id, title: "Sylow theorems", speaker_ids: [user.id],
+      dates: ["2025-06-03", "2025-06-10"],
     });
 
     await new DashboardLectureBrowsePage(page).goto();
@@ -393,6 +394,7 @@ test("shows a student's talk on the seminar's card",
     await expect(registered.getByRole("link", { name: "Group Theory Seminar" })).toBeVisible();
     const talk = registered.getByRole("link", { name: "Sylow theorems", exact: true });
     await expect(talk).toHaveCount(1);
+    await expect(registered.getByText("2025-06-03, 2025-06-10")).toBeVisible();
     await talk.click();
     await expect(page).toHaveURL(/\/talks\/\d+$/);
   });

@@ -199,7 +199,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
       expect(note.at_css("a[href='/talks/#{talk.id}']").text.squish)
         .to eq("Sylow theorems")
-      expect(note.text.squish).to include("with Grace Hopper")
+      expect(note.text.squish).to include("2026-11-03", "with Grace Hopper")
     end
   end
 end

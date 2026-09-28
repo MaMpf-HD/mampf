@@ -71,8 +71,10 @@ class LectureDashboardCardComponent < ViewComponent::Base
     registration_status.present? && registration_status != :confirmed
   end
 
+  # Each date keeps together; with several, the line may wrap between them.
   def talk_dates(talk)
-    talk.dates.map { |date| I18n.l(date, format: :concise) }.join(", ").presence
+    dates = talk.dates.map { |date| tag.span(I18n.l(date, format: :concise), class: "text-nowrap") }
+    safe_join(dates, ", ").presence
   end
 
   def talk_cospeakers(talk)

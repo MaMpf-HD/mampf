@@ -247,14 +247,15 @@ $card-rail-width: 12rem;
 
     &__talk-line {
         display: flex;
+        flex-wrap: wrap;
         align-items: baseline;
         justify-content: space-between;
-        gap: 0.5rem;
+        column-gap: 0.5rem;
     }
 
     &__talk-date {
-        flex-shrink: 0;
-        white-space: nowrap;
+        margin-left: auto;
+        text-align: end;
     }
 
     // lines up with the talk's title, past the microphone
