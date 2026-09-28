@@ -5,6 +5,17 @@ module RecordsOffice
   class TermOverview
     GROUP_ASSOCIATIONS = { tutorials: :tutorial_memberships, talks: :speaker_talk_joins,
                            cohorts: :cohort_memberships, exams: :exam_roster_entries }.freeze
+    GROUP_TYPES = { "tutorial" => Tutorial, "talk" => Talk,
+                    "cohort" => Cohort, "exam" => Exam }.freeze
+
+    # Talks are listed by their number, as the seminar lists them.
+    def self.group_title(group)
+      group.is_a?(Talk) ? group.to_label : group.title
+    end
+
+    def self.group_type(group)
+      GROUP_TYPES.key(group.class)
+    end
 
     def initialize(term)
       @term = term

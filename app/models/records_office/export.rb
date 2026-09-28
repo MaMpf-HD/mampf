@@ -12,11 +12,6 @@ module RecordsOffice
       emails: PERSON_COLUMNS
     }.freeze
 
-    # The rosterables whose members the records office can download, by the
-    # name the route carries.
-    GROUP_TYPES = { "tutorial" => Tutorial, "talk" => Talk,
-                    "cohort" => Cohort, "exam" => Exam }.freeze
-
     # Lists the exam and talk results whose `results_published_at` is set, as
     # the students see them; assignments have no release step and stay out.
     def self.grades(lecture)
@@ -24,7 +19,8 @@ module RecordsOffice
       participations = Assessment::Participation.with_result.where(assessment: gradebooks)
                                                 .includes(:user, assessment: :assessable)
                                                 .sort_by do |participation|
-        [group_title(participation.assessment.assessable), *sort_key(participation.user)]
+        [TermOverview.group_title(participation.assessment.assessable),
+         *sort_key(participation.user)]
       end
       generate(:grades, participations.map { |participation| grade_row(participation) })
     end
@@ -50,11 +46,6 @@ module RecordsOffice
       generate(:emails, members.sort_by { |user| sort_key(user) }.map { |user| person(user) })
     end
 
-    # A talk may have no title of its own; its label carries the number.
-    def self.group_title(group)
-      group.is_a?(Talk) ? group.to_label : group.title
-    end
-
     def self.generate(kind, rows)
       BOM + SafeCsv.generate(col_sep: ";") do |csv|
         csv << COLUMNS.fetch(kind).map { |column| I18n.t("records_office.columns.#{column}") }
@@ -75,13 +66,13 @@ module RecordsOffice
 
     def self.grade_row(participation)
       assessable = participation.assessment.assessable
-      kind = I18n.t("records_office.kinds.#{assessable.class.name.downcase}")
+      kind = I18n.t("records_office.kinds.#{TermOverview.group_type(assessable)}")
       grade = participation.grade_numeric && format("%.1f", participation.grade_numeric)
+      grade = grade&.tr(".", ",") || participation.grade_text
       status = if participation.absent? || participation.exempt?
         I18n.t("assessment.grading_exam.status_word.#{participation.status}")
       end
-      person(participation.user) +
-        [kind, group_title(assessable), grade&.tr(".", ",") || participation.grade_text, status]
+      person(participation.user) + [kind, TermOverview.group_title(assessable), grade, status]
     end
     private_class_method :grade_row
 

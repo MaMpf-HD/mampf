@@ -23,10 +23,10 @@ class RecordsOfficeController < ApplicationController
   end
 
   def emails
-    group = RecordsOffice::Export::GROUP_TYPES.fetch(params[:group_type])
-                                              .find(params[:group_id])
+    group = RecordsOffice::TermOverview::GROUP_TYPES.fetch(params[:group_type])
+                                                    .find(params[:group_id])
     send_csv(RecordsOffice::Export.emails(group), :emails,
-             "#{group.lecture.title} #{RecordsOffice::Export.group_title(group)}")
+             "#{group.lecture.title} #{RecordsOffice::TermOverview.group_title(group)}")
   end
 
   private

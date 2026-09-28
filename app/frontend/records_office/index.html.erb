@@ -88,14 +88,15 @@
 
             <tbody>
               <% groups.each do |group| %>
-                <% title = RecordsOffice::Export.group_title(group) %>
+                <% title = RecordsOffice::TermOverview.group_title(group) %>
+                <% group_type = RecordsOffice::TermOverview.group_type(group) %>
                 <% count = group.roster_entries_count %>
 
                 <tr>
                   <th scope="row" class="fw-normal"><%= title %></th>
 
                   <td>
-                    <%= t("records_office.kinds.#{group.class.name.downcase}") %>
+                    <%= t("records_office.kinds.#{group_type}") %>
                   </td>
 
                   <td>
@@ -111,7 +112,7 @@
                   </td>
 
                   <td class="text-end">
-                    <%= link_to records_office_emails_path(group.class.name.downcase, group),
+                    <%= link_to records_office_emails_path(group_type, group),
                                 class: "btn btn-sm btn-link",
                                 "aria-label": t("records_office.emails_of", group: title) do %>
                       <i class="bi bi-envelope" aria-hidden="true"></i>
