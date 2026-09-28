@@ -234,7 +234,6 @@ en:
       reject_button: 'Reject'
       reject_tooltip: 'Reject registration and remove from the active registrations list'
       reject_confirm: 'This registration will be rejected and removed from the active registrations list. Continue?'
-      remove_button: 'Remove'
       remove_tooltip: 'Remove person from the participants list'
       remove_disabled_tooltip: 'Cannot remove because grading data already exists'
       remove_confirm: 'This person will be removed from the participants list. Continue?'

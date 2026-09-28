@@ -2,7 +2,9 @@
   <table class="table table-hover mb-0 align-middle">
     <thead class="table-light">
       <tr>
-        <th scope="col" class="border-top-0"><%= t("basics.name") %></th>
+        <th scope="col" class="border-top-0 person-name-column">
+          <%= t("basics.name") %>
+        </th>
 
         <th scope="col" class="border-top-0">
           <%= User.human_attribute_name(:matriculation_number) %>
@@ -34,10 +36,7 @@
           <% user = membership.user %>
 
           <tr>
-            <td>
-              <%= render "shared/copy_email_button", email: user.email,
-                                                     name: user.tutorial_name %>
-            </td>
+            <td><%= user.tutorial_name %></td>
 
             <td><%= user.matriculation_number %></td>
             <td><%= user.program&.name_with_subject %></td>
@@ -60,7 +59,9 @@
             </td>
 
             <td class="text-end">
-              <div class="d-flex justify-content-end gap-2">
+              <div class="d-flex justify-content-end gap-1">
+                <%= render "shared/copy_email_button", email: user.email %>
+
                 <%= button_to component.helpers.remove_member_lecture_path(component.lecture,
                                                                            user),
                               method: :delete,

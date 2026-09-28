@@ -81,7 +81,7 @@
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th><%= t("basics.name") %></th>
+              <th class="person-name-column"><%= t("basics.name") %></th>
               <th><%= User.human_attribute_name(:matriculation_number) %></th>
               <th><%= User.human_attribute_name(:program_id) %></th>
               <th class="text-end"><%= t("basics.actions") %></th>
@@ -97,58 +97,48 @@
                 data-exams--registration-list-target="entry"
                 data-student-search="<%= "#{user.tutorial_name} #{user.matriculation_number} #{user.email}".downcase %>"
               >
-                <td>
-                  <%= render "shared/copy_email_button",
-                             email: user.email, name: user.tutorial_name.presence || user.email %>
-                </td>
+                <td><%= user.tutorial_name.presence || user.email %></td>
 
                 <td><%= user.matriculation_number %></td>
                 <td><%= user.program&.name_with_subject %></td>
 
                 <td class="text-end">
-                  <% if removable %>
-                    <%= button_to remove_participant_exam_path(exam,
-                                                               user_id: user.id),
-                                  method: :delete,
-                                  class: "btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1",
-                                  title: t("assessment.registration_tab.remove_tooltip"),
-                                  aria: {
-                                    label: t("assessment.registration_tab.remove_tooltip")
-                                  },
-                                  form: {
-                                    class: "d-inline-block mb-0",
-                                    data: {
-                                      turbo_confirm: t("assessment.registration_tab.remove_confirm")
-                                    }
-                                  } do %>
-                      <i class="bi bi-trash"></i>
+                  <div class="d-flex justify-content-end gap-1">
+                    <%= render "shared/copy_email_button", email: user.email %>
 
-                      <span>
-                        <%= t("assessment.registration_tab.remove_button") %>
+                    <% if removable %>
+                      <%= button_to remove_participant_exam_path(exam,
+                                                                 user_id: user.id),
+                                    method: :delete,
+                                    class: "btn icon-button icon-button--danger",
+                                    title: t("assessment.registration_tab.remove_tooltip"),
+                                    aria: {
+                                      label: t("assessment.registration_tab.remove_tooltip")
+                                    },
+                                    form: {
+                                      class: "d-inline-flex mb-0",
+                                      data: {
+                                        turbo_confirm: t("assessment.registration_tab.remove_confirm")
+                                      }
+                                    } do %>
+                        <i class="bi bi-trash" aria-hidden="true"></i>
+                      <% end %>
+                    <% else %>
+                      <span
+                        class="d-inline-flex"
+                        title="<%= t("assessment.registration_tab.remove_disabled_tooltip") %>"
+                      >
+                        <button
+                          type="button"
+                          class="btn icon-button"
+                          disabled
+                          aria-label="<%= t("assessment.registration_tab.remove_disabled_tooltip") %>"
+                        >
+                          <i class="bi bi-trash" aria-hidden="true"></i>
+                        </button>
                       </span>
                     <% end %>
-                  <% else %>
-                    <span
-                      class="d-inline-block"
-                      title="<%= t("assessment.registration_tab.remove_disabled_tooltip") %>"
-                    >
-                      <button
-                        type="button"
-                        class="
-                          btn btn-sm btn-outline-danger d-inline-flex
-                          align-items-center gap-1
-                        "
-                        disabled
-                        aria-label="<%= t("assessment.registration_tab.remove_disabled_tooltip") %>"
-                      >
-                        <i class="bi bi-trash"></i>
-
-                        <span>
-                          <%= t("assessment.registration_tab.remove_button") %>
-                        </span>
-                      </button>
-                    </span>
-                  <% end %>
+                  </div>
                 </td>
               </tr>
             <% end %>
@@ -173,9 +163,10 @@
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
         <tr>
-          <th><%= t("basics.name") %></th>
+          <th class="person-name-column"><%= t("basics.name") %></th>
           <th><%= User.human_attribute_name(:matriculation_number) %></th>
           <th><%= User.human_attribute_name(:program_id) %></th>
+          <th class="text-end"><%= t("basics.actions") %></th>
         </tr>
       </thead>
 
@@ -184,13 +175,13 @@
           <% user = entry.user %>
 
           <tr>
-            <td>
-              <%= render "shared/copy_email_button", email: user.email,
-                                                     name: user.tutorial_name %>
-            </td>
-
+            <td><%= user.tutorial_name %></td>
             <td><%= user.matriculation_number %></td>
             <td><%= user.program&.name_with_subject %></td>
+
+            <td class="text-end">
+              <%= render "shared/copy_email_button", email: user.email %>
+            </td>
           </tr>
         <% end %>
       </tbody>

@@ -1,18 +1,12 @@
-<%# locals: (email:, name: nil) %>
-<%# With a name, name and button stay together, so that the button never
-    wraps onto a line of its own. %>
+<%# locals: (email:) %>
 <% label = "#{t("buttons.copy_email_address")}: #{email}" %>
 <span
-  class="<%= "d-inline-flex align-items-center gap-1" if name %>"
+  class="d-inline-flex"
   data-controller="clipboard"
   data-clipboard-text-value="<%= email %>"
   data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
   data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
 >
-  <% if name %>
-    <span><%= name %></span>
-  <% end %>
-
   <button
     type="button"
     class="btn icon-button"
