@@ -50,7 +50,7 @@ class DashboardTermSelectComponent < ViewComponent::Base
   # Without an anchor, the picker sits on the dashboard and the link jumps down
   # to the lecture search. With one, the picker is already in the search.
   def next_term_link_data
-    data = { testid: "next-term-notice-link" }
+    data = { testid: "next-term-notice-link", turbo_prefetch: false }
     anchor.present? ? data.merge(pick_data(next_term)) : data
   end
 
