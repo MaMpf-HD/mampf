@@ -87,7 +87,7 @@ RSpec.describe("Records office", type: :request) do
 
       rows = csv_rows
       expect(rows.headers).to eq(["Last name", "First name", "Matriculation number", "Email"])
-      expect(rows.map { |row| row["Last name"] }).to eq(["Noether", "Zuse"])
+      expect(rows["Last name"]).to eq(["Noether", "Zuse"])
       expect(rows.first["Matriculation number"]).to eq("1234567")
     end
 
@@ -115,6 +115,25 @@ RSpec.describe("Records office", type: :request) do
         .to eq([["Noether", "Exam", "Final exam", "2,3", nil],
                 ["Zuse", "Exam", "Final exam", nil, "absent"],
                 ["Noether", "Talk", talk.to_label, "1,0", nil]])
+    end
+
+    it "lists the exams first and the talks by their number" do
+      seminar = create(:lecture, term: term, sort: "seminar")
+      speaker = person("Noether", "Emmy")
+      [[2, "Primes"], [10, "Groups"]].each do |position, title|
+        talk = create(:talk, lecture: seminar, title: title, position: position)
+        talk.assessment.update!(results_published_at: 1.hour.ago)
+        create(:assessment_participation, :reviewed, assessment: talk.assessment,
+                                                     user: speaker, grade_numeric: 1.0)
+      end
+      exam = create(:exam, lecture: seminar, title: "Written exam")
+      exam.assessment.update!(results_published_at: 1.hour.ago)
+      create(:assessment_participation, :reviewed, assessment: exam.assessment,
+                                                   user: speaker, grade_numeric: 2.0)
+
+      get records_office_grades_path(seminar)
+
+      expect(csv_rows["Title"]).to eq(["Written exam", "Talk 2. Primes", "Talk 10. Groups"])
     end
 
     it "gives exactly the results the students were shown, and no sheets" do

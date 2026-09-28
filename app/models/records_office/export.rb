@@ -19,8 +19,7 @@ module RecordsOffice
       participations = Assessment::Participation.with_result.where(assessment: gradebooks)
                                                 .includes(:user, assessment: :assessable)
                                                 .sort_by do |participation|
-        [TermOverview.group_title(participation.assessment.assessable),
-         *sort_key(participation.user)]
+        [*assessable_key(participation.assessment.assessable), *sort_key(participation.user)]
       end
       generate(:grades, participations.map { |participation| grade_row(participation) })
     end
@@ -53,6 +52,17 @@ module RecordsOffice
       end
     end
     private_class_method :generate
+
+    # Puts the exams first, by date and then title, and the talks after them by
+    # their number, so talk 10 follows talk 2.
+    def self.assessable_key(assessable)
+      if assessable.is_a?(Talk)
+        [1, assessable.position.to_i, assessable.id]
+      else
+        [0, assessable.date ? 0 : 1, assessable.date.to_i, assessable.title.to_s, assessable.id]
+      end
+    end
+    private_class_method :assessable_key
 
     def self.sort_key(user)
       [user.last_name.to_s.downcase, user.first_name.to_s.downcase, user.email]
