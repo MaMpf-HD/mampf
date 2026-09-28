@@ -18,7 +18,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @mode = "tutor"
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: :tutors)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
     @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial)
     @participations_by_user_id =
       preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
@@ -29,7 +29,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @tutorials = @lecture.tutorials
     @stack = @assignment.submissions.proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: :tutors)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
 
     @non_submitters = @assignment.non_submitters_in_tutorials

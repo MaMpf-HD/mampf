@@ -47,8 +47,6 @@ RSpec.describe(SubmissionAbility) do
       expect(ability.can?(:accept, submission)).to be(true)
     end
 
-    # The teacher stands in for a tutor with the files, but whether a late
-    # hand-in counts stays with the group's tutor.
     it "lets the lecture's teacher correct, but not decide on a late hand-in" do
       ability = described_class.new(lecture.teacher)
 
