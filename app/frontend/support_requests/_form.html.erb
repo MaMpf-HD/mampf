@@ -1,0 +1,53 @@
+<%# locals: (support_request:, throttled: false) %>
+<%= form_with model: support_request, url: support_requests_path, local: true,
+              data: { action: "submit->support-widget#stampPage" } do |f| %>
+  <p class="small text-muted">
+    <%= t(user_signed_in? ? "support_request.intro" : "support_request.intro_signed_out") %>
+  </p>
+
+  <% if throttled %>
+    <div class="alert alert-warning py-2 small" role="alert">
+      <%= t("support_request.throttled") %>
+    </div>
+  <% end %>
+
+  <% unless user_signed_in? %>
+    <div class="mb-2">
+      <%= f.label :email, t("support_request.email"), class: "form-label small mb-1" %>
+
+      <%= f.email_field :email,
+                        class: class_names("form-control form-control-sm",
+                                           "is-invalid": support_request.errors[:email].any?),
+                        required: true,
+                        autocomplete: "email" %>
+
+      <% support_request.errors.full_messages_for(:email).each do |message| %>
+        <div class="invalid-feedback"><%= message %></div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="mb-2">
+    <%= f.label :message, t("support_request.message"), class: "visually-hidden" %>
+
+    <%= f.text_area :message,
+                    rows: 6,
+                    class: class_names("form-control",
+                                       "is-invalid": support_request.errors[:message].any?),
+                    placeholder: t("support_request.message_placeholder"),
+                    required: true,
+                    minlength: SupportRequest::MESSAGE_MIN_LENGTH,
+                    maxlength: SupportRequest::MESSAGE_MAX_LENGTH,
+                    data: { support_widget_target: "message" } %>
+
+    <% support_request.errors.full_messages_for(:message).each do |message| %>
+      <div class="invalid-feedback"><%= message %></div>
+    <% end %>
+  </div>
+
+  <%= f.hidden_field :page, data: { support_widget_target: "page" } %>
+
+  <div class="text-end">
+    <%= f.submit t("support_request.send"), class: "btn btn-primary btn-sm" %>
+  </div>
+<% end %>

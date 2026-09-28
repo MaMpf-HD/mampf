@@ -12,15 +12,24 @@ RSpec.describe("Mail senders") do
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
   end
 
-  it "sends feedback from the sender address to the feedback address" do
-    feedback = Feedback.create!(user: user, title: "Idea", feedback: "A longer idea text",
-                                can_contact: true)
+  it "sends a support request from the sender address to the support address" do
+    request = { "message" => "My exam registration does not work.", "user_id" => user.id,
+                "page" => "http://localhost/lectures/1" }
 
-    email = FeedbackMailer.with(feedback: feedback).new_user_feedback_email
+    email = SupportRequestMailer.with(support_request: request).new_support_request_email
 
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
-    expect(email.to).to eq([DefaultSetting::FEEDBACK_EMAIL])
+    expect(email.to).to eq([DefaultSetting::SUPPORT_EMAIL])
     expect(email.reply_to).to eq([user.email])
+    expect(email.body.to_s).to include("My exam registration does not work.")
+  end
+
+  it "answers a support request from somebody not signed in at the given address" do
+    request = { "message" => "I cannot sign in.", "email" => "someone@example.com" }
+
+    email = SupportRequestMailer.with(support_request: request).new_support_request_email
+
+    expect(email.reply_to).to eq(["someone@example.com"])
   end
 
   it "sends a user's data from the sender address to that user alone" do

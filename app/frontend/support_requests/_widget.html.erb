@@ -1,0 +1,42 @@
+<%= vite_stylesheet_tag "support_requests/widget.scss" %>
+
+<div class="support-widget d-print-none" data-controller="support-widget">
+  <section
+    id="support-widget-panel"
+    class="support-widget__panel card shadow"
+    aria-labelledby="support-widget-title"
+    hidden
+    data-support-widget-target="panel"
+    data-action="keydown.esc->support-widget#close"
+  >
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h2 id="support-widget-title" class="h6 mb-0">
+        <%= t("support_request.title") %>
+      </h2>
+
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="<%= t("buttons.close") %>"
+        data-action="support-widget#close"
+      ></button>
+    </div>
+
+    <div id="support-request-body" class="card-body">
+      <%= render "support_requests/form", support_request: SupportRequest.new %>
+    </div>
+  </section>
+
+  <button
+    type="button"
+    class="support-widget__toggle"
+    title="<%= t("support_request.open") %>"
+    aria-label="<%= t("support_request.open") %>"
+    aria-expanded="false"
+    aria-controls="support-widget-panel"
+    data-support-widget-target="toggle"
+    data-action="support-widget#toggle"
+  >
+    <i class="bi bi-question-lg" aria-hidden="true"></i>
+  </button>
+</div>

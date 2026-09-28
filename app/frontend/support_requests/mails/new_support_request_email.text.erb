@@ -1,0 +1,9 @@
+<%= @request["message"] %>
+
+-----
+<% if @user %>
+<%= @user.tutorial_name %> (<%= @user.email %>, id <%= @user.id %>)
+<% else %>
+<%= @request["email"] %> (not signed in)
+<% end %>
+<%= @request["page"] %>

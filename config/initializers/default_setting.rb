@@ -3,6 +3,7 @@ class DefaultSetting
   FROM_ADDRESS = ENV.fetch("FROM_ADDRESS")
   ERROR_EMAIL = ENV.fetch("ERROR_EMAIL")
   FEEDBACK_EMAIL = ENV.fetch("FEEDBACK_EMAIL")
+  SUPPORT_EMAIL = ENV.fetch("SUPPORT_EMAIL")
   PROJECT_NOTIFICATION_EMAIL = ENV.fetch("PROJECT_NOTIFICATION_EMAIL")
   BLOG_LINK = ENV.fetch("BLOG")
   RESEARCHGATE_LINK = "https://www.researchgate.net/project/MaMpf-Mathematische-Medienplattform".freeze
