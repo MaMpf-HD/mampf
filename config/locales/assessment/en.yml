@@ -348,8 +348,11 @@ en:
       more_actions: 'More actions'
       summary:
         handed_in:
-          one: '1 hand-in'
-          other: '%{count} hand-ins'
+          one: '1 handed in'
+          other: '%{count} handed in'
+        teams:
+          one: '(1 team)'
+          other: '(%{count} teams)'
         reviewed: '%{count} reviewed'
         pending_grading: '%{count} pending grading'
         not_submitted: '%{count} not submitted'
