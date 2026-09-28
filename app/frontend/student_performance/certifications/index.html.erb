@@ -65,7 +65,7 @@
 
     <% if @rule %>
       <div class="bg-light rounded border mt-3 mb-4 py-2 px-3">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex flex-wrap align-items-center column-gap-3">
           <div class="mb-0">
             <span class="text-muted small border-end pe-2 me-2">
               <%= t("student_performance.certifications.index.rule_info") %>
@@ -117,12 +117,12 @@
             <% end %>
           </div>
 
-          <div class="d-flex gap-2 ms-3">
+          <div class="d-flex">
             <%= link_to edit_lecture_student_performance_rules_path(
                          @lecture,
                          source_frame: "performance-certifications-frame"
                        ),
-                       class: "btn btn-outline-primary btn-sm text-nowrap",
+                       class: "btn btn-link btn-sm p-0 text-nowrap text-decoration-none",
                        data: { turbo_frame: "rule-editor-frame" } do %>
               <i class="bi bi-pencil me-1"></i>
               <%= t("student_performance.rules.show.edit_button") %>
