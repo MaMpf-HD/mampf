@@ -12,7 +12,7 @@ de:
             achievement:
               must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
   student_performance:
-    eligibility_in_use: "Die Anmeldung für %{campaigns} fragt diese Zulassungen noch ab. Schließe sie zuerst ab oder entferne dort die Zulassungsbedingung."
+    eligibility_in_use: "Die Anmeldung für %{campaigns} fragt diese Zulassungen noch ab. Schließe sie zuerst ab, oder entferne dort, solange sie ein Entwurf ist, die Richtlinie „Studierendenleistung“."
     lists:
       search: "Studierende suchen"
       no_match: "Keine Studierenden gefunden."
@@ -109,7 +109,7 @@ de:
         save: "Regel speichern"
         threshold_section: "Punkteschwelle"
         none_mode: "Keine Punkteschwelle"
-        none_hint: "Es zählen nur die geforderten Zusatzkriterien. Ohne welche wird jede Person zur Zulassung vorgeschlagen, und Du lehnst einzelne von Hand ab."
+        none_hint: "Es zählen nur die geforderten Zusatzkriterien. Sind keine gewählt, wird jede Person zur Zulassung vorgeschlagen, und Du lehnst einzelne von Hand ab."
         percentage_mode: "Prozent der Gesamtpunkte"
         percentage_hint: "Studierende müssen diesen Prozentsatz der Gesamtpunkte erreichen."
         absolute_mode: "Absolute Punkte"
