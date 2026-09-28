@@ -31,6 +31,31 @@ test.describe("the group rows", () => {
       await expect(title).toHaveAttribute("aria-expanded", "false");
     });
 
+  test("open a participant's group from the participants table",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
+      const tutorial = await factory.create("tutorial", [], {
+        lecture_id: lecture.id, title: "Mo 10", capacity: 8, skip_campaigns: true,
+      });
+      await tutorial.__call("add_user_to_roster!", student.user);
+      await factory.create("lecture_membership", [], {
+        lecture_id: lecture.id, user_id: student.user.id,
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit`);
+      await page.getByRole("tab", { name: "Participants" }).click();
+      await page.getByRole("row").filter({
+        has: page.getByRole("button", { name: `Copy email address: ${student.user.email}` }),
+      }).getByRole("link", { name: "Mo 10", exact: true }).click();
+
+      const panel = page.getByRole("complementary", { name: "Participants" });
+      await expect(panel.getByRole("heading", { name: "Participants" })).toBeVisible();
+      await expect(panel.getByRole("button", {
+        name: `Copy email address: ${student.user.email}`,
+      })).toBeVisible();
+      await expect(page).toHaveURL(/tab=groups/);
+    });
+
   test("open an allocated group's roster from the allocation table with the keyboard",
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });

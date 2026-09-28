@@ -47,8 +47,7 @@
               <% if groups.any? %>
                 <div class="d-flex flex-wrap gap-1">
                   <% groups.each do |group| %>
-                    <%= component.helpers.roster_group_badge(group,
-                                                             component.group_type) %>
+                    <%= component.helpers.roster_group_link(group) %>
                   <% end %>
                 </div>
               <% else %>
