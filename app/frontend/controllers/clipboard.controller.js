@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { Tooltip } from "bootstrap";
 
 const FEEDBACK_DURATION = 1500;
 const SUCCESS_ICON = "bi-check2";
@@ -34,6 +35,7 @@ export default class extends Controller {
     if (this.hasStatusTarget) {
       this.statusTarget.textContent = message;
     }
+    this.showNote(message);
     if (!this.hasIconTarget) return;
 
     clearTimeout(this.timeout);
@@ -43,7 +45,28 @@ export default class extends Controller {
     }, FEEDBACK_DURATION);
   }
 
+  /**
+   * Says in words what happened: a changed icon alone left people wondering
+   * whether they had just sent a mail. Hung on the body, so that a panel
+   * which clips its content does not cut the note off.
+   */
+  showNote(message) {
+    const button = this.element.querySelector("button") || this.element;
+    clearTimeout(this.noteTimeout);
+    this.note?.dispose();
+    this.note = new Tooltip(button, { title: message, trigger: "manual", container: "body" });
+    this.note.show();
+    this.noteTimeout = setTimeout(() => this.hideNote(), FEEDBACK_DURATION);
+  }
+
+  hideNote() {
+    this.note?.dispose();
+    this.note = null;
+  }
+
   disconnect() {
     clearTimeout(this.timeout);
+    clearTimeout(this.noteTimeout);
+    this.hideNote();
   }
 }

@@ -1,4 +1,7 @@
+<%# locals: (email:) %>
+<% label = "#{t("buttons.copy_email_address")}: #{email}" %>
 <span
+  class="d-inline-flex"
   data-controller="clipboard"
   data-clipboard-text-value="<%= email %>"
   data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
@@ -6,12 +9,12 @@
 >
   <button
     type="button"
-    class="btn btn-link btn-sm p-0 border-0 align-baseline text-muted ms-1"
+    class="btn icon-button"
     data-action="clipboard#copy"
-    title="<%= t("buttons.copy_email_address") %>"
-    aria-label="<%= t("buttons.copy_email_address") %>"
+    title="<%= label %>"
+    aria-label="<%= label %>"
   >
-    <i class="bi bi-envelope" data-clipboard-target="icon"></i>
+    <i class="bi bi-envelope" aria-hidden="true" data-clipboard-target="icon"></i>
   </button>
   <span class="visually-hidden" role="status" data-clipboard-target="status"></span>
 </span>

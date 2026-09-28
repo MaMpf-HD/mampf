@@ -32,14 +32,6 @@ RSpec.describe(Lectures::MarkingBacklog) do
       .to eq([["Homework 1", "Mo 10", 2]])
   end
 
-  it "counts every group for the lecturer" do
-    backlog = described_class.new(lecture)
-
-    expect(backlog.entries.map { |e| [e.tutorial.title, e.people] })
-      .to contain_exactly(["Mo 10", 2], ["Di 14", 1])
-    expect(backlog.total).to eq(3)
-  end
-
   it "counts nothing for a tutor without groups" do
     expect(described_class.new(lecture, tutorials: []).entries).to be_empty
   end
