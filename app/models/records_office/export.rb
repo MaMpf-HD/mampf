@@ -7,8 +7,8 @@ module RecordsOffice
     PERSON_COLUMNS = [:last_name, :first_name, :matriculation_number, :email].freeze
     COLUMNS = {
       grades: PERSON_COLUMNS + [:kind, :title, :grade, :status],
-      admissions: PERSON_COLUMNS + [:points, :maximum, :percentage, :criteria_met,
-                                    :decision, :decided_by, :decided_at, :note],
+      eligibility: PERSON_COLUMNS + [:points, :maximum, :percentage, :criteria_met,
+                                     :decision, :decided_by, :decided_at, :note],
       emails: PERSON_COLUMNS
     }.freeze
 
@@ -24,9 +24,9 @@ module RecordsOffice
       generate(:grades, participations.map { |participation| grade_row(participation) })
     end
 
-    # Lists every admission decision of the lecture with what it rests on: the
-    # points, the criteria met, who decided and why.
-    def self.admissions(lecture)
+    # Lists every certification of the lecture with the performance record
+    # behind it: points, achievements met, who decided and their note.
+    def self.eligibility(lecture)
       records = lecture.student_performance_records.index_by(&:user_id)
       achievements = Achievement.where(lecture: lecture).pluck(:id, :title).to_h
       rows = lecture.student_performance_certifications.includes(:user, :certified_by)
@@ -36,7 +36,7 @@ module RecordsOffice
           record_fields(records[certification.user_id], achievements) +
           decision_fields(certification)
       end
-      generate(:admissions, rows)
+      generate(:eligibility, rows)
     end
 
     # Lists the members of one group, for the course evaluation's mailing.

@@ -168,7 +168,7 @@ RSpec.describe("Records office", type: :request) do
         .to eq([["Noether", "Final exam", nil]])
     end
 
-    it "gives the exam admissions with what they rest on" do
+    it "gives the exam eligibility decisions with what they rest on" do
       noether = person("Noether", "Emmy")
       create(:student_performance_record, lecture: lecture, user: noether,
                                           points_total_materialized: 42.5,
@@ -177,7 +177,7 @@ RSpec.describe("Records office", type: :request) do
       create(:student_performance_certification, :passed, :manual,
              lecture: lecture, user: noether, note: "Certificate from the doctor")
 
-      get records_office_admissions_path(lecture)
+      get records_office_eligibility_path(lecture)
 
       rows = csv_rows
       expect(rows.first.fields("Last name", "Points", "Maximum", "Percentage", "Decision", "Note"))

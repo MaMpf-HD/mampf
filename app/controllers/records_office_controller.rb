@@ -1,9 +1,9 @@
 # Lets the records office read every lecture of a term: its groups and how full
-# they are, and the published grades, the exam admissions and each group's
-# addresses as downloads. Nothing here changes a record.
+# they are, and as downloads the published grades, the exam eligibility
+# decisions and each group's emails. Every action only reads.
 class RecordsOfficeController < ApplicationController
   authorize_resource class: false
-  before_action :set_lecture, only: [:grades, :admissions]
+  before_action :set_lecture, only: [:grades, :eligibility]
 
   def current_ability
     @current_ability ||= RecordsOfficeAbility.new(current_user)
@@ -19,8 +19,8 @@ class RecordsOfficeController < ApplicationController
     send_csv(RecordsOffice::Export.grades(@lecture), :grades, @lecture.title)
   end
 
-  def admissions
-    send_csv(RecordsOffice::Export.admissions(@lecture), :admissions, @lecture.title)
+  def eligibility
+    send_csv(RecordsOffice::Export.eligibility(@lecture), :eligibility, @lecture.title)
   end
 
   def emails

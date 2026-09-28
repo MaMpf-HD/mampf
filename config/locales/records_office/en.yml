@@ -18,7 +18,7 @@ en:
     emails: 'Emails'
     emails_of: 'Email addresses of %{group}'
     download_grades: 'Grades'
-    download_admissions: 'Exam admissions'
+    download_eligibility: 'Exam admissions'
     decided_by_rule: 'Rule'
     kinds:
       tutorial: 'Tutorial'
@@ -31,7 +31,7 @@ en:
       pending: 'open'
     files:
       grades: 'grades'
-      admissions: 'admissions'
+      eligibility: 'eligibility'
       emails: 'emails'
     columns:
       last_name: 'Last name'

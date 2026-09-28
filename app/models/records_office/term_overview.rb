@@ -45,8 +45,8 @@ module RecordsOffice
       lecture_ids_with_grades.include?(lecture.id)
     end
 
-    def admissions?(lecture)
-      lecture_ids_with_admissions.include?(lecture.id)
+    def eligibility?(lecture)
+      lecture_ids_with_eligibility.include?(lecture.id)
     end
 
     private
@@ -75,8 +75,8 @@ module RecordsOffice
                                 .distinct.pluck(:lecture_id).to_set
       end
 
-      def lecture_ids_with_admissions
-        @lecture_ids_with_admissions ||=
+      def lecture_ids_with_eligibility
+        @lecture_ids_with_eligibility ||=
           StudentPerformance::Certification.where(lecture: lectures)
                                            .distinct.pluck(:lecture_id).to_set
       end

@@ -50,11 +50,11 @@
             <% end %>
           <% end %>
 
-          <% if @overview.admissions?(lecture) %>
-            <%= link_to records_office_admissions_path(lecture),
+          <% if @overview.eligibility?(lecture) %>
+            <%= link_to records_office_eligibility_path(lecture),
                         class: "btn btn-sm btn-outline-primary" do %>
               <i class="bi bi-download" aria-hidden="true"></i>
-              <%= t("records_office.download_admissions") %>
+              <%= t("records_office.download_eligibility") %>
             <% end %>
           <% end %>
         </div>

@@ -19,7 +19,7 @@ de:
     emails: 'E-Mails'
     emails_of: 'E-Mail-Adressen von %{group}'
     download_grades: 'Noten'
-    download_admissions: 'Prüfungszulassungen'
+    download_eligibility: 'Prüfungszulassungen'
     decided_by_rule: 'Regel'
     kinds:
       tutorial: 'Tutorium'
@@ -32,7 +32,7 @@ de:
       pending: 'offen'
     files:
       grades: 'noten'
-      admissions: 'zulassungen'
+      eligibility: 'zulassungen'
       emails: 'emails'
     columns:
       last_name: 'Nachname'
