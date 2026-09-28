@@ -133,5 +133,8 @@ test.describe("the group rows", () => {
       const locked = dialog.getByRole("button", { name: /Di 12/ });
       await expect(locked).toBeDisabled();
       await expect(locked).toContainText("Managed by a registration process");
+
+      await page.mouse.click(5, 5);
+      await expect(dialog).toBeHidden();
     });
 });

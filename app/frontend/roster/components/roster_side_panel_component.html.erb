@@ -275,78 +275,102 @@
 
   <% if drag_controller? %>
     <dialog
-      class="roster-drag-choice-dialog"
+      class="roster-modal"
       data-roster-drag-target="targetDialog"
-      data-action="cancel->roster-drag#cancelPick"
+      data-action="cancel->roster-drag#cancelPick click->roster-drag#cancelOnBackdrop"
       aria-labelledby="roster-drag-target-title"
       data-title-template="<%= t("roster.group_row.move.title", name: "__NAME__") %>"
       data-locked-note="<%= t("roster.group_row.move.locked") %>"
     >
-      <p
-        class="fw-semibold mb-3"
-        id="roster-drag-target-title"
-        data-role="dialog-title"
-      ></p>
+      <div class="modal-content">
+        <div class="modal-header">
+          <p
+            class="modal-title h5"
+            id="roster-drag-target-title"
+            data-role="dialog-title"
+          ></p>
 
-      <ul
-        class="list-unstyled d-grid gap-2 mb-3"
-        data-roster-drag-target="targetList"
-      ></ul>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="<%= t("buttons.close") %>"
+            data-action="click->roster-drag#cancelPick"
+          ></button>
+        </div>
 
-      <p class="small text-muted d-none" data-role="no-targets">
-        <%= t("roster.group_row.move.none") %>
-      </p>
+        <div class="modal-body">
+          <ul
+            class="list-unstyled d-grid gap-2 mb-0"
+            data-roster-drag-target="targetList"
+          ></ul>
 
-      <div class="d-flex justify-content-end">
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary"
-          data-action="click->roster-drag#cancelPick"
-        >
-          <%= t("buttons.cancel") %>
-        </button>
+          <p class="small text-muted mb-0 d-none" data-role="no-targets">
+            <%= t("roster.group_row.move.none") %>
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-action="click->roster-drag#cancelPick"
+          >
+            <%= t("buttons.cancel") %>
+          </button>
+        </div>
       </div>
     </dialog>
   <% end %>
 
   <% unless read_only? || registerable.nil? %>
     <dialog
-      class="roster-drag-choice-dialog"
+      class="roster-modal"
       data-roster-drag-target="choiceDialog"
-      data-action="cancel->roster-drag#cancelChoice"
+      data-action="cancel->roster-drag#cancelChoice click->roster-drag#cancelOnBackdrop"
       aria-labelledby="roster-drag-choice-title"
     >
-      <p class="fw-semibold mb-3" id="roster-drag-choice-title">
-        <%= t("roster.drag.choice_title") %>
-        <span data-role="target-name" class="text-primary"></span>
-      </p>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="roster-drag-choice-title">
+            <%= t("roster.drag.choice_title") %>
+            <span data-role="target-name"></span>
+          </h2>
 
-      <div class="d-flex gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary"
-          data-action="click->roster-drag#cancelChoice"
-        >
-          <%= t("buttons.cancel") %>
-        </button>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="<%= t("buttons.close") %>"
+            data-action="click->roster-drag#cancelChoice"
+          ></button>
+        </div>
 
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          data-action="click->roster-drag#chooseAdd"
-        >
-          <i class="bi bi-plus-lg me-1"></i>
-          <%= t("roster.drag.add_only") %>
-        </button>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-action="click->roster-drag#cancelChoice"
+          >
+            <%= t("buttons.cancel") %>
+          </button>
 
-        <button
-          type="button"
-          class="btn btn-sm btn-primary"
-          data-action="click->roster-drag#chooseMove"
-        >
-          <i class="bi bi-arrow-right me-1"></i>
-          <%= t("roster.drag.move") %>
-        </button>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-action="click->roster-drag#chooseAdd"
+          >
+            <i class="bi bi-plus-lg me-1"></i>
+            <%= t("roster.drag.add_only") %>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-action="click->roster-drag#chooseMove"
+          >
+            <i class="bi bi-arrow-right me-1"></i>
+            <%= t("roster.drag.move") %>
+          </button>
+        </div>
       </div>
     </dialog>
   <% end %>

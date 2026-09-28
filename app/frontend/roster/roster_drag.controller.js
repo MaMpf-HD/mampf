@@ -292,6 +292,21 @@ export default class extends Controller {
     this.submitAdd(userId, targetAddPath);
   }
 
+  /**
+   * A click beside the dialog lands on the dialog element itself, around its
+   * content, and cancels as a Bootstrap modal's backdrop does.
+   */
+  cancelOnBackdrop(event) {
+    if (event.target !== event.currentTarget) return;
+
+    if (this.hasChoiceDialogTarget && event.currentTarget === this.choiceDialogTarget) {
+      this.cancelChoice();
+    }
+    else {
+      this.cancelPick();
+    }
+  }
+
   cancelChoice() {
     this.pendingDrop = null;
     this.pickedIndex = null;
