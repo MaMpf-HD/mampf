@@ -313,11 +313,11 @@
       <table class="table table-sm table-hover align-middle certifications-table">
         <thead class="table-light">
           <tr>
-            <th scope="col">
+            <th scope="col" class="student-column">
               <%= t("student_performance.records.columns.student") %>
             </th>
 
-            <th scope="col" class="text-end">
+            <th scope="col" class="text-end share-column">
               <% if @rule&.min_points_absolute.present? %>
                 <%= t("student_performance.records.columns.points") %>
               <% else %>
@@ -339,13 +339,17 @@
 
             <th
               scope="col"
-              class="text-start <%= 'ps-4' if @achievements.empty? %>"
+              class="text-start decision-column <%= 'ps-4' if @achievements.empty? %>"
             >
               <%= t("student_performance.certifications.columns.certification") %>
             </th>
 
             <th scope="col" class="hint-column">
               <%= t("student_performance.certifications.columns.hint") %>
+            </th>
+
+            <th scope="col" class="note-column">
+              <%= t("student_performance.certifications.columns.note") %>
             </th>
 
             <th scope="col" class="text-end"></th>
@@ -516,26 +520,19 @@
                     </span>
                   <% end %>
                 <% end %>
+              </td>
 
+              <td class="small note-column">
                 <% if decided %>
                   <div data-certification-inline-target="display">
-                    <% if cert.note.present? %>
-                      <span class="text-muted d-block">
-                        <%= t("student_performance.certifications.columns.note") %>:
-                        <%= cert.note %>
-                      </span>
-                    <% end %>
+                    <span class="text-muted"><%= cert.note %></span>
                   </div>
-                  <div
-                    data-certification-inline-target="edit"
-                    class="d-none mt-1"
-                  >
+                  <div data-certification-inline-target="edit" class="d-none">
                     <input
                       type="text"
                       data-certification-inline-target="noteInput"
                       data-action="keydown.enter->certification-inline#save"
                       class="form-control form-control-sm"
-                      aria-label="<%= t("student_performance.certifications.columns.note") %>"
                       value="<%= cert.note %>"
                       placeholder="<%= t('student_performance.certifications.override.note_hint') %>"
                       autocomplete="off"

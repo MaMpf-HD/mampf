@@ -1,6 +1,7 @@
-// One column holds sentences - the hint, and a decision's note below it; the
-// others hold a name, a figure, a status, an icon. It takes what the others
-// leave over. Notes are rare, so a column of their own stood mostly empty.
+// Two columns hold sentences - the hint and the note; the others hold a
+// name, a figure, a status, an icon. Every column gets a share of the width,
+// so the short ones do not huddle at the left while the sentences take the
+// rest; the achievement ticks and the actions keep what they need.
 .certifications-table {
   th,
   td {
@@ -8,10 +9,28 @@
     padding-inline: 0.75rem;
   }
 
+  .student-column {
+    width: 18%;
+  }
+
+  .share-column {
+    width: 12%;
+  }
+
+  .decision-column {
+    width: 16%;
+  }
+
   .hint-column {
     white-space: normal;
-    width: 100%;
+    width: 28%;
     min-width: 14rem;
+  }
+
+  .note-column {
+    white-space: normal;
+    width: 20%;
+    min-width: 10rem;
   }
 
   .numeric {
