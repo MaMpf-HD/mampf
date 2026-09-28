@@ -136,6 +136,110 @@ RSpec.describe(Assessment::Assessment, type: :model) do
     end
   end
 
+  describe "#publish_results!" do
+    let(:exam) { FactoryBot.create(:exam) }
+    let(:assessment) { exam.assessment }
+
+    def row(status, locale)
+      user = FactoryBot.create(:confirmed_user, locale: locale)
+      FactoryBot.create(:assessment_participation, assessment: assessment, status: status,
+                                                   user: user)
+      user
+    end
+
+    let!(:graded) { [row(:reviewed, "de"), row(:reviewed, "de")] }
+    let!(:absent) { row(:absent, "en") }
+    let!(:waiting) { row(:pending, "de") }
+
+    # The mail says nothing personal, so everybody of one language gets the
+    # same one.
+    it "mails everyone who has a result once per language, and nobody still waiting" do
+      perform_enqueued_jobs { assessment.publish_results! }
+
+      mails = ActionMailer::Base.deliveries.last(2)
+      expect(mails.map { |mail| mail.bcc.sort })
+        .to contain_exactly(graded.map(&:email).sort, [absent.email])
+      expect(mails.flat_map(&:bcc)).not_to include(waiting.email)
+      expect(assessment.reload.results_published?).to be(true)
+    end
+
+    # Taking the results back is mostly a correction; the second publication
+    # would announce it as news.
+    it "mails nobody when the results are published again" do
+      assessment.publish_results!
+      assessment.withdraw_results!
+
+      expect { assessment.publish_results! }
+        .not_to have_enqueued_mail(Assessment::ResultsMailer, :published_email)
+      expect(assessment.reload.results_published?).to be(true)
+    end
+
+    # Two clicks load the same unpublished assessment before either has saved.
+    it "mails once although a second, stale copy publishes too" do
+      stale = Assessment::Assessment.find(assessment.id)
+
+      expect do
+        assessment.publish_results!
+        stale.publish_results!
+      end.to have_enqueued_mail(Assessment::ResultsMailer, :published_email).twice
+    end
+
+    it "mails on the next try when the mail could not be queued" do
+      allow(Assessment::ResultsMailer).to receive(:with).and_raise(RedisClient::CannotConnectError)
+
+      expect { assessment.publish_results! }.to raise_error(RedisClient::CannotConnectError)
+      expect(assessment.reload).to have_attributes(results_published_at: be_present,
+                                                   results_notified_at: nil)
+
+      allow(Assessment::ResultsMailer).to receive(:with).and_call_original
+      expect { assessment.publish_results! }
+        .to have_enqueued_mail(Assessment::ResultsMailer, :published_email).twice
+    end
+
+    it "mails someone without a language of their own in the default one" do
+      nobody = row(:reviewed, "")
+
+      perform_enqueued_jobs { assessment.publish_results! }
+
+      mail = ActionMailer::Base.deliveries.last(2).find { |m| m.bcc.include?(nobody.email) }
+      expect(mail.bcc).to include(*graded.map(&:email))
+    end
+  end
+
+  describe "#withdraw_results!" do
+    it "hides the results and remembers that the participants were told" do
+      assessment = FactoryBot.create(:exam).assessment
+      assessment.publish_results!
+
+      assessment.withdraw_results!
+
+      expect(assessment.reload).to have_attributes(results_published_at: nil,
+                                                   results_notified_at: be_present)
+    end
+  end
+
+  describe ".complete_talk_gradebooks" do
+    let(:seminar) { FactoryBot.create(:lecture, sort: "seminar") }
+
+    def talk_with(*statuses)
+      talk = FactoryBot.create(:talk, lecture: seminar)
+      statuses.each do |status|
+        FactoryBot.create(:assessment_participation, assessment: talk.assessment,
+                                                     status: status)
+      end
+      talk
+    end
+
+    it "lists the talks whose speakers all have a result" do
+      graded = talk_with(:reviewed, :reviewed)
+      talk_with(:reviewed, :pending)
+      talk_with
+
+      expect(described_class.complete_talk_gradebooks(seminar).map(&:assessable))
+        .to eq([graded])
+    end
+  end
+
   describe "destroying" do
     # The active-only `has_one` cannot clean up superseded schemes, and the
     # foreign key refuses the delete without them.

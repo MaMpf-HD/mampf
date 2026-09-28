@@ -29,6 +29,10 @@
               <%= safe_join(details, " · ") %>
             </div>
           <% end %>
+
+          <% if row.tasks.present? %>
+            <%= render "user_registrations/result_tasks", tasks: row.tasks %>
+          <% end %>
         </div>
 
         <% if row.actions.present? %>

@@ -365,6 +365,50 @@ de:
       user_joined_tutorial: 'Ohne Übungsgruppe abgegeben, seitdem in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'Keine Vorträge, die bewertet werden können.'
+    results_release:
+      exam_published: "Veröffentlicht %{time}"
+      exam_published_detail: "Studierende sehen Note und Punkte auf der Startseite der Veranstaltung. Was Du jetzt änderst, erscheint dort sofort."
+      unpublished: "Nicht veröffentlicht"
+      all_published: "Veröffentlicht"
+      partly_published: "%{published} von %{total} veröffentlicht"
+      shown_to_speaker: "Die vortragende Person sieht diese Note"
+      nobody_has_result: "Noch niemand hat ein Ergebnis."
+      no_talk_complete: "Noch kein Vortrag hat eine Note für alle Vortragenden."
+      publish: "Ergebnisse veröffentlichen"
+      publish_talks:
+        one: "1 Vortrag veröffentlichen"
+        other: "%{count} Vorträge veröffentlichen"
+      withdraw: "Zurücknehmen"
+      publish_confirm:
+        one: "Ab jetzt sieht 1 Person ihr Ergebnis auf der Startseite der Veranstaltung."
+        other: "Ab jetzt sehen %{count} Personen ihr Ergebnis auf der Startseite der Veranstaltung."
+      mail: "Sie bekommen dazu eine E-Mail, ohne Note und Punkte."
+      no_mail: "Niemand bekommt erneut eine E-Mail, sie wurden beim ersten Mal benachrichtigt."
+      grades_differ:
+        one: "Achtung: 1 Note weicht davon ab, was das Schema jetzt vergibt."
+        other: "Achtung: %{count} Noten weichen davon ab, was das Schema jetzt vergibt."
+      ungraded:
+        one: "1 Person hat Punkte, aber keine Note."
+        other: "%{count} Personen haben Punkte, aber keine Note."
+      some_mail:
+        one: "1 davon bekommt dazu eine E-Mail; die anderen wurden beim ersten Veröffentlichen benachrichtigt."
+        other: "%{count} davon bekommen dazu eine E-Mail; die anderen wurden beim ersten Veröffentlichen benachrichtigt."
+      withdraw_confirm: "Studierende sehen diese Ergebnisse dann nicht mehr. Manche haben sie vielleicht schon gesehen."
+      flash:
+        published: "Ergebnisse veröffentlicht."
+        withdrawn: "Ergebnisse zurückgenommen."
+        mail_failed: "Die Ergebnisse sind veröffentlicht, aber die E-Mail konnte nicht verschickt werden. Veröffentliche erneut, um sie zu senden."
+    results_mailer:
+      subject: "Ergebnisse von %{title} in %{lecture}"
+      body_html: |
+        <p>Hallo,</p>
+        <p>Die Ergebnisse von <strong>%{title}</strong> in <strong>%{lecture}</strong> sind jetzt in MaMpf verfügbar.</p>
+      body: |
+        Hallo,
+
+        die Ergebnisse von „%{title}“ in „%{lecture}“ sind jetzt in MaMpf verfügbar.
+      link: "Zur Veranstaltung"
+      footer: "Diese E-Mail zu Deinen eigenen Ergebnissen bekommst Du unabhängig von Deinen Benachrichtigungseinstellungen."
     grading_exam:
       no_candidates: 'Noch niemand auf der Klausurliste.'
       mark_absent: 'Als abwesend vermerken'
