@@ -1610,11 +1610,14 @@ en:
       edited_lectures: 'Additional Edited Event Series'
       edited_media: 'Edited Media'
       administration: 'User Administration'
-      sorts: 'Admins, Editors and Teachers'
+      sorts: 'Admins, Editors, Teachers and Support'
+      support: 'Support'
       password_policy_progress: '%{current} of %{total} accounts currently meet the updated password standard.'
       edit_generics: 'Edit generic users'
       elevate: 'Promote to Administrator'
       info:
+        support: >
+          Finds people and corrects their name and matriculation number, which they cannot change themselves once saved.
         display_name: >
           Here you can enter the display name. The display name
           is used for the display of teachers, editors, forum posts etc.

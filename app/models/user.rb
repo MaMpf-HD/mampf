@@ -15,8 +15,11 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
+  include PgSearch::Model
+
   # a user has many bookmarked lectures (formerly: subscribed lectures)
   has_many :lecture_bookmarks, dependent: :destroy
+  has_many :personal_data_changes, dependent: :delete_all
   has_many :dashboard_card_styles, class_name: "Dashboard::CardStyle", dependent: :delete_all
   has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
@@ -199,6 +202,22 @@ class User < ApplicationRecord
   scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
+
+  # The support finds a person by any of the ways they identify themselves.
+  # Named like the other searchable models' scope, which
+  # Search::Filters::FulltextFilter calls.
+  pg_search_scope :search_by_title,
+                  against: [:first_name, :last_name, :name, :email,
+                            :matriculation_number, :uni_id],
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { word_similarity: true, threshold: 0.3 }
+                  }
+
+  def self.default_search_order
+    Arel.sql("LOWER(unaccent(users.last_name)), LOWER(unaccent(users.first_name)), " \
+             "LOWER(users.email)")
+  end
 
   # returns the array of all teachers
   def self.teachers

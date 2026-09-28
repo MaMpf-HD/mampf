@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_28_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -667,6 +667,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
     t.index ["aliased_tag_id"], name: "index_notions_on_aliased_tag_id"
     t.index ["tag_id"], name: "index_notions_on_tag_id"
     t.index ["title"], name: "index_notions_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "personal_data_changes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "editor_id"
+    t.string "field", null: false
+    t.string "old_value"
+    t.string "new_value"
+    t.datetime "created_at", null: false
+    t.index ["editor_id"], name: "index_personal_data_changes_on_editor_id"
+    t.index ["user_id"], name: "index_personal_data_changes_on_user_id"
   end
 
   create_table "program_translations", force: :cascade do |t|
@@ -1333,6 +1344,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
     t.datetime "personal_data_confirmed_at"
     t.datetime "personal_data_declined_at"
     t.bigint "program_id"
+    t.boolean "support", default: false, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"
@@ -1551,6 +1563,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
   add_foreign_key "links", "media", column: "linked_medium_id"
   add_foreign_key "medium_tag_joins", "media"
   add_foreign_key "medium_tag_joins", "tags"
+  add_foreign_key "personal_data_changes", "users", column: "editor_id", on_delete: :nullify
+  add_foreign_key "personal_data_changes", "users", on_delete: :cascade
   add_foreign_key "programs", "subjects"
   add_foreign_key "quiz_certificates", "media", column: "quiz_id"
   add_foreign_key "quiz_certificates", "users"

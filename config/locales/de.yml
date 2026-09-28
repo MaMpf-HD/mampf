@@ -1770,11 +1770,14 @@ de:
       edited_lectures: 'Weitere editierte Veranstaltungen'
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
-      sorts: 'Admins, EditorInnen und DozentInnen'
+      sorts: 'Admins, EditorInnen, DozentInnen und Support'
+      support: 'Support'
       password_policy_progress: '%{current} von %{total} Accounts erfüllen derzeit den aktualisierten Passwortstandard.'
       edit_generics: 'Sonstige NutzerInnen bearbeiten'
       elevate: 'zum Administrator befördern'
       info:
+        support: >
+          Findet Personen und korrigiert Namen und Matrikelnummer, die sie nach dem Speichern nicht mehr selbst ändern können.
         display_name: >
           Hier kannst Du den Anzeigename eingeben. Der Anzeigename
           wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.

@@ -1,0 +1,41 @@
+de:
+  support:
+    title: 'Support'
+    users:
+      title: 'Support: Stammdaten'
+      explainer: >-
+        Finde eine Person über Name, E-Mail-Adresse, Matrikelnummer oder Uni-ID
+        und korrigiere, was sie nach dem Speichern nicht mehr selbst ändern kann:
+        Vor- und Nachname und Matrikelnummer.
+      hits:
+        one: '1 Person'
+        other: '%{count} Personen'
+      no_hits: 'Niemand passt.'
+      correct: 'Korrigieren'
+      correct_for: 'Stammdaten von %{user} korrigieren'
+      back: 'Zurück zur Suche'
+      edit_title: 'Stammdaten von %{user}'
+      edit_explainer: >-
+        Gruppen, Klausurlisten und Notenexporte führen die Person unter diesen
+        Feldern. Ein leer gelassenes Feld kann die Person einmal selbst füllen.
+      display_name: 'Anzeigename'
+      save: 'Speichern'
+      saved: 'Die Stammdaten sind korrigiert.'
+      history: 'Korrekturen'
+      no_history: 'Bisher wurde nichts korrigiert.'
+      columns:
+        name: 'Name'
+        matriculation_number: 'Matrikelnummer'
+        email: 'E-Mail'
+        program: 'Studiengang'
+        actions: 'Aktionen'
+      fields:
+        first_name: 'Vorname'
+        last_name: 'Nachname'
+        matriculation_number: 'Matrikelnummer'
+      changes:
+        when: 'Wann'
+        who: 'Von'
+        field: 'Feld'
+        from: 'Vorher'
+        to: 'Nachher'

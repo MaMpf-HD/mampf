@@ -1,0 +1,41 @@
+en:
+  support:
+    title: 'Support'
+    users:
+      title: 'Support: personal data'
+      explainer: >-
+        Find a person by name, email, matriculation number or Uni ID, and
+        correct what they cannot change themselves once saved: their first and
+        last name and their matriculation number.
+      hits:
+        one: '1 person'
+        other: '%{count} people'
+      no_hits: 'Nobody matches.'
+      correct: 'Correct'
+      correct_for: 'Correct the personal data of %{user}'
+      back: 'Back to the search'
+      edit_title: 'Personal data of %{user}'
+      edit_explainer: >-
+        Groups, exam lists and grade exports list this person by these fields.
+        A field left empty can be filled in once by the person themselves.
+      display_name: 'Display name'
+      save: 'Save'
+      saved: 'The personal data has been corrected.'
+      history: 'Corrections'
+      no_history: 'Nothing has been corrected yet.'
+      columns:
+        name: 'Name'
+        matriculation_number: 'Matriculation number'
+        email: 'Email'
+        program: 'Program'
+        actions: 'Actions'
+      fields:
+        first_name: 'First name'
+        last_name: 'Last name'
+        matriculation_number: 'Matriculation number'
+      changes:
+        when: 'When'
+        who: 'By'
+        field: 'Field'
+        from: 'Before'
+        to: 'After'

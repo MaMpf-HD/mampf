@@ -1,0 +1,59 @@
+<div class="container-md py-3">
+  <%= link_to t("support.users.back"), support_users_path, class: "small" %>
+
+  <h1 class="h3 mt-2">
+    <%= t("support.users.edit_title", user: @user.email) %>
+  </h1>
+
+  <p class="text-muted"><%= t("support.users.edit_explainer") %></p>
+
+  <dl class="row small">
+    <dt class="col-sm-3"><%= t("support.users.columns.email") %></dt>
+    <dd class="col-sm-9"><%= @user.email %></dd>
+    <dt class="col-sm-3"><%= t("support.users.display_name") %></dt>
+    <dd class="col-sm-9"><%= @user.name %></dd>
+    <dt class="col-sm-3"><%= t("support.users.columns.program") %></dt>
+    <dd class="col-sm-9"><%= @user.program&.name_with_subject || "—" %></dd>
+  </dl>
+
+  <%= bootstrap_form_with model: @user, url: support_user_path(@user), method: :patch,
+                          local: true do |f| %>
+    <%= f.text_field :first_name, label: t("support.users.fields.first_name") %>
+    <%= f.text_field :last_name, label: t("support.users.fields.last_name") %>
+
+    <%= f.text_field :matriculation_number,
+                     label: t("support.users.fields.matriculation_number") %>
+
+    <%= f.submit t("support.users.save"), class: "btn btn-primary" %>
+  <% end %>
+
+  <h2 class="h5 mt-4"><%= t("support.users.history") %></h2>
+
+  <% if @changes.any? %>
+    <table class="table table-sm small">
+      <thead>
+        <tr>
+          <th scope="col"><%= t("support.users.changes.when") %></th>
+          <th scope="col"><%= t("support.users.changes.who") %></th>
+          <th scope="col"><%= t("support.users.changes.field") %></th>
+          <th scope="col"><%= t("support.users.changes.from") %></th>
+          <th scope="col"><%= t("support.users.changes.to") %></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @changes.each do |change| %>
+          <tr>
+            <td><%= l(change.created_at, format: :short) %></td>
+            <td><%= change.editor&.email || "—" %></td>
+            <td><%= t("support.users.fields.#{change.field}") %></td>
+            <td><%= change.old_value.presence || "—" %></td>
+            <td><%= change.new_value.presence || "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-muted small"><%= t("support.users.no_history") %></p>
+  <% end %>
+</div>

@@ -102,6 +102,13 @@
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('admin.navbar.users') %>
         </li>
+        <li class="nav-item">
+          <%= link_to '', support_users_path,
+                  class: 'nav-link bi bi-life-preserver ' + get_class_for_path(support_users_path),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('support.title'),
+                  'aria-label': t('support.title') %>
+        </li>
       </ul>
     <% end %>
 

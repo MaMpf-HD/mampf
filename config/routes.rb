@@ -71,6 +71,12 @@ Rails.application.routes.draw do
       to: "administration#classification",
       as: "classification"
 
+  # support routes
+
+  namespace :support do
+    resources :users, only: [:index, :edit, :update]
+  end
+
   # annotation routes
   get "annotations/update_annotations",
       to: "annotations#update_annotations",

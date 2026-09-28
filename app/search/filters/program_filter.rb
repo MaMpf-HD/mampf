@@ -12,6 +12,9 @@ module Search
       def filter
         return scope if skip_filter?(all_param: :all_programs, ids_param: :program_ids)
 
+        # A user has their own program rather than one through a course.
+        return scope.where(program_id: params[:program_ids]) if scope.klass == User
+
         join_path = case scope.klass.name
                     when "Course"
                       :divisions

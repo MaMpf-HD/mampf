@@ -37,6 +37,17 @@
           </a>
         </li>
 
+        <% if current_user.support? && !current_user.admin? %>
+          <li class="nav-item">
+            <a href="<%= support_users_path %>"
+              class="nav-link bi bi-life-preserver <%= get_class_for_path(support_users_path) %>"
+              data-bs-toggle="tooltip"
+              title="<%= t('support.title') %>"
+              aria-label="<%= t('support.title') %>">
+            </a>
+          </li>
+        <% end %>
+
         <% if current_user.admin? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
