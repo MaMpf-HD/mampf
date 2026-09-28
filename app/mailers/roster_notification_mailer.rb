@@ -106,9 +106,10 @@ class RosterNotificationMailer < ApplicationMailer
         end
       end
 
-      # One mail per language, members in bcc. The mail carries no personal greeting.
+      # One mail per language, members in bcc.
       def deliver_grouped(template, rosterable, users)
         users.group_by(&:locale).each_value do |users_in_locale|
+          t = users_in_locale
           with(rosterable: rosterable,
                recipients: users_in_locale).public_send(template).deliver_later
         end
@@ -243,11 +244,39 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def add_exam_details
-      @info[:exam_date] = if @rosterable.date
-        I18n.l(@rosterable.date, format: :long)
-      else
-        t("basics.value_not_available")
+      scope = "roster.mailer.exam_schedule"
+
+      exam_date     = (I18n.l(@rosterable.date, format: :long) if @rosterable.date)
+      exam_location = @rosterable.location.presence
+
+      @info[:exam_date]     = exam_date
+      @info[:exam_location] = exam_location
+
+      parts = []
+
+      # Sentence with known information
+      if exam_date || exam_location
+        sentence = [I18n.t("#{scope}.first_part")]
+        sentence << I18n.t("#{scope}.date_part", exam_date: exam_date) if exam_date
+        sentence << I18n.t("#{scope}.location_part", exam_location: exam_location) if exam_location
+
+        last_part = I18n.t("#{scope}.last_part")
+        sentence << last_part if last_part.present?
+
+        parts << "#{sentence.join(" ")}."
       end
-      @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
+
+      # Sentence for missing information
+      missing = []
+      missing << I18n.t("#{scope}.date_ops") unless exam_date
+      missing << I18n.t("#{scope}.location_ops") unless exam_location
+
+      if missing.any?
+        parts << I18n.t("#{scope}.non_available_info",
+                        count: missing.size,
+                        non_avai_ops: missing.to_sentence)
+      end
+
+      @info[:exam_schedule] = parts.join(" ").strip
     end
 end

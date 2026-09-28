@@ -367,16 +367,11 @@ en:
           You have been added to exam <strong>%{rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong>.
         </p>
-        <p>
-          The exam will take place on %{exam_date} at %{exam_location}.
-        </p>
       roster_added_to_exam_email_body: |
         Hello %{name},
 
         You have been added to exam "%{rosterable_title}" in the lecture
         "%{lecture_title}".
-
-        The exam will take place on %{exam_date} at %{exam_location}.
       roster_added_to_exam_email_subject: 'Added to exam %{rosterable_title} in %{lecture_title}'
       roster_removed_from_group_email_body_html: |
         <p>Hello %{name},</p>
@@ -508,10 +503,6 @@ en:
           in the lecture <strong>%{lecture_title}</strong> has changed.
         </p>
         <p>
-          The exam will now take place on <strong>%{exam_date}</strong>
-          at <strong>%{exam_location}</strong>.
-        </p>
-        <p>
           Please make a note of the new details.
         </p>
       roster_change_exam_schedule_email_body: |
@@ -519,8 +510,6 @@ en:
 
         The schedule for exam "%{rosterable_title}" in the lecture
         "%{lecture_title}" has changed.
-
-        The exam will now take place on %{exam_date} at %{exam_location}.
 
         Please make a note of the new details.
       roster_change_exam_schedule_email_subject: 'Schedule change for exam %{rosterable_title} in %{lecture_title}'
@@ -546,3 +535,13 @@ en:
         Your registration for exam "%{rosterable_title}" in the lecture
         "%{lecture_title}" was not successful.
       roster_rejected_from_exam_email_subject: 'Registration for exam %{rosterable_title} in %{lecture_title} was not successful'
+      exam_schedule:
+        first_part: "The exam will take place"
+        date_part: "on %{exam_date}"
+        location_part: "at %{exam_location}"
+        last_part: ""
+        non_available_info:
+          one: "%{non_avai_ops} will be announced later."
+          other: "%{non_avai_ops} will be announced later."
+        date_ops: Date
+        location_ops: Location

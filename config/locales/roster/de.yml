@@ -371,16 +371,12 @@ de:
           Du wurdest zur Klausur <strong>%{rosterable_title}</strong>
           in der Veranstaltung <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
-        <p>
-          Die Klausur findet am %{exam_date} in %{exam_location} statt.
-        </p>
       roster_added_to_exam_email_body: |
         Hallo %{name},
 
         Du wurdest zur Klausur „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ hinzugefügt.
 
-        Die Klausur findet am %{exam_date} in %{exam_location} statt.
       roster_added_to_exam_email_subject: 'Zur Klausur %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
@@ -512,10 +508,6 @@ de:
           in der Veranstaltung <strong>%{lecture_title}</strong> hat sich geändert.
         </p>
         <p>
-          Die Klausur findet nun am <strong>%{exam_date}</strong>
-          in <strong>%{exam_location}</strong> statt.
-        </p>
-        <p>
           Bitte notiere Dir die neuen Angaben.
         </p>
       roster_change_exam_schedule_email_body: |
@@ -523,8 +515,6 @@ de:
 
         Der Termin der Klausur „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ hat sich geändert.
-
-        Die Klausur findet nun am %{exam_date} in %{exam_location} statt.
 
         Bitte notiere Dir die neuen Angaben.
       roster_change_exam_schedule_email_subject: 'Terminänderung für Klausur %{rosterable_title} in %{lecture_title}'
@@ -551,3 +541,13 @@ de:
         Deine Anmeldung zur Klausur „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ war nicht erfolgreich.
       roster_rejected_from_exam_email_subject: 'Anmeldung zur Klausur %{rosterable_title} in %{lecture_title} nicht erfolgreich'
+      exam_schedule:
+        first_part: "Die Klausur findet"
+        date_part: "am %{exam_date}"
+        location_part: "in %{exam_location}"
+        last_part: "statt"
+        non_available_info:
+          one: "%{non_avai_ops} wird noch bekannt gegeben."
+          other: "%{non_avai_ops} werden noch bekannt gegeben."
+        date_ops: Datum
+        location_ops: Ort
