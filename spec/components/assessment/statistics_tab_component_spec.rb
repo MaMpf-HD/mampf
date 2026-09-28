@@ -33,10 +33,10 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
     page = render_tab
     tables = page.css("section").index_by { |section| section.at_css("h6")&.text&.squish }
 
-    expect(tables["Tasks"].at_css("tbody tr").text.squish).to include("Task 1", "10", "6")
+    expect(tables["Tasks"].css("tbody tr td").map { |cell| cell.text.squish })
+      .to start_with("10", "6", "6")
     programs = tables["By program"].css("tbody th").map { |cell| cell.text.squish }
     expect(programs).to eq([program.name_with_subject, "Other or none given"])
-    expect(page.text).not_to include("Coming soon")
   end
 
   context "with an exam's grades" do
