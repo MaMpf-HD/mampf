@@ -5,6 +5,10 @@ import Sortable from "sortablejs";
 // its controller, and the new controller restores the focus from here.
 let focusAfterReplace = null;
 
+// `drag` goes on firing where no `dragover` does; Firefox gives it no
+// coordinates, which leaves the last ones standing.
+const POINTER_EVENTS = ["drag", "dragover", "pointermove", "touchmove"];
+
 export default class extends Controller {
   static targets = ["studentList", "choiceDialog", "targetDialog", "targetList"];
 
@@ -34,6 +38,7 @@ export default class extends Controller {
     this.rowDropInstances.forEach(s => s.destroy());
     this.rowDropInstances = [];
     this.clearHighlight();
+    this.stopFollowingPointer();
     document.body.classList.remove("roster-dragging");
   }
 
@@ -48,10 +53,13 @@ export default class extends Controller {
       chosenClass: "roster-drag-chosen",
       filter: ".tutorial-roster-student-remove, form, button, a",
       preventOnFilter: false,
-      onStart: () => document.body.classList.add("roster-dragging"),
-      onMove: evt => this.updateHighlight(evt.to),
+      onStart: () => {
+        document.body.classList.add("roster-dragging");
+        this.followPointer();
+      },
       onEnd: (evt) => {
         document.body.classList.remove("roster-dragging");
+        this.stopFollowingPointer();
         this.clearHighlight();
         if (evt.item.parentNode !== this.studentListTarget) {
           evt.item.remove();
@@ -73,6 +81,8 @@ export default class extends Controller {
         ghostClass: "d-none",
         onAdd: (evt) => {
           evt.item.remove();
+          if (!this.pointerOver(row)) return;
+
           this.handleDrop(row, evt.item?.dataset?.userId);
         },
       });
@@ -103,8 +113,46 @@ export default class extends Controller {
     this.initDropZones();
   }
 
-  updateHighlight(dropZone) {
-    const row = dropZone.closest(".group-row");
+  /**
+   * Sortable reports a row being entered but not being left, so the pointer
+   * itself decides: the row under it is lit, and only that row takes the
+   * drop. Touch dragging would otherwise drop into the last row entered.
+   * Listened to while capturing, as Sortable stops `dragover` over its lists.
+   */
+  followPointer() {
+    this.pointer = null;
+    this.onPointer = (event) => {
+      const point = event.touches?.[0] || event;
+      if (point.clientX === 0 && point.clientY === 0) return;
+
+      this.pointer = { x: point.clientX, y: point.clientY };
+      this.highlight(this.rowUnderPointer());
+    };
+    POINTER_EVENTS.forEach(type => document.addEventListener(type, this.onPointer, true));
+  }
+
+  stopFollowingPointer() {
+    if (!this.onPointer) return;
+
+    POINTER_EVENTS.forEach(type => document.removeEventListener(type, this.onPointer, true));
+    this.onPointer = null;
+  }
+
+  rowUnderPointer() {
+    if (!this.pointer) return null;
+
+    return this.targetRows().find(row => !this.isLocked(row) && this.pointerOver(row)) || null;
+  }
+
+  pointerOver(row) {
+    if (!this.pointer) return true;
+
+    const rect = row.getBoundingClientRect();
+    return this.pointer.x >= rect.left && this.pointer.x <= rect.right
+      && this.pointer.y >= rect.top && this.pointer.y <= rect.bottom;
+  }
+
+  highlight(row) {
     if (row === this.highlightedRow) return;
 
     this.clearHighlight();
