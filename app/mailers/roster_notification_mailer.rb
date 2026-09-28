@@ -175,9 +175,11 @@ class RosterNotificationMailer < ApplicationMailer
       @recipients      = params[:recipients]
       @participant     = params[:participant]
       @username        = @recipient&.tutorial_name
-      @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable)
-      @lecture ||= lecture_for_rosterable(@rosterable || @new_rosterable)
-      @info = params[:info] || {}
+      rosterable = @rosterable || @new_rosterable
+      @rosterable_link = url_for_rosterable(rosterable) if rosterable
+      @lecture         = params[:lecture] ||
+                         lecture_for_rosterable(@rosterable || @new_rosterable)
+      @info            = {}
     end
 
     # Single recipient: addressed directly.
@@ -225,8 +227,6 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def url_for_rosterable(rosterable)
-      return nil if rosterable.nil?
-
       case rosterable
       when Lecture
         lecture_url(rosterable)

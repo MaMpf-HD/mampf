@@ -294,14 +294,41 @@ describe RosterNotificationMailer do
   end
 
   describe ".finalized" do
+    let(:other_user) { create(:user, locale: "de") }
+    let(:english_user) { create(:user, locale: "en") }
+
     context "with a supported rosterable" do
-      it "enqueues one email per user for a Tutorial" do
+      it "enqueues one email for all users of a Tutorial with the same locale" do
         tutorial = create(:tutorial)
-        other_user = create(:user, locale: "de")
 
         expect do
           described_class.finalized(tutorial, [user, other_user])
+        end.to have_enqueued_mail(described_class, :added_to_group_email).once.with(
+          a_hash_including(
+            params: a_hash_including(
+              rosterable: tutorial,
+              recipients: match_array([user, other_user])
+            )
+          )
+        )
+      end
+
+      it "enqueues one email per locale" do
+        tutorial = create(:tutorial)
+
+        expect do
+          described_class.finalized(tutorial, [user, other_user, english_user])
         end.to have_enqueued_mail(described_class, :added_to_group_email).twice
+      end
+
+      it "does not address the users individually" do
+        tutorial = create(:tutorial)
+
+        expect do
+          described_class.finalized(tutorial, [user])
+        end.not_to have_enqueued_mail(described_class, :added_to_group_email).with(
+          a_hash_including(params: a_hash_including(recipient: user))
+        )
       end
 
       it "enqueues an email for a Cohort" do
@@ -318,16 +345,6 @@ describe RosterNotificationMailer do
         expect do
           described_class.finalized(talk, [user])
         end.to have_enqueued_mail(described_class, :added_to_group_email)
-      end
-    end
-
-    context "with a Lecture" do
-      it "enqueues no email" do
-        lecture = create(:lecture)
-
-        expect do
-          described_class.finalized(lecture, [user])
-        end.not_to have_enqueued_mail
       end
     end
 
@@ -381,43 +398,167 @@ describe RosterNotificationMailer do
         expect(body).to include("Room 101")
       end
 
-      it "enqueues one email per user" do
+      it "enqueues one email per locale" do
         exam = create(:exam, :written)
-        other_user = create(:user, locale: "de")
 
         expect do
           described_class.finalized(exam, [user, other_user])
+        end.to have_enqueued_mail(described_class, :added_to_exam_email).once
+
+        expect do
+          described_class.finalized(exam, [user, english_user])
         end.to have_enqueued_mail(described_class, :added_to_exam_email).twice
       end
     end
   end
 
-  describe ".rejected" do
-    let(:reasons) { ["Email domain not allowed."] }
-    let(:campaign) { create(:registration_campaign) }
+  describe ".change_exam_schedule" do
+    let(:exam) { create(:exam, :written) }
+    let(:other_user) { create(:user, locale: "de") }
+    let(:english_user) { create(:user, locale: "en") }
 
-    def add_item(registerable)
-      create(:registration_item, registration_campaign: campaign, registerable: registerable)
+    it "enqueues one email for all participants with the same locale" do
+      [user, other_user].each { |participant| exam.add_user_to_roster!(participant) }
+
+      expect do
+        described_class.change_exam_schedule(exam)
+      end.to have_enqueued_mail(described_class, :change_exam_schedule_email).once.with(
+        a_hash_including(
+          params: a_hash_including(
+            rosterable: exam,
+            recipients: match_array([user, other_user])
+          )
+        )
+      )
     end
 
-    context "with a supported rosterable" do
-      it "enqueues a group rejection email with the reasons for a Tutorial" do
-        tutorial = create(:tutorial)
-        add_item(tutorial)
+    it "enqueues one email per locale" do
+      [user, other_user, english_user].each { |participant| exam.add_user_to_roster!(participant) }
 
+      expect do
+        described_class.change_exam_schedule(exam)
+      end.to have_enqueued_mail(described_class, :change_exam_schedule_email).twice
+    end
+
+    it "enqueues no email when nobody is on the roster" do
+      expect do
+        described_class.change_exam_schedule(exam)
+      end.not_to have_enqueued_mail
+    end
+
+    it "does not enqueue an email for a non-exam and logs instead" do
+      tutorial = create(:tutorial)
+      expect(Rails.logger).to receive(:error)
+        .with(/Unsupported rosterable type: Tutorial/)
+
+      expect do
+        described_class.change_exam_schedule(tutorial)
+      end.not_to have_enqueued_mail
+    end
+  end
+
+  describe "grouped mails" do
+    let(:exam) do
+      create(:exam, :written, date: Time.zone.parse("2026-11-15 10:00"), location: "Room 101")
+    end
+    let(:other_user) { create(:user, name: "Carol", locale: "de") }
+
+    it "puts all recipients in bcc and none in to" do
+      email = described_class.with(
+        rosterable: exam,
+        recipients: [user, other_user]
+      ).change_exam_schedule_email
+
+      delivered = deliver(email)
+
+      expect(delivered.bcc).to match_array([user.email, other_user.email])
+      expect(delivered.to).to be_blank
+      expect(delivered[:from].value).to eq(NotificationMailer.sender("de"))
+    end
+
+    it "greets nobody by name" do
+      email = described_class.with(
+        rosterable: exam,
+        recipients: [user, other_user]
+      ).change_exam_schedule_email
+
+      body = delivered_body(deliver(email))
+
+      expect(body).not_to include("Alice")
+      expect(body).not_to include("Carol")
+    end
+
+    it "carries the new schedule in the change mail" do
+      email = described_class.with(
+        rosterable: exam,
+        recipients: [user]
+      ).change_exam_schedule_email
+
+      delivered = deliver(email)
+
+      expected_subject = I18n.with_locale(user.locale) do
+        I18n.t("roster.mailer.roster_change_exam_schedule_email_subject",
+               rosterable_title: exam.title,
+               lecture_title: exam.lecture.title)
+      end
+      expect(delivered.subject).to eq(expected_subject)
+
+      body = delivered_body(delivered)
+      expect(body).to include(I18n.l(exam.date, format: :long, locale: user.locale))
+      expect(body).to include("Room 101")
+    end
+
+    it "sends the finalization mail for a group in bcc as well" do
+      tutorial = create(:tutorial, title: "Übung 3")
+
+      email = described_class.with(
+        rosterable: tutorial,
+        recipients: [user, other_user]
+      ).added_to_group_email
+
+      delivered = deliver(email)
+
+      expect(delivered.bcc).to match_array([user.email, other_user.email])
+      expect(delivered.subject).to include("Übung 3")
+    end
+  end
+
+  describe ".rejected" do
+    let(:reasons) { ["Email domain not allowed."] }
+
+    context "for a group campaign" do
+      let(:lecture) { create(:lecture) }
+      let(:campaign) do
+        instance_double(Registration::Campaign, exam_campaign?: false, campaignable: lecture)
+      end
+
+      it "enqueues a group rejection email with the lecture and the reasons" do
         expect do
           described_class.rejected(user, campaign, reasons: reasons)
         end.to have_enqueued_mail(described_class, :rejected_from_group_email).with(
           a_hash_including(
-            params: a_hash_including(rosterable: tutorial, recipient: user, reasons: reasons)
+            params: a_hash_including(lecture: lecture, recipient: user, reasons: reasons)
           )
         )
       end
 
-      it "enqueues an exam rejection email with the reasons for an Exam" do
-        exam = create(:exam, :written, :without_campaign)
-        add_item(exam)
+      it "sends one email per student" do
+        other_user = create(:user, locale: "de")
 
+        expect do
+          described_class.rejected(user, campaign, reasons: reasons)
+          described_class.rejected(other_user, campaign, reasons: reasons)
+        end.to have_enqueued_mail(described_class, :rejected_from_group_email).twice
+      end
+    end
+
+    context "for an exam campaign" do
+      let(:exam) { create(:exam, :written) }
+      let(:campaign) do
+        instance_double(Registration::Campaign, exam_campaign?: true, exam: exam)
+      end
+
+      it "enqueues an exam rejection email with the exam and the reasons" do
         expect do
           described_class.rejected(user, campaign, reasons: reasons)
         end.to have_enqueued_mail(described_class, :rejected_from_exam_email).with(
@@ -427,41 +568,40 @@ describe RosterNotificationMailer do
         )
       end
     end
-
-    context "with a campaign that has no supported rosterable" do
-      it "does not enqueue an email and logs instead" do
-        # No items, so there is no rosterable to resolve.
-        expect(Rails.logger).to receive(:error)
-          .with(/Unsupported rosterable type: NilClass/)
-
-        expect do
-          described_class.rejected(user, campaign, reasons: reasons)
-        end.not_to have_enqueued_mail
-      end
-    end
   end
 
   describe "reason link" do
-    let(:lecture) { create(:lecture) }
+    let(:reasons) { ["Email domain not allowed."] }
 
-    context "when the rosterable has no page of its own (Tutorial/Cohort)" do
-      let(:tutorial) { create(:tutorial, lecture: lecture, title: "Übung 3") }
+    def deliver_rejection(campaign)
+      expect do
+        perform_enqueued_jobs do
+          described_class.rejected(user, campaign, reasons: reasons)
+        end
+      end.to change { ActionMailer::Base.deliveries.count }.by(2)
 
-      it "falls back to the lecture home link" do
-        email = described_class.with(rosterable: tutorial,
-                                     recipient: user).rejected_from_group_email
-        delivered = deliver(email)
+      ActionMailer::Base.deliveries.last
+    end
+
+    context "when the campaign is a group campaign" do
+      let(:campaign) do
+        create(:registration_campaign, :with_items, :preference_based, status: :draft)
+      end
+
+      it "links to the lecture home" do
+        delivered = deliver_rejection(campaign)
 
         expect(delivered_body(delivered)).to match(%r{https?://\S*})
       end
     end
 
-    context "when the rosterable is an Exam" do
-      let(:exam) { create(:exam, :written, lecture: lecture) }
+    context "when the campaign is an exam campaign" do
+      let(:lecture) { create(:lecture) }
+      let(:exam) { create(:exam, lecture: lecture) }
+      let(:campaign) { exam.registration_campaign }
 
-      it "includes a link" do
-        email = described_class.with(rosterable: exam, recipient: user).rejected_from_exam_email
-        delivered = deliver(email)
+      it "links to the lecture home" do
+        delivered = deliver_rejection(campaign)
 
         expect(delivered_body(delivered)).to match(%r{https?://\S*})
       end
@@ -517,6 +657,15 @@ describe RosterNotificationMailer do
         new_rosterable: create(:tutorial, title: "Übung 7"),
         recipient: user
       ).moved_between_groups_email))
+    end
+
+    it "carries no markup in a mail to a whole group" do
+      body = text_part_of(described_class.with(
+        rosterable: rosterable, recipients: [user]
+      ).added_to_group_email)
+
+      expect(body).not_to include("Alice")
+      expect(body).not_to match(%r{<[a-z/][^>]*>}i)
     end
 
     it "names both the tutor and the participant when someone leaves a tutorial" do
