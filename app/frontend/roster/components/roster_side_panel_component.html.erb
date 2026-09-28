@@ -165,7 +165,7 @@
                     <% if drag_controller? %>
                       <button
                         type="button"
-                        class="btn tutorial-roster-student-action"
+                        class="btn icon-button"
                         data-action="roster-drag#pickTarget"
                         data-user-id="<%= student.id %>"
                         data-user-name="<%= student_display_name(student) %>"
@@ -187,7 +187,7 @@
                     >
                       <button
                         type="button"
-                        class="btn tutorial-roster-student-action"
+                        class="btn icon-button"
                         data-action="clipboard#copy"
                         title="<%= copy_email_label(student) %>"
                         aria-label="<%= copy_email_label(student) %>"
@@ -211,7 +211,7 @@
                     <% if path %>
                       <%= button_to path,
                                     method: :delete,
-                                    class: "btn tutorial-roster-student-action " \
+                                    class: "btn icon-button icon-button--danger " \
                                            "tutorial-roster-student-remove",
                                     title: t("roster.group_row.remove",
                                              name: student_display_name(student)),

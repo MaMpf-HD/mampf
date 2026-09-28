@@ -98,8 +98,8 @@
                 data-student-search="<%= "#{user.tutorial_name} #{user.matriculation_number} #{user.email}".downcase %>"
               >
                 <td>
-                  <%= user.tutorial_name.presence || user.email %>
-                  <%= render "shared/copy_email_button", email: user.email %>
+                  <%= render "shared/copy_email_button",
+                             email: user.email, name: user.tutorial_name.presence || user.email %>
                 </td>
 
                 <td><%= user.matriculation_number %></td>
@@ -185,8 +185,8 @@
 
           <tr>
             <td>
-              <%= user.tutorial_name %>
-              <%= render "shared/copy_email_button", email: user.email %>
+              <%= render "shared/copy_email_button", email: user.email,
+                                                     name: user.tutorial_name %>
             </td>
 
             <td><%= user.matriculation_number %></td>

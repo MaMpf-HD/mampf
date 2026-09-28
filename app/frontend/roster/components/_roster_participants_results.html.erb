@@ -35,8 +35,8 @@
 
           <tr>
             <td>
-              <%= user.tutorial_name %>
-              <%= render "shared/copy_email_button", email: user.email %>
+              <%= render "shared/copy_email_button", email: user.email,
+                                                     name: user.tutorial_name %>
             </td>
 
             <td><%= user.matriculation_number %></td>
@@ -46,10 +46,12 @@
               <% groups = component.participant_groups(user) %>
 
               <% if groups.any? %>
-                <% groups.each do |group| %>
-                  <%= component.helpers.roster_group_badge(group,
-                                                           component.group_type) %>
-                <% end %>
+                <div class="d-flex flex-wrap gap-1">
+                  <% groups.each do |group| %>
+                    <%= component.helpers.roster_group_badge(group,
+                                                             component.group_type) %>
+                  <% end %>
+                </div>
               <% else %>
                 <span class="text-muted small">
                   <%= t("roster.stats.status_unassigned") %>
@@ -65,11 +67,12 @@
                               params: { source: :participants,
                                         group_type: component.group_type,
                                         page: component.pagy.page },
-                              class: "btn btn-sm btn-outline-danger",
+                              class: "btn icon-button icon-button--danger",
                               title: t('roster.tooltips.kick_from_lecture'),
+                              "aria-label": t('roster.tooltips.kick_from_lecture'),
                               data: { bs_toggle: "tooltip",
                                       turbo_confirm: t('roster.warnings.confirm_kick_from_lecture') } do %>
-                  <i class="bi bi-trash"></i>
+                  <i class="bi bi-trash" aria-hidden="true"></i>
                 <% end %>
               </div>
             </td>
