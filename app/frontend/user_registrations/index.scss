@@ -141,8 +141,7 @@
   gap: 0.5rem;
 }
 
-// Title, details, places and actions line up from row to row, as in the
-// staff's group rows; the places column keeps one width so the bars do too.
+// Title, details, seats and actions line up from row to row, as in the group rows.
 .registration-options-rows {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 11rem auto;
@@ -246,13 +245,6 @@
   align-items: flex-end;
   gap: 0.25rem;
 
-  // Every row offers the same kind of action, so the buttons stay light and
-  // of one width; a finger needs the larger target, a pointer does not.
-  > .btn,
-  > form .btn {
-    min-width: 7.5rem;
-  }
-
   // Outweighs the lecture home, which gives every button the finger's height.
   @media (pointer: fine) {
     .registration-options & .btn {
@@ -267,6 +259,13 @@
       min-height: 44px;
       min-width: 44px;
     }
+  }
+
+  // Every row offers the same kind of action, so the buttons share one width.
+  // After the finger's target, which would outweigh it on a touch screen.
+  .registration-options & > .btn,
+  .registration-options & > form .btn {
+    min-width: 7.5rem;
   }
 
   form {
