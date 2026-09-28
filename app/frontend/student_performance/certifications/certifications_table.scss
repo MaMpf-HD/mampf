@@ -1,6 +1,6 @@
-// Two columns hold sentences - the hint and the note; the others hold a
-// name, a figure, a status, an icon. The two share what the others leave
-// over, so neither ends up at the far edge behind the other's slack.
+// One column holds sentences - the hint, and a decision's note below it; the
+// others hold a name, a figure, a status, an icon. It takes what the others
+// leave over. Notes are rare, so a column of their own stood mostly empty.
 .certifications-table {
   th,
   td {
@@ -10,14 +10,8 @@
 
   .hint-column {
     white-space: normal;
-    width: 55%;
+    width: 100%;
     min-width: 14rem;
-  }
-
-  .note-column {
-    white-space: normal;
-    width: 45%;
-    min-width: 10rem;
   }
 
   .numeric {

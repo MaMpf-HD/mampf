@@ -291,7 +291,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               tr.text.include?(user_a.tutorial_name)
             end
 
-            expect(row.css("td")[-3].text.strip).to be_empty
+            expect(row.at_css("td.hint-column").text.strip).to be_empty
           end
 
           it "does not call a deferred row a contradiction" do
@@ -958,7 +958,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
-        it "keeps the note column for the note" do
+        it "shows the note below the hint" do
           StudentPerformance::Certification
             .find_by(lecture: lecture, user: decided_user)
             .update!(note: "Sick note on file")
@@ -968,7 +968,11 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             tr.text.include?(decided_user.tutorial_name)
           end
 
-          expect(row.css("td.note-column").text.strip).to eq("Sick note on file")
+          hint_cell = row.at_css("td.hint-column")
+          expect(hint_cell.text).to include(
+            I18n.t("student_performance.certifications.columns.rule_today")
+          )
+          expect(hint_cell.text.squish).to include("Note: Sick note on file")
         end
       end
 

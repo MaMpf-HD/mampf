@@ -348,10 +348,6 @@
               <%= t("student_performance.certifications.columns.hint") %>
             </th>
 
-            <th scope="col" class="note-column">
-              <%= t("student_performance.certifications.columns.note") %>
-            </th>
-
             <th scope="col" class="text-end"></th>
           </tr>
         </thead>
@@ -520,19 +516,26 @@
                     </span>
                   <% end %>
                 <% end %>
-              </td>
 
-              <td class="small note-column">
                 <% if decided %>
                   <div data-certification-inline-target="display">
-                    <span class="text-muted"><%= cert.note %></span>
+                    <% if cert.note.present? %>
+                      <span class="text-muted d-block">
+                        <%= t("student_performance.certifications.columns.note") %>:
+                        <%= cert.note %>
+                      </span>
+                    <% end %>
                   </div>
-                  <div data-certification-inline-target="edit" class="d-none">
+                  <div
+                    data-certification-inline-target="edit"
+                    class="d-none mt-1"
+                  >
                     <input
                       type="text"
                       data-certification-inline-target="noteInput"
                       data-action="keydown.enter->certification-inline#save"
                       class="form-control form-control-sm"
+                      aria-label="<%= t("student_performance.certifications.columns.note") %>"
                       value="<%= cert.note %>"
                       placeholder="<%= t('student_performance.certifications.override.note_hint') %>"
                       autocomplete="off"
