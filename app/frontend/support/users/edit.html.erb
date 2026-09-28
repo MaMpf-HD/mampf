@@ -18,6 +18,8 @@
 
   <%= bootstrap_form_with model: @user, url: support_user_path(@user), method: :patch,
                           local: true do |f| %>
+    <%= f.alert_message t("support.users.not_saved") %>
+
     <%= f.text_field :first_name, label: t("support.users.fields.first_name") %>
     <%= f.text_field :last_name, label: t("support.users.fields.last_name") %>
 

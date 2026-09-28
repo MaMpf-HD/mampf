@@ -103,6 +103,15 @@ RSpec.describe("Support users", type: :request) do
       expect(student.personal_data_changes).to be_empty
     end
 
+    it "names the error when a field outside the form keeps the user from saving" do
+      student.update_column(:homepage, "not a url")
+
+      patch support_user_path(student), params: { user: { last_name: "Lasker" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include("Nothing was saved:", "Homepage")
+    end
+
     it "says so when nothing has changed, and records nothing" do
       patch support_user_path(student), params: { user: { last_name: "Noether" } }
       follow_redirect!
