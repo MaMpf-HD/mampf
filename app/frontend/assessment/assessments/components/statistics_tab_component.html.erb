@@ -20,11 +20,6 @@
     <%= t("assessment.statistics_tab.counts",
           marked: counts[:marked], total: counts[:total]) %>
 
-    <% if show_submissions? %>
-      ·
-      <%= t("assessment.statistics_tab.handed_in", count: counts[:handed_in]) %>
-    <% end %>
-
     <% if counts[:absent].positive? %>
       ·
       <%= t("assessment.statistics_tab.absent", count: counts[:absent]) %>

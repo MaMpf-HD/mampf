@@ -588,9 +588,6 @@ en:
     statistics_tab:
       overview: 'Overview'
       counts: '%{marked} of %{total} marked in full'
-      handed_in:
-        one: '1 handed in'
-        other: '%{count} handed in'
       absent: '%{count} absent'
       exempt: '%{count} exempt'
       nothing_marked: 'Nothing has been marked in full yet.'

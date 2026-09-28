@@ -47,7 +47,6 @@ module Assessment
     def counts
       @counts ||= {
         total: participations.size,
-        handed_in: participations.count(&:submitted_at),
         marked: marked.size,
         absent: participations.count(&:absent?),
         exempt: participations.count(&:exempt?)

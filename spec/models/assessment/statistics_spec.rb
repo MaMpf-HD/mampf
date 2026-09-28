@@ -59,7 +59,7 @@ RSpec.describe(Assessment::Statistics) do
       create(:assessment_task_point, task: first_task, assessment_participation: half,
                                      points: 1)
 
-      expect(statistics.counts).to include(total: 2, marked: 1, handed_in: 2)
+      expect(statistics.counts).to include(total: 2, marked: 1)
       expect(statistics.task_rows.first.figures.number).to eq(1)
     end
 

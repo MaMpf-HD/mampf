@@ -588,9 +588,6 @@ de:
     statistics_tab:
       overview: 'Überblick'
       counts: '%{marked} von %{total} vollständig bewertet'
-      handed_in:
-        one: '1 abgegeben'
-        other: '%{count} abgegeben'
       absent: '%{count} abwesend'
       exempt: '%{count} befreit'
       nothing_marked: 'Bisher ist noch nichts vollständig bewertet.'
