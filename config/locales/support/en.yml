@@ -16,8 +16,8 @@ en:
       back: 'Back to the search'
       edit_title: 'Personal data of %{user}'
       edit_explainer: >-
-        Groups, exam lists and grade exports list this person by these fields.
-        A field left empty can be filled in once by the person themselves.
+        Groups and exam lists show this person by these fields. A field left
+        empty can be filled in once by the person themselves.
       save: 'Save'
       saved: 'The personal data has been corrected.'
       not_saved: 'Nothing was saved:'

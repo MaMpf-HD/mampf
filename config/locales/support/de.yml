@@ -10,14 +10,14 @@ de:
       hits:
         one: '1 Person'
         other: '%{count} Personen'
-      no_hits: 'Niemand passt.'
+      no_hits: 'Keine Treffer.'
       correct: 'Korrigieren'
       correct_for: 'Stammdaten von %{user} korrigieren'
       back: 'Zurück zur Suche'
       edit_title: 'Stammdaten von %{user}'
       edit_explainer: >-
-        Gruppen, Klausurlisten und Notenexporte führen die Person unter diesen
-        Feldern. Ein leer gelassenes Feld kann die Person einmal selbst füllen.
+        Gruppen und Klausurlisten führen die Person unter diesen Feldern. Ein
+        leer gelassenes Feld kann die Person einmal selbst füllen.
       save: 'Speichern'
       saved: 'Die Stammdaten sind korrigiert.'
       not_saved: 'Nichts wurde gespeichert:'

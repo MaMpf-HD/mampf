@@ -1617,7 +1617,7 @@ en:
       elevate: 'Promote to Administrator'
       info:
         support: >
-          Finds people and corrects their name and matriculation number, which they cannot change themselves once saved.
+          Finds people and corrects their first and last name and matriculation number, which they cannot change themselves once saved.
         display_name: >
           Here you can enter the display name. The display name
           is used for the display of teachers, editors, forum posts etc.
