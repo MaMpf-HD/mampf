@@ -1,0 +1,16 @@
+<%# locals: (lecture:, empty:) %>
+<%#
+  The medium is made elsewhere, and publishing it can make the homework too;
+  neither shows from this form.
+%>
+
+<div class="form-text">
+  <% if empty %>
+    <%= t("assessment.exercise_medium_hint.empty") %>
+  <% end %>
+
+  <%= t("assessment.exercise_medium_hint.text_html",
+        link: link_to(t("assessment.exercise_medium_hint.link"),
+                      edit_lecture_path(lecture, tab: "content"),
+                      data: { turbo_frame: "_top" })) %>
+</div>

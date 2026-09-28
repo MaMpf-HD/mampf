@@ -1,5 +1,9 @@
 de:
   assessment:
+    exercise_medium_hint:
+      empty: "Noch keine Übung."
+      text_html: "Das Blatt selbst ist ein Übungs-Medium: Lege es unter %{link} an und wähle es hier aus. Beim Veröffentlichen einer Übung lässt sich auch gleich ihre Hausaufgabe anlegen."
+      link: "Inhalt → Medien"
     tabs:
       assessments: "Testate"
       assignments: "Hausaufgaben & Tests"
