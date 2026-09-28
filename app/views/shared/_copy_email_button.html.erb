@@ -1,11 +1,15 @@
 <%# locals: (email:) %>
-<% label = "#{t("buttons.copy_email_address")}: #{email}" %>
+<%# A list copies every address at once, as a team's hand-in needs. %>
+<% emails = Array(email) %>
+<% several = emails.size > 1 %>
+<% text = emails.join(", ") %>
+<% label = "#{t(several ? "buttons.copy_email_addresses" : "buttons.copy_email_address")}: #{text}" %>
 <span
   class="d-inline-flex"
   data-controller="clipboard"
-  data-clipboard-text-value="<%= email %>"
-  data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
-  data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
+  data-clipboard-text-value="<%= text %>"
+  data-clipboard-confirmation-value="<%= t(several ? "basics.emails_copied_to_clipboard" : "basics.email_copied_to_clipboard") %>"
+  data-clipboard-failure-value="<%= t(several ? "basics.emails_copy_failed" : "basics.email_copy_failed") %>"
 >
   <button
     type="button"
