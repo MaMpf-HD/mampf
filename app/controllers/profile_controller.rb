@@ -138,11 +138,11 @@ class ProfileController < ApplicationController
     end
 
     # A teacher's homepage and picture show on their teacher page, so only a
-    # teacher sets them. A new picture wins over a ticked "remove".
+    # teacher sets them.
     def assign_teacher_profile
       return unless @user.teacher?
 
-      profile = params.expect(user: [:homepage, :image, :remove_image])
+      profile = params.permit(user: [:homepage, :image, :remove_image]).fetch(:user, {})
       @user.homepage = profile[:homepage] if profile.key?(:homepage)
       if profile[:image].present?
         @user.image = profile[:image]

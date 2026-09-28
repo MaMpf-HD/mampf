@@ -33,7 +33,6 @@ test.describe("the note pinned to a lecturer's dashboard", () => {
     await courses.getByRole("button", { name: "Close" }).click();
     await expect(courses).toBeHidden();
 
-    // closing the dialog puts the keyboard back where it was
     const newLecture = note.getByRole("button", { name: "New lecture" });
     await newLecture.click();
     const dialog = page.getByRole("dialog", { name: "Create an event series" });
@@ -47,7 +46,6 @@ test.describe("the note pinned to a lecturer's dashboard", () => {
     await expect(page).toHaveURL(/\/lectures\/\d+\/edit/);
     await expect(page.getByText("has been successfully created")).toBeVisible();
 
-    // the same lecture a second time is refused inside the dialog
     await page.goto("/");
     const staffNote = page.getByRole("region", { name: "You are staff in these" })
       .getByRole("complementary", { name: "Now and then" });

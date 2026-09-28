@@ -57,7 +57,7 @@ RSpec.describe("Profile", type: :request) do
         expect(user.reload.image).to be_nil
       end
 
-      context "with a new picture that is refused" do
+      describe "a new picture" do
         let(:refused) do
           image = Rails.root.join(SPEC_FILES, "image.png").open("rb")
           cached = ProfileimageUploader.upload(image, :cache)
@@ -71,20 +71,32 @@ RSpec.describe("Profile", type: :request) do
           user.update!(image: Rails.public_path.join("unknown-person.gif").open)
         end
 
-        it "says why the picture was refused and keeps the old one" do
+        def upload_picture
+          scanner = instance_double(ClamavScanner, scan: UploadScanResult.clean)
+          allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+          post("/profile_image/upload",
+               params: { file: Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "image.png"),
+                                                            "image/png") },
+               headers: upload_intent_headers(ProfileimageUploader, user: user, target: user))
+          response.body
+        end
+
+        it "that is refused is named, and the old one stays" do
+          old_image = user.image.id
+
           save_teacher_profile(image: refused)
 
           expect(response.body).to include(
             I18n.t("submission.upload_failure_scan_required", locale: :en).strip
           )
           expect(response.body).to include("$('#image-error').append(")
-          expect(user.reload.image).to be_present
+          expect(user.reload.image.id).to eq(old_image)
         end
 
-        it "takes the new picture over a ticked remove" do
-          save_teacher_profile(image: refused, remove_image: "1")
+        it "wins over a ticked remove" do
+          save_teacher_profile(image: upload_picture, remove_image: "1")
 
-          expect(user.reload.image).to be_present
+          expect(user.reload.image.original_filename).to eq("image.png")
         end
       end
     end

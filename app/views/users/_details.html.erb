@@ -23,16 +23,13 @@
         </div>
       </div>
       <div class="col-3 text-center">
-        <% unless profile %>
-          <%= link_to t('admin.user.index'),
-                      users_path,
-                      class: 'btn btn-sm btn-outline-primary' %>
-        <% end %>
+        <%= link_to t('admin.user.index'),
+                    users_path,
+                    class: 'btn btn-sm btn-outline-primary' %>
       </div>
     </div>
     <%= render partial: 'users/data',
                locals: { user: user,
-                         f: f,
-                         profile: profile } %>
+                         f: f } %>
   <% end %>
 </div>
