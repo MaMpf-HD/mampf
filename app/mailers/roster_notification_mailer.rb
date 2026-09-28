@@ -10,11 +10,10 @@ class RosterNotificationMailer < ApplicationMailer
       # A bare lecture roster entry grants no access, so there is nothing to announce.
       return if rosterable.is_a?(Lecture)
 
-      template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
       with(
         rosterable: rosterable,
         recipient: user
-      ).public_send(template).deliver_later
+      ).public_send(added_template(rosterable)).deliver_later
     end
 
     def removed(user, rosterable)
@@ -50,23 +49,15 @@ class RosterNotificationMailer < ApplicationMailer
     def change_exam_schedule(rosterable)
       return log_unsupported(rosterable) unless rosterable.is_a?(Exam)
 
-      rosterable.roster_entries.includes(:user).find_each do |entry|
-        with(
-          rosterable: rosterable,
-          recipient: entry.user
-        ).change_exam_schedule_email.deliver_later
-      end
+      users = rosterable.roster_entries.includes(:user).map(&:user)
+      deliver_grouped(:change_exam_schedule_email, rosterable, users)
     end
 
     def finalized(rosterable, users)
       return log_unsupported(rosterable) unless supported?(rosterable)
-      # A bare lecture roster entry grants no access, so there is nothing to announce.
       return if rosterable.is_a?(Lecture)
 
-      template  = rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
-      users.each do |user|
-        with(rosterable: rosterable, recipient: user).public_send(template).deliver_later
-      end
+      deliver_grouped(added_template(rosterable), rosterable, users)
     end
 
     def rejected(user, campaign, reasons:)
@@ -98,6 +89,10 @@ class RosterNotificationMailer < ApplicationMailer
         SUPPORTED_ROSTERABLES.any? { |klass| rosterable.is_a?(klass) }
       end
 
+      def added_template(rosterable)
+        rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
+      end
+
       # Only a tutorial has someone responsible for it. The two sides hear different
       # news: work handed in before the move stays with the tutorial it was handed in to.
       def notify_tutors(user, old_rosterable, new_rosterable)
@@ -112,6 +107,14 @@ class RosterNotificationMailer < ApplicationMailer
                  new_rosterable: new_rosterable,
                  recipient: tutor).public_send(template).deliver_later
           end
+        end
+      end
+
+      # One mail per language, members in bcc. The mail carries no personal greeting.
+      def deliver_grouped(template, rosterable, users)
+        users.group_by(&:locale).each_value do |users_in_locale|
+          with(rosterable: rosterable,
+               recipients: users_in_locale).public_send(template).deliver_later
         end
       end
   end
@@ -195,8 +198,9 @@ class RosterNotificationMailer < ApplicationMailer
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
+      @recipients      = params[:recipients]
       @participant     = params[:participant]
-      @username        = @recipient.tutorial_name
+      @username        = @recipient&.tutorial_name
       @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable)
       @lecture ||= lecture_for_rosterable(@rosterable || @new_rosterable)
       @info = params[:info] || {}
@@ -204,10 +208,13 @@ class RosterNotificationMailer < ApplicationMailer
 
     def email
       prepare_data(params)
-      I18n.with_locale(@recipient.locale || I18n.default_locale) do
+      addressees = @recipient ? [@recipient] : @recipients
+      locale = addressees.first.locale
+      addressing = @recipient ? { to: @recipient.email } : { bcc: @recipients.map(&:email) }
+      I18n.with_locale(locale || I18n.default_locale) do
         mail(
-          from: NotificationMailer.sender(@recipient.locale),
-          to: @recipient.email,
+          from: NotificationMailer.sender(locale),
+          **addressing,
           subject: yield
         )
       end
