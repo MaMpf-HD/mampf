@@ -32,6 +32,75 @@ RSpec.describe("Auth unlocks", type: :request) do
     end
   end
 
+  describe "POST /users/unlock for an account that is not locked" do
+    before do
+      Rails.cache.clear
+      ActionMailer::Base.deliveries.clear
+    end
+
+    it "sends the password reset mail, since the password is what is missing" do
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      ActionMailer::Base.deliveries.clear
+
+      post(user_unlock_path, params: { user: { email: user.email }, locale: "en" })
+
+      mail = ActionMailer::Base.deliveries.sole
+      expect(mail.to).to eq([user.email])
+      expect(mail.subject).to eq(I18n.t("devise.mailer.reset_password_instructions.subject",
+                                        locale: :en))
+      expect(user.reload.reset_password_sent_at).to be_present
+    end
+
+    it "does the same once a lock has run out" do
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      user.lock_access!
+      user.update!(locked_at: (Devise.unlock_in + 1.minute).ago)
+      ActionMailer::Base.deliveries.clear
+
+      post(user_unlock_path, params: { user: { email: user.email }, locale: "en" })
+
+      expect(ActionMailer::Base.deliveries.sole.subject)
+        .to eq(I18n.t("devise.mailer.reset_password_instructions.subject", locale: :en))
+    end
+
+    it "shares the daily limit per address with the password reset form" do
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      ActionMailer::Base.deliveries.clear
+      params = { user: { email: user.email }, locale: "en" }
+
+      6.times do |i|
+        post(user_password_path, params: params, env: { "REMOTE_ADDR" => "10.0.1.#{i}" })
+      end
+      5.times do |i|
+        post(user_unlock_path, params: params, env: { "REMOTE_ADDR" => "10.0.2.#{i}" })
+      end
+
+      expect(ActionMailer::Base.deliveries.count).to eq(10)
+    end
+
+    it "answers as for any address and sends nothing for an unknown one" do
+      post(user_unlock_path, params: { user: { email: "nobody@example.com" }, locale: "en" })
+
+      expect(ActionMailer::Base.deliveries).to be_empty
+      expect(flash[:notice])
+        .to eq(I18n.t("devise.unlocks.send_paranoid_instructions", locale: :en))
+    end
+  end
+
+  describe "the mail sent on locking" do
+    it "points to the password reset as well" do
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      ActionMailer::Base.deliveries.clear
+
+      user.lock_access!
+
+      mail = ActionMailer::Base.deliveries.sole
+      links = Nokogiri::HTML((mail.html_part || mail).body.decoded).css("a").pluck("href")
+      expect(links).to include(a_string_including("unlock_token="),
+                               a_string_including(new_user_password_path))
+    end
+  end
+
   describe "GET /users/unlock" do
     it "unlocks the account through the link from the mail" do
       user = create(:confirmed_user_en, password: "correct-horse-battery-staple")

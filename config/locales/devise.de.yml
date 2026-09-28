@@ -77,6 +77,10 @@ de:
         instruction: >
           Klicke auf den untenstehenden Link, um Deinen Account zu entsperren.
         action: "Account entsperren"
+        forgot_password: >-
+          Dein Account wird nach %{unlock_in} von selbst entsperrt. Falls Du Dein Passwort
+          nicht mehr weißt, setze es zurück – damit wird Dein Account auch entsperrt.
+        reset_password: "Passwort zurücksetzen"
       email_changed:
         subject: "E-Mail geändert"
       password_change:
@@ -143,7 +147,10 @@ de:
         didn_t_receive_unlock_instructions: 'Anleitung zum Entsperren nicht erhalten?'
     unlocks:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
-      send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
+      send_paranoid_instructions: >-
+        Falls es Deinen Account gibt, erhältst Du in wenigen Minuten eine E-Mail: mit einem
+        Link zum Entsperren oder, falls er nicht gesperrt ist, zum Zurücksetzen Deines
+        Passworts.
       unlocked: "Dein Account wurde entsperrt. Bitte melde Dich an."
       new:
         resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"

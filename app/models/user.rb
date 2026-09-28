@@ -908,6 +908,16 @@ class User < ApplicationRecord
   def current_sign_in_ip=(_ip)
   end
 
+  # Answers the unlock form with the password reset mail when the account is
+  # not locked: whoever cannot sign in without a lock has lost the password,
+  # and a lock ends by itself after `unlock_in`, so the unlock mail would
+  # never come. Setting the new password unlocks the account as well.
+  def resend_unlock_instructions
+    return super if access_locked?
+
+    send_reset_password_instructions
+  end
+
   ##############################################################################
   # Annotations
   ##############################################################################
