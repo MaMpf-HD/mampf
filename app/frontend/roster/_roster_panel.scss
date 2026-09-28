@@ -162,21 +162,20 @@
   }
 }
 
-.tutorial-roster-student .card-body {
-  position: relative;
-  padding-right: 3.25rem;
-}
-
+// Removing is rarer than moving or copying, so it waits for the pointer or
+// the keyboard and turns red only then.
 .tutorial-roster-student-remove {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
   opacity: 0;
   transition: opacity 0.12s ease-in-out;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--bs-danger);
+  }
 }
 
-.tutorial-roster-student:hover .tutorial-roster-student-remove {
+.tutorial-roster-student:hover .tutorial-roster-student-remove,
+.tutorial-roster-student-remove:focus-visible {
   opacity: 1;
 }
 

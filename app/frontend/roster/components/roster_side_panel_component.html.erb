@@ -147,14 +147,9 @@
             data-student-search="<%= "#{student_display_name(student)} #{student.email}".downcase %>"
             data-user-id="<%= student.id %>"
           >
-            <div
-              class="
-                card-body border-0 py-2 px-3 d-flex gap-2 pe-5
-                position-relative
-              "
-            >
+            <div class="card-body border-0 py-2 px-3 d-flex gap-2">
               <div class="tutorial-roster-student-main">
-                <div class="d-flex align-items-start gap-2">
+                <div class="d-flex align-items-center gap-2">
                   <div class="fw-semibold tutorial-roster-student-name">
                     <%= student_display_name(student) %>
                   </div>
@@ -210,6 +205,28 @@
                         data-clipboard-target="status"
                       ></span>
                     </div>
+
+                    <% path = show_remove_button? && remove_member_path(student) %>
+
+                    <% if path %>
+                      <%= button_to path,
+                                    method: :delete,
+                                    class: "btn tutorial-roster-student-action " \
+                                           "tutorial-roster-student-remove",
+                                    title: t("roster.group_row.remove",
+                                             name: student_display_name(student)),
+                                    "aria-label": t("roster.group_row.remove",
+                                                    name: student_display_name(student)),
+                                    form: {
+                                      class: "mb-0 d-flex",
+                                      data: {
+                                        turbo_confirm:
+                                          t("roster.warnings.confirm_kick_from_group")
+                                      }
+                                    } do %>
+                        <i class="bi bi-trash" aria-hidden="true"></i>
+                      <% end %>
+                    <% end %>
                   </div>
                 </div>
 
@@ -234,27 +251,6 @@
                   </div>
                 <% end %>
               </div>
-
-              <% if show_remove_button? %>
-                <% path = remove_member_path(student) %>
-                <% if path %>
-                  <%= button_to path,
-                                method: :delete,
-                                class: "btn btn-sm btn-outline-danger " \
-                                       "tutorial-roster-student-remove",
-                                form: {
-                                  class: "mb-0 d-flex h-100
-                                          position-absolute top-50 end-0
-                                          translate-middle-y",
-                                  data: {
-                                    turbo_confirm:
-                                      t("roster.warnings.confirm_kick_from_group")
-                                  }
-                                } do %>
-                    <i class="bi bi-trash"></i>
-                  <% end %>
-                <% end %>
-              <% end %>
             </div>
           </div>
         <% end %>

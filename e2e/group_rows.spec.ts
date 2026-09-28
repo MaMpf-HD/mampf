@@ -137,4 +137,23 @@ test.describe("the group rows", () => {
       await page.mouse.click(5, 5);
       await expect(dialog).toBeHidden();
     });
+
+  test("remove a member through the row's own button, after asking",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
+      const monday = await factory.create("tutorial", [], {
+        lecture_id: lecture.id, title: "Mo 10", capacity: 8, skip_campaigns: true,
+      });
+      await monday.__call("add_user_to_roster!", student.user);
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
+      const panel = page.getByRole("complementary", { name: "Participants" });
+      page.once("dialog", dialog => dialog.accept());
+      await panel.getByRole("button", { name: /^Remove .* from this group$/ }).click();
+
+      await expect(page.getByRole("listitem")
+        .filter({ has: page.getByRole("heading", { name: "Mo 10", exact: true }) }))
+        .toContainText("0 / 8 members");
+    });
 });

@@ -249,6 +249,7 @@ de:
         members: "Mitglieder · Kapazität"
         first_choices: "Erstwünsche · Plätze"
         actions: "Aktionen"
+      remove: "%{name} aus dieser Gruppe entfernen"
       move:
         button: "%{name} in eine andere Gruppe verschieben oder hinzufügen"
         title: "Zielgruppe für %{name} auswählen"

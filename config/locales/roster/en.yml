@@ -247,6 +247,7 @@ en:
         members: "Members · Capacity"
         first_choices: "First Choices · Seats"
         actions: "Actions"
+      remove: "Remove %{name} from this group"
       move:
         button: "Move or add %{name} to another group"
         title: "Move or add %{name} to …"
