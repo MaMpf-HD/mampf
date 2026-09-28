@@ -396,8 +396,6 @@ test.describe("marking table", () => {
     await note.hover();
   });
 
-  // The teacher stands in for a tutor with the corrections, but a late
-  // hand-in stays the tutor's call.
   test("lets the lecture's teacher upload corrections for a group", async ({
     factory,
     teacher,
@@ -428,7 +426,8 @@ test.describe("marking table", () => {
     await expect(row.getByRole("link", { name: "Upload correction" })).toBeVisible();
 
     await teacher.page.getByRole("button", { name: "More actions" }).click();
-    await expect(teacher.page.getByRole("button", { name: "Bulk upload of corrections" }))
+    await teacher.page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+    await expect(teacher.page.getByRole("heading", { name: /Bulk upload of corrections/ }))
       .toBeVisible();
   });
 });
