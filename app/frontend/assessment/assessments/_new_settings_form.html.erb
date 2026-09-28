@@ -62,7 +62,7 @@
     <% end %>
 
     <% unless assignment.kind_test? %>
-      <% exercises = Medium.where(teachable: lecture, sort: "Exercise").to_a %>
+      <% exercises = exercise_media(lecture) %>
       <div class="col-md-6">
         <%= f.label :medium_id, t("medium.singular"), class: "form-label" %>
 
@@ -73,7 +73,7 @@
                    { class: "form-select selectize" } %>
 
         <%= render "assessment/assessments/exercise_medium_hint",
-                   lecture: lecture, empty: exercises.empty? %>
+                   lecture: lecture, no_exercises: exercises.empty? %>
       </div>
       <div class="col-md-6">
         <%= f.label :accepted_file_type, t("submission.file_format"), class: "form-label" %>

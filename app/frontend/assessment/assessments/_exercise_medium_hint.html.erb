@@ -1,11 +1,11 @@
-<%# locals: (lecture:, empty:) %>
+<%# locals: (lecture:, no_exercises:) %>
 <%#
-  The medium is made elsewhere, and publishing it can make the homework too;
-  neither shows from this form.
+  The form cannot show where its media come from: exercises are created in
+  the content tab, and publishing one can create its assignment.
 %>
 
 <div class="form-text">
-  <% if empty %>
+  <% if no_exercises %>
     <%= t("assessment.exercise_medium_hint.empty") %>
   <% end %>
 
