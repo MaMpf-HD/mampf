@@ -5,9 +5,7 @@ RSpec.describe(Assessment::Statistics) do
     it "takes the middle of an even count as the mean of the two middle values" do
       figures = described_class.figures([1, 4, 2, 3])
 
-      expect(figures).to have_attributes(number: 4, mean: 2.5, median: 2.5,
-                                         lowest: 1.0, highest: 4.0)
-      expect(figures.deviation).to be_within(0.001).of(Math.sqrt(1.25))
+      expect(figures).to have_attributes(number: 4, mean: 2.5, median: 2.5)
     end
 
     it "has nothing to say about no values" do

@@ -5,8 +5,7 @@ module Assessment
   # only rows marked in full, so that a sheet half way through marking does
   # not pull the averages down.
   class Statistics
-    Figures = Struct.new(:number, :mean, :median, :deviation, :lowest, :highest,
-                         keyword_init: true)
+    Figures = Struct.new(:number, :mean, :median, keyword_init: true)
     TaskRow = Struct.new(:task, :figures, :full_share, :zero_share, keyword_init: true)
     GroupRow = Struct.new(:label, :people, :figures, :grades, keyword_init: true)
     GradeFigures = Struct.new(:number, :mean, :pass_share, keyword_init: true)
@@ -23,10 +22,8 @@ module Assessment
       return Figures.new(number: 0) if values.empty?
 
       sorted = values.map(&:to_f).sort
-      mean = sorted.sum / sorted.size
-      Figures.new(number: sorted.size, mean: mean, median: median_of(sorted),
-                  deviation: Math.sqrt(sorted.sum { |value| (value - mean)**2 } / sorted.size),
-                  lowest: sorted.first, highest: sorted.last)
+      Figures.new(number: sorted.size, mean: sorted.sum / sorted.size,
+                  median: median_of(sorted))
     end
 
     def self.median_of(sorted)
