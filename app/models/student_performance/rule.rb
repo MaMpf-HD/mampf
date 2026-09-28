@@ -58,14 +58,18 @@ module StudentPerformance
 
     private
 
-      # A threshold of zero asks for nothing; it is kept as what it means, so
-      # that the rule reads the same whichever way it was entered.
+      # Stores a zero threshold as threshold_mode none, so that 0 %, 0 points
+      # and "No point threshold" are the same rule and show as "No requirement".
       def drop_zero_threshold
-        return unless min_percentage&.zero? || min_points_absolute&.zero?
+        if threshold_mode_percentage? && min_percentage&.zero?
+          self.min_percentage = nil
+        elsif threshold_mode_absolute? && min_points_absolute&.zero?
+          self.min_points_absolute = nil
+        else
+          return
+        end
 
         self.threshold_mode = :none
-        self.min_percentage = nil
-        self.min_points_absolute = nil
       end
 
       # The mode is the single source of truth; the two value columns have to

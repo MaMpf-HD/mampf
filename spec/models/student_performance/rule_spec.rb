@@ -156,6 +156,24 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         expect(rule.min_percentage).to be_nil
       end
 
+      it "reads an absolute threshold of zero as no threshold" do
+        rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
+                                min_points_absolute: 0)
+
+        expect(rule).to be_valid
+        expect(rule).to be_threshold_mode_none
+        expect(rule.min_points_absolute).to be_nil
+      end
+
+      it "keeps a real threshold when the other column is zero" do
+        rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
+                                min_points_absolute: 30, min_percentage: 0)
+
+        expect(rule).not_to be_valid
+        expect(rule).to be_threshold_mode_absolute
+        expect(rule.errors.added?(:base, :percentage_and_absolute_exclusive)).to be(true)
+      end
+
       it "accepts a threshold without any achievement" do
         rule = FactoryBot.build(:student_performance_rule, :with_percentage)
         expect(rule).to be_valid
