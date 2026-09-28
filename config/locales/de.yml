@@ -3520,9 +3520,6 @@ de:
       Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
-    subscribe_course: 'Seine Veranstaltungen kannst Du in der Veranstaltungssuche auf Deinem Dashboard merken.'
-    subscribe_course_text: >
-      Seine Veranstaltungen kannst Du in der Veranstaltungssuche auf Deinem Dashboard merken.
     submission_invitation_subject: >
       Einladung zu Abgabe für %{assignment} in %{lecture}
     submission_invitation_html: >

@@ -3290,9 +3290,6 @@ en:
       You can bookmark it in the lecture search on your dashboard.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
-    subscribe_course: 'You can bookmark its event series in the lecture search on your dashboard.'
-    subscribe_course_text: >
-      You can bookmark its event series in the lecture search on your dashboard.
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
     submission_invitation_html: >
