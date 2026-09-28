@@ -283,6 +283,21 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(text).to include("3 handed in (2 teams)")
       end
 
+      it "names no team behind a file the tutor refused" do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [member, partner], accepted: false)
+        [member, partner].each do |user|
+          create(:assessment_participation, assessment: assessment, user: user,
+                                            tutorial: tutorial, submitted_at: nil)
+        end
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+
+        text = I18n.with_locale(:en) { render_inline(component.summary).text }
+        expect(text).to include("1 handed in")
+        expect(text).not_to include("team")
+      end
+
       it "leaves the teams out when everybody handed in alone" do
         create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
                                               users: [member])

@@ -110,9 +110,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   # The row counts once for each of its members.
   def row_statuses
     from_files = @stack.flat_map do |submission|
-      status = team_participations(submission).compact.first&.display_status ||
-               :pending_grading
-      [status] * [submission.users.size, 1].max
+      [file_status(submission)] * [submission.users.size, 1].max
     end
     return from_files unless grading_enabled?
 
@@ -123,8 +121,13 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   end
 
   # Only worth saying where some file was handed in by more than one person.
+  # A refused file puts its people among those who did not hand in, so it is
+  # no team behind the hand-ins either.
   def team_count
-    @stack.size if @stack.any? { |submission| submission.users.size > 1 }
+    handed_in = @stack.select do |submission|
+      file_status(submission).in?(MarkingSummaryComponent::HANDED_IN)
+    end
+    handed_in.size if handed_in.any? { |submission| submission.users.size > 1 }
   end
 
   def tasks
@@ -138,6 +141,10 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   end
 
   private
+
+    def file_status(submission)
+      team_participations(submission).compact.first&.display_status || :pending_grading
+    end
 
     def roster_rows
       if @mode == "tutor"

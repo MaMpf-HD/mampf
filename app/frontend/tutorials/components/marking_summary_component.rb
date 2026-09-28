@@ -3,6 +3,7 @@
 class MarkingSummaryComponent < ViewComponent::Base
   PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
            :met, :not_met, :unmarked, :exempt, :absent].freeze
+  HANDED_IN = [:reviewed, :pending_grading].freeze
 
   # A talk's rows have nothing handed in to count. An exam draws two tables
   # on one page, so the second line needs an id of its own to be replaced.
@@ -21,7 +22,7 @@ class MarkingSummaryComponent < ViewComponent::Base
     counts = @statuses.tally
     parts = []
     if @hand_ins
-      handed_in = counts.fetch(:reviewed, 0) + counts.fetch(:pending_grading, 0)
+      handed_in = HANDED_IN.sum { |status| counts.fetch(status, 0) }
       parts << handed_in_text(handed_in)
     end
     PARTS.each do |status|
