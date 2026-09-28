@@ -21,6 +21,7 @@ de:
       display_name: 'Anzeigename'
       save: 'Speichern'
       saved: 'Die Stammdaten sind korrigiert.'
+      unchanged: 'Es hat sich nichts geändert.'
       history: 'Korrekturen'
       no_history: 'Bisher wurde nichts korrigiert.'
       columns:

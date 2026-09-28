@@ -21,6 +21,7 @@ en:
       display_name: 'Display name'
       save: 'Save'
       saved: 'The personal data has been corrected.'
+      unchanged: 'Nothing has changed.'
       history: 'Corrections'
       no_history: 'Nothing has been corrected yet.'
       columns:

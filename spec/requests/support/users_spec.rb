@@ -103,6 +103,15 @@ RSpec.describe("Support users", type: :request) do
       expect(student.personal_data_changes).to be_empty
     end
 
+    it "says so when nothing has changed, and records nothing" do
+      patch support_user_path(student), params: { user: { last_name: "Noether" } }
+      follow_redirect!
+
+      expect(response.body).to include("Nothing has changed.")
+      expect(response.body).not_to include("The personal data has been corrected.")
+      expect(student.personal_data_changes).to be_empty
+    end
+
     it "shows the corrections so far" do
       patch support_user_path(student), params: { user: { first_name: "Amalie" } }
       follow_redirect!

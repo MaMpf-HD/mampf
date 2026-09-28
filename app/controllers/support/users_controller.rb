@@ -24,9 +24,10 @@ module Support
     end
 
     def update
-      if PersonalDataChange.correct!(@user, personal_data_params, editor: current_user)
-        redirect_to edit_support_user_path(@user), notice: t("support.users.saved"),
-                                                   status: :see_other
+      fields = PersonalDataChange.correct(@user, personal_data_params, editor: current_user)
+      if fields
+        notice = t(fields.any? ? "support.users.saved" : "support.users.unchanged")
+        redirect_to edit_support_user_path(@user), notice: notice, status: :see_other
       else
         set_changes
         render :edit, status: :unprocessable_content
