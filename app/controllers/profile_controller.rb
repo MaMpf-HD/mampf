@@ -5,10 +5,9 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
                                      :star_lecture, :unstar_lecture]
-  # A pass phrase is shared by the whole lecture, so guessing it is throttled
+  # A passphrase is shared by the whole lecture, so guessing it is throttled
   # as in Lectures::UnlocksController.
-  PASSPHRASE_ATTEMPTS = 10
-  rate_limit to: PASSPHRASE_ATTEMPTS, within: 1.minute, only: :subscribe_lecture,
+  rate_limit to: 10, within: 1.minute, only: :subscribe_lecture,
              by: -> { current_user&.id || request.remote_ip },
              with: -> { head :too_many_requests }
 
