@@ -10,8 +10,6 @@ module Assessment
     GroupRow = Struct.new(:label, :people, :figures, :grades, keyword_init: true)
     GradeFigures = Struct.new(:number, :mean, :pass_share, keyword_init: true)
 
-    PASSING = GradeScheme::PASSING_GRADES.max
-
     attr_reader :assessment
 
     def initialize(assessment)
@@ -81,7 +79,7 @@ module Assessment
     end
 
     def grade_distribution
-      GradeScheme::PASSING_GRADES.sort.push(5.0).map do |grade|
+      GradeEntryService::VALID_GRADES_NUMERIC.map do |grade|
         [grade, graded.count { |row| row.grade_numeric == grade.to_d }]
       end
     end
@@ -110,8 +108,9 @@ module Assessment
         return GradeFigures.new(number: 0) if rows.empty?
 
         values = rows.map { |row| row.grade_numeric.to_f }
+        passed = values.count { |value| value < GradeSchemeApplier::FAILING_GRADE }
         GradeFigures.new(number: values.size, mean: values.sum / values.size,
-                         pass_share: values.count { |value| value <= PASSING }.to_f / values.size)
+                         pass_share: passed.to_f / values.size)
       end
 
       def group_rows(groups)
