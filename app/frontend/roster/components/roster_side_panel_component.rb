@@ -233,7 +233,7 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   # Someone without a last name sorts by the name the panel shows for them.
-  # Rosters::ParticipantQuery::ORDER sorts the participants tab the same way.
+  # User::LAST_NAME_ORDER sorts the participants tab the same way.
   def last_name_key(student)
     names = if student.last_name.present?
       [student.last_name, student.first_name.to_s]
