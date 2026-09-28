@@ -597,8 +597,6 @@ en:
       pass_share: 'Passed'
       people: 'People'
       tasks: 'Tasks'
-      task: 'Task'
-      maximum: 'Maximum'
       reached: 'Reached on average'
       full_marks: 'Full marks'
       no_points: 'No points'

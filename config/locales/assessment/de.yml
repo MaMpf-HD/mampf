@@ -597,8 +597,6 @@ de:
       pass_share: 'Bestanden'
       people: 'Personen'
       tasks: 'Aufgaben'
-      task: 'Aufgabe'
-      maximum: 'Maximum'
       reached: 'Im Mittel erreicht'
       full_marks: 'Volle Punktzahl'
       no_points: 'Keine Punkte'
