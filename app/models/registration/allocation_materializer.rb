@@ -11,7 +11,7 @@ module Registration
         @campaign.registration_items.includes(:registerable).find_each do |item|
           user_ids = item.confirmed_user_ids
 
-          item.registerable.materialize_allocation!(
+          added_ids = item.registerable.materialize_allocation!(
             user_ids: user_ids,
             campaign: @campaign
           )
@@ -21,13 +21,12 @@ module Registration
               .update_all(materialized_at: Time.current)
           # rubocop:enable Rails/SkipsModelValidations
 
-          pending_notifications << [item.registerable, user_ids]
+          pending_notifications << [item.registerable, added_ids] if added_ids&.any?
         end
 
         transaction.after_commit do
-          pending_notifications.each do |registerable, user_ids|
-            users = User.where(id: user_ids)
-            RosterNotificationMailer.finalized(registerable, users)
+          pending_notifications.each do |registerable, added_ids|
+            RosterNotificationMailer.finalized(registerable, User.where(id: added_ids))
           end
         end
       end

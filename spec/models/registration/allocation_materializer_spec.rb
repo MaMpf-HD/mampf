@@ -68,7 +68,7 @@ RSpec.describe(Registration::AllocationMaterializer, type: :model) do
         end
 
         email = ActionMailer::Base.deliveries.last
-        expect(email.to).to eq([user.email])
+        expect(email.bcc).to eq([user.email])
       end
 
       it "sends the correct subject" do
@@ -100,23 +100,27 @@ RSpec.describe(Registration::AllocationMaterializer, type: :model) do
       end
 
       context "with multiple confirmed users on the same item" do
-        let(:other_user) { create(:user, locale: "en") }
+        let(:other_user1) { create(:user, locale: "en") }
+        let(:other_user2) { create(:user, locale: "de") }
 
         before do
           create(:registration_user_registration, :confirmed, registration_item: item,
-                                                              user: other_user,
+                                                              user: other_user1,
+                                                              registration_campaign: campaign)
+          create(:registration_user_registration, :confirmed, registration_item: item,
+                                                              user: other_user2,
                                                               registration_campaign: campaign)
         end
 
-        it "sends one email per user" do
+        it "sends one email per locale" do
           perform_enqueued_jobs do
             expect do
               materializer.materialize!
             end.to change { ActionMailer::Base.deliveries.count }.by(2)
           end
 
-          recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:to)
-          expect(recipients).to contain_exactly(user.email, other_user.email)
+          recipients = ActionMailer::Base.deliveries.last(2).flat_map(&:bcc)
+          expect(recipients).to contain_exactly(user.email, other_user1.email, other_user2.email)
         end
       end
 

@@ -257,7 +257,7 @@ module Registration
                 allocation_decided_at: allocation_decided_at || Time.current)
       end
 
-      reject_notify
+      notify_rejected_users
     end
 
     def reopen!(registration_deadline: nil)
@@ -295,39 +295,6 @@ module Registration
           reason_label: violation[:reason_label] || violation[:message],
           rejection_policy_id: violation[:policy_id],
           rejected_at: now
-        )
-      end
-    end
-
-    def reject_notify
-      rejected_registrations = user_registrations.where(status: :rejected).includes(:user)
-      user_ids = rejected_registrations.map(&:user_id).uniq
-
-      confirmed_user_ids = user_registrations
-                           .where(user_id: user_ids, status: :confirmed)
-                           .distinct.pluck(:user_id).to_set
-      pending_user_ids = user_registrations
-                         .pending
-                         .where(user_id: user_ids)
-                         .distinct.pluck(:user_id).to_set
-
-      rejected_to_notify = rejected_registrations
-                           .group_by(&:user)
-                           .filter_map do |user, regs|
-        next if confirmed_user_ids.include?(user.id)
-        next if pending_user_ids.include?(user.id)
-
-        reasons = I18n.with_locale(user.locale.presence || I18n.default_locale) do
-          regs.map(&:resolved_rejection_reason_label).uniq
-        end
-
-        [user, reasons, self]
-      end
-      rejected_to_notify.each do |user, reasons, campaign|
-        RosterNotificationMailer.rejected(
-          user,
-          campaign,
-          reasons: reasons
         )
       end
     end
@@ -705,6 +672,30 @@ module Registration
           # Fallback: Load instances and use the Rosterable interface.
           # This is slower but guarantees correctness if the association name differs.
           scope.flat_map(&:allocated_user_ids)
+        end
+      end
+
+      def notify_rejected_users
+        rejected_registrations = user_registrations.where(status: :rejected).includes(:user)
+        user_ids = rejected_registrations.map(&:user_id).uniq
+
+        confirmed_user_ids = user_registrations
+                             .where(user_id: user_ids, status: :confirmed)
+                             .distinct.pluck(:user_id).to_set
+
+        rejected_to_notify = rejected_registrations
+                             .group_by(&:user)
+                             .filter_map do |user, regs|
+          next if confirmed_user_ids.include?(user.id)
+
+          reasons = I18n.with_locale(user.locale.presence || I18n.default_locale) do
+            regs.map(&:resolved_rejection_reason_label).uniq
+          end
+
+          [user, reasons]
+        end
+        rejected_to_notify.each do |user, reasons|
+          RosterNotificationMailer.rejected(user, self, reasons: reasons)
         end
       end
   end
