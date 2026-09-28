@@ -30,7 +30,7 @@ test.describe("records office", () => {
       await expect(student.page.getByRole("region", { name: lectureTitle })).toHaveCount(0);
 
       await student.page.getByLabel("Term").selectOption({ label: "SS 2030" });
-      await expect(student.page).toHaveURL(new RegExp(`term_id=${older.id}`));
+      await expect(student.page).toHaveURL(/term=SS30/);
       const card = student.page.getByRole("region", { name: lectureTitle });
       const row = card.getByRole("row", { name: /Tuesday group/ });
       await expect(row).toContainText("1 / 12");

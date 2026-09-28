@@ -6,10 +6,10 @@
   <%= form_with url: records_office_path, method: :get, local: true,
                 data: { controller: "submit-on-change" },
                 class: "d-flex align-items-center gap-2 mb-4" do |f| %>
-    <%= f.label :term_id, t("records_office.term"), class: "form-label mb-0" %>
+    <%= f.label :term, t("records_office.term"), class: "form-label mb-0" %>
 
-    <%= f.select :term_id,
-                 options_for_select(Term.select_terms, @term&.id),
+    <%= f.select :term,
+                 options_for_select(@term_options, @term&.dashboard_param),
                  {},
                  class: "form-select w-auto",
                  data: { action: "change->submit-on-change#change" } %>

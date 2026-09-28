@@ -71,7 +71,7 @@ RSpec.describe("Records office", type: :request) do
     it "shows another term's lectures when it is picked" do
       other = create(:lecture, term: create(:term))
 
-      get records_office_path(term_id: other.term_id)
+      get records_office_path(term: other.term.dashboard_param)
 
       expect(response.body).to include(CGI.escapeHTML(other.title_no_term))
     end

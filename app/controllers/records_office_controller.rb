@@ -10,7 +10,8 @@ class RecordsOfficeController < ApplicationController
   end
 
   def index
-    @term = Term.find_by(id: params[:term_id]) || Term.active || Term.chronological.last
+    @term = Term.from_dashboard_param(params[:term]) || Term.active || Term.chronological.last
+    @term_options = Term.chronological.reverse.map { |term| [term.to_label, term.dashboard_param] }
     @overview = RecordsOffice::TermOverview.new(@term)
   end
 
