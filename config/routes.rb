@@ -183,7 +183,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # support routes
+  # support request routes
   resources :support_requests, only: [:create]
 
   # items routes
