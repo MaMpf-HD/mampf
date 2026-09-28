@@ -94,5 +94,21 @@ RSpec.describe("Auth confirmations", type: :request) do
       # the action runs, so no 6th mail goes out.
       expect(ActionMailer::Base.deliveries.count).to eq(5)
     end
+
+    it "stops sending confirmation emails to one address after the daily limit" do
+      Rails.cache.clear
+      user = create(:user, locale: "en") # unconfirmed
+      ActionMailer::Base.deliveries.clear # drop the sign-up confirmation mail
+
+      params = { user: { email: user.email }, locale: "en" }
+      11.times do |i|
+        post(user_confirmation_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.#{i}" })
+      end
+
+      expect(ActionMailer::Base.deliveries.count).to eq(10)
+      expect(flash[:alert]).to eq(
+        I18n.t("devise.failure.too_many_requests", wait: "1 day", locale: :en)
+      )
+    end
   end
 end

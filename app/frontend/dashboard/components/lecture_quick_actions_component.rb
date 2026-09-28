@@ -1,13 +1,13 @@
-# Speech bubbles beside a lecture's card, one per actionable item (deadlines,
-# open exam registration, unread activity). Purely informational state stays
-# on the card itself.
+# Speech bubbles beside a lecture's card, one per actionable item (a new
+# result, deadlines, open exam registration, unread activity). Purely
+# informational state stays on the card itself.
 class LectureQuickActionsComponent < ViewComponent::Base
   DUE_SOON_WINDOW = 7.days
   MAX_TILT = 1.5
 
   Action = Struct.new(:kind, :icon, :label, :href, keyword_init: true)
 
-  # `staff` keeps only the unread activity, since deadlines and exam
+  # `staff` keeps only the unread activity, since results, deadlines and exam
   # registration are student actions.
   def initialize(lecture:, user:, activity: nil, staff: false)
     super()
@@ -28,7 +28,7 @@ class LectureQuickActionsComponent < ViewComponent::Base
     @actions ||= if staff?
       [activity_action].compact
     else
-      [assignment_action, exam_registration_action, activity_action].compact
+      [result_action, assignment_action, exam_registration_action, activity_action].compact
     end
   end
 
@@ -51,6 +51,21 @@ class LectureQuickActionsComponent < ViewComponent::Base
     def activity
       @activity ||= Dashboard::LectureActivity.new(user: user,
                                                    lectures: [lecture])
+    end
+
+    # Leads to the lecture home. Once the student closes the result's block
+    # there (result_seen_at), the bubble is gone as well.
+    def result_action
+      titles = Assessment::Participation.new_results_for(user, lecture)
+                                        .map { |participation| participation.assessment.title }
+      return if titles.empty?
+
+      Action.new(
+        kind: "result",
+        icon: "bi-award",
+        label: t("dashboard.quick_actions.result.label", count: titles.size, title: titles.first),
+        href: lecture_path(lecture)
+      )
     end
 
     def next_assignment_deadline

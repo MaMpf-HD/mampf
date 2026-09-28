@@ -7,6 +7,8 @@ class PasswordsController < Devise::PasswordsController
              by: -> { "#{request.remote_ip}:#{throttle_email}" },
              with: -> { respond_with_flash(:alert, throttled_message(THROTTLE_WINDOW)) }
 
+  include AddressMailLimit
+
   skip_before_action :require_no_authentication, only: :restart
 
   def restart
