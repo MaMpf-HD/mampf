@@ -676,8 +676,8 @@ class User < ApplicationRecord
     true
   end
 
-  # The check of unlock_lecture! without the bookmark, for a form that must
-  # vet every lecture before it saves any of them.
+  # The check of unlock_lecture! without the bookmark, for callers that must
+  # refuse before they change anything else.
   def may_unlock_lecture?(lecture, passphrase: nil)
     return false unless lecture.published? || admin || lecture.edited_by?(self)
 
