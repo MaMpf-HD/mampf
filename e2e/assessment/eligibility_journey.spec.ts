@@ -69,6 +69,9 @@ test.describe("from a mark to a decision", () => {
     // pinned from both sides.
     await expect(decision).toContainText("Eligible");
     await expect(decision).not.toContainText("Not Eligible");
+    await expect(decision.getByRole("button", {
+      name: `Copy email address: ${member.email}`,
+    })).toBeVisible();
   });
 
   test("moves the recorded decisions when the rule is tightened", async ({

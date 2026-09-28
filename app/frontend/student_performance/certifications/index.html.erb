@@ -352,6 +352,10 @@
               <%= t("student_performance.certifications.columns.note") %>
             </th>
 
+            <th scope="col">
+              <span class="visually-hidden"><%= t("basics.email") %></span>
+            </th>
+
             <th scope="col" class="text-end"></th>
           </tr>
         </thead>
@@ -539,6 +543,10 @@
                     >
                   </div>
                 <% end %>
+              </td>
+
+              <td class="pe-0">
+                <%= render "shared/copy_email_button", email: record.user.email %>
               </td>
 
               <td class="text-end">
