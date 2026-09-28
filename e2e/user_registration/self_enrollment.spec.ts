@@ -69,9 +69,8 @@ test.describe("student self-enrollment", () => {
 
     const option = student.page.getByTestId("registration-option")
       .filter({ hasText: "Full Self-managed Tutorial" });
-    await expect(option.getByText("No places left.")).toBeVisible();
-    await expect(option.getByRole("button", { name: "Full" })).toBeDisabled();
-    await expect(option.getByRole("button", { name: /^Register for / })).toHaveCount(0);
+    await expect(option.getByText("Full", { exact: true })).toBeVisible();
+    await expect(option.getByRole("button")).toHaveCount(0);
   });
 
   test("leaves out the registrations when no campaigns or free groups exist", async ({

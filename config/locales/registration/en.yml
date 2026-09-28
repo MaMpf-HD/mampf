@@ -532,7 +532,6 @@ en:
         no_match: "No option matches your search."
         show_all: "Show all %{count}"
         withdraw_from: "Withdraw from %{title}"
-        no_places: "No places left."
         switch: "Switch here"
         switch_to: "Switch to %{title}"
         register_for: "Register for %{title}"

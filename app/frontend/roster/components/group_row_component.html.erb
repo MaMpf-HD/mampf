@@ -1,0 +1,203 @@
+<li
+  id="<%= dom_id(dom_target) %>"
+  class="<%= row_classes %>"
+  data-tutorial-roster-panel-target="trigger"
+  data-action="
+    click->tutorial-roster-panel#openFromTrigger
+    focusin->tutorial-roster-panel#rememberFocus
+  "
+  data-roster-key="<%= roster_key %>"
+  data-roster-panel-path="<%= panel_path %>"
+  data-roster-type="<%= registerable.class.name.underscore %>"
+  data-roster-id="<%= registerable.id %>"
+  data-roster-full="<%= registerable.full? %>"
+  data-roster-locked="<%= locked? %>"
+  data-roster-title="<%= registerable.title %>"
+  data-roster-count="<%= count_text %>"
+  data-roster-add-member-path="<%= add_member_path %>"
+>
+  <div class="group-row__drop" aria-hidden="true"></div>
+
+  <div class="group-row__main">
+    <div class="group-row__type">
+      <%= type_text %>
+
+      <% if date_text.present? %>
+        <span class="group-row__date">
+          ·
+          <i class="bi bi-calendar-event" aria-hidden="true"></i>
+          <span class="visually-hidden"><%= t("basics.date") %>:</span>
+          <%= date_text %>
+        </span>
+      <% end %>
+    </div>
+
+    <h6 class="group-row__title">
+      <button
+        type="button"
+        class="group-row__open"
+        data-roster-open
+        aria-expanded="false"
+        aria-controls="tutorial-roster-side-panel"
+      >
+        <%= registerable.title %>
+      </button>
+    </h6>
+
+    <% if show_self_enrollment_dropdown? %>
+      <div class="dropdown group-row__self-enrollment">
+        <button
+          class="btn btn-sm btn-link dropdown-toggle <%= sm_button_class %>"
+          type="button"
+          data-bs-toggle="dropdown"
+          data-bs-boundary="window"
+          aria-expanded="false"
+        >
+          <i class="bi <%= sm_icon_class %> me-1" aria-hidden="true"></i>
+          <%= sm_text %>
+        </button>
+
+        <ul class="dropdown-menu shadow-sm group-row__self-enrollment-menu">
+          <li>
+            <h6 class="dropdown-header">
+              <%= t("roster.self_materialization.label") %>
+            </h6>
+          </li>
+
+          <% sm_modes.each do |mode| %>
+            <% path = sm_update_path(mode) %>
+            <% next unless path %>
+
+            <li>
+              <%= link_to path,
+                  class: "dropdown-item #{'active' if sm_mode == mode}",
+                  data: { turbo_method: :patch } do %>
+                <i class="bi <%= sm_icon_for(mode) %> me-2" aria-hidden="true"></i>
+
+                <%= t(mode,
+                    scope: "roster.self_materialization.modes",
+                    default: mode.titleize) %>
+              <% end %>
+            </li>
+          <% end %>
+
+          <li><hr class="dropdown-divider"></li>
+
+          <li>
+            <%= link_to bulk_sm_path,
+                class: "dropdown-item",
+                data: {
+                  turbo_method: :patch,
+                  turbo_confirm: bulk_sm_confirm
+                } do %>
+              <i class="bi bi-check2-all me-2" aria-hidden="true"></i>
+
+              <%= t("roster.self_materialization.apply_to_all_free_groups") %>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="group-row__details">
+    <div class="group-row__meta">
+      <% if people_label %>
+        <span>
+          <i class="bi bi-person" aria-hidden="true"></i>
+          <span class="visually-hidden"><%= people_label %>:</span>
+          <%= tutors_text %>
+        </span>
+      <% end %>
+
+      <% if location_text.present? %>
+        <span>
+          <i class="bi bi-geo-alt" aria-hidden="true"></i>
+
+          <span class="visually-hidden">
+            <%= t("roster.group_row.room") %>:
+          </span>
+
+          <%= location_text %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="group-row__count">
+    <div class="group-row__count-line">
+      <span class="group-row__count-text"><%= count_text %></span>
+
+      <% if (state = count_state) %>
+        <% kind, text = state %>
+        <% if kind == :plain %>
+          <span class="group-row__count-note"><%= text %></span>
+        <% else %>
+          <span class="badge group-row__badge <%= badge_class(kind) %>">
+            <%= text %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if bar? %>
+      <div class="group-row__bar <%= 'group-row__bar--over' if over_capacity? %>">
+        <span style="width: <%= bar_percent %>%"></span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="group-row__actions">
+    <%= link_to edit_path,
+            class: "btn btn-sm btn-outline-primary",
+            title: t("roster.tooltips.edit_settings"),
+            aria: { label: edit_label },
+            data: { turbo_stream: true, bs_toggle: "tooltip" } do %>
+      <i class="bi bi-pencil" aria-hidden="true"></i>
+    <% end %>
+
+    <% if remove_path && remove_disabled? %>
+      <span title="<%= remove_disabled_title %>" data-bs-toggle="tooltip">
+        <button
+          class="btn btn-sm btn-outline-secondary opacity-50"
+          type="button"
+          style="cursor: not-allowed;"
+          aria-label="<%= remove_disabled_label %>"
+          aria-disabled="true"
+        >
+          <i class="bi bi-box-arrow-left" aria-hidden="true"></i>
+        </button>
+      </span>
+    <% elsif remove_path %>
+      <%= link_to remove_path,
+              class: "btn btn-sm btn-outline-secondary",
+              title: remove_title,
+              aria: { label: remove_label },
+              data: remove_data do %>
+        <i class="bi bi-box-arrow-left" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+
+    <% if delete_disabled? %>
+      <span title="<%= delete_disabled_title %>" data-bs-toggle="tooltip">
+        <button
+          class="btn btn-sm btn-outline-danger opacity-50"
+          type="button"
+          style="cursor: not-allowed;"
+          aria-label="<%= delete_disabled_label %>"
+          aria-disabled="true"
+        >
+          <i class="bi bi-trash" aria-hidden="true"></i>
+        </button>
+      </span>
+    <% else %>
+      <%= link_to delete_path,
+              class: "btn btn-sm btn-outline-danger",
+              title: delete_title,
+              aria: { label: delete_label },
+              data: delete_data do %>
+        <i class="bi bi-trash" aria-hidden="true"></i>
+      <% end %>
+    <% end %>
+  </div>
+</li>

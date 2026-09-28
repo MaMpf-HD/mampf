@@ -187,7 +187,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     )
   end
 
-  it "renders the participants removal action with explicit label after finalization" do
+  it "renders the participants removal action with a label after finalization" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)
     create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
@@ -195,7 +195,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     render_inline(described_class.new(exam: exam))
 
     document = Nokogiri::HTML.fragment(rendered_content)
-    remove_action = document.at_css("button.btn-outline-danger[title]")
+    remove_action = document.at_css("button.icon-button--danger[title]")
     filter_label = document.at_css('label[for="exam-participants-filter"]')
     add_toggle = document.at_css(
       "button[data-bs-toggle='collapse'][aria-controls='exam-#{exam.id}-participants-add-form']"
@@ -211,9 +211,6 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
       I18n.t("assessment.registration_tab.add_form_label")
     )
 
-    expect(rendered_content).to include(
-      I18n.t("assessment.registration_tab.remove_button")
-    )
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.filter_label")
     )
@@ -231,6 +228,9 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     expect(add_form_label).to be_present
     expect(filter_label_index).to be < add_form_label_index
     expect(remove_action["title"]).to eq(
+      I18n.t("assessment.registration_tab.remove_tooltip")
+    )
+    expect(remove_action["aria-label"]).to eq(
       I18n.t("assessment.registration_tab.remove_tooltip")
     )
   end

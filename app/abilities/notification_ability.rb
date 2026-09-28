@@ -5,7 +5,7 @@ class NotificationAbility
     clear_aliased_actions
 
     can [:index, :destroy_all, :destroy_lecture_notifications,
-         :destroy_news_notifications], Notification
+         :destroy_lecture_media_notifications, :destroy_news_notifications], Notification
 
     can :destroy, Notification do |notification|
       notification.recipient == user
