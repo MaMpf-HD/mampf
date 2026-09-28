@@ -34,6 +34,33 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
     end
   end
 
+  describe "a new result" do
+    let(:exam) { create(:exam, lecture: lecture, title: "Main Exam") }
+    let!(:participation) do
+      create(:assessment_participation, assessment: exam.assessment, user: user,
+                                        status: :reviewed, grade_numeric: 2.0)
+    end
+
+    it "points at the lecture home once the result is published" do
+      exam.assessment.update!(results_published_at: Time.current)
+
+      action = render_actions.at_css("[data-testid='quick-action-result']")
+
+      expect(action["href"]).to eq("/lectures/#{lecture.id}")
+      expect(action.text)
+        .to include(I18n.t("dashboard.quick_actions.result.label", count: 1, title: "Main Exam"))
+    end
+
+    it "stays quiet before the result is published and after it was closed" do
+      expect(render_actions.css("[data-testid='quick-action-result']")).to be_empty
+
+      exam.assessment.update!(results_published_at: Time.current)
+      participation.update!(result_seen_at: Time.current)
+
+      expect(render_actions.css("[data-testid='quick-action-result']")).to be_empty
+    end
+  end
+
   describe "an open exam registration" do
     let(:exam) { create(:exam, :with_date, lecture: lecture) }
 

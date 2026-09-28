@@ -30,6 +30,10 @@ en:
     intro:
       more: "Read more"
       less: "Show less"
+    new_result:
+      title: "Your result in %{title}"
+      grade: "Grade"
+      close: "Close"
     focus:
       campaign: "Registration open"
       exam: "Your next exam"
@@ -54,6 +58,31 @@ en:
       forum:
         one: "1 unread topic in the board"
         other: "%{count} unread topics in the board"
+    content:
+      title: "In the lecture"
+      last_lesson: "Last lecture"
+      what_we_did: "What we did"
+      notes: "Notes"
+      video: "Video"
+      new_media: "New for you"
+      more_media:
+        one: "and 1 more"
+        other: "and %{count} more"
+      mark_seen: "mark as seen"
+      position: "Where we are"
+      progress: "Section %{reached} of %{total}"
+      over: "Lectures over"
+      contents: "Contents"
+      one_lesson: "1 lecture, %{date}"
+      lessons: "%{count} lectures, %{from} – %{to}"
+      chapters:
+        one: "1 chapter"
+        other: "%{count} chapters"
+      sections:
+        one: "1 section"
+        other: "%{count} sections"
+      revision: "For review"
+      materials: "Materials"
     history:
       title: "Past registrations (%{count})"
       completed: "Finalized · deadline was %{deadline}"

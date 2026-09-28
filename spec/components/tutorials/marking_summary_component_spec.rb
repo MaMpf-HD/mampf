@@ -7,13 +7,19 @@ RSpec.describe(MarkingSummaryComponent, type: :component) do
     render_inline(described_class.new(statuses: statuses)).text.strip
   end
 
-  it "counts the hand-ins and names every state that occurs" do
+  it "counts who handed in and names every state that occurs" do
     expect(summary([:reviewed, :reviewed, :pending_grading, :not_submitted, :exempt]))
-      .to eq("3 hand-ins · 2 reviewed · 1 pending grading · 1 not submitted · 1 exempt")
+      .to eq("3 handed in · 2 reviewed · 1 pending grading · 1 not submitted · 1 exempt")
   end
 
-  it "keeps quiet about states nobody is in, but always counts the hand-ins" do
-    expect(summary([:not_submitted])).to eq("0 hand-ins · 1 not submitted")
+  it "keeps quiet about states nobody is in, but always counts who handed in" do
+    expect(summary([:not_submitted])).to eq("0 handed in · 1 not submitted")
+  end
+
+  it "names the teams behind the hand-ins when given" do
+    component = described_class.new(statuses: [:reviewed, :reviewed, :pending_grading], teams: 2)
+    expect(render_inline(component).text.strip)
+      .to eq("3 handed in (2 teams) · 2 reviewed · 1 pending grading")
   end
 
   it "carries the id the row answers replace" do

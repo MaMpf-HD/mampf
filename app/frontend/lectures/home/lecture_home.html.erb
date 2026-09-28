@@ -94,10 +94,10 @@
     </div>
   <% end %>
 
-  <% backlog = @lecture_backlog || @tutor_backlog %>
-  <% if backlog&.entries&.any? %>
-    <%= render "lectures/home/marking", lecture: @lecture, backlog: backlog,
-                                        per_tutorial: @lecture_backlog.nil? %>
+  <%= render NewResultsComponent.new(lecture: @lecture, user: current_user) %>
+
+  <% if @tutor_backlog&.entries&.any? %>
+    <%= render "lectures/home/marking", lecture: @lecture, backlog: @tutor_backlog %>
   <% elsif focus %>
     <%= render "lectures/home/focus", focus: focus, certification: @certification %>
   <% end %>
@@ -110,6 +110,10 @@
   <% if @notifications.present? || (@lecture.forum? && @new_topics_count.positive?) %>
     <%= render "lectures/home/news", lecture: @lecture, notifications: @notifications,
                                      posts_count: @new_topics_count %>
+  <% end %>
+
+  <% if @content&.render? %>
+    <%= render @content %>
   <% end %>
 
   <% if @tutorials_given.any? %>
@@ -155,6 +159,7 @@
   <% end %>
 
   <% if !@lecture.home_content? && !@can_edit && focus.nil? && @notifications.blank? &&
+        !@content&.render? &&
         @new_topics_count.zero? && @tutorials_given.empty? && campaigns.empty? &&
         Array(@self_rosterables).empty? && @work.nil? && participation_html.blank? &&
         Array(@overview&.closed_campaigns).empty? %>

@@ -49,6 +49,28 @@ test.describe("the card for a sheet that is due", () => {
    * appears twice is resolved to whichever card came first, which puts the
    * answer on the wrong card.
    */
+  test("leads a student without a group to the whole lecture home page", async ({
+    factory,
+    teacher,
+    student,
+  }) => {
+    const { lecture } = await lectureWithSheet(factory, teacher.user.id, []);
+    await factory.create("lecture_bookmark", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByText(
+      "You are not in a tutorial group for this event series",
+    )).toBeVisible();
+    await student.page.getByRole("link", { name: "To the event page" }).click();
+
+    await expect(student.page).toHaveURL(`/lectures/${lecture.id}`);
+    await expect(student.page.getByText(
+      "You are not in a tutorial group for this event series",
+    )).toHaveCount(0);
+  });
+
   test("keeps two open hand-in forms apart", async ({
     factory,
     teacher,

@@ -113,7 +113,7 @@ class StandingComponent < ViewComponent::Base
                                                required: number(mark_percentage))
   end
 
-  # The line above names its base - "of 10 points marked so far" - so this one
+  # The line above names its base - "of 10 points possible so far" - so this one
   # only has to say what is outstanding and that it is not in there. Naming a
   # second number here would put two maxima next to each other and leave the
   # reader to work out which of them they are being measured against.

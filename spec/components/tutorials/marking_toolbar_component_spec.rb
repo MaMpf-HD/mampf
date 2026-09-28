@@ -7,7 +7,8 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
   let(:assignment) { create(:assignment, :expired, lecture: lecture) }
 
   def toolbar(scope:, statuses: [], submissions: [], tutorials: [])
-    described_class.new(assignment: assignment, grading_scope: scope, statuses: statuses,
+    described_class.new(assignment: assignment, grading_scope: scope,
+                        summary: MarkingSummaryComponent.new(statuses: statuses),
                         submissions: submissions, tutorials: tutorials)
   end
 

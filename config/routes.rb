@@ -155,7 +155,9 @@ Rails.application.routes.draw do
           patch :apply
         end
       end
+      resource :results, only: [:update, :destroy]
     end
+    resource :talk_results, only: [:update, :destroy], controller: "results"
   end
 
   # chapters routes
@@ -653,6 +655,10 @@ Rails.application.routes.draw do
   post "notifications/destroy_lecture_notifications",
        to: "notifications#destroy_lecture_notifications",
        as: "destroy_lecture_notifications"
+
+  post "notifications/destroy_lecture_media_notifications",
+       to: "notifications#destroy_lecture_media_notifications",
+       as: "destroy_lecture_media_notifications"
 
   post "notifications/destroy_news_notifications",
        to: "notifications#destroy_news_notifications",
@@ -1262,6 +1268,10 @@ Rails.application.routes.draw do
   patch "participations/:participation_id/refresh_achievement_value",
         to: "assessment/achievement_values#refresh",
         as: "refresh_achievement_value_participation"
+
+  patch "participations/:participation_id/result_seen",
+        to: "assessment/result_notices#update",
+        as: "result_seen_participation"
 
   # main routes
 
