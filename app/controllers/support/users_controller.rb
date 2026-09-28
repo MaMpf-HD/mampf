@@ -20,7 +20,7 @@ module Support
     end
 
     def edit
-      @changes = @user.personal_data_changes.includes(:editor).order(created_at: :desc)
+      set_changes
     end
 
     def update
@@ -28,7 +28,7 @@ module Support
         redirect_to edit_support_user_path(@user), notice: t("support.users.saved"),
                                                    status: :see_other
       else
-        @changes = @user.personal_data_changes.includes(:editor).order(created_at: :desc)
+        set_changes
         render :edit, status: :unprocessable_content
       end
     end
@@ -43,12 +43,16 @@ module Support
         @user = User.find(params[:id])
       end
 
+      def set_changes
+        @changes = @user.personal_data_changes.includes(:editor).order(created_at: :desc)
+      end
+
       def personal_data_params
         params.expect(user: User::LOCKED_PERSONAL_DATA_FIELDS)
       end
 
       def search_params
-        params.fetch(:search, {}).permit(:fulltext, :all_programs, :per, program_ids: [])
+        params.fetch(:search, {}).permit(:fulltext, :all_programs, program_ids: [])
       end
   end
 end
