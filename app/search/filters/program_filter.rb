@@ -3,19 +3,18 @@
 # This filter is skipped if the 'all_programs' parameter is set to '1' or if
 # no program IDs are provided.
 #
-# When active, it dynamically determines the correct join path based on the
-# model being filtered (e.g., `Course` or `Lecture`) to filter by the given
-# program IDs. It does not modify the scope for unsupported models.
+# When active, filters users by their own `program_id` and joins courses
+# and lectures through their divisions. It does not modify the scope for
+# unsupported models.
 module Search
   module Filters
     class ProgramFilter < BaseFilter
       def filter
         return scope if skip_filter?(all_param: :all_programs, ids_param: :program_ids)
 
-        # A user has their own program rather than one through a course.
-        return scope.where(program_id: params[:program_ids]) if scope.klass == User
-
         join_path = case scope.klass.name
+                    when "User"
+                      return scope.where(program_id: params[:program_ids])
                     when "Course"
                       :divisions
                     when "Lecture"
