@@ -310,7 +310,10 @@
     </p>
   <% else %>
     <div class="table-responsive">
-      <table class="table table-sm table-hover align-middle certifications-table">
+      <table
+        class="table table-sm table-hover align-middle certifications-table"
+        style="--achievement-columns: <%= [@achievements.size, 1].max %>"
+      >
         <thead class="table-light">
           <tr>
             <th scope="col" class="student-column">

@@ -17,8 +17,10 @@
     width: 12%;
   }
 
+  // However many achievements the rule asks for, together they take no more
+  // than two of them would, so the other columns keep their share.
   .achievement-column {
-    width: 7%;
+    width: min(7%, calc(14% / var(--achievement-columns, 1)));
   }
 
   .decision-column {
