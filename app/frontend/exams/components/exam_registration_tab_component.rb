@@ -119,9 +119,8 @@ class ExamRegistrationTabComponent < ViewComponent::Base
         }
       end
 
-      entries_by_user_id.values.sort_by do |entry|
-        [entry[:user].name.to_s, entry[:user].email.to_s]
-      end
+      order = User.where(id: entries_by_user_id.keys).by_last_name.pluck(:id)
+      entries_by_user_id.values_at(*order)
     end
   end
 
