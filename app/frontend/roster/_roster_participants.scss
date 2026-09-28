@@ -13,4 +13,9 @@
     color: var(--bs-emphasis-color);
     text-decoration: none;
   }
+
+  // Outweighs the default cursor every badge gets on hover.
+  &.badge:hover {
+    cursor: pointer;
+  }
 }
