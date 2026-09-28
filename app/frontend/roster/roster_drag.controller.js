@@ -153,10 +153,9 @@ export default class extends Controller {
     dialog.querySelector("[data-role='no-targets']")?.classList.toggle("d-none", rows.length > 0);
 
     rows.forEach((row) => {
-      const item = document.createElement("li");
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "btn btn-sm btn-outline-secondary w-100 text-start";
+      button.className = "list-group-item list-group-item-action";
       const title = document.createElement("span");
       title.className = "fw-semibold";
       title.textContent = row.dataset.rosterTitle;
@@ -172,8 +171,7 @@ export default class extends Controller {
       button.append(title, note);
       const key = row.dataset.rosterKey;
       button.addEventListener("click", () => this.choosePickedTarget(key));
-      item.appendChild(button);
-      list.appendChild(item);
+      list.appendChild(button);
     });
   }
 
