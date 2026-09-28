@@ -58,6 +58,19 @@ en:
           You’re receiving this email because recently a MaMpf password reset
           for an account linked to this email adress was issued. If this wasn’t
           you, please ignore this email.
+      registration_attempt:
+        subject: "You already have a MaMpf account"
+        greetings: "Hi, %{name}!"
+        no_name_fallback: "there"
+        instruction: >
+          Somebody tried to create a new MaMpf account with this email address.
+          There already is an account for it, so no new one was created.
+        sign_in: "Sign in"
+        forgot_password_html: "Forgot your password? %{link}."
+        reset_password: "Reset it here"
+        not_you: >
+          If this was not you, you can ignore this email. Nothing about your
+          account has changed.
       unlock_instructions:
         subject: "Unlock instructions"
         greeting: "Hello %{recipient}"
@@ -66,6 +79,10 @@ en:
           unsuccessful sign in attempts.
         instruction: "Click the link below to unlock your account."
         action: "Unlock my account"
+        forgot_password: >-
+          Your account unlocks itself after %{unlock_in}. If you no longer know your
+          password, reset it – that unlocks your account as well.
+        reset_password: "Reset my password"
       email_changed:
         subject: "Email changed"
       password_change:
@@ -132,7 +149,9 @@ en:
         didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
     unlocks:
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
-      send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
+      send_paranoid_instructions: >-
+        If your account exists, you will receive an email in a few minutes: with a link to
+        unlock it or, if it is not locked, to reset your password.
       unlocked: "Your account has been unlocked successfully. Please sign in to continue."
       new:
         resend_unlock_instructions: "Resend unlock instructions"

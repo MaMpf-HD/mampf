@@ -646,23 +646,16 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  # lecture that are in the active term
-  # Teachers and editors see their lectures on the start page without
-  # subscribing. As with the subscriptions, the current fold takes the
-  # lectures without a term along.
-  def current_staff_lectures
-    staff_lectures_in([Term.active, nil])
-  end
-
-  def next_term_staff_lectures
-    coming = Term.active&.next
-    return [] if coming.blank?
-
-    staff_lectures_in(coming)
-  end
-
-  def staff_lecture?(lecture)
-    lecture.teacher == self || edited_lectures.include?(lecture)
+  # Lectures of the active term (and those without a term) the user teaches,
+  # edits (also as editor of the course), bookmarked, is on the roster of or
+  # applied to. Listed by lectures/show/_switcher.
+  def current_lectures
+    [given_lectures, edited_lectures, Lecture.where(course: edited_courses),
+     lectures, roster_lectures.or(lectures_with_registration_application)]
+      .flat_map do |scope|
+        scope.where(term: [Term.active, nil]).includes(:course, :term, :teacher)
+      end
+      .uniq.natural_sort_by(&:title)
   end
 
   # The published lectures whose content this user gets to see as a student:
@@ -732,27 +725,6 @@ class User < ApplicationRecord
                                 .non_exam
                                 .select(:campaignable_id)
     )
-  end
-
-  # The lectures this user holds a place in for the given term, or has an
-  # open application for (see `lectures_with_registration_application`).
-  # Sorted by Registration::StatusQuery.sort_priority (confirmed first,
-  # rejected last), ties kept in `lectures_of_term`'s title order.
-  def current_enrolled_lectures(term = Term.active)
-    combined = roster_lectures.or(lectures_with_registration_application)
-    enrolled = lectures_of_term(combined, term)
-    statuses = Registration::StatusQuery.new(self, enrolled.map(&:id)).statuses
-
-    enrolled.sort_by.with_index do |lecture, index|
-      [Registration::StatusQuery.sort_priority(statuses[lecture.id]), index]
-    end
-  end
-
-  # Bookmarked but not already listed in `current_enrolled_lectures`. Pass
-  # `enrolled` when the caller already computed it, to avoid recomputing it.
-  def current_bookmarked_lectures(term = Term.active,
-                                  enrolled: current_enrolled_lectures(term))
-    lectures_of_term(lectures, term) - enrolled
   end
 
   def submission_partners(lecture)
@@ -898,12 +870,6 @@ class User < ApplicationRecord
     talks.any?
   end
 
-  def layout
-    return "administration" if admin_or_editor?
-
-    "application_no_sidebar"
-  end
-
   def course_editor?
     edited_courses.any?
   end
@@ -942,6 +908,16 @@ class User < ApplicationRecord
   def current_sign_in_ip=(_ip)
   end
 
+  # Answers the unlock form with the password reset mail when the account is
+  # not locked: whoever cannot sign in without a lock has lost the password,
+  # and a lock ends by itself after `unlock_in`, so the unlock mail would
+  # never come. Setting the new password unlocks the account as well.
+  def resend_unlock_instructions
+    return super if access_locked?
+
+    send_reset_password_instructions
+  end
+
   ##############################################################################
   # Annotations
   ##############################################################################
@@ -957,27 +933,10 @@ class User < ApplicationRecord
 
   private
 
-    # Term-independent lectures belong to every term, so they follow the ones
-    # of the selected term rather than being left out.
-    def lectures_of_term(scope, term)
-      independent = scope.where(term: nil).includes(:course, :teacher)
-                         .natural_sort_by(&:title)
-      return independent if term.nil?
-
-      scope.where(term: term).includes(:course, :term, :teacher)
-           .natural_sort_by(&:title) + independent
-    end
-
     def program_offered_to_students
       return if program.nil? || program.degree.present?
 
       errors.add(:program_id, :inclusion)
-    end
-
-    def staff_lectures_in(terms)
-      given = given_lectures.where(term: terms).includes(:course, :term)
-      edited = edited_lectures.where(term: terms).includes(:course, :term, :teacher)
-      (given + edited).uniq.natural_sort_by(&:title)
     end
 
     def password_differs_from_current

@@ -23,6 +23,7 @@
   </div>
   <p class="lecture-home-more">
     <%= link_to t("registration.lecture.home.staff_registration_manage"),
-                edit_lecture_path(lecture, tab: "groups") %>
+                edit_lecture_path(lecture, tab: "groups"),
+                data: lecture_mode_switch_data %>
   </p>
 </section>

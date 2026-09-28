@@ -51,7 +51,7 @@ async function admitRejectedStudentThroughTeacherRoster(
 }
 
 test.describe("campaign registration", () => {
-  test("can be opened from the lecture home tab", async ({ factory, student }) => {
+  test("can be opened on the lecture home page", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
     await createTutorialItemsCampaign(
@@ -62,7 +62,6 @@ test.describe("campaign registration", () => {
     );
 
     await student.page.goto(`/lectures/${lecture.id}`);
-    await student.page.getByRole("link", { name: "Home" }).click();
 
     const home = new CampaignRegistrationPage(student.page, lecture.id);
     await expect(student.page.getByRole("region", { name: "Registration open" })
@@ -153,7 +152,7 @@ test.describe("campaign registration", () => {
     await expect(home.campaign("Tutorial registration")).not.toHaveAttribute("open", "");
 
     await student.page.goto(
-      `/lectures/${lecture.id}/home#student_registration_registration_campaign_${campaign.id}`,
+      `/lectures/${lecture.id}#student_registration_registration_campaign_${campaign.id}`,
     );
 
     await expect(home.campaign("Tutorial registration")).toHaveAttribute("open", "");

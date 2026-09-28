@@ -266,7 +266,11 @@ class TutorialsController < ApplicationController
     def can_view_index
       return if current_user.in?(@lecture.tutors) || current_user.editor_or_teacher_in?(@lecture)
 
-      redirect_to :root, alert: I18n.t("controllers.no_tutor_in_this_lecture")
+      if current_user.proper_student_in?(@lecture)
+        redirect_to lecture_submissions_path(@lecture)
+      else
+        redirect_to lecture_home_path(@lecture)
+      end
     end
 
     def tutorial_params

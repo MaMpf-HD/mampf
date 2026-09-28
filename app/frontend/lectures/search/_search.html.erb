@@ -6,10 +6,13 @@
 
   <div id="lecture-search-wrapper" class="glass">
     <% if @available_terms.present? %>
-      <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
-                                                  selected: @selected_term,
-                                                  id: "lecture-search-term-select",
-                                                  anchor: "lecture-search")) %>
+      <%= render(DashboardTermSelectComponent.new(
+        terms: @available_terms,
+        selected: @selected_term,
+        next_term_lecture_count: @next_term_lecture_count,
+        id: "lecture-search-term-select",
+        anchor: "lecture-search"
+      )) %>
     <% end %>
 
     <%= form_with url: search_lectures_path,

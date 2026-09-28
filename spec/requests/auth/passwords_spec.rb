@@ -29,6 +29,22 @@ RSpec.describe("Auth passwords", type: :request) do
       expect(ActionMailer::Base.deliveries.count).to eq(5)
     end
 
+    it "stops sending reset emails to one address after the daily limit" do
+      Rails.cache.clear
+      user = create(:confirmed_user_en)
+      ActionMailer::Base.deliveries.clear
+
+      params = { user: { email: user.email }, locale: "en" }
+      11.times do |i|
+        post(user_password_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.#{i}" })
+      end
+
+      expect(ActionMailer::Base.deliveries.count).to eq(10)
+      expect(flash[:alert]).to eq(
+        I18n.t("devise.failure.too_many_requests", wait: "1 day", locale: :en)
+      )
+    end
+
     it "does not send mail for an unknown email in paranoid mode" do
       expect do
         post(user_password_path, params: { user: { email: "unknown@example.com" } })
@@ -152,7 +168,7 @@ RSpec.describe("Auth passwords", type: :request) do
       post user_session_path,
            params: { user: { email: user.email, password: new_password } }
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
     end
 
     it "rejects an invalid reset token" do

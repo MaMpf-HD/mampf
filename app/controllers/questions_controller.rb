@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   before_action :set_quizzes, only: [:reassign]
   before_action :check_solution_errors, only: [:update]
   authorize_resource except: :reassign
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= QuestionAbility.new(current_user)

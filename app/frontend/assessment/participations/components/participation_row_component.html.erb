@@ -125,6 +125,11 @@
       <td class="text-center <%= layout.column_class(:status) %>">
         <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
 
+        <% if talk? %>
+          <%= render "assessment/participations/shown_to_speaker",
+                     participation: @participation %>
+        <% end %>
+
         <% if locked_reason %>
           <div class="small text-muted"><%= locked_reason %></div>
         <% end %>

@@ -34,6 +34,33 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
     end
   end
 
+  describe "a new result" do
+    let(:exam) { create(:exam, lecture: lecture, title: "Main Exam") }
+    let!(:participation) do
+      create(:assessment_participation, assessment: exam.assessment, user: user,
+                                        status: :reviewed, grade_numeric: 2.0)
+    end
+
+    it "points at the lecture home once the result is published" do
+      exam.assessment.update!(results_published_at: Time.current)
+
+      action = render_actions.at_css("[data-testid='quick-action-result']")
+
+      expect(action["href"]).to eq("/lectures/#{lecture.id}")
+      expect(action.text)
+        .to include(I18n.t("dashboard.quick_actions.result.label", count: 1, title: "Main Exam"))
+    end
+
+    it "stays quiet before the result is published and after it was closed" do
+      expect(render_actions.css("[data-testid='quick-action-result']")).to be_empty
+
+      exam.assessment.update!(results_published_at: Time.current)
+      participation.update!(result_seen_at: Time.current)
+
+      expect(render_actions.css("[data-testid='quick-action-result']")).to be_empty
+    end
+  end
+
   describe "an open exam registration" do
     let(:exam) { create(:exam, :with_date, lecture: lecture) }
 
@@ -75,6 +102,35 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
       expect(action.text)
         .to include(I18n.t("dashboard.quick_actions.activity.comments", count: 1))
       expect(action["href"]).to eq("/lectures/#{lecture.id}")
+    end
+  end
+
+  context "when the card belongs to staff or a tutor" do
+    let(:activity) do
+      instance_double(Dashboard::LectureActivity,
+                      unread_forum_topics: 1,
+                      unread_comments: 0)
+    end
+
+    def render_staff_actions
+      render_inline(described_class.new(lecture: lecture, user: user,
+                                        activity: activity, staff: true))
+    end
+
+    it "leaves out the student deadlines and exam registration" do
+      create(:assignment, lecture: lecture, deadline: 2.days.from_now)
+      exam = create(:exam, :with_date, lecture: lecture)
+      exam.registration_campaign.update!(status: :open)
+
+      rendered = render_staff_actions
+
+      expect(rendered.css("[data-testid='quick-action-assignment']")).to be_empty
+      expect(rendered.css("[data-testid='quick-action-exam']")).to be_empty
+    end
+
+    it "still shows unread discussion" do
+      expect(render_staff_actions.at_css("[data-testid='quick-action-activity']"))
+        .to be_present
     end
   end
 

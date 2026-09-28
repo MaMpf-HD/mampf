@@ -5,11 +5,18 @@
     <div class="row g-4">
       <div class="col-xl-7 order-2 order-xl-1">
         <div class="card shadow">
-          <div class="card-header bg-light">
+          <div
+            class="
+              card-header bg-light d-flex flex-wrap align-items-center
+              justify-content-between gap-2
+            "
+          >
             <h6 class="mb-0">
               <i class="bi bi-people me-1"></i>
               <%= t("assessment.grade_table.roster_heading") %>
             </h6>
+
+            <%= render ResultsReleaseComponent.new(exam: assessment.assessable) %>
           </div>
 
           <div class="card-body">

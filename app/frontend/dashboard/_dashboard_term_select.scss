@@ -2,6 +2,7 @@
 
 .dashboard-term-select {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
@@ -22,4 +23,34 @@
     min-width: 8.5rem;
     max-width: 100%;
     font-variant-numeric: tabular-nums;
+}
+
+.dashboard-term-select__notice {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color);
+
+    .bi-stars {
+        color: $mampf-blue;
+    }
+}
+
+.dashboard-term-select__link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: $mampf-blue;
+
+    &:hover {
+        color: $mampf-blue-focus;
+    }
+
+    .bi-chevron-down {
+        font-size: 0.7em;
+    }
+
+    .bi-arrow-counterclockwise {
+        font-size: 0.85em;
+        margin-right: 0.15rem;
+    }
 }

@@ -20,6 +20,11 @@ Müsli is a system previously used to handle tutorial groups for lectures & to a
 ## Testing
 
 - RSpec (Ruby). Always run specs with: `VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec ...`. NEVER EVER run specs with: `bundle exec rspec ...` alone, this will wipe the development database.
+- For many spec files or the whole suite, run them in parallel instead. Each worker gets its own test database (`mampf-test1..N`).
+  - `just test rspec-parallel` for the whole suite, or `just test rspec-parallel <paths...>`, e.g. `just test rspec-parallel spec/models spec/services`.
+  - The worker count is already set up (CPU cores minus one), so don't count cores or pass a count yourself.
+  - If it fails because a database is missing or the schema is outdated (e.g. after new migrations), run `just test rspec-parallel-setup` once and try again.
+  - For a single file or a few examples, the plain `rspec` command above is faster (no extra boot per worker).
 - We use Playwright for end-to-end tests (in `e2e/`). Make sure to use page.locator() as little as possible, and rather rely on the page.getBy*() methods, e.g. page.getByRole(), page.getByText(), etc. This will make the tests more robust and less prone to breakage when we change the UI.
 
 ## Linting

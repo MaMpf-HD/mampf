@@ -35,6 +35,23 @@ RSpec.describe(Exam, type: :model) do
     end
   end
 
+  describe "#registrable_by?" do
+    let(:exam) { create(:exam) }
+    let(:user) { create(:confirmed_user) }
+
+    it "lets a member of the lecture register" do
+      create(:lecture_membership, lecture: exam.lecture, user: user)
+
+      expect(exam.registrable_by?(user)).to be(true)
+    end
+
+    it "keeps out somebody who only bookmarked the lecture" do
+      create(:lecture_bookmark, lecture: exam.lecture, user: user)
+
+      expect(exam.registrable_by?(user)).to be(false)
+    end
+  end
+
   describe "associations" do
     it "belongs to a lecture" do
       exam = create(:exam)

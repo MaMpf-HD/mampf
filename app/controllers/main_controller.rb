@@ -33,10 +33,10 @@ class MainController < ApplicationController
 
   def start
     @available_terms = Dashboard::TermSelector.terms
-    @selected_term = Dashboard::TermSelector.selected(params)
+    @selected_term = selected_dashboard_term
+    @next_term_lecture_count = Dashboard::TermSelector.next_term_lecture_count
 
     load_board(@selected_term)
-    next_term_banner
   end
 
   private
@@ -45,23 +45,5 @@ class MainController < ApplicationController
       return unless user_signed_in?
 
       redirect_to consent_profile_path unless current_user.consents
-    end
-
-    # Transitional banner pointing to the lectures of the upcoming term
-    # (see main/start/_next_term_banner). It is only shown when the
-    # feature flag is enabled and there is at least one lecture for the next
-    # term that is visible to students (i.e. published).
-    def next_term_banner
-      return unless Flipper.enabled?(:next_term_banner)
-
-      @next_term = Term.active&.next
-      return if @next_term.blank?
-
-      # matches Search::Filters::DashboardTermFilter: term-independent
-      # lectures (term: nil) are part of the results the banner links to,
-      # so they are part of the count as well
-      @next_term_lecture_count = Lecture.published
-                                        .where(term: [@next_term, nil])
-                                        .count
     end
 end

@@ -136,7 +136,9 @@ Rails.application.routes.draw do
           patch :apply
         end
       end
+      resource :results, only: [:update, :destroy]
     end
+    resource :talk_results, only: [:update, :destroy], controller: "results"
   end
 
   # chapters routes
@@ -322,10 +324,19 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  get "lectures/:id/home",
+  # GET lecture_path is the lecture home page, resources :lectures has no show.
+  get "lectures/:id",
       to: "lectures/home#show",
       as: "lecture_home",
+      constraints: { id: /\d+/ },
       defaults: { project: "home" }
+
+  # kept for old links to the lecture home page
+  get "lectures/:id/home",
+      constraints: { id: /\d+/ },
+      to: redirect { |params, request|
+        ["/lectures/#{params[:id]}", request.query_string.presence].compact.join("?")
+      }
 
   # nginx gives this path a larger client_max_body_size for home_attachment;
   # ordinary lecture requests keep the default limit.
@@ -351,7 +362,7 @@ Rails.application.routes.draw do
       to: "lectures#outline",
       as: "lecture_outline"
 
-  resources :lectures, except: [:index] do
+  resources :lectures, except: [:index, :show] do
     get "roster", to: "roster/maintenance#index"
     get "roster/participants", to: "roster/maintenance#participants"
 
@@ -1235,6 +1246,10 @@ Rails.application.routes.draw do
         to: "assessment/achievement_values#refresh",
         as: "refresh_achievement_value_participation"
 
+  patch "participations/:participation_id/result_seen",
+        to: "assessment/result_notices#update",
+        as: "result_seen_participation"
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not
@@ -1270,9 +1285,11 @@ Rails.application.routes.draw do
       to: "main#comments",
       as: "comments"
 
+  # Old dashboard URL, redirected to root so existing bookmarks still work.
   get "main/start",
-      to: "main#start",
-      as: "start"
+      to: redirect { |_params, req|
+        req.query_string.present? ? "/?#{req.query_string}" : "/"
+      }
 
   get "internal/upload-authorizations/:uploader",
       to: "internal/upload_authorizations#show",

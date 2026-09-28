@@ -2,7 +2,7 @@
 class ChaptersController < ApplicationController
   before_action :set_chapter, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= ChapterAbility.new(current_user)

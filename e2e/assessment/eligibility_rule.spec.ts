@@ -46,7 +46,7 @@ test.describe("the eligibility rule", () => {
     await expect(summary.getByText("60%")).toBeVisible();
 
     // and it does not turn up again somewhere unrelated
-    await teacher.page.goto("/main/start");
+    await teacher.page.goto("/");
     await expect(teacher.page.getByText("Eligibility rule updated."))
       .toHaveCount(0);
   });

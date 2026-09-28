@@ -93,12 +93,15 @@ jobs:
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
 
+      # One worker (and test database) per CPU core via parallel_tests;
+      # SimpleCov merges the coverage of all workers into one report.
       - name: Run unit tests
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run --entrypoint="" -e COVERAGE=true app-test sh -c
-          "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
+          run --entrypoint="" -e COVERAGE=true -e RAILS_ENV=test app-test sh -c
+          "bundle exec rake parallel:create parallel:load_schema &&
+          bundle exec parallel_rspec -o '--format RSpec::Github::Formatter' spec"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v6
