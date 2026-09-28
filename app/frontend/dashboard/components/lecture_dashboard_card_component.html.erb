@@ -69,23 +69,19 @@
   <% talks.each do |talk| %>
     <% card.with_note do %>
       <div class="dashboard-card__talk">
-        <div>
+        <div class="dashboard-card__talk-line">
           <%= link_to talk_path(talk), class: "dashboard-card__note-link" do %>
             <i class="bi bi-mic" aria-hidden="true"></i>
-            <%= t("main.start.your_talk", title: talk.title) %>
+            <%= talk.title %>
           <% end %>
 
-          <%= link_to "",
-                      assemble_talk_path(talk),
-                      class: "bi bi-pencil text-muted dashboard-card__note-link ms-1",
-                      title: t("main.start.edit_talk", title: talk.title),
-                      "aria-label": t("main.start.edit_talk", title: talk.title) %>
+          <% if (dates = talk_dates(talk)) %>
+            <span class="dashboard-card__talk-date"><%= dates %></span>
+          <% end %>
         </div>
 
-        <% if (details = talk_details(talk)).any? %>
-          <div class="dashboard-card__talk-details">
-            <%= safe_join(details, " · ") %>
-          </div>
+        <% if (cospeakers = talk_cospeakers(talk)) %>
+          <div class="dashboard-card__talk-details"><%= cospeakers %></div>
         <% end %>
       </div>
     <% end %>

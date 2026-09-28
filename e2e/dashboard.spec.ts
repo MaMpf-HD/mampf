@@ -391,9 +391,9 @@ test("shows a student's talk on the seminar's card",
 
     const registered = page.getByRole("region", { name: "You are registered for these" });
     await expect(registered.getByRole("link", { name: "Group Theory Seminar" })).toBeVisible();
-    await expect(registered.getByRole("link", { name: "Sylow theorems", exact: true }))
-      .toHaveCount(0);
-    await registered.getByRole("link", { name: "Your talk: Sylow theorems" }).click();
+    const talk = registered.getByRole("link", { name: "Sylow theorems", exact: true });
+    await expect(talk).toHaveCount(1);
+    await talk.click();
     await expect(page).toHaveURL(/\/talks\/\d+$/);
   });
 

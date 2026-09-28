@@ -198,9 +198,8 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       note = card.css(".dashboard-card__note").find { |li| li.text.include?("Sylow") }
 
       expect(note.at_css("a[href='/talks/#{talk.id}']").text.squish)
-        .to eq("Your talk: Sylow theorems")
+        .to eq("Sylow theorems")
       expect(note.text.squish).to include("with Grace Hopper")
-      expect(note.at_css("a[aria-label='Edit Sylow theorems']")).to be_present
     end
   end
 end

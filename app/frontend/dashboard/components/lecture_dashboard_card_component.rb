@@ -71,11 +71,13 @@ class LectureDashboardCardComponent < ViewComponent::Base
     registration_status.present? && registration_status != :confirmed
   end
 
-  def talk_details(talk)
-    dates = talk.dates.map { |date| I18n.l(date, format: :concise) }.join(", ")
+  def talk_dates(talk)
+    talk.dates.map { |date| I18n.l(date, format: :concise) }.join(", ").presence
+  end
+
+  def talk_cospeakers(talk)
     cospeakers = helpers.cospeaker_list(talk, user)
-    [dates.presence,
-     (t("main.start.talk_with", names: cospeakers) if cospeakers.present?)].compact
+    t("main.start.talk_with", names: cospeakers) if cospeakers.present?
   end
 
   def registration_status_label

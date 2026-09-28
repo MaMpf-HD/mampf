@@ -232,7 +232,29 @@ $card-rail-width: 12rem;
     }
 
     &__talk {
+        flex: 1;
         min-width: 0;
+
+        a {
+            color: var(--bs-body-color);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &__talk-line {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    &__talk-date {
+        flex-shrink: 0;
+        white-space: nowrap;
     }
 
     // lines up with the talk's title, past the microphone
