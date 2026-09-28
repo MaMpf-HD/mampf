@@ -45,6 +45,13 @@ RSpec.describe(Assessment::Statistics) do
       expect(second.zero_share).to be_within(0.01).of(1.0 / 3)
     end
 
+    it "leaves full marks and zero points empty for a task worth no points" do
+      first_task.update!(max_points: 0)
+      mark(0, 6)
+
+      expect(statistics.task_rows.first).to have_attributes(full_share: nil, zero_share: nil)
+    end
+
     it "leaves rows still being marked out of the figures but counts them" do
       mark(4, 6)
       half = create(:assessment_participation, assessment: assessment,

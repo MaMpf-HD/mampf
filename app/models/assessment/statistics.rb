@@ -69,8 +69,8 @@ module Assessment
         end
         max = task.max_points.to_f
         TaskRow.new(task: task, figures: self.class.figures(values),
-                    full_share: share(values) { |value| max.positive? && value >= max },
-                    zero_share: share(values) { |value| value.to_f.zero? })
+                    full_share: (share(values) { |value| value >= max } if max.positive?),
+                    zero_share: (share(values) { |value| value.to_f.zero? } if max.positive?))
       end
     end
 
