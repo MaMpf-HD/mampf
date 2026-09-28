@@ -19,8 +19,8 @@ class SupportRequestsController < ApplicationController
 
     return render_form(support_request, :unprocessable_content) unless support_request.valid?
 
-    request = support_request.attributes.merge("user_id" => current_user&.id)
-    SupportRequestMailer.with(support_request: request).new_support_request_email.deliver_later
+    details = support_request.attributes.merge("user_id" => current_user&.id)
+    SupportRequestMailer.with(support_request: details).new_support_request_email.deliver_later
     render turbo_stream: turbo_stream.update(
       "support-request-body", partial: "support_requests/sent"
     )

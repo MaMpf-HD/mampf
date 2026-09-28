@@ -13,10 +13,10 @@ RSpec.describe("Mail senders") do
   end
 
   it "sends a support request from the sender address to the support address" do
-    request = { "message" => "My exam registration does not work.", "user_id" => user.id,
+    details = { "message" => "My exam registration does not work.", "user_id" => user.id,
                 "page" => "http://localhost/lectures/1" }
 
-    email = SupportRequestMailer.with(support_request: request).new_support_request_email
+    email = SupportRequestMailer.with(support_request: details).new_support_request_email
 
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
     expect(email.to).to eq([DefaultSetting::SUPPORT_EMAIL])
@@ -25,9 +25,9 @@ RSpec.describe("Mail senders") do
   end
 
   it "answers a support request from somebody not signed in at the given address" do
-    request = { "message" => "I cannot sign in.", "email" => "someone@example.com" }
+    details = { "message" => "I cannot sign in.", "email" => "someone@example.com" }
 
-    email = SupportRequestMailer.with(support_request: request).new_support_request_email
+    email = SupportRequestMailer.with(support_request: details).new_support_request_email
 
     expect(email.reply_to).to eq(["someone@example.com"])
   end
