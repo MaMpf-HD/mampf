@@ -30,6 +30,13 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    it "sends nothing for a message of spaces only" do
+      expect { send_request(message: " " * 12) }
+        .not_to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     # Open to anybody, so a limit keeps it from flooding the support address.
     it "stops after five messages in an hour" do
       6.times { send_request }

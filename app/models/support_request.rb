@@ -12,11 +12,9 @@ class SupportRequest
   attribute :page, :string
   attr_accessor :user
 
-  validates :message, length: { minimum: MESSAGE_MIN_LENGTH, maximum: MESSAGE_MAX_LENGTH }
+  validates :message, presence: true,
+                      length: { minimum: MESSAGE_MIN_LENGTH, maximum: MESSAGE_MAX_LENGTH,
+                                allow_blank: true }
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP },
                     unless: :user
-
-  def reply_to
-    user&.email || email
-  end
 end
