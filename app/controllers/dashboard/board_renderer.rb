@@ -5,7 +5,23 @@ module Dashboard
   module BoardRenderer
     extend ActiveSupport::Concern
 
+    TERM_COOKIE = :dashboard_term
+
     private
+
+      # The term to show on the dashboard (see Dashboard::TermSelector.selected).
+      # An explicit ?term= pick is stored in a cookie, so the dashboard opens
+      # on that term next time.
+      def selected_dashboard_term
+        term = Dashboard::TermSelector.selected(params, cookies[TERM_COOKIE])
+        remember_dashboard_term(term) if params[:term].present? && term
+        term
+      end
+
+      def remember_dashboard_term(term)
+        cookies[TERM_COOKIE] = { value: term.dashboard_param, expires: 1.year,
+                                 httponly: true, same_site: :lax }
+      end
 
       # Populates @selected_term and @board (see Dashboard::Board).
       def load_board(term)
@@ -14,7 +30,7 @@ module Dashboard
       end
 
       def render_board
-        load_board(Dashboard::TermSelector.selected(params))
+        load_board(selected_dashboard_term)
 
         respond_to do |format|
           format.turbo_stream do
