@@ -143,6 +143,7 @@
 
 .registration-options-rows {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   border: 1px solid var(--bs-border-color);
   border-radius: var(--bs-border-radius);
 }
@@ -160,7 +161,8 @@
 
 .registration-option {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
   gap: 0.75rem;
   padding: 0.6rem 0.75rem;
@@ -276,7 +278,7 @@
     flex-basis: 100%;
   }
 
-  .registration-option {
+  .registration-options-rows {
     grid-template-columns: minmax(0, 1fr);
   }
 

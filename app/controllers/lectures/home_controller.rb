@@ -23,6 +23,9 @@ module Lectures
                              !LectureMembership.exists?(user: current_user,
                                                         lecture: @lecture)
       @notifications = current_user.active_notifications(@lecture)
+      if @content_accessible
+        @content = LectureContentComponent.new(lecture: @lecture, user: current_user)
+      end
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       load_student_registration if Registration::Participation.allowed?(current_user, @lecture)
       load_tutor_work
@@ -114,7 +117,6 @@ module Lectures
                                                    .includes(registration_items: :registerable)
                                                    .order(:registration_deadline).to_a
         @campaign_counts = CampaignCounts.new(@managed_campaigns).to_h
-        @lecture_backlog = MarkingBacklog.new(@lecture)
       end
 
       def next_exam

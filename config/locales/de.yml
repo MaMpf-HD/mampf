@@ -2887,6 +2887,8 @@ de:
     formats:
       concise: '%d.%m.%Y'
       test_week_start: '%d.%m.'
+      day_month: '%-d. %b'
+      weekday_day: '%a, %-d. %b'
       test_week_end: '%d.%m.%Y'
   datetimepicker:
     invalid_date: 'Ungültiges Datums-Zeit-Format.'
@@ -3039,7 +3041,7 @@ de:
       standing:
         mark_percentage: "%{percentage} %"
         heading: Klausurzulassung
-        of_marked: "von %{max} bisher korrigierten Punkten"
+        of_marked: "von %{max} bisher möglichen Punkten"
         of_needed: "von %{max} nötigen Punkten"
         no_max: "Punkte, noch nichts korrigiert"
         nothing_marked: Es ist noch nichts korrigiert.
@@ -3927,7 +3929,6 @@ de:
     saved_at: "Gespeichert %{time}"
     last_saved_at: "Zuletzt gespeichert %{time}"
     available: "Verfügbar"
-    full: "Ausgebucht"
     position: "Position"
     room: "Raum"
     confirmed: "Bestätigt"

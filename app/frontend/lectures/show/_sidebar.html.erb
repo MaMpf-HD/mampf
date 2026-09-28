@@ -4,7 +4,11 @@
         (mirrors the redirect in LecturesController#check_for_unlock). %>
 <% content_accessible = lecture&.content_accessible_by?(current_user) %>
 <% available = ->(page) { content_accessible && lecture.page_available?(page, current_user) } %>
-<ul class="nav nav-pills flex-column" data-controller="lecture-sidebar">
+<ul
+  class="nav nav-pills flex-column"
+  data-controller="lecture-sidebar"
+  data-action="turbo:frame-load@document->lecture-sidebar#markLoaded"
+>
 
   <%# Lecture Home %>
   <% project_name = 'home' %>

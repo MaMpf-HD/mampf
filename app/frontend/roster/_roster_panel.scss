@@ -115,21 +115,41 @@
   }
 }
 
-.tutorial-roster-student .card-body {
-  position: relative;
-  padding-right: 3.25rem;
+// The heading takes the focus when the keyboard opens the panel, so that
+// reading starts there. The ring hugs the text instead of the full width.
+[data-roster-panel-heading] {
+  display: inline-block;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--bs-primary-rgb), 0.5);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
+.tutorial-roster-student-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tutorial-roster-student-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+// Removing is rarer than moving or copying, so it waits for the pointer or
+// the keyboard.
 .tutorial-roster-student-remove {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
   opacity: 0;
   transition: opacity 0.12s ease-in-out;
 }
 
-.tutorial-roster-student:hover .tutorial-roster-student-remove {
+.tutorial-roster-student:hover .tutorial-roster-student-remove,
+.tutorial-roster-student-remove:focus-visible {
   opacity: 1;
 }
 

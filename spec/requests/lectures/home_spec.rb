@@ -85,6 +85,77 @@ RSpec.describe("Lectures::Home", type: :request) do
     end
   end
 
+  describe "the block on what the lecture covers" do
+    before do
+      chapter = create(:chapter, lecture: lecture, title: "Ringe")
+      section = create(:section, chapter: chapter, title: "Ringe und Ideale")
+      Lesson.create!(lecture: lecture, date: lecture.term.begin_date, sections: [section])
+    end
+
+    it "shows the lecture's chapters to a student" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-content"')
+      expect(response.body).to include("Ringe und Ideale")
+    end
+
+    it "takes the place of the \"start here\" card" do
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).not_to include('data-testid="lecture-home-fallback-card"')
+    end
+
+    it "stays hidden while a passphrase keeps the content closed" do
+      lecture.update!(passphrase: "secret")
+      sign_in student
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).not_to include('data-testid="lecture-home-content"')
+    end
+  end
+
+  describe "the hand-ins waiting for points" do
+    let(:tutor) { create(:confirmed_user) }
+    let(:tutorial) { create(:tutorial, lecture: lecture, tutors: [tutor]) }
+
+    before do
+      sheet = create(:assignment, :expired, lecture: lecture, expired_since: 2.days)
+      create(:assessment_participation, assessment: sheet.assessment,
+                                        user: create(:confirmed_user), tutorial: tutorial,
+                                        submitted_at: 3.days.ago)
+    end
+
+    it "are offered to the tutor of the group" do
+      sign_in tutor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-marking"')
+    end
+
+    it "are not offered to the teacher, who does not mark other people's groups" do
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).not_to include('data-testid="lecture-home-marking"')
+    end
+
+    it "are offered to the teacher for a group the teacher tutors" do
+      tutorial.update!(tutors: [editor])
+      sign_in editor
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include('data-testid="lecture-home-marking"')
+    end
+  end
+
   describe "a talk campaign" do
     it "offers the student the talks rather than groups" do
       seminar = create(:seminar, :released_for_all, teacher: editor)
