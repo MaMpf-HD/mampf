@@ -131,7 +131,7 @@ class UsersController < ApplicationController
     end
 
     # Teachers and editors update their own account here too; only admins
-    # change the personal data.
+    # change the personal data and who belongs to the records office.
     def user_params
       allowed = [:name, :email, :homepage, :current_lecture_id, :image]
       allowed += User::PERSONAL_DATA_FIELDS + [:records_office] if current_user.admin?
