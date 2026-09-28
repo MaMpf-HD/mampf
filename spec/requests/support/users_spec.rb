@@ -139,5 +139,15 @@ RSpec.describe("Support users", type: :request) do
 
       expect(account.reload).to be_support
     end
+
+    it "keeps a teacher from making themselves the support" do
+      teacher = create(:confirmed_user_en)
+      create(:lecture, teacher: teacher)
+      sign_in(teacher)
+
+      patch user_path(teacher), params: { user: { name: "Hilbert", support: "1" } }, xhr: true
+
+      expect(teacher.reload).to have_attributes(name: "Hilbert", support: false)
+    end
   end
 end
