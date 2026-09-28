@@ -63,6 +63,21 @@ RSpec.describe("Auth unlocks", type: :request) do
         .to eq(I18n.t("devise.mailer.reset_password_instructions.subject", locale: :en))
     end
 
+    it "shares the daily limit per address with the password reset form" do
+      user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
+      ActionMailer::Base.deliveries.clear
+      params = { user: { email: user.email }, locale: "en" }
+
+      6.times do |i|
+        post(user_password_path, params: params, env: { "REMOTE_ADDR" => "10.0.1.#{i}" })
+      end
+      5.times do |i|
+        post(user_unlock_path, params: params, env: { "REMOTE_ADDR" => "10.0.2.#{i}" })
+      end
+
+      expect(ActionMailer::Base.deliveries.count).to eq(10)
+    end
+
     it "answers as for any address and sends nothing for an unknown one" do
       post(user_unlock_path, params: { user: { email: "nobody@example.com" }, locale: "en" })
 

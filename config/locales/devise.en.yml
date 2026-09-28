@@ -79,7 +79,9 @@ en:
           unsuccessful sign in attempts.
         instruction: "Click the link below to unlock your account."
         action: "Unlock my account"
-        forgot_password: "Your account unlocks itself after %{unlock_in}. If you no longer know your password, reset it – that unlocks your account as well."
+        forgot_password: >-
+          Your account unlocks itself after %{unlock_in}. If you no longer know your
+          password, reset it – that unlocks your account as well.
         reset_password: "Reset my password"
       email_changed:
         subject: "Email changed"
@@ -147,7 +149,9 @@ en:
         didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
     unlocks:
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
-      send_paranoid_instructions: "If your account exists, you will receive an email in a few minutes: with a link to unlock it or, if it is not locked, to reset your password."
+      send_paranoid_instructions: >-
+        If your account exists, you will receive an email in a few minutes: with a link to
+        unlock it or, if it is not locked, to reset your password.
       unlocked: "Your account has been unlocked successfully. Please sign in to continue."
       new:
         resend_unlock_instructions: "Resend unlock instructions"
