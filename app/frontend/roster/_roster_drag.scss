@@ -51,5 +51,22 @@
   &::backdrop {
     background: rgba(0, 0, 0, 0.5);
   }
+
+  .list-group {
+    --bs-list-group-action-hover-bg: var(--bs-secondary-bg);
+  }
+
+  // The first group gets the focus when the dialog opens, so that the
+  // keyboard can choose it right away; opened by a click, it must not look
+  // chosen already.
+  .list-group-item-action:focus:not(:focus-visible, :hover) {
+    color: var(--bs-list-group-action-color);
+    background-color: var(--bs-list-group-bg);
+  }
+
+  .list-group-item-action:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: -2px;
+  }
 }
 
