@@ -74,8 +74,8 @@ class AssessmentsIndexComponent < ViewComponent::Base
     t("assessment.assignments_complete.#{confirmation}_dialog.confirm")
   end
 
-  # A registration still running reads the computed decisions, so they may not
-  # be reset under it.
+  # A registration campaign that is not completed screens against the computed
+  # certifications, so they may not be reset under it.
   def reset_blocked_by
     return @reset_blocked_by if defined?(@reset_blocked_by)
 

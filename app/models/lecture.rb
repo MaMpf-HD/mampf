@@ -1113,11 +1113,11 @@ class Lecture < ApplicationRecord
     tutorials.merge(Tutorial.roster_eligible).exists?
   end
 
-  # The titles of the registrations still running that ask for this lecture's
-  # exam eligibility, or nil. While one does, the decisions it reads must not
-  # vanish under it; a completed one is never screened again.
+  # The titles of the registration campaigns that are not completed and have a
+  # student performance policy for this lecture, or nil. Their screening reads
+  # this lecture's certifications.
   def eligibility_in_use_by
-    policies = open_eligibility_policies
+    policies = unfinished_eligibility_policies
     return if policies.empty?
 
     blocking_campaign_titles(policies)
@@ -1279,7 +1279,7 @@ class Lecture < ApplicationRecord
       errors.add(:uses_exam_eligibility, :referenced_by_policies, campaigns: titles)
     end
 
-    def open_eligibility_policies
+    def unfinished_eligibility_policies
       Registration::Policy.student_performance_for_lecture(id)
                           .joins(:registration_campaign)
                           .merge(Registration::Campaign.where.not(status: :completed))

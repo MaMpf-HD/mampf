@@ -641,16 +641,31 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
-      it "refuses while a running registration asks for the decisions" do
+      it "refuses while an open registration asks for the decisions" do
         lecture.update!(uses_exam_eligibility: true)
+        campaign = FactoryBot.create(:registration_campaign, :with_items)
         policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   registration_campaign: campaign,
                                    config: { "lecture_ids" => [lecture.id.to_s] })
+        campaign.update!(status: :open)
 
         delete lecture_student_performance_rules_path(lecture)
 
         expect(rule.reload).to be_active
         expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(2)
         expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
+      it "is not held up by a completed registration" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+        policy.registration_campaign.update!(status: :completed)
+
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).not_to be_active
+        expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(1)
       end
 
       it "says so when there is no rule in use to remove" do

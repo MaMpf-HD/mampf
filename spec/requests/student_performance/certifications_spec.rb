@@ -29,8 +29,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
-      # Another sheet changes nothing such a rule asks, so the open list does
-      # not hold the proposals back.
       context "with a rule that asks for nothing, while the list is open" do
         before do
           FactoryBot.create(:student_performance_rule, :active, :without_criteria,
@@ -1946,7 +1944,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
       end
 
       # A running registration reads these decisions; resetting them would
-      # refuse its students at the next screening.
+      # block its students at the next screening.
       it "refuses while a running registration asks for the decisions" do
         lecture.update!(uses_exam_eligibility: true)
         policy = FactoryBot.create(:registration_policy, :student_performance,
@@ -1956,6 +1954,38 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
 
         expect(StudentPerformance::Certification.exists?(computed_passed.id)).to be(true)
         expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
+      it "offers the sweep disabled and names the registration that holds it" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+
+        get lecture_student_performance_certifications_path(lecture)
+
+        label = I18n.t("student_performance.certifications.index.bulk_reset", count: 2)
+        reset = Nokogiri::HTML(response.body).css("button").find do |button|
+          button.text.strip == label
+        end
+        expect(reset["disabled"]).not_to be_nil
+        expect(response.body).not_to include(
+          bulk_reset_lecture_student_performance_certifications_path(lecture)
+        )
+        expect(response.body).to include(
+          CGI.escapeHTML(policy.registration_campaign.campaignable.title)
+        )
+      end
+
+      it "is not held up by a completed registration" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+        policy.registration_campaign.update!(status: :completed)
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        remaining = StudentPerformance::Certification.where(lecture: lecture)
+        expect(remaining).to contain_exactly(manual)
       end
 
       it "leaves other lectures alone" do
