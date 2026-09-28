@@ -1,7 +1,7 @@
 // Two columns hold sentences - the hint and the note; the others hold a
-// name, a figure, a status, an icon. Every column gets a share of the width,
-// so the short ones do not huddle at the left while the sentences take the
-// rest; the achievement ticks and the actions keep what they need.
+// name, a figure, a status, an icon. Each gets a share of the width after
+// what it usually holds, so the gaps between the columns come out about
+// equal; the actions keep what is left.
 .certifications-table {
   th,
   td {
