@@ -88,7 +88,7 @@ module StudentPerformance
       # When assignments_complete? is false, every proposal of a rule with a
       # points threshold is inconclusive; bulk_accept would only create or
       # update pending certifications.
-      if !@lecture.assignments_complete? && @rule.points_threshold?
+      if helpers.assignment_list_holds_back?(@lecture, @rule)
         redirect_to lecture_student_performance_certifications_path(@lecture),
                     alert: I18n.t(
                       "student_performance.certifications.index.assignments_incomplete",

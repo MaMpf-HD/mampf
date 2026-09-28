@@ -139,7 +139,6 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
     end
 
     describe "criteria" do
-      # Every student is proposed as eligible; staff refuse the few by hand.
       it "accepts a rule with neither a threshold nor an achievement" do
         rule = FactoryBot.build(:student_performance_rule, :without_criteria)
 
@@ -172,6 +171,12 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         expect(rule).not_to be_valid
         expect(rule).to be_threshold_mode_absolute
         expect(rule.errors.added?(:base, :percentage_and_absolute_exclusive)).to be(true)
+      end
+
+      it "asks for nothing without a threshold or an achievement" do
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria)
+
+        expect(rule).to be_no_requirement
       end
 
       it "accepts a threshold without any achievement" do

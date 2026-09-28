@@ -9,8 +9,8 @@
 
     <div class="d-flex gap-2">
       <%#
-        While the open sheet list holds the proposals back there is nothing to
-        accept; the rule card says so and where to change it.
+        While the list of sheets and tests holds the proposals back there is
+        nothing to accept; the rule box says so and links to where to change it.
       %>
 
       <% if @rule && @uncertified_count > 0 && !assignment_list_holds_back?(@lecture, @rule) &&
@@ -104,7 +104,7 @@
               </span>
             <% end %>
 
-            <% if !@rule.points_threshold? && @rule.required_achievements.none? %>
+            <% if @rule.no_requirement? %>
               <strong>
                 <%= t("student_performance.rules.show.no_requirement") %>
               </strong>

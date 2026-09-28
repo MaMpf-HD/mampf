@@ -539,8 +539,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
     end
 
-    # Another sheet changes nothing a rule without points asks, so the open
-    # list holds nobody back.
     context "with a rule that asks for nothing, while the list is open" do
       let(:rule) do
         FactoryBot.create(:student_performance_rule, :active, :without_criteria,
@@ -561,6 +559,43 @@ RSpec.describe(StudentPerformance::Evaluator) do
         result = evaluator.evaluate(record)
         expect(result.proposed_status).to eq(:passed)
         expect(result.details[:assignments_incomplete]).to be(false)
+      end
+    end
+
+    context "with a rule that asks only for an achievement, while the list is open" do
+      let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
+
+      let(:rule) do
+        FactoryBot.build(:student_performance_rule, :active, :without_criteria,
+                         lecture: lecture).tap do |r|
+          r.rule_achievements.build(achievement: achievement, position: 1)
+          r.save!
+        end
+      end
+
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: false, due_points: due_points)
+      end
+
+      it "proposes a student who has the achievement as eligible" do
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture,
+                                   achievements_met_ids: [achievement.id])
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:passed)
+        expect(result.details[:assignments_incomplete]).to be(false)
+      end
+
+      it "defers a student whose achievement is ungraded for that reason only" do
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture,
+                                   achievements_met_ids: [],
+                                   achievements_ungraded_ids: [achievement.id])
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:inconclusive)
+        expect(result.verdict_deferral_reasons).to eq([:achievements_ungraded])
       end
     end
 

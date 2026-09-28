@@ -1,9 +1,9 @@
 module StudentPerformance
   # What a lecture asks of a student before they may sit its exam: a points
-  # threshold, a set of required achievements, both, or neither - then every
-  # student is proposed as eligible, and staff refuse the few by hand. One rule
-  # is active per lecture; the earlier ones stay for the certifications that
-  # cite them.
+  # threshold, a set of required achievements, both, or neither. With neither,
+  # every student is proposed as eligible and staff refuse single students by
+  # hand. One rule is active per lecture; the earlier ones stay for the
+  # certifications that cite them.
   class Rule < ApplicationRecord
     belongs_to :lecture
 
@@ -50,6 +50,12 @@ module StudentPerformance
     # reachable and, as a share, the points needed.
     def points_threshold?
       min_percentage.present? || min_points_absolute.present?
+    end
+
+    # Whether the rule asks for nothing, so that every student is proposed as
+    # eligible.
+    def no_requirement?
+      !points_threshold? && required_achievements.none?
     end
 
     def rule_achievement_ids_set

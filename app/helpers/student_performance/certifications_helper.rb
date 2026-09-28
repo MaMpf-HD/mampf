@@ -21,8 +21,8 @@ module StudentPerformance
       rule.present? && rule.points_threshold? && !lecture.assignments_complete?
     end
 
-    # The reasons a row spells out. While the open list of sheets holds every
-    # proposal back, they all defer for the same reason, and the box above the
+    # The reasons a row spells out. While the open list of sheets defers every
+    # proposal, they all defer for the same reason, and the box above the
     # table gives it once, so the rows stay empty.
     def proposal_reasons(proposal)
       case proposal.proposed_status
