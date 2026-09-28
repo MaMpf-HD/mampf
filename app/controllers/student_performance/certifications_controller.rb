@@ -189,6 +189,12 @@ module StudentPerformance
     end
 
     def bulk_reset
+      if (titles = @lecture.eligibility_in_use_by)
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.eligibility_in_use", campaigns: titles)
+        return
+      end
+
       count = @lecture.student_performance_certifications.reset_computed!
 
       redirect_to lecture_student_performance_certifications_path(@lecture),
@@ -271,6 +277,7 @@ module StudentPerformance
         @passed_count = @certifications.count(&:passed?)
         @failed_count = @certifications.count(&:failed?)
         @computed_count = @certifications.count { |c| c.computed? && !c.pending? }
+        @eligibility_in_use_by = @lecture.eligibility_in_use_by if @computed_count.positive?
         decided_count = @passed_count + @failed_count
         @uncertified_count = @total_students - decided_count
       end

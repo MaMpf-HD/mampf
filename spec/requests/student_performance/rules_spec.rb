@@ -29,6 +29,24 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
+      it "says why the rule cannot be removed while a registration asks for it" do
+        FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                          lecture: lecture)
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+
+        get edit_lecture_student_performance_rules_path(lecture)
+
+        remove = Nokogiri::HTML(response.body).css("button").find do |button|
+          button.text.strip == I18n.t("student_performance.rules.edit.remove")
+        end
+        expect(remove["disabled"]).not_to be_nil
+        expect(response.body).to include(
+          CGI.escapeHTML(policy.registration_campaign.campaignable.title)
+        )
+      end
+
       it "renders inside rule-editor-frame by default" do
         get edit_lecture_student_performance_rules_path(lecture)
         expect(response.body).to include("rule-editor-frame")
@@ -587,6 +605,18 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(flash[:notice]).to eq(
           I18n.t("student_performance.rules.flash.removed", count: 1)
         )
+      end
+
+      it "refuses while a running registration asks for the decisions" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).to be_active
+        expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(2)
+        expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
       end
 
       it "brings the rule back when the form is saved again" do

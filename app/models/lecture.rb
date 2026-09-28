@@ -1113,6 +1113,16 @@ class Lecture < ApplicationRecord
     tutorials.merge(Tutorial.roster_eligible).exists?
   end
 
+  # The titles of the registrations still running that ask for this lecture's
+  # exam eligibility, or nil. While one does, the decisions it reads must not
+  # vanish under it; a completed one is never screened again.
+  def eligibility_in_use_by
+    policies = open_eligibility_policies
+    return if policies.empty?
+
+    blocking_campaign_titles(policies)
+  end
+
   private
 
     def scheduled_release(medium)
@@ -1263,15 +1273,17 @@ class Lecture < ApplicationRecord
     # A completed campaign is the exception: it has allocated its seats and is
     # never screened again, so it would block for good with nothing left to undo.
     def exam_eligibility_can_be_disabled
-      blocking = Registration::Policy.student_performance_for_lecture(id)
-                                     .joins(:registration_campaign)
-                                     .merge(Registration::Campaign
-                                              .where.not(status: :completed))
-                                     .includes(registration_campaign: :campaignable)
-      return if blocking.empty?
+      titles = eligibility_in_use_by
+      return unless titles
 
-      errors.add(:uses_exam_eligibility, :referenced_by_policies,
-                 campaigns: blocking_campaign_titles(blocking))
+      errors.add(:uses_exam_eligibility, :referenced_by_policies, campaigns: titles)
+    end
+
+    def open_eligibility_policies
+      Registration::Policy.student_performance_for_lecture(id)
+                          .joins(:registration_campaign)
+                          .merge(Registration::Campaign.where.not(status: :completed))
+                          .includes(registration_campaign: :campaignable)
     end
 
     def blocking_campaign_titles(policies)

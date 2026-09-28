@@ -1945,6 +1945,19 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(remaining).to contain_exactly(manual)
       end
 
+      # A running registration reads these decisions; resetting them would
+      # refuse its students at the next screening.
+      it "refuses while a running registration asks for the decisions" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(StudentPerformance::Certification.exists?(computed_passed.id)).to be(true)
+        expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
       it "leaves other lectures alone" do
         elsewhere = FactoryBot.create(:student_performance_certification,
                                       :passed)

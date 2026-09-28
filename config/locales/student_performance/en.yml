@@ -12,6 +12,7 @@ en:
             achievement:
               must_belong_to_same_lecture: "must belong to the same lecture as the rule"
   student_performance:
+    eligibility_in_use: "The registration for %{campaigns} still asks for these decisions. Finish it, or remove its eligibility policy, first."
     lists:
       search: "Search students"
       no_match: "No students found."

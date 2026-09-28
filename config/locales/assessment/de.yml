@@ -182,6 +182,9 @@ de:
         body:
           one: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassung widerspricht ihr danach. Jetzt zurücksetzen? Diese Zulassung ist dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
           other: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Jetzt zurücksetzen? Diese Zulassungen sind dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
+        body_in_use:
+          one: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassung widerspricht ihr danach. Sie bleibt, weil die Anmeldung für %{campaigns} sie noch abfragt.'
+          other: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Sie bleiben, weil die Anmeldung für %{campaigns} sie noch abfragt.'
         reset: 'Zurücksetzen'
         confirm: 'Behalten'
     campaign_status:

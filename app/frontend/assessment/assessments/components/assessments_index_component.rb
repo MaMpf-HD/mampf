@@ -58,6 +58,10 @@ class AssessmentsIndexComponent < ViewComponent::Base
   end
 
   def confirmation_body
+    if confirmation == :reopen && reset_blocked_by
+      return t("assessment.assignments_complete.reopen_dialog.body_in_use",
+               count: computed_decisions_count, campaigns: reset_blocked_by)
+    end
     if confirmation == :reopen
       return t("assessment.assignments_complete.reopen_dialog.body",
                count: computed_decisions_count)
@@ -68,6 +72,14 @@ class AssessmentsIndexComponent < ViewComponent::Base
 
   def confirmation_button
     t("assessment.assignments_complete.#{confirmation}_dialog.confirm")
+  end
+
+  # A registration still running reads the computed decisions, so they may not
+  # be reset under it.
+  def reset_blocked_by
+    return @reset_blocked_by if defined?(@reset_blocked_by)
+
+    @reset_blocked_by = lecture.eligibility_in_use_by
   end
 
   def computed_decisions_count

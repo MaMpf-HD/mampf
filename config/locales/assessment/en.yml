@@ -182,6 +182,9 @@ en:
         body:
           one: 'Without the tick the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. Reset it now? That eligibility is then undecided again. Individual decisions stay either way.'
           other: 'Without the tick the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. Reset them now? Those eligibilities are then undecided again. Individual decisions stay either way.'
+        body_in_use:
+          one: 'Without the tick the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. It stays, because the registration for %{campaigns} still asks for it.'
+          other: 'Without the tick the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. They stay, because the registration for %{campaigns} still asks for them.'
         reset: 'Reset'
         confirm: 'Keep'
     campaign_status:

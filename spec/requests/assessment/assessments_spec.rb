@@ -377,6 +377,25 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           )
         end
 
+        it "offers no reset while a running registration asks for the decisions" do
+          create(:valid_assignment, lecture: lecture)
+          lecture.update!(assignments_complete: true, uses_exam_eligibility: true)
+          policy = create(:registration_policy, :student_performance,
+                          config: { "lecture_ids" => [lecture.id.to_s] })
+
+          get assessment_assessments_path(lecture_id: lecture.id)
+
+          expect(response.body).to include(
+            CGI.escapeHTML(
+              I18n.t("assessment.assignments_complete.reopen_dialog.body_in_use",
+                     count: 1, campaigns: policy.registration_campaign.campaignable.title)
+            )
+          )
+          expect(response.body).not_to include(
+            I18n.t("assessment.assignments_complete.reopen_dialog.reset")
+          )
+        end
+
         # The list is open, so the question is the other one: what closing it
         # would do. Nothing is said about decisions, because closing leaves
         # them alone.
@@ -399,6 +418,19 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         it "keeps the decisions unless told otherwise" do
           patch assignments_complete_assessment_assessments_path(
             lecture_id: lecture.id, complete: "0"
+          )
+
+          expect(lecture.reload.assignments_complete?).to be(false)
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
+        end
+
+        it "keeps the decisions while a running registration asks for them" do
+          lecture.update!(uses_exam_eligibility: true)
+          FactoryBot.create(:registration_policy, :student_performance,
+                            config: { "lecture_ids" => [lecture.id.to_s] })
+
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "0", reset_certifications: "1"
           )
 
           expect(lecture.reload.assignments_complete?).to be(false)

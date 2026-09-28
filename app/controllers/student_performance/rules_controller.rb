@@ -19,6 +19,7 @@ module StudentPerformance
       @achievements = Achievement.where(lecture: @lecture).order(:title)
       @selected_achievement_ids = @rule.rule_achievement_ids_set
       @computed_count = @lecture.student_performance_certifications.computed.decided.count
+      @eligibility_in_use_by = @lecture.eligibility_in_use_by
     end
 
     def update
@@ -48,6 +49,12 @@ module StudentPerformance
     # the rule back.
     def destroy
       @source_frame = params[:source_frame].presence
+      if (titles = @lecture.eligibility_in_use_by)
+        redirect_to source_path,
+                    alert: I18n.t("student_performance.eligibility_in_use", campaigns: titles)
+        return
+      end
+
       rule = StudentPerformance::Rule.find_by(lecture: @lecture, active: true)
       count = 0
       if rule

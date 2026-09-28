@@ -232,7 +232,24 @@
 
     <% if @rule.persisted? && @rule.active? %>
       <div class="border-top mt-3 pt-3 text-end">
-        <%= button_to t("student_performance.rules.edit.remove"),
+        <% if @eligibility_in_use_by %>
+          <span
+            class="d-inline-block"
+            tabindex="0"
+            title="<%= t("student_performance.eligibility_in_use",
+                         campaigns: @eligibility_in_use_by) %>"
+            data-bs-toggle="tooltip"
+          >
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-sm"
+              disabled
+            >
+              <%= t("student_performance.rules.edit.remove") %>
+            </button>
+          </span>
+        <% else %>
+          <%= button_to t("student_performance.rules.edit.remove"),
                       lecture_student_performance_rules_path(@lecture),
                       method: :delete,
                       params: { source_frame: submit_frame },
@@ -244,6 +261,7 @@
                                            count: @computed_count)
                         }
                       } %>
+        <% end %>
       </div>
     <% end %>
   </div>

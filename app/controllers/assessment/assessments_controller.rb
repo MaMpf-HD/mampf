@@ -34,7 +34,8 @@ module Assessment
       # time — after the dialog had already been answered with "keep".
       reset = params[:reset_certifications] == "1" &&
               @lecture.saved_change_to_assignments_complete_at? &&
-              !@lecture.assignments_complete?
+              !@lecture.assignments_complete? &&
+              @lecture.eligibility_in_use_by.nil?
       count = reset ? @lecture.student_performance_certifications.reset_computed! : 0
 
       redirect_to assessment_assessments_path(lecture_id: @lecture.id,
