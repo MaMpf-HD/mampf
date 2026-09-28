@@ -2,8 +2,19 @@ en:
   dashboard:
     term_select:
       label: "Semester"
+      next_term_notice:
+        text:
+          one: "The first lecture for %{term} is online."
+          other: "%{count} lectures for %{term} are online."
+        link: "Take a look"
+        link_label: "Take a look at the lectures for %{term}"
+      current_term_link: "Jump to current semester (%{term})"
     quick_actions:
       list_label: "Things to do for %{lecture}"
+      result:
+        label:
+          one: "Your result in %{title}"
+          other: "%{count} new results"
       assignment:
         label: "Assignment due %{date}"
       exam:

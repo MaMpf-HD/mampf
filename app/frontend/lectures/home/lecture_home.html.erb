@@ -94,6 +94,8 @@
     </div>
   <% end %>
 
+  <%= render NewResultsComponent.new(lecture: @lecture, user: current_user) %>
+
   <% if @tutor_backlog&.entries&.any? %>
     <%= render "lectures/home/marking", lecture: @lecture, backlog: @tutor_backlog %>
   <% elsif focus %>

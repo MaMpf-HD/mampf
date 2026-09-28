@@ -1,6 +1,6 @@
 <% disabled = local_assigns.fetch(:disabled, false) %>
 <% registered_items = local_assigns.fetch(:registered_items, []) %>
-<% sorted_items = sorted_student_registration_items(campaign, items, current_user) %>
+<% sorted_items = sorted_student_registration_items(items) %>
 
 <div data-test="multi-item-first-come-first-served">
   <%= render layout: "user_registrations/option_list", locals: { count: sorted_items.size } do %>

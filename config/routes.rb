@@ -136,7 +136,9 @@ Rails.application.routes.draw do
           patch :apply
         end
       end
+      resource :results, only: [:update, :destroy]
     end
+    resource :talk_results, only: [:update, :destroy], controller: "results"
   end
 
   # chapters routes
@@ -1248,6 +1250,10 @@ Rails.application.routes.draw do
         to: "assessment/achievement_values#refresh",
         as: "refresh_achievement_value_participation"
 
+  patch "participations/:participation_id/result_seen",
+        to: "assessment/result_notices#update",
+        as: "result_seen_participation"
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not
@@ -1283,9 +1289,11 @@ Rails.application.routes.draw do
       to: "main#comments",
       as: "comments"
 
+  # Old dashboard URL, redirected to root so existing bookmarks still work.
   get "main/start",
-      to: "main#start",
-      as: "start"
+      to: redirect { |_params, req|
+        req.query_string.present? ? "/?#{req.query_string}" : "/"
+      }
 
   get "internal/upload-authorizations/:uploader",
       to: "internal/upload_authorizations#show",

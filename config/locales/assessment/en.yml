@@ -348,8 +348,11 @@ en:
       more_actions: 'More actions'
       summary:
         handed_in:
-          one: '1 hand-in'
-          other: '%{count} hand-ins'
+          one: '1 handed in'
+          other: '%{count} handed in'
+        teams:
+          one: '(1 team)'
+          other: '(%{count} teams)'
         reviewed: '%{count} reviewed'
         pending_grading: '%{count} pending grading'
         not_submitted: '%{count} not submitted'
@@ -365,6 +368,50 @@ en:
       user_joined_tutorial: 'Handed in without a tutorial, since then in %{new_tutorial}.'
     grading_talk:
       no_talks_gradable: 'No talks that can be graded.'
+    results_release:
+      exam_published: "Published %{time}"
+      exam_published_detail: "Students see their grade and points on the lecture home page. Changes you make now show there at once."
+      unpublished: "Not published"
+      all_published: "Published"
+      partly_published: "%{published} of %{total} published"
+      shown_to_speaker: "The speaker sees this grade"
+      nobody_has_result: "Nobody has a result yet."
+      no_talk_complete: "No talk has a grade for every speaker yet."
+      publish: "Publish results"
+      publish_talks:
+        one: "Publish 1 talk"
+        other: "Publish %{count} talks"
+      withdraw: "Take back"
+      publish_confirm:
+        one: "From now on, 1 person sees their result on the lecture home page."
+        other: "From now on, %{count} people see their result on the lecture home page."
+      mail: "They get an email saying so, without grade or points."
+      no_mail: "Nobody is emailed again, as they were told the first time."
+      grades_differ:
+        one: "Careful: 1 grade differs from what the scheme gives now."
+        other: "Careful: %{count} grades differ from what the scheme gives now."
+      ungraded:
+        one: "1 person has points but no grade."
+        other: "%{count} people have points but no grade."
+      some_mail:
+        one: "1 of them gets an email saying so; the others were told when their results first went out."
+        other: "%{count} of them get an email saying so; the others were told when their results first went out."
+      withdraw_confirm: "Students will no longer see these results. Some may have seen them already."
+      flash:
+        published: "Results published."
+        withdrawn: "Results taken back."
+        mail_failed: "The results are published, but the email could not be sent. Publish again to send it."
+    results_mailer:
+      subject: "Results of %{title} in %{lecture}"
+      body_html: |
+        <p>Hello,</p>
+        <p>The results of <strong>%{title}</strong> in <strong>%{lecture}</strong> are now available in MaMpf.</p>
+      body: |
+        Hello,
+
+        The results of "%{title}" in "%{lecture}" are now available in MaMpf.
+      link: "Go to the lecture"
+      footer: "You get this email about your own results whatever your notification settings are."
     grading_exam:
       no_candidates: 'Nobody is on the exam roster yet.'
       mark_absent: 'Record as absent'

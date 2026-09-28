@@ -30,6 +30,10 @@ en:
     intro:
       more: "Read more"
       less: "Show less"
+    new_result:
+      title: "Your result in %{title}"
+      grade: "Grade"
+      close: "Close"
     focus:
       campaign: "Registration open"
       exam: "Your next exam"

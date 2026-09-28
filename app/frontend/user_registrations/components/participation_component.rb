@@ -7,7 +7,8 @@ class ParticipationComponent < ViewComponent::Base
 
   TARGET = "student_registration_participation".freeze
 
-  Row = Struct.new(:label, :title, :lines, :badge, :note, :actions, keyword_init: true)
+  Row = Struct.new(:label, :title, :lines, :badge, :note, :actions, :tasks,
+                   keyword_init: true)
 
   def initialize(lecture:, user:, overview: nil)
     super()
@@ -35,13 +36,36 @@ class ParticipationComponent < ViewComponent::Base
 
     def roster_rows
       rosterables.map do |rosterable|
+        result = released_result(rosterable)
         Row.new(label: helpers.roster_type_text(rosterable),
                 title: rosterable.title,
-                lines: meta_lines(rosterable),
-                badge: roster_badge(rosterable),
+                lines: meta_lines(rosterable) + result_lines(result),
+                badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
-                actions: leave_action(rosterable))
+                actions: leave_action(rosterable),
+                tasks: result&.tasks || [])
       end
+    end
+
+    def released_result(rosterable)
+      return unless rosterable.is_a?(Exam) || rosterable.is_a?(Talk)
+
+      participation = rosterable.assessment&.assessment_participations
+                                &.includes(:task_points, assessment: :tasks)
+                                &.find_by(user_id: @user.id)
+      ResultSummary.new(participation) if participation&.result_released?
+    end
+
+    def result_badge(result)
+      return [:warn, t("registration.user_registration.participation.absent")] if result.absent?
+      return [:info, t("registration.user_registration.participation.exempt")] if result.exempt?
+      return [:info, result.grade_line] if result.grade
+
+      [:info, t("registration.user_registration.participation.marked")]
+    end
+
+    def result_lines(result)
+      result ? result.lines : []
     end
 
     def standing_rows
