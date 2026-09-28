@@ -33,15 +33,29 @@
 
         <tr
           class="allocation-item-row"
-          data-tutorial-roster-panel-target="tile"
-          data-action="click->tutorial-roster-panel#openFromTile"
+          data-tutorial-roster-panel-target="trigger"
+          data-action="
+            click->tutorial-roster-panel#openFromTrigger
+            focusin->tutorial-roster-panel#rememberFocus
+          "
           data-roster-key="<%= registerable.class.name %>-<%= registerable.id %>"
           data-roster-panel-path="<%= roster_registration_campaign_item_path(campaign, item, source: :panel, format: :turbo_stream) %>"
           data-roster-type="<%= registerable.class.name.underscore %>"
           data-roster-id="<%= registerable.id %>"
           data-roster-title="<%= registerable.title %>"
         >
-          <td><%= item.title %></td>
+          <td>
+            <button
+              type="button"
+              class="allocation-item-open"
+              data-roster-open
+              aria-expanded="false"
+              aria-controls="tutorial-roster-side-panel"
+            >
+              <%= item.title %>
+              <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
+          </td>
 
           <td class="text-end">
             <span><%= data[:count] %> / <%= data[:capacity] || "∞" %></span>

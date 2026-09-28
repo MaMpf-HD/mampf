@@ -5,6 +5,21 @@ module Rosters
     # The name a row shows first, see User#tutorial_name.
     FULL_NAME = "CONCAT_WS(' ', NULLIF(users.first_name, ''), NULLIF(users.last_name, ''))"
                 .freeze
+    # The name a row shows, as User#tutorial_name picks it. The search looks
+    # only at what the row shows, so a hidden display name or address never
+    # explains a hit.
+    SHOWN_NAME = "COALESCE(NULLIF(#{FULL_NAME}, ''), NULLIF(users.name_in_tutorials, ''), " \
+                 "users.name)".freeze
+    # Matches RosterSidePanelComponent#last_name_key, so that the tab and the
+    # side panel list the same people in the same order; "C" compares bytes as
+    # Ruby does, whatever the database's collation.
+    ORDER = Arel.sql(
+      "LOWER(unaccent(COALESCE(NULLIF(users.last_name, ''), NULLIF(#{FULL_NAME}, ''), " \
+      "NULLIF(users.name_in_tutorials, ''), NULLIF(users.name, ''), users.email))) " \
+      "COLLATE \"C\", " \
+      "CASE WHEN NULLIF(users.last_name, '') IS NULL THEN '' " \
+      "ELSE LOWER(unaccent(COALESCE(users.first_name, ''))) END COLLATE \"C\", users.id"
+    ).freeze
 
     def initialize(lecture, params)
       @lecture = lecture
@@ -19,13 +34,11 @@ module Rosters
         @lecture.lecture_memberships
                 .joins(:user)
                 .includes(user: User::PROGRAM_PRELOAD)
-                .order(Arel.sql("COALESCE(NULLIF(#{FULL_NAME}, ''), " \
-                                "NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+                .order(ORDER)
 
       if search
         base_scope = base_scope.where(
-          "users.name ILIKE :q OR users.email ILIKE :q OR users.name_in_tutorials ILIKE :q " \
-          "OR #{FULL_NAME} ILIKE :q OR users.matriculation_number ILIKE :q",
+          "#{SHOWN_NAME} ILIKE :q OR users.matriculation_number ILIKE :q",
           q: "%#{search}%"
         )
       end

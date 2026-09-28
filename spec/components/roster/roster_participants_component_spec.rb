@@ -318,7 +318,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
       document = Nokogiri::HTML.fragment(rendered_content)
       expect(document.css("th").map { |th| th.text.strip }).not_to include(I18n.t("basics.email"))
-      expect(document.at_css("button[aria-label='#{I18n.t("buttons.copy_email_address")}']"))
+      expect(document.at_css("button[aria-label^='#{I18n.t("buttons.copy_email_address")}: ']"))
         .to be_present
     end
   end

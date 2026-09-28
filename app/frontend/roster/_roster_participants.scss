@@ -1,0 +1,21 @@
+// The groups stay chips, so several of them keep apart and never wrap, but
+// they do not outweigh the name in the same row.
+.roster-group-badge {
+  border: 1px solid var(--bs-border-color);
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-emphasis-color);
+  font-weight: normal;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-emphasis-color);
+    text-decoration: none;
+  }
+
+  // Outweighs the default cursor every badge gets on hover.
+  &.badge:hover {
+    cursor: pointer;
+  }
+}

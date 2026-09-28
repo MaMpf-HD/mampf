@@ -49,34 +49,30 @@ RSpec.describe(RosterHelper, type: :helper) do
     end
   end
 
-  describe "#roster_group_badge" do
-    let(:group_type) { :tutorials }
-    let(:tutorial) { create(:tutorial, title: "Tut 1") }
-    let(:active_cohort) { create(:cohort, title: "Active", propagate_to_lecture: true) }
-    let(:isolated_cohort) { create(:cohort, title: "Isolated", propagate_to_lecture: false) }
+  describe "#roster_group_link" do
+    let(:lecture) { create(:lecture) }
+    let(:tutorial) { create(:tutorial, title: "Tut 1", lecture: lecture) }
+    let(:cohort) { create(:cohort, title: "Repeaters", context: lecture) }
 
-    it "renders primary badge for tutorial" do
-      badge = helper.roster_group_badge(tutorial, group_type)
-      expect(badge).to include("bg-secondary")
-      expect(badge).to include("Tut 1")
+    it "opens a tutorial's roster on its lecture's groups tab" do
+      link = Nokogiri::HTML.fragment(helper.roster_group_link(tutorial)).at_css("a")
+
+      expect(link.text).to eq("Tut 1")
+      expect(link["href"]).to eq(
+        edit_lecture_path(lecture, tab: "groups", open_roster: "Tutorial-#{tutorial.id}")
+      )
     end
 
-    it "renders primary badge for propagating cohort" do
-      badge = helper.roster_group_badge(active_cohort, group_type)
-      expect(badge).to include("bg-secondary")
-      expect(badge).to include("Active")
-    end
+    it "opens a cohort's roster on the lecture it belongs to" do
+      link = Nokogiri::HTML.fragment(helper.roster_group_link(cohort)).at_css("a")
 
-    it "renders secondary badge for isolated cohort" do
-      badge = helper.roster_group_badge(isolated_cohort, group_type)
-      expect(badge).to include("bg-light")
-      expect(badge).to include("text-dark")
-      expect(badge).to include("Isolated")
+      expect(link["href"]).to eq(
+        edit_lecture_path(lecture, tab: "groups", open_roster: "Cohort-#{cohort.id}")
+      )
     end
 
     it "disables turbo for full-page navigation" do
-      badge = helper.roster_group_badge(tutorial, group_type)
-      expect(badge).to include('data-turbo="false"')
+      expect(helper.roster_group_link(tutorial)).to include('data-turbo="false"')
     end
   end
 
