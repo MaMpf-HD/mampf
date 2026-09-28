@@ -5,6 +5,7 @@ class PersonalDataChange < ApplicationRecord
   belongs_to :editor, class_name: "User", optional: true
 
   validates :field, inclusion: { in: User::LOCKED_PERSONAL_DATA_FIELDS.map(&:to_s) }
+  validates :editor, presence: true, on: :create
 
   # Saves the corrected fields and records each one that changed; returns the
   # changed fields, or nil and saves neither when the user does not validate.
@@ -22,5 +23,11 @@ class PersonalDataChange < ApplicationRecord
     changes.keys
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
     nil
+  end
+
+  # Keeps a recorded correction as it was. Deleting the user still removes it:
+  # dependent: :delete_all and the cascading foreign key skip this check.
+  def readonly?
+    persisted?
   end
 end
