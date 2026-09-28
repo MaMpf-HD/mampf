@@ -24,7 +24,6 @@
     data-uppy-upload-endpoint-value="/profile_image/upload"
     data-uppy-upload-failure-message-value="<%= t("submission.upload_failure") %>"
     data-uppy-upload-hidden-input-selector-value="#upload-image-hidden"
-    data-uppy-upload-warning-selector-value="#teacher-profile-save"
     data-uppy-upload-preview-selector-value="#image-preview"
   >
     <div data-uppy-upload-target="dashboard"></div>
@@ -34,9 +33,4 @@
   <% if user.image.present? %>
     <%= f.check_box :remove_image, label: t("profile.teacher_profile.remove_image") %>
   <% end %>
-
-  <%= f.submit t("profile.changes_made_btn"),
-               id: "teacher-profile-save",
-               class: "btn btn-warning btn-sm mt-2",
-               style: "display: none" %>
 </div>

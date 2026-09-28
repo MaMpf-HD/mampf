@@ -60,10 +60,6 @@ Rails.application.routes.draw do
       to: "administration#exit",
       as: "exit_administration"
 
-  get "/administration/profile",
-      to: "administration#profile",
-      as: "elevated_profile"
-
   get "administration/search",
       to: "administration#search",
       as: "administration_search"

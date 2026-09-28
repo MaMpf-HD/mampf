@@ -18,7 +18,7 @@
               media_search: link_to(t('admin.main.media_search'),
                                     administration_search_path),
               profile: link_to(t('admin.main.user_profile'),
-                               elevated_profile_path(current_user))) %>
+                               edit_user_path(current_user))) %>
       <% end %>
     <% else %>
       <%= t('admin.main.no_media') %>

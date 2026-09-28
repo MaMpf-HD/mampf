@@ -107,8 +107,9 @@
 
     <ul class="navbar-nav" id="adminProfile">
       <li class="nav-item">
-        <%= link_to '', elevated_profile_path,
-                class: 'nav-link bi bi-person-fill ' + get_class_for_path(elevated_profile_path()),
+        <%= link_to '', edit_user_path(current_user),
+                class: 'nav-link bi bi-person-fill ' +
+                       get_class_for_path(edit_user_path(current_user)),
                 data: { 'bs-toggle': 'tooltip' },
                 title: t('admin.navbar.profile') %>
       </li>

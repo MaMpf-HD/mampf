@@ -18,9 +18,6 @@ class AdministrationController < ApplicationController
     redirect_to root_path
   end
 
-  def profile
-  end
-
   def classification
     @subjects = Subject.includes(programs: [:divisions]).all
   end
