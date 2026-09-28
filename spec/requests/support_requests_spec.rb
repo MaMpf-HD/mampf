@@ -15,7 +15,7 @@ RSpec.describe("SupportRequests", type: :request) do
   context "when signed in" do
     before { sign_in user }
 
-    it "mails the message to the support address, answering to the user" do
+    it "mails the message" do
       expect { send_request }
         .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
 
@@ -47,6 +47,25 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response.body).to include(
         I18n.t("devise.failure.too_many_requests", wait: wait)
       )
+    end
+  end
+
+  context "when signed in but asked for personal data or a new password first" do
+    it "mails the message of a user whose personal data is still due" do
+      sign_in create(:confirmed_user, personal_data_confirmed_at: nil)
+
+      expect { send_request }
+        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+    end
+
+    it "mails the message of a user who must change the password" do
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      expect { send_request }
+        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
     end
   end
 
