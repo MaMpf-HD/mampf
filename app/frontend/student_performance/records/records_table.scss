@@ -35,6 +35,35 @@
     box-shadow: inset 0 -1px 0 var(--bs-border-color);
   }
 
+  // A page shows twenty students, and sorting brings others onto it. Widths
+  // taken from the content would move every column with them, so each column
+  // has its own.
+  table-layout: fixed;
+
+  .records-col-student {
+    width: 12rem;
+  }
+
+  .records-col-points {
+    width: 6rem;
+  }
+
+  .records-col-maximum {
+    width: 7.5rem;
+  }
+
+  .records-col-share {
+    width: 5rem;
+  }
+
+  .records-col-assessment {
+    width: 4rem;
+  }
+
+  .records-col-achievement {
+    width: 3.5rem;
+  }
+
   // Figures belong under each other, and monospace makes the row read like a
   // terminal.
   .numeric {
