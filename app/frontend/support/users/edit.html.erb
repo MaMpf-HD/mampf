@@ -10,7 +10,7 @@
   <dl class="row small">
     <dt class="col-sm-3"><%= t("support.users.columns.email") %></dt>
     <dd class="col-sm-9"><%= @user.email %></dd>
-    <dt class="col-sm-3"><%= t("support.users.display_name") %></dt>
+    <dt class="col-sm-3"><%= t("basics.display_name") %></dt>
     <dd class="col-sm-9"><%= @user.name %></dd>
     <dt class="col-sm-3"><%= t("support.users.columns.program") %></dt>
     <dd class="col-sm-9"><%= @user.program&.name_with_subject || "—" %></dd>
@@ -20,11 +20,9 @@
                           local: true do |f| %>
     <%= f.alert_message t("support.users.not_saved") %>
 
-    <%= f.text_field :first_name, label: t("support.users.fields.first_name") %>
-    <%= f.text_field :last_name, label: t("support.users.fields.last_name") %>
-
-    <%= f.text_field :matriculation_number,
-                     label: t("support.users.fields.matriculation_number") %>
+    <%= f.text_field :first_name %>
+    <%= f.text_field :last_name %>
+    <%= f.text_field :matriculation_number %>
 
     <%= f.submit t("support.users.save"), class: "btn btn-primary" %>
   <% end %>
@@ -48,7 +46,7 @@
           <tr>
             <td><%= l(change.created_at, format: :short) %></td>
             <td><%= change.editor&.email || "—" %></td>
-            <td><%= t("support.users.fields.#{change.field}") %></td>
+            <td><%= User.human_attribute_name(change.field) %></td>
             <td><%= change.old_value.presence || "—" %></td>
             <td><%= change.new_value.presence || "—" %></td>
           </tr>

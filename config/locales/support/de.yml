@@ -18,7 +18,6 @@ de:
       edit_explainer: >-
         Gruppen, Klausurlisten und Notenexporte führen die Person unter diesen
         Feldern. Ein leer gelassenes Feld kann die Person einmal selbst füllen.
-      display_name: 'Anzeigename'
       save: 'Speichern'
       saved: 'Die Stammdaten sind korrigiert.'
       not_saved: 'Nichts wurde gespeichert:'
@@ -27,14 +26,9 @@ de:
       no_history: 'Bisher wurde nichts korrigiert.'
       columns:
         name: 'Name'
-        matriculation_number: 'Matrikelnummer'
         email: 'E-Mail'
         program: 'Studiengang'
         actions: 'Aktionen'
-      fields:
-        first_name: 'Vorname'
-        last_name: 'Nachname'
-        matriculation_number: 'Matrikelnummer'
       changes:
         when: 'Wann'
         who: 'Von'
