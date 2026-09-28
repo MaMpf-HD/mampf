@@ -307,7 +307,7 @@ module StudentPerformance
         records = @lecture.student_performance_records
                           .includes(:user)
                           .joins(:user)
-                          .order(Rosters::ParticipantQuery::ORDER)
+                          .merge(User.by_last_name)
         @pagy, @filtered_records = pagy(filter_records(filter_by_name(records)))
       end
 

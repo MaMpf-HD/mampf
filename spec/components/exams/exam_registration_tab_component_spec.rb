@@ -15,6 +15,15 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     expect(rendered_content).to include("Physik: B.Sc. 100%")
   end
 
+  it "lists the participants by last name" do
+    exam = create(:exam, :with_date, lecture: lecture, skip_campaigns: true)
+    zuse = create(:confirmed_user, name: "Adam", first_name: "Konrad", last_name: "Zuse")
+    abel = create(:confirmed_user, name: "Zed", first_name: "Niels", last_name: "Abel")
+    [zuse, abel].each { |user| create(:exam_roster_entry, exam: exam, user: user) }
+
+    expect(described_class.new(exam: exam).participants_entries.map(&:user)).to eq([abel, zuse])
+  end
+
   it "renders a disabled deadline field for a closed campaign" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :closed)

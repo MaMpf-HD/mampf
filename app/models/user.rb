@@ -196,6 +196,9 @@ class User < ApplicationRecord
   scope :confirmed, -> { where.not(confirmed_at: nil) }
   scope :unconfirmed, -> { where(confirmed_at: nil) }
   scope :no_sign_in_data, -> { where(current_sign_in_at: nil) }
+  # Sorts people as every list of them in a lecture does: by last name, then
+  # first name, and without either by the name the row shows.
+  scope :by_last_name, -> { order(Rosters::ParticipantQuery::ORDER) }
   scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }

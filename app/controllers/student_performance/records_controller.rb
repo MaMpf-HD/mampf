@@ -87,7 +87,7 @@ module StudentPerformance
         @lecture.student_performance_records
                 .includes(:user)
                 .joins(:user)
-                .order(Rosters::ParticipantQuery::ORDER, :id)
+                .merge(User.by_last_name).order(:id)
       end
 
       def filter_by_tutorial(scope)
