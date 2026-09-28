@@ -2826,7 +2826,7 @@ en:
       standing:
         mark_percentage: "%{percentage} %"
         heading: Exam admission
-        of_marked: "of %{max} points marked so far"
+        of_marked: "of %{max} points possible so far"
         of_needed: "of %{max} points needed"
         no_max: "points, nothing marked yet"
         nothing_marked: Nothing has been marked yet.
