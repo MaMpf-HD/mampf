@@ -12,7 +12,8 @@ test.describe("the note pinned to a lecturer's dashboard", () => {
     await factory.create("tag", [], { title: "Sylow theorems", course_ids: [course.id] });
 
     await page.goto("/");
-    const note = page.getByRole("complementary", { name: "Now and then" });
+    const section = page.getByRole("region", { name: "For teaching staff" });
+    const note = section.getByRole("complementary", { name: "Now and then" });
 
     await note.getByRole("button", { name: "My courses" }).click();
     const courses = page.getByRole("dialog", { name: "My courses" });
@@ -32,7 +33,9 @@ test.describe("the note pinned to a lecturer's dashboard", () => {
     await expect(page.getByText("has been successfully created")).toBeVisible();
 
     await page.goto("/");
-    await note.getByRole("link", { name: "Find media and tags" }).click();
+    await page.getByRole("region", { name: "You are staff in these" })
+      .getByRole("complementary", { name: "Now and then" })
+      .getByRole("link", { name: "Find media and tags" }).click();
     await expect(page.getByRole("heading", { name: "Search media and tags" })).toBeVisible();
 
     await page.getByRole("tab", { name: "Tag Search" }).click();
