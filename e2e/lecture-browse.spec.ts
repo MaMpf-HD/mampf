@@ -207,3 +207,36 @@ test("switches the search to the next semester by clicking on the hint",
     await expect(dashboard.results).not.toContainText("Topology Current");
     await expect(page.locator("body")).toHaveAttribute("data-stayed-on-page", "true");
   });
+
+test("remembers the last picked semester for the next visit",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 1, "Topology Current", currentTerm.id);
+    await createLecturesWithCourses(factory, 1, "Topology Next", nextTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    const termSwitched = () => page.waitForResponse(response =>
+      response.url().includes("/dashboard/term"));
+
+    // picked in the dropdown
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("SS25");
+    await dashboard.selectTerm("WS 2025/26");
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("WS25-26");
+    await expect(dashboard.searchTermSelect).toHaveValue("WS25-26");
+
+    // back to the current semester via its link
+    const backToCurrent = termSwitched();
+    await page.getByTestId("current-term-link").first().click();
+    await backToCurrent;
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("SS25");
+
+    // picked via the "Take a look" hint
+    await page.getByRole("link", { name: "Take a look at the lectures for WS 25/26" })
+      .first().click();
+    await page.waitForURL(/term=WS25-26/);
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("WS25-26");
+  });

@@ -144,6 +144,28 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).to include("Here Now")
       end
 
+      it "ignores a remembered term that no longer exists" do
+        here = lecture_with_title("Here Now")
+        here.lecture_memberships.create!(user: user)
+        cookies[:dashboard_term] = "SS99"
+
+        get root_path
+
+        expect(response.body).to include("Here Now")
+      end
+
+      it "keeps the remembered term for a garbage value without rewriting it" do
+        there = create(:lecture, course: create(:course, title: "Over There"),
+                                 term: other_term)
+        there.lecture_memberships.create!(user: user)
+        cookies[:dashboard_term] = other_term.dashboard_param
+
+        get root_path(term: "garbage")
+
+        expect(response.body).to include("Over There")
+        expect(response.headers["Set-Cookie"].to_s).not_to include("dashboard_term")
+      end
+
       it "never renders as a Turbo Stream, even with that Accept header " \
          "(as happens on the GET Turbo tags after a redirecting sign-in " \
          "or sign-out POST)" do
