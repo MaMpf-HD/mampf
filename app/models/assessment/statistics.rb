@@ -85,6 +85,8 @@ module Assessment
     end
 
     def program_rows
+      return [] if participations.none? { |row| row.user.program }
+
       group_rows(participations.group_by { |row| row.user.program }) do |program|
         program&.name_with_subject
       end

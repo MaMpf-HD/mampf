@@ -76,6 +76,12 @@ RSpec.describe(Assessment::Statistics) do
       expect(rows.first.figures.mean).to eq(7.0)
     end
 
+    it "groups by program only where somebody gave one" do
+      mark(4, 6)
+
+      expect(statistics.program_rows).to be_empty
+    end
+
     it "groups by tutorial only where somebody sits in one" do
       mark(4, 6)
       expect(statistics.tutorial_rows).to be_empty
