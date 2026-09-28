@@ -37,7 +37,7 @@
 
           <span class="small text-muted">
             <%= lecture.teacher.tutorial_name %> ·
-            <%= t("records_office.members", count: lecture.lecture_memberships.size) %>
+            <%= t("records_office.members", count: @overview.member_count(lecture)) %>
           </span>
         </div>
 
@@ -90,7 +90,7 @@
               <% groups.each do |group| %>
                 <% title = RecordsOffice::TermOverview.group_title(group) %>
                 <% group_type = RecordsOffice::TermOverview.group_type(group) %>
-                <% count = group.roster_entries_count %>
+                <% count = @overview.roster_count(group) %>
 
                 <tr>
                   <th scope="row" class="fw-normal"><%= title %></th>
@@ -102,7 +102,7 @@
                   <td>
                     <% if group.capacity %>
                       <%= progress_bar(count, group.capacity,
-                                       classification: group.over_capacity? ? :danger : :neutral,
+                                       classification: count > group.capacity ? :danger : :neutral,
                                        label: "#{count} / #{group.capacity}",
                                        height: "1.25rem",
                                        container_class: "progress") %>

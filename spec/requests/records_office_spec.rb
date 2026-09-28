@@ -54,6 +54,20 @@ RSpec.describe("Records office", type: :request) do
       expect(response.body).not_to include(CGI.escapeHTML(other.title_no_term))
     end
 
+    it "counts the lecture's members and only the active exam roster" do
+      2.times { create(:lecture_membership, lecture: lecture) }
+      exam = create(:exam, lecture: lecture, capacity: 1)
+      create_list(:exam_roster_entry, 2, exam: exam)
+      create(:exam_roster_entry, exam: exam, excluded_at: 1.day.ago)
+
+      get records_office_path
+
+      row = Nokogiri::HTML(response.body).css("tr").find { |tr| tr.text.include?(exam.title) }
+      expect(response.body).to include("2 members")
+      expect(row.text).to include("2 / 1")
+      expect(row.at_css(".progress-bar")[:class]).to include("bg-danger")
+    end
+
     it "shows another term's lectures when it is picked" do
       other = create(:lecture, term: create(:term))
 

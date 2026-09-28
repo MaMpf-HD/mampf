@@ -1,10 +1,10 @@
 module RecordsOffice
   # Gathers what the records office sees of one term: every lecture with its
   # groups and how full they are, and which downloads each lecture has, in a
-  # fixed number of queries however many lectures the term holds.
+  # fixed number of queries however many lectures the term holds. Members are
+  # counted, not loaded, since a term holds thousands of them.
   class TermOverview
-    GROUP_ASSOCIATIONS = { tutorials: :tutorial_memberships, talks: :speaker_talk_joins,
-                           cohorts: :cohort_memberships, exams: :exam_roster_entries }.freeze
+    GROUP_ASSOCIATIONS = [:tutorials, :talks, :cohorts, :exams].freeze
     GROUP_TYPES = { "tutorial" => Tutorial, "talk" => Talk,
                     "cohort" => Cohort, "exam" => Exam }.freeze
 
@@ -25,14 +25,20 @@ module RecordsOffice
       return [] unless @term
 
       @lectures ||= Lecture.where(term: @term)
-                           .includes(:course, :term, :teacher, :lecture_memberships,
-                                     **GROUP_ASSOCIATIONS)
+                           .includes(:course, :term, :teacher, *GROUP_ASSOCIATIONS)
                            .sort_by { |lecture| lecture.title_no_term.downcase }
     end
 
-    # Tutorials, talks, cohorts and exams, in that order.
     def groups(lecture)
-      GROUP_ASSOCIATIONS.keys.flat_map { |association| lecture.public_send(association).to_a }
+      GROUP_ASSOCIATIONS.flat_map { |association| lecture.public_send(association).to_a }
+    end
+
+    def member_count(lecture)
+      member_counts.fetch(lecture.id, 0)
+    end
+
+    def roster_count(group)
+      roster_counts.fetch(group.class).fetch(group.id, 0)
     end
 
     def grades?(lecture)
@@ -44,6 +50,24 @@ module RecordsOffice
     end
 
     private
+
+      def member_counts
+        @member_counts ||= LectureMembership.where(lecture: lectures).group(:lecture_id).count
+      end
+
+      def roster_counts
+        @roster_counts ||= {
+          Tutorial => count_entries(TutorialMembership, :tutorial_id, Tutorial),
+          Talk => count_entries(SpeakerTalkJoin, :talk_id, Talk),
+          Cohort => count_entries(CohortMembership, :cohort_id, Cohort),
+          Exam => count_entries(ExamRosterEntry.active, :exam_id, Exam)
+        }
+      end
+
+      def count_entries(entries, column, group_class)
+        ids = lectures.flat_map { |lecture| groups(lecture) }.grep(group_class).map(&:id)
+        entries.where(column => ids).group(column).count
+      end
 
       def lecture_ids_with_grades
         @lecture_ids_with_grades ||=
