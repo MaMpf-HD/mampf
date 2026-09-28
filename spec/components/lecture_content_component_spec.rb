@@ -66,6 +66,17 @@ RSpec.describe(LectureContentComponent, type: :component) do
       expect(html.text.squish).to include("and 1 more")
     end
 
+    it "leaves out a medium hidden again since it was announced" do
+      lesson = lesson_on(3.days.ago.to_date, ideals)
+      medium = create(:lesson_medium, :released, teachable: lesson, description: "Entwurf")
+      create(:notification, recipient: user, notifiable: medium)
+      medium.update!(released: "locked")
+
+      html = render_for(user)
+
+      expect(html.text.squish).not_to include("Entwurf")
+    end
+
     it "leaves out the news of other people" do
       lesson = lesson_on(3.days.ago.to_date, ideals)
       medium = create(:lesson_medium, :released, teachable: lesson)
@@ -109,9 +120,17 @@ RSpec.describe(LectureContentComponent, type: :component) do
       expect(html.text.squish).to include("Lectures over")
       expect(html.text.squish).to include("2 lectures")
       summaries = html.css("summary").map { |summary| summary.text.squish }
-      expect(summaries).to include("Ringe · 2 sections")
+      expect(summaries).to include("#{rings.displayed_number}. Ringe · 2 sections")
       expect(html.text.squish).to include("#{ideals.displayed_number} Ringe und Ideale")
       expect(html.text.squish).not_to include("Last lecture")
+    end
+
+    it "keeps a chapter's own number, even one that is not a digit" do
+      rings.update!(display_number: "A")
+
+      summaries = render_for(user).css("summary").map { |summary| summary.text.squish }
+
+      expect(summaries).to include("A. Ringe · 2 sections")
     end
 
     it "names only the chapter when its one section repeats the title" do

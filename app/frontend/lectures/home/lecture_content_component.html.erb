@@ -116,14 +116,14 @@
 
         <ol class="lecture-home-content-chapters">
           <% chapters.each do |chapter| %>
-            <li value="<%= chapter.displayed_number.to_i %>">
+            <li>
               <% if (sections = section_list(chapter)) %>
                 <details class="lecture-home-content-chapter">
                   <summary><%= chapter_summary(chapter) %></summary>
                   <%= sections %>
                 </details>
               <% else %>
-                <%= chapter.title %>
+                <%= chapter_label(chapter) %>
               <% end %>
             </li>
           <% end %>

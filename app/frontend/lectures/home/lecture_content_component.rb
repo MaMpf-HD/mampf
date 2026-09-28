@@ -80,10 +80,13 @@ class LectureContentComponent < ViewComponent::Base
     end
   end
 
+  # A notification outlives a medium being hidden again, so each one is
+  # checked the way the medium's own page checks it.
   def new_media
     @new_media ||= Medium.where(id: user.active_media_notifications(lecture)
                                         .select(:notifiable_id))
-                         .order(created_at: :desc).to_a
+                         .order(created_at: :desc)
+                         .select { |medium| medium.visible_for_user?(user) }
   end
 
   def current_section
@@ -132,9 +135,13 @@ class LectureContentComponent < ViewComponent::Base
             .presence
   end
 
+  def chapter_label(chapter)
+    "#{chapter.displayed_number}. #{chapter.title}"
+  end
+
   def chapter_summary(chapter)
     count = t("lecture_home.content.sections", count: chapter.sections.size)
-    "#{chapter.title} · #{count}"
+    "#{chapter_label(chapter)} · #{count}"
   end
 
   def progress_label
