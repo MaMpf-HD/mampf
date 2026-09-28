@@ -1,4 +1,7 @@
 <%# locals: (support_request:, throttled: nil) %>
+<% email_invalid = support_request.errors[:email].any? %>
+<% message_invalid = support_request.errors[:message].any? %>
+
 <%= form_with model: support_request, url: support_requests_path, local: true,
               data: { action: "submit->support-widget#stampPage",
                       support_widget_target: "form" } do |f| %>
@@ -18,13 +21,17 @@
 
       <%= f.email_field :email,
                         class: class_names("form-control form-control-sm",
-                                           "is-invalid": support_request.errors[:email].any?),
+                                           "is-invalid": email_invalid),
                         required: true,
                         autocomplete: "email",
+                        aria: { invalid: email_invalid,
+                                describedby: ("support-request-email-error" if email_invalid) },
                         data: { support_widget_target: "email" } %>
 
-      <% support_request.errors.full_messages_for(:email).each do |message| %>
-        <div class="invalid-feedback"><%= message %></div>
+      <% if email_invalid %>
+        <div id="support-request-email-error" class="invalid-feedback">
+          <%= support_request.errors.full_messages_for(:email).to_sentence %>
+        </div>
       <% end %>
     </div>
   <% end %>
@@ -34,16 +41,19 @@
 
     <%= f.text_area :message,
                     rows: 6,
-                    class: class_names("form-control",
-                                       "is-invalid": support_request.errors[:message].any?),
+                    class: class_names("form-control", "is-invalid": message_invalid),
                     placeholder: t("support_request.message_placeholder"),
                     required: true,
                     minlength: SupportRequest::MESSAGE_MIN_LENGTH,
                     maxlength: SupportRequest::MESSAGE_MAX_LENGTH,
+                    aria: { invalid: message_invalid,
+                            describedby: ("support-request-message-error" if message_invalid) },
                     data: { support_widget_target: "message" } %>
 
-    <% support_request.errors.full_messages_for(:message).each do |message| %>
-      <div class="invalid-feedback"><%= message %></div>
+    <% if message_invalid %>
+      <div id="support-request-message-error" class="invalid-feedback">
+        <%= support_request.errors.full_messages_for(:message).to_sentence %>
+      </div>
     <% end %>
   </div>
 
