@@ -359,6 +359,10 @@ RSpec.describe("Assessment::Assessments", type: :request) do
                  lecture: lecture)
         end
 
+        let!(:rule) do
+          create(:student_performance_rule, :active, :with_percentage, lecture: lecture)
+        end
+
         before { lecture.update!(assignments_complete: true) }
 
         it "asks before reopening the list" do
@@ -396,6 +400,23 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           )
         end
 
+        it "offers no reset for a rule the open list does not hold back" do
+          rule.update!(threshold_mode: :none, min_percentage: nil)
+          create(:valid_assignment, lecture: lecture)
+          lecture.update!(assignments_complete: true)
+
+          get assessment_assessments_path(lecture_id: lecture.id)
+
+          expect(response.body).to include(
+            CGI.escapeHTML(
+              I18n.t("assessment.assignments_complete.open_dialog.body")
+            )
+          )
+          expect(response.body).not_to include(
+            I18n.t("assessment.assignments_complete.reopen_dialog.reset")
+          )
+        end
+
         # The list is open, so the question is the other one: what closing it
         # would do. Nothing is said about decisions, because closing leaves
         # them alone.
@@ -426,8 +447,8 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
         it "keeps the decisions while a running registration asks for them" do
           lecture.update!(uses_exam_eligibility: true)
-          FactoryBot.create(:registration_policy, :student_performance,
-                            config: { "lecture_ids" => [lecture.id.to_s] })
+          policy = FactoryBot.create(:registration_policy, :student_performance,
+                                     config: { "lecture_ids" => [lecture.id.to_s] })
 
           patch assignments_complete_assessment_assessments_path(
             lecture_id: lecture.id, complete: "0", reset_certifications: "1"
@@ -435,6 +456,8 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
           expect(lecture.reload.assignments_complete?).to be(false)
           expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
+          expect(flash[:notice]).to be_nil
+          expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
         end
 
         it "drops the computed decisions when told to, and keeps the manual ones" do

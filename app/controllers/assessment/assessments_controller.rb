@@ -32,18 +32,23 @@ module Assessment
       @lecture.update!(assignments_complete: params[:complete])
       # Without the change check, a resubmitted form would delete a second
       # time — after the dialog had already been answered with "keep".
-      reset = params[:reset_certifications] == "1" &&
-              @lecture.saved_change_to_assignments_complete_at? &&
-              !@lecture.assignments_complete? &&
-              @lecture.eligibility_in_use_by.nil?
+      wanted = params[:reset_certifications] == "1" &&
+               @lecture.saved_change_to_assignments_complete_at? &&
+               !@lecture.assignments_complete?
+      blocked_by = @lecture.eligibility_in_use_by if wanted
+      reset = wanted && blocked_by.nil?
       count = reset ? @lecture.student_performance_certifications.reset_computed! : 0
 
+      flash_opts = if reset
+        { notice: I18n.t("student_performance.certifications.flash.reset", count: count) }
+      elsif blocked_by
+        { alert: I18n.t("student_performance.eligibility_in_use", campaigns: blocked_by) }
+      else
+        {}
+      end
       redirect_to assessment_assessments_path(lecture_id: @lecture.id,
                                               tab: "assessments"),
-                  notice: (if reset
-                             I18n.t("student_performance.certifications.flash.reset",
-                                    count: count)
-                           end)
+                  **flash_opts
     end
 
     def show
