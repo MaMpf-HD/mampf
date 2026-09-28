@@ -34,4 +34,40 @@ RSpec.describe(SubmissionAbility) do
       expect(ability.can?(:upload_manuscript, submission)).to be(false)
     end
   end
+
+  describe "correcting a hand-in" do
+    let(:submission) { create(:submission, assignment: assignment, tutorial: tutorial) }
+
+    it "lets the group's tutor correct and decide on a late hand-in" do
+      tutorial.tutors << student
+      ability = described_class.new(student)
+
+      expect(ability.can?(:add_correction, submission)).to be(true)
+      expect(ability.can?(:delete_correction, submission)).to be(true)
+      expect(ability.can?(:accept, submission)).to be(true)
+    end
+
+    # The teacher stands in for a tutor with the files, but whether a late
+    # hand-in counts stays with the group's tutor.
+    it "lets the lecture's teacher correct, but not decide on a late hand-in" do
+      ability = described_class.new(lecture.teacher)
+
+      expect(ability.can?(:add_correction, submission)).to be(true)
+      expect(ability.can?(:delete_correction, submission)).to be(true)
+      expect(ability.can?(:accept, submission)).to be(false)
+      expect(ability.can?(:reject, submission)).to be(false)
+    end
+
+    it "lets the lecture's editors correct" do
+      lecture.editors << student
+
+      expect(described_class.new(student).can?(:add_correction, submission)).to be(true)
+    end
+
+    it "refuses a tutor of another group" do
+      create(:tutorial, lecture: lecture).tutors << student
+
+      expect(described_class.new(student).can?(:add_correction, submission)).to be(false)
+    end
+  end
 end
