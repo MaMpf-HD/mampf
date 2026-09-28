@@ -17,48 +17,58 @@ class StatisticsTabComponent < ViewComponent::Base
     @statistics ||= Assessment::Statistics.new(assessment)
   end
 
-  def number(value, precision: 1)
-    return "—" if value.nil?
-
-    helpers.number_with_precision(value, precision: precision,
-                                         strip_insignificant_zeros: true)
-  end
-
-  def percent(share)
-    return "—" if share.nil?
-
-    helpers.number_to_percentage(share * 100, precision: 0)
-  end
-
-  def grade(value)
-    return "—" if value.nil?
-
-    helpers.number_with_precision(value, precision: 1)
-  end
-
-  def share_of_max(value)
-    return if value.nil? || statistics.max_points.zero?
-
-    value / statistics.max_points
-  end
-
-  def task_share(row)
-    max = row.task.max_points.to_f
-    return if row.figures.mean.nil? || max.zero?
-
-    row.figures.mean / max
-  end
-
-  def task_label(task)
-    "#{t("assessment.grading_tutorial.task")} #{task.position}"
+  def marked?
+    statistics.counts[:marked].positive?
   end
 
   def grades?
     statistics.grades.number.positive?
   end
 
-  def bar(count, total)
+  def group_tables
+    return {} unless marked? || grades?
+
+    { programs: statistics.program_rows, tutorials: statistics.tutorial_rows }
+      .reject { |_key, rows| rows.empty? }
+  end
+
+  def format_points(value)
+    return "—" if value.nil?
+
+    helpers.number_with_precision(value, precision: 1, strip_insignificant_zeros: true)
+  end
+
+  def format_share(share)
+    return "—" if share.nil?
+
+    helpers.number_to_percentage(share * 100, precision: 0)
+  end
+
+  def format_grade(value)
+    return "—" if value.nil?
+
+    helpers.number_with_precision(value, precision: 1)
+  end
+
+  def share_of(mean, max)
+    return if mean.nil? || max.to_f.zero?
+
+    mean / max.to_f
+  end
+
+  def task_label(task)
+    "#{t("assessment.grading_tutorial.task")} #{task.position}"
+  end
+
+  def grade_count_bar(count, total)
     helpers.progress_bar(count, [total, 1].max, label: count.to_s, height: "1rem",
                                                 container_class: "progress")
+  end
+
+  def share_bar(share)
+    return if share.nil?
+
+    helpers.progress_bar((share * 100).round, 100, label: format_share(share),
+                                                   height: "1rem", container_class: "progress")
   end
 end

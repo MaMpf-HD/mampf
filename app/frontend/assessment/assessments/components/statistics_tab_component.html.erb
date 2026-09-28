@@ -8,9 +8,6 @@
   <hr class="my-4">
 <% end %>
 
-<% counts = statistics.counts %>
-<% marked = counts[:marked].positive? %>
-
 <section class="mb-4" aria-labelledby="statistics-counts">
   <h6 class="fw-bold mb-2" id="statistics-counts">
     <%= t("assessment.statistics_tab.overview") %>
@@ -18,29 +15,29 @@
 
   <p class="small text-muted mb-2">
     <%= t("assessment.statistics_tab.counts",
-          marked: counts[:marked], total: counts[:total]) %>
+          marked: statistics.counts[:marked], total: statistics.counts[:total]) %>
 
-    <% if counts[:absent].positive? %>
+    <% if statistics.counts[:absent].positive? %>
       ·
-      <%= t("assessment.statistics_tab.absent", count: counts[:absent]) %>
+      <%= t("assessment.statistics_tab.absent", count: statistics.counts[:absent]) %>
     <% end %>
 
-    <% if counts[:exempt].positive? %>
+    <% if statistics.counts[:exempt].positive? %>
       ·
-      <%= t("assessment.statistics_tab.exempt", count: counts[:exempt]) %>
+      <%= t("assessment.statistics_tab.exempt", count: statistics.counts[:exempt]) %>
     <% end %>
 
     <% if grades? %>
       ·
       <%= t("assessment.statistics_tab.mean_grade") %>
-      <%= grade(statistics.grades.mean) %>
+      <%= format_grade(statistics.grades.mean) %>
       ·
       <%= t("assessment.statistics_tab.pass_share") %>
-      <%= percent(statistics.grades.pass_share) %>
+      <%= format_share(statistics.grades.pass_share) %>
     <% end %>
   </p>
 
-  <% if marked %>
+  <% if marked? %>
     <%= render DistributionAnalysisComponent.new(assessment: assessment,
                                                  grade_scheme: assessment.grade_scheme) %>
   <% else %>
@@ -50,7 +47,7 @@
   <% end %>
 </section>
 
-<% if marked %>
+<% if marked? %>
   <% if statistics.tasks.any? %>
     <section class="mb-4" aria-labelledby="statistics-tasks">
       <h6 class="fw-bold mb-2" id="statistics-tasks">
@@ -91,27 +88,27 @@
 
           <tbody>
             <% statistics.task_rows.each do |row| %>
-              <% share = task_share(row) %>
-
               <tr>
                 <th scope="row" class="fw-normal">
                   <%= task_label(row.task) %>
                 </th>
 
-                <td class="text-end"><%= number(row.task.max_points) %></td>
-                <td class="text-end"><%= number(row.figures.mean) %></td>
-                <td class="text-end"><%= number(row.figures.median) %></td>
-
-                <td>
-                  <% if share %>
-                    <%= helpers.progress_bar((share * 100).round, 100,
-                                             label: percent(share), height: "1rem",
-                                             container_class: "progress") %>
-                  <% end %>
+                <td class="text-end">
+                  <%= format_points(row.task.max_points) %>
                 </td>
 
-                <td class="text-end"><%= percent(row.full_share) %></td>
-                <td class="text-end"><%= percent(row.zero_share) %></td>
+                <td class="text-end"><%= format_points(row.figures.mean) %></td>
+
+                <td class="text-end">
+                  <%= format_points(row.figures.median) %>
+                </td>
+
+                <td>
+                  <%= share_bar(share_of(row.figures.mean, row.task.max_points)) %>
+                </td>
+
+                <td class="text-end"><%= format_share(row.full_share) %></td>
+                <td class="text-end"><%= format_share(row.zero_share) %></td>
               </tr>
             <% end %>
           </tbody>
@@ -141,8 +138,8 @@
       <tbody>
         <% statistics.grade_distribution.each do |value, count| %>
           <tr>
-            <th scope="row" class="fw-normal"><%= grade(value) %></th>
-            <td><%= bar(count, statistics.grades.number) %></td>
+            <th scope="row" class="fw-normal"><%= format_grade(value) %></th>
+            <td><%= grade_count_bar(count, statistics.grades.number) %></td>
           </tr>
         <% end %>
       </tbody>
@@ -150,10 +147,7 @@
   </section>
 <% end %>
 
-<% [[:programs, statistics.program_rows], [:tutorials, statistics.tutorial_rows]]
-     .each do |key, rows| %>
-  <% next if rows.empty? || !marked && !grades? %>
-
+<% group_tables.each do |key, rows| %>
   <section class="mb-4" aria-labelledby="statistics-<%= key %>">
     <h6 class="fw-bold mb-2" id="statistics-<%= key %>">
       <%= t("assessment.statistics_tab.#{key}") %>
@@ -200,8 +194,6 @@
 
         <tbody>
           <% rows.each do |row| %>
-            <% share = share_of_max(row.figures.mean) %>
-
             <tr>
               <th scope="row" class="fw-normal">
                 <%= row.label || t("assessment.statistics_tab.no_#{key.to_s.singularize}") %>
@@ -209,20 +201,18 @@
 
               <td class="text-end"><%= row.people %></td>
               <td class="text-end"><%= row.figures.number %></td>
-              <td class="text-end"><%= number(row.figures.mean) %></td>
-              <td class="text-end"><%= number(row.figures.median) %></td>
+              <td class="text-end"><%= format_points(row.figures.mean) %></td>
+              <td class="text-end"><%= format_points(row.figures.median) %></td>
 
               <td>
-                <% if share %>
-                  <%= helpers.progress_bar((share * 100).round, 100,
-                                           label: percent(share), height: "1rem",
-                                           container_class: "progress") %>
-                <% end %>
+                <%= share_bar(share_of(row.figures.mean, statistics.max_points)) %>
               </td>
 
               <% if grades? %>
-                <td class="text-end"><%= grade(row.grades.mean) %></td>
-                <td class="text-end"><%= percent(row.grades.pass_share) %></td>
+                <td class="text-end"><%= format_grade(row.grades.mean) %></td>
+                <td class="text-end">
+                  <%= format_share(row.grades.pass_share) %>
+                </td>
               <% end %>
             </tr>
           <% end %>
