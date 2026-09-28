@@ -125,14 +125,7 @@ class RosterNotificationMailer < ApplicationMailer
 
   def added_to_exam_email
     email do
-      if @rosterable.is_a?(Exam)
-        @info[:exam_date] = if @rosterable.date
-          I18n.l(@rosterable.date, format: :long)
-        else
-          t("basics.value_not_available")
-        end
-        @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
-      end
+      add_exam_details
       t("roster.mailer.roster_added_to_exam_email_subject", **subject_vars)
     end
   end
@@ -179,14 +172,7 @@ class RosterNotificationMailer < ApplicationMailer
 
   def change_exam_schedule_email
     email do
-      if @rosterable.is_a?(Exam)
-        @info[:exam_date] = if @rosterable.date
-          I18n.l(@rosterable.date, format: :long)
-        else
-          t("basics.value_not_available")
-        end
-        @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
-      end
+      add_exam_details
       t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars)
     end
   end
@@ -256,5 +242,14 @@ class RosterNotificationMailer < ApplicationMailer
         raise(ArgumentError,
               "Unknown rosterable type: #{rosterable.class.name}")
       end
+    end
+
+    def add_exam_details
+      @info[:exam_date] = if @rosterable.date
+        I18n.l(@rosterable.date, format: :long)
+      else
+        t("basics.value_not_available")
+      end
+      @info[:exam_location] = @rosterable.location.presence || t("basics.value_not_available")
     end
 end
