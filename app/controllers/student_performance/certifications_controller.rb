@@ -299,10 +299,7 @@ module StudentPerformance
         end
       end
 
-      # By last name, as the participants tab lists them. The order ends in the
-      # user id, because a page cut with OFFSET needs rows it can tell apart:
-      # otherwise it shows a student twice and skips another. Measured, not
-      # feared.
+      # By last name, as the participants tab lists them.
       def load_filtered_records
         records = @lecture.student_performance_records
                           .includes(:user)
