@@ -87,10 +87,7 @@ module StudentPerformance
         @lecture.student_performance_records
                 .includes(:user)
                 .joins(:user)
-                .order(Arel.sql(
-                         "COALESCE(NULLIF(users.name_in_tutorials, " \
-                         "''), users.name) ASC"
-                       ), :id)
+                .order(Rosters::ParticipantQuery::ORDER, :id)
       end
 
       def filter_by_tutorial(scope)

@@ -299,13 +299,15 @@ module StudentPerformance
         end
       end
 
-      # By id after the timestamp, because the records of a lecture are written
-      # in one go and carry the same one: a page cut with OFFSET would then
-      # show a student twice and skip another. Measured, not feared.
+      # By last name, as the participants tab lists them. The order ends in the
+      # user id, because a page cut with OFFSET needs rows it can tell apart:
+      # otherwise it shows a student twice and skips another. Measured, not
+      # feared.
       def load_filtered_records
         records = @lecture.student_performance_records
                           .includes(:user)
-                          .order(:created_at, :id)
+                          .joins(:user)
+                          .order(Rosters::ParticipantQuery::ORDER)
         @pagy, @filtered_records = pagy(filter_records(filter_by_name(records)))
       end
 

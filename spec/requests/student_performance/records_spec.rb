@@ -517,6 +517,17 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(listed_names).to eq(["Grace Hopper"])
         end
 
+        it "lists the students by last name" do
+          { ada => ["Ada", "Lovelace"], grace => ["Grace", "Hopper"],
+            nina => ["Nina", "Simone"] }.each do |user, (first, last)|
+            user.update!(first_name: first, last_name: last)
+          end
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(listed_names).to eq(["Grace Hopper", "Ada Lovelace", "Nina Simone"])
+        end
+
         # The tutorial filter has its own examples above; what this one is
         # about is that the search narrows what the filter left standing.
         it "searches within the tutorial that is filtered for" do
