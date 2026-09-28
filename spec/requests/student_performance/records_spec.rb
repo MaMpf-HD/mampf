@@ -615,6 +615,20 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
 
           expect(header.at_css("a")["href"]).to include("dir=asc")
         end
+
+        # Without a way back, the order by name is gone once a column is
+        # sorted: the third click leaves the sort out.
+        it "offers the order by name on the column it sorted ascending" do
+          get lecture_student_performance_records_path(
+            lecture, sort: "points", dir: "asc"
+          )
+
+          header = Nokogiri::HTML(response.body)
+                           .css("thead tr")[1].css("th")
+                           .find { |th| th["aria-sort"] == "ascending" }
+
+          expect(header.at_css("a")["href"]).not_to include("sort=")
+        end
       end
 
       # An unmarked sheet holds back everyone at once, so the warning belongs on
