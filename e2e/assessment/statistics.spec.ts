@@ -41,6 +41,6 @@ test.describe("the statistics of a sheet", () => {
     const programs = teacher.page.getByRole("region", { name: "By program" });
     await expect(programs.getByRole("row", { name: new RegExp(programName) }))
       .toContainText("6");
-    await expect(programs.getByRole("row", { name: /No program given/ })).toBeVisible();
+    await expect(programs.getByRole("row", { name: /Other or none given/ })).toBeVisible();
   });
 });

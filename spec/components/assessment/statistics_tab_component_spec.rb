@@ -35,7 +35,7 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
 
     expect(tables["Tasks"].at_css("tbody tr").text.squish).to include("Task 1", "10", "6")
     programs = tables["By program"].css("tbody th").map { |cell| cell.text.squish }
-    expect(programs).to eq([program.name_with_subject, "No program given"])
+    expect(programs).to eq([program.name_with_subject, "Other or none given"])
     expect(page.text).not_to include("Coming soon")
   end
 

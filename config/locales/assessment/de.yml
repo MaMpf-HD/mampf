@@ -604,7 +604,7 @@ de:
       grade: 'Note'
       programs: 'Nach Studiengang'
       program: 'Studiengang'
-      no_program: 'Kein Studiengang angegeben'
+      no_program: 'Sonstiger oder keiner angegeben'
       tutorials: 'Nach Tutorium'
       tutorial: 'Tutorium'
       no_tutorial: 'Ohne Tutorium'

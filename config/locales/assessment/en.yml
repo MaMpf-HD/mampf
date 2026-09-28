@@ -604,7 +604,7 @@ en:
       grade: 'Grade'
       programs: 'By program'
       program: 'Program'
-      no_program: 'No program given'
+      no_program: 'Other or none given'
       tutorials: 'By tutorial'
       tutorial: 'Tutorial'
       no_tutorial: 'No tutorial'
