@@ -63,6 +63,20 @@ RSpec.describe(Assessment::Statistics) do
       expect(statistics.task_rows.first.figures.number).to eq(1)
     end
 
+    it "counts absent and exempt rows but leaves them out of the points" do
+      program = create(:program, degree: "msc")
+      mark(4, 6, program: program)
+      [:absent, :exempt].each do |status|
+        create(:assessment_participation, status, assessment: assessment,
+                                                  user: create(:confirmed_user, program: program))
+      end
+
+      expect(statistics.counts).to include(total: 3, marked: 1, absent: 1, exempt: 1)
+      expect(statistics.task_rows.map { |row| row.figures.number }).to eq([1, 1])
+      expect(statistics.program_rows.sole).to have_attributes(people: 3)
+      expect(statistics.program_rows.sole.figures).to have_attributes(number: 1, mean: 10.0)
+    end
+
     it "groups the people by program, the ones without one last" do
       program = create(:program, degree: "msc")
       mark(4, 6, program: program)

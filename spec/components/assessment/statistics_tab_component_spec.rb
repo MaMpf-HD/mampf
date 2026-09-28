@@ -39,6 +39,16 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
     expect(programs).to eq([program.name_with_subject, "Other or none given"])
   end
 
+  it "names absent and exempt people only when there are some" do
+    mark(8)
+    expect(render_tab.text).not_to match(/absent|exempt/)
+
+    create(:assessment_participation, :absent, assessment: assessment)
+    create(:assessment_participation, :exempt, assessment: assessment)
+
+    expect(render_tab.text.squish).to include("1 of 3 reviewed · 1 absent · 1 exempt")
+  end
+
   context "with an exam's grades" do
     let(:assessment) { create(:assessment, :for_exam, :with_points) }
 
