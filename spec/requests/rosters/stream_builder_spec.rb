@@ -50,7 +50,7 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
     end
   end
 
-  describe "stream dispatch via group panel" do
+  describe "stream dispatch via panel source in a completed campaign" do
     let(:campaign_tutorial) do
       create(:tutorial, lecture: lecture, skip_campaigns: false)
     end
