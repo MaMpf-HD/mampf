@@ -2,14 +2,14 @@ en:
   support_request:
     open: "Contact support"
     title: "Contact support"
-    intro: "Your message goes to the MaMpf team, who answer you by email."
-    intro_signed_out: "Your message goes to the MaMpf team, who answer you at the address you give."
+    intro: "Your message goes to the MaMpf team, who will reply by email."
+    intro_signed_out: "Your message goes to the MaMpf team, who will reply to the address you enter."
     email: "Your email address"
     message: "Your message"
     message_placeholder: "How can we help?"
     send: "Send"
-    sent: "Thank you! Your message is on its way; we answer by email."
-    sent_signed_out: "Thank you! Your message is on its way; we answer at the address you gave."
+    sent: "Thank you! Your message is on its way. We will reply by email."
+    sent_signed_out: "Thank you! Your message is on its way. We will reply to the address you entered."
   activemodel:
     attributes:
       support_request:

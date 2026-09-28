@@ -8,8 +8,8 @@ de:
     message: "Deine Nachricht"
     message_placeholder: "Wie können wir helfen?"
     send: "Senden"
-    sent: "Danke! Deine Nachricht ist unterwegs; wir antworten per E-Mail."
-    sent_signed_out: "Danke! Deine Nachricht ist unterwegs; wir antworten an die angegebene Adresse."
+    sent: "Danke! Deine Nachricht ist unterwegs. Wir antworten per E-Mail."
+    sent_signed_out: "Danke! Deine Nachricht ist unterwegs. Wir antworten an die angegebene Adresse."
   activemodel:
     attributes:
       support_request:
