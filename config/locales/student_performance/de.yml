@@ -216,7 +216,13 @@ de:
           one: "%{count} manuelle Entscheidung: Regel oder Leistungsdaten haben sich seither geändert."
           other: "%{count} manuelle Entscheidungen: Regel oder Leistungsdaten haben sich seither geändert."
         reevaluate: "Mit Regel abgleichen"
+        reevaluate_confirm:
+          one: "Setzt 1 Entscheidung auf das, was die Regel heute ergibt. Fortfahren?"
+          other: "Setzt %{count} Entscheidungen auf das, was die Regel heute ergibt. Fortfahren?"
         confirm_manual: "Einzelentscheidungen bestätigen"
+        confirm_manual_confirm:
+          one: "Behält 1 manuelle Entscheidung bei, obwohl sich Regel oder Leistungsdaten seither geändert haben. Fortfahren?"
+          other: "Behält %{count} manuelle Entscheidungen bei, obwohl sich Regel oder Leistungsdaten seither geändert haben. Fortfahren?"
       status:
         passed: "Zugelassen"
         failed: "Nicht zugelassen"

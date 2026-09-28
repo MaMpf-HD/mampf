@@ -127,8 +127,10 @@ test.describe("from a mark to a decision", () => {
 
     await expect(teacher.page.getByText(/Eligibility rule updated/))
       .toBeVisible();
+    const confirmation = teacher.page.waitForEvent("dialog");
     await teacher.page
       .getByRole("button", { name: "Reconcile with rule" }).click();
+    expect((await confirmation).message()).toContain("to what the rule gives today");
 
     // the row says "Not Eligible" either way — once as what the rule says
     // today, once as the decision. What only reconciling does is make them one.
