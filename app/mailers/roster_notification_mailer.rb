@@ -61,16 +61,12 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def rejected(user, campaign, reasons:)
-      rosterable_of_campaign = campaign.registration_items.first&.registerable
-      return log_unsupported(rosterable_of_campaign) unless supported?(rosterable_of_campaign)
-      return if rosterable_of_campaign.is_a?(Lecture)
-
-      if rosterable_of_campaign.is_a?(Exam)
-        with(rosterable: rosterable_of_campaign,
+      if campaign.exam_campaign?
+        with(rosterable: campaign.exam,
              reasons: reasons,
              recipient: user).rejected_from_exam_email.deliver_later
       else
-        with(rosterable: rosterable_of_campaign,
+        with(lecture: campaign.campaignable,
              reasons: reasons,
              recipient: user).rejected_from_group_email.deliver_later
       end
@@ -147,19 +143,11 @@ class RosterNotificationMailer < ApplicationMailer
   end
 
   def rejected_from_group_email
-    email do
-      @info[:reason_link] = lecture_home_url(@lecture) if @lecture
-      @info[:reasons] = rejection_reasons(params[:reasons])
-      t("roster.mailer.roster_rejected_from_group_email_subject", **subject_vars)
-    end
+    rejection_email("roster.mailer.roster_rejected_from_group_email_subject")
   end
 
   def rejected_from_exam_email
-    email do
-      @info[:reason_link] = lecture_home_url(@lecture) if @lecture
-      @info[:reasons] = rejection_reasons(params[:reasons])
-      t("roster.mailer.roster_rejected_from_exam_email_subject", **subject_vars)
-    end
+    rejection_email("roster.mailer.roster_rejected_from_exam_email_subject")
   end
 
   def participant_left_group_email
@@ -192,6 +180,8 @@ class RosterNotificationMailer < ApplicationMailer
       @info = params[:info] || {}
     end
 
+    # Single recipient: addressed directly.
+    # Multiple recipients: members in bcc.
     def email
       prepare_data(params)
       addressees = @recipient ? [@recipient] : @recipients
@@ -206,6 +196,14 @@ class RosterNotificationMailer < ApplicationMailer
       end
     end
 
+    def rejection_email(subject_key)
+      email do
+        @info[:reason_link] = lecture_home_url(@lecture) if @lecture
+        @info[:reasons] = rejection_reasons(params[:reasons])
+        t(subject_key, **subject_vars)
+      end
+    end
+
     def subject_vars
       {
         rosterable_title: @rosterable&.title || @new_rosterable&.title,
@@ -215,7 +213,7 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     def rejection_reasons(reasons)
-      reasons&.join(", ") || nil
+      reasons&.join(", ")
     end
 
     def lecture_for_rosterable(rosterable)
