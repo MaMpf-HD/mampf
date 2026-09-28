@@ -148,7 +148,8 @@ de:
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
       search: 'Suchen'
-      filter_placeholder: 'Nach Name oder E-Mail filtern'
+      search_placeholder: 'Nach Name oder Matrikelnummer suchen'
+      filter_placeholder: 'Nach Name filtern'
     drag:
       choice_title: 'Aktion für'
       move: 'Verschieben'

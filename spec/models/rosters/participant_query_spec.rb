@@ -40,6 +40,22 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
         expect(result.scope.map(&:user)).to eq([user2])
       end
 
+      it "finds a participant by the display name when the row shows it" do
+        result = described_class.new(lecture, search: "Charlie").call
+
+        expect(result.scope.map(&:user)).to eq([user3])
+      end
+
+      it "ignores a display name the row does not show" do
+        expect(described_class.new(lecture, search: "Bob").call.scope).to be_empty
+      end
+
+      it "ignores the email address" do
+        user3.update!(email: "someone19@example.com")
+
+        expect(described_class.new(lecture, search: "19").call.scope).to be_empty
+      end
+
       it "sorts by last name, and by the shown name without one" do
         expect(subject.scope.map(&:user)).to eq([user3, user2, user1])
       end

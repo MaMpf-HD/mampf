@@ -223,6 +223,7 @@ en:
       unlimited_capacity: 'unlimited'
       filter_label: 'Filter participants list'
       filter_placeholder: 'Filter by name or email'
+      participants_filter_placeholder: 'Filter by name or matriculation number'
       no_filter_results: 'No matching students'
       add_form_label: 'Add person by email'
       add_form_hint: 'Adds a person directly to the participants list and is not used for filtering.'

@@ -147,7 +147,8 @@ en:
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Registration Process Management'
       search: 'Search'
-      filter_placeholder: 'Filter by name or email'
+      search_placeholder: 'Search by name or matriculation number'
+      filter_placeholder: 'Filter by name'
     drag:
       choice_title: 'Drop action for'
       move: 'Move'

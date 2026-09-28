@@ -144,7 +144,7 @@
         <% students.each do |student| %>
           <div
             class="tutorial-roster-student card rounded-3"
-            data-student-search="<%= "#{student_display_name(student)} #{student.email}".downcase %>"
+            data-student-search="<%= student_display_name(student).downcase %>"
             data-user-id="<%= student.id %>"
           >
             <div class="card-body border-0 py-2 px-3 d-flex gap-2">

@@ -20,7 +20,7 @@
             id="exam-participants-filter"
             type="text"
             class="form-control form-control-sm"
-            placeholder="<%= t("assessment.registration_tab.filter_placeholder") %>"
+            placeholder="<%= t("assessment.registration_tab.participants_filter_placeholder") %>"
             autocomplete="off"
             data-action="input->exams--registration-list#filter"
           >
@@ -95,7 +95,7 @@
 
               <tr
                 data-exams--registration-list-target="entry"
-                data-student-search="<%= "#{user.tutorial_name} #{user.matriculation_number} #{user.email}".downcase %>"
+                data-student-search="<%= "#{user.tutorial_name.presence || user.email} #{user.matriculation_number}".downcase %>"
               >
                 <td><%= user.tutorial_name.presence || user.email %></td>
 

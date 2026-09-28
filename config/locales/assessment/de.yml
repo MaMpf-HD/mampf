@@ -223,6 +223,7 @@ de:
       unlimited_capacity: 'unbegrenzt'
       filter_label: 'Teilnahmeliste filtern'
       filter_placeholder: 'Nach Name oder E-Mail filtern'
+      participants_filter_placeholder: 'Nach Name oder Matrikelnummer filtern'
       no_filter_results: 'Keine passenden Studierenden'
       add_form_label: 'Person per E-Mail hinzufügen'
       add_form_hint: 'Fügt eine Person direkt zur Teilnahmeliste hinzu und dient nicht zum Filtern.'
