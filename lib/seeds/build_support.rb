@@ -34,7 +34,6 @@ module Seeds
     SEED_LAST_NAMES = ["Albrecht", "Bauer", "Fischer", "Hoffmann", "Keller", "Lang",
                        "Meyer", "Neumann", "Richter", "Schmitt", "Wagner", "Weber",
                        "Zimmermann"].freeze
-    ENROLMENT_DESCRIPTION = "Anmeldung zur Veranstaltung".freeze
     TUTORIAL_DESCRIPTION = "Anmeldung zu den Übungsgruppen".freeze
     TALK_DESCRIPTION = "Vergabe der Vortragsthemen".freeze
 

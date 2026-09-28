@@ -765,7 +765,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       targets = Nokogiri::HTML(response.body).css("turbo-stream").pluck("target")
       expect(targets).to include("points-participation-row-user-#{newcomer.id}",
                                  "submission-row-#{team.id}", "marking-summary")
-      expect(response.body).to include(newcomer.tutorial_name)
+      expect(response.body).to include(ERB::Util.html_escape(newcomer.tutorial_name))
     end
 
     # The page may have been drawn before the backfill worker seeded the
@@ -788,7 +788,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             params: { grading_scope_type: "tutorial" }, as: :turbo_stream)
 
       expect(response.body).to include(I18n.t("assessment.task_points.add_member"))
-      expect(response.body).to include(newcomer.tutorial_name)
+      expect(response.body).to include(ERB::Util.html_escape(newcomer.tutorial_name))
     end
 
     it "keeps another group's tutor out" do
