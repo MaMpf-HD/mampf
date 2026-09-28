@@ -2108,7 +2108,6 @@ en:
     subscribe_course: 'You can bookmark its event series in the lecture search on your dashboard.'
     subscribe_course_html: 'You can bookmark its event series in %{dashboard}.'
     profile: 'profile'
-    goto_profile: "Visit your profile"
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
@@ -2116,6 +2115,7 @@ en:
     subscribe_lecture: 'You can bookmark it in the lecture search on your dashboard.'
     subscribe_lecture_html: 'You can bookmark it in %{dashboard}.'
     dashboard_search: 'the lecture search on your dashboard'
+    goto_dashboard_search: 'Go to the lecture search'
     new_lecture_created_html: >
       New event series created:<br>
       %{title} (%{term}, %{teacher})

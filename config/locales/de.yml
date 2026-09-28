@@ -2295,7 +2295,6 @@ de:
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
     subscribe_course: 'Seine Veranstaltungen kannst Du in der Veranstaltungssuche auf Deinem Dashboard merken.'
     subscribe_course_html: 'Seine Veranstaltungen kannst Du in %{dashboard} merken.'
-    goto_profile: 'Zu Deinen Profileinstellungen'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
@@ -2304,6 +2303,7 @@ de:
     subscribe_lecture: 'Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.'
     subscribe_lecture_html: 'Du kannst sie in %{dashboard} merken.'
     dashboard_search: 'der Veranstaltungssuche auf Deinem Dashboard'
+    goto_dashboard_search: 'Zur Veranstaltungssuche'
     new_lecture_created_html: >
       Neue Veranstaltung angelegt:<br>
       %{title} (%{term}, %{teacher})
