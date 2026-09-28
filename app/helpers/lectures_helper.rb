@@ -131,12 +131,6 @@ module LecturesHelper
     end
   end
 
-  def circle_icon(subscribed)
-    return "fas fa-check-circle" if subscribed
-
-    "far fa-circle"
-  end
-
   def lecture_border(lecture)
     return "" if lecture.published?
 
