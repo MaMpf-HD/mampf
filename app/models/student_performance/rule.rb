@@ -1,7 +1,9 @@
 module StudentPerformance
   # What a lecture asks of a student before they may sit its exam: a points
-  # threshold, a set of required achievements, or both. One rule is active per
-  # lecture; the earlier ones stay for the certifications that cite them.
+  # threshold, a set of required achievements, both, or neither - then every
+  # student is proposed as eligible, and staff refuse the few by hand. One rule
+  # is active per lecture; the earlier ones stay for the certifications that
+  # cite them.
   class Rule < ApplicationRecord
     belongs_to :lecture
 
@@ -24,8 +26,8 @@ module StudentPerformance
     validates :min_points_absolute,
               numericality: { greater_than_or_equal_to: 0 },
               allow_nil: true
+    before_validation :drop_zero_threshold
     validate :threshold_matches_mode
-    validate :at_least_one_criterion
 
     # What this rule asks of one student, in points, out of the maximum it is
     # weighed against. A percentage only becomes a number once there are points
@@ -43,26 +45,27 @@ module StudentPerformance
       end
     end
 
+    # Whether points decide anything. Only then does the rule wait for the
+    # lecture's list of sheets and tests: another sheet changes the points
+    # reachable and, as a share, the points needed.
+    def points_threshold?
+      min_percentage.present? || min_points_absolute.present?
+    end
+
     def rule_achievement_ids_set
       Set.new(rule_achievements.pluck(:achievement_id))
     end
 
-    # Criteria that survive the current save — excludes associated records that
-    # are built but marked for removal.
-    def pending_rule_achievements
-      rule_achievements.reject(&:marked_for_destruction?)
-    end
-
     private
 
-      # A rule that constrains nothing certifies every student, so it is never a
-      # meaningful configuration: leaving exam eligibility switched off has the
-      # same effect without silently producing certifications.
-      def at_least_one_criterion
-        return if min_percentage.present? || min_points_absolute.present?
-        return if pending_rule_achievements.any?
+      # A threshold of zero asks for nothing; it is kept as what it means, so
+      # that the rule reads the same whichever way it was entered.
+      def drop_zero_threshold
+        return unless min_percentage&.zero? || min_points_absolute&.zero?
 
-        errors.add(:base, :no_criteria)
+        self.threshold_mode = :none
+        self.min_percentage = nil
+        self.min_points_absolute = nil
       end
 
       # The mode is the single source of truth; the two value columns have to

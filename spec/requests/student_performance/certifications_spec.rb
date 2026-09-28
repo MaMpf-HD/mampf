@@ -29,6 +29,35 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
+      # Another sheet changes nothing such a rule asks, so the open list does
+      # not hold the proposals back.
+      context "with a rule that asks for nothing, while the list is open" do
+        before do
+          FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                            lecture: lecture)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: student,
+                            percentage_materialized: 0,
+                            points_total_materialized: 0,
+                            points_max_materialized: 100)
+          lecture.update!(assignments_complete: false)
+        end
+
+        it "names the rule and offers the sweep" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.show.no_requirement")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.bulk_accept")
+          )
+          expect(response.body).not_to include(
+            I18n.t("student_performance.certifications.index.list_open")
+          )
+        end
+      end
+
       # Mid-term the screen has to say why it proposes nothing, or it reads as
       # broken rather than as "too early".
       context "while the list of assignments is open" do
@@ -1225,6 +1254,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           I18n.t("student_performance.certifications.index.assignments_incomplete",
                  tab: I18n.t("assessment.tabs.assignments"))
         )
+      end
+
+      it "admits everybody under a rule that asks for nothing, list open or not" do
+        rule.update!(threshold_mode: :none, min_percentage: nil)
+        lecture.update!(assignments_complete: false)
+
+        post(bulk_accept_lecture_student_performance_certifications_path(lecture))
+
+        expect(StudentPerformance::Certification.where(lecture: lecture)
+                 .pluck(:status).uniq).to eq(["passed"])
       end
 
       it "creates certifications for all students" do

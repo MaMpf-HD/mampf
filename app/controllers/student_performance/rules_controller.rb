@@ -122,6 +122,8 @@ module StudentPerformance
         mode = params.dig(:rule, :threshold_mode)
         pct = (params.dig(:rule, :min_percentage).presence&.to_f if mode == "percentage")
         pts = (params.dig(:rule, :min_points_absolute).presence&.to_f if mode == "absolute")
+        pct = nil if pct&.zero?
+        pts = nil if pts&.zero?
 
         achievement_ids = Set.new(
           Array(params.dig(:rule, :achievement_ids))

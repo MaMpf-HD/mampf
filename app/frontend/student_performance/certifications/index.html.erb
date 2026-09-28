@@ -9,11 +9,11 @@
 
     <div class="d-flex gap-2">
       <%#
-        While the sheet list is open every proposal is deferred and there is
-        nothing to accept; the rule card says so and where to change it.
+        While the open sheet list holds the proposals back there is nothing to
+        accept; the rule card says so and where to change it.
       %>
 
-      <% if @rule && @uncertified_count > 0 && @lecture.assignments_complete? &&
+      <% if @rule && @uncertified_count > 0 && !assignment_list_holds_back?(@lecture, @rule) &&
             (@proposed_passed + @proposed_failed) > 0 %>
         <%# What the sweep would do is asked back, not worn on the button. %>
         <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
@@ -85,8 +85,17 @@
               </span>
             <% end %>
 
+            <% if !@rule.points_threshold? && @rule.required_achievements.none? %>
+              <strong>
+                <%= t("student_performance.rules.show.no_requirement") %>
+              </strong>
+              <span class="small text-muted">
+                <%= t("student_performance.rules.show.no_requirement_hint") %>
+              </span>
+            <% end %>
+
             <% if @rule.required_achievements.any? %>
-              <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+              <% if @rule.points_threshold? %>
                 <span class="text-muted small mx-1">
                   <i class="bi bi-plus"></i>
                 </span>
@@ -130,7 +139,7 @@
           </div>
         </div>
 
-        <% unless @lecture.assignments_complete? %>
+        <% if assignment_list_holds_back?(@lecture, @rule) %>
           <div class="small text-muted border-top mt-2 pt-2">
             <i class="bi bi-info-circle me-1"></i>
             <%= t("student_performance.certifications.index.list_open") %>
@@ -478,7 +487,7 @@
                     <%= t("student_performance.certifications.columns.rule_today") %>
                     <%= t("student_performance.certifications.rule_today.#{proposal.proposed_status}") %>
 
-                    <% reasons = proposal_reasons(proposal, @lecture) %>
+                    <% reasons = proposal_reasons(proposal) %>
 
                     <% if reasons.any? %>
                       &mdash;

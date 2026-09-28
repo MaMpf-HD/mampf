@@ -85,9 +85,10 @@ module StudentPerformance
         return
       end
 
-      # When assignments_complete? is false, every proposal is inconclusive;
-      # bulk_accept would only create or update pending certifications.
-      unless @lecture.assignments_complete?
+      # When assignments_complete? is false, every proposal of a rule with a
+      # points threshold is inconclusive; bulk_accept would only create or
+      # update pending certifications.
+      if !@lecture.assignments_complete? && @rule.points_threshold?
         redirect_to lecture_student_performance_certifications_path(@lecture),
                     alert: I18n.t(
                       "student_performance.certifications.index.assignments_incomplete",

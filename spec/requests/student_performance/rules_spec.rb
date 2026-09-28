@@ -116,16 +116,20 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(rule.min_percentage).to be_nil
       end
 
-      it "rejects a rule with neither a threshold nor an achievement" do
+      it "saves a rule with neither a threshold nor an achievement" do
         expect do
           patch(lecture_student_performance_rules_path(lecture),
                 params: { rule: { threshold_mode: "none" } })
-        end.not_to change(StudentPerformance::Rule, :count)
+        end.to change(StudentPerformance::Rule, :count).by(1)
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body)
-          .to include(I18n.t("activerecord.errors.models." \
-                             "student_performance/rule.attributes.base.no_criteria"))
+        expect(StudentPerformance::Rule.find_by(lecture: lecture)).not_to be_points_threshold
+      end
+
+      it "saves a percentage of zero as no threshold" do
+        patch(lecture_student_performance_rules_path(lecture),
+              params: { rule: { threshold_mode: "percentage", min_percentage: "0" } })
+
+        expect(StudentPerformance::Rule.find_by(lecture: lecture)).to be_threshold_mode_none
       end
 
       it "redirects to records when source_frame is performance-records-frame" do

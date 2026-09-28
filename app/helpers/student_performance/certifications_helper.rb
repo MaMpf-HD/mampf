@@ -15,17 +15,23 @@ module StudentPerformance
       ParticipationRowComponent::ROW_ACTION_CLASSES
     end
 
-    # The reasons a row spells out. While `assignments_complete?` is false
-    # every proposal defers for the same reason, and the box above the table
-    # gives it once, so the rows stay empty.
-    def proposal_reasons(proposal, lecture)
+    # Whether the open list of sheets and tests defers every proposal: only a
+    # rule with a points threshold waits for it.
+    def assignment_list_holds_back?(lecture, rule)
+      rule.present? && rule.points_threshold? && !lecture.assignments_complete?
+    end
+
+    # The reasons a row spells out. While the open list of sheets holds every
+    # proposal back, they all defer for the same reason, and the box above the
+    # table gives it once, so the rows stay empty.
+    def proposal_reasons(proposal)
       case proposal.proposed_status
       when :failed
         proposal.missed_criteria.map do |criterion|
           t("student_performance.evaluator.missed.#{criterion}")
         end
       when :inconclusive
-        return [] unless lecture.assignments_complete?
+        return [] if proposal.details[:assignments_incomplete]
 
         proposal.verdict_deferral_reasons.map do |reason|
           deferral_text(proposal, reason)

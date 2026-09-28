@@ -539,6 +539,31 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
     end
 
+    # Another sheet changes nothing a rule without points asks, so the open
+    # list holds nobody back.
+    context "with a rule that asks for nothing, while the list is open" do
+      let(:rule) do
+        FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                          lecture: lecture)
+      end
+
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: false, due_points: due_points)
+      end
+
+      it "proposes every student as eligible" do
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture,
+                                   points_total_materialized: 0,
+                                   points_max_materialized: 100,
+                                   percentage_materialized: 0)
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:passed)
+        expect(result.details[:assignments_incomplete]).to be(false)
+      end
+    end
+
     # While sheets can still be added, another one worth p points raises the
     # points needed by p/2 and the points reachable by p — so it can overturn a
     # pass and a fail alike, and neither is worth handing out.

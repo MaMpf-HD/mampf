@@ -6,7 +6,6 @@ en:
           attributes:
             base:
               percentage_and_absolute_exclusive: "Cannot specify both a percentage and an absolute point threshold"
-              no_criteria: "The rule needs at least one criterion: a point threshold or a required achievement. Without one, every student would be certified."
               threshold_without_mode: "A point threshold is set although no threshold mode was chosen"
         student_performance/rule_achievement:
           attributes:
@@ -95,6 +94,8 @@ en:
       show:
         of_total_points: "of total points required"
         points_absolute: "points required (absolute)"
+        no_requirement: "No requirement"
+        no_requirement_hint: "every student is proposed as eligible"
         edit_button: "Edit Rule"
         value_types:
           boolean: "Required"
@@ -107,7 +108,7 @@ en:
         save: "Save Rule"
         threshold_section: "Point Threshold"
         none_mode: "No point threshold"
-        none_hint: "Eligibility is determined solely by achievements."
+        none_hint: "Only the required achievements count. Without any, every student is proposed as eligible, and you refuse single students by hand."
         percentage_mode: "Percentage of total points"
         percentage_hint: "Students must reach this percentage of total points."
         absolute_mode: "Absolute points"
