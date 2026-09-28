@@ -57,8 +57,8 @@ module UserRegistrationsHelper
     t("registration.user_registration.options.free", free: free, capacity: capacity)
   end
 
-  # How full a group is, as the width of its bar in percent; a group without
-  # a limit has no bar.
+  # Returns how full a group is as its bar's width in percent, or nil for a
+  # group without a capacity.
   def option_fill_percent(capacity, used)
     return if capacity.nil?
     return 100 unless capacity.positive?

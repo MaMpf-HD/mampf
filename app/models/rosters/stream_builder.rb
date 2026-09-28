@@ -174,8 +174,9 @@ module Rosters
         )
       end
 
-      # Whoever leaves every group of a finished campaign is unplaced again,
-      # and whoever joins one is placed, so the campaigns' footnotes count anew.
+      # Removing a student from every group of a completed campaign makes her
+      # unassigned again, adding her to one assigns her; each completed
+      # campaign's footnote shows that count.
       def footnote_replacements(streams)
         @lecture.registration_campaigns.non_exam.completed.find_each do |campaign|
           streams << @turbo_stream.replace(

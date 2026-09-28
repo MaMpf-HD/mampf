@@ -89,8 +89,6 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.body).to include("assessments_container")
       end
 
-      # The medium is made in the content tab; the settings say so, and why
-      # the list may be empty.
       it "points the exercise medium to where it is created" do
         get assessment_assessment_path(assessment.id),
             params: { assessable_type: "Assignment", assessable_id: assignment.id },

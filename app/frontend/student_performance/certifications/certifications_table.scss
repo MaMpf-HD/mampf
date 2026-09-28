@@ -1,7 +1,6 @@
-// Two columns hold sentences - the hint and the note; the others hold a
-// name, a figure, a status, an icon. Each gets a share of the width after
-// what it usually holds, so the gaps between the columns come out about
-// equal; the actions keep what is left.
+// Hint and note hold sentences and may wrap; the other columns hold a name,
+// a figure, a status or an icon. Each column's share follows what it usually
+// holds, so the gaps between columns come out about equal.
 .certifications-table {
   th,
   td {

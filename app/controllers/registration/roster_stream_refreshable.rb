@@ -23,8 +23,8 @@ module Registration
         ]
       end
 
-      # Puts back the lazy frame of the participants tab, so the tab loads
-      # afresh when it is next shown instead of keeping memberships of before.
+      # Replaces the participants tab with its lazy frame, so the tab reloads
+      # when next shown instead of listing the memberships from before.
       def participants_reload_stream(lecture)
         turbo_stream.replace(
           "roster_participants_panel",
