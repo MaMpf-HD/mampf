@@ -593,8 +593,7 @@ en:
           voucher to the user outside of MaMpf. The user can then redeem the
           voucher in their profile settings and will become a lecture editor.
         subscribers_count: >
-          This is the number of all users subscribed to this event series in
-          their profile settings.
+          This is the number of all users who have bookmarked this event series.
         organizational: >
           If you check this box, the general information will be visible for
           all subscribers of your event series (it can be accessed via
