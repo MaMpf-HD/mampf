@@ -17,17 +17,13 @@ module RecordsOffice
     GROUP_TYPES = { "tutorial" => Tutorial, "talk" => Talk,
                     "cohort" => Cohort, "exam" => Exam }.freeze
 
-    # Lists the published results of the lecture's exams and talks; results
-    # still being graded, and sheets, stay with the teachers.
+    # Lists the exam and talk results whose `results_published_at` is set, as
+    # the students see them; assignments have no release step and stay out.
     def self.grades(lecture)
-      gradebooks = Assessment::Assessment.where(lecture: lecture, assessable_type: ["Exam", "Talk"])
-                                         .where.not(results_published_at: nil)
-      scope = Assessment::Participation.all
-      with_result = scope.where.not(grade_numeric: nil).or(scope.where.not(grade_text: nil))
-                         .or(scope.absent).or(scope.exempt)
-      participations = scope.where(assessment: gradebooks).merge(with_result)
-                            .includes(:user, assessment: :assessable)
-                            .sort_by do |participation|
+      gradebooks = Assessment::Assessment.with_published_results.where(lecture: lecture)
+      participations = Assessment::Participation.with_result.where(assessment: gradebooks)
+                                                .includes(:user, assessment: :assessable)
+                                                .sort_by do |participation|
         [group_title(participation.assessment.assessable), *sort_key(participation.user)]
       end
       generate(:grades, participations.map { |participation| grade_row(participation) })

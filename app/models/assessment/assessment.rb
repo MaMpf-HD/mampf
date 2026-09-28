@@ -26,6 +26,12 @@ module Assessment
 
     accepts_nested_attributes_for :assessable
 
+    # The exam and talk gradebooks whose results the students were shown;
+    # assignments have no release step, so theirs never count as published.
+    scope :with_published_results, lambda {
+      where(assessable_type: ["Exam", "Talk"]).where.not(results_published_at: nil)
+    }
+
     # Whether anything has been recorded for this user that removing them would
     # throw away. `pending` with nothing entered is the empty state, so it does
     # not count; every other status is a decision somebody made.

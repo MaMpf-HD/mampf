@@ -117,6 +117,24 @@ RSpec.describe("Records office", type: :request) do
                 ["Noether", "Talk", talk.to_label, "1,0", nil]])
     end
 
+    it "gives exactly the results the students were shown, and no sheets" do
+      exam = create(:exam, lecture: lecture, title: "Final exam")
+      exam.assessment.update!(results_published_at: 1.hour.ago)
+      create(:assessment_participation, :reviewed, assessment: exam.assessment,
+                                                   user: person("Noether", "Emmy"))
+      create(:assessment_participation, assessment: exam.assessment,
+                                        user: person("Zuse", "Konrad"), grade_text: "")
+      assignment = create(:assignment, :expired, lecture: lecture)
+      assignment.assessment.update!(results_published_at: 1.hour.ago)
+      create(:assessment_participation, :reviewed, assessment: assignment.assessment,
+                                                   user: person("Gauss", "Carl"))
+
+      get records_office_grades_path(lecture)
+
+      expect(csv_rows.map { |row| row.fields("Last name", "Title", "Grade") })
+        .to eq([["Noether", "Final exam", nil]])
+    end
+
     it "gives the exam admissions with what they rest on" do
       noether = person("Noether", "Emmy")
       create(:student_performance_record, lecture: lecture, user: noether,

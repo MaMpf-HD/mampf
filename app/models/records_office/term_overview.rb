@@ -36,8 +36,7 @@ module RecordsOffice
 
       def lecture_ids_with_grades
         @lecture_ids_with_grades ||=
-          Assessment::Assessment.where(lecture: lectures, assessable_type: ["Exam", "Talk"])
-                                .where.not(results_published_at: nil)
+          Assessment::Assessment.with_published_results.where(lecture: lectures)
                                 .distinct.pluck(:lecture_id).to_set
       end
 
