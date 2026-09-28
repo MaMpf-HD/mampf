@@ -559,10 +559,11 @@
                   </div>
                   <div data-certification-inline-target="edit" class="d-none">
                     <%#
-                      Not a tick and a cross: those are "admit" and "refuse"
-                      two rows down. Bare icons as in the marking tables: save,
-                      wipe the decision (filled and amber - it changes things,
-                      backing out does not), and back out last.
+                      Bare icons as in the marking tables: save, wipe the
+                      decision (filled and amber - it changes things, backing
+                      out does not), and back out last. Backing out is a grey
+                      cross without the frame that "refuse" wears in a
+                      proposal row.
                     %>
 
                     <div class="d-flex align-items-center justify-content-end">
@@ -608,7 +609,7 @@
                         title="<%= t('student_performance.certifications.index.cancel') %>"
                         aria-label="<%= t('student_performance.certifications.index.cancel') %>"
                       >
-                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <i class="bi bi-x-lg"></i>
                       </button>
                     </div>
 
