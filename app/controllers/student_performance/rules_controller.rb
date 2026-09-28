@@ -18,6 +18,7 @@ module StudentPerformance
               .find_or_initialize_by(lecture: @lecture)
       @achievements = Achievement.where(lecture: @lecture).order(:title)
       @selected_achievement_ids = @rule.rule_achievement_ids_set
+      @computed_count = @lecture.student_performance_certifications.computed.decided.count
     end
 
     def update
@@ -30,13 +31,7 @@ module StudentPerformance
       build_rule_achievements
       @rule.save!
 
-      target = if @source_frame == "performance-records-frame"
-        lecture_student_performance_records_path(@lecture)
-      else
-        lecture_student_performance_certifications_path(@lecture)
-      end
-
-      redirect_to target,
+      redirect_to source_path,
                   notice: I18n.t("student_performance.rules.flash.updated")
     rescue ActiveRecord::RecordInvalid
       @threshold_mode = params.dig(:rule, :threshold_mode)
@@ -45,6 +40,25 @@ module StudentPerformance
         Array(params.dig(:rule, :achievement_ids)).map(&:to_i)
       )
       render :edit, status: :unprocessable_content
+    end
+
+    # Takes the rule out of use rather than deleting it: the decisions made
+    # under it still cite it. The computed ones go, since the rule was all they
+    # stood on; the ones staff took by hand stay. Saving the form again brings
+    # the rule back.
+    def destroy
+      @source_frame = params[:source_frame].presence
+      rule = StudentPerformance::Rule.find_by(lecture: @lecture, active: true)
+      count = 0
+      if rule
+        StudentPerformance::Rule.transaction do
+          rule.update!(active: false)
+          count = @lecture.student_performance_certifications.reset_computed!
+        end
+      end
+
+      redirect_to source_path,
+                  notice: I18n.t("student_performance.rules.flash.removed", count: count)
     end
 
     def preview
@@ -75,6 +89,14 @@ module StudentPerformance
     end
 
     private
+
+      def source_path
+        if @source_frame == "performance-records-frame"
+          lecture_student_performance_records_path(@lecture)
+        else
+          lecture_student_performance_certifications_path(@lecture)
+        end
+      end
 
       def apply_threshold_params
         mode = params.dig(:rule, :threshold_mode)

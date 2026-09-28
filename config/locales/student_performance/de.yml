@@ -118,8 +118,17 @@ de:
         absolute_field: "Mindestpunktzahl"
         achievements_section: "Erforderliche Zusatzkriterien"
         achievements_hint: "Wählen Sie, welche Zusatzkriterien Studierende erfüllen müssen."
+        remove: "Regel entfernen"
+        remove_confirm:
+          zero: "Entfernt die Regel; dann entscheidest Du über jede Person wieder von Hand. Einzelentscheidungen bleiben."
+          one: "Entfernt die Regel und setzt die %{count} Entscheidung zurück, die sie getroffen hat; dann entscheidest Du über jede Person wieder von Hand. Einzelentscheidungen bleiben."
+          other: "Entfernt die Regel und setzt die %{count} Entscheidungen zurück, die sie getroffen hat; dann entscheidest Du über jede Person wieder von Hand. Einzelentscheidungen bleiben."
       flash:
         updated: "Zulassungsregel aktualisiert."
+        removed:
+          zero: "Zulassungsregel entfernt."
+          one: "Zulassungsregel entfernt, %{count} Entscheidung zurückgesetzt."
+          other: "Zulassungsregel entfernt, %{count} Entscheidungen zurückgesetzt."
       preview:
         button: "Vorschau"
         impact: "Auswirkung"

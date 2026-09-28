@@ -554,4 +554,58 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
       end
     end
   end
+
+  describe "DELETE /lectures/:lecture_id/performance/rules" do
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                        lecture: lecture)
+    end
+    let(:computed_user) { FactoryBot.create(:confirmed_user) }
+    let(:manual_user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture, user: computed_user, rule: rule,
+                        source: :computed)
+      FactoryBot.create(:student_performance_certification, :failed,
+                        lecture: lecture, user: manual_user, rule: rule,
+                        source: :manual)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      # The decisions taken under the rule still cite it, so it stays, only out
+      # of use; the ones it took go with it, the ones taken by hand stay.
+      it "takes the rule out of use and resets only its own decisions" do
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).not_to be_active
+        expect(lecture.reload.active_performance_rule).to be_nil
+        certifications = StudentPerformance::Certification.where(lecture: lecture)
+        expect(certifications.map(&:user)).to eq([manual_user])
+        expect(flash[:notice]).to eq(
+          I18n.t("student_performance.rules.flash.removed", count: 1)
+        )
+      end
+
+      it "brings the rule back when the form is saved again" do
+        delete lecture_student_performance_rules_path(lecture)
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: { threshold_mode: "percentage", min_percentage: "40" } }
+
+        expect(lecture.reload.active_performance_rule).to eq(rule)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "leaves the rule alone" do
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).to be_active
+      end
+    end
+  end
 end

@@ -118,8 +118,17 @@ en:
         absolute_field: "Minimum points"
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
+        remove: "Remove rule"
+        remove_confirm:
+          zero: "Removes the rule; every student is decided by hand again. Individual decisions stay."
+          one: "Removes the rule and resets the %{count} decision taken by it; every student is decided by hand again. Individual decisions stay."
+          other: "Removes the rule and resets the %{count} decisions taken by it; every student is decided by hand again. Individual decisions stay."
       flash:
         updated: "Eligibility rule updated."
+        removed:
+          zero: "Eligibility rule removed."
+          one: "Eligibility rule removed, %{count} decision reset."
+          other: "Eligibility rule removed, %{count} decisions reset."
       preview:
         button: "Preview"
         impact: "Impact"

@@ -174,4 +174,38 @@ test.describe("from a mark to a decision", () => {
         .toHaveText("Eligible");
     }
   });
+
+  test("removes the rule, and every student is decided by hand again", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createEligibilityLecture(
+      factory, teacher.user.id, { assignments_complete: true },
+    );
+    await factory.create("student_performance_rule", ["active"], {
+      lecture_id: lecture.id,
+      threshold_mode: "percentage",
+      min_percentage: 50,
+    });
+    await recordFor(factory, lecture.id, "Ada Lovelace", {
+      points_total_materialized: 60,
+      points_max_materialized: 100,
+      percentage_materialized: 60,
+    });
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await page.gotoOverview();
+    await page.overviewTab("Exam Eligibility").click();
+    await teacher.page.getByRole("link", { name: "Edit Rule" }).click();
+
+    const confirmation = teacher.page.waitForEvent("dialog");
+    teacher.page.once("dialog", dialog => dialog.accept());
+    await teacher.page.getByRole("button", { name: "Remove rule" }).click();
+    expect((await confirmation).message()).toContain("decided by hand again");
+
+    await expect(teacher.page.getByText("Eligibility rule removed")).toBeVisible();
+    await expect(teacher.page.getByRole("link", { name: "Set up rule" })).toBeVisible();
+    await expect(teacher.page.getByRole("row", { name: /Ada Lovelace/ })
+      .getByRole("button", { name: /eligible/i }).first()).toBeVisible();
+  });
 });
