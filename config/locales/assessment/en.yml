@@ -587,10 +587,10 @@ en:
       markers_caption_proposed: 'Threshold markers (1.0, 4.0) refer to the proposed scheme.'
     statistics_tab:
       overview: 'Overview'
-      counts: '%{marked} of %{total} marked in full'
+      counts: '%{marked} of %{total} reviewed'
       absent: '%{count} absent'
       exempt: '%{count} exempt'
-      nothing_marked: 'Nothing has been marked in full yet.'
+      nothing_marked: 'Nobody has been reviewed yet.'
       mean: 'Mean'
       median: 'Median'
       mean_grade: 'Mean grade'
@@ -610,7 +610,7 @@ en:
       tutorials: 'By tutorial'
       tutorial: 'Tutorial'
       no_tutorial: 'No tutorial'
-      marked: 'Marked'
+      marked: 'Reviewed'
     grade_talk_row:
       speaker: "Speaker"
       grade: "Grade"

@@ -587,10 +587,10 @@ de:
       markers_caption_proposed: 'Schwellenmarker (1.0, 4.0) beziehen sich auf das neue Schema.'
     statistics_tab:
       overview: 'Überblick'
-      counts: '%{marked} von %{total} vollständig bewertet'
+      counts: '%{marked} von %{total} bewertet'
       absent: '%{count} abwesend'
       exempt: '%{count} befreit'
-      nothing_marked: 'Bisher ist noch nichts vollständig bewertet.'
+      nothing_marked: 'Bisher ist noch niemand bewertet.'
       mean: 'Mittelwert'
       median: 'Median'
       mean_grade: 'Durchschnittsnote'

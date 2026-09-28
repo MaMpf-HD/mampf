@@ -1,9 +1,8 @@
 module Assessment
-  # The figures a teacher reads off one assessment's marks beyond the spread
-  # of the points (see DistributionAnalysisComponent): per task, per program
-  # and per tutorial, and for a graded assessment the grades. Points count
-  # only rows marked in full, so that a sheet half way through marking does
-  # not pull the averages down.
+  # Breaks one assessment's points down by task, program and tutorial, and
+  # sums up its grades; the overall spread is DistributionAnalysisComponent's.
+  # Points count only reviewed rows, so that a sheet half way through
+  # marking does not pull the averages down.
   class Statistics
     Figures = Struct.new(:number, :mean, :median, keyword_init: true)
     TaskRow = Struct.new(:task, :figures, :full_share, :zero_share, keyword_init: true)

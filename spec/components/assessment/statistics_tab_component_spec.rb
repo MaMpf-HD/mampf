@@ -18,11 +18,11 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
     row.reload.update!(status: :reviewed, graded_at: 1.day.ago)
   end
 
-  it "says so while nothing has been marked in full" do
+  it "says so while nobody has been reviewed" do
     create(:assessment_participation, assessment: assessment)
 
-    expect(render_tab.text.squish).to include("0 of 1 marked in full",
-                                              "Nothing has been marked in full yet.")
+    expect(render_tab.text.squish).to include("0 of 1 reviewed",
+                                              "Nobody has been reviewed yet.")
   end
 
   it "shows the tasks and the programs once something is marked" do
