@@ -83,7 +83,8 @@ RSpec.describe("Records office", type: :request) do
 
       exam.assessment.update!(results_published_at: 1.hour.ago)
       get records_office_path
-      expect(response.body).to include(records_office_grades_path(lecture))
+      link = Nokogiri::HTML(response.body).at_css("a[href='#{records_office_grades_path(lecture)}']")
+      expect(link["data-turbo"]).to eq("false")
     end
   end
 

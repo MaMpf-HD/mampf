@@ -44,7 +44,8 @@
         <div class="d-flex flex-wrap gap-2">
           <% if @overview.grades?(lecture) %>
             <%= link_to records_office_grades_path(lecture),
-                        class: "btn btn-sm btn-outline-primary" do %>
+                        class: "btn btn-sm btn-outline-primary",
+                        data: { turbo: false } do %>
               <i class="bi bi-download" aria-hidden="true"></i>
               <%= t("records_office.download_grades") %>
             <% end %>
@@ -52,7 +53,8 @@
 
           <% if @overview.eligibility?(lecture) %>
             <%= link_to records_office_eligibility_path(lecture),
-                        class: "btn btn-sm btn-outline-primary" do %>
+                        class: "btn btn-sm btn-outline-primary",
+                        data: { turbo: false } do %>
               <i class="bi bi-download" aria-hidden="true"></i>
               <%= t("records_office.download_eligibility") %>
             <% end %>
@@ -114,6 +116,7 @@
                   <td class="text-end">
                     <%= link_to records_office_emails_path(group_type, group),
                                 class: "btn btn-sm btn-link",
+                                data: { turbo: false },
                                 "aria-label": t("records_office.emails_of", group: title) do %>
                       <i class="bi bi-envelope" aria-hidden="true"></i>
                       <%= t("records_office.emails") %>
