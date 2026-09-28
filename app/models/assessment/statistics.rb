@@ -9,8 +9,6 @@ module Assessment
     GroupRow = Struct.new(:label, :people, :figures, :grades, keyword_init: true)
     GradeFigures = Struct.new(:number, :mean, :pass_share, keyword_init: true)
 
-    attr_reader :assessment
-
     def initialize(assessment)
       @assessment = assessment
     end
@@ -28,20 +26,6 @@ module Assessment
       sorted.size.odd? ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2
     end
     private_class_method :median_of
-
-    def participations
-      @participations ||= assessment.assessment_participations
-                                    .includes(:tutorial, :task_points,
-                                              user: User::PROGRAM_PRELOAD).to_a
-    end
-
-    def marked
-      @marked ||= participations.select { |row| row.reviewed? && row.points_total }
-    end
-
-    def graded
-      @graded ||= participations.select(&:grade_numeric)
-    end
 
     def counts
       @counts ||= {
@@ -97,6 +81,22 @@ module Assessment
     end
 
     private
+
+      attr_reader :assessment
+
+      def participations
+        @participations ||= assessment.assessment_participations
+                                      .includes(:tutorial, :task_points,
+                                                user: User::PROGRAM_PRELOAD).to_a
+      end
+
+      def marked
+        @marked ||= participations.select { |row| row.reviewed? && row.points_total }
+      end
+
+      def graded
+        @graded ||= participations.select(&:grade_numeric)
+      end
 
       def share(values, &)
         return if values.empty?
