@@ -1,4 +1,4 @@
-<%# locals: (support_request:, throttled: false) %>
+<%# locals: (support_request:, throttled: nil) %>
 <%= form_with model: support_request, url: support_requests_path, local: true,
               data: { action: "submit->support-widget#stampPage" } do |f| %>
   <p class="small text-muted">
@@ -7,7 +7,7 @@
 
   <% if throttled %>
     <div class="alert alert-warning py-2 small" role="alert">
-      <%= t("support_request.throttled") %>
+      <%= throttled %>
     </div>
   <% end %>
 

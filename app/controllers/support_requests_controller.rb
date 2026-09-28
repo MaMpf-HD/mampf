@@ -1,16 +1,18 @@
 # Sends a message from the support button to the support address. Open to
 # everybody, signed in or not: whoever cannot get in needs support most.
 class SupportRequestsController < ApplicationController
+  THROTTLE_WINDOW = 1.hour
+
   skip_before_action :authenticate_user!, :enforce_password_change,
                      :enforce_personal_data, only: :create
 
   # Without a limit, the form would mail the support address any number of
   # times, and it is open to anybody.
-  rate_limit to: 5, within: 1.hour, only: :create,
+  rate_limit to: 5, within: THROTTLE_WINDOW, only: :create,
              by: -> { current_user&.id || request.remote_ip },
              with: lambda {
                render_form(SupportRequest.new(support_request_params), :too_many_requests,
-                           throttled: true)
+                           throttled: throttled_message(THROTTLE_WINDOW))
              }
 
   def create
@@ -32,7 +34,7 @@ class SupportRequestsController < ApplicationController
       params.expect(support_request: [:message, :email, :page])
     end
 
-    def render_form(support_request, status, throttled: false)
+    def render_form(support_request, status, throttled: nil)
       render turbo_stream: turbo_stream.update(
         "support-request-body",
         partial: "support_requests/form",

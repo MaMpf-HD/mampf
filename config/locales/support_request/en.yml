@@ -10,7 +10,6 @@ en:
     send: "Send"
     sent: "Thank you! Your message is on its way; we answer by email."
     sent_signed_out: "Thank you! Your message is on its way; we answer at the address you gave."
-    throttled: "You have sent several messages in a short time. Please try again in an hour."
   activemodel:
     attributes:
       support_request:

@@ -30,7 +30,7 @@ module Flash
   end
 
   # Renders a flash success message for turbo_stream and html formats.
-  # Usage: respond_with_flash(:success, I18n.t("support_request.sent"))
+  # Usage: respond_with_flash(:alert, throttled_message(THROTTLE_WINDOW))
   # Turbo renders responses with the Turbo Stream content type even on errors,
   # so callers can preserve an HTTP error status while displaying a flash.
   def respond_with_flash(flash_type, message, redirect_path: nil,

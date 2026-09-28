@@ -10,7 +10,6 @@ de:
     send: "Senden"
     sent: "Danke! Deine Nachricht ist unterwegs; wir antworten per E-Mail."
     sent_signed_out: "Danke! Deine Nachricht ist unterwegs; wir antworten an die angegebene Adresse."
-    throttled: "Du hast in kurzer Zeit mehrere Nachrichten geschickt. Bitte versuche es in einer Stunde erneut."
   activemodel:
     attributes:
       support_request:

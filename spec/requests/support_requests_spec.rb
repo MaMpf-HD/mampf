@@ -34,8 +34,13 @@ RSpec.describe("SupportRequests", type: :request) do
     it "stops after five messages in an hour" do
       6.times { send_request }
 
+      wait = ActionController::Base.helpers.distance_of_time_in_words(
+        SupportRequestsController::THROTTLE_WINDOW
+      )
       expect(response).to have_http_status(:too_many_requests)
-      expect(response.body).to include(I18n.t("support_request.throttled"))
+      expect(response.body).to include(
+        I18n.t("devise.failure.too_many_requests", wait: wait)
+      )
     end
   end
 
