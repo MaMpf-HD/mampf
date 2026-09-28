@@ -145,7 +145,7 @@
 // staff's group rows; the places column keeps one width so the bars do too.
 .registration-options-rows {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 10rem auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 11rem auto;
   border: 1px solid var(--bs-border-color);
   border-radius: var(--bs-border-radius);
 }
@@ -212,7 +212,9 @@
   }
 }
 
+// The padding keeps the bar clear of the button beside it.
 .registration-option-seats {
+  padding-right: 1rem;
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
 }
@@ -244,9 +246,25 @@
   align-items: flex-end;
   gap: 0.25rem;
 
-  .btn {
-    min-height: 44px;
-    min-width: 44px;
+  // Every row offers the same kind of action, so the buttons stay light and
+  // of one width; a finger needs the larger target, a pointer does not.
+  > .btn,
+  > form .btn {
+    min-width: 7.5rem;
+  }
+
+  @media (pointer: coarse) {
+    .btn {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+
+  // Outweighs the lecture home, which gives every button the finger's height.
+  @media (pointer: fine) {
+    .registration-options & .btn {
+      min-height: 0;
+    }
   }
 
   form {
