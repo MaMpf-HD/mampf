@@ -1,6 +1,6 @@
-# Configures the support's search for people. Nobody is listed until a name,
-# address or number is typed or a program is picked: the support looks for
-# someone in particular, not through everyone.
+# Configures the support's search for users. Returns no configuration until a
+# fulltext or a program is given, so the support looks up a particular person
+# instead of browsing all users.
 module Search
   module Configurators
     class UserSearchConfigurator < BaseSearchConfigurator

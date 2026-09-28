@@ -1,6 +1,6 @@
 module Support
-  # Lets the support find a person and correct what they cannot change
-  # themselves once saved: their name and matriculation number.
+  # Lets the support find a person and correct their LOCKED_PERSONAL_DATA_FIELDS,
+  # which the person cannot change once saved.
   class UsersController < ApplicationController
     helper SupportUsersHelper
 

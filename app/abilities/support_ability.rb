@@ -1,5 +1,3 @@
-# Opens the support's search for people and the correction of their locked
-# personal data to the support and to admins.
 class SupportAbility
   include CanCan::Ability
 

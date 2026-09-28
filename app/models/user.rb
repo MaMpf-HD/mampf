@@ -203,9 +203,8 @@ class User < ApplicationRecord
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
 
-  # The support finds a person by any of the ways they identify themselves.
-  # Named like the other searchable models' scope, which
-  # Search::Filters::FulltextFilter calls.
+  # Named search_by_title although users have no title: Search::Filters::FulltextFilter
+  # calls this scope on every searchable model.
   pg_search_scope :search_by_title,
                   against: [:first_name, :last_name, :name, :email,
                             :matriculation_number, :uni_id],

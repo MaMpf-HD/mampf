@@ -1,5 +1,3 @@
-# Keeps who corrected which of a user's locked personal data, and from what
-# to what, since exam lists and grade exports go by it.
 class CreatePersonalDataChanges < ActiveRecord::Migration[8.0]
   def change
     create_table :personal_data_changes do |t|
