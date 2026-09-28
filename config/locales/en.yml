@@ -1904,7 +1904,6 @@ en:
       edit: 'Edit Division'
       name: 'Title'
       new: 'Create new division'
-      no_courses: 'There are no courses in this division yet.'
     tutorial:
       new: 'Add tutorial'
     assignment:
@@ -1936,10 +1935,8 @@ en:
       If you leave this field empty, your display name will be used for that.
     change_data: 'Change login data'
     delete_account: 'Delete Account'
-    courses: 'Courses'
     primary_lecture: 'Primary event series'
     secondary_lectures: 'Secondary event series'
-    no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
     content_info: >
       With the tag graph, you can search for keywords and see related content.
@@ -2108,16 +2105,17 @@ en:
     course_selection: 'Course selection'
     new_course: 'New course %{title}'
     new_course_created_html: 'New course created:<br>%{title}'
-    subscribe_course: 'You can subscribe it via your profile.'
-    subscribe_course_html: 'You can subscribe it via your %{profile}.'
+    subscribe_course: 'You can bookmark its event series in the lecture search on your dashboard.'
+    subscribe_course_html: 'You can bookmark its event series in %{dashboard}.'
     profile: 'profile'
     goto_profile: "Visit your profile"
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
-    subscribe_lecture: 'You can subscribe it via your profile.'
-    subscribe_lecture_html: 'You can subscribe it via your %{profile}.'
+    subscribe_lecture: 'You can bookmark it in the lecture search on your dashboard.'
+    subscribe_lecture_html: 'You can bookmark it in %{dashboard}.'
+    dashboard_search: 'the lecture search on your dashboard'
     new_lecture_created_html: >
       New event series created:<br>
       %{title} (%{term}, %{teacher})
@@ -3286,14 +3284,14 @@ en:
       Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
-    subscribe_lecture: 'You can subscribe to it in your profile settings.'
+    subscribe_lecture: 'You can bookmark it in the lecture search on your dashboard.'
     subscribe_lecture_text: >
-      You can subscribe to it in your profile settings.
+      You can bookmark it in the lecture search on your dashboard.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
-    subscribe_course: 'You can subscribe to it in your profile settings.'
+    subscribe_course: 'You can bookmark its event series in the lecture search on your dashboard.'
     subscribe_course_text: >
-      You can subscribe to it in your profile settings.
+      You can bookmark its event series in the lecture search on your dashboard.
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
     submission_invitation_html: >

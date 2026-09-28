@@ -2083,7 +2083,6 @@ de:
       edit: 'Teilbereich bearbeiten'
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
-      no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
     tutorial:
       new: 'Neues Tutorium anlegen'
     assignment:
@@ -2116,10 +2115,8 @@ de:
       Dieser Name wird Deinem Tutor bei Deinen Abgaben angezeigt. Wenn
       Du dieses Feld leerlässt, wird dafür der Anzeigename verwendet.
     change_data: 'Zugangsdaten ändern'
-    courses: 'Module'
     primary_lecture: 'Primäre Veranstaltung'
     secondary_lectures: 'Weitere Veranstaltungen'
-    no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Veranstaltungen.'
     passphrase: 'Zugangsschlüssel'
     content_info: >
       Mit dem Tag-Graphen kannst du nach Stichwörtern suchen und verknüpfte
@@ -2296,16 +2293,17 @@ de:
     course_selection: 'Kursangebot'
     new_course: 'Neues Modul %{title}'
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
-    subscribe_course: 'Abonniere es in Deinem Profil.'
-    subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
+    subscribe_course: 'Seine Veranstaltungen kannst Du in der Veranstaltungssuche auf Deinem Dashboard merken.'
+    subscribe_course_html: 'Seine Veranstaltungen kannst Du in %{dashboard} merken.'
     goto_profile: 'Zu Deinen Profileinstellungen'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
     edit_lecture: 'Veranstaltung bearbeiten'
-    subscribe_lecture: 'Abonniere sie in Deinem Profil.'
-    subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
+    subscribe_lecture: 'Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.'
+    subscribe_lecture_html: 'Du kannst sie in %{dashboard} merken.'
+    dashboard_search: 'der Veranstaltungssuche auf Deinem Dashboard'
     new_lecture_created_html: >
       Neue Veranstaltung angelegt:<br>
       %{title} (%{term}, %{teacher})
@@ -3515,14 +3513,14 @@ de:
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
-      Du kannst sie über Deine Profileinstellungen abonnieren.
+      Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.
     subscribe_lecture_text: >
-      Du kannst sie über Deine Profileinstellungen abonnieren.
+      Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
-    subscribe_course: 'Du kannst es über Deine Profileinstellungen abonnieren.'
+    subscribe_course: 'Seine Veranstaltungen kannst Du in der Veranstaltungssuche auf Deinem Dashboard merken.'
     subscribe_course_text: >
-      Du kannst es über Deine Profileinstellungen abonnieren.
+      Seine Veranstaltungen kannst Du in der Veranstaltungssuche auf Deinem Dashboard merken.
     submission_invitation_subject: >
       Einladung zu Abgabe für %{assignment} in %{lecture}
     submission_invitation_html: >
