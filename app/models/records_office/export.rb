@@ -101,7 +101,7 @@ module RecordsOffice
       elsif !certification.pending?
         I18n.t("records_office.decided_by_rule")
       end
-      [I18n.t("records_office.decisions.#{certification.status}"), decided_by,
+      [I18n.t("student_performance.certifications.status.#{certification.status}"), decided_by,
        certification.certified_at && I18n.l(certification.certified_at.to_date),
        certification.note]
     end

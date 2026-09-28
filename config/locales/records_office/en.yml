@@ -4,7 +4,7 @@ en:
     explainer: >-
       Every lecture of a term with its groups and how full they are. The
       downloads open in Excel: the published grades of exams and talks, the
-      exam admissions, and each group's email addresses.
+      exam eligibility, and each group's email addresses.
     term: 'Term'
     no_lectures: 'There are no lectures in this term.'
     no_groups: 'This lecture has no groups.'
@@ -18,17 +18,13 @@ en:
     emails: 'Emails'
     emails_of: 'Emails of %{group}'
     download_grades: 'Grades'
-    download_eligibility: 'Exam admissions'
+    download_eligibility: 'Exam eligibility'
     decided_by_rule: 'Rule'
     kinds:
       tutorial: 'Tutorial'
       talk: 'Talk'
       cohort: 'Other group'
       exam: 'Exam'
-    decisions:
-      passed: 'eligible'
-      failed: 'not eligible'
-      pending: 'open'
     files:
       grades: 'grades'
       eligibility: 'eligibility'
@@ -45,7 +41,7 @@ en:
       points: 'Points'
       maximum: 'Maximum'
       percentage: 'Percentage'
-      criteria_met: 'Criteria met'
+      criteria_met: 'Achievements met'
       decision: 'Decision'
       decided_by: 'Decided by'
       decided_at: 'Decided on'

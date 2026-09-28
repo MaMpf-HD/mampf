@@ -182,7 +182,7 @@ RSpec.describe("Records office", type: :request) do
 
       rows = csv_rows
       expect(rows.first.fields("Last name", "Points", "Maximum", "Percentage", "Decision", "Note"))
-        .to eq(["Noether", "42,5", "60", "70,83", "eligible", "Certificate from the doctor"])
+        .to eq(["Noether", "42,5", "60", "70,83", "Eligible", "Certificate from the doctor"])
     end
   end
 

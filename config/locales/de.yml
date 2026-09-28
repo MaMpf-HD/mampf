@@ -1777,7 +1777,9 @@ de:
       elevate: 'zum Administrator befördern'
       info:
         records_office: >
-          Sieht Gruppen, veröffentlichte Noten und Prüfungszulassungen aller Veranstaltungen, nur lesend, für Prüfungssekretariat oder Dekanat.
+          Sieht Gruppen, veröffentlichte Noten und Prüfungszulassungen aller
+          Veranstaltungen, nur lesend, und lädt Namen, Matrikelnummern und
+          E-Mail-Adressen herunter. Für Prüfungssekretariat oder Dekanat.
         display_name: >
           Hier kannst Du den Anzeigename eingeben. Der Anzeigename
           wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.

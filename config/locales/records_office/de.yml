@@ -26,10 +26,6 @@ de:
       talk: 'Vortrag'
       cohort: 'Weitere Gruppe'
       exam: 'Klausur'
-    decisions:
-      passed: 'zugelassen'
-      failed: 'nicht zugelassen'
-      pending: 'offen'
     files:
       grades: 'noten'
       eligibility: 'zulassungen'
@@ -46,8 +42,8 @@ de:
       points: 'Punkte'
       maximum: 'Maximum'
       percentage: 'Prozent'
-      criteria_met: 'Erfüllte Kriterien'
+      criteria_met: 'Erfüllte Zusatzkriterien'
       decision: 'Entscheidung'
       decided_by: 'Entschieden von'
       decided_at: 'Entschieden am'
-      note: 'Notiz'
+      note: 'Anmerkung'
