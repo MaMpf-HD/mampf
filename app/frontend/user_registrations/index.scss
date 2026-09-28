@@ -253,17 +253,19 @@
     min-width: 7.5rem;
   }
 
-  @media (pointer: coarse) {
-    .btn {
-      min-height: 44px;
-      min-width: 44px;
-    }
-  }
-
   // Outweighs the lecture home, which gives every button the finger's height.
   @media (pointer: fine) {
     .registration-options & .btn {
       min-height: 0;
+    }
+  }
+
+  // After the rule above, so that a device with a touch screen as well as a
+  // mouse keeps the finger's target.
+  @media (any-pointer: coarse) {
+    .registration-options & .btn {
+      min-height: 44px;
+      min-width: 44px;
     }
   }
 
