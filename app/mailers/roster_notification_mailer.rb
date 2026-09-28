@@ -109,7 +109,6 @@ class RosterNotificationMailer < ApplicationMailer
       # One mail per language, members in bcc.
       def deliver_grouped(template, rosterable, users)
         users.group_by(&:locale).each_value do |users_in_locale|
-          t = users_in_locale
           with(rosterable: rosterable,
                recipients: users_in_locale).public_send(template).deliver_later
         end
