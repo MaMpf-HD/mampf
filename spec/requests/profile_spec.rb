@@ -15,7 +15,7 @@ RSpec.describe("Profile", type: :request) do
            xhr: true)
     end
 
-    it "keeps the bookmarks, which the dashboard's search looks after" do
+    it "leaves the bookmarks untouched" do
       lecture = create(:lecture, :released_for_all)
       create(:lecture_bookmark, user: user, lecture: lecture)
 
@@ -30,6 +30,7 @@ RSpec.describe("Profile", type: :request) do
 
       save_profile(lecture: { lecture.id.to_s => { subscribed: "1" } })
 
+      expect(response).to have_http_status(:ok)
       expect(user.reload.lectures).to be_empty
     end
   end
