@@ -320,4 +320,100 @@ RSpec.describe(ParticipationComponent, type: :component) do
       expect(rendered.text).to be_blank
     end
   end
+
+  describe "published results" do
+    let(:exam) { create(:exam, lecture: lecture, title: "Final Exam") }
+    let(:assessment) { exam.assessment }
+    let!(:first_task) do
+      create(:assessment_task, assessment: assessment, max_points: 10, position: 1,
+                               description: nil)
+    end
+    let!(:second_task) do
+      create(:assessment_task, assessment: assessment, max_points: 20, position: 2,
+                               description: "Proof")
+    end
+    let(:participation) do
+      create(:assessment_participation, assessment: assessment, user: user)
+    end
+
+    before do
+      create(:exam_roster_entry, exam: exam, user: user)
+      create(:assessment_task_point, assessment_participation: participation,
+                                     task: first_task, points: 7.5)
+      create(:assessment_task_point, assessment_participation: participation,
+                                     task: second_task, points: 12)
+      participation.update!(status: :reviewed, points_total: 19.5, grade_numeric: 2.3)
+    end
+
+    def render_row
+      render_inline(described_class.new(lecture: lecture, user: user))
+        .css("[data-testid=participation-row]").find { |row| row.text.include?("Final Exam") }
+    end
+
+    it "shows nothing of the result before it is published" do
+      row = render_row
+
+      expect(row.text).to include("On the exam list")
+      expect(row.text).not_to include("2.3")
+      expect(row.css("details")).to be_empty
+    end
+
+    it "shows the grade, the points and the points per problem once published" do
+      assessment.update!(results_published_at: Time.current)
+
+      row = render_row
+
+      expect(row.text.squish).to include("Grade 2.3")
+      expect(row.text.squish).to include("19.5 of 30 points")
+      problems = row.css("details dt").map { |term| term.text.squish }
+      expect(problems).to eq(["Problem 1", "Proof"])
+      expect(row.css("details dd").map { |value| value.text.squish }).to eq(["7.5 / 10", "12 / 20"])
+    end
+
+    # A grade entered without any points is no score of zero.
+    it "shows a grade given without points, but no points" do
+      participation.task_points.destroy_all
+      participation.update!(points_total: nil)
+      assessment.update!(results_published_at: Time.current)
+
+      row = render_row
+
+      expect(row.text.squish).to include("Grade 2.3")
+      expect(row.text).not_to include("points")
+      expect(row.css("details")).to be_empty
+    end
+
+    it "says so for a student who did not take part" do
+      participation.update!(status: :absent, grade_numeric: 5.0)
+      assessment.update!(results_published_at: Time.current)
+
+      row = render_row
+
+      expect(row.text.squish).to include("Did not take part")
+      expect(row.text.squish).to include("Grade 5.0")
+      expect(row.css("details")).to be_empty
+    end
+
+    it "says so for a student who was exempted" do
+      participation.update!(status: :exempt, grade_numeric: nil)
+      assessment.update!(results_published_at: Time.current)
+
+      expect(render_row.text.squish).to include("Exempt")
+    end
+
+    it "shows a speaker the talk's grade but never the lecturer's note" do
+      seminar = create(:lecture, sort: "seminar")
+      talk = create(:talk, lecture: seminar, title: "Sylow theorems")
+      create(:speaker_talk_join, talk: talk, speaker: user)
+      create(:assessment_participation, assessment: talk.assessment, user: user,
+                                        status: :reviewed, grade_numeric: 1.7,
+                                        note: "Rushed the last proof")
+      talk.assessment.update!(results_published_at: Time.current)
+
+      rendered = render_inline(described_class.new(lecture: seminar, user: user))
+
+      expect(rendered.text.squish).to include("Grade 1.7")
+      expect(rendered.text).not_to include("Rushed the last proof")
+    end
+  end
 end

@@ -3,15 +3,17 @@
 class MarkingSummaryComponent < ViewComponent::Base
   PARTS = [:reviewed, :pending_grading, :not_submitted, :awaiting_record,
            :met, :not_met, :unmarked, :exempt, :absent].freeze
+  HANDED_IN = [:reviewed, :pending_grading].freeze
 
   # A talk's rows have nothing handed in to count. An exam draws two tables
   # on one page, so the second line needs an id of its own to be replaced.
   attr_reader :id
 
-  def initialize(statuses:, hand_ins: true, id: "marking-summary", extra_parts: [])
+  def initialize(statuses:, hand_ins: true, id: "marking-summary", extra_parts: [], teams: nil)
     super()
     @statuses = statuses
     @hand_ins = hand_ins
+    @teams = teams
     @id = id
     @extra_parts = extra_parts
   end
@@ -20,8 +22,8 @@ class MarkingSummaryComponent < ViewComponent::Base
     counts = @statuses.tally
     parts = []
     if @hand_ins
-      handed_in = counts.fetch(:reviewed, 0) + counts.fetch(:pending_grading, 0)
-      parts << I18n.t("assessment.grading_tutorial.summary.handed_in", count: handed_in)
+      handed_in = HANDED_IN.sum { |status| counts.fetch(status, 0) }
+      parts << handed_in_text(handed_in)
     end
     PARTS.each do |status|
       next unless counts[status]&.positive?
@@ -34,4 +36,14 @@ class MarkingSummaryComponent < ViewComponent::Base
   def call
     tag.p(text, id: @id, class: "text-muted small mb-2")
   end
+
+  private
+
+    # Counts people; the teams, when given, are the files they handed in.
+    def handed_in_text(count)
+      text = I18n.t("assessment.grading_tutorial.summary.handed_in", count: count)
+      return text unless @teams
+
+      "#{text} #{I18n.t("assessment.grading_tutorial.summary.teams", count: @teams)}"
+    end
 end

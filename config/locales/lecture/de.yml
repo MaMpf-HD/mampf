@@ -31,6 +31,10 @@ de:
     intro:
       more: "Weiterlesen"
       less: "Weniger anzeigen"
+    new_result:
+      title: "Dein Ergebnis in %{title}"
+      grade: "Note"
+      close: "Schließen"
     focus:
       campaign: "Anmeldung offen"
       exam: "Deine nächste Klausur"
