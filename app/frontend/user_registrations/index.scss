@@ -141,9 +141,11 @@
   gap: 0.5rem;
 }
 
+// Title, details, places and actions line up from row to row, as in the
+// staff's group rows; the places column keeps one width so the bars do too.
 .registration-options-rows {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 10rem auto;
   border: 1px solid var(--bs-border-color);
   border-radius: var(--bs-border-radius);
 }
@@ -197,8 +199,40 @@
   font-weight: 600;
 }
 
-.registration-option-meta,
-.registration-option-seats,
+.registration-option-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1rem;
+  min-width: 0;
+  color: var(--bs-secondary-color);
+  font-size: 0.875rem;
+
+  .bi {
+    margin-right: 0.25rem;
+  }
+}
+
+.registration-option-seats {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+// Muted, so that a list of full groups does not read as a list of warnings.
+.registration-option-bar {
+  max-width: 10rem;
+  height: 4px;
+  margin-top: 0.35rem;
+  border-radius: 2px;
+  background: var(--bs-secondary-bg);
+  overflow: hidden;
+
+  > span {
+    display: block;
+    height: 100%;
+    background: rgba(var(--bs-primary-rgb), 0.4);
+  }
+}
+
 .registration-option-reason {
   color: var(--bs-secondary-color);
   font-size: 0.85rem;

@@ -57,6 +57,15 @@ module UserRegistrationsHelper
     t("registration.user_registration.options.free", free: free, capacity: capacity)
   end
 
+  # How full a group is, as the width of its bar in percent; a group without
+  # a limit has no bar.
+  def option_fill_percent(capacity, used)
+    return if capacity.nil?
+    return 100 unless capacity.positive?
+
+    [used * 100 / capacity, 100].min
+  end
+
   def lecture_home_badge_class(kind)
     "lecture-home-badge lecture-home-badge--#{kind}"
   end

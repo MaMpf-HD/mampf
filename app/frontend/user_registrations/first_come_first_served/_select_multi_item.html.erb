@@ -55,8 +55,9 @@
       <%= render "user_registrations/option_row",
                  title: title,
                  type_label: item_display_type(item),
-                 meta: item_tile_metadata_rows(item).map { |row| row[:value] },
-                 seats: option_seats_text(item.capacity, item.item_capacity_used),
+                 meta: item_tile_metadata_rows(item),
+                 capacity: item.capacity,
+                 used: item.item_capacity_used,
                  mine: mine,
                  actions: actions,
                  reason: reason %>
