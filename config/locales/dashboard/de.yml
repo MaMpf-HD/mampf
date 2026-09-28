@@ -14,7 +14,8 @@ de:
       new_lecture: "Neue Veranstaltung"
       my_courses: "Meine Kurse"
       search: "Medien und Tags finden"
-      courses_explainer: "Die Kurse, die Du bearbeitest. Ein Kurs enthält die Veranstaltungen aller Semester."
+      courses_explainer: >-
+        Die Kurse, die Du bearbeitest. Ein Kurs enthält die Veranstaltungen aller Semester.
       edit_course: "%{course} bearbeiten"
     quick_actions:
       list_label: "Zu erledigen für %{lecture}"

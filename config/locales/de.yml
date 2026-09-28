@@ -2163,7 +2163,9 @@ de:
       damit die Änderungen wirksam werden.
     teacher_profile:
       title: "Was Studierende über Dich sehen"
-      explainer: "Deine Homepage und Dein Foto erscheinen auf Deiner Seite als lehrende Person, auf die Deine Veranstaltungen verlinken."
+      explainer: >-
+        Deine Homepage und Dein Foto erscheinen auf Deiner Seite als lehrende Person, auf
+        die Deine Veranstaltungen verlinken.
       remove_image: "Foto entfernen"
     changes_made_btn: >
       Klicke hier, um Deine Änderungen zu übernehmen.
