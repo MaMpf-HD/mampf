@@ -190,8 +190,8 @@
           <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
                         class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
-                        form_class: "d-inline",
                         form: {
+                          class: "d-inline",
                           data: {
                             turbo_confirm: t(
                               "student_performance.certifications.index.reevaluate_confirm",
@@ -215,8 +215,8 @@
           <%= button_to bulk_confirm_manual_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
                         class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
-                        form_class: "d-inline",
                         form: {
+                          class: "d-inline",
                           data: {
                             turbo_confirm: t(
                               "student_performance.certifications.index.confirm_manual_confirm",
