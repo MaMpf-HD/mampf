@@ -1,9 +1,8 @@
-<%= @support_request["message"] %>
-
------
 <% if @user %>
-<%= @user.tutorial_name %> (<%= @user.email %>, id <%= @user.id %>)
+From: <%= @user.tutorial_name %> (<%= @user.email %>, id <%= @user.id %>)
 <% else %>
-<%= @support_request["email"] %> (not signed in)
+From: <%= @support_request["email"] %> (not signed in, address not verified)
 <% end %>
-<%= @support_request["page"] %>
+Page: <%= @support_request["page"] %>
+-----
+<%= @support_request["message"] %>
