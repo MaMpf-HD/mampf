@@ -58,6 +58,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           expect(response.body).to include(CGI.escapeHTML(hint))
         end
 
+        it "links to the assignments tab of the lecture's edit page" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          link = Nokogiri::HTML(response.body).at_css(
+            "a[href='#{edit_lecture_path(lecture, tab: "assessments",
+                                                  assessment_tab: "assignments")}']"
+          )
+          expect(link).to be_present
+        end
+
         # Nothing could be accepted; the rule card says why and where to
         # change it, so no button waits greyed out for that day.
         it "offers no sweep" do

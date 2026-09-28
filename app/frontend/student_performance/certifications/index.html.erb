@@ -140,8 +140,8 @@
 
             <%= link_to t("student_performance.certifications.index.list_open_link",
                           tab: t("assessment.tabs.assignments")),
-                        assessment_assessments_path(lecture_id: @lecture.id,
-                                                    tab: "assignments"),
+                        edit_lecture_path(@lecture, tab: "assessments",
+                                                    assessment_tab: "assignments"),
                         class: "ms-2",
                         data: { turbo_frame: "_top" } %>
           </div>
