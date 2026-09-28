@@ -104,7 +104,8 @@ RSpec.describe("Support users", type: :request) do
     end
 
     it "names the error when a field outside the form keeps the user from saving" do
-      student.update_column(:homepage, "not a url")
+      student.homepage = "not a url"
+      student.save(validate: false)
 
       patch support_user_path(student), params: { user: { last_name: "Lasker" } }
 
