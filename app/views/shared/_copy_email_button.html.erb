@@ -1,22 +1,27 @@
 <%# locals: (email:) %>
-<%# A list copies every address at once, as a team's hand-in needs. %>
-<% emails = Array(email) %>
-<% several = emails.size > 1 %>
-<% text = emails.join(", ") %>
-<% label = "#{t(several ? "buttons.copy_email_addresses" : "buttons.copy_email_address")}: #{text}" %>
+<%# Takes an array too: a submission's users are copied together. %>
+<%
+  emails = Array(email)
+  several = emails.size > 1
+  text = emails.join(", ")
+  label = t(several ? "buttons.copy_email_addresses" : "buttons.copy_email_address")
+  confirmation = t(several ? "basics.emails_copied_to_clipboard"
+                           : "basics.email_copied_to_clipboard")
+  failure = t(several ? "basics.emails_copy_failed" : "basics.email_copy_failed")
+%>
 <span
   class="d-inline-flex"
   data-controller="clipboard"
   data-clipboard-text-value="<%= text %>"
-  data-clipboard-confirmation-value="<%= t(several ? "basics.emails_copied_to_clipboard" : "basics.email_copied_to_clipboard") %>"
-  data-clipboard-failure-value="<%= t(several ? "basics.emails_copy_failed" : "basics.email_copy_failed") %>"
+  data-clipboard-confirmation-value="<%= confirmation %>"
+  data-clipboard-failure-value="<%= failure %>"
 >
   <button
     type="button"
     class="btn icon-button"
     data-action="clipboard#copy"
-    title="<%= label %>"
-    aria-label="<%= label %>"
+    title="<%= label %>: <%= text %>"
+    aria-label="<%= label %>: <%= text %>"
   >
     <i class="bi bi-envelope" aria-hidden="true" data-clipboard-target="icon"></i>
   </button>
