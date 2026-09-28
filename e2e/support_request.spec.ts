@@ -15,7 +15,7 @@ test.describe("the support button", () => {
     await expect(page.getByRole("status")).toContainText("Thank you!");
   });
 
-  // Whoever cannot sign in needs support most, so the login page has it too.
+  // Runs on the login page, where the button serves visitors who cannot sign in.
   test("asks somebody not signed in for an address to answer to", async ({ page }) => {
     await page.goto("/users/sign_in?locale=en");
 

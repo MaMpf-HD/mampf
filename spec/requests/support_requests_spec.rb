@@ -37,7 +37,6 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    # Open to anybody, so a limit keeps it from flooding the support address.
     it "stops after five messages in an hour" do
       6.times { send_request }
 
@@ -51,7 +50,6 @@ RSpec.describe("SupportRequests", type: :request) do
     end
   end
 
-  # Whoever cannot sign in needs support most.
   context "when not signed in" do
     it "takes a message with an address to answer to" do
       expect { send_request(email: "someone@example.com") }

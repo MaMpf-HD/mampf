@@ -1,5 +1,6 @@
-# Sends a message from the support button to the support address. Open to
-# everybody, signed in or not: whoever cannot get in needs support most.
+# Sends a message from the support button to the support address. Also open to
+# visitors who are not signed in, since the button is on the login page for
+# those who cannot sign in.
 class SupportRequestsController < ApplicationController
   THROTTLE_WINDOW = 1.hour
 
