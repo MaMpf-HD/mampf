@@ -331,6 +331,42 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(response.body).to include("blank")
       end
 
+      context "when an existing rule fails to save" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                            lecture: lecture)
+        end
+
+        def remove_form
+          Nokogiri::HTML(response.body).css("form[data-turbo-confirm]").first
+        end
+
+        it "asks for the removal with the number of computed decisions" do
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, rule: rule, source: :computed)
+
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: { threshold_mode: "percentage", min_percentage: "" } }
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(remove_form["data-turbo-confirm"]).to eq(
+            I18n.t("student_performance.rules.edit.remove_confirm", count: 1)
+          )
+        end
+
+        it "offers no removal for a rule that is out of use" do
+          rule.update!(active: false)
+
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: { threshold_mode: "percentage", min_percentage: "" } }
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body).not_to include(
+            I18n.t("student_performance.rules.edit.remove")
+          )
+        end
+      end
+
       it "renders edit inside records frame when source_frame is records" do
         patch lecture_student_performance_rules_path(lecture),
               params: {
@@ -593,8 +629,6 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      # The decisions taken under the rule still cite it, so it stays, only out
-      # of use; the ones it took go with it, the ones taken by hand stay.
       it "takes the rule out of use and resets only its own decisions" do
         delete lecture_student_performance_rules_path(lecture)
 
@@ -617,6 +651,16 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(rule.reload).to be_active
         expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(2)
         expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
+      it "says so when there is no rule in use to remove" do
+        rule.update!(active: false)
+
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(2)
+        expect(flash[:notice]).to be_nil
+        expect(flash[:alert]).to eq(I18n.t("student_performance.evaluator.no_rule"))
       end
 
       it "brings the rule back when the form is saved again" do

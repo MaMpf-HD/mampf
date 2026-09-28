@@ -16,10 +16,8 @@ module StudentPerformance
       @source_frame = params[:source_frame]
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)
-      @achievements = Achievement.where(lecture: @lecture).order(:title)
       @selected_achievement_ids = @rule.rule_achievement_ids_set
-      @computed_count = @lecture.student_performance_certifications.computed.decided.count
-      @eligibility_in_use_by = @lecture.eligibility_in_use_by
+      load_edit_form
     end
 
     def update
@@ -36,17 +34,16 @@ module StudentPerformance
                   notice: I18n.t("student_performance.rules.flash.updated")
     rescue ActiveRecord::RecordInvalid
       @threshold_mode = params.dig(:rule, :threshold_mode)
-      @achievements = Achievement.where(lecture: @lecture).order(:title)
+      load_edit_form
       @selected_achievement_ids = Set.new(
         Array(params.dig(:rule, :achievement_ids)).map(&:to_i)
       )
       render :edit, status: :unprocessable_content
     end
 
-    # Takes the rule out of use rather than deleting it: the decisions made
-    # under it still cite it. The computed ones go, since the rule was all they
-    # stood on; the ones staff took by hand stay. Saving the form again brings
-    # the rule back.
+    # Sets the rule inactive instead of deleting it, because certifications
+    # keep its rule_id. Resets the computed certifications, which only the rule
+    # backed; manual ones stay. #update activates the rule again.
     def destroy
       @source_frame = params[:source_frame].presence
       if (titles = @lecture.eligibility_in_use_by)
@@ -56,12 +53,14 @@ module StudentPerformance
       end
 
       rule = StudentPerformance::Rule.find_by(lecture: @lecture, active: true)
-      count = 0
-      if rule
-        StudentPerformance::Rule.transaction do
-          rule.update!(active: false)
-          count = @lecture.student_performance_certifications.reset_computed!
-        end
+      unless rule
+        redirect_to source_path, alert: I18n.t("student_performance.evaluator.no_rule")
+        return
+      end
+
+      count = StudentPerformance::Rule.transaction do
+        rule.update!(active: false)
+        @lecture.student_performance_certifications.reset_computed!
       end
 
       redirect_to source_path,
@@ -96,6 +95,12 @@ module StudentPerformance
     end
 
     private
+
+      def load_edit_form
+        @achievements = Achievement.where(lecture: @lecture).order(:title)
+        @computed_count = @lecture.student_performance_certifications.computed.decided.count
+        @eligibility_in_use_by = @lecture.eligibility_in_use_by
+      end
 
       def source_path
         if @source_frame == "performance-records-frame"

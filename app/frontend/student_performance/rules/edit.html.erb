@@ -230,7 +230,7 @@
       <%= turbo_frame_tag "rule-preview-frame" %>
     <% end %>
 
-    <% if @rule.persisted? && @rule.active? %>
+    <% if @rule.persisted? && @rule.active_in_database %>
       <div class="border-top mt-3 pt-3 text-end">
         <% if @eligibility_in_use_by %>
           <span
