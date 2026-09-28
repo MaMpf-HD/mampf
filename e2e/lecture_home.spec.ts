@@ -64,6 +64,36 @@ test.describe("lecture home", () => {
       .not.toContainText("New for you");
   });
 
+  test("marks the sidebar entry of a page opened from the review links", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await factory.create("lecture_with_sparse_toc",
+      ["released_for_all", "term_independent"]);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const lesson = await factory.create("valid_lesson", [], {
+      lecture_id: lecture.id,
+      date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+    });
+    await factory.create("lesson_medium",
+      ["with_manuscript", "released", "with_lesson_by_id"],
+      { lesson_id: lesson.id });
+
+    await student.page.goto(`/lectures/${lecture.id}`);
+    const content = student.page.getByRole("region", { name: "In the lecture" });
+    await expect(content).toContainText("For review");
+    await content.getByRole("link", { name: "Lesson", exact: true }).click();
+
+    const sidebar = student.page.getByRole("navigation")
+      .filter({ has: student.page.getByRole("link", { name: "Lessons" }) });
+    await expect(sidebar.getByRole("listitem")
+      .filter({ has: student.page.getByRole("link", { name: "Lessons" }) }))
+      .toHaveClass(/active-item/);
+    await expect(sidebar.getByRole("listitem")
+      .filter({ has: student.page.getByRole("link", { name: "Home" }) }))
+      .not.toHaveClass(/active-item/);
+  });
+
   test("takes an announcement off the page once it is read", async ({
     factory,
     student,
