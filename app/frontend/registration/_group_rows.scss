@@ -72,6 +72,17 @@ $group-row-actions-width: 8rem;
   border-top: 1px dashed var(--bs-border-color);
 }
 
+// Without groups, the buttons for adding one stand alone.
+.group-rows--empty {
+  border: 0;
+  background: none;
+
+  .group-rows__add {
+    border-top: 0;
+    padding: 0;
+  }
+}
+
 .group-row {
   position: relative;
   align-items: center;

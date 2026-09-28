@@ -5,8 +5,10 @@
 
 <% people = local_assigns[:lecture].try(:seminar?) ? "speakers" : "tutors" %>
 
-<div class="group-rows">
-  <% if local_assigns[:with_head] != false %>
+<% empty = local_assigns[:empty] %>
+
+<div class="group-rows <%= "group-rows--empty" if empty %>">
+  <% unless empty %>
     <div class="group-rows__head" aria-hidden="true">
       <span class="group-rows__head-main">
         <%= t("roster.group_row.head.group") %>

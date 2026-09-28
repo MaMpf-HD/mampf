@@ -37,7 +37,7 @@
                locals: {
                  count_kind: campaign.first_come_first_served? ? "confirmed" : "first_choices",
                  lecture: campaign.campaignable,
-                 with_head: items.any?,
+                 empty: items.none?,
                  footer: footer
                } do %>
       <% items.each do |item| %>
