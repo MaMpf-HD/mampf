@@ -6,7 +6,8 @@ class SearchAbility
 
     can :index, :search
 
-    # Media and tags are searched to be edited, which is the teaching staff's.
+    # Staff look up media and tags to edit them; students have the general
+    # search.
     can :staff, :search do
       !user.generic?
     end

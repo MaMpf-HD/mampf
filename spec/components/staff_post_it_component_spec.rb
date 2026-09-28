@@ -4,7 +4,12 @@ RSpec.describe(StaffPostItComponent, type: :component) do
   around { |example| I18n.with_locale(:en) { example.run } }
 
   def render_note(user)
+    allow(vc_test_controller).to receive(:current_user).and_return(user)
     render_inline(described_class.new(user: user))
+  end
+
+  def search_link(user)
+    render_note(user).at_css("a.staff-post-it__item")["href"]
   end
 
   def items(user)
@@ -32,5 +37,13 @@ RSpec.describe(StaffPostItComponent, type: :component) do
     expect(items(editor)).to eq(["New lecture", "My courses", "Find media and tags"])
     expect(rendered.css("#staff-courses-modal li").map { |li| li.text.squish })
       .to eq(["Algebra Edit"])
+  end
+
+  it "leads the staff to their search and an admin to the administration's" do
+    teacher = create(:confirmed_user)
+    create(:lecture, teacher: teacher)
+
+    expect(search_link(teacher)).to eq("/search/staff")
+    expect(search_link(create(:confirmed_user, admin: true))).to eq("/administration/search")
   end
 end

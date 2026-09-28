@@ -1,7 +1,5 @@
-# Pins what the teaching staff need now and then, but no longer find in an
-# administration area of their own, to the end of their dashboard band:
-# creating a lecture, the courses they edit, and the search for media and
-# tags.
+# Gathers what the teaching staff need only now and then in one note at the
+# end of their dashboard band, out of the way of their lectures' cards.
 class StaffPostItComponent < ViewComponent::Base
   COURSES_MODAL_ID = "staff-courses-modal".freeze
 

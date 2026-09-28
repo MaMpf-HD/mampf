@@ -91,7 +91,8 @@
     }
 }
 
-// In a left-hand slot the rail comes first; the note takes the card's place.
+// An odd slot puts its rail in the first grid column, so the note moves to
+// the second, where a card would sit.
 @include media-breakpoint-up(xl) {
     .dashboard-cards > .dashboard-card-slot:nth-child(odd) > .staff-post-it {
         grid-area: 1 / 2;

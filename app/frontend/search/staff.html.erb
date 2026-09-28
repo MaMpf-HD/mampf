@@ -5,8 +5,11 @@
     <li class="nav-item" role="presentation">
       <button
         class="nav-link active"
+        id="media_catalog-tab"
         type="button"
         role="tab"
+        aria-controls="media_catalog"
+        aria-selected="true"
         data-bs-toggle="pill"
         data-bs-target="#media_catalog"
       >
@@ -17,8 +20,11 @@
     <li class="nav-item" role="presentation">
       <button
         class="nav-link"
+        id="tag_search-tab"
         type="button"
         role="tab"
+        aria-controls="tag_search"
+        aria-selected="false"
         data-bs-toggle="pill"
         data-bs-target="#tag_search"
       >
@@ -28,12 +34,22 @@
   </ul>
 
   <div class="tab-content">
-    <div class="tab-pane fade show active" id="media_catalog" role="tabpanel">
+    <div
+      class="tab-pane fade show active"
+      id="media_catalog"
+      role="tabpanel"
+      aria-labelledby="media_catalog-tab"
+    >
       <%= render partial: "search/media_search_form", locals: { purpose: "media" } %>
       <div id="media-search-results"></div>
     </div>
 
-    <div class="tab-pane fade" id="tag_search" role="tabpanel">
+    <div
+      class="tab-pane fade"
+      id="tag_search"
+      role="tabpanel"
+      aria-labelledby="tag_search-tab"
+    >
       <%= render partial: "search/tag_search_form" %>
       <div id="tag-search-results"></div>
     </div>

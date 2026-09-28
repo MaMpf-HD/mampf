@@ -43,8 +43,9 @@ RSpec.describe("Profile", type: :request) do
 
         save_teacher_profile(homepage: "not an address")
 
+        message = build(:user, homepage: "not an address").tap(&:valid?).errors[:homepage]
         expect(user.reload.homepage).to be_blank
-        expect(response.body).to include("#homepage-error")
+        expect(response.body).to include("$('#homepage-error').append('#{message.join(" ")}')")
       end
 
       it "drop the picture when asked to" do
@@ -54,6 +55,37 @@ RSpec.describe("Profile", type: :request) do
         save_teacher_profile(remove_image: "1")
 
         expect(user.reload.image).to be_nil
+      end
+
+      context "with a new picture that is refused" do
+        let(:refused) do
+          image = Rails.root.join(SPEC_FILES, "image.png").open("rb")
+          cached = ProfileimageUploader.upload(image, :cache)
+          data = cached.data.deep_dup
+          data["metadata"]["malware_scan"] = { "status" => "clean" }
+          data.to_json
+        end
+
+        before do
+          create(:lecture, teacher: user)
+          user.update!(image: Rails.public_path.join("unknown-person.gif").open)
+        end
+
+        it "says why the picture was refused and keeps the old one" do
+          save_teacher_profile(image: refused)
+
+          expect(response.body).to include(
+            I18n.t("submission.upload_failure_scan_required", locale: :en).strip
+          )
+          expect(response.body).to include("$('#image-error').append(")
+          expect(user.reload.image).to be_present
+        end
+
+        it "takes the new picture over a ticked remove" do
+          save_teacher_profile(image: refused, remove_image: "1")
+
+          expect(user.reload.image).to be_present
+        end
       end
     end
 

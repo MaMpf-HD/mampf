@@ -137,16 +137,18 @@ class ProfileController < ApplicationController
       @locale = params[:user][:locale]
     end
 
-    # A teacher's homepage and picture show on their teacher page; the
-    # administration's profile page, which used to hold them, is for admins
-    # only.
+    # A teacher's homepage and picture show on their teacher page, so only a
+    # teacher sets them. A new picture wins over a ticked "remove".
     def assign_teacher_profile
       return unless @user.teacher?
 
-      profile = params.fetch(:user, {}).permit(:homepage, :image, :remove_image)
+      profile = params.expect(user: [:homepage, :image, :remove_image])
       @user.homepage = profile[:homepage] if profile.key?(:homepage)
-      @user.image = profile[:image] if profile[:image].present?
-      @user.image = nil if profile[:remove_image] == "1"
+      if profile[:image].present?
+        @user.image = profile[:image]
+      elsif profile[:remove_image] == "1"
+        @user.image = nil
+      end
     end
 
     def derive_profile_image

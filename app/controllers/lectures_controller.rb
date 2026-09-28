@@ -93,8 +93,11 @@ class LecturesController < ApplicationController
       render turbo_stream: streams
     else
       @from = params.dig(:lecture, :from)
+      # The dashboard's form leaves its frame to open the new lecture, so the
+      # request names no frame; the form goes back into the modal's.
+      target = @from == "dashboard" ? Lecture.new : turbo_frame_request_id
 
-      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+      render turbo_stream: turbo_stream.update(target,
                                                partial: "lectures/new/new",
                                                locals: { lecture: @lecture, from: @from }),
              status: :unprocessable_content

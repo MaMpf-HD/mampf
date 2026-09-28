@@ -1,5 +1,5 @@
 <%# locals: (f:, user:) %>
-<div class="mb-3" data-testid="teacher-profile">
+<div class="mb-3">
   <div class="fw-bold mb-1"><%= t("profile.teacher_profile.title") %></div>
   <p class="text-muted small mb-2"><%= t("profile.teacher_profile.explainer") %></p>
 
@@ -29,6 +29,7 @@
   >
     <div data-uppy-upload-target="dashboard"></div>
   </div>
+  <div class="invalid-feedback" id="image-error"></div>
 
   <% if user.image.present? %>
     <%= f.check_box :remove_image, label: t("profile.teacher_profile.remove_image") %>
