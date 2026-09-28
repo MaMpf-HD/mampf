@@ -12,7 +12,7 @@ RSpec.describe("Records office", type: :request) do
 
   def csv_rows
     expect(response.body).to start_with("\uFEFF")
-    CSV.parse(response.body.delete_prefix("\uFEFF"), col_sep: ";")
+    CSV.parse(response.body.delete_prefix("\uFEFF"), col_sep: ";", headers: true)
   end
 
   describe "who gets in" do
@@ -86,9 +86,9 @@ RSpec.describe("Records office", type: :request) do
       get records_office_emails_path("tutorial", tutorial)
 
       rows = csv_rows
-      expect(rows.first).to eq(["Last name", "First name", "Matriculation number", "Email"])
-      expect(rows.drop(1).map(&:first)).to eq(["Noether", "Zuse"])
-      expect(rows.second.third).to eq("1234567")
+      expect(rows.headers).to eq(["Last name", "First name", "Matriculation number", "Email"])
+      expect(rows.map { |row| row["Last name"] }).to eq(["Noether", "Zuse"])
+      expect(rows.first["Matriculation number"]).to eq("1234567")
     end
 
     it "gives the published grades of exams and talks, and nothing still being graded" do
@@ -111,7 +111,7 @@ RSpec.describe("Records office", type: :request) do
 
       get records_office_grades_path(seminar)
 
-      expect(csv_rows.drop(1).map { |row| row.values_at(0, 4, 5, 6, 7) })
+      expect(csv_rows.map { |row| row.fields("Last name", "Kind", "Title", "Grade", "Status") })
         .to eq([["Noether", "Exam", "Final exam", "2,3", nil],
                 ["Zuse", "Exam", "Final exam", nil, "absent"],
                 ["Noether", "Talk", talk.to_label, "1,0", nil]])
@@ -129,8 +129,7 @@ RSpec.describe("Records office", type: :request) do
       get records_office_admissions_path(lecture)
 
       rows = csv_rows
-      expect(rows.first).to include("Points", "Decision", "Note")
-      expect(rows.second.values_at(0, 4, 5, 6, 8, 11))
+      expect(rows.first.fields("Last name", "Points", "Maximum", "Percentage", "Decision", "Note"))
         .to eq(["Noether", "42,5", "60", "70,83", "eligible", "Certificate from the doctor"])
     end
   end
