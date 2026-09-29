@@ -194,7 +194,6 @@ de:
       export_stats: 'Statistiken exportieren'
       users: 'Nutzerverwaltung'
       course: 'Modul'
-      profile: 'Mein Profil'
     catalog:
       info:
         locked_medium: 'Dieses Medium ist gesperrt.'
@@ -233,10 +232,8 @@ de:
       my_media: 'Meine Medien'
       media_restriction_html: >
         Es werden nur die 25 zuletzt upgedateten Medien angezeigt.
-        Mehr Medien findest Du über die %{media_search} oder in Deinen
-        %{profile}.
+        Mehr Medien findest Du über die %{media_search}.
       media_search: 'Mediensuche'
-      user_profile: 'Nutzerprofil'
       no_media: >
         Es gibt keine Medien, für die Du als EditorIn eingetragen bist.
       other_lectures: 'Sonstige Veranstaltungen'
@@ -2164,6 +2161,12 @@ de:
     changes_made: >
       Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
       damit die Änderungen wirksam werden.
+    teacher_profile:
+      title: "Was Studierende über Dich sehen"
+      explainer: >-
+        Deine Homepage und Dein Foto erscheinen auf Deiner Seite als lehrende Person, auf
+        die Deine Veranstaltungen verlinken.
+      remove_image: "Foto entfernen"
     changes_made_btn: >
       Klicke hier, um Deine Änderungen zu übernehmen.
     email_for_submissions: >

@@ -231,6 +231,38 @@ $card-rail-width: 12rem;
         }
     }
 
+    &__talk {
+        flex: 1;
+        min-width: 0;
+
+        a {
+            color: var(--bs-body-color);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &__talk-line {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        column-gap: 0.5rem;
+    }
+
+    &__talk-date {
+        margin-left: auto;
+        text-align: end;
+    }
+
+    // lines up with the talk's title, past the microphone
+    &__talk-details {
+        padding-left: 1.2rem;
+    }
+
     // above the title's stretched link, like the corner
     &__note-link {
         position: relative;

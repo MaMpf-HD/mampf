@@ -419,6 +419,13 @@ RSpec.describe("Lectures", type: :request) do
       expect(response.body).to include("course_lectures")
     end
 
+    it "opens the new lecture when it was created from the dashboard" do
+      post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
+                          as: :turbo_stream)
+
+      expect(response).to redirect_to(edit_lecture_path(Lecture.last))
+    end
+
     context "when the teacher already gives that lecture in that term" do
       before { create(:lecture, **attributes.except(:from, :content_mode)) }
 
@@ -428,6 +435,16 @@ RSpec.describe("Lectures", type: :request) do
         end.not_to change(Lecture, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
+      end
+
+      it "puts the form back into the dashboard's modal" do
+        post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
+                            as: :turbo_stream)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream")["target"])
+          .to eq("new_lecture")
         expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
       end
     end
