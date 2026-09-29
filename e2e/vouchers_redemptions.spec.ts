@@ -133,7 +133,7 @@ const STAFF = "You are staff in these";
 async function expectLectureOnDashboard(page: Page, lecture: FactoryBotObject, section: string) {
   await page.goto(`/?term=${lecture.term_id ?? ""}`);
   const region = page.getByRole("region", { name: section });
-  await expect(region.getByRole("link", { name: COURSE_TITLE })).toBeVisible();
+  await expect(region.getByRole("heading", { name: COURSE_TITLE })).toBeVisible();
 }
 
 function notificationList(page: Page): Locator {
