@@ -400,4 +400,29 @@ RSpec.describe(Registration::Item, type: :model) do
       expect(item.removal_blocker).to eq(:allocation)
     end
   end
+
+  describe "#provisional_users" do
+    let(:campaign) { create(:registration_campaign, :preference_based) }
+    let(:item) { create(:registration_item, registration_campaign: campaign) }
+    let(:allocated) { create(:confirmed_user) }
+
+    before do
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: item,
+                                                          user: allocated, preference_rank: 1)
+      create(:registration_user_registration, :pending, registration_campaign: campaign,
+                                                        registration_item: item,
+                                                        preference_rank: 2)
+    end
+
+    it "names nobody before a preference campaign has allocated" do
+      expect(item.provisional_users).to be_nil
+    end
+
+    it "names those allocated once it has" do
+      campaign.update!(last_allocation_calculated_at: Time.current)
+
+      expect(item.provisional_users).to contain_exactly(allocated)
+    end
+  end
 end

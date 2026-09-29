@@ -10,9 +10,6 @@ FactoryBot.define do
     status { :pending }
     submitted_at { nil }
     graded_at { nil }
-    results_published_at { nil }
-    published { false }
-    locked { false }
 
     trait :with_tutorial do
       association :tutorial
@@ -85,17 +82,6 @@ FactoryBot.define do
       reviewed
       association :assessment, factory: [:assessment, :gradable]
       grade_text { ["pass", "fail"].sample }
-    end
-
-    trait :published do
-      reviewed
-      published { true }
-      results_published_at { 1.hour.ago }
-    end
-
-    trait :locked do
-      published
-      locked { true }
     end
   end
 end

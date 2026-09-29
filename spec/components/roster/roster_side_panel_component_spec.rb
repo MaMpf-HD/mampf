@@ -265,6 +265,66 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
+  describe "#students" do
+    def names(panel)
+      panel.students.map(&:tutorial_name)
+    end
+
+    it "sorts by last name, and by the shown name without one" do
+      students = [
+        create(:confirmed_user, first_name: "Anna", last_name: "Zimmer"),
+        create(:confirmed_user, first_name: "Ben", last_name: "Özdemir"),
+        create(:confirmed_user, first_name: nil, last_name: nil, name_in_tutorials: "Nick"),
+        create(:confirmed_user, first_name: "Clara", last_name: "Becker")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(names(panel)).to eq(["Clara Becker", "Nick", "Ben Özdemir", "Anna Zimmer"])
+    end
+
+    it "puts someone known by first name alone before a last name that equals it" do
+      students = [
+        create(:confirmed_user, first_name: "Ada", last_name: "Max"),
+        create(:confirmed_user, first_name: "Max", last_name: nil)
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(names(panel)).to eq(["Max", "Ada Max"])
+    end
+
+    # The participants tab sorts in SQL, where unaccent spells ß out as ss.
+    it "sorts ß as ss, like the participants tab" do
+      students = [
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students.reverse)
+
+      expect(panel.students).to eq(User.where(id: students).by_last_name.to_a)
+    end
+
+    it "keeps letters of other scripts apart" do
+      students = [
+        create(:confirmed_user, first_name: "Eva", last_name: "Ωι"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Άλφα")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(names(panel)).to eq(["Eva Άλφα", "Eva Ωι"])
+    end
+  end
+
+  describe "#copy_email_label" do
+    it "names the address the button copies" do
+      student = build(:confirmed_user, email: "alice@example.com")
+
+      I18n.with_locale(:en) do
+        expect(component.copy_email_label(student))
+          .to eq("Copy email address: alice@example.com")
+      end
+    end
+  end
+
   describe "#campaign_wishes" do
     let(:campaign) { double(id: 1) }
 

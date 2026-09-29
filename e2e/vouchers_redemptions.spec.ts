@@ -122,11 +122,18 @@ async function expectCancelBringsFormBack(page: Page) {
   await expect(page.getByRole("textbox", { name: "Voucher code" })).toBeVisible();
 }
 
-/** Opens the dashboard on the lecture's own term, which the factory picks at random. */
-async function expectLectureBookmarked(page: Page, lecture: FactoryBotObject) {
+const BOOKMARKED = "You bookmarked these";
+const TUTORING = "You are tutor in these";
+const STAFF = "You are staff in these";
+
+/**
+ * Opens the dashboard on the lecture's own term, which the factory picks at random.
+ * A lecture someone tutors or teaches moves from their bookmarks to its own section.
+ */
+async function expectLectureOnDashboard(page: Page, lecture: FactoryBotObject, section: string) {
   await page.goto(`/?term=${lecture.term_id ?? ""}`);
-  const bookmarked = page.getByRole("region", { name: "You bookmarked these" });
-  await expect(bookmarked.getByRole("link", { name: COURSE_TITLE })).toBeVisible();
+  const region = page.getByRole("region", { name: section });
+  await expect(region.getByRole("heading", { name: COURSE_TITLE })).toBeVisible();
 }
 
 function notificationList(page: Page): Locator {
@@ -136,7 +143,7 @@ function notificationList(page: Page): Locator {
 // The bell's name carries the icon glyph in front of the count, so the count
 // is read off the text.
 async function expectOneNotification(page: Page) {
-  await page.goto("/main/start");
+  await page.goto("/");
   await expect(notificationList(page).getByRole("link", { name: "1" })).toHaveText("1");
 }
 
@@ -156,7 +163,7 @@ async function expectRoleNotification(page: Page, role: Role, user: User) {
 }
 
 async function expectNoNotification(page: Page) {
-  await page.goto("/main/start");
+  await page.goto("/");
   await expect(notificationList(page)).toHaveCount(0);
 }
 
@@ -185,7 +192,8 @@ async function redeemWithNothingToClaim(
   await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGES[type])).toBeVisible();
   await expect(student.page.getByRole("link", { name: "Redeem Voucher" })).toBeVisible();
   await redeemVoucher(student.page, role);
-  await expectLectureBookmarked(student.page, lecture);
+  // a tutor is one before having a tutorial; a speaker without a talk is not
+  await expectLectureOnDashboard(student.page, lecture, role === "tutor" ? TUTORING : BOOKMARKED);
 
   if (type === "talk") {
     await teacher.page.goto(`/lectures/${lecture.id}/edit`);
@@ -209,7 +217,7 @@ async function redeemWithSomethingClaimed(
 
   await submitVoucher(student.page, voucher.secure_hash as string);
   await claimAndRedeem(student.page, role, type, [first.title, second.title]);
-  await expectLectureBookmarked(student.page, lecture);
+  await expectLectureOnDashboard(student.page, lecture, role === "tutor" ? TUTORING : BOOKMARKED);
 
   if (type === "talk") {
     await teacher.page.goto(`/lectures/${lecture.id}/edit`);
@@ -314,7 +322,7 @@ test.describe("editor voucher redemption", () => {
       await submitVoucher(student.page, voucher.secure_hash as string);
       await expect(student.page.getByText(REDEMPTION_TEXTS.editor)).toBeVisible();
       await redeemVoucher(student.page, "editor");
-      await expectLectureBookmarked(student.page, lecture);
+      await expectLectureOnDashboard(student.page, lecture, STAFF);
 
       await student.page.goto(peopleTabLink(lecture.id));
       await expect(editorOption(student.page, student.user)).toHaveCount(1);
@@ -350,7 +358,7 @@ test.describe("teacher voucher redemption", () => {
       await submitVoucher(student.page, voucher.secure_hash as string);
       await expect(student.page.getByText(REDEMPTION_TEXTS.teacher)).toBeVisible();
       await redeemVoucher(student.page, "teacher");
-      await expectLectureBookmarked(student.page, lecture);
+      await expectLectureOnDashboard(student.page, lecture, STAFF);
 
       await student.page.goto(peopleTabLink(lecture.id));
       await expect(student.page.getByText(

@@ -39,6 +39,9 @@ module Mampf
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
     config.i18n.raise_on_missing_translations = false
+    # Lets a model or attribute set its own error format in the locales, such
+    # as '%{message}' for messages that are whole sentences.
+    config.active_model.i18n_customize_full_message = true
     config.time_zone = "Berlin"
     config.active_storage.variant_processor = :vips
 

@@ -14,7 +14,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
   it "re-renders the board for its semester when the card is removed" do
     term = create(:term, :summer, year: 2031)
-    removal = render_card(term: term, bookmarked: true)
+    removal = render_card(term: term, section: :bookmarked)
               .at_css("[data-controller='bookmark-removal']")
 
     expect(removal["data-bookmark-removal-url-value"]).to end_with("?term=SS31")
@@ -30,13 +30,13 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
   it "warns before removing the bookmark that unlocked a pass-phrase lecture" do
     lecture.update!(passphrase: "open sesame")
 
-    expect(render_card(bookmarked: true).text)
+    expect(render_card(section: :bookmarked).text)
       .to include(I18n.t("main.start.remove_bookmark_body_locked",
                          lecture: lecture.title_no_term))
   end
 
   it "does not warn for an open lecture" do
-    expect(render_card(bookmarked: true).text)
+    expect(render_card(section: :bookmarked).text)
       .to include(I18n.t("main.start.remove_bookmark_body", lecture: lecture.title_no_term))
   end
 
@@ -81,6 +81,16 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
     expect(render_card.at_css(".dashboard-card-slot__rail")).to be_nil
   end
 
+  it "leaves the student points progress and deadlines off a staff card" do
+    create(:assignment, lecture: lecture, deadline: 2.days.from_now)
+    allow(DashboardPointsProgressComponent).to receive(:new).and_call_original
+
+    rendered = render_card(section: :staff)
+
+    expect(rendered.at_css(".dashboard-card-slot__rail")).to be_nil
+    expect(DashboardPointsProgressComponent).not_to have_received(:new)
+  end
+
   it "no longer carries a bookmark toggle" do
     expect(render_card.at_css(".bi-bookmark, .bi-bookmark-fill")).to be_nil
   end
@@ -91,7 +101,7 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
   context "when the card sits in the bookmarked band" do
     it "offers a remove-bookmark control wired to the lecture" do
-      rendered = render_card(bookmarked: true)
+      rendered = render_card(section: :bookmarked)
 
       control = rendered.at_css("[data-controller='bookmark-removal']")
       expect(control["data-bookmark-removal-url-value"])
@@ -125,6 +135,15 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
 
       expect(link["href"]).to eq("/lectures/#{lecture.id}")
       expect(link.text).to include(I18n.t("main.start.registration_open"))
+    end
+
+    it "offers no registration to those who run the lecture" do
+      campaign
+
+      [:staff, :tutor].each do |section|
+        expect(render_card(section: section).text)
+          .not_to include(I18n.t("main.start.registration_open"))
+      end
     end
 
     it "shows a badge for a pending registration" do
@@ -170,6 +189,49 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       lecture.update!(passphrase: "secret")
 
       expect(render_card.at_css(keep)).to be_nil
+    end
+  end
+
+  describe "a lecture not published yet" do
+    it "says so to those who run it" do
+      expect(render_card(section: :staff).text).to include(I18n.t("main.start.not_published"))
+    end
+
+    # Only its editors may open it before it is published.
+    it "is no link for a tutor" do
+      expect(render_card(section: :tutor).at_css("a.dashboard-card__link")).to be_nil
+    end
+
+    it "tells a tutor who has no tutorial yet" do
+      expect(render_card(section: :tutor).text).to include(I18n.t("main.start.awaiting_group"))
+    end
+
+    it "is a link for a tutor once it is published" do
+      lecture.update!(released: "all")
+
+      card = render_card(section: :tutor)
+      expect(card.at_css("a.dashboard-card__link")["href"]).to eq("/lectures/#{lecture.id}")
+      expect(card.text).not_to include(I18n.t("main.start.not_published"))
+    end
+  end
+
+  describe "the user's own talk" do
+    around { |example| I18n.with_locale(:en) { example.run } }
+
+    let(:lecture) { create(:lecture, sort: "seminar") }
+    let(:cospeaker) { create(:confirmed_user, name_in_tutorials: "Grace Hopper") }
+    let(:talk) do
+      create(:talk, lecture: lecture, title: "Sylow theorems", dates: [Date.new(2026, 11, 3)],
+                    speaker_ids: [user.id, cospeaker.id])
+    end
+
+    it "shows on the seminar's card, with its date and co-speaker" do
+      card = render_card(talks: [talk])
+      note = card.css(".dashboard-card__note").find { |li| li.text.include?("Sylow") }
+
+      expect(note.at_css("a[href='/talks/#{talk.id}']").text.squish)
+        .to eq("Sylow theorems")
+      expect(note.text.squish).to include("2026-11-03", "with Grace Hopper")
     end
   end
 end

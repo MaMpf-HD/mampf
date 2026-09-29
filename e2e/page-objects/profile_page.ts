@@ -14,7 +14,7 @@ export class ProfilePage {
 
   async save() {
     const responsePromise = this.page.waitForResponse(response =>
-      response.url().includes("main/start"),
+      new URL(response.url()).pathname === "/",
     );
     await this.page.getByRole("button", { name: "save your changes" }).click();
     await responsePromise;

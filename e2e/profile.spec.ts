@@ -117,34 +117,6 @@ test.describe("Account settings", () => {
 
       await loginPage.goto();
       await loginPage.login(newEmail, user.password);
-      await expect(page).toHaveURL(/\/main\/start/);
-    });
-});
-
-test.describe("Module settings", () => {
-  test("can bookmark a lecture (via profile page)",
-    async ({ factory, student: { page } }) => {
-      const divisionName = "Fourier Division";
-      const courseName = "Happy Calculus 101";
-      const division = await factory.create("division", [], { name: divisionName });
-      const course = await factory.create("course", ["with_division"], { title: courseName, division_id: division.id });
-      const term = await factory.create("term", ["summer", "active"], { year: 2025 });
-      const lecture = await factory.create("lecture", ["released_for_all"], { course_id: course.id, term_id: term.id });
-      const teacher = await lecture.__call("teacher");
-
-      const profilePage = new ProfilePage(page);
-      await profilePage.goto();
-      await page.getByTestId("courses-accordion").getByRole("button").first().click();
-      await expect(page.getByTestId("courses-accordion")).toContainText(divisionName);
-      const courseButton = page.getByText(courseName);
-      await courseButton.click();
-      await page.getByText(teacher.name).click();
-      await profilePage.save();
-
-      // bookmarked, not enrolled: it belongs in the second band of the board
-      await page.goto("/");
-      const dashboard = page.getByTestId("dashboard-bookmarked-lectures");
-      await expect(dashboard).toContainText(courseName);
-      await expect(dashboard).toContainText(teacher.name);
+      await expect(page).toHaveURL(/:3145\/$/);
     });
 });

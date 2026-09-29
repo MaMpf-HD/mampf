@@ -144,6 +144,80 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/tutorials, the group's participants" do
+    let(:member) { create(:confirmed_user, first_name: "Ada", last_name: "Lovelace") }
+
+    before do
+      create(:tutorial_membership, tutorial: tutorial, user: member)
+      sign_in tutor
+    end
+
+    def body
+      Nokogiri::HTML(response.body)
+    end
+
+    it "shows them before the lecture has a sheet" do
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      expect(body.at_css("[data-testid='tutorial-participants']").text).to include("Ada Lovelace")
+    end
+
+    it "offers them next to the sheets once there are some" do
+      create(:assignment, lecture: lecture)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+      link = body.css("a").find { |a| a.text.strip == I18n.t("tutorial.participants.button") }
+      expect(link["href"]).to include("view=participants")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
+      expect(body.at_css("[data-testid='tutorial-participants']").text).to include("Ada Lovelace")
+      expect(body.css("tr.submission-row")).to be_empty
+    end
+
+    it "stays on the participants when the tutor switches to another group" do
+      create(:assignment, lecture: lecture)
+      other = create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: tutor.id,
+                                                   title: "Other group")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
+      option = body.css("#tutorial-select option").find { |o| o.text.strip == "Other group" }
+      get option["value"]
+
+      expect(response.request.params[:tutorial]).to eq(other.id.to_s)
+      expect(body.at_css("[data-testid='tutorial-participants']")).to be_present
+    end
+
+    # The group is filled when the registration is finalized; until then its
+    # tutor writes to those registered so far, and the button says so.
+    it "offers a mail to those registered while the registration runs" do
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+      item = create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: item)
+      campaign.update!(status: :open)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      expect(response.body).to include(I18n.t("student_message.tutorial.registered_button"))
+      expect(response.body).to include("value=\"item:#{item.id}:provisional\"")
+    end
+  end
+
+  # A tutor by address or voucher may have no tutorial of their own yet.
+  describe "GET /lectures/:id/tutorials for a tutor without a tutorial" do
+    it "says so instead of turning them away" do
+      appointed = create(:confirmed_user)
+      TutorAppointment.create!(lecture: lecture, user: appointed)
+      sign_in appointed
+
+      get lecture_tutorials_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).text.squish)
+        .to include(I18n.t("tutorial.not_assigned_yet").squish)
+    end
+  end
+
   describe "the marking table's queries" do
     def count_queries
       count = 0
@@ -252,6 +326,48 @@ RSpec.describe("Tutorials", type: :request) do
 
     context "as an editor" do
       before { sign_in editor }
+
+      # A group may join a campaign until its allocation is computed.
+      context "into a running registration process" do
+        let(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
+        def create_in(campaign)
+          post(tutorials_path,
+               params: { tutorial: valid_attributes, registration_section: "campaign",
+                         registration_campaign_id: campaign.id },
+               as: :turbo_stream)
+        end
+
+        it "adds the group to an open process" do
+          expect { create_in(campaign) }.to change(campaign.registration_items, :count).by(1)
+        end
+
+        it "offers a mail to those registered so far" do
+          create(:registration_user_registration, :confirmed,
+                 registration_campaign: campaign,
+                 registration_item: campaign.registration_items.first)
+
+          create_in(campaign)
+
+          hint = Nokogiri::HTML(response.body).at_css('[data-testid="new-group-mail-hint"]')
+          expect(hint.at_css("a")["href"])
+            .to include("mail_audience=campaign%3A#{campaign.id}%3Aall")
+        end
+
+        it "offers no mail while nobody has registered" do
+          create_in(campaign)
+
+          expect(response.body).not_to include("new-group-mail-hint")
+        end
+
+        it "refuses once the allocation is computed" do
+          campaign.update!(status: :closed, registration_deadline: 1.day.ago,
+                           last_allocation_calculated_at: Time.current)
+
+          expect { create_in(campaign) }.not_to change(Tutorial, :count)
+          expect(response.body).to include(I18n.t("registration.campaign.takes_no_new_items"))
+        end
+      end
 
       context "with valid parameters" do
         it "creates a new tutorial" do

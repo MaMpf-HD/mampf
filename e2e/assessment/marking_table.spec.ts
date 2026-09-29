@@ -155,7 +155,7 @@ test.describe("marking table", () => {
     await tutor.page.goto(
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
     );
-    await expect(tutor.page.getByText("1 hand-in · 1 reviewed · 1 not submitted")).toBeVisible();
+    await expect(tutor.page.getByText("1 handed in · 1 reviewed · 1 not submitted")).toBeVisible();
 
     const table = tutor.page.getByRole("table");
     await tutor.page.getByLabel("Status").selectOption("Not Submitted");
@@ -176,7 +176,7 @@ test.describe("marking table", () => {
       .getByRole("link", { name: "Record a hand-in on paper or by other means" }).click();
     await expect(table.getByRole("row", { name: /Grace Hopper/ })).toBeHidden();
     await expect(tutor.page.getByText("No matching rows.")).toBeVisible();
-    await expect(tutor.page.getByText("2 hand-ins · 1 reviewed · 1 pending grading")).toBeVisible();
+    await expect(tutor.page.getByText("2 handed in · 1 reviewed · 1 pending grading")).toBeVisible();
   });
 
   test("saves one row, then the rest at once", async ({ factory, teacher, tutor }) => {
@@ -215,14 +215,14 @@ test.describe("marking table", () => {
     await expect(saveAll).toContainText("1");
     await ada.getByRole("button", { name: "Save this row's points" }).click();
     await expect(ada.getByText("Reviewed")).toBeVisible();
-    await expect(tutor.page.getByText("2 hand-ins · 1 reviewed · 1 pending grading")).toBeVisible();
+    await expect(tutor.page.getByText("2 handed in · 1 reviewed · 1 pending grading")).toBeVisible();
     // the saved row left the pile of unsaved changes
     await expect(saveAll).toBeDisabled();
 
     await grace.getByRole("spinbutton", { name: "Task 1 for Grace Hopper" }).fill("4");
     await saveAll.click();
     await expect(grace.getByText("Reviewed")).toBeVisible();
-    await expect(tutor.page.getByText("2 hand-ins · 2 reviewed")).toBeVisible();
+    await expect(tutor.page.getByText("2 handed in · 2 reviewed")).toBeVisible();
     await expect(saveAll).toBeDisabled();
   });
 
@@ -388,11 +388,46 @@ test.describe("marking table", () => {
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
     );
     const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
-    await row.getByRole("button", { name: "Copy mail adresses to Clipboard" }).click();
+    await row.getByRole("button", { name: `Copy email address: ${student.email}` }).click();
 
-    const note = tutor.page.getByText("Mail adresses have been copied to the clipboard.");
-    await expect(note).toBeVisible();
+    const note = tutor.page.getByRole("tooltip");
+    await expect(note).toHaveText("The email address has been copied to the clipboard.");
     // hover fails when another element would take the pointer instead
     await note.hover();
+  });
+
+  test("lets the lecture's teacher upload corrections for a group", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const { lecture, assignment } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id,
+      tutor_id: tutor.user.id,
+    });
+    const student = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Ada Lovelace",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.id,
+    });
+    await handIn(factory, assignment.id, tutorial.id, student.id);
+
+    await teacher.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
+    );
+    const row = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
+    await expect(row.getByRole("link", { name: "Upload correction" })).toBeVisible();
+
+    await teacher.page.getByRole("button", { name: "More actions" }).click();
+    await teacher.page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+    await expect(teacher.page.getByRole("heading", { name: /Bulk upload of corrections/ }))
+      .toBeVisible();
   });
 });

@@ -1,5 +1,5 @@
 # Paper card shown on the dashboard: photo, title, subtitle, and washi tape.
-# Lecture and talk specifics come in through slots.
+# The lecture's specifics, a talk given in it among them, come in through slots.
 class DashboardCardComponent < ViewComponent::Base
   renders_one :subtitle
   renders_one :corner

@@ -102,11 +102,12 @@ class Lecture < ApplicationRecord
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
+  has_many :tutor_appointments, dependent: :destroy
 
   has_many :cohorts, as: :context, dependent: :destroy
 
   # Stores a pass phrase of blanks as none, so that `restricted?` and the SQL
-  # scopes (`restricted`, User#unlocked_lectures) agree about it.
+  # of User#unlocked_lectures agree about it.
   normalizes :passphrase, with: ->(value) { value.presence }
 
   # we do not allow that a teacher gives a certain lecture in a given term
@@ -173,8 +174,6 @@ class Lecture < ApplicationRecord
   scope :published, -> { where.not(released: nil) }
 
   scope :no_term, -> { where(term: nil) }
-
-  scope :restricted, -> { where.not(passphrase: ["", nil]) }
 
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
 
@@ -836,6 +835,23 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
+  # Whether the user is a tutor of the lecture: of one of its tutorials, or
+  # made one before having a tutorial, by a redeemed voucher or by address.
+  # Such a tutor has the tutors' page, with or without a tutorial yet.
+  def tutor?(user)
+    return false unless user
+
+    TutorTutorialJoin.exists?(tutorial: tutorials, tutor: user) ||
+      tutor_appointments.exists?(user: user) ||
+      Redemption.exists?(voucher: vouchers.for_tutors, user: user)
+  end
+
+  def cohort_tutor?(user)
+    return false unless user
+
+    CohortTutorJoin.exists?(cohort: cohorts, tutor: user)
+  end
+
   def default_submission_deletion_date
     (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
       15.days
@@ -1052,10 +1068,25 @@ class Lecture < ApplicationRecord
   end
 
   def eligible_as_tutors
-    (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
+    (tutors + Redemption.tutors_by_redemption_in(self) + appointed_tutors + editors +
+      [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some tutor statuses were
     # still given by the old system, this will not be true
+  end
+
+  def appointed_tutors
+    User.where(id: tutor_appointments.select(:user_id))
+  end
+
+  # Undoes what made the user a tutor before having a tutorial: the
+  # appointment by address and the tutor vouchers redeemed here. Tutorials
+  # and cohorts the user is assigned to stay as they are.
+  def remove_waiting_tutor(user)
+    transaction do
+      tutor_appointments.where(user: user).destroy_all
+      Redemption.where(voucher: vouchers.for_tutors, user: user).destroy_all
+    end
   end
 
   def eligible_as_editors
@@ -1111,6 +1142,25 @@ class Lecture < ApplicationRecord
   # the student picking one.
   def roster_managed?
     tutorials.merge(Tutorial.roster_eligible).exists?
+  end
+
+  # The titles of the registration campaigns that are not completed and have a
+  # student performance policy for this lecture, or nil. Their screening reads
+  # this lecture's certifications.
+  def eligibility_in_use_by
+    policies = unfinished_eligibility_policies
+    return if policies.empty?
+
+    blocking_campaign_titles(policies)
+  end
+
+  # Drops the computed certifications and returns how many decisions went, or
+  # returns nil and drops nothing while eligibility_in_use_by names a
+  # registration that still reads them.
+  def reset_computed_certifications!
+    return if eligibility_in_use_by
+
+    student_performance_certifications.reset_computed!
   end
 
   private
@@ -1263,15 +1313,17 @@ class Lecture < ApplicationRecord
     # A completed campaign is the exception: it has allocated its seats and is
     # never screened again, so it would block for good with nothing left to undo.
     def exam_eligibility_can_be_disabled
-      blocking = Registration::Policy.student_performance_for_lecture(id)
-                                     .joins(:registration_campaign)
-                                     .merge(Registration::Campaign
-                                              .where.not(status: :completed))
-                                     .includes(registration_campaign: :campaignable)
-      return if blocking.empty?
+      titles = eligibility_in_use_by
+      return unless titles
 
-      errors.add(:uses_exam_eligibility, :referenced_by_policies,
-                 campaigns: blocking_campaign_titles(blocking))
+      errors.add(:uses_exam_eligibility, :referenced_by_policies, campaigns: titles)
+    end
+
+    def unfinished_eligibility_policies
+      Registration::Policy.student_performance_for_lecture(id)
+                          .joins(:registration_campaign)
+                          .merge(Registration::Campaign.where.not(status: :completed))
+                          .includes(registration_campaign: :campaignable)
     end
 
     def blocking_campaign_titles(policies)

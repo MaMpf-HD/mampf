@@ -2,8 +2,6 @@
 
 <%= render partial: "shared/announcement_banner" %>
 
-<%= render partial: "feedbacks/form/modal" %>
-
 <div class="navbars-container">
   <nav class="navbar navbar-expand" id="firstnav">
     <%# Sized in the markup: the svg declares 97mm, and navbar.scss is loaded
@@ -20,9 +18,9 @@
                 id: 'mampfbrand' %>
       <ul class="navbar-nav">
         <li class="nav-item">
-          <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
+          <% is_home_active = !get_class_for_any_path_startswith([lectures_path()]).empty?\
             || !get_class_for_path(root_path()).empty? %>
-          <a href="<%= start_path %>"
+          <a href="<%= root_path %>"
             class="nav-link bi bi-house-fill <%= is_home_active ? ApplicationHelper::ACTIVE_CSS_CLASS : '' %>"
             data-bs-toggle="tooltip"
             title="<%= t('navbar.home') %>">
@@ -36,6 +34,17 @@
             title="<%= t('navbar.profile') %>">
           </a>
         </li>
+
+        <% if current_user.support? || current_user.admin? %>
+          <li class="nav-item">
+            <a href="<%= support_users_path %>"
+              class="nav-link bi bi-life-preserver <%= get_class_for_path(support_users_path) %>"
+              data-bs-toggle="tooltip"
+              title="<%= t('support.title') %>"
+              aria-label="<%= t('support.title') %>">
+            </a>
+          </li>
+        <% end %>
 
         <% if current_user.admin? %>
           <li class="nav-item">
@@ -111,8 +120,6 @@
       </ul>
 
       <%= render partial: 'shared/dropdown_notifications' %>
-
-      <%= render partial: 'feedbacks/navbar/button' %>
 
       <ul class="navbar-nav" id="searchField">
         <li class="nav-item">

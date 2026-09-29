@@ -83,7 +83,7 @@ class ApplicationController < ActionController::Base
     return stored if stored.present? && stored != super
     return edit_profile_path if first_sign_in?(resource_or_scope)
 
-    start_path
+    root_path
   end
 
   # Whether the user is arriving from their very first sign-in, which is the
@@ -127,7 +127,7 @@ class ApplicationController < ActionController::Base
                         })
   end
 
-  # A seminar lists its talks twice on the edit page: as group tiles and in the
+  # A seminar lists its talks twice on the edit page: as group rows and in the
   # content card above them. Adding or deleting one has to reach both.
   def refresh_seminar_content_stream(lecture)
     return nil unless lecture&.seminar?
@@ -149,8 +149,7 @@ class ApplicationController < ActionController::Base
     # Where staff land when the page they were on is gone, e.g. after
     # deleting the record. Only admins have the administration area.
     def staff_home_path
-      # TODO: change to "root_path" after #1317 is merged
-      current_user&.admin? ? administration_path : start_path
+      current_user&.admin? ? administration_path : root_path
     end
 
     def configure_permitted_parameters
@@ -296,7 +295,7 @@ class ApplicationController < ActionController::Base
     def after_password_change_path_for(resource)
       session.delete(:enforce_password_change)
       stored_location_for(resource).presence ||
-        (first_sign_in?(resource) ? edit_profile_path : start_path)
+        (first_sign_in?(resource) ? edit_profile_path : root_path)
     end
 
     # https://stackoverflow.com/a/69313330/

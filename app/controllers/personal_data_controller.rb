@@ -97,6 +97,6 @@ class PersonalDataController < ApplicationController
     end
 
     def after_personal_data_path
-      session.delete(:after_personal_data).presence || start_path
+      session.delete(:after_personal_data).presence || root_path
     end
 end

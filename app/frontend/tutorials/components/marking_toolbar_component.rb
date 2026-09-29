@@ -1,19 +1,17 @@
 # The strip above the marking table, the same on a group's page and in the
 # lecture's dashboard: summary, filters, the rare actions and saving.
 class MarkingToolbarComponent < ViewComponent::Base
-  def initialize(assignment:, grading_scope:, statuses:, submissions:, tutorials: [])
+  def initialize(assignment:, grading_scope:, summary:, submissions:, tutorials: [])
     super()
     @assignment = assignment
     @grading_scope = grading_scope
     @tutorial = grading_scope if grading_scope.is_a?(Tutorial)
-    @statuses = statuses
+    @summary = summary
     @submissions = submissions
     @tutorials = tutorials
   end
 
-  def summary
-    MarkingSummaryComponent.new(statuses: @statuses, hand_ins: !@assignment.kind_test?)
-  end
+  attr_reader :summary
 
   def status_options
     missing = @assignment.assessment&.status_without_hand_in || :not_submitted
@@ -55,8 +53,8 @@ class MarkingToolbarComponent < ViewComponent::Base
     @tutorial.present? && (hand_in_files? || certificate_check?)
   end
 
-  def tutor?
-    @tutorial.present? && helpers.current_user.in?(@tutorial.tutors)
+  def corrects?
+    @tutorial.present? && @tutorial.correctable_by?(helpers.current_user)
   end
 
   def certificate_check?

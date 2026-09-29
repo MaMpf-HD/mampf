@@ -68,6 +68,40 @@ module Assessment
       results_published_at.present?
     end
 
+    # Mails only the first time, as publishing again is a correction. That
+    # first mail is claimed under the row lock and given back if mailing
+    # fails, so a retry mails and a second click does not.
+    def publish_results!
+      first_time = with_lock do
+        claim = results_notified_at.nil?
+        now = Time.current
+        update!(results_published_at: now, results_notified_at: results_notified_at || now)
+        claim
+      end
+      return unless first_time
+
+      begin
+        mail_results
+      rescue StandardError
+        update!(results_notified_at: nil)
+        raise
+      end
+    end
+
+    def withdraw_results!
+      update!(results_published_at: nil)
+    end
+
+    # A seminar's talks are published together from one table, and a talk
+    # only once each of its speakers has a result.
+    def self.complete_talk_gradebooks(seminar)
+      where(assessable: seminar.talks).includes(:assessable, :assessment_participations)
+                                      .select do |assessment|
+        rows = assessment.assessment_participations
+        rows.any? && rows.none?(&:pending?)
+      end
+    end
+
     def short_title
       parts = title.split(" ", 2)
       parts.length > 1 ? parts.last.presence || title.truncate(5) : title.truncate(5)
@@ -141,6 +175,19 @@ module Assessment
     end
 
     private
+
+      # One mail per language, everyone in bcc: the mail names nobody. A locale
+      # MaMpf does not offer counts as the default one.
+      def mail_results
+        offered = I18n.available_locales.map(&:to_s)
+        User.where(id: assessment_participations.with_result.select(:user_id))
+            .pluck(:id, :locale)
+            .group_by { |_, locale| locale.presence_in(offered) || I18n.default_locale.to_s }
+            .each do |locale, rows|
+              ResultsMailer.with(recipients: rows.map(&:first), locale: locale, assessment: self)
+                           .published_email.deliver_later
+            end
+      end
 
       def lecture_matches_assessable
         return unless lecture_id.present? && assessable&.lecture_id.present?

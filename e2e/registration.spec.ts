@@ -74,7 +74,7 @@ test("says so before submitting when the confirmation differs", async ({ page })
 
   await page.getByLabel("Password", { exact: true }).fill("correct-horse-battery-staple");
   await page.getByLabel("Password confirmation").fill("something-else-entirely");
-  await page.getByLabel("Email").click();
+  await page.getByLabel("Email", { exact: true }).click();
 
   await expect(mismatch).toBeVisible();
 
@@ -88,7 +88,7 @@ test("enforces password strength on sign up", async ({ page }) => {
   await signUpPage.goto();
 
   const email = `testuser_weak_${Date.now()}@example.com`;
-  await page.getByLabel("Email").fill(email);
+  await page.getByLabel("Email", { exact: true }).fill(email);
 
   const meter = page.locator(".password-strength-meter");
   await expect(meter).toBeHidden();

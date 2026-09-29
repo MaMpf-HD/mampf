@@ -15,6 +15,27 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     expect(rendered_content).to include("Physik: B.Sc. 100%")
   end
 
+  it "lists the participants by last name" do
+    exam = create(:exam, :with_date, lecture: lecture, skip_campaigns: true)
+    zuse = create(:confirmed_user, name: "Adam", first_name: "Konrad", last_name: "Zuse")
+    abel = create(:confirmed_user, name: "Zed", first_name: "Niels", last_name: "Abel")
+    [zuse, abel].each { |user| create(:exam_roster_entry, exam: exam, user: user) }
+
+    expect(described_class.new(exam: exam).participants_entries.map(&:user)).to eq([abel, zuse])
+  end
+
+  it "lists the people taken off the roster by last name" do
+    exam = create(:exam, :with_date, lecture: lecture, skip_campaigns: true)
+    zuse = create(:confirmed_user, name: "Adam", first_name: "Konrad", last_name: "Zuse")
+    abel = create(:confirmed_user, name: "Zed", first_name: "Niels", last_name: "Abel")
+    [zuse, abel].each do |user|
+      create(:exam_roster_entry, exam: exam, user: user, excluded_at: Time.current)
+    end
+
+    entries = described_class.new(exam: exam).not_on_roster_entries
+    expect(entries.pluck(:user)).to eq([abel, zuse])
+  end
+
   it "renders a disabled deadline field for a closed campaign" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :closed)
@@ -187,7 +208,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     )
   end
 
-  it "renders the participants removal action with explicit label after finalization" do
+  it "renders the participants removal action with a label after finalization" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)
     create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
@@ -195,7 +216,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     render_inline(described_class.new(exam: exam))
 
     document = Nokogiri::HTML.fragment(rendered_content)
-    remove_action = document.at_css("button.btn-outline-danger[title]")
+    remove_action = document.at_css("button.icon-button--danger[title]")
     filter_label = document.at_css('label[for="exam-participants-filter"]')
     add_toggle = document.at_css(
       "button[data-bs-toggle='collapse'][aria-controls='exam-#{exam.id}-participants-add-form']"
@@ -211,9 +232,6 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
       I18n.t("assessment.registration_tab.add_form_label")
     )
 
-    expect(rendered_content).to include(
-      I18n.t("assessment.registration_tab.remove_button")
-    )
     expect(rendered_content).to include(
       I18n.t("assessment.registration_tab.filter_label")
     )
@@ -231,6 +249,9 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     expect(add_form_label).to be_present
     expect(filter_label_index).to be < add_form_label_index
     expect(remove_action["title"]).to eq(
+      I18n.t("assessment.registration_tab.remove_tooltip")
+    )
+    expect(remove_action["aria-label"]).to eq(
       I18n.t("assessment.registration_tab.remove_tooltip")
     )
   end

@@ -25,6 +25,7 @@ module Assessment
     }
 
     scope :submitted, -> { where.not(submitted_at: nil) }
+    scope :with_result, -> { where.not(status: :pending) }
     # The rows Assessment#grading_data_for? calls graded, as one query.
     scope :with_grading_data, lambda {
       where.not(status: :pending)
@@ -47,6 +48,18 @@ module Assessment
     validate :assessment_must_be_gradable, if: -> { grade_numeric.present? }
     validate :absence_only_without_hand_in,
              if: -> { (absent? || exempt?) && status_changed? }
+
+    # A student's published exam and talk results in a lecture that they
+    # have not closed yet: the lecture home shows them up top, the
+    # dashboard points to them.
+    def self.new_results_for(user, lecture)
+      with_result.joins(:assessment)
+                 .preload(:task_points, assessment: [:tasks, :assessable])
+                 .where(user: user, result_seen_at: nil)
+                 .where(assessment_assessments: { lecture_id: lecture.id,
+                                                  assessable_type: ["Exam", "Talk"] })
+                 .where.not(assessment_assessments: { results_published_at: nil })
+    end
 
     def self.tutorial_for(user, lecture)
       TutorialMembership.joins(:tutorial)
@@ -111,11 +124,11 @@ module Assessment
       task_ids.none? { |task_id| points_by_task_id[task_id].nil? }
     end
 
-    # The one place the student side asks whether marks may be shown. Sheets
-    # have no release step - what a tutor saves, the student sees - so the
-    # answer today is "somebody wrote a value on some task". Everything student
-    # facing reads it here, so should sheets ever get a release step, this is
-    # the single line that changes.
+    # The one place the student side asks whether a sheet's marks may be
+    # shown. Sheets have no release step - what a tutor saves, the student
+    # sees - so the answer today is "somebody wrote a value on some task".
+    # Everything student facing about sheets reads it here, so should sheets
+    # ever get a release step, this is the single line that changes.
     #
     # Deliberately not `points_total`: a row saved with every field left blank
     # creates task points of nil, and the sum `Assessment::TaskPoint` writes
@@ -124,6 +137,14 @@ module Assessment
       return task_points.any? { |point| !point.points.nil? } if task_points.loaded?
 
       task_points.where.not(points: nil).exists?
+    end
+
+    # Whether the student may see this row's result on the lecture home:
+    # the results are published and the row carries one. Exams and talks have
+    # this release step; results_visible? only asks whether points were entered,
+    # which is all a sheet waits for.
+    def result_released?
+      assessment.results_published? && !pending?
     end
 
     private

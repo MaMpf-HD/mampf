@@ -30,7 +30,6 @@ import "~/js/thyme/attributes";
 
 // TODO: use vite_javascript_tag at the respective files instead of importing
 // everything here. This is just a temporary solution during the Vite migration.
-import "~/js/copy_and_paste_button";
 import "~/js/mampf_routes";
 import "~/js/talks";
 
@@ -52,7 +51,6 @@ import "~/js/sections.coffee";
 import "~/js/tags.coffee";
 import "~/js/tex_preview.coffee";
 import "~/js/tutorials.coffee";
-import "~/js/users.coffee";
 import "~/js/vertices.coffee";
 
 import "@uppy/core/css/style.min.css";

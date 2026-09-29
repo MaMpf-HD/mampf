@@ -16,6 +16,7 @@ en:
       preference_hint: "Before the allocation, a group of a preference-based process means everybody who listed it, at any rank."
       registered: "everyone registered"
       rejected: "rejected"
+      provisional: "%{group}: registered, not final yet"
     count_failed: "The count could not be read; change the selection to try again."
     nobody_picked: "Nobody picked yet."
     addresses_copy_failed: "The addresses could not be copied."
@@ -46,6 +47,12 @@ en:
       button: "Email the group"
       title: "Email to %{tutorial}"
       hint: "Goes to everybody in the group, from you; replies come back to you."
+      registered_button: "Email the registered"
+      registered_title: "Email to those registered for %{tutorial}"
+      registered_hint: >
+        Goes to everybody registered for the group so far, from you. The
+        registration is not final yet: some may still leave or be moved, and
+        who registers later does not get this mail. Replies come back to you.
     crosslink_html: >-
       You want to email students (e.g. to send around a course program)?
       You can do that in the %{link} tab.

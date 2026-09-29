@@ -18,8 +18,8 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @mode = "tutor"
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: :tutors)
-    @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+    @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
     @participations_by_user_id =
       preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
   end
@@ -29,10 +29,10 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @tutorials = @lecture.tutorials
     @stack = @assignment.submissions.proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: :tutors)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
 
-    @non_submitters = @assignment.non_submitters_in_tutorials
+    @non_submitters = @assignment.non_submitters_in_tutorials.by_last_name
     # Somebody who left the groups after handing in sits with the group that
     # has the sheet - as a file row or a roster row - not among those in none.
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
@@ -94,21 +94,23 @@ class TutorialMarkingTableComponent < ViewComponent::Base
 
   def toolbar
     MarkingToolbarComponent.new(assignment: @assignment, grading_scope: @grading_scope,
-                                statuses: row_statuses, submissions: @stack,
+                                summary: summary, submissions: @stack,
                                 tutorials: @tutorials || [])
   end
 
   # Every answer that swaps a row out sends the line above the table along,
   # rebuilt from the rows, so the two never disagree.
   def summary
-    MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?)
+    MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?,
+                                teams: team_count)
   end
 
   # A team row speaks for its first member with a participation, as the row
   # itself does; a file without any participation is still to be marked.
+  # The row counts once for each of its members.
   def row_statuses
-    from_files = @stack.map do |submission|
-      team_participations(submission).compact.first&.display_status || :pending_grading
+    from_files = @stack.flat_map do |submission|
+      [file_status(submission)] * [submission.users.size, 1].max
     end
     return from_files unless grading_enabled?
 
@@ -116,6 +118,16 @@ class TutorialMarkingTableComponent < ViewComponent::Base
       participation_for(user, tutorial).display_status
     end
     from_files + from_rows
+  end
+
+  # Only worth saying where some file was handed in by more than one person.
+  # A refused file puts its people among those who did not hand in, so it is
+  # no team behind the hand-ins either.
+  def team_count
+    handed_in = @stack.select do |submission|
+      file_status(submission).in?(MarkingSummaryComponent::HANDED_IN)
+    end
+    handed_in.size if handed_in.any? { |submission| submission.users.size > 1 }
   end
 
   def tasks
@@ -129,6 +141,10 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   end
 
   private
+
+    def file_status(submission)
+      team_participations(submission).compact.first&.display_status || :pending_grading
+    end
 
     def roster_rows
       if @mode == "tutor"

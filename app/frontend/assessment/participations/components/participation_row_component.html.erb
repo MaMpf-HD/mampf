@@ -45,22 +45,9 @@
         <% end %>
       </div>
 
-      <button
-        type="button"
-        class="
-          clipboardpopup btn btn-link p-0 ms-3 text-secondary
-          clipboard-btn clipboard-button
-        "
-        data-clipboard-text="<%= @user.email %>"
-        title="<%= t('buttons.copy_email_to_clipboard') %>"
-        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
-      >
-        <i class="bi bi-clipboard"></i>
-
-        <span class="clipboardpopuptext token-clipboard-popup">
-          <%= t('basics.emails_copied_to_clipboard') %>
-        </span>
-      </button>
+      <span class="ms-3">
+        <%= render "shared/copy_email_button", email: @user.email %>
+      </span>
     </div>
   </td>
 
@@ -124,6 +111,11 @@
     <% else %>
       <td class="text-center <%= layout.column_class(:status) %>">
         <%= render ParticipationStatusBadgeComponent.new(status: status, variant: :full) %>
+
+        <% if talk? %>
+          <%= render "assessment/participations/shown_to_speaker",
+                     participation: @participation %>
+        <% end %>
 
         <% if locked_reason %>
           <div class="small text-muted"><%= locked_reason %></div>

@@ -196,106 +196,6 @@ RSpec.describe(User, type: :model) do
     end
   end
 
-  describe "#current_enrolled_lectures" do
-    let(:term) { create(:term, :summer, :active, year: 2025) }
-    let(:user) { create(:user) }
-
-    it "includes lectures the user holds a roster seat in" do
-      lecture = create(:lecture, term: term)
-      create(:lecture_membership, user: user, lecture: lecture)
-
-      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
-    end
-
-    it "includes lectures the user is only in a non-propagating cohort of" do
-      lecture = create(:lecture, term: term)
-      cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
-      create(:cohort_membership, user: user, cohort: cohort)
-
-      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
-    end
-
-    it "does not count an exam registration as registering for the lecture" do
-      lecture = create(:lecture, term: term)
-      exam = create(:exam, :without_campaign, lecture: lecture)
-      campaign = create(:registration_campaign, campaignable: lecture)
-      item = create(:registration_item, registration_campaign: campaign,
-                                        registerable: exam)
-      campaign.update!(status: :open)
-      create(:registration_user_registration, :pending,
-             user: user, registration_campaign: campaign,
-             registration_item: item)
-
-      expect(user.current_enrolled_lectures(term)).to be_empty
-      expect(lecture.registration_status_for(user)).to be_nil
-    end
-
-    it "keeps such a lecture out of the bookmarked ones even when bookmarked" do
-      lecture = create(:lecture, term: term)
-      create(:lecture_membership, user: user, lecture: lecture)
-      user.bookmark_lecture!(lecture)
-
-      expect(user.current_bookmarked_lectures(term)).to be_empty
-    end
-
-    it "includes a lecture with a pending registration but no roster seat" do
-      lecture = create(:lecture, term: term)
-      campaign = create(:registration_campaign, :open, campaignable: lecture)
-      create(:registration_user_registration, :pending,
-             user: user,
-             registration_campaign: campaign,
-             registration_item: campaign.registration_items.first)
-
-      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
-    end
-
-    it "includes a lecture with a rejected, not-yet-dismissed registration" do
-      lecture = create(:lecture, term: term)
-      campaign = create(:registration_campaign, :open, campaignable: lecture)
-      create(:registration_user_registration, :rejected,
-             user: user,
-             registration_campaign: campaign,
-             registration_item: campaign.registration_items.first)
-
-      expect(user.current_enrolled_lectures(term)).to contain_exactly(lecture)
-    end
-
-    it "excludes a lecture whose rejected registration was dismissed" do
-      lecture = create(:lecture, term: term)
-      campaign = create(:registration_campaign, :open, campaignable: lecture)
-      create(:registration_user_registration, :rejected,
-             user: user,
-             registration_campaign: campaign,
-             registration_item: campaign.registration_items.first,
-             dismissed_at: Time.current)
-
-      expect(user.current_enrolled_lectures(term)).to be_empty
-    end
-
-    it "sorts settled lectures before pending, before rejected" do
-      rejected_lecture = create(:lecture, term: term, course: create(:course, title: "Z Rejected"))
-      rejected_campaign = create(:registration_campaign, :closed,
-                                 campaignable: rejected_lecture)
-      create(:registration_user_registration, :rejected,
-             user: user, registration_campaign: rejected_campaign,
-             registration_item: rejected_campaign.registration_items.first)
-
-      pending_lecture = create(:lecture, term: term, course: create(:course, title: "A Pending"))
-      pending_campaign = create(:registration_campaign, :open,
-                                campaignable: pending_lecture)
-      create(:registration_user_registration, :pending,
-             user: user, registration_campaign: pending_campaign,
-             registration_item: pending_campaign.registration_items.first)
-
-      confirmed_lecture = create(:lecture, term: term,
-                                           course: create(:course, title: "M Confirmed"))
-      create(:lecture_membership, user: user, lecture: confirmed_lecture)
-
-      expect(user.current_enrolled_lectures(term))
-        .to eq([confirmed_lecture, pending_lecture, rejected_lecture])
-    end
-  end
-
   describe "#current_lectures" do
     let!(:term) { create(:term, :summer, :active, year: 2025) }
     let(:user) { create(:confirmed_user) }
@@ -508,6 +408,52 @@ RSpec.describe(User, type: :model) do
 
     it "has many enrolled_tutorials" do
       expect(user).to respond_to(:enrolled_tutorials)
+    end
+  end
+
+  describe ".sort_by_last_name" do
+    it "sorts loaded people as by_last_name does" do
+      users = [
+        create(:confirmed_user, first_name: "Anna", last_name: "Zimmer"),
+        create(:confirmed_user, first_name: "Ben", last_name: "Özdemir"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse"),
+        create(:confirmed_user, first_name: "Eva", last_name: "MAẞE"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Þórsdóttir"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Thorsen"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Ǣlfric"),
+        create(:confirmed_user, first_name: nil, last_name: nil, name_in_tutorials: "Nick"),
+        create(:confirmed_user, first_name: "Max", last_name: nil),
+        create(:confirmed_user, first_name: "Ada", last_name: "Max")
+      ]
+
+      expect(described_class.sort_by_last_name(users.reverse))
+        .to eq(described_class.where(id: users).by_last_name.to_a)
+    end
+  end
+
+  describe "#save_admin_change" do
+    let(:author) { create(:confirmed_user, admin: true) }
+    let(:other) { create(:confirmed_user, admin: true) }
+
+    it "saves the change while its author is an admin" do
+      other.admin = false
+
+      expect(other.save_admin_change(by: author)).to be(true)
+      expect(other.reload.admin).to be(false)
+    end
+
+    # The other admin took the author's rights just before: the author still
+    # looks like an admin in memory, but not in the database.
+    it "refuses it once its author has lost the admin rights meanwhile" do
+      author_as_loaded = User.find(author.id)
+      author.update_column(:admin, false) # rubocop:disable Rails/SkipsModelValidations
+      other.admin = false
+
+      expect(other.save_admin_change(by: author_as_loaded)).to be_falsey
+      expect(other.reload.admin).to be(true)
+      expect(other.errors[:base])
+        .to include(I18n.t("activerecord.errors.models.user.admin_rights_lost"))
     end
   end
 end

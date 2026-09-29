@@ -35,6 +35,14 @@ RSpec.describe("Registration::Items", type: :request) do
         expect(response.body).to include(I18n.t("registration.item.created"))
       end
 
+      it "adds no group once the process is completed" do
+        completed = create(:registration_campaign, :completed, campaignable: lecture)
+
+        expect do
+          post(registration_campaign_items_path(completed), params: valid_params)
+        end.not_to change(Registration::Item, :count)
+      end
+
       context "with invalid parameters" do
         it "does not create an item" do
           expect do
@@ -470,6 +478,35 @@ RSpec.describe("Registration::Items", type: :request) do
         follow_redirect!
         expect(response.body).to include(I18n.t("roster.errors.cannot_delete_not_empty"))
       end
+    end
+  end
+
+  describe "GET .../items/:id/roster in a first come, first served campaign" do
+    let(:campaign) do
+      create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+    end
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+    end
+
+    before do
+      campaign.update!(status: :open)
+      sign_in editor
+    end
+
+    it "lists the confirmed registrations the row counts, not the rejected ones" do
+      confirmed = create(:confirmed_user, name: "Confirmed Student")
+      rejected = create(:confirmed_user, name: "Rejected Student")
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: confirmed)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign, registration_item: item, user: rejected)
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      expect(response.body).to include(confirmed.email)
+      expect(response.body).not_to include(rejected.email)
     end
   end
 end

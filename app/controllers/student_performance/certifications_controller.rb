@@ -85,9 +85,10 @@ module StudentPerformance
         return
       end
 
-      # When assignments_complete? is false, every proposal is inconclusive;
-      # bulk_accept would only create or update pending certifications.
-      unless @lecture.assignments_complete?
+      # When assignments_complete? is false, every proposal of a rule with a
+      # points threshold is inconclusive; bulk_accept would only create or
+      # update pending certifications.
+      if helpers.assignment_list_holds_back?(@lecture, @rule)
         redirect_to lecture_student_performance_certifications_path(@lecture),
                     alert: I18n.t(
                       "student_performance.certifications.index.assignments_incomplete",
@@ -142,6 +143,14 @@ module StudentPerformance
         return
       end
 
+      # Reconciling defers every decision the rule no longer backs, which a
+      # running registration would read as a refusal.
+      if (titles = @lecture.eligibility_in_use_by)
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.eligibility_in_use", campaigns: titles)
+        return
+      end
+
       # A computed decision is compared with today's proposal rather than with
       # a timestamp, and rewritten only where the two differ. `pending` rows
       # carry no decision; `bulk_accept` writes those.
@@ -188,7 +197,12 @@ module StudentPerformance
     end
 
     def bulk_reset
-      count = @lecture.student_performance_certifications.reset_computed!
+      unless (count = @lecture.reset_computed_certifications!)
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.eligibility_in_use",
+                                  campaigns: @lecture.eligibility_in_use_by)
+        return
+      end
 
       redirect_to lecture_student_performance_certifications_path(@lecture),
                   notice: I18n.t("student_performance.certifications.flash.reset",
@@ -270,6 +284,7 @@ module StudentPerformance
         @passed_count = @certifications.count(&:passed?)
         @failed_count = @certifications.count(&:failed?)
         @computed_count = @certifications.count { |c| c.computed? && !c.pending? }
+        @eligibility_in_use_by = @lecture.eligibility_in_use_by if @computed_count.positive?
         decided_count = @passed_count + @failed_count
         @uncertified_count = @total_students - decided_count
       end
@@ -299,13 +314,12 @@ module StudentPerformance
         end
       end
 
-      # By id after the timestamp, because the records of a lecture are written
-      # in one go and carry the same one: a page cut with OFFSET would then
-      # show a student twice and skip another. Measured, not feared.
+      # By last name, as the participants tab lists them.
       def load_filtered_records
         records = @lecture.student_performance_records
                           .includes(:user)
-                          .order(:created_at, :id)
+                          .joins(:user)
+                          .merge(User.by_last_name)
         @pagy, @filtered_records = pagy(filter_records(filter_by_name(records)))
       end
 

@@ -15,10 +15,7 @@ class AdministrationController < ApplicationController
   end
 
   def exit
-    redirect_to start_path
-  end
-
-  def profile
+    redirect_to root_path
   end
 
   def classification

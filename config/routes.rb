@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   # search routes
 
   get "search/index"
+  get "search/staff", to: "search#staff", as: "search_staff"
 
   # administration routes
 
@@ -59,10 +60,6 @@ Rails.application.routes.draw do
       to: "administration#exit",
       as: "exit_administration"
 
-  get "/administration/profile",
-      to: "administration#profile",
-      as: "elevated_profile"
-
   get "administration/search",
       to: "administration#search",
       as: "administration_search"
@@ -70,6 +67,18 @@ Rails.application.routes.draw do
   get "/administration/classification",
       to: "administration#classification",
       as: "classification"
+
+  # support routes
+
+  namespace :support do
+    resources :users, only: [:index, :edit, :update, :destroy] do
+      member do
+        patch :unlock
+        post :password_reset
+        post :confirmation
+      end
+    end
+  end
 
   # annotation routes
   get "annotations/update_annotations",
@@ -136,7 +145,9 @@ Rails.application.routes.draw do
           patch :apply
         end
       end
+      resource :results, only: [:update, :destroy]
     end
+    resource :talk_results, only: [:update, :destroy], controller: "results"
   end
 
   # chapters routes
@@ -181,8 +192,8 @@ Rails.application.routes.draw do
     end
   end
 
-  # feedback routes
-  resources :feedbacks, only: [:new, :create]
+  # support request routes
+  resources :support_requests, only: [:create]
 
   # items routes
 
@@ -362,6 +373,9 @@ Rails.application.routes.draw do
 
   resources :lectures, except: [:index, :show] do
     get "roster", to: "roster/maintenance#index"
+    resources :tutor_appointments, only: [:create, :destroy], param: :user_id
+    resources :editors, only: :create, controller: "lecture_editors"
+    get "cohort_participants", to: "cohort_participants#index"
     get "roster/participants", to: "roster/maintenance#participants"
 
     member do
@@ -387,7 +401,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resource :rules, only: [:edit, :update] do
+      resource :rules, only: [:edit, :update, :destroy] do
         patch :preview, on: :collection
       end
 
@@ -634,6 +648,10 @@ Rails.application.routes.draw do
   post "notifications/destroy_lecture_notifications",
        to: "notifications#destroy_lecture_notifications",
        as: "destroy_lecture_notifications"
+
+  post "notifications/destroy_lecture_media_notifications",
+       to: "notifications#destroy_lecture_media_notifications",
+       as: "destroy_lecture_media_notifications"
 
   post "notifications/destroy_news_notifications",
        to: "notifications#destroy_news_notifications",
@@ -1140,17 +1158,9 @@ Rails.application.routes.draw do
                                     unlocks: "unlocks" }
   # users routes
 
-  get "users/elevate",
-      to: "users#elevate",
-      as: "elevate_user"
-
   get "users/teacher/:teacher_id",
       to: "users#teacher",
       as: "teacher"
-
-  get "users/list_generic_users",
-      to: "users#list_generic_users",
-      as: "list_generic_users"
 
   get "captcha_challenge",
       to: "captcha_challenges#show",
@@ -1167,8 +1177,6 @@ Rails.application.routes.draw do
   get "users/:id/image/:variant",
       to: "users#image",
       as: "image_user"
-
-  resources :users, only: [:index, :edit, :update, :destroy]
 
   post "vouchers/verify",
        to: "vouchers#verify",
@@ -1244,6 +1252,10 @@ Rails.application.routes.draw do
         to: "assessment/achievement_values#refresh",
         as: "refresh_achievement_value_participation"
 
+  patch "participations/:participation_id/result_seen",
+        to: "assessment/result_notices#update",
+        as: "result_seen_participation"
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not
@@ -1279,9 +1291,11 @@ Rails.application.routes.draw do
       to: "main#comments",
       as: "comments"
 
+  # Old dashboard URL, redirected to root so existing bookmarks still work.
   get "main/start",
-      to: "main#start",
-      as: "start"
+      to: redirect { |_params, req|
+        req.query_string.present? ? "/?#{req.query_string}" : "/"
+      }
 
   get "internal/upload-authorizations/:uploader",
       to: "internal/upload_authorizations#show",
