@@ -1,15 +1,18 @@
 <%= t('quiz.obtained_certificate',
       code: certificate.code) %>
-<i class="clipboardpopup far fa-copy clickable
-          text-secondary clipboard-btn ms-3
-          clipboard-button"
-   data-clipboard-text="<%= certificate.code %>"
-   data-bs-toggle="tooltip"
-   data-id="<%= certificate.id %>"
-   title="<%= t('buttons.copy_to_clipboard') %>">
-  <span class="clipboardpopuptext token-clipboard-popup"
-        data-id="<%= certificate.id %>">
-    <%= t('basics.code_copied_to_clipboard') %>
-  </span>
-</i>
+<span class="d-inline-flex ms-2"
+      data-controller="clipboard"
+      data-clipboard-text-value="<%= certificate.code %>"
+      data-clipboard-resting-icon-value="bi-clipboard"
+      data-clipboard-confirmation-value="<%= t('basics.code_copied_to_clipboard') %>"
+      data-clipboard-failure-value="<%= t('basics.code_copy_failed') %>">
+  <button type="button"
+          class="btn icon-button"
+          data-action="clipboard#copy"
+          title="<%= t('buttons.copy_to_clipboard') %>"
+          aria-label="<%= t('buttons.copy_to_clipboard') %>">
+    <i class="bi bi-clipboard" aria-hidden="true" data-clipboard-target="icon"></i>
+  </button>
+  <span class="visually-hidden" role="status" data-clipboard-target="status"></span>
+</span>
 <%= helpdesk(t('quiz.certificate_info_on_use'), false) %>

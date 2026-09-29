@@ -65,7 +65,7 @@
 
     <% if @rule %>
       <div class="bg-light rounded border mt-3 mb-4 py-2 px-3">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex flex-wrap align-items-center column-gap-3">
           <div class="mb-0">
             <span class="text-muted small border-end pe-2 me-2">
               <%= t("student_performance.certifications.index.rule_info") %>
@@ -117,12 +117,12 @@
             <% end %>
           </div>
 
-          <div class="d-flex gap-2 ms-3">
+          <div class="d-flex">
             <%= link_to edit_lecture_student_performance_rules_path(
                          @lecture,
                          source_frame: "performance-certifications-frame"
                        ),
-                       class: "btn btn-outline-primary btn-sm text-nowrap",
+                       class: "btn btn-link btn-sm p-0 text-nowrap text-decoration-none",
                        data: { turbo_frame: "rule-editor-frame" } do %>
               <i class="bi bi-pencil me-1"></i>
               <%= t("student_performance.rules.show.edit_button") %>
@@ -140,8 +140,8 @@
 
             <%= link_to t("student_performance.certifications.index.list_open_link",
                           tab: t("assessment.tabs.assignments")),
-                        assessment_assessments_path(lecture_id: @lecture.id,
-                                                    tab: "assignments"),
+                        edit_lecture_path(@lecture, tab: "assessments",
+                                                    assessment_tab: "assignments"),
                         class: "ms-2",
                         data: { turbo_frame: "_top" } %>
           </div>
@@ -190,7 +190,15 @@
           <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
                         class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
-                        form_class: "d-inline" do %>
+                        form: {
+                          class: "d-inline",
+                          data: {
+                            turbo_confirm: t(
+                              "student_performance.certifications.index.reevaluate_confirm",
+                              count: @disagreeing_user_ids.size
+                            )
+                          }
+                        } do %>
             <%= t("student_performance.certifications.index.reevaluate") %>
             <i class="bi bi-arrow-right-short"></i>
           <% end %>
@@ -207,7 +215,15 @@
           <%= button_to bulk_confirm_manual_lecture_student_performance_certifications_path(@lecture),
                         method: :post,
                         class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
-                        form_class: "d-inline" do %>
+                        form: {
+                          class: "d-inline",
+                          data: {
+                            turbo_confirm: t(
+                              "student_performance.certifications.index.confirm_manual_confirm",
+                              count: @stale_manual_user_ids.size
+                            )
+                          }
+                        } do %>
             <%= t("student_performance.certifications.index.confirm_manual") %>
             <i class="bi bi-arrow-right-short"></i>
           <% end %>
@@ -294,14 +310,17 @@
     </p>
   <% else %>
     <div class="table-responsive">
-      <table class="table table-sm table-hover align-middle certifications-table">
+      <table
+        class="table table-sm table-hover align-middle certifications-table"
+        style="--achievement-width: <%= [7, 14.0 / [@achievements.size, 1].max].min.round(2) %>%"
+      >
         <thead class="table-light">
           <tr>
-            <th scope="col">
+            <th scope="col" class="student-column">
               <%= t("student_performance.records.columns.student") %>
             </th>
 
-            <th scope="col" class="text-end">
+            <th scope="col" class="text-end share-column">
               <% if @rule&.min_points_absolute.present? %>
                 <%= t("student_performance.records.columns.points") %>
               <% else %>
@@ -314,7 +333,7 @@
             </th>
 
             <% @achievements.each do |achievement| %>
-              <th scope="col" class="text-center small px-3">
+              <th scope="col" class="text-center small achievement-column">
                 <abbr title="<%= achievement.title %>">
                   <%= @achievement_headings[achievement.id] %>
                 </abbr>
@@ -323,7 +342,7 @@
 
             <th
               scope="col"
-              class="text-start <%= 'ps-4' if @achievements.empty? %>"
+              class="text-start decision-column <%= 'ps-4' if @achievements.empty? %>"
             >
               <%= t("student_performance.certifications.columns.certification") %>
             </th>
@@ -528,22 +547,26 @@
               <td class="text-end">
                 <% if decided %>
                   <div data-certification-inline-target="display">
-                    <button
-                      type="button"
-                      class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
-                      data-action="certification-inline#toggleEdit"
-                      title="<%= t('student_performance.certifications.index.edit_certification') %>"
-                      aria-label="<%= t('student_performance.certifications.index.edit_certification') %>"
-                    >
-                      <i class="bi bi-gear"></i>
-                    </button>
+                    <div class="d-flex align-items-center justify-content-end gap-1">
+                      <%= render "shared/copy_email_button", email: record.user.email %>
+
+                      <button
+                        type="button"
+                        class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
+                        data-action="certification-inline#toggleEdit"
+                        title="<%= t('student_performance.certifications.index.edit_certification') %>"
+                        aria-label="<%= t('student_performance.certifications.index.edit_certification') %>"
+                      >
+                        <i class="bi bi-gear"></i>
+                      </button>
+                    </div>
                   </div>
                   <div data-certification-inline-target="edit" class="d-none">
                     <%#
-                      Not a tick and a cross: those are "admit" and "refuse"
-                      two rows down. Bare icons as in the marking tables: save,
-                      wipe the decision (filled and amber - it changes things,
-                      backing out does not), and back out last.
+                      Bare icons as in the marking tables: save, reset (filled
+                      and amber: it changes data, cancel does not), cancel
+                      last. Cancel is a grey cross without the outline of
+                      "refuse" in a proposal row.
                     %>
 
                     <div class="d-flex align-items-center justify-content-end">
@@ -584,12 +607,12 @@
 
                       <button
                         type="button"
-                        class="<%= row_action_classes %>"
+                        class="<%= row_action_classes %> text-secondary"
                         data-action="certification-inline#cancel"
                         title="<%= t('student_performance.certifications.index.cancel') %>"
                         aria-label="<%= t('student_performance.certifications.index.cancel') %>"
                       >
-                        <i class="bi bi-arrow-return-left"></i>
+                        <i class="bi bi-x-lg"></i>
                       </button>
                     </div>
 
@@ -631,7 +654,9 @@
                       "btn-success" : "btn-outline-success"
                     fail_btn = proposal&.proposed_status == :failed ?
                       "btn-danger" : "btn-outline-danger" %>
-                  <div class="d-flex gap-1 justify-content-end">
+                  <div class="d-flex align-items-center gap-1 justify-content-end">
+                    <%= render "shared/copy_email_button", email: record.user.email %>
+
                     <%= button_to(
                           lecture_student_performance_certifications_path(
                             @lecture

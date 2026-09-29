@@ -69,6 +69,9 @@ test.describe("from a mark to a decision", () => {
     // pinned from both sides.
     await expect(decision).toContainText("Eligible");
     await expect(decision).not.toContainText("Not Eligible");
+    await expect(decision.getByRole("button", {
+      name: `Copy email address: ${member.email}`,
+    })).toBeVisible();
   });
 
   test("moves the recorded decisions when the rule is tightened", async ({
@@ -127,8 +130,10 @@ test.describe("from a mark to a decision", () => {
 
     await expect(teacher.page.getByText(/Eligibility rule updated/))
       .toBeVisible();
+    const confirmation = teacher.page.waitForEvent("dialog");
     await teacher.page
       .getByRole("button", { name: "Reconcile with rule" }).click();
+    expect((await confirmation).message()).toContain("to what the rule gives today");
 
     // the row says "Not Eligible" either way — once as what the rule says
     // today, once as the decision. What only reconciling does is make them one.

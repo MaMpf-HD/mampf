@@ -9,7 +9,7 @@ class RosterSidePanelComponent < ViewComponent::Base
                  allocated: false, preference_ranks: {})
     super()
     @registerable = registerable
-    @students = students.sort_by { |student| last_name_key(student) }
+    @students = User.sort_by_last_name(students)
     @read_only = read_only
     @panel_kind = panel_kind&.to_sym
     @campaign = campaign
@@ -230,22 +230,6 @@ class RosterSidePanelComponent < ViewComponent::Base
     when :unassigned
       t("roster.candidates.completed_description")
     end
-  end
-
-  # Someone without a last name sorts by the name the panel shows for them.
-  # Rosters::ParticipantQuery::ORDER sorts the participants tab the same way.
-  def last_name_key(student)
-    names = if student.last_name.present?
-      [student.last_name, student.first_name.to_s]
-    else
-      [student_display_name(student), ""]
-    end
-    names.map { |name| fold_accents(name).downcase } + [student.id.to_i]
-  end
-
-  # Drops the accents and keeps every other letter, as unaccent does in SQL.
-  def fold_accents(name)
-    name.unicode_normalize(:nfkd).gsub(/\p{Mn}/, "")
   end
 
   def student_display_name(student)

@@ -3888,9 +3888,11 @@ de:
     as: als
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
-    emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    emails_copied_to_clipboard: Die E-Mail-Adressen wurden in die Zwischenablage kopiert.
+    emails_copy_failed: Die E-Mail-Adressen konnten nicht kopiert werden.
     email_copied_to_clipboard: Die E-Mail-Adresse wurde in die Zwischenablage kopiert.
     email_copy_failed: Die E-Mail-Adresse konnte nicht kopiert werden.
+    code_copy_failed: Der Code konnte nicht kopiert werden.
     lecture_search: Veranstaltungssuche
     course_search: Modulsuche
     immediately: sofort
@@ -4043,8 +4045,8 @@ de:
     open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
     join: 'Beitreten'
     copy_to_clipboard: 'in die Zwischenablage kopieren'
-    copy_email_to_clipboard: 'E-Mail-Adressen in die Zwischenablage kopieren'
     copy_email_address: 'E-Mail-Adresse kopieren'
+    copy_email_addresses: 'E-Mail-Adressen kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'

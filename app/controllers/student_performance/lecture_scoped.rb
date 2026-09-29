@@ -29,17 +29,15 @@ module StudentPerformance
         @due_points ||= DuePoints.new(lecture: @lecture)
       end
 
-      # The one field staff reach for when they are looking for a person, on
-      # every table that lists them. Matched against both names and the
-      # address, so the search works with whatever the person is known by.
+      # The one field staff reach for when looking for a person. Matched
+      # against the name the row shows only, so a hit never comes from a
+      # display name or an address the row does not show.
       def filter_by_name(scope)
         query = params[:q].presence
         return scope unless query
 
         scope.joins(:user)
-             .where("users.name ILIKE :q OR users.name_in_tutorials ILIKE :q " \
-                    "OR users.email ILIKE :q",
-                    q: "%#{query}%")
+             .where("#{User::SHOWN_NAME_SQL} ILIKE :q", q: "%#{query}%")
       end
 
       def evaluator_for(rule)

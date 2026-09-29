@@ -1,5 +1,9 @@
 en:
   assessment:
+    exercise_medium_hint:
+      empty: "No exercise yet."
+      text_html: "The sheet itself is an exercise medium: create it under %{link} and pick it here. Publishing an exercise can also set up its homework."
+      link: "Content → Media"
     tabs:
       assessments: "Assessments"
       assignments: "Assignments & Tests"

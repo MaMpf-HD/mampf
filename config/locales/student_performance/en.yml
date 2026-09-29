@@ -216,7 +216,13 @@ en:
           one: "%{count} manual decision: rule or performance data changed since."
           other: "%{count} manual decisions: rule or performance data changed since."
         reevaluate: "Reconcile with rule"
+        reevaluate_confirm:
+          one: "Sets 1 decision to what the rule gives today. Continue?"
+          other: "Sets %{count} decisions to what the rule gives today. Continue?"
         confirm_manual: "Confirm individual decisions"
+        confirm_manual_confirm:
+          one: "Keeps 1 manual decision as it is, although the rule or the performance data changed since. Continue?"
+          other: "Keeps %{count} manual decisions as they are, although the rule or the performance data changed since. Continue?"
       status:
         passed: "Eligible"
         failed: "Not Eligible"

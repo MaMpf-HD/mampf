@@ -97,7 +97,7 @@
       <% if campaign.discardable? %>
         <span class="dissolved-campaign-pill-sep">&middot;</span>
         <%= link_to registration_campaign_path(campaign),
-                    class: "text-reset text-decoration-none",
+                    class: "btn icon-button icon-button--danger",
                     title: campaign_discard_title(campaign),
                     aria: { label: campaign_discard_title(campaign) },
                     data: {
@@ -105,7 +105,7 @@
                       turbo_confirm: campaign_discard_confirmation(campaign),
                       turbo_stream: true
                     } do %>
-          <i class="bi bi-trash text-danger"></i>
+          <i class="bi bi-trash" aria-hidden="true"></i>
         <% end %>
       <% end %>
     </span>

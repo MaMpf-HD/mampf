@@ -58,6 +58,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           expect(response.body).to include(CGI.escapeHTML(hint))
         end
 
+        it "links to the assignments tab of the lecture's edit page" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          link = Nokogiri::HTML(response.body).at_css(
+            "a[href='#{edit_lecture_path(lecture, tab: "assessments",
+                                                  assessment_tab: "assignments")}']"
+          )
+          expect(link).to be_present
+        end
+
         # Nothing could be accepted; the rule card says why and where to
         # change it, so no button waits greyed out for that day.
         it "offers no sweep" do
@@ -281,7 +291,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               tr.text.include?(user_a.tutorial_name)
             end
 
-            expect(row.css("td")[-3].text.strip).to be_empty
+            expect(row.at_css("td.hint-column").text.strip).to be_empty
           end
 
           it "does not call a deferred row a contradiction" do
@@ -371,6 +381,22 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture, q: "hopper")
 
           expect(listed_names).to eq(["Grace Hopper"])
+        end
+
+        it "lists the students by last name" do
+          ada.update!(first_name: "Ada", last_name: "Lovelace")
+          grace.update!(first_name: "Grace", last_name: "Hopper")
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(listed_names).to eq(["Grace Hopper", "Ada Lovelace"])
+        end
+
+        # The address is only in the copy button's tooltip.
+        it "does not match an address the table does not show" do
+          get lecture_student_performance_certifications_path(lecture, q: "cobol")
+
+          expect(listed_names).to be_empty
         end
 
         it "searches within the status that is filtered for" do

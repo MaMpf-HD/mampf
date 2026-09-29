@@ -3657,9 +3657,11 @@ en:
     as: as
     as_file_type: as %{type} file
     code_copied_to_clipboard: Code has been copied to the clipboard.
-    emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    emails_copied_to_clipboard: The email addresses have been copied to the clipboard.
+    emails_copy_failed: The email addresses could not be copied.
     email_copied_to_clipboard: The email address has been copied to the clipboard.
     email_copy_failed: The email address could not be copied.
+    code_copy_failed: The code could not be copied.
     lecture_search: Lecture Search
     course_search: Course Search
     immediately: immediately
@@ -3814,8 +3816,8 @@ en:
     open_comments: 'Reopen all closed discussions'
     join: 'Join'
     copy_to_clipboard: 'Copy to Clipboard'
-    copy_email_to_clipboard: 'Copy mail adresses to Clipboard'
     copy_email_address: 'Copy email address'
+    copy_email_addresses: 'Copy email addresses'
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successful'
