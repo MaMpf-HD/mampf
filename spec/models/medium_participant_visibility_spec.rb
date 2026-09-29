@@ -69,6 +69,20 @@ RSpec.describe(Medium) do
     expect(lecture_medium.visible_for_user?(student)).to be(true)
   end
 
+  # Rows saved before the passphrase was normalized hold "" for none, which a
+  # query for a nil passphrase misses until the migration clears them.
+  it "is shown to a registered student once an older blank passphrase is cleared" do
+    require Rails.root.join("db/migrate/20260929000005_nullify_blank_lecture_passphrases")
+    lecture.class.connection.execute("UPDATE lectures SET passphrase = '' WHERE id = #{lecture.id}")
+    register
+    expect(lecture_medium.visible_for_user?(student)).to be(false)
+
+    ActiveRecord::Migration.suppress_messages { NullifyBlankLecturePassphrases.new.up }
+
+    expect(lecture.reload.passphrase).to be_nil
+    expect(lecture_medium.reload.visible_for_user?(student)).to be(true)
+  end
+
   it "leaves media for registered users open to every student" do
     lecture_medium.update!(released: "users")
 
