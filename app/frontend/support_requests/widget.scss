@@ -46,6 +46,10 @@
   right: 0;
   bottom: calc(100% + 0.5rem);
   width: min(22rem, calc(100vw - 2rem));
+  // No higher than the room above the button, so that a phone held sideways
+  // can still scroll to its top.
+  max-height: calc(100dvh - 5.25rem);
+  overflow-y: auto;
   transform-origin: bottom right;
 
   @media (prefers-reduced-motion: no-preference) {
