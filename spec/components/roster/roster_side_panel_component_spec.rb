@@ -289,6 +289,17 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       expect(panel.students.map(&:id)).to eq([2, 1])
     end
 
+    # The participants tab sorts in SQL, where unaccent spells ß out as ss.
+    it "sorts ß as ss, like the participants tab" do
+      students = [
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students.reverse)
+
+      expect(panel.students).to eq(User.where(id: students).by_last_name.to_a)
+    end
+
     it "keeps letters of other scripts apart" do
       students = [
         build(:confirmed_user, first_name: "Eva", last_name: "Ωι", id: 1),
