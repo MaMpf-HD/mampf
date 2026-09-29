@@ -233,21 +233,17 @@
     <% if @rule.persisted? && @rule.active_in_database %>
       <div class="border-top mt-3 pt-3 text-end">
         <% if @eligibility_in_use_by %>
-          <span
-            class="d-inline-block"
-            tabindex="0"
-            title="<%= t("student_performance.eligibility_in_use",
-                         campaigns: @eligibility_in_use_by) %>"
-            data-bs-toggle="tooltip"
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            aria-describedby="rule-remove-blocked-note"
+            disabled
           >
-            <button
-              type="button"
-              class="btn btn-outline-danger btn-sm"
-              disabled
-            >
-              <%= t("student_performance.rules.edit.remove") %>
-            </button>
-          </span>
+            <%= t("student_performance.rules.edit.remove") %>
+          </button>
+          <p id="rule-remove-blocked-note" class="small text-muted mt-1 mb-0">
+            <%= t("student_performance.eligibility_in_use", campaigns: @eligibility_in_use_by) %>
+          </p>
         <% else %>
           <%= button_to t("student_performance.rules.edit.remove"),
                       lecture_student_performance_rules_path(@lecture),

@@ -641,6 +641,14 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
+      # Nothing a manual decision rests on changes when the rule goes.
+      it "leaves the manual decisions unflagged" do
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(StudentPerformance::Certification.where(lecture: lecture).stale_manual)
+          .to be_empty
+      end
+
       it "refuses while an open registration asks for the decisions" do
         lecture.update!(uses_exam_eligibility: true)
         campaign = FactoryBot.create(:registration_campaign, :with_items)

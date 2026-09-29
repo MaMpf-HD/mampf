@@ -143,6 +143,14 @@ module StudentPerformance
         return
       end
 
+      # Reconciling defers every decision the rule no longer backs, which a
+      # running registration would read as a refusal.
+      if (titles = @lecture.eligibility_in_use_by)
+        redirect_to lecture_student_performance_certifications_path(@lecture),
+                    alert: I18n.t("student_performance.eligibility_in_use", campaigns: titles)
+        return
+      end
+
       # A computed decision is compared with today's proposal rather than with
       # a timestamp, and rewritten only where the two differ. `pending` rows
       # carry no decision; `bulk_accept` writes those.
@@ -189,13 +197,12 @@ module StudentPerformance
     end
 
     def bulk_reset
-      if (titles = @lecture.eligibility_in_use_by)
+      unless (count = @lecture.reset_computed_certifications!)
         redirect_to lecture_student_performance_certifications_path(@lecture),
-                    alert: I18n.t("student_performance.eligibility_in_use", campaigns: titles)
+                    alert: I18n.t("student_performance.eligibility_in_use",
+                                  campaigns: @lecture.eligibility_in_use_by)
         return
       end
-
-      count = @lecture.student_performance_certifications.reset_computed!
 
       redirect_to lecture_student_performance_certifications_path(@lecture),
                   notice: I18n.t("student_performance.certifications.flash.reset",

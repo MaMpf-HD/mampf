@@ -32,17 +32,19 @@ module Assessment
       @lecture.update!(assignments_complete: params[:complete])
       # Without the change check, a resubmitted form would delete a second
       # time — after the dialog had already been answered with "keep".
+      # A rule without a points threshold proposes the same with the list open,
+      # so its dialog offers no reset and none is taken.
       wanted = params[:reset_certifications] == "1" &&
                @lecture.saved_change_to_assignments_complete_at? &&
-               !@lecture.assignments_complete?
-      blocked_by = @lecture.eligibility_in_use_by if wanted
-      reset = wanted && blocked_by.nil?
-      count = reset ? @lecture.student_performance_certifications.reset_computed! : 0
+               !@lecture.assignments_complete? &&
+               @lecture.active_performance_rule&.points_threshold?
+      count = @lecture.reset_computed_certifications! if wanted
 
-      flash_opts = if reset
+      flash_opts = if count
         { notice: I18n.t("student_performance.certifications.flash.reset", count: count) }
-      elsif blocked_by
-        { alert: I18n.t("student_performance.eligibility_in_use", campaigns: blocked_by) }
+      elsif wanted
+        { alert: I18n.t("student_performance.eligibility_in_use",
+                        campaigns: @lecture.eligibility_in_use_by) }
       else
         {}
       end

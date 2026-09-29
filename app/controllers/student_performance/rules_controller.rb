@@ -46,12 +46,6 @@ module StudentPerformance
     # backed; manual ones stay. #update activates the rule again.
     def destroy
       @source_frame = params[:source_frame].presence
-      if (titles = @lecture.eligibility_in_use_by)
-        redirect_to source_path,
-                    alert: I18n.t("student_performance.eligibility_in_use", campaigns: titles)
-        return
-      end
-
       rule = StudentPerformance::Rule.find_by(lecture: @lecture, active: true)
       unless rule
         redirect_to source_path, alert: I18n.t("student_performance.evaluator.no_rule")
@@ -59,12 +53,20 @@ module StudentPerformance
       end
 
       count = StudentPerformance::Rule.transaction do
-        rule.update!(active: false)
-        @lecture.student_performance_certifications.reset_computed!
+        # Leaves updated_at alone: every manual decision made before it would
+        # otherwise count as stale.
+        rule.update_column(:active, false) # rubocop:disable Rails/SkipsModelValidations
+        @lecture.reset_computed_certifications! || raise(ActiveRecord::Rollback)
       end
 
-      redirect_to source_path,
-                  notice: I18n.t("student_performance.rules.flash.removed", count: count)
+      if count
+        redirect_to source_path,
+                    notice: I18n.t("student_performance.rules.flash.removed", count: count)
+      else
+        redirect_to source_path,
+                    alert: I18n.t("student_performance.eligibility_in_use",
+                                  campaigns: @lecture.eligibility_in_use_by)
+      end
     end
 
     def preview

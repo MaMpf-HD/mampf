@@ -35,24 +35,17 @@
 
       <%# A rare correction, not a second main action: a quiet link. %>
       <% if @computed_count > 0 && @eligibility_in_use_by %>
-        <span
-          class="d-inline-block"
-          tabindex="0"
-          title="<%= t("student_performance.eligibility_in_use",
-                       campaigns: @eligibility_in_use_by) %>"
-          data-bs-toggle="tooltip"
+        <button
+          type="button"
+          class="btn btn-sm btn-link text-secondary text-decoration-none"
+          aria-describedby="eligibility-in-use-note"
+          disabled
         >
-          <button
-            type="button"
-            class="btn btn-sm btn-link text-secondary text-decoration-none"
-            disabled
-          >
-            <i class="bi bi-arrow-counterclockwise me-1"></i>
+          <i class="bi bi-arrow-counterclockwise me-1"></i>
 
-            <%= t("student_performance.certifications.index.bulk_reset",
-                  count: @computed_count) %>
-          </button>
-        </span>
+          <%= t("student_performance.certifications.index.bulk_reset",
+                count: @computed_count) %>
+        </button>
       <% elsif @computed_count > 0 %>
         <%= button_to bulk_reset_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
@@ -73,6 +66,13 @@
       <% end %>
     </div>
   </div>
+
+  <%# Said on the page, not in a tooltip, so that touch and keyboard get it too. %>
+  <% if @computed_count > 0 && @eligibility_in_use_by %>
+    <p id="eligibility-in-use-note" class="small text-muted text-end mb-2">
+      <%= t("student_performance.eligibility_in_use", campaigns: @eligibility_in_use_by) %>
+    </p>
+  <% end %>
 
   <%= turbo_frame_tag "rule-editor-frame" do %>
     <%#
@@ -215,20 +215,31 @@
           <%= t("student_performance.certifications.index.disagreeing_warning",
                 count: @disagreeing_user_ids.size) %>
 
-          <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
-                        method: :post,
-                        class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
-                        form: {
-                          class: "d-inline",
-                          data: {
-                            turbo_confirm: t(
-                              "student_performance.certifications.index.reevaluate_confirm",
-                              count: @disagreeing_user_ids.size
-                            )
-                          }
-                        } do %>
-            <%= t("student_performance.certifications.index.reevaluate") %>
-            <i class="bi bi-arrow-right-short"></i>
+          <% if @eligibility_in_use_by %>
+            <button
+              type="button"
+              class="btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap"
+              aria-describedby="eligibility-in-use-note"
+              disabled
+            >
+              <%= t("student_performance.certifications.index.reevaluate") %>
+            </button>
+          <% else %>
+            <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+                          method: :post,
+                          class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
+                          form: {
+                            class: "d-inline",
+                            data: {
+                              turbo_confirm: t(
+                                "student_performance.certifications.index.reevaluate_confirm",
+                                count: @disagreeing_user_ids.size
+                              )
+                            }
+                          } do %>
+              <%= t("student_performance.certifications.index.reevaluate") %>
+              <i class="bi bi-arrow-right-short"></i>
+            <% end %>
           <% end %>
         </div>
       <% end %>

@@ -482,6 +482,19 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           expect(StudentPerformance::Certification.exists?(manual.id)).to be(true)
         end
 
+        # Such a rule proposes the same with the list open, so no computed
+        # decision contradicts it and the dialog offers no reset.
+        it "does not drop anything for a rule without a points threshold" do
+          rule.update!(threshold_mode: :none, min_percentage: nil)
+
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "0", reset_certifications: "1"
+          )
+
+          expect(lecture.reload.assignments_complete?).to be(false)
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
+        end
+
         # The dialog is shown while the list is closed. Sending its answer a
         # second time must not undo a "keep" from the first one.
         it "does not drop anything when the list is open already" do

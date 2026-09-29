@@ -1123,6 +1123,15 @@ class Lecture < ApplicationRecord
     blocking_campaign_titles(policies)
   end
 
+  # Drops the computed certifications and returns how many decisions went, or
+  # returns nil and drops nothing while eligibility_in_use_by names a
+  # registration that still reads them.
+  def reset_computed_certifications!
+    return if eligibility_in_use_by
+
+    student_performance_certifications.reset_computed!
+  end
+
   private
 
     def scheduled_release(medium)

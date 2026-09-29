@@ -1753,6 +1753,42 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response).to redirect_to(new_user_session_path)
       end
     end
+
+    context "as an editor while a running registration asks for the decisions" do
+      before { sign_in editor }
+
+      let!(:cert_b) do
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture, user: user_b, rule: rule)
+      end
+      let!(:policy) do
+        lecture.update!(uses_exam_eligibility: true)
+        FactoryBot.create(:registration_policy, :student_performance,
+                          config: { "lecture_ids" => [lecture.id.to_s] })
+      end
+
+      it "rewrites nothing and names the registration" do
+        post bulk_reevaluate_lecture_student_performance_certifications_path(lecture)
+
+        expect(cert_b.reload.status).to eq("passed")
+        expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
+      it "offers the reconcile disabled and says why on the page" do
+        get lecture_student_performance_certifications_path(lecture)
+
+        label = I18n.t("student_performance.certifications.index.reevaluate")
+        reconcile = Nokogiri::HTML(response.body).css("button").find do |button|
+          button.text.strip == label
+        end
+        expect(reconcile["disabled"]).not_to be_nil
+        expect(response.body).not_to include(
+          bulk_reevaluate_lecture_student_performance_certifications_path(lecture)
+        )
+        note = Nokogiri::HTML(response.body).at_css("##{reconcile["aria-describedby"]}")
+        expect(note.text).to include(policy.registration_campaign.campaignable.title)
+      end
+    end
   end
 
   describe "POST /lectures/:lecture_id/performance/certifications/bulk_confirm_manual" do
