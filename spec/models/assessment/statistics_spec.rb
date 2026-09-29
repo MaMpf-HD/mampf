@@ -90,6 +90,24 @@ RSpec.describe(Assessment::Statistics) do
       expect(rows.first.figures.mean).to eq(7.0)
     end
 
+    # A grade entered by hand makes a row reviewed with part of its points;
+    # its points count, as they do in the grading tab's histogram.
+    it "counts a reviewed row with a grade by hand and only some of its points" do
+      partial = create(:assessment_participation, assessment: assessment,
+                                                  submitted_at: 2.days.ago)
+      create(:assessment_task_point, task: first_task, assessment_participation: partial,
+                                     points: 4)
+      partial.reload.update!(status: :reviewed, graded_at: 1.day.ago)
+      mark(2, 6)
+
+      first, second = statistics.task_rows
+
+      expect(statistics.counts[:marked]).to eq(2)
+      expect(first.figures).to have_attributes(number: 2, mean: 3.0)
+      expect(second.figures).to have_attributes(number: 1, mean: 6.0)
+      expect(statistics.overall_row.figures).to have_attributes(number: 2, mean: 6.0)
+    end
+
     it "sums everybody up for the groups to be compared with" do
       program = create(:program, degree: "msc")
       mark(4, 6, program: program)
@@ -147,6 +165,26 @@ RSpec.describe(Assessment::Statistics) do
       expect(statistics.grades).to have_attributes(number: 2, pass_share: 0.5)
       expect(statistics.grade_distribution.to_h[5.0]).to eq(1)
       expect(statistics.counts[:absent]).to eq(1)
+    end
+
+    # The groups and the foot row sum up grades on their own path.
+    it "leaves the absent out of the grades of every group and of everybody" do
+      program = create(:program, degree: "msc")
+      tutorial = create(:tutorial, lecture: assessment.lecture, title: "Tuesday")
+      [[:reviewed, 2.0], [:reviewed, 5.0], [:absent, 5.0]].each do |status, grade|
+        create(:assessment_participation, assessment: assessment, status: status,
+                                          grade_numeric: grade, tutorial: tutorial,
+                                          user: create(:confirmed_user, program: program))
+      end
+
+      statistics = described_class.new(assessment)
+      rows = [statistics.program_rows.first, statistics.tutorial_rows.first,
+              statistics.overall_row]
+
+      expect(rows.map(&:people)).to eq([3, 3, 3])
+      rows.each do |row|
+        expect(row.grades).to have_attributes(number: 2, mean: 3.5, pass_share: 0.5)
+      end
     end
   end
 end

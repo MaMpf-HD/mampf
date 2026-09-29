@@ -37,7 +37,13 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
       .to start_with("10", "6", "6")
     programs = tables["By program"].css("tbody th").map { |cell| cell.text.squish }
     expect(programs).to eq([program.name_with_subject, "Other or none given"])
-    expect(tables["By program"].at_css("tfoot tr").text.squish).to start_with("Everybody 2 2 6")
+    expect(tables["By program"].at_css("tfoot tr").text.squish).to eq("Everybody 2 2 6 6 60%")
+    tables.each_value do |section|
+      next unless (table = section.at_css("table"))
+
+      expect(table["aria-labelledby"]).to eq(section.at_css("h6")["id"])
+      expect(table["aria-labelledby"]).to include(assessment.id.to_s)
+    end
   end
 
   it "names absent and exempt people only when there are some" do
@@ -54,15 +60,20 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
     let(:assessment) { create(:assessment, :for_exam, :with_points) }
 
     it "adds the mean grade, how many passed and the spread of the grades" do
+      program = create(:program, degree: "msc")
       [1.3, 5.0].each do |value|
         create(:assessment_participation, :reviewed, assessment: assessment,
-                                                     grade_numeric: value)
+                                                     grade_numeric: value, points_total: nil,
+                                                     user: create(:confirmed_user,
+                                                                  program: program))
       end
 
       page = render_tab
 
       expect(page.text.squish).to include("Mean grade 3.2", "Passed 50%")
       expect(page.text).not_to include("Nobody has been reviewed yet.")
+      # No points, so nothing to share out; the dash says so as elsewhere.
+      expect(page.at_css("tfoot tr").text.squish).to eq("Everybody 2 0 — — — 3.2 50%")
       grades = page.css("section").find { |section| section.at_css("h6")&.text&.squish == "Grades" }
       expect(grades.css("tbody th").map { |cell| cell.text.squish }).to include("1.0", "4.0", "5.0")
     end

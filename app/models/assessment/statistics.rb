@@ -1,9 +1,7 @@
 module Assessment
-  # Breaks one assessment's points down by task, program and tutorial, and
-  # sums up its grades; the overall spread is DistributionAnalysisComponent's.
-  # Points count only reviewed rows, so that a sheet half way through
-  # marking does not pull the averages down. Grades leave out the absent,
-  # whose 5.0 the grade scheme wrote: they are counted as absent instead.
+  # Sums up tasks, programs and tutorials for the statistics tab. Points come
+  # from reviewed rows, as in the grading tab's histogram; grades leave out the
+  # absent, whose 5.0 the grade scheme writes without scored work.
   class Statistics
     Figures = Struct.new(:number, :mean, :median, keyword_init: true)
     TaskRow = Struct.new(:task, :figures, :full_share, :zero_share, keyword_init: true)
@@ -75,7 +73,7 @@ module Assessment
       end
     end
 
-    # Everybody together, for the program and tutorial tables to compare with.
+    # Gives the figures for everybody, the baseline of both group tables.
     def overall_row
       @overall_row ||= GroupRow.new(label: nil, people: participations.size,
                                     figures: self.class.figures(marked.map(&:points_total)),

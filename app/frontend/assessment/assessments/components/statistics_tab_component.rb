@@ -1,5 +1,5 @@
-# The statistics tab of a sheet or an exam: how the hand-ins stand, then how
-# the marks spread (see Assessment::Statistics).
+# Shows the hand-ins and how the marks spread on the statistics tab of a sheet
+# or an exam; Assessment::Statistics supplies the figures.
 class StatisticsTabComponent < ViewComponent::Base
   def initialize(assessment:, lecture:)
     super()
@@ -23,6 +23,12 @@ class StatisticsTabComponent < ViewComponent::Base
 
   def grades?
     statistics.grades.number.positive?
+  end
+
+  # The assignment's and the exam's dashboard can both be open on the lecture
+  # page, so the ids name the assessment.
+  def heading_id(key)
+    helpers.dom_id(assessment, "statistics_#{key}")
   end
 
   def group_tables
@@ -65,7 +71,7 @@ class StatisticsTabComponent < ViewComponent::Base
   end
 
   def share_bar(share)
-    return if share.nil?
+    return format_share(nil) if share.nil?
 
     figure_with_bar(format_share(share), (share * 100).round, 100)
   end

@@ -10,8 +10,8 @@
   <hr class="my-4">
 <% end %>
 
-<section class="mb-4" aria-labelledby="statistics-counts">
-  <h6 class="fw-bold mb-2" id="statistics-counts">
+<section class="mb-4" aria-labelledby="<%= heading_id(:counts) %>">
+  <h6 class="fw-bold mb-2" id="<%= heading_id(:counts) %>">
     <%= t("assessment.statistics_tab.overview") %>
   </h6>
 
@@ -51,13 +51,16 @@
 
 <% if marked? %>
   <% if statistics.tasks.any? %>
-    <section class="mb-4" aria-labelledby="statistics-tasks">
-      <h6 class="fw-bold mb-2" id="statistics-tasks">
+    <section class="mb-4" aria-labelledby="<%= heading_id(:tasks) %>">
+      <h6 class="fw-bold mb-2" id="<%= heading_id(:tasks) %>">
         <%= t("assessment.statistics_tab.tasks") %>
       </h6>
 
       <div class="table-responsive">
-        <table class="table table-sm small align-middle">
+        <table
+          class="table table-sm small align-middle"
+          aria-labelledby="<%= heading_id(:tasks) %>"
+        >
           <thead>
             <tr>
               <th scope="col"><%= t("assessment.grading_tutorial.task") %></th>
@@ -121,12 +124,15 @@
 <% end %>
 
 <% if grades? %>
-  <section class="mb-4" aria-labelledby="statistics-grades">
-    <h6 class="fw-bold mb-2" id="statistics-grades">
+  <section class="mb-4" aria-labelledby="<%= heading_id(:grades) %>">
+    <h6 class="fw-bold mb-2" id="<%= heading_id(:grades) %>">
       <%= t("assessment.statistics_tab.grades") %>
     </h6>
 
-    <table class="table table-sm small align-middle">
+    <table
+      class="table table-sm small align-middle"
+      aria-labelledby="<%= heading_id(:grades) %>"
+    >
       <thead>
         <tr>
           <th scope="col"><%= t("assessment.statistics_tab.grade") %></th>
@@ -150,13 +156,16 @@
 <% end %>
 
 <% group_tables.each do |key, rows| %>
-  <section class="mb-4" aria-labelledby="statistics-<%= key %>">
-    <h6 class="fw-bold mb-2" id="statistics-<%= key %>">
+  <section class="mb-4" aria-labelledby="<%= heading_id(key) %>">
+    <h6 class="fw-bold mb-2" id="<%= heading_id(key) %>">
       <%= t("assessment.statistics_tab.#{key}") %>
     </h6>
 
     <div class="table-responsive">
-      <table class="table table-sm small align-middle">
+      <table
+        class="table table-sm small align-middle"
+        aria-labelledby="<%= heading_id(key) %>"
+      >
         <thead>
           <tr>
             <th scope="col">
