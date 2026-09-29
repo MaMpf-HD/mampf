@@ -36,7 +36,7 @@ class SubmissionRowComponent < ViewComponent::Base
     return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
 
     @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial)
-    @addable_members.sort_by { |member| member.tutorial_name.to_s.downcase }
+    User.sort_by_last_name(@addable_members)
   end
 
   # The earliest join founded the team; whether that was late is the

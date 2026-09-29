@@ -410,4 +410,21 @@ RSpec.describe(User, type: :model) do
       expect(user).to respond_to(:enrolled_tutorials)
     end
   end
+
+  describe ".sort_by_last_name" do
+    it "sorts loaded people as by_last_name does in SQL" do
+      users = [
+        create(:confirmed_user, first_name: "Anna", last_name: "Zimmer"),
+        create(:confirmed_user, first_name: "Ben", last_name: "Özdemir"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse"),
+        create(:confirmed_user, first_name: nil, last_name: nil, name_in_tutorials: "Nick"),
+        create(:confirmed_user, first_name: "Max", last_name: nil),
+        create(:confirmed_user, first_name: "Ada", last_name: "Max")
+      ]
+
+      expect(described_class.sort_by_last_name(users.reverse))
+        .to eq(described_class.where(id: users).by_last_name.to_a)
+    end
+  end
 end

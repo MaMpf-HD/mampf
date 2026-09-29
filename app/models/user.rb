@@ -18,9 +18,9 @@ class User < ApplicationRecord
   # explains a hit.
   SHOWN_NAME_SQL = "COALESCE(NULLIF(#{FULL_NAME_SQL}, ''), NULLIF(users.name_in_tutorials, ''), " \
                    "users.name)".freeze
-  # Matches RosterSidePanelComponent#last_name_key, so that the participants
-  # tab and the side panel list the same people in the same order; "C"
-  # compares bytes as Ruby does, whatever the database's collation.
+  # Matches User.sort_by_last_name, so that the participants tab and the side
+  # panel list the same people in the same order; "C" compares bytes as Ruby
+  # does, whatever the database's collation.
   # Ends in users.id: a page cut with OFFSET needs rows the order can tell
   # apart, or a student shows twice and another not at all.
   LAST_NAME_ORDER = Arel.sql(
@@ -30,6 +30,11 @@ class User < ApplicationRecord
     "CASE WHEN NULLIF(users.last_name, '') IS NULL THEN '' " \
     "ELSE LOWER(unaccent(COALESCE(users.first_name, ''))) END COLLATE \"C\", users.id"
   ).freeze
+  # Letters that have no accent to drop, but that unaccent in SQL spells out
+  # all the same; without them "Maße" and "Masse" would sort apart.
+  UNACCENT_LETTERS = { "ß" => "ss", "æ" => "ae", "Æ" => "AE", "œ" => "oe", "Œ" => "OE",
+                       "ø" => "o", "Ø" => "O", "ł" => "l", "Ł" => "L", "đ" => "d",
+                       "Đ" => "D" }.freeze
 
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
@@ -219,6 +224,25 @@ class User < ApplicationRecord
   # Sorts people as the participants tab does: by last name, then first name;
   # without a last name by the name the row shows.
   scope :by_last_name, -> { order(LAST_NAME_ORDER) }
+
+  # Sorts people already loaded as by_last_name sorts them in SQL.
+  def self.sort_by_last_name(users)
+    users.sort_by do |user|
+      names = if user.last_name.present?
+        [user.last_name, user.first_name.to_s]
+      else
+        [user.tutorial_name.presence || user.email, ""]
+      end
+      names.map { |name| fold_accents(name).downcase } + [user.id.to_i]
+    end
+  end
+
+  # Drops the accents and keeps every other letter, as unaccent does in SQL.
+  def self.fold_accents(name)
+    name.unicode_normalize(:nfkd).gsub(/\p{Mn}/, "")
+        .gsub(Regexp.union(UNACCENT_LETTERS.keys), UNACCENT_LETTERS)
+  end
+  private_class_method :fold_accents
   scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
