@@ -5,11 +5,9 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
                                      :star_lecture, :unstar_lecture]
-  # A pass phrase is shared by the whole lecture, so guessing it is throttled
-  # as in Lectures::UnlocksController; #update counts only the saves that
-  # check one (see #check_passphrases).
-  PASSPHRASE_ATTEMPTS = 10
-  rate_limit to: PASSPHRASE_ATTEMPTS, within: 1.minute, only: :subscribe_lecture,
+  # A passphrase is shared by the whole lecture, so guessing it is throttled
+  # as in Lectures::UnlocksController.
+  rate_limit to: 10, within: 1.minute, only: :subscribe_lecture,
              by: -> { current_user&.id || request.remote_ip },
              with: -> { head :too_many_requests }
 
@@ -22,24 +20,18 @@ class ProfileController < ApplicationController
       redirect_to consent_profile_path
       return
     end
-    # destroy the notifications related to new lectures and courses
-    current_user.notifications.where(notifiable_type: ["Lecture", "Course"])
-                .destroy_all
     render layout: "application_no_sidebar"
   end
 
   def update
-    check_passphrases
-    return if @errors.present?
-
-    if @user.update(lectures: @lectures,
-                    name: @name,
+    previous_image = @user.image_data
+    assign_teacher_profile
+    if @user.update(name: @name,
                     name_in_tutorials: @name_in_tutorials,
                     subscription_type: @subscription_type,
                     locale: @locale)
       @user.update(email_params)
-      # remove notifications that have become obsolete
-      clean_up_notifications
+      derive_profile_image if @user.image_data != previous_image
       I18n.locale = @locale
       cookies[:locale] = @locale
       @user.touch
@@ -129,9 +121,28 @@ class ProfileController < ApplicationController
       @subscription_type = params[:user][:subscription_type].to_i
       @name = params[:user][:name]
       @name_in_tutorials = params[:user].fetch(:name_in_tutorials, @user.name_in_tutorials)
-      @lectures = Lecture.where(id: lecture_ids)
-      @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
       @locale = params[:user][:locale]
+    end
+
+    # A teacher's homepage and picture show on their teacher page, so only a
+    # teacher sets them.
+    def assign_teacher_profile
+      return unless @user.teacher?
+
+      profile = params.permit(user: [:homepage, :image, :remove_image]).fetch(:user, {})
+      @user.homepage = profile[:homepage] if profile.key?(:homepage)
+      if profile[:image].present?
+        @user.image = profile[:image]
+      elsif profile[:remove_image] == "1"
+        @user.image = nil
+      end
+    end
+
+    def derive_profile_image
+      return if @user.image.blank?
+
+      @user.image_derivatives!
+      @user.save
     end
 
     def email_params
@@ -156,53 +167,5 @@ class ProfileController < ApplicationController
 
     def lecture_params
       params.expect(lecture: [:id, :passphrase, :parent])
-    end
-
-    # extracts all lecture ids from user params
-    def lecture_ids
-      return [] if params[:user][:lecture].blank?
-
-      params[:user][:lecture].select { |_k, v| v["subscribed"] == "1" }.keys.map(&:to_i)
-    end
-
-    def clean_up_notifications
-      # delete all of the user's notifications if he does not want them
-      # remove all notification related not related to subscribed courses
-      # or lectures
-      subscribed_teachables = @courses + @lectures
-      irrelevant_notifications = @user.notifications.select do |n|
-        n.teachable.present? && !n.teachable.in?(subscribed_teachables)
-      end
-      Notification.where(id: irrelevant_notifications.map(&:id)).delete_all
-    end
-
-    # stop the update if any of passphrases for newly subscribed
-    # lectures is incorrect
-    # Every lecture the save would newly bookmark goes through the rule of
-    # User#unlock_lecture!, before anything is saved, so a refused one leaves
-    # the whole profile unchanged.
-    def check_passphrases
-      @errors = {}
-      bookmarked = current_user.lecture_bookmarks.pluck(:lecture_id)
-      new_lectures = Lecture.where(id: lecture_ids - bookmarked).to_a
-      return if new_lectures.empty?
-
-      refused = if new_lectures.any?(&:restricted?) && passphrase_attempts_exhausted?
-        new_lectures
-      else
-        new_lectures.reject do |lecture|
-          current_user.may_unlock_lecture?(lecture, passphrase: passphrase_for(lecture))
-        end
-      end
-      @errors[:passphrase] = refused.map(&:id) if refused.any?
-    end
-
-    def passphrase_for(lecture)
-      params.dig(:user, :lecture, lecture.id.to_s, :passphrase)
-    end
-
-    def passphrase_attempts_exhausted?
-      key = "profile-passphrase-attempts/#{current_user.id}"
-      Rails.cache.increment(key, 1, expires_in: 1.minute).to_i > PASSPHRASE_ATTEMPTS
     end
 end

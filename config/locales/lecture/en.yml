@@ -18,6 +18,7 @@ en:
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...
+      all_terms: Search all semesters
       bookmark: Bookmark
       bookmark_lecture: "Bookmark %{lecture}"
       registration_open: Registration open

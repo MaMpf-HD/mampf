@@ -713,6 +713,14 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(grouped[user2].count).to eq(1)
       expect(grouped[user3].count).to eq(1)
     end
+
+    it "orders by last name rather than by display name" do
+      user1.update!(first_name: "Alice", last_name: "Zeller")
+      user3.update!(first_name: "Charlie", last_name: "Abt")
+
+      grouped = campaign.user_registrations_grouped_by_user
+      expect(grouped.keys).to eq([user3, user2, user1])
+    end
   end
 
   describe "#unassigned_users" do

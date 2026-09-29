@@ -53,8 +53,8 @@ class MarkingToolbarComponent < ViewComponent::Base
     @tutorial.present? && (hand_in_files? || certificate_check?)
   end
 
-  def tutor?
-    @tutorial.present? && helpers.current_user.in?(@tutorial.tutors)
+  def corrects?
+    @tutorial.present? && @tutorial.correctable_by?(helpers.current_user)
   end
 
   def certificate_check?

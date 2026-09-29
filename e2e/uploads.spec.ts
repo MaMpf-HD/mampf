@@ -305,19 +305,35 @@ test.describe("uploading through Uppy", () => {
       await expect(save).toBeDisabled();
     });
 
-  test("a profile picture", async ({ admin: { page } }) => {
-    await page.goto("/administration/profile");
+  test("a profile picture", async ({ admin: { page, user } }) => {
+    await page.goto(`/users/${user.id}/edit`);
     await attachToUploadArea(page, "#image-uploadArea", "e2e/files/image.png");
 
     await expect(page.locator("#image-file")).toHaveText("image.png");
 
     // Saving answers with JavaScript that reloads the page by itself.
     const reloaded = page.waitForResponse(response => response.request().method() === "GET"
-      && response.url().endsWith("/administration/profile"));
+      && response.url().endsWith(`/users/${user.id}/edit`));
     await page.getByRole("button", { name: "Save" }).first().click();
     await reloaded;
 
     await expect(page.locator("#image-file")).toHaveText("image.png");
+    await expect(page.locator("#image-preview"))
+      .toHaveAttribute("src", /\/users\/\d+\/image\/original/);
+  });
+
+  test("a teacher's picture on the profile page", async ({ factory, teacher: { page, user } }) => {
+    await factory.create("lecture", [], { teacher_id: user.id });
+    await page.goto("/profile/edit");
+    await attachToUploadArea(page, "[data-controller='uppy-upload']", "e2e/files/image.png");
+
+    const saved = page.waitForResponse(response => response.request().method() === "POST"
+      && response.url().endsWith("/profile/update"));
+    await page.getByRole("button", { name: "Click here to save your changes." })
+      .filter({ visible: true }).click();
+    await saved;
+
+    await page.goto("/profile/edit");
     await expect(page.locator("#image-preview"))
       .toHaveAttribute("src", /\/users\/\d+\/image\/original/);
   });

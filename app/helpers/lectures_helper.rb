@@ -41,8 +41,8 @@ module LecturesHelper
   end
 
   # create text for notification card
-  def lecture_notification_item_details(_lecture)
-    t("notifications.subscribe_lecture")
+  def lecture_notification_item_details(lecture)
+    t(lecture_search_hint_key(lecture, "notifications"), term: lecture.term_to_label)
   end
 
   # create text for notification about new course in notification card
@@ -54,11 +54,19 @@ module LecturesHelper
   end
 
   # create link for notification about new course in notification card
-  def lecture_notification_card_link
-    t("notifications.subscribe_lecture_html",
-      profile: link_to(t("notifications.profile"),
-                       edit_profile_path,
-                       class: "darkblue"))
+  def lecture_notification_card_link(lecture)
+    t(lecture_search_hint_key(lecture, "notifications", "_html"),
+      term: lecture.term_to_label,
+      dashboard: link_to(t("notifications.dashboard_search"),
+                         root_path(anchor: "lecture-search"),
+                         class: "darkblue"))
+  end
+
+  # Names the lecture's term where it has one: the dashboard's search shows
+  # the term picked there, which need not be the lecture's.
+  def lecture_search_hint_key(lecture, scope, suffix = "")
+    in_term = lecture.term ? "_in_term" : ""
+    "#{scope}.subscribe_lecture#{in_term}#{suffix}"
   end
 
   def days_short
@@ -129,12 +137,6 @@ module LecturesHelper
     else
       "bg-info"
     end
-  end
-
-  def circle_icon(subscribed)
-    return "fas fa-check-circle" if subscribed
-
-    "far fa-circle"
   end
 
   def lecture_border(lecture)

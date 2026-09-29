@@ -49,15 +49,18 @@ export class DashboardLectureBrowsePage {
    * Picks a semester in the dashboard's term dropdown, by its visible label.
    * This refreshes the term-dependent regions in place via Turbo Stream (no
    * navigation) and updates the URL to `/?term=<slug>`; we wait for the
-   * `?term=` value to change.
+   * `?term=` value to change, and for the response too: the URL changes before
+   * the request that remembers the term is sent.
    */
   async selectTerm(label: string) {
     const before = new URL(this.page.url()).searchParams.get("term");
     const urlUpdated = this.page.waitForURL(
       url => (url.searchParams.get("term") ?? null) !== before,
     );
+    const remembered = this.page.waitForResponse(response =>
+      response.url().includes("/dashboard/term"));
     await this.termSelect.selectOption({ label });
-    await urlUpdated;
+    await Promise.all([urlUpdated, remembered]);
   }
 
   async scrollToBottom() {

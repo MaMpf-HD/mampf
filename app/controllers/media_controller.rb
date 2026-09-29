@@ -593,8 +593,7 @@ class MediaController < ApplicationController
     render json: isPermitted # rubocop:todo Naming/VariableName
   end
 
-  # Renders the feedback player. Do not confuse with the feedback button
-  # which has nothing to do with the thyme player(s).
+  # Renders the feedback player.
   def feedback
     @time = params[:time]
     render layout: "feedback"

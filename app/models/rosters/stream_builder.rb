@@ -97,7 +97,10 @@ module Rosters
         @rosterable.reload
 
         streams = []
-        row_replacements_for(@rosterable, streams) if update_rows
+        if update_rows
+          row_replacements_for(@rosterable, streams)
+          footnote_replacements(streams)
+        end
 
         if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort) || @rosterable.is_a?(Talk)
           streams << @turbo_stream.replace(
@@ -120,6 +123,7 @@ module Rosters
         streams = []
         row_replacements_for(@rosterable, streams)
         row_replacements_for(@target, streams)
+        footnote_replacements(streams)
 
         streams << @turbo_stream.replace(
           "tutorial-roster-side-panel",
@@ -168,6 +172,19 @@ module Rosters
             registerable: rosterable
           ).render_in(@view_context)
         )
+      end
+
+      # Removing a student from every group of a completed campaign makes her
+      # unassigned again, adding her to one assigns her; each completed
+      # campaign's footnote shows that count.
+      def footnote_replacements(streams)
+        @lecture.registration_campaigns.non_exam.completed.find_each do |campaign|
+          streams << @turbo_stream.replace(
+            "dissolved_campaign_#{campaign.id}",
+            partial: "registration/campaigns/dissolved_footnote",
+            locals: { campaign: campaign }
+          )
+        end
       end
 
       def normalize_group_type

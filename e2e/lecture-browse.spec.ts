@@ -208,6 +208,35 @@ test("switches the search to the next semester by clicking on the hint",
     await expect(page.locator("body")).toHaveAttribute("data-stayed-on-page", "true");
   });
 
+test("searches all semesters without moving the dashboard to another",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 1, "Topology Current", currentTerm.id);
+    await createLecturesWithCourses(factory, 1, "Topology Next", nextTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    await dashboard.scrollToSearchAndWaitForResults();
+    await dashboard.searchFor("Topology");
+    await expect(dashboard.results).not.toContainText("Topology Next");
+
+    const allTerms = page.getByRole("switch", { name: "Search all semesters" });
+    let searched = dashboard.getLectureSearchPromise();
+    await allTerms.check();
+    await searched;
+    await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.termSelect).toHaveValue("SS25");
+
+    // picking a semester means that semester again
+    searched = dashboard.getLectureSearchPromise();
+    await dashboard.selectTerm("WS 2025/26");
+    await searched;
+    await expect(allTerms).not.toBeChecked();
+    await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).not.toContainText("Topology Current");
+  });
+
 test("remembers the last picked semester for the next visit",
   async ({ factory, student: { page } }) => {
     const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);

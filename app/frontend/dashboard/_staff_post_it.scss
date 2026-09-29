@@ -1,0 +1,95 @@
+@import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+@font-face {
+    font-family: "Caveat";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("~/fonts/Caveat-Bold.woff2") format("woff2");
+}
+
+.staff-post-it {
+    position: relative;
+    width: 100%;
+    min-height: 12rem;
+    padding: 1.5rem;
+    background: linear-gradient(175deg, #fff9c9 0%, #fdf1a6 100%);
+    border-radius: 2px 2px 2px 14px / 2px 2px 2px 6px;
+    rotate: -1.5deg;
+    box-shadow:
+        0 1px 2px rgb(0 0 0 / 10%),
+        0 10px 16px -8px rgb(0 0 0 / 22%);
+    transition:
+        rotate 0.25s ease,
+        translate 0.25s ease;
+
+    &:hover,
+    &:focus-within {
+        rotate: 0deg;
+        translate: 0 -3px;
+    }
+
+    &__title {
+        margin: 0 0 0.9rem;
+        font-family: "Caveat", cursive;
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #5b4a12;
+    }
+
+    &__list {
+        display: grid;
+        gap: 0.7rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__item {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.55rem;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: #3d3310;
+        font-size: 1.05rem;
+        text-align: left;
+        text-decoration: none;
+
+        i {
+            color: #8a7424;
+        }
+
+        &:hover,
+        &:focus-visible {
+            color: #3d3310;
+            text-decoration: underline wavy #b59a2e;
+            text-underline-offset: 4px;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $mampf-blue-focus;
+            outline-offset: 3px;
+            border-radius: 2px;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .staff-post-it {
+        transition: none;
+    }
+}
+
+// An odd slot puts its rail in the first grid column, so the note moves to
+// the second, where a card would sit.
+@include media-breakpoint-up(xl) {
+    .dashboard-cards > .dashboard-card-slot:nth-child(odd) > .staff-post-it {
+        grid-area: 1 / 2;
+    }
+}

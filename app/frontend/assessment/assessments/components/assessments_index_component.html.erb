@@ -182,7 +182,7 @@
                 <%= confirmation_button %>
               </button>
 
-              <% if confirmation == :reopen %>
+              <% if confirmation == :reopen && !reset_blocked_by %>
                 <button
                   type="button"
                   class="btn btn-outline-danger"

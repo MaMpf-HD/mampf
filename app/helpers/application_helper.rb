@@ -6,9 +6,10 @@ module ApplicationHelper
     root_path(params: { locale: I18n.locale })
   end
 
-  # Only admins have the administration area and its search.
+  # Only admins have the administration area and its search; the rest of
+  # the teaching staff search media and tags on a page of their own.
   def staff_search_path
-    current_user.admin? ? administration_search_path : search_index_path
+    current_user.admin? ? administration_search_path : search_staff_path
   end
 
   # Returns the full title on a per-page basis.

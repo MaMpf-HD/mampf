@@ -89,6 +89,18 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.body).to include("assessments_container")
       end
 
+      it "points the exercise medium to where it is created" do
+        get assessment_assessment_path(assessment.id),
+            params: { assessable_type: "Assignment", assessable_id: assignment.id },
+            headers: { "Turbo-Frame" => "assessment-assessments-frame" }
+
+        link = Nokogiri::HTML(response.body).at_css(
+          "a[href='#{edit_lecture_path(lecture, tab: "content")}']"
+        )
+        expect(link&.text).to eq(I18n.t("assessment.exercise_medium_hint.link"))
+        expect(response.body).to include(I18n.t("assessment.exercise_medium_hint.empty"))
+      end
+
       it "answers a frame request with the dashboard itself" do
         get assessment_assessment_path(assessment.id),
             params: { assessable_type: "Assignment", assessable_id: assignment.id },
@@ -359,6 +371,10 @@ RSpec.describe("Assessment::Assessments", type: :request) do
                  lecture: lecture)
         end
 
+        let!(:rule) do
+          create(:student_performance_rule, :active, :with_percentage, lecture: lecture)
+        end
+
         before { lecture.update!(assignments_complete: true) }
 
         it "asks before reopening the list" do
@@ -374,6 +390,42 @@ RSpec.describe("Assessment::Assessments", type: :request) do
               I18n.t("assessment.assignments_complete.reopen_dialog.body",
                      count: 1)
             )
+          )
+        end
+
+        it "offers no reset while a running registration asks for the decisions" do
+          create(:valid_assignment, lecture: lecture)
+          lecture.update!(assignments_complete: true, uses_exam_eligibility: true)
+          policy = create(:registration_policy, :student_performance,
+                          config: { "lecture_ids" => [lecture.id.to_s] })
+
+          get assessment_assessments_path(lecture_id: lecture.id)
+
+          expect(response.body).to include(
+            CGI.escapeHTML(
+              I18n.t("assessment.assignments_complete.reopen_dialog.body_in_use",
+                     count: 1, campaigns: policy.registration_campaign.campaignable.title)
+            )
+          )
+          expect(response.body).not_to include(
+            I18n.t("assessment.assignments_complete.reopen_dialog.reset")
+          )
+        end
+
+        it "offers no reset for a rule the open list does not hold back" do
+          rule.update!(threshold_mode: :none, min_percentage: nil)
+          create(:valid_assignment, lecture: lecture)
+          lecture.update!(assignments_complete: true)
+
+          get assessment_assessments_path(lecture_id: lecture.id)
+
+          expect(response.body).to include(
+            CGI.escapeHTML(
+              I18n.t("assessment.assignments_complete.open_dialog.body")
+            )
+          )
+          expect(response.body).not_to include(
+            I18n.t("assessment.assignments_complete.reopen_dialog.reset")
           )
         end
 
@@ -405,6 +457,21 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
         end
 
+        it "keeps the decisions while a running registration asks for them" do
+          lecture.update!(uses_exam_eligibility: true)
+          policy = FactoryBot.create(:registration_policy, :student_performance,
+                                     config: { "lecture_ids" => [lecture.id.to_s] })
+
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "0", reset_certifications: "1"
+          )
+
+          expect(lecture.reload.assignments_complete?).to be(false)
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
+          expect(flash[:notice]).to be_nil
+          expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+        end
+
         it "drops the computed decisions when told to, and keeps the manual ones" do
           patch assignments_complete_assessment_assessments_path(
             lecture_id: lecture.id, complete: "0", reset_certifications: "1"
@@ -413,6 +480,19 @@ RSpec.describe("Assessment::Assessments", type: :request) do
           expect(lecture.reload.assignments_complete?).to be(false)
           expect(StudentPerformance::Certification.exists?(computed.id)).to be(false)
           expect(StudentPerformance::Certification.exists?(manual.id)).to be(true)
+        end
+
+        # Such a rule proposes the same with the list open, so no computed
+        # decision contradicts it and the dialog offers no reset.
+        it "does not drop anything for a rule without a points threshold" do
+          rule.update!(threshold_mode: :none, min_percentage: nil)
+
+          patch assignments_complete_assessment_assessments_path(
+            lecture_id: lecture.id, complete: "0", reset_certifications: "1"
+          )
+
+          expect(lecture.reload.assignments_complete?).to be(false)
+          expect(StudentPerformance::Certification.exists?(computed.id)).to be(true)
         end
 
         # The dialog is shown while the list is closed. Sending its answer a
