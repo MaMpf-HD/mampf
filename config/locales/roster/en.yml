@@ -341,9 +341,9 @@ en:
       link_reject_info: |
         You can view your registration status here: %{rosterable_link}
       reject_reasons_html: |
-        Unfortunately, your registration could not be accepted for the following reason(s): %{reasons}
+        <p>Reason: %{reasons}</p>
       reject_reasons: |
-        Unfortunately, your registration could not be accepted for the following reason(s): %{reasons}
+        Reason: %{reasons}
       greeting_name_html: '<p>Hello %{name},</p>'
       greeting_name: 'Hello %{name},'
       greeting_html: '<p>Hello,</p>'
