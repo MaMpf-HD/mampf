@@ -12,14 +12,13 @@ RSpec.describe("Mail senders") do
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
   end
 
-  it "sends a support request from the sender address to the support address" do
-    details = { "message" => "My exam registration does not work.", "user_id" => user.id,
-                "page" => "http://localhost/lectures/1" }
+  it "sends a support request from the sender address to the feedback address" do
+    details = { "message" => "My exam registration does not work.", "user_id" => user.id }
 
     email = SupportRequestMailer.with(support_request: details).new_support_request_email
 
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
-    expect(email.to).to eq([DefaultSetting::SUPPORT_EMAIL])
+    expect(email.to).to eq([DefaultSetting::FEEDBACK_EMAIL])
     expect(email.reply_to).to eq([user.email])
     expect(email.subject).to eq("Support: #{user.email}")
     expect(email.body.to_s).to include("My exam registration does not work.")
