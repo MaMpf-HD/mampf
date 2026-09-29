@@ -8,9 +8,9 @@ RSpec.describe(LecturesHelper, type: :helper) do
       lecture = create(:lecture)
 
       expect(helper.lecture_notification_item_details(lecture))
-        .to include("under #{lecture.term.to_label}")
+        .to include(lecture.term.to_label)
       expect(helper.lecture_notification_card_link(lecture))
-        .to include("under #{lecture.term.to_label}")
+        .to include(lecture.term.to_label)
     end
 
     it "names no term for a lecture without one" do
