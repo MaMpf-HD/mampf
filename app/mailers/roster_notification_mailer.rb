@@ -199,7 +199,6 @@ class RosterNotificationMailer < ApplicationMailer
 
     def rejection_email(subject_key)
       email do
-        @info[:reason_link] = lecture_home_url(@lecture) if @lecture
         @info[:reasons] = rejection_reasons(params[:reasons])
         t(subject_key, **subject_vars)
       end
