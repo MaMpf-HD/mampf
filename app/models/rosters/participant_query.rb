@@ -15,12 +15,12 @@ module Rosters
       base_scope =
         @lecture.lecture_memberships
                 .joins(:user)
-                .includes(:user)
-                .order(Arel.sql("COALESCE(NULLIF(users.name_in_tutorials, ''), users.name) ASC"))
+                .includes(user: User::PROGRAM_PRELOAD)
+                .merge(User.by_last_name)
 
       if search
         base_scope = base_scope.where(
-          "users.name ILIKE :q OR users.email ILIKE :q OR users.name_in_tutorials ILIKE :q",
+          "#{User::SHOWN_NAME_SQL} ILIKE :q OR users.matriculation_number ILIKE :q",
           q: "%#{search}%"
         )
       end

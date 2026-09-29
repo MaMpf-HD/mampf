@@ -22,7 +22,7 @@ module Rosters
     end
     # rubocop:enable Metrics/ParameterLists
 
-    def streams(variant: nil, update_tiles: true)
+    def streams(variant: nil, update_rows: true)
       return move_panel_streams if variant == :move_panel
 
       if @mparams.unassigned?
@@ -30,7 +30,7 @@ module Rosters
       elsif @mparams.rejected?
         campaign_panel_streams(kind: :rejected)
       elsif @mparams.panel?
-        panel_streams(update_tiles: update_tiles)
+        panel_streams(update_rows: update_rows)
       elsif @mparams.participants?
         participants_streams
       else
@@ -65,7 +65,7 @@ module Rosters
         @rosterable.reload
 
         streams = []
-        tile_replacements_for(@rosterable, streams)
+        row_replacements_for(@rosterable, streams)
 
         if campaign
           students = if kind == :rejected
@@ -93,18 +93,21 @@ module Rosters
         streams.compact
       end
 
-      def panel_streams(update_tiles: true)
+      def panel_streams(update_rows: true)
         @rosterable.reload
 
         streams = []
-        tile_replacements_for(@rosterable, streams) if update_tiles
+        if update_rows
+          row_replacements_for(@rosterable, streams)
+          footnote_replacements(streams)
+        end
 
         if @rosterable.is_a?(Tutorial) || @rosterable.is_a?(Cohort) || @rosterable.is_a?(Talk)
           streams << @turbo_stream.replace(
             "tutorial-roster-side-panel",
             html: RosterSidePanelComponent.new(
               registerable: @rosterable,
-              students: @rosterable.members.order(:name),
+              students: @rosterable.members,
               read_only: @rosterable.locked?
             ).render_in(@view_context)
           )
@@ -118,14 +121,15 @@ module Rosters
         @target.reload
 
         streams = []
-        tile_replacements_for(@rosterable, streams)
-        tile_replacements_for(@target, streams)
+        row_replacements_for(@rosterable, streams)
+        row_replacements_for(@target, streams)
+        footnote_replacements(streams)
 
         streams << @turbo_stream.replace(
           "tutorial-roster-side-panel",
           html: RosterSidePanelComponent.new(
             registerable: @rosterable,
-            students: @rosterable.members.order(:name),
+            students: @rosterable.members,
             read_only: @rosterable.locked?
           ).render_in(@view_context)
         )
@@ -151,11 +155,11 @@ module Rosters
         streams
       end
 
-      def tile_replacements_for(rosterable, streams)
+      def row_replacements_for(rosterable, streams)
         Registration::Item.where(registerable: rosterable).find_each do |item|
           streams << @turbo_stream.replace(
             @view_context.dom_id(item),
-            html: GroupTileComponent.new(
+            html: GroupRowComponent.new(
               registerable: item.registerable,
               item: item
             ).render_in(@view_context)
@@ -164,10 +168,23 @@ module Rosters
 
         streams << @turbo_stream.replace(
           @view_context.dom_id(rosterable),
-          html: GroupTileComponent.new(
+          html: GroupRowComponent.new(
             registerable: rosterable
           ).render_in(@view_context)
         )
+      end
+
+      # Removing a student from every group of a completed campaign makes her
+      # unassigned again, adding her to one assigns her; each completed
+      # campaign's footnote shows that count.
+      def footnote_replacements(streams)
+        @lecture.registration_campaigns.non_exam.completed.find_each do |campaign|
+          streams << @turbo_stream.replace(
+            "dissolved_campaign_#{campaign.id}",
+            partial: "registration/campaigns/dissolved_footnote",
+            locals: { campaign: campaign }
+          )
+        end
       end
 
       def normalize_group_type

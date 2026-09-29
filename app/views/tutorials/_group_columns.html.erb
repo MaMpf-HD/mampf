@@ -1,0 +1,24 @@
+<%# The group and its mail belong to every state of the page, with a sheet to mark or without. %>
+<div class="col-12 col-md-4">
+  <label class="form-label fw-semibold mb-2" for="tutorial-select">
+    <%= t('basics.tutorial') %>
+  </label>
+
+  <% if tutorials.size > 1 %>
+    <%= render partial: 'tutorials/tutorial_dropdown' %>
+  <% else %>
+    <input id="tutorial-select" class="form-control form-control-sm" disabled value="<%= tutorial.title %>">
+  <% end %>
+</div>
+
+<% participants_path = local_assigns[:participants_path] %>
+<div class="col-12 col-md-auto d-flex flex-wrap gap-2">
+  <% if participants_path %>
+    <%= link_to participants_path, class: 'btn btn-sm btn-outline-primary text-nowrap' do %>
+      <i class="bi bi-people me-1" aria-hidden="true"></i>
+      <%= t('tutorial.participants.button') %>
+    <% end %>
+  <% end %>
+  <%= render partial: 'tutorials/mail_buttons',
+             locals: { group: tutorial, key: "tutorial:#{tutorial.id}" } %>
+</div>

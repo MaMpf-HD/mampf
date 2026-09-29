@@ -65,7 +65,7 @@ class AnnouncementsController < ApplicationController
 
     def create_notifications
       users_to_notify = if @announcement.lecture.present?
-        @announcement.lecture.users
+        @announcement.lecture.audience
       else
         User
       end
@@ -83,7 +83,7 @@ class AnnouncementsController < ApplicationController
 
     def send_notification_email
       recipients = if @announcement.lecture.present?
-        @announcement.lecture.users
+        @announcement.lecture.audience
                      .where(email_for_announcement: true)
       else
         User.where(email_for_news: true)

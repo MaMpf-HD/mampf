@@ -31,8 +31,44 @@ module UserRegistrationsHelper
         icon: "description",
         cell_class: "text-center",
         field: ->(rosterable) { rosterable.description } }
+    ],
+    "Exam" => [
+      { header: "basics.date",
+        icon: "event",
+        field: lambda { |rosterable|
+          rosterable.date && I18n.l(rosterable.date,
+                                    format: :student_registration)
+        } },
+      { header: "basics.location",
+        cell_class: "text-start fw-semibold",
+        icon: "location",
+        field: ->(rosterable) { rosterable.location } }
     ]
   }.freeze
+
+  OPTIONS_SHOWN_AT_FIRST = 8
+
+  def option_seats_text(capacity, used)
+    return t("registration.user_registration.options.unlimited") if capacity.nil?
+
+    free = capacity - used
+    return t("registration.user_registration.options.full") unless free.positive?
+
+    t("registration.user_registration.options.free", free: free, capacity: capacity)
+  end
+
+  # Returns how full a group is as its bar's width in percent, or nil for a
+  # group without a capacity.
+  def option_fill_percent(capacity, used)
+    return if capacity.nil?
+    return 100 unless capacity.positive?
+
+    [used * 100 / capacity, 100].min
+  end
+
+  def lecture_home_badge_class(kind)
+    "lecture-home-badge lecture-home-badge--#{kind}"
+  end
 
   def format_date(time)
     return "" if time.nil?
@@ -45,7 +81,11 @@ module UserRegistrationsHelper
   end
 
   def student_registration_instruction(campaign, items = [])
-    key = if campaign.first_come_first_served?
+    key = if campaign.exam_campaign?
+      "first_come_first_served_instruction_exam"
+    elsif campaign.first_come_first_served? && talks_only?(items)
+      "first_come_first_served_instruction_talk"
+    elsif campaign.first_come_first_served?
       "first_come_first_served_instruction"
     else
       "preference_instruction"
@@ -57,6 +97,17 @@ module UserRegistrationsHelper
       count: preference_rank_count(items))
   end
 
+  def registration_needs_action?(details)
+    campaign = details.campaign
+    return false if Array(details.own_registrations).any? do |registration|
+      registration.confirmed? || (registration.pending? && registration.preference_rank)
+    end
+    return false unless Array(details.eligibility).all? { |policy| policy.dig(:outcome, :pass) }
+    return false if registration_campaign_blocked?(campaign, details.items)
+
+    campaign.preference_based? || details.items.any?(&:still_has_capacity?)
+  end
+
   def student_visible_campaign?(campaign)
     campaign.open? || campaign.closed? || campaign.processing?
   end
@@ -65,26 +116,18 @@ module UserRegistrationsHelper
     student_visible_campaign?(campaign) && !campaign.open_for_registrations?
   end
 
-  def sorted_student_visible_campaigns(campaigns_details)
-    visible_campaigns = campaigns_details.select do |campaign_details|
-      student_visible_campaign?(campaign_details.campaign)
-    end
-
-    readonly_campaigns, open_campaigns = visible_campaigns.partition do |campaign_details|
-      student_registration_readonly?(campaign_details.campaign)
-    end
-
-    readonly_campaigns.sort_by do |campaign_details|
-      -student_registration_readonly_changed_at(campaign_details.campaign).to_i
-    end + open_campaigns
+  # Keeps the options in the order of the program, the student's own and full
+  # ones included, so a talk's place tells when it is given: "Talk N" carries
+  # the talk's position.
+  def sorted_student_registration_items(items)
+    Rosters::RegisterableOrdering.sort_items(items)
   end
 
-  def sorted_student_registration_items(campaign, items, user)
-    items.sort_by do |item|
-      [student_registration_item_priority(campaign, item, user),
-       item_display_type(item).to_s,
-       item.registerable.title.to_s]
-    end
+  # A seminar campaign may mix talks and cohorts; only one of talks alone is
+  # spoken of as talks.
+  def talks_only?(items)
+    items = Array(items)
+    items.any? && items.all? { |item| item.registerable_type == "Talk" }
   end
 
   def preference_rank_for(item, item_preferences)
@@ -97,16 +140,6 @@ module UserRegistrationsHelper
 
   def preference_ranks_for(items)
     1..preference_rank_count(items)
-  end
-
-  def preference_rank_button_tooltip(rank)
-    rank_label = t("registration.user_registration.preference_rank_options.#{rank}")
-    t("registration.user_registration.actions.rank_option_tooltip",
-      rank: rank_label)
-  end
-
-  def item_capacity_row(item)
-    "#{item.item_capacity_used} / #{nullable_capacity_display(item.capacity)}"
   end
 
   def item_tile_metadata_rows(item)
@@ -132,10 +165,6 @@ module UserRegistrationsHelper
     group_type == "Cohort"
   end
 
-  def nullable_capacity_display(capacity)
-    capacity.nil? ? "\u221E" : capacity.to_s
-  end
-
   def registration_blocked_by_unremovable_assignment?(lecture)
     return false if lecture.blank?
     return @registration_blocked_by_unremovable_assignment \
@@ -146,50 +175,37 @@ module UserRegistrationsHelper
                                      .blocked_by_unremovable_assignment?
   end
 
+  # Whether the student may not register for this item: it is a tutorial and
+  # they sit in one they are not allowed to leave, or an exam of a lecture
+  # they are not a member of. The edit services refuse the same registration.
+  def registration_item_blocked?(item, lecture)
+    exam_closed_to_current_user?(item) ||
+      (item.registerable.roster_exclusive_within_lecture? &&
+        registration_blocked_by_unremovable_assignment?(lecture))
+  end
+
+  def exam_closed_to_current_user?(item)
+    item.registerable.is_a?(Exam) && !item.registerable.registrable_by?(current_user)
+  end
+
+  def registration_blocked_reason(item)
+    if exam_closed_to_current_user?(item)
+      t("registration.user_registration.messages.not_on_lecture_roster")
+    else
+      registration_blocked_tooltip
+    end
+  end
+
+  def registration_campaign_blocked?(campaign, items)
+    items = Array(items)
+    items.any? && items.all? { |item| registration_item_blocked?(item, campaign.campaignable) }
+  end
+
   def registration_blocked_tooltip
     t("registration.user_registration.blocked_tooltip")
   end
 
-  def registration_blocked_tile_locals(blocked, tile_variant_class: "tutorial-gtile--campaign")
-    {
-      tile_tooltip_text: (registration_blocked_tooltip if blocked),
-      tile_variant_class: class_names(
-        tile_variant_class,
-        "tutorial-gtile--blocked": blocked
-      )
-    }
-  end
-
-  def registration_blocked_action
-    render partial: "user_registrations/registration_blocked_action"
-  end
-
   private
-
-    def student_registration_readonly_changed_at(campaign)
-      return campaign.last_allocation_calculated_at || campaign.updated_at if campaign.processing?
-
-      campaign.updated_at
-    end
-
-    def student_registration_item_priority(campaign, item, user)
-      return 0 if item.user_registered?(user)
-      return 1 if student_registration_item_available?(campaign, item, user)
-      return 3 unless item.still_has_capacity?
-
-      2
-    end
-
-    def student_registration_item_available?(campaign, item, user)
-      return false unless campaign.open_for_registrations?
-      return false unless item.still_has_capacity?
-      return true if freely_registerable?(item.registerable_type)
-
-      !campaign.user_registration_confirmed_for_group_type?(
-        user,
-        item.registerable_type
-      )
-    end
 
     def metadata_label_for(col)
       t(col[:header])
@@ -198,7 +214,7 @@ module UserRegistrationsHelper
     # Rows with a blank value are dropped so we never render a lone icon with
     # no data next to it (e.g. a talk without a description or dates).
     def metadata_rows_for(type, rosterable)
-      TABLE_CONFIG[type].filter_map do |col|
+      TABLE_CONFIG.fetch(type).filter_map do |col|
         value = col[:field].call(rosterable)
         next if value.blank?
 

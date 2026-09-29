@@ -35,6 +35,14 @@ RSpec.describe("Registration::Items", type: :request) do
         expect(response.body).to include(I18n.t("registration.item.created"))
       end
 
+      it "adds no group once the process is completed" do
+        completed = create(:registration_campaign, :completed, campaignable: lecture)
+
+        expect do
+          post(registration_campaign_items_path(completed), params: valid_params)
+        end.not_to change(Registration::Item, :count)
+      end
+
       context "with invalid parameters" do
         it "does not create an item" do
           expect do
@@ -44,6 +52,40 @@ RSpec.describe("Registration::Items", type: :request) do
           end.not_to change(Registration::Item, :count)
 
           expect(response).to redirect_to(edit_lecture_path(lecture, tab: "groups"))
+        end
+      end
+
+      context "with an exam" do
+        # With the flag off an exam gets neither its own campaign nor an item,
+        # and `skip_campaigns` stays false — which is what leaves it postable.
+        let(:loose_exam) do
+          exam = create(:exam, :with_date, lecture: lecture)
+          exam
+        end
+
+        def post_exam(target, exam)
+          post(registration_campaign_items_path(target),
+               params: { registration_item: { registerable_id: exam.id,
+                                              registerable_type: "Exam" } })
+        end
+
+        it "does not add it to a preference-based campaign" do
+          preference_campaign = create(:registration_campaign, :preference_based,
+                                       campaignable: lecture, status: :draft)
+          exam = loose_exam
+
+          expect do
+            post_exam(preference_campaign, exam)
+          end.not_to change(Registration::Item, :count)
+        end
+
+        it "does not add a second exam to an exam campaign" do
+          exam_campaign = create(:exam, :with_date, lecture: lecture).registration_campaign
+          exam = loose_exam
+
+          expect do
+            post_exam(exam_campaign, exam)
+          end.not_to change(Registration::Item, :count)
         end
       end
     end
@@ -436,6 +478,35 @@ RSpec.describe("Registration::Items", type: :request) do
         follow_redirect!
         expect(response.body).to include(I18n.t("roster.errors.cannot_delete_not_empty"))
       end
+    end
+  end
+
+  describe "GET .../items/:id/roster in a first come, first served campaign" do
+    let(:campaign) do
+      create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+    end
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+    end
+
+    before do
+      campaign.update!(status: :open)
+      sign_in editor
+    end
+
+    it "lists the confirmed registrations the row counts, not the rejected ones" do
+      confirmed = create(:confirmed_user, name: "Confirmed Student")
+      rejected = create(:confirmed_user, name: "Rejected Student")
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: confirmed)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign, registration_item: item, user: rejected)
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      expect(response.body).to include(confirmed.email)
+      expect(response.body).not_to include(rejected.email)
     end
   end
 end

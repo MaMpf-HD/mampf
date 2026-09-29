@@ -1,3 +1,24 @@
+@import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "./dashboard_card";
+@import "./washi_tape";
+@import "./dashboard_quick_actions";
+@import "./dashboard_progress";
+@import "./dashboard_term_select";
+@import "./staff_post_it";
+
+// Fills the first viewport below the navbar (one nav link high plus its
+// padding) and main's pt-3; the go-to-search link sticks to its bottom edge
+// via margin-top: auto.
+.dashboard-hero {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - #{$nav-link-height + 2 * $navbar-padding-y} - #{$spacer});
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
 #go-to-lecture-search {
     text-decoration: none;
     display: flex;
@@ -8,6 +29,7 @@
     transition: color 0.3s ease;
     padding-bottom: 2em;
     padding-top: 2em;
+    margin-top: auto;
 
     &:hover {
         color: #333;
@@ -18,31 +40,13 @@
     }
 }
 
-.next-term-banner {
-    width: fit-content;
-    max-width: 100%;
+.go-to-lecture-search-label {
+    font-size: 0.9em;
+    font-weight: 500;
 }
 
-.next-term-banner__content {
-    max-width: min(105ch, calc(100vw - 6rem));
-}
-
-// Divider between the main content and the transition notice: a top border
-// when stacked (mobile), switching to a left border in the side-by-side
-// layout (md and up).
-.next-term-banner__transition {
-    border-top: var(--bs-border-width) solid var(--bs-border-color);
-    padding-top: 0.5rem;
-}
-
-@media (min-width: 768px) {
-    .next-term-banner__transition {
-        flex: 0 0 30%;
-        border-top: 0;
-        border-left: var(--bs-border-width) solid var(--bs-border-color);
-        padding-top: 0;
-        padding-left: 1.5rem;
-    }
+#arrow-go-to-lecture-wrapper {
+    transition: transform 0.3s ease;
 }
 
 #arrow-go-to-lecture {

@@ -1,0 +1,16 @@
+<tr>
+  <% columns.each do |column| %>
+    <th class="<%= column.css_class %>">
+      <% if column.label_hidden %>
+        <span class="visually-hidden"><%= column.label %></span>
+      <% else %>
+        <%= column.label %>
+      <% end %>
+
+      <% if column.sublabel %>
+        <br>
+        <div class="text-muted"><%= column.sublabel %></div>
+      <% end %>
+    </th>
+  <% end %>
+</tr>

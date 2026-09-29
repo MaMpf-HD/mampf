@@ -5,12 +5,12 @@ import { resetPasswordLinkFor } from "./_support/mail";
 import { LoginPage } from "./page-objects/login_page";
 
 test("can reset the password via the mailed reset link", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-reset" }) as User;
   const newPassword = "super-secure-horse-battery-staple";
 
   await page.goto("/users/password/new?locale=en");
-  await page.getByLabel("Email").fill(user.email);
+  await page.getByLabel("Email", { exact: true }).fill(user.email);
   await page.getByRole("button", { name: "Reset password" }).click();
 
   await expect(page).toHaveURL(/\/users\/sign_in/);
@@ -36,16 +36,16 @@ test("can reset the password via the mailed reset link", async ({ page, request 
 
   await loginPage.goto();
   await loginPage.login(user.email, newPassword);
-  await expect(page).toHaveURL(/\/main\/start/);
+  await expect(page).toHaveURL(/:3145\/$/);
 });
 
 test("clears stale validation errors after correcting a rejected password", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-reset" }) as User;
   const newPassword = "super-secure-horse-battery-staple";
 
   await page.goto("/users/password/new?locale=en");
-  await page.getByLabel("Email").fill(user.email);
+  await page.getByLabel("Email", { exact: true }).fill(user.email);
   await page.getByRole("button", { name: "Reset password" }).click();
 
   await expect(page).toHaveURL(/\/users\/sign_in/);
@@ -78,7 +78,7 @@ test("clears stale validation errors after correcting a rejected password", asyn
 });
 
 test("keeps helpdesk popovers working after a rejected account password change", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-change" }) as User;
 
   const loginPage = new LoginPage(page);
@@ -107,7 +107,7 @@ test("keeps helpdesk popovers working after a rejected account password change",
 });
 
 test("clears stale current password errors after correcting an account password change", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator_playwright",
+  const user = await callBackend(request, "user_creator",
     { role: "password-change" }) as User;
   const newPassword = "super-secure-horse-battery-staple";
 

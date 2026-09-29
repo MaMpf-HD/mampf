@@ -1,0 +1,90 @@
+<div class="container-md py-3">
+  <h1 class="h3"><%= t("support.users.title") %></h1>
+
+  <p class="text-muted"><%= t("support.users.explainer") %></p>
+
+  <%= render(SearchForm::SearchForm.new(url: support_users_path, context: "support-users",
+                                        local: true, values: search_values)) do |c| %>
+    <% c.add_fulltext_field(help_text: t("support.users.fulltext_hint")) %>
+
+    <% c.add_program_field(collection: study_programs.map { |p| [p.name_with_subject, p.id] },
+                           all: search_values.nil? || search_values.all_programs == "1") %>
+
+    <% c.add_submit_field %>
+  <% end %>
+
+  <div id="support-user-results">
+    <% if @users.any? %>
+      <p class="small text-muted mb-2">
+        <%= t("support.users.hits", count: @pagy.count) %>
+      </p>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th scope="col"><%= t("support.users.columns.name") %></th>
+
+              <th scope="col">
+                <%= User.human_attribute_name(:matriculation_number) %>
+              </th>
+
+              <th scope="col"><%= t("support.users.columns.email") %></th>
+              <th scope="col"><%= t("support.users.columns.program") %></th>
+
+              <th scope="col">
+                <span class="visually-hidden">
+                  <%= t("support.users.columns.actions") %>
+                </span>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @users.each do |user| %>
+              <tr>
+                <th scope="row" class="fw-normal">
+                  <%= listed_name(user) %>
+
+                  <% if user.admin? %>
+                    <span class="badge bg-info">
+                      <%= t("basics.administrator_short") %>
+                    </span>
+                  <% end %>
+
+                  <% if user.support? %>
+                    <span class="badge bg-info">
+                      <%= t("admin.user.support") %>
+                    </span>
+                  <% end %>
+
+                  <% if user.deans_office? %>
+                    <span class="badge bg-info">
+                      <%= t("admin.user.deans_office") %>
+                    </span>
+                  <% end %>
+                </th>
+
+                <td><%= user.matriculation_number %></td>
+                <td><%= user.email %></td>
+                <td><%= user.program&.name_with_subject %></td>
+
+                <td class="text-end">
+                  <% if can?(:edit, user) %>
+                    <%= link_to t("support.users.open"),
+                                edit_support_user_path(user, search: search_query),
+                                "aria-label": t("support.users.open_for", user: user.email) %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <%== pagy_series_nav(@pagy) if @pagy.pages > 1 %>
+    <% elsif search_values&.fulltext.to_s.strip.length == 1 %>
+      <p><%= t("support.users.too_short") %></p>
+    <% elsif search_query %>
+      <p><%= t("support.users.no_hits") %></p>
+    <% end %>
+  </div>
+</div>

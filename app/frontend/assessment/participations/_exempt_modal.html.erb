@@ -1,0 +1,42 @@
+<%# One dialog for the whole table; the row that opens it hands over its url. %>
+<% title = local_assigns.fetch(:title, t("assessment.grading_exam.exempt_modal.title")) %>
+
+<div
+  class="modal fade"
+  tabindex="-1"
+  aria-hidden="true"
+  aria-labelledby="exempt-modal-title"
+  data-controller="exempt-modal"
+  data-action="participation-row:exempt-open@window->exempt-modal#open"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <%= form_with url: "#", method: :patch,
+                    data: { exempt_modal_target: "form", action: "submit->exempt-modal#submit" } do |f| %>
+        <div class="modal-header">
+          <h5 class="modal-title" id="exempt-modal-title"><%= title %></h5>
+        </div>
+
+        <div class="modal-body">
+          <%= f.label :note, t("assessment.grading_exam.exempt_modal.note_label"), for: "exempt-note",
+                      class: "form-label" %>
+
+          <%= f.text_area :note, id: "exempt-note", class: "form-control", rows: 3, maxlength: 255,
+                                 data: { exempt_modal_target: "note" } %>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-action="click->exempt-modal#hide"
+          >
+            <%= t("buttons.cancel") %>
+          </button>
+
+          <%= f.submit t("assessment.grading_exam.exempt_modal.save"), class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -4,8 +4,7 @@ class TalksController < ApplicationController
 
   before_action :set_talk, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  before_action :set_view_locale, only: [:edit]
-  layout "administration"
+  layout :staff_layout
 
   def current_ability
     @current_ability ||= TalkAbility.new(current_user)
@@ -19,8 +18,6 @@ class TalksController < ApplicationController
     @lecture = Lecture.find_by(id: params[:lecture_id])
     @talk = Talk.new(lecture: @lecture)
     authorize! :new, @talk
-    I18n.locale = @talk.lecture.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
 
     respond_to do |format|
       format.js do
@@ -58,8 +55,6 @@ class TalksController < ApplicationController
     dates = parse_talk_dates(params[:talk][:dates])
     @talk.dates = dates
 
-    I18n.locale = @talk&.lecture&.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
     position = params[:talk][:predecessor]
 
     saved = false
@@ -98,8 +93,6 @@ class TalksController < ApplicationController
   end
 
   def update
-    I18n.locale = @talk.lecture.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
     if @talk.update(talk_params) && @talk.valid?
       dates = parse_talk_dates(params[:talk][:dates])
       @talk.update(dates: dates)
@@ -202,11 +195,6 @@ class TalksController < ApplicationController
                            { tag_ids: [] }])
     end
 
-    def set_view_locale
-      I18n.locale = @talk.lecture.locale_with_inheritance ||
-                    current_user.locale || I18n.default_locale
-    end
-
     def parse_talk_dates(dates_param)
       return [] unless dates_param
 
@@ -227,6 +215,7 @@ class TalksController < ApplicationController
       if saved
         flash.now[:notice] = t("controllers.talks.created")
         streams << stream_flash if flash.present?
+        streams << new_group_mail_hint_stream(@talk)
         streams << refresh_campaigns_index_stream(@talk.lecture)
         streams << refresh_seminar_content_stream(@talk.lecture)
         streams << turbo_stream.update("modal-container", "")
@@ -237,7 +226,7 @@ class TalksController < ApplicationController
         streams << stream_flash if flash.present?
       end
 
-      streams
+      streams.compact
     end
 
     def registration_section_no_campaign?

@@ -14,7 +14,7 @@ state is the head of the talk grading work. That is the baseline the steps below
 
 `SubmissionGraderService` and both row components ask `!assignment.active?`; the model
 asks `assessment.grading_open?`. Point all three at the model's hook. The submission row
-keeps `valid_for_pointing?` on top — that is a real extra condition, not a duplicate.
+keeps `valid_for_marking?` on top — that is a real extra condition, not a duplicate.
 
 The boundary moves from the plain deadline to the friendly one, so parts of the task
 point request specs will move with it. Read each failure before adjusting it: some of
@@ -65,6 +65,18 @@ Two things are worth correcting while the file is open:
 Nothing about assignments should change. If a spec has to move, something else moved
 with it.
 
+```admonish note title="Both corrections are in"
+The table reads the participations of everybody on the page, marks included, in one
+query and hands each row its team's; the tasks are read once and handed down the same
+way. The request spec pins the count: a group of eight hand-ins costs what a group of two
+does.
+
+The maximum is decided as no ceiling at any layer: `TaskPoint` allows more than
+`max_points` because a bonus is points, the input carries no `max`, and the controller
+checks only the minimum. What a task is worth is what the header says, not what a tutor
+may enter.
+```
+
 ## 4 · Derive the assessable instead of being told it
 
 Drop `params[:type]`. The assessable and the grading scope both follow from the
@@ -79,6 +91,18 @@ an empty 200.
 
 The submission actions stay assignment-specific. They are about a team handing something
 in, which exams do not do.
+
+```admonish note title="Where this landed"
+Who may grade is settled from the record: the participation's or hand-in's own group, or
+the lecture where it has none - an exam, or a sheet handed in on paper by somebody in no
+group, which the loader no longer refuses. The page still says which table the row goes
+back into (`grading_scope_type`), because the group's table and the lecture's table draw
+different columns; that hint decides the shape of the answer and nothing else.
+
+A participation in anything but an assignment is refused with 400 before the actions run:
+this page has no row to draw it into. A record that is not there answers 404. Both carry
+the flash, and Turbo renders it either way.
+```
 
 ## 5 · Project the exam roster onto participations
 
@@ -113,8 +137,9 @@ to the assignment one.
 through `mark_exempt`: it clears the grade along with the status, and setting the status
 directly would leave a failing grade that re-applying a scheme will not remove either.
 
-`PointGridComponent` needs to stop treating a missing `submitted_at` as absence from the
-table, and to stop showing a tutorial column for assessables that have no tutorials.
+`PointGridComponent` is gone: an exam's points tab is `ExamPointsTableComponent`,
+which draws every candidate on the roster and reads absence off the status, not off
+`submitted_at`.
 
 ## 8 · A grade a person can type
 

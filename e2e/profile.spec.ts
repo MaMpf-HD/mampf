@@ -47,9 +47,13 @@ test.describe("Account settings", () => {
       await page.getByRole("textbox", { name: "name in tutorials" }).fill(newName);
       await profilePage.save();
 
-      await factory.create("tutorial", ["with_tutor_by_id"],
+      const tutorial = await factory.create("tutorial", ["with_tutor_by_id"],
         { lecture_id: lecture.id, tutor_id: tutorUser.id });
-      await new LecturePage(page, lecture.id).subscribe();
+      await new LecturePage(page, lecture.id).goto();
+      // A hand-in goes to the group one sits in, so there has to be a seat.
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
       const submissionsPage = new SubmissionsPage(page, lecture.id);
       await submissionsPage.goto();
       await submissionsPage.createSubmission();
@@ -113,32 +117,6 @@ test.describe("Account settings", () => {
 
       await loginPage.goto();
       await loginPage.login(newEmail, user.password);
-      await expect(page).toHaveURL(/\/main\/start/);
-    });
-});
-
-test.describe("Module settings", () => {
-  test("can subscribe to a lecture (via profile page)",
-    async ({ factory, student: { page } }) => {
-      const divisionName = "Fourier Division";
-      const courseName = "Happy Calculus 101";
-      const division = await factory.create("division", [], { name: divisionName });
-      const course = await factory.create("course", ["with_division"], { title: courseName, division_id: division.id });
-      const lecture = await factory.create("lecture", ["released_for_all"], { course_id: course.id });
-      const teacher = await lecture.__call("teacher");
-
-      const profilePage = new ProfilePage(page);
-      await profilePage.goto();
-      await page.getByTestId("courses-accordion").getByRole("button").first().click();
-      await expect(page.getByTestId("courses-accordion")).toContainText(divisionName);
-      const courseButton = page.getByText(courseName);
-      await courseButton.click();
-      await page.getByText(teacher.name).click();
-      await profilePage.save();
-
-      await page.goto("/");
-      const furtherSubscribed = page.getByTestId("further-subscribed");
-      await expect(furtherSubscribed).toContainText(courseName);
-      await expect(furtherSubscribed).toContainText(teacher.name);
+      await expect(page).toHaveURL(/:3145\/$/);
     });
 });

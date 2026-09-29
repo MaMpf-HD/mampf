@@ -1,0 +1,116 @@
+<div class="container-md py-3">
+  <%= link_to t("support.users.back"), support_users_path(search: search_query), class: "small" %>
+
+  <h1 class="h3 mt-2">
+    <%= t("support.users.edit_title", user: @user.email) %>
+  </h1>
+
+  <h2 class="h5 mt-4"><%= t("support.users.status.title") %></h2>
+
+  <dl class="row small" data-testid="support-account-status">
+    <dt class="col-sm-4"><%= t("support.users.columns.email") %></dt>
+
+    <dd class="col-sm-8">
+      <%= @user.email %>
+      <div class="text-muted"><%= t("support.users.email_hint") %></div>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.confirmed") %></dt>
+
+    <dd class="col-sm-8">
+      <%= confirmation_status(@user) %>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.locked") %></dt>
+
+    <dd class="col-sm-8">
+      <%= lock_status(@user) %>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.last_sign_in") %></dt>
+
+    <dd class="col-sm-8">
+      <%= sign_in_status(@user) %>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.password") %></dt>
+
+    <dd class="col-sm-8">
+      <%= t(@user.password_change_required? ? "support.users.status.password_due"
+                                             : "support.users.status.password_ok") %>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.personal_data") %></dt>
+
+    <dd class="col-sm-8">
+      <%= personal_data_status(@user) %>
+    </dd>
+
+    <% if @user.deletion_date %>
+      <dt class="col-sm-4"><%= t("support.users.status.deletion") %></dt>
+      <dd class="col-sm-8"><%= l(@user.deletion_date) %></dd>
+    <% end %>
+  </dl>
+
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <% if @user.access_locked? || @user.failed_attempts.positive? %>
+      <%= button_to t("support.users.actions.unlock"),
+                    unlock_support_user_path(@user, search: search_query),
+                    method: :patch, class: "btn btn-sm btn-outline-primary" %>
+    <% end %>
+
+    <%= button_to t("support.users.actions.password_reset"),
+                  password_reset_support_user_path(@user, search: search_query),
+                  class: "btn btn-sm btn-outline-primary" %>
+
+    <% if !@user.confirmed? || @user.pending_reconfirmation? %>
+      <%= button_to t("support.users.actions.confirmation"),
+                    confirmation_support_user_path(@user, search: search_query),
+                    class: "btn btn-sm btn-outline-primary" %>
+    <% end %>
+  </div>
+
+  <h2 class="h5"><%= t("support.users.data") %></h2>
+
+  <%= bootstrap_form_with model: @user,
+                          url: support_user_path(@user, search: search_query),
+                          method: :patch, local: true do |f| %>
+    <%= f.alert_message t("support.users.not_saved") %>
+
+    <%# The personal data dialog requires these; the support also corrects accounts without them. %>
+    <%= f.text_field :first_name, required: false %>
+    <%= f.text_field :last_name, required: false %>
+    <%= f.text_field :matriculation_number, required: false %>
+
+    <%= f.select :program_id, support_program_options(@user),
+                 include_blank: t("personal_data.other_program") %>
+
+    <%= f.text_field :uni_id %>
+    <%= f.text_field :name, label: t("basics.display_name") %>
+    <%= f.text_field :name_in_tutorials, label: t("profile.name_in_tutorials") %>
+
+    <% if can?(:assign_roles, @user) %>
+      <%= f.check_box :support, label: t("admin.user.support"),
+                                help: t("admin.user.info.support") %>
+      <%= f.check_box :deans_office, label: t("admin.user.deans_office"),
+                                       help: t("admin.user.info.deans_office") %>
+    <% end %>
+
+    <% if can?(:assign_admin, @user) %>
+      <%= f.check_box :admin, label: t("basics.administrator"),
+                              help: t("admin.user.info.administrator") %>
+    <% end %>
+
+    <%= f.submit t("support.users.save"), class: "btn btn-primary" %>
+  <% end %>
+
+  <% if can?(:destroy, @user) %>
+    <h2 class="h5 mt-4"><%= t("support.users.delete_title") %></h2>
+    <p class="small text-muted"><%= t("support.users.delete_hint") %></p>
+    <%= button_to t("support.users.delete"),
+                  support_user_path(@user, search: search_query),
+                  method: :delete, class: "btn btn-sm btn-outline-danger",
+                  form: { data: { turbo_confirm: t("support.users.delete_confirm",
+                                                   user: @user.email) } } %>
+  <% end %>
+</div>

@@ -125,15 +125,6 @@ class Course < ApplicationRecord
     lectures.empty? && media.empty? && persisted?
   end
 
-  def subscribable_lectures(user)
-    return lectures if user.admin || user.in?(editors)
-    return lectures.published unless user.edited_lectures.any? || user.teacher?
-
-    lectures.left_outer_joins(:editable_user_joins)
-            .where("released IS NOT NULL OR editable_user_joins.user_id = ? " \
-                   "OR teacher_id = ?", user.id, user.id).distinct
-  end
-
   def lectures_by_date
     lectures.sort
   end
@@ -150,14 +141,6 @@ class Course < ApplicationRecord
     lectures.collect(&:items).flatten
   end
 
-  def subscribed_lectures(user)
-    course.lectures & user.lectures
-  end
-
-  def to_be_authorized_lectures(user)
-    subscribable_lectures(user).restricted - subscribed_lectures(user)
-  end
-
   def subscribed_by?(user)
     user.courses.include?(self)
   end
@@ -167,12 +150,16 @@ class Course < ApplicationRecord
   end
 
   def users
-    User.where(id: LectureUserJoin.where(lecture: lectures)
+    User.where(id: LectureBookmark.where(lecture: lectures)
                                   .pluck(:user_id).uniq)
   end
 
+  def audience
+    LectureAudience.users(lectures.select(:id))
+  end
+
   def user_ids
-    User.where(id: LectureUserJoin.where(lecture: lectures)
+    User.where(id: LectureBookmark.where(lecture: lectures)
                                   .pluck(:user_id).uniq).pluck(:id)
   end
 

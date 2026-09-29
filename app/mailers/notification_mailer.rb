@@ -1,4 +1,6 @@
 class NotificationMailer < ApplicationMailer
+  helper LecturesHelper
+
   before_action :set_sender_and_locale
   before_action :set_recipients, only: [:medium_email, :announcement_email,
                                         :new_lecture_email,
@@ -10,6 +12,7 @@ class NotificationMailer < ApplicationMailer
                 only: [:submission_upload_email,
                        :submission_upload_removal_email,
                        :submission_join_email,
+                       :submission_added_email,
                        :submission_leave_email,
                        :correction_upload_email,
                        :submission_acceptance_email,
@@ -19,6 +22,7 @@ class NotificationMailer < ApplicationMailer
                        :submission_upload_removal_email]
   before_action :set_user,
                 only: [:submission_join_email,
+                       :submission_added_email,
                        :submission_leave_email]
 
   def medium_email
@@ -87,6 +91,15 @@ class NotificationMailer < ApplicationMailer
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title,
                     user: @user.tutorial_name))
+  end
+
+  # To the person a tutor put on the team; `@user` is the tutor.
+  def submission_added_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t("mailer.submission_added_subject",
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
   end
 
   def submission_leave_email

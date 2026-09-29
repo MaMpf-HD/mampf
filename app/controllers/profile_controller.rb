@@ -5,6 +5,11 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
                                      :star_lecture, :unstar_lecture]
+  # A passphrase is shared by the whole lecture, so guessing it is throttled
+  # as in Lectures::UnlocksController.
+  rate_limit to: 10, within: 1.minute, only: :subscribe_lecture,
+             by: -> { current_user&.id || request.remote_ip },
+             with: -> { head :too_many_requests }
 
   def current_ability
     @current_ability ||= ProfileAbility.new(current_user)
@@ -15,30 +20,22 @@ class ProfileController < ApplicationController
       redirect_to consent_profile_path
       return
     end
-    # destroy the notifications related to new lectures and courses
-    current_user.notifications.where(notifiable_type: ["Lecture", "Course"])
-                .destroy_all
     render layout: "application_no_sidebar"
   end
 
   def update
-    check_passphrases
-    return if @errors.present?
-
-    if @user.update(lectures: @lectures,
-                    name: @name,
+    previous_image = @user.image_data
+    assign_teacher_profile
+    if @user.update(name: @name,
                     name_in_tutorials: @name_in_tutorials,
                     subscription_type: @subscription_type,
                     locale: @locale)
       @user.update(email_params)
-      # remove notifications that have become obsolete
-      clean_up_notifications
-      # update lecture cookie
-      update_lecture_cookie
+      derive_profile_image if @user.image_data != previous_image
       I18n.locale = @locale
       cookies[:locale] = @locale
       @user.touch
-      redirect_to :start, notice: t("profile.success")
+      redirect_to :root, notice: t("profile.success")
     else
       @errors = @user.errors
     end
@@ -72,52 +69,15 @@ class ProfileController < ApplicationController
     if !@lecture.published? && !current_user.admin &&
        !@lecture.edited_by?(current_user)
       @unpublished = true
-      if html_redirect_flow?
-        return redirect_to root_path,
-                           alert: t("admin.lecture.no_rights")
-      end
       return
     end
-    # Roster members may subscribe without the passphrase: a roster seat is
-    # a stronger credential than a shared passphrase.
-    if @lecture.passphrase.present? &&
-       !@lecture.in?(current_user.lectures) &&
-       !LectureMembership.exists?(user: current_user, lecture: @lecture) &&
-       @lecture.passphrase != @passphrase
-      if html_redirect_flow?
-        return redirect_to lecture_home_path(@lecture),
-                           alert: t("errors.profile.passphrase")
-      end
-      return
-    end
-
-    @success = current_user.subscribe_lecture!(@lecture)
-
-    redirect_to lecture_path(@lecture) if @parent == "redirect"
+    # Roster members may bookmark without the passphrase: a roster seat is
+    # a stronger credential than a shared passphrase (see User#unlock_lecture!).
+    @success = current_user.unlock_lecture!(@lecture, passphrase: @passphrase)
   end
 
   def unsubscribe_lecture
-    @success = current_user.unsubscribe_lecture!(@lecture)
-    # A seat, an application or the lecturer's role outlives the
-    # subscription, so the card stays: the next load shows the lecture in
-    # the group that carries it.
-    @own = @parent.in?(["current_subscribed", "next_term_subscribed"]) &&
-           current_user.staff_lecture?(@lecture)
-    @place_left = @own ||
-                  (@parent == "next_term_subscribed" &&
-                   (current_user.next_term_seated_lectures +
-                    current_user.next_term_registered_lectures).include?(@lecture))
-    @none_left = case @parent
-                 when "current_subscribed"
-                   current_user.current_subscribed_lectures.empty? &&
-                   current_user.current_staff_lectures.empty?
-                 when "inactive" then current_user.inactive_lectures.empty?
-                 when "next_term_subscribed"
-                   current_user.next_term_lectures.empty? &&
-                   current_user.next_term_staff_lectures.empty? &&
-                   current_user.next_term_seated_lectures.empty? &&
-                   current_user.next_term_registered_lectures.empty?
-    end
+    @success = current_user.unbookmark_lecture!(@lecture)
   end
 
   def star_lecture
@@ -138,20 +98,12 @@ class ProfileController < ApplicationController
     current_user.touch
   end
 
+  # Firefox scrolls a newly-opened accordion fold out of view (see
+  # show_accordion.coffee); other browsers do not need this.
   def show_accordion
     @collapse_id = params[:id]
     redirect_to :root and return if @collapse_id.blank?
 
-    @lectures = case @collapse_id
-                when "collapseCurrentStuff" then current_user.current_subscribed_lectures
-                when "collapseInactiveLectures" then current_user.inactive_lectures
-                                                                 .includes(:course, :term)
-                                                                 .sort
-                when "collapseAllCurrent" then current_user.current_subscribable_lectures
-    end
-    if @collapse_id == "collapseCurrentStuff"
-      @own_lectures = current_user.current_staff_lectures - @lectures
-    end
     @link = "#{@collapse_id.remove("collapse").camelize(:lower)}Link"
   end
 
@@ -161,19 +113,6 @@ class ProfileController < ApplicationController
 
   private
 
-    # The subscribe form on the lecture home page submits as a plain HTML
-    # or Turbo request, in contrast to the legacy JS-driven subscribe flows
-    # (dashboard cards, subscribe page), which expect a JS response.
-    #
-    # NOTE: request.format.html? alone would actually suffice even for Turbo
-    # submissions (Mime::Type#html? matches any MIME string containing
-    # "html", which includes text/vnd.turbo-stream.html) — but we spell out
-    # the Turbo case so correctness does not hinge on that subtlety.
-    def html_redirect_flow?
-      @parent == "redirect" &&
-        (request.format.html? || request.format.turbo_stream?)
-    end
-
     def set_user
       @user = current_user
     end
@@ -181,10 +120,29 @@ class ProfileController < ApplicationController
     def set_basics
       @subscription_type = params[:user][:subscription_type].to_i
       @name = params[:user][:name]
-      @name_in_tutorials = params[:user][:name_in_tutorials]
-      @lectures = Lecture.where(id: lecture_ids)
-      @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
+      @name_in_tutorials = params[:user].fetch(:name_in_tutorials, @user.name_in_tutorials)
       @locale = params[:user][:locale]
+    end
+
+    # A teacher's homepage and picture show on their teacher page, so only a
+    # teacher sets them.
+    def assign_teacher_profile
+      return unless @user.teacher?
+
+      profile = params.permit(user: [:homepage, :image, :remove_image]).fetch(:user, {})
+      @user.homepage = profile[:homepage] if profile.key?(:homepage)
+      if profile[:image].present?
+        @user.image = profile[:image]
+      elsif profile[:remove_image] == "1"
+        @user.image = nil
+      end
+    end
+
+    def derive_profile_image
+      return if @user.image.blank?
+
+      @user.image_derivatives!
+      @user.save
     end
 
     def email_params
@@ -204,54 +162,10 @@ class ProfileController < ApplicationController
       @parent = lecture_params[:parent]
       @current = !@parent.in?(["lectureSearch", "inactive",
                                "next_term_subscribed", "next_term_registered"])
-      redirect_to start_path unless @lecture
+      redirect_to root_path unless @lecture
     end
 
     def lecture_params
       params.expect(lecture: [:id, :passphrase, :parent])
-    end
-
-    # extracts all lecture ids from user params
-    def lecture_ids
-      return [] if params[:user][:lecture].blank?
-
-      params[:user][:lecture].select { |_k, v| v["subscribed"] == "1" }.keys.map(&:to_i)
-    end
-
-    def clean_up_notifications
-      # delete all of the user's notifications if he does not want them
-      # remove all notification related not related to subscribed courses
-      # or lectures
-      subscribed_teachables = @courses + @lectures
-      irrelevant_notifications = @user.notifications.select do |n|
-        n.teachable.present? && !n.teachable.in?(subscribed_teachables)
-      end
-      Notification.where(id: irrelevant_notifications.map(&:id)).delete_all
-    end
-
-    # if user unsubscribed the lecture the current lecture cookie refers to,
-    # set the lectures cookie to nil
-    def update_lecture_cookie
-      return if @current_lecture.in?(@user.lectures)
-
-      cookies[:current_lecture_id] = nil
-    end
-
-    # stop the update if any of passphrases for newly subscribed
-    # lectures is incorrect
-    def check_passphrases
-      @errors = {}
-      restricted_lectures = Lecture.where(id: lecture_ids)
-                                   .select do |l|
-        l.in?(l.course
-               .to_be_authorized_lectures(current_user))
-      end
-      restricted_lectures.each do |l|
-        given_passphrase = params[:user][:lecture][l.id.to_s][:passphrase]
-        unless given_passphrase == l.passphrase
-          @errors[:passphrase] ||= []
-          @errors[:passphrase].push(l.id)
-        end
-      end
     end
 end

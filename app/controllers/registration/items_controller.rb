@@ -2,7 +2,6 @@ module Registration
   class ItemsController < ApplicationController
     helper RosterHelper
     before_action :set_campaign
-    before_action :set_locale
     before_action :set_item, only: [:destroy, :destroy_with_registerable,
                                     :update, :roster]
     authorize_resource class: "Registration::Item", except: [:create]
@@ -45,7 +44,7 @@ module Registration
                                        embedded: embedded
                                      }),
                 turbo_stream.replace(@item,
-                                     html: GroupTileComponent.new(
+                                     html: GroupRowComponent.new(
                                        registerable: @item.registerable,
                                        item: @item
                                      ).render_in(view_context)),
@@ -54,7 +53,7 @@ module Registration
             else
               [
                 turbo_stream.replace(@item,
-                                     html: GroupTileComponent.new(
+                                     html: GroupRowComponent.new(
                                        registerable: @item.registerable,
                                        item: @item
                                      ).render_in(view_context)),
@@ -127,10 +126,10 @@ module Registration
       end
 
       def create_existing_item
-        @item = @campaign.registration_items.build(item_params)
-        authorize! :create, @item
+        authorize! :create, @campaign.registration_items.build(item_params)
+        @item = @campaign.add_item(item_params)
 
-        if @item.save
+        if @item.persisted?
           respond_with_flash(:notice, t("registration.item.created"),
                              redirect_path: after_action_path) do
             render_campaigns_container
@@ -161,10 +160,6 @@ module Registration
         respond_with_flash(:alert, t("registration.campaign.not_found"), redirect_path: root_path)
       end
 
-      def set_locale
-        I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
-      end
-
       def set_item
         @item = @campaign.registration_items.find_by(id: params[:id])
         return if @item
@@ -191,10 +186,9 @@ module Registration
       end
 
       def panel_students_for(item)
-        registrations = if @campaign.last_allocation_calculated_at.present?
+        registrations = if @campaign.last_allocation_calculated_at.present? ||
+                           @campaign.first_come_first_served?
           item.user_registrations.confirmed
-        elsif @campaign.first_come_first_served?
-          item.user_registrations
         else
           item.user_registrations.where(preference_rank: 1)
         end
@@ -202,7 +196,6 @@ module Registration
         registrations.includes(:user)
                      .filter_map(&:user)
                      .uniq(&:id)
-                     .sort_by { |user| [user.name.to_s.downcase, user.email.to_s.downcase] }
       end
 
       def preference_ranks_for(item)

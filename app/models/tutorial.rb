@@ -2,6 +2,10 @@ class Tutorial < ApplicationRecord
   include Registration::Registerable
   include Rosters::Rosterable
 
+  def self.displaces_sibling_assignment?
+    true
+  end
+
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
@@ -51,6 +55,12 @@ class Tutorial < ApplicationRecord
     blockers
   end
 
+  # Who may upload, replace and delete the group's corrections: its tutors,
+  # and the lecture's teacher and editors, who stand in for a tutor.
+  def correctable_by?(user)
+    user.in?(tutors) || user.editor_or_teacher_in?(lecture)
+  end
+
   def teams_to_csv(assignment)
     submissions = Submission.where(tutorial: self, assignment: assignment)
                             .proper.order(:last_modification_by_users_at)
@@ -92,6 +102,10 @@ class Tutorial < ApplicationRecord
     TutorialMembership.where(lecture: lecture, user: user)
                       .where.not(tutorial: self)
                       .first&.tutorial
+  end
+
+  def graders_with_inheritance
+    (tutors + lecture.graders_with_inheritance).uniq
   end
 
   private

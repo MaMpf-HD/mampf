@@ -3,7 +3,7 @@ import { Page, expect, test } from "./_support/fixtures";
 // Everything here is reached the way a person reaches it — through Turbo, not
 // through a reload — because that is where the page used to fall silent.
 async function visitEdit(page: Page, lectureId: number, tab: string) {
-  await page.goto(`/lectures/${lectureId}/home`);
+  await page.goto(`/lectures/${lectureId}`);
   await page.evaluate((url) => {
     window.Turbo.visit(url);
   }, `/lectures/${lectureId}/edit?tab=${tab}`);
@@ -13,12 +13,11 @@ async function visitEdit(page: Page, lectureId: number, tab: string) {
 test.describe("the lecture edit page", () => {
   test("announces unsaved changes on every tab that has a form",
     async ({ factory, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
 
       for (const [tab, form, warning] of [
         ["people", "#lecture-form", "#lecture-basics-warning"],
         ["settings", "#lecture-preferences-form", "#lecture-preferences-warning"],
-        ["assignments", "#lecture-assignments-form", "#lecture-assignments-warning"],
       ] as const) {
         await visitEdit(page, lecture.id, tab);
         await expect(page.locator(warning)).toBeHidden();
@@ -30,26 +29,27 @@ test.describe("the lecture edit page", () => {
       }
     });
 
-  test("puts the assignments tab back when the change is discarded",
+  test("puts the settings tab back when the change is discarded",
     async ({ factory, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      await visitEdit(page, lecture.id, "assignments");
-      const teamSize = page.getByLabel("maximal team size for submissions");
-      const saved = await teamSize.inputValue();
+      const lecture = await factory.create("lecture", ["released_for_all"]);
+      await visitEdit(page, lecture.id, "settings");
+      const startSection = page.getByLabel("Nummer of the first section");
+      const saved = await startSection.inputValue();
 
-      await teamSize.fill("7");
-      await teamSize.dispatchEvent("change", { bubbles: true });
-      await expect(page.locator("#lecture-assignments-warning")).toBeVisible();
+      await page.getByLabel("absolute numbering").check();
+      await startSection.fill("7");
+      await startSection.dispatchEvent("change", { bubbles: true });
+      await expect(page.locator("#lecture-preferences-warning")).toBeVisible();
 
-      await page.locator("#cancel-lecture-assignments").click();
+      await page.locator("#cancel-lecture-preferences").click();
 
-      await expect(page.locator("#lecture-assignments-warning")).toBeHidden();
-      await expect(teamSize).toHaveValue(saved);
+      await expect(page.locator("#lecture-preferences-warning")).toBeHidden();
+      await expect(startSection).toHaveValue(saved);
     });
 
   test("only lets the start section be picked with absolute numbering on",
     async ({ factory, admin: { page } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await visitEdit(page, lecture.id, "settings");
       const startSection = page.getByLabel("Nummer of the first section");
 
@@ -65,7 +65,7 @@ test.describe("the lecture edit page", () => {
   test("fills the subscriber list on the way in",
     async ({ factory, student, admin: { page } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      await factory.create("lecture_user_join", [], {
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: student.user.id,
       });
 
@@ -76,7 +76,7 @@ test.describe("the lecture edit page", () => {
     });
 
   test("folds the media column away and back", async ({ factory, admin: { page } }) => {
-    const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+    const lecture = await factory.create("lecture", ["released_for_all"]);
     await visitEdit(page, lecture.id, "content");
     const mediaCard = page.locator("#lecture-media-card");
     const showButton = page.getByTitle("Show media");

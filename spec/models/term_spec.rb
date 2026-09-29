@@ -51,6 +51,46 @@ RSpec.describe(Term, type: :model) do
     end
   end
 
+  describe "#dashboard_param" do
+    it "is season + two-digit year for a summer term" do
+      expect(build(:term, season: "SS", year: 2025).dashboard_param).to eq("SS25")
+    end
+
+    it "spans both years for a winter term" do
+      expect(build(:term, season: "WS", year: 2025).dashboard_param)
+        .to eq("WS25-26")
+    end
+
+    it "wraps the second year across the century" do
+      expect(build(:term, season: "WS", year: 2099).dashboard_param)
+        .to eq("WS99-00")
+    end
+  end
+
+  describe ".from_dashboard_param" do
+    let!(:summer) { create(:term, season: "SS", year: 2025) }
+    let!(:winter) { create(:term, season: "WS", year: 2025) }
+
+    it "round-trips a #dashboard_param slug" do
+      expect(Term.from_dashboard_param(summer.dashboard_param)).to eq(summer)
+      expect(Term.from_dashboard_param(winter.dashboard_param)).to eq(winter)
+    end
+
+    it "is case-insensitive and ignores the redundant winter end year" do
+      expect(Term.from_dashboard_param("ws25-99")).to eq(winter)
+    end
+
+    it "still accepts a bare id" do
+      expect(Term.from_dashboard_param(summer.id.to_s)).to eq(summer)
+    end
+
+    it "is nil for a blank or unknown value" do
+      expect(Term.from_dashboard_param(nil)).to be_nil
+      expect(Term.from_dashboard_param("SS99")).to be_nil
+      expect(Term.from_dashboard_param("nonsense")).to be_nil
+    end
+  end
+
   # test methods - NEEDS TO BE REFACTORED
 
   # describe '#begin_date' do

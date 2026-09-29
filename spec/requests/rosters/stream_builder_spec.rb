@@ -21,11 +21,13 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       expect(response.body).to include("tutorial-roster-side-panel")
     end
 
-    it "skips tile DOM id when showing (update_tiles: false)" do
+    it "skips the row DOM id when showing (update_rows: false)" do
       get tutorial_roster_path(tutorial, source: "panel"),
           as: :turbo_stream
 
-      expect(response.body).to include("tutorial-roster-side-panel")
+      assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(tutorial),
+                          count: 0
     end
   end
 
@@ -44,6 +46,42 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
 
       expect(response).to have_http_status(:success)
       expect(response.body).to include("roster_participants_panel")
+      assert_turbo_stream action: :replace, target: "roster_participants_panel", count: 0
+    end
+  end
+
+  describe "stream dispatch via panel source in a completed campaign" do
+    let(:campaign_tutorial) do
+      create(:tutorial, lecture: lecture, skip_campaigns: false)
+    end
+    let(:campaign) do
+      create(:registration_campaign, campaignable: lecture,
+                                     status: :completed, registration_deadline: 2.weeks.ago)
+    end
+    let(:student) { create(:confirmed_user) }
+
+    before do
+      item = create(:registration_item,
+                    registration_campaign: campaign,
+                    registerable: campaign_tutorial)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: student)
+      create(:lecture_membership, lecture: lecture, user: student)
+      create(:tutorial_membership, tutorial: campaign_tutorial, user: student)
+    end
+
+    # The student is back among the campaign's unplaced ones, and the
+    # participants tab lists her without a group - neither is on the panel.
+    it "counts the campaign's unplaced students anew and reloads the participants tab" do
+      delete remove_member_tutorial_path(campaign_tutorial, user_id: student.id),
+             params: { source: "panel" },
+             as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      assert_turbo_stream action: :replace, target: "dissolved_campaign_#{campaign.id}" do
+        assert_select "template", text: /1\s+#{I18n.t("roster.candidates.short_title")}/
+      end
+      assert_turbo_stream action: :replace, target: "roster_participants_panel"
     end
   end
 
@@ -176,13 +214,15 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       create(:tutorial_membership, tutorial: tutorial, user: member)
     end
 
-    it "returns tile updates for both source and target plus side panel" do
+    it "returns row updates for both source and target plus side panel" do
       patch move_member_tutorial_path(tutorial, user_id: member.id),
             params: { target_id: target.id, source: "panel" },
             as: :turbo_stream
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to include("tutorial-roster-side-panel")
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(tutorial)
+      assert_turbo_stream action: :replace, target: ActionView::RecordIdentifier.dom_id(target)
+      assert_turbo_stream action: :replace, target: "tutorial-roster-side-panel"
     end
   end
 end

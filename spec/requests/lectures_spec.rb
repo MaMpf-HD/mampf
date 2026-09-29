@@ -40,44 +40,70 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).not_to include(lecture_algebra.course.title)
       end
 
-      it "filters lectures to the current term" do
+      it "scopes results to the selected term, keeping term-independent ones" do
         current_term = create(:term, :summer, :active, year: 2025)
-        next_term = create(:term, :winter, year: 2025)
-        current_course = create(:course, title: "Topology Current")
-        next_course = create(:course, title: "Topology Next")
-        create(:lecture, course: current_course, term: current_term)
-        create(:lecture, course: next_course, term: next_term)
+        other_term = create(:term, :winter, year: 2025)
+        selected_course = create(:course, title: "Topology Selected")
+        other_course = create(:course, title: "Topology Other")
+        create(:lecture, course: selected_course, term: other_term)
+        create(:lecture, course: other_course, term: current_term)
         term_independent_course = create(:course, :term_independent,
                                          title: "Topology Independent")
         create(:lecture, :term_independent, course: term_independent_course)
 
         get search_lectures_path,
-            params: { search: { fulltext: "Topology", term_scope: "current" } },
+            params: { search: { fulltext: "Topology",
+                                term: other_term.dashboard_param } },
+            xhr: true
+
+        expect(response.body).to include(selected_course.title)
+        expect(response.body).to include(term_independent_course.title)
+        expect(response.body).not_to include(other_course.title)
+      end
+
+      it "falls back to the active term when no term is given" do
+        current_term = create(:term, :summer, :active, year: 2025)
+        other_term = create(:term, :winter, year: 2025)
+        current_course = create(:course, title: "Analysis Current")
+        other_course = create(:course, title: "Analysis Other")
+        create(:lecture, course: current_course, term: current_term)
+        create(:lecture, course: other_course, term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Analysis" } },
             xhr: true
 
         expect(response.body).to include(current_course.title)
-        expect(response.body).to include(term_independent_course.title)
-        expect(response.body).not_to include(next_course.title)
+        expect(response.body).not_to include(other_course.title)
       end
 
-      it "filters lectures to the next term" do
-        current_term = create(:term, :summer, :active, year: 2025)
-        next_term = create(:term, :winter, year: 2025)
-        current_course = create(:course, title: "Analysis Current")
-        next_course = create(:course, title: "Analysis Next")
-        create(:lecture, course: current_course, term: current_term)
-        create(:lecture, course: next_course, term: next_term)
-        term_independent_course = create(:course, :term_independent,
-                                         title: "Analysis Independent")
-        create(:lecture, :term_independent, course: term_independent_course)
+      it "names each result's term when there is no term to scope to" do
+        other_term = create(:term, :winter)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
 
         get search_lectures_path,
-            params: { search: { fulltext: "Analysis", term_scope: "next" } },
-            xhr: true
+            params: { search: { fulltext: "Geometry", show_term: "0" } },
+            as: :turbo_stream
 
-        expect(response.body).to include(next_course.title)
-        expect(response.body).to include(term_independent_course.title)
-        expect(response.body).not_to include(current_course.title)
+        expect(response.body).to include("Geometry Other", other_term.to_label_short)
+      end
+
+      it "searches every term when asked to, and names each result's term" do
+        current_term = create(:term, :summer, :active)
+        other_term = create(:term, :winter)
+        create(:lecture, course: create(:course, title: "Geometry Current"),
+                         term: current_term)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Geometry", term: current_term.dashboard_param,
+                                show_term: "0", all_terms: "1" } },
+            as: :turbo_stream
+
+        expect(response.body).to include("Geometry Current", "Geometry Other")
+        expect(response.body).to include(other_term.to_label_short)
       end
     end
 
@@ -100,6 +126,17 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include("lecture-search-registration-badge")
       end
 
+      it "offers both the register shortcut and the bookmark toggle " \
+         "while the user is not registered" do
+        create(:registration_campaign, :open, :first_come_first_served,
+               campaignable: lecture_algebra)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-register-link")
+        expect(response.body).to include("lecture-search-bookmark-button")
+      end
+
       it "does not show a badge for draft campaigns" do
         create(:registration_campaign, :first_come_first_served,
                campaignable: lecture_algebra)
@@ -110,7 +147,7 @@ RSpec.describe("Lectures", type: :request) do
           .not_to include("lecture-search-registration-badge")
       end
 
-      it "shows a registered badge instead when the user has registered" do
+      it "shows the registered marker instead when the user has registered" do
         campaign = create(:registration_campaign, :open,
                           :first_come_first_served,
                           campaignable: lecture_algebra)
@@ -119,7 +156,7 @@ RSpec.describe("Lectures", type: :request) do
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body).to include("lecture-search-registered-control")
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
       end
@@ -135,7 +172,49 @@ RSpec.describe("Lectures", type: :request) do
 
         expect(response.body).to include("lecture-search-registration-badge")
         expect(response.body)
-          .not_to include("lecture-search-registered-badge")
+          .not_to include("lecture-search-registered-control")
+      end
+
+      it "shows the pending label and hides the bookmark toggle" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :pending,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.pending"))
+        expect(response.body).not_to include("lecture-search-bookmark-button")
+      end
+
+      it "shows the rejected label once the campaign is closed, hides the bookmark toggle" do
+        campaign = create(:registration_campaign, :closed,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :rejected,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.rejected"))
+        expect(response.body).not_to include("lecture-search-bookmark-button")
+      end
+
+      it "shows the confirmed label and hides the bookmark toggle" do
+        campaign = create(:registration_campaign, :open,
+                          :first_come_first_served,
+                          campaignable: lecture_algebra)
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign, user: user)
+
+        search_algebra
+
+        expect(response.body).to include("lecture-search-registered-control")
+        expect(response.body).to include(I18n.t("registration.user_registration.status.confirmed"))
+        expect(response.body).not_to include("lecture-search-bookmark-button")
       end
     end
 
@@ -155,14 +234,14 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include("lecture-search-registration-badge")
       end
 
-      it "shows the registered badge when the user is already in a group" do
+      it "shows the registered marker when the user is already in a group" do
         tutorial = create(:tutorial, lecture: lecture_algebra,
                                      self_materialization_mode: :add_only)
         create(:tutorial_membership, tutorial: tutorial, user: user)
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-registered-badge")
+        expect(response.body).to include("lecture-search-registered-control")
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
       end
@@ -176,30 +255,39 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body)
           .not_to include("lecture-search-registration-badge")
         expect(response.body)
-          .not_to include("lecture-search-registered-badge")
+          .not_to include("lecture-search-registered-control")
       end
     end
 
-    context "with subscribed lectures" do
+    context "with bookmarked lectures" do
       def search_algebra
         get(search_lectures_path,
             params: { search: { fulltext: "Algebra" }, infinite_scroll: true },
             as: :turbo_stream)
       end
 
-      it "shows a subscribed indicator on the card" do
-        create(:lecture_user_join, user: user, lecture: lecture_algebra)
+      it "shows the bookmark button pressed on a bookmarked lecture" do
+        create(:lecture_bookmark, user: user, lecture: lecture_algebra)
 
         search_algebra
 
-        expect(response.body).to include("lecture-search-subscribed-indicator")
+        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).to include('aria-pressed="true"')
       end
 
-      it "does not show a subscribed indicator otherwise" do
+      it "shows the bookmark button unpressed otherwise" do
         search_algebra
 
-        expect(response.body)
-          .not_to include("lecture-search-subscribed-indicator")
+        expect(response.body).to include("lecture-search-bookmark-button")
+        expect(response.body).to include('aria-pressed="false"')
+      end
+
+      it "offers no bookmark button for a lecture behind a passphrase" do
+        lecture_algebra.update!(passphrase: "secret")
+
+        search_algebra
+
+        expect(response.body).not_to include("lecture-search-bookmark-button")
       end
     end
 
@@ -252,7 +340,7 @@ RSpec.describe("Lectures", type: :request) do
     let(:lecture) { create(:lecture, :released_for_all, locale: "en") }
 
     before do
-      create(:lecture_user_join, user: user, lecture: lecture)
+      create(:lecture_bookmark, user: user, lecture: lecture)
       create(:lecture_medium,
              teachable: lecture,
              sort: "Script",
@@ -282,10 +370,68 @@ RSpec.describe("Lectures", type: :request) do
       get lecture_script_path(lecture)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("sidebar-item__badge")
-      expect(response.body).to include(
-        I18n.t("registration.lecture.home.news_indicator")
-      )
+      badge = Nokogiri::HTML(response.body).at_css("##{SidebarBadgeComponent::HOME_ID}")
+      expect(badge.text).to eq("1")
+      expect(badge["hidden"]).to be_nil
+      expect(badge["title"]).to eq(I18n.t("registration.lecture.home.news_indicator"))
+    end
+
+    it "keeps the Home marker hidden without updates" do
+      get lecture_script_path(lecture)
+
+      badge = Nokogiri::HTML(response.body).at_css("##{SidebarBadgeComponent::HOME_ID}")
+      expect(badge["hidden"]).not_to be_nil
+    end
+  end
+
+  describe "lecture pages with nothing to show" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all, organizational: nil) }
+
+    before { create(:lecture_bookmark, user: user, lecture: lecture) }
+
+    it "send a media page without media to the lecture home page" do
+      get lecture_lesson_materials_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the announcements without any to the lecture home page" do
+      get lecture_announcements_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the organizational page without its text to the lecture home page" do
+      get lecture_organizational_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+
+    it "send the self test without enough questions to the lecture home page" do
+      get show_random_quizzes_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+    end
+  end
+
+  describe "GET /lectures/:id/show_random_quizzes" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    before do
+      create(:lecture_bookmark, user: user, lecture: lecture)
+      10.times do
+        build(:question, :with_stuff, teachable: lecture.course, released: "all")
+          .save(validate: false)
+      end
+    end
+
+    it "renders the self test with the notation help" do
+      get show_random_quizzes_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("test.notation_header")))
     end
   end
 
@@ -293,7 +439,7 @@ RSpec.describe("Lectures", type: :request) do
     let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
 
     before do
-      create(:lecture_user_join, user: user, lecture: lecture)
+      create(:lecture_bookmark, user: user, lecture: lecture)
     end
 
     it "renders an edit affordance on the content page" do
@@ -322,6 +468,13 @@ RSpec.describe("Lectures", type: :request) do
       expect(response.body).to include("course_lectures")
     end
 
+    it "opens the new lecture when it was created from the dashboard" do
+      post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
+                          as: :turbo_stream)
+
+      expect(response).to redirect_to(edit_lecture_path(Lecture.last))
+    end
+
     context "when the teacher already gives that lecture in that term" do
       before { create(:lecture, **attributes.except(:from, :content_mode)) }
 
@@ -333,6 +486,29 @@ RSpec.describe("Lectures", type: :request) do
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
       end
+
+      it "puts the form back into the dashboard's modal" do
+        post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
+                            as: :turbo_stream)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream")["target"])
+          .to eq("new_lecture")
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
+      end
+    end
+
+    # The error has no field of its own, so it is shown as a whole sentence
+    # under the form, where an attribute name in front would only garble it.
+    it "says in one sentence that a term-independent course takes no term" do
+      term_independent = create(:course, :term_independent)
+
+      post(lectures_path, params: { lecture: attributes.merge(course_id: term_independent.id) },
+                          as: :turbo_stream)
+
+      message = Nokogiri::HTML(response.body).at_css(".invalid-feedback").text.strip
+      expect(message).to eq(I18n.t("activerecord.errors.models.lecture.attributes.term.present",
+                                   locale: user.locale).strip)
     end
   end
 
@@ -379,6 +555,15 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).not_to include(I18n.t("errors.unknown"))
       end
 
+      it "sends a saved settings pane back to its tab" do
+        patch lecture_path(lecture),
+              params: { lecture: { locale: "de" }, subpage: "settings" },
+              as: :turbo_stream
+
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "settings"))
+        expect(lecture.reload.locale).to eq("de")
+      end
+
       it "leaves the people pane alone" do
         patch lecture_path(lecture),
               params: { lecture: { term_id: other_term.id, sort: "lecture",
@@ -415,7 +600,7 @@ RSpec.describe("Lectures", type: :request) do
     let!(:xss_section) { create(:section, chapter: xss_chapter, details: xss_payload) }
 
     before do
-      create(:lecture_user_join, user: user, lecture: xss_lecture)
+      create(:lecture_bookmark, user: user, lecture: xss_lecture)
     end
 
     it "escapes or strips script tags from lecture organizational concept, chapters, and sections in edit view" do # rubocop:disable Layout/LineLength
@@ -433,62 +618,37 @@ RSpec.describe("Lectures", type: :request) do
 
   describe "GET /lectures/:id" do
     let(:user) { create(:confirmed_user) }
-    let(:term) { create(:term, :winter, year: 2026) }
-    let(:lecture) { create(:lecture, :released_for_all, term: term) }
+    let(:lecture) { create(:lecture, :released_for_all) }
 
-    after { Flipper.disable(:lecture_home_landing) }
+    it "serves the lecture home page" do
+      create(:lecture_bookmark, user: user, lecture: lecture)
 
-    context "when the lecture's term uses home as its landing page" do
-      before { Flipper.enable_actor(:lecture_home_landing, term) }
+      get lecture_path(lecture)
 
-      it "sends subscribers to the lecture home page" do
-        create(:lecture_user_join, user: user, lecture: lecture)
-
-        get lecture_path(lecture)
-
-        expect(response).to redirect_to(lecture_home_path(lecture))
-      end
-
-      it "sends non-subscribers to the lecture home page" do
-        get lecture_path(lecture)
-
-        expect(response).to redirect_to(lecture_home_path(lecture))
-      end
-
-      it "sends teachers to the lecture home page without a subscription" do
-        teacher_lecture = create(:lecture, :released_for_all,
-                                 term: term, teacher: user)
-
-        get lecture_path(teacher_lecture)
-
-        expect(teacher_lecture.in?(user.lectures)).to be(false)
-        expect(response).to redirect_to(lecture_home_path(teacher_lecture))
-      end
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include('data-testid="lecture-home"')
     end
 
-    context "when the lecture's term keeps the outline landing page" do
-      it "sends subscribers to the stable outline page" do
-        create(:lecture_user_join, user: user, lecture: lecture)
+    it "serves the lecture home page to teachers" do
+      teacher_lecture = create(:lecture, :released_for_all, teacher: user)
 
-        get lecture_path(lecture)
+      get lecture_path(teacher_lecture)
 
-        expect(response).to redirect_to(lecture_outline_path(lecture))
-      end
+      expect(response.body).to include('data-testid="lecture-home"')
+    end
 
-      it "sends non-subscribers to the stable outline page" do
-        get lecture_path(lecture)
+    it "is the address of the lecture home page" do
+      expect(lecture_home_path(lecture)).to eq(lecture_path(lecture))
+    end
+  end
 
-        expect(response).to redirect_to(lecture_outline_path(lecture))
-      end
+  describe "GET /lectures/:id/home" do
+    let(:lecture) { create(:lecture, :released_for_all) }
 
-      it "sends teachers to the stable outline page" do
-        teacher_lecture = create(:lecture, :released_for_all,
-                                 term: term, teacher: user)
+    it "leads to the lecture's address, keeping the query" do
+      get "/lectures/#{lecture.id}/home?locale=de"
 
-        get lecture_path(teacher_lecture)
-
-        expect(response).to redirect_to(lecture_outline_path(teacher_lecture))
-      end
+      expect(response).to redirect_to("/lectures/#{lecture.id}?locale=de")
     end
   end
 
@@ -496,8 +656,8 @@ RSpec.describe("Lectures", type: :request) do
     let(:user) { create(:confirmed_user) }
     let(:lecture) { create(:lecture, :released_for_all) }
 
-    it "serves the outline content page to subscribers" do
-      create(:lecture_user_join, user: user, lecture: lecture)
+    it "serves the outline content page to users who bookmarked it" do
+      create(:lecture_bookmark, user: user, lecture: lecture)
 
       get lecture_outline_path(lecture)
 
@@ -512,27 +672,78 @@ RSpec.describe("Lectures", type: :request) do
       expect(response).to have_http_status(:success)
     end
 
-    it "sends non-subscribers to the lecture home page" do
+    it "serves the outline content page of an unprotected lecture to " \
+       "users who have not bookmarked it" do
       get lecture_outline_path(lecture)
 
-      expect(response).to redirect_to(lecture_home_path(lecture))
+      expect(response).to have_http_status(:success)
     end
 
-    context "when the lecture's term uses home as its landing page" do
-      let(:term) { create(:term, :winter, year: 2026) }
-      let(:lecture) { create(:lecture, :released_for_all, term: term) }
+    context "with a passphrase-protected lecture" do
+      let(:lecture) do
+        create(:lecture, :released_for_all, passphrase: "secret")
+      end
 
-      before { Flipper.enable_actor(:lecture_home_landing, term) }
-
-      after { Flipper.disable(:lecture_home_landing) }
-
-      it "still serves the stable outline page to subscribers" do
-        create(:lecture_user_join, user: user, lecture: lecture)
+      it "serves the outline content page to users who unlocked it" do
+        create(:lecture_bookmark, user: user, lecture: lecture)
 
         get lecture_outline_path(lecture)
 
         expect(response).to have_http_status(:success)
       end
+
+      it "sends users who have not unlocked it to the lecture home page" do
+        get lecture_outline_path(lecture)
+
+        expect(response).to redirect_to(lecture_home_path(lecture))
+      end
+    end
+  end
+
+  describe "GET /lectures/:id/edit (people tab)" do
+    it "lists the tutors with their tutorials, and the voucher holders without one" do
+      lecture = create(:lecture, teacher: user)
+      ada = create(:confirmed_user, name_in_tutorials: "Ada L.")
+      grace = create(:confirmed_user, name_in_tutorials: "Grace H.")
+      create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: ada.id, title: "Mo 10")
+      create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: ada.id, title: "Tu 14")
+      Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: grace)
+
+      get edit_lecture_path(lecture, tab: "people")
+
+      rows = Nokogiri::HTML(response.body).css("[data-testid='tutors-overview'] tr")
+                     .map { |row| row.text.squish }
+      expect(rows.size).to eq(2)
+      expect(rows.first).to include("Ada L.", "Mo 10, Tu 14")
+      expect(rows.last).to include("Grace H.",
+                                   I18n.t("admin.lecture.tutors_overview.no_group_yet"))
+    end
+
+    it "lists a flexible group's tutors with their group" do
+      lecture = create(:lecture, teacher: user)
+      ada = create(:confirmed_user, name_in_tutorials: "Ada L.")
+      create(:cohort, context: lecture, title: "Extra lessons").tutors << ada
+
+      get edit_lecture_path(lecture, tab: "people")
+
+      row = Nokogiri::HTML(response.body).at_css("[data-testid='tutors-overview'] tr")
+      expect(row.text.squish).to include("Ada L.", "Extra lessons")
+    end
+
+    it "says so when there are no tutors yet" do
+      lecture = create(:lecture, teacher: user)
+
+      get edit_lecture_path(lecture, tab: "people")
+
+      expect(response.body).to include(I18n.t("admin.lecture.tutors_overview.none_yet"))
+    end
+
+    it "has no tutors list on a seminar" do
+      seminar = create(:seminar, teacher: user)
+
+      get edit_lecture_path(seminar, tab: "people")
+
+      expect(response.body).not_to include("tutors-overview")
     end
   end
 
@@ -568,7 +779,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "shows the attached pdf with a control to remove it" do
-      lecture.update!(home_attachment: pdf_upload)
+      attach_home_pdf(lecture).save!
 
       get edit_lecture_path(lecture, tab: "home")
 
@@ -577,7 +788,7 @@ RSpec.describe("Lectures", type: :request) do
     end
 
     it "saves the home intro and returns to the home tab" do
-      patch lecture_path(lecture),
+      patch lecture_home_content_path(lecture),
             params: { lecture: { home_intro: "<div>Welcome</div>" },
                       subpage: "home" }
 
@@ -585,20 +796,213 @@ RSpec.describe("Lectures", type: :request) do
       expect(response).to redirect_to(edit_lecture_path(lecture, tab: "home"))
     end
 
-    it "stores a pdf program" do
-      patch lecture_path(lecture),
+    it "stores a pdf program, scanned" do
+      patch lecture_home_content_path(lecture),
             params: { lecture: { home_attachment: pdf_upload }, subpage: "home" }
 
-      expect(lecture.reload.home_attachment_filename).to eq("program.pdf")
+      attachment = lecture.reload.home_attachment
+      expect(attachment.metadata["filename"]).to eq("program.pdf")
+      expect(attachment.metadata.dig(MalwareScanGate::METADATA_KEY, "status"))
+        .to eq(MalwareScanGate::CLEAN_STATUS)
+    end
+
+    it "stores nothing when the scan finds malware" do
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
+
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" },
+            as: :turbo_stream
+
+      expect(lecture.reload.home_attachment).to be_nil
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('target="edit_home"')
+      expect(response.body).to include(I18n.t("submission.upload_failure_malware"))
+    end
+
+    it "hands the typed intro back when the scan refuses the program" do
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.unavailable("down"))
+
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_intro: "<div>Draft welcome</div>",
+                                 home_attachment: pdf_upload },
+                      subpage: "home" },
+            as: :turbo_stream
+
+      expect(response.body).to include("Draft welcome")
+      expect(lecture.reload.home_intro.to_s).not_to include("Draft welcome")
+    end
+
+    it "stores nothing when the scanner is not there" do
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.unavailable("down"))
+
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: pdf_upload }, subpage: "home" },
+            as: :turbo_stream
+
+      expect(lecture.reload.home_attachment).to be_nil
+      expect(response.body).to include(I18n.t("submission.upload_failure_scanner_unavailable"))
+    end
+
+    it "tells no new editor about a save the scan refused" do
+      editor = create(:confirmed_user)
+      scanner = instance_double(ClamavScanner)
+      allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      allow(MalwareScanMetrics).to receive(:record_scan)
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.infected("Eicar-Signature"))
+
+      expect do
+        patch(lecture_home_content_path(lecture),
+              params: { lecture: { home_attachment: pdf_upload, editor_ids: [editor.id] },
+                        subpage: "home" })
+      end.not_to have_enqueued_mail(LectureNotificationMailer, :new_editor_email)
+      expect(lecture.reload.editors).not_to include(editor)
+    end
+
+    it "keeps the previous program when a replacement is refused by validation" do
+      attach_home_pdf(lecture, "%PDF-1.4 demo", "first.pdf").save!
+      not_a_pdf = Rack::Test::UploadedFile.new(StringIO.new("just some text"),
+                                               "application/pdf",
+                                               original_filename: "second.pdf")
+
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: not_a_pdf }, subpage: "home" },
+            as: :turbo_stream
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(lecture.reload.home_attachment_filename).to eq("first.pdf")
+      expect(response.body).to include("first.pdf")
+      expect(response.body).not_to include("second.pdf")
+    end
+
+    it "names a refused program on the home tab, not on another" do
+      not_a_pdf = Rack::Test::UploadedFile.new(StringIO.new("just some text"),
+                                               "application/pdf",
+                                               original_filename: "notes.pdf")
+
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: not_a_pdf }, subpage: "home" },
+            as: :turbo_stream
+
+      expect(response.body).to include('target="edit_home"')
+      expect(response.body).to include(I18n.t("admin.lecture.home_attachment_must_be_pdf"))
+      expect(response.body).not_to include("notes.pdf")
+    end
+
+    it "answers a crafted scalar attachment with 400, not a crash" do
+      patch lecture_home_content_path(lecture),
+            params: { lecture: { home_attachment: "text" }, subpage: "home" }
+
+      expect(response).to have_http_status(:bad_request)
+      expect(lecture.reload.home_attachment).to be_nil
+    end
+
+    it "answers a crafted scalar lecture with 400, not a crash" do
+      patch lecture_home_content_path(lecture), params: { lecture: "text", subpage: "home" }
+
+      expect(response).to have_http_status(:bad_request)
     end
 
     it "removes the pdf when the remove control is submitted" do
-      lecture.update!(home_attachment: pdf_upload)
+      attach_home_pdf(lecture).save!
 
-      patch lecture_path(lecture),
+      patch lecture_home_content_path(lecture),
             params: { lecture: { remove_home_attachment: "1" }, subpage: "home" }
 
       expect(lecture.reload.home_attachment).to be_nil
+    end
+  end
+
+  describe "PATCH /lectures/:id" do
+    let(:teacher) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, teacher: teacher) }
+
+    before do
+      sign_in teacher
+    end
+
+    context "with turbo_stream request and assessments subpage" do
+      it "updates lecture submission settings" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: {
+                  submission_max_team_size: 5,
+                  submission_grace_period: 30
+                },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        lecture.reload
+        expect(lecture.submission_max_team_size).to eq(5)
+        expect(lecture.submission_grace_period).to eq(30)
+      end
+
+      it "renders turbo_stream replacing submission settings" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 3 },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response.body).to include("turbo-stream")
+        expect(response.body).to include("lecture-submission-settings")
+        expect(response.body).to include("submission_settings")
+      end
+
+      it "includes flash notice in turbo_stream" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 2 },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response.body).to include(I18n.t("admin.lecture.updated"))
+      end
+
+      it "sets view locale from lecture" do
+        lecture.update(locale: "en")
+
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 4 },
+                subpage: "assessments"
+              },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(I18n.locale).to eq(:en)
+      end
+    end
+
+    context "with html request" do
+      it "redirects to edit page" do
+        patch lecture_path(lecture),
+              params: { lecture: { submission_max_team_size: 5 } }
+
+        expect(response).to redirect_to(edit_lecture_path(lecture))
+      end
+
+      it "redirects to edit page with tab param when subpage present" do
+        patch lecture_path(lecture),
+              params: {
+                lecture: { submission_max_team_size: 5 },
+                subpage: "assessments"
+              }
+
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "assessments"))
+      end
     end
   end
 end

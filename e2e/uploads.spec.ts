@@ -1,15 +1,20 @@
 import { readFileSync } from "node:fs";
 
-import { expect, test } from "./_support/fixtures";
+import { expect, Page, test } from "./_support/fixtures";
 import { attachToUploadArea } from "./_support/uploads";
 
 const SUBMISSION_FORM = "form[data-controller~='submission-upload']";
+
+async function openBulkUpload(page: Page) {
+  await page.getByRole("button", { name: "More actions" }).click();
+  await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+}
 
 // One test per place that uploads through Uppy. They all follow the same
 // shape: hand over a file, see it named on the page, save, see it survive.
 test.describe("uploading through Uppy", () => {
   test("a video on a medium", async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "Kaviar" });
 
@@ -28,7 +33,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a second video, without reloading the page in between",
     async ({ factory, teacher: { page, user } }) => {
-      const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
       const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
         { lecture_id: lecture.id, sort: "Kaviar" });
 
@@ -45,7 +50,7 @@ test.describe("uploading through Uppy", () => {
 
   test("a rejected file, with the reason the server gave",
     async ({ factory, teacher: { page, user } }) => {
-      const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
       const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
         { lecture_id: lecture.id, sort: "Kaviar" });
 
@@ -80,7 +85,7 @@ test.describe("uploading through Uppy", () => {
     });
 
   test("a geogebra applet on a medium", async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id, locale: "en" });
+    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id, sort: "WorkedExample" });
 
@@ -92,18 +97,25 @@ test.describe("uploading through Uppy", () => {
 
   test("a submission, once the assurance is given",
     async ({ factory, student: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await factory.create("assignment", [], { lecture_id: lecture.id });
-      await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });
-      await factory.create("lecture_user_join", [], {
+      const tutorial = await factory.create("tutorial", [],
+        { lecture_id: lecture.id, title: "Mo 10" });
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: user.id,
+      });
+      // A hand-in goes to the group one sits in, so there has to be a seat.
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
       });
 
       await page.goto(`/lectures/${lecture.id}/submissions`);
-      await page.getByRole("button", { name: "create" }).click();
+      await page.getByRole("link", { name: "Hand in" }).click();
       await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
 
-      const stored = page.locator("#userManuscriptMetadata");
+      const stored = page.locator(
+        `${SUBMISSION_FORM} [data-submission-upload-target='metadata']`,
+      );
 
       // Nothing is stored until the box about third-party rights is ticked.
       page.once("dialog", dialog => dialog.accept());
@@ -118,22 +130,28 @@ test.describe("uploading through Uppy", () => {
       const created = page.waitForResponse(response => response.request().method() !== "GET");
       await page.getByRole("button", { name: "Save" }).click();
       await created;
-      await page.goto(`/lectures/${lecture.id}/submissions`);
 
-      await expect(page.getByRole("link", { name: "Submission ↓" })).toBeVisible();
+      // The card comes back in its own frame, with the file on it.
+      await expect(page.getByRole("link", { name: "manuscript.pdf" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Replace file" })).toBeVisible();
     });
 
   test("a submission, up to the moment the file is taken back out",
     async ({ factory, student: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
+      const lecture = await factory.create("lecture", ["released_for_all"]);
       await factory.create("assignment", [], { lecture_id: lecture.id });
-      await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });
-      await factory.create("lecture_user_join", [], {
+      const tutorial = await factory.create("tutorial", [],
+        { lecture_id: lecture.id, title: "Mo 10" });
+      await factory.create("lecture_bookmark", [], {
         lecture_id: lecture.id, user_id: user.id,
+      });
+      // A hand-in goes to the group one sits in, so there has to be a seat.
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
       });
 
       await page.goto(`/lectures/${lecture.id}/submissions`);
-      await page.getByRole("button", { name: "create" }).click();
+      await page.getByRole("link", { name: "Hand in" }).click();
       const save = page.getByRole("button", { name: "Save" });
       await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
 
@@ -142,14 +160,47 @@ test.describe("uploading through Uppy", () => {
       await page.getByRole("button", { name: "Remove file" }).click();
 
       await expect(save).toBeEnabled();
-      await expect(page.locator("#userManuscript-not-upload-notice")).toBeHidden();
+      await expect(page.locator(
+        `${SUBMISSION_FORM} [data-submission-upload-target='pendingNotice']`,
+      )).toBeHidden();
+    });
+
+  test("a submission, with the box ticked before the file is chosen",
+    async ({ factory, student: { page, user } }) => {
+      const lecture = await factory.create("lecture", ["released_for_all"]);
+      await factory.create("assignment", [], { lecture_id: lecture.id });
+      const tutorial = await factory.create("tutorial", [],
+        { lecture_id: lecture.id, title: "Mo 10" });
+      await factory.create("lecture_bookmark", [], {
+        lecture_id: lecture.id, user_id: user.id,
+      });
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
+
+      await page.goto(`/lectures/${lecture.id}/submissions`);
+      await page.getByRole("link", { name: "Hand in" }).click();
+      const assurance = page.getByRole("checkbox", { name: "I assure that" });
+      await assurance.check();
+      await attachToUploadArea(page, SUBMISSION_FORM, "e2e/files/manuscript.pdf");
+
+      // Choosing the file is not a reason to ask again.
+      await expect(assurance).toBeChecked();
+      await expect(page.getByText('Please press "Upload" and then "Save"')).toBeVisible();
+
+      await page.getByRole("button", { name: "Upload file" }).click();
+
+      await expect(page.getByText('Please press "Save"')).toBeVisible();
+      await expect(page.getByText('Please press "Upload" and then "Save"')).toBeHidden();
     });
 
   test("a correction, once the deadline has passed",
     async ({ factory, student, tutor: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      const assignment = await factory.create("assignment", [], {
-        lecture_id: lecture.id, deadline: "2020-01-01 12:00:00",
+      const lecture = await factory.create("lecture", ["released_for_all"]);
+      // The trait rather than a date in the past: an assignment refuses a
+      // deadline that has already gone by, and writes it afterwards instead.
+      const assignment = await factory.create("assignment", ["expired"], {
+        lecture_id: lecture.id,
       });
       const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
         lecture_id: lecture.id, tutor_id: user.id, title: "Mo 10",
@@ -171,7 +222,7 @@ test.describe("uploading through Uppy", () => {
         .toContainText("manuscript.pdf");
 
       const stored = page.waitForResponse(response => response.url().includes("add_correction"));
-      await page.getByRole("button", { name: "Save" }).click();
+      await page.getByRole("button", { name: "Save", exact: true }).click();
       await stored;
       await page.goto(`/lectures/${lecture.id}/tutorials`);
       await page.getByRole("link", { name: "Upload" }).first().click();
@@ -182,9 +233,11 @@ test.describe("uploading through Uppy", () => {
 
   test("a stack of corrections, each named after its submission",
     async ({ factory, student, tutor: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      const assignment = await factory.create("assignment", [], {
-        lecture_id: lecture.id, deadline: "2020-01-01 12:00:00",
+      const lecture = await factory.create("lecture", ["released_for_all"]);
+      // The trait rather than a date in the past: an assignment refuses a
+      // deadline that has already gone by, and writes it afterwards instead.
+      const assignment = await factory.create("assignment", ["expired"], {
+        lecture_id: lecture.id,
       });
       const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
         lecture_id: lecture.id, tutor_id: user.id, title: "Mo 10",
@@ -197,7 +250,7 @@ test.describe("uploading through Uppy", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/tutorials`);
-      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await openBulkUpload(page);
       // Bulk upload assigns by filename: everything behind -ID- is the submission.
       await attachToUploadArea(page, "#bulk-upload-form", {
         name: `correction-ID-${submission.id}.pdf`,
@@ -220,9 +273,11 @@ test.describe("uploading through Uppy", () => {
 
   test("a stack of corrections the tutor changes their mind about",
     async ({ factory, student, tutor: { page, user } }) => {
-      const lecture = await factory.create("lecture", ["released_for_all"], { locale: "en" });
-      const assignment = await factory.create("assignment", [], {
-        lecture_id: lecture.id, deadline: "2020-01-01 12:00:00",
+      const lecture = await factory.create("lecture", ["released_for_all"]);
+      // The trait rather than a date in the past: an assignment refuses a
+      // deadline that has already gone by, and writes it afterwards instead.
+      const assignment = await factory.create("assignment", ["expired"], {
+        lecture_id: lecture.id,
       });
       const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
         lecture_id: lecture.id, tutor_id: user.id, title: "Mo 10",
@@ -235,7 +290,7 @@ test.describe("uploading through Uppy", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/tutorials`);
-      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await openBulkUpload(page);
       await attachToUploadArea(page, "#bulk-upload-form", "e2e/files/manuscript.pdf");
 
       const save = page.locator("#upload-bulk-correction-save");
@@ -243,26 +298,25 @@ test.describe("uploading through Uppy", () => {
 
       // Reopening the area must not offer to save what the tutor discarded.
       await page.getByRole("button", { name: "Cancel" }).click();
-      await page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+      await openBulkUpload(page);
 
       await expect(page.locator("#upload-bulk-correction-metadata")).toBeEmpty();
       await expect(page.locator("#upload-bulk-correction-hidden")).toHaveValue("");
       await expect(save).toBeDisabled();
     });
 
-  test("a profile picture", async ({ admin: { page } }) => {
-    await page.goto("/administration/profile");
-    await attachToUploadArea(page, "#image-uploadArea", "e2e/files/image.png");
+  test("a teacher's picture on the profile page", async ({ factory, teacher: { page, user } }) => {
+    await factory.create("lecture", [], { teacher_id: user.id });
+    await page.goto("/profile/edit");
+    await attachToUploadArea(page, "[data-controller='uppy-upload']", "e2e/files/image.png");
 
-    await expect(page.locator("#image-file")).toHaveText("image.png");
+    const saved = page.waitForResponse(response => response.request().method() === "POST"
+      && response.url().endsWith("/profile/update"));
+    await page.getByRole("button", { name: "Click here to save your changes." })
+      .filter({ visible: true }).click();
+    await saved;
 
-    // Saving answers with JavaScript that reloads the page by itself.
-    const reloaded = page.waitForResponse(response => response.request().method() === "GET"
-      && response.url().endsWith("/administration/profile"));
-    await page.getByRole("button", { name: "Save" }).first().click();
-    await reloaded;
-
-    await expect(page.locator("#image-file")).toHaveText("image.png");
+    await page.goto("/profile/edit");
     await expect(page.locator("#image-preview"))
       .toHaveAttribute("src", /\/users\/\d+\/image\/original/);
   });

@@ -47,6 +47,22 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    scope :non_exam, lambda {
+      where.not(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
+
+    # The counterpart of `non_exam`, in one query rather than one `exam_campaign?`
+    # per campaign. An item of another kind cannot sit in the same campaign
+    # (see Registration::Item), so naming an exam item is enough.
+    scope :exam, lambda {
+      where(
+        id: Registration::Item.where(registerable_type: "Exam")
+                              .select(:registration_campaign_id)
+      )
+    }
     DISCARDABLE_STATUSES = ["draft", "open", "closed", "completed"].freeze
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
@@ -74,6 +90,7 @@ module Registration
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
+    validate :exam_campaign_is_first_come_first_served
 
     before_destroy :ensure_campaign_is_discardable, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -84,9 +101,12 @@ module Registration
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
     end
 
+    # An exam campaign without a description is named after its exam, since a
+    # lecture has several of them; the others after what they allocate.
     def student_facing_title
       description.to_s.strip.presence ||
-        I18n.t("registration.user_registration.campaign_main")
+        (roster_group_type == "exams" && titled_exam&.title) ||
+        I18n.t("registration.user_registration.campaign_title.#{roster_group_type}")
     end
 
     def evaluate_policies_for(user, phase: :registration)
@@ -149,6 +169,59 @@ module Registration
         materialized_roster_entries?
     end
 
+    # A group may join until an allocation is computed: while the campaign is
+    # open, students see it at once; after the deadline, the allocation can
+    # still fill it with those left without a place. A computed allocation
+    # does not know the group, and a completed campaign has its rosters.
+    def accepts_new_items?
+      (draft? || open? || closed?) && !allocation_present?
+    end
+
+    # Adds a group under the campaign's lock, which the allocation and
+    # finalize! take as well: a group asked for while they run is checked
+    # against the campaign they leave behind. Returns the item, unsaved with errors when
+    # the campaign takes no new groups.
+    def add_item(attributes)
+      item = nil
+      with_lock do
+        item = registration_items.build(attributes)
+        if accepts_new_items?
+          item.save
+        else
+          item.errors.add(:base, I18n.t("registration.campaign.takes_no_new_items"))
+        end
+      end
+      item
+    end
+
+    def exam_campaign?
+      registration_items.where.not(registerable_type: "Exam").none? &&
+        registration_items.where(registerable_type: "Exam").any?
+    end
+
+    def exam
+      registration_items.find_by(registerable_type: "Exam")&.registerable
+    end
+
+    # The three Turbo frames an exam's registration tab is made of. They are
+    # named here rather than spelled out at each end, because a target that
+    # stops matching updates nothing and reports nothing.
+    def self.exam_workspace_frame_id(exam)
+      "exam_#{exam.id}_allocation_workspace"
+    end
+
+    def self.exam_registration_frame_id(exam)
+      "exam_#{exam.id}_registration"
+    end
+
+    def self.exam_registration_tab_label_frame_id(exam)
+      "exam_#{exam.id}_registration_tab_label"
+    end
+
+    def exam_workspace_frame_id?(frame_id)
+      exam_campaign? && frame_id == self.class.exam_workspace_frame_id(exam)
+    end
+
     def total_registrations_count
       return user_registrations.map(&:user_id).uniq.size if user_registrations.loaded?
 
@@ -188,9 +261,10 @@ module Registration
     end
 
     def user_registrations_grouped_by_user
-      user_registrations.includes(:user, :registration_item)
+      user_registrations.where.not(status: :rejected)
+                        .includes(:user, :registration_item)
                         .joins(:user)
-                        .order("users.name")
+                        .merge(User.by_last_name)
                         .group_by(&:user)
     end
 
@@ -217,7 +291,23 @@ module Registration
         reject_pending_registrations!
 
         update!(status: :completed,
+                finalized_at: Time.current,
                 allocation_decided_at: allocation_decided_at || Time.current)
+      end
+
+      notify_rejected_users
+    end
+
+    def reopen!(registration_deadline: nil)
+      with_lock do
+        return if completed?
+
+        was_processing = processing?
+        attributes = { status: :open }
+        attributes[:registration_deadline] = registration_deadline if registration_deadline.present?
+
+        update!(attributes)
+        reset_allocation_results! if was_processing
       end
     end
 
@@ -291,8 +381,8 @@ module Registration
     # and shown in the rejected queue instead.
     #
     # When preload_registrations is true, the returned relation also eager-loads
-    # the registration data needed by the "unassigned side panel" and orders by
-    # name and email.
+    # the registration data needed by the "unassigned side panel", which sorts
+    # the users itself.
     def unassigned_users(preload_registrations: false)
       return User.none if draft?
 
@@ -309,7 +399,7 @@ module Registration
           :registration_campaign,
           { registration_item: :registerable }
         ]
-      ).order(:name, :email)
+      )
     end
 
     def rejected_users(preload_registrations: false)
@@ -325,7 +415,7 @@ module Registration
           :registration_campaign,
           { registration_item: :registerable }
         ]
-      ).order(:name, :email)
+      )
     end
 
     def open_rejected_registrations
@@ -380,6 +470,15 @@ module Registration
     end
 
     private
+
+      def titled_exam
+        item = if association(:registration_items).loaded?
+          registration_items.detect { |i| i.registerable_type == "Exam" }
+        else
+          registration_items.find_by(registerable_type: "Exam")
+        end
+        item&.registerable
+      end
 
       def data_blocker
         return :registrations if user_registrations.exists?
@@ -438,6 +537,7 @@ module Registration
           rejection_policy_id: nil,
           rejected_at: nil,
           rejection_overridden_at: nil,
+          dismissed_at: nil,
           updated_at: Time.current
         )
         # rubocop:enable Rails/SkipsModelValidations
@@ -458,6 +558,7 @@ module Registration
           ),
           rejected_at: now,
           rejection_overridden_at: nil,
+          dismissed_at: nil,
           updated_at: now
         )
         # rubocop:enable Rails/SkipsModelValidations
@@ -542,6 +643,15 @@ module Registration
         errors.add(:allocation_mode, :frozen)
       end
 
+      # Preference-based allocation ranks the items on offer, and an exam
+      # campaign offers just the one — the exam itself.
+      def exam_campaign_is_first_come_first_served
+        return if first_come_first_served?
+        return unless registration_items.exists?(registerable_type: "Exam")
+
+        errors.add(:allocation_mode, :exams_are_first_come_first_served)
+      end
+
       def cannot_revert_to_draft
         return unless status_changed? && draft?
 
@@ -611,6 +721,34 @@ module Registration
           # Fallback: Load instances and use the Rosterable interface.
           # This is slower but guarantees correctness if the association name differs.
           scope.flat_map(&:allocated_user_ids)
+        end
+      end
+
+      def notify_rejected_users
+        rejected_registrations = user_registrations.where(status: :rejected).includes(:user)
+        user_ids = rejected_registrations.map(&:user_id).uniq
+
+        confirmed_user_ids = user_registrations
+                             .where(user_id: user_ids, status: :confirmed)
+                             .distinct.pluck(:user_id).to_set
+
+        rejected_to_notify = rejected_registrations
+                             .group_by(&:user)
+                             .filter_map do |user, regs|
+          next if confirmed_user_ids.include?(user.id)
+
+          reasons = I18n.with_locale(user.locale.presence || I18n.default_locale) do
+            regs.map(&:resolved_rejection_reason_label).uniq
+          end
+
+          [user, reasons]
+        end
+        exam_campaign = exam_campaign?
+        exam_rosterable = exam_campaign ? exam : nil
+        rejected_to_notify.each do |user, reasons|
+          RosterNotificationMailer
+            .rejected(user, reasons: reasons, exam_campaign: exam_campaign,
+                            exam: exam_rosterable, lecture: campaignable)
         end
       end
   end

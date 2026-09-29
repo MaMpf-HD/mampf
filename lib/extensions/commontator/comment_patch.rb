@@ -20,7 +20,7 @@ module Extensions
       ].freeze
 
       def apply!
-        return unless ActiveRecord::Base.connection.table_exists?(:thredded_topics)
+        return unless tables_present?
 
         validators.each do |validator|
           ::Commontator::Comment._validators[:body].delete(validator)
@@ -50,6 +50,13 @@ module Extensions
             thread.commontable
           end
         end
+      end
+
+      # The database may not exist yet, e.g. during `rails db:create`.
+      def tables_present?
+        ActiveRecord::Base.connection.table_exists?(:thredded_topics)
+      rescue ActiveRecord::NoDatabaseError
+        false
       end
 
       def validators

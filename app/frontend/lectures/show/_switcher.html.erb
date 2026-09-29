@@ -1,0 +1,43 @@
+<%# In edit mode, a lecture links to its edit page if the user may edit it.
+    switcher.controller.js keeps the current page when switching. %>
+<% lectures = current_user.current_lectures %>
+<% Lecture.preload_editors(lectures) if edit_mode %>
+<% term = Term.active&.compact_title %>
+<div class="dropdown" data-controller="lecture-switcher">
+  <button type="button"
+          class="btn btn-link link-body-emphasis text-decoration-none fs-5 fw-semibold
+                 dropdown-toggle text-truncate p-0"
+          id="lecture-title-bar-title"
+          title="<%= t("lecture.title_bar.switch") %>"
+          data-bs-toggle="dropdown"
+          aria-expanded="false">
+    <%= lecture.title_term_info_no_type %>
+  </button>
+  <ul class="dropdown-menu shadow" aria-labelledby="lecture-title-bar-title">
+    <% if term %>
+      <li>
+        <h6 class="dropdown-header">
+          <%= t("lecture.title_bar.current_lectures", term: term) %>
+        </h6>
+      </li>
+    <% end %>
+    <% lectures.each do |other| %>
+      <% edit = edit_mode && current_user.can_edit?(other) %>
+      <li>
+        <%= link_to other.course.title,
+                    edit ? edit_lecture_path(other) : lecture_path(other),
+                    class: ["dropdown-item", { active: other == lecture }],
+                    aria: { current: other == lecture ? "page" : nil },
+                    data: { turbo_frame: "_top",
+                            action: "click->lecture-switcher#keepPlace" } %>
+      </li>
+    <% end %>
+    <% if term && (lectures - [lecture]).empty? %>
+      <li>
+        <span class="dropdown-item-text text-body-secondary">
+          <%= t("lecture.title_bar.no_other_lectures", term: term) %>
+        </span>
+      </li>
+    <% end %>
+  </ul>
+</div>

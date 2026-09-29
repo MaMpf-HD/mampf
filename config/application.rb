@@ -15,6 +15,11 @@ module Mampf
     backend_paths -= Rails.root.glob("app/models/vignettes/**/")
     backend_paths -= Rails.root.glob("app/models/registration/**/")
     backend_paths -= Rails.root.glob("app/models/rosters/**/")
+    backend_paths -= Rails.root.glob("app/models/assessment/**/")
+    backend_paths -= Rails.root.glob("app/models/student_performance/**/")
+    backend_paths -= Rails.root.glob("app/models/dashboard/**/")
+    backend_paths -= Rails.root.glob("app/models/student_messages/**/")
+    backend_paths -= Rails.root.glob("app/models/deans_office/**/")
     frontend_paths = Rails.root.glob("app/frontend/**/")
     # For ViewComponents to work correctly with namespaces, we only load the
     # main components directory, but not any subdirectories.
@@ -35,6 +40,9 @@ module Mampf
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
     config.i18n.raise_on_missing_translations = false
+    # Lets a model or attribute set its own error format in the locales, such
+    # as '%{message}' for messages that are whole sentences.
+    config.active_model.i18n_customize_full_message = true
     config.time_zone = "Berlin"
     config.active_storage.variant_processor = :vips
 

@@ -7,7 +7,7 @@ import { expect, test } from "./_support/fixtures";
 test("keeps the group tiles visible once a campaign exists",
   async ({ factory, teacher: { page, user } }) => {
     const lecture = await factory.create("lecture", [], {
-      teacher_id: user.id, locale: "en",
+      teacher_id: user.id,
     });
     await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });
     await factory.create("registration_campaign", [], {

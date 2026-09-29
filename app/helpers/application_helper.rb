@@ -1,14 +1,15 @@
 module ApplicationHelper
   # returns the path that is associated to the MaMpf brand in the navbar
   def home_path
-    return start_path if user_signed_in?
+    return root_path if user_signed_in?
 
     root_path(params: { locale: I18n.locale })
   end
 
-  # get current lecture from session object
-  def current_lecture
-    Lecture.find_by(id: cookies[:current_lecture_id])
+  # Only admins have the administration area and its search; the rest of
+  # the teaching staff search media and tags on a page of their own.
+  def staff_search_path
+    current_user.admin? ? administration_search_path : search_staff_path
   end
 
   # Returns the full title on a per-page basis.
@@ -283,8 +284,8 @@ module ApplicationHelper
     value ? "no_display" : ""
   end
 
-  def helpdesk(text, html, title = t("info"))
-    tag.i(class: "far fa-question-circle helpdesk ms-2",
+  def helpdesk(text, html, title = t("info"), icon: "far fa-question-circle")
+    tag.i(class: "#{icon} helpdesk ms-2",
           tabindex: -1,
           data: {
             controller: "bs-popover",

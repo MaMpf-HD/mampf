@@ -1,0 +1,45 @@
+<%# Who a selection reaches: the send button and the addresses to copy. %>
+<%# The id is where the staff's picker sends a new count; a tutor's forms have none. %>
+<%# locals: (emails:, picker: false) %>
+
+<%= tag.div id: ("student-message-recipients" if picker),
+            class: "d-flex align-items-center flex-wrap gap-2",
+            data: { testid: "student-mail-recipients" } do %>
+  <%= submit_tag t("student_message.send", count: emails.size),
+                 class: "btn btn-primary",
+                 disabled: emails.empty?,
+                 data: { testid: "student-mail-send" } %>
+
+  <% if emails.empty? %>
+    <span class="text-muted"><%= t("student_message.nobody_picked") %></span>
+  <% else %>
+    <span
+      data-controller="clipboard"
+      data-clipboard-text-value="<%= emails.join("; ") %>"
+      data-clipboard-confirmation-value="<%= t("student_message.addresses_copied") %>"
+      data-clipboard-failure-value="<%= t("student_message.addresses_copy_failed") %>"
+      data-clipboard-resting-icon-value="bi-clipboard"
+    >
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        data-action="clipboard#copy"
+        data-testid="copy-student-emails"
+      >
+        <i
+          class="bi bi-clipboard"
+          data-clipboard-target="icon"
+          aria-hidden="true"
+        ></i>
+
+        <%= t("student_message.copy_addresses") %>
+      </button>
+
+      <span
+        class="visually-hidden"
+        role="status"
+        data-clipboard-target="status"
+      ></span>
+    </span>
+  <% end %>
+<% end %>

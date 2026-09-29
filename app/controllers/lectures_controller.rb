@@ -3,27 +3,21 @@ class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
 
   before_action :set_lecture, except: [:new, :create, :search]
-  before_action :set_lecture_cookie, only: [:show, :outline, :organizational,
-                                            :show_announcements]
   authorize_resource except: [:new, :create, :search, :outline]
   before_action :check_for_consent
-  before_action :check_for_subscribe, only: [:outline]
-  before_action :set_view_locale, only: [:edit, :show, :outline, :subscribe_page,
-                                         :show_random_quizzes]
+  before_action :check_for_unlock, only: [:outline]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
+  before_action :check_for_announcements, only: [:show_announcements]
+  before_action :check_for_organizational, only: [:organizational]
   before_action :require_turbo_frame, only: [:new]
-  layout "administration"
+  # Unlike the other staff controllers, not staff_layout: admins edit a
+  # lecture in the regular layout too, so that switching between viewing and
+  # editing stays in place (see layouts/_lecture_mode). layouts/application
+  # gives them their administration navbar on lecture pages.
+  layout "staff"
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
-  end
-
-  def show
-    if lecture_home_landing_page?
-      redirect_to lecture_home_path(@lecture)
-    else
-      redirect_to lecture_outline_path(@lecture)
-    end
   end
 
   def outline
@@ -40,7 +34,6 @@ class LecturesController < ApplicationController
       # if new action was triggered from inside a course view, add the course
       # info to the lecture
       @lecture.course = Course.find_by(id: params[:course])
-      I18n.locale = @lecture.course.locale
       @lecture.annotations_status = 0
     end
 
@@ -71,8 +64,14 @@ class LecturesController < ApplicationController
       # set language to default language
       set_language
 
-      flash.now[:notice] = I18n.t("controllers.created_lecture_success",
-                                  lecture: @lecture.title_with_teacher)
+      notice = I18n.t("controllers.created_lecture_success",
+                      lecture: @lecture.title_with_teacher)
+      # The dashboard has no list to update, so the new lecture opens.
+      if params.dig(:lecture, :from) == "dashboard"
+        return redirect_to(edit_lecture_path(@lecture), notice: notice, status: :see_other)
+      end
+
+      flash.now[:notice] = notice
 
       streams = []
 
@@ -94,8 +93,11 @@ class LecturesController < ApplicationController
       render turbo_stream: streams
     else
       @from = params.dig(:lecture, :from)
+      # The dashboard's form leaves its frame to open the new lecture, so the
+      # request names no frame; the form goes back into the modal's.
+      target = @from == "dashboard" ? Lecture.new : turbo_frame_request_id
 
-      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+      render turbo_stream: turbo_stream.update(target,
                                                partial: "lectures/new/new",
                                                locals: { lecture: @lecture, from: @from }),
              status: :unprocessable_content
@@ -105,48 +107,15 @@ class LecturesController < ApplicationController
   def update
     return unless @lecture.valid_annotations_status?
 
-    editor_ids = lecture_params[:editor_ids]
-    unless editor_ids.nil?
-      # removes the empty String "" in the NEW array of editor ids
-      # and converts it into an array of integers
-      all_ids = editor_ids.map(&:to_i) - [0]
-      old_ids = @lecture.editor_ids
-      new_ids = all_ids - old_ids
-
-      # returns an array of Users that match the given ids
-      recipients = User.where(id: new_ids)
-
-      recipients.each do |r|
-        LectureNotifier.notify_new_editor_by_mail(r, @lecture)
-      end
-    end
-
-    @lecture.update(lecture_params)
-    @lecture.touch
-    @lecture.forum&.update(name: @lecture.forum_title)
-
-    @errors = @lecture.errors
-
-    if @lecture.valid?
-      if params[:subpage].present?
-        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
-      else
-        redirect_to edit_lecture_path(@lecture)
-      end
-      return
-    end
-
-    @terms = Term.select_terms
-
-    pane, partial = if params[:subpage] == "people"
-      ["edit_people", "lectures/edit/people"]
-    else
-      ["edit_preferences", "lectures/edit/preferences"]
-    end
-
-    render turbo_stream: turbo_stream.update(pane, partial: partial,
-                                                   locals: { lecture: @lecture }),
-           status: :unprocessable_content
+    attach_scanned_home_attachment
+    new_editors = editors_to_notify
+    update_lecture_and_forum
+    notify_new_editors(new_editors) if @errors.empty?
+    handle_update_response
+  rescue MalwareScanGate::InfectedUploadError
+    refuse_home_attachment(t("submission.upload_failure_malware"))
+  rescue MalwareScanGate::ScannerUnavailableError
+    refuse_home_attachment(t("submission.upload_failure_scanner_unavailable"))
   end
 
   def publish
@@ -171,7 +140,7 @@ class LecturesController < ApplicationController
 
     # destroy all notifications related to this lecture
     destroy_notifications
-    redirect_to administration_path, status: :see_other
+    redirect_to staff_home_path, status: :see_other
   end
 
   # add forum for this lecture
@@ -210,13 +179,11 @@ class LecturesController < ApplicationController
     @announcements = @lecture.announcements.order(:created_at).reverse
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
-    I18n.locale = @lecture.locale_with_inheritance
     render template: "lectures/announcements/show_announcements",
            layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def organizational
-    I18n.locale = @lecture.locale_with_inheritance
     render template: "lectures/organizational/_organizational",
            locals: { lecture: @lecture },
            layout: turbo_frame_request? ? "turbo_frame" : "application"
@@ -298,21 +265,26 @@ class LecturesController < ApplicationController
     # per request and scoped to the current page, so the cards do not
     # trigger per-lecture queries and the cost is bounded by the page size)
     page_lecture_ids = @lectures.map(&:id)
-    @subscribed_lecture_ids =
-      current_user.lecture_user_joins
-                  .where(lecture_id: page_lecture_ids)
-                  .pluck(:lecture_id).to_set
-    @registered_lecture_ids =
-      Registration::UserRegistration
-      .where(user: current_user, status: [:pending, :confirmed])
-      .joins(:registration_campaign)
-      .where(registration_campaigns: { campaignable_type: "Lecture",
-                                       campaignable_id: page_lecture_ids })
-      .pluck("registration_campaigns.campaignable_id")
-      .to_set
-    status = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
-    @rosterized_lecture_ids = status.rosterized_lecture_ids
-    @self_enrollable_lecture_ids = status.enrollable_lecture_ids
+    self_enrollment = Rosters::SelfEnrollmentStatusQuery.new(current_user, page_lecture_ids)
+    @search_result_ids = LectureSearchResultComponent::PageIds.new(
+      bookmarked_lecture_ids:
+        current_user.lecture_bookmarks
+                    .where(lecture_id: page_lecture_ids)
+                    .pluck(:lecture_id).to_set,
+      registration_status_by_lecture_id:
+        Registration::StatusQuery.new(current_user, page_lecture_ids).statuses,
+      rosterized_lecture_ids: self_enrollment.rosterized_lecture_ids,
+      self_enrollable_lecture_ids: self_enrollment.enrollable_lecture_ids
+    )
+
+    # The dashboard search is scoped to one semester by the picker above it, so
+    # the term on each result card is redundant there and switched off via a
+    # hidden field. Other callers (e.g. /search/index) keep it. Without a term
+    # to scope to, DashboardTermFilter scopes nothing, and the cards need it.
+    @search_term = Term.from_dashboard_param(params.dig(:search, :term))
+    @show_term = params.dig(:search, :show_term) != "0" ||
+                 params.dig(:search, :all_terms) == "1" ||
+                 (@search_term || Term.active).nil?
 
     respond_to do |format|
       format.js { render template: "lectures/search/old/search" }
@@ -327,9 +299,7 @@ class LecturesController < ApplicationController
             turbo_stream.replace("pagy-nav-next",
                                  partial: "lectures/search/nav",
                                  locals: { pagy: @pagy }),
-            turbo_stream.append("lecture-search-results",
-                                partial: "lectures/search/lecture",
-                                collection: @lectures)
+            turbo_stream.append("lecture-search-results", search_result_cards)
           ]
         end
       end
@@ -347,14 +317,8 @@ class LecturesController < ApplicationController
 
   def display_course
     @course = @lecture.course
-    I18n.locale = @course.locale || @lecture.locale
     render template: "lectures/course/display_course",
            layout: turbo_frame_request? ? "turbo_frame" : "application"
-  end
-
-  def subscribe_page
-    render template: "lectures/subscribe/subscribe_page",
-           layout: "application_no_sidebar"
   end
 
   def import_toc
@@ -368,6 +332,13 @@ class LecturesController < ApplicationController
 
   private
 
+    def search_result_cards
+      LectureSearchResultComponent.with_collection(
+        @lectures, ids: @search_result_ids, user: current_user,
+                   term: @search_term, show_term: @show_term
+      )
+    end
+
     def set_lecture
       @lecture = Lecture.find_by(id: params[:id])
       return if @lecture
@@ -375,28 +346,17 @@ class LecturesController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
-    def set_lecture_cookie
-      cookies[:current_lecture_id] = @lecture.id
-    end
-
-    def set_view_locale
-      I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
-    end
-
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    def check_for_subscribe
-      # Staff bypass the subscription gate for content.
-      return if current_user.can_edit?(@lecture)
+    def check_for_unlock
+      # Students of an open or unlocked lecture pass, and so does its staff.
+      return if @lecture.content_accessible_by?(current_user)
 
-      return if @lecture.in?(current_user.lectures)
-
-      # Non-subscribers are sent to the lecture's home page (its
-      # organizational front door), which offers registration (if the
-      # lecture uses it) as well as a link to the subscription page.
+      # Users who have not unlocked the lecture are sent to its home page
+      # (its organizational front door), which offers registration (if the
+      # lecture uses it) as well as the passphrase form to unlock it.
       redirect_to lecture_home_path(@lecture)
     end
 
@@ -428,22 +388,26 @@ class LecturesController < ApplicationController
       end
     end
 
-    def lecture_home_landing_page?
-      @lecture.term.present? &&
-        Flipper.enabled?(:lecture_home_landing, @lecture.term)
+    def lecture_params
+      permitted_lecture_params.except(:home_attachment)
     end
 
-    def lecture_params
+    # Permits :home_attachment on update so a file-only request passes expect;
+    # lecture_params leaves it out, attach_scanned_home_attachment attaches it.
+    # The new-lecture form has no such field.
+    def permitted_lecture_params
       allowed_params = [:term_id, :start_chapter, :absolute_numbering,
                         :start_section, :organizational, :locale,
-                        :organizational_concept, :muesli, :vignettes,
+                        :organizational_concept, :vignettes,
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
+                        :submission_deletion_date, :uses_exam_eligibility,
                         :annotations_status,
-                        :home_intro, :home_attachment, :remove_home_attachment]
-      if action_name == "update" && current_user.can_update_personell?(@lecture)
-        allowed_params.push({ editor_ids: [] })
+                        :home_intro, :remove_home_attachment]
+      if action_name == "update"
+        allowed_params.push(:home_attachment)
+        allowed_params.push({ editor_ids: [] }) if current_user.can_update_personell?(@lecture)
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
@@ -526,7 +490,7 @@ class LecturesController < ApplicationController
 
     def search_params
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per, :term_scope,
+                             :all_teachers, :fulltext, :per, :term,
                              { types: [],
                                term_ids: [],
                                program_ids: [],
@@ -534,8 +498,123 @@ class LecturesController < ApplicationController
     end
 
     def check_if_enough_questions
-      return if @lecture.course.enough_questions?
+      return if @lecture.page_available?("self_test", current_user)
 
-      redirect_to :root, alert: I18n.t("controllers.no_test")
+      redirect_to lecture_home_path(@lecture), alert: I18n.t("controllers.no_test")
+    end
+
+    # The lecture switcher (lectures/show/_switcher) keeps the page when
+    # switching, but the other lecture may have nothing to show on it.
+    def check_for_announcements
+      return if @lecture.page_available?("announcements", current_user)
+
+      redirect_to lecture_home_path(@lecture)
+    end
+
+    def check_for_organizational
+      return if @lecture.page_available?("organizational", current_user)
+
+      redirect_to lecture_home_path(@lecture)
+    end
+
+    # Reads the new editors before the update, which makes them editors already.
+    def editors_to_notify
+      editor_ids = lecture_params[:editor_ids]
+      return User.none if editor_ids.nil?
+
+      all_ids = editor_ids.map(&:to_i) - [0]
+      User.where(id: all_ids - @lecture.editor_ids).to_a
+    end
+
+    def notify_new_editors(recipients)
+      recipients.each { |r| LectureNotifier.notify_new_editor_by_mail(r, @lecture) }
+    end
+
+    # Caches the form's file through the malware scan; the attacher refuses it
+    # as a mass-assigned attribute.
+    def attach_scanned_home_attachment
+      upload = permitted_lecture_params[:home_attachment]
+      return if upload.blank?
+      raise(ActionController::BadRequest) unless upload.respond_to?(:tempfile)
+
+      File.open(upload.tempfile.path) do |file|
+        @lecture.home_attachment_attacher.attach_cached(
+          file, metadata: { "filename" => upload.original_filename }
+        )
+      end
+    end
+
+    # Hands the typed intro back unsaved: the scan refuses before the update
+    # would have assigned it.
+    def refuse_home_attachment(message)
+      @lecture.assign_attributes(lecture_params.slice(:home_intro))
+      @lecture.errors.add(:home_attachment, message)
+      handle_failed_update
+    end
+
+    # Touches only after a successful update: a touch after a failed one still
+    # commits, and promotes the attachment the validation refused.
+    def update_lecture_and_forum
+      if @lecture.update(lecture_params)
+        @lecture.touch
+        @lecture.forum&.update(name: @lecture.forum_title)
+      end
+      @errors = @lecture.errors
+    end
+
+    def handle_update_response
+      if @lecture.valid?
+        handle_successful_update
+      else
+        handle_failed_update
+      end
+    end
+
+    def handle_successful_update
+      respond_to do |format|
+        format.html { redirect_to_edit_lecture }
+        format.turbo_stream { render_turbo_stream_update }
+      end
+    end
+
+    def redirect_to_edit_lecture
+      if params[:subpage].present?
+        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
+      else
+        redirect_to edit_lecture_path(@lecture)
+      end
+    end
+
+    # Only the assessments pane has something to put in place of itself. Every
+    # other tab is answered the way a form submit is answered without Turbo --
+    # by loading the tab again; rendering nothing leaves the page as it was and
+    # the save looks like it did not happen.
+    def render_turbo_stream_update
+      return redirect_to_edit_lecture unless params[:subpage] == "assessments"
+
+      flash.now[:notice] = t("admin.lecture.updated")
+      streams = [
+        turbo_stream.replace(
+          "lecture-submission-settings",
+          partial: "assessment/assessments/submission_settings",
+          locals: { lecture: @lecture }
+        )
+      ]
+      streams << stream_flash if flash.present?
+      render turbo_stream: streams
+    end
+
+    def handle_failed_update
+      @terms = Term.select_terms
+
+      pane, partial = case params[:subpage]
+                      when "people" then ["edit_people", "lectures/edit/people"]
+                      when "home" then ["edit_home", "lectures/edit/home"]
+                      else ["edit_preferences", "lectures/edit/preferences"]
+      end
+
+      render turbo_stream: turbo_stream.update(pane, partial: partial,
+                                                     locals: { lecture: @lecture }),
+             status: :unprocessable_content
     end
 end

@@ -1,0 +1,260 @@
+<%= vite_stylesheet_tag "deans_office/index.scss" %>
+
+<div class="container py-3" data-controller="deans-office">
+  <h1 class="h3"><%= t("deans_office.title") %></h1>
+
+  <p class="text-muted"><%= t("deans_office.explainer") %></p>
+
+  <dl class="small text-muted row mb-3">
+    <% [:registration, :registered, :members, :seats].each do |column| %>
+      <dt class="col-sm-2"><%= t("deans_office.#{column}") %></dt>
+      <dd class="col-sm-10 mb-1"><%= t("deans_office.legend.#{column}") %></dd>
+    <% end %>
+  </dl>
+
+  <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+    <%= form_with url: deans_office_path, method: :get, local: true,
+                  data: { controller: "submit-on-change" },
+                  class: "d-flex align-items-center gap-2" do |f| %>
+      <%= f.label :term, t("deans_office.term"), class: "form-label mb-0" %>
+
+      <%= f.select :term,
+                   options_for_select(@term_options, @term&.dashboard_param),
+                   {},
+                   class: "form-select w-auto",
+                   data: { action: "change->submit-on-change#change" } %>
+    <% end %>
+
+    <% if @overview.lectures.any? %>
+      <div class="d-flex align-items-center gap-2">
+        <%= label_tag "deans-office-filter", t("deans_office.filter"),
+                      class: "form-label mb-0" %>
+
+        <%= search_field_tag "deans-office-filter", nil,
+                             class: "form-control",
+                             placeholder: t("deans_office.filter_placeholder"),
+                             autocomplete: "off",
+                             data: { deans_office_target: "filter",
+                                     action: "input->deans-office#filter" } %>
+      </div>
+      <div class="ms-auto d-flex gap-2">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-action="deans-office#openAll"
+        >
+          <%= t("deans_office.open_all") %>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-action="deans-office#closeAll"
+        >
+          <%= t("deans_office.close_all") %>
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @overview.lectures.empty? %>
+    <p><%= t("deans_office.no_lectures") %></p>
+  <% else %>
+    <% @overview.sections.each do |section, lectures| %>
+      <section
+        class="mb-4"
+        aria-labelledby="deans-office-<%= section %>"
+        data-deans-office-target="section"
+      >
+        <h2 class="h5" id="deans-office-<%= section %>">
+          <%= t("deans_office.sections.#{section}") %>
+        </h2>
+
+        <div class="table-responsive">
+          <table
+            class="table table-sm align-middle"
+            aria-labelledby="deans-office-<%= section %>"
+          >
+            <thead>
+              <tr>
+                <th scope="col"><%= t("deans_office.lecture") %></th>
+                <th scope="col"><%= t("deans_office.teacher") %></th>
+                <th scope="col"><%= t("deans_office.registration") %></th>
+
+                <th scope="col" class="text-end pe-4">
+                  <%= t("deans_office.groups") %>
+                </th>
+
+                <th scope="col" class="text-end pe-4">
+                  <%= t("deans_office.seats") %>
+                </th>
+
+                <th scope="col" class="text-end pe-4">
+                  <%= t("deans_office.registered") %>
+                </th>
+
+                <th scope="col" class="text-end">
+                  <%= t("deans_office.members") %>
+                </th>
+              </tr>
+            </thead>
+
+            <% lectures.each do |lecture| %>
+              <% lecture_title = lecture.course.title %>
+              <% filter_text = [lecture_title, lecture.teacher.tutorial_name].join(" ").downcase %>
+              <% groups = @overview.groups(lecture) %>
+              <% groups_id = dom_id(lecture, :deans_office_groups) %>
+
+              <tbody
+                data-deans-office-target="lecture"
+                data-filter-text="<%= filter_text %>"
+              >
+                <tr>
+                  <th scope="row" class="fw-semibold">
+                    <% if groups.any? %>
+                      <button
+                        type="button"
+                        class="
+                          btn btn-link p-0 text-start fw-semibold text-body
+                          text-decoration-none
+                        "
+                        aria-expanded="false"
+                        aria-controls="<%= groups_id %>"
+                        data-deans-office-target="toggle"
+                        data-action="deans-office#toggle"
+                      >
+                        <i
+                          class="bi bi-chevron-right deans-office-chevron"
+                          aria-hidden="true"
+                        ></i>
+
+                        <%= lecture_title %>
+                      </button>
+                    <% else %>
+                      <i
+                        class="bi bi-chevron-right invisible"
+                        aria-hidden="true"
+                      ></i>
+                      <%= lecture_title %>
+                    <% end %>
+
+                    <% if lecture.seminar? %>
+                      <span class="small text-muted fw-normal">
+                        <%= lecture.sort_localized %>
+                      </span>
+                    <% end %>
+                  </th>
+
+                  <td><%= lecture.teacher.tutorial_name %></td>
+
+                  <td class="small">
+                    <%= deans_office_accesses(@overview.accesses(lecture)) if groups.any? %>
+                  </td>
+
+                  <td class="text-end pe-4">
+                    <% if groups.empty? %>
+                      <span class="text-muted">0</span>
+                    <% else %>
+                      <%= groups.size %>
+                    <% end %>
+                  </td>
+
+                  <td class="text-end pe-4">
+                    <%= deans_office_seats(*@overview.seats(lecture)) if groups.any? %>
+                  </td>
+
+                  <td class="text-end pe-4">
+                    <%= deans_office_registrations(@overview.registered_people(lecture)) %>
+                  </td>
+
+                  <td class="text-end">
+                    <%= @overview.member_count(lecture) %>
+                  </td>
+                </tr>
+
+                <% if groups.any? %>
+                  <tr id="<%= groups_id %>" hidden>
+                    <td colspan="7" class="bg-body-tertiary">
+                      <table
+                        class="table table-sm mb-0 align-middle"
+                        aria-label="<%= t('deans_office.groups_of', lecture: lecture_title) %>"
+                      >
+                        <thead>
+                          <tr>
+                            <th scope="col"><%= t("deans_office.group") %></th>
+                            <th scope="col"><%= t("deans_office.kind") %></th>
+
+                            <th scope="col">
+                              <%= t("deans_office.registration") %>
+                            </th>
+
+                            <th scope="col" class="text-end pe-4">
+                              <%= t("deans_office.seats") %>
+                            </th>
+
+                            <th scope="col" class="text-end pe-4">
+                              <%= t("deans_office.registered") %>
+                            </th>
+
+                            <th scope="col" class="w-25">
+                              <%= t("deans_office.members") %>
+                            </th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <% groups.each do |group| %>
+                            <% title = DeansOffice::TermOverview.group_title(group) %>
+                            <% group_type = DeansOffice::TermOverview.group_type(group) %>
+                            <% count = @overview.roster_count(group) %>
+
+                            <tr>
+                              <th scope="row" class="fw-normal">
+                                <%= title %>
+                              </th>
+
+                              <td>
+                                <%= t("deans_office.kinds.#{group_type}") %>
+                              </td>
+
+                              <td class="small">
+                                <%= deans_office_access(@overview.access(group)) %>
+                              </td>
+
+                              <td class="text-end pe-4">
+                                <%= group.capacity || t("deans_office.unlimited") %>
+                              </td>
+
+                              <td class="text-end pe-4">
+                                <%= deans_office_registrations(
+                                  @overview.registration_count(group),
+                                  first_choices: @overview.first_choices?(group)
+                                ) %>
+                              </td>
+
+                              <td>
+                                <%= deans_office_members(count, group.capacity) %>
+                              </td>
+                            </tr>
+                          <% end %>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            <% end %>
+          </table>
+        </div>
+      </section>
+    <% end %>
+    <p
+      class="text-muted"
+      role="status"
+      hidden
+      data-deans-office-target="none"
+    >
+      <%= t("deans_office.no_match") %>
+    </p>
+  <% end %>
+</div>

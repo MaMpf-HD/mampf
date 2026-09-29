@@ -1,6 +1,7 @@
 de:
   roster:
-    title: 'Teilnehmende/Gruppen'
+    title: 'Teilnehmende'
+    participants: 'Teilnehmende'
     status: 'Status'
     group_category:
       tutorial: "Tutorium"
@@ -55,7 +56,7 @@ de:
     lifecycle_help:
       title: "Lebenszyklus"
       toggle: "Lebenszyklus"
-      intro: "Folge diesen Schritten, um Teilnehmerlisten zu erstellen und zu verwalten."
+      intro: "Folge diesen Schritten, um Teilnahmelisten zu erstellen und zu verwalten."
       phase1:
         title: "Gruppenerstellung"
         description_html: "Erstelle Deine %{link} über das Dashboard unten."
@@ -66,7 +67,7 @@ de:
         link_text: "Einschreibemethoden"
       phase3:
         title: "Verwaltung"
-        description_html: "Verwalte Deine Teilnehmerlisten während des Semesters manuell. Details unter %{link}."
+        description_html: "Verwalte Deine Teilnahmelisten während des Semesters manuell. Details unter %{link}."
         link_text: "Verwaltung"
     roster_help:
       title: "Einschreibemethoden"
@@ -79,16 +80,16 @@ de:
         intro: "Verschiedene Gruppentypen dienen unterschiedlichen Zwecken in Deiner Veranstaltungsstruktur."
         tutorials:
           title: "Tutorien"
-          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+          description: "Wöchentliche Übungsgruppen. Studierende werden automatisch in die Teilnahmeliste der Veranstaltung übernommen."
         talks:
           title: "Vorträge"
-          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnehmerliste der Veranstaltung übernommen."
+          description: "Seminarvorträge. Vortragende werden automatisch in die Teilnahmeliste der Veranstaltung übernommen."
         flexible:
           title: "Flexible Gruppen"
-          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Du kannst selbst festlegen, ob Mitglieder automatisch in die Teilnehmerliste der Veranstaltung übernommen werden sollen."
+          description: "Für verschiedene Zwecke wie Sammelgruppen (für Veranstaltungen ohne Tutorien/Vorträge), Bedarfserhebung, Wartelisten, Ergänzungsgruppen (z.B. 'Wiederholende') oder Sonderprojekte. Du kannst selbst festlegen, ob Mitglieder automatisch in die Teilnahmeliste der Veranstaltung übernommen werden sollen."
         superset_principle:
           title: "Obermengenprinzip"
-          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnehmerliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
+          description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnahmeliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
         sticky_enrollment:
           title: "Feste Einschreibung"
           description: "Sobald eine Person in der Veranstaltung eingeschrieben ist (über Tutorium, Vortrag oder Gruppe mit Einschreibung), bleibt sie eingeschrieben, auch wenn sie später alle Gruppen verlässt. So bleibt dokumentiert, wer zu irgendeinem Zeitpunkt eingeschrieben war. Um eine Person vollständig zu entfernen, verwende die Entfernen-Aktion im Tab 'Eingeschriebene'."
@@ -147,7 +148,8 @@ de:
       enable_manual_management: 'Direkte Verwaltung'
       enable_campaign_management: 'Einschreibung durch Anmeldeverfahren'
       search: 'Suchen'
-      filter_placeholder: 'Nach Name oder E-Mail filtern'
+      search_placeholder: 'Nach Name oder Matrikelnummer suchen'
+      filter_placeholder: 'Nach Name filtern'
     drag:
       choice_title: 'Aktion für'
       move: 'Verschieben'
@@ -218,6 +220,42 @@ de:
       preferences: 'Präferenzen'
       actions: 'Aktionen'
     manage: 'Verwalten'
+    group_row:
+      room: "Raum"
+      confirmed: "%{count} / %{capacity} bestätigt"
+      confirmed_unlimited: "%{count} bestätigt"
+      members: "%{count} / %{capacity} Mitglieder"
+      members_unlimited: "%{count} Mitglieder"
+      first_choices:
+        one: "%{count} Erstwunsch"
+        other: "%{count} Erstwünsche"
+      seats:
+        one: "%{count} Platz"
+        other: "%{count} Plätze"
+      no_limit: "Keine Platzgrenze"
+      full: "Voll"
+      over_capacity:
+        one: "%{count} über der Kapazität"
+        other: "%{count} über der Kapazität"
+      seats_available:
+        one: "%{count} Platz frei"
+        other: "%{count} Plätze frei"
+      demand_exceeds_seats: "Mehr Nachfrage als Plätze"
+      head:
+        group: "Gruppe"
+        details:
+          tutors: "TutorInnen · Raum"
+          speakers: "Vortragende · Raum"
+        confirmed: "Bestätigt · Kapazität"
+        members: "Mitglieder · Kapazität"
+        first_choices: "Erstwünsche · Plätze"
+        actions: "Aktionen"
+      remove: "%{name} aus dieser Gruppe entfernen"
+      move:
+        button: "%{name} in eine andere Gruppe verschieben oder hinzufügen"
+        title: "Zielgruppe für %{name} auswählen"
+        none: "Es gibt keine andere Gruppe, in die verschoben werden kann."
+        locked: "Wird über ein Anmeldeverfahren verwaltet"
     self_materialization:
       modes:
         disabled: 'Selbsteinschreibung deaktiviert'
@@ -257,7 +295,6 @@ de:
       locked_manage_no_campaign: "Liste ist gesperrt (aktiviere Anmeldeverfahren überspringen für direkte Verwaltung)"
       edit_settings: "Einstellungen bearbeiten"
       edit_disabled_campaign: "Einstellungen können während eines laufenden Anmeldeverfahrens nicht bearbeitet werden"
-      top_bar_campaign: "Diese Gruppe ist Teil eines Anmeldeverfahrens"
       delete: "Löschen"
       delete_disabled: "Gruppe kann nicht gelöscht werden (hat Teilnehmer oder ist Teil eines Anmeldeverfahrens)"
       self_materialization_disabled_campaign: "Selbsteinschreibung ist während aktiver Anmeldeverfahren deaktiviert"
@@ -270,6 +307,7 @@ de:
       talk_content_html: "Nutze den %{link} für Inhalte, Tags und Medien."
       talk_content_new: "Inhalte, Tags und Medien können nach dem Erstellen verwaltet werden."
       cohort_description: "Die Beschreibung wird Studierenden im Anmeldeformular angezeigt. Du kannst sie nutzen, um zusätzliche Informationen zur Gruppe bereitzustellen."
+      cohort_tutors: "Im Normalfall braucht eine flexible Gruppe keine TutorIn. Wenn Du eine einträgst, sieht sie, wer in der Gruppe ist, und kann allen schreiben, z. B. für Zusatzübungen."
       cohort_propagate_to_lecture: "Wenn aktiviert, wird bei Einschreibung in diese Sondergruppe automatisch eine Veranstaltungseinschreibung vorgenommen. Wenn deaktiviert, ist diese Sondergruppe nur eine von der Veranstaltung isolierte Liste (z.B. Warteliste) und Mitglieder werden nicht automatisch in die Veranstaltung eingeschrieben."
       cohort_already_propagating: "Mitglieder dieser Sondergruppe werden automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
       cohort_is_isolated: "Mitglieder dieser Sondergruppe werden nicht automatisch in die Veranstaltung eingeschrieben. Diese Einstellung kann nicht geändert werden."
@@ -286,25 +324,31 @@ de:
       active_campaign_exists: 'Selbsteinschreibung kann nicht aktiviert werden, da bereits ein aktives Anmeldeverfahren läuft.'
       capacity_exceeded: "Gruppenkapazität überschritten."
       lecture_has_other_roster_entry: 'Du bist bereits in einer anderen Gruppe dieser Veranstaltung eingeschrieben. Bitte verlasse zuerst die andere Gruppe, bevor Du dieser beitrittst.'
+      grading_data_present: "Für diese Person liegt hier bereits eine Bewertung vor. Lösche sie zuerst, wenn Du die Person wirklich entfernen oder verschieben willst."
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
+      switch_failed: "Der Wechsel hat nicht geklappt; Du bist in Deiner bisherigen Gruppe geblieben."
       self_add_not_allowed: "Die Selbstanmeldung zu diesem %{type} ist für Studierende nicht erlaubt."
       self_remove_not_allowed: "Das selbstständige Verlassen dieses %{type} ist für Studierende nicht erlaubt."
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
+      cannot_delete: "Kann nicht gelöscht werden."
       cannot_delete_in_campaign: "Kann nicht gelöscht werden, da Teil eines Anmeldeverfahrens."
       cannot_delete_not_empty: "Kann nicht gelöscht werden, da Teilnehmer vorhanden sind."
       cannot_delete_with_media: "Kann nicht gelöscht werden, da Medien daran hängen."
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
       cannot_enable_both_campaign_and_self_materialization: "Selbsteinschreibung kann nicht aktiviert werden, während auf Anmeldeverfahren-Modus umgestellt wird. Bitte deaktiviere zuerst die Selbsteinschreibung oder behalte 'Anmeldeverfahren überspringen' aktiviert."
     warnings:
-      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Fortfahren?'
+      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Ihre Leistungsdaten und eine erteilte Prüfungszulassung werden gelöscht — auch eine von Hand erteilte. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'
+      enrolled_tutor:
+        one: '%{names} ist in diesem Tutorium eingetragen und würde die eigenen Blätter bewerten. Trotzdem als TutorIn eintragen?'
+        other: '%{names} sind in diesem Tutorium eingetragen und würden die eigenen Blätter bewerten. Trotzdem als TutorInnen eintragen?'
       propagate_readonly_after_creation: 'Diese Einstellung kann nach dem Erstellen nicht mehr geändert werden.'
       setting_cannot_be_changed: 'Diese Einstellung kann nachträglich nicht mehr geändert werden.'
     messages:
@@ -312,86 +356,129 @@ de:
       user_moved: "%{user} wurde nach %{target} verschoben."
       user_moved_between_tutorials: "%{user} wurde nach %{target} verschoben. Bereits in %{source} eingereichte Abgaben bleiben dort, sofern sie nicht vor Fristende noch einmal bearbeitet werden."
       user_not_moved: "%{user} wurde nicht verschoben: die Person ist bereits in %{target} oder nicht mehr in der Gruppe, aus der Du sie verschoben hast."
+      user_switched: "Du bist jetzt in %{group}."
       user_added: "%{user} wurde zu %{group} hinzugefügt."
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
-    self_enrollment:
-      no_registration_options: "Derzeit sind keine Tutorien oder Gruppen zur Anmeldung verfügbar."
+    no_participants_yet: 'Noch niemand steht auf der Prüfungsliste.'
+    registered: 'Registriert'
     mailer:
       end_mail_html: |
         <p>Mit freundlichen Grüßen,<br>Dein MaMpf-Team</p>
       end_mail: |
         Mit freundlichen Grüßen,
         Dein MaMpf-Team
-      link_text_html: |
+      link_text_group_html: |
         <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
-      link_text: |
+      link_text_group: |
         Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}
+      link_text_exam_html: |
+        <p>Du kannst Deine neuen Klausurinformationen hier aufrufen: %{rosterable_link}</p>
+      link_text_exam: |
+        Du kannst Deine neuen Klausurinformationen hier aufrufen: %{rosterable_link}
+      link_reject_info_html: |
+        <p>Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}</p>
+      link_reject_info: |
+        Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}
+      reject_reasons_html: |
+        <p>Grund: %{reasons}</p>
+      reject_reasons: |
+        Grund: %{reasons}
+      greeting_name_html: '<p>Hallo %{name},</p>'
+      greeting_name: 'Hallo %{name},'
+      greeting_html: '<p>Hallo,</p>'
+      greeting: 'Hallo,'
       roster_added_to_group_email_body_html: |
-        <p>Hallo %{name},</p>
         <p>
           Du wurdest zu <strong>%{rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
+          in der Veranstaltung <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
         <p>
           Du nimmst nun an dieser Gruppe teil.
         </p>
       roster_added_to_group_email_body: |
-        Hallo %{name},
-
-        Du wurdest zu „%{rosterable_title}“ in der Vorlesung
+        Du wurdest zu „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ hinzugefügt.
 
         Du nimmst nun an dieser Gruppe teil.
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
+      roster_added_to_exam_email_body_html: |
+        <p>
+          Du wurdest zur Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> hinzugefügt.
+        </p>
+      roster_added_to_exam_email_body: |
+        Du wurdest zur Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ hinzugefügt.
+
+      roster_added_to_exam_email_subject: 'Zur Klausur %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest aus <strong>%{rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> entfernt.
+          in der Veranstaltung <strong>%{lecture_title}</strong> entfernt.
         </p>
         <p>
           Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
           wende Dich bitte an Deine Lehrperson oder das Support-Team.
         </p>
         <p>
-          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+          Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
         </p>
       roster_removed_from_group_email_body: |
         Hallo %{name},
 
-        Du wurdest aus „%{rosterable_title}“ in der Vorlesung
+        Du wurdest aus „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ entfernt.
 
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
 
-        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
+      roster_removed_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest aus der Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+          wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_removed_from_exam_email_body: |
+        Hallo %{name},
+
+        Du wurdest aus der Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
+      roster_removed_from_exam_email_subject: 'Aus der Klausur %{rosterable_title} in %{lecture_title} entfernt'
       roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest von <strong>%{old_rosterable_title}</strong>
           nach <strong>%{new_rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> verschoben.
+          in der Veranstaltung <strong>%{lecture_title}</strong> verschoben.
         </p>
         <p>
-          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+          Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
         </p>
       roster_moved_between_groups_email_body: |
         Hallo %{name},
 
         Du wurdest von „%{old_rosterable_title}“ nach „%{new_rosterable_title}“
-        in der Vorlesung „%{lecture_title}“ verschoben.
+        in der Veranstaltung „%{lecture_title}“ verschoben.
 
-        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
       roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} in %{lecture_title} verschoben'
       roster_participant_left_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           %{participant_name} hat Deine Gruppe <strong>%{old_rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> verlassen und ist jetzt in
+          in der Veranstaltung <strong>%{lecture_title}</strong> verlassen und ist jetzt in
           <strong>%{new_rosterable_title}</strong>.
         </p>
         <p>
@@ -402,7 +489,7 @@ de:
       roster_participant_left_group_email_body: |
         Hallo %{name},
 
-        %{participant_name} hat Deine Gruppe „%{old_rosterable_title}“ in der Vorlesung
+        %{participant_name} hat Deine Gruppe „%{old_rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ verlassen und ist jetzt in „%{new_rosterable_title}“.
 
         Bereits bei Dir eingereichte Abgaben bleiben bei Dir und werden von Dir
@@ -413,7 +500,7 @@ de:
         <p>Hallo %{name},</p>
         <p>
           %{participant_name} ist neu in Deiner Gruppe <strong>%{new_rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong>, zuvor in
+          in der Veranstaltung <strong>%{lecture_title}</strong>, zuvor in
           <strong>%{old_rosterable_title}</strong>.
         </p>
         <p>
@@ -425,7 +512,7 @@ de:
         Hallo %{name},
 
         %{participant_name} ist neu in Deiner Gruppe „%{new_rosterable_title}“ in der
-        Vorlesung „%{lecture_title}“, zuvor in „%{old_rosterable_title}“.
+        Veranstaltung „%{lecture_title}“, zuvor in „%{old_rosterable_title}“.
 
         Bereits eingereichte Abgaben bleiben in „%{old_rosterable_title}“ und werden dort
         korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
@@ -449,3 +536,50 @@ de:
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'
+      roster_change_exam_schedule_email_body_html: |
+        <p>
+          Der Termin der Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> hat sich geändert.
+        </p>
+        <p>
+          Bitte notiere Dir die neuen Angaben.
+        </p>
+      roster_change_exam_schedule_email_body: |
+        Der Termin der Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ hat sich geändert.
+
+        Bitte notiere Dir die neuen Angaben.
+      roster_change_exam_schedule_email_subject: 'Terminänderung für Klausur %{rosterable_title} in %{lecture_title}'
+      roster_rejected_from_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung für <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_group_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung für „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_group_email_subject: 'Anmeldung für %{lecture_title} nicht erfolgreich'
+
+      roster_rejected_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung zur Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_exam_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung zur Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_exam_email_subject: 'Anmeldung zur Klausur %{rosterable_title} in %{lecture_title} nicht erfolgreich'
+      exam_schedule:
+        first_part: "Die Klausur findet"
+        date_part: "am %{exam_date}"
+        location_part: "in %{exam_location}"
+        last_part: "statt"
+        non_available_info:
+          one: "%{non_avai_ops} wird noch bekannt gegeben."
+          other: "%{non_avai_ops} werden noch bekannt gegeben."
+        date_ops: Datum
+        location_ops: Ort

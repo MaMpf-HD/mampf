@@ -12,11 +12,6 @@ RSpec.describe(Lecture, type: :model) do
   describe "lecture home page content" do
     let(:lecture) { create(:lecture) }
 
-    def pdf_upload(content = "%PDF-1.4 demo", name = "program.pdf")
-      Rack::Test::UploadedFile.new(StringIO.new(content), "application/pdf",
-                                   original_filename: name)
-    end
-
     describe "#home_content?" do
       it "is false when neither intro nor attachment is set" do
         expect(lecture.home_content?).to be(false)
@@ -28,7 +23,7 @@ RSpec.describe(Lecture, type: :model) do
       end
 
       it "is true with an attachment" do
-        lecture.home_attachment = pdf_upload
+        attach_home_pdf(lecture)
         expect(lecture.home_content?).to be(true)
       end
 
@@ -52,19 +47,19 @@ RSpec.describe(Lecture, type: :model) do
       end
 
       it "returns the uploaded filename" do
-        lecture.update!(home_attachment: pdf_upload("%PDF-1.4 demo", "seminar.pdf"))
-        expect(lecture.home_attachment_filename).to eq("seminar.pdf")
+        attach_home_pdf(lecture, "%PDF-1.4 demo", "seminar.pdf").save!
+        expect(lecture.reload.home_attachment_filename).to eq("seminar.pdf")
       end
     end
 
     describe "home_attachment validation" do
       it "accepts a pdf" do
-        lecture.home_attachment = pdf_upload
+        attach_home_pdf(lecture)
         expect(lecture).to be_valid
       end
 
       it "rejects a non-pdf (content-sniffed, not by extension)" do
-        lecture.home_attachment = pdf_upload("just some text", "program.pdf")
+        attach_home_pdf(lecture, "just some text", "program.pdf")
         expect(lecture).to be_invalid
       end
     end
@@ -148,6 +143,64 @@ RSpec.describe(Lecture, type: :model) do
     end
     it "has one sections in each chapter" do
       expect(@lecture.chapters.map { |c| c.sections.size }).to eq([1])
+    end
+  end
+
+  describe "#graders_with_inheritance" do
+    let(:lecture) { create(:lecture) }
+    let(:lecture_editor) { create(:confirmed_user) }
+    let(:module_editor) { create(:confirmed_user) }
+
+    before do
+      lecture.editors << lecture_editor
+      lecture.course.editors << module_editor
+    end
+
+    it "lists the teacher and the editors of lecture and module" do
+      expect(lecture.graders_with_inheritance)
+        .to contain_exactly(lecture.teacher, lecture_editor, module_editor)
+    end
+  end
+
+  describe ".preload_editors" do
+    let(:user) { create(:confirmed_user) }
+
+    it "lets can_edit? answer for all lectures without further queries" do
+      edited = create(:lecture)
+      edited.editors << user
+      course_edited = create(:lecture)
+      course_edited.course.editors << user
+      lectures = Lecture.where(id: [edited.id, course_edited.id, create(:lecture).id]).to_a
+
+      described_class.preload_editors(lectures)
+      queries = 0
+      counter = ->(*, payload) { queries += 1 unless payload[:name] == "SCHEMA" }
+      editable = ActiveSupport::Notifications.subscribed(counter, "sql.active_record") do
+        lectures.select { |lecture| user.can_edit?(lecture) }
+      end
+
+      expect(editable).to contain_exactly(edited, course_edited)
+      expect(queries).to eq(0)
+    end
+  end
+
+  describe "#script?" do
+    let(:lecture) { create(:lecture) }
+    let(:user) { create(:confirmed_user) }
+
+    def import_medium(sort)
+      medium = create(:lecture_medium, :released, sort: sort)
+      create(:import, teachable: lecture, medium: medium)
+    end
+
+    it "is true for an imported script" do
+      import_medium("Script")
+      expect(lecture.script?(user)).to be(true)
+    end
+
+    it "is false for imported exercises only" do
+      import_medium("Exercise")
+      expect(lecture.script?(user)).to be(false)
     end
   end
 
@@ -365,32 +418,50 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
 
-    it "subscribes roster members to the lecture" do
+    it "bookmarks the lecture for roster members" do
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(3)
+      end.to change(LectureBookmark, :count).by(3)
 
       expect(lecture.users).to include(*users)
     end
 
-    it "keeps existing subscriptions intact" do
-      create(:lecture_user_join, user: users.first, lecture: lecture)
+    it "keeps existing bookmarks intact" do
+      create(:lecture_bookmark, user: users.first, lecture: lecture)
 
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
-      end.to change(LectureUserJoin, :count).by(2) # Only 2 new ones
+      end.to change(LectureBookmark, :count).by(2) # Only 2 new ones
 
-      expect(LectureUserJoin.where(lecture: lecture, user: users.first).count)
+      expect(LectureBookmark.where(lecture: lecture, user: users.first).count)
         .to eq(1)
+    end
+
+    it "fires LectureMembership callbacks (creates performance records)" do
+      lecture.ensure_roster_membership!(users.map(&:id))
+
+      expect(StudentPerformance::Record.where(lecture: lecture).count)
+        .to eq(3)
+    end
+
+    it "seeds existing achievement participations for new roster members" do
+      achievement = create(:achievement, lecture: lecture)
+
+      expect do
+        lecture.ensure_roster_membership!(users.map(&:id))
+      end.to change(achievement.assessment.assessment_participations, :count)
+        .by(3)
     end
   end
 
   describe "#registration_mail_recipients" do
     let(:lecture) { create(:lecture, :released_for_all) }
+    let(:users) { create_list(:confirmed_user, 3) }
     let(:campaign) do
       create(:registration_campaign, :open, :first_come_first_served,
              campaignable: lecture)
     end
+    let(:users) { create_list(:confirmed_user, 3) }
 
     it "includes campaign registrants with pending or confirmed status" do
       pending_user = create(:confirmed_user)
@@ -433,6 +504,239 @@ RSpec.describe(Lecture, type: :model) do
              registration_campaign: other_campaign, user: stranger)
 
       expect(lecture.registration_mail_recipients).not_to include(stranger)
+    end
+  end
+
+  describe "#supported_assessable_types" do
+    it "returns assignments for regular lectures" do
+      lecture = create(:lecture, sort: "lecture")
+      expect(lecture.supported_assessable_types).to eq(["Assignment"])
+    end
+
+    it "returns talks for seminars" do
+      lecture = create(:lecture, sort: "seminar")
+      expect(lecture.supported_assessable_types).to eq(["Talk"])
+    end
+  end
+
+  describe "#submission_deletion_date callbacks" do
+    it "initializes submission_deletion_date from default when not set" do
+      lecture = create(:lecture)
+      expect(lecture.submission_deletion_date).to be_present
+      expect(lecture.submission_deletion_date).to be_a(Date)
+    end
+
+    it "keeps an explicitly set submission_deletion_date" do
+      date = 1.year.from_now.to_date
+      lecture = create(:lecture, submission_deletion_date: date)
+      expect(lecture.submission_deletion_date).to eq(date)
+    end
+
+    it "initializes it even when validations are skipped" do
+      lecture = build(:lecture)
+      expect { lecture.save(validate: false) }.not_to raise_error
+      expect(lecture.reload.submission_deletion_date).to be_present
+    end
+
+    it "fans out submission_deletion_date changes to assignments" do
+      lecture = create(:lecture,
+                       submission_deletion_date: 6.months.from_now.to_date)
+      a1 = create(:assignment, lecture: lecture, deadline: 1.week.from_now)
+      a2 = create(:assignment, lecture: lecture, deadline: 2.weeks.from_now)
+
+      new_date = 1.year.from_now.to_date
+      lecture.update!(submission_deletion_date: new_date)
+
+      expect(a1.reload.deletion_date).to eq(new_date)
+      expect(a2.reload.deletion_date).to eq(new_date)
+    end
+
+    it "does not fan out when unrelated attributes change" do
+      original_date = 6.months.from_now.to_date
+      lecture = create(:lecture, submission_deletion_date: original_date)
+      a1 = create(:assignment, lecture: lecture, deadline: 1.week.from_now)
+
+      lecture.update!(passphrase: "new-passphrase")
+
+      expect(a1.reload.deletion_date).to eq(original_date)
+    end
+  end
+
+  # Nothing about eligibility holds while sheets can still be added, so the
+  # lecture carries the statement that they cannot.
+  describe "#assignments_complete" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+
+    it "is not said for a lecture nobody has said it for" do
+      expect(lecture.assignments_complete?).to be(false)
+    end
+
+    it "keeps the moment it was said" do
+      lecture.update!(assignments_complete: true)
+
+      expect(lecture.assignments_complete?).to be(true)
+      expect(lecture.assignments_complete_at).to be_present
+    end
+
+    it "takes it back" do
+      lecture.update!(assignments_complete: true)
+      lecture.update!(assignments_complete: false)
+
+      expect(lecture.assignments_complete?).to be(false)
+      expect(lecture.assignments_complete_at).to be_nil
+    end
+
+    # Otherwise every unrelated save would mark every decision in the lecture
+    # for reconciliation.
+    it "does not move the moment when the same thing is said again" do
+      lecture.update!(assignments_complete: true)
+      said_at = lecture.assignments_complete_at
+
+      lecture.update!(assignments_complete: "1")
+
+      expect(lecture.reload.assignments_complete_at).to eq(said_at)
+    end
+
+    it "recomputes the records, so the decisions before it read as outdated" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      record = lecture.student_performance_records.find_by(user: user)
+      before = record.computed_at
+
+      lecture.update!(assignments_complete: true)
+
+      expect(record.reload.computed_at).to be > before
+    end
+  end
+
+  describe "#reset_computed_certifications!" do
+    let(:lecture) do
+      create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)
+    end
+    let!(:computed) { create(:student_performance_certification, :passed, lecture: lecture) }
+    let!(:manual) do
+      create(:student_performance_certification, :failed, :manual, lecture: lecture)
+    end
+
+    it "drops the computed decisions, keeps the manual ones and counts them" do
+      expect(lecture.reset_computed_certifications!).to eq(1)
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(manual)
+    end
+
+    it "drops nothing while a running registration asks for the decisions" do
+      create(:registration_policy, :student_performance,
+             config: { "lecture_ids" => [lecture.id.to_s] })
+
+      expect(lecture.reset_computed_certifications!).to be_nil
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(computed, manual)
+    end
+  end
+
+  describe "disabling uses_exam_eligibility" do
+    let(:lecture) do
+      create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)
+    end
+
+    it "is allowed when no dependent data exists" do
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    # A rule and its certifications are a record of what happened. Disabling
+    # hides them from the interface without deleting anything, and neither can
+    # decide about a student on its own — so neither stands in the way.
+    it "is allowed with an existing rule, which is kept" do
+      rule = create(:student_performance_rule, lecture: lecture)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+      expect(rule.reload).to be_persisted
+    end
+
+    it "is allowed with existing certifications, which are kept" do
+      user = create(:confirmed_user)
+      create(:lecture_membership, user: user, lecture: lecture)
+      cert = create(:student_performance_certification, :passed,
+                    lecture: lecture, user: user,
+                    certified_by: create(:confirmed_user))
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+      expect(cert.reload).to be_passed
+    end
+
+    it "is blocked by a policy referencing the lecture" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility].first)
+        .to include(policy.registration_campaign.campaignable.title)
+    end
+
+    it "is blocked by a policy using the legacy lecture_id config" do
+      create(:registration_policy, :student_performance,
+             config: { "lecture_id" => lecture.id })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+      expect(lecture.errors[:uses_exam_eligibility]).to be_present
+    end
+
+    it "is not blocked by a policy referencing a different lecture" do
+      other = create(:lecture, :with_organizational_stuff)
+      create(:registration_policy, :student_performance,
+             config: { "lecture_id" => other.id })
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    it "is not blocked by a policy whose campaign has completed" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+      policy.registration_campaign.update!(status: :completed)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(true)
+    end
+
+    it "is blocked by a policy whose campaign has only closed" do
+      policy = create(:registration_policy, :student_performance,
+                      config: { "lecture_ids" => [lecture.id.to_s] })
+      policy.registration_campaign.update!(status: :closed)
+
+      expect(lecture.update(uses_exam_eligibility: false)).to be(false)
+    end
+  end
+
+  describe "#open_exam_registration_for" do
+    let(:student) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let(:exam) { create(:exam, :with_date, lecture: lecture) }
+
+    it "finds an exam campaign that is still open" do
+      exam.registration_campaign.update!(status: :open)
+
+      expect(lecture.open_exam_registration_for(student))
+        .to eq(exam.registration_campaign)
+    end
+
+    it "ignores a campaign that has not been opened yet" do
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign for anything but an exam" do
+      create(:registration_campaign, :open, campaignable: lecture)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
+    end
+
+    it "ignores a campaign the student has already answered" do
+      campaign = exam.registration_campaign
+      campaign.update!(status: :open)
+      create(:registration_user_registration,
+             user: student,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(lecture.open_exam_registration_for(student)).to be_nil
     end
   end
 end

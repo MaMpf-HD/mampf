@@ -25,8 +25,8 @@ async function createLecturesWithCourses(
 
 test("loads initial results when scrolling to search bar",
   async ({ factory, student: { page } }) => {
-    const { nextTerm } = await createLectureSearchTerms(factory);
-    await createLecturesWithCourses(factory, 5, "Course", nextTerm.id);
+    const { currentTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 5, "Course", currentTerm.id);
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
@@ -40,8 +40,8 @@ test("loads initial results when scrolling to search bar",
 
 test("loads more results when scrolling to bottom (even multiple times)",
   async ({ factory, student: { page } }) => {
-    const { nextTerm } = await createLectureSearchTerms(factory);
-    await createLecturesWithCourses(factory, 50, "Sample Course", nextTerm.id);
+    const { currentTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 50, "Sample Course", currentTerm.id);
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
@@ -60,23 +60,60 @@ test("loads more results when scrolling to bottom (even multiple times)",
     expect(thirdCount).toBeGreaterThan(secondCount);
   });
 
+test("does not duplicate cards when scrolling triggers overlapping page loads",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 60, "Rapid Course", currentTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    await dashboard.scrollToSearchAndWaitForResults();
+
+    // Continuously fire synthetic scroll events (dispatching one does not
+    // actually move the viewport) while we scroll to the bottom repeatedly.
+    // This provokes the race where a page is requested again before its
+    // predecessor's turbo-stream response has updated the "next page"
+    // marker, which used to duplicate that page's cards.
+    await page.evaluate(() => {
+      setInterval(() => window.dispatchEvent(new Event("scroll")), 3);
+    });
+
+    for (let i = 0; i < 8; i++) {
+      const responsePromise = dashboard.getLectureSearchPromise()
+        .catch(() => null);
+      await page.evaluate(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      const response = await Promise.race([
+        responsePromise,
+        page.waitForTimeout(3000).then(() => null),
+      ]);
+      if (!response) break; // no more pages to load
+    }
+    await page.waitForTimeout(300);
+
+    const hrefs = await dashboard.getLectureCardHrefs();
+    const duplicates = hrefs.filter((href, index) => hrefs.indexOf(href) !== index);
+    expect(duplicates).toEqual([]);
+  });
+
 test("filters results based on search input",
   async ({ factory, student: { page } }) => {
-    const { nextTerm } = await createLectureSearchTerms(factory);
+    const { currentTerm } = await createLectureSearchTerms(factory);
     const calculusCourse = await factory.create("course", [], { title: "Advanced Calculus" });
     await factory.create("lecture", ["released_for_all"], {
       course_id: calculusCourse.id,
-      term_id: nextTerm.id,
+      term_id: currentTerm.id,
     });
     const algebraCourse = await factory.create("course", [], { title: "Linear Algebra" });
     await factory.create("lecture", ["released_for_all"], {
       course_id: algebraCourse.id,
-      term_id: nextTerm.id,
+      term_id: currentTerm.id,
     });
     const mathCourse = await factory.create("course", [], { title: "Discrete Mathematics" });
     await factory.create("lecture", ["released_for_all"], {
       course_id: mathCourse.id,
-      term_id: nextTerm.id,
+      term_id: currentTerm.id,
     });
 
     const dashboard = new DashboardLectureBrowsePage(page);
@@ -93,7 +130,7 @@ test("filters results based on search input",
     await expect(dashboard.results).not.toContainText("Mathematics");
   });
 
-test("filters results by selected term",
+test("scopes results to the semester picked in the dropdown",
   async ({ factory, student: { page } }) => {
     const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
     const currentCourse = await factory.create("course", [], { title: "Topology Current" });
@@ -114,59 +151,121 @@ test("filters results by selected term",
     });
 
     const dashboard = new DashboardLectureBrowsePage(page);
+
+    // default: the active term (plus term-independent lectures)
+    await dashboard.goto();
+    await dashboard.scrollToSearchAndWaitForResults();
+    await dashboard.searchFor("Topology");
+    await expect(dashboard.results).toContainText("Topology Current");
+    await expect(dashboard.results).toContainText("Topology Independent");
+    await expect(dashboard.results).not.toContainText("Topology Next");
+
+    // pick the upcoming semester: the sections and the search refresh in
+    // place, without navigating away or jumping the scroll position
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    const searchReloaded = dashboard.getLectureSearchPromise();
+    await dashboard.selectTerm("WS 2025/26");
+    await searchReloaded;
+
+    const scrollAfter = await page.evaluate(() => window.scrollY);
+    expect(Math.abs(scrollAfter - scrollBefore)).toBeLessThan(5);
+
+    await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).toContainText("Topology Independent");
+    await expect(dashboard.results).not.toContainText("Topology Current");
+
+    // a shared ?term=<slug> link lands on the same scope
+    await dashboard.gotoTerm("WS25-26");
+    await dashboard.scrollToSearchAndWaitForResults();
+    await dashboard.searchFor("Topology");
+    await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).not.toContainText("Topology Current");
+  });
+
+test("switches the search to the next semester by clicking on the hint",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 1, "Topology Current", currentTerm.id);
+    await createLecturesWithCourses(factory, 1, "Topology Next", nextTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
     await dashboard.scrollToSearchAndWaitForResults();
 
-    await expect(dashboard.nextTermFilter).toBeChecked();
+    // a Turbo visit swaps out the body, and with it this marker
+    await page.evaluate(() => {
+      document.body.dataset.stayedOnPage = "true";
+    });
+    const searchReloaded = dashboard.getLectureSearchPromise();
+    await page.getByTestId("lecture-search")
+      .getByRole("link", { name: "Take a look at the lectures for WS 25/26" })
+      .click();
+    await searchReloaded;
 
+    await expect(dashboard.searchTermSelect).toHaveValue("WS25-26");
+    await expect(dashboard.results).toContainText("Topology Next");
+    await expect(dashboard.results).not.toContainText("Topology Current");
+    await expect(page.locator("body")).toHaveAttribute("data-stayed-on-page", "true");
+  });
+
+test("searches all semesters without moving the dashboard to another",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 1, "Topology Current", currentTerm.id);
+    await createLecturesWithCourses(factory, 1, "Topology Next", nextTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    await dashboard.scrollToSearchAndWaitForResults();
     await dashboard.searchFor("Topology");
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
-    await expect(dashboard.results).not.toContainText("Topology Current");
-
-    await dashboard.clearNextTerm();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
-
-    await dashboard.selectCurrentTerm();
-    await expect(dashboard.currentTermFilter).toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Next");
 
-    await dashboard.clearCurrentTermWithKeyboard();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
+    const allTerms = page.getByRole("switch", { name: "Search all semesters" });
+    let searched = dashboard.getLectureSearchPromise();
+    await allTerms.check();
+    await searched;
     await expect(dashboard.results).toContainText("Topology Current");
     await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
+    await expect(dashboard.termSelect).toHaveValue("SS25");
 
-    await dashboard.selectCurrentTerm();
-    await expect(dashboard.currentTermFilter).toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Independent");
-    await expect(dashboard.results).not.toContainText("Topology Next");
-
-    await dashboard.clearCurrentTerm();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
+    // picking a semester means that semester again
+    searched = dashboard.getLectureSearchPromise();
+    await dashboard.selectTerm("WS 2025/26");
+    await searched;
+    await expect(allTerms).not.toBeChecked();
     await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
-
-    await dashboard.selectNextTerm();
-    await expect(dashboard.nextTermFilter).toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
     await expect(dashboard.results).not.toContainText("Topology Current");
+  });
 
-    await dashboard.clearNextTermWithKeyboard();
-    await expect(dashboard.currentTermFilter).not.toBeChecked();
-    await expect(dashboard.nextTermFilter).not.toBeChecked();
-    await expect(dashboard.results).toContainText("Topology Current");
-    await expect(dashboard.results).toContainText("Topology Next");
-    await expect(dashboard.results).toContainText("Topology Independent");
+test("remembers the last picked semester for the next visit",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm, nextTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 1, "Topology Current", currentTerm.id);
+    await createLecturesWithCourses(factory, 1, "Topology Next", nextTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    const termSwitched = () => page.waitForResponse(response =>
+      response.url().includes("/dashboard/term"));
+
+    // picked in the dropdown
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("SS25");
+    await dashboard.selectTerm("WS 2025/26");
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("WS25-26");
+    await expect(dashboard.searchTermSelect).toHaveValue("WS25-26");
+
+    // back to the current semester via its link
+    const backToCurrent = termSwitched();
+    await page.getByTestId("current-term-link").first().click();
+    await backToCurrent;
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("SS25");
+
+    // picked via the "Take a look" hint
+    await page.getByRole("link", { name: "Take a look at the lectures for WS 25/26" })
+      .first().click();
+    await page.waitForURL(/term=WS25-26/);
+    await dashboard.goto();
+    await expect(dashboard.termSelect).toHaveValue("WS25-26");
   });

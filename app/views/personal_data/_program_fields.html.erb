@@ -1,0 +1,69 @@
+<% programs = study_programs %>
+<% program = f.object.program %>
+<% answered = f.object.attribute_in_database(:personal_data_confirmed_at).present? %>
+<div class="mb-3" data-controller="study-program">
+  <fieldset class="mb-3">
+    <legend class="form-label fs-6 float-none"><%= t("personal_data.degree_question") %></legend>
+    <% programs.map(&:degree).uniq.each do |degree| %>
+      <% math_program = programs.find { |p| p.degree == degree && p.subject.math? } %>
+      <div class="form-check">
+        <%= radio_button_tag :study_degree, degree, program&.degree == degree,
+                             class: "form-check-input", required: true,
+                             data: { study_program_target: "degree",
+                                     two_subjects: Program::TWO_SUBJECT_DEGREES.include?(degree),
+                                     math_program: math_program&.id,
+                                     action: "study-program#update" } %>
+        <%= label_tag "study_degree_#{degree}", t("programs.degree_choices.#{degree}"),
+                      class: "form-check-label" %>
+      </div>
+    <% end %>
+    <div class="form-check">
+      <%= radio_button_tag :study_degree, "other", answered && program.nil?,
+                           class: "form-check-input", required: true,
+                           data: { study_program_target: "degree",
+                                   action: "study-program#update" } %>
+      <%= label_tag "study_degree_other", t("personal_data.other_degree"),
+                    class: "form-check-label" %>
+    </div>
+  </fieldset>
+
+  <fieldset class="mb-3" data-study-program-target="mathQuestion">
+    <legend class="form-label fs-6 float-none"><%= t("personal_data.math_question") %></legend>
+    <% ["yes", "no"].each do |answer| %>
+      <div class="form-check">
+        <%= radio_button_tag :study_math, answer,
+                             program&.two_subjects? && program.subject.math? == (answer == "yes"),
+                             class: "form-check-input",
+                             data: { study_program_target: "math",
+                                     action: "study-program#update" } %>
+        <%= label_tag "study_math_#{answer}", t("personal_data.participation_#{answer}"),
+                      class: "form-check-label" %>
+      </div>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="mb-3" data-study-program-target="choice">
+    <legend class="form-label fs-6 float-none"><%= t("personal_data.program_question") %></legend>
+    <% programs.each do |choice| %>
+      <div class="form-check" data-study-program-target="option"
+           data-degree="<%= choice.degree %>" data-math="<%= choice.subject.math? %>">
+        <%= f.radio_button :program_id, choice.id, class: "form-check-input",
+                                                   data: { summary: choice.name_with_subject } %>
+        <%= f.label "program_id_#{choice.id}", choice.name_with_subject,
+                    class: "form-check-label" %>
+      </div>
+    <% end %>
+    <div class="form-check" data-study-program-target="option" data-degree="any"
+         data-math="false">
+      <%= f.radio_button :program_id, "", id: "user_program_id_other_subject",
+                                          class: "form-check-input",
+                                          data: { summary: t("personal_data.other_program") } %>
+      <%= label_tag "user_program_id_other_subject", t("personal_data.other_subject"),
+                    class: "form-check-label" %>
+    </div>
+  </fieldset>
+  <%= f.radio_button :program_id, "", hidden: true,
+                                      data: { study_program_target: "other",
+                                              summary: t("personal_data.other_program") } %>
+  <div class="form-text"><%= t("personal_data.program_hint") %></div>
+</div>

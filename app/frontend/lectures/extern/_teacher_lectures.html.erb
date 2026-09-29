@@ -8,7 +8,7 @@
     <ul>
       <% lectures.each do |l| %>
         <li>
-          <% if current_user.lectures.include?(l) %>
+          <% if l.content_accessible_by?(current_user) %>
             <%= link_to l.title, l.path(current_user),
                         class: 'text-dark' %>
           <% else %>

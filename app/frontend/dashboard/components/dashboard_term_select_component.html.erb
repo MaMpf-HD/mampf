@@ -1,0 +1,54 @@
+<%= tag.div id: "#{id}-wrapper",
+            class: "dashboard-term-select",
+            data: { controller: "dashboard-term-select" } do %>
+  <%= label_tag id, t("dashboard.term_select.label"),
+                class: "dashboard-term-select__label" %>
+
+  <%= form_with url: dashboard_term_path, method: :get, local: true,
+                data: { turbo_stream: true } do %>
+    <%= select_tag "term",
+                   options_for_select(options, selected&.dashboard_param),
+                   id: id,
+                   class: "form-select form-select-sm dashboard-term-select__input",
+                   data: {
+                     testid: id,
+                     dashboard_term_select_target: "select",
+                     action: "change->dashboard-term-select#change"
+                   } %>
+  <% end %>
+
+  <% if show_next_term_notice? %>
+    <p class="dashboard-term-select__notice" data-testid="next-term-notice">
+      <i class="bi bi-stars" aria-hidden="true"></i>
+
+      <span>
+        <%= t("dashboard.term_select.next_term_notice.text",
+              count: next_term_lecture_count, term: next_term.to_label_short) %>
+      </span>
+
+      <%= link_to root_path(term: next_term.dashboard_param, anchor: "lecture-search"),
+                  class: "dashboard-term-select__link",
+                  aria: { label: t("dashboard.term_select.next_term_notice.link_label",
+                                   term: next_term.to_label_short) },
+                  data: next_term_link_data do %>
+        <%= t("dashboard.term_select.next_term_notice.link") %>
+
+        <% if anchor.blank? %>
+          <i class="bi bi-chevron-down" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+    </p>
+  <% end %>
+
+  <% if show_current_term_link? %>
+    <%= link_to target_path(active_term),
+                class: "dashboard-term-select__link",
+                data: { testid: "current-term-link", turbo_prefetch: false,
+                        **pick_data(active_term) } do %>
+      <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+
+      <%= t("dashboard.term_select.current_term_link",
+            term: active_term.to_label_short) %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -10,11 +10,10 @@ test.describe("Vignettes", () => {
   async function createLecture(factory: FactoryBot, teacherId: number, studentId: number,
     usesVignettes: boolean): Promise<FactoryBotObject> {
     const lecture = await factory.create("lecture", ["released_for_all"], {
-      locale: "en",
       teacher_id: teacherId,
       vignettes: usesVignettes,
     });
-    await factory.create("lecture_user_join", [], {
+    await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id,
       user_id: studentId,
     });
@@ -277,7 +276,7 @@ test.describe("Vignettes", () => {
       });
 
       const posted: string[] = [];
-      student.page.on("request", request => {
+      student.page.on("request", (request) => {
         if (request.method() === "POST") posted.push(request.url());
       });
 

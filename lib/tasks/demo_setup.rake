@@ -9,9 +9,54 @@ namespace :demo do
     Demo::SetupSupport.setup_rosters!
   end
 
-  desc "Create the maximum available demo data for the current slice"
+  desc "Create demo assignments, tasks, participations, statuses, and points"
+  task assessment: :environment do
+    Demo::SetupSupport.setup_assessment!
+  end
+
+  desc "Create demo achievements and performance records"
+  task performance: :environment do
+    Demo::SetupSupport.setup_performance!
+  end
+
+  desc "Create an active eligibility rule and certify the demo students against it"
+  task eligibility: :environment do
+    Demo::SetupSupport.setup_eligibility!
+  end
+
+  desc "Drop the eligibility rule and all certifications of the demo lecture, " \
+       "keeping points, achievements and performance records — the state a " \
+       "lecture is in before anyone has configured a rule"
+  task eligibility_reset: :environment do
+    Demo::SetupSupport.reset_eligibility!
+  end
+
+  desc "Create demo exams with campaigns, registrations and a finalized roster"
+  task exams: :environment do
+    Demo::SetupSupport.setup_exams!
+  end
+
+  desc "Grade the finalized demo exam by applying a banded grading scheme"
+  task grading: :environment do
+    Demo::SetupSupport.setup_grading!
+  end
+
+  desc "Add the demo data to a database restored from the shipped seed, " \
+       "leaving its tutorials, talks and seating alone"
   task setup: :environment do
     Demo::SetupSupport.setup!
+  end
+
+  desc "The same on a database without the demo groups: builds those first, " \
+       "which reseats everybody - what the seed build runs"
+  task setup_from_scratch: :environment do
+    Demo::SetupSupport.setup_from_scratch!
+  end
+
+  desc "Hand in the demo homework: a submission per team for every sheet that " \
+       "carries an assessment"
+  task homework_submissions: :environment do
+    Demo::SetupSupport.setup_homework_submissions!
   end
 
   desc "Create vignettes for a lecture in every state they can be in"
@@ -21,8 +66,9 @@ namespace :demo do
     )
   end
 
-  desc "Stage the next-term banner scenario (flag, next term, demo lectures)"
-  task next_term_banner: :environment do
-    Demo::NextTermBannerSupport.setup!
+  desc "Stage a lecture the way they ran before the roster: groups nobody " \
+       "sits in, subscribed students, sheets handed in the old way"
+  task legacy_lecture: :environment do
+    Demo::LegacyLectureSupport.setup!
   end
 end

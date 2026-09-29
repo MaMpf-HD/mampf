@@ -174,4 +174,67 @@ RSpec.describe(Submission, type: :model) do
       expect(report[:invalid_id]).not_to include(in_scope_file)
     end
   end
+
+  describe "assessments" do
+    it "delegates assessment to assignment" do
+      submission = FactoryBot.build(:valid_submission, :with_assignment)
+      expect(submission.assessment).to eq(submission.assignment.assessment)
+    end
+  end
+
+  describe "participations" do
+    context "when assessment flag is disabled" do
+      it "returns nil" do
+        submission = FactoryBot.build(:valid_submission, :with_assignment)
+        expect(submission.participations).to be_nil
+      end
+    end
+
+    context "for old assignment created before assessment flag was enabled" do
+      let(:lecture) { FactoryBot.create(:lecture) }
+      let(:assignment) do
+        FactoryBot.create(:assignment, :without_assessment,
+                          title: "usual BS", lecture: lecture)
+      end
+      let(:user1) { FactoryBot.create(:confirmed_user) }
+      let(:user2) { FactoryBot.create(:confirmed_user) }
+      let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
+
+      it "returns nil" do
+        submission = FactoryBot.create(:submission, assignment: assignment,
+                                                    tutorial: tutorial,
+                                                    users: [user1, user2])
+
+        expect(submission.participations).to be_nil
+      end
+    end
+
+    context "when assessment flag is enabled and new assignment" do
+      let!(:assignment) { FactoryBot.create(:valid_assignment, title: "usual BS") }
+      let!(:assessment) do
+        assignment.assessment.tap do |record|
+          record.update!(requires_points: true)
+        end
+      end
+      let(:lecture) { assignment.lecture }
+      # both users are in the same tutorial,
+      let(:user1) { FactoryBot.create(:confirmed_user) }
+      let(:user2) { FactoryBot.create(:confirmed_user) }
+      let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture) }
+
+      before do
+        assignment.reload
+        assessment.reload
+        tutorial.add_user_to_roster!(user1, nil)
+        tutorial.add_user_to_roster!(user2, nil)
+      end
+
+      it "returns an array of participations based on users of the submission " do
+        submission = FactoryBot.create(:submission, assignment: assignment,
+                                                    tutorial: tutorial,
+                                                    users: [user1, user2])
+        expect(submission.participations.size).to eq(2)
+      end
+    end
+  end
 end

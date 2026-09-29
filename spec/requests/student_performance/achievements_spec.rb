@@ -1,0 +1,332 @@
+require "rails_helper"
+
+RSpec.describe("StudentPerformance::Achievements", type: :request) do
+  let(:lecture) { FactoryBot.create(:lecture, locale: I18n.default_locale) }
+  let(:editor) { FactoryBot.create(:confirmed_user) }
+  let(:student) { FactoryBot.create(:confirmed_user) }
+
+  before do
+    FactoryBot.create(:editable_user_join, user: editor, editable: lecture)
+    editor.reload
+    lecture.reload
+  end
+  describe "GET /lectures/:lecture_id/performance/achievements" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns http success" do
+        get lecture_student_performance_achievements_path(lecture)
+        expect(response).to have_http_status(:success)
+      end
+
+      it "renders percentage thresholds in fixed-point notation" do
+        create(:achievement,
+               :percentage,
+               lecture: lecture,
+               threshold: BigDecimal("0.75e2"))
+
+        get lecture_student_performance_achievements_path(lecture)
+
+        expect(response.body).to include("75.0%")
+        expect(response.body).not_to include("0.75e2%")
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        get lecture_student_performance_achievements_path(lecture)
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "GET /lectures/:lecture_id/performance/achievements/new" do
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns turbo stream with the form" do
+        get new_lecture_student_performance_achievement_path(lecture),
+            as: :turbo_stream
+        expect(response).to have_http_status(:success)
+        expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      end
+
+      it "redirects to index for HTML requests" do
+        get new_lecture_student_performance_achievement_path(lecture)
+        expect(response).to redirect_to(
+          lecture_student_performance_achievements_path(lecture)
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        get new_lecture_student_performance_achievement_path(lecture),
+            as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "GET /lectures/:lecture_id/performance/achievements/:id" do
+    let!(:achievement) do
+      FactoryBot.create(:achievement, lecture: lecture)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "returns turbo stream with the dashboard" do
+        get lecture_student_performance_achievement_path(lecture, achievement),
+            as: :turbo_stream
+        expect(response).to have_http_status(:success)
+        expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+      end
+
+      it "redirects to index for HTML requests" do
+        get lecture_student_performance_achievement_path(lecture, achievement)
+        expect(response).to redirect_to(
+          lecture_student_performance_achievements_path(lecture)
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        get lecture_student_performance_achievement_path(lecture, achievement),
+            as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "POST /lectures/:lecture_id/performance/achievements" do
+    let(:valid_params) do
+      { achievement: { title: "Blackboard Presentation",
+                       value_type: "boolean" } }
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "creates an achievement" do
+        expect do
+          post(lecture_student_performance_achievements_path(lecture),
+               params: valid_params, as: :turbo_stream)
+        end.to change(Achievement, :count).by(1)
+      end
+
+      it "refuses a request that does not want a Turbo Stream" do
+        expect do
+          post(lecture_student_performance_achievements_path(lecture),
+               params: valid_params)
+        end.not_to change(Achievement, :count)
+
+        expect(response).to have_http_status(:not_acceptable)
+      end
+
+      it "hands the form back when the params are invalid" do
+        expect do
+          post(lecture_student_performance_achievements_path(lecture),
+               params: { achievement: { title: "", value_type: "boolean" } },
+               as: :turbo_stream)
+        end.not_to change(Achievement, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("achievement-form")
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        post lecture_student_performance_achievements_path(lecture),
+             params: valid_params
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "PATCH /lectures/:lecture_id/performance/achievements/:id" do
+    let!(:achievement) do
+      FactoryBot.create(:achievement, :percentage, lecture: lecture, threshold: 80)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      let!(:assessment) do
+        achievement.ensure_assessment!(
+          requires_points: false, requires_submission: false
+        )
+      end
+
+      let!(:participation) do
+        create(:assessment_participation,
+               assessment: assessment,
+               grade_text: "85.0")
+      end
+
+      it "updates the achievement" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { title: "Updated Title" } },
+              as: :turbo_stream
+        expect(achievement.reload.title).to eq("Updated Title")
+      end
+
+      it "keeps the title when the params are invalid" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { title: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(achievement.reload.title).to be_present
+      end
+
+      it "returns an unprocessable turbo response for blank threshold" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: {
+                achievement: {
+                  title: achievement.title,
+                  value_type: "percentage",
+                  threshold: "",
+                  description: achievement.description
+                }
+              },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.media_type).to eq(Mime[:turbo_stream].to_s)
+        expect(response.body).to include(
+          %(data-achievement-form-has-errors-value="true")
+        )
+        expect(response.body).to include(
+          %(data-achievement-form-original-threshold-value="80.0")
+        )
+      end
+
+      it "keeps the type once a value has been entered, and says so" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { value_type: "boolean", threshold: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(achievement.reload).to be_percentage
+        assert_flash_error
+        expect(response.body).to include(
+          I18n.t("activerecord.errors.models.achievement.attributes.value_type.fixed_by_values")
+        )
+      end
+
+      it "moves the threshold with values entered" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { threshold: "90" } },
+              as: :turbo_stream
+
+        expect(achievement.reload.threshold).to eq(90)
+      end
+
+      it "renders validation errors only through invalid-feedback" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { title: "" } },
+              as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include("invalid-feedback")
+        expect(response.body).not_to include("text-danger small mt-1")
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        patch lecture_student_performance_achievement_path(lecture, achievement),
+              params: { achievement: { title: "Hack" } }
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "DELETE /lectures/:lecture_id/performance/achievements/:id" do
+    let!(:achievement) do
+      FactoryBot.create(:achievement, lecture: lecture)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "destroys the achievement" do
+        expect do
+          delete(lecture_student_performance_achievement_path(
+                   lecture, achievement
+                 ), as: :turbo_stream)
+        end.to change(Achievement, :count).by(-1)
+      end
+
+      it "keeps an achievement somebody has a value on, and says so in words" do
+        student = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: student)
+        achievement.assessment.assessment_participations.find_by!(user: student)
+                   .update!(grade_text: Achievement::PASSED)
+
+        expect do
+          delete(lecture_student_performance_achievement_path(
+                   lecture, achievement
+                 ), as: :turbo_stream)
+        end.not_to change(Achievement, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        assert_flash_error
+        expect(response.body).to include(
+          I18n.t("assessment.achievement_not_destructible.has_values")
+        )
+        expect(response.body).not_to include("rule_achievements")
+      end
+
+      context "when referenced by a rule" do
+        before do
+          rule = create(:student_performance_rule, lecture: lecture)
+          create(:student_performance_rule_achievement,
+                 rule: rule, achievement: achievement)
+        end
+
+        it "does not destroy the achievement" do
+          expect do
+            delete(lecture_student_performance_achievement_path(
+                     lecture, achievement
+                   ))
+          end.not_to change(Achievement, :count)
+        end
+
+        it "returns unprocessable_content for turbo requests, naming the rule" do
+          delete lecture_student_performance_achievement_path(
+            lecture, achievement
+          ), as: :turbo_stream
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(response.body).to include(
+            I18n.t("assessment.achievement_not_destructible.referenced_by_rules")
+          )
+        end
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root" do
+        delete lecture_student_performance_achievement_path(
+          lecture, achievement
+        )
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+end

@@ -93,10 +93,10 @@ entered or corrected by hand are not overwritten. See
 
 ~~~admonish danger "Concerns another PR: what `muesli/tutor-grading-view` has to honour"
 Nothing in slices 1–5 writes a grading state. No controller enters task points,
-none sets `reviewed`, none marks a participant absent or exempt —
-`Gradable#set_grade!` exists but has no caller. Everything that puts a
-participation into one of those states is being built on the tutor grading
-branch, for exams as well as for seminar talks.
+none sets `reviewed`, none marks a participant absent or exempt. Everything
+that puts a participation into one of those states is being built on the tutor
+grading branches: task points through `SubmissionGraderService`, a talk's grade
+through `GradeEntryService`, exams still to come.
 
 Two rules the model layer here already assumes, and which that branch has to keep:
 

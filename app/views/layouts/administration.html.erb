@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="<%= I18n.locale %>">
   <head>
     <%= render partial: "layouts/login_transition" %>
     <%= render partial: 'layouts/head' %>
     <%= render partial: 'layouts/head_additional_js' %>
-    <%= vite_stylesheet_tag "styles/admin.scss" %>
     <meta name="theme-color" content="#821A3B " />
   </head>
 
@@ -23,5 +22,6 @@
 
     <div id="modal-container"></div>
 
+    <%= render "support_requests/widget" %>
   </body>
 </html>

@@ -282,61 +282,10 @@ RSpec.describe(Course, type: :model) do
     end
   end
 
-  context "subscribable lectures" do
-    before :each do
-      @admin = FactoryBot.create(:confirmed_user, admin: true)
-      @course_editor = FactoryBot.create(:confirmed_user)
-      @editor = FactoryBot.create(:confirmed_user)
-      @teacher = FactoryBot.create(:confirmed_user)
-      @generic_user = FactoryBot.create(:confirmed_user)
-      @course = FactoryBot.create(:course, editors: [@course_editor])
-      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
-      term1 = FactoryBot.create(:term, year: year, season: "SS")
-      term2 = FactoryBot.create(:term, year: year, season: "WS")
-      term3 = FactoryBot.create(:term, year: year + 1)
-      term4 = FactoryBot.create(:term, year: year + 2)
-      @lecture1 = FactoryBot.create(:lecture, course: @course,
-                                              teacher: @teacher, term: term1)
-      @lecture2 = FactoryBot.create(:lecture, course: @course,
-                                              editors: [@editor], term: term2)
-      @lecture3 = FactoryBot.create(:lecture, :released_for_all,
-                                    course: @course, term: term3)
-      @lecture4 = FactoryBot.create(:lecture, :released_for_all,
-                                    course: @course, term: term4)
-    end
-
-    describe "#subscribable_lectures" do
-      it "returns all lectures for admins" do
-        expect(@course.subscribable_lectures(@admin))
-          .to match_array([@lecture1, @lecture2, @lecture3, @lecture4])
-      end
-
-      it "returns all lectures for course editors" do
-        expect(@course.subscribable_lectures(@course_editor))
-          .to match_array([@lecture1, @lecture2, @lecture3, @lecture4])
-      end
-
-      it "returns all given lectures and published lectures for teachers" do
-        expect(@course.subscribable_lectures(@teacher))
-          .to match_array([@lecture1, @lecture3, @lecture4])
-      end
-
-      it "returns all edited lectures and published lectures for editors" do
-        expect(@course.subscribable_lectures(@editor))
-          .to match_array([@lecture2, @lecture3, @lecture4])
-      end
-
-      it "returns all published lectures for generic users" do
-        expect(@course.subscribable_lectures(@generic_user))
-          .to match_array([@lecture3, @lecture4])
-      end
-    end
-  end
-
   context "lecture sorting" do
     before :each do
       @course = FactoryBot.create(:course)
-      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
+      year = Faker::Number.between(from: 2050, to: 9999)
       term1 = FactoryBot.create(:term, year: year, season: "SS")
       term2 = FactoryBot.create(:term, year: year, season: "WS")
       term3 = FactoryBot.create(:term, year: year + 1)
@@ -379,42 +328,6 @@ RSpec.describe(Course, type: :model) do
       item1 = FactoryBot.create(:item, section: section1)
       item2 = FactoryBot.create(:item, section: section2)
       expect(course.items).to match_array([item1, item2])
-    end
-  end
-
-  context "lecture subscriptions" do
-    before :each do
-      @course = FactoryBot.create(:course)
-      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
-      term1 = FactoryBot.create(:term, year: year, season: "SS")
-      term2 = FactoryBot.create(:term, year: year, season: "WS")
-      term3 = FactoryBot.create(:term, year: year + 1)
-      term4 = FactoryBot.create(:term, year: year + 2)
-      @lecture1 = FactoryBot.create(:lecture, :released_for_all,
-                                    course: @course, term: term1)
-      @lecture2 = FactoryBot.create(:lecture, :released_for_all,
-                                    course: @course, term: term2)
-      @lecture3 = FactoryBot.create(:lecture, :released_for_all,
-                                    course: @course, term: term3)
-      @lecture4 = FactoryBot.create(:lecture, :released_for_all,
-                                    course: @course, term: term4,
-                                    passphrase: "test123")
-      @user = FactoryBot.create(:confirmed_user,
-                                lectures: [@lecture1, @lecture2, @lecture3])
-    end
-
-    describe "#subscribed_lectures" do
-      it "returns all the subscribed lectures of the user" do
-        expect(@course.subscribed_lectures(@user))
-          .to match_array([@lecture1, @lecture2, @lecture3])
-      end
-    end
-
-    describe "#to_be_authorized_lectures" do
-      it "returns all the nonsubscribed lectures of the user with passphrase" do
-        expect(@course.to_be_authorized_lectures(@user))
-          .to match_array([@lecture4])
-      end
     end
   end
 

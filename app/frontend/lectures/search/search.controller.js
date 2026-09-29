@@ -10,14 +10,17 @@ import { addDataToForm } from "~/js/form_helper.js";
  * Only when the user scrolls again to the bottom of the page, more lectures are
  * loaded (infinite scrolling).
  *
+ * The semester the results are scoped to is not chosen here: it comes from the
+ * dashboard's semester picker as a server-rendered hidden `search[term]`
+ * field, so the search and the dashboard above it always show the same
+ * semester. The `allTerms` switch only lifts that scope for the search.
  */
 export default class extends Controller {
-  static targets = ["form", "scrollObserver"];
+  static targets = ["form", "scrollObserver", "allTerms"];
 
   connect() {
     addDataToForm(this.formTarget, { infinite_scroll: true });
     this.isSubmitting = false;
-    this.applyTermScopeFromUrl();
 
     this.observer = new IntersectionObserver((entries) => {
       if (this.initiallyLoaded) return;
@@ -32,6 +35,10 @@ export default class extends Controller {
 
     this.handleScroll = this.handleScroll.bind(this);
     window.addEventListener("scroll", this.handleScroll);
+
+    this.reloadForTermChange = this.reloadForTermChange.bind(this);
+    document.addEventListener("dashboard-term-select:changed",
+      this.reloadForTermChange);
   }
 
   scrollObserverTargetConnected() {
@@ -58,6 +65,21 @@ export default class extends Controller {
       this.scrollObserver.disconnect();
     }
     window.removeEventListener("scroll", this.handleScroll);
+    document.removeEventListener("dashboard-term-select:changed",
+      this.reloadForTermChange);
+  }
+
+  /**
+   * The semester picker changed the term (and our hidden `search[term]` field
+   * with it). Re-run the search from the first page if results are already on
+   * screen; otherwise the new term is picked up when the user scrolls down to
+   * the search. Picking a semester also ends a search across all of them.
+   */
+  reloadForTermChange() {
+    if (this.hasAllTermsTarget) this.allTermsTarget.checked = false;
+    if (!this.initiallyLoaded) return;
+
+    this.search();
   }
 
   handleScroll() {
@@ -87,80 +109,9 @@ export default class extends Controller {
       // This is especially important when the user has already scrolled down
       // and we were on a later page.
       addDataToForm(this.formTarget, { page: "" });
+      this.lastRequestedPage = null;
       this.submitForm();
     }, 200);
-  }
-
-  rememberTermFilterState(event) {
-    const input = this.termFilterInput(event);
-    if (!input) return;
-
-    input.dataset.wasChecked = input.checked ? "true" : "false";
-  }
-
-  toggleTermFilter(event) {
-    const input = this.termFilterInput(event);
-    if (!input || input.dataset.wasChecked !== "true") return;
-
-    delete input.dataset.wasChecked;
-    event.preventDefault();
-    input.checked = false;
-    this.search();
-  }
-
-  clearTermFilterWithKeyboard(event) {
-    if (!event.target.checked) return;
-
-    event.preventDefault();
-    event.target.checked = false;
-    this.search();
-  }
-
-  /**
-   * Applies the term filter from the URL (e.g. /?term_scope=next), so that
-   * banners, announcements etc. can deep-link into a pre-filtered lecture
-   * search. The initial search (triggered by the IntersectionObserver once
-   * the form becomes visible) then picks up the pre-selected filter.
-   */
-  applyTermScopeFromUrl() {
-    const termScope = new URLSearchParams(window.location.search).get("term_scope");
-    if (!["current", "next"].includes(termScope)) return;
-
-    const radios = this.formTarget.querySelectorAll("input[name='search[term_scope]']");
-    radios.forEach((radio) => {
-      radio.checked = radio.value === termScope;
-    });
-
-    // The deep link should always bring the search into view. We cannot rely
-    // on the #lecture-search anchor alone: when the hash did not change
-    // (e.g. the banner CTA is clicked a second time), the browser does not
-    // scroll to it again.
-    requestAnimationFrame(() => this.element.scrollIntoView());
-  }
-
-  rememberTermFilterState(event) {
-    const input = this.termFilterInput(event);
-    if (!input) return;
-
-    input.dataset.wasChecked = input.checked ? "true" : "false";
-  }
-
-  toggleTermFilter(event) {
-    const input = this.termFilterInput(event);
-    if (!input || input.dataset.wasChecked !== "true") return;
-
-    delete input.dataset.wasChecked;
-    event.preventDefault();
-    input.checked = false;
-    this.search();
-  }
-
-  clearTermFilterWithKeyboard(event) {
-    if (!event.target.checked) return;
-
-    event.preventDefault();
-    event.target.checked = false;
-    this.search();
   }
 
   /**
@@ -179,6 +130,15 @@ export default class extends Controller {
     const nextPage = pagyDataElement.dataset.nextPage;
     if (!nextPage) return;
 
+    // `turbo:submit-end` (which unlocks `isSubmitting` below) fires before
+    // the turbo-stream response is actually rendered, so `#pagy-nav-next`
+    // can still carry the page we just requested for a moment after
+    // `isSubmitting` is unlocked. Without this guard, a scroll/intersection
+    // event landing in that window would request the same page a second
+    // time, duplicating that page's cards once both responses render.
+    if (nextPage === this.lastRequestedPage) return;
+    this.lastRequestedPage = nextPage;
+
     addDataToForm(this.formTarget, { page: nextPage });
     this.submitForm();
   }
@@ -191,14 +151,5 @@ export default class extends Controller {
     const unlockHandler = () => this.isSubmitting = false;
     document.addEventListener("turbo:submit-end", unlockHandler, { once: true });
     this.formTarget.requestSubmit();
-  }
-
-  termFilterInput(event) {
-    if (event.currentTarget instanceof HTMLInputElement) return event.currentTarget;
-
-    const inputId = event.currentTarget.getAttribute("for");
-    if (!inputId) return null;
-
-    return document.getElementById(inputId);
   }
 }

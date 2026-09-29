@@ -1,0 +1,68 @@
+// Hint and note hold sentences and may wrap; the other columns hold a name,
+// a figure, a status or an icon. Each column's share follows what it usually
+// holds, so the gaps between columns come out about equal.
+.certifications-table {
+  th,
+  td {
+    white-space: nowrap;
+    padding-inline: 0.75rem;
+  }
+
+  .student-column {
+    width: 15%;
+  }
+
+  .share-column {
+    width: 12%;
+  }
+
+  // However many achievements the rule asks for, together they take no more
+  // than two of them would, so the other columns keep their share.
+  .achievement-column {
+    width: var(--achievement-width, 7%);
+  }
+
+  .decision-column {
+    width: 17%;
+  }
+
+  .hint-column {
+    white-space: normal;
+    width: 25%;
+    min-width: 14rem;
+  }
+
+  .note-column {
+    white-space: normal;
+    width: 17%;
+    min-width: 10rem;
+  }
+
+  .numeric {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// A count in every pill, quiet enough not to be a second row of figures:
+// body-coloured on the page's grey, the active pill's on white.
+.count-pills {
+  .nav-link {
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+
+    &.active {
+      color: white;
+    }
+  }
+
+  .badge {
+    color: var(--bs-body-color);
+    background: var(--bs-tertiary-bg);
+    font-size: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nav-link.active .badge {
+    background: white;
+  }
+}

@@ -1,0 +1,5 @@
+<%= t('mailer.submission_added',
+      assignment: @assignment.title,
+      lecture: @assignment.lecture.short_title,
+      tutor: @user.tutorial_name,
+      team: (@submission.users - [@recipient]).map(&:tutorial_name).to_sentence) %>

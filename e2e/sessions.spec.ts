@@ -5,7 +5,7 @@ import { LoginPage } from "./page-objects/login_page";
 
 test("keeps the failure generic while an account runs into the lock",
   async ({ page, request }) => {
-    const user = await callBackend(request, "user_creator_playwright",
+    const user = await callBackend(request, "user_creator",
       { role: "locked-account" }) as User;
     const loginPage = new LoginPage(page);
     const alert = page.getByRole("alert").first();
@@ -27,7 +27,7 @@ test("keeps the failure generic while an account runs into the lock",
 
 test("shows unlock guidance once the locked account's password is right",
   async ({ page, request }) => {
-    const user = await callBackend(request, "user_creator_playwright",
+    const user = await callBackend(request, "user_creator",
       { role: "locked-account" }) as User;
     const loginPage = new LoginPage(page);
     const alert = page.getByRole("alert").first();

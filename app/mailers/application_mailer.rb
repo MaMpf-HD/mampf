@@ -17,23 +17,24 @@ class ApplicationMailer < ActionMailer::Base
     # Configures the template_path for mails such that email views in our
     # custom `app/frontend/` folder structure can be found.
     #
-    # Example for `feedback_mailer.rb`:
+    # Example for `support_request_mailer.rb`:
     #
     # - The default view path is `app/views/`. Inside this folder, the default
     #   Rails convention is to look for a folder with the class name, that is
-    #   in our case: "feedback_mailer". That is, we obtain a path like
-    #   `app/views/feedback_mailer/`. Inside this folder, Rails will
+    #   in our case: "support_request_mailer". That is, we obtain a path like
+    #   `app/views/support_request_mailer/`. Inside this folder, Rails will
     #   look for a file that starts with the action name,
-    #   e.g. "new_user_feedback_email".
+    #   e.g. "new_support_request_email".
     #
     # - In addition, we've added `app/frontend/` to the view paths. But here,
     #   we DON'T want to have a structure like
-    #   `app/frontend/feedback_mailer/new_user_feedback_email.text.erb`
-    #   next to our `app/frontend/feedbacks/` folder.
+    #   `app/frontend/support_request_mailer/new_support_request_email.text.erb`
+    #   next to our `app/frontend/support_requests/` folder.
     #
-    #   Instead, we modify the template path to just read "feedbacks"
-    #   (instead of "feedback_mailer"), therefore obtaining the correct path:
-    #   `app/frontend/feedbacks/new_user_feedback_email.text.erb`.
+    #   Instead, we modify the template path to just read
+    #   "support_requests/mails" (instead of "support_request_mailer"),
+    #   therefore obtaining the correct path:
+    #   `app/frontend/support_requests/mails/new_support_request_email.text.erb`.
     def mail(headers = {}, &)
       usual_rails_path = self.class.name.underscore
       custom_path = "#{usual_rails_path.delete_suffix("_mailer").pluralize}/mails"

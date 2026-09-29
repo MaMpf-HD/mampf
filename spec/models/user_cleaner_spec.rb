@@ -218,6 +218,24 @@ RSpec.describe(UserCleaner, type: :model) do
       expect(User.where(id: user_teacher.id)).to exist
       expect(User.where(id: user_editor.id)).to exist
     end
+
+    it "keeps a dean's office account" do
+      office = FactoryBot.create(:confirmed_user, deletion_date: Date.current - 1.day,
+                                                  deans_office: true)
+
+      UserCleaner.new.delete_users_according_to_deletion_date!
+
+      expect(User.where(id: office.id)).to exist
+    end
+
+    it "keeps a support account" do
+      support = FactoryBot.create(:confirmed_user, deletion_date: Date.current - 1.day,
+                                                   support: true)
+
+      expect { UserCleaner.new.delete_users_according_to_deletion_date! }
+        .not_to have_enqueued_mail(UserCleanerMailer, :deletion_email)
+      expect(User.where(id: support.id)).to exist
+    end
   end
 
   describe("mails") do

@@ -1,51 +1,81 @@
 @import '~/styles/branding';
 
+:root {
+  --section-header-border: #a8c5e6;
+}
+
+.campaign-section {
+  border: 1.5px solid transparent;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--bs-body-bg), var(--bs-body-bg)) padding-box,
+    linear-gradient(145deg, mampf-blue(0.7), mampf-blue(0.35)) border-box;
+  box-shadow: 0 0.3rem 0.9rem rgba(34, 62, 98, 0.08);
+}
+
+// The badges hang in two places: the header of a registration card and the
+// exam's registration tab, so they are styled here rather than inside the
+// card that holds one of them.
+.policy-badge {
+  vertical-align: middle;
+  cursor: default;
+  position: relative;
+
+  &--draft {
+    cursor: grab;
+    padding-right: 0.5em;
+
+    &:active { cursor: grabbing; }
+  }
+
+  // Dimmed rather than hidden, so a draft shows that its chips can be edited
+  // without hovering; a display:none button could not take focus either.
+  .policy-badge-actions {
+    margin-left: 0.35em;
+    display: inline-flex;
+    gap: 0.35em;
+    align-items: center;
+    opacity: 0.6;
+    transition: opacity 0.1s ease-in-out;
+  }
+
+  &--draft:hover .policy-badge-actions,
+  &--draft:focus-within .policy-badge-actions {
+    opacity: 1;
+  }
+
+  .policy-badge-action {
+    border: none;
+    background: none;
+    padding: 0;
+    line-height: 1;
+    vertical-align: baseline;
+    color: var(--bs-secondary-color);
+    cursor: pointer;
+
+    &:hover { color: var(--bs-emphasis-color); }
+  }
+
+  .policy-badge-action--delete:hover {
+    color: var(--bs-danger);
+  }
+
+  &.sortable-ghost {
+    opacity: 0.4;
+  }
+}
+
+.policy-badge.sortable-ghost {
+  opacity: 0.4;
+}
+
 .registration-campaign-card {
   background-color: var(--bs-body-bg);
 
   .registration-campaign-card-header {
     padding: 1rem 1.15rem;
-    background: linear-gradient(160deg, mampf-blue(0.14), mampf-blue(0.05));
-
-    .policy-badge {
-      vertical-align: middle;
-      cursor: default;
-      position: relative;
-
-      &--draft {
-        cursor: grab;
-        padding-right: 0.5em;
-
-        &:active { cursor: grabbing; }
-      }
-
-      .policy-badge-actions {
-        margin-left: 0.35em;
-        display: none;
-        gap: 0.2em;
-        align-items: center;
-      }
-
-      &--draft:hover .policy-badge-actions,
-      &--draft:focus-within .policy-badge-actions {
-        display: inline-flex;
-      }
-
-      .policy-badge-action {
-        border: none;
-        background: none;
-        padding: 0;
-        line-height: 1;
-        vertical-align: baseline;
-        cursor: pointer;
-
-        &:hover { opacity: 0.7; }
-      }
-    }
-
-    .policy-badge.sortable-ghost {
-      opacity: 0.4;
-    }
+    background: linear-gradient(160deg, mampf-blue(0.09), mampf-blue(0.03));
 
     .policy-form-panel {
       margin: 0.5rem -1.15rem -1rem;
@@ -61,6 +91,11 @@
     position: absolute;
     top: 0.65rem;
     right: 0.65rem;
+
+    // On the tinted header an outline button reads as disabled.
+    .btn:not(:hover) {
+      background-color: var(--bs-body-bg);
+    }
   }
 
   .card-body {
@@ -96,6 +131,47 @@
 
     .btn {
       width: 100%;
+    }
+  }
+}
+
+.policy-badges-shell {
+  &:has(turbo-frame:not(:empty)) {
+    .policy-add-link {
+      display: none !important;
+    }
+  }
+}
+
+.policy-badges-shell--embedded {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  .policy-editor-slot {
+    width: 100%;
+  }
+
+  .policy-add-link {
+    text-decoration: none;
+  }
+
+  .policy-editor-slot--embedded {
+    turbo-frame {
+      display: block;
+    }
+  }
+
+  .policy-editor-slot--embedded:has(turbo-frame:not(:empty)) {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--bs-card-border-radius);
+    background: linear-gradient(160deg, mampf-blue(0.08), mampf-blue(0.03));
+
+    .policy-form-panel {
+      margin: 0;
+      padding: 0.75rem 1.15rem;
+      background-color: rgba(255, 255, 255, 0.72);
+      border-radius: inherit;
     }
   }
 }
@@ -142,7 +218,7 @@
   }
 }
 
-@keyframes dissolved-tile-settle {
+@keyframes dissolved-row-settle {
   0% {
     opacity: 0;
     transform: translateY(-24px) scale(0.9);
@@ -182,14 +258,23 @@
   font-size: 0.74rem;
   color: var(--bs-gray-600);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  // No taller than the text, so that a discardable campaign's pill keeps the
+  // height of the others.
+  .icon-button {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-block: -0.1rem;
+    font-size: 0.85rem;
+  }
 }
 
-.dissolved-campaign-settling .registration-group-tile-col {
-  animation: dissolved-tile-settle 0.7s ease both;
+.dissolved-campaign-settling .group-row {
+  animation: dissolved-row-settle 0.7s ease both;
 }
 
 @for $i from 1 through 12 {
-  .dissolved-campaign-settling .registration-group-tile-col:nth-child(#{$i}) {
+  .dissolved-campaign-settling .group-row:nth-child(#{$i}) {
     animation-delay: #{500 + $i * 150}ms;
   }
 }
@@ -197,7 +282,7 @@
 @media (prefers-reduced-motion: reduce) {
   .campaign-dissolving,
   .dissolved-campaign-pill,
-  .dissolved-campaign-settling .registration-group-tile-col {
+  .dissolved-campaign-settling .group-row {
     animation: none;
   }
 }
@@ -284,10 +369,39 @@
   opacity: 0.45;
 }
 
+// The rest of the pill is a plain summary; the dotted underline and the color
+// mark the counts that open a roster.
 .campaign-panel-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: -0.1rem -0.35rem;
+  padding: 0.1rem 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
   cursor: pointer;
 
-  &:focus:not(:focus-visible) {
-    outline: none;
+  &--rejected {
+    color: var(--bs-danger-text-emphasis);
+  }
+
+  &--unassigned {
+    color: var(--bs-warning-text-emphasis);
+  }
+
+  &:hover,
+  &.roster-trigger--selected {
+    background: var(--bs-secondary-bg);
+    text-decoration-style: solid;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 1px;
   }
 }

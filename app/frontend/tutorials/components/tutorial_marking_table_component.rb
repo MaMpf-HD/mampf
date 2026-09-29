@@ -1,0 +1,163 @@
+# The marking table of a sheet: a row for every hand-in and one for everybody
+# else on the roster. A tutor sees their group, the lecturer every group.
+class TutorialMarkingTableComponent < ViewComponent::Base
+  def initialize(assignment:, grading_scope: nil)
+    super()
+    @assignment = assignment
+    @lecture = assignment.lecture
+    @grading_scope = grading_scope
+    if grading_scope.is_a?(Tutorial)
+      @tutorial = @grading_scope
+      init_tutor_case
+    elsif grading_scope.is_a?(Lecture)
+      init_teacher_case
+    end
+  end
+
+  def init_tutor_case
+    @mode = "tutor"
+    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
+                        .order(:last_modification_by_users_at)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+    @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
+    @participations_by_user_id =
+      preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
+  end
+
+  def init_teacher_case
+    @mode = "teacher"
+    @tutorials = @lecture.tutorials
+    @stack = @assignment.submissions.proper
+                        .order(:last_modification_by_users_at)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+    @submissions_by_tutorial = @stack.group_by(&:tutorial)
+
+    @non_submitters = @assignment.non_submitters_in_tutorials.by_last_name
+    # Somebody who left the groups after handing in sits with the group that
+    # has the sheet - as a file row or a roster row - not among those in none.
+    @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
+                                            .where.not(id: @non_submitters.map(&:id) +
+                                                           @stack.flat_map(&:user_ids))
+    listed = @non_submitters.to_a + @non_tutorial_participants.to_a
+    @participations_by_user_id = preload_participations(listed, @stack, groups_of(listed))
+
+    # Somebody who moved groups after handing in on paper stays with the group
+    # that has the sheet; everybody else sits with the group they are in.
+    @non_submitters_by_tutorial = @non_submitters.group_by do |user|
+      @participations_by_user_id[user.id]&.tutorial || membership_tutorials[user.id]
+    end
+  end
+
+  # Batch creation avoids per-student inserts and validation queries.
+  def preload_participations(non_submitters, submissions, groups)
+    return {} unless @assignment.assessment
+
+    assessment = @assignment.assessment
+    if @assignment.kind_test?
+      return Assessment::ParticipationIndex.rows_for(assessment, non_submitters, groups)
+    end
+
+    user_ids = non_submitters.map(&:id) + submissions.flat_map(&:user_ids)
+    rows = Assessment::ParticipationIndex.load_rows(assessment, user_ids)
+    Assessment::ParticipationIndex.rehome_blank_rows(rows, groups)
+    rows
+  end
+
+  # The group each listed user is a member of now, nil for none: after the
+  # deadline a group's page also lists people who have moved away and left a
+  # row behind, so the page's own group is not the answer.
+  def groups_of(users)
+    users.to_h { |user| [user.id, membership_tutorials[user.id]] }
+  end
+
+  def team_participations(submission)
+    submission.users.map { |user| @participations_by_user_id[user.id] }
+  end
+
+  # Before the backfill worker has been round there is no participation yet;
+  # the row is drawn from an unsaved one, and recording the hand-in saves it.
+  # A test's rows are seeded before any is asked for, so this never builds
+  # one for a test.
+  def participation_for(user, tutorial)
+    @participations_by_user_id[user.id] ||=
+      Assessment::Participation.new(assessment: @assignment.assessment, user: user,
+                                    tutorial: tutorial)
+  end
+
+  def grading_enabled?
+    @assignment.assessable?
+  end
+
+  def layout
+    @layout ||= MarkingTableLayout.for(assessable: @assignment, grading_scope: @grading_scope)
+  end
+
+  def toolbar
+    MarkingToolbarComponent.new(assignment: @assignment, grading_scope: @grading_scope,
+                                summary: summary, submissions: @stack,
+                                tutorials: @tutorials || [])
+  end
+
+  # Every answer that swaps a row out sends the line above the table along,
+  # rebuilt from the rows, so the two never disagree.
+  def summary
+    MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?,
+                                teams: team_count)
+  end
+
+  # A team row speaks for its first member with a participation, as the row
+  # itself does; a file without any participation is still to be marked.
+  # The row counts once for each of its members.
+  def row_statuses
+    from_files = @stack.flat_map do |submission|
+      [file_status(submission)] * [submission.users.size, 1].max
+    end
+    return from_files unless grading_enabled?
+
+    from_rows = roster_rows.map do |user, tutorial|
+      participation_for(user, tutorial).display_status
+    end
+    from_files + from_rows
+  end
+
+  # Only worth saying where some file was handed in by more than one person.
+  # A refused file puts its people among those who did not hand in, so it is
+  # no team behind the hand-ins either.
+  def team_count
+    handed_in = @stack.select do |submission|
+      file_status(submission).in?(MarkingSummaryComponent::HANDED_IN)
+    end
+    handed_in.size if handed_in.any? { |submission| submission.users.size > 1 }
+  end
+
+  def tasks
+    @assignment&.assessment&.persisted_tasks || []
+  end
+
+  # A sheet from before there were points has file rows only.
+  def rows?
+    @stack.any? ||
+      (grading_enabled? && (@non_submitters.any? || @non_tutorial_participants.present?))
+  end
+
+  private
+
+    def file_status(submission)
+      team_participations(submission).compact.first&.display_status || :pending_grading
+    end
+
+    def roster_rows
+      if @mode == "tutor"
+        @non_submitters.map { |user| [user, @tutorial] }
+      else
+        @non_submitters_by_tutorial.flat_map { |tutorial, users| users.map { |u| [u, tutorial] } } +
+          @non_tutorial_participants.map { |user| [user, nil] }
+      end
+    end
+
+    def membership_tutorials
+      @membership_tutorials ||=
+        TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
+                          .index_by(&:user_id).transform_values(&:tutorial)
+    end
+end

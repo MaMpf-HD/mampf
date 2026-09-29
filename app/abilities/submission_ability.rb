@@ -5,8 +5,11 @@ class SubmissionAbility
     clear_aliased_actions
 
     can [:index, :new, :join, :cancel_edit, :cancel_new, :redeem_code,
-         :enter_code], Submission
+         :enter_code, :seen, :seen_all], Submission
 
+    # Enrolment is what this asks; the group is asked for by
+    # `SubmissionsController#rostered_tutorial!`, which every way in goes
+    # through and which says what is missing rather than "not authorized".
     can :create, Submission do |submission|
       lecture = submission.assignment&.lecture
       lecture.present? && user.proper_student_in?(lecture)
@@ -17,21 +20,31 @@ class SubmissionAbility
       user.in?(submission.users) && !submission.not_updatable?
     end
 
-    can [:add_correction, :delete_correction, :select_tutorial,
-         :cancel_action, :accept, :reject, :edit_correction,
+    # The file arrives before the hand-in is saved, so the upload asks for the
+    # seat that `rostered_tutorial!` asks for later: without one, the file
+    # could never become a hand-in and is not taken at all.
+    can :upload_manuscript, Submission do |submission|
+      lecture = submission.assignment&.lecture
+      seated = lecture.present? && user.rostered_tutorial_in(lecture).present?
+      if submission.persisted?
+        seated && user.in?(submission.users) && !submission.not_updatable?
+      else
+        seated && user.proper_student_in?(lecture)
+      end
+    end
+
+    can [:add_correction, :delete_correction, :edit_correction,
          :cancel_edit_correction], Submission do |submission|
+      submission.tutorial.correctable_by?(user)
+    end
+
+    # Whether a late hand-in counts is the group's tutor's call.
+    can [:accept, :reject], Submission do |submission|
       user.in?(submission.tutorial.tutors)
     end
 
-    can :move, Submission do |submission|
-      user.in?(submission.tutorial.tutors) &&
-        !submission.tutorial.lecture.roster_managed?
-    end
-
     can [:show_manuscript, :show_correction], Submission do |submission|
-      user.in?(submission.users) || user.in?(submission.tutorial.tutors) ||
-        user.in?(submission.tutorial.lecture.editors) ||
-        user == submission.tutorial.lecture.teacher
+      user.in?(submission.users) || submission.tutorial.correctable_by?(user)
     end
   end
 end

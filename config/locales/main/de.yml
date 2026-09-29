@@ -1,13 +1,48 @@
 de:
   main:
-    next_term_banner:
-      heading:
-        one: "Die Veranstaltungen für das %{term} werden gerade veröffentlicht — die erste ist schon in MaMpf."
-        other: "Die Veranstaltungen für das %{term} werden gerade veröffentlicht — %{count} sind schon in MaMpf."
-      registration_intro: >-
-        Die Anmeldung zu Veranstaltungen kann jetzt auch über MaMpf erfolgen (sofern die entsprechende Veranstaltung diese Option bereitstellt).
-      transition_label: "Im Umbau"
-      transition_notice: >-
-        Müsli wird in Rente gehen. Tschüssli, Müsli! In den nächsten Wochen bauen wir MaMpf schrittweise um, deshalb kann es an einigen Stellen vorübergehend noch etwas unfertig wirken.
-      cta: "Veranstaltungen fürs nächste Semester ansehen"
-      dismiss: "Ausblenden"
+    start:
+      no_lectures: >-
+        Du bist zu keiner Veranstaltung im %{term} angemeldet und hast Dir auch
+        keine gemerkt. Scrolle nach unten, um neue Veranstaltungen zu entdecken.
+      no_lectures_any_term: >-
+        Du bist noch zu keiner Veranstaltung angemeldet und hast Dir auch keine
+        gemerkt. Scrolle nach unten, um neue Veranstaltungen zu entdecken.
+      no_lectures_teacher: >-
+        Du betreust im %{term} keine Veranstaltung. Wähle oben ein anderes
+        Semester oder scrolle nach unten, um Veranstaltungen zu suchen.
+      no_lectures_teacher_any_term: >-
+        Du betreust noch keine Veranstaltung. Scrolle nach unten, um
+        Veranstaltungen zu suchen.
+      sections:
+        staff: "Diese betreust Du"
+        staff_note_only: "Für Lehrende"
+        tutor: "In diesen bist Du TutorIn"
+        enrolled: "Für diese bist Du angemeldet"
+        bookmarked: "Diese hast Du Dir gemerkt"
+      registration_open: "Anmeldung offen — jetzt anmelden"
+      talk_with: "mit %{names}"
+      remove_bookmark: "Nicht mehr merken"
+      remove_bookmark_for: "Nicht mehr merken: %{lecture}"
+      remove_bookmark_title: "Nicht mehr merken?"
+      not_published: "Noch nicht veröffentlicht"
+      awaiting_group: "Noch keinem Tutorium zugeordnet"
+      remove_bookmark_body: >-
+        „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Du kannst
+        sie über die Vorlesungssuche erneut merken.
+      remove_bookmark_body_locked: >-
+        „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Sie ist
+        durch einen Zugangsschlüssel geschützt, Du musst ihn dann auf der
+        Veranstaltungsseite erneut eingeben, um sie zu öffnen.
+      remove_entirely_relocks: >-
+        Entfernst Du sie ganz, musst Du ihren Zugangsschlüssel erneut eingeben,
+        um sie zu öffnen.
+      remove_bookmark_confirm: "Entfernen"
+      remove_registration_notice: "Ausblenden"
+      remove_registration_notice_for: "Hinweis zu %{lecture} ausblenden"
+      remove_registration_notice_title: "Hinweis ausblenden?"
+      remove_registration_notice_body: >-
+        Deine Anmeldung für „%{lecture}“ wurde abgelehnt. Du kannst die
+        Veranstaltung weiter gemerkt lassen oder ganz von Deinem Dashboard
+        entfernen.
+      remove_registration_notice_keep_bookmarked: "Weiter merken"
+      remove_registration_notice_remove_entirely: "Ganz entfernen"

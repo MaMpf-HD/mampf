@@ -1,14 +1,46 @@
 en:
   main:
-    next_term_banner:
-      heading:
-        one: "Lectures for %{term} are being published — the first one is already in MaMpf."
-        other: "Lectures for %{term} are being published — %{count} are already in MaMpf."
-      registration_intro: >-
-        Course registration can now also happen here in MaMpf (provided the relevant lecture offers this option).
-      transition_label: "Under construction"
-      transition_notice: >-
-        Müsli is heading into retirement. Bye-bye, Müsli! Over the next few weeks, we will be gradually rebuilding
-        MaMpf, so some parts may still feel a little unfinished for a while.
-      cta: "Browse next term's lectures"
-      dismiss: "Dismiss"
+    start:
+      no_lectures: >-
+        You are not registered for any lecture of %{term}, and have not
+        bookmarked any. Scroll down to discover new lectures.
+      no_lectures_any_term: >-
+        You are not registered for any lecture yet, and have not bookmarked
+        any. Scroll down to discover new lectures.
+      no_lectures_teacher: >-
+        You are not teaching any lecture in %{term}. Choose another semester
+        above, or scroll down to search for lectures.
+      no_lectures_teacher_any_term: >-
+        You are not teaching any lecture yet. Scroll down to search for
+        lectures.
+      sections:
+        staff: "You are staff in these"
+        staff_note_only: "For teaching staff"
+        tutor: "You are tutor in these"
+        enrolled: "You are registered for these"
+        bookmarked: "You bookmarked these"
+      registration_open: "Registration open — register now"
+      talk_with: "with %{names}"
+      remove_bookmark: "Remove bookmark"
+      remove_bookmark_for: "Remove bookmark: %{lecture}"
+      remove_bookmark_title: "Remove bookmark?"
+      not_published: "Not published yet"
+      awaiting_group: "Not on a tutorial yet"
+      remove_bookmark_body: >-
+        Remove “%{lecture}” from your bookmarks? You can bookmark it again from
+        the lecture search.
+      remove_bookmark_body_locked: >-
+        Remove “%{lecture}” from your bookmarks? It is protected by a pass
+        phrase, so you will need to enter it again on the lecture page to open
+        it.
+      remove_entirely_relocks: >-
+        Removing it entirely means entering its pass phrase again to open it.
+      remove_bookmark_confirm: "Remove"
+      remove_registration_notice: "Dismiss"
+      remove_registration_notice_for: "Dismiss the notice for %{lecture}"
+      remove_registration_notice_title: "Dismiss the notice?"
+      remove_registration_notice_body: >-
+        Your registration for “%{lecture}” was rejected. You can keep the
+        lecture as a bookmark, or remove it from your dashboard entirely.
+      remove_registration_notice_keep_bookmarked: "Keep in bookmarked lectures"
+      remove_registration_notice_remove_entirely: "Remove entirely"

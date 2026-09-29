@@ -1,6 +1,7 @@
 en:
   roster:
     title: "Participants/Groups"
+    participants: 'Participants'
     status: 'Status'
     group_category:
       tutorial: "Tutorial"
@@ -146,7 +147,8 @@ en:
       enable_manual_management: 'Direct Management'
       enable_campaign_management: 'Registration Process Management'
       search: 'Search'
-      filter_placeholder: 'Filter by name or email'
+      search_placeholder: 'Search by name or matriculation number'
+      filter_placeholder: 'Filter by name'
     drag:
       choice_title: 'Drop action for'
       move: 'Move'
@@ -216,6 +218,42 @@ en:
       preferences: 'Preferences'
       actions: 'Actions'
     manage: 'Manage'
+    group_row:
+      room: "Room"
+      confirmed: "%{count} / %{capacity} confirmed"
+      confirmed_unlimited: "%{count} confirmed"
+      members: "%{count} / %{capacity} members"
+      members_unlimited: "%{count} members"
+      first_choices:
+        one: "%{count} first choice"
+        other: "%{count} first choices"
+      seats:
+        one: "%{count} seat"
+        other: "%{count} seats"
+      no_limit: "No seat limit"
+      full: "Full"
+      over_capacity:
+        one: "%{count} over capacity"
+        other: "%{count} over capacity"
+      seats_available:
+        one: "%{count} seat available"
+        other: "%{count} seats available"
+      demand_exceeds_seats: "Demand exceeds seats"
+      head:
+        group: "Group"
+        details:
+          tutors: "Tutors · Room"
+          speakers: "Speakers · Room"
+        confirmed: "Confirmed · Capacity"
+        members: "Members · Capacity"
+        first_choices: "First Choices · Seats"
+        actions: "Actions"
+      remove: "Remove %{name} from this group"
+      move:
+        button: "Move or add %{name} to another group"
+        title: "Move or add %{name} to …"
+        none: "There is no other group to move to."
+        locked: "Managed by a registration process"
     self_materialization:
       modes:
         disabled: 'Self-Enrollment Disabled'
@@ -253,7 +291,6 @@ en:
       locked_manage_no_campaign: "Roster is locked (enable skip registration processes to manage directly)"
       edit_settings: "Edit Settings"
       edit_disabled_campaign: "Cannot edit settings during active registration process"
-      top_bar_campaign: "This group is part of a registration process"
       delete: "Delete"
       delete_disabled: "Cannot delete group (has participants or in registration process)"
       self_materialization_disabled_campaign: "Self-enrollment is disabled during active registration processes"
@@ -266,6 +303,7 @@ en:
       talk_content_html: "Use the %{link} to manage content, tags, and media."
       talk_content_new: "Content, tags, and media can be managed after creation."
       cohort_description: "The description is shown to students in the registration form. Use it to provide additional information about the group."
+      cohort_tutors: "Usually a flexible group needs no tutor. If you name one, they see who is in the group and can write to them, e.g. for extra lessons."
       cohort_propagate_to_lecture: "If checked, members of this group are automatically enrolled in the lecture. If unchecked, this group is just an isolated list (e.g. Waitlist) and members do not get automatic access to lecture materials."
       cohort_already_propagating: "Members of this group are automatically enrolled in the lecture. This setting cannot be changed."
       cohort_is_isolated: "Members of this group are not automatically enrolled in the lecture. This setting cannot be changed."
@@ -282,25 +320,31 @@ en:
       active_campaign_exists: 'Self-Enrollment cannot be enabled because an active registration process already handles enrollment.'
       capacity_exceeded: "Group capacity exceeded."
       lecture_has_other_roster_entry: "You are already enrolled in another group of this lecture and cannot join another group at the same time."
+      grading_data_present: "This person already has a result here. Delete it first if you really want to remove or move them."
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
       user_already_in_bundle: "%{user} is already assigned to %{group}."
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
+      switch_failed: "The switch did not work; you stay in your current group."
       self_add_not_allowed: "Self-enrollment in this %{type} is not permitted for students."
       self_remove_not_allowed: "Self-leaving from this %{type} is not permitted for students."
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
+      cannot_delete: "Cannot be deleted."
       cannot_delete_in_campaign: "Cannot be deleted because it is part of a registration process."
       cannot_delete_not_empty: "Cannot be deleted because there are participants."
       cannot_delete_with_media: "Cannot be deleted because media are attached to it."
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
       cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to registration process mode. Please disable self-enrollment first or keep skip registration processes enabled."
     warnings:
-      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in groups without lecture enrollment remain unaffected. Continue?'
+      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in groups without lecture enrollment remain unaffected. Their performance data and any exam admission are deleted, including one granted by hand. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
+      enrolled_tutor:
+        one: '%{names} is enrolled in this tutorial and would be marking their own sheets. Make them its tutor anyway?'
+        other: '%{names} are enrolled in this tutorial and would be marking their own sheets. Make them its tutors anyway?'
       propagate_readonly_after_creation: 'This setting cannot be changed after creation.'
       setting_cannot_be_changed: 'This setting cannot be changed afterwards.'
     messages:
@@ -308,24 +352,40 @@ en:
       user_moved: "%{user} moved to %{target}."
       user_moved_between_tutorials: "%{user} moved to %{target}. Work already handed in to %{source} stays there, unless it is edited again before the deadline."
       user_not_moved: "%{user} was not moved: they are already in %{target}, or no longer in the group you moved them from."
+      user_switched: "You are now in %{group}."
       user_added: "%{user} added to %{group} successfully."
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
-    self_enrollment:
-      no_registration_options: "There are currently no tutorials or groups available for registration."
+    no_participants_yet: 'Nobody is on the exam roster yet.'
+    registered: 'Registered'
     mailer:
       end_mail_html: |
         <p>With kind regards,<br>Your MaMpf-Team</p>
       end_mail: |
         With kind regards,
         Your MaMpf-Team
-      link_text_html: |
+      link_text_group_html: |
         <p>You can access your new group here: %{rosterable_link}</p>
-      link_text: |
+      link_text_group: |
         You can access your new group here: %{rosterable_link}
+      link_text_exam_html: |
+        <p>You can view your new exam info here: %{rosterable_link}</p>
+      link_text_exam: |
+        You can view your new exam info here: %{rosterable_link}
+      link_reject_info_html: |
+        <p>You can view your registration status here: %{rosterable_link}</p>
+      link_reject_info: |
+        You can view your registration status here: %{rosterable_link}
+      reject_reasons_html: |
+        <p>Reason: %{reasons}</p>
+      reject_reasons: |
+        Reason: %{reasons}
+      greeting_name_html: '<p>Hello %{name},</p>'
+      greeting_name: 'Hello %{name},'
+      greeting_html: '<p>Hello,</p>'
+      greeting: 'Hello,'
       roster_added_to_group_email_body_html: |
-        <p>Hello %{name},</p>
         <p>
           You have been added to <strong>%{rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong>.
@@ -334,13 +394,20 @@ en:
           You are now a participant in this group.
         </p>
       roster_added_to_group_email_body: |
-        Hello %{name},
-
         You have been added to "%{rosterable_title}" in the lecture
         "%{lecture_title}".
 
         You are now a participant in this group.
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{lecture_title}'
+      roster_added_to_exam_email_body_html: |
+        <p>
+          You have been added to exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+      roster_added_to_exam_email_body: |
+        You have been added to exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+      roster_added_to_exam_email_subject: 'Added to exam %{rosterable_title} in %{lecture_title}'
       roster_removed_from_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
@@ -365,6 +432,25 @@ en:
 
         Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
       roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_exam_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_exam_email_body: |
+        Hello %{name},
+
+        You have been removed from exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+
+        If you believe this was a mistake or if you have any questions,
+        please contact your instructor or the support team.
+      roster_removed_from_exam_email_subject: 'Removed from exam %{rosterable_title} in %{lecture_title}'
       roster_moved_between_groups_email_body_html: |
         <p>Hello %{name},</p>
         <p>
@@ -445,3 +531,49 @@ en:
         If you believe this was a mistake or if you have any questions,
         please contact your instructor or the support team.
       roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'
+      roster_change_exam_schedule_email_body_html: |
+        <p>
+          The schedule for exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong> has changed.
+        </p>
+        <p>
+          Please make a note of the new details.
+        </p>
+      roster_change_exam_schedule_email_body: |
+        The schedule for exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}" has changed.
+
+        Please make a note of the new details.
+      roster_change_exam_schedule_email_subject: 'Schedule change for exam %{rosterable_title} in %{lecture_title}'
+      roster_rejected_from_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          Your registration for <strong>%{lecture_title}</strong> was not successful.
+        </p>
+      roster_rejected_from_group_email_body: |
+        Hello %{name},
+
+        Your registration for "%{lecture_title}" was not successful.
+      roster_rejected_from_group_email_subject: 'Registration for %{lecture_title} was not successful'
+      roster_rejected_from_exam_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          Your registration for exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong> was not successful.
+        </p>
+      roster_rejected_from_exam_email_body: |
+        Hello %{name},
+
+        Your registration for exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}" was not successful.
+      roster_rejected_from_exam_email_subject: 'Registration for exam %{rosterable_title} in %{lecture_title} was not successful'
+      exam_schedule:
+        first_part: "The exam will take place"
+        date_part: "on %{exam_date}"
+        location_part: "at %{exam_location}"
+        last_part: ""
+        non_available_info:
+          one: "%{non_avai_ops} will be announced later."
+          other: "%{non_avai_ops} will be announced later."
+        date_ops: Date
+        location_ops: Location

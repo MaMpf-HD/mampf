@@ -7,6 +7,112 @@ RSpec.describe("Profile", type: :request) do
     sign_in user
   end
 
+  describe "POST /profile/update" do
+    def save_profile(**fields)
+      post("/profile/update",
+           params: { user: { name: user.name, subscription_type: 1, locale: "en",
+                             email_for_news: "0", **fields } },
+           xhr: true)
+    end
+
+    describe "the teacher's homepage and picture" do
+      it "are saved for a teacher" do
+        create(:lecture, teacher: user)
+
+        save_profile(homepage: "https://example.org/~ada")
+
+        expect(user.reload.homepage).to eq("https://example.org/~ada")
+      end
+
+      it "are left alone for someone who teaches nothing" do
+        save_profile(homepage: "https://example.org/~ada")
+
+        expect(user.reload.homepage).to be_blank
+      end
+
+      it "report an address that is no web address" do
+        create(:lecture, teacher: user)
+
+        save_profile(homepage: "not an address")
+
+        message = build(:user, homepage: "not an address").tap(&:valid?).errors[:homepage]
+        expect(user.reload.homepage).to be_blank
+        expect(response.body).to include("$('#homepage-error').append('#{message.join(" ")}')")
+      end
+
+      it "drop the picture when asked to" do
+        create(:lecture, teacher: user)
+        user.update!(image: Rails.public_path.join("unknown-person.gif").open)
+
+        save_profile(remove_image: "1")
+
+        expect(user.reload.image).to be_nil
+      end
+
+      describe "a new picture" do
+        let(:refused) do
+          image = Rails.root.join(SPEC_FILES, "image.png").open("rb")
+          cached = ProfileimageUploader.upload(image, :cache)
+          data = cached.data.deep_dup
+          data["metadata"]["malware_scan"] = { "status" => "clean" }
+          data.to_json
+        end
+
+        before do
+          create(:lecture, teacher: user)
+          user.update!(image: Rails.public_path.join("unknown-person.gif").open)
+        end
+
+        def upload_picture
+          scanner = instance_double(ClamavScanner, scan: UploadScanResult.clean)
+          allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+          post("/profile_image/upload",
+               params: { file: Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "image.png"),
+                                                            "image/png") },
+               headers: upload_intent_headers(ProfileimageUploader, user: user, target: user))
+          response.body
+        end
+
+        it "that is refused is named, and the old one stays" do
+          old_image = user.image.id
+
+          save_profile(image: refused)
+
+          expect(response.body).to include(
+            I18n.t("submission.upload_failure_scan_required", locale: :en).strip
+          )
+          expect(response.body).to include("$('#image-error').append(")
+          expect(user.reload.image.id).to eq(old_image)
+        end
+
+        it "wins over a ticked remove" do
+          save_profile(image: upload_picture, remove_image: "1")
+
+          expect(user.reload.image.original_filename).to eq("image.png")
+        end
+      end
+    end
+
+    it "leaves the bookmarks untouched" do
+      lecture = create(:lecture, :released_for_all)
+      create(:lecture_bookmark, user: user, lecture: lecture)
+
+      save_profile
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.lectures).to contain_exactly(lecture)
+    end
+
+    it "bookmarks nothing sent along with the form" do
+      lecture = create(:lecture, :released_for_all)
+
+      save_profile(lecture: { lecture.id.to_s => { subscribed: "1" } })
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.lectures).to be_empty
+    end
+  end
+
   describe "GET /profile/request_data" do
     it "mails the user their data and nobody else" do
       expect { get(request_data_path, xhr: true) }
@@ -27,20 +133,29 @@ RSpec.describe("Profile", type: :request) do
         create(:lecture, :released_for_all, passphrase: "secret")
       end
 
-      it "subscribes the user with the correct passphrase" do
+      it "bookmarks the lecture with the correct passphrase" do
         subscribe(lecture, passphrase: "secret")
 
         expect(response).to have_http_status(:ok)
         expect(user.reload.lectures).to include(lecture)
       end
 
-      it "does not subscribe the user without the passphrase" do
+      it "stops guessing the passphrase after ten attempts a minute" do
+        10.times { subscribe(lecture, passphrase: "wrong") }
+
+        subscribe(lecture, passphrase: "secret")
+
+        expect(response).to have_http_status(:too_many_requests)
+        expect(user.reload.lectures).not_to include(lecture)
+      end
+
+      it "does not bookmark the lecture without the passphrase" do
         subscribe(lecture)
 
         expect(user.reload.lectures).not_to include(lecture)
       end
 
-      it "subscribes roster members without the passphrase" do
+      it "bookmarks the lecture for roster members without the passphrase" do
         create(:lecture_membership, user: user, lecture: lecture)
 
         subscribe(lecture)
@@ -56,102 +171,6 @@ RSpec.describe("Profile", type: :request) do
 
       before { create(:term, :summer, :active, year: 2025) }
 
-      it "takes the card away when the lecture is unsubscribed there" do
-        user.subscribe_lecture!(lecture)
-
-        patch(unsubscribe_lecture_path,
-              params: { lecture: { id: lecture.id,
-                                   parent: "next_term_subscribed" } },
-              xhr: true)
-
-        expect(response.body).to include("$card.remove()")
-      end
-
-      it "shows the empty state once the fold has run out of cards" do
-        user.subscribe_lecture!(lecture)
-
-        patch(unsubscribe_lecture_path,
-              params: { lecture: { id: lecture.id,
-                                   parent: "next_term_subscribed" } },
-              xhr: true)
-
-        expect(response.body).to include("$('#emptyNextTermStuff').show()")
-      end
-
-      it "keeps the card of a lecture that is still applied for" do
-        campaign = create(:registration_campaign, :open, campaignable: lecture)
-        create(:registration_user_registration, :pending,
-               user: user, registration_campaign: campaign)
-        user.subscribe_lecture!(lecture)
-
-        patch(unsubscribe_lecture_path,
-              params: { lecture: { id: lecture.id,
-                                   parent: "next_term_subscribed" } },
-              xhr: true)
-
-        expect(response.body).not_to include("$card.remove()")
-        expect(response.body).to include("$card.empty()")
-      end
-
-      # The lecturer's tie outlives the subscription: the card stays, as
-      # their own, and the fold is not empty.
-      it "keeps the card of a lecture the user holds" do
-        lecture.update!(teacher: user)
-        user.subscribe_lecture!(lecture)
-
-        patch(unsubscribe_lecture_path,
-              params: { lecture: { id: lecture.id,
-                                   parent: "next_term_subscribed" } },
-              xhr: true)
-
-        expect(response.body).not_to include("$card.remove()")
-        expect(response.body).not_to include("$('#emptyNextTermStuff').show()")
-        expect(response.body).to include("$card.empty()")
-        expect(response.body).not_to include(I18n.t("basics.subscribe"))
-      end
-
-      # The fold of terms gone by lists subscriptions only; an own lecture
-      # unsubscribed there goes like any other.
-      it "takes the card of an own lecture away from the fold of terms gone by" do
-        gone = create(:term, :winter, year: 2023)
-        old_lecture = create(:lecture, :released_for_all, term: gone, teacher: user)
-        user.subscribe_lecture!(old_lecture)
-
-        patch(unsubscribe_lecture_path,
-              params: { lecture: { id: old_lecture.id, parent: "inactive" } },
-              xhr: true)
-
-        expect(response.body).to include("$card.remove()")
-      end
-
-      it "keeps the card of a lecture the user has a seat in" do
-        cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
-        create(:cohort_membership, cohort: cohort, user: user)
-        user.subscribe_lecture!(lecture)
-
-        patch(unsubscribe_lecture_path,
-              params: { lecture: { id: lecture.id,
-                                   parent: "next_term_subscribed" } },
-              xhr: true)
-
-        expect(response.body).not_to include("$card.remove()")
-      end
-
-      it "keeps the empty state hidden while an application is left" do
-        user.subscribe_lecture!(lecture)
-        other = create(:lecture, :released_for_all, term: next_term)
-        campaign = create(:registration_campaign, :open, campaignable: other)
-        create(:registration_user_registration, :pending,
-               user: user, registration_campaign: campaign)
-
-        patch(unsubscribe_lecture_path,
-              params: { lecture: { id: lecture.id,
-                                   parent: "next_term_subscribed" } },
-              xhr: true)
-
-        expect(response.body).not_to include("emptyNextTermStuff")
-      end
-
       it "keeps the term on the card it renders back" do
         patch(subscribe_lecture_path,
               params: { lecture: { id: lecture.id,
@@ -159,59 +178,6 @@ RSpec.describe("Profile", type: :request) do
               xhr: true)
 
         expect(response.body).to include(next_term.to_label_short)
-      end
-    end
-
-    context "with the plain HTML flow of the lecture home page" do
-      let(:lecture) do
-        create(:lecture, :released_for_all, passphrase: "secret")
-      end
-
-      def subscribe_html(lecture, passphrase: nil)
-        patch(subscribe_lecture_path,
-              params: { lecture: { id: lecture.id,
-                                   passphrase: passphrase,
-                                   parent: "redirect" } })
-      end
-
-      it "redirects to the lecture landing page after a successful subscription" do
-        subscribe_html(lecture, passphrase: "secret")
-
-        expect(response).to redirect_to(lecture_path(lecture))
-        expect(user.reload.lectures).to include(lecture)
-      end
-
-      it "redirects back to the lecture home page with an alert on a " \
-         "wrong passphrase" do
-        subscribe_html(lecture, passphrase: "wrong")
-
-        expect(response)
-          .to redirect_to(lecture_home_path(lecture))
-        expect(flash[:alert]).to eq(I18n.t("errors.profile.passphrase"))
-        expect(user.reload.lectures).not_to include(lecture)
-      end
-
-      it "redirects with an alert also for Turbo form submissions" do
-        # Turbo intercepts even local forms and negotiates the
-        # turbo_stream format
-        patch(subscribe_lecture_path,
-              params: { lecture: { id: lecture.id, passphrase: "wrong",
-                                   parent: "redirect" } },
-              headers: { "ACCEPT" => "text/vnd.turbo-stream.html, " \
-                                     "text/html, application/xhtml+xml" })
-
-        expect(response)
-          .to redirect_to(lecture_home_path(lecture))
-        expect(flash[:alert]).to eq(I18n.t("errors.profile.passphrase"))
-      end
-
-      it "redirects with an alert when the lecture is not published" do
-        unpublished = create(:lecture)
-
-        subscribe_html(unpublished)
-
-        expect(response).to redirect_to(root_path)
-        expect(flash[:alert]).to eq(I18n.t("admin.lecture.no_rights"))
       end
     end
   end

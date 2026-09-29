@@ -34,11 +34,10 @@
     <ul class="list-unstyled mb-0" style="max-height: 400px; overflow-y: auto;">
       <% all_users_for_impersonation.each do |id, name| %>
         <li data-username="<%= name.downcase %>">
-          <%= link_to name,
-                      dev_impersonate_path(id),
-                      class: "dropdown-item",
-                      method: :post,
-                      data: { turbo: false } %>
+          <%= button_to name,
+                        dev_impersonate_path(id),
+                        class: "dropdown-item",
+                        form: { data: { turbo: false } } %>
         </li>
       <% end %>
     </ul>

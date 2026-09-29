@@ -1,0 +1,42 @@
+<div
+  class="<%= class_names("registration-option", "registration-option--mine": local_assigns[:mine]) %>"
+  role="listitem"
+  data-option-filter-target="row"
+  data-filter-text="<%= [title, type_label, *meta.pluck(:value)].compact.join(" ").downcase %>"
+  data-keep="<%= local_assigns[:mine] || local_assigns[:keep] ? "true" : "false" %>"
+  data-testid="registration-option"
+>
+  <div class="registration-option-main">
+    <span class="registration-option-type"><%= type_label %></span>
+    <span class="registration-option-title"><%= title %></span>
+  </div>
+
+  <div class="registration-option-details">
+    <% meta.each do |row| %>
+      <span>
+        <i class="bi <%= row[:icon] %>" aria-hidden="true"></i>
+        <span class="visually-hidden"><%= row[:label] %>:</span>
+        <%= row[:value] %>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="registration-option-seats">
+    <% if local_assigns.key?(:capacity) %>
+      <%= option_seats_text(capacity, used) %>
+      <% if (percent = option_fill_percent(capacity, used)) %>
+        <div class="registration-option-bar" aria-hidden="true">
+          <span style="width: <%= percent %>%"></span>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="registration-option-actions">
+    <%= actions %>
+
+    <% if local_assigns[:reason] %>
+      <span class="registration-option-reason"><%= reason %></span>
+    <% end %>
+  </div>
+</div>

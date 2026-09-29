@@ -2,6 +2,8 @@ module Roster
   # Manages group allocations through a lecture-level overview and a polymorphic
   # item dashboard. Handles student membership visualization and maintenance actions.
   class MaintenanceController < ApplicationController
+    include Registration::RosterStreamRefreshable
+
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
 
@@ -11,7 +13,6 @@ module Roster
                          :update_self_materialization, :bulk_update_self_materialization]
     before_action :build_maintenance_params
     before_action :authorize_lecture
-    before_action :use_lecture_locale
 
     rescue_from "Rosters::UserAlreadyInBundleError" do |e|
       respond_with_flash(:alert, t("roster.errors.user_already_in_bundle",
@@ -22,6 +23,11 @@ module Roster
 
     rescue_from "Rosters::MaintenanceService::CapacityExceededError" do
       respond_with_flash(:alert, t("roster.errors.capacity_exceeded"),
+                         fallback_location: fallback_path)
+    end
+
+    rescue_from "Rosters::MaintenanceService::GradingDataPresentError" do
+      respond_with_flash(:alert, t("roster.errors.grading_data_present"),
                          fallback_location: fallback_path)
     end
 
@@ -67,7 +73,7 @@ module Roster
 
     def show
       if @mparams.panel?
-        render_with_streams(stream_builder.streams(update_tiles: false))
+        render_with_streams(stream_builder.streams(update_rows: false))
       else
         redirect_to lecture_roster_path(@lecture)
       end
@@ -93,12 +99,12 @@ module Roster
 
       source = find_panel_source
       if source
-        render_with_streams(
+        render_membership_streams(
           stream_builder(rosterable: source, target: @rosterable)
             .streams(variant: :move_panel)
         )
       else
-        render_with_streams(stream_builder.streams)
+        render_membership_streams(stream_builder.streams)
       end
     end
 
@@ -110,7 +116,7 @@ module Roster
 
       flash.now[:notice] = t("roster.messages.user_removed", user: user.info)
 
-      render_with_streams(stream_builder.streams)
+      render_membership_streams(stream_builder.streams)
     end
 
     def move_member
@@ -145,11 +151,11 @@ module Roster
       end
 
       if @mparams.panel?
-        render_with_streams(
+        render_membership_streams(
           stream_builder(target: target).streams(variant: :move_panel)
         )
       else
-        render_with_streams(stream_builder.streams)
+        render_membership_streams(stream_builder.streams)
       end
     end
 
@@ -159,7 +165,7 @@ module Roster
       if @rosterable.update(self_materialization_mode: mode)
         render turbo_stream: turbo_stream.replace(
           @rosterable,
-          html: GroupTileComponent.new(
+          html: GroupRowComponent.new(
             registerable: @rosterable
           ).render_in(view_context)
         )
@@ -248,6 +254,14 @@ module Roster
                                 alert: flash.now[:alert]
           end
         end
+      end
+
+      # A change of membership also changes the participants tab, which the
+      # groups tab does not render; it is reloaded when next shown. A change
+      # made in the participants tab updates that tab itself.
+      def render_membership_streams(streams)
+        streams += [participants_reload_stream(@lecture)] unless @mparams.participants?
+        render_with_streams(streams)
       end
 
       def stream_builder(target: nil, rosterable: nil)
@@ -363,11 +377,6 @@ module Roster
 
       def build_maintenance_params
         @mparams = Rosters::MaintenanceParams.new(params, lecture: @lecture)
-      end
-
-      def use_lecture_locale
-        locale = @lecture&.locale_with_inheritance || I18n.default_locale
-        I18n.locale = locale
       end
   end
 end

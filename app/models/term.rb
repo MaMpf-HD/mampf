@@ -20,6 +20,10 @@ class Term < ApplicationRecord
   after_save :touch_lectures_and_lessons
   after_save :touch_media
 
+  # "SS" sorts before "WS", so ordering by (year, season) is already the
+  # chronological order the dashboard's semester picker is built from.
+  scope :chronological, -> { order(:year, :season) }
+
   def self.active
     Term.find_by(active: true)
   end
@@ -52,6 +56,27 @@ class Term < ApplicationRecord
     season + year_corrected_short
   end
 
+  # Slug used in the dashboard's ?term=<slug> links, so the URL reads as a
+  # semester rather than a database id: "SS25" for summer 2025, "WS25-26" for
+  # winter 2025/26. (Term#to_param stays the id, for /terms/:id and friends.)
+  def dashboard_param
+    start = (year % 100).to_s.rjust(2, "0")
+    return "SS#{start}" unless season == "WS"
+
+    "WS#{start}-#{((year + 1) % 100).to_s.rjust(2, "0")}"
+  end
+
+  # The term a dashboard "?term=" value points at: a #dashboard_param slug, or
+  # a bare id for links that still carry one. nil when nothing matches.
+  def self.from_dashboard_param(value)
+    return if value.blank?
+
+    match = /\A(SS|WS)(\d{2})(?:-\d{2})?\z/i.match(value.to_s)
+    return find_by(id: value) unless match
+
+    find_by(season: match[1].upcase, year: 2000 + match[2].to_i)
+  end
+
   def previous
     previous_year = season == "WS" ? year : year - 1
     previous_season = season == "WS" ? "SS" : "WS"
@@ -64,45 +89,11 @@ class Term < ApplicationRecord
     Term.find_by(year: next_year, season: next_season)
   end
 
-  def assignments
-    Assignment.where(lecture: lectures)
-  end
-
-  def submissions
-    Submission.where(assignment: assignments)
-  end
-
-  def submitter_ids
-    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
-  end
-
-  def submitters
-    User.where(id: submitter_ids)
-  end
-
-  def assignments_with_submissions
-    Assignment.where(id: submissions.pluck(:assignment_id).uniq)
-  end
-
-  def lectures_with_submissions
-    Lecture.where(id: assignments_with_submissions.pluck(:lecture_id).uniq)
-  end
-
-  def people_in_charge_of_submissions
-    (lectures_with_submissions.map(&:editors).flatten +
-      lectures_with_submissions.map(&:teacher)).uniq
-  end
-
-  def submission_deletion_info_dates
-    [end_date + 1.day, end_date + 8.days, submission_deletion_date]
-  end
-
   def self.possible_deletion_dates
     return [Time.zone.today + 6.months] if Term.active.blank?
 
     [Term.active.end_date + 2.weeks + 1.day,
-     Term.active.end_date + 2.weeks + 3.months + 1.day,
-     Term.active.end_date + 2.weeks + 6.months + 1.day]
+     Term.active.end_date + 2.weeks + 4.months + 1.day]
   end
 
   def self.possible_deletion_dates_localized

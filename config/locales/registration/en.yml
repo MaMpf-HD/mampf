@@ -1,10 +1,16 @@
 en:
   registration:
     campaign:
+      title: 'Registration Campaign'
+      deadline_label: 'Deadline'
       errors:
         already_finalized: "Registration process is already finalized."
       created: "Registration process created successfully."
       create_failed: "Registration process could not be created."
+      takes_no_new_items: "No group can be added to this registration process any more: its allocation has been computed or it is completed."
+      new_group_mail_hint: "%{group} is new in a registration process that people have already registered for."
+      new_group_mail_link: "Let them know"
+      new_group_mail_subject: "New group: %{group}"
       destroyed: "Registration process deleted successfully."
       discarded: "Registration process discarded. Its groups were kept and can now be managed manually."
       cannot_delete: "Registration process cannot be deleted."
@@ -67,12 +73,13 @@ en:
         choice:
           question: "Do you need a registration process?"
           hint: >-
-            If you are unsure, we recommend choosing a registration process.
-            It gives you a clear registration window, lets you review demand
-            before assignments are finalized, and helps you handle
-            eligibility rules or limited capacities more fairly. It can also
-            assign students to groups automatically, based on the preferences
-            they submit.
+            With a registration process you set a fixed registration window,
+            see the demand before the places are given out, and can handle
+            policies and limited places fairly; if you like, students are
+            allocated automatically by their preferences. Without one you are
+            more flexible: you put people into groups directly or let them join
+            themselves, at any time and without a deadline. In return there is
+            no choice by preference and there are no policies.
         columns:
           description: "Short description"
           type: "Type"
@@ -96,6 +103,8 @@ en:
       allocation_mode:
         first_come_first_served: "First-Come-First-Served"
         preference_based: "Preference-Based"
+      type:
+        exam: "Exam"
       status:
         draft: "Draft"
         open: "Open"
@@ -205,10 +214,17 @@ en:
         prerequisite_not_configured: "Prerequisite registration process not configured."
         prerequisite_missing: "Prerequisite registration process missing."
         prerequisite_not_met: "Prerequisite registration process not completed."
+        certification_not_passed: "Exam eligibility not granted"
+        missing_lecture: "At least one lecture must be selected."
+        lecture_not_found: "At least one selected lecture does not exist."
+        lecture_exam_eligibility_disabled: >-
+          Exam eligibility is disabled for: %{titles}
+        multiple_student_performance: "Only one student performance policy is allowed."
       configs:
         allowed_domains: "Allowed Domains"
         prerequisite_campaign_id: "Prerequisite Registration Process"
         lecture_id: "Lecture"
+        lecture_ids: "Lectures"
       hints:
         allowed_domains: "e.g. uni-heidelberg.de (also allows stud.uni-heidelberg.de)"
         select_prerequisite: "— Select a registration process —"
@@ -252,10 +268,12 @@ en:
         tutorials: "Tutorials"
         talks: "Talks"
         cohorts: "Other Groups"
+        exams: "Exams"
         general: "General"
       types:
         tutorial: "Tutorial"
         talk: "Talk"
+        exam: "Exam"
         cohort: "Special Group"
         enrollment_group: "Enrollment Group"
         planning_survey: "Planning Group"
@@ -289,20 +307,6 @@ en:
       forced_assignment: "Forced Assignment"
       index:
         title: "Registrations"
-        confirmed_cases: "Your registration is confirmed for"
-        unassigned_notice: "You have not been assigned to a group yet."
-        pending_preference_notice: "You have not been assigned to a group yet. After the registration period ends, you will be assigned based on your preferences."
-        fulfilled_preference_notice_html: "We could fulfill your <em>%{rank}</em> preference."
-        fulfilled_preference_ranks:
-          "1": "1st"
-          "2": "2nd"
-          "3": "3rd"
-        unfulfilled_preferences_notice_html: "Unfortunately, your preferences (<em>%{preferences}</em>) could not be fulfilled."
-        unallocated_preference_notice_html: "Unfortunately, your registration for <em>%{campaign}</em> could not be considered because there were more registrations than available places. We received your preferences: <em>%{preferences}</em>."
-        policy_rejection_notice_html: >-
-          Your registration for <em>%{campaign}</em> was rejected for the following reasons:
-        unknown_tutor: "A tutor has not been assigned yet."
-        unremovable_assignment_notice: "You cannot leave this tutorial because the lecturer has set it up this way."
         first_choice_title: "1st Choice Registrations"
         allocated_title: "Allocated Students"
         rejected_title: "Rejected Registrations"
@@ -328,14 +332,19 @@ en:
       actions:
         reject_user: "Reject registrations"
         defer_due_to_blocker: "Reject for now"
-        rank_option_tooltip: "Set as %{rank} preference"
       registrations: "Registrations"
       title: "Your Registration"
       planning: "Planning"
       course_code: "Course code"
-      campaign_main: "Registration process"
+      campaign_title:
+        tutorials: "Tutorial registration"
+        talks: "Talk assignment"
+        cohorts: "Registration process"
+        exams: "Exam registration"
       eligibility_title: "Eligibility"
       first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
+      first_come_first_served_instruction_talk: "Register for a talk. Final allocation will automatically take place after the registration deadline."
+      first_come_first_served_instruction_exam: "Register for this exam. Your place is confirmed right away."
       preference_instruction:
         one: "Rank %{count} option. Allocation is calculated after the deadline."
         other: "Rank %{count} options. Allocation is calculated after the deadline."
@@ -358,13 +367,8 @@ en:
       register_now: "Register now"
       registration_blocked: "Unavailable"
       withdraw: "Withdraw"
-      closed_before_deadline: The registration process has ended earlier than scheduled. If you have questions about this change, please contact the course administration.
       ineligible_notice:
         title: "Registration unavailable"
-        description: "You cannot register for this campaign right now for the following reasons:"
-      readonly_notice:
-        title: "Registration closed"
-        description: "Your submitted choices stay visible here while the teacher reviews the registrations and finalizes the allocation. You can no longer make changes."
       finalization_policy_notice:
         title: "Your registration would currently fail at finalization"
         description: >-
@@ -374,10 +378,8 @@ en:
         title: "Policy checks for this registration"
         registration_title: "Checked at registration"
         registration_description: "These checks must be fulfilled before you can register."
-        registration_empty: "There are no additional rules or restrictions for registration."
         finalization_title: "Checked again at finalization"
         finalization_description: "These checks are evaluated again when the registration process is finalized."
-        finalization_empty: "There are no additional checks at finalization."
         status:
           fulfilled: "Currently fulfilled"
           not_fulfilled: "Currently not fulfilled"
@@ -385,7 +387,7 @@ en:
         policies:
           institutional_email_html: "Email domain must be <em>%{domains}</em>"
           prerequisite_campaign_html: "Confirmed registration in <em>%{campaign}</em>"
-          student_performance_html: "Student performance status must be <em>%{status}</em>"
+          student_performance_html: "You must be admitted to the exam in <em>%{lectures}</em>"
           generic_html: "Requirement: <em>%{requirement}</em>"
         hints:
           institutional_email_registration_html: >-
@@ -427,13 +429,12 @@ en:
         prerequisite_not_met_finalization_rejection_html: "At the time this registration process was finalized, you did not have a confirmed registration in <em>%{campaign}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
         prerequisite_campaign_not_found_html: "The required prerequisite registration <em>%{campaign}</em> is currently unavailable. Please contact the course administration."
         prerequisite_configuration_error: "This campaign depends on a prerequisite registration that is not configured correctly. Please contact the course administration."
-        student_performance_failed_html: "Your student performance status does not match the required status <em>%{status}</em>. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
-        student_performance_failed_finalization_warning_html: "Your current student performance status does not match the required status <em>%{status}</em>. If this remains unchanged when the registration process is finalized, your registration will be rejected."
-        student_performance_failed_finalization_rejection_html: "At the time this registration process was finalized, your student performance status did not match the required status <em>%{status}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_html: "You are not admitted to the exam in <em>%{lectures}</em>. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
+        student_performance_failed_finalization_warning_html: "You are not admitted to the exam in <em>%{lectures}</em> yet. If this remains unchanged when the registration process is finalized, your registration will be rejected."
+        student_performance_failed_finalization_rejection_html: "At the time this registration process was finalized, you were not admitted to the exam in <em>%{lectures}</em>. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
         generic_html: "You do not currently meet the <em>%{requirement}</em> requirement. If you believe you already fulfill this requirement, please contact the lecturer or teaching assistant."
         generic_finalization_warning_html: "You do not currently meet the <em>%{requirement}</em> requirement. If this remains unchanged when the registration process is finalized, your registration will be rejected."
         generic_finalization_rejection_html: "At the time this registration process was finalized, you did not meet the <em>%{requirement}</em> requirement. If you believe you fulfilled this requirement, please contact the lecturer or teaching assistant."
-      withdraw_first: "Withdraw first"
       filter_placeholder: "Filter by weekday, time, tutor"
       status_for_registration: "Current statuses of your submitted options"
       submitted_pref: "Your submitted choice(s)"
@@ -455,12 +456,14 @@ en:
       messages:
         campaign_unavailable: "This registration process is not accessible right now."
         campaign_not_opened: "Registration is not opened."
+        switched: "You have switched groups."
         registration_success: "Registration completed successfully."
         registration_failed: "Registration could not be completed."
         already_registered: "You are already registered for this registration process."
         no_slots: "No seats available."
         requirements_not_met: "You do not meet the requirements."
         unremovable_assignment: "You cannot register for another group because you cannot leave your current tutorial."
+        not_on_lecture_roster: "Only participants of this lecture can register for the exam. If you are meant to take it, please contact the lecturer."
         invalid_options: "Invalid options selected."
         withdrawn: "You have withdrawn your registration."
         preferences_saved: "Your preferences have been saved."
@@ -471,7 +474,121 @@ en:
         cannot_secure_slot: "Unfortunately, none of your selected options could be assigned."
         course_admin_help: "We understand this is disappointing. Please reach out to the Course Administrator for alternatives."
         campaign_not_found: "Registration process not found."
+      registrations_title: "Registrations"
+      participation:
+        title: "Your participation"
+        preferences_title: "Your preferences"
+        allocation_pending: "Waiting for allocation"
+        registered: "Registered"
+        checked_at_finalization: "The requirements are checked again when the process is finalized."
+        no_place: "No place"
+        your_preferences: "Your preferences: %{preferences}"
+        rejected: "Rejected"
+        rejected_by_teacher: "The lecture staff rejected this registration."
+        excluded_from_exam: "Removed from the exam list"
+        on_exam_list: "On the exam list"
+        grade: "Grade %{grade}"
+        marked: "Marked"
+        absent: "Did not take part"
+        exempt: "Exempt"
+        points: "%{points} of %{total} points"
+        points_per_problem: "Points per problem"
+        problem: "Problem %{number}"
+        enrolled: "Enrolled"
+        assigned: "Assigned"
+        leave: "Leave"
+        preference_fulfilled: "Your %{rank} choice."
+        outside_preferences: "Assigned outside your preferences."
+      summary:
+        load_failed: "The options could not be loaded."
+        retry: "Try again"
+        registered: "Registered"
+        preferences_saved: "Preferences saved"
+        full: "No places left"
+        loading: "Loading …"
+        blocked: "Not available"
+        requirement_missing: "Requirement missing"
+        no_preferences: "No preferences yet"
+        not_registered: "Not registered yet"
+        details: "Details"
+        change: "Change"
+        change_preferences: "Change preferences"
+        choose: "Choose preferences"
+        register: "Register"
+        show_and_register: "Show groups"
+        show_talks: "Show talks"
+        days_left:
+          zero: "ends today"
+          one: "1 day left"
+          other: "%{count} days left"
+        deadline: "Registration until %{deadline}"
+        preference_mode:
+          one: "Rank %{count} of %{options} options"
+          other: "Rank %{count} of %{options} options"
+        exam_places:
+          zero: "No places left"
+          one: "1 place left"
+          other: "%{count} places left"
+        fcfs_mode: "First come, first served · %{open} of %{total} with free places"
+        unsaved: "Unsaved changes"
+      options:
+        search_label: "Search options"
+        search_placeholder: "Weekday, time, tutor, room"
+        no_match: "No option matches your search."
+        show_all: "Show all %{count}"
+        withdraw_from: "Withdraw from %{title}"
+        switch: "Switch here"
+        switch_to: "Switch to %{title}"
+        register_for: "Register for %{title}"
+        unlimited: "No limit"
+        full: "Full"
+        free: "%{free} of %{capacity} places free"
+        rank_for: "%{title} as %{rank} choice"
+        saved: "All changes saved"
+        unsaved: "Unsaved changes"
+      self_enrollment:
+        title: "Join a group yourself"
+        meta:
+          one: "%{count} group, no deadline"
+          other: "%{count} groups, no deadline"
+        show: "Show groups"
+        instruction: "You join these groups right away, without a registration period."
+        joined: "Joined"
+        join: "Join"
+      self_enrollment_talks:
+        title: "Take a talk yourself"
+        meta:
+          one: "%{count} talk, no deadline"
+          other: "%{count} talks, no deadline"
+        show: "Show talks"
+        instruction: "You take these talks right away, without a registration period."
     allocation:
+      violations_table:
+        override_pass: "Override to passed"
+        confirm_override_pass: "Mark this student as eligible? This creates a manual certification override and cannot be undone without going to the Certifications dashboard."
+        go_to_certifications: "Resolve in Certifications dashboard"
+        additional_blockers: "Additional blockers"
+        other_blockers: "Other blockers"
+      student_performance:
+        unfulfilled: "Some registered students do not have a passed certification. These will fail the exam eligibility policy on finalization."
+      perf_evidence:
+        certified_by: "(by %{name})"
+        no_cert: "No certification record"
+        pts_abbr: "pts"
+        achievements_short: "%{met}/%{total} crit."
+      cert_incomplete:
+        title: "Certifications Incomplete"
+        desc:
+          one: "%{count} registered student does not have a decided performance certificate. Certifications must be resolved before finalization."
+          other: "%{count} registered students do not have decided performance certificates. Certifications must be resolved before finalization."
+        missing_label:
+          one: "%{count} student not yet certified"
+          other: "%{count} students not yet certified"
+        pending_label:
+          one: "%{count} student with pending certificate"
+          other: "%{count} students with pending certificates"
+        go_to_certs: "Go to Certifications"
+        policy_reason: "This registration campaign has a finalization policy that requires decided certifications."
       started: "Allocation has been calculated."
       conflicts:
         title: "Conflicting Registrations"
@@ -529,6 +646,7 @@ en:
       errors:
         already_completed: "Registration process is already completed."
         wrong_status: "Registration process has wrong status for this action."
+        certification_incomplete: "Certification not yet complete for all registered students. Please resolve on the Performance tab first."
         policy_violation: "Allocation currently not possible. Please review the details below."
         policy_violation_title: "Allocation currently not possible"
         policy_violation_desc: "At least one finalization policy cannot currently be assessed conclusively for these registrations. Resolve the cases before you finalize the allocation."
@@ -559,20 +677,15 @@ en:
       not_found: "Lecture not found."
       home:
         empty_title: "Start here"
-        empty_subscribed: >-
+        empty_accessible: >-
           Lecture news and updates appear on this page. Materials are
           available from the lecture navigation.
-        empty_unsubscribed: >-
-          Lecture news and updates appear on this page. Subscribe to access
-          the materials.
-        news_indicator: "New updates on Home"
+        empty_locked: >-
+          Lecture news and updates appear on this page. Unlock the lecture to
+          access the materials.
+        news_indicator: "Unread announcements and forum topics"
         attachment_download: "Download program (PDF)"
         attachment_missing: "No program is attached to this lecture."
-        staff_registration_title: "What students see here"
-        staff_registration_hint: >-
-          Below your intro, students see the registration process and their own
-          status (open registrations, the group they were assigned to). That
-          view is personal to each student, so it is not shown to you here.
         staff_registration_manage: "Manage registration processes"
         intro_empty: >-
           Your lecture home page has no welcome text or program yet. Add a short
@@ -581,40 +694,16 @@ en:
           A registration is running for this lecture, but your home page has no
           welcome text — this is what students see before they register. Add a
           short intro and your program.
-        subscribe_prompt: >-
-          You have not subscribed to this lecture yet. Subscribing gives you
-          access to its materials — it is not a binding course registration.
-    student_message:
-      title: "Email to registered students"
-      audience:
-        zero: "No students have registered yet."
-        one: "Goes to 1 registered student."
-        other: "Goes to %{count} registered students."
-      copy_addresses: "Copy email addresses"
-      addresses_copied: "Addresses copied to clipboard"
-      subject: "Subject"
-      body: "Message"
-      attachment: "Attachment (optional)"
-      attachment_hint: "One PDF file, at most 10 MB — e.g. a course program."
-      attachment_must_be_pdf: "must be a PDF file"
-      send:
-        one: "Send to 1 student"
-        other: "Send to %{count} students"
-      sent:
-        one: "Your message is being sent to 1 student."
-        other: "Your message is being sent to %{count} students."
-      no_recipients: "There are no registered students to send to yet."
-      sent_messages: "Sent messages"
-      recipients:
-        one: "1 recipient"
-        other: "%{count} recipients"
-      crosslink_html: >-
-        You want to email all registered students (e.g. to send around a
-        course program)? You can do that in the %{link} tab.
+        unlock_prompt: >-
+          This lecture is protected by a pass phrase. Enter it to unlock its
+          materials.
+        unlock_prompt_member: >-
+          This lecture is protected by a pass phrase. As a member of the
+          lecture, you can unlock its materials without entering it.
+        unlock: "Unlock"
+        unlock_too_many_attempts: >-
+          Too many attempts. Please wait a moment and try again.
   activerecord:
-    attributes:
-      registration/student_message:
-        attachment: "Attachment"
     errors:
       models:
         registration/campaign:
@@ -638,6 +727,7 @@ en:
               must_be_in_future: "must be in the future"
             allocation_mode:
               frozen: "cannot be changed after registration process is opened"
+              exams_are_first_come_first_served: "is always first-come-first-served for exam registrations"
         registration/policy:
           attributes:
             base:
@@ -648,6 +738,7 @@ en:
               taken: "This item is already part of a registration process."
             registerable:
               not_registerable: "cannot be part of a registration process"
+              other_lecture: "belongs to another lecture"
             base:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration process is no longer in draft mode."
@@ -656,6 +747,10 @@ en:
               cannot_remove_after_allocation: "Cannot be removed because an allocation has already been computed."
               cannot_remove_last_item: "Cannot be removed because a running registration process needs at least one group. Take the process back to draft to change its groups."
               registerable_not_managed_by_campaign: "The item is locked for registration processes."
+              cannot_add_exam_to_non_exam_campaign: "Exams cannot be added to campaigns that already contain tutorials, talks, or other groups."
+              cannot_add_non_exam_to_exam_campaign: "Tutorials, talks, and other groups cannot be added to exam campaigns."
+              exam_requires_first_come_first_served_campaign: "Exams can only be added to first-come-first-served campaigns."
+              campaign_already_has_exam: "The campaign already contains an exam."
         registration/user_registration:
           attributes:
             registration_item:

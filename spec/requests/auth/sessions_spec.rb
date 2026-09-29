@@ -20,6 +20,16 @@ RSpec.describe("Auth sessions", type: :request) do
       expect(flash[:notice]).to eq(I18n.t("profile.please_update"))
     end
 
+    it "leaves the profile notice out while the personal data question is open" do
+      user.update!(personal_data_confirmed_at: nil)
+
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+
+      expect(flash[:notice]).to be_nil
+    end
+
     it "redirects returning users to the start page" do
       post user_session_path, params: {
         user: { email: user.email, password: password }
@@ -30,7 +40,7 @@ RSpec.describe("Auth sessions", type: :request) do
         user: { email: user.email, password: password }
       }
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
       expect(flash[:notice]).to be_nil
     end
 
@@ -77,7 +87,7 @@ RSpec.describe("Auth sessions", type: :request) do
       }
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include("data-cy=\"login-form\"")
+      expect(response.body).to include("id=\"login-form\"")
     end
 
     it "renders a Turbo Stream flash for invalid credentials" do

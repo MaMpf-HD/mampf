@@ -24,10 +24,15 @@ module SearchForm
       # Initializes a new ProgramField component.
       #
       # @param form_state [SearchForm::FormState] The form state object for context
+      # @param collection [Array, nil] Offers other programs than those with courses
+      # @param all [Boolean] Whether "All" is ticked, as it is unless a search
+      #   shown again picked programs
       # @param options [Hash] Additional options passed to the underlying multi-select field
-      def initialize(form_state:, **options)
+      def initialize(form_state:, collection: nil, all: true, **options)
         super()
         @form_state = form_state
+        @collection = collection
+        @all = all
         @options = options
       end
 
@@ -38,11 +43,12 @@ module SearchForm
             name: :program_ids,
             label: I18n.t("basics.programs"),
             help_text: I18n.t("search.helpdesks.program_field"),
-            collection: program_options,
+            collection: @collection || program_options,
+            disabled: @all,
             **options
           )
 
-          @all_checkbox = create_all_checkbox(for_field_name: :program_ids)
+          @all_checkbox = create_all_checkbox(for_field_name: :program_ids, checked: @all)
 
           @checkbox_group_wrapper = Fields::Utilities::CheckboxGroupWrapper.new(
             parent_field: @multi_select_field,
@@ -50,8 +56,11 @@ module SearchForm
           )
         end
 
+        # Study programs without courses exist only for students to pick; they
+        # would find nothing here.
         def program_options
-          Program.includes(:subject, :translations, subject: :translations)
+          Program.where(id: Division.joins(:division_course_joins).select(:program_id))
+                 .includes(:subject, :translations, subject: :translations)
                  .map { |p| [p.name_with_subject, p.id] }
                  .natural_sort_by(&:first)
         end

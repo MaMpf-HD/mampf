@@ -79,6 +79,40 @@ RSpec.describe(User, type: :model) do
     expect(User.where(archived: true).count).to eq(1)
   end
 
+  # The results go with the account; what somebody entered for others stays
+  # with those others, without their name.
+  it "lets a student and a grader delete their accounts" do
+    student = create(:confirmed_user)
+    grader = create(:confirmed_user)
+    exam = create(:exam)
+    create(:exam_roster_entry, exam: exam, user: student)
+    create(:student_performance_record, lecture: exam.lecture, user: student)
+    create(:student_performance_certification, :passed, lecture: exam.lecture, user: student,
+                                                        certified_by: grader)
+    other = create(:assessment_participation, :reviewed, grader: grader)
+    create(:assessment_participation, :reviewed, user: student, grader: grader)
+
+    expect(student.archive_and_destroy("Archived Person")).to be_truthy
+    expect(grader.archive_and_destroy("Archived Person")).to be_truthy
+
+    expect(User.where(id: [student.id, grader.id])).to be_empty
+    expect(other.reload.grader_id).to be_nil
+    expect(ExamRosterEntry.where(exam: exam)).to be_empty
+  end
+
+  it "keeps a decision on somebody else once its certifier deletes their account" do
+    certifier = create(:confirmed_user)
+    decision = create(:student_performance_certification, :failed, :manual,
+                      certified_by: certifier, note: "Missed the test")
+
+    expect(certifier.archive_and_destroy("Archived Person")).to be_truthy
+
+    decision.reload
+    expect(decision).to have_attributes(certified_by_id: nil, status: "failed",
+                                        note: "Missed the test")
+    expect(decision).to be_valid
+  end
+
   it "is invalid with a password shorter than 15 characters", :password_strength do
     user = FactoryBot.build(:user, password: "short-pass1")
     expect(user).not_to be_valid
@@ -157,17 +191,17 @@ RSpec.describe(User, type: :model) do
     end
   end
 
-  describe "user with subscribed lectures" do
+  describe "user with bookmarked lectures" do
     before :each do
       @user = FactoryBot.build(:user, :with_lectures)
     end
     it "has a valid factory" do
       expect(@user).to be_valid
     end
-    it "has subscribed lectures" do
+    it "has bookmarked lectures" do
       expect(@user.lectures).not_to be_nil
     end
-    it "has 2 subscribed lectures when called without lecture_count param" do
+    it "has 2 bookmarked lectures when called without lecture_count param" do
       expect(@user.lectures.size).to eq(2)
     end
     it "has correct number of lectures when called with lecture_count param" do
@@ -192,6 +226,57 @@ RSpec.describe(User, type: :model) do
     context "when user is not rostered to a tutorial in the lecture" do
       it "returns nil" do
         expect(user.rostered_tutorial_in(lecture)).to be_nil
+      end
+    end
+  end
+
+  describe "#current_lectures" do
+    let!(:term) { create(:term, :summer, :active, year: 2025) }
+    let(:user) { create(:confirmed_user) }
+
+    it "gathers taught, edited, bookmarked and rostered lectures of the active term" do
+      taught = create(:lecture, term: term, teacher: user)
+      edited = create(:lecture, term: term)
+      create(:editable_user_join, user: user, editable: edited)
+      bookmarked = create(:lecture, term: term)
+      user.bookmark_lecture!(bookmarked)
+      rostered = create(:lecture, term: term)
+      create(:lecture_membership, user: user, lecture: rostered)
+
+      expect(user.current_lectures)
+        .to contain_exactly(taught, edited, bookmarked, rostered)
+    end
+
+    it "includes lectures the user edits as editor of their course" do
+      lecture = create(:lecture, term: term)
+      create(:editable_user_join, user: user, editable: lecture.course)
+
+      expect(user.current_lectures).to contain_exactly(lecture)
+    end
+
+    it "leaves out lectures of other terms" do
+      create(:lecture, term: create(:term, :winter, year: 2024), teacher: user)
+
+      expect(user.current_lectures).to be_empty
+    end
+  end
+
+  describe "#tutor_in?" do
+    let(:lecture)   { create(:lecture) }
+    let(:tutorial)  { create(:tutorial, lecture: lecture) }
+    let(:user)      { create(:user) }
+
+    context "when user is a tutor in the tutorial" do
+      before { create(:tutor_tutorial_join, tutor: user, tutorial: tutorial) }
+
+      it "returns true" do
+        expect(user.tutor_in?(tutorial)).to be(true)
+      end
+    end
+
+    context "when user is not a tutor in the tutorial" do
+      it "returns false" do
+        expect(user.tutor_in?(tutorial)).to be(false)
       end
     end
   end
@@ -334,17 +419,17 @@ RSpec.describe(User, type: :model) do
     end
   end
 
-  describe "#subscribe_lecture!" do
+  describe "#bookmark_lecture!" do
     it "creates at most one join under concurrent calls" do
       user = create(:confirmed_user)
       lecture = create(:lecture)
 
       values = run_concurrently do
-        User.find(user.id).subscribe_lecture!(Lecture.find(lecture.id))
+        User.find(user.id).bookmark_lecture!(Lecture.find(lecture.id))
       end
 
       expect(values).to contain_exactly(true, false)
-      expect(LectureUserJoin.where(user: user, lecture: lecture).count).to eq(1)
+      expect(LectureBookmark.where(user: user, lecture: lecture).count).to eq(1)
     end
   end
 
@@ -357,6 +442,52 @@ RSpec.describe(User, type: :model) do
 
     it "has many enrolled_tutorials" do
       expect(user).to respond_to(:enrolled_tutorials)
+    end
+  end
+
+  describe ".sort_by_last_name" do
+    it "sorts loaded people as by_last_name does" do
+      users = [
+        create(:confirmed_user, first_name: "Anna", last_name: "Zimmer"),
+        create(:confirmed_user, first_name: "Ben", last_name: "Özdemir"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse"),
+        create(:confirmed_user, first_name: "Eva", last_name: "MAẞE"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Þórsdóttir"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Thorsen"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Ǣlfric"),
+        create(:confirmed_user, first_name: nil, last_name: nil, name_in_tutorials: "Nick"),
+        create(:confirmed_user, first_name: "Max", last_name: nil),
+        create(:confirmed_user, first_name: "Ada", last_name: "Max")
+      ]
+
+      expect(described_class.sort_by_last_name(users.reverse))
+        .to eq(described_class.where(id: users).by_last_name.to_a)
+    end
+  end
+
+  describe "#save_admin_change" do
+    let(:author) { create(:confirmed_user, admin: true) }
+    let(:other) { create(:confirmed_user, admin: true) }
+
+    it "saves the change while its author is an admin" do
+      other.admin = false
+
+      expect(other.save_admin_change(by: author)).to be(true)
+      expect(other.reload.admin).to be(false)
+    end
+
+    # The other admin took the author's rights just before: the author still
+    # looks like an admin in memory, but not in the database.
+    it "refuses it once its author has lost the admin rights meanwhile" do
+      author_as_loaded = User.find(author.id)
+      author.update_column(:admin, false) # rubocop:disable Rails/SkipsModelValidations
+      other.admin = false
+
+      expect(other.save_admin_change(by: author_as_loaded)).to be_falsey
+      expect(other.reload.admin).to be(true)
+      expect(other.errors[:base])
+        .to include(I18n.t("activerecord.errors.models.user.admin_rights_lost"))
     end
   end
 end

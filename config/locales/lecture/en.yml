@@ -2,17 +2,114 @@ en:
   lecture:
     edit:
       announcements_audience_hint: >-
-        Announcements reach everyone who subscribed to this lecture — as an
-        in-app notification always, but by email only those who have enabled
-        email notifications for announcements.
+        Announcements reach everyone who bookmarked this lecture, is on one of
+        its lists (tutorials, talks, exams) or has a registration running — as
+        an in-app notification always, but by email only those who have
+        enabled email notifications for announcements.
+    title_bar:
+      back: Back to the dashboard
+      switch: Switch to another lecture
+      current_lectures: "Your lectures in %{term}"
+      no_other_lectures: "No other lectures in %{term}"
+    mode_toggle:
+      label: Switch between viewing and editing the lecture
+      view: View
+      edit: Edit
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...
-      term_filter: Lecture term filter
-      current_term: Current term
-      next_term: Next term
+      all_terms: Search all semesters
+      bookmark: Bookmark
+      bookmark_lecture: "Bookmark %{lecture}"
       registration_open: Registration open
-      registered: Registered
-      subscribed: Subscribed
+      registered_status: You are registered for this lecture
+      go_register: Registration open — go to the lecture page to register
+      go_register_for: "Registration open for %{lecture} — go to its page to register"
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
+  lecture_home:
+    intro:
+      more: "Read more"
+      less: "Show less"
+    new_result:
+      title: "Your result in %{title}"
+      grade: "Grade"
+      close: "Close"
+    focus:
+      campaign: "Registration open"
+      exam: "Your next exam"
+      open_sheet: "Go to your hand-in"
+    work:
+      admission_details: "Details"
+      all: "All hand-ins"
+      nothing_due: "No sheet is open right now."
+      title: "Your hand-ins"
+      due: "Due %{deadline}"
+      admission:
+        open: "Admission not decided yet"
+        pending: "Admission not decided yet"
+        passed: "Admitted to the exam"
+        failed: "Not admitted to the exam"
+    news:
+      title: "New in this course"
+      by: "%{author}, %{date}"
+      more:
+        one: "1 more announcement"
+        other: "%{count} more announcements"
+      forum:
+        one: "1 unread topic in the board"
+        other: "%{count} unread topics in the board"
+    content:
+      title: "In the lecture"
+      last_lesson: "Last lecture"
+      what_we_did: "What we did"
+      notes: "Notes"
+      video: "Video"
+      new_media: "New for you"
+      more_media:
+        one: "and 1 more"
+        other: "and %{count} more"
+      mark_seen: "mark as seen"
+      position: "Where we are"
+      progress: "Section %{reached} of %{total}"
+      over: "Lectures over"
+      contents: "Contents"
+      one_lesson: "1 lecture, %{date}"
+      lessons: "%{count} lectures, %{from} – %{to}"
+      chapters:
+        one: "1 chapter"
+        other: "%{count} chapters"
+      sections:
+        one: "1 section"
+        other: "%{count} sections"
+      revision: "For review"
+      materials: "Materials"
+    history:
+      title: "Past registrations (%{count})"
+      completed: "Finalized · deadline was %{deadline}"
+      ended: "Registration ended on %{deadline}"
+      closed_early: "Registration closed before its deadline of %{deadline}"
+    tutor:
+      title: "Your groups"
+      members:
+        one: "1 person"
+        other: "%{count} people"
+      open: "Open group"
+    marking:
+      title: "To mark"
+      waiting:
+        one: "1 person waiting for points"
+        other: "%{count} people waiting for points"
+      open: "Mark"
+    teacher:
+      title: "Registration processes"
+      registered:
+        one: "1 person registered"
+        other: "%{count} people registered"
+      with_preferences:
+        one: "1 person handed in preferences"
+        other: "%{count} people handed in preferences"
+      on_roster:
+        one: "1 person on the list"
+        other: "%{count} people on the list"
+      deadline: "until %{deadline}"

@@ -1,4 +1,6 @@
 class MainController < ApplicationController
+  include Dashboard::BoardRenderer
+
   before_action :check_for_consent
   authorize_resource class: false, only: :start
   layout "application_no_sidebar"
@@ -30,25 +32,11 @@ class MainController < ApplicationController
   end
 
   def start
-    @current_stuff = current_user.current_subscribed_lectures
-    @current_own = current_user.current_staff_lectures - @current_stuff
-    if @current_stuff.empty? && @current_own.empty?
-      @inactive_lectures = current_user.inactive_lectures.includes(:course,
-                                                                   :term)
-                                       .sort
-    end
-    @next_term_stuff = current_user.next_term_lectures
-    @next_term_own = current_user.next_term_staff_lectures - @next_term_stuff
-    listed = @next_term_stuff + @next_term_own
-    @next_term_seats = current_user.next_term_seated_lectures - listed
-    @next_term_pending = current_user.next_term_registered_lectures - listed - @next_term_seats
-    next_term_banner
-    @talks = current_user.talks.includes(lecture: :term)
-                         .select { |t| t.visible_for_user?(current_user) }
-                         .sort_by do |t|
-                           [-t.lecture.term.begin_date.jd,
-                            t.position]
-                         end
+    @available_terms = Dashboard::TermSelector.terms
+    @selected_term = selected_dashboard_term
+    @next_term_lecture_count = Dashboard::TermSelector.next_term_lecture_count
+
+    load_board(@selected_term)
   end
 
   private
@@ -57,23 +45,5 @@ class MainController < ApplicationController
       return unless user_signed_in?
 
       redirect_to consent_profile_path unless current_user.consents
-    end
-
-    # Transitional banner pointing to the lectures of the upcoming term
-    # (see main/start/_next_term_banner). It is only shown when the
-    # feature flag is enabled and there is at least one lecture for the next
-    # term that is visible to students (i.e. published).
-    def next_term_banner
-      return unless Flipper.enabled?(:next_term_banner)
-
-      @next_term = Term.active&.next
-      return if @next_term.blank?
-
-      # matches Search::Filters::CurrentNextTermFilter: term-independent
-      # lectures (term: nil) are part of the results the banner links to,
-      # so they are part of the count as well
-      @next_term_lecture_count = Lecture.published
-                                        .where(term: [@next_term, nil])
-                                        .count
     end
 end

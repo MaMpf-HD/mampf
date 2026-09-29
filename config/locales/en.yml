@@ -50,7 +50,6 @@ en:
       singular: 'Quiz Remark'
       plural: 'Quiz Remarks'
       short: 'Rem'
-    muesli: 'MUESLI'
     board: 'Board'
     comments: 'Comments'
     organizational_html: 'General Information'
@@ -62,6 +61,7 @@ en:
     mampf_news: 'MaMpf-News'
     submissions: 'Submissions'
     tutorials: 'Tutorials'
+    cohorts: 'Flexible Groups'
   unauthorized:
     default: >
       You are not authorized to access this page.
@@ -72,7 +72,7 @@ en:
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}, %{mupdf}.
       Bugs can be reported %{bugs}.
-      We encourage you to send further feedback to %{feedback}.
+      Support requests and feedback can be sent to %{feedback}.
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
@@ -148,16 +148,14 @@ en:
       boards: 'Messageboards'
       stats: 'Access statistics'
       export_stats: 'Export statistics'
-      users: 'User administration'
       course: 'Course'
-      profile: 'My Profile'
     catalog:
       info:
         locked_medium: 'This medium is locked.'
         unpublished_medium: 'This medium is unpublished.'
         free_medium: 'This medium is free.'
         user_medium: 'This medium is only available for MaMpf users.'
-        subscriber_medium: 'This medium is only available for subscribers.'
+        subscriber_medium: 'This medium is only available for participants of the event series.'
     teachables:
       teachables: Lecture Search
       courses: Course Search
@@ -185,10 +183,8 @@ en:
       my_media: 'My Media'
       media_restriction_html: >
         Only the last 25 recently updated media are shown.
-        You can find more by doing a %{media_search} or in your
-        %{profile}.
+        You can find more by doing a %{media_search}.
       media_search: 'Media Search'
-      user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
       other_lectures: 'Other event series'
@@ -393,6 +389,23 @@ en:
           homepage. This can be useful if it is an announcement of a server
           downtime.
     lecture:
+      editors_by_email:
+        label: "Add an editor by email address"
+        add: "Add editor"
+        hint: >-
+          The address of their MaMpf account. They get a mail about it and then
+          appear among the editors above, where they are removed again as well.
+      tutors_overview:
+        hint_html: "Students become tutors by redeeming a tutor voucher (see below) or when you add them by the address of their account; editors and the teacher can be picked right away. On the %{link} tab tutors are put on their tutorials and flexible groups. This is who tutors what."
+        none_yet: "No tutors yet. Add them by address below, or create a tutor voucher and send it to the people who are to become tutors."
+        no_group_yet: "redeemed a voucher, not in a group yet"
+        added_no_group_yet: "added by address, not in a group yet"
+        add_by_email: "Add a tutor by email address"
+        add_hint: "The address of their MaMpf account. They get a mail about it and can then be put on a group."
+        add: "Add tutor"
+        remove: "Remove %{name}"
+        remove_confirm: "Remove %{name} from the tutors of this lecture? Assignments to flexible groups stay."
+      updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
       lecture_content: 'Lecture Contents'
@@ -425,6 +438,8 @@ en:
         Optional. PDF only, up to 10 MB — e.g. a seminar or course program.
       home_attachment_remove: 'Remove the attached PDF'
       home_attachment_must_be_pdf: 'The attachment must be a PDF.'
+      home_attachment_too_large: 'The file is larger than %{max}.'
+      home_save_failed: 'Saving did not work. Please try again.'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'
       no_terms_yet: 'You have to create a term first.'
@@ -457,10 +472,12 @@ en:
       new_posts: 'new forum posts'
       no_rights: 'You are not authorized to subscribe this event series.'
       disable_teacher_display: disable the display of the teacher's name
+      uses_exam_eligibility: enable exam eligibility
       submission_max_team_size: >
         maximal team size for submissions
       submission_grace_period: >
         grace period for submissions (in minutes)
+      submission_deletion_date: Submission deletion date
       import_toc: Import table of contents from other lecture
       import_chapters: import chapters
       import_sections: import sections
@@ -468,6 +485,9 @@ en:
       no_active_voucher: >
         There is no active %{role} for this event series.
       info:
+        language: >
+          The language this event series is taught in. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         home_intro: >
           Shown at the top of the lecture home page, above the registration.
           Use it to welcome students, explain the registration process, and
@@ -581,9 +601,9 @@ en:
           are not yet eligible you have to create a voucher and communicate the
           voucher to the user outside of MaMpf. The user can then redeem the
           voucher in their profile settings and will become a lecture editor.
+          Or add them below by the email address of their MaMpf account.
         subscribers_count: >
-          This is the number of all users subscribed to this event series in
-          their profile settings.
+          This is the number of all users who have bookmarked this event series.
         organizational: >
           If you check this box, the general information will be visible for
           all subscribers of your event series (it can be accessed via
@@ -593,10 +613,6 @@ en:
         organizational_on_top: >
           If you check this box, the page for general information will be the
           starting page for this event series.
-        muesli: >
-          If you check this box, the link to MUESLI will be activated in the
-          sidebar for this event series.
-          their profile settings.
         vignettes: >
           If you check this box, the vignettes of this event series appear in
           the sidebar for everyone who can see its contents.
@@ -649,8 +665,19 @@ en:
           lecture card on the start page and from the lecture page for generic
           users. This could make sense e.g. if a lecture that is term
           independent is only administratively supervised by a "teacher".
+        uses_exam_eligibility: >
+          If you check this box, exam eligibility tracking is enabled for
+          this event series. Students can then receive certifications and
+          registration policies can reference this event series.
+        eligibility_data_kept:
+          one: >
+            Disabling keeps 1 certification, but it will no longer be
+            reachable.
+          other: >
+            Disabling keeps %{count} certifications, but they will no longer be
+            reachable.
         submission_max_team_size: >
-          Here you can enter how many persons are maximally allowed for
+          Here you can enter how many people are maximally allowed for
           one submission. If you enter nothing, there will be no restriction on
           the team size. Changes will apply imediately. Note however
           that a reduction of this number does not hold retroactively:
@@ -661,6 +688,16 @@ en:
           submissions. Files that are uploaded after the deadline but before the
           grace period is expired will be accepted by the system, but will be
           timestamped and marked as "too late".
+        submission_deletion_date: >-
+          Here you can set when submissions and corrections for this
+          event series will be automatically deleted. The first
+          option corresponds to end of term plus approx. two weeks,
+          the second to end of term plus approx. four months and
+          two weeks. Two weeks before the chosen date, students
+          will be notified by email; one week before, they receive
+          a reminder. On the chosen date, submissions will be
+          irrevocably deleted. If the date has already passed,
+          deletion occurs on the next scheduled run.
         section_needed: Please create a section first
         voucher_for_tutor: >
           Vouchers for tutors can be redeemed by users to obtain tutor status
@@ -673,9 +710,6 @@ en:
           status for this event series. The previous teacher will be demoted
           and becomes an editor. Such a voucher will be invalidated directly
           after its redemption.
-        voucher_for_speaker: >
-          Vouchers for speakers can be redeemed by users to obtain speaker
-          status for this seminar and to directly take over talks.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -706,7 +740,6 @@ en:
       imported_media: 'Imported Media'
       organizational_visible: 'General information visible'
       organizational_on_top: 'General Information as start page'
-      uses_muesli: 'Event series uses MUESLI'
       uses_vignettes: 'Event series uses vignettes'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'
@@ -735,6 +768,9 @@ en:
         No image has been uploaded yet. Therefore, the generic image will be
         used for event cards.
       info:
+        language: >
+          The language the course is taught in. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         title: >
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
@@ -933,11 +969,9 @@ en:
         speakers: >
           Here you can select the speakers of the talk. They can edit the talk
           and add media to it. You can only select users who have the status of
-          speaker in the seminar, or editors or yourself. In order to grant
-          students the status of speaker, you have to create a voucher in
-          the "People/Tutorials" tab. You have to communicate the voucher to
-          the students outside of MaMpf. The voucher can then be redeemed by the
-          students.
+          speaker in the seminar, or editors or yourself. Students become
+          speakers through a registration process for the talks, set up on the
+          "Groups" tab.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -1001,6 +1035,7 @@ en:
           As it is not clear which tags associated to this section belong to
           which section, you can make assignments here.
     medium:
+      singular: 'Medium'
       course_medium_html: >
         There is one medium of this type that is associated to the
         course %{course}.
@@ -1231,17 +1266,20 @@ en:
           medium. Non-registered users do not have access to the medium.
           </li>
           <li>
-          only subscribers: Registered users of MaMpf who have subscribed to
-          the associated event series/course can see the medium. Other generic
-          MaMpf users cannot see the medium.
+          only participants: Users who have bookmarked the associated event
+          series, are on one of its lists (tutorials, talks, exams) or have a
+          registration for it running can see the medium; for a course
+          medium, the participants of one of the course's event series.
+          Other MaMpf users cannot see the medium.
           </li>
           <li>
           locked: generic MaMpf users cannot see the medium.
           </li>
           </ul>
         language: >
-          Here you can select the language for this medium. By default,
-          it is the language of the associated event series/course.
+          The language of this medium; by default that of the associated
+          event series/course. It does not change the interface: everybody sees MaMpf in the
+          language of their own settings.
         video: >
           The video should be in mp4 format. The recommended horizontal
           resolution is 1080 Pixel for future compatibility.
@@ -1303,8 +1341,13 @@ en:
           The publication will not precisely occur at the right second, but it
           should not be later than around a minute after the given time.
         assignment_settings: >
-          Settings that will hold for <i>all</i> assignments in this lecture
-          can be adjusted on the lecture page under "Assignments".
+          Settings that hold for <i>all</i> assignments in this lecture, such
+          as the team size and the grace period, are on the lecture page under
+          "Assessments".
+        assignment_further_settings: >-
+          Tasks and points are set on the lecture page under "Assessments"
+          once the assignment exists, which is when the medium is released.
+          Until then it is listed there as scheduled.
     tag:
       index: 'Search Tags'
       related_tags: 'Related Tags'
@@ -1565,54 +1608,22 @@ en:
           You can still create this reference, but as long as the pdf remains
           unchanged the reference will just point to the first page of the pdf.
     user:
-      current_lecture: 'Current event series'
       homepage: 'Homepage'
       profile_image: 'Profile image'
-      index: 'User Index'
-      edited_content: 'Curated Content'
-      no_content: 'There is no content yet.'
-      given_lectures: 'Given Event Series'
-      edited_courses: 'Edited Courses'
-      edited_lectures: 'Additional Edited Event Series'
-      edited_media: 'Edited Media'
-      administration: 'User Administration'
-      sorts: 'Admins, Editors and Teachers'
-      password_policy_progress: '%{current} of %{total} accounts currently meet the updated password standard.'
-      edit_generics: 'Edit generic users'
-      elevate: 'Promote to Administrator'
+      support: 'Support'
+      deans_office: "Dean's office"
       info:
-        display_name: >
-          Here you can enter the display name. The display name
-          is used for the display of teachers, editors, forum posts etc.
-        email: >
-          Here you can enter the email address. It is used for signing in,
-          and emails for password reset will be sent there.
+        support: >
+          Finds people, corrects their personal data, unlocks their accounts and
+          sends them the mails that get them back in. Admin accounts stay beyond
+          their reach.
+        deans_office: >
+          Sees every lecture of each term with its groups, seats, registrations
+          and assignments, read-only. For the dean's office.
         administrator: >
           Here you can decide whether the user has administrator rights or not.
           You cannot revoke your own administrator rights, only another
           adminsitrator can do that.
-        current_lecture: >
-          Here you can select the event series which is currently your primary one.
-          If a event series is selected here, an icon in the navbar will take
-          you right there.
-        homepage: >
-          Here you can enter the adress of a homepage. This can make sense
-          for teachers.
-        profile_image: >
-          Here you will soon have the opportunity to upload a profile image.
-        given_lectures: >
-          This is the list of event series you are teaching/have taught.
-          Unpublished event series are displayed in red.
-        edited_courses: >
-          This is the list of courses for which you have course editor rights.
-        edited_lectures: >
-          This is the list of event series for which you have editing rights
-          (even if the teacher was a different person). Unpublished event series
-          are displayed in red.
-        edited_media: >
-          This is the list of media for which you have editing rights.
-        elevate: >
-          If you check this box, the user will be promoted to administrator.
     question:
       independent: 'Question is independent'
       hint: 'Hint'
@@ -1821,8 +1832,8 @@ en:
       publish_vertices: >
         Publish all questions and remarks associated to the quiz
       restricted_vertex: >
-        This %{sort} is only accesible for subscribers of %{teachable}.
-        Users without subscription caanot play the quiz.
+        This %{sort} is only accessible for participants of %{teachable}.
+        Other users cannot play the quiz.
       no_editor_rights: >
         You do not have editor rights this %{sort}.
       dependent_quizzable: >
@@ -1862,15 +1873,22 @@ en:
       name: 'Title'
       new: 'Create new program'
       no_courses: 'There are no courses in this program yet.'
+      no_degree: 'no degree'
+      degree_hint: >-
+        Without a degree, the program only classifies courses and students cannot
+        choose it.
     division:
       edit: 'Edit Division'
       name: 'Title'
       new: 'Create new division'
-      no_courses: 'There are no courses in this division yet.'
     tutorial:
       new: 'Add tutorial'
     assignment:
       new: 'Add assignment'
+      title: 'Title'
+      title_placeholder: 'e.g. Exercise Sheet 1'
+      filetype: 'File Type'
+      deletion: 'Deletion Date'
     voucher:
       secure_hash: 'Secure Hash'
       expires_at: 'Expires at'
@@ -1880,6 +1898,9 @@ en:
         create a voucher. This is a special code that the person can redeem in
         their profile to get the role, e.g. to become a tutor for your lecture.
         You should send the code to the person via a different medium, e.g. email.
+      speakers_by_registration: >
+        Speakers are no longer assigned by voucher: set up a registration
+        process for the talks on the "Groups" tab.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1891,10 +1912,8 @@ en:
       If you leave this field empty, your display name will be used for that.
     change_data: 'Change login data'
     delete_account: 'Delete Account'
-    courses: 'Courses'
     primary_lecture: 'Primary event series'
     secondary_lectures: 'Secondary event series'
-    no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
     content_info: >
       With the tag graph, you can search for keywords and see related content.
@@ -1928,32 +1947,20 @@ en:
     consent: >
       You consented to our privacy policy.
     locale: 'Language'
-    subscribe_lecture: 'Subscribe lecture'
+    subscribe_lecture: 'Bookmark event series'
     passphrase_required: >
-      You want to subscribe the event series %{lecture_title}. It is protected
+      You want to bookmark the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
-    my_term_html: My term &ndash; %{term}
-    my_next_term_html: My next term &ndash; %{term}
-    inactive_lectures: Further subscribed event series
-    active_nonsubscribed_lectures_html: >
-      Current event series &ndash; %{term}
-    no_current_stuff: >
-      You have not yet subscribed any event series of the current term.
-    no_inactive_stuff: >
-      You have not yet subscribed any event series outside of the current term.
-    no_next_term_stuff: >
-      You have not yet subscribed any event series of the coming term.
-    next_term_registrations: >
-      Applied for — places are allocated after the registration deadline.
-    next_term_seats: >
-      You are on a list for this lecture, but have not subscribed to it.
-    no_current_at_all: >
-      In the current term, no event series have yet been published.
     other_preferences: >
       Other Preferences
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    teacher_profile:
+      title: "What students see about you"
+      explainer: >-
+        Your homepage and picture appear on your teacher page, which your lectures link to.
+      remove_image: "Remove the picture"
     changes_made_btn: >
       Click here to save your changes.
     email_for_submissions: >
@@ -1972,6 +1979,7 @@ en:
     email_for_submission_decision: >
       acceptance or rejection of a late submission
     delete_account: Delete Account
+    password: Password
     stored_submissions: >
       There are %{submissions} submissions to assignments from you in the
       system.
@@ -2002,7 +2010,6 @@ en:
     miscellaneous: Miscellaneous
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
-    my_talks: My talks
     media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
@@ -2031,9 +2038,9 @@ en:
       After having redeemed the voucher, the teacher can assign you
       to the tutorials.
     select_tutorials: Select Tutorials
-    all_tutorials_taken: >
-      There are no more tutorials available for this lecture that you can take
-      over.
+    own_tutorial_not_offered: >
+      The tutorial you are enrolled in is not on offer: a tutor voucher does not
+      make you the tutor of your own group.
     already_tutor_by_redemption: >
       You have already redeemed this voucher to become a tutor.
     become_editor_html: >
@@ -2080,16 +2087,20 @@ en:
     course_selection: 'Course selection'
     new_course: 'New course %{title}'
     new_course_created_html: 'New course created:<br>%{title}'
-    subscribe_course: 'You can subscribe it via your profile.'
-    subscribe_course_html: 'You can subscribe it via your %{profile}.'
+    subscribe_course: 'You can find its event series in the lecture search on your dashboard.'
+    subscribe_course_html: 'You can find its event series in %{dashboard}.'
     profile: 'profile'
-    goto_profile: "Visit your profile"
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
-    subscribe_lecture: 'You can subscribe it via your profile.'
-    subscribe_lecture_html: 'You can subscribe it via your %{profile}.'
+    goto_dashboard: 'Go to your dashboard'
+    subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
+    subscribe_lecture_html: 'You can find it in %{dashboard}.'
+    subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
+    subscribe_lecture_in_term_html: 'You can find it in %{dashboard} under %{term}.'
+    dashboard_search: 'the lecture search on your dashboard'
+    goto_dashboard_search: 'Go to the lecture search'
     new_lecture_created_html: >
       New event series created:<br>
       %{title} (%{term}, %{teacher})
@@ -2121,15 +2132,10 @@ en:
     redemption_in_lecture: 'Voucher redeemed in %{lecture}'
     no_tutorials_taken: 'No tutorials have been taken over by the redemption.'
     no_talks_taken: 'No talks have been taken over by the redemption.'
+
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
-    no_tutorials_yet: >
-      For this event series, no tutorials have been created yet.
-    tutorials: >
-      For this event series there are the following tutorials:
-    no_submissions_yet: >
-      No assignments have been due yet.
   sure: 'Are you sure?'
   details: 'Details'
   none: 'none'
@@ -2173,6 +2179,7 @@ en:
   mampf_map: 'MaMpf Map'
   external_render: 'render in an external tab'
   medium:
+    singular: 'Medium'
     details: 'view details'
     different_language: 'This medium is in %{language}.'
     unpublished: 'This medium is unpublished.'
@@ -2654,12 +2661,20 @@ en:
   date:
     formats:
       concise: '%Y-%m-%d'
+      test_week_start: '%b %-d'
+      day_month: '%b %-d'
+      weekday_day: '%a, %b %-d'
+      test_week_end: '%b %-d, %Y'
   datetimepicker:
     invalid_date: 'Invalid date time format.'
   time:
     formats:
+      submission_deadline: "%A, %B %-d, %Y, %H:%M"
+      # A file is a detail, not a headline: the long form of a date belongs
+      # to a deadline, where the day of the week is what people plan by.
+      file_time: "%Y-%m-%d, %H:%M"
       concise: '%Y-%m-%d'
-      student_registration: '%B %-d, %Hh%M'
+      student_registration: '%B %-d, %Y, %H:%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
   thyme:
@@ -2711,7 +2726,6 @@ en:
     unknown: >
       You filled out the form correctly, but unfortunately something went wrong
       on the server. Please try again later and contact us if the problem persists.
-    not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
     thyme:
@@ -2788,24 +2802,203 @@ en:
     en: 'English'
     de: 'German'
   submission:
+    hub:
+      page_title: "Submissions - %{lecture}"
+      heading: Earlier sheets
+      heading_with_tests: Earlier sheets and tests
+      standing:
+        mark_percentage: "%{percentage} %"
+        heading: Exam admission
+        of_marked: "of %{max} points possible so far"
+        of_needed: "of %{max} points needed"
+        no_max: "points, nothing marked yet"
+        nothing_marked: Nothing has been marked yet.
+        awaiting_marks:
+          one: >-
+            1 result worth %{points} points is still with your tutor and is not
+            counted above.
+          other: >-
+            %{count} results worth %{points} points in total are still with
+            your tutor and are not counted above.
+        needed: "%{points} needed"
+        bar_plain: "%{percentage} percent of the points earned"
+        bar_absolute: "%{points} of the %{needed} points needed"
+        bar_with_mark: "%{percentage} percent earned, %{required} percent required"
+        condition_percentage: "%{percentage} % of the points"
+        condition_absolute: "%{points} points"
+        you_have_percent: "you have %{percentage} %"
+        you_have_nothing_marked: nothing marked yet
+        you_have_points: "you have %{points}"
+        you_have_value: "you have %{value} %{unit}"
+        achievement_threshold: "%{title}, at least %{threshold} %{unit}"
+        passed: passed
+        not_passed: not passed
+        not_recorded: not recorded yet
+        no_conditions: >
+          Your lecturer has not set the conditions yet. They will appear here,
+          each with your standing.
+        what_this_means: What this means
+        out_of_reach: >
+          Even full marks on everything still open would leave you at %{best}
+          of the %{needed} points needed.
+        recorded_as_failed: "%{names} was recorded as not passed."
+        ask_your_tutor: Your tutor can tell you what is still possible.
+      card:
+        before_groups: >-
+          This event series ran before groups were kept here. Handing in is
+          over; your hand-ins and corrections stay readable.
+        no_tutorials_yet: >-
+          This event series has no tutorial groups yet. Once there are some and
+          you are in one, you can hand in here.
+        no_seat_yet: >-
+          You are not in a tutorial group for this event series, so you cannot
+          hand anything in.
+        where_to_enrol: To the event page
+        team_label: Team
+        invited_label: Invited
+        due: "Due %{time}"
+        in_time: "in %{time}"
+        worth:
+          one: "%{count} problem, %{points} points possible"
+          other: "%{count} problems, %{points} points possible"
+        hand_in: Hand in
+        in_tutorial: in your tutorial
+        hand_in_elsewhere: >-
+          Not handed in via MaMpf. Your tutor records what arrived and enters
+          the points.
+        no_digital_hand_in: This sheet is not handed in via MaMpf.
+        replace: Replace file
+        invite: Invite someone
+        join: Join with a code
+        leave: Leave the team
+        delete: Delete
+        code: Join code
+        copy_code: Copy the code
+        code_copied: Code copied
+        code_copy_failed: The code could not be copied
+        refresh_code: Get a new code
+        refresh_confirm: >
+          Get a new code? The old one stops working, and anybody you have already
+          given it to cannot join with it any more.
+        delete_confirm: >
+          Delete this hand-in? The file is removed and the sheet counts as not
+          handed in.
+        leave_confirm: >
+          Leave the team? The hand-in stays with the others, but this sheet no
+          longer counts as handed in for you, and the others are told.
+        team_hint: >
+          You can hand in alone or together with others. Whoever hands in first
+          gets a code to pass on.
+        unknown_inviter: somebody
+        reload: Reload the page
+        nothing_due: Nothing to hand in
+        nothing_scheduled: The next sheet has not been posted yet.
+        appears: "%{sheet} appears on %{date}."
+        appears_until: "%{sheet} appears on %{date} - you will have until %{deadline}."
+        marked_recently: Marked most recently
+      sheet_count:
+        one: "%{count} sheet"
+        other: "%{count} sheets"
+      test_count:
+        one: "%{count} test"
+        other: "%{count} tests"
+      column_sheet: Sheet
+      column_status: Status
+      column_points: Your points
+      old_style: old-style sheet
+      news:
+        lead: "New since you last looked:"
+        marker: New since you last looked.
+        prefix: "New —"
+        indicator: "Sheets with a new correction or new points"
+        correction_html: "%{sheet} (correction)"
+        points_html: "%{sheet} (points)"
+        both_html: "%{sheet} (correction and points)"
+        more:
+          one: "and %{count} more"
+          other: "and %{count} more"
+        seen_all: mark all as seen
+      fold:
+        handed_in_label: Hand-in
+        not_uploaded_yet: not uploaded yet
+        tasks_heading: Points per problem
+        files_heading: Files
+        problem: "Problem %{number}"
+        problem_unmarked: "not marked yet, out of %{max} points"
+        problem_unmarked_no_max: not marked yet
+        correction_label: Correction
+        no_file: nothing handed in
+        team: "Team: you and %{names}"
+        team_with_points: >
+          Team: you and %{names} - these %{points} points are yours
+        join_late: >
+          Handed in with a team after all? Its code still gets you on it, until
+          the team has been marked; after that your tutor can still add you.
+        no_points:
+          nothing_yet: Nothing has been entered yet.
+          on_the_correction: >
+            Your points are written on the correction, but they are not in MaMpf
+            yet, so they do not count towards your total for now.
+          zero: >
+            None - all %{max} points are missing from your total.
+          no_tasks: >
+            The problems for this sheet have not been set up yet, so nothing is
+            missing from your total.
+          exempt: >
+            This sheet is not counted for you - its points are not missing
+            from your total either.
+          legacy: >
+            This sheet was set up before points existed in MaMpf. Nothing is
+            recorded against it.
+      no_points: no points
+      points_reader: "%{points} of %{max} points"
+      points_reader_no_max: "%{points} points"
+      no_sheets_yet: >
+        None yet. Once a sheet has been marked, it appears here with your
+        points.
+      no_sheets_yet_named: >
+        None yet. Once %{sheet} has been marked, it appears here with your
+        points.
+      deletion_notice: >
+        Submitted files and corrections are deleted on %{date}.
+      chips:
+        nothing_handed_in: Nothing handed in yet
+        handed_in: Handed in
+        grace_period: "%{time} left"
+        tutor_decides: Your tutor decides
+        awaiting_marks: Waiting to be marked
+        awaiting_record: Not yet recorded
+        correction_uploaded: Correction uploaded
+        exempt: Excused
+      notes:
+        grace_period: the deadline has passed, you have %{time}
+        tutor_decides: handed in after the deadline
+        rejected: handed in late, your tutor did not let it count
+        partially_marked: not every problem has been marked yet
+        missed: nothing arrived by the deadline
+        awaiting_record: handed in on paper or by other means - your tutor records what arrived
+        awaiting_record_test: no result entered yet - your tutor enters the points, or records you as absent
+        absent: recorded as absent
+        exempt: not counted for you
+        not_recorded: >
+          your file is here, but it is not recorded as a hand-in - talk to your
+          tutor
     invited: You have been invited by '%{inviter}' for this submission.
     accept_invitation: Accept invitation
     invalid_code_for_assignment: >
       The code you entered is invalid for %{assignment}.
     invalid_code: The code you entered is invalid.
-    assignment_expired: >
-      The due date for this homework assignment has already
-      expired.
+    team_marked: >
+      This team has already been marked; ask your tutor to add you.
+    marked_on_own: >
+      You have already been marked for this sheet on your own; ask your tutor
+      if you should be on the team.
     already_in: You are already a partner for this assignment.
-    lecture_not_subscribed: >
-      You are not subscribed to the corresponding event series.
+    lecture_not_unlocked: >
+      You do not have access to the corresponding event series.
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).
-    nothing_here: >
-      There is nothing here yet. Create a new submission or join one.
-    nothing_here_past: >
-      Nothing was submitted for this assignment.
     tutorial_needed: >
       You are not in a tutorial for this event series, so you cannot submit
       anything.
@@ -2819,13 +3012,6 @@ en:
       Redemption of submission code failed: %{message}.
     too_many_attempts: >
       Too many attempts. Please wait a moment and try again.
-    current: Current Submission
-    previous: Previous Submission
-    old_ones: Old Submissions
-    future_ones: Future Submissions
-    no_old_ones: Nothing has been submitted yet.
-    no_future_ones: >
-      There are no assignments beyond the current one.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
     correct_file_size: This file has the correct size.
@@ -2849,6 +3035,10 @@ en:
     upload_failure_scan_required: >
       The uploaded file is missing a required malware scan.
       Please upload the file again.
+    upload_failure_no_tutorial: >
+      You are not in a tutorial for this event series, so you cannot upload a
+      hand-in. Please contact your teacher if you think this happened by
+      mistake.
     upload_failure_unauthorized: >
       You are not allowed to upload this file here.
     upload_failure_wrong_target: >
@@ -2881,7 +3071,6 @@ en:
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
     working: Working
-    deletion_date: Deletion Date
     multiple_files_selected: Multiple files have been selected.
     merging_help_html: >
       <b>Merging:</b> Use this button to merge the files in the order given above.
@@ -2891,7 +3080,6 @@ en:
     merge: Merge
     merging_failed: Merging failed
     no_correction_yet: Currently, no file is stored.
-    move_to_tutorial: move to tutorial
     manuscript_no_pdf: The uploaded file is not a valid pdf file.
     manuscript_size_too_big: >
       The uploaded file is too big (maximum allowed size is %{max_size}).
@@ -2903,108 +3091,19 @@ en:
       %{accepted_mime_types}.
     correction_size_too_big: >
       The uploaded file is too big. Maximum file size is 15 MB.
-    too_late_no_saving:
-      The due date for this assignment has expired, therefore this change
-      cannot be saved.
-    too_late_no_editing:
-      The due date for this assignment has expired, therefore this submission
-      cannot be edited.
-    too_late_no_inviting:
-      The due date for this assignment has expired, therefore invitations to
-      this submission are no longer possible.
-    too_late_no_destroying:
-      The due date for this assignment has expired, therefore this submission
-      cannot be deleted.
-    late_submission_warning_html: >
-      You can make changes within the grace period until %{friendly_deadline}.
-      However, if you do so, the submission will be declared as
-      <b>'too late'</b>.
-      It is within the discretion of the teacher and the tutor if and how the
-      submission will be graded.
-    last_modification: >
-      last modification
-    last_modification_info_html: >
-      It is logged when the last change to the submission by a team member took
-      place. The following is taken into account:
-      <ul>
-      <li>
-      creation of the submission
-      </li>
-      <li>
-      successful first upload or replacement of the file
-      </li>
-      <li>
-      the joining of a team member
-      </li>
-      <li>
-      the leaving of a team member
-      </li>
-      </ul>
-      If the last modification ist before the due date, the submission is valid.
-      Otherwise it will be marked as <b>too late</b>.
-    okay: Everything is fine.
-    no_file: No file is stored.
-    nothing: No submission was created.
-    with_correction: >
-      Everything is fine. You tutor has uploaded the correction to this
-      submission.
-    too_late: >
-      The submission is marked as "late", because the last change was after
-      the due date. It is at the discretion of the teacher and the tutor
-      if and how it is graded.
-    too_late_accepted: >
-      You tutor accepted the submission that was marked as "late" and is now
-      working on the correction.
-    too_late_rejected: >
-      Your submission that was marked as "late" was rejected.
-    under_review: >
-      Your tutor is currently reviewing the submission.
     already_corrected: >
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
+    already_rejected: >
+      This submission was rejected, so it can no longer be joined.
     late: late submission
-    late_submissions: late submissions
     rejected: rejected
     bulk_download_submissions: Bulk download of submissions
     bulk_download_corrections: Bulk download of corrections
     bulk_upload: Bulk upload of corrections
-    code_explanation: >
-      By knowledge and input of this code, other persons can join this
-      submission. Joining via a code is particularly recommended when the
-      other person has not yet cooperated with you in this event series.
-      Perosns that you have already cooperated with can be invited using
-      the "Invite" button (this button only exists in the case that such persons
-      exist, are not yet a member of this team and the team size is below
-      the maximal allowed size for teams).
-    profile_info_html: >
-      In your %{profile} you can set your preferences about which events in the
-      context of submissions you want to be notified about via email. This
-      includes successful upload and removal of files, joining or leaving of
-      team members, decisions about the acceptance of late submissions and
-      upload of corrections by your tutor.
-    deletion_date_info: >
-      The data you submit is personal data that we delete in the following semester
-      for data privacy reasons. You can find the exact deletion date in the table.
-      You will also be reminded of the deletion in advance by e-mail so that you
-      can back up your data.
-    team_info: >
-      Here you can see your submission team. You can enlarge
-      your team by giving other persons the submission code so that they can
-      join or by inviting persons that you have already had submissions with in
-      this event series, so that they can join. The team can become only as
-      large as the maximal team size allowed in this event series.
     file_format: Submission format
   assignment:
     expired: The due date has expired.
-    not_in_this_lecture: >
-      In this lecture, no assignments have yet been created. Therefore, there
-      are no submissions.
-    no_current: >
-      Currently, there is no assignment for which something could be submitted.
-    no_previous: >
-      Nothing has yet been submitted.
-    nothing_yet_in_lecture: >
-      In this lecture nothing had yet to be submitted.
     deletion_date: Deletion date
     destruction_info: >
       <i>
@@ -3017,9 +3116,45 @@ en:
         This assignment will be created when the associated medium is published.
         In order to change things please edit the publication settings for the
         medium.
+  lecture_editors:
+    create:
+      no_account: "There is no MaMpf account with this address."
+      already: "%{name} is already an editor or the teacher of this event series."
+      added: "%{name} is now an editor and gets a mail about it."
+  tutor_appointments:
+    create:
+      no_account: "There is no MaMpf account with this address."
+      already: "%{name} can already be put on a tutorial."
+      added: "%{name} is now a tutor and gets a mail about it."
   tutorial:
+    not_assigned_yet: >
+      You are a tutor in this lecture, but not on a tutorial yet. Once you are
+      given one, it shows here.
+    tutors_missing_html: "Somebody missing? On the %{link} tab you make people tutors: with a voucher, or by the email address of their MaMpf account."
+    participants:
+      button: "Participants"
+      pick: "Choose …"
+      title: "Participants"
+      none: "Nobody is in this group yet."
+      registered_title: "Registered, not final yet"
+      no_program: "no program given"
+      registered_hint: >
+        They join the group when the registration "%{campaign}" is finalized.
+        Until then, registrations can still change.
+      allocation_pending: >
+        The registration "%{campaign}" allocates the groups after its deadline
+        (%{deadline}); until then it is open who will be in this group.
+    title_placeholder: "e.g. Mon 14–16"
+    location_placeholder: "e.g. SR 3"
+    no_tutorials_yet: >
+      This lecture has no tutorials yet, so there is no table of points to
+      enter into.
     no_submissions_for_assignment: >
       There are no submissions for this assignment.
+    no_submissions: >
+      No submissions
+    no_submission: >
+      No submission
     destruction_info: >
       <i>
       Note.
@@ -3032,8 +3167,7 @@ en:
       Own Tutorials
     other_tutorials: 'Other Tutorials'
     deadline_warning: >
-      The deadline for submission is still %{deadline}. Only after the deadline
-      corrections can be uploaded.
+      The deadline for submission is still %{deadline}. Only after the deadline, the grading process can take place and the corrections can be uploaded by the tutors.
     grace_period_warning: >
       The grace period lasts until %{friendly_deadline}. Within the grace
       period, submisions and retrospective changes by the students are possible
@@ -3049,14 +3183,14 @@ en:
     teams_as_csv: Teams as .csv
     certificate_invalid: This code is invalid.
     info:
-      tutors:
+      tutors: >
         Here you can select the tutors of the tutorial. They can view
         the submissions and upload corrections.
         You can only select users who have the status of tutor in the
-        event series, or editors or yourself. In order to grant students the
-        status of tutor, you have to create a voucher.
-        You have to communicate the voucher to the students outside
-        of MaMpf. The students can then redeem the voucher.
+        event series, or editors or yourself. On the "Personnel" tab you make
+        people tutors: with a voucher that you pass on to them outside of
+        MaMpf and that they redeem, or by the email address of their MaMpf
+        account.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
@@ -3135,14 +3269,21 @@ en:
       browser and open it afterwards.
     announcement_subject: 'New announcement'
     student_message_footer: >-
-      This message was sent by %{sender} via MaMpf to the registered
-      students of %{lecture}. Replies to this email go directly to the
+      This message was sent by %{sender} (%{email}, %{role}) via MaMpf to
+      %{audiences} in %{lecture}. Replies to this email go directly to the
       sender.
+    student_message_role:
+      staff: "lecture staff"
+      tutor: "tutor"
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
     new_editor_subject: 'Editing Rights for %{title}'
+    new_tutor_subject: 'Tutor in %{title}'
+    new_tutor: >
+      Dear %{username}, you have been made a tutor in %{title}. The lecture is
+      on your dashboard; your groups show there once you are put on them.
     new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
     new_teacher_subject: 'Teacher Status for %{title}'
     new_teacher: 'Dear %{username}, you have been given teacher status for %{title}.'
@@ -3159,14 +3300,14 @@ en:
       Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
-    subscribe_lecture: 'You can subscribe to it in your profile settings.'
+    subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
     subscribe_lecture_text: >
-      You can subscribe to it in your profile settings.
+      You can find it in the lecture search on your dashboard.
+    subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
+    subscribe_lecture_in_term_text: >
+      You can find it in the lecture search on your dashboard under %{term}.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
-    subscribe_course: 'You can subscribe to it in your profile settings.'
-    subscribe_course_text: >
-      You can subscribe to it in your profile settings.
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
     submission_invitation_html: >
@@ -3195,6 +3336,12 @@ en:
       %{user} has joined the submission for %{assignment} in %{lecture}
     submission_join: >
       %{user} has joined the submission for %{assignment} in %{lecture}.
+    submission_added_subject: >
+      You are on the team for %{assignment} in %{lecture} now
+    submission_added: >
+      %{tutor} has put you on the team of %{team} for %{assignment} in
+      %{lecture}. Their hand-in counts for you now, and so do the points it
+      gets.
     submission_leave_subject: >
       %{user} has left the submission for %{assignment} in %{lecture}
     submission_leave: >
@@ -3362,7 +3509,12 @@ en:
     email: 'Email'
     preferences: 'Preferences'
     language: 'Language'
+    teaching_language: 'Language of instruction'
+    material_language: 'Language of the material'
     date: 'Date'
+    location: 'Location'
+    not_specified: 'Not specified'
+    unlimited: 'Unlimited'
     seats: 'Seats'
     add: 'Add'
     section: 'Section'
@@ -3383,6 +3535,10 @@ en:
     actions: 'Actions'
     post_processing: 'Post process...'
     search: 'Search'
+    loading: 'Loading...'
+    edit: 'Edit'
+    delete: 'Delete'
+    confirm_delete: 'Are you sure you want to delete this?'
     mampf_package: 'MaMpf package'
     associated_to: 'Associated to'
     associated_to_short: 'Ass. to'
@@ -3489,6 +3645,9 @@ en:
     assignments: 'Assignments'
     deadline: 'Due date'
     tutorial: 'Tutorial'
+    exam: 'Exam'
+    exams: 'Exams'
+    edit_settings: 'Edit Settings'
     code: 'Code'
     partners: 'Partners'
     team: 'Team'
@@ -3508,9 +3667,11 @@ en:
     as: as
     as_file_type: as %{type} file
     code_copied_to_clipboard: Code has been copied to the clipboard.
-    emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    emails_copied_to_clipboard: The email addresses have been copied to the clipboard.
+    emails_copy_failed: The email addresses could not be copied.
     email_copied_to_clipboard: The email address has been copied to the clipboard.
     email_copy_failed: The email address could not be copied.
+    code_copy_failed: The code could not be copied.
     lecture_search: Lecture Search
     course_search: Course Search
     immediately: immediately
@@ -3537,6 +3698,7 @@ en:
       <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
+    voucher_code: Voucher code
     speaker: Speaker
     speakers: Speakers
     mode: "Allocation Mode"
@@ -3551,7 +3713,6 @@ en:
     saved_at: "Saved %{time}"
     last_saved_at: "Last saved %{time}"
     available: "Available"
-    full: "Full"
     position: "Position"
     room: "Room"
     confirmed: "Confirmed"
@@ -3570,7 +3731,7 @@ en:
     locked: 'locked'
     all: 'free'
     users: 'only registered MaMpf users'
-    subscribers: 'only subscribers'
+    subscribers: 'only participants'
     referenced_from: 'referenced from'
     irrelevant: 'irrelevant'
   buttons:
@@ -3579,6 +3740,7 @@ en:
     create_cohort: 'Create Group'
     edit_cohort: 'Edit Group'
     save: 'Save'
+    refresh: 'Refresh'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'
@@ -3606,6 +3768,7 @@ en:
     create_division: 'Create Division'
     create_voucher: 'Create Voucher'
     create: 'Create'
+    new: 'New'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -3634,7 +3797,6 @@ en:
     i_consent: 'I consent'
     delete_account: 'Delete Account'
     create_term: 'Create Term'
-    edit_users: 'Edit generic users (%{count})'
     close: 'Close'
     add_answer: 'Add Answer'
     create_copy: 'Create Copy'
@@ -3663,8 +3825,8 @@ en:
     open_comments: 'Reopen all closed discussions'
     join: 'Join'
     copy_to_clipboard: 'Copy to Clipboard'
-    copy_email_to_clipboard: 'Copy mail adresses to Clipboard'
     copy_email_address: 'Copy email address'
+    copy_email_addresses: 'Copy email addresses'
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successful'
@@ -3673,7 +3835,6 @@ en:
     send: 'Send'
     send_variant: 'Send'
     download: 'Download'
-    move: 'Move'
     accept: 'Accept'
     reject: 'Reject'
     dismiss: 'Dismiss'
@@ -3689,6 +3850,9 @@ en:
     self_remove_talk: Unregister from this talk
     add_to_list: 'Add to List'
     remove_from_list: 'Remove from List'
+    back_to_assessments: 'Back to Assessments'
+    create_exam: 'Create Exam'
+    edit_exam: 'Edit Exam'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -3760,7 +3924,6 @@ en:
     no_geogebra: 'There is no Geogebra applet for this medium.'
     invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
-    no_user: 'There is no user with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'
@@ -3791,16 +3954,11 @@ en:
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
-    no_tutor_in_this_lecture: You are not a tutor in this lecture.
     no_editor_or_teacher: >
       In this event series you are neither teacher nor editor.
-    no_student_status_in_lecture: >
-      In this event series you are allowed to submit.
     no_tutorials_in_lecture: >
       In this event series there are no tutorials, hence no submissions can be
       made.
-    no_assignments_in_lecture: >
-      In this event series there are no assigments yet.
     no_voucher: 'There is no voucher with this id.'
     voucher_invalid: 'This voucher is invalid.'
     become_tutor_success: >
@@ -3883,6 +4041,10 @@ en:
           attributes:
             details:
               blank: 'You need to give a text.'
+        assessment/assessment:
+          attributes:
+            lecture_id:
+              must_match_assessable_lecture: "must match the assessable's lecture"
         assignment:
           attributes:
             title:
@@ -3891,9 +4053,12 @@ en:
               blank: You need to give a title.
             deadline:
               blank: You need to give a due date.
+              in_past: Due date can't be in the past.
             deletion_date:
               blank: You need to give a deletion date.
               in_past: Deletion date can't lie in the past.
+            accepted_file_type:
+              locked_after_deadline: can't be changed after the deadline has passed.
         chapter:
           attributes:
             title:
@@ -3947,11 +4112,17 @@ en:
             content_mode:
               inclusion: 'Invalid mode.'
             term:
+              format: '%{message}'
               required: 'You need to give a term.'
               present: >
-                Term was given, but associated course is independent of terms
+                A term-independent course takes no term.
             teacher:
               required: 'You need to give a teacher.'
+            uses_exam_eligibility:
+              referenced_by_policies: >
+                cannot be disabled while a registration policy still refers to
+                this event series (%{campaigns}). Remove it there first —
+                certifications and rules are kept.
         lesson:
           attributes:
             date:
@@ -4015,6 +4186,10 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        student_performance/certification:
+          attributes:
+            status:
+              manual_cannot_be_pending: "cannot be pending for a decision made by hand"
         submission:
           lecture_not_matching: >
             The tutorial should belong to the same lecture as the assignment.
@@ -4025,6 +4200,19 @@ en:
               invalid: >
                 There is already a submission from you or the team has already
                 reached its maximal size.
+            base:
+              changed_meanwhile: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. To look at it, cancel here; you will
+                then have to upload your file again. Or save once more right
+                away if your file is the right one.
+              removed_meanwhile: >
+                Since you opened this page, somebody on your team removed the
+                file. Save again if your file is the one to hand in.
+              changed_before_removal: >
+                Since you opened this page, somebody on your team uploaded
+                %{filename} at %{time}. If that one is to go as well, remove
+                it here and save again.
         tag:
           attributes:
             notions:
@@ -4035,6 +4223,14 @@ en:
           attributes:
             lecture:
               must_be_seminar: "Talks can only be created for seminars."
+            speaker_ids:
+              graded:
+                one: >-
+                  %{names} stays on the talk: it has already been graded for
+                  them. Clear the grade first.
+                other: >-
+                  %{names} stay on the talk: it has already been graded for
+                  them. Clear the grade first.
             title:
               blank: You need to give a title.
         term:
@@ -4063,6 +4259,7 @@ en:
             lecture:
               does_not_match_tutorial: does not match the tutorial's lecture.
         user:
+          admin_rights_lost: 'You are no longer an admin, so nothing was saved.'
           attributes:
             consents:
               accepted: 'You need to accept the privacy policy to create an account.'
@@ -4087,8 +4284,6 @@ en:
             role:
               only_one_active: >
                 There can be only one active voucher of this type for the lecture.
-              speaker_vouchers_only_for_seminars: >
-                Speaker vouchers are only allowed for seminars.
               invalid_for_lecture: >
                 This role is not available for this lecture.
         watchlist_entry:

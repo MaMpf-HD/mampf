@@ -9,11 +9,11 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
         .to eq("Localized description")
     end
 
-    it "falls back to the default title when the description is blank" do
+    it "falls back to a title naming what the campaign allocates" do
       campaign = build(:registration_campaign, description: "  ")
 
       expect(helper.student_registration_campaign_title(campaign))
-        .to eq(I18n.t("registration.user_registration.campaign_main"))
+        .to eq(I18n.t("registration.user_registration.campaign_title.tutorials"))
     end
   end
 
@@ -106,11 +106,36 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
         expect(row[:field].call(cohort)).to eq("Group A")
       end
     end
-  end
 
-  describe "#nullable_capacity_display" do
-    it { expect(helper.nullable_capacity_display(nil)).to eq("∞") }
-    it { expect(helper.nullable_capacity_display(10)).to eq("10") }
+    describe "Exam config" do
+      let(:exam) do
+        create(:exam, lecture: lecture, location: "Lecture Hall 1",
+                      date: Time.zone.local(2026, 4, 10, 9, 30))
+      end
+
+      it "defines two rows" do
+        expect(config["Exam"].size).to eq(2)
+      end
+
+      it "evaluates date and location fields" do
+        expect(config["Exam"][0][:header]).to eq("basics.date")
+        expect(config["Exam"][0][:field].call(exam)).to include("09:30")
+        expect(config["Exam"][1][:header]).to eq("basics.location")
+        expect(config["Exam"][1][:field].call(exam)).to eq("Lecture Hall 1")
+      end
+
+      it "leaves out a date an oral exam does not have" do
+        oral = create(:exam, :oral, lecture: lecture)
+
+        expect(config["Exam"][0][:field].call(oral)).to be_nil
+      end
+    end
+
+    it "covers every type that can be registered for" do
+      registerable = [Tutorial, Talk, Cohort, Exam].map(&:name)
+
+      expect(config.keys).to match_array(registerable)
+    end
   end
 
   describe "metadata icons" do
@@ -150,18 +175,110 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     end
   end
 
+  describe "#sorted_student_registration_items" do
+    it "puts talk 2 before talk 10" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :preference_based, campaignable: seminar)
+      talks = (1..10).map { |position| create(:talk, lecture: seminar, position: position) }
+      items = talks.reverse.map do |talk|
+        create(:registration_item, registration_campaign: campaign, registerable: talk)
+      end
+
+      sorted = helper.sorted_student_registration_items(items)
+
+      expect(sorted.map { |item| item.registerable.position }).to eq((1..10).to_a)
+    end
+
+    it "keeps a full talk in its place" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, :open,
+                        campaignable: seminar)
+      items = [nil, 0, nil].each_with_index.map do |capacity, index|
+        talk = create(:talk, lecture: seminar, position: index + 1, capacity: capacity)
+        create(:registration_item, registration_campaign: campaign, registerable: talk)
+      end
+
+      sorted = helper.sorted_student_registration_items(items.reverse)
+
+      expect(items.second.still_has_capacity?).to be(false)
+      expect(sorted.map { |item| item.registerable.position }).to eq([1, 2, 3])
+    end
+
+    it "puts talks before cohorts, whatever the labels are called" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: seminar)
+      cohort = create(:registration_item, registration_campaign: campaign,
+                                          registerable: create(:cohort, context: seminar))
+      talk = create(:registration_item, registration_campaign: campaign,
+                                        registerable: create(:talk, lecture: seminar, position: 1))
+
+      expect(helper.sorted_student_registration_items([cohort, talk])).to eq([talk, cohort])
+    end
+
+    it "puts tutorial 2 before tutorial 10" do
+      lecture = create(:lecture)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+      items = ["Gruppe 10", "Gruppe 2"].map do |title|
+        create(:registration_item, registration_campaign: campaign,
+                                   registerable: create(:tutorial, lecture: lecture, title: title))
+      end
+
+      sorted = helper.sorted_student_registration_items(items)
+
+      expect(sorted.map { |item| item.registerable.title }).to eq(["Gruppe 2", "Gruppe 10"])
+    end
+  end
+
+  describe "#student_registration_instruction" do
+    it "asks for a talk in a first come, first served talk campaign" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: seminar)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:talk, lecture: seminar))
+
+      expect(helper.student_registration_instruction(campaign, campaign.registration_items))
+        .to eq(I18n.t("registration.user_registration.first_come_first_served_instruction_talk"))
+    end
+
+    it "does not speak of talks when the campaign mixes talks and cohorts" do
+      seminar = create(:seminar)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: seminar)
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:talk, lecture: seminar))
+      create(:registration_item, registration_campaign: campaign,
+                                 registerable: create(:cohort, context: seminar))
+
+      expect(helper.student_registration_instruction(campaign, campaign.registration_items))
+        .to eq(I18n.t("registration.user_registration.first_come_first_served_instruction"))
+    end
+  end
+
+  describe "#option_fill_percent" do
+    it "has no bar for a group without a limit" do
+      expect(helper.option_fill_percent(nil, 4)).to be_nil
+    end
+
+    it "fills the bar by the share of places taken" do
+      expect(helper.option_fill_percent(20, 12)).to eq(60)
+    end
+
+    it "fills the bar no further than full, even when overbooked" do
+      expect(helper.option_fill_percent(10, 12)).to eq(100)
+    end
+  end
+
   describe "#format_date" do
     let(:timestamp) { Time.zone.local(2026, 5, 2, 17, 45) }
 
     it "uses the English student registration format" do
       I18n.with_locale(:en) do
-        expect(helper.format_date(timestamp)).to eq("May 2, 17h45")
+        expect(helper.format_date(timestamp)).to eq("May 2, 2026, 17:45")
       end
     end
 
     it "uses the German student registration format" do
       I18n.with_locale(:de) do
-        expect(helper.format_date(timestamp)).to eq("2. Mai, 17h45")
+        expect(helper.format_date(timestamp)).to eq("2. Mai 2026, 17:45")
       end
     end
   end

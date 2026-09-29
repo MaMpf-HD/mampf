@@ -1,0 +1,74 @@
+<%# The term-dependent dashboard sections. Rendered on the initial page and
+    swapped in place via Turbo Stream when the semester picker changes
+    (dashboard/terms/show.turbo_stream.erb) or a card is removed
+    (BoardRenderer#render_board), so the wrapper keeps its id. %>
+<div id="dashboardLectureCards" class="container-md small-width mb-3">
+  <%= render(DashboardSectionComponent.new(
+               title: t(@board.staff_lectures.any? ? "main.start.sections.staff" :
+                                                     "main.start.sections.staff_note_only"),
+               testid: "dashboard-staff-lectures")) do %>
+    <% @board.staff_lectures.each do |lecture| %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    term: @selected_term,
+                    activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture),
+                    section: :staff)) %>
+    <% end %>
+    <%= render(StaffPostItComponent.new(user: current_user)) %>
+  <% end %>
+
+  <%= render(DashboardSectionComponent.new(
+               title: t("main.start.sections.tutor"),
+               testid: "dashboard-tutored-lectures")) do %>
+    <% @board.tutored_lectures.each do |lecture| %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    term: @selected_term,
+                    activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture),
+                    section: :tutor)) %>
+    <% end %>
+  <% end %>
+
+  <%= render(DashboardSectionComponent.new(
+               title: t("main.start.sections.enrolled"),
+               testid: "dashboard-enrolled-lectures")) do %>
+    <% @board.enrolled_lectures.each do |lecture| %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    term: @selected_term,
+                    activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture))) %>
+    <% end %>
+  <% end %>
+
+  <%= render(DashboardSectionComponent.new(
+               title: t("main.start.sections.bookmarked"),
+               testid: "dashboard-bookmarked-lectures")) do %>
+    <% @board.bookmarked_lectures.each do |lecture| %>
+      <%= render(LectureDashboardCardComponent.new(
+                    lecture: lecture,
+                    user: current_user,
+                    term: @selected_term,
+                    activity: @board.lecture_activity,
+                    talks: @board.talks_for(lecture),
+                    section: :bookmarked)) %>
+    <% end %>
+  <% end %>
+
+  <% if @board.empty? %>
+    <%= tag.div id: "dashboardEmptyState",
+                class: "text-center text-muted my-5",
+                data: { testid: "dashboard-empty-state" } do %>
+      <p class="mb-0">
+        <% key = current_user.teacher? ? "no_lectures_teacher" : "no_lectures" %>
+        <%= @selected_term ? t("main.start.#{key}", term: @selected_term.to_label) :
+                             t("main.start.#{key}_any_term") %>
+      </p>
+    <% end %>
+  <% end %>
+</div>

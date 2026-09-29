@@ -19,7 +19,6 @@ test.describe("getting out of a registration process", () => {
   ): Promise<Setup> {
     const lecture = await factory.create("lecture", [], {
       teacher_id: teacherId,
-      locale: "en",
     });
     const campaign = await factory.create(
       "registration_campaign", ["first_come_first_served"],
@@ -49,8 +48,9 @@ test.describe("getting out of a registration process", () => {
     return { lecture, campaign, tutorials, items };
   }
 
-  function tile(page: Page, title: string) {
-    return page.getByTestId("group-tile").filter({ hasText: title });
+  function groupRow(page: Page, title: string) {
+    return page.getByRole("listitem")
+      .filter({ has: page.getByRole("heading", { name: title, exact: true }) });
   }
 
   function noCampaignSection(page: Page) {
@@ -121,23 +121,23 @@ test.describe("getting out of a registration process", () => {
       // the group that was registered for is pinned, the other one is not. A
       // blocked button keeps its place in the tab order, so its name carries
       // the reason - the tooltip on the wrapper is mouse-only.
-      const pinned = tile(page, "Monday Tutorial");
+      const pinned = groupRow(page, "Monday Tutorial");
       await expect(
         pinned.getByRole("button", {
-          name: "Remove from registration process: Cannot be removed because students "
-            + "have already registered for it.",
+          name: "Remove from registration process: Monday Tutorial. Cannot be removed "
+            + "because students have already registered for it.",
           exact: true,
         }),
       ).toBeDisabled();
       await expect(
-        pinned.getByRole("button", { name: "Delete group completely:" }),
+        pinned.getByRole("button", { name: "Delete group completely: Monday Tutorial." }),
       ).toBeDisabled();
       // deleting the group inherits the reason the item cannot leave the process
       await expect(
         pinned.getByTitle("Cannot be removed because students have already registered for it."),
       ).toHaveCount(2);
       await expect(
-        tile(page, "Tuesday Tutorial")
+        groupRow(page, "Tuesday Tutorial")
           .getByRole("link", { name: "Remove from registration process" }),
       ).toBeVisible();
     });
@@ -151,7 +151,7 @@ test.describe("getting out of a registration process", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await expect(noCampaignSection(page).getByText("Monday Tutorial")).toBeHidden();
 
-      await tile(page, "Monday Tutorial")
+      await groupRow(page, "Monday Tutorial")
         .getByRole("link", { name: "Remove from registration process" }).click();
 
       await expect(page.getByText(
@@ -170,7 +170,7 @@ test.describe("getting out of a registration process", () => {
       page.on("dialog", dialog => dialog.accept());
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      await tile(page, "Monday Tutorial")
+      await groupRow(page, "Monday Tutorial")
         .getByRole("link", { name: "Delete group completely" }).click();
 
       await expect(page.getByText("Group deleted successfully.")).toBeVisible();
@@ -190,7 +190,7 @@ test.describe("getting out of a registration process", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
 
       // a running process needs a group, so both actions are barred - and say so
-      const onlyGroup = tile(page, "Monday Tutorial");
+      const onlyGroup = groupRow(page, "Monday Tutorial");
       await expect(
         onlyGroup.getByRole("button", { name: "Remove from registration process" }),
       ).toBeDisabled();
@@ -205,7 +205,7 @@ test.describe("getting out of a registration process", () => {
       )).toBeVisible();
       expect(await campaign.__call("status")).toBe("draft");
 
-      await tile(page, "Monday Tutorial")
+      await groupRow(page, "Monday Tutorial")
         .getByRole("link", { name: "Delete group completely" }).click();
 
       await expect(page.getByText("Group deleted successfully.")).toBeVisible();
@@ -220,7 +220,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const talks = [];
       for (const title of ["First Talk", "Second Talk"]) {
@@ -291,7 +290,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const talk = await factory.create("talk", [], {
         lecture_id: lecture.id, title: "Nobody's Talk",
@@ -323,8 +321,8 @@ test.describe("getting out of a registration process", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("link", { name: "Delete", exact: true }).first().click();
 
-      // a teacher is no admin, so the administration path sends them to the start
-      await expect(page).toHaveURL(/:\d+\/$/);
+      // a teacher is no admin, so they are sent to the start page
+      await expect(page).toHaveURL(/:3145\/$/);
       expect(confirmation).toContain("1 registration process with 1 registration");
     });
 
@@ -334,7 +332,6 @@ test.describe("getting out of a registration process", () => {
     async ({ factory, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", ["is_seminar"], {
         teacher_id: user.id,
-        locale: "en",
       });
       const campaign = await factory.create(
         "registration_campaign", ["first_come_first_served"],
@@ -359,10 +356,10 @@ test.describe("getting out of a registration process", () => {
       page.on("dialog", dialog => dialog.accept());
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      await tile(page, "Nobody's Talk")
-        .getByRole("link", { name: "Delete", exact: true }).click();
+      await groupRow(page, "Nobody's Talk")
+        .getByRole("link", { name: "Delete: Nobody's Talk", exact: true }).click();
 
-      // gone from the group tiles and from the seminar's content list above them
+      // gone from the group rows and from the seminar's content list above them
       await expect(page.getByText("Nobody's Talk")).toHaveCount(0);
       expect(await lecture.__call("talks")).toHaveLength(0);
     });
@@ -377,7 +374,7 @@ test.describe("getting out of a registration process", () => {
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
 
-      const occupied = tile(page, "Monday Tutorial");
+      const occupied = groupRow(page, "Monday Tutorial");
       await expect(
         occupied.getByRole("button", { name: "Delete group completely" }),
       ).toBeDisabled();
@@ -386,7 +383,7 @@ test.describe("getting out of a registration process", () => {
       ).toBeVisible();
       // taking it out of the process is still allowed - that loses nothing
       await expect(
-        tile(page, "Monday Tutorial")
+        groupRow(page, "Monday Tutorial")
           .getByRole("link", { name: "Remove from registration process" }),
       ).toBeVisible();
     });
