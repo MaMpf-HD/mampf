@@ -200,6 +200,20 @@ RSpec.describe("StudentMessages", type: :request) do
 
         expect(flash[:alert]).to eq(I18n.t("student_message.no_audience"))
       end
+
+      it "sends to those registered for their group while its registration runs" do
+        item = create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+        registrant = create(:confirmed_user)
+        create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                            registration_item: item,
+                                                            user: registrant)
+
+        expect do
+          send_message(audiences: ["item:#{item.id}:provisional"])
+        end.to change(StudentMessage, :count).by(1)
+
+        expect(StudentMessage.last.recipient_emails).to eq([registrant.email])
+      end
     end
 
     # The edit right is inherited from the course, and staff status with it.
@@ -349,7 +363,7 @@ RSpec.describe("StudentMessages", type: :request) do
 
       get lecture_tutorials_path(lecture, tutorial: tutorial.id)
 
-      expect(response.body).to include(I18n.t("assignment.nothing_yet_in_lecture").strip)
+      expect(response.body).to include(I18n.t("tutorial.participants.title"))
       expect(response.body).to include(I18n.t("student_message.tutorial.button"))
     end
   end

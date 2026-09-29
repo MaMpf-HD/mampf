@@ -3341,8 +3341,6 @@ de:
     file_format: Abgabeformat
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
-    nothing_yet_in_lecture: >
-      In dieser Vorlesung war bisher noch nichts abzugeben.
     deletion_date: Löschdatum
     destruction_info:
       <i>
@@ -3356,6 +3354,17 @@ de:
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
   tutorial:
+    participants:
+      option: "Teilnehmende"
+      title: "Teilnehmende"
+      none: "In dieser Gruppe ist noch niemand."
+      registered_title: "Angemeldet, noch nicht endgültig"
+      registered_hint: >
+        Sie kommen in die Gruppe, sobald die Anmeldung „%{campaign}“
+        abgeschlossen ist. Bis dahin können sich Anmeldungen noch ändern.
+      allocation_pending: >
+        Die Anmeldung „%{campaign}“ teilt die Gruppen nach ihrem Ende
+        (%{deadline}) zu; bis dahin steht nicht fest, wer in diese Gruppe kommt.
     title_placeholder: "z. B. Mo 14–16"
     location_placeholder: "z. B. SR 3"
     no_tutorials_yet: >

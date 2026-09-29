@@ -32,6 +32,13 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_item
 
+    # Items of a campaign that has opened and is not finalized yet: its groups'
+    # rosters are still empty, the registrations say who will be in them.
+    scope :running, lambda {
+      joins(:registration_campaign)
+        .merge(Registration::Campaign.where(status: [:open, :closed, :processing]))
+    }
+
     validates :registerable_id,
               uniqueness: {
                 scope: :registerable_type
@@ -115,6 +122,16 @@ module Registration
 
     def confirmed_user_ids
       user_registrations.confirmed.pluck(:user_id)
+    end
+
+    # Who the group will hold once the campaign is finalized, as far as that is
+    # decided: the confirmed registrations. Nil while a preference campaign has
+    # not allocated, since a wish does not say who gets in.
+    def provisional_users
+      campaign = registration_campaign
+      return if campaign.preference_based? && campaign.last_allocation_calculated_at.nil?
+
+      User.where(id: user_registrations.confirmed.select(:user_id))
     end
 
     # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial

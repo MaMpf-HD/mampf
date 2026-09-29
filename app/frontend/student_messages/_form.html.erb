@@ -4,10 +4,16 @@
   `return_to` is where the page was, so a send lands back on it.
 %>
 
+<%#
+  A tutor's page may hold two of these forms, one per audience; the namespace
+  keeps their field ids, and with them the labels, apart.
+%>
+
 <%= form_with model: StudentMessage.new,
               url: lecture_student_messages_path(lecture),
               method: :post,
               local: true,
+              namespace: fixed_audience&.key&.parameterize,
               html: { multipart: true },
               data: (catalog ? { controller: "audience-picker",
                                  audience_picker_url_value:
@@ -145,7 +151,8 @@
   </div>
 
   <%= render partial: "student_messages/recipients",
-             locals: { emails: (catalog ? catalog.everyone : fixed_audience).emails } %>
+             locals: { emails: (catalog ? catalog.everyone : fixed_audience).emails,
+                       picker: catalog.present? } %>
 
   <% if catalog %>
     <p

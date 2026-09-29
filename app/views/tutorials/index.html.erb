@@ -2,7 +2,15 @@
   <div class="jumbotron">
     <%= t('tutorial.no_tutorials_yet') %>
   </div>
-<% elsif @assignments.present? || @achievements.present? %>
+<% elsif @participants %>
+  <%# A first word to the group comes before the first sheet. %>
+  <%= render partial: 'tutorials/header_index',
+             locals: { assignment: nil, assignments: @assignments,
+                       achievement: nil, achievements: @achievements,
+                       tutorials: @tutorials, grading_scope: @tutorial,
+                       tutorial: @tutorial, stack: nil } %>
+  <%= render TutorialParticipantsComponent.new(tutorial: @tutorial) %>
+<% else %>
 <div>
   <div class="row">
     <div class="col-12">
@@ -31,15 +39,6 @@
     <% end %>
   </div>
 </div>
-<% else %>
-  <%# A first word to the group comes before the first sheet. %>
-  <div class="d-flex flex-wrap align-items-end gap-3 m-3">
-    <%= render partial: 'tutorials/group_columns',
-               locals: { tutorials: @tutorials, tutorial: @tutorial } %>
-  </div>
-  <div class="jumbotron">
-    <%= t('assignment.nothing_yet_in_lecture') %>
-  </div>
 <% end %>
 <%= render partial: 'shared/generic_modal',
            locals: { sort: 'validateCertificate',

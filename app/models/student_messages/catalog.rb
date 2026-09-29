@@ -134,9 +134,27 @@ module StudentMessages
       end
 
       def registrations
-        return [] unless staff?
+        return tutor_registrations unless staff?
 
         running_campaigns.flat_map { |campaign| campaign_audiences(campaign) }
+      end
+
+      # A tutor reaches those registered for their group while its roster is
+      # still to be filled - as far as the registration has decided who gets
+      # in, so nobody before a preference campaign has allocated.
+      def tutor_registrations
+        tutored = @sender.given_tutorials.where(lecture: @lecture)
+        Registration::Item.running.where(registerable: tutored)
+                          .preload(:registerable, :registration_campaign)
+                          .filter_map do |item|
+          users = item.provisional_users
+          next unless users
+
+          audience("item:#{item.id}:provisional",
+                   I18n.t("student_message.audiences.provisional",
+                          group: item.registerable.title),
+                   :registrations, users)
+        end
       end
 
       def running_campaigns

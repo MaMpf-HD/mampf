@@ -1,7 +1,9 @@
 <%# Who a selection reaches: the send button and the addresses to copy. %>
+<%# The id is where the staff's picker sends a new count; a tutor's forms have none. %>
+<%# locals: (emails:, picker: false) %>
 
 <div
-  id="student-message-recipients"
+  <%= tag.attributes(id: ("student-message-recipients" if picker)) %>
   class="d-flex align-items-center flex-wrap gap-2"
   data-testid="student-mail-recipients"
 >

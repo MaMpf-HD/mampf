@@ -3122,8 +3122,6 @@ en:
     file_format: Submission format
   assignment:
     expired: The due date has expired.
-    nothing_yet_in_lecture: >
-      In this lecture nothing had yet to be submitted.
     deletion_date: Deletion date
     destruction_info: >
       <i>
@@ -3137,6 +3135,17 @@ en:
         In order to change things please edit the publication settings for the
         medium.
   tutorial:
+    participants:
+      option: "Participants"
+      title: "Participants"
+      none: "Nobody is in this group yet."
+      registered_title: "Registered, not final yet"
+      registered_hint: >
+        They join the group when the registration "%{campaign}" is finalized.
+        Until then, registrations can still change.
+      allocation_pending: >
+        The registration "%{campaign}" allocates the groups after its deadline
+        (%{deadline}); until then it is open who will be in this group.
     title_placeholder: "e.g. Mon 14–16"
     location_placeholder: "e.g. SR 3"
     no_tutorials_yet: >

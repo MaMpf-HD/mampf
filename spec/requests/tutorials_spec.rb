@@ -144,6 +144,52 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/tutorials, the group's participants" do
+    let(:member) { create(:confirmed_user, first_name: "Ada", last_name: "Lovelace") }
+
+    before do
+      create(:tutorial_membership, tutorial: tutorial, user: member)
+      sign_in tutor
+    end
+
+    def body
+      Nokogiri::HTML(response.body)
+    end
+
+    it "shows them before the lecture has a sheet" do
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      expect(body.at_css("[data-testid='tutorial-participants']").text).to include("Ada Lovelace")
+    end
+
+    it "offers them next to the sheets once there are some, and keeps them on a change of group" do
+      create(:assignment, lecture: lecture)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+      options = body.css("#assignment-select option").map { |option| option.text.strip }
+      expect(options).to include(I18n.t("tutorial.participants.option"))
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
+      expect(body.at_css("[data-testid='tutorial-participants']").text).to include("Ada Lovelace")
+      expect(body.css("tr.submission-row")).to be_empty
+    end
+
+    # The group is filled when the registration is finalized; until then its
+    # tutor writes to those registered so far, and the button says so.
+    it "offers a mail to those registered while the registration runs" do
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+      item = create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: item)
+      campaign.update!(status: :open)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      expect(response.body).to include(I18n.t("student_message.tutorial.registered_button"))
+      expect(response.body).to include("value=\"item:#{item.id}:provisional\"")
+    end
+  end
+
   describe "the marking table's queries" do
     def count_queries
       count = 0
