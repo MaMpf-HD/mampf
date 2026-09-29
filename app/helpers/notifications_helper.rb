@@ -75,7 +75,7 @@ module NotificationsHelper
     elsif notification.course?
       course_notification_card_link
     elsif notification.lecture?
-      lecture_notification_card_link
+      lecture_notification_card_link(notifiable)
     elsif notification.redemption?
       redemption_notification_details(notifiable)
     else

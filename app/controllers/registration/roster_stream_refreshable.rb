@@ -19,15 +19,21 @@ module Registration
               loading: "lazy"
             )
           ),
-          turbo_stream.replace(
-            "roster_participants_panel",
-            view_context.turbo_frame_tag(
-              "roster_participants_panel",
-              src: view_context.lecture_roster_participants_path(lecture),
-              loading: "lazy"
-            )
-          )
+          participants_reload_stream(lecture)
         ]
+      end
+
+      # Replaces the participants tab with its lazy frame, so the tab reloads
+      # when next shown instead of listing the memberships from before.
+      def participants_reload_stream(lecture)
+        turbo_stream.replace(
+          "roster_participants_panel",
+          view_context.turbo_frame_tag(
+            "roster_participants_panel",
+            src: view_context.lecture_roster_participants_path(lecture),
+            loading: "lazy"
+          )
+        )
       end
   end
 end

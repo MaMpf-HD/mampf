@@ -83,6 +83,52 @@ test.describe("the group rows", () => {
       await expect(title).toHaveAttribute("aria-expanded", "true");
     });
 
+  test("show a student removed from a group as unplaced and without group",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
+      const campaign = await factory.create("registration_campaign",
+        ["completed", "first_come_first_served"], {
+          campaignable_id: lecture.id,
+          campaignable_type: "Lecture",
+        });
+      const tutorial = await factory.create("tutorial", [], {
+        lecture_id: lecture.id, title: "Mo 10", capacity: 8,
+      });
+      const item = await factory.create("registration_item", [], {
+        registration_campaign_id: campaign.id,
+        registerable_type: "Tutorial",
+        registerable_id: tutorial.id,
+      });
+      await factory.create("registration_user_registration", ["confirmed"], {
+        user_id: student.user.id,
+        registration_campaign_id: campaign.id,
+        registration_item_id: item.id,
+      });
+      await factory.create("lecture_membership", [], {
+        lecture_id: lecture.id, user_id: student.user.id,
+      });
+      await tutorial.__call("add_user_to_roster!", student.user);
+
+      await page.goto(`/lectures/${lecture.id}/edit`);
+      await page.getByRole("tab", { name: "Participants" }).click();
+      const participant = page.getByRole("row").filter({
+        has: page.getByRole("button", { name: `Copy email address: ${student.user.email}` }),
+      });
+      await expect(participant.getByRole("link", { name: "Mo 10" })).toBeVisible();
+
+      await page.getByRole("tab", { name: "Groups" }).click();
+      await expect(page.getByRole("button", { name: /unplaced/ })).toHaveCount(0);
+      await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
+      page.once("dialog", dialog => dialog.accept());
+      await page.getByRole("complementary", { name: "Participants" })
+        .getByRole("button", { name: /from this group/ }).click();
+
+      await expect(page.getByRole("button", { name: /1 unplaced/ })).toBeVisible();
+
+      await page.getByRole("tab", { name: "Participants" }).click();
+      await expect(participant).toContainText("Without group");
+    });
+
   test("move a student to another tutorial without dragging",
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });

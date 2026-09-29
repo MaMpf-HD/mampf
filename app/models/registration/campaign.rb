@@ -239,7 +239,7 @@ module Registration
       user_registrations.where.not(status: :rejected)
                         .includes(:user, :registration_item)
                         .joins(:user)
-                        .order("users.name")
+                        .merge(User.by_last_name)
                         .group_by(&:user)
     end
 

@@ -149,7 +149,6 @@ en:
       export_stats: 'Export statistics'
       users: 'User administration'
       course: 'Course'
-      profile: 'My Profile'
     catalog:
       info:
         locked_medium: 'This medium is locked.'
@@ -184,10 +183,8 @@ en:
       my_media: 'My Media'
       media_restriction_html: >
         Only the last 25 recently updated media are shown.
-        You can find more by doing a %{media_search} or in your
-        %{profile}.
+        You can find more by doing a %{media_search}.
       media_search: 'Media Search'
-      user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
       other_lectures: 'Other event series'
@@ -593,8 +590,7 @@ en:
           voucher to the user outside of MaMpf. The user can then redeem the
           voucher in their profile settings and will become a lecture editor.
         subscribers_count: >
-          This is the number of all users subscribed to this event series in
-          their profile settings.
+          This is the number of all users who have bookmarked this event series.
         organizational: >
           If you check this box, the general information will be visible for
           all subscribers of your event series (it can be accessed via
@@ -1904,7 +1900,6 @@ en:
       edit: 'Edit Division'
       name: 'Title'
       new: 'Create new division'
-      no_courses: 'There are no courses in this division yet.'
     tutorial:
       new: 'Add tutorial'
     assignment:
@@ -1936,10 +1931,8 @@ en:
       If you leave this field empty, your display name will be used for that.
     change_data: 'Change login data'
     delete_account: 'Delete Account'
-    courses: 'Courses'
     primary_lecture: 'Primary event series'
     secondary_lectures: 'Secondary event series'
-    no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
     content_info: >
       With the tag graph, you can search for keywords and see related content.
@@ -1982,6 +1975,11 @@ en:
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    teacher_profile:
+      title: "What students see about you"
+      explainer: >-
+        Your homepage and picture appear on your teacher page, which your lectures link to.
+      remove_image: "Remove the picture"
     changes_made_btn: >
       Click here to save your changes.
     email_for_submissions: >
@@ -2108,16 +2106,19 @@ en:
     course_selection: 'Course selection'
     new_course: 'New course %{title}'
     new_course_created_html: 'New course created:<br>%{title}'
-    subscribe_course: 'You can subscribe it via your profile.'
-    subscribe_course_html: 'You can subscribe it via your %{profile}.'
+    subscribe_course: 'You can find its event series in the lecture search on your dashboard.'
+    subscribe_course_html: 'You can find its event series in %{dashboard}.'
     profile: 'profile'
-    goto_profile: "Visit your profile"
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
-    subscribe_lecture: 'You can subscribe it via your profile.'
-    subscribe_lecture_html: 'You can subscribe it via your %{profile}.'
+    subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
+    subscribe_lecture_html: 'You can find it in %{dashboard}.'
+    subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
+    subscribe_lecture_in_term_html: 'You can find it in %{dashboard} under %{term}.'
+    dashboard_search: 'the lecture search on your dashboard'
+    goto_dashboard_search: 'Go to the lecture search'
     new_lecture_created_html: >
       New event series created:<br>
       %{title} (%{term}, %{teacher})
@@ -3288,14 +3289,14 @@ en:
       Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
-    subscribe_lecture: 'You can subscribe to it in your profile settings.'
+    subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
     subscribe_lecture_text: >
-      You can subscribe to it in your profile settings.
+      You can find it in the lecture search on your dashboard.
+    subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
+    subscribe_lecture_in_term_text: >
+      You can find it in the lecture search on your dashboard under %{term}.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
-    subscribe_course: 'You can subscribe to it in your profile settings.'
-    subscribe_course_text: >
-      You can subscribe to it in your profile settings.
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
     submission_invitation_html: >
@@ -3655,9 +3656,11 @@ en:
     as: as
     as_file_type: as %{type} file
     code_copied_to_clipboard: Code has been copied to the clipboard.
-    emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    emails_copied_to_clipboard: The email addresses have been copied to the clipboard.
+    emails_copy_failed: The email addresses could not be copied.
     email_copied_to_clipboard: The email address has been copied to the clipboard.
     email_copy_failed: The email address could not be copied.
+    code_copy_failed: The code could not be copied.
     lecture_search: Lecture Search
     course_search: Course Search
     immediately: immediately
@@ -3812,8 +3815,8 @@ en:
     open_comments: 'Reopen all closed discussions'
     join: 'Join'
     copy_to_clipboard: 'Copy to Clipboard'
-    copy_email_to_clipboard: 'Copy mail adresses to Clipboard'
     copy_email_address: 'Copy email address'
+    copy_email_addresses: 'Copy email addresses'
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successful'
@@ -4100,9 +4103,10 @@ en:
             content_mode:
               inclusion: 'Invalid mode.'
             term:
+              format: '%{message}'
               required: 'You need to give a term.'
               present: >
-                Term was given, but associated course is independent of terms
+                A term-independent course takes no term.
             teacher:
               required: 'You need to give a teacher.'
             uses_exam_eligibility:

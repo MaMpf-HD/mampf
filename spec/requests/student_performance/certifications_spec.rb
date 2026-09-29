@@ -29,6 +29,33 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
+      context "with a rule that asks for nothing, while the list is open" do
+        before do
+          FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                            lecture: lecture)
+          FactoryBot.create(:student_performance_record,
+                            lecture: lecture, user: student,
+                            percentage_materialized: 0,
+                            points_total_materialized: 0,
+                            points_max_materialized: 100)
+          lecture.update!(assignments_complete: false)
+        end
+
+        it "names the rule and offers the sweep" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.show.no_requirement")
+          )
+          expect(response.body).to include(
+            I18n.t("student_performance.certifications.index.bulk_accept")
+          )
+          expect(response.body).not_to include(
+            I18n.t("student_performance.certifications.index.list_open")
+          )
+        end
+      end
+
       # Mid-term the screen has to say why it proposes nothing, or it reads as
       # broken rather than as "too early".
       context "while the list of assignments is open" do
@@ -56,6 +83,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
 
           expect(response.body).to include(CGI.escapeHTML(hint))
+        end
+
+        it "links to the assignments tab of the lecture's edit page" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          link = Nokogiri::HTML(response.body).at_css(
+            "a[href='#{edit_lecture_path(lecture, tab: "assessments",
+                                                  assessment_tab: "assignments")}']"
+          )
+          expect(link).to be_present
         end
 
         # Nothing could be accepted; the rule card says why and where to
@@ -281,7 +318,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
               tr.text.include?(user_a.tutorial_name)
             end
 
-            expect(row.css("td")[-3].text.strip).to be_empty
+            expect(row.at_css("td.hint-column").text.strip).to be_empty
           end
 
           it "does not call a deferred row a contradiction" do
@@ -371,6 +408,22 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture, q: "hopper")
 
           expect(listed_names).to eq(["Grace Hopper"])
+        end
+
+        it "lists the students by last name" do
+          ada.update!(first_name: "Ada", last_name: "Lovelace")
+          grace.update!(first_name: "Grace", last_name: "Hopper")
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(listed_names).to eq(["Grace Hopper", "Ada Lovelace"])
+        end
+
+        # The address is only in the copy button's tooltip.
+        it "does not match an address the table does not show" do
+          get lecture_student_performance_certifications_path(lecture, q: "cobol")
+
+          expect(listed_names).to be_empty
         end
 
         it "searches within the status that is filtered for" do
@@ -1227,6 +1280,16 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
+      it "admits everybody under a rule that asks for nothing, list open or not" do
+        rule.update!(threshold_mode: :none, min_percentage: nil)
+        lecture.update!(assignments_complete: false)
+
+        post(bulk_accept_lecture_student_performance_certifications_path(lecture))
+
+        expect(StudentPerformance::Certification.where(lecture: lecture)
+                 .pluck(:status).uniq).to eq(["passed"])
+      end
+
       it "creates certifications for all students" do
         expect do
           post(bulk_accept_lecture_student_performance_certifications_path(
@@ -1690,6 +1753,42 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response).to redirect_to(new_user_session_path)
       end
     end
+
+    context "as an editor while a running registration asks for the decisions" do
+      before { sign_in editor }
+
+      let!(:cert_b) do
+        FactoryBot.create(:student_performance_certification, :passed,
+                          lecture: lecture, user: user_b, rule: rule)
+      end
+      let!(:policy) do
+        lecture.update!(uses_exam_eligibility: true)
+        FactoryBot.create(:registration_policy, :student_performance,
+                          config: { "lecture_ids" => [lecture.id.to_s] })
+      end
+
+      it "rewrites nothing and names the registration" do
+        post bulk_reevaluate_lecture_student_performance_certifications_path(lecture)
+
+        expect(cert_b.reload.status).to eq("passed")
+        expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
+      it "offers the reconcile disabled and says why on the page" do
+        get lecture_student_performance_certifications_path(lecture)
+
+        label = I18n.t("student_performance.certifications.index.reevaluate")
+        reconcile = Nokogiri::HTML(response.body).css("button").find do |button|
+          button.text.strip == label
+        end
+        expect(reconcile["disabled"]).not_to be_nil
+        expect(response.body).not_to include(
+          bulk_reevaluate_lecture_student_performance_certifications_path(lecture)
+        )
+        note = Nokogiri::HTML(response.body).at_css("##{reconcile["aria-describedby"]}")
+        expect(note.text).to include(policy.registration_campaign.campaignable.title)
+      end
+    end
   end
 
   describe "POST /lectures/:lecture_id/performance/certifications/bulk_confirm_manual" do
@@ -1902,6 +2001,51 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(response).to redirect_to(
           lecture_student_performance_certifications_path(lecture)
         )
+        remaining = StudentPerformance::Certification.where(lecture: lecture)
+        expect(remaining).to contain_exactly(manual)
+      end
+
+      # A running registration reads these decisions; resetting them would
+      # block its students at the next screening.
+      it "refuses while a running registration asks for the decisions" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
+        expect(StudentPerformance::Certification.exists?(computed_passed.id)).to be(true)
+        expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
+      it "offers the sweep disabled and names the registration that holds it" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+
+        get lecture_student_performance_certifications_path(lecture)
+
+        label = I18n.t("student_performance.certifications.index.bulk_reset", count: 2)
+        reset = Nokogiri::HTML(response.body).css("button").find do |button|
+          button.text.strip == label
+        end
+        expect(reset["disabled"]).not_to be_nil
+        expect(response.body).not_to include(
+          bulk_reset_lecture_student_performance_certifications_path(lecture)
+        )
+        expect(response.body).to include(
+          CGI.escapeHTML(policy.registration_campaign.campaignable.title)
+        )
+      end
+
+      it "is not held up by a completed registration" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+        policy.registration_campaign.update!(status: :completed)
+
+        post bulk_reset_lecture_student_performance_certifications_path(lecture)
+
         remaining = StudentPerformance::Certification.where(lecture: lecture)
         expect(remaining).to contain_exactly(manual)
       end

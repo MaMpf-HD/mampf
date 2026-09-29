@@ -194,7 +194,6 @@ de:
       export_stats: 'Statistiken exportieren'
       users: 'Nutzerverwaltung'
       course: 'Modul'
-      profile: 'Mein Profil'
     catalog:
       info:
         locked_medium: 'Dieses Medium ist gesperrt.'
@@ -233,10 +232,8 @@ de:
       my_media: 'Meine Medien'
       media_restriction_html: >
         Es werden nur die 25 zuletzt upgedateten Medien angezeigt.
-        Mehr Medien findest Du über die %{media_search} oder in Deinen
-        %{profile}.
+        Mehr Medien findest Du über die %{media_search}.
       media_search: 'Mediensuche'
-      user_profile: 'Nutzerprofil'
       no_media: >
         Es gibt keine Medien, für die Du als EditorIn eingetragen bist.
       other_lectures: 'Sonstige Veranstaltungen'
@@ -675,8 +672,8 @@ de:
           Die Person kann dann den Gutschein auf ihrer Profilseite einlösen
           und wird dadurch zusätzliche VeranstaltungseditorIn.
         subscribers_count: >
-          Das ist die Zahl aller NutzerInnen, die diese
-          Veranstaltung in ihrem Profil abonniert haben.
+          Das ist die Zahl aller NutzerInnen, die diese Veranstaltung gemerkt
+          haben.
         organizational: >
           Wenn Du diesen Haken setzt, wird in der
           Sidebar der Punkt Organisatorisches für alle Studierenden
@@ -2083,7 +2080,6 @@ de:
       edit: 'Teilbereich bearbeiten'
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
-      no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
     tutorial:
       new: 'Neues Tutorium anlegen'
     assignment:
@@ -2116,10 +2112,8 @@ de:
       Dieser Name wird Deinem Tutor bei Deinen Abgaben angezeigt. Wenn
       Du dieses Feld leerlässt, wird dafür der Anzeigename verwendet.
     change_data: 'Zugangsdaten ändern'
-    courses: 'Module'
     primary_lecture: 'Primäre Veranstaltung'
     secondary_lectures: 'Weitere Veranstaltungen'
-    no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Veranstaltungen.'
     passphrase: 'Zugangsschlüssel'
     content_info: >
       Mit dem Tag-Graphen kannst du nach Stichwörtern suchen und verknüpfte
@@ -2164,6 +2158,12 @@ de:
     changes_made: >
       Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
       damit die Änderungen wirksam werden.
+    teacher_profile:
+      title: "Was Studierende über Dich sehen"
+      explainer: >-
+        Deine Homepage und Dein Foto erscheinen auf Deiner Seite als lehrende Person, auf
+        die Deine Veranstaltungen verlinken.
+      remove_image: "Foto entfernen"
     changes_made_btn: >
       Klicke hier, um Deine Änderungen zu übernehmen.
     email_for_submissions: >
@@ -2296,16 +2296,19 @@ de:
     course_selection: 'Kursangebot'
     new_course: 'Neues Modul %{title}'
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
-    subscribe_course: 'Abonniere es in Deinem Profil.'
-    subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
-    goto_profile: 'Zu Deinen Profileinstellungen'
+    subscribe_course: 'Seine Veranstaltungen findest Du in der Veranstaltungssuche auf Deinem Dashboard.'
+    subscribe_course_html: 'Seine Veranstaltungen findest Du in %{dashboard}.'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
     edit_lecture: 'Veranstaltung bearbeiten'
-    subscribe_lecture: 'Abonniere sie in Deinem Profil.'
-    subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
+    subscribe_lecture: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.'
+    subscribe_lecture_html: 'Du findest sie in %{dashboard}.'
+    subscribe_lecture_in_term: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.'
+    subscribe_lecture_in_term_html: 'Du findest sie in %{dashboard} unter %{term}.'
+    dashboard_search: 'der Veranstaltungssuche auf Deinem Dashboard'
+    goto_dashboard_search: 'Zur Veranstaltungssuche'
     new_lecture_created_html: >
       Neue Veranstaltung angelegt:<br>
       %{title} (%{term}, %{teacher})
@@ -3517,14 +3520,15 @@ de:
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
-      Du kannst sie über Deine Profileinstellungen abonnieren.
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
     subscribe_lecture_text: >
-      Du kannst sie über Deine Profileinstellungen abonnieren.
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
+    subscribe_lecture_in_term: >
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.
+    subscribe_lecture_in_term_text: >
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
-    subscribe_course: 'Du kannst es über Deine Profileinstellungen abonnieren.'
-    subscribe_course_text: >
-      Du kannst es über Deine Profileinstellungen abonnieren.
     submission_invitation_subject: >
       Einladung zu Abgabe für %{assignment} in %{lecture}
     submission_invitation_html: >
@@ -3885,9 +3889,11 @@ de:
     as: als
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
-    emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    emails_copied_to_clipboard: Die E-Mail-Adressen wurden in die Zwischenablage kopiert.
+    emails_copy_failed: Die E-Mail-Adressen konnten nicht kopiert werden.
     email_copied_to_clipboard: Die E-Mail-Adresse wurde in die Zwischenablage kopiert.
     email_copy_failed: Die E-Mail-Adresse konnte nicht kopiert werden.
+    code_copy_failed: Der Code konnte nicht kopiert werden.
     lecture_search: Veranstaltungssuche
     course_search: Modulsuche
     immediately: sofort
@@ -4040,8 +4046,8 @@ de:
     open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
     join: 'Beitreten'
     copy_to_clipboard: 'in die Zwischenablage kopieren'
-    copy_email_to_clipboard: 'E-Mail-Adressen in die Zwischenablage kopieren'
     copy_email_address: 'E-Mail-Adresse kopieren'
+    copy_email_addresses: 'E-Mail-Adressen kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
@@ -4339,10 +4345,10 @@ de:
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:
+              format: '%{message}'
               required: 'Es muss ein Semester angegeben werden.'
               present: >
-                Semester angeben, assoziiertes Modul ist jedoch
-                semesterunabhängig
+                Für ein semesterunabhängiges Modul wird kein Semester angegeben.
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
             uses_exam_eligibility:
