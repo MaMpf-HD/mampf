@@ -77,9 +77,21 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).not_to include(other_course.title)
       end
 
+      it "names each result's term when there is no term to scope to" do
+        other_term = create(:term, :winter)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Geometry", show_term: "0" } },
+            as: :turbo_stream
+
+        expect(response.body).to include("Geometry Other", other_term.to_label_short)
+      end
+
       it "searches every term when asked to, and names each result's term" do
-        current_term = create(:term, :summer, :active, year: 2025)
-        other_term = create(:term, :winter, year: 2025)
+        current_term = create(:term, :summer, :active)
+        other_term = create(:term, :winter)
         create(:lecture, course: create(:course, title: "Geometry Current"),
                          term: current_term)
         create(:lecture, course: create(:course, title: "Geometry Other"),
@@ -88,7 +100,7 @@ RSpec.describe("Lectures", type: :request) do
         get search_lectures_path,
             params: { search: { fulltext: "Geometry", term: current_term.dashboard_param,
                                 show_term: "0", all_terms: "1" } },
-            xhr: true
+            as: :turbo_stream
 
         expect(response.body).to include("Geometry Current", "Geometry Other")
         expect(response.body).to include(other_term.to_label_short)
