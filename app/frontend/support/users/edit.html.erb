@@ -1,59 +1,82 @@
 <div class="container-md py-3">
-  <%= link_to t("support.users.back"), support_users_path, class: "small" %>
+  <%= link_to t("support.users.back"), support_users_path(search: search_query), class: "small" %>
 
   <h1 class="h3 mt-2">
     <%= t("support.users.edit_title", user: @user.email) %>
   </h1>
 
-  <p class="text-muted"><%= t("support.users.edit_explainer") %></p>
+  <h2 class="h5 mt-4"><%= t("support.users.status.title") %></h2>
+  <dl class="row small" data-testid="support-account-status">
+    <dt class="col-sm-4"><%= t("support.users.status.confirmed") %></dt>
+    <dd class="col-sm-8">
+      <%= confirmation_status(@user) %>
+    </dd>
 
-  <dl class="row small">
-    <dt class="col-sm-3"><%= t("support.users.columns.email") %></dt>
-    <dd class="col-sm-9"><%= @user.email %></dd>
-    <dt class="col-sm-3"><%= t("basics.display_name") %></dt>
-    <dd class="col-sm-9"><%= @user.name %></dd>
-    <dt class="col-sm-3"><%= t("support.users.columns.program") %></dt>
-    <dd class="col-sm-9"><%= @user.program&.name_with_subject || "—" %></dd>
+    <dt class="col-sm-4"><%= t("support.users.status.locked") %></dt>
+    <dd class="col-sm-8">
+      <%= lock_status(@user) %>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.last_sign_in") %></dt>
+    <dd class="col-sm-8">
+      <%= sign_in_status(@user) %>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.password") %></dt>
+    <dd class="col-sm-8">
+      <%= t(@user.password_change_required? ? "support.users.status.password_due"
+                                             : "support.users.status.password_ok") %>
+    </dd>
+
+    <dt class="col-sm-4"><%= t("support.users.status.personal_data") %></dt>
+    <dd class="col-sm-8">
+      <%= personal_data_status(@user) %>
+    </dd>
+
+    <% if @user.deletion_date %>
+      <dt class="col-sm-4"><%= t("support.users.status.deletion") %></dt>
+      <dd class="col-sm-8"><%= l(@user.deletion_date) %></dd>
+    <% end %>
   </dl>
 
-  <%= bootstrap_form_with model: @user, url: support_user_path(@user), method: :patch,
-                          local: true do |f| %>
+  <div class="d-flex flex-wrap gap-2 mb-4">
+    <% if @user.access_locked? || @user.failed_attempts.positive? %>
+      <%= button_to t("support.users.actions.unlock"),
+                    unlock_support_user_path(@user, search: search_query),
+                    method: :patch, class: "btn btn-sm btn-outline-primary" %>
+    <% end %>
+    <%= button_to t("support.users.actions.password_reset"),
+                  password_reset_support_user_path(@user, search: search_query),
+                  class: "btn btn-sm btn-outline-primary" %>
+    <% if !@user.confirmed? || @user.pending_reconfirmation? %>
+      <%= button_to t("support.users.actions.confirmation"),
+                    confirmation_support_user_path(@user, search: search_query),
+                    class: "btn btn-sm btn-outline-primary" %>
+    <% end %>
+  </div>
+
+  <h2 class="h5"><%= t("support.users.data") %></h2>
+  <%= bootstrap_form_with model: @user,
+                          url: support_user_path(@user, search: search_query),
+                          method: :patch, local: true do |f| %>
     <%= f.alert_message t("support.users.not_saved") %>
 
-    <%= f.text_field :first_name %>
-    <%= f.text_field :last_name %>
-    <%= f.text_field :matriculation_number %>
+    <%# Required only when a person gives them; the support also saves accounts without. %>
+    <%= f.text_field :first_name, required: false %>
+    <%= f.text_field :last_name, required: false %>
+    <%= f.text_field :matriculation_number, required: false %>
+    <%= f.select :program_id, support_program_options(@user),
+                 include_blank: t("personal_data.other_program") %>
+    <%= f.text_field :uni_id %>
+    <%= f.text_field :name, label: t("basics.display_name") %>
+    <%= f.text_field :name_in_tutorials, label: t("profile.name_in_tutorials") %>
+    <%= f.email_field :email, help: t("support.users.email_hint") %>
+
+    <% if can?(:assign_support, @user) %>
+      <%= f.check_box :support, label: t("admin.user.support"),
+                                help: t("admin.user.info.support") %>
+    <% end %>
 
     <%= f.submit t("support.users.save"), class: "btn btn-primary" %>
-  <% end %>
-
-  <h2 class="h5 mt-4"><%= t("support.users.history") %></h2>
-
-  <% if @changes.any? %>
-    <table class="table table-sm small">
-      <thead>
-        <tr>
-          <th scope="col"><%= t("support.users.changes.when") %></th>
-          <th scope="col"><%= t("support.users.changes.who") %></th>
-          <th scope="col"><%= t("support.users.changes.field") %></th>
-          <th scope="col"><%= t("support.users.changes.from") %></th>
-          <th scope="col"><%= t("support.users.changes.to") %></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @changes.each do |change| %>
-          <tr>
-            <td><%= l(change.created_at, format: :short) %></td>
-            <td><%= change.editor&.email || "—" %></td>
-            <td><%= User.human_attribute_name(change.field) %></td>
-            <td><%= change.old_value.presence || "—" %></td>
-            <td><%= change.new_value.presence || "—" %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p class="text-muted small"><%= t("support.users.no_history") %></p>
   <% end %>
 </div>

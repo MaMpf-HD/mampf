@@ -71,7 +71,13 @@ Rails.application.routes.draw do
   # support routes
 
   namespace :support do
-    resources :users, only: [:index, :edit, :update]
+    resources :users, only: [:index, :edit, :update] do
+      member do
+        patch :unlock
+        post :password_reset
+        post :confirmation
+      end
+    end
   end
 
   # annotation routes
@@ -1177,7 +1183,7 @@ Rails.application.routes.draw do
       to: "users#image",
       as: "image_user"
 
-  resources :users, only: [:index, :edit, :update, :destroy]
+  resources :users, only: [:index, :destroy]
 
   post "vouchers/verify",
        to: "vouchers#verify",

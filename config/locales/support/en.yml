@@ -2,36 +2,61 @@ en:
   support:
     title: 'Support'
     users:
-      title: 'Support: personal data'
+      title: 'Support: accounts'
       explainer: >-
-        Find a person by name, email, matriculation number or Uni ID, and
-        correct what they cannot change themselves once saved: their first and
-        last name and their matriculation number.
+        Find a person by name, email, matriculation number or Uni ID. On their
+        page you correct their personal data, see whether their account is
+        locked or unconfirmed, and send them the mails that get them back in.
       hits:
         one: '1 person'
         other: '%{count} people'
-      no_hits: 'Nobody matches.'
-      correct: 'Correct'
-      correct_for: 'Correct the personal data of %{user}'
+      no_hits: 'Nobody matches. Type a name, email or number, or pick a program.'
+      open: 'Open'
+      open_for: 'Open the account of %{user}'
       back: 'Back to the search'
-      edit_title: 'Personal data of %{user}'
-      edit_explainer: >-
-        Groups and exam lists show this person by these fields. A field left
-        empty can be filled in once by the person themselves.
+      edit_title: 'Account of %{user}'
+      data: 'Personal data'
+      email_hint: >-
+        A new address holds once its owner confirms it: MaMpf sends a link to
+        it. Until then, the old address stays in use.
       save: 'Save'
-      saved: 'The personal data has been corrected.'
+      saved: 'The personal data has been saved.'
+      saved_email_pending: >-
+        The personal data has been saved. %{email} gets a link to confirm the
+        new address.
       not_saved: 'Nothing was saved:'
       unchanged: 'Nothing has changed.'
-      history: 'Corrections'
-      no_history: 'Nothing has been corrected yet.'
+      unlocked: 'The account is unlocked; its failed sign-ins are reset.'
+      password_reset_sent: 'A mail to reset the password is on its way.'
+      confirmation_sent: 'The confirmation mail is on its way again.'
+      actions:
+        unlock: 'Unlock'
+        password_reset: 'Send a password reset mail'
+        confirmation: 'Send the confirmation mail again'
+      status:
+        title: 'Account'
+        confirmed: 'Confirmed'
+        confirmed_at: 'yes, on %{time}'
+        unconfirmed: 'no, registered on %{time}'
+        new_email_pending: 'New address %{email} waits to be confirmed.'
+        locked: 'Locked'
+        locked_until: 'yes, until %{time} (%{attempts} failed sign-ins)'
+        not_locked: 'no (%{attempts} failed sign-ins in a row)'
+        last_sign_in: 'Last sign-in'
+        never_signed_in: 'never'
+        signed_in:
+          one: '%{time}, 1 sign-in in all'
+          other: '%{time}, %{count} sign-ins in all'
+        password: 'Password'
+        password_due: 'must be changed at the next sign-in'
+        password_ok: 'up to date'
+        personal_data: 'Personal data'
+        personal_data_confirmed: 'confirmed on %{time}'
+        personal_data_declined: 'declined'
+        personal_data_open: 'not given yet'
+        deletion: 'Deleted for inactivity on'
       columns:
         name: 'Name'
         email: 'Email'
         program: 'Program'
         actions: 'Actions'
-      changes:
-        when: 'When'
-        who: 'By'
-        field: 'Field'
-        from: 'Before'
-        to: 'After'

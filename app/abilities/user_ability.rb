@@ -14,7 +14,7 @@ class UserAbility
       user&.admin? || user == given_user || given_user.teacher?
     end
 
-    can [:index, :elevate, :destroy, :edit], User do
+    can [:index, :elevate, :destroy], User do
       user.admin?
     end
 

@@ -1,7 +1,7 @@
 # UsersController
 class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
-  before_action :set_user, only: [:edit, :update, :destroy]
+  before_action :set_user, only: [:destroy]
 
   layout "administration"
 
@@ -17,24 +17,6 @@ class UsersController < ApplicationController
     @password_policy_current_count = User.confirmed
                                          .where(password_policy_version: User::CURRENT_PASSWORD_POLICY_VERSION..)
                                          .count
-  end
-
-  def edit
-    authorize! :edit, @user
-  end
-
-  def update
-    authorize! :update, @user
-    old_image_data = @user.image_data
-    @user.update(user_params)
-    @errors = @user.errors
-    @user.update(image: nil) if params[:user][:detach_image] == "true"
-    changed_image = @user.image_data != old_image_data
-    if @user.image.present? && changed_image
-      @user.image_derivatives!
-      @user.save
-    end
-    @errors = @user.errors
   end
 
   # promote a generic user to admin status
@@ -128,14 +110,6 @@ class UsersController < ApplicationController
 
     def elevate_params
       params.expect(generic_user: [:id, :admin, :editor, :teacher, :name])
-    end
-
-    # Teachers and editors update their own account here too; only admins
-    # change the personal data.
-    def user_params
-      allowed = [:name, :email, :homepage, :current_lecture_id, :image]
-      allowed += User::PERSONAL_DATA_FIELDS + [:support] if current_user.admin?
-      params.expect(user: allowed)
     end
 
     def set_user

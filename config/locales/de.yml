@@ -1756,15 +1756,8 @@ de:
           solange sich in dem pdf nichts ändert, wird die Referenz aber
           nichts bewirken, d.h. auf die erste Seite zeigen.
     user:
-      current_lecture: 'Aktuelle Veranstaltung'
       homepage: 'Homepage'
       profile_image: 'Profilbild'
-      index: 'NutzerInnenübersicht'
-      edited_content: 'Betreute Inhalte'
-      no_content: 'Es gibt noch keine entsprechenden Inhalte.'
-      given_lectures: 'Gehaltene Veranstaltungen'
-      edited_courses: 'Editierte Module'
-      edited_lectures: 'Weitere editierte Veranstaltungen'
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
       sorts: 'Admins, EditorInnen, DozentInnen und Support'
@@ -1774,40 +1767,14 @@ de:
       elevate: 'zum Administrator befördern'
       info:
         support: >
-          Findet Personen und korrigiert Vor- und Nachname und Matrikelnummer, die sie nach dem Speichern nicht mehr selbst ändern können.
-        display_name: >
-          Hier kannst Du den Anzeigename eingeben. Der Anzeigename
-          wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.
-        email: >
-          Hier kannst Du die E-Mail-Adresse eingeben. Mit dieser erfolgt
-          dann auch die Nutzeranmeldung, außerdem werden E-Mails bezüglich
-          Passwortzurücksetzung dorthin geschickt.
+          Findet Personen, korrigiert ihre Stammdaten, entsperrt ihre Konten und
+          schickt ihnen die Mails, mit denen sie wieder hineinkommen. Konten von
+          Admins bleiben außer Reichweite.
         administrator: >
           Hier kannst Du anklicken, ob die NutzerIn
           Administratorenrechte haben soll oder nicht. Dir selbst kannst Du
           nicht die Administratorenrechte entziehen, das kann nur ein von
           Dir verschiedener Administrator.
-        current_lecture: >
-          Hier kannst Du auswählen, welche Veranstaltung aktuell für Dich primär
-          ist. Falls hier eine Veranstaltung ausgewählt ist, führt Dich
-          ein entsprechendes Icon in der Navigationsleiste direkt zu ihr.
-        homepage: >
-          Hier kannst Du die Adresse einer Homepage eingeben.
-        profile_image: >
-          Hier wirst Du demnächst die Möglichkeit haben, ein
-          Profilbild hochzuladen.
-        given_lectures: >
-          Dies ist die Liste aller Veranstaltungen, für die Du als DozentIn
-          die Du als DozentIn verantwortest bzw. verantwortet hast.
-          Unveröffentlichte Veranstaltung sind in rötlicher Farbe gekennzeichnet.
-        edited_courses: >
-          Dies ist die Liste aller Module, für die Du Moduleditorenrechte hast.
-        edited_lectures: >
-          Dies ist die Liste aller Veranstaltungen, für die Du zusätzliche
-          Editorenrechte hast. Unveröffentlichte Veranstaltung
-          sind in rötlicher Farbe gekennzeichnet.
-        edited_media: >
-          Dies ist die Liste aller Medien, für die Du Medieneditorenrechte hast.
         elevate: >
           Wenn Du das anklickst, wird die NutzerIn zur
           AdministratorIn befördert.

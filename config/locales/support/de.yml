@@ -2,36 +2,62 @@ de:
   support:
     title: 'Support'
     users:
-      title: 'Support: Stammdaten'
+      title: 'Support: Konten'
       explainer: >-
-        Finde eine Person über Name, E-Mail-Adresse, Matrikelnummer oder Uni-ID
-        und korrigiere, was sie nach dem Speichern nicht mehr selbst ändern kann:
-        Vor- und Nachname und Matrikelnummer.
+        Finde eine Person über Name, E-Mail-Adresse, Matrikelnummer oder Uni-ID.
+        Auf ihrer Seite korrigierst Du ihre Stammdaten, siehst, ob ihr Konto
+        gesperrt oder unbestätigt ist, und schickst ihr die Mails, mit denen sie
+        wieder hineinkommt.
       hits:
         one: '1 Person'
         other: '%{count} Personen'
-      no_hits: 'Keine Treffer.'
-      correct: 'Korrigieren'
-      correct_for: 'Stammdaten von %{user} korrigieren'
+      no_hits: 'Keine Treffer. Gib einen Namen, eine Adresse oder eine Nummer ein, oder wähle einen Studiengang.'
+      open: 'Öffnen'
+      open_for: 'Konto von %{user} öffnen'
       back: 'Zurück zur Suche'
-      edit_title: 'Stammdaten von %{user}'
-      edit_explainer: >-
-        Gruppen und Klausurlisten führen die Person unter diesen Feldern. Ein
-        leer gelassenes Feld kann die Person einmal selbst füllen.
+      edit_title: 'Konto von %{user}'
+      data: 'Stammdaten'
+      email_hint: >-
+        Eine neue Adresse gilt erst, wenn sie bestätigt ist: MaMpf schickt einen
+        Link dorthin. Bis dahin bleibt die alte Adresse in Gebrauch.
       save: 'Speichern'
-      saved: 'Die Stammdaten sind korrigiert.'
+      saved: 'Die Stammdaten sind gespeichert.'
+      saved_email_pending: >-
+        Die Stammdaten sind gespeichert. %{email} bekommt einen Link, um die neue
+        Adresse zu bestätigen.
       not_saved: 'Nichts wurde gespeichert:'
       unchanged: 'Es hat sich nichts geändert.'
-      history: 'Korrekturen'
-      no_history: 'Bisher wurde nichts korrigiert.'
+      unlocked: 'Das Konto ist entsperrt; die fehlgeschlagenen Anmeldungen sind zurückgesetzt.'
+      password_reset_sent: 'Eine Mail zum Zurücksetzen des Passworts ist unterwegs.'
+      confirmation_sent: 'Die Bestätigungsmail ist erneut unterwegs.'
+      actions:
+        unlock: 'Entsperren'
+        password_reset: 'Mail zum Zurücksetzen des Passworts schicken'
+        confirmation: 'Bestätigungsmail erneut schicken'
+      status:
+        title: 'Konto'
+        confirmed: 'Bestätigt'
+        confirmed_at: 'ja, am %{time}'
+        unconfirmed: 'nein, registriert am %{time}'
+        new_email_pending: 'Die neue Adresse %{email} wartet auf ihre Bestätigung.'
+        locked: 'Gesperrt'
+        locked_until: 'ja, bis %{time} (%{attempts} fehlgeschlagene Anmeldungen)'
+        not_locked: 'nein (%{attempts} fehlgeschlagene Anmeldungen in Folge)'
+        last_sign_in: 'Letzte Anmeldung'
+        never_signed_in: 'nie'
+        signed_in:
+          one: '%{time}, insgesamt 1 Anmeldung'
+          other: '%{time}, insgesamt %{count} Anmeldungen'
+        password: 'Passwort'
+        password_due: 'muss bei der nächsten Anmeldung geändert werden'
+        password_ok: 'aktuell'
+        personal_data: 'Stammdaten'
+        personal_data_confirmed: 'bestätigt am %{time}'
+        personal_data_declined: 'abgelehnt'
+        personal_data_open: 'noch nicht angegeben'
+        deletion: 'Wird wegen Inaktivität gelöscht am'
       columns:
         name: 'Name'
         email: 'E-Mail'
         program: 'Studiengang'
         actions: 'Aktionen'
-      changes:
-        when: 'Wann'
-        who: 'Von'
-        field: 'Feld'
-        from: 'Vorher'
-        to: 'Nachher'

@@ -4,13 +4,13 @@
   <p class="text-muted"><%= t("support.users.explainer") %></p>
 
   <%= render(SearchForm::SearchForm.new(url: support_users_path, context: "support-users",
-                                        turbo_frame: "support-user-results")) do |c| %>
+                                        local: true, values: search_values)) do |c| %>
     <% c.add_fulltext_field %>
     <% c.add_program_field %>
     <% c.add_submit_field %>
   <% end %>
 
-  <%= turbo_frame_tag "support-user-results", target: "_top" do %>
+  <div id="support-user-results">
     <% if @users.any? %>
       <p class="small text-muted mb-2">
         <%= t("support.users.hits", count: @pagy.count) %>
@@ -46,9 +46,9 @@
                 <td><%= user.program&.name_with_subject %></td>
 
                 <td class="text-end">
-                  <%= link_to t("support.users.correct"), edit_support_user_path(user),
-                              "aria-label": t("support.users.correct_for",
-                                              user: user.email) %>
+                  <%= link_to t("support.users.open"),
+                              edit_support_user_path(user, search: search_query),
+                              "aria-label": t("support.users.open_for", user: user.email) %>
                 </td>
               </tr>
             <% end %>
@@ -59,5 +59,5 @@
     <% elsif params[:search].present? %>
       <p><%= t("support.users.no_hits") %></p>
     <% end %>
-  <% end %>
+  </div>
 </div>
