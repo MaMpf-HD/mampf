@@ -1,3 +1,4 @@
-From: <%= @user.tutorial_name %> (<%= @user.email %>, id <%= @user.id %>)
+<% name, email, id = @support_request.values_at("user_name", "user_email", "user_id") %>
+From: <%= name %> (<%= email %>, id <%= id %>)
 -----
 <%= @support_request["message"] %>

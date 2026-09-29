@@ -19,7 +19,9 @@ class SupportRequestsController < ApplicationController
                          throttled: throttled_message(THROTTLE_WINDOW))
     end
 
-    details = support_request.attributes.merge("user_id" => current_user.id)
+    details = support_request.attributes.merge("user_id" => current_user.id,
+                                               "user_name" => current_user.tutorial_name,
+                                               "user_email" => current_user.email)
     SupportRequestMailer.with(support_request: details).new_support_request_email.deliver_later
     render turbo_stream: turbo_stream.update(
       "support-request-body",
@@ -36,10 +38,12 @@ class SupportRequestsController < ApplicationController
 
     # Without a limit, the form would mail the project address any number of
     # times. Only messages that go out are counted, so that a form sent back
-    # for a mistake does not use one up.
+    # for a mistake does not use one up. Without the cache the count is nil,
+    # and the support stays open.
     def over_limit?
-      Rails.cache.increment("support-requests:#{current_user.id}", 1,
-                            expires_in: THROTTLE_WINDOW) > LIMIT
+      count = Rails.cache.increment("support-requests:#{current_user.id}", 1,
+                                    expires_in: THROTTLE_WINDOW)
+      count.present? && count > LIMIT
     end
 
     def render_form(support_request, status, throttled: nil)

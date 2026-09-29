@@ -57,6 +57,13 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response.body).to include(I18n.t("devise.failure.too_many_requests", wait: wait))
     end
 
+    it "takes messages when the cache is down" do
+      allow(Rails.cache).to receive(:increment).and_return(nil)
+
+      expect { send_request }
+        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+    end
+
     # Otherwise a few mistakes would lock somebody out of the support.
     it "does not count a message sent back for a mistake" do
       (SupportRequestsController::LIMIT + 1).times { send_request(message: "Help") }
