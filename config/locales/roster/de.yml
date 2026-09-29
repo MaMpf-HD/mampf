@@ -500,7 +500,6 @@ de:
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'
       roster_change_exam_schedule_email_body_html: |
-        <p>Hallo,</p>
         <p>
           Der Termin der Klausur <strong>%{rosterable_title}</strong>
           in der Veranstaltung <strong>%{lecture_title}</strong> hat sich geändert.
@@ -509,8 +508,6 @@ de:
           Bitte notiere Dir die neuen Angaben.
         </p>
       roster_change_exam_schedule_email_body: |
-        Hallo,
-
         Der Termin der Klausur „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ hat sich geändert.
 
