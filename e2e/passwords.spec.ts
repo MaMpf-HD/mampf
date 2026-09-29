@@ -10,7 +10,7 @@ test("can reset the password via the mailed reset link", async ({ page, request 
   const newPassword = "super-secure-horse-battery-staple";
 
   await page.goto("/users/password/new?locale=en");
-  await page.getByLabel("Email").fill(user.email);
+  await page.getByLabel("Email", { exact: true }).fill(user.email);
   await page.getByRole("button", { name: "Reset password" }).click();
 
   await expect(page).toHaveURL(/\/users\/sign_in/);
@@ -45,7 +45,7 @@ test("clears stale validation errors after correcting a rejected password", asyn
   const newPassword = "super-secure-horse-battery-staple";
 
   await page.goto("/users/password/new?locale=en");
-  await page.getByLabel("Email").fill(user.email);
+  await page.getByLabel("Email", { exact: true }).fill(user.email);
   await page.getByRole("button", { name: "Reset password" }).click();
 
   await expect(page).toHaveURL(/\/users\/sign_in/);

@@ -19,7 +19,6 @@ $(document).on("turbo:load", function () {
     $("#secondnav").show();
     $("#lecturesDropdown").appendTo($("#secondnav"));
     $("#notificationDropdown").appendTo($("#secondnav"));
-    $("#feedback-btn").appendTo($("#secondnav"));
     $("#searchField").appendTo($("#secondnav"));
     $("#second-admin-nav").show();
     $("#adminDetails").appendTo($("#second-admin-nav"));
@@ -41,7 +40,6 @@ $(document).on("turbo:load", function () {
     $("#secondnav").hide();
     $("#lecturesDropdown").appendTo($("#firstnav"));
     $("#notificationDropdown").appendTo($("#firstnav"));
-    $("#feedback-btn").appendTo($("#firstnav"));
     $("#searchField").appendTo($("#firstnav"));
     $("#second-admin-nav").hide();
     $("#teachableDrop").appendTo($("#first-admin-nav"));

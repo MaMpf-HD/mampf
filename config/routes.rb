@@ -180,8 +180,8 @@ Rails.application.routes.draw do
     end
   end
 
-  # feedback routes
-  resources :feedbacks, only: [:new, :create]
+  # support request routes
+  resources :support_requests, only: [:create]
 
   # items routes
 
