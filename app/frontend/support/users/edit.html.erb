@@ -89,9 +89,11 @@
     <%= f.text_field :name, label: t("basics.display_name") %>
     <%= f.text_field :name_in_tutorials, label: t("profile.name_in_tutorials") %>
 
-    <% if can?(:assign_support, @user) %>
+    <% if can?(:assign_roles, @user) %>
       <%= f.check_box :support, label: t("admin.user.support"),
                                 help: t("admin.user.info.support") %>
+      <%= f.check_box :records_office, label: t("admin.user.records_office"),
+                                       help: t("admin.user.info.records_office") %>
     <% end %>
 
     <% if can?(:assign_admin, @user) %>

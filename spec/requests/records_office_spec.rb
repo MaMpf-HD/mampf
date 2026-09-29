@@ -232,18 +232,22 @@ RSpec.describe("Records office", type: :request) do
     it "lets an admin make somebody the records office" do
       sign_in(create(:confirmed_user, admin: true))
 
-      patch user_path(account), params: { user: { records_office: "1" } }, xhr: true
+      patch support_user_path(account), params: { user: { records_office: "1" } }
 
       expect(account.reload).to be_records_office
     end
 
-    it "does not let a teacher make themselves the records office" do
-      create(:lecture, teacher: account)
-      sign_in(account)
+    it "does not let a teacher or the support make somebody the records office" do
+      teacher = create(:confirmed_user)
+      create(:lecture, teacher: teacher)
+      [teacher, create(:confirmed_user, support: true)].each do |user|
+        sign_in(user)
 
-      patch user_path(account), params: { user: { name: "Ada", records_office: "1" } }, xhr: true
+        patch support_user_path(account), params: { user: { name: "Ada", records_office: "1" } }
+        patch support_user_path(user), params: { user: { name: "Ada", records_office: "1" } }
+      end
 
-      expect(account.reload).not_to be_records_office
+      expect(User.where(records_office: true)).to be_empty
     end
   end
 end

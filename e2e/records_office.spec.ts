@@ -19,9 +19,10 @@ test.describe("records office", () => {
       await student.page.goto("/");
       await expect(student.page.getByRole("link", { name: "Records office" })).toHaveCount(0);
 
-      await admin.page.goto(`/users/${student.user.id}/edit`);
+      await admin.page.goto(`/support/users/${student.user.id}/edit`);
       await admin.page.getByRole("checkbox", { name: "Records office" }).check();
       await admin.page.getByRole("button", { name: "Save", exact: true }).click();
+      await expect(admin.page.getByText("The changes have been saved.")).toBeVisible();
       await expect(admin.page.getByRole("checkbox", { name: "Records office" })).toBeChecked();
 
       await student.page.reload();
