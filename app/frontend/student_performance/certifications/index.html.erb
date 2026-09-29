@@ -312,7 +312,7 @@
     <div class="table-responsive">
       <table
         class="table table-sm table-hover align-middle certifications-table"
-        style="--achievement-columns: <%= [@achievements.size, 1].max %>"
+        style="--achievement-width: <%= [7, 14.0 / [@achievements.size, 1].max].min.round(2) %>%"
       >
         <thead class="table-light">
           <tr>
@@ -353,10 +353,6 @@
 
             <th scope="col" class="note-column">
               <%= t("student_performance.certifications.columns.note") %>
-            </th>
-
-            <th scope="col">
-              <span class="visually-hidden"><%= t("basics.email") %></span>
             </th>
 
             <th scope="col" class="text-end"></th>
@@ -548,22 +544,22 @@
                 <% end %>
               </td>
 
-              <td class="pe-0">
-                <%= render "shared/copy_email_button", email: record.user.email %>
-              </td>
-
               <td class="text-end">
                 <% if decided %>
                   <div data-certification-inline-target="display">
-                    <button
-                      type="button"
-                      class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
-                      data-action="certification-inline#toggleEdit"
-                      title="<%= t('student_performance.certifications.index.edit_certification') %>"
-                      aria-label="<%= t('student_performance.certifications.index.edit_certification') %>"
-                    >
-                      <i class="bi bi-gear"></i>
-                    </button>
+                    <div class="d-flex align-items-center justify-content-end gap-1">
+                      <%= render "shared/copy_email_button", email: record.user.email %>
+
+                      <button
+                        type="button"
+                        class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
+                        data-action="certification-inline#toggleEdit"
+                        title="<%= t('student_performance.certifications.index.edit_certification') %>"
+                        aria-label="<%= t('student_performance.certifications.index.edit_certification') %>"
+                      >
+                        <i class="bi bi-gear"></i>
+                      </button>
+                    </div>
                   </div>
                   <div data-certification-inline-target="edit" class="d-none">
                     <%#
@@ -658,7 +654,9 @@
                       "btn-success" : "btn-outline-success"
                     fail_btn = proposal&.proposed_status == :failed ?
                       "btn-danger" : "btn-outline-danger" %>
-                  <div class="d-flex gap-1 justify-content-end">
+                  <div class="d-flex align-items-center gap-1 justify-content-end">
+                    <%= render "shared/copy_email_button", email: record.user.email %>
+
                     <%= button_to(
                           lecture_student_performance_certifications_path(
                             @lecture
