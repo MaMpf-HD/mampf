@@ -5,16 +5,6 @@ RSpec.describe("Records office", type: :request) do
   let(:term) { create(:term, :active) }
   let(:lecture) { create(:lecture, term: term) }
 
-  def person(last_name, first_name, matriculation_number = nil)
-    create(:confirmed_user, last_name: last_name, first_name: first_name,
-                            matriculation_number: matriculation_number)
-  end
-
-  def csv_rows
-    expect(response.body).to start_with("\uFEFF")
-    CSV.parse(response.body.delete_prefix("\uFEFF"), col_sep: ";", headers: true)
-  end
-
   describe "who gets in" do
     it "lets the records office and admins in" do
       [office, create(:confirmed_user_en, admin: true)].each do |user|
@@ -25,15 +15,10 @@ RSpec.describe("Records office", type: :request) do
       end
     end
 
-    it "keeps teachers and students out, downloads included" do
-      teacher = lecture.teacher
-      tutorial = create(:tutorial, lecture: lecture)
-      [teacher, create(:confirmed_user_en)].each do |user|
+    it "keeps teachers and students out" do
+      [lecture.teacher, create(:confirmed_user_en)].each do |user|
         sign_in(user)
         get records_office_path
-        expect(response).to redirect_to(root_path)
-
-        get records_office_emails_path("tutorial", tutorial)
         expect(response).to redirect_to(root_path)
       end
     end
@@ -134,36 +119,6 @@ RSpec.describe("Records office", type: :request) do
       get records_office_path(term: other.term.dashboard_param)
 
       expect(response.body).to include(CGI.escapeHTML(other.title_no_term))
-    end
-  end
-
-  describe "the downloads" do
-    before { sign_in(office) }
-
-    it "lists a group's members by last name, for German Excel" do
-      tutorial = create(:tutorial, lecture: lecture)
-      [person("Zuse", "Konrad"), person("Noether", "Emmy", "1234567")].each do |user|
-        create(:tutorial_membership, tutorial: tutorial, user: user)
-      end
-      create(:tutorial_membership, tutorial: create(:tutorial, lecture: lecture))
-
-      get records_office_emails_path("tutorial", tutorial)
-
-      rows = csv_rows
-      expect(rows.headers).to eq(["Last name", "First name", "Matriculation number", "Email"])
-      expect(rows["Last name"]).to eq(["Noether", "Zuse"])
-      expect(rows.first["Matriculation number"]).to eq("1234567")
-    end
-
-    it "lists an exam's active roster only" do
-      exam = create(:exam, lecture: lecture)
-      create(:exam_roster_entry, exam: exam, user: person("Noether", "Emmy"))
-      create(:exam_roster_entry, exam: exam, user: person("Zuse", "Konrad"),
-                                 excluded_at: 1.day.ago)
-
-      get records_office_emails_path("exam", exam)
-
-      expect(csv_rows["Last name"]).to eq(["Noether"])
     end
   end
 

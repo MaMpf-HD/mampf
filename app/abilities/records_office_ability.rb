@@ -6,7 +6,7 @@ class RecordsOfficeAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:index, :emails], :records_office do
+    can :index, :records_office do
       user.records_office? || user.admin?
     end
   end

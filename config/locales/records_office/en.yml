@@ -3,8 +3,7 @@ en:
     title: 'Records office'
     explainer: >-
       Every lecture of a term with its groups: how many seats they have, how
-      many have registered and who is assigned. Each group's email addresses
-      can be downloaded for Excel.
+      many have registered and who is assigned.
     term: 'Term'
     no_lectures: 'There are no lectures in this term.'
     no_groups: 'none'
@@ -27,17 +26,8 @@ en:
     close_all: 'Hide all groups'
     group: 'Group'
     kind: 'Kind'
-    emails: 'Emails'
-    emails_of: 'Emails of %{group}'
     kinds:
       tutorial: 'Tutorial'
       talk: 'Talk'
       cohort: 'Other group'
       exam: 'Exam'
-    files:
-      emails: 'emails'
-    columns:
-      last_name: 'Last name'
-      first_name: 'First name'
-      matriculation_number: 'Matriculation number'
-      email: 'Email'

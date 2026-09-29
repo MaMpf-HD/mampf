@@ -1,6 +1,5 @@
 # Lets the records office read every lecture of a term: its groups, how many
-# have registered for them and how full they are, and each group's emails as
-# a download. Every action only reads.
+# have registered for them and how full they are. It only reads.
 class RecordsOfficeController < ApplicationController
   authorize_resource class: false
   helper RecordsOfficeHelper
@@ -14,18 +13,4 @@ class RecordsOfficeController < ApplicationController
     @term_options = Term.chronological.reverse.map { |term| [term.to_label, term.dashboard_param] }
     @overview = RecordsOffice::TermOverview.new(@term)
   end
-
-  def emails
-    group = RecordsOffice::TermOverview::GROUP_TYPES.fetch(params[:group_type])
-                                                    .find(params[:group_id])
-    send_csv(RecordsOffice::Export.emails(group), :emails,
-             "#{group.lecture.title} #{RecordsOffice::TermOverview.group_title(group)}")
-  end
-
-  private
-
-    def send_csv(csv, kind, subject)
-      filename = "#{I18n.t("records_office.files.#{kind}")} #{subject}".parameterize
-      send_data(csv, type: "text/csv; charset=utf-8", filename: "#{filename}.csv")
-    end
 end

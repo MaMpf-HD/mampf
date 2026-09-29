@@ -157,12 +157,6 @@
                         <th scope="col" class="w-25">
                           <%= t("records_office.assigned") %>
                         </th>
-
-                        <th scope="col">
-                          <span class="visually-hidden">
-                            <%= t("records_office.emails") %>
-                          </span>
-                        </th>
                       </tr>
                     </thead>
 
@@ -200,17 +194,6 @@
                                                container_class: "progress") %>
                             <% else %>
                               <%= count %>
-                            <% end %>
-                          </td>
-
-                          <td class="text-end">
-                            <%= link_to records_office_emails_path(group_type, group),
-                                        class: "btn btn-sm btn-link",
-                                        data: { turbo: false },
-                                        aria: { label: t("records_office.emails_of",
-                                                        group: title) } do %>
-                              <i class="bi bi-envelope" aria-hidden="true"></i>
-                              <%= t("records_office.emails") %>
                             <% end %>
                           </td>
                         </tr>

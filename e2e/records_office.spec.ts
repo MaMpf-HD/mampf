@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import { parseCsv } from "./_support/csv";
 import { expect, test } from "./_support/fixtures";
 
 test.describe("records office", () => {
@@ -47,14 +45,6 @@ test.describe("records office", () => {
       await expect(toggle).toHaveAttribute("aria-expanded", "true");
       const row = groups.getByRole("row", { name: /Tuesday group/ });
       await expect(row).toContainText("1 / 12");
-
-      const downloadPromise = student.page.waitForEvent("download");
-      await row.getByRole("link", { name: "Emails of Tuesday group" }).click();
-      const filePath = await (await downloadPromise).path();
-      const rows = parseCsv((await readFile(filePath, "utf-8")).replace(/^\uFEFF/, ""));
-
-      expect(rows[0]).toEqual(["Last name", "First name", "Matriculation number", "Email"]);
-      expect(rows[1][3]).toBe(student.user.email);
 
       await student.page.getByRole("button", { name: "Hide all groups" }).click();
       await expect(groups).toBeHidden();

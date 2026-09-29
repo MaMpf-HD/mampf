@@ -86,11 +86,6 @@ Rails.application.routes.draw do
       to: "records_office#index",
       as: "records_office"
 
-  get "records_office/:group_type/:group_id/emails",
-      to: "records_office#emails",
-      as: "records_office_emails",
-      constraints: { group_type: /tutorial|talk|cohort|exam/ }
-
   # annotation routes
   get "annotations/update_annotations",
       to: "annotations#update_annotations",

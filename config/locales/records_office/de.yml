@@ -3,8 +3,7 @@ de:
     title: 'Verwaltung'
     explainer: >-
       Alle Veranstaltungen eines Semesters mit ihren Gruppen: wie viele Plätze
-      sie haben, wie viele sich angemeldet haben und wer zugeteilt ist. Die
-      E-Mail-Adressen jeder Gruppe lassen sich für Excel herunterladen.
+      sie haben, wie viele sich angemeldet haben und wer zugeteilt ist.
     term: 'Semester'
     no_lectures: 'In diesem Semester gibt es keine Veranstaltungen.'
     no_groups: 'keine'
@@ -27,17 +26,8 @@ de:
     close_all: 'Alle Gruppen ausblenden'
     group: 'Gruppe'
     kind: 'Art'
-    emails: 'E-Mails'
-    emails_of: 'E-Mails von %{group}'
     kinds:
       tutorial: 'Tutorium'
       talk: 'Vortrag'
       cohort: 'Weitere Gruppe'
       exam: 'Klausur'
-    files:
-      emails: 'emails'
-    columns:
-      last_name: 'Nachname'
-      first_name: 'Vorname'
-      matriculation_number: 'Matrikelnummer'
-      email: 'E-Mail'
