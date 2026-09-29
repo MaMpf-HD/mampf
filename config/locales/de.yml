@@ -111,7 +111,7 @@ de:
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}, %{mupdf}.
       Bugs meldest Du am besten %{bugs}.
-      Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
+      Supportanfragen und Feedback kannst Du an %{feedback} schicken.
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'

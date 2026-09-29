@@ -11,7 +11,7 @@
 </div>
 
 <%# Footbar %>
-<div class="container-fluid p-3" id="footer-bar">
+<div class="container-fluid px-3 pt-3" id="footer-bar">
   <div class="row">
     <div class="col text-md-start">
       <%= t('footer.text_html',
@@ -48,7 +48,7 @@
              bugs: link_to(t('here'),
                             'https://github.com/MaMpf-HD/mampf/issues',
                             target: :_blank),
-             feedback: mail_to(DefaultSetting::FEEDBACK_EMAIL, nil)) %>
+             feedback: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
     </div>
     <div class="col text-md-end">
       <a href="#sponsors" data-toggle="modal"
