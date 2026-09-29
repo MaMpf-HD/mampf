@@ -36,7 +36,15 @@ test.describe("dean's office", () => {
       await expect(student.page.getByRole("rowheader", { name: /Number Theory/ })).toBeVisible();
 
       // one line per lecture; the filter keeps the one asked for
-      await student.page.getByRole("searchbox", { name: "Filter" }).fill("linear");
+      const filter = student.page.getByRole("searchbox", { name: "Filter" });
+      await filter.fill("no such lecture");
+      await expect(student.page.getByRole("status")).toHaveText("No lecture matches the filter.");
+      await expect(student.page.getByRole("table", { name: "Lectures" })).toBeHidden();
+      await filter.fill("");
+      await expect(student.page.getByRole("table", { name: "Lectures" })).toBeVisible();
+      await expect(student.page.getByRole("status")).toBeHidden();
+
+      await filter.fill("linear");
       await expect(student.page.getByRole("rowheader", { name: /Number Theory/ })).toBeHidden();
       const groups = student.page.getByRole("table", { name: /Groups of .*Linear Algebra/ });
       await expect(groups).toBeHidden();

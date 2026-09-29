@@ -1,14 +1,14 @@
 module DeansOffice
-  # Gathers what the dean's office sees of one term: every lecture with its
-  # groups, how many have registered for them and how full they are, in a
-  # fixed number of queries however many lectures the term holds. Members are
-  # counted, not loaded, since a term holds thousands of them.
+  # Collects a term's lecture and group figures for the dean's office. Roster
+  # counts are batched and only registration ids are loaded, so the page stays
+  # at a fixed number of queries however many lectures the term holds.
   class TermOverview
     GROUP_ASSOCIATIONS = [:tutorials, :talks, :cohorts, :exams].freeze
     GROUP_TYPES = { "tutorial" => Tutorial, "talk" => Talk,
                     "cohort" => Cohort, "exam" => Exam }.freeze
+    RUNNING_STATUSES = ["open", "closed", "processing"].freeze
 
-    # Talks are listed by their number, as the seminar lists them.
+    # Uses Talk#to_label so talk numbers read as on the seminar's own pages.
     def self.group_title(group)
       group.is_a?(Talk) ? group.to_label : group.title
     end
@@ -29,8 +29,6 @@ module DeansOffice
                            .sort_by { |lecture| lecture.course.title.downcase }
     end
 
-    # Lectures first, then seminars of every kind, each by course title; a
-    # kind the term has none of is left out.
     def sections
       seminars, others = lectures.partition(&:seminar?)
       { lectures: others, seminars: seminars }.reject { |_, list| list.empty? }
@@ -48,42 +46,38 @@ module DeansOffice
       roster_counts.fetch(group.class).fetch(group.id, 0)
     end
 
-    # The seats the lecture's groups offer together, and whether one of them
-    # has no limit, which makes the sum a lower bound.
+    # Returns the capacities' sum and whether some group has none; with such
+    # a group the sum is only a lower bound.
     def seats(lecture)
       capacities = groups(lecture).map(&:capacity)
       [capacities.compact.sum, capacities.include?(nil)]
     end
 
-    # The registrations of the group's running campaign, counted as its
-    # campaign card counts them: confirmed ones first come, first served, the
-    # first choices when preferences are allocated. Nil without such a campaign.
     Access = Struct.new(:state, :campaign)
 
-    # How people get into the group: through its running campaign (:open,
-    # :allocating), not yet (:not_open, :no_campaign_yet), by joining it
-    # themselves (:self_join), or through the teacher (:completed, :staff_only).
+    # A campaign whose deadline has passed takes no more registrations, even
+    # before the worker closes it, so it counts as allocating already.
     def access(group)
-      if (item = running_item(group))
-        Access.new(item.registration_campaign.open? ? :open : :allocating,
-                   item.registration_campaign)
-      elsif (item = item_of(group, :draft?))
-        Access.new(:not_open, item.registration_campaign)
-      elsif group.campaign_managed? && !item_of(group, :completed?)
+      campaign = item(group)&.registration_campaign
+      if campaign && RUNNING_STATUSES.include?(campaign.status)
+        Access.new(campaign.open_for_registrations? ? :open : :allocating, campaign)
+      elsif campaign&.draft?
+        Access.new(:not_open, campaign)
+      elsif group.campaign_managed? && !campaign&.completed?
         Access.new(:no_campaign_yet)
       elsif group.config_allow_self_add?
         Access.new(:self_join)
       else
-        Access.new(item_of(group, :completed?) ? :completed : :staff_only)
+        Access.new(campaign&.completed? ? :completed : :staff_only)
       end
     end
 
-    # The ways into the lecture's groups, each with the groups that take it:
-    # one entry per campaign that is running or about to, else one per way.
     def accesses(lecture)
       groups(lecture).group_by { |group| access(group) }
     end
 
+    # Matches GroupRowComponent#count, so the dean's office and the teacher
+    # see the same figures. Nil without a running campaign.
     def registration_count(group)
       item = running_item(group)
       return unless item
@@ -98,8 +92,8 @@ module DeansOffice
       item.present? && !item.registration_campaign.first_come_first_served?
     end
 
-    # The people who registered for any of the lecture's groups, each once.
-    # Nil while none of its groups has a running campaign.
+    # Nil without a running campaign, so that no registration at all reads
+    # differently from nobody registered yet.
     def registered_people(lecture)
       ids = groups(lecture).filter_map { |group| running_item(group)&.id }
       return if ids.empty?
@@ -126,26 +120,28 @@ module DeansOffice
         }
       end
 
-      def count_entries(entries, column, group_class)
-        entries.where(column => all_groups.grep(group_class).map(&:id)).group(column).count
+      def count_entries(scope, column, group_class)
+        scope.where(column => all_groups.grep(group_class).map(&:id)).group(column).count
       end
 
-      # Every campaign item of the term's groups, whatever its campaign's status.
+      # Loads draft and completed campaigns too: access tells a group waiting
+      # for its registration from one its teacher manages after it.
       def items_by_group
         @items_by_group ||= Registration::Item.where(registerable: all_groups)
                                               .includes(:registration_campaign)
-                                              .group_by do |item|
+                                              .index_by do |item|
           [item.registerable_type, item.registerable_id]
         end
       end
 
-      def item_of(group, status)
-        items_by_group.fetch([group.class.name, group.id], [])
-                      .find { |item| item.registration_campaign.public_send(status) }
+      # A group is an item of one campaign at most (unique index on the item).
+      def item(group)
+        items_by_group[[group.class.name, group.id]]
       end
 
       def running_item(group)
-        item_of(group, :open?) || item_of(group, :closed?) || item_of(group, :processing?)
+        found = item(group)
+        found if found && RUNNING_STATUSES.include?(found.registration_campaign.status)
       end
 
       def running_registrations

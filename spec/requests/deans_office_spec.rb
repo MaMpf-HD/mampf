@@ -15,12 +15,26 @@ RSpec.describe("Dean's office", type: :request) do
       end
     end
 
-    it "keeps teachers and students out" do
-      [lecture.teacher, create(:confirmed_user_en)].each do |user|
+    it "keeps teachers, students and the support out, whatever term or format is asked for" do
+      support = create(:confirmed_user_en, support: true)
+      [lecture.teacher, create(:confirmed_user_en), support].each do |user|
         sign_in(user)
-        get deans_office_path
-        expect(response).to redirect_to(root_path)
+        [deans_office_path, deans_office_path(term: term.dashboard_param),
+         deans_office_path(format: :json)].each do |path|
+          get path
+          expect(response).not_to have_http_status(:ok)
+          expect(response.body).not_to include(CGI.escapeHTML(lecture.course.title))
+        end
       end
+    end
+
+    it "closes the page once the role is taken away" do
+      sign_in(office)
+      office.update!(deans_office: false)
+
+      get deans_office_path
+
+      expect(response).to redirect_to(root_path)
     end
   end
 
@@ -164,6 +178,37 @@ RSpec.describe("Dean's office", type: :request) do
       get deans_office_path
 
       expect(Nokogiri::HTML(response.body).css("nav a[href='#{deans_office_path}']")).to be_present
+    end
+
+    # The worker closes a campaign only once a minute; students are turned
+    # away at the deadline already.
+    it "shows a campaign whose deadline has passed as waiting for its allocation" do
+      tutorial = create(:tutorial, lecture: lecture, title: "Late group", capacity: 12)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      campaign.update!(status: :open)
+      campaign.update_column(:registration_deadline, 1.minute.ago) # rubocop:disable Rails/SkipsModelValidations
+
+      get deans_office_path
+
+      row = Nokogiri::HTML(response.body).css("tr")
+                    .find { |tr| tr.at_css("th")&.text&.strip == "Late group" }
+      expect(row.text).to include("closed, allocation pending")
+      expect(row.text).not_to include("open until")
+    end
+
+    # Rosters are empty while a registration runs; the bar alone shows no label then.
+    it "writes an empty group's members out as text, beside a bar hidden from screen readers" do
+      create(:tutorial, lecture: lecture, title: "Empty group", capacity: 12)
+
+      get deans_office_path
+
+      doc = Nokogiri::HTML(response.body)
+      row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Empty group" }
+      expect(row.css("span").map { |span| span.text.strip }).to include("0 / 12")
+      expect(row.at_css("[role='progressbar']").ancestors("[aria-hidden='true']")).to be_present
+      table = doc.at_css("section[data-deans-office-target='section'] > div > table")
+      expect(table["aria-labelledby"]).to eq("deans-office-lectures")
     end
 
     it "shows another term's lectures when it is picked" do

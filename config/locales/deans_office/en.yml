@@ -3,7 +3,7 @@ en:
     title: "Dean's office"
     explainer: >-
       Every lecture of a term with its groups: how many seats they have, how
-      many have registered and who is assigned.
+      many have registered and how many members they have so far.
     term: 'Term'
     no_lectures: 'There are no lectures in this term.'
     no_groups: 'none'
@@ -12,7 +12,7 @@ en:
     groups: 'Groups'
     seats: 'Seats'
     registered: 'Registered'
-    assigned: 'Assigned'
+    members: 'Members'
     registration: 'Registration'
     sections:
       lectures: 'Lectures'
@@ -20,10 +20,17 @@ en:
     legend:
       registration: 'How people get into the group.'
       registered: >-
-        Registrations in the running registration; where places go by
-        preference, the first choices. "–" where there is no registration.
-      assigned: 'Who is in the group now.'
-      seats: 'The most the group takes.'
+        Group: confirmed registrations in the running registration; where
+        places go by preference, the first choices. Lecture: how many people
+        registered for any of its groups, each once, rejected ones left out.
+        "–" where no registration is running.
+      members: >-
+        Group: how many are in the group now. Lecture: how many members the
+        lecture has; this can be more or fewer than in its groups together.
+      seats: >-
+        Group: the most it takes. Lecture: its groups' places added up,
+        tutorials, talks and exams together; these are group places, not
+        people.
     access:
       open: 'open until %{deadline} · %{mode}'
       modes:

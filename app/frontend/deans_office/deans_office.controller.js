@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Filters the term's lectures by what is typed and opens their groups, one
- * lecture or all of them at once.
+ * Filters the dean's office overview by lecture title or teacher and opens
+ * the groups of one lecture or all of them, so a term can be scanned at once.
  */
 export default class extends Controller {
   static targets = ["filter", "section", "lecture", "toggle", "none"];

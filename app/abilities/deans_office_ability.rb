@@ -1,5 +1,5 @@
-# Opens the read-only dean's office pages, across all lectures, to the
-# dean's office and to admins.
+# Grants the dean's office, and admins, the term overview across all
+# lectures, without any right to change them.
 class DeansOfficeAbility
   include CanCan::Ability
 

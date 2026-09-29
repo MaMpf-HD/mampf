@@ -1,5 +1,5 @@
-# Lets the dean's office read every lecture of a term: its groups, how many
-# have registered for them and how full they are. It only reads.
+# Shows the dean's office every lecture of a term with its groups, how many
+# have registered and how full they are, without asking each teacher.
 class DeansOfficeController < ApplicationController
   authorize_resource class: false
   helper DeansOfficeHelper

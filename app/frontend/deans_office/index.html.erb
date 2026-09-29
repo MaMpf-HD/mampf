@@ -6,7 +6,7 @@
   <p class="text-muted"><%= t("deans_office.explainer") %></p>
 
   <dl class="small text-muted row mb-3">
-    <% [:registration, :registered, :assigned, :seats].each do |column| %>
+    <% [:registration, :registered, :members, :seats].each do |column| %>
       <dt class="col-sm-2"><%= t("deans_office.#{column}") %></dt>
       <dd class="col-sm-10 mb-1"><%= t("deans_office.legend.#{column}") %></dd>
     <% end %>
@@ -71,7 +71,10 @@
         </h2>
 
         <div class="table-responsive">
-          <table class="table table-sm align-middle">
+          <table
+            class="table table-sm align-middle"
+            aria-labelledby="deans-office-<%= section %>"
+          >
             <thead>
               <tr>
                 <th scope="col"><%= t("deans_office.lecture") %></th>
@@ -91,7 +94,7 @@
                 </th>
 
                 <th scope="col" class="text-end">
-                  <%= t("deans_office.assigned") %>
+                  <%= t("deans_office.members") %>
                 </th>
               </tr>
             </thead>
@@ -189,7 +192,7 @@
                             </th>
 
                             <th scope="col" class="w-25">
-                              <%= t("deans_office.assigned") %>
+                              <%= t("deans_office.members") %>
                             </th>
                           </tr>
                         </thead>
@@ -199,7 +202,6 @@
                             <% title = DeansOffice::TermOverview.group_title(group) %>
                             <% group_type = DeansOffice::TermOverview.group_type(group) %>
                             <% count = @overview.roster_count(group) %>
-                            <% over = group.capacity && count > group.capacity %>
 
                             <tr>
                               <th scope="row" class="fw-normal">
@@ -226,15 +228,7 @@
                               </td>
 
                               <td>
-                                <% if group.capacity %>
-                                  <%= progress_bar(count, group.capacity,
-                                               classification: over ? :danger : :neutral,
-                                               label: "#{count} / #{group.capacity}",
-                                               height: "1.25rem",
-                                               container_class: "progress") %>
-                                <% else %>
-                                  <%= count %>
-                                <% end %>
+                                <%= deans_office_members(count, group.capacity) %>
                               </td>
                             </tr>
                           <% end %>
@@ -249,7 +243,12 @@
         </div>
       </section>
     <% end %>
-    <p class="text-muted" hidden data-deans-office-target="none">
+    <p
+      class="text-muted"
+      role="status"
+      hidden
+      data-deans-office-target="none"
+    >
       <%= t("deans_office.no_match") %>
     </p>
   <% end %>
