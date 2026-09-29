@@ -60,12 +60,21 @@
             <th scope="col"><%= t("records_office.lecture") %></th>
             <th scope="col"><%= t("records_office.teacher") %></th>
 
-            <th scope="col" class="text-end">
-              <%= t("records_office.members_column") %>
+            <th scope="col" class="text-end pe-4">
+              <%= t("records_office.groups") %>
             </th>
 
-            <th scope="col"><%= t("records_office.groups") %></th>
-            <th scope="col"><%= t("records_office.downloads") %></th>
+            <th scope="col" class="text-end pe-4">
+              <%= t("records_office.seats") %>
+            </th>
+
+            <th scope="col" class="text-end pe-4">
+              <%= t("records_office.registered") %>
+            </th>
+
+            <th scope="col" class="text-end">
+              <%= t("records_office.assigned") %>
+            </th>
           </tr>
         </thead>
 
@@ -73,7 +82,6 @@
           <% lecture_title = lecture.title_no_term %>
           <% filter_text = [lecture_title, lecture.teacher.tutorial_name].join(" ").downcase %>
           <% groups = @overview.groups(lecture) %>
-          <% occupancy = @overview.occupancy(lecture) %>
           <% groups_id = dom_id(lecture, :records_office_groups) %>
 
           <tbody
@@ -104,53 +112,31 @@
               </th>
 
               <td><%= lecture.teacher.tutorial_name %></td>
-              <td class="text-end"><%= @overview.member_count(lecture) %></td>
 
-              <td class="text-nowrap">
+              <td class="text-end pe-4">
                 <% if groups.empty? %>
                   <span class="text-muted">
                     <%= t("records_office.no_groups") %>
                   </span>
                 <% else %>
-                  <%= t("records_office.group_count", count: groups.size) %>
-                  <% if occupancy %>
-                    <span class="text-muted">
-                      ·
-                      <%= t("records_office.occupancy_summary", taken: occupancy.first,
-                                                                  offered: occupancy.last) %>
-                    </span>
-                  <% end %>
+                  <%= groups.size %>
                 <% end %>
               </td>
 
-              <td class="text-nowrap">
-                <% if @overview.grades?(lecture) %>
-                  <%= link_to records_office_grades_path(lecture),
-                              class: "btn btn-sm btn-outline-primary",
-                              data: { turbo: false },
-                              "aria-label": t("records_office.grades_of",
-                                              lecture: lecture_title) do %>
-                    <i class="bi bi-download" aria-hidden="true"></i>
-                    <%= t("records_office.download_grades") %>
-                  <% end %>
-                <% end %>
-
-                <% if @overview.eligibility?(lecture) %>
-                  <%= link_to records_office_eligibility_path(lecture),
-                              class: "btn btn-sm btn-outline-primary",
-                              data: { turbo: false },
-                              "aria-label": t("records_office.eligibility_of",
-                                              lecture: lecture_title) do %>
-                    <i class="bi bi-download" aria-hidden="true"></i>
-                    <%= t("records_office.download_eligibility") %>
-                  <% end %>
-                <% end %>
+              <td class="text-end pe-4">
+                <%= records_office_seats(*@overview.seats(lecture)) if groups.any? %>
               </td>
+
+              <td class="text-end pe-4">
+                <%= records_office_registrations(@overview.registered_people(lecture)) %>
+              </td>
+
+              <td class="text-end"><%= @overview.member_count(lecture) %></td>
             </tr>
 
             <% if groups.any? %>
               <tr id="<%= groups_id %>" hidden>
-                <td colspan="5" class="bg-body-tertiary">
+                <td colspan="6" class="bg-body-tertiary">
                   <table
                     class="table table-sm mb-0 align-middle"
                     aria-label="<%= t('records_office.groups_of', lecture: lecture_title) %>"
@@ -160,8 +146,16 @@
                         <th scope="col"><%= t("records_office.group") %></th>
                         <th scope="col"><%= t("records_office.kind") %></th>
 
+                        <th scope="col" class="text-end pe-4">
+                          <%= t("records_office.seats") %>
+                        </th>
+
+                        <th scope="col" class="text-end pe-4">
+                          <%= t("records_office.registered") %>
+                        </th>
+
                         <th scope="col" class="w-25">
-                          <%= t("records_office.occupancy") %>
+                          <%= t("records_office.assigned") %>
                         </th>
 
                         <th scope="col">
@@ -186,6 +180,17 @@
                             <%= t("records_office.kinds.#{group_type}") %>
                           </td>
 
+                          <td class="text-end pe-4">
+                            <%= group.capacity || t("records_office.unlimited") %>
+                          </td>
+
+                          <td class="text-end pe-4">
+                            <%= records_office_registrations(
+                                  @overview.registration_count(group),
+                                  first_choices: @overview.first_choices?(group)
+                                ) %>
+                          </td>
+
                           <td>
                             <% if group.capacity %>
                               <%= progress_bar(count, group.capacity,
@@ -194,7 +199,7 @@
                                                height: "1.25rem",
                                                container_class: "progress") %>
                             <% else %>
-                              <%= t("records_office.without_limit", count: count) %>
+                              <%= count %>
                             <% end %>
                           </td>
 

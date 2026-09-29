@@ -1,9 +1,9 @@
-# Lets the records office read every lecture of a term: its groups and how full
-# they are, and as downloads the published grades, the exam eligibility
-# decisions and each group's emails. Every action only reads.
+# Lets the records office read every lecture of a term: its groups, how many
+# have registered for them and how full they are, and each group's emails as
+# a download. Every action only reads.
 class RecordsOfficeController < ApplicationController
   authorize_resource class: false
-  before_action :set_lecture, only: [:grades, :eligibility]
+  helper RecordsOfficeHelper
 
   def current_ability
     @current_ability ||= RecordsOfficeAbility.new(current_user)
@@ -15,14 +15,6 @@ class RecordsOfficeController < ApplicationController
     @overview = RecordsOffice::TermOverview.new(@term)
   end
 
-  def grades
-    send_csv(RecordsOffice::Export.grades(@lecture), :grades, @lecture.title)
-  end
-
-  def eligibility
-    send_csv(RecordsOffice::Export.eligibility(@lecture), :eligibility, @lecture.title)
-  end
-
   def emails
     group = RecordsOffice::TermOverview::GROUP_TYPES.fetch(params[:group_type])
                                                     .find(params[:group_id])
@@ -31,10 +23,6 @@ class RecordsOfficeController < ApplicationController
   end
 
   private
-
-    def set_lecture
-      @lecture = Lecture.find(params[:lecture_id])
-    end
 
     def send_csv(csv, kind, subject)
       filename = "#{I18n.t("records_office.files.#{kind}")} #{subject}".parameterize

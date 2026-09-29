@@ -35,12 +35,6 @@ RSpec.describe("Records office", type: :request) do
 
         get records_office_emails_path("tutorial", tutorial)
         expect(response).to redirect_to(root_path)
-
-        get records_office_grades_path(lecture)
-        expect(response).to redirect_to(root_path)
-
-        get records_office_eligibility_path(lecture)
-        expect(response).to redirect_to(root_path)
       end
     end
   end
@@ -71,8 +65,8 @@ RSpec.describe("Records office", type: :request) do
       doc = Nokogiri::HTML(response.body)
       lecture_row = doc.at_css("tbody[data-records-office-target='lecture'] > tr")
       row = doc.css("tr").find { |tr| tr.text.include?(exam.title) }
-      expect(lecture_row.css("td")[1].text.strip).to eq("2")
-      expect(lecture_row.text).to include("1 group", "2 of 1 seats")
+      cells = lecture_row.css("td").map { |td| td.text.strip }
+      expect(cells.values_at(1, 2, 4)).to eq(["1", "1", "2"])
       expect(row.text).to include("2 / 1")
       expect(row.at_css(".progress-bar")[:class]).to include("bg-danger")
     end
@@ -93,23 +87,53 @@ RSpec.describe("Records office", type: :request) do
         .to include(lecture.title_no_term.downcase, lecture.teacher.tutorial_name.downcase)
     end
 
+    # The rosters stay empty until the allocation; the registrations say who
+    # is coming, counted as the lecturer's campaign card counts them.
+    it "counts the registrations of the running campaigns" do
+      monday = create(:tutorial, lecture: lecture, title: "Monday group", capacity: 12)
+      reading = create(:cohort, context: lecture, title: "Reading group")
+      first_come = create(:registration_campaign, :first_come_first_served,
+                          campaignable: lecture)
+      monday_item = create(:registration_item, registration_campaign: first_come,
+                                               registerable: monday)
+      preferences = create(:registration_campaign, :preference_based, campaignable: lecture)
+      reading_item = create(:registration_item, registration_campaign: preferences,
+                                                registerable: reading)
+      create(:registration_item, registration_campaign: preferences,
+                                 registerable: create(:cohort, context: lecture))
+      [first_come, preferences].each { |campaign| campaign.update!(status: :open) }
+      people = create_list(:confirmed_user, 3)
+      people.first(2).each do |person|
+        create(:registration_user_registration, :confirmed, user: person,
+                                                            registration_campaign: first_come,
+                                                            registration_item: monday_item)
+      end
+      create(:registration_user_registration, user: people.first, preference_rank: 1,
+                                              registration_campaign: preferences,
+                                              registration_item: reading_item)
+      create(:registration_user_registration, user: people.last, preference_rank: 2,
+                                              registration_campaign: preferences,
+                                              registration_item: reading_item)
+
+      get records_office_path
+
+      doc = Nokogiri::HTML(response.body)
+      lecture_cells = doc.at_css("tbody[data-records-office-target='lecture'] > tr")
+                         .css("td").map { |td| td.text.strip }
+      monday_row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Monday group" }
+      reading_row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Reading group" }
+      expect(lecture_cells[3]).to eq("3")
+      expect(monday_row.css("td").map { |td| td.text.strip }.values_at(1, 2))
+        .to eq(["12", "2"])
+      expect(reading_row.text).to include("1 (first choice)")
+    end
+
     it "shows another term's lectures when it is picked" do
       other = create(:lecture, term: create(:term))
 
       get records_office_path(term: other.term.dashboard_param)
 
       expect(response.body).to include(CGI.escapeHTML(other.title_no_term))
-    end
-
-    it "offers the grades only once some were published" do
-      exam = create(:exam, lecture: lecture)
-      get records_office_path
-      expect(response.body).not_to include(records_office_grades_path(lecture))
-
-      exam.assessment.update!(results_published_at: 1.hour.ago)
-      get records_office_path
-      link = Nokogiri::HTML(response.body).at_css("a[href='#{records_office_grades_path(lecture)}']")
-      expect(link["data-turbo"]).to eq("false")
     end
   end
 
@@ -140,108 +164,6 @@ RSpec.describe("Records office", type: :request) do
       get records_office_emails_path("exam", exam)
 
       expect(csv_rows["Last name"]).to eq(["Noether"])
-    end
-
-    it "gives the published grades of exams and talks, and nothing still being graded" do
-      seminar = create(:lecture, term: term, sort: "seminar")
-      published = create(:exam, lecture: seminar, title: "Final exam")
-      published.assessment.update!(results_published_at: 1.hour.ago)
-      noether = person("Noether", "Emmy")
-      create(:assessment_participation, :reviewed, assessment: published.assessment,
-                                                   user: noether, grade_numeric: 2.3)
-      create(:assessment_participation, :absent, assessment: published.assessment,
-                                                 user: person("Zuse", "Konrad"))
-      hidden = create(:exam, lecture: seminar, title: "Resit")
-      create(:assessment_participation, :reviewed, assessment: hidden.assessment,
-                                                   user: noether, grade_numeric: 1.0)
-
-      talk = create(:talk, lecture: seminar, title: "Primes")
-      talk.assessment.update!(results_published_at: 1.hour.ago)
-      create(:assessment_participation, :reviewed, assessment: talk.assessment,
-                                                   user: noether, grade_numeric: 1.0)
-
-      get records_office_grades_path(seminar)
-
-      expect(csv_rows.map { |row| row.fields("Last name", "Kind", "Title", "Grade", "Status") })
-        .to eq([["Noether", "Exam", "Final exam", "2,3", nil],
-                ["Zuse", "Exam", "Final exam", nil, "absent"],
-                ["Noether", "Talk", talk.to_label, "1,0", nil]])
-    end
-
-    it "lists the exams first and the talks by their number" do
-      seminar = create(:lecture, term: term, sort: "seminar")
-      speaker = person("Noether", "Emmy")
-      [[2, "Primes"], [10, "Groups"]].each do |position, title|
-        talk = create(:talk, lecture: seminar, title: title, position: position)
-        talk.assessment.update!(results_published_at: 1.hour.ago)
-        create(:assessment_participation, :reviewed, assessment: talk.assessment,
-                                                     user: speaker, grade_numeric: 1.0)
-      end
-      exam = create(:exam, lecture: seminar, title: "Written exam")
-      exam.assessment.update!(results_published_at: 1.hour.ago)
-      create(:assessment_participation, :reviewed, assessment: exam.assessment,
-                                                   user: speaker, grade_numeric: 2.0)
-
-      get records_office_grades_path(seminar)
-
-      expect(csv_rows["Title"]).to eq(["Written exam", "Talk 2. Primes", "Talk 10. Groups"])
-    end
-
-    it "gives exactly the results the students were shown, and no sheets" do
-      exam = create(:exam, lecture: lecture, title: "Final exam")
-      exam.assessment.update!(results_published_at: 1.hour.ago)
-      create(:assessment_participation, :reviewed, assessment: exam.assessment,
-                                                   user: person("Noether", "Emmy"))
-      create(:assessment_participation, assessment: exam.assessment,
-                                        user: person("Zuse", "Konrad"), grade_text: "")
-      assignment = create(:assignment, :expired, lecture: lecture)
-      assignment.assessment.update!(results_published_at: 1.hour.ago)
-      create(:assessment_participation, :reviewed, assessment: assignment.assessment,
-                                                   user: person("Gauss", "Carl"))
-
-      get records_office_grades_path(lecture)
-
-      expect(csv_rows.map { |row| row.fields("Last name", "Title", "Grade") })
-        .to eq([["Noether", "Final exam", nil]])
-    end
-
-    it "gives the exam eligibility decisions with what they rest on" do
-      noether = person("Noether", "Emmy")
-      create(:student_performance_record, lecture: lecture, user: noether,
-                                          points_total_materialized: 42.5,
-                                          points_max_materialized: 60,
-                                          percentage_materialized: 70.83)
-      create(:student_performance_certification, :passed, :manual,
-             lecture: lecture, user: noether, note: "Certificate from the doctor")
-
-      get records_office_eligibility_path(lecture)
-
-      rows = csv_rows
-      expect(rows.first.fields("Last name", "Points", "Maximum", "Percentage", "Decision", "Note"))
-        .to eq(["Noether", "42,5", "60", "70,83", "Eligible", "Certificate from the doctor"])
-    end
-
-    it "names the rule for a computed decision and leaves a deferred one undated" do
-      create(:student_performance_certification, :failed,
-             lecture: lecture, user: person("Noether", "Emmy"))
-      create(:student_performance_certification, :pending,
-             lecture: lecture, user: person("Zuse", "Konrad"))
-
-      get records_office_eligibility_path(lecture)
-
-      expect(csv_rows.map { |row| row.fields("Last name", "Decision", "Decided by", "Decided on") })
-        .to eq([["Noether", "Not Eligible", "Rule", I18n.l(Time.zone.today)],
-                ["Zuse", "Deferred", nil, nil]])
-    end
-
-    it "leaves the points blank when the student has no performance record" do
-      create(:student_performance_certification, :passed,
-             lecture: lecture, user: person("Noether", "Emmy"))
-
-      get records_office_eligibility_path(lecture)
-
-      expect(csv_rows.first.fields("Points", "Maximum", "Percentage", "Achievements met"))
-        .to eq([nil, nil, nil, nil])
     end
   end
 

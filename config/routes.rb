@@ -86,14 +86,6 @@ Rails.application.routes.draw do
       to: "records_office#index",
       as: "records_office"
 
-  get "records_office/lectures/:lecture_id/grades",
-      to: "records_office#grades",
-      as: "records_office_grades"
-
-  get "records_office/lectures/:lecture_id/eligibility",
-      to: "records_office#eligibility",
-      as: "records_office_eligibility"
-
   get "records_office/:group_type/:group_id/emails",
       to: "records_office#emails",
       as: "records_office_emails",

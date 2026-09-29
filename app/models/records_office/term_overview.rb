@@ -1,6 +1,6 @@
 module RecordsOffice
   # Gathers what the records office sees of one term: every lecture with its
-  # groups and how full they are, and which downloads each lecture has, in a
+  # groups, how many have registered for them and how full they are, in a
   # fixed number of queries however many lectures the term holds. Members are
   # counted, not loaded, since a term holds thousands of them.
   class TermOverview
@@ -41,24 +41,44 @@ module RecordsOffice
       roster_counts.fetch(group.class).fetch(group.id, 0)
     end
 
-    # How full the lecture's groups with a capacity are, together: the seats
-    # taken and offered, or nil when no group has a capacity.
-    def occupancy(lecture)
-      limited = groups(lecture).select(&:capacity)
-      return if limited.empty?
-
-      [limited.sum { |group| roster_count(group) }, limited.sum(&:capacity)]
+    # The seats the lecture's groups offer together, and whether one of them
+    # has no limit, which makes the sum a lower bound.
+    def seats(lecture)
+      capacities = groups(lecture).map(&:capacity)
+      [capacities.compact.sum, capacities.include?(nil)]
     end
 
-    def grades?(lecture)
-      lecture_ids_with_grades.include?(lecture.id)
+    # The registrations of the group's running campaign, counted as its
+    # campaign card counts them: confirmed ones first come, first served, the
+    # first choices when preferences are allocated. Nil without such a campaign.
+    def registration_count(group)
+      item = running_items[[group.class.name, group.id]]
+      return unless item
+      return item.confirmed_registrations_count if item.registration_campaign
+                                                       .first_come_first_served?
+
+      first_choice_counts.fetch(item.id, 0)
     end
 
-    def eligibility?(lecture)
-      lecture_ids_with_eligibility.include?(lecture.id)
+    def first_choices?(group)
+      item = running_items[[group.class.name, group.id]]
+      item.present? && !item.registration_campaign.first_come_first_served?
+    end
+
+    # The people who registered for any of the lecture's groups, each once.
+    # Nil while none of its groups has a running campaign.
+    def registered_people(lecture)
+      ids = groups(lecture).filter_map { |group| running_items[[group.class.name, group.id]]&.id }
+      return if ids.empty?
+
+      registered_users_by_item.values_at(*ids).compact.reduce(Set.new, :|).size
     end
 
     private
+
+      def all_groups
+        @all_groups ||= lectures.flat_map { |lecture| groups(lecture) }
+      end
 
       def member_counts
         @member_counts ||= LectureMembership.where(lecture: lectures).group(:lecture_id).count
@@ -74,20 +94,33 @@ module RecordsOffice
       end
 
       def count_entries(entries, column, group_class)
-        ids = lectures.flat_map { |lecture| groups(lecture) }.grep(group_class).map(&:id)
-        entries.where(column => ids).group(column).count
+        entries.where(column => all_groups.grep(group_class).map(&:id)).group(column).count
       end
 
-      def lecture_ids_with_grades
-        @lecture_ids_with_grades ||=
-          Assessment::Assessment.with_published_results.where(lecture: lectures)
-                                .distinct.pluck(:lecture_id).to_set
+      def running_items
+        @running_items ||= Registration::Item.running.where(registerable: all_groups)
+                                             .includes(:registration_campaign)
+                                             .index_by do |item|
+          [item.registerable_type, item.registerable_id]
+        end
       end
 
-      def lecture_ids_with_eligibility
-        @lecture_ids_with_eligibility ||=
-          StudentPerformance::Certification.where(lecture: lectures)
-                                           .distinct.pluck(:lecture_id).to_set
+      def running_registrations
+        Registration::UserRegistration.where(registration_item_id: running_items.values.map(&:id))
+      end
+
+      def first_choice_counts
+        @first_choice_counts ||= running_registrations.where(preference_rank: 1)
+                                                      .group(:registration_item_id).count
+      end
+
+      def registered_users_by_item
+        @registered_users_by_item ||= running_registrations.where.not(status: :rejected)
+                                                           .pluck(:registration_item_id, :user_id)
+                                                           .group_by(&:first)
+                                                           .transform_values do |pairs|
+          pairs.to_set(&:last)
+        end
       end
   end
 end
