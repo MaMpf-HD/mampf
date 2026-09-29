@@ -171,7 +171,7 @@ en:
       go_to_registration: 'Go to Registration →'
     assignments_complete:
       label: 'The list of sheets and tests is complete'
-      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
+      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict that depends on points — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
       cancel: 'Cancel'
       close_dialog:
         title: 'Tick the box'
@@ -179,7 +179,7 @@ en:
         confirm: 'Tick the box'
       open_dialog:
         title: 'Clear the tick'
-        body: 'Without the tick the eligibility rule decides nothing: every verdict is deferred until you set it again.'
+        body: 'Without the tick the eligibility rule decides nothing that depends on points: such verdicts are deferred until you set it again.'
         confirm: 'Clear the tick'
       reopen_dialog:
         title: 'Clear the tick'
