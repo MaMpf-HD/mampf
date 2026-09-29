@@ -3,9 +3,9 @@
 # This filter is skipped if the 'all_programs' parameter is set to '1' or if
 # no program IDs are provided.
 #
-# When active, filters users by their own `program_id` and joins courses
-# and lectures through their divisions. It does not modify the scope for
-# unsupported models.
+# When active, it dynamically determines the correct join path based on the
+# model being filtered (e.g., `Course` or `Lecture`) to filter by the given
+# program IDs. It does not modify the scope for unsupported models.
 module Search
   module Filters
     class ProgramFilter < BaseFilter

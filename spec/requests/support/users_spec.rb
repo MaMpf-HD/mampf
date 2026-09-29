@@ -22,10 +22,12 @@ RSpec.describe("Support users", type: :request) do
       end
     end
 
-    it "keeps teachers and students out, corrections included" do
+    it "keeps teachers, editors and students out, corrections included" do
       teacher = create(:confirmed_user_en)
       create(:lecture, teacher: teacher)
-      [teacher, create(:confirmed_user_en)].each do |user|
+      editor = create(:confirmed_user_en)
+      create(:lecture).editors << editor
+      [teacher, editor, create(:confirmed_user_en)].each do |user|
         sign_in(user)
 
         get support_users_path
@@ -34,6 +36,60 @@ RSpec.describe("Support users", type: :request) do
         patch support_user_path(student), params: { user: { last_name: "Lasker" } }
         expect(student.reload.last_name).to eq("Noether")
       end
+    end
+
+    # Otherwise a redirect for an existing id and a 404 for a missing one would
+    # tell anybody which ids exist.
+    it "answers outsiders the same whether the account exists or not" do
+      sign_in(create(:confirmed_user_en))
+
+      get edit_support_user_path(student)
+      expect(response).to redirect_to(root_path)
+
+      get edit_support_user_path(id: User.maximum(:id) + 1)
+      expect(response).to redirect_to(root_path)
+    end
+  end
+
+  describe "the support's limits" do
+    before { sign_in(support) }
+
+    it "cannot make themselves an admin" do
+      patch support_user_path(support),
+            params: { user: { last_name: "Test", admin: "1", support: "0" } }
+
+      expect(support.reload).to have_attributes(last_name: "Test", admin: false, support: true)
+    end
+
+    it "changes neither the password nor the tokens of an account" do
+      patch support_user_path(student),
+            params: { user: { last_name: "Test", password: "AnOwnedPassword123!",
+                              encrypted_password: "x", reset_password_token: "owned",
+                              confirmation_token: "owned", unconfirmed_email: "o@example.org" } }
+
+      expect(student.reload).to have_attributes(last_name: "Test", reset_password_token: nil,
+                                                unconfirmed_email: nil)
+      expect(student.valid_password?("AnOwnedPassword123!")).to be(false)
+    end
+
+    it "keeps away from an admin's account in every action" do
+      admin = create(:confirmed_user, admin: true, locked_at: 1.minute.ago, failed_attempts: 5)
+      ActionMailer::Base.deliveries.clear
+
+      get edit_support_user_path(admin)
+      expect(response).to redirect_to(root_path)
+      patch unlock_support_user_path(admin)
+      post confirmation_support_user_path(admin)
+      delete support_user_path(admin)
+
+      expect(admin.reload).to have_attributes(failed_attempts: 5)
+      expect(ActionMailer::Base.deliveries).to be_empty
+    end
+
+    it "does not break on a search address that is not a search" do
+      get support_users_path, params: { search: "abc" }
+
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -85,6 +141,20 @@ RSpec.describe("Support users", type: :request) do
       rows = Nokogiri::HTML(response.body).css("#support-user-results tbody tr")
       admin_row = rows.find { |row| row.text.include?("admin@example.org") }
       expect(admin_row.text).to include(I18n.t("basics.administrator_short"))
+    end
+
+    # The dropdown offers what students pick; courses have their own programs.
+    it "shows a chosen program again, ticked off and offered" do
+      program = create(:program, degree: :msc)
+
+      get support_users_path, params: { search: { all_programs: "0", program_ids: [program.id] } }
+
+      doc = Nokogiri::HTML(response.body)
+      all = doc.at_css("input[type=checkbox][name='search[all_programs]']")
+      select = doc.at_css("select[name='search[program_ids][]']")
+      expect(all["checked"]).to be_nil
+      expect(select["disabled"]).to be_nil
+      expect(select.css("option[selected]").pluck("value")).to eq([program.id.to_s])
     end
 
     it "narrows the search to a program" do
@@ -225,6 +295,27 @@ RSpec.describe("Support users", type: :request) do
       expect(ActionMailer::Base.deliveries.map(&:to)).to eq([["sofia@example.org"]])
     end
 
+    it "says so, and sends nothing, when nothing waits for confirmation" do
+      ActionMailer::Base.deliveries.clear
+
+      post confirmation_support_user_path(student)
+      follow_redirect!
+
+      expect(ActionMailer::Base.deliveries).to be_empty
+      expect(response.body).to include("nothing left to confirm")
+    end
+
+    # Devise keeps the sign-in before the latest in last_sign_in_at.
+    it "shows the latest sign-in" do
+      student.update_columns(last_sign_in_at: Time.zone.local(2026, 9, 1, 10), # rubocop:disable Rails/SkipsModelValidations
+                             current_sign_in_at: Time.zone.local(2026, 9, 20, 10))
+
+      get edit_support_user_path(student)
+
+      status = Nokogiri::HTML(response.body).at_css("[data-testid='support-account-status']").text
+      expect(status).to include(I18n.l(Time.zone.local(2026, 9, 20, 10), format: :short))
+    end
+
     it "offers the confirmation mail only while something waits for confirmation" do
       get edit_support_user_path(student)
 
@@ -268,6 +359,36 @@ RSpec.describe("Support users", type: :request) do
 
       expect(User.exists?(account.id)).to be(false)
       expect(response).to redirect_to(support_users_path)
+    end
+
+    it "keeps an account that exam registrations still refer to, and says so" do
+      create(:exam_roster_entry, user: account)
+      sign_in(admin)
+
+      delete support_user_path(account)
+      follow_redirect!
+
+      expect(User.exists?(account.id)).to be(true)
+      expect(response.body).to include("was not deleted")
+    end
+
+    it "keeps the accounts of editors, admins and their own" do
+      editor = create(:confirmed_user)
+      create(:lecture).editors << editor
+      other_admin = create(:confirmed_user, admin: true)
+      sign_in(admin)
+
+      [editor, other_admin, admin].each { |person| delete support_user_path(person) }
+
+      expect(User.where(id: [editor, other_admin, admin].map(&:id)).count).to eq(3)
+    end
+
+    it "lets an admin delete a support account" do
+      sign_in(admin)
+
+      delete support_user_path(support)
+
+      expect(User.exists?(support.id)).to be(false)
     end
 
     it "keeps the accounts of teachers, and the support's hands off deleting" do

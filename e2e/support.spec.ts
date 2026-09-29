@@ -11,7 +11,7 @@ test.describe("the support", () => {
       await admin.page.goto(`/support/users/${student.user.id}/edit`);
       await admin.page.getByRole("checkbox", { name: "Support" }).check();
       await admin.page.getByRole("button", { name: "Save", exact: true }).click();
-      await expect(admin.page.getByText("The personal data has been saved.")).toBeVisible();
+      await expect(admin.page.getByText("The changes have been saved.")).toBeVisible();
       await expect(admin.page.getByRole("checkbox", { name: "Support" })).toBeChecked();
 
       const page = student.page;
@@ -35,7 +35,7 @@ test.describe("the support", () => {
       await page.getByLabel("Last name").fill("Noether-Lasker");
       await page.getByLabel("Name in tutorials").fill("Emmy");
       await page.getByRole("button", { name: "Save", exact: true }).click();
-      await expect(page.getByText("The personal data has been saved.")).toBeVisible();
+      await expect(page.getByText("The changes have been saved.")).toBeVisible();
       await expect(page.getByLabel("Last name")).toHaveValue("Noether-Lasker");
 
       // the search is still there on the way back

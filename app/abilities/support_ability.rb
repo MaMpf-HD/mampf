@@ -1,3 +1,6 @@
+# Grants the support its account pages: finding people, correcting their
+# personal data and sending the mails that get them back in. Kept apart from
+# the rights of teaching and editing content.
 class SupportAbility
   include CanCan::Ability
 
@@ -8,7 +11,6 @@ class SupportAbility
 
     can :index, :support
 
-    # An admin's account is beyond the support's reach; their own is not.
     can [:edit, :update, :unlock, :password_reset, :confirmation], User do |person|
       user.admin? || !person.admin?
     end
@@ -17,12 +19,13 @@ class SupportAbility
 
     can :assign_support, User
 
-    # Nobody takes their own admin rights, so the last admin cannot lock all out.
+    # Only another admin may change an account's admin rights.
     can :assign_admin, User do |person|
       person != user
     end
 
-    # Staff accounts hold lectures, courses and media; only other accounts go.
+    # Accounts of admins, teachers and editors hold lectures, courses and
+    # media; they stay.
     can :destroy, User do |person|
       person.generic? && person != user
     end

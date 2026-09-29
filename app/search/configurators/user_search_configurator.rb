@@ -1,6 +1,6 @@
 # Configures the support's search for users. Returns no configuration until a
-# fulltext of two characters or a program is given, so the support looks up a
-# particular person instead of browsing all users.
+# fulltext of two characters or a program is given, so the support looks up
+# particular people.
 module Search
   module Configurators
     class UserSearchConfigurator < BaseSearchConfigurator

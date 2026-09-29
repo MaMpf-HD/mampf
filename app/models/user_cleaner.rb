@@ -169,7 +169,6 @@ class UserCleaner
 
   private
 
-    # Staff and the support keep their accounts, used or not.
     def deletable?(user)
       user.generic? && !user.support?
     end

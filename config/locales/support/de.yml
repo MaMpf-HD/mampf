@@ -19,25 +19,27 @@ de:
       data: 'Stammdaten'
       email_hint: 'Die Adresse ändert die Person selbst in ihren Kontoeinstellungen.'
       save: 'Speichern'
-      saved: 'Die Stammdaten sind gespeichert.'
+      saved: 'Die Änderungen sind gespeichert.'
       not_saved: 'Nichts wurde gespeichert:'
       unchanged: 'Es hat sich nichts geändert.'
       unlocked: 'Das Konto ist entsperrt; die fehlgeschlagenen Anmeldungen sind zurückgesetzt.'
       password_reset_sent: 'Eine Mail zum Zurücksetzen des Passworts ist unterwegs.'
       confirmation_sent: 'Die Bestätigungsmail ist erneut unterwegs.'
+      nothing_to_confirm: 'Am Konto ist nichts mehr zu bestätigen, deshalb wurde keine Mail verschickt.'
       fulltext_hint: >-
         Durchsucht Vor- und Nachname, Anzeigename, E-Mail-Adresse,
         Matrikelnummer und Uni-ID. Unter drei Zeichen zählen nur Wortanfänge.
       too_short: 'Gib mindestens zwei Zeichen ein.'
       delete_title: 'Konto löschen'
       delete_hint: >-
-        Löscht das Konto mit allem, was dazugehört, etwa wenn die Person per
-        Mail darum bittet. Konten von Admins, DozentInnen und EditorInnen lassen
-        sich hier nicht löschen.
+        Löscht das Konto, etwa wenn die Person per Mail darum bittet. Ein Konto,
+        auf das noch Einträge wie Klausuranmeldungen verweisen, bleibt bestehen.
+        Konten von Admins, DozentInnen und EditorInnen lassen sich hier nicht
+        löschen.
       delete: 'Konto löschen'
       delete_confirm: 'Das Konto von %{user} endgültig löschen? Das lässt sich nicht rückgängig machen.'
       deleted: 'Das Konto von %{user} ist gelöscht.'
-      not_deleted: 'Das Konto konnte nicht gelöscht werden.'
+      not_deleted: 'Das Konto wurde nicht gelöscht: Einträge wie Klausuranmeldungen verweisen noch darauf.'
       actions:
         unlock: 'Entsperren'
         password_reset: 'Mail zum Zurücksetzen des Passworts schicken'

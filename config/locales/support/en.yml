@@ -18,12 +18,13 @@ en:
       data: 'Personal data'
       email_hint: 'The person changes it themselves in their account settings.'
       save: 'Save'
-      saved: 'The personal data has been saved.'
+      saved: 'The changes have been saved.'
       not_saved: 'Nothing was saved:'
       unchanged: 'Nothing has changed.'
       unlocked: 'The account is unlocked; its failed sign-ins are reset.'
       password_reset_sent: 'A mail to reset the password is on its way.'
       confirmation_sent: 'The confirmation mail is on its way again.'
+      nothing_to_confirm: 'The account has nothing left to confirm, so no mail was sent.'
       fulltext_hint: >-
         Searches first and last name, display name, email address,
         matriculation number and Uni ID. Below three characters, only the
@@ -31,13 +32,13 @@ en:
       too_short: 'Type at least two characters.'
       delete_title: 'Delete the account'
       delete_hint: >-
-        Deletes the account with everything that belongs to it, for instance
-        when its owner asks for it by mail. Accounts of admins, teachers and
-        editors cannot be deleted here.
+        Deletes the account, for instance when its owner asks for it by mail.
+        An account that records such as exam registrations still refer to
+        stays. Accounts of admins, teachers and editors cannot be deleted here.
       delete: 'Delete the account'
       delete_confirm: 'Delete the account of %{user} for good? This cannot be undone.'
       deleted: 'The account of %{user} has been deleted.'
-      not_deleted: 'The account could not be deleted.'
+      not_deleted: 'The account was not deleted: records such as exam registrations still refer to it.'
       actions:
         unlock: 'Unlock'
         password_reset: 'Send a password reset mail'

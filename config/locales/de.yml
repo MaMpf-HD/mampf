@@ -4504,6 +4504,7 @@ de:
             lecture:
               does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
+          admin_rights_lost: 'Du bist nicht mehr Admin, deshalb wurde nichts gespeichert.'
           attributes:
             consents:
               accepted: 'Du musst der Datenschutzerklärung zustimmen, um ein Konto anzulegen.'

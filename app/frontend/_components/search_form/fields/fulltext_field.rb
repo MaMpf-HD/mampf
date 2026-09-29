@@ -23,8 +23,8 @@ module SearchForm
       # field name, label, and help text appropriate for search functionality.
       #
       # @param form_state [SearchForm::FormState] The form state object for context
-      # @param help_text [String, nil] Says what the search looks through, where
-      #   the general text says too little
+      # @param help_text [String, nil] Replaces the general hint where the search
+      #   looks through fields of its own
       # @param options [Hash] Additional options passed to the underlying text field,
       #   such as placeholder, maxlength, or custom styling attributes
       def initialize(form_state:, help_text: nil, **options)

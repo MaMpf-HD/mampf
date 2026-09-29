@@ -1,11 +1,10 @@
+# Formats a person's account state and personal data for the support pages.
 module SupportUsersHelper
   # Lists a person the way exam lists do: last name first.
   def listed_name(user)
     [user.last_name, user.first_name].compact.join(", ").presence || user.name
   end
 
-  # Says whether the account is confirmed, and names an address that still
-  # waits for its owner to confirm it.
   def confirmation_status(user)
     status = if user.confirmed?
       t("support.users.status.confirmed_at", time: l(user.confirmed_at, format: :short))
@@ -28,10 +27,12 @@ module SupportUsersHelper
     end
   end
 
+  # Devise keeps the latest sign-in in current_sign_in_at; last_sign_in_at is
+  # the one before.
   def sign_in_status(user)
-    return t("support.users.status.never_signed_in") unless user.last_sign_in_at
+    return t("support.users.status.never_signed_in") unless user.current_sign_in_at
 
-    t("support.users.status.signed_in", time: l(user.last_sign_in_at, format: :short),
+    t("support.users.status.signed_in", time: l(user.current_sign_in_at, format: :short),
                                         count: user.sign_in_count)
   end
 

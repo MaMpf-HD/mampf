@@ -77,7 +77,7 @@
                           method: :patch, local: true do |f| %>
     <%= f.alert_message t("support.users.not_saved") %>
 
-    <%# Required only when a person gives them; the support also saves accounts without. %>
+    <%# The personal data dialog requires these; the support also corrects accounts without them. %>
     <%= f.text_field :first_name, required: false %>
     <%= f.text_field :last_name, required: false %>
     <%= f.text_field :matriculation_number, required: false %>

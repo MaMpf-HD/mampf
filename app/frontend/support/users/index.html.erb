@@ -6,7 +6,10 @@
   <%= render(SearchForm::SearchForm.new(url: support_users_path, context: "support-users",
                                         local: true, values: search_values)) do |c| %>
     <% c.add_fulltext_field(help_text: t("support.users.fulltext_hint")) %>
-    <% c.add_program_field %>
+
+    <% c.add_program_field(collection: study_programs.map { |p| [p.name_with_subject, p.id] },
+                           all: search_values.nil? || search_values.all_programs == "1") %>
+
     <% c.add_submit_field %>
   <% end %>
 
@@ -60,9 +63,11 @@
                 <td><%= user.program&.name_with_subject %></td>
 
                 <td class="text-end">
-                  <%= link_to t("support.users.open"),
-                              edit_support_user_path(user, search: search_query),
-                              "aria-label": t("support.users.open_for", user: user.email) %>
+                  <% if can?(:edit, user) %>
+                    <%= link_to t("support.users.open"),
+                                edit_support_user_path(user, search: search_query),
+                                "aria-label": t("support.users.open_for", user: user.email) %>
+                  <% end %>
                 </td>
               </tr>
             <% end %>
@@ -70,9 +75,9 @@
         </table>
       </div>
       <%== pagy_series_nav(@pagy) if @pagy.pages > 1 %>
-    <% elsif params.dig(:search, :fulltext).to_s.strip.length == 1 %>
+    <% elsif search_values&.fulltext.to_s.strip.length == 1 %>
       <p><%= t("support.users.too_short") %></p>
-    <% elsif params[:search].present? %>
+    <% elsif search_query %>
       <p><%= t("support.users.no_hits") %></p>
     <% end %>
   </div>

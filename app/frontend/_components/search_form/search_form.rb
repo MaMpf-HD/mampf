@@ -62,10 +62,10 @@ module SearchForm
     # @param turbo_frame [String, nil] Id of the turbo frame the results go into.
     #   Only pass it where such a frame exists; the other searches still answer
     #   with JavaScript and write into a plain container.
-    # @param local [Boolean] Submits as a plain GET that Turbo navigates, so the
-    #   URL keeps the query for going back and reloading.
-    # @param values [Object, nil] Answers the field names with the query the page
-    #   was opened with, so that the fields show it again.
+    # @param local [Boolean] Leaves the form to Turbo instead of Rails UJS, so a
+    #   GET search keeps its query in the URL.
+    # @param values [Object, nil] Supplies values through methods named after the
+    #   fields, so a search shown again fills them.
     # rubocop:disable Metrics/ParameterLists
     def initialize(url:, scope: :search, method: :get, context: nil,
                    container_class: "row mb-3 p-2", turbo_frame: nil, local: false,

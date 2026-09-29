@@ -4255,6 +4255,7 @@ en:
             lecture:
               does_not_match_tutorial: does not match the tutorial's lecture.
         user:
+          admin_rights_lost: 'You are no longer an admin, so nothing was saved.'
           attributes:
             consents:
               accepted: 'You need to accept the privacy policy to create an account.'

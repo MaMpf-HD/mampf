@@ -250,10 +250,9 @@ class User < ApplicationRecord
                   against: SEARCHED_FIELDS,
                   using: { tsearch: { prefix: true, any_word: true } }
 
-  # Named search_by_title although users have no title: Search::Filters::FulltextFilter
-  # calls this scope on every searchable model. Below three characters the
-  # similarity search matches nearly everybody (".de" ends most addresses), so
-  # only the beginnings of words count there.
+  # Search::Filters::FulltextFilter calls search_by_title on every model. Below
+  # three characters only word beginnings count: the similarity search would
+  # match most addresses by their ".de".
   def self.search_by_title(term)
     term.to_s.strip.length < 3 ? search_by_word_start(term) : search_by_similarity(term)
   end
@@ -943,6 +942,20 @@ class User < ApplicationRecord
 
   def generic?
     !(admin? || teacher? || editor?)
+  end
+
+  # Saves a change of admin rights after every other one: the rows of all
+  # admins are locked, and its author must still be an admin then. Two admins
+  # taking each other's rights at once would otherwise leave none.
+  def save_admin_change(by:)
+    self.class.transaction do
+      self.class.where(admin: true).lock.load
+      unless by.reload.admin?
+        errors.add(:base, :admin_rights_lost)
+        raise(ActiveRecord::Rollback)
+      end
+      save || raise(ActiveRecord::Rollback)
+    end
   end
 
   # for lectures that are too old, only the teacher or an editor
