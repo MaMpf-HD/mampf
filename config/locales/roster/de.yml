@@ -369,74 +369,116 @@ de:
       end_mail: |
         Mit freundlichen Grüßen,
         Dein MaMpf-Team
-      link_text_html: |
+      link_text_group_html: |
         <p>Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}</p>
-      link_text: |
+      link_text_group: |
         Du kannst Deine neue Gruppe hier aufrufen: %{rosterable_link}
+      link_text_exam_html: |
+        <p>Du kannst Deine neuen Klausurinformationen hier aufrufen: %{rosterable_link}</p>
+      link_text_exam: |
+        Du kannst Deine neuen Klausurinformationen hier aufrufen: %{rosterable_link}
+      link_reject_info_html: |
+        <p>Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}</p>
+      link_reject_info: |
+        Du kannst Deinen Anmeldestatus hier einsehen: %{rosterable_link}
+      reject_reasons_html: |
+        <p>Grund: %{reasons}</p>
+      reject_reasons: |
+        Grund: %{reasons}
+      greeting_name_html: '<p>Hallo %{name},</p>'
+      greeting_name: 'Hallo %{name},'
+      greeting_html: '<p>Hallo,</p>'
+      greeting: 'Hallo,'
       roster_added_to_group_email_body_html: |
-        <p>Hallo %{name},</p>
         <p>
           Du wurdest zu <strong>%{rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> hinzugefügt.
+          in der Veranstaltung <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
         <p>
           Du nimmst nun an dieser Gruppe teil.
         </p>
       roster_added_to_group_email_body: |
-        Hallo %{name},
-
-        Du wurdest zu „%{rosterable_title}“ in der Vorlesung
+        Du wurdest zu „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ hinzugefügt.
 
         Du nimmst nun an dieser Gruppe teil.
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
+      roster_added_to_exam_email_body_html: |
+        <p>
+          Du wurdest zur Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> hinzugefügt.
+        </p>
+      roster_added_to_exam_email_body: |
+        Du wurdest zur Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ hinzugefügt.
+
+      roster_added_to_exam_email_subject: 'Zur Klausur %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_removed_from_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest aus <strong>%{rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> entfernt.
+          in der Veranstaltung <strong>%{lecture_title}</strong> entfernt.
         </p>
         <p>
           Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
           wende Dich bitte an Deine Lehrperson oder das Support-Team.
         </p>
         <p>
-          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+          Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
         </p>
       roster_removed_from_group_email_body: |
         Hallo %{name},
 
-        Du wurdest aus „%{rosterable_title}“ in der Vorlesung
+        Du wurdest aus „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ entfernt.
 
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
 
-        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
+      roster_removed_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du wurdest aus der Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> entfernt.
+        </p>
+        <p>
+          Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+          wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_removed_from_exam_email_body: |
+        Hallo %{name},
+
+        Du wurdest aus der Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ entfernt.
+
+        Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
+        wende Dich bitte an Deine Lehrperson oder das Support-Team.
+      roster_removed_from_exam_email_subject: 'Aus der Klausur %{rosterable_title} in %{lecture_title} entfernt'
       roster_moved_between_groups_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           Du wurdest von <strong>%{old_rosterable_title}</strong>
           nach <strong>%{new_rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> verschoben.
+          in der Veranstaltung <strong>%{lecture_title}</strong> verschoben.
         </p>
         <p>
-          Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+          Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
         </p>
       roster_moved_between_groups_email_body: |
         Hallo %{name},
 
         Du wurdest von „%{old_rosterable_title}“ nach „%{new_rosterable_title}“
-        in der Vorlesung „%{lecture_title}“ verschoben.
+        in der Veranstaltung „%{lecture_title}“ verschoben.
 
-        Deine Einschreibung in die entsprechende Vorlesung %{lecture_title} bleibt unverändert.
+        Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
       roster_moved_between_groups_email_subject: 'In die Gruppe %{rosterable_title} in %{lecture_title} verschoben'
       roster_participant_left_group_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
           %{participant_name} hat Deine Gruppe <strong>%{old_rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong> verlassen und ist jetzt in
+          in der Veranstaltung <strong>%{lecture_title}</strong> verlassen und ist jetzt in
           <strong>%{new_rosterable_title}</strong>.
         </p>
         <p>
@@ -447,7 +489,7 @@ de:
       roster_participant_left_group_email_body: |
         Hallo %{name},
 
-        %{participant_name} hat Deine Gruppe „%{old_rosterable_title}“ in der Vorlesung
+        %{participant_name} hat Deine Gruppe „%{old_rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ verlassen und ist jetzt in „%{new_rosterable_title}“.
 
         Bereits bei Dir eingereichte Abgaben bleiben bei Dir und werden von Dir
@@ -458,7 +500,7 @@ de:
         <p>Hallo %{name},</p>
         <p>
           %{participant_name} ist neu in Deiner Gruppe <strong>%{new_rosterable_title}</strong>
-          in der Vorlesung <strong>%{lecture_title}</strong>, zuvor in
+          in der Veranstaltung <strong>%{lecture_title}</strong>, zuvor in
           <strong>%{old_rosterable_title}</strong>.
         </p>
         <p>
@@ -470,7 +512,7 @@ de:
         Hallo %{name},
 
         %{participant_name} ist neu in Deiner Gruppe „%{new_rosterable_title}“ in der
-        Vorlesung „%{lecture_title}“, zuvor in „%{old_rosterable_title}“.
+        Veranstaltung „%{lecture_title}“, zuvor in „%{old_rosterable_title}“.
 
         Bereits eingereichte Abgaben bleiben in „%{old_rosterable_title}“ und werden dort
         korrigiert — sofern sie nicht vor Fristende noch einmal bearbeitet werden.
@@ -494,3 +536,50 @@ de:
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_removed_from_lecture_email_subject: 'Entfernt aus der Veranstaltung %{lecture_title}'
+      roster_change_exam_schedule_email_body_html: |
+        <p>
+          Der Termin der Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> hat sich geändert.
+        </p>
+        <p>
+          Bitte notiere Dir die neuen Angaben.
+        </p>
+      roster_change_exam_schedule_email_body: |
+        Der Termin der Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ hat sich geändert.
+
+        Bitte notiere Dir die neuen Angaben.
+      roster_change_exam_schedule_email_subject: 'Terminänderung für Klausur %{rosterable_title} in %{lecture_title}'
+      roster_rejected_from_group_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung für <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_group_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung für „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_group_email_subject: 'Anmeldung für %{lecture_title} nicht erfolgreich'
+
+      roster_rejected_from_exam_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Deine Anmeldung zur Klausur <strong>%{rosterable_title}</strong>
+          in der Veranstaltung <strong>%{lecture_title}</strong> war nicht erfolgreich.
+        </p>
+      roster_rejected_from_exam_email_body: |
+        Hallo %{name},
+
+        Deine Anmeldung zur Klausur „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“ war nicht erfolgreich.
+      roster_rejected_from_exam_email_subject: 'Anmeldung zur Klausur %{rosterable_title} in %{lecture_title} nicht erfolgreich'
+      exam_schedule:
+        first_part: "Die Klausur findet"
+        date_part: "am %{exam_date}"
+        location_part: "in %{exam_location}"
+        last_part: "statt"
+        non_available_info:
+          one: "%{non_avai_ops} wird noch bekannt gegeben."
+          other: "%{non_avai_ops} werden noch bekannt gegeben."
+        date_ops: Datum
+        location_ops: Ort

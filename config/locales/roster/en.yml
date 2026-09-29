@@ -365,12 +365,27 @@ en:
       end_mail: |
         With kind regards,
         Your MaMpf-Team
-      link_text_html: |
+      link_text_group_html: |
         <p>You can access your new group here: %{rosterable_link}</p>
-      link_text: |
+      link_text_group: |
         You can access your new group here: %{rosterable_link}
+      link_text_exam_html: |
+        <p>You can view your new exam info here: %{rosterable_link}</p>
+      link_text_exam: |
+        You can view your new exam info here: %{rosterable_link}
+      link_reject_info_html: |
+        <p>You can view your registration status here: %{rosterable_link}</p>
+      link_reject_info: |
+        You can view your registration status here: %{rosterable_link}
+      reject_reasons_html: |
+        <p>Reason: %{reasons}</p>
+      reject_reasons: |
+        Reason: %{reasons}
+      greeting_name_html: '<p>Hello %{name},</p>'
+      greeting_name: 'Hello %{name},'
+      greeting_html: '<p>Hello,</p>'
+      greeting: 'Hello,'
       roster_added_to_group_email_body_html: |
-        <p>Hello %{name},</p>
         <p>
           You have been added to <strong>%{rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong>.
@@ -379,13 +394,20 @@ en:
           You are now a participant in this group.
         </p>
       roster_added_to_group_email_body: |
-        Hello %{name},
-
         You have been added to "%{rosterable_title}" in the lecture
         "%{lecture_title}".
 
         You are now a participant in this group.
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{lecture_title}'
+      roster_added_to_exam_email_body_html: |
+        <p>
+          You have been added to exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+      roster_added_to_exam_email_body: |
+        You have been added to exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+      roster_added_to_exam_email_subject: 'Added to exam %{rosterable_title} in %{lecture_title}'
       roster_removed_from_group_email_body_html: |
         <p>Hello %{name},</p>
         <p>
@@ -410,6 +432,25 @@ en:
 
         Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
       roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title} in %{lecture_title}'
+      roster_removed_from_exam_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You have been removed from exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong>.
+        </p>
+        <p>
+          If you believe this was a mistake or if you have any questions,
+          please contact your instructor or the support team.
+        </p>
+      roster_removed_from_exam_email_body: |
+        Hello %{name},
+
+        You have been removed from exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}".
+
+        If you believe this was a mistake or if you have any questions,
+        please contact your instructor or the support team.
+      roster_removed_from_exam_email_subject: 'Removed from exam %{rosterable_title} in %{lecture_title}'
       roster_moved_between_groups_email_body_html: |
         <p>Hello %{name},</p>
         <p>
@@ -490,3 +531,49 @@ en:
         If you believe this was a mistake or if you have any questions,
         please contact your instructor or the support team.
       roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'
+      roster_change_exam_schedule_email_body_html: |
+        <p>
+          The schedule for exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong> has changed.
+        </p>
+        <p>
+          Please make a note of the new details.
+        </p>
+      roster_change_exam_schedule_email_body: |
+        The schedule for exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}" has changed.
+
+        Please make a note of the new details.
+      roster_change_exam_schedule_email_subject: 'Schedule change for exam %{rosterable_title} in %{lecture_title}'
+      roster_rejected_from_group_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          Your registration for <strong>%{lecture_title}</strong> was not successful.
+        </p>
+      roster_rejected_from_group_email_body: |
+        Hello %{name},
+
+        Your registration for "%{lecture_title}" was not successful.
+      roster_rejected_from_group_email_subject: 'Registration for %{lecture_title} was not successful'
+      roster_rejected_from_exam_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          Your registration for exam <strong>%{rosterable_title}</strong>
+          in the lecture <strong>%{lecture_title}</strong> was not successful.
+        </p>
+      roster_rejected_from_exam_email_body: |
+        Hello %{name},
+
+        Your registration for exam "%{rosterable_title}" in the lecture
+        "%{lecture_title}" was not successful.
+      roster_rejected_from_exam_email_subject: 'Registration for exam %{rosterable_title} in %{lecture_title} was not successful'
+      exam_schedule:
+        first_part: "The exam will take place"
+        date_part: "on %{exam_date}"
+        location_part: "at %{exam_location}"
+        last_part: ""
+        non_available_info:
+          one: "%{non_avai_ops} will be announced later."
+          other: "%{non_avai_ops} will be announced later."
+        date_ops: Date
+        location_ops: Location
