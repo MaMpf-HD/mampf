@@ -37,7 +37,6 @@ $(document).on("turbo:load", function () {
     $("#second-admin-nav").show();
     $("#adminDetails").appendTo($("#second-admin-nav"));
     $("#adminUsers").appendTo($("#second-admin-nav"));
-    $("#adminProfile").appendTo($("#second-admin-nav"));
     $("#teachableDrop").prependTo($("#second-admin-nav"));
     $("#adminMain").css("flex-direction", "row");
     $("#adminHome").css("padding-right", "0.5rem");
@@ -61,7 +60,6 @@ $(document).on("turbo:load", function () {
     $("#teachableDrop").appendTo($("#first-admin-nav"));
     $("#adminDetails").appendTo($("#first-admin-nav"));
     $("#adminUsers").appendTo($("#first-admin-nav"));
-    $("#adminProfile").appendTo($("#first-admin-nav"));
     $("#adminMain").removeAttr("style");
     $("#adminHome").removeAttr("style");
     $("#adminCurrentLecture").removeAttr("style");

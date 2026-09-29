@@ -93,6 +93,10 @@
             <%= link_to t("personal_data.edit_link"), edit_personal_data_path %>
           </div>
 
+          <% if @user.teacher? %>
+            <%= render "profile/teacher_profile", f: f, user: @user %>
+          <% end %>
+
           <%= render partial: 'profile/subscription_type', locals: { f: f } %>
           <%= render partial: 'profile/account' %>
         </div>

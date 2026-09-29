@@ -53,14 +53,14 @@ class AchievementMarkingTableComponent < ViewComponent::Base
 
   private
 
-    # A group's members by the name the table shows; the lecture's members
-    # group by group, those in no group last, as the sheet tables read.
+    # A group's members by last name; the lecture's members group by group,
+    # those in no group last, as the sheet tables read.
     def members
       @members ||= if @tutorial
-        @tutorial.members.to_a.sort_by { |user| user.tutorial_name.to_s.downcase }
+        @tutorial.members.by_last_name.to_a
       else
-        @lecture.members.to_a.sort_by do |user|
-          [groups[user.id] ? 0 : 1, groups[user.id]&.title.to_s, user.tutorial_name.to_s.downcase]
+        @lecture.members.by_last_name.to_a.sort_by.with_index do |user, position|
+          [groups[user.id] ? 0 : 1, groups[user.id]&.title.to_s, position]
         end
       end
     end

@@ -73,6 +73,42 @@ test.describe("student self-enrollment", () => {
     await expect(option.getByRole("button")).toHaveCount(0);
   });
 
+  test("tells how many places are left, and nothing of a limit where there is none", async ({
+    factory,
+    student,
+    student2,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const limited = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Limited Tutorial",
+      capacity: 4,
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: limited.id,
+      user_id: student2.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Open Tutorial",
+      capacity: null,
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await openSelfEnrollment(student.page);
+
+    const option = (title: string) => student.page.getByTestId("registration-option")
+      .filter({ hasText: title });
+    await expect(option("Limited Tutorial").getByText("3 of 4 places free")).toBeVisible();
+    await expect(option("Open Tutorial").getByText("No limit")).toBeVisible();
+    await expect(option("Open Tutorial")).not.toContainText("places free");
+  });
+
   test("leaves out the registrations when no campaigns or free groups exist", async ({
     factory,
     student,

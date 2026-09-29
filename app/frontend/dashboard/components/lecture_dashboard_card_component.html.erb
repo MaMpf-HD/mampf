@@ -66,6 +66,27 @@
     <% end %>
   <% end %>
 
+  <% talks.each do |talk| %>
+    <% card.with_note do %>
+      <div class="dashboard-card__talk">
+        <div class="dashboard-card__talk-line">
+          <%= link_to talk_path(talk), class: "dashboard-card__note-link" do %>
+            <i class="bi bi-mic" aria-hidden="true"></i>
+            <%= talk.title %>
+          <% end %>
+
+          <% if (dates = talk_dates(talk)) %>
+            <span class="dashboard-card__talk-date"><%= dates %></span>
+          <% end %>
+        </div>
+
+        <% if (cospeakers = talk_cospeakers(talk)) %>
+          <div class="dashboard-card__talk-details"><%= cospeakers %></div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
   <% unless staff? %>
     <% card.with_progress do %>
       <%= render(DashboardPointsProgressComponent.new(lecture: lecture,

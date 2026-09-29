@@ -11,6 +11,7 @@ export default class extends Controller {
   static values = {
     selector: String,
     frameId: String,
+    url: String,
   };
 
   async open(event) {
@@ -20,9 +21,10 @@ export default class extends Controller {
     if (!modalEl) return;
 
     const modal = Modal.getOrCreateInstance(modalEl);
+    this.returnFocusOnClose(modalEl);
     modal.show();
 
-    const url = this.element.getAttribute("href");
+    const url = this.urlValue || this.element.getAttribute("href");
 
     try {
       // TODO: We should find a better way to load modals without having
@@ -54,6 +56,16 @@ export default class extends Controller {
       console.error("Network error loading modal content:", error);
       this.showModalLoadingErrorMessage(modalEl);
     }
+  }
+
+  /**
+   * Bootstrap gives the focus back only to a trigger that opened the modal
+   * through its data API; this one opens it from code.
+   */
+  returnFocusOnClose(modalEl) {
+    modalEl.addEventListener("hidden.bs.modal", () => {
+      if (this.element.isConnected) this.element.focus();
+    }, { once: true });
   }
 
   showModalLoadingErrorMessage(modalEl) {

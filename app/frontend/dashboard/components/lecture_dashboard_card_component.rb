@@ -7,17 +7,20 @@ class LectureDashboardCardComponent < ViewComponent::Base
   # :bookmarked section gets a remove "x", and cards in the :staff and :tutor
   # sections leave out the student-only points progress and quick actions.
   # `term` is the semester the board shows; removing the card re-renders the
-  # board for it.
-  def initialize(lecture:, user:, term:, activity: nil, section: :enrolled)
+  # board for it. `talks` are the user's own talks in this seminar.
+  # rubocop: disable Metrics/ParameterLists
+  def initialize(lecture:, user:, term:, activity: nil, section: :enrolled, talks: [])
     super()
     @lecture = lecture
     @user = user
     @term = term
     @activity = activity
     @section = section
+    @talks = talks
   end
+  # rubocop: enable Metrics/ParameterLists
 
-  attr_reader :lecture, :user, :term, :activity, :section
+  attr_reader :lecture, :user, :term, :activity, :section, :talks
 
   def bookmarked?
     section == :bookmarked
@@ -66,6 +69,17 @@ class LectureDashboardCardComponent < ViewComponent::Base
   # Confirmed is the default state of this band, so only show flux states.
   def show_registration_status?
     registration_status.present? && registration_status != :confirmed
+  end
+
+  # Each date keeps together; with several, the line may wrap between them.
+  def talk_dates(talk)
+    dates = talk.dates.map { |date| tag.span(I18n.l(date, format: :concise), class: "text-nowrap") }
+    safe_join(dates, ", ").presence
+  end
+
+  def talk_cospeakers(talk)
+    cospeakers = helpers.cospeaker_list(talk, user)
+    t("main.start.talk_with", names: cospeakers) if cospeakers.present?
   end
 
   def registration_status_label

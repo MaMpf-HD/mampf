@@ -609,6 +609,31 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#reset_computed_certifications!" do
+    let(:lecture) do
+      create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)
+    end
+    let!(:computed) { create(:student_performance_certification, :passed, lecture: lecture) }
+    let!(:manual) do
+      create(:student_performance_certification, :failed, :manual, lecture: lecture)
+    end
+
+    it "drops the computed decisions, keeps the manual ones and counts them" do
+      expect(lecture.reset_computed_certifications!).to eq(1)
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(manual)
+    end
+
+    it "drops nothing while a running registration asks for the decisions" do
+      create(:registration_policy, :student_performance,
+             config: { "lecture_ids" => [lecture.id.to_s] })
+
+      expect(lecture.reset_computed_certifications!).to be_nil
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(computed, manual)
+    end
+  end
+
   describe "disabling uses_exam_eligibility" do
     let(:lecture) do
       create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)

@@ -27,11 +27,14 @@ class ProfileController < ApplicationController
   end
 
   def update
+    previous_image = @user.image_data
+    assign_teacher_profile
     if @user.update(name: @name,
                     name_in_tutorials: @name_in_tutorials,
                     subscription_type: @subscription_type,
                     locale: @locale)
       @user.update(email_params)
+      derive_profile_image if @user.image_data != previous_image
       I18n.locale = @locale
       cookies[:locale] = @locale
       @user.touch
@@ -122,6 +125,27 @@ class ProfileController < ApplicationController
       @name = params[:user][:name]
       @name_in_tutorials = params[:user].fetch(:name_in_tutorials, @user.name_in_tutorials)
       @locale = params[:user][:locale]
+    end
+
+    # A teacher's homepage and picture show on their teacher page, so only a
+    # teacher sets them.
+    def assign_teacher_profile
+      return unless @user.teacher?
+
+      profile = params.permit(user: [:homepage, :image, :remove_image]).fetch(:user, {})
+      @user.homepage = profile[:homepage] if profile.key?(:homepage)
+      if profile[:image].present?
+        @user.image = profile[:image]
+      elsif profile[:remove_image] == "1"
+        @user.image = nil
+      end
+    end
+
+    def derive_profile_image
+      return if @user.image.blank?
+
+      @user.image_derivatives!
+      @user.save
     end
 
     def email_params

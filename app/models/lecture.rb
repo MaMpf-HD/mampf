@@ -1113,6 +1113,25 @@ class Lecture < ApplicationRecord
     tutorials.merge(Tutorial.roster_eligible).exists?
   end
 
+  # The titles of the registration campaigns that are not completed and have a
+  # student performance policy for this lecture, or nil. Their screening reads
+  # this lecture's certifications.
+  def eligibility_in_use_by
+    policies = unfinished_eligibility_policies
+    return if policies.empty?
+
+    blocking_campaign_titles(policies)
+  end
+
+  # Drops the computed certifications and returns how many decisions went, or
+  # returns nil and drops nothing while eligibility_in_use_by names a
+  # registration that still reads them.
+  def reset_computed_certifications!
+    return if eligibility_in_use_by
+
+    student_performance_certifications.reset_computed!
+  end
+
   private
 
     def scheduled_release(medium)
@@ -1263,15 +1282,17 @@ class Lecture < ApplicationRecord
     # A completed campaign is the exception: it has allocated its seats and is
     # never screened again, so it would block for good with nothing left to undo.
     def exam_eligibility_can_be_disabled
-      blocking = Registration::Policy.student_performance_for_lecture(id)
-                                     .joins(:registration_campaign)
-                                     .merge(Registration::Campaign
-                                              .where.not(status: :completed))
-                                     .includes(registration_campaign: :campaignable)
-      return if blocking.empty?
+      titles = eligibility_in_use_by
+      return unless titles
 
-      errors.add(:uses_exam_eligibility, :referenced_by_policies,
-                 campaigns: blocking_campaign_titles(blocking))
+      errors.add(:uses_exam_eligibility, :referenced_by_policies, campaigns: titles)
+    end
+
+    def unfinished_eligibility_policies
+      Registration::Policy.student_performance_for_lecture(id)
+                          .joins(:registration_campaign)
+                          .merge(Registration::Campaign.where.not(status: :completed))
+                          .includes(registration_campaign: :campaignable)
     end
 
     def blocking_campaign_titles(policies)

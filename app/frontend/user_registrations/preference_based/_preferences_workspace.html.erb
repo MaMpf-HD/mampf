@@ -91,7 +91,7 @@
         <%= render "user_registrations/option_row",
                    title: title,
                    type_label: item_display_type(item),
-                   meta: item_tile_metadata_rows(item).map { |row| row[:value] },
+                   meta: item_tile_metadata_rows(item),
                    keep: selected_rank.present?,
                    actions: actions,
                    reason: (registration_blocked_tooltip if blocked && !readonly) %>

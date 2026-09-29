@@ -253,6 +253,20 @@ RSpec.describe(UserRegistrationsHelper, type: :helper) do
     end
   end
 
+  describe "#option_fill_percent" do
+    it "has no bar for a group without a limit" do
+      expect(helper.option_fill_percent(nil, 4)).to be_nil
+    end
+
+    it "fills the bar by the share of places taken" do
+      expect(helper.option_fill_percent(20, 12)).to eq(60)
+    end
+
+    it "fills the bar no further than full, even when overbooked" do
+      expect(helper.option_fill_percent(10, 12)).to eq(100)
+    end
+  end
+
   describe "#format_date" do
     let(:timestamp) { Time.zone.local(2026, 5, 2, 17, 45) }
 
