@@ -3360,6 +3360,7 @@ de:
       title: "Teilnehmende"
       none: "In dieser Gruppe ist noch niemand."
       registered_title: "Angemeldet, noch nicht endgültig"
+      no_program: "ohne Angabe"
       registered_hint: >
         Sie kommen in die Gruppe, sobald die Anmeldung „%{campaign}“
         abgeschlossen ist. Bis dahin können sich Anmeldungen noch ändern.

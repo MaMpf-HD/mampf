@@ -5,7 +5,8 @@
   </h2>
 
   <% if members.any? %>
-    <%= render "tutorials/participants_table", users: members, css: "mb-4" %>
+    <%= render "tutorials/participants_table", users: members, css: "mb-4",
+                                                summary: program_summary(members) %>
   <% else %>
     <p class="text-muted mb-4"><%= t("tutorial.participants.none") %></p>
   <% end %>
@@ -27,7 +28,8 @@
       <%= t("tutorial.participants.registered_hint", campaign: campaign_title) %>
     </p>
     <% if registered.any? %>
-      <%= render "tutorials/participants_table", users: registered, css: "" %>
+      <%= render "tutorials/participants_table", users: registered, css: "",
+                                                  summary: program_summary(registered) %>
     <% end %>
   <% end %>
 </div>

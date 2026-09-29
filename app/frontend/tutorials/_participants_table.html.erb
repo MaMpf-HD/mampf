@@ -1,29 +1,36 @@
-<%# locals: (users:, css:) %>
+<%# locals: (users:, css:, summary:) %>
 <%# The program says what a participant is likely to know already. %>
-<div class="table-responsive <%= css %>">
-  <table class="table table-sm align-middle mb-0">
-    <thead class="table-light">
-      <tr>
-        <th scope="col" class="person-name-column"><%= t("basics.name") %></th>
-        <th scope="col"><%= User.human_attribute_name(:program_id) %></th>
+<div class="<%= css %>">
+  <p class="small text-muted mb-2"><%= summary %></p>
 
-        <th scope="col" class="text-end">
-          <span class="visually-hidden"><%= t("basics.actions") %></span>
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% users.each do |user| %>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead class="table-light">
         <tr>
-          <td><%= user.tutorial_name %></td>
-          <td class="text-muted"><%= user.program&.name_with_subject %></td>
+          <th scope="col" class="person-name-column">
+            <%= t("basics.name") %>
+          </th>
 
-          <td class="text-end">
-            <%= render "shared/copy_email_button", email: user.email %>
-          </td>
+          <th scope="col"><%= User.human_attribute_name(:program_id) %></th>
+
+          <th scope="col" class="text-end">
+            <span class="visually-hidden"><%= t("basics.actions") %></span>
+          </th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+
+      <tbody>
+        <% users.each do |user| %>
+          <tr>
+            <td><%= user.tutorial_name %></td>
+            <td class="text-muted"><%= user.program&.name_with_subject %></td>
+
+            <td class="text-end">
+              <%= render "shared/copy_email_button", email: user.email %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -37,6 +37,16 @@ class TutorialParticipantsComponent < ViewComponent::Base
     running_item.present? && running_item.provisional_users.nil?
   end
 
+  # "8 × B.Sc. Mathematik · 3 × …", most frequent first: the mix of a group at a
+  # glance, before the rows.
+  def program_summary(users)
+    counts = users.map { |user| user.program&.name_with_subject }.tally
+    parts = counts.sort_by { |name, count| [-count, name.to_s] }.map do |name, count|
+      "#{count} × #{name || t("tutorial.participants.no_program")}"
+    end
+    parts.join(" · ")
+  end
+
   def campaign_title
     campaign.description.to_s.strip.presence || campaign.student_facing_title
   end

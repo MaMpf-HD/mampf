@@ -29,6 +29,20 @@ RSpec.describe(TutorialParticipantsComponent, type: :component) do
     expect(html.at_css("button[aria-label='Copy email address: #{becker.email}']")).to be_present
   end
 
+  it "sums the group up by program, most frequent first" do
+    program = create(:program, degree: :msc)
+    2.times do
+      create(:tutorial_membership, tutorial: tutorial,
+                                   user: create(:confirmed_user, program: program))
+    end
+    create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
+
+    text = render_inline(described_class.new(tutorial: tutorial)).text.squish
+
+    expect(text).to include("2 × #{program.name_with_subject} · 1 × " \
+                            "#{I18n.t("tutorial.participants.no_program")}")
+  end
+
   it "says so when nobody is in the group" do
     text = render_inline(described_class.new(tutorial: tutorial)).text.squish
 

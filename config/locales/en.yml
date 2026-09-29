@@ -3141,6 +3141,7 @@ en:
       title: "Participants"
       none: "Nobody is in this group yet."
       registered_title: "Registered, not final yet"
+      no_program: "no program given"
       registered_hint: >
         They join the group when the registration "%{campaign}" is finalized.
         Until then, registrations can still change.
