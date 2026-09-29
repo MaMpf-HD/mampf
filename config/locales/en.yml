@@ -3200,7 +3200,7 @@ en:
     teams_as_csv: Teams as .csv
     certificate_invalid: This code is invalid.
     info:
-      tutors:
+      tutors: >
         Here you can select the tutors of the tutorial. They can view
         the submissions and upload corrections.
         You can only select users who have the status of tutor in the
