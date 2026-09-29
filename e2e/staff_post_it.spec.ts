@@ -66,4 +66,28 @@ test.describe("the note pinned to a lecturer's dashboard", () => {
     await tags.getByRole("button", { name: "Search" }).click();
     await expect(tags.getByText("Sylow theorems")).toBeVisible();
   });
+
+  test("creates a lecture of a term-independent course without asking for a term", async ({
+    factory,
+    teacher: { page, user },
+  }) => {
+    await factory.create("course", ["with_editor_by_id"], {
+      editor_id: user.id, title: "Algebra",
+    });
+    await factory.create("course", ["with_editor_by_id", "term_independent"], {
+      editor_id: user.id, title: "Analysis 2",
+    });
+    await factory.create("term", ["summer", "active"], { year: 2025 });
+
+    await page.goto("/");
+    await page.getByRole("region", { name: "For teaching staff" })
+      .getByRole("button", { name: "New lecture" }).click();
+    const dialog = page.getByRole("dialog", { name: "Create an event series" });
+    const term = dialog.getByRole("combobox", { name: "Term" });
+    await expect(term).toBeVisible();
+
+    await createLecture(page, "Analysis 2");
+    await expect(page).toHaveURL(/\/lectures\/\d+\/edit/);
+    await expect(page.getByText("has been successfully created")).toBeVisible();
+  });
 });
