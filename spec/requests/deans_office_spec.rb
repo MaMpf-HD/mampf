@@ -34,9 +34,9 @@ RSpec.describe("Dean's office", type: :request) do
 
       get deans_office_path
 
-      expect(response.body).to include(CGI.escapeHTML(lecture.title_no_term), "Tuesday group",
+      expect(response.body).to include(CGI.escapeHTML(lecture.course.title), "Tuesday group",
                                        "3 / 10")
-      expect(response.body).not_to include(CGI.escapeHTML(other.title_no_term))
+      expect(response.body).not_to include(CGI.escapeHTML(other.course.title))
     end
 
     it "counts the lecture's members and only the active exam roster" do
@@ -69,7 +69,7 @@ RSpec.describe("Dean's office", type: :request) do
       expect(groups["hidden"]).not_to be_nil
       expect(groups.text).to include("Tuesday group")
       expect(doc.at_css("tbody[data-deans-office-target='lecture']")["data-filter-text"])
-        .to include(lecture.title_no_term.downcase, lecture.teacher.tutorial_name.downcase)
+        .to include(lecture.course.title.downcase, lecture.teacher.tutorial_name.downcase)
     end
 
     # The rosters stay empty until the allocation; the registrations say who
@@ -145,12 +145,33 @@ RSpec.describe("Dean's office", type: :request) do
       expect(rows["Teacher's group"]).to include("only through the teacher")
     end
 
+    it "lists the lectures first and the seminars in a table of their own" do
+      seminar = create(:lecture, :is_seminar, term: term)
+      lecture
+
+      get deans_office_path
+
+      sections = Nokogiri::HTML(response.body).css("section[data-deans-office-target='section']")
+      expect(sections.map { |section| section.at_css("h2").text.strip })
+        .to eq(["Lectures", "Seminars"])
+      expect(sections.last.text).to include(seminar.course.title, seminar.sort_localized)
+      expect(sections.first.text).not_to include(seminar.course.title)
+    end
+
+    it "is in the navbar of admins too" do
+      sign_in(create(:confirmed_user_en, admin: true))
+
+      get deans_office_path
+
+      expect(Nokogiri::HTML(response.body).css("nav a[href='#{deans_office_path}']")).to be_present
+    end
+
     it "shows another term's lectures when it is picked" do
       other = create(:lecture, term: create(:term))
 
       get deans_office_path(term: other.term.dashboard_param)
 
-      expect(response.body).to include(CGI.escapeHTML(other.title_no_term))
+      expect(response.body).to include(CGI.escapeHTML(other.course.title))
     end
   end
 

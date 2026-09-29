@@ -14,6 +14,9 @@ en:
     registered: 'Registered'
     assigned: 'Assigned'
     registration: 'Registration'
+    sections:
+      lectures: 'Lectures'
+      seminars: 'Seminars'
     legend:
       registration: 'How people get into the group.'
       registered: >-

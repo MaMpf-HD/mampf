@@ -26,7 +26,14 @@ module DeansOffice
 
       @lectures ||= Lecture.where(term: @term)
                            .includes(:course, :term, :teacher, *GROUP_ASSOCIATIONS)
-                           .sort_by { |lecture| lecture.title_no_term.downcase }
+                           .sort_by { |lecture| lecture.course.title.downcase }
+    end
+
+    # Lectures first, then seminars of every kind, each by course title; a
+    # kind the term has none of is left out.
+    def sections
+      seminars, others = lectures.partition(&:seminar?)
+      { lectures: others, seminars: seminars }.reject { |_, list| list.empty? }
     end
 
     def groups(lecture)

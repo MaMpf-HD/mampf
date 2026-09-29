@@ -60,173 +60,195 @@
   <% if @overview.lectures.empty? %>
     <p><%= t("deans_office.no_lectures") %></p>
   <% else %>
-    <div class="table-responsive">
-      <table class="table table-sm align-middle">
-        <thead>
-          <tr>
-            <th scope="col"><%= t("deans_office.lecture") %></th>
-            <th scope="col"><%= t("deans_office.teacher") %></th>
-            <th scope="col"><%= t("deans_office.registration") %></th>
+    <% @overview.sections.each do |section, lectures| %>
+      <section
+        class="mb-4"
+        aria-labelledby="deans-office-<%= section %>"
+        data-deans-office-target="section"
+      >
+        <h2 class="h5" id="deans-office-<%= section %>">
+          <%= t("deans_office.sections.#{section}") %>
+        </h2>
 
-            <th scope="col" class="text-end pe-4">
-              <%= t("deans_office.groups") %>
-            </th>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th scope="col"><%= t("deans_office.lecture") %></th>
+                <th scope="col"><%= t("deans_office.teacher") %></th>
+                <th scope="col"><%= t("deans_office.registration") %></th>
 
-            <th scope="col" class="text-end pe-4">
-              <%= t("deans_office.seats") %>
-            </th>
+                <th scope="col" class="text-end pe-4">
+                  <%= t("deans_office.groups") %>
+                </th>
 
-            <th scope="col" class="text-end pe-4">
-              <%= t("deans_office.registered") %>
-            </th>
+                <th scope="col" class="text-end pe-4">
+                  <%= t("deans_office.seats") %>
+                </th>
 
-            <th scope="col" class="text-end">
-              <%= t("deans_office.assigned") %>
-            </th>
-          </tr>
-        </thead>
+                <th scope="col" class="text-end pe-4">
+                  <%= t("deans_office.registered") %>
+                </th>
 
-        <% @overview.lectures.each do |lecture| %>
-          <% lecture_title = lecture.title_no_term %>
-          <% filter_text = [lecture_title, lecture.teacher.tutorial_name].join(" ").downcase %>
-          <% groups = @overview.groups(lecture) %>
-          <% groups_id = dom_id(lecture, :deans_office_groups) %>
+                <th scope="col" class="text-end">
+                  <%= t("deans_office.assigned") %>
+                </th>
+              </tr>
+            </thead>
 
-          <tbody
-            data-deans-office-target="lecture"
-            data-filter-text="<%= filter_text %>"
-          >
-            <tr>
-              <th scope="row" class="fw-semibold">
+            <% lectures.each do |lecture| %>
+              <% lecture_title = lecture.course.title %>
+              <% filter_text = [lecture_title, lecture.teacher.tutorial_name].join(" ").downcase %>
+              <% groups = @overview.groups(lecture) %>
+              <% groups_id = dom_id(lecture, :deans_office_groups) %>
+
+              <tbody
+                data-deans-office-target="lecture"
+                data-filter-text="<%= filter_text %>"
+              >
+                <tr>
+                  <th scope="row" class="fw-semibold">
+                    <% if groups.any? %>
+                      <button
+                        type="button"
+                        class="btn btn-link p-0 text-start fw-semibold text-decoration-none"
+                        aria-expanded="false"
+                        aria-controls="<%= groups_id %>"
+                        data-deans-office-target="toggle"
+                        data-action="deans-office#toggle"
+                      >
+                        <i
+                          class="bi bi-chevron-right deans-office-chevron"
+                          aria-hidden="true"
+                        ></i>
+
+                        <%= lecture_title %>
+                      </button>
+                    <% else %>
+                      <%= lecture_title %>
+                    <% end %>
+
+                    <% if lecture.seminar? %>
+                      <span class="small text-muted fw-normal">
+                        <%= lecture.sort_localized %>
+                      </span>
+                    <% end %>
+                  </th>
+
+                  <td><%= lecture.teacher.tutorial_name %></td>
+
+                  <td class="small">
+                    <%= deans_office_accesses(@overview.accesses(lecture)) if groups.any? %>
+                  </td>
+
+                  <td class="text-end pe-4">
+                    <% if groups.empty? %>
+                      <span class="text-muted">
+                        <%= t("deans_office.no_groups") %>
+                      </span>
+                    <% else %>
+                      <%= groups.size %>
+                    <% end %>
+                  </td>
+
+                  <td class="text-end pe-4">
+                    <%= deans_office_seats(*@overview.seats(lecture)) if groups.any? %>
+                  </td>
+
+                  <td class="text-end pe-4">
+                    <%= deans_office_registrations(@overview.registered_people(lecture)) %>
+                  </td>
+
+                  <td class="text-end">
+                    <%= @overview.member_count(lecture) %>
+                  </td>
+                </tr>
+
                 <% if groups.any? %>
-                  <button
-                    type="button"
-                    class="btn btn-link p-0 text-start fw-semibold text-decoration-none"
-                    aria-expanded="false"
-                    aria-controls="<%= groups_id %>"
-                    data-deans-office-target="toggle"
-                    data-action="deans-office#toggle"
-                  >
-                    <i
-                      class="bi bi-chevron-right deans-office-chevron"
-                      aria-hidden="true"
-                    ></i>
+                  <tr id="<%= groups_id %>" hidden>
+                    <td colspan="7" class="bg-body-tertiary">
+                      <table
+                        class="table table-sm mb-0 align-middle"
+                        aria-label="<%= t('deans_office.groups_of', lecture: lecture_title) %>"
+                      >
+                        <thead>
+                          <tr>
+                            <th scope="col"><%= t("deans_office.group") %></th>
+                            <th scope="col"><%= t("deans_office.kind") %></th>
 
-                    <%= lecture_title %>
-                  </button>
-                <% else %>
-                  <%= lecture_title %>
-                <% end %>
-              </th>
+                            <th scope="col">
+                              <%= t("deans_office.registration") %>
+                            </th>
 
-              <td><%= lecture.teacher.tutorial_name %></td>
+                            <th scope="col" class="text-end pe-4">
+                              <%= t("deans_office.seats") %>
+                            </th>
 
-              <td class="small">
-                <%= deans_office_accesses(@overview.accesses(lecture)) if groups.any? %>
-              </td>
+                            <th scope="col" class="text-end pe-4">
+                              <%= t("deans_office.registered") %>
+                            </th>
 
-              <td class="text-end pe-4">
-                <% if groups.empty? %>
-                  <span class="text-muted">
-                    <%= t("deans_office.no_groups") %>
-                  </span>
-                <% else %>
-                  <%= groups.size %>
-                <% end %>
-              </td>
+                            <th scope="col" class="w-25">
+                              <%= t("deans_office.assigned") %>
+                            </th>
+                          </tr>
+                        </thead>
 
-              <td class="text-end pe-4">
-                <%= deans_office_seats(*@overview.seats(lecture)) if groups.any? %>
-              </td>
+                        <tbody>
+                          <% groups.each do |group| %>
+                            <% title = DeansOffice::TermOverview.group_title(group) %>
+                            <% group_type = DeansOffice::TermOverview.group_type(group) %>
+                            <% count = @overview.roster_count(group) %>
+                            <% over = group.capacity && count > group.capacity %>
 
-              <td class="text-end pe-4">
-                <%= deans_office_registrations(@overview.registered_people(lecture)) %>
-              </td>
+                            <tr>
+                              <th scope="row" class="fw-normal">
+                                <%= title %>
+                              </th>
 
-              <td class="text-end"><%= @overview.member_count(lecture) %></td>
-            </tr>
+                              <td>
+                                <%= t("deans_office.kinds.#{group_type}") %>
+                              </td>
 
-            <% if groups.any? %>
-              <tr id="<%= groups_id %>" hidden>
-                <td colspan="7" class="bg-body-tertiary">
-                  <table
-                    class="table table-sm mb-0 align-middle"
-                    aria-label="<%= t('deans_office.groups_of', lecture: lecture_title) %>"
-                  >
-                    <thead>
-                      <tr>
-                        <th scope="col"><%= t("deans_office.group") %></th>
-                        <th scope="col"><%= t("deans_office.kind") %></th>
+                              <td class="small">
+                                <%= deans_office_access(@overview.access(group)) %>
+                              </td>
 
-                        <th scope="col">
-                          <%= t("deans_office.registration") %>
-                        </th>
+                              <td class="text-end pe-4">
+                                <%= group.capacity || t("deans_office.unlimited") %>
+                              </td>
 
-                        <th scope="col" class="text-end pe-4">
-                          <%= t("deans_office.seats") %>
-                        </th>
-
-                        <th scope="col" class="text-end pe-4">
-                          <%= t("deans_office.registered") %>
-                        </th>
-
-                        <th scope="col" class="w-25">
-                          <%= t("deans_office.assigned") %>
-                        </th>
-                      </tr>
-                    </thead>
-
-                    <tbody>
-                      <% groups.each do |group| %>
-                        <% title = DeansOffice::TermOverview.group_title(group) %>
-                        <% group_type = DeansOffice::TermOverview.group_type(group) %>
-                        <% count = @overview.roster_count(group) %>
-                        <% over = group.capacity && count > group.capacity %>
-
-                        <tr>
-                          <th scope="row" class="fw-normal"><%= title %></th>
-
-                          <td>
-                            <%= t("deans_office.kinds.#{group_type}") %>
-                          </td>
-
-                          <td class="small">
-                            <%= deans_office_access(@overview.access(group)) %>
-                          </td>
-
-                          <td class="text-end pe-4">
-                            <%= group.capacity || t("deans_office.unlimited") %>
-                          </td>
-
-                          <td class="text-end pe-4">
-                            <%= deans_office_registrations(
+                              <td class="text-end pe-4">
+                                <%= deans_office_registrations(
                                   @overview.registration_count(group),
                                   first_choices: @overview.first_choices?(group)
                                 ) %>
-                          </td>
+                              </td>
 
-                          <td>
-                            <% if group.capacity %>
-                              <%= progress_bar(count, group.capacity,
+                              <td>
+                                <% if group.capacity %>
+                                  <%= progress_bar(count, group.capacity,
                                                classification: over ? :danger : :neutral,
                                                label: "#{count} / #{group.capacity}",
                                                height: "1.25rem",
                                                container_class: "progress") %>
-                            <% else %>
-                              <%= count %>
-                            <% end %>
-                          </td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
+                                <% else %>
+                                  <%= count %>
+                                <% end %>
+                              </td>
+                            </tr>
+                          <% end %>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
             <% end %>
-          </tbody>
-        <% end %>
-      </table>
-    </div>
+          </table>
+        </div>
+      </section>
+    <% end %>
     <p class="text-muted" hidden data-deans-office-target="none">
       <%= t("deans_office.no_match") %>
     </p>

@@ -46,7 +46,7 @@
           </li>
         <% end %>
 
-        <% if current_user.deans_office? %>
+        <% if current_user.deans_office? || current_user.admin? %>
           <li class="nav-item">
             <a href="<%= deans_office_path %>"
               class="nav-link bi bi-building <%= get_class_for_path(deans_office_path) %>"

@@ -5,7 +5,7 @@ import { Controller } from "@hotwired/stimulus";
  * lecture or all of them at once.
  */
 export default class extends Controller {
-  static targets = ["filter", "lecture", "toggle", "none"];
+  static targets = ["filter", "section", "lecture", "toggle", "none"];
 
   filter() {
     const words = this.filterTarget.value.toLowerCase().split(/\s+/).filter(Boolean);
@@ -15,6 +15,10 @@ export default class extends Controller {
       const match = words.every(word => text.includes(word));
       lecture.hidden = !match;
       if (match) shown += 1;
+    });
+    this.sectionTargets.forEach((section) => {
+      section.hidden = !this.lectureTargets.some(lecture =>
+        !lecture.hidden && section.contains(lecture));
     });
     this.noneTarget.hidden = shown > 0;
   }
