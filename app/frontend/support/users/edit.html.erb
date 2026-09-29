@@ -76,7 +76,21 @@
       <%= f.check_box :support, label: t("admin.user.support"),
                                 help: t("admin.user.info.support") %>
     <% end %>
+    <% if can?(:assign_admin, @user) %>
+      <%= f.check_box :admin, label: t("basics.administrator"),
+                              help: t("admin.user.info.administrator") %>
+    <% end %>
 
     <%= f.submit t("support.users.save"), class: "btn btn-primary" %>
+  <% end %>
+
+  <% if can?(:destroy, @user) %>
+    <h2 class="h5 mt-4"><%= t("support.users.delete_title") %></h2>
+    <p class="small text-muted"><%= t("support.users.delete_hint") %></p>
+    <%= button_to t("support.users.delete"),
+                  support_user_path(@user, search: search_query),
+                  method: :delete, class: "btn btn-sm btn-outline-danger",
+                  form: { data: { turbo_confirm: t("support.users.delete_confirm",
+                                                   user: @user.email) } } %>
   <% end %>
 </div>

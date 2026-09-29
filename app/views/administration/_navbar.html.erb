@@ -96,12 +96,6 @@
 
     <% if current_user.admin? %>
       <ul class="navbar-nav" id="adminUsers">
-        <li class="nav-item <%= active_controller?('users') %>">
-          <%= link_to '', users_path,
-                  class: 'nav-link bi bi-people-fill ' + get_class_for_path(users_path()),
-                  data: { 'bs-toggle': 'tooltip' },
-                  title: t('admin.navbar.users') %>
-        </li>
         <li class="nav-item">
           <%= link_to '', support_users_path,
                   class: 'nav-link bi bi-life-preserver ' + get_class_for_path(support_users_path),

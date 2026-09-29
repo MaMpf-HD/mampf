@@ -5,7 +5,7 @@
 
   <%= render(SearchForm::SearchForm.new(url: support_users_path, context: "support-users",
                                         local: true, values: search_values)) do |c| %>
-    <% c.add_fulltext_field %>
+    <% c.add_fulltext_field(help_text: t("support.users.fulltext_hint")) %>
     <% c.add_program_field %>
     <% c.add_submit_field %>
   <% end %>
@@ -39,7 +39,15 @@
           <tbody>
             <% @users.each do |user| %>
               <tr>
-                <th scope="row" class="fw-normal"><%= listed_name(user) %></th>
+                <th scope="row" class="fw-normal">
+                  <%= listed_name(user) %>
+                  <% if user.admin? %>
+                    <span class="badge bg-info"><%= t("basics.administrator_short") %></span>
+                  <% end %>
+                  <% if user.support? %>
+                    <span class="badge bg-info"><%= t("admin.user.support") %></span>
+                  <% end %>
+                </th>
 
                 <td><%= user.matriculation_number %></td>
                 <td><%= user.email %></td>
@@ -56,6 +64,8 @@
         </table>
       </div>
       <%== pagy_series_nav(@pagy) if @pagy.pages > 1 %>
+    <% elsif params.dig(:search, :fulltext).to_s.strip.length == 1 %>
+      <p><%= t("support.users.too_short") %></p>
     <% elsif params[:search].present? %>
       <p><%= t("support.users.no_hits") %></p>
     <% end %>

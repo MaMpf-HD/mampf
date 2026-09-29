@@ -57,6 +57,36 @@ RSpec.describe("Support users", type: :request) do
       end
     end
 
+    # Every uni address ends in ".de"; the similarity search would find them all.
+    it "counts only the beginnings of words below three characters" do
+      create(:confirmed_user, first_name: "Li", last_name: "Wei", email: "wei@uni.de")
+      create(:confirmed_user, last_name: "Hilbert", email: "david@uni.de")
+
+      search(fulltext: "de")
+      expect(response.body).not_to include("wei@uni.de", "david@uni.de")
+
+      search(fulltext: "Li")
+      expect(response.body).to include("wei@uni.de")
+      expect(response.body).not_to include("david@uni.de")
+    end
+
+    it "asks for a second character instead of listing" do
+      search(fulltext: "N")
+
+      expect(response.body).to include("Type at least two characters.")
+      expect(response.body).not_to include("emmy@example.org")
+    end
+
+    it "marks admins and the support in the hits" do
+      create(:confirmed_user, last_name: "Noether", email: "admin@example.org", admin: true)
+
+      search(fulltext: "Noether")
+
+      rows = Nokogiri::HTML(response.body).css("#support-user-results tbody tr")
+      admin_row = rows.find { |row| row.text.include?("admin@example.org") }
+      expect(admin_row.text).to include(I18n.t("basics.administrator_short"))
+    end
+
     it "narrows the search to a program" do
       program = create(:program, degree: "msc")
       student.update!(program: program)
@@ -203,23 +233,55 @@ RSpec.describe("Support users", type: :request) do
     end
   end
 
-  describe "the admin's switch" do
+  describe "what only admins do" do
     let(:account) { create(:confirmed_user) }
+    let(:admin) { create(:confirmed_user_en, admin: true) }
 
-    it "lets an admin make somebody the support" do
-      sign_in(create(:confirmed_user, admin: true))
+    it "lets an admin make somebody the support or an admin" do
+      sign_in(admin)
 
-      patch support_user_path(account), params: { user: { support: "1" } }
+      patch support_user_path(account), params: { user: { support: "1", admin: "1" } }
 
-      expect(account.reload).to be_support
+      expect(account.reload).to have_attributes(support: true, admin: true)
     end
 
-    it "is not offered to the support" do
+    # Otherwise the last admin could lock everybody out.
+    it "keeps an admin from taking their own admin rights" do
+      sign_in(admin)
+
+      patch support_user_path(admin), params: { user: { admin: "0" } }
+
+      expect(admin.reload.admin).to be(true)
+    end
+
+    it "offers neither switch to the support" do
       sign_in(support)
 
       get edit_support_user_path(account)
 
-      expect(response.body).not_to include("user[support]")
+      expect(response.body).not_to include("user[support]", "user[admin]")
+    end
+
+    it "lets an admin delete an account" do
+      sign_in(admin)
+
+      delete support_user_path(account)
+
+      expect(User.exists?(account.id)).to be(false)
+      expect(response).to redirect_to(support_users_path)
+    end
+
+    it "keeps the accounts of teachers, and the support's hands off deleting" do
+      teacher = create(:confirmed_user)
+      create(:lecture, teacher: teacher)
+      sign_in(admin)
+      delete support_user_path(teacher)
+
+      sign_in(support)
+      delete support_user_path(account)
+
+      expect(User.exists?(teacher.id)).to be(true)
+      expect(User.exists?(account.id)).to be(true)
     end
   end
 end

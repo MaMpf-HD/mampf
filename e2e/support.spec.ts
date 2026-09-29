@@ -43,4 +43,17 @@ test.describe("the support", () => {
       await expect(page.getByRole("search").getByLabel("Full text")).toHaveValue("1234567");
       await expect(results.getByRole("row", { name: /Noether-Lasker, Emmy/ })).toBeVisible();
     });
+
+  test("deletes an account when an admin is asked to", async ({ admin: { page }, factory }) => {
+    const person = await factory.create("confirmed_user", [], {
+      first_name: "Sofja", last_name: "Kowalewskaja",
+    });
+
+    await page.goto(`/support/users/${person.id}/edit`);
+    page.once("dialog", confirmation => confirmation.accept());
+    await page.getByRole("button", { name: "Delete the account" }).click();
+
+    await expect(page.getByText(`The account of ${person.email} has been deleted.`))
+      .toBeVisible();
+  });
 });

@@ -147,7 +147,6 @@ en:
       boards: 'Messageboards'
       stats: 'Access statistics'
       export_stats: 'Export statistics'
-      users: 'User administration'
       course: 'Course'
     catalog:
       info:
@@ -1597,13 +1596,7 @@ en:
     user:
       homepage: 'Homepage'
       profile_image: 'Profile image'
-      edited_media: 'Edited Media'
-      administration: 'User Administration'
-      sorts: 'Admins, Editors, Teachers and Support'
       support: 'Support'
-      password_policy_progress: '%{current} of %{total} accounts currently meet the updated password standard.'
-      edit_generics: 'Edit generic users'
-      elevate: 'Promote to Administrator'
       info:
         support: >
           Finds people, corrects their personal data, unlocks their accounts and
@@ -1613,8 +1606,6 @@ en:
           Here you can decide whether the user has administrator rights or not.
           You cannot revoke your own administrator rights, only another
           adminsitrator can do that.
-        elevate: >
-          If you check this box, the user will be promoted to administrator.
     question:
       independent: 'Question is independent'
       hint: 'Hint'
@@ -3758,7 +3749,6 @@ en:
     i_consent: 'I consent'
     delete_account: 'Delete Account'
     create_term: 'Create Term'
-    edit_users: 'Edit generic users (%{count})'
     close: 'Close'
     add_answer: 'Add Answer'
     create_copy: 'Create Copy'
@@ -3886,7 +3876,6 @@ en:
     no_geogebra: 'There is no Geogebra applet for this medium.'
     invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
-    no_user: 'There is no user with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'

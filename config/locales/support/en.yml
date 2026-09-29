@@ -29,6 +29,20 @@ en:
       unlocked: 'The account is unlocked; its failed sign-ins are reset.'
       password_reset_sent: 'A mail to reset the password is on its way.'
       confirmation_sent: 'The confirmation mail is on its way again.'
+      fulltext_hint: >-
+        Searches first and last name, display name, email address,
+        matriculation number and Uni ID. Below three characters, only the
+        beginnings of words count.
+      too_short: 'Type at least two characters.'
+      delete_title: 'Delete the account'
+      delete_hint: >-
+        Deletes the account with everything that belongs to it, for instance
+        when its owner asks for it by mail. Accounts of admins, teachers and
+        editors cannot be deleted here.
+      delete: 'Delete the account'
+      delete_confirm: 'Delete the account of %{user} for good? This cannot be undone.'
+      deleted: 'The account of %{user} has been deleted.'
+      not_deleted: 'The account could not be deleted.'
       actions:
         unlock: 'Unlock'
         password_reset: 'Send a password reset mail'

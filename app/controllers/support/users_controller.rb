@@ -64,6 +64,14 @@ module Support
       back_to_person(t("support.users.confirmation_sent"))
     end
 
+    def destroy
+      authorize! :destroy, @user
+      return back_to_person(t("support.users.not_deleted"), kind: :alert) unless @user.destroy
+
+      redirect_to support_users_path(search: search_query),
+                  notice: t("support.users.deleted", user: @user.email), status: :see_other
+    end
+
     private
 
       def set_user
@@ -73,11 +81,12 @@ module Support
       def user_params
         fields = FIELDS
         fields += [:support] if can?(:assign_support, @user)
+        fields += [:admin] if can?(:assign_admin, @user)
         params.expect(user: fields)
       end
 
-      def back_to_person(notice)
-        redirect_to edit_support_user_path(@user, search: search_query), notice: notice,
+      def back_to_person(message, kind: :notice)
+        redirect_to edit_support_user_path(@user, search: search_query), kind => message,
                                                                          status: :see_other
       end
 

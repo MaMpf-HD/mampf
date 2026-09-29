@@ -14,15 +14,11 @@ class UserAbility
       user&.admin? || user == given_user || given_user.teacher?
     end
 
-    can [:index, :elevate, :destroy], User do
-      user.admin?
-    end
-
     can :update, User do |given_user|
       user.admin? || (!user.generic? && user == given_user)
     end
 
-    can [:fill_user_select, :list_generic_users], User do
+    can :fill_user_select, User do
       user.admin?
     end
   end

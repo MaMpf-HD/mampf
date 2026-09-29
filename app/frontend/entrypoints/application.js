@@ -51,7 +51,6 @@ import "~/js/sections.coffee";
 import "~/js/tags.coffee";
 import "~/js/tex_preview.coffee";
 import "~/js/tutorials.coffee";
-import "~/js/users.coffee";
 import "~/js/vertices.coffee";
 
 import "@uppy/core/css/style.min.css";
