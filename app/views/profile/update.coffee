@@ -1,6 +1,9 @@
 # clean up from previous error messages
 $('#username-error').empty().hide()
 $('#user_name').removeClass('is-invalid')
+$('#homepage-error').empty().hide()
+$('#user_homepage').removeClass('is-invalid')
+$('#image-error').empty().hide()
 $('#js-messages').empty().hide()
 $('#courses-accordion').removeClass('border-danger')
 $('[id^="course-card-"]').removeClass('border-danger')
@@ -22,6 +25,13 @@ $('#course-card-' + '<%= Lecture.find_by_id(@errors[:passphrase].first).course.i
 <% if @errors[:courses].present? %>
 $('#js-messages').append('<%= @errors[:courses].join("") %>').show()
 $('#courses-accordion').addClass('border-danger')
+<% end %>
+<% if @errors[:homepage].present? %>
+$('#homepage-error').append('<%= j @errors[:homepage].join(" ") %>').show()
+$('#user_homepage').addClass('is-invalid')
+<% end %>
+<% if @errors[:image].present? %>
+$('#image-error').append('<%= j @errors[:image].join(" ") %>').show()
 <% end %>
 <% if @errors[:name].present? %>
 $('#username-error').append('<%= @errors[:name].join("") %>').show()

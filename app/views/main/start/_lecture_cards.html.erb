@@ -4,7 +4,8 @@
     (BoardRenderer#render_board), so the wrapper keeps its id. %>
 <div id="dashboardLectureCards" class="container-md small-width mb-3">
   <%= render(DashboardSectionComponent.new(
-               title: t("main.start.sections.staff"),
+               title: t(@board.staff_lectures.any? ? "main.start.sections.staff" :
+                                                     "main.start.sections.staff_note_only"),
                testid: "dashboard-staff-lectures")) do %>
     <% @board.staff_lectures.each do |lecture| %>
       <%= render(LectureDashboardCardComponent.new(
@@ -15,6 +16,7 @@
                     talks: @board.talks_for(lecture),
                     section: :staff)) %>
     <% end %>
+    <%= render(StaffPostItComponent.new(user: current_user)) %>
   <% end %>
 
   <%= render(DashboardSectionComponent.new(

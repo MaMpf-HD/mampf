@@ -149,7 +149,6 @@ en:
       export_stats: 'Export statistics'
       users: 'User administration'
       course: 'Course'
-      profile: 'My Profile'
     catalog:
       info:
         locked_medium: 'This medium is locked.'
@@ -184,10 +183,8 @@ en:
       my_media: 'My Media'
       media_restriction_html: >
         Only the last 25 recently updated media are shown.
-        You can find more by doing a %{media_search} or in your
-        %{profile}.
+        You can find more by doing a %{media_search}.
       media_search: 'Media Search'
-      user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
       other_lectures: 'Other event series'
@@ -1982,6 +1979,11 @@ en:
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    teacher_profile:
+      title: "What students see about you"
+      explainer: >-
+        Your homepage and picture appear on your teacher page, which your lectures link to.
+      remove_image: "Remove the picture"
     changes_made_btn: >
       Click here to save your changes.
     email_for_submissions: >

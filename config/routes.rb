@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   # search routes
 
   get "search/index"
+  get "search/staff", to: "search#staff", as: "search_staff"
 
   # administration routes
 
@@ -58,10 +59,6 @@ Rails.application.routes.draw do
   get "/administration/exit",
       to: "administration#exit",
       as: "exit_administration"
-
-  get "/administration/profile",
-      to: "administration#profile",
-      as: "elevated_profile"
 
   get "administration/search",
       to: "administration#search",
