@@ -15,13 +15,17 @@ en:
         lectures.
       sections:
         staff: "You are staff in these"
+        staff_note_only: "For teaching staff"
         tutor: "You are tutor in these"
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"
+      talk_with: "with %{names}"
       remove_bookmark: "Remove bookmark"
       remove_bookmark_for: "Remove bookmark: %{lecture}"
       remove_bookmark_title: "Remove bookmark?"
+      not_published: "Not published yet"
+      awaiting_group: "Not on a tutorial yet"
       remove_bookmark_body: >-
         Remove “%{lecture}” from your bookmarks? You can bookmark it again from
         the lecture search.

@@ -266,37 +266,51 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
   end
 
   describe "#students" do
+    def names(panel)
+      panel.students.map(&:tutorial_name)
+    end
+
     it "sorts by last name, and by the shown name without one" do
       students = [
-        build(:confirmed_user, first_name: "Anna", last_name: "Zimmer", id: 1),
-        build(:confirmed_user, first_name: "Ben", last_name: "Özdemir", id: 2),
-        build(:confirmed_user, first_name: nil, last_name: nil,
-                               name_in_tutorials: "Nick", id: 3),
-        build(:confirmed_user, first_name: "Clara", last_name: "Becker", id: 4)
+        create(:confirmed_user, first_name: "Anna", last_name: "Zimmer"),
+        create(:confirmed_user, first_name: "Ben", last_name: "Özdemir"),
+        create(:confirmed_user, first_name: nil, last_name: nil, name_in_tutorials: "Nick"),
+        create(:confirmed_user, first_name: "Clara", last_name: "Becker")
       ]
       panel = described_class.new(registerable: tutorial, students: students)
 
-      expect(panel.students.map(&:id)).to eq([4, 3, 2, 1])
+      expect(names(panel)).to eq(["Clara Becker", "Nick", "Ben Özdemir", "Anna Zimmer"])
     end
 
     it "puts someone known by first name alone before a last name that equals it" do
       students = [
-        build(:confirmed_user, first_name: "Ada", last_name: "Max", id: 1),
-        build(:confirmed_user, first_name: "Max", last_name: nil, id: 2)
+        create(:confirmed_user, first_name: "Ada", last_name: "Max"),
+        create(:confirmed_user, first_name: "Max", last_name: nil)
       ]
       panel = described_class.new(registerable: tutorial, students: students)
 
-      expect(panel.students.map(&:id)).to eq([2, 1])
+      expect(names(panel)).to eq(["Max", "Ada Max"])
+    end
+
+    # The participants tab sorts in SQL, where unaccent spells ß out as ss.
+    it "sorts ß as ss, like the participants tab" do
+      students = [
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students.reverse)
+
+      expect(panel.students).to eq(User.where(id: students).by_last_name.to_a)
     end
 
     it "keeps letters of other scripts apart" do
       students = [
-        build(:confirmed_user, first_name: "Eva", last_name: "Ωι", id: 1),
-        build(:confirmed_user, first_name: "Eva", last_name: "Άλφα", id: 2)
+        create(:confirmed_user, first_name: "Eva", last_name: "Ωι"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Άλφα")
       ]
       panel = described_class.new(registerable: tutorial, students: students)
 
-      expect(panel.students.map(&:id)).to eq([2, 1])
+      expect(names(panel)).to eq(["Eva Άλφα", "Eva Ωι"])
     end
   end
 

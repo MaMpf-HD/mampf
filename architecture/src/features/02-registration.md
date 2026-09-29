@@ -210,7 +210,7 @@ Campaigns transition through several states to ensure data integrity and fair us
 
 | Action | Freeze Point | Modification Rules |
 |--------|--------------|-------------------|
-| Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
+| Add item | Allocation computed | An item can join while the campaign is `draft`, `open` or `closed` and no allocation has been computed (`Campaign#accepts_new_items?`). Gives students more options without invalidating existing choices; in a preference campaign the allocation can place those left without a place in it. `Campaign#add_item` checks this under the campaign's lock, which allocation and finalization take as well. |
 | Remove item | `processing` | An item can leave its campaign while the campaign is `draft`, `open` or `closed`, as long as nobody registered for it, no allocation has been computed, and (outside `draft`) at least one other item remains. |
 
 Removing an item and deleting the group behind it are two separate actions, see

@@ -19,6 +19,7 @@ de:
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
+      all_terms: In allen Semestern suchen
       bookmark: Merken
       bookmark_lecture: "%{lecture} merken"
       registration_open: Anmeldung offen
@@ -90,7 +91,7 @@ de:
       ended: "Anmeldung beendet am %{deadline}"
       closed_early: "Anmeldung vor der geplanten Frist (%{deadline}) beendet"
     tutor:
-      title: "Deine Tutorien"
+      title: "Deine Gruppen"
       members:
         one: "1 Person"
         other: "%{count} Personen"

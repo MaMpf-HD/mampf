@@ -99,11 +99,11 @@ module SearchForm
             Fields::Primitives::CheckboxField.new(
               name: all_name,
               label: I18n.t("basics.all"),
-              checked: true,
               form_state: form_state,
               container_class: "form-check mb-2",
               stimulus: { toggle: true },
-              **extra_config
+              checked: extra_config.fetch(:checked, true),
+              **extra_config.except(:checked)
             ).with_form(form)
           end
 

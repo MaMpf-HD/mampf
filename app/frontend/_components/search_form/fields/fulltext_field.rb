@@ -23,11 +23,14 @@ module SearchForm
       # field name, label, and help text appropriate for search functionality.
       #
       # @param form_state [SearchForm::FormState] The form state object for context
+      # @param help_text [String, nil] Replaces the general hint where the search
+      #   looks through fields of its own
       # @param options [Hash] Additional options passed to the underlying text field,
       #   such as placeholder, maxlength, or custom styling attributes
-      def initialize(form_state:, **options)
+      def initialize(form_state:, help_text: nil, **options)
         super()
         @form_state = form_state
+        @help_text = help_text
         @options = options
       end
 
@@ -37,7 +40,7 @@ module SearchForm
           @text_field = create_text_field(
             name: :fulltext,
             label: I18n.t("basics.fulltext"),
-            help_text: I18n.t("search.helpdesks.fulltext_field"),
+            help_text: @help_text || I18n.t("search.helpdesks.fulltext_field"),
             **options
           )
         end

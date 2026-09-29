@@ -76,6 +76,35 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include(current_course.title)
         expect(response.body).not_to include(other_course.title)
       end
+
+      it "names each result's term when there is no term to scope to" do
+        other_term = create(:term, :winter)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Geometry", show_term: "0" } },
+            as: :turbo_stream
+
+        expect(response.body).to include("Geometry Other", other_term.to_label_short)
+      end
+
+      it "searches every term when asked to, and names each result's term" do
+        current_term = create(:term, :summer, :active)
+        other_term = create(:term, :winter)
+        create(:lecture, course: create(:course, title: "Geometry Current"),
+                         term: current_term)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Geometry", term: current_term.dashboard_param,
+                                show_term: "0", all_terms: "1" } },
+            as: :turbo_stream
+
+        expect(response.body).to include("Geometry Current", "Geometry Other")
+        expect(response.body).to include(other_term.to_label_short)
+      end
     end
 
     context "with registration campaigns" do
@@ -386,6 +415,26 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/show_random_quizzes" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    before do
+      create(:lecture_bookmark, user: user, lecture: lecture)
+      10.times do
+        build(:question, :with_stuff, teachable: lecture.course, released: "all")
+          .save(validate: false)
+      end
+    end
+
+    it "renders the self test with the notation help" do
+      get show_random_quizzes_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("test.notation_header")))
+    end
+  end
+
   describe "GET /lectures/:id as staff" do
     let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
 
@@ -419,6 +468,13 @@ RSpec.describe("Lectures", type: :request) do
       expect(response.body).to include("course_lectures")
     end
 
+    it "opens the new lecture when it was created from the dashboard" do
+      post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
+                          as: :turbo_stream)
+
+      expect(response).to redirect_to(edit_lecture_path(Lecture.last))
+    end
+
     context "when the teacher already gives that lecture in that term" do
       before { create(:lecture, **attributes.except(:from, :content_mode)) }
 
@@ -430,6 +486,29 @@ RSpec.describe("Lectures", type: :request) do
         expect(response).to have_http_status(:unprocessable_content)
         expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
       end
+
+      it "puts the form back into the dashboard's modal" do
+        post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
+                            as: :turbo_stream)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(Nokogiri::HTML(response.body).at_css("turbo-stream")["target"])
+          .to eq("new_lecture")
+        expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
+      end
+    end
+
+    # The error has no field of its own, so it is shown as a whole sentence
+    # under the form, where an attribute name in front would only garble it.
+    it "says in one sentence that a term-independent course takes no term" do
+      term_independent = create(:course, :term_independent)
+
+      post(lectures_path, params: { lecture: attributes.merge(course_id: term_independent.id) },
+                          as: :turbo_stream)
+
+      message = Nokogiri::HTML(response.body).at_css(".invalid-feedback").text.strip
+      expect(message).to eq(I18n.t("activerecord.errors.models.lecture.attributes.term.present",
+                                   locale: user.locale).strip)
     end
   end
 
@@ -637,7 +716,18 @@ RSpec.describe("Lectures", type: :request) do
       expect(rows.size).to eq(2)
       expect(rows.first).to include("Ada L.", "Mo 10, Tu 14")
       expect(rows.last).to include("Grace H.",
-                                   I18n.t("admin.lecture.tutors_overview.no_tutorial_yet"))
+                                   I18n.t("admin.lecture.tutors_overview.no_group_yet"))
+    end
+
+    it "lists a flexible group's tutors with their group" do
+      lecture = create(:lecture, teacher: user)
+      ada = create(:confirmed_user, name_in_tutorials: "Ada L.")
+      create(:cohort, context: lecture, title: "Extra lessons").tutors << ada
+
+      get edit_lecture_path(lecture, tab: "people")
+
+      row = Nokogiri::HTML(response.body).at_css("[data-testid='tutors-overview'] tr")
+      expect(row.text.squish).to include("Ada L.", "Extra lessons")
     end
 
     it "says so when there are no tutors yet" do

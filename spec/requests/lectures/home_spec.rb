@@ -254,6 +254,20 @@ RSpec.describe("Lectures::Home", type: :request) do
       expect(response.body).to include("Thursday Tutorial")
       expect(response.body).not_to include("Friday Tutorial")
     end
+
+    it "lists the flexible groups the user tutors, leading to their people" do
+      tutor = create(:confirmed_user)
+      cohort = create(:cohort, context: lecture, title: "Extra lessons")
+      cohort.tutors << tutor
+      sign_in tutor
+
+      get lecture_home_path(lecture)
+
+      block = Nokogiri::HTML(response.body).at_css('[data-testid="lecture-home-tutor"]')
+      expect(block.text).to include("Extra lessons")
+      expect(block.at_css("a")["href"])
+        .to eq(lecture_cohort_participants_path(lecture, cohort: cohort.id))
+    end
   end
 
   describe "the closed campaigns" do

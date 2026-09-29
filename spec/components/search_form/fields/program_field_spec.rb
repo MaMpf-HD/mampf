@@ -51,8 +51,21 @@ RSpec.describe(SearchForm::Fields::ProgramField, type: :component) do
     end
 
     it "calls create_all_checkbox with the correct field name" do
-      expect(field).to receive(:create_all_checkbox).with(for_field_name: :program_ids)
+      expect(field).to receive(:create_all_checkbox).with(for_field_name: :program_ids,
+                                                          checked: true)
       field.before_render
+    end
+
+    it "leaves All unticked and the select open for a search that picked programs" do
+      picked = described_class.new(**minimal_args, all: false)
+      allow(picked).to receive_messages(program_options: [],
+                                        create_multi_select_field: multi_select_double)
+      expect(picked).to receive(:create_all_checkbox).with(for_field_name: :program_ids,
+                                                           checked: false)
+      picked.before_render
+
+      expect(picked).to have_received(:create_multi_select_field)
+        .with(hash_including(disabled: false))
     end
 
     it "instantiates a CheckboxGroupWrapper with the created fields" do

@@ -33,15 +33,18 @@ class SubmissionAbility
       end
     end
 
-    can [:add_correction, :delete_correction, :accept, :reject,
-         :edit_correction, :cancel_edit_correction], Submission do |submission|
+    can [:add_correction, :delete_correction, :edit_correction,
+         :cancel_edit_correction], Submission do |submission|
+      submission.tutorial.correctable_by?(user)
+    end
+
+    # Whether a late hand-in counts is the group's tutor's call.
+    can [:accept, :reject], Submission do |submission|
       user.in?(submission.tutorial.tutors)
     end
 
     can [:show_manuscript, :show_correction], Submission do |submission|
-      user.in?(submission.users) || user.in?(submission.tutorial.tutors) ||
-        user.in?(submission.tutorial.lecture.editors) ||
-        user == submission.tutorial.lecture.teacher
+      user.in?(submission.users) || submission.tutorial.correctable_by?(user)
     end
   end
 end

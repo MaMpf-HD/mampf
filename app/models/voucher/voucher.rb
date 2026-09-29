@@ -12,6 +12,9 @@
 # To better align this process with GDPR requirements, the concept of voucher
 # was introduced. This way, teachers can only assign roles to users who have
 # actively redeemed a voucher.
+#
+# The one exception is a tutor: the staff may also enter the exact address of
+# somebody's account (TutorAppointment). The pool itself stays closed.
 class Voucher < ApplicationRecord
   include Redeemer
 

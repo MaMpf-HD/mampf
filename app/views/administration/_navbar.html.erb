@@ -96,23 +96,16 @@
 
     <% if current_user.admin? %>
       <ul class="navbar-nav" id="adminUsers">
-        <li class="nav-item <%= active_controller?('users') %>">
-          <%= link_to '', users_path,
-                  class: 'nav-link bi bi-people-fill ' + get_class_for_path(users_path()),
+        <li class="nav-item">
+          <%= link_to '', support_users_path,
+                  class: 'nav-link bi bi-life-preserver ' + get_class_for_path(support_users_path),
                   data: { 'bs-toggle': 'tooltip' },
-                  title: t('admin.navbar.users') %>
+                  title: t('support.title'),
+                  'aria-label': t('support.title') %>
         </li>
       </ul>
     <% end %>
 
-    <ul class="navbar-nav" id="adminProfile">
-      <li class="nav-item">
-        <%= link_to '', elevated_profile_path,
-                class: 'nav-link bi bi-person-fill ' + get_class_for_path(elevated_profile_path()),
-                data: { 'bs-toggle': 'tooltip' },
-                title: t('admin.navbar.profile') %>
-      </li>
-    </ul>
   </nav>
   <nav class="navbar navbar-expand" id="second-admin-nav" style="display: none;">
   </nav>

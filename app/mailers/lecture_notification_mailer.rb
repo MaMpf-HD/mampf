@@ -13,6 +13,16 @@ class LectureNotificationMailer < ApplicationMailer
                     title: @lecture.title_for_viewers))
   end
 
+  def new_tutor_email
+    @lecture = params[:lecture]
+    @recipient = params[:recipient]
+    @username = @recipient.tutorial_name
+
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t("mailer.new_tutor_subject", title: @lecture.title_for_viewers))
+  end
+
   def new_teacher_email
     @lecture = params[:lecture]
     @recipient = params[:recipient]

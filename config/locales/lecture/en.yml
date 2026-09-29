@@ -18,6 +18,7 @@ en:
     search:
       go_to_search: Search lectures
       placeholder: Search for lectures...
+      all_terms: Search all semesters
       bookmark: Bookmark
       bookmark_lecture: "Bookmark %{lecture}"
       registration_open: Registration open
@@ -89,7 +90,7 @@ en:
       ended: "Registration ended on %{deadline}"
       closed_early: "Registration closed before its deadline of %{deadline}"
     tutor:
-      title: "Your tutorials"
+      title: "Your groups"
       members:
         one: "1 person"
         other: "%{count} people"

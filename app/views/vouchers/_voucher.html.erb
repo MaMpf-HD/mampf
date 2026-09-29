@@ -9,19 +9,20 @@
 
   <% if voucher %>
     <!-- Secure hash with copy button -->
-    <div class="input-group mb-3">
-      <button class="btn btn-outline-secondary clipboard-btn clipboard-button"
+    <div class="input-group mb-3"
+         data-controller="clipboard"
+         data-clipboard-text-value="<%= voucher.secure_hash %>"
+         data-clipboard-resting-icon-value="bi-clipboard"
+         data-clipboard-confirmation-value="<%= t('basics.code_copied_to_clipboard') %>"
+         data-clipboard-failure-value="<%= t('basics.code_copy_failed') %>">
+      <button type="button"
+              class="btn btn-outline-secondary"
+              data-action="clipboard#copy"
               title="<%= t('buttons.copy_to_clipboard')%>"
-              aria-label="<%= t('buttons.copy_to_clipboard')%>"
-              data-clipboard-text="<%= voucher.secure_hash %>">
-        <i class="bi bi-clipboard"></i>
-        <!-- Currently just a workaround for the clipboard -->
-        <div class="clipboardpopup" style="display: block;">
-          <span class="clipboardpopuptext token-clipboard-popup">
-            <%= t('basics.code_copied_to_clipboard') %>
-          </span>
-        </div>
+              aria-label="<%= t('buttons.copy_to_clipboard')%>">
+        <i class="bi bi-clipboard" aria-hidden="true" data-clipboard-target="icon"></i>
       </button>
+      <span class="visually-hidden" role="status" data-clipboard-target="status"></span>
       <input type="text" class="form-control" disabled
             value="<%= voucher.secure_hash %>"
             aria-label="<%= t('basics.voucher_code') %>">

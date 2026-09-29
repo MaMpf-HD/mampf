@@ -215,6 +215,7 @@ class TalksController < ApplicationController
       if saved
         flash.now[:notice] = t("controllers.talks.created")
         streams << stream_flash if flash.present?
+        streams << new_group_mail_hint_stream(@talk)
         streams << refresh_campaigns_index_stream(@talk.lecture)
         streams << refresh_seminar_content_stream(@talk.lecture)
         streams << turbo_stream.update("modal-container", "")
@@ -225,7 +226,7 @@ class TalksController < ApplicationController
         streams << stream_flash if flash.present?
       end
 
-      streams
+      streams.compact
     end
 
     def registration_section_no_campaign?
