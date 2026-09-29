@@ -602,6 +602,7 @@ en:
       median: 'Median'
       mean_grade: 'Mean grade'
       pass_share: 'Passed'
+      everybody: 'Everybody'
       people: 'People'
       tasks: 'Tasks'
       reached: 'Reached on average'

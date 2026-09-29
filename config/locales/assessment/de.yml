@@ -602,6 +602,7 @@ de:
       median: 'Median'
       mean_grade: 'Durchschnittsnote'
       pass_share: 'Bestanden'
+      everybody: 'Alle'
       people: 'Personen'
       tasks: 'Aufgaben'
       reached: 'Im Mittel erreicht'

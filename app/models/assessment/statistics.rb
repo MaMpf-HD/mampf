@@ -75,6 +75,13 @@ module Assessment
       end
     end
 
+    # Everybody together, for the program and tutorial tables to compare with.
+    def overall_row
+      @overall_row ||= GroupRow.new(label: nil, people: participations.size,
+                                    figures: self.class.figures(marked.map(&:points_total)),
+                                    grades: grades)
+    end
+
     def tutorial_rows
       return [] if participations.none?(&:tutorial)
 

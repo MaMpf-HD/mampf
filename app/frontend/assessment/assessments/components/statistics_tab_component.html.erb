@@ -194,31 +194,40 @@
           </tr>
         </thead>
 
-        <tbody>
-          <% rows.each do |row| %>
-            <tr>
-              <th scope="row" class="fw-normal">
-                <%= row.label || t("assessment.statistics_tab.no_#{key.to_s.singularize}") %>
-              </th>
+        <% { tbody: rows, tfoot: [statistics.overall_row] }.each do |part, part_rows| %>
+          <%= content_tag(part, class: ("table-group-divider fw-semibold" if part == :tfoot)) do %>
+            <% part_rows.each do |row| %>
+              <tr>
+                <th scope="row" class="<%= 'fw-normal' if part == :tbody %>">
+                  <% if part == :tfoot %>
+                    <%= t("assessment.statistics_tab.everybody") %>
+                  <% else %>
+                    <%= row.label || t("assessment.statistics_tab.no_#{key.to_s.singularize}") %>
+                  <% end %>
+                </th>
 
-              <td class="text-end"><%= row.people %></td>
-              <td class="text-end"><%= row.figures.number %></td>
-              <td class="text-end"><%= format_points(row.figures.mean) %></td>
-              <td class="text-end"><%= format_points(row.figures.median) %></td>
+                <td class="text-end"><%= row.people %></td>
+                <td class="text-end"><%= row.figures.number %></td>
+                <td class="text-end"><%= format_points(row.figures.mean) %></td>
 
-              <td>
-                <%= share_bar(share_of(row.figures.mean, statistics.max_points)) %>
-              </td>
-
-              <% if grades? %>
-                <td class="text-end"><%= format_grade(row.grades.mean) %></td>
                 <td class="text-end">
-                  <%= format_share(row.grades.pass_share) %>
+                  <%= format_points(row.figures.median) %>
                 </td>
-              <% end %>
-            </tr>
+
+                <td>
+                  <%= share_bar(share_of(row.figures.mean, statistics.max_points)) %>
+                </td>
+
+                <% if grades? %>
+                  <td class="text-end"><%= format_grade(row.grades.mean) %></td>
+                  <td class="text-end">
+                    <%= format_share(row.grades.pass_share) %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
           <% end %>
-        </tbody>
+        <% end %>
       </table>
     </div>
   </section>

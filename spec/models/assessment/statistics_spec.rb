@@ -90,6 +90,15 @@ RSpec.describe(Assessment::Statistics) do
       expect(rows.first.figures.mean).to eq(7.0)
     end
 
+    it "sums everybody up for the groups to be compared with" do
+      program = create(:program, degree: "msc")
+      mark(4, 6, program: program)
+      mark(2, 2)
+
+      expect(statistics.overall_row).to have_attributes(label: nil, people: 2)
+      expect(statistics.overall_row.figures).to have_attributes(number: 2, mean: 7.0)
+    end
+
     it "groups by program only where somebody gave one" do
       mark(4, 6)
 

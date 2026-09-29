@@ -37,6 +37,7 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
       .to start_with("10", "6", "6")
     programs = tables["By program"].css("tbody th").map { |cell| cell.text.squish }
     expect(programs).to eq([program.name_with_subject, "Other or none given"])
+    expect(tables["By program"].at_css("tfoot tr").text.squish).to start_with("Everybody 2 2 6")
   end
 
   it "names absent and exempt people only when there are some" do
