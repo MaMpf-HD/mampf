@@ -98,8 +98,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
 
     context "with a rule that has no points threshold" do
-      # A rule must constrain something, so a threshold-less rule carries an
-      # achievement instead; points are then irrelevant to the outcome.
+      # The achievement is all this rule asks for; points are then irrelevant
+      # to the outcome.
       let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
 
       let(:rule) do
