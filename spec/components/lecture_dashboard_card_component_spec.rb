@@ -137,6 +137,15 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       expect(link.text).to include(I18n.t("main.start.registration_open"))
     end
 
+    it "offers no registration to those who run the lecture" do
+      campaign
+
+      [:staff, :tutor].each do |section|
+        expect(render_card(section: section).text)
+          .not_to include(I18n.t("main.start.registration_open"))
+      end
+    end
+
     it "shows a badge for a pending registration" do
       create(:registration_user_registration, :pending,
              user: user, registration_campaign: campaign,
@@ -180,6 +189,25 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       lecture.update!(passphrase: "secret")
 
       expect(render_card.at_css(keep)).to be_nil
+    end
+  end
+
+  describe "a lecture not published yet" do
+    it "says so to those who run it" do
+      expect(render_card(section: :staff).text).to include(I18n.t("main.start.not_published"))
+    end
+
+    # Only its editors may open it before it is published.
+    it "is no link for a tutor" do
+      expect(render_card(section: :tutor).at_css("a.dashboard-card__link")).to be_nil
+    end
+
+    it "is a link for a tutor once it is published" do
+      lecture.update!(released: "all")
+
+      card = render_card(section: :tutor)
+      expect(card.at_css("a.dashboard-card__link")["href"]).to eq("/lectures/#{lecture.id}")
+      expect(card.text).not_to include(I18n.t("main.start.not_published"))
     end
   end
 

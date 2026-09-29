@@ -24,6 +24,7 @@ en:
       remove_bookmark: "Remove bookmark"
       remove_bookmark_for: "Remove bookmark: %{lecture}"
       remove_bookmark_title: "Remove bookmark?"
+      not_published: "Not published yet"
       remove_bookmark_body: >-
         Remove “%{lecture}” from your bookmarks? You can bookmark it again from
         the lecture search.

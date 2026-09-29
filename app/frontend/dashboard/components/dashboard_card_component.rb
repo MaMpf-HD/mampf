@@ -1,5 +1,6 @@
 # Paper card shown on the dashboard: photo, title, subtitle, and washi tape.
 # The lecture's specifics, a talk given in it among them, come in through slots.
+# Without an `href` the card is not a link.
 class DashboardCardComponent < ViewComponent::Base
   renders_one :subtitle
   renders_one :corner
