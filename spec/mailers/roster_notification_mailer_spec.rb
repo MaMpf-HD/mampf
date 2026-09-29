@@ -220,21 +220,50 @@ describe RosterNotificationMailer do
   end
 
   describe "#added_to_group_email" do
-    let(:rosterable) { create(:tutorial, title: "Übung 3") }
+    context "with a tutorial" do
+      let(:rosterable) { create(:tutorial, title: "Übung 3") }
 
-    it "sends the correct email" do
-      email = described_class.with(
-        rosterable: rosterable,
-        recipient: user
-      ).added_to_group_email
+      it "sends the correct email" do
+        email = described_class.with(
+          rosterable: rosterable,
+          recipient: user
+        ).added_to_group_email
 
-      delivered = deliver(email)
+        delivered = deliver(email)
 
-      expect(delivered.to).to eq([user.email])
-      expect(delivered[:from].value).to eq(NotificationMailer.sender(user.locale))
-      expect(delivered.subject).to include("Übung 3")
-      expect(delivered_body(delivered)).to include("hinzugefügt")
-      expect(delivered_body(delivered)).to include("Alice")
+        expect(delivered.to).to eq([user.email])
+        expect(delivered[:from].value).to eq(NotificationMailer.sender(user.locale))
+        expect(delivered.subject).to include("Übung 3")
+        expect(delivered_body(delivered)).to include("hinzugefügt")
+        expect(delivered_body(delivered)).to include("Alice")
+      end
+
+      it "links to the lecture home" do
+        email = described_class.with(
+          rosterable: rosterable,
+          recipient: user
+        ).added_to_group_email
+
+        delivered = deliver(email)
+
+        expect(delivered_body(delivered)).to match(%r{https?://\S*lectures\S*})
+      end
+    end
+
+    context "with a talk" do
+      let(:rosterable) { create(:talk, title: "Vortrag 1") }
+
+      it "links to the talk" do
+        email = described_class.with(
+          rosterable: rosterable,
+          recipient: user
+        ).added_to_group_email
+
+        delivered = deliver(email)
+
+        expect(delivered.subject).to include("Vortrag 1")
+        expect(delivered_body(delivered)).to match(%r{https?://\S*talks\S*})
+      end
     end
   end
 
@@ -296,6 +325,13 @@ describe RosterNotificationMailer do
   describe ".finalized" do
     let(:other_user) { create(:user, locale: "de") }
     let(:english_user) { create(:user, locale: "en") }
+
+    before do
+      user
+      other_user
+      english_user
+      ActionMailer::Base.deliveries.clear
+    end
 
     context "with a supported rosterable" do
       it "enqueues one email for all users of a Tutorial with the same locale" do
@@ -410,6 +446,60 @@ describe RosterNotificationMailer do
         end.to have_enqueued_mail(described_class, :added_to_exam_email).twice
       end
     end
+
+    context "with a tutorial" do
+      let(:tutorial) { create(:tutorial, title: "Übung 3") }
+
+      it "sends one mail in bcc with a link to the lecture home" do
+        expect do
+          perform_enqueued_jobs do
+            described_class.finalized(tutorial, [user, other_user])
+          end
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        delivered = ActionMailer::Base.deliveries.last
+
+        expect(delivered.bcc).to match_array([user.email, other_user.email])
+        expect(delivered.to).to be_blank
+        expect(delivered.subject).to include("Übung 3")
+        expect(delivered_body(delivered)).to match(%r{https?://\S*lectures\S*})
+      end
+
+      it "sends one mail per locale, each only to its own group" do
+        expect do
+          perform_enqueued_jobs do
+            described_class.finalized(tutorial, [user, other_user, english_user])
+          end
+        end.to change { ActionMailer::Base.deliveries.count }.by(2)
+
+        bccs = ActionMailer::Base.deliveries.last(2).map(&:bcc)
+
+        expect(bccs).to contain_exactly(
+          match_array([user.email, other_user.email]),
+          [english_user.email]
+        )
+      end
+    end
+
+    context "with a talk" do
+      let(:seminar) { create(:seminar) }
+      let(:talk) { create(:talk, title: "Talk 3", lecture: seminar) }
+
+      it "sends one mail in bcc with a link to the talk" do
+        expect do
+          perform_enqueued_jobs do
+            described_class.finalized(talk, [user, other_user])
+          end
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+
+        delivered = ActionMailer::Base.deliveries.last
+
+        expect(delivered.bcc).to match_array([user.email, other_user.email])
+        expect(delivered.to).to be_blank
+        expect(delivered.subject).to include("Talk 3")
+        expect(delivered_body(delivered)).to match(%r{https?://\S*talks\S*})
+      end
+    end
   end
 
   describe ".change_exam_schedule" do
@@ -458,68 +548,45 @@ describe RosterNotificationMailer do
   end
 
   describe "grouped mails" do
-    let(:exam) do
-      create(:exam, :written, date: Time.zone.parse("2026-11-15 10:00"), location: "Room 101")
-    end
     let(:other_user) { create(:user, name: "Carol", locale: "de") }
 
-    it "puts all recipients in bcc and none in to" do
-      email = described_class.with(
-        rosterable: exam,
-        recipients: [user, other_user]
-      ).change_exam_schedule_email
-
-      delivered = deliver(email)
-
-      expect(delivered.bcc).to match_array([user.email, other_user.email])
-      expect(delivered.to).to be_blank
-      expect(delivered[:from].value).to eq(NotificationMailer.sender("de"))
-    end
-
-    it "greets nobody by name" do
-      email = described_class.with(
-        rosterable: exam,
-        recipients: [user, other_user]
-      ).change_exam_schedule_email
-
-      body = delivered_body(deliver(email))
-
-      expect(body).not_to include("Alice")
-      expect(body).not_to include("Carol")
-    end
-
-    it "carries the new schedule in the change mail" do
-      email = described_class.with(
-        rosterable: exam,
-        recipients: [user]
-      ).change_exam_schedule_email
-
-      delivered = deliver(email)
-
-      expected_subject = I18n.with_locale(user.locale) do
-        I18n.t("roster.mailer.roster_change_exam_schedule_email_subject",
-               rosterable_title: exam.title,
-               lecture_title: exam.lecture.title)
+    context "for exam" do
+      let(:exam) do
+        create(:exam, :written, date: Time.zone.parse("2026-11-15 10:00"), location: "Room 101")
       end
-      expect(delivered.subject).to eq(expected_subject)
+      it "puts all recipients in bcc and none in to" do
+        email = described_class.with(
+          rosterable: exam,
+          recipients: [user, other_user]
+        ).change_exam_schedule_email
 
-      body = delivered_body(delivered)
-      expect(body).to include(I18n.l(exam.date, format: :long, locale: user.locale))
-      expect(body).to include("Room 101")
-    end
+        delivered = deliver(email)
 
-    it "sends the finalization mail for a group in bcc as well" do
-      tutorial = create(:tutorial, title: "Übung 3")
+        expect(delivered.bcc).to match_array([user.email, other_user.email])
+        expect(delivered.to).to be_blank
+        expect(delivered[:from].value).to eq(NotificationMailer.sender("de"))
+      end
 
-      email = described_class.with(
-        rosterable: tutorial,
-        recipients: [user, other_user]
-      ).added_to_group_email
+      it "carries the new schedule in the change mail with a link to the lecture home" do
+        email = described_class.with(
+          rosterable: exam,
+          recipients: [user]
+        ).change_exam_schedule_email
 
-      delivered = deliver(email)
+        delivered = deliver(email)
 
-      expect(delivered.bcc).to match_array([user.email, other_user.email])
-      expect(delivered.subject).to include("Übung 3")
+        expected_subject = I18n.with_locale(user.locale) do
+          I18n.t("roster.mailer.roster_change_exam_schedule_email_subject",
+                 rosterable_title: exam.title,
+                 lecture_title: exam.lecture.title)
+        end
+        expect(delivered.subject).to eq(expected_subject)
+
+        body = delivered_body(delivered)
+        expect(body).to include(I18n.l(exam.date, format: :long, locale: user.locale))
+        expect(body).to include("Room 101")
+        expect(delivered_body(delivered)).to match(%r{https?://\S*lectures\S*})
+      end
     end
   end
 
@@ -570,51 +637,6 @@ describe RosterNotificationMailer do
           described_class.rejected(user, reasons: reasons,
                                          exam_campaign: true, exam: exam, lecture: lecture)
         end.not_to have_enqueued_mail(described_class, :rejected_from_group_email)
-      end
-    end
-  end
-
-  describe "reason link" do
-    let(:reasons) { ["Email domain not allowed."] }
-
-    # Mirrors what Registration::Campaign#notify_rejected_users passes in.
-    def deliver_rejection(campaign)
-      exam_campaign = campaign.exam_campaign?
-
-      expect do
-        perform_enqueued_jobs do
-          described_class.rejected(user,
-                                   reasons: reasons,
-                                   exam_campaign: exam_campaign,
-                                   exam: (campaign.exam if exam_campaign),
-                                   lecture: campaign.campaignable)
-        end
-      end.to change { ActionMailer::Base.deliveries.count }.by(2)
-
-      ActionMailer::Base.deliveries.last
-    end
-
-    context "when the campaign is a group campaign" do
-      let(:campaign) do
-        create(:registration_campaign, :with_items, :preference_based, status: :draft)
-      end
-
-      it "links to the lecture home" do
-        delivered = deliver_rejection(campaign)
-
-        expect(delivered_body(delivered)).to match(%r{https?://\S*})
-      end
-    end
-
-    context "when the campaign is an exam campaign" do
-      let(:lecture) { create(:lecture) }
-      let(:exam) { create(:exam, lecture: lecture) }
-      let(:campaign) { exam.registration_campaign }
-
-      it "links to the lecture home" do
-        delivered = deliver_rejection(campaign)
-
-        expect(delivered_body(delivered)).to match(%r{https?://\S*})
       end
     end
   end

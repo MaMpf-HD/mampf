@@ -175,10 +175,9 @@ class RosterNotificationMailer < ApplicationMailer
       @recipients      = params[:recipients]
       @participant     = params[:participant]
       @username        = @recipient&.tutorial_name
-      rosterable = @rosterable || @new_rosterable
-      @rosterable_link = url_for_rosterable(rosterable) if rosterable
       @lecture         = params[:lecture] ||
                          lecture_for_rosterable(@rosterable || @new_rosterable)
+      @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable, @lecture)
       @info            = {}
     end
 
@@ -226,19 +225,16 @@ class RosterNotificationMailer < ApplicationMailer
       end
     end
 
-    def url_for_rosterable(rosterable)
+    def url_for_rosterable(rosterable, lecture)
       case rosterable
       when Lecture
         lecture_url(rosterable)
-      when Tutorial, Cohort
-        nil
       when Talk
         talk_url(rosterable)
-      when Exam
-        lecture_home_url(rosterable.lecture)
+      when Exam, Tutorial, Cohort, nil
+        lecture_home_url(lecture || rosterable&.lecture)
       else
-        raise(ArgumentError,
-              "Unknown rosterable type: #{rosterable.class.name}")
+        raise(ArgumentError, "Unknown rosterable type: #{rosterable.class.name}")
       end
     end
 
