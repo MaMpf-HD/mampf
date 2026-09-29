@@ -1,7 +1,3 @@
-<% if @user %>
 From: <%= @user.tutorial_name %> (<%= @user.email %>, id <%= @user.id %>)
-<% else %>
-From: <%= @support_request["email"] %> (not signed in, address not verified)
-<% end %>
 -----
 <%= @support_request["message"] %>

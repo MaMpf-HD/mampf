@@ -5,12 +5,10 @@ class SupportRequestMailer < ApplicationMailer
 
   def new_support_request_email
     @support_request = params[:support_request]
-    @user = User.find_by(id: @support_request["user_id"])
-    reply_to = @user&.email || @support_request["email"]
-    subject = @user ? "Support: #{reply_to}" : "Support (not signed in): #{reply_to}"
+    @user = User.find(@support_request["user_id"])
     mail(to: DefaultSetting::PROJECT_EMAIL,
-         subject: subject,
+         subject: "Support: #{@user.email}",
          content_type: "text/plain",
-         reply_to: reply_to)
+         reply_to: @user.email)
   end
 end

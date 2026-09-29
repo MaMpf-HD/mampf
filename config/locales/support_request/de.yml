@@ -6,18 +6,14 @@ de:
       Deine Nachricht geht an das MaMpf-Team, das Dir per E-Mail antwortet. Fragen zu
       einer Veranstaltung richtest Du am besten an ihre DozentIn. Du kannst uns auch
       an %{email} schreiben.
-    intro_signed_out_html: >
-      Deine Nachricht geht an das MaMpf-Team, das Dir an die angegebene Adresse
-      antwortet. Fragen zu einer Veranstaltung richtest Du am besten an ihre DozentIn.
-      Du kannst uns auch an %{email} schreiben.
-    email: "Deine E-Mail-Adresse"
+    signed_out_html: >
+      Schreib uns an %{email}, wir antworten Dir per E-Mail. Fragen zu einer
+      Veranstaltung richtest Du am besten an ihre DozentIn.
     message: "Deine Nachricht"
     message_placeholder: "Wie können wir helfen?"
     send: "Senden"
     sent: "Danke! Deine Nachricht ist unterwegs. Wir antworten per E-Mail."
-    sent_signed_out: "Danke! Deine Nachricht ist unterwegs. Wir antworten an die angegebene Adresse."
   activemodel:
     attributes:
       support_request:
         message: "Nachricht"
-        email: "E-Mail-Adresse"

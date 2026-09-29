@@ -1,25 +1,12 @@
-# Sends a message from the support button to the address people write to. Also
-# open to visitors who are not signed in, since the button is on the login page
-# for those who cannot sign in.
+# Sends a message from the support button to the address people write to. Only
+# for signed-in users: for anybody else there is no address we know to be
+# theirs to answer to, so the button shows them where to write instead.
 class SupportRequestsController < ApplicationController
   THROTTLE_WINDOW = 1.hour
-  SIGNED_IN_LIMIT = 20
-  SIGNED_OUT_LIMIT = 5
+  LIMIT = 20
 
-  skip_before_action :authenticate_user!, :enforce_password_change,
-                     :enforce_personal_data, only: :create
-
-  # Without a limit, the form would mail the project address any number of
-  # times, and it is open to anybody. Visitors who are not signed in share an
-  # address in the university network, so theirs is the tighter one.
-  rate_limit to: SIGNED_IN_LIMIT, within: THROTTLE_WINDOW, only: :create,
-             name: "signed_in", if: :user_signed_in?,
-             by: -> { current_user.id },
-             with: -> { render_throttled }
-  rate_limit to: SIGNED_OUT_LIMIT, within: THROTTLE_WINDOW, only: :create,
-             name: "signed_out", unless: :user_signed_in?,
-             by: -> { request.remote_ip },
-             with: -> { render_throttled }
+  # Somebody stuck on these pages is the one who needs to reach the support.
+  skip_before_action :enforce_password_change, :enforce_personal_data, only: :create
 
   def create
     support_request = SupportRequest.new(support_request_params)
@@ -27,24 +14,32 @@ class SupportRequestsController < ApplicationController
 
     return render_form(support_request, :unprocessable_content) unless support_request.valid?
 
-    details = support_request.attributes.merge("user_id" => current_user&.id)
+    if over_limit?
+      return render_form(support_request, :too_many_requests,
+                         throttled: throttled_message(THROTTLE_WINDOW))
+    end
+
+    details = support_request.attributes.merge("user_id" => current_user.id)
     SupportRequestMailer.with(support_request: details).new_support_request_email.deliver_later
     render turbo_stream: turbo_stream.update(
       "support-request-body",
       partial: "support_requests/sent",
-      locals: { support_request: SupportRequest.new(email: support_request.email) }
+      locals: { support_request: SupportRequest.new }
     )
   end
 
   private
 
     def support_request_params
-      params.expect(support_request: [:message, :email])
+      params.expect(support_request: [:message])
     end
 
-    def render_throttled
-      render_form(SupportRequest.new(support_request_params), :too_many_requests,
-                  throttled: throttled_message(THROTTLE_WINDOW))
+    # Without a limit, the form would mail the project address any number of
+    # times. Only messages that go out are counted, so that a form sent back
+    # for a mistake does not use one up.
+    def over_limit?
+      Rails.cache.increment("support-requests:#{current_user.id}", 1,
+                            expires_in: THROTTLE_WINDOW) > LIMIT
     end
 
     def render_form(support_request, status, throttled: nil)

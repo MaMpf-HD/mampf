@@ -5,18 +5,14 @@ en:
     intro_html: >
       Your message goes to the MaMpf team, who will reply by email. Questions about
       a lecture are best sent to its teacher. You can also write to us at %{email}.
-    intro_signed_out_html: >
-      Your message goes to the MaMpf team, who will reply to the address you enter.
-      Questions about a lecture are best sent to its teacher. You can also write to
-      us at %{email}.
-    email: "Your email address"
+    signed_out_html: >
+      Write to us at %{email}, and we will reply by email. Questions about a
+      lecture are best sent to its teacher.
     message: "Your message"
     message_placeholder: "How can we help?"
     send: "Send"
     sent: "Thank you! Your message is on its way. We will reply by email."
-    sent_signed_out: "Thank you! Your message is on its way. We will reply to the address you entered."
   activemodel:
     attributes:
       support_request:
         message: "Message"
-        email: "Email address"

@@ -26,7 +26,16 @@
     </div>
 
     <div id="support-request-body" class="card-body">
-      <%= render "support_requests/form", support_request: SupportRequest.new %>
+      <%# Without an account there is no address to answer to that we know is theirs. %>
+      <% if user_signed_in? %>
+        <%= render "support_requests/form", support_request: SupportRequest.new %>
+      <% else %>
+        <p class="small mb-0">
+          <%= t("support_request.signed_out_html",
+                email: mail_to(DefaultSetting::PROJECT_EMAIL, nil,
+                               data: { support_widget_target: "contact" })) %>
+        </p>
+      <% end %>
     </div>
   </section>
 

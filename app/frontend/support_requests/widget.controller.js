@@ -6,7 +6,7 @@ import { Controller } from "@hotwired/stimulus";
  * also return the focus to the button.
  */
 export default class extends Controller {
-  static targets = ["panel", "toggle", "email", "message", "result", "form"];
+  static targets = ["panel", "toggle", "message", "contact", "result", "form"];
 
   connect() {
     this.closeOnOutsideClick = (event) => {
@@ -68,7 +68,7 @@ export default class extends Controller {
   }
 
   firstField() {
-    if (this.hasEmailTarget) return this.emailTarget;
-    return this.hasMessageTarget ? this.messageTarget : null;
+    if (this.hasMessageTarget) return this.messageTarget;
+    return this.hasContactTarget ? this.contactTarget : null;
   }
 }

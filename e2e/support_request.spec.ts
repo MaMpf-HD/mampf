@@ -19,20 +19,17 @@ test.describe("the support button", () => {
     await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
   });
 
-  // Runs on the login page, where the button serves visitors who cannot sign in.
-  test("asks somebody not signed in for an address to answer to", async ({ page }) => {
+  // Runs on the login page, where the button serves visitors who cannot sign in:
+  // without an account there is no address we know to be theirs, so it shows
+  // where to write instead of a form.
+  test("shows somebody not signed in where to write", async ({ page }) => {
     await page.goto("/users/sign_in?locale=en");
 
     await page.getByRole("button", { name: "Contact support" }).click();
-    const email = page.getByRole("textbox", { name: "Your email address" });
-    await expect(email).toBeFocused();
-    await email.fill("locked-out@example.com");
-    await page.getByRole("textbox", { name: "Your message" })
-      .fill("I cannot sign in any more.");
-    await page.getByRole("button", { name: "Send" }).click();
-
-    await expect(page.getByRole("status")).toContainText("Thank you!");
-    await expect(page.getByRole("status")).toBeFocused();
+    const panel = page.getByRole("region", { name: "Contact support" });
+    await expect(panel.getByText("Write to us at")).toBeVisible();
+    await expect(panel.getByRole("link", { name: /@/ })).toBeFocused();
+    await expect(panel.getByRole("textbox")).toHaveCount(0);
   });
 
   test("closes with Escape and gives the focus back to the button", async ({ student }) => {

@@ -1,5 +1,5 @@
 # A message to the MaMpf team from the support button. It is sent by mail and
-# not stored; somebody who is not signed in leaves an address to answer to.
+# not stored; the answer goes to the address of the account it came from.
 class SupportRequest
   include ActiveModel::Model
   include ActiveModel::Attributes
@@ -8,12 +8,9 @@ class SupportRequest
   MESSAGE_MAX_LENGTH = 10_000
 
   attribute :message, :string
-  attribute :email, :string
   attr_accessor :user
 
   validates :message, presence: true,
                       length: { minimum: MESSAGE_MIN_LENGTH, maximum: MESSAGE_MAX_LENGTH,
                                 allow_blank: true }
-  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP },
-                    unless: :user
 end
