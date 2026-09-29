@@ -1,5 +1,7 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
+  include GradingTable
+
   # Throttle group-join code entry so the short join token cannot be brute-forced.
   rate_limit to: 10, within: 1.minute, only: [:join, :redeem_code],
              by: -> { current_user&.id || request.remote_ip },
@@ -308,7 +310,7 @@ class SubmissionsController < ApplicationController
 
     # A sheet from before there were states has no line above its table.
     def rerender_submission_row
-      grading_scope = params[:grading_scope_type] == "tutorial" ? @tutorial : @tutorial.lecture
+      grading_scope = grading_table(@tutorial, @tutorial.lecture)
       respond_to do |format|
         format.turbo_stream do
           row = turbo_stream.replace(

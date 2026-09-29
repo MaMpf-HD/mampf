@@ -204,7 +204,9 @@ RSpec.describe(UserRegistrations::LecturePreferenceEditService, type: :service) 
 
   describe "edit preference in mixed campaign (cohort + tutorial)" do
     let(:lecture) { FactoryBot.create(:lecture, teacher: teacher) }
-    let(:campaign) { FactoryBot.create(:registration_campaign, :preference_based, :draft) }
+    let(:campaign) do
+      FactoryBot.create(:registration_campaign, :preference_based, :draft, campaignable: lecture)
+    end
     let(:tutorial) { FactoryBot.create(:tutorial, lecture: lecture, capacity: 20) }
     let(:cohort) do
       FactoryBot.create(:cohort,

@@ -9,26 +9,37 @@ RSpec.describe("Auth unlocks", type: :request) do
       ActionMailer::Base.deliveries.clear # drop the mail sent on locking
 
       params = { user: { email: user.email } }
-      6.times { post(user_unlock_path, params: params) }
+      # Eleven minutes apart: past the pause per address, within the hour
+      # the limit per source counts.
+      start = Time.current
+      6.times do |i|
+        Timecop.travel(start + (i * 11).minutes) { post(user_unlock_path, params: params) }
+      end
 
       expect(ActionMailer::Base.deliveries.count).to eq(5)
     end
 
-    it "stops sending unlock emails to one address after the daily limit" do
+    it "pauses unlock emails to one address from any source for ten minutes" do
       Rails.cache.clear
       user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
       user.lock_access!
       ActionMailer::Base.deliveries.clear # drop the mail sent on locking
 
       params = { user: { email: user.email }, locale: "en" }
-      11.times do |i|
+      2.times do |i|
         post(user_unlock_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.#{i}" })
       end
 
-      expect(ActionMailer::Base.deliveries.count).to eq(10)
+      expect(ActionMailer::Base.deliveries.count).to eq(1)
       expect(flash[:alert]).to eq(
-        I18n.t("devise.failure.too_many_requests", wait: "1 day", locale: :en)
+        I18n.t("devise.failure.too_many_requests", wait: "10 minutes", locale: :en)
       )
+
+      # Whoever asked in between, the owner is through again after the pause.
+      Timecop.travel(11.minutes.from_now) do
+        post(user_unlock_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.9" })
+      end
+      expect(ActionMailer::Base.deliveries.count).to eq(2)
     end
   end
 
@@ -63,19 +74,15 @@ RSpec.describe("Auth unlocks", type: :request) do
         .to eq(I18n.t("devise.mailer.reset_password_instructions.subject", locale: :en))
     end
 
-    it "shares the daily limit per address with the password reset form" do
+    it "shares the pause per address with the password reset form" do
       user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
       ActionMailer::Base.deliveries.clear
       params = { user: { email: user.email }, locale: "en" }
 
-      6.times do |i|
-        post(user_password_path, params: params, env: { "REMOTE_ADDR" => "10.0.1.#{i}" })
-      end
-      5.times do |i|
-        post(user_unlock_path, params: params, env: { "REMOTE_ADDR" => "10.0.2.#{i}" })
-      end
+      post(user_password_path, params: params, env: { "REMOTE_ADDR" => "10.0.1.1" })
+      post(user_unlock_path, params: params, env: { "REMOTE_ADDR" => "10.0.2.1" })
 
-      expect(ActionMailer::Base.deliveries.count).to eq(10)
+      expect(ActionMailer::Base.deliveries.count).to eq(1)
     end
 
     it "answers as for any address and sends nothing for an unknown one" do

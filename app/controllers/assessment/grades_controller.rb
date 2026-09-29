@@ -19,7 +19,7 @@ module Assessment
     end
 
     def authorize_assessment!
-      authorize! :enter_grades, @lecture if @lecture.present?
+      authorize! :enter_grades, @lecture
     end
 
     def update

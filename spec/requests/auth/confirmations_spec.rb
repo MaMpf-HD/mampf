@@ -88,27 +88,38 @@ RSpec.describe("Auth confirmations", type: :request) do
       ActionMailer::Base.deliveries.clear # drop the sign-up confirmation mail
 
       params = { user: { email: user.email } }
-      6.times { post(user_confirmation_path, params: params) }
+      # Eleven minutes apart: past the pause per address, within the hour
+      # the limit per source counts.
+      start = Time.current
+      6.times do |i|
+        Timecop.travel(start + (i * 11).minutes) { post(user_confirmation_path, params: params) }
+      end
 
       # rate_limit allows 5 within the hour; the 6th request is throttled before
       # the action runs, so no 6th mail goes out.
       expect(ActionMailer::Base.deliveries.count).to eq(5)
     end
 
-    it "stops sending confirmation emails to one address after the daily limit" do
+    it "pauses confirmation emails to one address from any source for ten minutes" do
       Rails.cache.clear
       user = create(:user, locale: "en") # unconfirmed
       ActionMailer::Base.deliveries.clear # drop the sign-up confirmation mail
 
       params = { user: { email: user.email }, locale: "en" }
-      11.times do |i|
+      2.times do |i|
         post(user_confirmation_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.#{i}" })
       end
 
-      expect(ActionMailer::Base.deliveries.count).to eq(10)
+      expect(ActionMailer::Base.deliveries.count).to eq(1)
       expect(flash[:alert]).to eq(
-        I18n.t("devise.failure.too_many_requests", wait: "1 day", locale: :en)
+        I18n.t("devise.failure.too_many_requests", wait: "10 minutes", locale: :en)
       )
+
+      # Whoever asked in between, the owner is through again after the pause.
+      Timecop.travel(11.minutes.from_now) do
+        post(user_confirmation_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.9" })
+      end
+      expect(ActionMailer::Base.deliveries.count).to eq(2)
     end
   end
 end

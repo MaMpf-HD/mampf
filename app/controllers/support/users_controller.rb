@@ -86,8 +86,7 @@ module Support
         authorize! :index, :support
       end
 
-      # Exam registrations and other records the university keeps refer to
-      # the account; such an account stays, and the page says so.
+      # An account that a record still refers to stays, and the page says so.
       def destroy_person
         @user.destroy
       rescue ActiveRecord::InvalidForeignKey, ActiveRecord::DeleteRestrictionError

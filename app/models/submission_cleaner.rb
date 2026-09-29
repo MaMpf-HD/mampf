@@ -34,11 +34,15 @@ class SubmissionCleaner
     send_info_mail_to_editors
   end
 
+  # A past submission_deletion_date keeps matching on later nights, so only
+  # lectures that still hold submissions are taken, and loaded before the
+  # deletion: their staff are told once, for the run that deleted them.
   def check_for_deletion
     @deletion_date = @date
+    holding = Assignment.where(id: Submission.select(:assignment_id)).select(:lecture_id)
     @lectures = Lecture.where(
       Lecture.arel_table[:submission_deletion_date].lteq(@deletion_date)
-    )
+    ).where(id: holding).to_a
     return if @lectures.empty?
 
     @assignments = Assignment.where(lecture: @lectures)
@@ -94,7 +98,7 @@ class SubmissionCleaner
 
     def send_destruction_mail_to_editors
       @lectures.each do |l|
-        editor_ids = l.editors.pluck(:id) + [l.teacher.id]
+        editor_ids = l.editors.pluck(:id) + [l.teacher_id].compact
         NotificationMailer.with(recipients: editor_ids,
                                 lecture: l,
                                 deletion_date: @deletion_date,
@@ -123,7 +127,7 @@ class SubmissionCleaner
 
     def send_info_mail_to_editors
       @lectures.each do |l|
-        editor_ids = l.editors.pluck(:id) + [l.teacher.id]
+        editor_ids = l.editors.pluck(:id) + [l.teacher_id].compact
         NotificationMailer.with(recipients: editor_ids,
                                 lecture: l,
                                 deletion_date: @deletion_date,

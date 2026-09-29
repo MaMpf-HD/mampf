@@ -12,7 +12,9 @@ module StudentPerformance
     belongs_to :rule, class_name: "StudentPerformance::Rule", optional: true
 
     validates :lecture_id, uniqueness: { scope: :user_id }
-    validates :certified_by, presence: true, unless: :pending?
+    # Whoever decides is recorded; a decision outlives its certifier's
+    # deleted account, which leaves certified_by empty.
+    validates :certified_by, presence: true, unless: :pending?, if: :deciding?
     validates :certified_at, presence: true, unless: :pending?
 
     # `pending` is what the rule writes when it cannot decide. A person
@@ -124,5 +126,11 @@ module StudentPerformance
           .or(cert_table[:certified_at].eq(nil))
       )
     }
+
+    private
+
+      def deciding?
+        new_record? || will_save_change_to_status?
+      end
   end
 end

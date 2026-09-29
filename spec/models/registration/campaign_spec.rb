@@ -1223,19 +1223,20 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "returns 'tutorials' when items are tutorials" do
-      tutorial = create(:tutorial)
+      tutorial = create(:tutorial, lecture: campaign.campaignable)
       create(:registration_item, registration_campaign: campaign, registerable: tutorial)
       expect(campaign.roster_group_type).to eq("tutorials")
     end
 
     it "returns 'talks' when items are talks" do
-      talk = create(:talk)
+      campaign.campaignable = create(:seminar)
+      talk = create(:talk, lecture: campaign.campaignable)
       create(:registration_item, registration_campaign: campaign, registerable: talk)
       expect(campaign.roster_group_type).to eq("talks")
     end
 
     it "returns 'cohorts' when items are cohorts" do
-      cohort = create(:cohort)
+      cohort = create(:cohort, context: campaign.campaignable)
       create(:registration_item, registration_campaign: campaign, registerable: cohort)
       expect(campaign.roster_group_type).to eq("cohorts")
     end
@@ -1385,7 +1386,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
   describe "#exam_campaign?" do
     it "returns true when all items are exams" do
       campaign = create(:registration_campaign)
-      exam = create(:exam, :without_campaign)
+      exam = create(:exam, :without_campaign, lecture: campaign.campaignable)
       create(:registration_item,
              registration_campaign: campaign,
              registerable: exam)
@@ -1395,7 +1396,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
     it "returns false when items are tutorials" do
       campaign = create(:registration_campaign)
-      tutorial = create(:tutorial)
+      tutorial = create(:tutorial, lecture: campaign.campaignable)
       create(:registration_item,
              registration_campaign: campaign,
              registerable: tutorial)

@@ -80,6 +80,16 @@ RSpec.describe(LectureAudience) do
     end
   end
 
+  # The lecturer's announcements reach the registered; the media of a lecture
+  # with a passphrase wait for it (see medium_participant_visibility_spec).
+  it "takes in a registration for a lecture with a passphrase, but not for its media" do
+    lecture.update!(passphrase: "secret")
+    register(:pending, :open)
+
+    expect(in_audience?).to be(true)
+    expect(described_class.lectures_of(student, media: true)).not_to include(lecture)
+  end
+
   it "leaves out a registration in a draft or a finished campaign" do
     register(:pending, :draft)
     register(:confirmed, :completed)
