@@ -17,13 +17,8 @@ class TutorAppointmentsController < ApplicationController
                            status: :unprocessable_content)
     end
 
-    if user.in?(@lecture.eligible_as_tutors)
-      flash.now[:notice] = t(".already", name: user.tutorial_name)
-    else
-      @lecture.tutor_appointments.create!(user: user)
-      LectureNotifier.notify_new_tutor_by_mail(user, @lecture)
-      flash.now[:notice] = t(".added", name: user.tutorial_name)
-    end
+    added = !user.in?(@lecture.eligible_as_tutors) && appoint(user)
+    flash.now[:notice] = t(added ? ".added" : ".already", name: user.tutorial_name)
     render_tutors
   end
 
@@ -34,6 +29,20 @@ class TutorAppointmentsController < ApplicationController
   end
 
   private
+
+    # Appoints the user and tells them; false when a request sent at the same
+    # time appointed them first.
+    def appoint(user)
+      @lecture.tutor_appointments.create!(user: user)
+      LectureNotifier.notify_new_tutor_by_mail(user, @lecture)
+      true
+    rescue ActiveRecord::RecordNotUnique
+      false
+    rescue ActiveRecord::RecordInvalid => e
+      raise unless e.record.errors.of_kind?(:user_id, :taken)
+
+      false
+    end
 
     def set_lecture
       @lecture = Lecture.find(params[:lecture_id])

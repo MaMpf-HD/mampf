@@ -45,6 +45,23 @@ RSpec.describe("TutorAppointments", type: :request) do
       expect(TutorAppointment.count).to eq(0)
     end
 
+    # Two staff adding the same person at once: the second finds the row taken.
+    it "says the person is a tutor already when another request appointed them first" do
+      person
+      allow(LectureNotifier).to receive(:notify_new_tutor_by_mail)
+      allow_any_instance_of(Lecture).to receive(:eligible_as_tutors).and_return([])
+      create_appointment
+
+      expect { add(person.email) }.not_to change(TutorAppointment, :count)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(
+        ERB::Util.html_escape(I18n.t("tutor_appointments.create.already",
+                                     name: person.tutorial_name))
+      )
+      expect(LectureNotifier).not_to have_received(:notify_new_tutor_by_mail)
+    end
+
     it "removes somebody added by address" do
       appointment = create_appointment
 

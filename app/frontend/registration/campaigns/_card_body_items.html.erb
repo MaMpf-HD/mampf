@@ -22,9 +22,9 @@
       </div>
     </div>
   <% else %>
-    <% items = Rosters::RegisterableOrdering.sort_items(
+    <% items = preload_group_tutors(Rosters::RegisterableOrdering.sort_items(
          campaign.registration_items.includes(:registerable)
-       ) %>
+       )) %>
     <% footer = capture do %>
       <% if can_add_groups %>
         <%= render "registration/campaigns/add_group_links",

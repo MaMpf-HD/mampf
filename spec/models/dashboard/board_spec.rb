@@ -37,6 +37,16 @@ RSpec.describe(Dashboard::Board) do
       expect(board.tutored_lectures)
         .to contain_exactly(grouped, by_voucher, by_address, with_cohort)
     end
+
+    # Running a flexible group keeps a student a student; one card is enough.
+    it "leaves a flexible group's lecture to the enrolled ones when the user holds a place" do
+      lecture = create(:lecture, term: term)
+      create(:cohort, context: lecture).tutors << user
+      create(:lecture_membership, user: user, lecture: lecture)
+
+      expect(board.tutored_lectures).to be_empty
+      expect(board.enrolled_lectures).to contain_exactly(lecture)
+    end
   end
 
   describe "#enrolled_lectures" do
