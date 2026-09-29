@@ -557,6 +557,148 @@ RSpec.describe(Registration::Campaign, type: :model) do
         end.to raise_error(Registration::Campaign::FinalizationBlockedError)
       end
     end
+
+    context "with preference-based allocation across three items and four students" do
+      let(:seminar) { create(:seminar) }
+      let(:campaign) do
+        create(:registration_campaign, :preference_based, status: :processing,
+                                                          campaignable: seminar)
+      end
+      let(:item1) { create(:talk, lecture: seminar) }
+      let(:item2) { create(:talk, lecture: seminar) }
+      let(:item3) { create(:talk, lecture: seminar) }
+      let!(:reg_item1) do
+        create(:registration_item, registration_campaign: campaign, registerable: item1)
+      end
+      let!(:reg_item2) do
+        create(:registration_item, registration_campaign: campaign, registerable: item2)
+      end
+      let!(:reg_item3) do
+        create(:registration_item, registration_campaign: campaign, registerable: item3)
+      end
+
+      let(:student1) { create(:confirmed_user, locale: "en") }
+      let(:student2) { create(:confirmed_user, locale: "en") }
+      let(:student3) { create(:confirmed_user, locale: "en") }
+      let(:student4) { create(:confirmed_user, locale: "en") } # rejected from all three
+
+      before do
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: reg_item1,
+               user: student1, status: :confirmed, preference_rank: 1)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: reg_item2,
+               user: student2, status: :confirmed, preference_rank: 1)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: reg_item3,
+               user: student3, status: :confirmed, preference_rank: 1)
+
+        # student4 applied to all three, confirmed on none
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: reg_item1,
+               user: student4, status: :pending, preference_rank: 1)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: reg_item2,
+               user: student4, status: :pending, preference_rank: 2)
+        create(:registration_user_registration,
+               registration_campaign: campaign,
+               registration_item: reg_item3,
+               user: student4, status: :pending, preference_rank: 3)
+      end
+
+      it "sends exactly one rejection email to the fully-unplaced student, not one per lost item" do
+        perform_enqueued_jobs { campaign.finalize! }
+
+        rejection_emails = ActionMailer::Base.deliveries.select do |mail|
+          mail.subject.include?("was not successful")
+        end
+
+        expect(rejection_emails.size).to eq(1)
+        expect(rejection_emails.first.to).to eq([student4.email])
+      end
+
+      it "sends three acceptance emails, one per placed student" do
+        perform_enqueued_jobs { campaign.finalize! }
+
+        acceptance_emails = ActionMailer::Base.deliveries.select do |mail|
+          mail.subject.include?("Added to group")
+        end
+
+        expect(acceptance_emails.size).to eq(3)
+        expect(acceptance_emails.flat_map(&:bcc))
+          .to contain_exactly(student1.email, student2.email, student3.email)
+      end
+
+      it "sends one acceptance mail per language for the same group" do
+        campaign = create(:registration_campaign, :preference_based, :with_items,
+                          items_count: 1, status: :processing)
+        item = campaign.registration_items.first
+        item.registerable.update!(capacity: 3)
+
+        english_students = create_list(:confirmed_user, 2, locale: "en")
+        german_student = create(:confirmed_user, locale: "de")
+
+        (english_students + [german_student]).each do |student|
+          create(:registration_user_registration, :confirmed,
+                 registration_campaign: campaign, registration_item: item,
+                 user: student, preference_rank: 1)
+        end
+
+        perform_enqueued_jobs { campaign.finalize! }
+
+        mails = ActionMailer::Base.deliveries.select { |m| m.bcc.present? }
+        expect(mails.size).to eq(2)
+
+        recipients_per_mail = mails.map { |m| m.bcc.sort }
+        expect(recipients_per_mail).to contain_exactly(
+          english_students.map(&:email).sort,
+          [german_student.email]
+        )
+        expect(mails.map(&:to).flatten.compact).to be_empty
+        expect(mails.map(&:subject).uniq.size).to eq(2)
+      end
+
+      it "does not announce students who are already on the roster" do
+        campaign = create(:registration_campaign, :preference_based, :with_items,
+                          items_count: 1, status: :processing)
+        item = campaign.registration_items.first
+        tutorial = item.registerable
+        tutorial.update!(capacity: 2)
+        existing = create(:confirmed_user, locale: "en")
+        newcomer = create(:confirmed_user, locale: "en")
+        create(:tutorial_membership, tutorial: tutorial, user: existing)
+        [existing, newcomer].each do |student|
+          create(:registration_user_registration, :confirmed,
+                 registration_campaign: campaign, registration_item: item,
+                 user: student, preference_rank: 1)
+        end
+        allow(RosterNotificationMailer).to receive(:finalized).and_call_original
+
+        campaign.finalize!
+
+        expect(RosterNotificationMailer).to have_received(:finalized).once do |registerable, users|
+          expect(registerable).to eq(tutorial)
+          expect(users.to_a).to contain_exactly(newcomer)
+        end
+      end
+
+      it "does not send any rejection email to students confirmed on some item" do
+        perform_enqueued_jobs { campaign.finalize! }
+
+        recipients_of_rejection = ActionMailer::Base
+                                  .deliveries
+                                  .select { |m| m.subject.include?("was not successful") }
+                                  .flat_map(&:to)
+
+        expect(recipients_of_rejection).not_to include(student1.email, student2.email,
+                                                       student3.email)
+      end
+    end
   end
 
   describe "#apply_rejections!" do
@@ -585,6 +727,117 @@ RSpec.describe(Registration::Campaign, type: :model) do
                                  ])
 
       expect(registration.reload).to be_rejected
+    end
+  end
+
+  describe "rejection mails on finalize" do
+    let(:user) { create(:confirmed_user, locale: "en") }
+
+    before { ActionMailer::Base.deliveries.clear }
+
+    def mails_to(recipient)
+      ActionMailer::Base.deliveries.select { |m| m.to&.include?(recipient.email) }
+    end
+
+    def mails_bcc(recipient)
+      ActionMailer::Base.deliveries.select { |m| m.bcc&.include?(recipient.email) }
+    end
+
+    def mail_text(mail)
+      (mail.text_part || mail).body.decoded
+    end
+
+    def finalize(campaign)
+      perform_enqueued_jobs { campaign.finalize! }
+    end
+
+    context "when finalizing" do
+      it "renders the capacity reason for pending users the solver left unassigned" do
+        campaign = create(:registration_campaign, :with_items, status: :processing)
+        create(:registration_user_registration,
+               registration_campaign: campaign, user: user, status: :pending)
+
+        finalize(campaign)
+
+        mails = mails_to(user)
+        expect(mails.size).to eq(1)
+        expect(mail_text(mails.first)).to include(
+          I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                 locale: user.locale)
+        )
+      end
+
+      it "renders the translated email policy reason for institutional_email_mismatch" do
+        campaign = create(:registration_campaign, :with_items, :first_come_first_served)
+        create(:registration_policy, :institutional_email, :for_finalization,
+               registration_campaign: campaign,
+               config: { "allowed_domains" => "uni.edu" })
+        campaign.update!(status: :closed)
+        invalid_user = create(:confirmed_user, email: "invalid@other.test", locale: "en")
+        create(:registration_user_registration, :pending,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: invalid_user)
+
+        finalize(campaign)
+
+        mails = mails_to(invalid_user)
+        expect(mails.size).to eq(1)
+        expect(mail_text(mails.first)).to include(
+          I18n.t("registration.policy.errors.email_domain_not_allowed",
+                 locale: invalid_user.locale)
+        )
+      end
+
+      it "renders the stored manual rejection label" do
+        campaign = create(:registration_campaign, :with_items, :preference_based,
+                          status: :processing)
+        create(:registration_user_registration, :rejected,
+               registration_campaign: campaign,
+               registration_item: campaign.registration_items.first,
+               user: user, preference_rank: 1,
+               rejection_reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_MANUAL,
+               rejection_reason_code: "manual_rejected")
+
+        finalize(campaign)
+
+        expect(mail_text(mails_to(user).first)).to include(
+          I18n.t("registration.user_registration.reason_labels.manual_rejected",
+                 locale: user.locale)
+        )
+      end
+
+      it "sends the reject mail to the student who lost seat and the accept mail to winner" do
+        campaign = create(:registration_campaign, :preference_based, :with_items,
+                          items_count: 1, status: :processing)
+        item = campaign.registration_items.first
+        item.registerable.update!(capacity: 1)
+
+        winner = create(:confirmed_user, locale: "en")
+        loser  = create(:confirmed_user, locale: "en")
+
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign, registration_item: item,
+               user: winner, preference_rank: 1)
+        create(:registration_user_registration, :pending,
+               registration_campaign: campaign, registration_item: item,
+               user: loser, preference_rank: 1)
+
+        finalize(campaign)
+
+        loser_mails = mails_to(loser)
+        expect(loser_mails.size).to eq(1)
+        expect(mail_text(loser_mails.first)).to include(
+          I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                 locale: loser.locale)
+        )
+
+        winner_mails = mails_bcc(winner)
+        expect(winner_mails.size).to eq(1)
+        expect(mail_text(winner_mails.first))
+          .not_to include(I18n.t("registration.user_registration.reason_labels.solver_unassigned",
+                                 locale: winner.locale))
+      end
     end
   end
 
