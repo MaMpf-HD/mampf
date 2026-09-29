@@ -17,7 +17,7 @@
 
   <p class="small text-muted mb-2">
     <%= t("assessment.statistics_tab.counts",
-          marked: statistics.counts[:marked], total: statistics.counts[:total]) %>
+          marked: statistics.counts[:reviewed], total: statistics.counts[:total]) %>
 
     <% if statistics.counts[:absent].positive? %>
       ·
@@ -216,7 +216,7 @@
                 </th>
 
                 <td class="text-end"><%= row.people %></td>
-                <td class="text-end"><%= row.figures.number %></td>
+                <td class="text-end"><%= row.reviewed %></td>
                 <td class="text-end"><%= format_points(row.figures.mean) %></td>
 
                 <td class="text-end">

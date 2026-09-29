@@ -73,7 +73,8 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
       expect(page.text.squish).to include("Mean grade 3.2", "Passed 50%")
       expect(page.text).not_to include("Nobody has been reviewed yet.")
       # No points, so nothing to share out; the dash says so as elsewhere.
-      expect(page.at_css("tfoot tr").text.squish).to eq("Everybody 2 0 — — — 3.2 50%")
+      expect(page.at_css("tfoot tr").text.squish).to eq("Everybody 2 2 — — — 3.2 50%")
+      expect(page.text.squish).to include("2 of 2 reviewed")
       grades = page.css("section").find { |section| section.at_css("h6")&.text&.squish == "Grades" }
       expect(grades.css("tbody th").map { |cell| cell.text.squish }).to include("1.0", "4.0", "5.0")
     end

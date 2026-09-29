@@ -5,7 +5,7 @@ module Assessment
   class Statistics
     Figures = Struct.new(:number, :mean, :median, keyword_init: true)
     TaskRow = Struct.new(:task, :figures, :full_share, :zero_share, keyword_init: true)
-    GroupRow = Struct.new(:label, :people, :figures, :grades, keyword_init: true)
+    GroupRow = Struct.new(:label, :people, :reviewed, :figures, :grades, keyword_init: true)
     GradeFigures = Struct.new(:number, :mean, :pass_share, keyword_init: true)
 
     def initialize(assessment)
@@ -29,6 +29,7 @@ module Assessment
     def counts
       @counts ||= {
         total: participations.size,
+        reviewed: participations.count(&:reviewed?),
         marked: marked.size,
         absent: participations.count(&:absent?),
         exempt: participations.count(&:exempt?)
@@ -76,6 +77,7 @@ module Assessment
     # Gives the figures for everybody, the baseline of both group tables.
     def overall_row
       @overall_row ||= GroupRow.new(label: nil, people: participations.size,
+                                    reviewed: counts[:reviewed],
                                     figures: self.class.figures(marked.map(&:points_total)),
                                     grades: grades)
     end
@@ -128,6 +130,7 @@ module Assessment
         rows = groups.map do |key, members|
           scored = members.select { |row| marked_ids.include?(row.id) }
           GroupRow.new(label: yield(key), people: members.size,
+                       reviewed: members.count(&:reviewed?),
                        figures: self.class.figures(scored.map(&:points_total)),
                        grades: grade_figures(members.select { |row| sat?(row) }))
         end

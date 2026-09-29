@@ -39,7 +39,7 @@ test.describe("the statistics of a sheet", () => {
     await expect(tasks.getByRole("row", { name: /Task 2/ })).toContainText("50%");
 
     const programs = teacher.page.getByRole("region", { name: "By program" });
-    await expect(programs.getByRole("row", { name: new RegExp(programName) })
+    await expect(programs.getByRole("row", { name: programName })
       .getByRole("cell", { name: "6", exact: true })).toHaveCount(2);
     await expect(programs.getByRole("row", { name: /Other or none given/ })).toBeVisible();
   });
