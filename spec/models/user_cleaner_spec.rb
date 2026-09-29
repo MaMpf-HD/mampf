@@ -219,9 +219,9 @@ RSpec.describe(UserCleaner, type: :model) do
       expect(User.where(id: user_editor.id)).to exist
     end
 
-    it "keeps a records office account" do
+    it "keeps a dean's office account" do
       office = FactoryBot.create(:confirmed_user, deletion_date: Date.current - 1.day,
-                                                  records_office: true)
+                                                  deans_office: true)
 
       UserCleaner.new.delete_users_according_to_deletion_date!
 

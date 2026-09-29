@@ -1342,7 +1342,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_29_000004) do
     t.datetime "personal_data_declined_at"
     t.bigint "program_id"
     t.boolean "support", default: false, null: false
-    t.boolean "records_office", default: false, null: false
+    t.boolean "deans_office", default: false, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"

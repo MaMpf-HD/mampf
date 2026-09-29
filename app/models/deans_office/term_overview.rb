@@ -1,5 +1,5 @@
-module RecordsOffice
-  # Gathers what the records office sees of one term: every lecture with its
+module DeansOffice
+  # Gathers what the dean's office sees of one term: every lecture with its
   # groups, how many have registered for them and how full they are, in a
   # fixed number of queries however many lectures the term holds. Members are
   # counted, not loaded, since a term holds thousands of them.

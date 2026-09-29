@@ -80,11 +80,11 @@ Rails.application.routes.draw do
     end
   end
 
-  # records office routes
+  # dean's office routes
 
-  get "records_office",
-      to: "records_office#index",
-      as: "records_office"
+  get "deans_office",
+      to: "deans_office#index",
+      as: "deans_office"
 
   # annotation routes
   get "annotations/update_annotations",

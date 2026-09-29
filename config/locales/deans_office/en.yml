@@ -1,6 +1,6 @@
 en:
-  records_office:
-    title: 'Records office'
+  deans_office:
+    title: "Dean's office"
     explainer: >-
       Every lecture of a term with its groups: how many seats they have, how
       many have registered and who is assigned.

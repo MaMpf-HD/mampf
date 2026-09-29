@@ -92,8 +92,8 @@
     <% if can?(:assign_roles, @user) %>
       <%= f.check_box :support, label: t("admin.user.support"),
                                 help: t("admin.user.info.support") %>
-      <%= f.check_box :records_office, label: t("admin.user.records_office"),
-                                       help: t("admin.user.info.records_office") %>
+      <%= f.check_box :deans_office, label: t("admin.user.deans_office"),
+                                       help: t("admin.user.info.deans_office") %>
     <% end %>
 
     <% if can?(:assign_admin, @user) %>

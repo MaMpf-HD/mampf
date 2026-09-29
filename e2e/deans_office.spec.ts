@@ -1,6 +1,6 @@
 import { expect, test } from "./_support/fixtures";
 
-test.describe("records office", () => {
+test.describe("dean's office", () => {
   test("is opened to somebody by an admin, who then reads a term's groups",
     async ({ admin, student, factory }) => {
       const older = await factory.create("term", [], { season: "SS", year: 2030 });
@@ -17,17 +17,17 @@ test.describe("records office", () => {
       await factory.create("lecture", [], { term_id: older.id, course_id: otherCourse.id });
 
       await student.page.goto("/");
-      await expect(student.page.getByRole("link", { name: "Records office" })).toHaveCount(0);
+      await expect(student.page.getByRole("link", { name: "Dean's office" })).toHaveCount(0);
 
       await admin.page.goto(`/support/users/${student.user.id}/edit`);
-      await admin.page.getByRole("checkbox", { name: "Records office" }).check();
+      await admin.page.getByRole("checkbox", { name: "Dean's office" }).check();
       await admin.page.getByRole("button", { name: "Save", exact: true }).click();
       await expect(admin.page.getByText("The changes have been saved.")).toBeVisible();
-      await expect(admin.page.getByRole("checkbox", { name: "Records office" })).toBeChecked();
+      await expect(admin.page.getByRole("checkbox", { name: "Dean's office" })).toBeChecked();
 
       await student.page.reload();
-      await student.page.getByRole("link", { name: "Records office" }).click();
-      await expect(student.page.getByRole("heading", { name: "Records office" })).toBeVisible();
+      await student.page.getByRole("link", { name: "Dean's office" }).click();
+      await expect(student.page.getByRole("heading", { name: "Dean's office" })).toBeVisible();
       const toggle = student.page.getByRole("button", { name: lectureTitle });
       await expect(toggle).toHaveCount(0);
 

@@ -100,7 +100,7 @@ module Support
 
       def user_params
         fields = FIELDS
-        fields += [:support, :records_office] if can?(:assign_roles, @user)
+        fields += [:support, :deans_office] if can?(:assign_roles, @user)
         fields += [:admin] if can?(:assign_admin, @user)
         params.expect(user: fields)
       end
