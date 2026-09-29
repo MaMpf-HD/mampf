@@ -2,11 +2,9 @@
 <%# The id is where the staff's picker sends a new count; a tutor's forms have none. %>
 <%# locals: (emails:, picker: false) %>
 
-<div
-  <%= tag.attributes(id: ("student-message-recipients" if picker)) %>
-  class="d-flex align-items-center flex-wrap gap-2"
-  data-testid="student-mail-recipients"
->
+<%= tag.div id: ("student-message-recipients" if picker),
+            class: "d-flex align-items-center flex-wrap gap-2",
+            data: { testid: "student-mail-recipients" } do %>
   <%= submit_tag t("student_message.send", count: emails.size),
                  class: "btn btn-primary",
                  disabled: emails.empty?,
@@ -44,4 +42,4 @@
       ></span>
     </span>
   <% end %>
-</div>
+<% end %>
