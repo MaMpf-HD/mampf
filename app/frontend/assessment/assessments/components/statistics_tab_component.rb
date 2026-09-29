@@ -61,14 +61,24 @@ class StatisticsTabComponent < ViewComponent::Base
   end
 
   def grade_count_bar(count, total)
-    helpers.progress_bar(count, [total, 1].max, label: count.to_s, height: "1rem",
-                                                container_class: "progress")
+    figure_with_bar(count.to_s, count, [total, 1].max)
   end
 
   def share_bar(share)
     return if share.nil?
 
-    helpers.progress_bar((share * 100).round, 100, label: format_share(share),
-                                                   height: "1rem", container_class: "progress")
+    figure_with_bar(format_share(share), (share * 100).round, 100)
   end
+
+  private
+
+    def figure_with_bar(figure, value, max)
+      tag.div(class: "d-flex align-items-center gap-2") do
+        tag.span(figure, class: "text-nowrap text-end statistics-figure") +
+          tag.div(class: "flex-grow-1", "aria-hidden": true) do
+            helpers.progress_bar(value, max, show_label: false, height: "0.5rem",
+                                             container_class: "progress statistics-bar")
+          end
+      end
+    end
 end
