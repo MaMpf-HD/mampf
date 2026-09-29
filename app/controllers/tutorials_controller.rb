@@ -47,7 +47,6 @@ class TutorialsController < ApplicationController
     # so the page opens on the first one; nil only while the lecture has none.
     @tutorial = @tutorials.find_by(id: params[:tutorial]) ||
                 current_user.tutorials(@lecture).first || @tutorials.first
-    # Before the first sheet or achievement, the group itself is all there is.
     @participants = params[:view] == "participants" || (@assignment.nil? && @achievement.nil?)
     @assignment = @achievement = nil if @participants
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper

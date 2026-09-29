@@ -162,7 +162,7 @@ RSpec.describe("Tutorials", type: :request) do
       expect(body.at_css("[data-testid='tutorial-participants']").text).to include("Ada Lovelace")
     end
 
-    it "offers them next to the sheets once there are some, and keeps them on a change of group" do
+    it "offers them next to the sheets once there are some" do
       create(:assignment, lecture: lecture)
 
       get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
@@ -172,6 +172,19 @@ RSpec.describe("Tutorials", type: :request) do
       get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
       expect(body.at_css("[data-testid='tutorial-participants']").text).to include("Ada Lovelace")
       expect(body.css("tr.submission-row")).to be_empty
+    end
+
+    it "stays on the participants when the tutor switches to another group" do
+      create(:assignment, lecture: lecture)
+      other = create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: tutor.id,
+                                                   title: "Other group")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
+      option = body.css("#tutorial-select option").find { |o| o.text.strip == "Other group" }
+      get option["value"]
+
+      expect(response.request.params[:tutorial]).to eq(other.id.to_s)
+      expect(body.at_css("[data-testid='tutorial-participants']")).to be_present
     end
 
     # The group is filled when the registration is finalized; until then its

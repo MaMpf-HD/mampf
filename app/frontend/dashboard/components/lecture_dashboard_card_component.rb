@@ -42,7 +42,6 @@ class LectureDashboardCardComponent < ViewComponent::Base
     staff? && !lecture.published?
   end
 
-  # Made a tutor by a voucher or by address, but not given a group yet.
   def awaiting_group?
     section == :tutor && !user.given_tutorials.exists?(lecture: lecture) &&
       !user.given_cohorts.exists?(context: lecture)

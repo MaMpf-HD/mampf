@@ -1,6 +1,6 @@
-# Lets the staff of a lecture make somebody a tutor by the address of their
-# account, besides a tutor voucher, and remove a tutor who came either way.
-# Only an exact address finds somebody, so the accounts cannot be browsed.
+# Lets the staff of a lecture make somebody a tutor by the exact address of
+# their confirmed account, besides a tutor voucher, and remove a tutor who
+# came either way.
 class TutorAppointmentsController < ApplicationController
   before_action :set_lecture
 

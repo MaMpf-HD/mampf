@@ -26,7 +26,6 @@ class TutorialParticipantsComponent < ViewComponent::Base
     running_item&.registration_campaign
   end
 
-  # Nil while a preference campaign has not allocated yet.
   def registered
     return @registered if defined?(@registered)
 

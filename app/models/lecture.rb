@@ -1075,7 +1075,6 @@ class Lecture < ApplicationRecord
     # still given by the old system, this will not be true
   end
 
-  # Those the staff made tutors by the address of their account.
   def appointed_tutors
     User.where(id: tutor_appointments.select(:user_id))
   end

@@ -454,12 +454,12 @@ de:
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
       tutors_overview:
-        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten) oder indem Du sie über die Adresse ihres Kontos hinzufügst; EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
+        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten) oder indem Du sie über die Adresse ihres Kontos hinzufügst; EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien und flexiblen Gruppen zugeordnet. Hier steht, wer welche Gruppe betreut."
         none_yet: "Noch keine TutorInnen. Füge sie unten über ihre Adresse hinzu, oder erstelle einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
-        no_tutorial_yet: "Gutschein eingelöst, noch keinem Tutorium zugeordnet"
-        added_no_tutorial_yet: "über die Adresse hinzugefügt, noch keinem Tutorium zugeordnet"
+        no_group_yet: "Gutschein eingelöst, noch keiner Gruppe zugeordnet"
+        added_no_group_yet: "über die Adresse hinzugefügt, noch keiner Gruppe zugeordnet"
         add_by_email: "TutorIn per E-Mail-Adresse hinzufügen"
-        add_hint: "Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und kann dann einem Tutorium zugeordnet werden."
+        add_hint: "Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und kann dann einer Gruppe zugeordnet werden."
         add: "Hinzufügen"
         remove: "%{name} entfernen"
         remove_confirm: "%{name} von den TutorInnen dieser Veranstaltung entfernen? Zuordnungen zu flexiblen Gruppen bleiben bestehen."
@@ -3365,7 +3365,7 @@ de:
     create:
       no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
       already: "%{name} kann bereits einem Tutorium zugeordnet werden."
-      added: "%{name} ist jetzt TutorIn und hat eine Mail darüber bekommen."
+      added: "%{name} ist jetzt TutorIn und bekommt eine Mail darüber."
   tutorial:
     not_assigned_yet: >
       Du bist TutorIn in dieser Veranstaltung, aber noch keinem Tutorium
@@ -3530,8 +3530,9 @@ de:
     new_editor_subject: 'EditorInnenrechte für %{title}'
     new_tutor_subject: 'TutorIn in %{title}'
     new_tutor: >
-      Hallo %{username}, Du wurdest als TutorIn in %{title} eingetragen. Dein
-      Tutorium erscheint auf Deinem Dashboard, sobald Du einem zugeordnet bist.
+      Hallo %{username}, Du wurdest als TutorIn in %{title} eingetragen. Die
+      Veranstaltung steht auf Deinem Dashboard; Deine Gruppen erscheinen dort,
+      sobald Du ihnen zugeordnet bist.
     new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_teacher_subject: 'DozentInnenstatus für %{title}'
     new_teacher: 'Hallo %{username}, Du hast soeben DozentInnenstatus für %{title} erhalten.'

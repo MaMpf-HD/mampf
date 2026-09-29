@@ -20,7 +20,7 @@ RSpec.describe("TutorAppointments", type: :request) do
 
       expect(lecture.eligible_as_tutors).to include(person)
       expect(response.body).to include(
-        I18n.t("admin.lecture.tutors_overview.added_no_tutorial_yet")
+        I18n.t("admin.lecture.tutors_overview.added_no_group_yet")
       )
     end
 

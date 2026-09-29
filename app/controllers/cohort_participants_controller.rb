@@ -1,5 +1,5 @@
-# The flexible groups a tutor runs in a lecture, with who is in them. Nothing
-# in a cohort is marked, so this list and the mail are all its tutors need.
+# Shows the tutor of flexible groups who is in them, with the mail to them.
+# Nothing in a cohort is marked, so that is all its tutors need.
 class CohortParticipantsController < ApplicationController
   before_action :set_lecture
 

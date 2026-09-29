@@ -109,7 +109,6 @@ module StudentMessages
         end
       end
 
-      # A cohort's tutors write to it as a tutorial's tutors do to theirs.
       def cohorts
         cohorts = if staff?
           @lecture.cohorts.to_a

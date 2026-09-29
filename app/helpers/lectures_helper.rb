@@ -114,18 +114,23 @@ module LecturesHelper
     "text-primary"
   end
 
-  def tutors_with_tutorials(lecture)
-    by_tutor = lecture.tutorials.includes(:tutors).each_with_object({}) do |tutorial, hash|
-      tutorial.tutors.each { |tutor| (hash[tutor] ||= []) << tutorial }
+  # Each tutor of the lecture with their tutorials and cohorts, and :address
+  # or :voucher if that is how they became one. Those still without a group
+  # are listed too, so that the lecturer sees who is waiting.
+  def lecture_tutors_overview(lecture)
+    groups = {}
+    lecture.tutorials.includes(:tutors).find_each do |tutorial|
+      tutorial.tutors.each { |tutor| (groups[tutor] ||= []) << tutorial }
     end
-    by_tutor.sort_by { |tutor, _| tutor.tutorial_name.to_s.downcase }
-  end
+    lecture.cohorts.includes(:tutors).find_each do |cohort|
+      cohort.tutors.each { |tutor| (groups[tutor] ||= []) << cohort }
+    end
+    sources = Redemption.tutors_by_redemption_in(lecture).index_with(:voucher)
+                        .merge(lecture.appointed_tutors.index_with(:address))
+    sources.each_key { |tutor| groups[tutor] ||= [] }
 
-  # Redeemed a tutor voucher or added by address, not put on a tutorial yet -
-  # listed so the lecturer sees who is waiting.
-  def tutors_without_tutorial(lecture)
-    ((Redemption.tutors_by_redemption_in(lecture) + lecture.appointed_tutors).uniq -
-      lecture.tutors).sort_by { |tutor| tutor.tutorial_name.to_s.downcase }
+    groups.map { |tutor, list| [tutor, list, sources[tutor]] }
+          .sort_by { |tutor, _, _| tutor.tutorial_name.to_s.downcase }
   end
 
   def lecture_header_color(subscribed, lecture)

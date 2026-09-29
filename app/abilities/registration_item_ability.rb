@@ -9,7 +9,6 @@ class RegistrationItemAbility
       user.can_edit?(item.registration_campaign.campaignable)
     end
 
-    # See Registration::Campaign#accepts_new_items? for when a group may join.
     can :create, Registration::Item do |item|
       campaign = item.registration_campaign
       user.can_edit?(campaign.campaignable) && campaign.accepts_new_items?

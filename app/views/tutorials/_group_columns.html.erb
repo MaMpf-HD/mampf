@@ -13,7 +13,6 @@
 
 <% participants_path = local_assigns[:participants_path] %>
 <div class="col-12 col-md-auto d-flex flex-wrap gap-2">
-  <%# The list without points, from a page that shows a sheet's points. %>
   <% if participants_path %>
     <%= link_to participants_path, class: 'btn btn-sm btn-outline-primary text-nowrap' do %>
       <i class="bi bi-people me-1" aria-hidden="true"></i>

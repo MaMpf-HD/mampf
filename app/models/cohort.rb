@@ -40,9 +40,7 @@ class Cohort < ApplicationRecord
   end
 
   def tutor_names
-    return unless tutors.any?
-
-    tutors.map(&:tutorial_name).join(", ")
+    tutors.map(&:tutorial_name).join(", ").presence
   end
 
   def exclusive_assignment?

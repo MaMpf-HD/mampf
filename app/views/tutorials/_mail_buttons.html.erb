@@ -1,5 +1,4 @@
 <%# locals: (group:, key:) %>
-<%# The mail to the group, and while its registration runs, to those registered so far. %>
 <% catalog = StudentMessages::Catalog.new(@lecture, current_user) %>
 <% group_audience = catalog.pick([key])&.first %>
 <% item = group.registration_items.running.first %>

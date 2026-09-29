@@ -254,7 +254,6 @@ class GroupRowComponent < ViewComponent::Base
     helpers.roster_tutors_text(registerable)
   end
 
-  # A flexible group names its tutors only if it has any; most need none.
   def people_label
     case registerable
     when Talk then t("basics.speakers")

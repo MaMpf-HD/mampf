@@ -122,7 +122,6 @@
     </li>
   <% end %>
 
-  <%# A flexible group's tutors see who is in the groups they run. %>
   <% if cohort_tutor %>
     <% active_class = get_class_for_any_path([lecture_cohort_participants_path(lecture)]) %>
     <li class="sidebar-item nav-link <%= active_class %>">

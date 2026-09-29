@@ -28,9 +28,9 @@ module RegistrationCampaignContext
       false
     end
 
-    # A group added to an open process that people have registered for: the
-    # staff are offered a mail to them, which they write themselves - several
-    # groups added in a row need not mean several mails.
+    # Offers the staff a mail to those registered when a group joins an open
+    # campaign. They write it themselves: several groups added in a row need
+    # not mean several mails.
     def new_group_mail_hint_stream(group)
       campaign = @joined_campaign
       return unless campaign&.open? &&

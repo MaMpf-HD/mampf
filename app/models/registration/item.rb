@@ -32,8 +32,8 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_item
 
-    # Items of a campaign that has opened and is not finalized yet: its groups'
-    # rosters are still empty, the registrations say who will be in them.
+    # Items of a campaign that has opened and is not finalized yet: the
+    # registrations, not the rosters, say who will be in their groups.
     scope :running, lambda {
       joins(:registration_campaign)
         .merge(Registration::Campaign.where(status: [:open, :closed, :processing]))

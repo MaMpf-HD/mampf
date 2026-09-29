@@ -16,7 +16,7 @@ test("adds a tutor by the address of their account, before any group exists",
     await page.getByRole("button", { name: "Add", exact: true }).click();
     const overview = page.getByTestId("tutors-overview");
     await expect(overview.getByRole("row", { name: /Grace Hopper/ }))
-      .toContainText("added by address, not on a tutorial yet");
+      .toContainText("added by address, not in a group yet");
 
     // the group's dialog offers her, and says where somebody missing is added
     await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });

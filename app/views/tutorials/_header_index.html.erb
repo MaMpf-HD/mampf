@@ -1,5 +1,4 @@
 <%# The page shows one sheet, test or achievement at a time; `subject` is whichever it is. %>
-<%# Without either, it shows the group's participants. %>
 <% subject = achievement || assignment %>
 <% participants_path = lecture_tutorials_path(@lecture, params: { view: 'participants',
                                                                   tutorial: tutorial.id }) %>

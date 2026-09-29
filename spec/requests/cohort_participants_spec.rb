@@ -30,6 +30,19 @@ RSpec.describe("CohortParticipants", type: :request) do
     expect(response.body).to include(lecture_submissions_path(lecture))
   end
 
+  it "shows a cohort's tutor no other cohort, whatever the id asked for" do
+    other = create(:cohort, context: lecture, title: "Reading group")
+    create(:cohort_membership, cohort: other,
+                               user: create(:confirmed_user, first_name: "Grace",
+                                                             last_name: "Hopper"))
+    sign_in tutor
+
+    get lecture_cohort_participants_path(lecture, params: { cohort: other.id })
+
+    expect(response.body).to include("Ada Lovelace")
+    expect(response.body).not_to include("Grace Hopper")
+  end
+
   it "shows nobody else the list" do
     sign_in create(:confirmed_user)
 

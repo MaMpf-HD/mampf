@@ -7,34 +7,28 @@
           link: link_to(t('roster.tabs.groups'), edit_lecture_path(lecture, tab: 'groups'))) %>
   </p>
 
-  <% assigned = tutors_with_tutorials(lecture) %>
-  <% waiting = tutors_without_tutorial(lecture) %>
-  <% appointments = lecture.tutor_appointments.index_by(&:user_id) %>
+  <% tutors = lecture_tutors_overview(lecture) %>
 
-  <% if assigned.empty? && waiting.empty? %>
+  <% if tutors.empty? %>
     <p class="text-muted" data-testid="tutors-overview-empty">
       <%= t('admin.lecture.tutors_overview.none_yet') %>
     </p>
   <% else %>
     <table class="table table-sm" data-testid="tutors-overview">
       <tbody>
-        <% assigned.each do |tutor, tutorials| %>
+        <% tutors.each do |tutor, groups, source| %>
           <tr>
             <td><%= tutor.tutorial_info %></td>
-            <td class="text-muted"><%= tutorials.map(&:title).natural_sort.join(", ") %></td>
-            <td></td>
-          </tr>
-        <% end %>
-        <% waiting.each do |tutor| %>
-          <% appointment = appointments[tutor.id] %>
-          <tr>
-            <td><%= tutor.tutorial_info %></td>
-            <td class="text-muted fst-italic">
-              <%= t(appointment ? 'admin.lecture.tutors_overview.added_no_tutorial_yet'
-                                : 'admin.lecture.tutors_overview.no_tutorial_yet') %>
-            </td>
+            <% if groups.any? %>
+              <td class="text-muted"><%= groups.map(&:title).natural_sort.join(", ") %></td>
+            <% else %>
+              <td class="text-muted fst-italic">
+                <%= t(source == :address ? 'admin.lecture.tutors_overview.added_no_group_yet'
+                                         : 'admin.lecture.tutors_overview.no_group_yet') %>
+              </td>
+            <% end %>
             <td class="text-end">
-              <% if current_user.can_update_personell?(lecture) %>
+              <% if source && groups.none?(Tutorial) && current_user.can_update_personell?(lecture) %>
                 <% label = t('admin.lecture.tutors_overview.remove', name: tutor.tutorial_name) %>
                 <%= button_to lecture_tutor_appointment_path(lecture, tutor),
                               method: :delete,
