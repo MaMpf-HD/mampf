@@ -243,9 +243,6 @@ class RosterNotificationMailer < ApplicationMailer
       exam_date     = (I18n.l(@rosterable.date, format: :long) if @rosterable.date)
       exam_location = @rosterable.location.presence
 
-      @info[:exam_date]     = exam_date
-      @info[:exam_location] = exam_location
-
       parts = []
 
       # Sentence with known information
