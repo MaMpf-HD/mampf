@@ -3147,7 +3147,7 @@ en:
       already: "%{name} can already be put on a tutorial."
       added: "%{name} is now a tutor and has been told by mail."
   tutorial:
-    tutors_missing_html: "Somebody missing? On the %{link} tab, tutors can be added by email address."
+    tutors_missing_html: "Somebody missing? On the %{link} tab you make people tutors: with a voucher, or by the email address of their MaMpf account."
     participants:
       button: "Participants"
       pick: "Choose …"
@@ -3204,10 +3204,10 @@ en:
         Here you can select the tutors of the tutorial. They can view
         the submissions and upload corrections.
         You can only select users who have the status of tutor in the
-        event series, or editors or yourself. In order to grant students the
-        status of tutor, you have to create a voucher on the "Personnel" tab.
-        You have to communicate the voucher to the students outside
-        of MaMpf. The students can then redeem the voucher.
+        event series, or editors or yourself. On the "Personnel" tab you make
+        people tutors: with a voucher that you pass on to them outside of
+        MaMpf and that they redeem, or by the email address of their MaMpf
+        account.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions

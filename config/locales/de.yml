@@ -3366,7 +3366,7 @@ de:
       already: "%{name} kann bereits einem Tutorium zugeordnet werden."
       added: "%{name} ist jetzt TutorIn und hat eine Mail darüber bekommen."
   tutorial:
-    tutors_missing_html: "Fehlt jemand? Im Reiter %{link} kannst Du TutorInnen per E-Mail-Adresse hinzufügen."
+    tutors_missing_html: "Fehlt jemand? Im Reiter %{link} machst Du Leute zu TutorInnen: mit einem Gutschein oder über die E-Mail-Adresse ihres MaMpf-Kontos."
     participants:
       button: "Teilnehmende"
       pick: "Auswählen …"
@@ -3425,11 +3425,9 @@ de:
         Diese können Abgaben einsehen und Korrekturen hochladen.
         Du kannst nur Personen auswählen, die den Status "TutorIn" in der
         Veranstaltung haben, dazu EditorInnen und Dich selbst.
-        Um Studierenden den Status einer TutorIn zu geben, musst Du
-        im Reiter "Personal" einen Gutschein erstellen, den die Studierenden
-        einlösen können.
-        Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
-        werden.
+        Im Reiter "Personal" machst Du Leute zu TutorInnen: mit einem
+        Gutschein, den Du ihnen außerhalb von MaMpf gibst und den sie einlösen,
+        oder über die E-Mail-Adresse ihres MaMpf-Kontos.
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
