@@ -103,6 +103,13 @@
                   title: t('support.title'),
                   'aria-label': t('support.title') %>
         </li>
+        <li class="nav-item">
+          <%= link_to '', deans_office_path,
+                  class: 'nav-link bi bi-building ' + get_class_for_path(deans_office_path),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('deans_office.title'),
+                  'aria-label': t('deans_office.title') %>
+        </li>
       </ul>
     <% end %>
 

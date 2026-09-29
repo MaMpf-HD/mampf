@@ -170,6 +170,6 @@ class UserCleaner
   private
 
     def deletable?(user)
-      user.generic? && !user.support?
+      user.generic? && !user.support? && !user.deans_office?
     end
 end
