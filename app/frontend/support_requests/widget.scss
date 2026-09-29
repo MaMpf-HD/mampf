@@ -1,0 +1,65 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+.support-widget {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: $zindex-fixed;
+}
+
+// The button covers the bottom-right corner of the page; the footer scrolls
+// up past it, so that its links and logo can be reached.
+#footer-bar {
+  padding-bottom: 4.5rem;
+}
+
+.support-widget__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 50%;
+  background: var(--bs-body-bg);
+  color: var(--bs-secondary-color);
+  font-size: 1.25rem;
+  box-shadow: var(--bs-box-shadow-sm);
+
+  &:hover,
+  &:focus-visible,
+  &[aria-expanded="true"] {
+    border-color: var(--bs-primary);
+    background: var(--bs-primary);
+    color: $white;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+  }
+}
+
+.support-widget__panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  width: min(22rem, calc(100vw - 2rem));
+  // No higher than the room above the button, so that a phone held sideways
+  // can still scroll to its top.
+  max-height: calc(100dvh - 5.25rem);
+  overflow-y: auto;
+  transform-origin: bottom right;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: support-widget-open 0.15s ease-out;
+  }
+}
+
+@keyframes support-widget-open {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}

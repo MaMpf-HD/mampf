@@ -28,8 +28,8 @@ window.Stimulus.register("turbo-modal", TurboModalController);
 import FlashMessagesController from "~/flash/_messages.controller.js";
 window.Stimulus.register("flash-messages", FlashMessagesController);
 
-import FeedbackFormController from "~/feedbacks/form/_form.controller.js";
-window.Stimulus.register("feedback", FeedbackFormController);
+import SupportWidgetController from "~/support_requests/widget.controller.js";
+window.Stimulus.register("support-widget", SupportWidgetController);
 
 import VignettesQuestionController from "~/vignettes/slides/form/question/_question.controller.js";
 window.Stimulus.register("vignettes-question", VignettesQuestionController);

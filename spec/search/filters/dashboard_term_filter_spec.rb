@@ -23,6 +23,16 @@ RSpec.describe(Search::Filters::DashboardTermFilter, type: :filter) do
       end
     end
 
+    context "with all terms asked for" do
+      let(:params) { { term: next_term.dashboard_param, all_terms: "1" } }
+
+      it "returns the lectures of every term" do
+        expect(filtered_scope).to contain_exactly(lecture_in_current_term,
+                                                  lecture_in_next_term,
+                                                  lecture_without_term)
+      end
+    end
+
     context "with a bare term id" do
       let(:params) { { term: next_term.id } }
 

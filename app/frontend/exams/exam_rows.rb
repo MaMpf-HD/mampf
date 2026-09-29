@@ -1,10 +1,10 @@
-# What both of an exam's tables draw: the candidates on the roster, by name,
+# What both of an exam's tables draw: the candidates on the roster, by last name,
 # each with their participation.
 module ExamRows
   STATUSES = [:reviewed, :pending_grading, :absent, :exempt].freeze
 
   def self.for(exam)
-    candidates = exam.users.order(:name)
+    candidates = exam.users.by_last_name
     Assessment::ParticipationIndex.build(candidates.map { |user| [exam.assessment, user] }).values
   end
 

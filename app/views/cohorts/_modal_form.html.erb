@@ -64,6 +64,23 @@
     </div>
 
     <div class="mb-3">
+      <%= f.label :tutor_ids, t("basics.tutors"), class: "form-label" %>
+      <small class="form-text text-muted d-block mb-2">
+        <%= t("roster.hints.cohort_tutors") %>
+      </small>
+      <%= f.select :tutor_ids,
+            cohort_tutors_preselection(cohort),
+            {},
+            { class: "selectize",
+              multiple: true,
+              data: { ajax: false,
+                      filled: true,
+                      model: "user",
+                      no_results: t("basics.no_results"),
+                      controller: "selectize" } } %>
+    </div>
+
+    <div class="mb-3">
       <%= f.label :capacity, t("basics.capacity"), class: "form-label" %>
       <%= f.number_field :capacity,
             class: "form-control",

@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   # search routes
 
   get "search/index"
+  get "search/staff", to: "search#staff", as: "search_staff"
 
   # administration routes
 
@@ -59,10 +60,6 @@ Rails.application.routes.draw do
       to: "administration#exit",
       as: "exit_administration"
 
-  get "/administration/profile",
-      to: "administration#profile",
-      as: "elevated_profile"
-
   get "administration/search",
       to: "administration#search",
       as: "administration_search"
@@ -70,6 +67,18 @@ Rails.application.routes.draw do
   get "/administration/classification",
       to: "administration#classification",
       as: "classification"
+
+  # support routes
+
+  namespace :support do
+    resources :users, only: [:index, :edit, :update, :destroy] do
+      member do
+        patch :unlock
+        post :password_reset
+        post :confirmation
+      end
+    end
+  end
 
   # records office routes
 
@@ -202,8 +211,8 @@ Rails.application.routes.draw do
     end
   end
 
-  # feedback routes
-  resources :feedbacks, only: [:new, :create]
+  # support request routes
+  resources :support_requests, only: [:create]
 
   # items routes
 
@@ -383,6 +392,9 @@ Rails.application.routes.draw do
 
   resources :lectures, except: [:index, :show] do
     get "roster", to: "roster/maintenance#index"
+    resources :tutor_appointments, only: [:create, :destroy], param: :user_id
+    resources :editors, only: :create, controller: "lecture_editors"
+    get "cohort_participants", to: "cohort_participants#index"
     get "roster/participants", to: "roster/maintenance#participants"
 
     member do
@@ -408,7 +420,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resource :rules, only: [:edit, :update] do
+      resource :rules, only: [:edit, :update, :destroy] do
         patch :preview, on: :collection
       end
 
@@ -1165,17 +1177,9 @@ Rails.application.routes.draw do
                                     unlocks: "unlocks" }
   # users routes
 
-  get "users/elevate",
-      to: "users#elevate",
-      as: "elevate_user"
-
   get "users/teacher/:teacher_id",
       to: "users#teacher",
       as: "teacher"
-
-  get "users/list_generic_users",
-      to: "users#list_generic_users",
-      as: "list_generic_users"
 
   get "captcha_challenge",
       to: "captcha_challenges#show",
@@ -1192,8 +1196,6 @@ Rails.application.routes.draw do
   get "users/:id/image/:variant",
       to: "users#image",
       as: "image_user"
-
-  resources :users, only: [:index, :edit, :update, :destroy]
 
   post "vouchers/verify",
        to: "vouchers#verify",

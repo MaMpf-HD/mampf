@@ -15,13 +15,17 @@ de:
         Veranstaltungen zu suchen.
       sections:
         staff: "Diese betreust Du"
+        staff_note_only: "Für Lehrende"
         tutor: "In diesen bist Du TutorIn"
         enrolled: "Für diese bist Du angemeldet"
         bookmarked: "Diese hast Du Dir gemerkt"
       registration_open: "Anmeldung offen — jetzt anmelden"
+      talk_with: "mit %{names}"
       remove_bookmark: "Nicht mehr merken"
       remove_bookmark_for: "Nicht mehr merken: %{lecture}"
       remove_bookmark_title: "Nicht mehr merken?"
+      not_published: "Noch nicht veröffentlicht"
+      awaiting_group: "Noch keinem Tutorium zugeordnet"
       remove_bookmark_body: >-
         „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Du kannst
         sie über die Vorlesungssuche erneut merken.

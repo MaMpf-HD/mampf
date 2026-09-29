@@ -2,8 +2,6 @@
 
 <%= render partial: "shared/announcement_banner" %>
 
-<%= render partial: "feedbacks/form/modal" %>
-
 <div class="navbars-container">
   <nav class="navbar navbar-expand" id="firstnav">
     <%# Sized in the markup: the svg declares 97mm, and navbar.scss is loaded
@@ -36,6 +34,17 @@
             title="<%= t('navbar.profile') %>">
           </a>
         </li>
+
+        <% if current_user.support? || current_user.admin? %>
+          <li class="nav-item">
+            <a href="<%= support_users_path %>"
+              class="nav-link bi bi-life-preserver <%= get_class_for_path(support_users_path) %>"
+              data-bs-toggle="tooltip"
+              title="<%= t('support.title') %>"
+              aria-label="<%= t('support.title') %>">
+            </a>
+          </li>
+        <% end %>
 
         <% if current_user.records_office? %>
           <li class="nav-item">
@@ -122,8 +131,6 @@
       </ul>
 
       <%= render partial: 'shared/dropdown_notifications' %>
-
-      <%= render partial: 'feedbacks/navbar/button' %>
 
       <ul class="navbar-nav" id="searchField">
         <li class="nav-item">

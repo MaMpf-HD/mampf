@@ -1,0 +1,42 @@
+<%# locals: (support_request:, throttled: nil, intro: true) %>
+<% message_invalid = support_request.errors[:message].any? %>
+
+<%= form_with model: support_request, url: support_requests_path, local: true,
+              data: { support_widget_target: "form" } do |f| %>
+  <% if intro %>
+    <p class="small text-muted">
+      <%= t("support_request.intro_html", email: mail_to(DefaultSetting::PROJECT_EMAIL)) %>
+    </p>
+  <% end %>
+
+  <% if throttled %>
+    <div class="alert alert-warning py-2 small" role="alert">
+      <%= throttled %>
+    </div>
+  <% end %>
+
+  <div class="mb-2">
+    <%= f.label :message, t("support_request.message"), class: "visually-hidden" %>
+
+    <%= f.text_area :message,
+                    rows: 6,
+                    class: class_names("form-control", "is-invalid": message_invalid),
+                    placeholder: t("support_request.message_placeholder"),
+                    required: true,
+                    minlength: SupportRequest::MESSAGE_MIN_LENGTH,
+                    maxlength: SupportRequest::MESSAGE_MAX_LENGTH,
+                    aria: { invalid: message_invalid,
+                            describedby: ("support-request-message-error" if message_invalid) },
+                    data: { support_widget_target: "message" } %>
+
+    <% if message_invalid %>
+      <div id="support-request-message-error" class="invalid-feedback">
+        <%= support_request.errors.full_messages_for(:message).to_sentence %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="text-end">
+    <%= f.submit t("support_request.send"), class: "btn btn-primary btn-sm" %>
+  </div>
+<% end %>

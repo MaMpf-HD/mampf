@@ -116,9 +116,11 @@
     <%= render @content %>
   <% end %>
 
-  <% if @tutorials_given.any? %>
+  <% if @tutorials_given.any? || @cohorts_given.any? %>
     <%= render "lectures/home/tutor_block", lecture: @lecture, tutorials: @tutorials_given,
-                                            member_counts: @member_counts %>
+                                            member_counts: @member_counts || {},
+                                            cohorts: @cohorts_given,
+                                            cohort_member_counts: @cohort_member_counts %>
   <% end %>
 
   <% if @can_edit && @managed_campaigns.any? %>
@@ -160,7 +162,8 @@
 
   <% if !@lecture.home_content? && !@can_edit && focus.nil? && @notifications.blank? &&
         !@content&.render? &&
-        @new_topics_count.zero? && @tutorials_given.empty? && campaigns.empty? &&
+        @new_topics_count.zero? && @tutorials_given.empty? && @cohorts_given.empty? &&
+        campaigns.empty? &&
         Array(@self_rosterables).empty? && @work.nil? && participation_html.blank? &&
         Array(@overview&.closed_campaigns).empty? %>
     <div class="lecture-home-empty" data-testid="lecture-home-fallback-card">

@@ -138,12 +138,45 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
       expect(rule.errors.added?(:min_percentage, :blank)).to be(true)
     end
 
-    describe "at least one criterion" do
-      it "rejects a rule with neither a threshold nor an achievement" do
+    describe "criteria" do
+      it "accepts a rule with neither a threshold nor an achievement" do
         rule = FactoryBot.build(:student_performance_rule, :without_criteria)
 
+        expect(rule).to be_valid
+        expect(rule).not_to be_points_threshold
+      end
+
+      it "reads a threshold of zero as no threshold" do
+        rule = FactoryBot.build(:student_performance_rule, :with_percentage,
+                                min_percentage: 0)
+
+        expect(rule).to be_valid
+        expect(rule).to be_threshold_mode_none
+        expect(rule.min_percentage).to be_nil
+      end
+
+      it "reads an absolute threshold of zero as no threshold" do
+        rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
+                                min_points_absolute: 0)
+
+        expect(rule).to be_valid
+        expect(rule).to be_threshold_mode_none
+        expect(rule.min_points_absolute).to be_nil
+      end
+
+      it "keeps a real threshold when the other column is zero" do
+        rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
+                                min_points_absolute: 30, min_percentage: 0)
+
         expect(rule).not_to be_valid
-        expect(rule.errors.added?(:base, :no_criteria)).to be(true)
+        expect(rule).to be_threshold_mode_absolute
+        expect(rule.errors.added?(:base, :percentage_and_absolute_exclusive)).to be(true)
+      end
+
+      it "asks for nothing without a threshold or an achievement" do
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria)
+
+        expect(rule).to be_no_requirement
       end
 
       it "accepts a threshold without any achievement" do
@@ -159,20 +192,6 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         rule.rule_achievements.build(achievement: achievement, position: 1)
 
         expect(rule).to be_valid
-      end
-
-      it "rejects removing the last achievement from a threshold-less rule" do
-        lecture = FactoryBot.create(:lecture)
-        rule = FactoryBot.build(:student_performance_rule, :without_criteria,
-                                lecture: lecture)
-        achievement = FactoryBot.create(:achievement, lecture: lecture)
-        rule.rule_achievements.build(achievement: achievement, position: 1)
-        rule.save!
-
-        rule.rule_achievements.each(&:mark_for_destruction)
-
-        expect(rule).not_to be_valid
-        expect(rule.errors.added?(:base, :no_criteria)).to be(true)
       end
     end
   end

@@ -410,4 +410,50 @@ RSpec.describe(User, type: :model) do
       expect(user).to respond_to(:enrolled_tutorials)
     end
   end
+
+  describe ".sort_by_last_name" do
+    it "sorts loaded people as by_last_name does" do
+      users = [
+        create(:confirmed_user, first_name: "Anna", last_name: "Zimmer"),
+        create(:confirmed_user, first_name: "Ben", last_name: "Özdemir"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse"),
+        create(:confirmed_user, first_name: "Eva", last_name: "MAẞE"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Þórsdóttir"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Thorsen"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Ǣlfric"),
+        create(:confirmed_user, first_name: nil, last_name: nil, name_in_tutorials: "Nick"),
+        create(:confirmed_user, first_name: "Max", last_name: nil),
+        create(:confirmed_user, first_name: "Ada", last_name: "Max")
+      ]
+
+      expect(described_class.sort_by_last_name(users.reverse))
+        .to eq(described_class.where(id: users).by_last_name.to_a)
+    end
+  end
+
+  describe "#save_admin_change" do
+    let(:author) { create(:confirmed_user, admin: true) }
+    let(:other) { create(:confirmed_user, admin: true) }
+
+    it "saves the change while its author is an admin" do
+      other.admin = false
+
+      expect(other.save_admin_change(by: author)).to be(true)
+      expect(other.reload.admin).to be(false)
+    end
+
+    # The other admin took the author's rights just before: the author still
+    # looks like an admin in memory, but not in the database.
+    it "refuses it once its author has lost the admin rights meanwhile" do
+      author_as_loaded = User.find(author.id)
+      author.update_column(:admin, false) # rubocop:disable Rails/SkipsModelValidations
+      other.admin = false
+
+      expect(other.save_admin_change(by: author_as_loaded)).to be_falsey
+      expect(other.reload.admin).to be(true)
+      expect(other.errors[:base])
+        .to include(I18n.t("activerecord.errors.models.user.admin_rights_lost"))
+    end
+  end
 end

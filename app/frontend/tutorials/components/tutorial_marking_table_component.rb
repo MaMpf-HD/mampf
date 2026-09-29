@@ -18,8 +18,8 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @mode = "tutor"
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: :tutors)
-    @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+    @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
     @participations_by_user_id =
       preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
   end
@@ -29,10 +29,10 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @tutorials = @lecture.tutorials
     @stack = @assignment.submissions.proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: :tutors)
+                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
 
-    @non_submitters = @assignment.non_submitters_in_tutorials
+    @non_submitters = @assignment.non_submitters_in_tutorials.by_last_name
     # Somebody who left the groups after handing in sits with the group that
     # has the sheet - as a file row or a roster row - not among those in none.
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials

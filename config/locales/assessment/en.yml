@@ -1,5 +1,9 @@
 en:
   assessment:
+    exercise_medium_hint:
+      empty: "No exercise yet."
+      text_html: "The sheet itself is an exercise medium: create it under %{link} and pick it here. Publishing an exercise can also set up its homework."
+      link: "Content → Media"
     tabs:
       assessments: "Assessments"
       assignments: "Assignments & Tests"
@@ -167,7 +171,7 @@ en:
       go_to_registration: 'Go to Registration →'
     assignments_complete:
       label: 'The list of sheets and tests is complete'
-      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
+      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict that depends on points — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
       cancel: 'Cancel'
       close_dialog:
         title: 'Tick the box'
@@ -175,13 +179,16 @@ en:
         confirm: 'Tick the box'
       open_dialog:
         title: 'Clear the tick'
-        body: 'Without the tick the eligibility rule decides nothing: every verdict is deferred until you set it again.'
+        body: 'Without the tick the eligibility rule decides nothing that depends on points: such verdicts are deferred until you set it again.'
         confirm: 'Clear the tick'
       reopen_dialog:
         title: 'Clear the tick'
         body:
           one: 'Without the tick the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. Reset it now? That eligibility is then undecided again. Individual decisions stay either way.'
           other: 'Without the tick the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. Reset them now? Those eligibilities are then undecided again. Individual decisions stay either way.'
+        body_in_use:
+          one: 'Without the tick the eligibility rule decides nothing — %{count} computed decision will contradict it afterwards. It stays, because the registration for %{campaigns} still asks for it.'
+          other: 'Without the tick the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. They stay, because the registration for %{campaigns} still asks for them.'
         reset: 'Reset'
         confirm: 'Keep'
     campaign_status:
