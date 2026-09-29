@@ -8,6 +8,12 @@
   z-index: $zindex-fixed;
 }
 
+// The button covers the bottom-right corner of the page; the footer scrolls
+// up past it, so that its links and logo can be reached.
+#footer-bar {
+  padding-bottom: 4.5rem;
+}
+
 .support-widget__toggle {
   display: flex;
   align-items: center;
