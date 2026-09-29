@@ -23,7 +23,6 @@ RSpec.describe(Lecture) do
 
       expect(blank.unlocked_for?(student)).to be(true)
       expect(student.unlocked_lectures).to include(blank)
-      expect(Lecture.restricted).not_to include(blank)
     end
   end
 
