@@ -20,9 +20,6 @@ class ProfileController < ApplicationController
       redirect_to consent_profile_path
       return
     end
-    # destroy the notifications related to new lectures and courses
-    current_user.notifications.where(notifiable_type: ["Lecture", "Course"])
-                .destroy_all
     render layout: "application_no_sidebar"
   end
 
