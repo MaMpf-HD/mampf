@@ -169,6 +169,14 @@ module Registration
         materialized_roster_entries?
     end
 
+    # A group may join until an allocation is computed: while the campaign is
+    # open, students see it at once; after the deadline, the allocation can
+    # still fill it with those left without a place. A computed allocation
+    # does not know the group, and a completed campaign has its rosters.
+    def accepts_new_items?
+      (draft? || open? || closed?) && !allocation_present?
+    end
+
     def exam_campaign?
       registration_items.where.not(registerable_type: "Exam").none? &&
         registration_items.where(registerable_type: "Exam").any?

@@ -7,6 +7,7 @@ en:
         already_finalized: "Registration process is already finalized."
       created: "Registration process created successfully."
       create_failed: "Registration process could not be created."
+      takes_no_new_items: "No group can be added to this registration process any more: its allocation has been computed or it is completed."
       destroyed: "Registration process deleted successfully."
       discarded: "Registration process discarded. Its groups were kept and can now be managed manually."
       cannot_delete: "Registration process cannot be deleted."

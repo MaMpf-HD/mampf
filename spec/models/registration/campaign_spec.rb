@@ -1247,6 +1247,27 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "#accepts_new_items?" do
+    it "takes a group while the campaign is a draft, open or closed" do
+      expect(create(:registration_campaign)).to be_accepts_new_items
+      expect(create(:registration_campaign, :open)).to be_accepts_new_items
+      expect(create(:registration_campaign, :closed)).to be_accepts_new_items
+    end
+
+    # The computed allocation does not know the new group.
+    it "takes none once an allocation is computed" do
+      campaign = create(:registration_campaign, :closed, :preference_based)
+      campaign.update!(last_allocation_calculated_at: Time.current)
+
+      expect(campaign).not_to be_accepts_new_items
+    end
+
+    it "takes none while processing or once completed" do
+      expect(create(:registration_campaign, :processing)).not_to be_accepts_new_items
+      expect(create(:registration_campaign, :completed)).not_to be_accepts_new_items
+    end
+  end
+
   describe "#revertible_to_draft?" do
     it "is true for an open campaign nobody has registered for" do
       expect(create(:registration_campaign, :open)).to be_revertible_to_draft

@@ -8,6 +8,11 @@ module RegistrationCampaignContext
                                                       error_target: error_target)
       return false unless campaign
 
+      unless campaign.accepts_new_items?
+        error_target.errors.add(:base, t("registration.campaign.takes_no_new_items"))
+        return false
+      end
+
       item = campaign.registration_items.build(registerable: registerable)
       unless RegistrationItemAbility.new(current_user).can?(:create, item)
         error_target.errors.add(:base, t("registration.campaign.create_failed"))

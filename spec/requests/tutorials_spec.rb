@@ -314,6 +314,30 @@ RSpec.describe("Tutorials", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
+      # A group may join a campaign until its allocation is computed.
+      context "into a running registration process" do
+        let(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
+        def create_in(campaign)
+          post(tutorials_path,
+               params: { tutorial: valid_attributes, registration_section: "campaign",
+                         registration_campaign_id: campaign.id },
+               as: :turbo_stream)
+        end
+
+        it "adds the group to an open process" do
+          expect { create_in(campaign) }.to change(campaign.registration_items, :count).by(1)
+        end
+
+        it "refuses once the allocation is computed" do
+          campaign.update!(status: :closed, registration_deadline: 1.day.ago,
+                           last_allocation_calculated_at: Time.current)
+
+          expect { create_in(campaign) }.not_to change(Tutorial, :count)
+          expect(response.body).to include(I18n.t("registration.campaign.takes_no_new_items"))
+        end
+      end
+
       context "with valid parameters" do
         it "creates a new tutorial" do
           expect do

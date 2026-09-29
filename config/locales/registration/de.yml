@@ -7,6 +7,7 @@ de:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
+      takes_no_new_items: "Diesem Anmeldeverfahren kann keine Gruppe mehr hinzugefügt werden: Die Zuteilung ist berechnet oder das Verfahren abgeschlossen."
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
       discarded: "Anmeldeverfahren verworfen. Die Gruppen bleiben erhalten und können jetzt manuell verwaltet werden."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
