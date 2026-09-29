@@ -2106,15 +2106,15 @@ en:
     course_selection: 'Course selection'
     new_course: 'New course %{title}'
     new_course_created_html: 'New course created:<br>%{title}'
-    subscribe_course: 'You can bookmark its event series in the lecture search on your dashboard.'
-    subscribe_course_html: 'You can bookmark its event series in %{dashboard}.'
+    subscribe_course: 'You can find its event series in the lecture search on your dashboard.'
+    subscribe_course_html: 'You can find its event series in %{dashboard}.'
     profile: 'profile'
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
-    subscribe_lecture: 'You can bookmark it in the lecture search on your dashboard.'
-    subscribe_lecture_html: 'You can bookmark it in %{dashboard}.'
+    subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
+    subscribe_lecture_html: 'You can find it in %{dashboard}.'
     dashboard_search: 'the lecture search on your dashboard'
     goto_dashboard_search: 'Go to the lecture search'
     new_lecture_created_html: >
@@ -3287,9 +3287,9 @@ en:
       Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
-    subscribe_lecture: 'You can bookmark it in the lecture search on your dashboard.'
+    subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
     subscribe_lecture_text: >
-      You can bookmark it in the lecture search on your dashboard.
+      You can find it in the lecture search on your dashboard.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
     submission_invitation_subject: >

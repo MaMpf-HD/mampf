@@ -2296,15 +2296,15 @@ de:
     course_selection: 'Kursangebot'
     new_course: 'Neues Modul %{title}'
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
-    subscribe_course: 'Seine Veranstaltungen kannst Du in der Veranstaltungssuche auf Deinem Dashboard merken.'
-    subscribe_course_html: 'Seine Veranstaltungen kannst Du in %{dashboard} merken.'
+    subscribe_course: 'Seine Veranstaltungen findest Du in der Veranstaltungssuche auf Deinem Dashboard.'
+    subscribe_course_html: 'Seine Veranstaltungen findest Du in %{dashboard}.'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
     edit_lecture: 'Veranstaltung bearbeiten'
-    subscribe_lecture: 'Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.'
-    subscribe_lecture_html: 'Du kannst sie in %{dashboard} merken.'
+    subscribe_lecture: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.'
+    subscribe_lecture_html: 'Du findest sie in %{dashboard}.'
     dashboard_search: 'der Veranstaltungssuche auf Deinem Dashboard'
     goto_dashboard_search: 'Zur Veranstaltungssuche'
     new_lecture_created_html: >
@@ -3518,9 +3518,9 @@ de:
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
-      Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
     subscribe_lecture_text: >
-      Du kannst sie in der Veranstaltungssuche auf Deinem Dashboard merken.
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
     submission_invitation_subject: >
