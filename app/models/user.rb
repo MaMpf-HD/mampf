@@ -843,7 +843,7 @@ class User < ApplicationRecord
 
   def proper_student_in?(lecture)
     lecture.published? && lecture.unlocked_for?(self) &&
-      !lecture.tutored_by?(self) && !in?(lecture.editors) && self != lecture.teacher
+      !lecture.tutor?(self) && !in?(lecture.editors) && self != lecture.teacher
   end
 
   def original_image_file

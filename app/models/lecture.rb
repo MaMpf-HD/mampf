@@ -852,12 +852,6 @@ class Lecture < ApplicationRecord
     CohortTutorJoin.exists?(cohort: cohorts, tutor: user)
   end
 
-  # Whether the user tutors anything in the lecture; a tutor is not one of
-  # its students.
-  def tutored_by?(user)
-    tutor?(user) || cohort_tutor?(user)
-  end
-
   def default_submission_deletion_date
     (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
       15.days

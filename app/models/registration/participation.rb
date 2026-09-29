@@ -11,7 +11,7 @@ module Registration
       return false if user.blank? || lecture.blank?
 
       lecture.published? &&
-        !lecture.tutored_by?(user) &&
+        !lecture.tutor?(user) &&
         user != lecture.teacher &&
         !user.can_edit?(lecture)
     end

@@ -756,8 +756,6 @@ class SubmissionsController < ApplicationController
 
       if @lecture.tutor?(current_user)
         redirect_to lecture_tutorials_path(@lecture)
-      elsif @lecture.cohort_tutor?(current_user)
-        redirect_to lecture_cohort_participants_path(@lecture)
       else
         redirect_to lecture_home_path(@lecture)
       end

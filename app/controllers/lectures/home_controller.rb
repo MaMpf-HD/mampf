@@ -90,7 +90,7 @@ module Lectures
       end
 
       def student_work?
-        @content_accessible && !@can_edit && !@lecture.tutored_by?(current_user) &&
+        @content_accessible && !@can_edit && !@lecture.tutor?(current_user) &&
           @lecture.assignments.exists?
       end
 
