@@ -40,7 +40,7 @@
   <% if marked? %>
     <%= render DistributionAnalysisComponent.new(assessment: assessment,
                                                  grade_scheme: assessment.grade_scheme) %>
-  <% else %>
+  <% elsif !grades? %>
     <p class="text-muted">
       <%= t("assessment.statistics_tab.nothing_marked") %>
     </p>

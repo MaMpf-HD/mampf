@@ -2,7 +2,8 @@ module Assessment
   # Breaks one assessment's points down by task, program and tutorial, and
   # sums up its grades; the overall spread is DistributionAnalysisComponent's.
   # Points count only reviewed rows, so that a sheet half way through
-  # marking does not pull the averages down.
+  # marking does not pull the averages down. Grades leave out the absent,
+  # whose 5.0 the grade scheme wrote: they are counted as absent instead.
   class Statistics
     Figures = Struct.new(:number, :mean, :median, keyword_init: true)
     TaskRow = Struct.new(:task, :figures, :full_share, :zero_share, keyword_init: true)
@@ -95,7 +96,11 @@ module Assessment
       end
 
       def graded
-        @graded ||= participations.select(&:grade_numeric)
+        @graded ||= participations.select { |row| sat?(row) }
+      end
+
+      def sat?(row)
+        row.grade_numeric && !row.absent?
       end
 
       def share(values, &)
@@ -119,7 +124,7 @@ module Assessment
           scored = members.select { |row| marked_ids.include?(row.id) }
           GroupRow.new(label: yield(key), people: members.size,
                        figures: self.class.figures(scored.map(&:points_total)),
-                       grades: grade_figures(members.select(&:grade_numeric)))
+                       grades: grade_figures(members.select { |row| sat?(row) }))
         end
         rows.sort_by { |row| [row.label.nil? ? 1 : 0, row.label.to_s.downcase] }
       end

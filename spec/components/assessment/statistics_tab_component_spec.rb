@@ -61,6 +61,7 @@ RSpec.describe(StatisticsTabComponent, type: :component) do
       page = render_tab
 
       expect(page.text.squish).to include("Mean grade 3.2", "Passed 50%")
+      expect(page.text).not_to include("Nobody has been reviewed yet.")
       grades = page.css("section").find { |section| section.at_css("h6")&.text&.squish == "Grades" }
       expect(grades.css("tbody th").map { |cell| cell.text.squish }).to include("1.0", "4.0", "5.0")
     end

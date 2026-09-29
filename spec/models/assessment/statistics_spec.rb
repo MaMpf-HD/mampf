@@ -124,5 +124,20 @@ RSpec.describe(Assessment::Statistics) do
       expect(statistics.grade_distribution.to_h).to include(1.3 => 1, 2.0 => 1, 5.0 => 1,
                                                             1.0 => 0)
     end
+
+    # The grade scheme writes 5.0 for the absent; counted in, it would pull the
+    # pass share of those who wrote down next to point figures without them.
+    it "leaves the absent out of the grades, their 5.0 included" do
+      create(:assessment_participation, :reviewed, assessment: assessment, grade_numeric: 2.0)
+      create(:assessment_participation, :reviewed, assessment: assessment, grade_numeric: 5.0)
+      create(:assessment_participation, assessment: assessment, status: :absent,
+                                        grade_numeric: 5.0)
+
+      statistics = described_class.new(assessment)
+
+      expect(statistics.grades).to have_attributes(number: 2, pass_share: 0.5)
+      expect(statistics.grade_distribution.to_h[5.0]).to eq(1)
+      expect(statistics.counts[:absent]).to eq(1)
+    end
   end
 end
