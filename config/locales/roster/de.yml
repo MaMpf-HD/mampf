@@ -348,8 +348,11 @@ de:
         Leider konnte Deine Anmeldung aus folgendem Grund nicht angenommen werden: %{reasons}
       reject_reasons: |
         Leider konnte Deine Anmeldung aus folgendem Grund nicht angenommen werden: %{reasons}
+      greeting_name_html: '<p>Hallo %{name},</p>'
+      greeting_name: 'Hallo %{name},'
+      greeting_html: '<p>Hallo,</p>'
+      greeting: 'Hallo,'
       roster_added_to_group_email_body_html: |
-        <p>Hallo %{name},</p>
         <p>
           Du wurdest zu <strong>%{rosterable_title}</strong>
           in der Veranstaltung <strong>%{lecture_title}</strong> hinzugefügt.
@@ -358,22 +361,17 @@ de:
           Du nimmst nun an dieser Gruppe teil.
         </p>
       roster_added_to_group_email_body: |
-        Hallo %{name},
-
         Du wurdest zu „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ hinzugefügt.
 
         Du nimmst nun an dieser Gruppe teil.
       roster_added_to_group_email_subject: 'Zur Gruppe %{rosterable_title} in %{lecture_title} hinzugefügt'
       roster_added_to_exam_email_body_html: |
-        <p>Hallo %{name},</p>
         <p>
           Du wurdest zur Klausur <strong>%{rosterable_title}</strong>
           in der Veranstaltung <strong>%{lecture_title}</strong> hinzugefügt.
         </p>
       roster_added_to_exam_email_body: |
-        Hallo %{name},
-
         Du wurdest zur Klausur „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“ hinzugefügt.
 

@@ -1,5 +1,9 @@
+<% if @username %>
+<%= t('roster.mailer.greeting_name', name: @username) %>
+<% else %>
+<%= t('roster.mailer.greeting') %>
+<% end %>
 <%= t('roster.mailer.roster_added_to_group_email_body',
-      name: @username,
       lecture_title: @lecture&.title || '',
       rosterable_title: @rosterable.title) %>
 <% if @rosterable_link %>

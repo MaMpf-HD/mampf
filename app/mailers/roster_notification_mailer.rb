@@ -174,7 +174,7 @@ class RosterNotificationMailer < ApplicationMailer
       @recipient       = params[:recipient]
       @recipients      = params[:recipients]
       @participant     = params[:participant]
-      @username        = @recipient&.tutorial_name || ""
+      @username        = @recipient&.tutorial_name
       rosterable = @rosterable || @new_rosterable
       @rosterable_link = url_for_rosterable(rosterable) if rosterable
       @lecture         = params[:lecture] ||

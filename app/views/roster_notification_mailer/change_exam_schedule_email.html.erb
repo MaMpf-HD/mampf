@@ -1,5 +1,9 @@
+<% if @username %>
+  <%= t('roster.mailer.greeting_name_html', name: @username) %>
+<% else %>
+  <%= t('roster.mailer.greeting_html') %>
+<% end %>
 <%= t('roster.mailer.roster_change_exam_schedule_email_body_html',
-      name: @username,
       lecture_title: @lecture&.title || '',
       rosterable_title: @rosterable.title) %>
 <% if @info[:exam_schedule] %>

@@ -344,8 +344,11 @@ en:
         Unfortunately, your registration could not be accepted for the following reason(s): %{reasons}
       reject_reasons: |
         Unfortunately, your registration could not be accepted for the following reason(s): %{reasons}
+      greeting_name_html: '<p>Hello %{name},</p>'
+      greeting_name: 'Hello %{name},'
+      greeting_html: '<p>Hello,</p>'
+      greeting: 'Hello,'
       roster_added_to_group_email_body_html: |
-        <p>Hello %{name},</p>
         <p>
           You have been added to <strong>%{rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong>.
@@ -354,22 +357,17 @@ en:
           You are now a participant in this group.
         </p>
       roster_added_to_group_email_body: |
-        Hello %{name},
-
         You have been added to "%{rosterable_title}" in the lecture
         "%{lecture_title}".
 
         You are now a participant in this group.
       roster_added_to_group_email_subject: 'Added to group %{rosterable_title} in %{lecture_title}'
       roster_added_to_exam_email_body_html: |
-        <p>Hello %{name},</p>
         <p>
           You have been added to exam <strong>%{rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong>.
         </p>
       roster_added_to_exam_email_body: |
-        Hello %{name},
-
         You have been added to exam "%{rosterable_title}" in the lecture
         "%{lecture_title}".
       roster_added_to_exam_email_subject: 'Added to exam %{rosterable_title} in %{lecture_title}'
@@ -497,7 +495,6 @@ en:
         please contact your instructor or the support team.
       roster_removed_from_lecture_email_subject: 'Removed from lecture %{lecture_title}'
       roster_change_exam_schedule_email_body_html: |
-        <p>Hello %{name},</p>
         <p>
           The schedule for exam <strong>%{rosterable_title}</strong>
           in the lecture <strong>%{lecture_title}</strong> has changed.
@@ -506,8 +503,6 @@ en:
           Please make a note of the new details.
         </p>
       roster_change_exam_schedule_email_body: |
-        Hello %{name},
-
         The schedule for exam "%{rosterable_title}" in the lecture
         "%{lecture_title}" has changed.
 
