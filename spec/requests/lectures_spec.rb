@@ -716,7 +716,18 @@ RSpec.describe("Lectures", type: :request) do
       expect(rows.size).to eq(2)
       expect(rows.first).to include("Ada L.", "Mo 10, Tu 14")
       expect(rows.last).to include("Grace H.",
-                                   I18n.t("admin.lecture.tutors_overview.no_tutorial_yet"))
+                                   I18n.t("admin.lecture.tutors_overview.no_group_yet"))
+    end
+
+    it "lists a flexible group's tutors with their group" do
+      lecture = create(:lecture, teacher: user)
+      ada = create(:confirmed_user, name_in_tutorials: "Ada L.")
+      create(:cohort, context: lecture, title: "Extra lessons").tutors << ada
+
+      get edit_lecture_path(lecture, tab: "people")
+
+      row = Nokogiri::HTML(response.body).at_css("[data-testid='tutors-overview'] tr")
+      expect(row.text.squish).to include("Ada L.", "Extra lessons")
     end
 
     it "says so when there are no tutors yet" do

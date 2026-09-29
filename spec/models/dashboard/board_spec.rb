@@ -18,6 +18,37 @@ RSpec.describe(Dashboard::Board) do
     end
   end
 
+  describe "#tutored_lectures" do
+    let(:term) { create(:term, :summer, :active) }
+    let(:user) { create(:confirmed_user) }
+    let(:board) { described_class.new(user: user, term: term) }
+
+    # A tutor is one before having a tutorial: by a voucher or by address.
+    it "includes the lectures the user tutors in, with or without a tutorial" do
+      grouped = create(:lecture, term: term)
+      create(:tutorial, lecture: grouped, tutors: [user])
+      by_voucher = create(:lecture, term: term)
+      Redemption.create!(voucher: create(:voucher, :tutor, lecture: by_voucher), user: user)
+      by_address = create(:lecture, term: term)
+      TutorAppointment.create!(lecture: by_address, user: user)
+      with_cohort = create(:lecture, term: term)
+      create(:cohort, context: with_cohort).tutors << user
+
+      expect(board.tutored_lectures)
+        .to contain_exactly(grouped, by_voucher, by_address, with_cohort)
+    end
+
+    # Running a flexible group keeps a student a student; one card is enough.
+    it "leaves a flexible group's lecture to the enrolled ones when the user holds a place" do
+      lecture = create(:lecture, term: term)
+      create(:cohort, context: lecture).tutors << user
+      create(:lecture_membership, user: user, lecture: lecture)
+
+      expect(board.tutored_lectures).to be_empty
+      expect(board.enrolled_lectures).to contain_exactly(lecture)
+    end
+  end
+
   describe "#enrolled_lectures" do
     let(:term) { create(:term, :summer, :active, year: 2025) }
     let(:user) { create(:user) }

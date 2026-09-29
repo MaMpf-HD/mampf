@@ -91,7 +91,7 @@ de:
       ended: "Anmeldung beendet am %{deadline}"
       closed_early: "Anmeldung vor der geplanten Frist (%{deadline}) beendet"
     tutor:
-      title: "Deine Tutorien"
+      title: "Deine Gruppen"
       members:
         one: "1 Person"
         other: "%{count} Personen"

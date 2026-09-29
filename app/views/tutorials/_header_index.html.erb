@@ -1,23 +1,25 @@
 <%# The page shows one sheet, test or achievement at a time; `subject` is whichever it is. %>
 <% subject = achievement || assignment %>
+<% participants_path = lecture_tutorials_path(@lecture, params: { view: 'participants',
+                                                                  tutorial: tutorial.id }) %>
 <div class="d-flex flex-wrap align-items-end gap-3 m-3">
-  <div class="col-12 col-md-4">
-    <label class="form-label fw-semibold mb-2" for="assignment-select">
-      <% if achievements.any? %>
-        <%= t('assessment.achievements.marking.select_label') %>
-      <% elsif assignments.any?(&:kind_test?) %>
-        <%= t('assessment.test.sheet_or_test') %>
-      <% else %>
-        <%= t('basics.assignment') %>
-      <% end %>
-    </label>
+  <% if assignments.any? || achievements.any? %>
+    <div class="col-12 col-md-4">
+      <label class="form-label fw-semibold mb-2" for="assignment-select">
+        <% if achievements.any? %>
+          <%= t('assessment.achievements.marking.select_label') %>
+        <% elsif assignments.any?(&:kind_test?) %>
+          <%= t('assessment.test.sheet_or_test') %>
+        <% else %>
+          <%= t('basics.assignment') %>
+        <% end %>
+      </label>
 
-    <% if assignments.size + achievements.size > 1 %>
       <select id="assignment-select"
               class="form-select form-select-sm"
               data-controller="select-navigation"
               data-action="change->select-navigation#visit">
-        <option selected><%= subject.title %></option>
+        <option selected><%= subject ? subject.title : t('tutorial.participants.pick') %></option>
         <% (assignments - [assignment]).each do |a| %>
           <option value="<%= lecture_tutorials_path(@lecture, params: { assignment: a.id, tutorial: tutorial.id }) %>">
             <%= a.title %>
@@ -33,13 +35,12 @@
           </optgroup>
         <% end %>
       </select>
-    <% else %>
-      <input id="assignment-select" class="form-control form-control-sm" disabled value="<%= subject.title %>">
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
   <%= render partial: 'tutorials/group_columns',
-             locals: { tutorials: tutorials, tutorial: tutorial } %>
+             locals: { tutorials: tutorials, tutorial: tutorial,
+                       participants_path: (participants_path if subject) } %>
 </div>
 
 
@@ -51,7 +52,7 @@
       &middot; <%= t('assessment.achievements.marking.threshold') %> <%= achievement.threshold.to_s.sub(/\.0+\z/, '') %><%= ' %' if achievement.percentage? %>
     <% end %>
   </p>
-<% elsif assignment.kind_test? %>
+<% elsif assignment&.kind_test? %>
   <p class="text-muted m-3 mb-0">
     <i class="bi bi-calendar-week me-1"></i>
     <%= t('assessment.test.week') %>: <%= test_week_label(assignment) %>

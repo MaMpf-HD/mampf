@@ -45,6 +45,14 @@ module RosterHelper
     roster_bulk_update_self_materialization_lecture_path(lecture, mode: mode)
   end
 
+  # Loads the tutors of the items' tutorials and cohorts at once, which the
+  # group rows name, rather than once per row.
+  def preload_group_tutors(items)
+    groups = items.map(&:registerable).grep(Tutorial) + items.map(&:registerable).grep(Cohort)
+    ActiveRecord::Associations::Preloader.new(records: groups, associations: :tutors).call
+    items
+  end
+
   def roster_tutors_text(registerable)
     if registerable.respond_to?(:tutor_names)
       registerable.tutor_names.presence || I18n.t("basics.tba")

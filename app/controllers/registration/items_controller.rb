@@ -126,10 +126,10 @@ module Registration
       end
 
       def create_existing_item
-        @item = @campaign.registration_items.build(item_params)
-        authorize! :create, @item
+        authorize! :create, @campaign.registration_items.build(item_params)
+        @item = @campaign.add_item(item_params)
 
-        if @item.save
+        if @item.persisted?
           respond_with_flash(:notice, t("registration.item.created"),
                              redirect_path: after_action_path) do
             render_campaigns_container

@@ -24,6 +24,8 @@ de:
       remove_bookmark: "Nicht mehr merken"
       remove_bookmark_for: "Nicht mehr merken: %{lecture}"
       remove_bookmark_title: "Nicht mehr merken?"
+      not_published: "Noch nicht veröffentlicht"
+      awaiting_group: "Noch keinem Tutorium zugeordnet"
       remove_bookmark_body: >-
         „%{lecture}“ aus Deinen gemerkten Veranstaltungen entfernen? Du kannst
         sie über die Vorlesungssuche erneut merken.

@@ -47,6 +47,8 @@ class TutorialsController < ApplicationController
     # so the page opens on the first one; nil only while the lecture has none.
     @tutorial = @tutorials.find_by(id: params[:tutorial]) ||
                 current_user.tutorials(@lecture).first || @tutorials.first
+    @participants = params[:view] == "participants" || (@assignment.nil? && @achievement.nil?)
+    @assignment = @achievement = nil if @participants
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
 
@@ -264,7 +266,7 @@ class TutorialsController < ApplicationController
     end
 
     def can_view_index
-      return if current_user.in?(@lecture.tutors) || current_user.editor_or_teacher_in?(@lecture)
+      return if @lecture.tutor?(current_user) || current_user.editor_or_teacher_in?(@lecture)
 
       if current_user.proper_student_in?(@lecture)
         redirect_to lecture_submissions_path(@lecture)
@@ -323,6 +325,7 @@ class TutorialsController < ApplicationController
 
       if saved
         streams << stream_flash if flash.present?
+        streams << new_group_mail_hint_stream(@tutorial)
         streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
       else
@@ -332,7 +335,7 @@ class TutorialsController < ApplicationController
         streams << stream_flash if flash.present?
       end
 
-      streams
+      streams.compact
     end
 
     def registration_section_no_campaign?

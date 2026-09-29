@@ -102,6 +102,7 @@ class Lecture < ApplicationRecord
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
+  has_many :tutor_appointments, dependent: :destroy
 
   has_many :cohorts, as: :context, dependent: :destroy
 
@@ -834,6 +835,23 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
+  # Whether the user is a tutor of the lecture: of one of its tutorials, or
+  # made one before having a tutorial, by a redeemed voucher or by address.
+  # Such a tutor has the tutors' page, with or without a tutorial yet.
+  def tutor?(user)
+    return false unless user
+
+    TutorTutorialJoin.exists?(tutorial: tutorials, tutor: user) ||
+      tutor_appointments.exists?(user: user) ||
+      Redemption.exists?(voucher: vouchers.for_tutors, user: user)
+  end
+
+  def cohort_tutor?(user)
+    return false unless user
+
+    CohortTutorJoin.exists?(cohort: cohorts, tutor: user)
+  end
+
   def default_submission_deletion_date
     (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
       15.days
@@ -1050,10 +1068,25 @@ class Lecture < ApplicationRecord
   end
 
   def eligible_as_tutors
-    (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
+    (tutors + Redemption.tutors_by_redemption_in(self) + appointed_tutors + editors +
+      [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some tutor statuses were
     # still given by the old system, this will not be true
+  end
+
+  def appointed_tutors
+    User.where(id: tutor_appointments.select(:user_id))
+  end
+
+  # Undoes what made the user a tutor before having a tutorial: the
+  # appointment by address and the tutor vouchers redeemed here. Tutorials
+  # and cohorts the user is assigned to stay as they are.
+  def remove_waiting_tutor(user)
+    transaction do
+      tutor_appointments.where(user: user).destroy_all
+      Redemption.where(voucher: vouchers.for_tutors, user: user).destroy_all
+    end
   end
 
   def eligible_as_editors

@@ -61,6 +61,7 @@ en:
     mampf_news: 'MaMpf-News'
     submissions: 'Submissions'
     tutorials: 'Tutorials'
+    cohorts: 'Flexible Groups'
   unauthorized:
     default: >
       You are not authorized to access this page.
@@ -388,10 +389,22 @@ en:
           homepage. This can be useful if it is an announcement of a server
           downtime.
     lecture:
+      editors_by_email:
+        label: "Add an editor by email address"
+        add: "Add editor"
+        hint: >-
+          The address of their MaMpf account. They get a mail about it and then
+          appear among the editors above, where they are removed again as well.
       tutors_overview:
-        hint_html: "Students become tutors by redeeming a tutor voucher (see below); editors and the teacher can be picked right away. On the %{link} tab tutors are put on their tutorials. This is who tutors what."
-        none_yet: "No tutors yet. Create a tutor voucher below and send it to the people who are to become tutors."
-        no_tutorial_yet: "redeemed a voucher, not on a tutorial yet"
+        hint_html: "Students become tutors by redeeming a tutor voucher (see below) or when you add them by the address of their account; editors and the teacher can be picked right away. On the %{link} tab tutors are put on their tutorials and flexible groups. This is who tutors what."
+        none_yet: "No tutors yet. Add them by address below, or create a tutor voucher and send it to the people who are to become tutors."
+        no_group_yet: "redeemed a voucher, not in a group yet"
+        added_no_group_yet: "added by address, not in a group yet"
+        add_by_email: "Add a tutor by email address"
+        add_hint: "The address of their MaMpf account. They get a mail about it and can then be put on a group."
+        add: "Add tutor"
+        remove: "Remove %{name}"
+        remove_confirm: "Remove %{name} from the tutors of this lecture? Assignments to flexible groups stay."
       updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
@@ -588,6 +601,7 @@ en:
           are not yet eligible you have to create a voucher and communicate the
           voucher to the user outside of MaMpf. The user can then redeem the
           voucher in their profile settings and will become a lecture editor.
+          Or add them below by the email address of their MaMpf account.
         subscribers_count: >
           This is the number of all users who have bookmarked this event series.
         organizational: >
@@ -2076,6 +2090,7 @@ en:
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
+    goto_dashboard: 'Go to your dashboard'
     subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
     subscribe_lecture_html: 'You can find it in %{dashboard}.'
     subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
@@ -3085,8 +3100,6 @@ en:
     file_format: Submission format
   assignment:
     expired: The due date has expired.
-    nothing_yet_in_lecture: >
-      In this lecture nothing had yet to be submitted.
     deletion_date: Deletion date
     destruction_info: >
       <i>
@@ -3099,7 +3112,34 @@ en:
         This assignment will be created when the associated medium is published.
         In order to change things please edit the publication settings for the
         medium.
+  lecture_editors:
+    create:
+      no_account: "There is no MaMpf account with this address."
+      already: "%{name} is already an editor or the teacher of this event series."
+      added: "%{name} is now an editor and gets a mail about it."
+  tutor_appointments:
+    create:
+      no_account: "There is no MaMpf account with this address."
+      already: "%{name} can already be put on a tutorial."
+      added: "%{name} is now a tutor and gets a mail about it."
   tutorial:
+    not_assigned_yet: >
+      You are a tutor in this lecture, but not on a tutorial yet. Once you are
+      given one, it shows here.
+    tutors_missing_html: "Somebody missing? On the %{link} tab you make people tutors: with a voucher, or by the email address of their MaMpf account."
+    participants:
+      button: "Participants"
+      pick: "Choose …"
+      title: "Participants"
+      none: "Nobody is in this group yet."
+      registered_title: "Registered, not final yet"
+      no_program: "no program given"
+      registered_hint: >
+        They join the group when the registration "%{campaign}" is finalized.
+        Until then, registrations can still change.
+      allocation_pending: >
+        The registration "%{campaign}" allocates the groups after its deadline
+        (%{deadline}); until then it is open who will be in this group.
     title_placeholder: "e.g. Mon 14–16"
     location_placeholder: "e.g. SR 3"
     no_tutorials_yet: >
@@ -3139,14 +3179,14 @@ en:
     teams_as_csv: Teams as .csv
     certificate_invalid: This code is invalid.
     info:
-      tutors:
+      tutors: >
         Here you can select the tutors of the tutorial. They can view
         the submissions and upload corrections.
         You can only select users who have the status of tutor in the
-        event series, or editors or yourself. In order to grant students the
-        status of tutor, you have to create a voucher on the "Personnel" tab.
-        You have to communicate the voucher to the students outside
-        of MaMpf. The students can then redeem the voucher.
+        event series, or editors or yourself. On the "Personnel" tab you make
+        people tutors: with a voucher that you pass on to them outside of
+        MaMpf and that they redeem, or by the email address of their MaMpf
+        account.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
@@ -3236,6 +3276,10 @@ en:
     author: 'Author'
     text: 'Text'
     new_editor_subject: 'Editing Rights for %{title}'
+    new_tutor_subject: 'Tutor in %{title}'
+    new_tutor: >
+      Dear %{username}, you have been made a tutor in %{title}. The lecture is
+      on your dashboard; your groups show there once you are put on them.
     new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
     new_teacher_subject: 'Teacher Status for %{title}'
     new_teacher: 'Dear %{username}, you have been given teacher status for %{title}.'

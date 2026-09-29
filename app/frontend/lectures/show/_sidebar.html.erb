@@ -91,8 +91,11 @@
     edit sheets and points on the lecture's edit page and get no entry here.
     Not greyed out for want of groups: the hub is where that is explained.
   %>
-  <% if lecture && (current_user.in?(lecture.tutors) || !current_user.editor_or_teacher_in?(lecture)) %>
-    <% if current_user.in?(lecture.tutors)
+  <% tutor = lecture&.tutor?(current_user) %>
+  <% cohort_tutor = lecture&.cohort_tutor?(current_user) %>
+  <% student = lecture && !current_user.editor_or_teacher_in?(lecture) %>
+  <% if tutor || student %>
+    <% if tutor
         link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
       else
         link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
@@ -108,13 +111,26 @@
           <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
           <%= link_text %>
         </span>
-        <% if content_accessible && !current_user.in?(lecture.tutors) %>
+        <% if content_accessible && !tutor %>
           <% work = @work || Assessment::SubmissionsHub::Loader.new(lecture: lecture,
                                                                     user: current_user).summary %>
           <%= render SidebarBadgeComponent.new(id: SidebarBadgeComponent::SUBMISSIONS_ID,
                                                count: work.news_count,
                                                title: t("submission.hub.news.indicator")) %>
         <% end %>
+      <% end %>
+    </li>
+  <% end %>
+
+  <% if cohort_tutor %>
+    <% active_class = get_class_for_any_path([lecture_cohort_participants_path(lecture)]) %>
+    <li class="sidebar-item nav-link <%= active_class %>">
+      <%= link_to lecture_cohort_participants_path(lecture),
+          data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
+        <span class="sidebar-item__label">
+          <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
+          <%= t('categories.cohorts') %>
+        </span>
       <% end %>
     </li>
   <% end %>
