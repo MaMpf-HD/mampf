@@ -73,12 +73,14 @@ de:
         choice:
           question: "Benötigst Du ein Anmeldeverfahren?"
           hint: >-
-            Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren.
-            Damit kannst Du ein klares Registrierungsfenster festlegen, die
-            Nachfrage vor der endgültigen Zuteilung besser überblicken und
-            Regeln oder begrenzte Plätze fairer verwalten. Außerdem kannst Du
-            die Zuteilung automatisch anhand der Präferenzen der Studierenden
-            berechnen lassen.
+            Mit einem Anmeldeverfahren legst Du ein festes Anmeldefenster fest,
+            siehst die Nachfrage, bevor die Plätze endgültig vergeben werden,
+            und kannst Anmeldebedingungen und begrenzte Plätze fair handhaben;
+            auf Wunsch wird automatisch nach den Präferenzen der Studierenden
+            zugeteilt. Ohne Anmeldeverfahren bist Du flexibler: Du trägst Leute
+            direkt in Gruppen ein oder lässt sie selbst beitreten, jederzeit und
+            ohne Frist. Dafür gibt es keine Wahl nach Präferenzen und keine
+            Anmeldebedingungen.
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"

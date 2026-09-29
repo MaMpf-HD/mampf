@@ -73,12 +73,13 @@ en:
         choice:
           question: "Do you need a registration process?"
           hint: >-
-            If you are unsure, we recommend choosing a registration process.
-            It gives you a clear registration window, lets you review demand
-            before assignments are finalized, and helps you handle
-            eligibility rules or limited capacities more fairly. It can also
-            assign students to groups automatically, based on the preferences
-            they submit.
+            With a registration process you set a fixed registration window,
+            see the demand before the places are given out, and can handle
+            policies and limited places fairly; if you like, students are
+            allocated automatically by their preferences. Without one you are
+            more flexible: you put people into groups directly or let them join
+            themselves, at any time and without a deadline. In return there is
+            no choice by preference and there are no policies.
         columns:
           description: "Short description"
           type: "Type"
