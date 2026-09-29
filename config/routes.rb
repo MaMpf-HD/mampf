@@ -68,6 +68,18 @@ Rails.application.routes.draw do
       to: "administration#classification",
       as: "classification"
 
+  # support routes
+
+  namespace :support do
+    resources :users, only: [:index, :edit, :update, :destroy] do
+      member do
+        patch :unlock
+        post :password_reset
+        post :confirmation
+      end
+    end
+  end
+
   # annotation routes
   get "annotations/update_annotations",
       to: "annotations#update_annotations",
@@ -1146,17 +1158,9 @@ Rails.application.routes.draw do
                                     unlocks: "unlocks" }
   # users routes
 
-  get "users/elevate",
-      to: "users#elevate",
-      as: "elevate_user"
-
   get "users/teacher/:teacher_id",
       to: "users#teacher",
       as: "teacher"
-
-  get "users/list_generic_users",
-      to: "users#list_generic_users",
-      as: "list_generic_users"
 
   get "captcha_challenge",
       to: "captcha_challenges#show",
@@ -1173,8 +1177,6 @@ Rails.application.routes.draw do
   get "users/:id/image/:variant",
       to: "users#image",
       as: "image_user"
-
-  resources :users, only: [:index, :edit, :update, :destroy]
 
   post "vouchers/verify",
        to: "vouchers#verify",

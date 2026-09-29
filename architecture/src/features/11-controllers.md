@@ -578,7 +578,7 @@ All controllers follow Rails conventions:
 Controllers integrate with CanCanCan abilities:
 - `load_and_authorize_resource` for standard CRUD.
 - Custom checks for special actions (allocation, grading).
-- Role-based access (student, tutor, teacher, editor, admin).
+- Role-based access (student, tutor, teacher, editor, support, admin). The support corrects personal data and account states on `/support/users`; only admins grant the support and admin roles there.
 ```
 
 ## Error Handling

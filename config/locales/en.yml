@@ -148,7 +148,6 @@ en:
       boards: 'Messageboards'
       stats: 'Access statistics'
       export_stats: 'Export statistics'
-      users: 'User administration'
       course: 'Course'
     catalog:
       info:
@@ -1609,54 +1608,18 @@ en:
           You can still create this reference, but as long as the pdf remains
           unchanged the reference will just point to the first page of the pdf.
     user:
-      current_lecture: 'Current event series'
       homepage: 'Homepage'
       profile_image: 'Profile image'
-      index: 'User Index'
-      edited_content: 'Curated Content'
-      no_content: 'There is no content yet.'
-      given_lectures: 'Given Event Series'
-      edited_courses: 'Edited Courses'
-      edited_lectures: 'Additional Edited Event Series'
-      edited_media: 'Edited Media'
-      administration: 'User Administration'
-      sorts: 'Admins, Editors and Teachers'
-      password_policy_progress: '%{current} of %{total} accounts currently meet the updated password standard.'
-      edit_generics: 'Edit generic users'
-      elevate: 'Promote to Administrator'
+      support: 'Support'
       info:
-        display_name: >
-          Here you can enter the display name. The display name
-          is used for the display of teachers, editors, forum posts etc.
-        email: >
-          Here you can enter the email address. It is used for signing in,
-          and emails for password reset will be sent there.
+        support: >
+          Finds people, corrects their personal data, unlocks their accounts and
+          sends them the mails that get them back in. Admin accounts stay beyond
+          their reach.
         administrator: >
           Here you can decide whether the user has administrator rights or not.
           You cannot revoke your own administrator rights, only another
           adminsitrator can do that.
-        current_lecture: >
-          Here you can select the event series which is currently your primary one.
-          If a event series is selected here, an icon in the navbar will take
-          you right there.
-        homepage: >
-          Here you can enter the adress of a homepage. This can make sense
-          for teachers.
-        profile_image: >
-          Here you will soon have the opportunity to upload a profile image.
-        given_lectures: >
-          This is the list of event series you are teaching/have taught.
-          Unpublished event series are displayed in red.
-        edited_courses: >
-          This is the list of courses for which you have course editor rights.
-        edited_lectures: >
-          This is the list of event series for which you have editing rights
-          (even if the teacher was a different person). Unpublished event series
-          are displayed in red.
-        edited_media: >
-          This is the list of media for which you have editing rights.
-        elevate: >
-          If you check this box, the user will be promoted to administrator.
     question:
       independent: 'Question is independent'
       hint: 'Hint'
@@ -3830,7 +3793,6 @@ en:
     i_consent: 'I consent'
     delete_account: 'Delete Account'
     create_term: 'Create Term'
-    edit_users: 'Edit generic users (%{count})'
     close: 'Close'
     add_answer: 'Add Answer'
     create_copy: 'Create Copy'
@@ -3958,7 +3920,6 @@ en:
     no_geogebra: 'There is no Geogebra applet for this medium.'
     invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
-    no_user: 'There is no user with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'
@@ -4294,6 +4255,7 @@ en:
             lecture:
               does_not_match_tutorial: does not match the tutorial's lecture.
         user:
+          admin_rights_lost: 'You are no longer an admin, so nothing was saved.'
           attributes:
             consents:
               accepted: 'You need to accept the privacy policy to create an account.'

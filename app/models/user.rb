@@ -35,6 +35,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
+  include PgSearch::Model
+
   # a user has many bookmarked lectures (formerly: subscribed lectures)
   has_many :lecture_bookmarks, dependent: :destroy
   has_many :dashboard_card_styles, class_name: "Dashboard::CardStyle", dependent: :delete_all
@@ -234,6 +236,31 @@ class User < ApplicationRecord
   scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
+
+  SEARCHED_FIELDS = [:first_name, :last_name, :name, :email, :matriculation_number,
+                     :uni_id].freeze
+
+  pg_search_scope :search_by_similarity,
+                  against: SEARCHED_FIELDS,
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { word_similarity: true, threshold: 0.3 }
+                  }
+  pg_search_scope :search_by_word_start,
+                  against: SEARCHED_FIELDS,
+                  using: { tsearch: { prefix: true, any_word: true } }
+
+  # Search::Filters::FulltextFilter calls search_by_title on every model. Below
+  # three characters only word beginnings count: the similarity search would
+  # match most addresses by their ".de".
+  def self.search_by_title(term)
+    term.to_s.strip.length < 3 ? search_by_word_start(term) : search_by_similarity(term)
+  end
+
+  def self.default_search_order
+    Arel.sql("LOWER(unaccent(users.last_name)), LOWER(unaccent(users.first_name)), " \
+             "LOWER(users.email)")
+  end
 
   # returns the array of all teachers
   def self.teachers
@@ -915,6 +942,20 @@ class User < ApplicationRecord
 
   def generic?
     !(admin? || teacher? || editor?)
+  end
+
+  # Saves a change of admin rights after every other one: the rows of all
+  # admins are locked, and its author must still be an admin then. Two admins
+  # taking each other's rights at once would otherwise leave none.
+  def save_admin_change(by:)
+    self.class.transaction do
+      self.class.where(admin: true).lock.load
+      unless by.reload.admin?
+        errors.add(:base, :admin_rights_lost)
+        raise(ActiveRecord::Rollback)
+      end
+      save || raise(ActiveRecord::Rollback)
+    end
   end
 
   # for lectures that are too old, only the teacher or an editor

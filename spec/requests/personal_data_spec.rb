@@ -428,36 +428,4 @@ RSpec.describe("Personal data", type: :request) do
       expect(user.first_name).to eq("Ada")
     end
   end
-
-  describe "the admin's user form" do
-    let(:account) { create(:confirmed_user, first_name: "Ada", last_name: "Lovelace") }
-
-    it "lets an admin correct the data" do
-      sign_in(create(:confirmed_user, admin: true))
-
-      patch user_path(account), params: { user: { first_name: "Augusta" } }, xhr: true
-
-      expect(account.reload.first_name).to eq("Augusta")
-    end
-
-    it "is not reachable for a teacher, since only admins have that area" do
-      create(:lecture, teacher: account)
-      sign_in(account)
-
-      get edit_user_path(account)
-
-      expect(response).to redirect_to(root_url)
-    end
-
-    it "does not let a teacher change their own data through it" do
-      create(:lecture, teacher: account)
-      sign_in(account)
-
-      patch user_path(account), params: { user: { name: "Ada L.", first_name: "Grace" } },
-                                xhr: true
-
-      expect(account.reload.name).to eq("Ada L.")
-      expect(account.first_name).to eq("Ada")
-    end
-  end
 end
