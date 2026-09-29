@@ -9,11 +9,11 @@ test("adds a tutor by the address of their account, before any group exists",
     const address = page.getByRole("textbox", { name: "Add a tutor by email address" });
 
     await address.fill("nobody@example.com");
-    await page.getByRole("button", { name: "Add", exact: true }).click();
+    await page.getByRole("button", { name: "Add tutor" }).click();
     await expect(page.getByText("There is no MaMpf account with this address.")).toBeVisible();
 
     await address.fill(person.email);
-    await page.getByRole("button", { name: "Add", exact: true }).click();
+    await page.getByRole("button", { name: "Add tutor" }).click();
     const overview = page.getByTestId("tutors-overview");
     await expect(overview.getByRole("row", { name: /Grace Hopper/ }))
       .toContainText("added by address, not in a group yet");

@@ -20,7 +20,7 @@
                   class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
         <div id="lecture_editors_select" data-testid="editor-select">
-          <%= editors_select(f, lecture) %>
+          <%= render "lectures/edit/editors_select", lecture: lecture %>
         </div>
       </div>
 
@@ -60,6 +60,7 @@
       </button>
     </div>
   <% end %>
+  <%= render "lectures/edit/editor_by_email", lecture: lecture %>
 <% else %>
   <%= t('admin.lecture.no_access_to_users_html',
         project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>

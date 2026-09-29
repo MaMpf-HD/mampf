@@ -453,6 +453,12 @@ de:
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
+      editors_by_email:
+        label: "EditorIn per E-Mail-Adresse hinzufügen"
+        add: "EditorIn hinzufügen"
+        hint: >-
+          Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und steht
+          dann oben bei den EditorInnen, wo sie sich auch wieder entfernen lässt.
       tutors_overview:
         hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten) oder indem Du sie über die Adresse ihres Kontos hinzufügst; EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien und flexiblen Gruppen zugeordnet. Hier steht, wer welche Gruppe betreut."
         none_yet: "Noch keine TutorInnen. Füge sie unten über ihre Adresse hinzu, oder erstelle einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
@@ -460,7 +466,7 @@ de:
         added_no_group_yet: "über die Adresse hinzugefügt, noch keiner Gruppe zugeordnet"
         add_by_email: "TutorIn per E-Mail-Adresse hinzufügen"
         add_hint: "Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und kann dann einer Gruppe zugeordnet werden."
-        add: "Hinzufügen"
+        add: "TutorIn hinzufügen"
         remove: "%{name} entfernen"
         remove_confirm: "%{name} von den TutorInnen dieser Veranstaltung entfernen? Zuordnungen zu flexiblen Gruppen bleiben bestehen."
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
@@ -672,12 +678,13 @@ de:
           DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
           Veranstaltung einpflegen. Du kannst nur Personen auswählen,
-          die von Ihrem Rechtestatus her dafür in Frage kommen.
+          die von ihrem Rechtestatus her dafür in Frage kommen.
           Um den entsprechenden Rechtestatus an Personen zu vergeben,
           die ihn bisher noch nicht haben, musst Du einen Gutschein
           erstellen und diesen an die entsprechende Person weitergeben.
           Die Person kann dann den Gutschein auf ihrer Profilseite einlösen
-          und wird dadurch zusätzliche VeranstaltungseditorIn.
+          und wird dadurch zusätzliche VeranstaltungseditorIn. Oder Du fügst
+          sie unten über die E-Mail-Adresse ihres MaMpf-Kontos hinzu.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese Veranstaltung gemerkt
           haben.
@@ -3361,6 +3368,11 @@ de:
         Diese Hausaufgabe wird bei der Veröffentlichung des assoziierten
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
+  lecture_editors:
+    create:
+      no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
+      already: "%{name} ist bereits EditorIn oder DozentIn dieser Veranstaltung."
+      added: "%{name} ist jetzt EditorIn und bekommt eine Mail darüber."
   tutor_appointments:
     create:
       no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
