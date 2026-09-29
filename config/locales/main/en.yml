@@ -20,6 +20,7 @@ en:
         enrolled: "You are registered for these"
         bookmarked: "You bookmarked these"
       registration_open: "Registration open — register now"
+      talk_with: "with %{names}"
       remove_bookmark: "Remove bookmark"
       remove_bookmark_for: "Remove bookmark: %{lecture}"
       remove_bookmark_title: "Remove bookmark?"
