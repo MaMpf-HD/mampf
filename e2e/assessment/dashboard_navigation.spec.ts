@@ -84,7 +84,7 @@ test.describe("finding the way around the assessment area", () => {
       await dashboard.tab("Statistics").click();
       await expect(dashboard.pane.getByRole("heading", { name: "Submissions" }))
         .toBeVisible();
-      await expect(dashboard.pane.getByText("Statistics are not yet available"))
+      await expect(dashboard.pane.getByText("Nobody has been reviewed yet."))
         .toBeVisible();
 
       // saving from the settings tab must not drop the teacher somewhere else
