@@ -1772,11 +1772,15 @@ de:
       homepage: 'Homepage'
       profile_image: 'Profilbild'
       support: 'Support'
+      deans_office: 'Dekanat'
       info:
         support: >
           Findet Personen, korrigiert ihre Stammdaten, entsperrt ihre Konten und
           schickt ihnen die Mails, mit denen sie wieder hineinkommen. Konten von
           Admins bleiben außer Reichweite.
+        deans_office: >
+          Sieht alle Veranstaltungen jedes Semesters mit ihren Gruppen, Plätzen,
+          Anmeldungen und Zuteilungen, nur lesend. Für das Dekanat.
         administrator: >
           Hier kannst Du anklicken, ob die NutzerIn
           Administratorenrechte haben soll oder nicht. Dir selbst kannst Du

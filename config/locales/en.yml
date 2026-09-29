@@ -1611,11 +1611,15 @@ en:
       homepage: 'Homepage'
       profile_image: 'Profile image'
       support: 'Support'
+      deans_office: "Dean's office"
       info:
         support: >
           Finds people, corrects their personal data, unlocks their accounts and
           sends them the mails that get them back in. Admin accounts stay beyond
           their reach.
+        deans_office: >
+          Sees every lecture of each term with its groups, seats, registrations
+          and assignments, read-only. For the dean's office.
         administrator: >
           Here you can decide whether the user has administrator rights or not.
           You cannot revoke your own administrator rights, only another

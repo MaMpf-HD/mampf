@@ -1,0 +1,61 @@
+en:
+  deans_office:
+    title: "Dean's office"
+    explainer: >-
+      Every lecture of a term with its groups: how many seats they have, how
+      many have registered and how many members they have so far.
+    term: 'Term'
+    no_lectures: 'There are no lectures in this term.'
+    lecture: 'Lecture'
+    teacher: 'Teacher'
+    groups: 'Groups'
+    seats: 'Seats'
+    registered: 'Registered'
+    members: 'Members'
+    registration: 'Registration'
+    sections:
+      lectures: 'Lectures'
+      seminars: 'Seminars'
+    legend:
+      registration: 'How people get into the group.'
+      registered: >-
+        Group: confirmed registrations in the running registration; where
+        places go by preference, the first choices. Lecture: how many people
+        registered for any of its groups, each once, rejected ones left out.
+        "–" where no registration is running.
+      members: >-
+        Group: how many are in the group now. Lecture: how many members the
+        lecture has; this can be more or fewer than in its groups together.
+      seats: >-
+        Group: the most it takes. Lecture: its groups' places added up,
+        tutorials, talks and exams together; these are group places, not
+        people.
+    access:
+      open: 'open until %{deadline} · %{mode}'
+      modes:
+        first_come: 'first come, first served'
+        preferences: 'by preference'
+      allocating: 'closed, allocation pending'
+      not_open: 'registration not open yet'
+      no_campaign_yet: 'waits for a registration'
+      self_join: 'students join themselves'
+      completed: 'registration completed'
+      staff_only: 'only through the teacher'
+    unlimited: 'unlimited'
+    seats_and_unlimited: '%{seats} + unlimited'
+    first_choices:
+      one: '1 (first choice)'
+      other: '%{count} (first choices)'
+    groups_of: 'Groups of %{lecture}'
+    filter: 'Filter'
+    filter_placeholder: 'Lecture or teacher'
+    no_match: 'No lecture matches the filter.'
+    open_all: 'Show all groups'
+    close_all: 'Hide all groups'
+    group: 'Group'
+    kind: 'Kind'
+    kinds:
+      tutorial: 'Tutorial'
+      talk: 'Talk'
+      cohort: 'Other group'
+      exam: 'Exam'

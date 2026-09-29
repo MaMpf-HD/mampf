@@ -17,7 +17,7 @@ class SupportAbility
 
     return unless user.admin?
 
-    can :assign_support, User
+    can :assign_roles, User
 
     # Only another admin may change an account's admin rights.
     can :assign_admin, User do |person|

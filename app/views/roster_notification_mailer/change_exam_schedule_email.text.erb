@@ -3,10 +3,14 @@
 <% else %>
 <%= t('roster.mailer.greeting') %>
 <% end %>
-<%= t('roster.mailer.roster_added_to_group_email_body',
+<%= t('roster.mailer.roster_change_exam_schedule_email_body',
       lecture_title: @lecture&.title || '',
       rosterable_title: @rosterable.title) %>
+<% if @info[:exam_schedule] %>
+<%= @info[:exam_schedule] %>
+<% end %>
 <% if @rosterable_link %>
-<%= t('roster.mailer.link_text_group', rosterable_link: @rosterable_link) %>
+<%= t('roster.mailer.link_text_exam',
+      rosterable_link: @rosterable_link) %>
 <% end %>
 <%= t('roster.mailer.end_mail') %>

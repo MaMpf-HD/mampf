@@ -277,9 +277,11 @@ module Rosters
         current_ids = roster_entries.pluck(roster_user_id_column)
         target_ids = user_ids.uniq
 
-        add_missing_users!(target_ids, current_ids, campaign)
+        added_ids = add_missing_users!(target_ids, current_ids, campaign)
         remove_excess_users!(target_ids, campaign)
         propagate_to_lecture!(target_ids)
+
+        added_ids
       end
     end
 
@@ -302,7 +304,7 @@ module Rosters
     # the given campaign.
     def add_missing_users!(target_ids, current_ids, campaign)
       users_to_add = target_ids - current_ids
-      return if users_to_add.empty?
+      return [] if users_to_add.empty?
 
       scope_attrs = roster_entries.scope_attributes
       now = Time.current
@@ -312,6 +314,7 @@ module Rosters
       end
 
       persist_missing_roster_entries!(attributes)
+      users_to_add
     end
 
     # Identifies users currently in the roster associated with this specific

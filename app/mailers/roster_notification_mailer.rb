@@ -1,7 +1,7 @@
 # Triggered whenever a user is added to / removed from / moved between group(s)
 # of a rosterable object
 class RosterNotificationMailer < ApplicationMailer
-  SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk].freeze
+  SUPPORTED_ROSTERABLES = [Lecture, Tutorial, Cohort, Talk, Exam].freeze
 
   class << self
     def added(user, rosterable)
@@ -13,14 +13,18 @@ class RosterNotificationMailer < ApplicationMailer
       with(
         rosterable: rosterable,
         recipient: user
-      ).added_to_group_email.deliver_later
+      ).public_send(added_template(rosterable)).deliver_later
     end
 
     def removed(user, rosterable)
       return log_unsupported(rosterable) unless supported?(rosterable)
 
-      template = rosterable.is_a?(Lecture) ? :removed_from_lecture_email : :removed_from_group_email
-
+      template =
+        case rosterable
+        when Lecture then :removed_from_lecture_email
+        when Exam    then :removed_from_exam_email
+        else              :removed_from_group_email
+        end
       with(
         rosterable: rosterable,
         recipient: user
@@ -30,6 +34,8 @@ class RosterNotificationMailer < ApplicationMailer
     def moved(user, old_rosterable, new_rosterable)
       return log_unsupported(old_rosterable) unless supported?(old_rosterable)
       return log_unsupported(new_rosterable) unless supported?(new_rosterable)
+      return log_unsupported(old_rosterable) if old_rosterable.is_a?(Exam)
+      return log_unsupported(new_rosterable) if new_rosterable.is_a?(Exam)
 
       with(
         old_rosterable: old_rosterable,
@@ -38,6 +44,32 @@ class RosterNotificationMailer < ApplicationMailer
       ).moved_between_groups_email.deliver_later
 
       notify_tutors(user, old_rosterable, new_rosterable)
+    end
+
+    def change_exam_schedule(rosterable)
+      return log_unsupported(rosterable) unless rosterable.is_a?(Exam)
+
+      users = rosterable.roster_entries.includes(:user).map(&:user)
+      deliver_grouped(:change_exam_schedule_email, rosterable, users)
+    end
+
+    def finalized(rosterable, users)
+      return log_unsupported(rosterable) unless supported?(rosterable)
+      return if rosterable.is_a?(Lecture)
+
+      deliver_grouped(added_template(rosterable), rosterable, users)
+    end
+
+    def rejected(user, reasons:, exam_campaign:, lecture:, exam: nil)
+      if exam_campaign
+        with(rosterable: exam,
+             reasons: reasons,
+             recipient: user).rejected_from_exam_email.deliver_later
+      else
+        with(lecture: lecture,
+             reasons: reasons,
+             recipient: user).rejected_from_group_email.deliver_later
+      end
     end
 
     def log_unsupported(rosterable)
@@ -51,6 +83,10 @@ class RosterNotificationMailer < ApplicationMailer
 
       def supported?(rosterable)
         SUPPORTED_ROSTERABLES.any? { |klass| rosterable.is_a?(klass) }
+      end
+
+      def added_template(rosterable)
+        rosterable.is_a?(Exam) ? :added_to_exam_email : :added_to_group_email
       end
 
       # Only a tutorial has someone responsible for it. The two sides hear different
@@ -69,14 +105,33 @@ class RosterNotificationMailer < ApplicationMailer
           end
         end
       end
+
+      # One mail per language, members in bcc.
+      def deliver_grouped(template, rosterable, users)
+        users.group_by(&:locale).each_value do |users_in_locale|
+          with(rosterable: rosterable,
+               recipients: users_in_locale.map(&:id)).public_send(template).deliver_later
+        end
+      end
   end
 
   def added_to_group_email
     email { t("roster.mailer.roster_added_to_group_email_subject", **subject_vars) }
   end
 
+  def added_to_exam_email
+    email do
+      add_exam_details
+      t("roster.mailer.roster_added_to_exam_email_subject", **subject_vars)
+    end
+  end
+
   def removed_from_group_email
     email { t("roster.mailer.roster_removed_from_group_email_subject", **subject_vars) }
+  end
+
+  def removed_from_exam_email
+    email { t("roster.mailer.roster_removed_from_exam_email_subject", **subject_vars) }
   end
 
   def moved_between_groups_email
@@ -87,12 +142,27 @@ class RosterNotificationMailer < ApplicationMailer
     email { t("roster.mailer.roster_removed_from_lecture_email_subject", **subject_vars) }
   end
 
+  def rejected_from_group_email
+    rejection_email("roster.mailer.roster_rejected_from_group_email_subject")
+  end
+
+  def rejected_from_exam_email
+    rejection_email("roster.mailer.roster_rejected_from_exam_email_subject")
+  end
+
   def participant_left_group_email
     email { t("roster.mailer.roster_participant_left_group_email_subject", **subject_vars) }
   end
 
   def participant_joined_group_email
     email { t("roster.mailer.roster_participant_joined_group_email_subject", **subject_vars) }
+  end
+
+  def change_exam_schedule_email
+    email do
+      add_exam_details
+      t("roster.mailer.roster_change_exam_schedule_email_subject", **subject_vars)
+    end
   end
 
   private
@@ -102,20 +172,37 @@ class RosterNotificationMailer < ApplicationMailer
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
+      @recipients      = User.where(id: params[:recipients]).to_a if params[:recipients].present?
       @participant     = params[:participant]
-      @username        = @recipient.tutorial_name
-      @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable)
-      @lecture         = lecture_for_rosterable(@rosterable || @new_rosterable)
+      @username        = @recipient&.tutorial_name
+      @lecture         = params[:lecture] ||
+                         lecture_for_rosterable(@rosterable || @new_rosterable)
+      @rosterable_link = url_for_rosterable(@rosterable || @new_rosterable, @lecture)
+      @info            = {}
     end
 
+    # Single recipient: addressed directly.
+    # Multiple recipients: members in bcc.
     def email
       prepare_data(params)
-      I18n.with_locale(@recipient.locale || I18n.default_locale) do
+      return if @recipients.blank? && @recipient.blank?
+
+      addressees = @recipient ? [@recipient] : @recipients
+      locale = addressees.first.locale
+      addressing = @recipient ? { to: @recipient.email } : { bcc: @recipients.map(&:email) }
+      I18n.with_locale(locale || I18n.default_locale) do
         mail(
-          from: NotificationMailer.sender(@recipient.locale),
-          to: @recipient.email,
+          from: NotificationMailer.sender(locale),
+          **addressing,
           subject: yield
         )
+      end
+    end
+
+    def rejection_email(subject_key)
+      email do
+        @info[:reasons] = rejection_reasons(params[:reasons])
+        t(subject_key, **subject_vars)
       end
     end
 
@@ -127,6 +214,10 @@ class RosterNotificationMailer < ApplicationMailer
       }
     end
 
+    def rejection_reasons(reasons)
+      reasons&.join(", ")
+    end
+
     def lecture_for_rosterable(rosterable)
       if rosterable.is_a?(Lecture)
         rosterable
@@ -135,17 +226,50 @@ class RosterNotificationMailer < ApplicationMailer
       end
     end
 
-    def url_for_rosterable(rosterable)
+    def url_for_rosterable(rosterable, lecture)
       case rosterable
       when Lecture
         lecture_url(rosterable)
-      when Tutorial, Cohort
-        nil
       when Talk
         talk_url(rosterable)
+      when Exam, Tutorial, Cohort, nil
+        lecture_home_url(lecture || rosterable&.lecture)
       else
-        raise(ArgumentError,
-              "Unknown rosterable type: #{rosterable.class.name}")
+        raise(ArgumentError, "Unknown rosterable type: #{rosterable.class.name}")
       end
+    end
+
+    def add_exam_details
+      scope = "roster.mailer.exam_schedule"
+
+      exam_date     = (I18n.l(@rosterable.date, format: :long) if @rosterable.date)
+      exam_location = @rosterable.location.presence
+
+      parts = []
+
+      # Sentence with known information
+      if exam_date || exam_location
+        sentence = [I18n.t("#{scope}.first_part")]
+        sentence << I18n.t("#{scope}.date_part", exam_date: exam_date) if exam_date
+        sentence << I18n.t("#{scope}.location_part", exam_location: exam_location) if exam_location
+
+        last_part = I18n.t("#{scope}.last_part")
+        sentence << last_part if last_part.present?
+
+        parts << "#{sentence.join(" ")}."
+      end
+
+      # Sentence for missing information
+      missing = []
+      missing << I18n.t("#{scope}.date_ops") unless exam_date
+      missing << I18n.t("#{scope}.location_ops") unless exam_location
+
+      if missing.any?
+        parts << I18n.t("#{scope}.non_available_info",
+                        count: missing.size,
+                        non_avai_ops: missing.to_sentence)
+      end
+
+      @info[:exam_schedule] = parts.join(" ").strip
     end
 end

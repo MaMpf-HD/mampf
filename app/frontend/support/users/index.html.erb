@@ -56,6 +56,12 @@
                       <%= t("admin.user.support") %>
                     </span>
                   <% end %>
+
+                  <% if user.deans_office? %>
+                    <span class="badge bg-info">
+                      <%= t("admin.user.deans_office") %>
+                    </span>
+                  <% end %>
                 </th>
 
                 <td><%= user.matriculation_number %></td>
