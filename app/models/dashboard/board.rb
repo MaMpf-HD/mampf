@@ -14,9 +14,17 @@ module Dashboard
       )
     end
 
+    # A tutor is one before having a group: by a redeemed voucher or by
+    # address. Running a flexible group counts as well.
     def tutored_lectures
       @tutored_lectures ||= lectures_of_term(
         Lecture.where(id: user.given_tutorials.select(:lecture_id))
+               .or(Lecture.where(id: user.given_cohorts.where(context_type: "Lecture")
+                                                   .select(:context_id)))
+               .or(Lecture.where(id: user.tutor_appointments.select(:lecture_id)))
+               .or(Lecture.where(id: Voucher.for_tutors
+                                            .where(id: user.redemptions.select(:voucher_id))
+                                            .select(:lecture_id)))
       ) - staff_lectures
     end
 

@@ -192,7 +192,8 @@ async function redeemWithNothingToClaim(
   await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGES[type])).toBeVisible();
   await expect(student.page.getByRole("link", { name: "Redeem Voucher" })).toBeVisible();
   await redeemVoucher(student.page, role);
-  await expectLectureOnDashboard(student.page, lecture, BOOKMARKED);
+  // a tutor is one before having a tutorial; a speaker without a talk is not
+  await expectLectureOnDashboard(student.page, lecture, role === "tutor" ? TUTORING : BOOKMARKED);
 
   if (type === "talk") {
     await teacher.page.goto(`/lectures/${lecture.id}/edit`);

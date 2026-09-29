@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_29_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_29_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -247,6 +247,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_29_000001) do
     t.index ["source_campaign_id"], name: "index_cohort_memberships_on_source_campaign_id"
     t.index ["user_id", "cohort_id"], name: "index_cohort_memberships_on_user_id_and_cohort_id", unique: true
     t.index ["user_id"], name: "index_cohort_memberships_on_user_id"
+  end
+
+  create_table "cohort_tutor_joins", force: :cascade do |t|
+    t.bigint "cohort_id", null: false
+    t.bigint "tutor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cohort_id", "tutor_id"], name: "index_cohort_tutor_joins_on_cohort_id_and_tutor_id", unique: true
+    t.index ["tutor_id"], name: "index_cohort_tutor_joins_on_tutor_id"
   end
 
   create_table "cohorts", force: :cascade do |t|
@@ -1536,6 +1545,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_29_000001) do
   add_foreign_key "cohort_memberships", "cohorts"
   add_foreign_key "cohort_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "cohort_memberships", "users"
+  add_foreign_key "cohort_tutor_joins", "cohorts"
+  add_foreign_key "cohort_tutor_joins", "users", column: "tutor_id"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade

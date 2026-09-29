@@ -61,6 +61,7 @@ en:
     mampf_news: 'MaMpf-News'
     submissions: 'Submissions'
     tutorials: 'Tutorials'
+    cohorts: 'Flexible Groups'
   unauthorized:
     default: >
       You are not authorized to access this page.
@@ -3147,6 +3148,9 @@ en:
       already: "%{name} can already be put on a tutorial."
       added: "%{name} is now a tutor and has been told by mail."
   tutorial:
+    not_assigned_yet: >
+      You are a tutor in this lecture, but not on a tutorial yet. Once you are
+      given one, it shows here.
     tutors_missing_html: "Somebody missing? On the %{link} tab you make people tutors: with a voucher, or by the email address of their MaMpf account."
     participants:
       button: "Participants"

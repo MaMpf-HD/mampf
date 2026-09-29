@@ -835,6 +835,33 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
+  def cohort_tutors
+    User.where(id: CohortTutorJoin.where(cohort: cohorts).select(:tutor_id))
+  end
+
+  # Whether the user is a tutor of the lecture: of one of its tutorials, or
+  # made one before having a tutorial, by a redeemed voucher or by address.
+  # Such a tutor has the tutors' page, with or without a tutorial yet.
+  def tutor?(user)
+    return false unless user
+
+    TutorTutorialJoin.exists?(tutorial: tutorials, tutor: user) ||
+      tutor_appointments.exists?(user: user) ||
+      Redemption.exists?(voucher: vouchers.for_tutors, user: user)
+  end
+
+  def cohort_tutor?(user)
+    return false unless user
+
+    CohortTutorJoin.exists?(cohort: cohorts, tutor: user)
+  end
+
+  # Whether the user tutors anything in the lecture; a tutor is not one of
+  # its students.
+  def tutored_by?(user)
+    tutor?(user) || cohort_tutor?(user)
+  end
+
   def default_submission_deletion_date
     (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
       15.days

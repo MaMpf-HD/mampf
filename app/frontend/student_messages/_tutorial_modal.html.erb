@@ -3,7 +3,7 @@
   few they sent stand under the form; nobody else sees them. While the
   group's registration runs, a second one goes to those registered so far.
 %>
-<%# locals: (lecture:, audience:, return_to:, tutorial:, kind: "tutorial") %>
+<%# locals: (lecture:, audience:, return_to:, group:, kind: "tutorial") %>
 <% modal_id = "tutorial-mail-modal-#{audience.key.parameterize}" %>
 <% texts = kind == "registered" ? "student_message.tutorial.registered_" : "student_message.tutorial." %>
 
@@ -28,7 +28,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="<%= modal_id %>-title">
-          <%= t("#{texts}title", tutorial: tutorial.title) %>
+          <%= t("#{texts}title", tutorial: group.title) %>
         </h5>
 
         <button

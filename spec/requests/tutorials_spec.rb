@@ -190,6 +190,21 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
+  # A tutor by address or voucher may have no tutorial of their own yet.
+  describe "GET /lectures/:id/tutorials for a tutor without a tutorial" do
+    it "says so instead of turning them away" do
+      appointed = create(:confirmed_user)
+      TutorAppointment.create!(lecture: lecture, user: appointed)
+      sign_in appointed
+
+      get lecture_tutorials_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(Nokogiri::HTML(response.body).text.squish)
+        .to include(I18n.t("tutorial.not_assigned_yet").squish)
+    end
+  end
+
   describe "the marking table's queries" do
     def count_queries
       count = 0

@@ -1,0 +1,16 @@
+<%# locals: (group:, key:) %>
+<%# The mail to the group, and while its registration runs, to those registered so far. %>
+<% catalog = StudentMessages::Catalog.new(@lecture, current_user) %>
+<% group_audience = catalog.pick([key])&.first %>
+<% item = group.registration_items.running.first %>
+<% registered_audience = item && catalog.pick(["item:#{item.id}:provisional"])&.first %>
+<% if group_audience %>
+  <%= render partial: 'student_messages/tutorial_modal',
+             locals: { lecture: @lecture, audience: group_audience, group: group,
+                       return_to: request.fullpath } %>
+<% end %>
+<% if registered_audience %>
+  <%= render partial: 'student_messages/tutorial_modal',
+             locals: { lecture: @lecture, audience: registered_audience, group: group,
+                       return_to: request.fullpath, kind: 'registered' } %>
+<% end %>

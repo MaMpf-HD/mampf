@@ -8,6 +8,9 @@ class Cohort < ApplicationRecord
   has_many :users, through: :cohort_memberships
   has_many :members, through: :cohort_memberships, source: :user
 
+  has_many :cohort_tutor_joins, dependent: :destroy
+  has_many :tutors, through: :cohort_tutor_joins
+
   scope :for_lectures, lambda { |lectures|
     where(context_type: "Lecture", context_id: lectures)
   }
@@ -34,6 +37,12 @@ class Cohort < ApplicationRecord
 
   def registration_title
     title
+  end
+
+  def tutor_names
+    return unless tutors.any?
+
+    tutors.map(&:tutorial_name).join(", ")
   end
 
   def exclusive_assignment?

@@ -89,6 +89,12 @@ class User < ApplicationRecord
            inverse_of: :tutor
   has_many :given_tutorials, -> { order(:title) },
            through: :tutor_tutorial_joins, source: :tutorial
+  has_many :cohort_tutor_joins,
+           foreign_key: "tutor_id",
+           dependent: :destroy,
+           inverse_of: :tutor
+  has_many :given_cohorts, -> { order(:title) },
+           through: :cohort_tutor_joins, source: :cohort
 
   # a user has many given talks
   has_many :speaker_talk_joins,
@@ -837,7 +843,7 @@ class User < ApplicationRecord
 
   def proper_student_in?(lecture)
     lecture.published? && lecture.unlocked_for?(self) &&
-      !in?(lecture.tutors) && !in?(lecture.editors) && self != lecture.teacher
+      !lecture.tutored_by?(self) && !in?(lecture.editors) && self != lecture.teacher
   end
 
   def original_image_file

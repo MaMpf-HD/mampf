@@ -202,6 +202,10 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       expect(render_card(section: :tutor).at_css("a.dashboard-card__link")).to be_nil
     end
 
+    it "tells a tutor who has no tutorial yet" do
+      expect(render_card(section: :tutor).text).to include(I18n.t("main.start.awaiting_group"))
+    end
+
     it "is a link for a tutor once it is published" do
       lecture.update!(released: "all")
 

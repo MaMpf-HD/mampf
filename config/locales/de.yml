@@ -100,6 +100,7 @@ de:
     mampf_news: 'MaMpf-News'
     submissions: 'Abgaben'
     tutorials: 'Tutorien'
+    cohorts: 'Flexible Gruppen'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.
@@ -3366,6 +3367,9 @@ de:
       already: "%{name} kann bereits einem Tutorium zugeordnet werden."
       added: "%{name} ist jetzt TutorIn und hat eine Mail darüber bekommen."
   tutorial:
+    not_assigned_yet: >
+      Du bist TutorIn in dieser Veranstaltung, aber noch keinem Tutorium
+      zugeordnet. Sobald Du eines übernimmst, erscheint es hier.
     tutors_missing_html: "Fehlt jemand? Im Reiter %{link} machst Du Leute zu TutorInnen: mit einem Gutschein oder über die E-Mail-Adresse ihres MaMpf-Kontos."
     participants:
       button: "Teilnehmende"

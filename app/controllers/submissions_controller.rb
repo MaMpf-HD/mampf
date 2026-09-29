@@ -754,8 +754,10 @@ class SubmissionsController < ApplicationController
     def check_student_status
       return if current_user.proper_student_in?(@lecture)
 
-      if current_user.in?(@lecture.tutors)
+      if @lecture.tutor?(current_user)
         redirect_to lecture_tutorials_path(@lecture)
+      elsif @lecture.cohort_tutor?(current_user)
+        redirect_to lecture_cohort_participants_path(@lecture)
       else
         redirect_to lecture_home_path(@lecture)
       end

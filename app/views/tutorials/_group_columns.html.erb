@@ -11,30 +11,15 @@
   <% end %>
 </div>
 
-<% catalog = StudentMessages::Catalog.new(@lecture, current_user) %>
-<% group_audience = catalog.pick(["tutorial:#{tutorial.id}"])&.first %>
-<%# Only a tutor of the group gets the second one; the staff write to registrations elsewhere. %>
-<% item = tutorial.registration_items.running.first %>
-<% registered_audience = item && catalog.pick(["item:#{item.id}:provisional"])&.first %>
 <% participants_path = local_assigns[:participants_path] %>
-<% if group_audience || registered_audience || participants_path %>
-  <div class="col-12 col-md-auto d-flex flex-wrap gap-2">
-    <%# The list without points, from a page that shows a sheet's points. %>
-    <% if participants_path %>
-      <%= link_to participants_path, class: 'btn btn-sm btn-outline-primary text-nowrap' do %>
-        <i class="bi bi-people me-1" aria-hidden="true"></i>
-        <%= t('tutorial.participants.button') %>
-      <% end %>
+<div class="col-12 col-md-auto d-flex flex-wrap gap-2">
+  <%# The list without points, from a page that shows a sheet's points. %>
+  <% if participants_path %>
+    <%= link_to participants_path, class: 'btn btn-sm btn-outline-primary text-nowrap' do %>
+      <i class="bi bi-people me-1" aria-hidden="true"></i>
+      <%= t('tutorial.participants.button') %>
     <% end %>
-    <% if group_audience %>
-      <%= render partial: 'student_messages/tutorial_modal',
-                 locals: { lecture: @lecture, audience: group_audience, tutorial: tutorial,
-                           return_to: request.fullpath } %>
-    <% end %>
-    <% if registered_audience %>
-      <%= render partial: 'student_messages/tutorial_modal',
-                 locals: { lecture: @lecture, audience: registered_audience, tutorial: tutorial,
-                           return_to: request.fullpath, kind: 'registered' } %>
-    <% end %>
-  </div>
-<% end %>
+  <% end %>
+  <%= render partial: 'tutorials/mail_buttons',
+             locals: { group: tutorial, key: "tutorial:#{tutorial.id}" } %>
+</div>

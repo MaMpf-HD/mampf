@@ -1,24 +1,25 @@
-# Lists who is in a tutorial for its tutors, and, while its registration runs
-# and the roster is still to be filled, who has registered for it so far.
+# Lists who is in a tutorial or a cohort for its tutors, and, while its
+# registration runs and the roster is still to be filled, who has registered
+# for it so far.
 class TutorialParticipantsComponent < ViewComponent::Base
-  def initialize(tutorial:)
+  def initialize(group:)
     super()
-    @tutorial = tutorial
+    @group = group
   end
 
-  attr_reader :tutorial
+  attr_reader :group
 
   def members
-    @members ||= tutorial.members.includes(User::PROGRAM_PRELOAD).by_last_name.to_a
+    @members ||= group.members.includes(User::PROGRAM_PRELOAD).by_last_name.to_a
   end
 
-  # The item of the tutorial's running registration, if there is one; a
-  # tutorial is an item of one campaign at most.
+  # The item of the group's running registration, if there is one; a group is
+  # an item of one campaign at most.
   def running_item
     return @running_item if defined?(@running_item)
 
-    @running_item = tutorial.registration_items.running
-                            .includes(:registration_campaign).first
+    @running_item = group.registration_items.running
+                         .includes(:registration_campaign).first
   end
 
   def campaign

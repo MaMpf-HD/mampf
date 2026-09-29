@@ -18,6 +18,22 @@ RSpec.describe(Registration::Participation) do
     expect(described_class.allowed?(tutor, lecture)).to be(false)
   end
 
+  # A tutor is one before having a tutorial, and running a flexible group
+  # makes one a tutor as well.
+  it "keeps out a tutor who has no tutorial yet" do
+    tutor = create(:confirmed_user)
+    TutorAppointment.create!(lecture: lecture, user: tutor)
+
+    expect(described_class.allowed?(tutor, lecture)).to be(false)
+  end
+
+  it "keeps out the tutor of a flexible group" do
+    tutor = create(:confirmed_user)
+    create(:cohort, context: lecture).tutors << tutor
+
+    expect(described_class.allowed?(tutor, lecture)).to be(false)
+  end
+
   it "keeps an editor out" do
     editor = create(:confirmed_user)
     lecture.editors << editor

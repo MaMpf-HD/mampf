@@ -267,7 +267,7 @@ class TutorialsController < ApplicationController
     end
 
     def can_view_index
-      return if current_user.in?(@lecture.tutors) || current_user.editor_or_teacher_in?(@lecture)
+      return if @lecture.tutor?(current_user) || current_user.editor_or_teacher_in?(@lecture)
 
       if current_user.proper_student_in?(@lecture)
         redirect_to lecture_submissions_path(@lecture)

@@ -109,10 +109,15 @@ module StudentMessages
         end
       end
 
+      # A cohort's tutors write to it as a tutorial's tutors do to theirs.
       def cohorts
-        return [] unless staff?
+        cohorts = if staff?
+          @lecture.cohorts.to_a
+        else
+          @sender.given_cohorts.where(context: @lecture).to_a
+        end
+        return [] if cohorts.empty?
 
-        cohorts = @lecture.cohorts.to_a
         counts = CohortMembership.where(cohort_id: cohorts.map(&:id))
                                  .group(:cohort_id).distinct.count(:user_id)
         cohorts.map do |cohort|
@@ -143,10 +148,12 @@ module StudentMessages
       # still to be filled - as far as the registration has decided who gets
       # in, so nobody before a preference campaign has allocated.
       def tutor_registrations
-        tutored = @sender.given_tutorials.where(lecture: @lecture)
-        Registration::Item.running.where(registerable: tutored)
-                          .preload(:registerable, :registration_campaign)
-                          .filter_map do |item|
+        running = Registration::Item.running
+        items = running.where(registerable: @sender.given_tutorials.where(lecture: @lecture))
+                       .or(running.where(registerable: @sender.given_cohorts
+                                                             .where(context: @lecture)))
+                       .preload(:registerable, :registration_campaign)
+        items.filter_map do |item|
           users = item.provisional_users
           next unless users
 

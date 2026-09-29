@@ -22,7 +22,7 @@ RSpec.describe(TutorialParticipantsComponent, type: :component) do
                                      program: create(:program, degree: :msc))
     [zimmer, becker].each { |user| create(:tutorial_membership, tutorial: tutorial, user: user) }
 
-    html = render_inline(described_class.new(tutorial: tutorial))
+    html = render_inline(described_class.new(group: tutorial))
 
     rows = html.css("tbody tr").map { |row| row.css("td").first(2).map { |cell| cell.text.strip } }
     expect(rows).to eq([["Clara Becker", becker.program.name_with_subject], ["Anna Zimmer", ""]])
@@ -37,14 +37,14 @@ RSpec.describe(TutorialParticipantsComponent, type: :component) do
     end
     create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
 
-    text = render_inline(described_class.new(tutorial: tutorial)).text.squish
+    text = render_inline(described_class.new(group: tutorial)).text.squish
 
     expect(text).to include("2 × #{program.name_with_subject} · 1 × " \
                             "#{I18n.t("tutorial.participants.no_program")}")
   end
 
   it "says so when nobody is in the group" do
-    text = render_inline(described_class.new(tutorial: tutorial)).text.squish
+    text = render_inline(described_class.new(group: tutorial)).text.squish
 
     expect(text).to include(I18n.t("tutorial.participants.none"))
     expect(text).not_to include(I18n.t("tutorial.participants.registered_title"))
@@ -54,7 +54,7 @@ RSpec.describe(TutorialParticipantsComponent, type: :component) do
     registrant = create(:confirmed_user, first_name: "Ada", last_name: "Lovelace")
     run_registration([:first_come_first_served], user: registrant)
 
-    text = render_inline(described_class.new(tutorial: tutorial)).text.squish
+    text = render_inline(described_class.new(group: tutorial)).text.squish
 
     expect(text).to include(I18n.t("tutorial.participants.registered_title"), "Ada Lovelace")
   end
@@ -64,7 +64,7 @@ RSpec.describe(TutorialParticipantsComponent, type: :component) do
     registrant = create(:confirmed_user, first_name: "Ada", last_name: "Lovelace")
     campaign = run_registration([:preference_based], user: registrant, status: :pending, rank: 1)
 
-    text = render_inline(described_class.new(tutorial: tutorial)).text.squish
+    text = render_inline(described_class.new(group: tutorial)).text.squish
 
     expect(text).to include(I18n.t("tutorial.participants.allocation_pending",
                                    campaign: campaign.description,

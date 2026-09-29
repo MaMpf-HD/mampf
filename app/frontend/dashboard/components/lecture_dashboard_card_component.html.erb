@@ -59,6 +59,13 @@
     <% end %>
   <% end %>
 
+  <% if awaiting_group? %>
+    <% card.with_note do %>
+      <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+      <%= t("main.start.awaiting_group") %>
+    <% end %>
+  <% end %>
+
   <% if show_registration_status? %>
     <% card.with_note do %>
       <% if registration_status == :open %>
