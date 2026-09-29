@@ -71,7 +71,7 @@ en:
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}, %{mupdf}.
       Bugs can be reported %{bugs}.
-      We encourage you to send further feedback to %{feedback}.
+      Support requests and feedback can be sent to %{feedback}.
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
