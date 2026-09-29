@@ -1,6 +1,6 @@
-# Sends a message from the support button to the feedback address. Also open
-# to visitors who are not signed in, since the button is on the login page for
-# those who cannot sign in.
+# Sends a message from the support button to the address people write to. Also
+# open to visitors who are not signed in, since the button is on the login page
+# for those who cannot sign in.
 class SupportRequestsController < ApplicationController
   THROTTLE_WINDOW = 1.hour
   SIGNED_IN_LIMIT = 20
@@ -9,7 +9,7 @@ class SupportRequestsController < ApplicationController
   skip_before_action :authenticate_user!, :enforce_password_change,
                      :enforce_personal_data, only: :create
 
-  # Without a limit, the form would mail the feedback address any number of
+  # Without a limit, the form would mail the project address any number of
   # times, and it is open to anybody. Visitors who are not signed in share an
   # address in the university network, so theirs is the tighter one.
   rate_limit to: SIGNED_IN_LIMIT, within: THROTTLE_WINDOW, only: :create,

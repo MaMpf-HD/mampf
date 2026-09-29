@@ -7,7 +7,7 @@
   <% if intro %>
     <p class="small text-muted">
       <%= t(user_signed_in? ? "support_request.intro_html" : "support_request.intro_signed_out_html",
-            email: mail_to(DefaultSetting::FEEDBACK_EMAIL)) %>
+            email: mail_to(DefaultSetting::PROJECT_EMAIL)) %>
     </p>
   <% end %>
 
