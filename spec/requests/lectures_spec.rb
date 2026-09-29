@@ -485,6 +485,19 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
       end
     end
+
+    # The error has no field of its own, so it is shown as a whole sentence
+    # under the form, where an attribute name in front would only garble it.
+    it "says in one sentence that a term-independent course takes no term" do
+      term_independent = create(:course, :term_independent)
+
+      post(lectures_path, params: { lecture: attributes.merge(course_id: term_independent.id) },
+                          as: :turbo_stream)
+
+      message = Nokogiri::HTML(response.body).at_css(".invalid-feedback").text.strip
+      expect(message).to eq(I18n.t("activerecord.errors.models.lecture.attributes.term.present",
+                                   locale: user.locale).strip)
+    end
   end
 
   describe "PATCH /lectures/:id" do

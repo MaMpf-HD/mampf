@@ -4103,9 +4103,10 @@ en:
             content_mode:
               inclusion: 'Invalid mode.'
             term:
+              format: '%{message}'
               required: 'You need to give a term.'
               present: >
-                Term was given, but associated course is independent of terms
+                A term-independent course takes no term.
             teacher:
               required: 'You need to give a teacher.'
             uses_exam_eligibility:

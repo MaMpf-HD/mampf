@@ -4345,10 +4345,10 @@ de:
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:
+              format: '%{message}'
               required: 'Es muss ein Semester angegeben werden.'
               present: >
-                Semester angeben, assoziiertes Modul ist jedoch
-                semesterunabhängig
+                Für ein semesterunabhängiges Modul wird kein Semester angegeben.
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
             uses_exam_eligibility:
