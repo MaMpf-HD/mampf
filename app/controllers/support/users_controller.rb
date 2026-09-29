@@ -6,8 +6,11 @@ module Support
     helper SupportUsersHelper
     helper PersonalDataHelper
 
+    # No email: whoever types a new address gets its confirmation link, so the
+    # support could move any account to themselves. People change it in their
+    # own account settings, behind their password.
     FIELDS = [:first_name, :last_name, :matriculation_number, :program_id, :uni_id,
-              :name, :name_in_tutorials, :email].freeze
+              :name, :name_in_tutorials].freeze
 
     before_action :set_user, except: :index
     helper_method :search_query, :search_values
@@ -40,7 +43,7 @@ module Support
       return back_to_person(t("support.users.unchanged")) unless @user.changed?
 
       if @user.save
-        back_to_person(saved_notice)
+        back_to_person(t("support.users.saved"))
       else
         render :edit, status: :unprocessable_content
       end
@@ -88,13 +91,6 @@ module Support
       def back_to_person(message, kind: :notice)
         redirect_to edit_support_user_path(@user, search: search_query), kind => message,
                                                                          status: :see_other
-      end
-
-      # A new address holds only once its owner confirms it.
-      def saved_notice
-        return t("support.users.saved") unless @user.saved_change_to_unconfirmed_email?
-
-        t("support.users.saved_email_pending", email: @user.unconfirmed_email)
       end
 
       def search_params

@@ -17,14 +17,9 @@ de:
       back: 'Zurück zur Suche'
       edit_title: 'Konto von %{user}'
       data: 'Stammdaten'
-      email_hint: >-
-        Eine neue Adresse gilt erst, wenn sie bestätigt ist: MaMpf schickt einen
-        Link dorthin. Bis dahin bleibt die alte Adresse in Gebrauch.
+      email_hint: 'Die Adresse ändert die Person selbst in ihren Kontoeinstellungen.'
       save: 'Speichern'
       saved: 'Die Stammdaten sind gespeichert.'
-      saved_email_pending: >-
-        Die Stammdaten sind gespeichert. %{email} bekommt einen Link, um die neue
-        Adresse zu bestätigen.
       not_saved: 'Nichts wurde gespeichert:'
       unchanged: 'Es hat sich nichts geändert.'
       unlocked: 'Das Konto ist entsperrt; die fehlgeschlagenen Anmeldungen sind zurückgesetzt.'

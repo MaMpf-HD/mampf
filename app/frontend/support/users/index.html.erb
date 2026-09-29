@@ -41,11 +41,17 @@
               <tr>
                 <th scope="row" class="fw-normal">
                   <%= listed_name(user) %>
+
                   <% if user.admin? %>
-                    <span class="badge bg-info"><%= t("basics.administrator_short") %></span>
+                    <span class="badge bg-info">
+                      <%= t("basics.administrator_short") %>
+                    </span>
                   <% end %>
+
                   <% if user.support? %>
-                    <span class="badge bg-info"><%= t("admin.user.support") %></span>
+                    <span class="badge bg-info">
+                      <%= t("admin.user.support") %>
+                    </span>
                   <% end %>
                 </th>
 

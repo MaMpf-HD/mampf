@@ -16,14 +16,9 @@ en:
       back: 'Back to the search'
       edit_title: 'Account of %{user}'
       data: 'Personal data'
-      email_hint: >-
-        A new address holds once its owner confirms it: MaMpf sends a link to
-        it. Until then, the old address stays in use.
+      email_hint: 'The person changes it themselves in their account settings.'
       save: 'Save'
       saved: 'The personal data has been saved.'
-      saved_email_pending: >-
-        The personal data has been saved. %{email} gets a link to confirm the
-        new address.
       not_saved: 'Nothing was saved:'
       unchanged: 'Nothing has changed.'
       unlocked: 'The account is unlocked; its failed sign-ins are reset.'

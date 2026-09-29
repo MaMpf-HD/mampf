@@ -118,18 +118,17 @@ RSpec.describe("Support users", type: :request) do
                                                 name: "Emmy N.", name_in_tutorials: "Emmy")
     end
 
-    # Otherwise changing the address, then sending a reset mail, would hand
-    # the account to whoever typed it.
-    it "keeps a new address waiting until its owner confirms it" do
+    # Whoever types a new address gets its confirmation link: the support could
+    # move any account to themselves and reset its password.
+    it "leaves the address alone and sends nothing" do
       ActionMailer::Base.deliveries.clear
 
-      patch support_user_path(student), params: { user: { email: "noether@example.org" } }
+      patch support_user_path(student),
+            params: { user: { last_name: "Lasker", email: "support@example.org" } }
 
-      expect(ActionMailer::Base.deliveries.map(&:to)).to eq([["noether@example.org"]])
-      expect(student.reload).to have_attributes(email: "emmy@example.org",
-                                                unconfirmed_email: "noether@example.org")
-      follow_redirect!
-      expect(response.body).to include("noether@example.org gets a link")
+      expect(student.reload).to have_attributes(last_name: "Lasker", email: "emmy@example.org",
+                                                unconfirmed_email: nil)
+      expect(ActionMailer::Base.deliveries).to be_empty
     end
 
     it "does not hand out rights" do
