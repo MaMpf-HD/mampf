@@ -2115,6 +2115,8 @@ en:
     edit_lecture: 'Edit event'
     subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
     subscribe_lecture_html: 'You can find it in %{dashboard}.'
+    subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
+    subscribe_lecture_in_term_html: 'You can find it in %{dashboard} under %{term}.'
     dashboard_search: 'the lecture search on your dashboard'
     goto_dashboard_search: 'Go to the lecture search'
     new_lecture_created_html: >
@@ -3290,6 +3292,9 @@ en:
     subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
     subscribe_lecture_text: >
       You can find it in the lecture search on your dashboard.
+    subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
+    subscribe_lecture_in_term_text: >
+      You can find it in the lecture search on your dashboard under %{term}.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
     submission_invitation_subject: >

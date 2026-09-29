@@ -2305,6 +2305,8 @@ de:
     edit_lecture: 'Veranstaltung bearbeiten'
     subscribe_lecture: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.'
     subscribe_lecture_html: 'Du findest sie in %{dashboard}.'
+    subscribe_lecture_in_term: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.'
+    subscribe_lecture_in_term_html: 'Du findest sie in %{dashboard} unter %{term}.'
     dashboard_search: 'der Veranstaltungssuche auf Deinem Dashboard'
     goto_dashboard_search: 'Zur Veranstaltungssuche'
     new_lecture_created_html: >
@@ -3521,6 +3523,10 @@ de:
       Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
     subscribe_lecture_text: >
       Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
+    subscribe_lecture_in_term: >
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.
+    subscribe_lecture_in_term_text: >
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
     submission_invitation_subject: >
