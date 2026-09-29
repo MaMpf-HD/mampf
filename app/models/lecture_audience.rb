@@ -25,16 +25,21 @@ module LectureAudience
      running_registrations(lecture_ids).select(:user_id)]
   end
 
-  def lectures_of(user)
-    lecture_id_scopes(user).map { |ids| Lecture.where(id: ids) }.reduce(:or)
+  # For media, a registration counts only where the lecture has no
+  # passphrase, since registering does not ask for it; its announcements
+  # still reach whoever registered.
+  def lectures_of(user, media: false)
+    lecture_id_scopes(user, media: media).map { |ids| Lecture.where(id: ids) }.reduce(:or)
   end
 
-  def lecture_id_scopes(user)
+  def lecture_id_scopes(user, media: false)
     running = Registration::Campaign.where(
       id: Registration::UserRegistration.where(user: user).where.not(status: :rejected)
                                         .select(:registration_campaign_id),
       status: RUNNING_CAMPAIGN_STATUSES, campaignable_type: "Lecture"
     )
+    registered = running.select(:campaignable_id)
+    registered = Lecture.where(id: registered, passphrase: nil).select(:id) if media
     [LectureBookmark.where(user: user).select(:lecture_id),
      LectureMembership.where(user: user).select(:lecture_id),
      Cohort.where(context_type: "Lecture",
@@ -43,7 +48,7 @@ module LectureAudience
      Talk.where(id: SpeakerTalkJoin.where(speaker: user).select(:talk_id)).select(:lecture_id),
      Exam.where(id: ExamRosterEntry.active.where(user: user).select(:exam_id))
          .select(:lecture_id),
-     running.select(:campaignable_id)]
+     registered]
   end
 
   def running_registrations(lecture_ids)

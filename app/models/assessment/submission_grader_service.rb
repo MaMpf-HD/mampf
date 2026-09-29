@@ -149,8 +149,14 @@ module Assessment
         # the lecturer's to enter.
         # The row is held by the student's current group while it is blank,
         # as the single-row route decides it.
+        # An exam's row is refused before follow_membership: its points need
+        # the lecture's permission, not that of the tutor of the student's group.
         def score_participation_entry!(entry, scorer, validated_scopes)
           participation = Participation.find(entry["id"]).lock!
+          unless participation.assessment.assessable.is_a?(Assignment)
+            raise(SubmissionGraderError, I18n.t("assessment.errors.invalid_assessable_type"))
+          end
+
           ParticipationIndex.follow_membership(participation)
 
           authorize_scope!(participation.tutorial || participation.assessment.lecture,

@@ -114,6 +114,23 @@ RSpec.describe(Registration::Item, type: :model) do
       end
     end
 
+    # Finalizing puts the allocated people into the group's lecture; a group
+    # of another lecture would let this lecture's editor hand out places there.
+    describe "#validate_registerable_of_campaign_lecture" do
+      let(:campaign) { create(:registration_campaign) }
+
+      it "refuses a group of another lecture" do
+        [create(:tutorial), create(:cohort, context: create(:lecture))].each do |group|
+          item = build(:registration_item, registration_campaign: campaign, registerable: group)
+
+          expect(item).not_to be_valid
+          expect(item.errors[:registerable])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes" \
+                               ".registerable.other_lecture"))
+        end
+      end
+    end
+
     describe "#validate_capacity_change_from_registerable!" do
       let(:campaign) { create(:registration_campaign, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
@@ -249,8 +266,7 @@ RSpec.describe(Registration::Item, type: :model) do
       let(:campaign) { create(:registration_campaign, campaignable: lecture) }
 
       context "with registerables (strict global uniqueness)" do
-        let(:other_lecture) { create(:lecture) }
-        let(:other_campaign) { create(:registration_campaign, campaignable: other_lecture) }
+        let(:other_campaign) { create(:registration_campaign, campaignable: lecture) }
 
         before do
           create(:registration_item, registration_campaign: other_campaign, registerable: tutorial)

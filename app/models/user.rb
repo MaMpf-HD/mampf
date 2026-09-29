@@ -138,6 +138,27 @@ class User < ApplicationRecord
   has_many :redemptions, dependent: :destroy
   has_many :tutor_appointments, dependent: :destroy
 
+  # A deleted account takes the person's own results along. What they
+  # entered for others stays, with grader, certifier and applier cleared.
+  has_many :exam_roster_entries, dependent: :delete_all
+  has_many :student_performance_records, class_name: "StudentPerformance::Record",
+                                         dependent: :delete_all
+  has_many :student_performance_certifications,
+           class_name: "StudentPerformance::Certification", dependent: :delete_all
+  has_many :given_certifications, class_name: "StudentPerformance::Certification",
+                                  foreign_key: :certified_by_id, dependent: :nullify,
+                                  inverse_of: :certified_by
+  has_many :graded_participations, class_name: "Assessment::Participation",
+                                   foreign_key: :grader_id, dependent: :nullify,
+                                   inverse_of: false
+  has_many :graded_task_points, class_name: "Assessment::TaskPoint",
+                                foreign_key: :grader_id, dependent: :nullify, inverse_of: false
+  has_many :applied_grade_schemes, class_name: "Assessment::GradeScheme",
+                                   foreign_key: :applied_by_id, dependent: :nullify,
+                                   inverse_of: :applied_by
+  has_many :sent_student_messages, class_name: "StudentMessage", foreign_key: :sender_id,
+                                   dependent: :destroy, inverse_of: :sender
+
   include ProfileimageUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
@@ -647,7 +668,7 @@ class User < ApplicationRecord
     # The same rule as Medium#visible_for_user?: "all" and "users" media are
     # everybody's, "subscribers" media ("only participants") need the user in
     # the audience of the lecture, or of one of the course's lectures.
-    participating = LectureAudience.lectures_of(self)
+    participating = LectureAudience.lectures_of(self, media: true)
     visible = media.where(released: ["all", "users"])
     [participating, Lesson.where(lecture: participating), Talk.where(lecture: participating),
      Course.where(id: participating.select(:course_id))].each do |teachables|

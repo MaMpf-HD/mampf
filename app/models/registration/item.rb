@@ -46,6 +46,7 @@ module Registration
 
     validate :validate_registerable_is_registerable, on: :create
     validate :validate_registerable_allows_campaigns, on: :create
+    validate :validate_registerable_of_campaign_lecture, on: :create
     validate :ensure_compatible_with_existing_items, on: :create
     validate :ensure_exam_campaign_holds_one_exam, on: :create
     validate :validate_capacity_reduction, on: :update
@@ -214,6 +215,16 @@ module Registration
         return if registerable.nil? || registerable.is_a?(Registration::Registerable)
 
         errors.add(:registerable, :not_registerable)
+      end
+
+      # A campaign fills the groups of its own lecture: another lecture's group
+      # would hand its seats, and with them a place in that lecture, to
+      # whoever registers here.
+      def validate_registerable_of_campaign_lecture
+        return unless registerable && registration_campaign
+        return if registerable.try(:lecture) == registration_campaign.campaignable
+
+        errors.add(:registerable, :other_lecture)
       end
 
       # Registerables that have the skip_campaigns flag set are excluded from

@@ -1224,7 +1224,7 @@ class Lecture < ApplicationRecord
     def participant?(user)
       @participant ||= {}
       @participant.fetch(user.id) do
-        @participant[user.id] = LectureAudience.lectures_of(user).exists?(id: id)
+        @participant[user.id] = LectureAudience.lectures_of(user, media: true).exists?(id: id)
       end
     end
 
@@ -1232,7 +1232,7 @@ class Lecture < ApplicationRecord
       @course_participant ||= {}
       @course_participant.fetch(user.id) do
         @course_participant[user.id] =
-          LectureAudience.lectures_of(user).exists?(course_id: course_id)
+          LectureAudience.lectures_of(user, media: true).exists?(course_id: course_id)
       end
     end
 

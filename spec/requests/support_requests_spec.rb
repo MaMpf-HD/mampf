@@ -21,6 +21,20 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response.body).to include(I18n.t("support_request.sent"))
     end
 
+    # The mail job carries the message, the name and the address; the log
+    # keeps only that a mail was queued.
+    it "keeps the message and the sender out of the log" do
+      log = StringIO.new
+      logger = ActiveSupport::Logger.new(log)
+      allow(ActiveJob::Base).to receive(:logger).and_return(logger)
+      allow(ActionController::Base).to receive(:logger).and_return(logger)
+
+      send_request(message: "My exam registration for Noether's lecture fails.")
+
+      expect(log.string).to include("Enqueued", "SupportRequestsController")
+      expect(log.string).not_to include("Noether", user.email)
+    end
+
     # A second question should not need a new page.
     it "offers an empty form for the next message" do
       send_request

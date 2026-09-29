@@ -878,5 +878,19 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         nil
       end.not_to change(Assessment::Participation, :count)
     end
+
+    # A sheet's table saves sheet rows; an exam's are the lecture's to mark.
+    it "refuses an exam's row" do
+      exam_row = FactoryBot.create(:assessment_participation,
+                                   assessment: FactoryBot.create(:assessment, :for_exam,
+                                                                 :with_points))
+
+      expect do
+        described_class.score_multi_teams_by_types!(
+          [{ "target" => "participation", "id" => exam_row.id, "task_points" => {} }], scorer
+        )
+      end.to raise_error(described_class::SubmissionGraderError,
+                         I18n.t("assessment.errors.invalid_assessable_type"))
+    end
   end
 end

@@ -1933,6 +1933,19 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         expect(StudentPerformance::Certification.exists?(cert.id)).to be(false)
       end
 
+      it "goes back to the list rather than to a return_to off this app" do
+        list = lecture_student_performance_certifications_path(lecture)
+        ["javascript:alert(1)", "http:evil.example", "https://evil.example/x"].each do |target|
+          cert = FactoryBot.create(:student_performance_certification, :passed,
+                                   lecture: lecture, user: FactoryBot.create(:confirmed_user))
+
+          delete lecture_student_performance_certification_path(lecture, cert),
+                 params: { return_to: target }
+
+          expect(response).to redirect_to(list)
+        end
+      end
+
       it "drops a manual decision too, one at a time" do
         manual = FactoryBot.create(
           :student_performance_certification, :passed, :manual,

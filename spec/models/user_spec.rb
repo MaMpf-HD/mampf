@@ -79,6 +79,40 @@ RSpec.describe(User, type: :model) do
     expect(User.where(archived: true).count).to eq(1)
   end
 
+  # The results go with the account; what somebody entered for others stays
+  # with those others, without their name.
+  it "lets a student and a grader delete their accounts" do
+    student = create(:confirmed_user)
+    grader = create(:confirmed_user)
+    exam = create(:exam)
+    create(:exam_roster_entry, exam: exam, user: student)
+    create(:student_performance_record, lecture: exam.lecture, user: student)
+    create(:student_performance_certification, :passed, lecture: exam.lecture, user: student,
+                                                        certified_by: grader)
+    other = create(:assessment_participation, :reviewed, grader: grader)
+    create(:assessment_participation, :reviewed, user: student, grader: grader)
+
+    expect(student.archive_and_destroy("Archived Person")).to be_truthy
+    expect(grader.archive_and_destroy("Archived Person")).to be_truthy
+
+    expect(User.where(id: [student.id, grader.id])).to be_empty
+    expect(other.reload.grader_id).to be_nil
+    expect(ExamRosterEntry.where(exam: exam)).to be_empty
+  end
+
+  it "keeps a decision on somebody else once its certifier deletes their account" do
+    certifier = create(:confirmed_user)
+    decision = create(:student_performance_certification, :failed, :manual,
+                      certified_by: certifier, note: "Missed the test")
+
+    expect(certifier.archive_and_destroy("Archived Person")).to be_truthy
+
+    decision.reload
+    expect(decision).to have_attributes(certified_by_id: nil, status: "failed",
+                                        note: "Missed the test")
+    expect(decision).to be_valid
+  end
+
   it "is invalid with a password shorter than 15 characters", :password_strength do
     user = FactoryBot.build(:user, password: "short-pass1")
     expect(user).not_to be_valid

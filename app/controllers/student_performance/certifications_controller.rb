@@ -239,15 +239,7 @@ module StudentPerformance
     private
 
       def return_to_path
-        if params[:return_to].present?
-          begin
-            uri = URI.parse(params[:return_to])
-            return params[:return_to] if uri.host.nil? || uri.host == request.host
-          rescue URI::InvalidURIError
-            # fall through
-          end
-        end
-        lecture_student_performance_certifications_path(@lecture)
+        url_from(params[:return_to]) || lecture_student_performance_certifications_path(@lecture)
       end
 
       def set_certification

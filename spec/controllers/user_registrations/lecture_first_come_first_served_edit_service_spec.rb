@@ -320,7 +320,7 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
 
     let(:cohort) do
       create(:cohort,
-             context: seminar,
+             context: lecture,
              propagate_to_lecture: true,
              capacity: nil)
     end

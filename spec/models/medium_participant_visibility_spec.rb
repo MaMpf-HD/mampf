@@ -40,14 +40,33 @@ RSpec.describe(Medium) do
     expect(visible).to include(lecture_medium)
   end
 
-  it "is shown to a student with a registration still running" do
+  def register
     campaign = create(:registration_campaign, :open, :with_items, campaignable: lecture)
     create(:registration_user_registration, :pending,
            user: student, registration_campaign: campaign,
            registration_item: campaign.registration_items.first)
+  end
+
+  it "is shown to a student with a registration still running" do
+    register
 
     expect(lecture_medium.visible_for_user?(student)).to be(true)
     expect(visible).to include(lecture_medium)
+  end
+
+  # Registering asks for no passphrase; entering it bookmarks the lecture.
+  it "is hidden from a student only registered for a lecture with a passphrase" do
+    lecture.update!(passphrase: "secret")
+    register
+
+    expect(lecture_medium.visible_for_user?(student)).to be(false)
+    expect(course_medium.visible_for_user?(student)).to be(false)
+    expect(visible).to be_empty
+    expect(lecture.reload.worked_example?(student)).to be(false)
+
+    student.bookmark_lecture!(lecture)
+
+    expect(lecture_medium.visible_for_user?(student)).to be(true)
   end
 
   it "leaves media for registered users open to every student" do

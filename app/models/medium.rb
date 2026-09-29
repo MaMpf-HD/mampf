@@ -572,7 +572,7 @@ class Medium < ApplicationRecord
 
     # "only participants": the audience of the lecture, or for a course
     # medium, of one of the course's lectures (see LectureAudience).
-    participating = LectureAudience.lectures_of(user)
+    participating = LectureAudience.lectures_of(user, media: true)
     return participating.exists?(course_id: teachable.id) if teachable_type == "Course"
 
     participating.exists?(id: teachable.lecture.id)

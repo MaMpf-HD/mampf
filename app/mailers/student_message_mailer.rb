@@ -33,8 +33,8 @@ class StudentMessageMailer < ApplicationMailer
     locale = params[:locale] || @lecture.locale_with_inheritance || I18n.default_locale
 
     if @message.attachment.present?
-      attachments[@message.attachment_filename || "attachment"] =
-        @message.attachment.read
+      attachments[attachment_name] = { mime_type: "application/pdf",
+                                       content: @message.attachment.read }
     end
 
     # The whole lecture staff (teacher and editors) is kept in the loop
@@ -58,6 +58,14 @@ class StudentMessageMailer < ApplicationMailer
   end
 
   private
+
+    # The upload was checked to be a PDF, but its filename is the sender's.
+    # A .pdf name and the PDF type keep mail clients from opening it as
+    # anything else.
+    def attachment_name
+      base = File.basename(@message.attachment_filename.to_s, ".*").gsub(/[[:cntrl:]]/, "")
+      "#{base.presence || "attachment"}.pdf"
+    end
 
     # A tutor's mail names the group in the subject: the lecture alone would
     # read like the lecturer's.

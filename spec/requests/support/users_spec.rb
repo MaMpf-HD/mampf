@@ -102,6 +102,17 @@ RSpec.describe("Support users", type: :request) do
       expect(response.body).not_to include("emmy@example.org")
     end
 
+    # The request line is logged with its query string, apart from the
+    # parameters Rails logs separately.
+    it "keeps what was searched for out of the logged path and parameters" do
+      env = Rack::MockRequest.env_for(support_users_path(search: { fulltext: "Noether" }))
+      env["action_dispatch.parameter_filter"] = Rails.application.config.filter_parameters
+      request = ActionDispatch::Request.new(env)
+
+      expect(request.filtered_path).not_to include("Noether")
+      expect(request.filtered_parameters.to_s).not_to include("Noether")
+    end
+
     it "puts the person first by matriculation number, last name or address" do
       create(:confirmed_user, last_name: "Hilbert", email: "david@example.org")
 
@@ -361,15 +372,14 @@ RSpec.describe("Support users", type: :request) do
       expect(response).to redirect_to(support_users_path)
     end
 
-    it "keeps an account that exam registrations still refer to, and says so" do
-      create(:exam_roster_entry, user: account)
+    it "takes the account's exam registrations along" do
+      entry = create(:exam_roster_entry, user: account)
       sign_in(admin)
 
       delete support_user_path(account)
-      follow_redirect!
 
-      expect(User.exists?(account.id)).to be(true)
-      expect(response.body).to include("was not deleted")
+      expect(User.exists?(account.id)).to be(false)
+      expect(ExamRosterEntry.exists?(entry.id)).to be(false)
     end
 
     it "keeps the accounts of editors, admins and their own" do

@@ -534,7 +534,7 @@ RSpec.describe(Exam, type: :model) do
 
     context "when exam is part of a draft campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft)
+        campaign = create(:registration_campaign, status: :draft, campaignable: lecture)
         create(:registration_item,
                registerable: exam,
                registration_campaign: campaign)
@@ -598,7 +598,7 @@ RSpec.describe(Exam, type: :model) do
         create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
         create(:registration_item,
                registerable: exam,
-               registration_campaign: create(:registration_campaign))
+               registration_campaign: create(:registration_campaign, campaignable: lecture))
       end
 
       it "is not destructible" do

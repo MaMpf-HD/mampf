@@ -1,14 +1,14 @@
-# Across all sources, one address gets at most ten mails a day from the
-# password reset, confirmation and unlock forms together, so that requests
-# from many machines cannot flood a stranger's inbox either. The forms share
-# one count because they send each other's mails: the unlock form sends the
-# password reset when nothing is locked. `rate_limit` would count each
-# controller on its own.
+# Pauses the password reset, confirmation and unlock mails to one address for
+# ten minutes, whichever machine asks, so nobody can flood a stranger's inbox.
+# A pause rather than a daily cap, which anybody could use up to keep the
+# owner out for a day. The forms share one count because the unlock form
+# sends the password reset when nothing is locked; `rate_limit` would count
+# each controller on its own.
 module AddressMailLimit
   extend ActiveSupport::Concern
 
-  ADDRESS_WINDOW = 1.day
-  ADDRESS_LIMIT = 10
+  ADDRESS_WINDOW = 10.minutes
+  ADDRESS_LIMIT = 1
 
   included do
     before_action :limit_mails_to_address, if: -> { action_name == "create" }

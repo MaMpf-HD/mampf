@@ -132,6 +132,42 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         end
       end
 
+      # The lecture's table lists every group's people with their email and
+      # points; a tutor authorized for one group must not get it by asking.
+      context "when a tutor asks for the lecture's table" do
+        before do
+          FactoryBot.create(:assessment_participation, :submitted, assessment: assessment,
+                                                                   user: student2,
+                                                                   tutorial: tutorial2)
+        end
+
+        [{ submissions: [].to_json }, {}].each do |payload|
+          it "answers with the tutor's own group (#{payload.keys.first || "no rows"})" do
+            patch point_multi_submissions_tutorial_path,
+                  params: { assignment_id: assignment.id, tutorial_id: tutorial.id,
+                            grading_scope_type: "lecture", **payload },
+                  as: :turbo_stream
+
+            expect(response).to have_http_status(:success)
+            expect(response.body).to include(student.email)
+            expect(response.body).not_to include(student2.email)
+          end
+        end
+
+        it "turns away a tutor from another lecture" do
+          stranger = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:tutorial).tutors << stranger
+          sign_in stranger
+
+          patch point_multi_submissions_tutorial_path,
+                params: { assignment_id: assignment.id,
+                          tutorial_id: stranger.given_tutorials.first.id },
+                as: :turbo_stream
+
+          expect(response.body).not_to include(student.email, student2.email)
+        end
+      end
+
       context "when assignment is not found" do
         it "returns turbo_stream with alert" do
           patch point_multi_submissions_tutorial_path,
@@ -947,6 +983,59 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
         expect(response.body).to include(tutorial.title)
       end
 
+      # The summary counts the table it is drawn for; the tutor's own group is
+      # the only one whose counts they may see.
+      context "when another group has hand-ins of its own" do
+        before do
+          [student2, FactoryBot.create(:confirmed_user)].each do |other|
+            FactoryBot.create(:assessment_participation, :submitted, assessment: assessment,
+                                                                     user: other,
+                                                                     tutorial: tutorial2)
+          end
+          Timecop.travel(3.hours.from_now)
+        end
+        after { Timecop.return }
+
+        def handed_in(count)
+          I18n.t("assessment.grading_tutorial.summary.handed_in", count: count)
+        end
+
+        let(:own_count) { handed_in(1) }
+        let(:other_count) { handed_in(2) }
+        let(:lecture_count) { handed_in(3) }
+
+        [{}, { grading_scope_type: "lecture" }].each do |asked|
+          it "sums up the tutor's group alone (#{asked.values.first || "no table named"})" do
+            patch mark_user_as_participated_path,
+                  params: { assignment_id: assignment.id, user_id: student.id, **asked },
+                  as: :turbo_stream
+
+            expect(response.body).to include(own_count)
+            expect(response.body).not_to include(lecture_count)
+          end
+        end
+
+        it "sums up the tutor's group whichever group the request names" do
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: student.id,
+                          tutorial_id: tutorial2.id, grading_scope_type: "tutorial" },
+                as: :turbo_stream
+
+          expect(response.body).to include(own_count)
+          expect(response.body).not_to include(other_count)
+        end
+
+        it "sums up the whole lecture for the teacher" do
+          sign_in teacher
+          patch mark_user_as_participated_path,
+                params: { assignment_id: assignment.id, user_id: student.id,
+                          grading_scope_type: "lecture" },
+                as: :turbo_stream
+
+          expect(response.body).to include(lecture_count)
+        end
+      end
+
       it "answers with the row alone when the student already has one" do
         participation = FactoryBot.create(:assessment_participation,
                                           assessment: assessment, user: student,
@@ -1036,6 +1125,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
                 as: :turbo_stream
 
           expect(response).to have_http_status(:not_found)
+        end
+
+        # Asked before the lookup, or a stranger learns who is a member.
+        it "answers a stranger the same for members and others" do
+          sign_in FactoryBot.create(:confirmed_user)
+
+          [student.id, FactoryBot.create(:confirmed_user).id].each do |user_id|
+            patch mark_user_as_participated_path,
+                  params: { assignment_id: assignment.id, user_id: user_id },
+                  as: :turbo_stream
+
+            expect(response).to redirect_to(root_path)
+          end
         end
       end
 
