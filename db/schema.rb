@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_29_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_29_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -247,6 +247,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_29_000000) do
     t.index ["source_campaign_id"], name: "index_cohort_memberships_on_source_campaign_id"
     t.index ["user_id", "cohort_id"], name: "index_cohort_memberships_on_user_id_and_cohort_id", unique: true
     t.index ["user_id"], name: "index_cohort_memberships_on_user_id"
+  end
+
+  create_table "cohort_tutor_joins", force: :cascade do |t|
+    t.bigint "cohort_id", null: false
+    t.bigint "tutor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cohort_id", "tutor_id"], name: "index_cohort_tutor_joins_on_cohort_id_and_tutor_id", unique: true
+    t.index ["tutor_id"], name: "index_cohort_tutor_joins_on_tutor_id"
   end
 
   create_table "cohorts", force: :cascade do |t|
@@ -1214,6 +1223,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_29_000000) do
     t.index ["user_id", "postable_id"], name: "thredded_user_topic_read_states_user_postable", unique: true
   end
 
+  create_table "tutor_appointments", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id", "user_id"], name: "index_tutor_appointments_on_lecture_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_tutor_appointments_on_user_id"
+  end
+
   create_table "tutor_tutorial_joins", force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "tutor_id", null: false
@@ -1517,6 +1535,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_29_000000) do
   add_foreign_key "cohort_memberships", "cohorts"
   add_foreign_key "cohort_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "cohort_memberships", "users"
+  add_foreign_key "cohort_tutor_joins", "cohorts"
+  add_foreign_key "cohort_tutor_joins", "users", column: "tutor_id"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
@@ -1576,6 +1596,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_29_000000) do
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
+  add_foreign_key "tutor_appointments", "lectures"
+  add_foreign_key "tutor_appointments", "users"
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
   add_foreign_key "tutorial_memberships", "lectures"

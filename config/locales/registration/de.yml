@@ -7,6 +7,10 @@ de:
         already_finalized: "Anmeldeverfahren ist bereits abgeschlossen."
       created: "Anmeldeverfahren erfolgreich erstellt."
       create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
+      takes_no_new_items: "Diesem Anmeldeverfahren kann keine Gruppe mehr hinzugefügt werden: Die Zuteilung ist berechnet oder das Verfahren abgeschlossen."
+      new_group_mail_hint: "%{group} ist neu in einem Anmeldeverfahren, für das sich schon Leute angemeldet haben."
+      new_group_mail_link: "Gib ihnen Bescheid"
+      new_group_mail_subject: "Neue Gruppe: %{group}"
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
       discarded: "Anmeldeverfahren verworfen. Die Gruppen bleiben erhalten und können jetzt manuell verwaltet werden."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
@@ -69,12 +73,14 @@ de:
         choice:
           question: "Benötigst Du ein Anmeldeverfahren?"
           hint: >-
-            Wenn Du unsicher bist, empfehlen wir Dir ein Anmeldeverfahren.
-            Damit kannst Du ein klares Registrierungsfenster festlegen, die
-            Nachfrage vor der endgültigen Zuteilung besser überblicken und
-            Regeln oder begrenzte Plätze fairer verwalten. Außerdem kannst Du
-            die Zuteilung automatisch anhand der Präferenzen der Studierenden
-            berechnen lassen.
+            Mit einem Anmeldeverfahren legst Du ein festes Anmeldefenster fest,
+            siehst die Nachfrage, bevor die Plätze endgültig vergeben werden,
+            und kannst Anmeldebedingungen und begrenzte Plätze fair handhaben;
+            auf Wunsch wird automatisch nach den Präferenzen der Studierenden
+            zugeteilt. Ohne Anmeldeverfahren bist Du flexibler: Du trägst Leute
+            direkt in Gruppen ein oder lässt sie selbst beitreten, jederzeit und
+            ohne Frist. Dafür gibt es keine Wahl nach Präferenzen und keine
+            Anmeldebedingungen.
         columns:
           description: "Kurzbeschreibung"
           type: "Typ"

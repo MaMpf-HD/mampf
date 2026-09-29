@@ -14,9 +14,20 @@ module Dashboard
       )
     end
 
+    # A tutor is one before having a group: by a redeemed voucher or by
+    # address. Running a flexible group counts as well, unless the user holds a
+    # place in the lecture too: then its card stays with the enrolled ones,
+    # which carry what a student needs.
     def tutored_lectures
       @tutored_lectures ||= lectures_of_term(
         Lecture.where(id: user.given_tutorials.select(:lecture_id))
+               .or(Lecture.where(id: user.given_cohorts.where(context_type: "Lecture")
+                                                   .select(:context_id))
+                          .where.not(id: seated_lectures.select(:id)))
+               .or(Lecture.where(id: user.tutor_appointments.select(:lecture_id)))
+               .or(Lecture.where(id: Voucher.for_tutors
+                                            .where(id: user.redemptions.select(:voucher_id))
+                                            .select(:lecture_id)))
       ) - staff_lectures
     end
 
@@ -26,10 +37,9 @@ module Dashboard
     # talk has a card to sit on.
     def enrolled_lectures
       @enrolled_lectures ||= begin
-        seated = user.roster_lectures.or(user.lectures_with_registration_application)
         speaking = talks.map(&:lecture_id).uniq -
                    (staff_lectures + tutored_lectures).map(&:id)
-        enrolled = lectures_of_term(Lecture.where(id: seated.select(:id))
+        enrolled = lectures_of_term(Lecture.where(id: seated_lectures.select(:id))
                                            .or(Lecture.where(id: speaking)))
         statuses = Registration::StatusQuery.new(user, enrolled.map(&:id))
                                             .statuses
@@ -75,6 +85,11 @@ module Dashboard
     end
 
     private
+
+      # The lectures the user holds a place in or has applied to as a student.
+      def seated_lectures
+        user.roster_lectures.or(user.lectures_with_registration_application)
+      end
 
       def lectures_of_term(scope)
         independent = scope.where(term: nil).includes(:course, :teacher)

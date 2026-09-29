@@ -133,7 +133,7 @@ const STAFF = "You are staff in these";
 async function expectLectureOnDashboard(page: Page, lecture: FactoryBotObject, section: string) {
   await page.goto(`/?term=${lecture.term_id ?? ""}`);
   const region = page.getByRole("region", { name: section });
-  await expect(region.getByRole("link", { name: COURSE_TITLE })).toBeVisible();
+  await expect(region.getByRole("heading", { name: COURSE_TITLE })).toBeVisible();
 }
 
 function notificationList(page: Page): Locator {
@@ -192,7 +192,8 @@ async function redeemWithNothingToClaim(
   await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGES[type])).toBeVisible();
   await expect(student.page.getByRole("link", { name: "Redeem Voucher" })).toBeVisible();
   await redeemVoucher(student.page, role);
-  await expectLectureOnDashboard(student.page, lecture, BOOKMARKED);
+  // a tutor is one before having a tutorial; a speaker without a talk is not
+  await expectLectureOnDashboard(student.page, lecture, role === "tutor" ? TUTORING : BOOKMARKED);
 
   if (type === "talk") {
     await teacher.page.goto(`/lectures/${lecture.id}/edit`);

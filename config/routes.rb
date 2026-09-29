@@ -361,6 +361,9 @@ Rails.application.routes.draw do
 
   resources :lectures, except: [:index, :show] do
     get "roster", to: "roster/maintenance#index"
+    resources :tutor_appointments, only: [:create, :destroy], param: :user_id
+    resources :editors, only: :create, controller: "lecture_editors"
+    get "cohort_participants", to: "cohort_participants#index"
     get "roster/participants", to: "roster/maintenance#participants"
 
     member do

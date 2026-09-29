@@ -35,6 +35,14 @@ RSpec.describe("Registration::Items", type: :request) do
         expect(response.body).to include(I18n.t("registration.item.created"))
       end
 
+      it "adds no group once the process is completed" do
+        completed = create(:registration_campaign, :completed, campaignable: lecture)
+
+        expect do
+          post(registration_campaign_items_path(completed), params: valid_params)
+        end.not_to change(Registration::Item, :count)
+      end
+
       context "with invalid parameters" do
         it "does not create an item" do
           expect do

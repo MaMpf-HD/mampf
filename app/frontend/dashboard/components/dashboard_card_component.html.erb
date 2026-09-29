@@ -12,7 +12,11 @@
 
     <div class="dashboard-card__body">
       <h3 class="dashboard-card__title">
-        <%= link_to title, href, class: "dashboard-card__link stretched-link" %>
+        <% if href %>
+          <%= link_to title, href, class: "dashboard-card__link stretched-link" %>
+        <% else %>
+          <%= title %>
+        <% end %>
       </h3>
 
       <% if subtitle? %>

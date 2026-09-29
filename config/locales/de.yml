@@ -100,6 +100,7 @@ de:
     mampf_news: 'MaMpf-News'
     submissions: 'Abgaben'
     tutorials: 'Tutorien'
+    cohorts: 'Flexible Gruppen'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.
@@ -452,10 +453,22 @@ de:
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
+      editors_by_email:
+        label: "EditorIn per E-Mail-Adresse hinzufügen"
+        add: "EditorIn hinzufügen"
+        hint: >-
+          Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und steht
+          dann oben bei den EditorInnen, wo sie sich auch wieder entfernen lässt.
       tutors_overview:
-        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten); EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
-        none_yet: "Noch keine TutorInnen. Erstelle unten einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
-        no_tutorial_yet: "Gutschein eingelöst, noch keinem Tutorium zugeordnet"
+        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten) oder indem Du sie über die Adresse ihres Kontos hinzufügst; EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien und flexiblen Gruppen zugeordnet. Hier steht, wer welche Gruppe betreut."
+        none_yet: "Noch keine TutorInnen. Füge sie unten über ihre Adresse hinzu, oder erstelle einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
+        no_group_yet: "Gutschein eingelöst, noch keiner Gruppe zugeordnet"
+        added_no_group_yet: "über die Adresse hinzugefügt, noch keiner Gruppe zugeordnet"
+        add_by_email: "TutorIn per E-Mail-Adresse hinzufügen"
+        add_hint: "Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und kann dann einer Gruppe zugeordnet werden."
+        add: "TutorIn hinzufügen"
+        remove: "%{name} entfernen"
+        remove_confirm: "%{name} von den TutorInnen dieser Veranstaltung entfernen? Zuordnungen zu flexiblen Gruppen bleiben bestehen."
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'
@@ -665,12 +678,13 @@ de:
           DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
           Veranstaltung einpflegen. Du kannst nur Personen auswählen,
-          die von Ihrem Rechtestatus her dafür in Frage kommen.
+          die von ihrem Rechtestatus her dafür in Frage kommen.
           Um den entsprechenden Rechtestatus an Personen zu vergeben,
           die ihn bisher noch nicht haben, musst Du einen Gutschein
           erstellen und diesen an die entsprechende Person weitergeben.
           Die Person kann dann den Gutschein auf ihrer Profilseite einlösen
-          und wird dadurch zusätzliche VeranstaltungseditorIn.
+          und wird dadurch zusätzliche VeranstaltungseditorIn. Oder Du fügst
+          sie unten über die E-Mail-Adresse ihres MaMpf-Kontos hinzu.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese Veranstaltung gemerkt
           haben.
@@ -2303,6 +2317,7 @@ de:
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
     edit_lecture: 'Veranstaltung bearbeiten'
+    goto_dashboard: 'Zu Deinem Dashboard'
     subscribe_lecture: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.'
     subscribe_lecture_html: 'Du findest sie in %{dashboard}.'
     subscribe_lecture_in_term: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.'
@@ -3341,8 +3356,6 @@ de:
     file_format: Abgabeformat
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
-    nothing_yet_in_lecture: >
-      In dieser Vorlesung war bisher noch nichts abzugeben.
     deletion_date: Löschdatum
     destruction_info:
       <i>
@@ -3355,7 +3368,34 @@ de:
         Diese Hausaufgabe wird bei der Veröffentlichung des assoziierten
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
+  lecture_editors:
+    create:
+      no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
+      already: "%{name} ist bereits EditorIn oder DozentIn dieser Veranstaltung."
+      added: "%{name} ist jetzt EditorIn und bekommt eine Mail darüber."
+  tutor_appointments:
+    create:
+      no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
+      already: "%{name} kann bereits einem Tutorium zugeordnet werden."
+      added: "%{name} ist jetzt TutorIn und bekommt eine Mail darüber."
   tutorial:
+    not_assigned_yet: >
+      Du bist TutorIn in dieser Veranstaltung, aber noch keinem Tutorium
+      zugeordnet. Sobald Du eines übernimmst, erscheint es hier.
+    tutors_missing_html: "Fehlt jemand? Im Reiter %{link} machst Du Leute zu TutorInnen: mit einem Gutschein oder über die E-Mail-Adresse ihres MaMpf-Kontos."
+    participants:
+      button: "Teilnehmende"
+      pick: "Auswählen …"
+      title: "Teilnehmende"
+      none: "In dieser Gruppe ist noch niemand."
+      registered_title: "Angemeldet, noch nicht endgültig"
+      no_program: "ohne Angabe"
+      registered_hint: >
+        Sie kommen in die Gruppe, sobald die Anmeldung „%{campaign}“
+        abgeschlossen ist. Bis dahin können sich Anmeldungen noch ändern.
+      allocation_pending: >
+        Die Anmeldung „%{campaign}“ teilt die Gruppen nach ihrem Ende
+        (%{deadline}) zu; bis dahin steht nicht fest, wer in diese Gruppe kommt.
     title_placeholder: "z. B. Mo 14–16"
     location_placeholder: "z. B. SR 3"
     no_tutorials_yet: >
@@ -3401,11 +3441,9 @@ de:
         Diese können Abgaben einsehen und Korrekturen hochladen.
         Du kannst nur Personen auswählen, die den Status "TutorIn" in der
         Veranstaltung haben, dazu EditorInnen und Dich selbst.
-        Um Studierenden den Status einer TutorIn zu geben, musst Du
-        im Reiter "Personal" einen Gutschein erstellen, den die Studierenden
-        einlösen können.
-        Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
-        werden.
+        Im Reiter "Personal" machst Du Leute zu TutorInnen: mit einem
+        Gutschein, den Du ihnen außerhalb von MaMpf gibst und den sie einlösen,
+        oder über die E-Mail-Adresse ihres MaMpf-Kontos.
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
@@ -3502,6 +3540,11 @@ de:
     author: 'VerfasserIn'
     text: 'Text'
     new_editor_subject: 'EditorInnenrechte für %{title}'
+    new_tutor_subject: 'TutorIn in %{title}'
+    new_tutor: >
+      Hallo %{username}, Du wurdest als TutorIn in %{title} eingetragen. Die
+      Veranstaltung steht auf Deinem Dashboard; Deine Gruppen erscheinen dort,
+      sobald Du ihnen zugeordnet bist.
     new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_teacher_subject: 'DozentInnenstatus für %{title}'
     new_teacher: 'Hallo %{username}, Du hast soeben DozentInnenstatus für %{title} erhalten.'

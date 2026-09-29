@@ -11,6 +11,7 @@
       <option value="<%= lecture_tutorials_path(
                         @lecture,
                         params: { assignment: @assignment&.id, achievement: @achievement&.id,
+                                  view: ('participants' if @participants),
                                   tutorial: t.id }.compact
                       ) %>">
         <%= t.title %>

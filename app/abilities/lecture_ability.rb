@@ -20,6 +20,11 @@ class LectureAbility
       user.can_edit?(lecture)
     end
 
+    # The same as changing the editors in the lecture's people form.
+    can :add_editor, Lecture do |lecture|
+      user.can_update_personell?(lecture)
+    end
+
     # there is a redirect to the lecture's home page inside the controller
     # if the lecture's content is not accessible to the user (see
     # Lecture#content_accessible_by?)

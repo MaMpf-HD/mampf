@@ -1,5 +1,5 @@
 <div id="registration_items_container">
-  <% can_add_groups = campaign.draft? && campaign.campaignable.is_a?(Lecture) %>
+  <% can_add_groups = campaign.accepts_new_items? && campaign.campaignable.is_a?(Lecture) %>
 
   <% if campaign.completed? %>
     <div class="alert alert-light border">
@@ -22,9 +22,9 @@
       </div>
     </div>
   <% else %>
-    <% items = Rosters::RegisterableOrdering.sort_items(
+    <% items = preload_group_tutors(Rosters::RegisterableOrdering.sort_items(
          campaign.registration_items.includes(:registerable)
-       ) %>
+       )) %>
     <% footer = capture do %>
       <% if can_add_groups %>
         <%= render "registration/campaigns/add_group_links",
