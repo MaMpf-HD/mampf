@@ -6,7 +6,6 @@ en:
       many have registered and how many members they have so far.
     term: 'Term'
     no_lectures: 'There are no lectures in this term.'
-    no_groups: 'none'
     lecture: 'Lecture'
     teacher: 'Teacher'
     groups: 'Groups'

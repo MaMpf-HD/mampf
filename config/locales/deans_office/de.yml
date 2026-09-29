@@ -7,7 +7,6 @@ de:
       schon haben.
     term: 'Semester'
     no_lectures: 'In diesem Semester gibt es keine Veranstaltungen.'
-    no_groups: 'keine'
     lecture: 'Veranstaltung'
     teacher: 'DozentIn'
     groups: 'Gruppen'

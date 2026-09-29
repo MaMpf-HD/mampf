@@ -114,7 +114,10 @@
                     <% if groups.any? %>
                       <button
                         type="button"
-                        class="btn btn-link p-0 text-start fw-semibold text-decoration-none"
+                        class="
+                          btn btn-link p-0 text-start fw-semibold text-body
+                          text-decoration-none
+                        "
                         aria-expanded="false"
                         aria-controls="<%= groups_id %>"
                         data-deans-office-target="toggle"
@@ -128,6 +131,10 @@
                         <%= lecture_title %>
                       </button>
                     <% else %>
+                      <i
+                        class="bi bi-chevron-right invisible"
+                        aria-hidden="true"
+                      ></i>
                       <%= lecture_title %>
                     <% end %>
 
@@ -146,9 +153,7 @@
 
                   <td class="text-end pe-4">
                     <% if groups.empty? %>
-                      <span class="text-muted">
-                        <%= t("deans_office.no_groups") %>
-                      </span>
+                      <span class="text-muted">0</span>
                     <% else %>
                       <%= groups.size %>
                     <% end %>

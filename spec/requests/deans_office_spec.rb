@@ -211,6 +211,14 @@ RSpec.describe("Dean's office", type: :request) do
       expect(table["aria-labelledby"]).to eq("deans-office-lectures")
     end
 
+    # The page promises a fixed number of queries per term; a figure read per
+    # lecture or group would put one back for each of the 35 lectures.
+    it "asks the database no more for six lectures than for two" do
+      queries_for_lectures(1)
+
+      expect(queries_for_lectures(6)).to eq(queries_for_lectures(2))
+    end
+
     it "shows another term's lectures when it is picked" do
       other = create(:lecture, term: create(:term))
 
@@ -218,6 +226,34 @@ RSpec.describe("Dean's office", type: :request) do
 
       expect(response.body).to include(CGI.escapeHTML(other.course.title))
     end
+  end
+
+  def queries_for_lectures(count)
+    term = create(:term)
+    count.times do
+      lecture = create(:lecture, term: term)
+      tutorial = create(:tutorial, lecture: lecture, capacity: 10)
+      create(:tutorial_membership, tutorial: tutorial)
+      create(:cohort, context: lecture)
+      create(:exam, lecture: lecture)
+      campaign = create(:registration_campaign, :preference_based, campaignable: lecture)
+      item = create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      campaign.update!(status: :open)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item, preference_rank: 1)
+      create(:talk, lecture: create(:lecture, :is_seminar, term: term))
+    end
+
+    count_queries { get(deans_office_path(term: term.dashboard_param)) }
+  end
+
+  def count_queries(&)
+    queries = 0
+    counter = lambda { |*, payload|
+      queries += 1 unless payload[:name].to_s.match?(/SCHEMA|TRANSACTION/)
+    }
+    ActiveSupport::Notifications.subscribed(counter, "sql.active_record", &)
+    queries
   end
 
   describe "the admin's switch" do
