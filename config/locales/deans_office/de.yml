@@ -13,6 +13,25 @@ de:
     seats: 'Plätze'
     registered: 'Angemeldet'
     assigned: 'Zugeteilt'
+    registration: 'Anmeldung'
+    legend:
+      registration: 'Wie man in die Gruppe kommt.'
+      registered: >-
+        Anmeldungen im laufenden Anmeldeverfahren; wo nach Präferenzen verteilt
+        wird, die Erstwünsche. „–“, wo es keine Anmeldung gibt.
+      assigned: 'Wer jetzt in der Gruppe ist.'
+      seats: 'Wie viele die Gruppe höchstens aufnimmt.'
+    access:
+      open: 'läuft bis %{deadline} · %{mode}'
+      modes:
+        first_come: 'wer zuerst kommt'
+        preferences: 'nach Präferenzen'
+      allocating: 'geschlossen, Zuteilung steht aus'
+      not_open: 'Anmeldung noch nicht geöffnet'
+      no_campaign_yet: 'wartet auf ein Anmeldeverfahren'
+      self_join: 'Studierende tragen sich selbst ein'
+      completed: 'Anmeldung abgeschlossen'
+      staff_only: 'nur durch Lehrende'
     unlimited: 'unbegrenzt'
     seats_and_unlimited: '%{seats} + unbegrenzt'
     first_choices:

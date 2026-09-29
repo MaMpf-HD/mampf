@@ -51,7 +51,7 @@ RSpec.describe("Dean's office", type: :request) do
       lecture_row = doc.at_css("tbody[data-deans-office-target='lecture'] > tr")
       row = doc.css("tr").find { |tr| tr.text.include?(exam.title) }
       cells = lecture_row.css("td").map { |td| td.text.strip }
-      expect(cells.values_at(1, 2, 4)).to eq(["1", "1", "2"])
+      expect(cells.values_at(2, 3, 5)).to eq(["1", "1", "2"])
       expect(row.text).to include("2 / 1")
       expect(row.at_css(".progress-bar")[:class]).to include("bg-danger")
     end
@@ -107,10 +107,42 @@ RSpec.describe("Dean's office", type: :request) do
                          .css("td").map { |td| td.text.strip }
       monday_row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Monday group" }
       reading_row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Reading group" }
-      expect(lecture_cells[3]).to eq("3")
-      expect(monday_row.css("td").map { |td| td.text.strip }.values_at(1, 2))
+      expect(lecture_cells[4]).to eq("3")
+      expect(monday_row.css("td").map { |td| td.text.strip }.values_at(2, 3))
         .to eq(["12", "2"])
       expect(reading_row.text).to include("1 (first choice)")
+    end
+
+    # Without knowing how people get into a group the numbers cannot be read.
+    it "says for each group how people get into it" do
+      states = {
+        "Open group" => [:first_come_first_served, :open],
+        "Waiting group" => [:preference_based, :closed],
+        "Draft group" => [:first_come_first_served, :draft]
+      }
+      states.each do |title, (mode, status)|
+        tutorial = create(:tutorial, lecture: lecture, title: title)
+        campaign = create(:registration_campaign, mode, campaignable: lecture)
+        create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+        campaign.update!(status: status, registration_deadline: 1.week.from_now) if status == :open
+        campaign.update!(status: status, registration_deadline: 1.day.ago) if status == :closed
+      end
+      create(:tutorial, lecture: lecture, title: "Unassigned group")
+      create(:tutorial, lecture: lecture, title: "Joined group", skip_campaigns: true,
+                        self_materialization_mode: :add_only)
+      create(:tutorial, lecture: lecture, title: "Teacher's group", skip_campaigns: true)
+
+      get deans_office_path
+
+      rows = Nokogiri::HTML(response.body).css("tr").to_h do |tr|
+        [tr.at_css("th")&.text&.strip, tr.text.squish]
+      end
+      expect(rows["Open group"]).to include("open until", "first come, first served")
+      expect(rows["Waiting group"]).to include("closed, allocation pending")
+      expect(rows["Draft group"]).to include("registration not open yet")
+      expect(rows["Unassigned group"]).to include("waits for a registration")
+      expect(rows["Joined group"]).to include("students join themselves")
+      expect(rows["Teacher's group"]).to include("only through the teacher")
     end
 
     it "shows another term's lectures when it is picked" do

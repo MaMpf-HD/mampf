@@ -5,6 +5,13 @@
 
   <p class="text-muted"><%= t("deans_office.explainer") %></p>
 
+  <dl class="small text-muted row mb-3">
+    <% [:registration, :registered, :assigned, :seats].each do |column| %>
+      <dt class="col-sm-2"><%= t("deans_office.#{column}") %></dt>
+      <dd class="col-sm-10 mb-1"><%= t("deans_office.legend.#{column}") %></dd>
+    <% end %>
+  </dl>
+
   <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
     <%= form_with url: deans_office_path, method: :get, local: true,
                   data: { controller: "submit-on-change" },
@@ -59,6 +66,7 @@
           <tr>
             <th scope="col"><%= t("deans_office.lecture") %></th>
             <th scope="col"><%= t("deans_office.teacher") %></th>
+            <th scope="col"><%= t("deans_office.registration") %></th>
 
             <th scope="col" class="text-end pe-4">
               <%= t("deans_office.groups") %>
@@ -113,6 +121,10 @@
 
               <td><%= lecture.teacher.tutorial_name %></td>
 
+              <td class="small">
+                <%= deans_office_accesses(@overview.accesses(lecture)) if groups.any? %>
+              </td>
+
               <td class="text-end pe-4">
                 <% if groups.empty? %>
                   <span class="text-muted">
@@ -136,7 +148,7 @@
 
             <% if groups.any? %>
               <tr id="<%= groups_id %>" hidden>
-                <td colspan="6" class="bg-body-tertiary">
+                <td colspan="7" class="bg-body-tertiary">
                   <table
                     class="table table-sm mb-0 align-middle"
                     aria-label="<%= t('deans_office.groups_of', lecture: lecture_title) %>"
@@ -145,6 +157,10 @@
                       <tr>
                         <th scope="col"><%= t("deans_office.group") %></th>
                         <th scope="col"><%= t("deans_office.kind") %></th>
+
+                        <th scope="col">
+                          <%= t("deans_office.registration") %>
+                        </th>
 
                         <th scope="col" class="text-end pe-4">
                           <%= t("deans_office.seats") %>
@@ -172,6 +188,10 @@
 
                           <td>
                             <%= t("deans_office.kinds.#{group_type}") %>
+                          </td>
+
+                          <td class="small">
+                            <%= deans_office_access(@overview.access(group)) %>
                           </td>
 
                           <td class="text-end pe-4">

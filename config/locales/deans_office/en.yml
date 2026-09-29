@@ -13,6 +13,25 @@ en:
     seats: 'Seats'
     registered: 'Registered'
     assigned: 'Assigned'
+    registration: 'Registration'
+    legend:
+      registration: 'How people get into the group.'
+      registered: >-
+        Registrations in the running registration; where places go by
+        preference, the first choices. "–" where there is no registration.
+      assigned: 'Who is in the group now.'
+      seats: 'The most the group takes.'
+    access:
+      open: 'open until %{deadline} · %{mode}'
+      modes:
+        first_come: 'first come, first served'
+        preferences: 'by preference'
+      allocating: 'closed, allocation pending'
+      not_open: 'registration not open yet'
+      no_campaign_yet: 'waits for a registration'
+      self_join: 'students join themselves'
+      completed: 'registration completed'
+      staff_only: 'only through the teacher'
     unlimited: 'unlimited'
     seats_and_unlimited: '%{seats} + unlimited'
     first_choices:
