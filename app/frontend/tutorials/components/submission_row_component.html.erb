@@ -189,7 +189,7 @@
     class="text-center <%= layout.column_class(:correction) %>"
     data-id="<%= @submission.id %>"
   >
-    <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+    <% if @submission.tutorial.correctable_by?(helpers.current_user) %>
       <%= render partial: 'submissions/correction_column',
                 locals: { submission: @submission } %>
     <% else %>

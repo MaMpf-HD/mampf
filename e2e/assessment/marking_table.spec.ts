@@ -395,4 +395,39 @@ test.describe("marking table", () => {
     // hover fails when another element would take the pointer instead
     await note.hover();
   });
+
+  test("lets the lecture's teacher upload corrections for a group", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const { lecture, assignment } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id,
+      tutor_id: tutor.user.id,
+    });
+    const student = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Ada Lovelace",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.id,
+    });
+    await handIn(factory, assignment.id, tutorial.id, student.id);
+
+    await teacher.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
+    );
+    const row = teacher.page.getByRole("row", { name: /Ada Lovelace/ });
+    await expect(row.getByRole("link", { name: "Upload correction" })).toBeVisible();
+
+    await teacher.page.getByRole("button", { name: "More actions" }).click();
+    await teacher.page.getByRole("button", { name: "Bulk upload of corrections" }).click();
+    await expect(teacher.page.getByRole("heading", { name: /Bulk upload of corrections/ }))
+      .toBeVisible();
+  });
 });

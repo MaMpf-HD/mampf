@@ -9,11 +9,11 @@
 
     <div class="d-flex gap-2">
       <%#
-        While the sheet list is open every proposal is deferred and there is
-        nothing to accept; the rule card says so and where to change it.
+        While the list of sheets and tests holds the proposals back there is
+        nothing to accept; the rule box says so and links to where to change it.
       %>
 
-      <% if @rule && @uncertified_count > 0 && @lecture.assignments_complete? &&
+      <% if @rule && @uncertified_count > 0 && !assignment_list_holds_back?(@lecture, @rule) &&
             (@proposed_passed + @proposed_failed) > 0 %>
         <%# What the sweep would do is asked back, not worn on the button. %>
         <%= button_to bulk_accept_lecture_student_performance_certifications_path(@lecture),
@@ -34,7 +34,19 @@
       <% end %>
 
       <%# A rare correction, not a second main action: a quiet link. %>
-      <% if @computed_count > 0 %>
+      <% if @computed_count > 0 && @eligibility_in_use_by %>
+        <button
+          type="button"
+          class="btn btn-sm btn-link text-secondary text-decoration-none"
+          aria-describedby="eligibility-in-use-note"
+          disabled
+        >
+          <i class="bi bi-arrow-counterclockwise me-1"></i>
+
+          <%= t("student_performance.certifications.index.bulk_reset",
+                count: @computed_count) %>
+        </button>
+      <% elsif @computed_count > 0 %>
         <%= button_to bulk_reset_lecture_student_performance_certifications_path(@lecture),
                     method: :post,
                     class: "btn btn-sm btn-link text-secondary text-decoration-none",
@@ -54,6 +66,13 @@
       <% end %>
     </div>
   </div>
+
+  <%# Said on the page, not in a tooltip, so that touch and keyboard get it too. %>
+  <% if @computed_count > 0 && @eligibility_in_use_by %>
+    <p id="eligibility-in-use-note" class="small text-muted text-end mb-2">
+      <%= t("student_performance.eligibility_in_use", campaigns: @eligibility_in_use_by) %>
+    </p>
+  <% end %>
 
   <%= turbo_frame_tag "rule-editor-frame" do %>
     <%#
@@ -85,8 +104,17 @@
               </span>
             <% end %>
 
+            <% if @rule.no_requirement? %>
+              <strong>
+                <%= t("student_performance.rules.show.no_requirement") %>
+              </strong>
+              <span class="small text-muted">
+                <%= t("student_performance.rules.show.no_requirement_hint") %>
+              </span>
+            <% end %>
+
             <% if @rule.required_achievements.any? %>
-              <% if @rule.min_percentage.present? || @rule.min_points_absolute.present? %>
+              <% if @rule.points_threshold? %>
                 <span class="text-muted small mx-1">
                   <i class="bi bi-plus"></i>
                 </span>
@@ -130,7 +158,7 @@
           </div>
         </div>
 
-        <% unless @lecture.assignments_complete? %>
+        <% if assignment_list_holds_back?(@lecture, @rule) %>
           <div class="small text-muted border-top mt-2 pt-2">
             <i class="bi bi-info-circle me-1"></i>
             <%= t("student_performance.certifications.index.list_open") %>
@@ -187,20 +215,31 @@
           <%= t("student_performance.certifications.index.disagreeing_warning",
                 count: @disagreeing_user_ids.size) %>
 
-          <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
-                        method: :post,
-                        class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
-                        form: {
-                          class: "d-inline",
-                          data: {
-                            turbo_confirm: t(
-                              "student_performance.certifications.index.reevaluate_confirm",
-                              count: @disagreeing_user_ids.size
-                            )
-                          }
-                        } do %>
-            <%= t("student_performance.certifications.index.reevaluate") %>
-            <i class="bi bi-arrow-right-short"></i>
+          <% if @eligibility_in_use_by %>
+            <button
+              type="button"
+              class="btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap"
+              aria-describedby="eligibility-in-use-note"
+              disabled
+            >
+              <%= t("student_performance.certifications.index.reevaluate") %>
+            </button>
+          <% else %>
+            <%= button_to bulk_reevaluate_lecture_student_performance_certifications_path(@lecture),
+                          method: :post,
+                          class: "btn btn-link alert-link p-0 ms-2 align-baseline text-nowrap",
+                          form: {
+                            class: "d-inline",
+                            data: {
+                              turbo_confirm: t(
+                                "student_performance.certifications.index.reevaluate_confirm",
+                                count: @disagreeing_user_ids.size
+                              )
+                            }
+                          } do %>
+              <%= t("student_performance.certifications.index.reevaluate") %>
+              <i class="bi bi-arrow-right-short"></i>
+            <% end %>
           <% end %>
         </div>
       <% end %>
@@ -497,7 +536,7 @@
                     <%= t("student_performance.certifications.columns.rule_today") %>
                     <%= t("student_performance.certifications.rule_today.#{proposal.proposed_status}") %>
 
-                    <% reasons = proposal_reasons(proposal, @lecture) %>
+                    <% reasons = proposal_reasons(proposal) %>
 
                     <% if reasons.any? %>
                       &mdash;

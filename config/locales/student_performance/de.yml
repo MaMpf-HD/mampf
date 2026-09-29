@@ -6,13 +6,13 @@ de:
           attributes:
             base:
               percentage_and_absolute_exclusive: "Es kann nicht gleichzeitig ein Prozent- und ein absoluter Punkteschwellwert angegeben werden"
-              no_criteria: "Die Regel braucht mindestens ein Kriterium: einen Punkteschwellwert oder ein Zusatzkriterium. Ohne Kriterium würden alle Studierenden zugelassen."
               threshold_without_mode: "Es ist ein Punkteschwellwert gesetzt, obwohl kein Schwellenmodus gewählt wurde"
         student_performance/rule_achievement:
           attributes:
             achievement:
               must_belong_to_same_lecture: "muss zur selben Veranstaltung gehören wie die Regel"
   student_performance:
+    eligibility_in_use: "Die Anmeldung für %{campaigns} fragt diese Zulassungen noch ab. Schließe sie zuerst ab, oder entferne dort, solange sie ein Entwurf ist, die Richtlinie „Studierendenleistung“."
     lists:
       search: "Studierende suchen"
       no_match: "Keine Studierenden gefunden."
@@ -95,6 +95,8 @@ de:
       show:
         of_total_points: "der Gesamtpunkte erforderlich"
         points_absolute: "Punkte erforderlich (absolut)"
+        no_requirement: "Keine Voraussetzung"
+        no_requirement_hint: "jede Person wird zur Zulassung vorgeschlagen"
         edit_button: "Regel bearbeiten"
         value_types:
           boolean: "Erforderlich"
@@ -107,7 +109,7 @@ de:
         save: "Regel speichern"
         threshold_section: "Punkteschwelle"
         none_mode: "Keine Punkteschwelle"
-        none_hint: "Zulassung wird ausschließlich anhand der Zusatzkriterien bestimmt."
+        none_hint: "Es zählen nur die geforderten Zusatzkriterien. Sind keine gewählt, wird jede Person zur Zulassung vorgeschlagen, und Du lehnst einzelne von Hand ab."
         percentage_mode: "Prozent der Gesamtpunkte"
         percentage_hint: "Studierende müssen diesen Prozentsatz der Gesamtpunkte erreichen."
         absolute_mode: "Absolute Punkte"
@@ -117,8 +119,17 @@ de:
         absolute_field: "Mindestpunktzahl"
         achievements_section: "Erforderliche Zusatzkriterien"
         achievements_hint: "Wählen Sie, welche Zusatzkriterien Studierende erfüllen müssen."
+        remove: "Regel entfernen"
+        remove_confirm:
+          zero: "Entfernt die Regel; dann entscheidest Du über jede Person wieder von Hand. Einzelentscheidungen bleiben."
+          one: "Entfernt die Regel und setzt die %{count} Entscheidung zurück, die sie getroffen hat; dann entscheidest Du über jede Person wieder von Hand. Einzelentscheidungen bleiben."
+          other: "Entfernt die Regel und setzt die %{count} Entscheidungen zurück, die sie getroffen hat; dann entscheidest Du über jede Person wieder von Hand. Einzelentscheidungen bleiben."
       flash:
         updated: "Zulassungsregel aktualisiert."
+        removed:
+          zero: "Zulassungsregel entfernt."
+          one: "Zulassungsregel entfernt, %{count} Entscheidung zurückgesetzt."
+          other: "Zulassungsregel entfernt, %{count} Entscheidungen zurückgesetzt."
       preview:
         button: "Vorschau"
         impact: "Auswirkung"

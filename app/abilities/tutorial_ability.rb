@@ -15,8 +15,7 @@ class TutorialAbility
 
     can [:bulk_download_submissions, :bulk_download_corrections, :bulk_upload,
          :export_teams], Tutorial do |tutorial|
-      user.in?(tutorial.tutors) ||
-        user.editor_or_teacher_in?(tutorial.lecture)
+      tutorial.correctable_by?(user)
     end
 
     can :validate_certificate, Tutorial do

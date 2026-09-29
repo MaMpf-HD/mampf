@@ -386,6 +386,26 @@ RSpec.describe("Lectures", type: :request) do
     end
   end
 
+  describe "GET /lectures/:id/show_random_quizzes" do
+    let(:user) { create(:confirmed_user) }
+    let(:lecture) { create(:lecture, :released_for_all) }
+
+    before do
+      create(:lecture_bookmark, user: user, lecture: lecture)
+      10.times do
+        build(:question, :with_stuff, teachable: lecture.course, released: "all")
+          .save(validate: false)
+      end
+    end
+
+    it "renders the self test with the notation help" do
+      get show_random_quizzes_path(lecture)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(CGI.escapeHTML(I18n.t("test.notation_header")))
+    end
+  end
+
   describe "GET /lectures/:id as staff" do
     let(:lecture) { create(:lecture, :released_for_all, teacher: user) }
 

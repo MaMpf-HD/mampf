@@ -171,7 +171,7 @@ de:
       go_to_registration: 'Zur Anmeldung →'
     assignments_complete:
       label: 'Die Liste der Blätter und Tests ist vollständig'
-      hint: 'Setze das Häkchen, wenn alle Übungsblätter und Tests des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück — jedes weitere Blatt und jeder weitere Test kann es umwerfen. Ein neues Blatt oder ein neuer Test entfernt das Häkchen wieder.'
+      hint: 'Setze das Häkchen, wenn alle Übungsblätter und Tests des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück, das von Punkten abhängt — jedes weitere Blatt und jeder weitere Test kann es umwerfen. Ein neues Blatt oder ein neuer Test entfernt das Häkchen wieder.'
       cancel: 'Abbrechen'
       close_dialog:
         title: 'Häkchen setzen'
@@ -179,13 +179,16 @@ de:
         confirm: 'Häkchen setzen'
       open_dialog:
         title: 'Häkchen entfernen'
-        body: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts: Jedes Urteil wird zurückgestellt, bis Du es wieder setzt.'
+        body: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts, was von Punkten abhängt: Solche Urteile werden zurückgestellt, bis Du es wieder setzt.'
         confirm: 'Häkchen entfernen'
       reopen_dialog:
         title: 'Häkchen entfernen'
         body:
           one: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassung widerspricht ihr danach. Jetzt zurücksetzen? Diese Zulassung ist dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
           other: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Jetzt zurücksetzen? Diese Zulassungen sind dann wieder offen. Einzelentscheidungen bleiben in jedem Fall.'
+        body_in_use:
+          one: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassung widerspricht ihr danach. Sie bleibt, weil die Anmeldung für %{campaigns} sie noch abfragt.'
+          other: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Sie bleiben, weil die Anmeldung für %{campaigns} sie noch abfragt.'
         reset: 'Zurücksetzen'
         confirm: 'Behalten'
     campaign_status:
