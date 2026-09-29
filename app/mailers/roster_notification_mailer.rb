@@ -110,7 +110,7 @@ class RosterNotificationMailer < ApplicationMailer
       def deliver_grouped(template, rosterable, users)
         users.group_by(&:locale).each_value do |users_in_locale|
           with(rosterable: rosterable,
-               recipients: users_in_locale).public_send(template).deliver_later
+               recipients: users_in_locale.map(&:id)).public_send(template).deliver_later
         end
       end
   end
@@ -172,7 +172,7 @@ class RosterNotificationMailer < ApplicationMailer
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
-      @recipients      = params[:recipients]
+      @recipients      = User.where(id: params[:recipients]).to_a if params[:recipients].present?
       @participant     = params[:participant]
       @username        = @recipient&.tutorial_name
       @lecture         = params[:lecture] ||
@@ -185,6 +185,8 @@ class RosterNotificationMailer < ApplicationMailer
     # Multiple recipients: members in bcc.
     def email
       prepare_data(params)
+      return if @recipients.blank? && @recipient.blank?
+
       addressees = @recipient ? [@recipient] : @recipients
       locale = addressees.first.locale
       addressing = @recipient ? { to: @recipient.email } : { bcc: @recipients.map(&:email) }

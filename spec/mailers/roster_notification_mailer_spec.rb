@@ -343,7 +343,7 @@ describe RosterNotificationMailer do
           a_hash_including(
             params: a_hash_including(
               rosterable: tutorial,
-              recipients: match_array([user, other_user])
+              recipients: match_array([user.id, other_user.id])
             )
           )
         )
@@ -516,7 +516,7 @@ describe RosterNotificationMailer do
         a_hash_including(
           params: a_hash_including(
             rosterable: exam,
-            recipients: match_array([user, other_user])
+            recipients: match_array([user.id, other_user.id])
           )
         )
       )
@@ -557,7 +557,7 @@ describe RosterNotificationMailer do
       it "puts all recipients in bcc and none in to" do
         email = described_class.with(
           rosterable: exam,
-          recipients: [user, other_user]
+          recipients: [user.id, other_user.id]
         ).change_exam_schedule_email
 
         delivered = deliver(email)
@@ -570,7 +570,7 @@ describe RosterNotificationMailer do
       it "carries the new schedule in the change mail with a link to the lecture home" do
         email = described_class.with(
           rosterable: exam,
-          recipients: [user]
+          recipients: [user.id]
         ).change_exam_schedule_email
 
         delivered = deliver(email)
@@ -694,7 +694,7 @@ describe RosterNotificationMailer do
 
     it "carries no markup in a mail to a whole group" do
       body = text_part_of(described_class.with(
-        rosterable: rosterable, recipients: [user]
+        rosterable: rosterable, recipients: [user.id]
       ).added_to_group_email)
 
       expect(body).not_to include("Alice")
