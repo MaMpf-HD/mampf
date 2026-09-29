@@ -6,7 +6,7 @@ import { Controller } from "@hotwired/stimulus";
  * also return the focus to the button.
  */
 export default class extends Controller {
-  static targets = ["panel", "toggle", "email", "message", "page", "result", "form"];
+  static targets = ["panel", "toggle", "email", "message", "result", "form"];
 
   connect() {
     this.closeOnOutsideClick = (event) => {
@@ -58,10 +58,11 @@ export default class extends Controller {
 
   /**
    * Moves the focus to the invalid field of a returned form. The form on page
-   * load also connects, but its panel is still hidden.
+   * load also connects, but its panel is still hidden, and the form under a
+   * result leaves the focus on the result.
    */
   formTargetConnected(form) {
-    if (this.panelTarget.hidden) return;
+    if (this.panelTarget.hidden || this.hasResultTarget) return;
 
     (form.querySelector(".is-invalid") || this.firstField())?.focus();
   }
@@ -69,13 +70,5 @@ export default class extends Controller {
   firstField() {
     if (this.hasEmailTarget) return this.emailTarget;
     return this.hasMessageTarget ? this.messageTarget : null;
-  }
-
-  /**
-   * Records the URL at submit time: lecture pages change it through the main
-   * turbo frame, which keeps this widget.
-   */
-  stampPage() {
-    if (this.hasPageTarget) this.pageTarget.value = window.location.href;
   }
 }

@@ -5,9 +5,15 @@ RSpec.describe("SupportRequests", type: :request) do
 
   def send_request(message: "My exam registration does not work.", email: nil)
     post(support_requests_path,
-         params: { support_request: { message: message, email: email,
-                                      page: "http://localhost/lectures/1" } },
+         params: { support_request: { message: message, email: email } },
          as: :turbo_stream)
+  end
+
+  def throttled_text
+    wait = ActionController::Base.helpers.distance_of_time_in_words(
+      SupportRequestsController::THROTTLE_WINDOW
+    )
+    I18n.t("devise.failure.too_many_requests", wait: wait)
   end
 
   before { Rails.cache.clear }
@@ -21,6 +27,14 @@ RSpec.describe("SupportRequests", type: :request) do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t("support_request.sent"))
+    end
+
+    # A second question should not need a new page.
+    it "offers an empty form for the next message" do
+      send_request
+
+      form = Nokogiri::HTML(response.body).at_css("form[action='#{support_requests_path}']")
+      expect(form.at_css("textarea").text.strip).to be_empty
     end
 
     it "sends nothing for a message too short to act on" do
@@ -37,16 +51,14 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "stops after five messages in an hour" do
-      6.times { send_request }
+    it "stops only after more messages than somebody not signed in may send" do
+      SupportRequestsController::SIGNED_IN_LIMIT.times { send_request }
+      expect(response).to have_http_status(:ok)
 
-      wait = ActionController::Base.helpers.distance_of_time_in_words(
-        SupportRequestsController::THROTTLE_WINDOW
-      )
+      send_request
+
       expect(response).to have_http_status(:too_many_requests)
-      expect(response.body).to include(
-        I18n.t("devise.failure.too_many_requests", wait: wait)
-      )
+      expect(response.body).to include(throttled_text)
     end
   end
 
@@ -73,6 +85,22 @@ RSpec.describe("SupportRequests", type: :request) do
     it "takes a message with an address to answer to" do
       expect { send_request(email: "someone@example.com") }
         .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+    end
+
+    it "keeps the address in the form for the next message" do
+      send_request(email: "someone@example.com")
+
+      field = Nokogiri::HTML(response.body).at_css("input[type='email']")
+      expect(field["value"]).to eq("someone@example.com")
+    end
+
+    it "stops after a few messages in an hour" do
+      (SupportRequestsController::SIGNED_OUT_LIMIT + 1).times do
+        send_request(email: "someone@example.com")
+      end
+
+      expect(response).to have_http_status(:too_many_requests)
+      expect(response.body).to include(throttled_text)
     end
 
     it "asks for the address" do

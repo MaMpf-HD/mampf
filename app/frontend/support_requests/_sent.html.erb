@@ -1,5 +1,6 @@
+<%# locals: (support_request:) %>
 <p
-  class="mb-0"
+  class="small"
   role="status"
   tabindex="-1"
   data-support-widget-target="result"
@@ -7,3 +8,5 @@
   <i class="bi bi-check-circle text-success me-1" aria-hidden="true"></i>
   <%= t(user_signed_in? ? "support_request.sent" : "support_request.sent_signed_out") %>
 </p>
+
+<%= render "support_requests/form", support_request: support_request, intro: false %>

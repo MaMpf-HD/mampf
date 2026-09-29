@@ -3,6 +3,5 @@ From: <%= @user.tutorial_name %> (<%= @user.email %>, id <%= @user.id %>)
 <% else %>
 From: <%= @support_request["email"] %> (not signed in, address not verified)
 <% end %>
-Page: <%= @support_request["page"] %>
 -----
 <%= @support_request["message"] %>

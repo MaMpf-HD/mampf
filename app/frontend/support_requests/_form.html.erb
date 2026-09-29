@@ -1,13 +1,15 @@
-<%# locals: (support_request:, throttled: nil) %>
+<%# locals: (support_request:, throttled: nil, intro: true) %>
 <% email_invalid = support_request.errors[:email].any? %>
 <% message_invalid = support_request.errors[:message].any? %>
 
 <%= form_with model: support_request, url: support_requests_path, local: true,
-              data: { action: "submit->support-widget#stampPage",
-                      support_widget_target: "form" } do |f| %>
-  <p class="small text-muted">
-    <%= t(user_signed_in? ? "support_request.intro" : "support_request.intro_signed_out") %>
-  </p>
+              data: { support_widget_target: "form" } do |f| %>
+  <% if intro %>
+    <p class="small text-muted">
+      <%= t(user_signed_in? ? "support_request.intro_html" : "support_request.intro_signed_out_html",
+            email: mail_to(DefaultSetting::FEEDBACK_EMAIL)) %>
+    </p>
+  <% end %>
 
   <% if throttled %>
     <div class="alert alert-warning py-2 small" role="alert">
@@ -56,8 +58,6 @@
       </div>
     <% end %>
   </div>
-
-  <%= f.hidden_field :page, data: { support_widget_target: "page" } %>
 
   <div class="text-end">
     <%= f.submit t("support_request.send"), class: "btn btn-primary btn-sm" %>

@@ -8,11 +8,15 @@ test.describe("the support button", () => {
     await page.goto("/");
 
     await page.getByRole("button", { name: "Contact support" }).click();
-    await page.getByRole("textbox", { name: "Your message" })
-      .fill("My exam registration does not work.");
+    await expect(page.getByText("You can also write to us at")).toBeVisible();
+    const message = page.getByRole("textbox", { name: "Your message" });
+    await message.fill("My exam registration does not work.");
     await page.getByRole("button", { name: "Send" }).click();
 
     await expect(page.getByRole("status")).toContainText("Thank you!");
+    // a second question needs no new page
+    await expect(message).toHaveValue("");
+    await expect(page.getByRole("button", { name: "Send" })).toBeVisible();
   });
 
   // Runs on the login page, where the button serves visitors who cannot sign in.

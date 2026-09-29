@@ -2,8 +2,14 @@ de:
   support_request:
     open: "Support kontaktieren"
     title: "Support kontaktieren"
-    intro: "Deine Nachricht geht an das MaMpf-Team, das Dir per E-Mail antwortet."
-    intro_signed_out: "Deine Nachricht geht an das MaMpf-Team, das Dir an die angegebene Adresse antwortet."
+    intro_html: >
+      Deine Nachricht geht an das MaMpf-Team, das Dir per E-Mail antwortet. Fragen zu
+      einer Veranstaltung richtest Du am besten an ihre DozentIn. Du kannst uns auch
+      an %{email} schreiben.
+    intro_signed_out_html: >
+      Deine Nachricht geht an das MaMpf-Team, das Dir an die angegebene Adresse
+      antwortet. Fragen zu einer Veranstaltung richtest Du am besten an ihre DozentIn.
+      Du kannst uns auch an %{email} schreiben.
     email: "Deine E-Mail-Adresse"
     message: "Deine Nachricht"
     message_placeholder: "Wie können wir helfen?"

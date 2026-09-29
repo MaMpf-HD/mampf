@@ -9,7 +9,6 @@ class SupportRequest
 
   attribute :message, :string
   attribute :email, :string
-  attribute :page, :string
   attr_accessor :user
 
   validates :message, presence: true,

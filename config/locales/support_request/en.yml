@@ -2,8 +2,13 @@ en:
   support_request:
     open: "Contact support"
     title: "Contact support"
-    intro: "Your message goes to the MaMpf team, who will reply by email."
-    intro_signed_out: "Your message goes to the MaMpf team, who will reply to the address you enter."
+    intro_html: >
+      Your message goes to the MaMpf team, who will reply by email. Questions about
+      a lecture are best sent to its teacher. You can also write to us at %{email}.
+    intro_signed_out_html: >
+      Your message goes to the MaMpf team, who will reply to the address you enter.
+      Questions about a lecture are best sent to its teacher. You can also write to
+      us at %{email}.
     email: "Your email address"
     message: "Your message"
     message_placeholder: "How can we help?"
