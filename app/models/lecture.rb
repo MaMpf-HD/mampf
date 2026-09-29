@@ -106,7 +106,7 @@ class Lecture < ApplicationRecord
   has_many :cohorts, as: :context, dependent: :destroy
 
   # Stores a pass phrase of blanks as none, so that `restricted?` and the SQL
-  # scopes (`restricted`, User#unlocked_lectures) agree about it.
+  # of User#unlocked_lectures agree about it.
   normalizes :passphrase, with: ->(value) { value.presence }
 
   # we do not allow that a teacher gives a certain lecture in a given term
@@ -173,8 +173,6 @@ class Lecture < ApplicationRecord
   scope :published, -> { where.not(released: nil) }
 
   scope :no_term, -> { where(term: nil) }
-
-  scope :restricted, -> { where.not(passphrase: ["", nil]) }
 
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
 

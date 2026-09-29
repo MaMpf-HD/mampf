@@ -76,6 +76,35 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include(current_course.title)
         expect(response.body).not_to include(other_course.title)
       end
+
+      it "names each result's term when there is no term to scope to" do
+        other_term = create(:term, :winter)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Geometry", show_term: "0" } },
+            as: :turbo_stream
+
+        expect(response.body).to include("Geometry Other", other_term.to_label_short)
+      end
+
+      it "searches every term when asked to, and names each result's term" do
+        current_term = create(:term, :summer, :active)
+        other_term = create(:term, :winter)
+        create(:lecture, course: create(:course, title: "Geometry Current"),
+                         term: current_term)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Geometry", term: current_term.dashboard_param,
+                                show_term: "0", all_terms: "1" } },
+            as: :turbo_stream
+
+        expect(response.body).to include("Geometry Current", "Geometry Other")
+        expect(response.body).to include(other_term.to_label_short)
+      end
     end
 
     context "with registration campaigns" do
@@ -467,6 +496,19 @@ RSpec.describe("Lectures", type: :request) do
           .to eq("new_lecture")
         expect(response.body).to match(/<select[^>]*is-invalid[^>]*new-lecture-course-select/)
       end
+    end
+
+    # The error has no field of its own, so it is shown as a whole sentence
+    # under the form, where an attribute name in front would only garble it.
+    it "says in one sentence that a term-independent course takes no term" do
+      term_independent = create(:course, :term_independent)
+
+      post(lectures_path, params: { lecture: attributes.merge(course_id: term_independent.id) },
+                          as: :turbo_stream)
+
+      message = Nokogiri::HTML(response.body).at_css(".invalid-feedback").text.strip
+      expect(message).to eq(I18n.t("activerecord.errors.models.lecture.attributes.term.present",
+                                   locale: user.locale).strip)
     end
   end
 

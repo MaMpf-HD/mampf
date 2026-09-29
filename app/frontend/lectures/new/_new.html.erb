@@ -39,13 +39,17 @@
                       { class: "selectize form-select",
                         disabled: from == 'course',
                         required: true,
-                        data: { testid: 'new-lecture-course-select', terminfo: Course.pluck(:id, :term_independent) }
+                        data: { testid: 'new-lecture-course-select',
+                                terminfo: Course.pluck(:id, :term_independent),
+                                lectures_new_form_target: 'course',
+                                action: 'change->lectures-new-form#courseChanged' }
                         } %>
           <% if from == 'course' %>
             <%= f.hidden_field :course_id, value: lecture.course.id %>
           <% end %>
         </div>
         <div class="col-4" id="newLectureTerm"
+            data-lectures-new-form-target="termField"
             style="<%= term_independent ? 'display: none;' : '' %>">
           <%= f.label :term_id,
                       t('basics.term'),
@@ -55,12 +59,14 @@
                       options_for_select(Term.select_terms, lecture.term_id),
                       {},
                       { class: "form-select",
-                        disabled: term_independent } %>
+                        disabled: term_independent,
+                        data: { lectures_new_form_target: 'term' } } %>
         </div>
         <div class="col-12 mt-4">
           <%= teacher_select(f, is_new_lecture=true) %>
         </div>
         <div class="col-12" id="newLectureSort"
+            data-lectures-new-form-target="sortField"
             style="<%= term_independent ? 'display: none;' : '' %>">
           <%= f.label :sort,
                       t('basics.type'),

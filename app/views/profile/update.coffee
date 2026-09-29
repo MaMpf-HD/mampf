@@ -4,28 +4,7 @@ $('#user_name').removeClass('is-invalid')
 $('#homepage-error').empty().hide()
 $('#user_homepage').removeClass('is-invalid')
 $('#image-error').empty().hide()
-$('#js-messages').empty().hide()
-$('#courses-accordion').removeClass('border-danger')
-$('[id^="course-card-"]').removeClass('border-danger')
-$('[id^="user_pass_lecture-"]').removeClass('is-invalid')
-$('[id^="passphrase-error-"]').empty()
 # display error messages
-<% if @errors[:passphrase].present? %>
-<% @errors[:passphrase].each do |l| %>
-$("#user_lecture_" + "<%= l %>" + "_passphrase").addClass('is-invalid')
-$('#passphrase-error-' + '<%= l %>')
-  .append('<%= t('errors.profile.passphrase') %>')
-$('#course-card-' + '<%= Lecture.find_by_id(l).course.id %>')
-  .addClass('border-danger')
-$('#collapse-course-<%= Lecture.find_by_id(l).course.id %>').collapse('show')
-<% end %>
-$('#course-card-' + '<%= Lecture.find_by_id(@errors[:passphrase].first).course.id %>').closest('.programCollapse')
-  .collapse('show')
-<% end %>
-<% if @errors[:courses].present? %>
-$('#js-messages').append('<%= @errors[:courses].join("") %>').show()
-$('#courses-accordion').addClass('border-danger')
-<% end %>
 <% if @errors[:homepage].present? %>
 $('#homepage-error').append('<%= j @errors[:homepage].join(" ") %>').show()
 $('#user_homepage').addClass('is-invalid')
