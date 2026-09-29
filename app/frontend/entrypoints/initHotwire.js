@@ -31,6 +31,9 @@ window.Stimulus.register("flash-messages", FlashMessagesController);
 import SupportWidgetController from "~/support_requests/widget.controller.js";
 window.Stimulus.register("support-widget", SupportWidgetController);
 
+import RecordsOfficeController from "~/records_office/records_office.controller.js";
+window.Stimulus.register("records-office", RecordsOfficeController);
+
 import VignettesQuestionController from "~/vignettes/slides/form/question/_question.controller.js";
 window.Stimulus.register("vignettes-question", VignettesQuestionController);
 

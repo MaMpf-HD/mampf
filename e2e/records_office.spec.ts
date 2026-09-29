@@ -15,6 +15,8 @@ test.describe("records office", () => {
         { lecture_id: lecture.id, title: "Tuesday group", capacity: 12 });
       await factory.create("tutorial_membership", [],
         { tutorial_id: tutorial.id, user_id: student.user.id });
+      const otherCourse = await factory.create("course", [], { title: "Number Theory" });
+      await factory.create("lecture", [], { term_id: older.id, course_id: otherCourse.id });
 
       await student.page.goto("/");
       await expect(student.page.getByRole("link", { name: "Records office" })).toHaveCount(0);
@@ -28,12 +30,22 @@ test.describe("records office", () => {
       await student.page.reload();
       await student.page.getByRole("link", { name: "Records office" }).click();
       await expect(student.page.getByRole("heading", { name: "Records office" })).toBeVisible();
-      await expect(student.page.getByRole("region", { name: lectureTitle })).toHaveCount(0);
+      const toggle = student.page.getByRole("button", { name: lectureTitle });
+      await expect(toggle).toHaveCount(0);
 
       await student.page.getByLabel("Term").selectOption({ label: "SS 2030" });
       await expect(student.page).toHaveURL(/term=SS30/);
-      const card = student.page.getByRole("region", { name: lectureTitle });
-      const row = card.getByRole("row", { name: /Tuesday group/ });
+      await expect(student.page.getByRole("rowheader", { name: /Number Theory/ })).toBeVisible();
+
+      // one line per lecture; the filter keeps the one asked for
+      await student.page.getByRole("searchbox", { name: "Filter" }).fill("linear");
+      await expect(student.page.getByRole("rowheader", { name: /Number Theory/ })).toBeHidden();
+      const groups = student.page.getByRole("table", { name: /Groups of .*Linear Algebra/ });
+      await expect(groups).toBeHidden();
+
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-expanded", "true");
+      const row = groups.getByRole("row", { name: /Tuesday group/ });
       await expect(row).toContainText("1 / 12");
 
       const downloadPromise = student.page.waitForEvent("download");
@@ -43,5 +55,10 @@ test.describe("records office", () => {
 
       expect(rows[0]).toEqual(["Last name", "First name", "Matriculation number", "Email"]);
       expect(rows[1][3]).toBe(student.user.email);
+
+      await student.page.getByRole("button", { name: "Hide all groups" }).click();
+      await expect(groups).toBeHidden();
+      await student.page.getByRole("button", { name: "Show all groups" }).click();
+      await expect(groups).toBeVisible();
     });
 });

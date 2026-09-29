@@ -68,10 +68,29 @@ RSpec.describe("Records office", type: :request) do
 
       get records_office_path
 
-      row = Nokogiri::HTML(response.body).css("tr").find { |tr| tr.text.include?(exam.title) }
-      expect(response.body).to include("2 members")
+      doc = Nokogiri::HTML(response.body)
+      lecture_row = doc.at_css("tbody[data-records-office-target='lecture'] > tr")
+      row = doc.css("tr").find { |tr| tr.text.include?(exam.title) }
+      expect(lecture_row.css("td")[1].text.strip).to eq("2")
+      expect(lecture_row.text).to include("1 group", "2 of 1 seats")
       expect(row.text).to include("2 / 1")
       expect(row.at_css(".progress-bar")[:class]).to include("bg-danger")
+    end
+
+    # 35 lectures a term: one line each, the filter finds one by title or teacher.
+    it "gives each lecture one line and its groups behind a button" do
+      create(:tutorial, lecture: lecture, title: "Tuesday group")
+
+      get records_office_path
+
+      doc = Nokogiri::HTML(response.body)
+      button = doc.at_css("button[data-action='records-office#toggle']")
+      groups = doc.at_css("##{button["aria-controls"]}")
+      expect(button["aria-expanded"]).to eq("false")
+      expect(groups["hidden"]).not_to be_nil
+      expect(groups.text).to include("Tuesday group")
+      expect(doc.at_css("tbody[data-records-office-target='lecture']")["data-filter-text"])
+        .to include(lecture.title_no_term.downcase, lecture.teacher.tutorial_name.downcase)
     end
 
     it "shows another term's lectures when it is picked" do

@@ -1,133 +1,226 @@
-<div class="container py-3">
+<%= vite_stylesheet_tag "records_office/index.scss" %>
+
+<div class="container py-3" data-controller="records-office">
   <h1 class="h3"><%= t("records_office.title") %></h1>
 
   <p class="text-muted"><%= t("records_office.explainer") %></p>
 
-  <%= form_with url: records_office_path, method: :get, local: true,
-                data: { controller: "submit-on-change" },
-                class: "d-flex align-items-center gap-2 mb-4" do |f| %>
-    <%= f.label :term, t("records_office.term"), class: "form-label mb-0" %>
+  <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+    <%= form_with url: records_office_path, method: :get, local: true,
+                  data: { controller: "submit-on-change" },
+                  class: "d-flex align-items-center gap-2" do |f| %>
+      <%= f.label :term, t("records_office.term"), class: "form-label mb-0" %>
 
-    <%= f.select :term,
-                 options_for_select(@term_options, @term&.dashboard_param),
-                 {},
-                 class: "form-select w-auto",
-                 data: { action: "change->submit-on-change#change" } %>
-  <% end %>
+      <%= f.select :term,
+                   options_for_select(@term_options, @term&.dashboard_param),
+                   {},
+                   class: "form-select w-auto",
+                   data: { action: "change->submit-on-change#change" } %>
+    <% end %>
+
+    <% if @overview.lectures.any? %>
+      <div class="d-flex align-items-center gap-2">
+        <%= label_tag "records-office-filter", t("records_office.filter"),
+                      class: "form-label mb-0" %>
+
+        <%= search_field_tag "records-office-filter", nil,
+                             class: "form-control",
+                             placeholder: t("records_office.filter_placeholder"),
+                             autocomplete: "off",
+                             data: { records_office_target: "filter",
+                                     action: "input->records-office#filter" } %>
+      </div>
+      <div class="ms-auto d-flex gap-2">
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-action="records-office#openAll"
+        >
+          <%= t("records_office.open_all") %>
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          data-action="records-office#closeAll"
+        >
+          <%= t("records_office.close_all") %>
+        </button>
+      </div>
+    <% end %>
+  </div>
 
   <% if @overview.lectures.empty? %>
     <p><%= t("records_office.no_lectures") %></p>
-  <% end %>
+  <% else %>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th scope="col"><%= t("records_office.lecture") %></th>
+            <th scope="col"><%= t("records_office.teacher") %></th>
 
-  <% @overview.lectures.each do |lecture| %>
-    <section
-      class="card mb-3"
-      aria-labelledby="<%= dom_id(lecture, :records_office) %>"
-    >
-      <div
-        class="
-          card-header d-flex flex-wrap justify-content-between
-          align-items-center gap-2
-        "
-      >
-        <div>
-          <h2 class="h5 mb-0" id="<%= dom_id(lecture, :records_office) %>">
-            <%= lecture.title_no_term %>
-          </h2>
+            <th scope="col" class="text-end">
+              <%= t("records_office.members_column") %>
+            </th>
 
-          <span class="small text-muted">
-            <%= lecture.teacher.tutorial_name %> ·
-            <%= t("records_office.members", count: @overview.member_count(lecture)) %>
-          </span>
-        </div>
+            <th scope="col"><%= t("records_office.groups") %></th>
+            <th scope="col"><%= t("records_office.downloads") %></th>
+          </tr>
+        </thead>
 
-        <div class="d-flex flex-wrap gap-2">
-          <% if @overview.grades?(lecture) %>
-            <%= link_to records_office_grades_path(lecture),
-                        class: "btn btn-sm btn-outline-primary",
-                        data: { turbo: false } do %>
-              <i class="bi bi-download" aria-hidden="true"></i>
-              <%= t("records_office.download_grades") %>
-            <% end %>
-          <% end %>
+        <% @overview.lectures.each do |lecture| %>
+          <% lecture_title = lecture.title_no_term %>
+          <% filter_text = [lecture_title, lecture.teacher.tutorial_name].join(" ").downcase %>
+          <% groups = @overview.groups(lecture) %>
+          <% occupancy = @overview.occupancy(lecture) %>
+          <% groups_id = dom_id(lecture, :records_office_groups) %>
 
-          <% if @overview.eligibility?(lecture) %>
-            <%= link_to records_office_eligibility_path(lecture),
-                        class: "btn btn-sm btn-outline-primary",
-                        data: { turbo: false } do %>
-              <i class="bi bi-download" aria-hidden="true"></i>
-              <%= t("records_office.download_eligibility") %>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
+          <tbody
+            data-records-office-target="lecture"
+            data-filter-text="<%= filter_text %>"
+          >
+            <tr>
+              <th scope="row" class="fw-semibold">
+                <% if groups.any? %>
+                  <button
+                    type="button"
+                    class="btn btn-link p-0 text-start fw-semibold text-decoration-none"
+                    aria-expanded="false"
+                    aria-controls="<%= groups_id %>"
+                    data-records-office-target="toggle"
+                    data-action="records-office#toggle"
+                  >
+                    <i
+                      class="bi bi-chevron-right records-office-chevron"
+                      aria-hidden="true"
+                    ></i>
 
-      <% groups = @overview.groups(lecture) %>
+                    <%= lecture_title %>
+                  </button>
+                <% else %>
+                  <%= lecture_title %>
+                <% end %>
+              </th>
 
-      <% if groups.empty? %>
-        <p class="card-body text-muted mb-0">
-          <%= t("records_office.no_groups") %>
-        </p>
-      <% else %>
-        <div class="table-responsive">
-          <table class="table table-sm mb-0 align-middle">
-            <thead>
-              <tr>
-                <th scope="col"><%= t("records_office.group") %></th>
-                <th scope="col"><%= t("records_office.kind") %></th>
+              <td><%= lecture.teacher.tutorial_name %></td>
+              <td class="text-end"><%= @overview.member_count(lecture) %></td>
 
-                <th scope="col" class="w-25">
-                  <%= t("records_office.occupancy") %>
-                </th>
-
-                <th scope="col">
-                  <span class="visually-hidden">
-                    <%= t("records_office.emails") %>
+              <td class="text-nowrap">
+                <% if groups.empty? %>
+                  <span class="text-muted">
+                    <%= t("records_office.no_groups") %>
                   </span>
-                </th>
+                <% else %>
+                  <%= t("records_office.group_count", count: groups.size) %>
+                  <% if occupancy %>
+                    <span class="text-muted">
+                      ·
+                      <%= t("records_office.occupancy_summary", taken: occupancy.first,
+                                                                  offered: occupancy.last) %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </td>
+
+              <td class="text-nowrap">
+                <% if @overview.grades?(lecture) %>
+                  <%= link_to records_office_grades_path(lecture),
+                              class: "btn btn-sm btn-outline-primary",
+                              data: { turbo: false },
+                              "aria-label": t("records_office.grades_of",
+                                              lecture: lecture_title) do %>
+                    <i class="bi bi-download" aria-hidden="true"></i>
+                    <%= t("records_office.download_grades") %>
+                  <% end %>
+                <% end %>
+
+                <% if @overview.eligibility?(lecture) %>
+                  <%= link_to records_office_eligibility_path(lecture),
+                              class: "btn btn-sm btn-outline-primary",
+                              data: { turbo: false },
+                              "aria-label": t("records_office.eligibility_of",
+                                              lecture: lecture_title) do %>
+                    <i class="bi bi-download" aria-hidden="true"></i>
+                    <%= t("records_office.download_eligibility") %>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+
+            <% if groups.any? %>
+              <tr id="<%= groups_id %>" hidden>
+                <td colspan="5" class="bg-body-tertiary">
+                  <table
+                    class="table table-sm mb-0 align-middle"
+                    aria-label="<%= t('records_office.groups_of', lecture: lecture_title) %>"
+                  >
+                    <thead>
+                      <tr>
+                        <th scope="col"><%= t("records_office.group") %></th>
+                        <th scope="col"><%= t("records_office.kind") %></th>
+
+                        <th scope="col" class="w-25">
+                          <%= t("records_office.occupancy") %>
+                        </th>
+
+                        <th scope="col">
+                          <span class="visually-hidden">
+                            <%= t("records_office.emails") %>
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <% groups.each do |group| %>
+                        <% title = RecordsOffice::TermOverview.group_title(group) %>
+                        <% group_type = RecordsOffice::TermOverview.group_type(group) %>
+                        <% count = @overview.roster_count(group) %>
+                        <% over = group.capacity && count > group.capacity %>
+
+                        <tr>
+                          <th scope="row" class="fw-normal"><%= title %></th>
+
+                          <td>
+                            <%= t("records_office.kinds.#{group_type}") %>
+                          </td>
+
+                          <td>
+                            <% if group.capacity %>
+                              <%= progress_bar(count, group.capacity,
+                                               classification: over ? :danger : :neutral,
+                                               label: "#{count} / #{group.capacity}",
+                                               height: "1.25rem",
+                                               container_class: "progress") %>
+                            <% else %>
+                              <%= t("records_office.without_limit", count: count) %>
+                            <% end %>
+                          </td>
+
+                          <td class="text-end">
+                            <%= link_to records_office_emails_path(group_type, group),
+                                        class: "btn btn-sm btn-link",
+                                        data: { turbo: false },
+                                        aria: { label: t("records_office.emails_of",
+                                                        group: title) } do %>
+                              <i class="bi bi-envelope" aria-hidden="true"></i>
+                              <%= t("records_office.emails") %>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              <% groups.each do |group| %>
-                <% title = RecordsOffice::TermOverview.group_title(group) %>
-                <% group_type = RecordsOffice::TermOverview.group_type(group) %>
-                <% count = @overview.roster_count(group) %>
-
-                <tr>
-                  <th scope="row" class="fw-normal"><%= title %></th>
-
-                  <td>
-                    <%= t("records_office.kinds.#{group_type}") %>
-                  </td>
-
-                  <td>
-                    <% if group.capacity %>
-                      <%= progress_bar(count, group.capacity,
-                                       classification: count > group.capacity ? :danger : :neutral,
-                                       label: "#{count} / #{group.capacity}",
-                                       height: "1.25rem",
-                                       container_class: "progress") %>
-                    <% else %>
-                      <%= t("records_office.without_limit", count: count) %>
-                    <% end %>
-                  </td>
-
-                  <td class="text-end">
-                    <%= link_to records_office_emails_path(group_type, group),
-                                class: "btn btn-sm btn-link",
-                                data: { turbo: false },
-                                "aria-label": t("records_office.emails_of", group: title) do %>
-                      <i class="bi bi-envelope" aria-hidden="true"></i>
-                      <%= t("records_office.emails") %>
-                    <% end %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% end %>
-    </section>
+            <% end %>
+          </tbody>
+        <% end %>
+      </table>
+    </div>
+    <p class="text-muted" hidden data-records-office-target="none">
+      <%= t("records_office.no_match") %>
+    </p>
   <% end %>
 </div>

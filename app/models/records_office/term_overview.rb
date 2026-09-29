@@ -41,6 +41,15 @@ module RecordsOffice
       roster_counts.fetch(group.class).fetch(group.id, 0)
     end
 
+    # How full the lecture's groups with a capacity are, together: the seats
+    # taken and offered, or nil when no group has a capacity.
+    def occupancy(lecture)
+      limited = groups(lecture).select(&:capacity)
+      return if limited.empty?
+
+      [limited.sum { |group| roster_count(group) }, limited.sum(&:capacity)]
+    end
+
     def grades?(lecture)
       lecture_ids_with_grades.include?(lecture.id)
     end
