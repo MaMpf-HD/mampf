@@ -144,7 +144,7 @@
 // Title, details, seats and actions line up from row to row, as in the group rows.
 .registration-options-rows {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 11rem auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto auto;
   border: 1px solid var(--bs-border-color);
   border-radius: var(--bs-border-radius);
 }
@@ -211,18 +211,18 @@
   }
 }
 
-// The padding keeps the bar clear of the button beside it.
 .registration-option-seats {
-  padding-right: 1rem;
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
 }
 
 // Muted, so that a list of full groups does not read as a list of warnings.
+// A width of its own, since the seats column takes the width of its content;
+// the margin keeps the bar clear of the button beside it.
 .registration-option-bar {
-  max-width: 10rem;
+  width: 10rem;
   height: 4px;
-  margin-top: 0.35rem;
+  margin: 0.35rem 1rem 0 0;
   border-radius: 2px;
   background: var(--bs-secondary-bg);
   overflow: hidden;
