@@ -113,7 +113,6 @@ class TutorialsController < ApplicationController
     end
 
     flash.now[:notice] = t("controllers.tutorials.created") if persisted
-    notify_tutor_added_by_email if persisted
     @errors = @tutorial.errors
 
     respond_to do |format|
@@ -135,7 +134,6 @@ class TutorialsController < ApplicationController
 
     if @tutorial.update(tutorial_params)
       flash.now[:notice] = t("controllers.tutorials.updated")
-      notify_tutor_added_by_email
     else
       @errors = @tutorial.errors
     end
@@ -278,15 +276,8 @@ class TutorialsController < ApplicationController
       end
     end
 
-    # Somebody put on a group by their address did nothing to get there, so
-    # they are told.
-    def notify_tutor_added_by_email
-      tutor = @tutorial.tutor_added_by_email
-      LectureNotifier.notify_new_tutor_by_mail(tutor, @tutorial) if tutor
-    end
-
     def tutorial_params
-      params.expect(tutorial: [:title, :lecture_id, :capacity, :location, :tutor_email,
+      params.expect(tutorial: [:title, :lecture_id, :capacity, :location,
                                { tutor_ids: [] }])
     end
 

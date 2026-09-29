@@ -48,25 +48,3 @@ test("asks before a member of the group becomes its tutor",
     await expect(page.getByRole("heading", { name: "Mo 10-12", exact: true })).toBeVisible();
     expect(askedAgain).toBe(false);
   });
-
-test("adds a tutor by the address of their account", async ({ factory, teacher: { page, user } }) => {
-  const lecture = await factory.create("lecture", [], { teacher_id: user.id });
-  await factory.create("tutorial", [], { lecture_id: lecture.id, title: "Mo 10" });
-  const person = await factory.create("confirmed_user", [], { name_in_tutorials: "Grace Hopper" });
-
-  await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-  await page.getByRole("link", { name: "Edit Settings" }).first().click();
-  const dialog = page.getByRole("dialog", { name: "Edit Tutorial" });
-  const address = dialog.getByRole("textbox", { name: "Add a tutor by email address" });
-
-  await address.fill("nobody@example.com");
-  await dialog.getByRole("button", { name: "Save" }).click();
-  await expect(dialog.getByText("There is no MaMpf account with this address.")).toBeVisible();
-
-  await address.fill(person.email);
-  await dialog.getByRole("button", { name: "Save" }).click();
-  await expect(dialog).toBeHidden();
-  const row = page.getByRole("listitem")
-    .filter({ has: page.getByRole("heading", { name: "Mo 10", exact: true }) });
-  await expect(row).toContainText("Grace Hopper");
-});

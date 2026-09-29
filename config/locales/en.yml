@@ -2113,7 +2113,6 @@ en:
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
-    goto_tutorials: 'Go to your tutorial'
     subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
     subscribe_lecture_html: 'You can find it in %{dashboard}.'
     subscribe_lecture_in_term: 'You can find it in the lecture search on your dashboard under %{term}.'
@@ -3136,15 +3135,13 @@ en:
         In order to change things please edit the publication settings for the
         medium.
   tutorial:
-    tutor_email: "Add a tutor by email address"
-    tutor_email_hint: "The address of their MaMpf account; they are told by email."
     participants:
       button: "Participants"
       pick: "Choose …"
-      no_program: "no program given"
       title: "Participants"
       none: "Nobody is in this group yet."
       registered_title: "Registered, not final yet"
+      no_program: "no program given"
       registered_hint: >
         They join the group when the registration "%{campaign}" is finalized.
         Until then, registrations can still change.
@@ -3287,8 +3284,6 @@ en:
     author: 'Author'
     text: 'Text'
     new_editor_subject: 'Editing Rights for %{title}'
-    new_tutor_subject: 'Tutor for %{tutorial} in %{title}'
-    new_tutor: 'Dear %{username}, you have been made a tutor of %{tutorial} in %{title}.'
     new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
     new_teacher_subject: 'Teacher Status for %{title}'
     new_teacher: 'Dear %{username}, you have been given teacher status for %{title}.'
@@ -4257,8 +4252,6 @@ en:
               taken: >
                 This tutorium title is already taken for this event series.
               blank: You need to giv a title.
-            tutor_email:
-              no_account: There is no MaMpf account with this address.
         tutorial_membership:
           attributes:
             base:

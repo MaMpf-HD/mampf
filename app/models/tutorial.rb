@@ -19,17 +19,9 @@ class Tutorial < ApplicationRecord
 
   has_many :claims, as: :claimable, dependent: :destroy
 
-  # An address typed into the group's form, as an alternative to a tutor
-  # voucher: the confirmed account with exactly this address joins the tutors.
-  # Only an exact address finds somebody, so nobody can browse the accounts.
-  attribute :tutor_email, :string
-  attr_reader :tutor_added_by_email
-
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validate :lecture_must_not_be_seminar
   validate :lecture_id_immutable, on: :update
-  validate :tutor_email_names_an_account, if: -> { tutor_email.present? }
-  before_save :add_tutor_by_email, if: -> { tutor_email.present? }
 
   scope :roster_eligible, lambda {
     where(id: unscoped.joins(:tutorial_memberships).select(:id))
@@ -117,23 +109,6 @@ class Tutorial < ApplicationRecord
   end
 
   private
-
-    def tutor_by_email
-      return @tutor_by_email if defined?(@tutor_by_email)
-
-      @tutor_by_email = User.confirmed.find_by(email: tutor_email.strip.downcase)
-    end
-
-    def tutor_email_names_an_account
-      errors.add(:tutor_email, :no_account) unless tutor_by_email
-    end
-
-    def add_tutor_by_email
-      return if tutor_by_email.in?(tutors)
-
-      tutors << tutor_by_email
-      @tutor_added_by_email = tutor_by_email
-    end
 
     def lecture_id_immutable
       errors.add(:lecture_id, :immutable) if lecture_id_changed?
