@@ -40,6 +40,15 @@
     </div>
 
     <div class="mb-3">
+      <%= f.label :tutor_email, t('tutorial.tutor_email'), class: "form-label" %>
+      <%= f.email_field :tutor_email, class: "form-control", autocomplete: "off",
+                                      aria: { describedby: dom_id(tutorial, "tutor_email_hint") } %>
+      <div id="<%= dom_id(tutorial, "tutor_email_hint") %>" class="form-text">
+        <%= t('tutorial.tutor_email_hint') %>
+      </div>
+    </div>
+
+    <div class="mb-3">
       <%= f.label :capacity, t('basics.capacity'), class: "form-label" %>
       <%= f.number_field :capacity,
             class: "form-control tutorial-capacity",

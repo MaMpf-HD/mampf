@@ -2303,6 +2303,7 @@ de:
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
     edit_lecture: 'Veranstaltung bearbeiten'
+    goto_tutorials: 'Zu Deinem Tutorium'
     subscribe_lecture: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.'
     subscribe_lecture_html: 'Du findest sie in %{dashboard}.'
     subscribe_lecture_in_term: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.'
@@ -3354,13 +3355,15 @@ de:
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
   tutorial:
+    tutor_email: "TutorIn per E-Mail-Adresse hinzufügen"
+    tutor_email_hint: "Die Adresse ihres MaMpf-Kontos; sie bekommt darüber eine Mail."
     participants:
       button: "Teilnehmende"
       pick: "Auswählen …"
+      no_program: "ohne Angabe"
       title: "Teilnehmende"
       none: "In dieser Gruppe ist noch niemand."
       registered_title: "Angemeldet, noch nicht endgültig"
-      no_program: "ohne Angabe"
       registered_hint: >
         Sie kommen in die Gruppe, sobald die Anmeldung „%{campaign}“
         abgeschlossen ist. Bis dahin können sich Anmeldungen noch ändern.
@@ -3513,6 +3516,8 @@ de:
     author: 'VerfasserIn'
     text: 'Text'
     new_editor_subject: 'EditorInnenrechte für %{title}'
+    new_tutor_subject: 'TutorIn für %{tutorial} in %{title}'
+    new_tutor: 'Hallo %{username}, Du wurdest als TutorIn für %{tutorial} in %{title} eingetragen.'
     new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_teacher_subject: 'DozentInnenstatus für %{title}'
     new_teacher: 'Hallo %{username}, Du hast soeben DozentInnenstatus für %{title} erhalten.'
@@ -4505,6 +4510,8 @@ de:
                 vergeben.
               blank: >
                 Es muss ein Titel angegeben werden.
+            tutor_email:
+              no_account: Es gibt kein MaMpf-Konto mit dieser Adresse.
         tutorial_membership:
           attributes:
             base:

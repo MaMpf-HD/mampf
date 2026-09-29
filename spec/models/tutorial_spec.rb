@@ -258,4 +258,37 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.destruction_blockers_outside_campaign).to be_empty
     end
   end
+
+  describe "adding a tutor by email address" do
+    let(:tutorial) { create(:tutorial) }
+    let(:person) { create(:confirmed_user, email: "ada@example.com") }
+
+    it "makes the account with exactly that address a tutor" do
+      person
+      tutorial.update!(tutor_email: " Ada@Example.com ")
+
+      expect(tutorial.reload.tutors).to contain_exactly(person)
+      expect(tutorial.tutor_added_by_email).to eq(person)
+    end
+
+    it "refuses an address without an account" do
+      expect(tutorial.update(tutor_email: "nobody@example.com")).to be(false)
+      expect(tutorial.errors.details[:tutor_email]).to eq([{ error: :no_account }])
+    end
+
+    it "does not find an account that is not confirmed" do
+      create(:user, email: "unconfirmed@example.com")
+
+      expect(tutorial.update(tutor_email: "unconfirmed@example.com")).to be(false)
+    end
+
+    it "adds nobody twice" do
+      tutorial.tutors << person
+
+      tutorial.update!(tutor_email: person.email)
+
+      expect(tutorial.reload.tutors).to contain_exactly(person)
+      expect(tutorial.tutor_added_by_email).to be_nil
+    end
+  end
 end

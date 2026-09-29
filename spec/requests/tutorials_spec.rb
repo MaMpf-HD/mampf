@@ -385,6 +385,29 @@ RSpec.describe("Tutorials", type: :request) do
         end
       end
 
+      # Put on the group by their address, the person did nothing to get
+      # there, so they are told.
+      it "adds a tutor by email address and tells them" do
+        person = create(:confirmed_user)
+
+        expect do
+          patch(tutorial_path(tutorial), params: { tutorial: { tutor_email: person.email } },
+                                         as: :turbo_stream)
+        end.to have_enqueued_mail(LectureNotificationMailer, :new_tutor_email)
+
+        expect(tutorial.reload.tutors).to include(person)
+      end
+
+      it "says so at the field when no account has the address" do
+        patch tutorial_path(tutorial), params: { tutorial: { tutor_email: "nobody@example.com" } },
+                                       as: :turbo_stream
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include(
+          I18n.t("activerecord.errors.models.tutorial.attributes.tutor_email.no_account")
+        )
+      end
+
       context "with invalid parameters" do
         it "does not update the tutorial" do
           patch tutorial_path(tutorial),

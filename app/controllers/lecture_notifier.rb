@@ -8,6 +8,13 @@ module LectureNotifier
                              .new_editor_email.deliver_later
   end
 
+  def notify_new_tutor_by_mail(tutor, tutorial)
+    LectureNotificationMailer.with(recipient: tutor,
+                                   locale: tutor.locale,
+                                   tutorial: tutorial)
+                             .new_tutor_email.deliver_later
+  end
+
   def notify_about_teacher_change_by_mail(lecture, previous_teacher)
     notify_new_teacher_by_mail(lecture)
     notify_previous_teacher_by_mail(previous_teacher, lecture)
