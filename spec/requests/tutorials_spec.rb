@@ -166,8 +166,8 @@ RSpec.describe("Tutorials", type: :request) do
       create(:assignment, lecture: lecture)
 
       get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
-      options = body.css("#assignment-select option").map { |option| option.text.strip }
-      expect(options).to include(I18n.t("tutorial.participants.option"))
+      link = body.css("a").find { |a| a.text.strip == I18n.t("tutorial.participants.button") }
+      expect(link["href"]).to include("view=participants")
 
       get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
       expect(body.at_css("[data-testid='tutorial-participants']").text).to include("Ada Lovelace")

@@ -16,14 +16,16 @@ RSpec.describe(TutorialParticipantsComponent, type: :component) do
     campaign
   end
 
-  it "lists the group's members by last name, with their addresses to copy" do
+  it "lists the group's members by last name, with program and address to copy" do
     zimmer = create(:confirmed_user, first_name: "Anna", last_name: "Zimmer")
-    becker = create(:confirmed_user, first_name: "Clara", last_name: "Becker")
+    becker = create(:confirmed_user, first_name: "Clara", last_name: "Becker",
+                                     program: create(:program, degree: :msc))
     [zimmer, becker].each { |user| create(:tutorial_membership, tutorial: tutorial, user: user) }
 
     html = render_inline(described_class.new(tutorial: tutorial))
 
-    expect(html.css("li > span:first-child").map(&:text)).to eq(["Clara Becker", "Anna Zimmer"])
+    rows = html.css("tbody tr").map { |row| row.css("td").first(2).map { |cell| cell.text.strip } }
+    expect(rows).to eq([["Clara Becker", becker.program.name_with_subject], ["Anna Zimmer", ""]])
     expect(html.at_css("button[aria-label='Copy email address: #{becker.email}']")).to be_present
   end
 

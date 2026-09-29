@@ -9,7 +9,7 @@ class TutorialParticipantsComponent < ViewComponent::Base
   attr_reader :tutorial
 
   def members
-    @members ||= tutorial.members.by_last_name.to_a
+    @members ||= tutorial.members.includes(User::PROGRAM_PRELOAD).by_last_name.to_a
   end
 
   # The item of the tutorial's running registration, if there is one; a
@@ -29,7 +29,8 @@ class TutorialParticipantsComponent < ViewComponent::Base
   def registered
     return @registered if defined?(@registered)
 
-    @registered = running_item&.provisional_users&.by_last_name.to_a
+    users = running_item&.provisional_users
+    @registered = users&.includes(User::PROGRAM_PRELOAD)&.by_last_name.to_a
   end
 
   def allocation_pending?

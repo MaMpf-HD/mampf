@@ -3355,7 +3355,8 @@ de:
         Veröffentlichungseinstellungen des Mediums bearbeiten.
   tutorial:
     participants:
-      option: "Teilnehmende"
+      button: "Teilnehmende"
+      pick: "Auswählen …"
       title: "Teilnehmende"
       none: "In dieser Gruppe ist noch niemand."
       registered_title: "Angemeldet, noch nicht endgültig"

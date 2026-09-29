@@ -3136,7 +3136,8 @@ en:
         medium.
   tutorial:
     participants:
-      option: "Participants"
+      button: "Participants"
+      pick: "Choose …"
       title: "Participants"
       none: "Nobody is in this group yet."
       registered_title: "Registered, not final yet"

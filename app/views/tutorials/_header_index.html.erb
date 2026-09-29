@@ -20,10 +20,7 @@
               class="form-select form-select-sm"
               data-controller="select-navigation"
               data-action="change->select-navigation#visit">
-        <option selected><%= subject ? subject.title : t('tutorial.participants.option') %></option>
-        <% if subject %>
-          <option value="<%= participants_path %>"><%= t('tutorial.participants.option') %></option>
-        <% end %>
+        <option selected><%= subject ? subject.title : t('tutorial.participants.pick') %></option>
         <% (assignments - [assignment]).each do |a| %>
           <option value="<%= lecture_tutorials_path(@lecture, params: { assignment: a.id, tutorial: tutorial.id }) %>">
             <%= a.title %>
@@ -43,7 +40,8 @@
   <% end %>
 
   <%= render partial: 'tutorials/group_columns',
-             locals: { tutorials: tutorials, tutorial: tutorial } %>
+             locals: { tutorials: tutorials, tutorial: tutorial,
+                       participants_path: (participants_path if subject) } %>
 </div>
 
 

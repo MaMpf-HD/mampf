@@ -5,19 +5,7 @@
   </h2>
 
   <% if members.any? %>
-    <ul class="list-group mb-4">
-      <% members.each do |user| %>
-        <li
-          class="
-            list-group-item d-flex align-items-center
-            justify-content-between gap-2
-          "
-        >
-          <span><%= user.tutorial_name %></span>
-          <%= render "shared/copy_email_button", email: user.email %>
-        </li>
-      <% end %>
-    </ul>
+    <%= render "tutorials/participants_table", users: members, css: "mb-4" %>
   <% else %>
     <p class="text-muted mb-4"><%= t("tutorial.participants.none") %></p>
   <% end %>
@@ -39,19 +27,7 @@
       <%= t("tutorial.participants.registered_hint", campaign: campaign_title) %>
     </p>
     <% if registered.any? %>
-      <ul class="list-group">
-        <% registered.each do |user| %>
-          <li
-            class="
-              list-group-item d-flex align-items-center
-              justify-content-between gap-2
-            "
-          >
-            <span><%= user.tutorial_name %></span>
-            <%= render "shared/copy_email_button", email: user.email %>
-          </li>
-        <% end %>
-      </ul>
+      <%= render "tutorials/participants_table", users: registered, css: "" %>
     <% end %>
   <% end %>
 </div>
