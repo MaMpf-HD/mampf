@@ -525,16 +525,13 @@ describe RosterNotificationMailer do
 
   describe ".rejected" do
     let(:reasons) { ["Email domain not allowed."] }
+    let(:lecture) { create(:lecture) }
 
     context "for a group campaign" do
-      let(:lecture) { create(:lecture) }
-      let(:campaign) do
-        instance_double(Registration::Campaign, exam_campaign?: false, campaignable: lecture)
-      end
-
       it "enqueues a group rejection email with the lecture and the reasons" do
         expect do
-          described_class.rejected(user, campaign, reasons: reasons)
+          described_class.rejected(user, reasons: reasons,
+                                         exam_campaign: false, lecture: lecture)
         end.to have_enqueued_mail(described_class, :rejected_from_group_email).with(
           a_hash_including(
             params: a_hash_including(lecture: lecture, recipient: user, reasons: reasons)
@@ -546,26 +543,33 @@ describe RosterNotificationMailer do
         other_user = create(:user, locale: "de")
 
         expect do
-          described_class.rejected(user, campaign, reasons: reasons)
-          described_class.rejected(other_user, campaign, reasons: reasons)
+          described_class.rejected(user, reasons: reasons,
+                                         exam_campaign: false, lecture: lecture)
+          described_class.rejected(other_user, reasons: reasons,
+                                               exam_campaign: false, lecture: lecture)
         end.to have_enqueued_mail(described_class, :rejected_from_group_email).twice
       end
     end
 
     context "for an exam campaign" do
-      let(:exam) { create(:exam, :written) }
-      let(:campaign) do
-        instance_double(Registration::Campaign, exam_campaign?: true, exam: exam)
-      end
+      let(:exam) { create(:exam, :written, lecture: lecture) }
 
       it "enqueues an exam rejection email with the exam and the reasons" do
         expect do
-          described_class.rejected(user, campaign, reasons: reasons)
+          described_class.rejected(user, reasons: reasons,
+                                         exam_campaign: true, exam: exam, lecture: lecture)
         end.to have_enqueued_mail(described_class, :rejected_from_exam_email).with(
           a_hash_including(
             params: a_hash_including(rosterable: exam, recipient: user, reasons: reasons)
           )
         )
+      end
+
+      it "does not enqueue a group rejection email" do
+        expect do
+          described_class.rejected(user, reasons: reasons,
+                                         exam_campaign: true, exam: exam, lecture: lecture)
+        end.not_to have_enqueued_mail(described_class, :rejected_from_group_email)
       end
     end
   end
@@ -573,10 +577,17 @@ describe RosterNotificationMailer do
   describe "reason link" do
     let(:reasons) { ["Email domain not allowed."] }
 
+    # Mirrors what Registration::Campaign#notify_rejected_users passes in.
     def deliver_rejection(campaign)
+      exam_campaign = campaign.exam_campaign?
+
       expect do
         perform_enqueued_jobs do
-          described_class.rejected(user, campaign, reasons: reasons)
+          described_class.rejected(user,
+                                   reasons: reasons,
+                                   exam_campaign: exam_campaign,
+                                   exam: (campaign.exam if exam_campaign),
+                                   lecture: campaign.campaignable)
         end
       end.to change { ActionMailer::Base.deliveries.count }.by(2)
 

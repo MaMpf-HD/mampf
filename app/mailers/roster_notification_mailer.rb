@@ -60,13 +60,13 @@ class RosterNotificationMailer < ApplicationMailer
       deliver_grouped(added_template(rosterable), rosterable, users)
     end
 
-    def rejected(user, campaign, reasons:)
-      if campaign.exam_campaign?
-        with(rosterable: campaign.exam,
+    def rejected(user, reasons:, exam_campaign:, lecture:, exam: nil)
+      if exam_campaign
+        with(rosterable: exam,
              reasons: reasons,
              recipient: user).rejected_from_exam_email.deliver_later
       else
-        with(lecture: campaign.campaignable,
+        with(lecture: lecture,
              reasons: reasons,
              recipient: user).rejected_from_group_email.deliver_later
       end

@@ -718,8 +718,12 @@ module Registration
 
           [user, reasons]
         end
+        exam_campaign = exam_campaign?
+        exam_rosterable = exam_campaign ? exam : nil
         rejected_to_notify.each do |user, reasons|
-          RosterNotificationMailer.rejected(user, self, reasons: reasons)
+          RosterNotificationMailer
+            .rejected(user, reasons: reasons, exam_campaign: exam_campaign,
+                            exam: exam_rosterable, lecture: campaignable)
         end
       end
   end
