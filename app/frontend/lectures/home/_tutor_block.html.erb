@@ -1,4 +1,5 @@
-<%# locals: (lecture:, tutorials:, member_counts:) %>
+<%# locals: (lecture:, tutorials:, member_counts:, cohorts:, cohort_member_counts:) %>
+<%# A flexible group's tutor has its list of people, no sheets to mark. %>
 <section class="lecture-home-block" aria-labelledby="tutor-heading"
          data-testid="lecture-home-tutor">
   <h2 class="lecture-home-label" id="tutor-heading"><%= t("lecture_home.tutor.title") %></h2>
@@ -15,6 +16,23 @@
         <div class="lecture-home-row-actions">
           <%= link_to t("lecture_home.tutor.open"),
                       lecture_tutorials_path(lecture, tutorial: tutorial.id),
+                      class: "btn btn-sm btn-outline-primary", data: { turbo_frame: "main" } %>
+        </div>
+      </div>
+    <% end %>
+    <% cohorts.each do |cohort| %>
+      <div class="lecture-home-row lecture-home-row--compact">
+        <div class="lecture-home-row-content">
+          <div class="lecture-home-row-title"><span><%= cohort.title %></span></div>
+          <div class="lecture-home-row-line">
+            <%= [t("roster.group_category.flexible_group"),
+                 t("lecture_home.tutor.members",
+                   count: cohort_member_counts.fetch(cohort.id, 0))].join(" · ") %>
+          </div>
+        </div>
+        <div class="lecture-home-row-actions">
+          <%= link_to t("lecture_home.tutor.open"),
+                      lecture_cohort_participants_path(lecture, cohort: cohort.id),
                       class: "btn btn-sm btn-outline-primary", data: { turbo_frame: "main" } %>
         </div>
       </div>

@@ -90,7 +90,7 @@ en:
       ended: "Registration ended on %{deadline}"
       closed_early: "Registration closed before its deadline of %{deadline}"
     tutor:
-      title: "Your tutorials"
+      title: "Your groups"
       members:
         one: "1 person"
         other: "%{count} people"
