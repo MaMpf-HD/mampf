@@ -130,6 +130,7 @@ class User < ApplicationRecord
 
   # a user has redemptions of vouchers
   has_many :redemptions, dependent: :destroy
+  has_many :tutor_appointments, dependent: :destroy
 
   include ProfileimageUploader[:image]
 

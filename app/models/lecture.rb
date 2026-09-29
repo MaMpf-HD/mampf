@@ -102,6 +102,7 @@ class Lecture < ApplicationRecord
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
+  has_many :tutor_appointments, dependent: :destroy
 
   has_many :cohorts, as: :context, dependent: :destroy
 
@@ -1050,10 +1051,16 @@ class Lecture < ApplicationRecord
   end
 
   def eligible_as_tutors
-    (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
+    (tutors + Redemption.tutors_by_redemption_in(self) + appointed_tutors + editors +
+      [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some tutor statuses were
     # still given by the old system, this will not be true
+  end
+
+  # Those the staff made tutors by the address of their account.
+  def appointed_tutors
+    User.where(id: tutor_appointments.select(:user_id))
   end
 
   def eligible_as_editors

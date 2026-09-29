@@ -121,11 +121,11 @@ module LecturesHelper
     by_tutor.sort_by { |tutor, _| tutor.tutorial_name.to_s.downcase }
   end
 
-  # Redeemed a tutor voucher, not put on a tutorial yet - listed so the
-  # lecturer sees who is waiting.
+  # Redeemed a tutor voucher or added by address, not put on a tutorial yet -
+  # listed so the lecturer sees who is waiting.
   def tutors_without_tutorial(lecture)
-    (Redemption.tutors_by_redemption_in(lecture) - lecture.tutors)
-      .sort_by { |tutor| tutor.tutorial_name.to_s.downcase }
+    ((Redemption.tutors_by_redemption_in(lecture) + lecture.appointed_tutors).uniq -
+      lecture.tutors).sort_by { |tutor| tutor.tutorial_name.to_s.downcase }
   end
 
   def lecture_header_color(subscribed, lecture)

@@ -1,0 +1,5 @@
+<%= t('mailer.new_tutor', title: @lecture.title_with_teacher, username: @username) %>
+<br>
+<p class="pt-2">
+  <%= link_to(t('notifications.goto_dashboard'), root_url, class: 'btn btn-primary') %>
+</p>

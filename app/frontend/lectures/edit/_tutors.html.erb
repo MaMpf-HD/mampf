@@ -1,34 +1,82 @@
-<hr class="lecture-pane-separator">
-<h3 class="lecture-pane-header"><%= t('basics.tutors') %></h3>
-<p class="text-muted">
-  <%= t('admin.lecture.tutors_overview.hint_html',
-        link: link_to(t('roster.tabs.groups'), edit_lecture_path(lecture, tab: 'groups'))) %>
-</p>
-
-<% assigned = tutors_with_tutorials(lecture) %>
-<% waiting = tutors_without_tutorial(lecture) %>
-
-<% if assigned.empty? && waiting.empty? %>
-  <p class="text-muted" data-testid="tutors-overview-empty">
-    <%= t('admin.lecture.tutors_overview.none_yet') %>
+<%# locals: (lecture:, email: nil, error: nil) %>
+<div id="lecture-tutors">
+  <hr class="lecture-pane-separator">
+  <h3 class="lecture-pane-header"><%= t('basics.tutors') %></h3>
+  <p class="text-muted">
+    <%= t('admin.lecture.tutors_overview.hint_html',
+          link: link_to(t('roster.tabs.groups'), edit_lecture_path(lecture, tab: 'groups'))) %>
   </p>
-<% else %>
-  <table class="table table-sm" data-testid="tutors-overview">
-    <tbody>
-      <% assigned.each do |tutor, tutorials| %>
-        <tr>
-          <td><%= tutor.tutorial_info %></td>
-          <td class="text-muted"><%= tutorials.map(&:title).natural_sort.join(", ") %></td>
-        </tr>
-      <% end %>
-      <% waiting.each do |tutor| %>
-        <tr>
-          <td><%= tutor.tutorial_info %></td>
-          <td class="text-muted fst-italic">
-            <%= t('admin.lecture.tutors_overview.no_tutorial_yet') %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% end %>
+
+  <% assigned = tutors_with_tutorials(lecture) %>
+  <% waiting = tutors_without_tutorial(lecture) %>
+  <% appointments = lecture.tutor_appointments.index_by(&:user_id) %>
+
+  <% if assigned.empty? && waiting.empty? %>
+    <p class="text-muted" data-testid="tutors-overview-empty">
+      <%= t('admin.lecture.tutors_overview.none_yet') %>
+    </p>
+  <% else %>
+    <table class="table table-sm" data-testid="tutors-overview">
+      <tbody>
+        <% assigned.each do |tutor, tutorials| %>
+          <tr>
+            <td><%= tutor.tutorial_info %></td>
+            <td class="text-muted"><%= tutorials.map(&:title).natural_sort.join(", ") %></td>
+            <td></td>
+          </tr>
+        <% end %>
+        <% waiting.each do |tutor| %>
+          <% appointment = appointments[tutor.id] %>
+          <tr>
+            <td><%= tutor.tutorial_info %></td>
+            <td class="text-muted fst-italic">
+              <%= t(appointment ? 'admin.lecture.tutors_overview.added_no_tutorial_yet'
+                                : 'admin.lecture.tutors_overview.no_tutorial_yet') %>
+            </td>
+            <td class="text-end">
+              <% if appointment && current_user.can_update_personell?(lecture) %>
+                <% label = t('admin.lecture.tutors_overview.remove', name: tutor.tutorial_name) %>
+                <%= button_to lecture_tutor_appointment_path(lecture, appointment),
+                              method: :delete,
+                              class: 'btn icon-button icon-button--danger',
+                              title: label,
+                              aria: { label: label },
+                              form: { data: { turbo_stream: true,
+                                              turbo_confirm: t('admin.lecture.tutors_overview.remove_confirm',
+                                                               name: tutor.tutorial_name) } } do %>
+                  <i class="bi bi-trash" aria-hidden="true"></i>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <% if current_user.can_update_personell?(lecture) %>
+    <%= form_with url: lecture_tutor_appointments_path(lecture), method: :post, local: true,
+                  data: { turbo_stream: true }, class: 'mb-3' do |f| %>
+      <%= f.label :email, t('admin.lecture.tutors_overview.add_by_email'),
+                  for: 'tutor-appointment-email', class: 'form-label' %>
+      <div class="row g-2">
+        <div class="col-12 col-md-8">
+          <%= f.email_field :email, value: email, required: true, autocomplete: 'off',
+                                    id: 'tutor-appointment-email',
+                                    class: class_names('form-control form-control-sm', 'is-invalid': error),
+                                    aria: { invalid: error.present?,
+                                            describedby: error ? 'tutor-appointment-error' : 'tutor-appointment-hint' } %>
+          <% if error %>
+            <div id="tutor-appointment-error" class="invalid-feedback"><%= error %></div>
+          <% end %>
+        </div>
+        <div class="col-auto">
+          <%= f.submit t('admin.lecture.tutors_overview.add'), class: 'btn btn-sm btn-outline-primary' %>
+        </div>
+      </div>
+      <div id="tutor-appointment-hint" class="form-text">
+        <%= t('admin.lecture.tutors_overview.add_hint') %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

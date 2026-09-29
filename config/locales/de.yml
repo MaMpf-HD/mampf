@@ -453,9 +453,15 @@ de:
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
       tutors_overview:
-        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten); EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
-        none_yet: "Noch keine TutorInnen. Erstelle unten einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
+        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten) oder indem Du sie über die Adresse ihres Kontos hinzufügst; EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
+        none_yet: "Noch keine TutorInnen. Füge sie unten über ihre Adresse hinzu, oder erstelle einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
         no_tutorial_yet: "Gutschein eingelöst, noch keinem Tutorium zugeordnet"
+        added_no_tutorial_yet: "über die Adresse hinzugefügt, noch keinem Tutorium zugeordnet"
+        add_by_email: "TutorIn per E-Mail-Adresse hinzufügen"
+        add_hint: "Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und kann dann einem Tutorium zugeordnet werden."
+        add: "Hinzufügen"
+        remove: "%{name} entfernen"
+        remove_confirm: "%{name} von den TutorInnen dieser Veranstaltung entfernen?"
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'
@@ -2303,6 +2309,7 @@ de:
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
     edit_lecture: 'Veranstaltung bearbeiten'
+    goto_dashboard: 'Zu Deinem Dashboard'
     subscribe_lecture: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.'
     subscribe_lecture_html: 'Du findest sie in %{dashboard}.'
     subscribe_lecture_in_term: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.'
@@ -3353,7 +3360,13 @@ de:
         Diese Hausaufgabe wird bei der Veröffentlichung des assoziierten
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
+  tutor_appointments:
+    create:
+      no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
+      already: "%{name} kann bereits einem Tutorium zugeordnet werden."
+      added: "%{name} ist jetzt TutorIn und hat eine Mail darüber bekommen."
   tutorial:
+    tutors_missing_html: "Fehlt jemand? Im Reiter %{link} kannst Du TutorInnen per E-Mail-Adresse hinzufügen."
     participants:
       button: "Teilnehmende"
       pick: "Auswählen …"
@@ -3513,6 +3526,10 @@ de:
     author: 'VerfasserIn'
     text: 'Text'
     new_editor_subject: 'EditorInnenrechte für %{title}'
+    new_tutor_subject: 'TutorIn in %{title}'
+    new_tutor: >
+      Hallo %{username}, Du wurdest als TutorIn in %{title} eingetragen. Dein
+      Tutorium erscheint auf Deinem Dashboard, sobald Du einem zugeordnet bist.
     new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_teacher_subject: 'DozentInnenstatus für %{title}'
     new_teacher: 'Hallo %{username}, Du hast soeben DozentInnenstatus für %{title} erhalten.'
