@@ -18,10 +18,26 @@ module RegistrationCampaignContext
         error_target.errors.add(:base, t("registration.campaign.create_failed"))
         return false
       end
-      return true if item.save
+      if item.save
+        @joined_campaign = campaign
+        return true
+      end
 
       error_target.errors.add(:base, item.errors.full_messages.to_sentence)
       false
+    end
+
+    # A group added to an open process that people have registered for: the
+    # staff are offered a mail to them, which they write themselves - several
+    # groups added in a row need not mean several mails.
+    def new_group_mail_hint_stream(group)
+      campaign = @joined_campaign
+      return unless campaign&.open? &&
+                    campaign.user_registrations.where.not(status: :rejected).exists?
+
+      turbo_stream.append("flash-messages",
+                          partial: "registration/campaigns/new_group_mail_hint",
+                          locals: { campaign: campaign, group: group })
     end
 
     def find_or_create_registration_campaign(lecture:, error_target:)

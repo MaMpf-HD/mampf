@@ -326,6 +326,7 @@ class TutorialsController < ApplicationController
 
       if saved
         streams << stream_flash if flash.present?
+        streams << new_group_mail_hint_stream(@tutorial)
         streams << refresh_campaigns_index_stream(@lecture)
         streams << turbo_stream.update("modal-container", "")
       else
@@ -335,7 +336,7 @@ class TutorialsController < ApplicationController
         streams << stream_flash if flash.present?
       end
 
-      streams
+      streams.compact
     end
 
     def registration_section_no_campaign?

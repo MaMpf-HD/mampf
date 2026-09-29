@@ -329,6 +329,24 @@ RSpec.describe("Tutorials", type: :request) do
           expect { create_in(campaign) }.to change(campaign.registration_items, :count).by(1)
         end
 
+        it "offers a mail to those registered so far" do
+          create(:registration_user_registration, :confirmed,
+                 registration_campaign: campaign,
+                 registration_item: campaign.registration_items.first)
+
+          create_in(campaign)
+
+          hint = Nokogiri::HTML(response.body).at_css('[data-testid="new-group-mail-hint"]')
+          expect(hint.at_css("a")["href"])
+            .to include("mail_audience=campaign%3A#{campaign.id}%3Aall")
+        end
+
+        it "offers no mail while nobody has registered" do
+          create_in(campaign)
+
+          expect(response.body).not_to include("new-group-mail-hint")
+        end
+
         it "refuses once the allocation is computed" do
           campaign.update!(status: :closed, registration_deadline: 1.day.ago,
                            last_allocation_calculated_at: Time.current)

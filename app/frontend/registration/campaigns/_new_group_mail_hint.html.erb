@@ -1,0 +1,29 @@
+<%# locals: (campaign:, group:) %>
+<%# Nothing is sent unless the staff write it; the link only opens the form. %>
+<div
+  class="alert alert-info alert-dismissible fade show d-flex align-items-center"
+  role="status"
+  aria-live="polite"
+  data-testid="new-group-mail-hint"
+>
+  <i class="bi bi-envelope flex-shrink-0 me-2" aria-hidden="true"></i>
+
+  <div>
+    <%= t("registration.campaign.new_group_mail_hint", group: group.title) %>
+
+    <%= link_to t("registration.campaign.new_group_mail_link"),
+                edit_lecture_path(campaign.campaignable,
+                                  tab: "communication",
+                                  mail_audience: "campaign:#{campaign.id}:all",
+                                  mail_subject: t("registration.campaign.new_group_mail_subject",
+                                                  group: group.title)),
+                class: "alert-link" %>
+  </div>
+
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="<%= t("buttons.close") %>"
+    data-bs-dismiss="alert"
+  ></button>
+</div>

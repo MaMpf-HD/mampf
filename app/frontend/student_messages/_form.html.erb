@@ -1,8 +1,13 @@
 <%#
   The form both pages share. Staff say "everybody" or pick groups from the
   lecture's catalog; a tutor's page hands in the one group the mail is for.
-  `return_to` is where the page was, so a send lands back on it.
+  `return_to` is where the page was, so a send lands back on it. A `preset`
+  audience and subject open the staff's form on a group already picked.
 %>
+<% preset = local_assigns[:preset] || {} %>
+
+<% preset_key = preset[:audience].presence if catalog %>
+<% preset_audience = preset_key && catalog.pick([preset_key])&.first %>
 
 <%#
   A tutor's page may hold two of these forms, one per audience; the namespace
@@ -27,7 +32,7 @@
       </legend>
 
       <div class="form-check">
-        <%= radio_button_tag "student_message[audiences][]", catalog.everyone.key, true,
+        <%= radio_button_tag "student_message[audiences][]", catalog.everyone.key, !preset_audience,
                              id: "audience-everyone", class: "form-check-input",
                              data: { action: "change->audience-picker#modeChanged " \
                                              "change->audience-picker#changed" } %>
@@ -43,7 +48,7 @@
       </div>
 
       <div class="form-check">
-        <%= radio_button_tag "student_message[audiences][]", "", false,
+        <%= radio_button_tag "student_message[audiences][]", "", preset_audience.present?,
                              id: "audience-groups", class: "form-check-input",
                              data: { audience_picker_target: "groupsMode",
                                      action: "change->audience-picker#modeChanged " \
@@ -55,12 +60,8 @@
       </div>
 
       <%# Disabled, and so not sent, while "everybody" is the answer. %>
-      <fieldset
-        class="ms-4 mt-2"
-        disabled
-        hidden
-        data-audience-picker-target="groups"
-      >
+      <%= tag.fieldset class: "ms-4 mt-2", disabled: !preset_audience, hidden: !preset_audience,
+                       data: { audience_picker_target: "groups" } do %>
         <div class="row g-3">
           <% catalog.sections.each do |heading, audiences| %>
             <% offered = audiences.select { |audience| audience.count.positive? } %>
@@ -95,6 +96,7 @@
                 <div class="form-check">
                   <%= f.check_box :audiences,
                                   { multiple: true, class: "form-check-input",
+                                    checked: audience.key == preset_audience&.key,
                                     id: "audience-#{audience.key.tr(":", "-")}",
                                     data: { action: "change->audience-picker#changed" } },
                                   audience.key, nil %>
@@ -111,7 +113,7 @@
             </div>
           <% end %>
         </div>
-      </fieldset>
+      <% end %>
     </fieldset>
   <% else %>
     <%= f.hidden_field :audiences, multiple: true, value: fixed_audience.key %>
@@ -120,7 +122,8 @@
   <div class="mb-3">
     <%= f.label :subject, t("student_message.subject"), class: "form-label" %>
 
-    <%= f.text_field :subject, class: "form-control", required: true, maxlength: 200,
+    <%= f.text_field :subject, value: preset[:subject], class: "form-control", required: true,
+                               maxlength: 200,
                                data: { testid: "student-mail-subject" } %>
   </div>
 
@@ -151,7 +154,7 @@
   </div>
 
   <%= render partial: "student_messages/recipients",
-             locals: { emails: (catalog ? catalog.everyone : fixed_audience).emails,
+             locals: { emails: (preset_audience || (catalog ? catalog.everyone : fixed_audience)).emails,
                        picker: catalog.present? } %>
 
   <% if catalog %>

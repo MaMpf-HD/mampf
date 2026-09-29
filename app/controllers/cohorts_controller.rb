@@ -143,13 +143,14 @@ class CohortsController < ApplicationController
 
       if saved
         streams << stream_flash if flash.present?
+        streams << new_group_mail_hint_stream(@cohort)
         streams << refresh_campaigns_index_stream(@lecture)
       else
         streams << turbo_stream.replace(view_context.dom_id(@cohort, "form"),
                                         partial: "cohorts/modal_form",
                                         locals: { cohort: @cohort })
       end
-      streams
+      streams.compact
     end
 
     def parse_group_type
