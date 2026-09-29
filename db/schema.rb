@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_29_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -416,16 +416,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
     t.index ["lecture_id", "date"], name: "index_exams_on_lecture_id_and_date"
     t.index ["lecture_id"], name: "index_exams_on_lecture_id"
     t.index ["self_materialization_mode"], name: "index_exams_on_self_materialization_mode"
-  end
-
-  create_table "feedbacks", force: :cascade do |t|
-    t.text "title"
-    t.text "feedback"
-    t.boolean "can_contact", default: false, null: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end
 
   create_table "flipper_features", force: :cascade do |t|
@@ -1538,7 +1528,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_27_000001) do
   add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "exam_roster_entries", "users"
   add_foreign_key "exams", "lectures"
-  add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
