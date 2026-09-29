@@ -76,6 +76,23 @@ RSpec.describe("Lectures", type: :request) do
         expect(response.body).to include(current_course.title)
         expect(response.body).not_to include(other_course.title)
       end
+
+      it "searches every term when asked to, and names each result's term" do
+        current_term = create(:term, :summer, :active, year: 2025)
+        other_term = create(:term, :winter, year: 2025)
+        create(:lecture, course: create(:course, title: "Geometry Current"),
+                         term: current_term)
+        create(:lecture, course: create(:course, title: "Geometry Other"),
+                         term: other_term)
+
+        get search_lectures_path,
+            params: { search: { fulltext: "Geometry", term: current_term.dashboard_param,
+                                show_term: "0", all_terms: "1" } },
+            xhr: true
+
+        expect(response.body).to include("Geometry Current", "Geometry Other")
+        expect(response.body).to include(other_term.to_label_short)
+      end
     end
 
     context "with registration campaigns" do

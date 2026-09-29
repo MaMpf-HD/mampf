@@ -19,6 +19,7 @@ de:
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
+      all_terms: In allen Semestern suchen
       bookmark: Merken
       bookmark_lecture: "%{lecture} merken"
       registration_open: Anmeldung offen

@@ -280,7 +280,8 @@ class LecturesController < ApplicationController
     # The dashboard search is scoped to one semester by the picker above it, so
     # the term on each result card is redundant there and switched off via a
     # hidden field. Other callers (e.g. /search/index) keep it.
-    @show_term = params.dig(:search, :show_term) != "0"
+    @show_term = params.dig(:search, :show_term) != "0" ||
+                 params.dig(:search, :all_terms) == "1"
     @search_term = Term.from_dashboard_param(params.dig(:search, :term))
 
     respond_to do |format|
