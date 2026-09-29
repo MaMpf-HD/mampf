@@ -462,7 +462,7 @@ de:
         add_hint: "Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und kann dann einem Tutorium zugeordnet werden."
         add: "Hinzufügen"
         remove: "%{name} entfernen"
-        remove_confirm: "%{name} von den TutorInnen dieser Veranstaltung entfernen?"
+        remove_confirm: "%{name} von den TutorInnen dieser Veranstaltung entfernen? Zuordnungen zu flexiblen Gruppen bleiben bestehen."
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'

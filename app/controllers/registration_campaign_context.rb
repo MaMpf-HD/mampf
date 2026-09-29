@@ -13,12 +13,13 @@ module RegistrationCampaignContext
         return false
       end
 
-      item = campaign.registration_items.build(registerable: registerable)
-      unless RegistrationItemAbility.new(current_user).can?(:create, item)
+      probe = campaign.registration_items.build(registerable: registerable)
+      unless RegistrationItemAbility.new(current_user).can?(:create, probe)
         error_target.errors.add(:base, t("registration.campaign.create_failed"))
         return false
       end
-      if item.save
+      item = campaign.add_item(registerable: registerable)
+      if item.persisted?
         @joined_campaign = campaign
         return true
       end

@@ -34,9 +34,9 @@
                                 : 'admin.lecture.tutors_overview.no_tutorial_yet') %>
             </td>
             <td class="text-end">
-              <% if appointment && current_user.can_update_personell?(lecture) %>
+              <% if current_user.can_update_personell?(lecture) %>
                 <% label = t('admin.lecture.tutors_overview.remove', name: tutor.tutorial_name) %>
-                <%= button_to lecture_tutor_appointment_path(lecture, appointment),
+                <%= button_to lecture_tutor_appointment_path(lecture, tutor),
                               method: :delete,
                               class: 'btn icon-button icon-button--danger',
                               title: label,

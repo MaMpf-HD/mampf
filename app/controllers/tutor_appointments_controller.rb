@@ -1,6 +1,6 @@
 # Lets the staff of a lecture make somebody a tutor by the address of their
-# account, besides a tutor voucher. Only an exact address finds somebody, so
-# the accounts cannot be browsed.
+# account, besides a tutor voucher, and remove a tutor who came either way.
+# Only an exact address finds somebody, so the accounts cannot be browsed.
 class TutorAppointmentsController < ApplicationController
   before_action :set_lecture
 
@@ -28,9 +28,8 @@ class TutorAppointmentsController < ApplicationController
   end
 
   def destroy
-    appointment = @lecture.tutor_appointments.find(params[:id])
-    authorize! :destroy, appointment
-    appointment.destroy!
+    authorize! :destroy, TutorAppointment.new(lecture: @lecture)
+    @lecture.remove_waiting_tutor(User.find(params[:user_id]))
     render_tutors
   end
 

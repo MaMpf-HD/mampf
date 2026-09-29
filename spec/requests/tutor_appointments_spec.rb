@@ -48,10 +48,33 @@ RSpec.describe("TutorAppointments", type: :request) do
     it "removes somebody added by address" do
       appointment = create_appointment
 
-      delete(lecture_tutor_appointment_path(lecture, appointment), as: :turbo_stream)
+      delete(lecture_tutor_appointment_path(lecture, person), as: :turbo_stream)
 
       expect(TutorAppointment.exists?(appointment.id)).to be(false)
       expect(lecture.eligible_as_tutors).not_to include(person)
+    end
+
+    # Otherwise a redeemed voucher would keep somebody a tutor, and no
+    # student of the lecture, for good.
+    it "removes somebody who redeemed a tutor voucher" do
+      Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: person)
+
+      delete(lecture_tutor_appointment_path(lecture, person), as: :turbo_stream)
+
+      expect(lecture.tutor?(person)).to be(false)
+      expect(lecture.eligible_as_tutors).not_to include(person)
+    end
+
+    it "leaves the groups of somebody removed as they are" do
+      create_appointment
+      create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: person.id)
+      cohort = create(:cohort, context: lecture)
+      cohort.tutors << person
+
+      delete(lecture_tutor_appointment_path(lecture, person), as: :turbo_stream)
+
+      expect(lecture.tutor?(person)).to be(true)
+      expect(cohort.reload.tutors).to include(person)
     end
   end
 
@@ -60,6 +83,15 @@ RSpec.describe("TutorAppointments", type: :request) do
     person
 
     expect { add(person.email) }.not_to change(TutorAppointment, :count)
+  end
+
+  it "lets nobody without the right to change the people of a lecture remove a tutor" do
+    sign_in create(:confirmed_user)
+    create_appointment
+
+    delete(lecture_tutor_appointment_path(lecture, person), as: :turbo_stream)
+
+    expect(TutorAppointment.where(user: person)).to exist
   end
 
   def create_appointment

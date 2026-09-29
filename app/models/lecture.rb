@@ -835,10 +835,6 @@ class Lecture < ApplicationRecord
                                     .pluck(:tutor_id).uniq)
   end
 
-  def cohort_tutors
-    User.where(id: CohortTutorJoin.where(cohort: cohorts).select(:tutor_id))
-  end
-
   # Whether the user is a tutor of the lecture: of one of its tutorials, or
   # made one before having a tutorial, by a redeemed voucher or by address.
   # Such a tutor has the tutors' page, with or without a tutorial yet.
@@ -1088,6 +1084,16 @@ class Lecture < ApplicationRecord
   # Those the staff made tutors by the address of their account.
   def appointed_tutors
     User.where(id: tutor_appointments.select(:user_id))
+  end
+
+  # Undoes what made the user a tutor before having a tutorial: the
+  # appointment by address and the tutor vouchers redeemed here. Tutorials
+  # and cohorts the user is assigned to stay as they are.
+  def remove_waiting_tutor(user)
+    transaction do
+      tutor_appointments.where(user: user).destroy_all
+      Redemption.where(voucher: vouchers.for_tutors, user: user).destroy_all
+    end
   end
 
   def eligible_as_editors

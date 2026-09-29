@@ -27,4 +27,9 @@ test("adds a tutor by the address of their account, before any group exists",
     await dialog.getByRole("combobox", { name: "Tutors" }).fill(person.email);
     await expect(dialog.getByRole("option", { name: new RegExp(person.email) }).last())
       .toBeVisible();
+
+    await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
+    page.once("dialog", confirmation => confirmation.accept());
+    await page.getByRole("button", { name: "Remove Grace Hopper" }).click();
+    await expect(page.getByTestId("tutors-overview-empty")).toBeVisible();
   });

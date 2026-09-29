@@ -399,7 +399,7 @@ en:
         add_hint: "The address of their MaMpf account. They get a mail about it and can then be put on a tutorial."
         add: "Add"
         remove: "Remove %{name}"
-        remove_confirm: "Remove %{name} from the tutors of this lecture?"
+        remove_confirm: "Remove %{name} from the tutors of this lecture? Assignments to flexible groups stay."
       updated: 'Submission settings successfully updated.'
       lecture: 'Lecture'
       lecture_short: 'L'
