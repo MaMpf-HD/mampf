@@ -36,11 +36,11 @@ RSpec.describe(NotificationMailer, type: :mailer) do
 
     it "names no term for a lecture without one" do
       lecture = create(:lecture, :term_independent)
-      mail = NotificationMailer.with(recipients: [recipient.id],
-                                     lecture: lecture).new_lecture_email
+      mail = NotificationMailer.with(recipients: [recipient.id], lecture: lecture,
+                                     locale: :en).new_lecture_email
 
       expect(mail.text_part.body.decoded)
-        .to include(I18n.t("mailer.subscribe_lecture_text", locale: recipient.locale).strip)
+        .to include(I18n.t("mailer.subscribe_lecture_text", locale: :en).strip)
     end
   end
 end
