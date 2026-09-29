@@ -8,6 +8,6 @@ class ExamParticipantsComponent < ViewComponent::Base
     @entries ||= @exam.exam_roster_entries
                       .includes(:user)
                       .joins(:user)
-                      .merge(User.order(:name))
+                      .merge(User.by_last_name)
   end
 end

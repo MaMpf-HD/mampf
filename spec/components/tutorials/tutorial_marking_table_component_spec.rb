@@ -327,7 +327,7 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       it "is the participation on file" do
         participation = create(:assessment_participation, assessment: assessment, user: member,
                                                           tutorial: tutorial)
-        allow(assignment).to receive(:non_submitters_in_tutorial).and_return([member])
+        allow(assignment).to receive(:non_submitters_in_tutorial).and_return(User.where(id: member))
 
         expect(component.participation_for(member, tutorial)).to eq(participation)
       end
@@ -382,7 +382,7 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         participation = create(:assessment_participation, assessment: assessment, user: user,
                                                           tutorial: tutorial,
                                                           submitted_at: 1.day.ago)
-        allow(assignment).to receive(:non_submitters_in_tutorials).and_return([user])
+        allow(assignment).to receive(:non_submitters_in_tutorials).and_return(User.where(id: user))
 
         grouped = described_class.new(assignment: assignment, grading_scope: lecture)
                                  .instance_variable_get(:@non_submitters_by_tutorial)

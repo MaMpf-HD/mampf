@@ -1,9 +1,10 @@
-<% wrapper_attributes = from == 'course' ? {} : {
+<% in_modal = from.in?(['course', 'dashboard']) %>
+<% wrapper_attributes = in_modal ? {} : {
      id: 'new-lecture-area',
      class: 'bg-green-lighten-4 p-3 mb-3 rounded'
    } %>
 <%= content_tag :div, **wrapper_attributes do %>
-  <% unless from == 'course' %>
+  <% unless in_modal %>
     <div class="row">
       <div class="col-12">
         <h6>
@@ -18,8 +19,10 @@
     <%= t('admin.lecture.no_terms_yet') %>
   <% else %>
     <%= form_with model: lecture,
+                  local: from == 'dashboard',
                   data: { controller: 'lectures-new-form',
-                          action: 'turbo:submit-end->lectures-new-form#submitEnd' } do |f| %>
+                          action: 'turbo:submit-end->lectures-new-form#submitEnd',
+                          turbo_frame: ('_top' if from == 'dashboard') } do |f| %>
       <% term_independent = (from != 'course' && first_course_independent?) ||
                               (from == 'course' && lecture.course.term_independent) %>
       <div class="row">
@@ -74,7 +77,7 @@
           <%= f.submit t('buttons.save'),
                 class: 'btn btn-primary',
                 "data-testid": 'new-lecture-submit' %>
-          <% if from == 'course' %>
+          <% if in_modal %>
             <button type="button"
                     id="cancel-new-lecture"
                     class="btn btn-secondary"

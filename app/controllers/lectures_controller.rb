@@ -64,8 +64,14 @@ class LecturesController < ApplicationController
       # set language to default language
       set_language
 
-      flash.now[:notice] = I18n.t("controllers.created_lecture_success",
-                                  lecture: @lecture.title_with_teacher)
+      notice = I18n.t("controllers.created_lecture_success",
+                      lecture: @lecture.title_with_teacher)
+      # The dashboard has no list to update, so the new lecture opens.
+      if params.dig(:lecture, :from) == "dashboard"
+        return redirect_to(edit_lecture_path(@lecture), notice: notice, status: :see_other)
+      end
+
+      flash.now[:notice] = notice
 
       streams = []
 
@@ -87,8 +93,11 @@ class LecturesController < ApplicationController
       render turbo_stream: streams
     else
       @from = params.dig(:lecture, :from)
+      # The dashboard's form leaves its frame to open the new lecture, so the
+      # request names no frame; the form goes back into the modal's.
+      target = @from == "dashboard" ? Lecture.new : turbo_frame_request_id
 
-      render turbo_stream: turbo_stream.update(turbo_frame_request_id,
+      render turbo_stream: turbo_stream.update(target,
                                                partial: "lectures/new/new",
                                                locals: { lecture: @lecture, from: @from }),
              status: :unprocessable_content

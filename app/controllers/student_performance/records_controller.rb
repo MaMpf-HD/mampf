@@ -79,18 +79,12 @@ module StudentPerformance
 
     private
 
-      # The id decides nothing a reader sees; it is there because a page is cut
-      # with OFFSET, and two rows the order cannot tell apart may come back in
-      # either order - once on one page, once on the next, and somebody else
-      # not at all. Two students may well share a name.
+      # By last name, as the participants tab lists them.
       def records_scope
         @lecture.student_performance_records
                 .includes(:user)
                 .joins(:user)
-                .order(Arel.sql(
-                         "COALESCE(NULLIF(users.name_in_tutorials, " \
-                         "''), users.name) ASC"
-                       ), :id)
+                .merge(User.by_last_name)
       end
 
       def filter_by_tutorial(scope)

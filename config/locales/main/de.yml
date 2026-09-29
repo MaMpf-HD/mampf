@@ -15,10 +15,12 @@ de:
         Veranstaltungen zu suchen.
       sections:
         staff: "Diese betreust Du"
+        staff_note_only: "Für Lehrende"
         tutor: "In diesen bist Du TutorIn"
         enrolled: "Für diese bist Du angemeldet"
         bookmarked: "Diese hast Du Dir gemerkt"
       registration_open: "Anmeldung offen — jetzt anmelden"
+      talk_with: "mit %{names}"
       remove_bookmark: "Nicht mehr merken"
       remove_bookmark_for: "Nicht mehr merken: %{lecture}"
       remove_bookmark_title: "Nicht mehr merken?"

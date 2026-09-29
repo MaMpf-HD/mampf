@@ -388,10 +388,10 @@ test.describe("marking table", () => {
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
     );
     const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
-    await row.getByRole("button", { name: "Copy mail adresses to Clipboard" }).click();
+    await row.getByRole("button", { name: `Copy email address: ${student.email}` }).click();
 
-    const note = tutor.page.getByText("Mail adresses have been copied to the clipboard.");
-    await expect(note).toBeVisible();
+    const note = tutor.page.getByRole("tooltip");
+    await expect(note).toHaveText("The email address has been copied to the clipboard.");
     // hover fails when another element would take the pointer instead
     await note.hover();
   });

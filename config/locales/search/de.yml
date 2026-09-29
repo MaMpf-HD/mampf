@@ -1,5 +1,7 @@
 de:
   search:
+    staff:
+      title: "Medien und Tags suchen"
     tag_search: 'Begriffssuche'
     term_too_short: 'Bitte gib mindestens 2 Zeichen ein.'
     results: 'Suchergebnisse für den Begriff %{search_string}'

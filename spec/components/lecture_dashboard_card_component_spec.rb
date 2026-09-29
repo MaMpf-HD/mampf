@@ -182,4 +182,24 @@ RSpec.describe(LectureDashboardCardComponent, type: :component) do
       expect(render_card.at_css(keep)).to be_nil
     end
   end
+
+  describe "the user's own talk" do
+    around { |example| I18n.with_locale(:en) { example.run } }
+
+    let(:lecture) { create(:lecture, sort: "seminar") }
+    let(:cospeaker) { create(:confirmed_user, name_in_tutorials: "Grace Hopper") }
+    let(:talk) do
+      create(:talk, lecture: lecture, title: "Sylow theorems", dates: [Date.new(2026, 11, 3)],
+                    speaker_ids: [user.id, cospeaker.id])
+    end
+
+    it "shows on the seminar's card, with its date and co-speaker" do
+      card = render_card(talks: [talk])
+      note = card.css(".dashboard-card__note").find { |li| li.text.include?("Sylow") }
+
+      expect(note.at_css("a[href='/talks/#{talk.id}']").text.squish)
+        .to eq("Sylow theorems")
+      expect(note.text.squish).to include("2026-11-03", "with Grace Hopper")
+    end
+  end
 end

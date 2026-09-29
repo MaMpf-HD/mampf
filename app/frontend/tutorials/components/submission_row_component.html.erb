@@ -91,26 +91,10 @@
           </div>
         <% end %>
 
-        <button
-          type="button"
-          class="
-            clipboardpopup btn btn-link p-0 ms-2 text-secondary
-            clipboard-btn clipboard-button
-          "
-          data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
-          data-id="<%= @submission.id %>"
-          title="<%= t('buttons.copy_email_to_clipboard') %>"
-          aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
-        >
-          <i class="bi bi-clipboard"></i>
-
-          <span
-            class="clipboardpopuptext token-clipboard-popup"
-            data-id="<%= @submission.id %>"
-          >
-            <%= t('basics.emails_copied_to_clipboard') %>
-          </span>
-        </button>
+        <span class="ms-2">
+          <%= render "shared/copy_email_button",
+                     email: @submission.users.map(&:email) %>
+        </span>
       </div>
     </div>
   </td>

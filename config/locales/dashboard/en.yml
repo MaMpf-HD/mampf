@@ -9,6 +9,13 @@ en:
         link: "Take a look"
         link_label: "Take a look at the lectures for %{term}"
       current_term_link: "Jump to current semester (%{term})"
+    staff_post_it:
+      title: "Now and then"
+      new_lecture: "New lecture"
+      my_courses: "My courses"
+      search: "Find media and tags"
+      courses_explainer: "The courses you edit. A course holds the lectures of all its terms."
+      edit_course: "Edit %{course}"
     quick_actions:
       list_label: "Things to do for %{lecture}"
       result:

@@ -444,7 +444,7 @@ RSpec.describe("Personal data", type: :request) do
       create(:lecture, teacher: account)
       sign_in(account)
 
-      get elevated_profile_path
+      get edit_user_path(account)
 
       expect(response).to redirect_to(root_url)
     end

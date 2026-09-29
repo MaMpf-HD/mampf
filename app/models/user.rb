@@ -10,6 +10,26 @@ class User < ApplicationRecord
   # What a group or an exam lists a student by: once saved, only the support
   # changes it. Program and Uni ID stay the user's to change.
   LOCKED_PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number].freeze
+  # The name a row shows first, see User#tutorial_name.
+  FULL_NAME_SQL = "CONCAT_WS(' ', NULLIF(users.first_name, ''), NULLIF(users.last_name, ''))"
+                  .freeze
+  # The name a row shows, as User#tutorial_name picks it. The search looks
+  # only at what the row shows, so a hidden display name or address never
+  # explains a hit.
+  SHOWN_NAME_SQL = "COALESCE(NULLIF(#{FULL_NAME_SQL}, ''), NULLIF(users.name_in_tutorials, ''), " \
+                   "users.name)".freeze
+  # Sorts the participants tab and, through User.sort_by_last_name, the lists
+  # loaded otherwise, so that all of them list the same people in the same
+  # order; "C" compares bytes, whatever the database's collation.
+  # Ends in users.id: a page cut with OFFSET needs rows the order can tell
+  # apart, or a student shows twice and another not at all.
+  LAST_NAME_ORDER = Arel.sql(
+    "LOWER(unaccent(COALESCE(NULLIF(users.last_name, ''), NULLIF(#{FULL_NAME_SQL}, ''), " \
+    "NULLIF(users.name_in_tutorials, ''), NULLIF(users.name, ''), users.email))) " \
+    "COLLATE \"C\", " \
+    "CASE WHEN NULLIF(users.last_name, '') IS NULL THEN '' " \
+    "ELSE LOWER(unaccent(COALESCE(users.first_name, ''))) END COLLATE \"C\", users.id"
+  ).freeze
 
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
@@ -196,6 +216,16 @@ class User < ApplicationRecord
   scope :confirmed, -> { where.not(confirmed_at: nil) }
   scope :unconfirmed, -> { where(confirmed_at: nil) }
   scope :no_sign_in_data, -> { where(current_sign_in_at: nil) }
+  # Sorts people as the participants tab does: by last name, then first name;
+  # without a last name by the name the row shows.
+  scope :by_last_name, -> { order(LAST_NAME_ORDER) }
+
+  # Sorts people already loaded as by_last_name does. The database decides:
+  # Ruby folds a good hundred Latin letters differently from unaccent.
+  def self.sort_by_last_name(users)
+    position = where(id: users.map(&:id)).by_last_name.ids.each_with_index.to_h
+    users.sort_by { |user| position.fetch(user.id) }
+  end
   scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
