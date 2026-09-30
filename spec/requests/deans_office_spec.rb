@@ -38,138 +38,283 @@ RSpec.describe("Dean's office", type: :request) do
     end
   end
 
-  describe "the term's lectures" do
+  describe "the term's courses" do
     before { sign_in(office) }
 
-    it "lists the active term's lectures with how full their groups are" do
-      tutorial = create(:tutorial, lecture: lecture, title: "Tuesday group", capacity: 10)
-      3.times { create(:tutorial_membership, tutorial: tutorial) }
-      other = create(:lecture, term: create(:term))
-
-      get deans_office_path
-
-      expect(response.body).to include(CGI.escapeHTML(lecture.course.title), "Tuesday group",
-                                       "3 / 10")
-      expect(response.body).not_to include(CGI.escapeHTML(other.course.title))
+    def page
+      Nokogiri::HTML(response.body)
     end
 
-    it "counts the lecture's members and only the active exam roster" do
-      2.times { create(:lecture_membership, lecture: lecture) }
-      exam = create(:exam, lecture: lecture, capacity: 1)
-      create_list(:exam_roster_entry, 2, exam: exam)
-      create(:exam_roster_entry, exam: exam, excluded_at: 1.day.ago)
-
-      get deans_office_path
-
-      doc = Nokogiri::HTML(response.body)
-      lecture_row = doc.at_css("tbody[data-deans-office-target='lecture'] > tr")
-      row = doc.css("tr").find { |tr| tr.text.include?(exam.title) }
-      cells = lecture_row.css("td").map { |td| td.text.strip }
-      expect(cells.values_at(2, 3, 5)).to eq(["1", "1", "2"])
-      expect(row.text).to include("2 / 1")
-      expect(row.at_css(".progress-bar")[:class]).to include("bg-danger")
+    def row(title)
+      page.css("tbody[data-deans-office-target='course']")
+          .find { |body| body.at_css("th[scope='row']")&.text&.include?(title) }
     end
 
-    # 35 lectures a term: one line each, the filter finds one by title or teacher.
-    it "gives each lecture one line and its groups behind a button" do
-      create(:tutorial, lecture: lecture, title: "Tuesday group")
-
-      get deans_office_path
-
-      doc = Nokogiri::HTML(response.body)
-      button = doc.at_css("button[data-action='deans-office#toggle']")
-      groups = doc.at_css("##{button["aria-controls"]}")
-      expect(button["aria-expanded"]).to eq("false")
-      expect(groups["hidden"]).not_to be_nil
-      expect(groups.text).to include("Tuesday group")
-      expect(doc.at_css("tbody[data-deans-office-target='lecture']")["data-filter-text"])
-        .to include(lecture.course.title.downcase, lecture.teacher.tutorial_name.downcase)
+    # The figures of a course's line, after its teaching team.
+    def cells(title)
+      row(title).at_css("tr").css("td").drop(1).map { |td| td.text.squish }
     end
 
-    # The rosters stay empty until the allocation; the registrations say who
-    # is coming, counted as the lecturer's campaign card counts them.
-    it "counts the registrations of the running campaigns" do
-      monday = create(:tutorial, lecture: lecture, title: "Monday group", capacity: 12)
-      reading = create(:cohort, context: lecture, title: "Reading group")
-      first_come = create(:registration_campaign, :first_come_first_served,
-                          campaignable: lecture)
-      monday_item = create(:registration_item, registration_campaign: first_come,
-                                               registerable: monday)
-      preferences = create(:registration_campaign, :preference_based, campaignable: lecture)
-      reading_item = create(:registration_item, registration_campaign: preferences,
-                                                registerable: reading)
-      create(:registration_item, registration_campaign: preferences,
-                                 registerable: create(:cohort, context: lecture))
-      [first_come, preferences].each { |campaign| campaign.update!(status: :open) }
-      people = create_list(:confirmed_user, 3)
-      people.first(2).each do |person|
+    def open_campaign(lecture, groups, deadline: 1.week.from_now)
+      campaign = create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+      groups.each do |group|
+        create(:registration_item, registration_campaign: campaign, registerable: group)
+      end
+      campaign.update!(status: :open, registration_deadline: deadline)
+      campaign
+    end
+
+    def register(campaign, group, people)
+      item = campaign.registration_items.find_by(registerable: group)
+      people.each do |person|
         create(:registration_user_registration, :confirmed, user: person,
-                                                            registration_campaign: first_come,
-                                                            registration_item: monday_item)
+                                                            registration_campaign: campaign,
+                                                            registration_item: item)
       end
-      create(:registration_user_registration, user: people.first, preference_rank: 1,
-                                              registration_campaign: preferences,
-                                              registration_item: reading_item)
-      create(:registration_user_registration, user: people.last, preference_rank: 2,
-                                              registration_campaign: preferences,
-                                              registration_item: reading_item)
-
-      get deans_office_path
-
-      doc = Nokogiri::HTML(response.body)
-      lecture_cells = doc.at_css("tbody[data-deans-office-target='lecture'] > tr")
-                         .css("td").map { |td| td.text.strip }
-      monday_row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Monday group" }
-      reading_row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Reading group" }
-      expect(lecture_cells[4]).to eq("3")
-      expect(monday_row.css("td").map { |td| td.text.strip }.values_at(2, 3))
-        .to eq(["12", "2"])
-      expect(reading_row.text).to include("1 (first choice)")
     end
 
-    # Without knowing how people get into a group the numbers cannot be read.
-    it "says for each group how people get into it" do
-      states = {
-        "Open group" => [:first_come_first_served, :open],
-        "Waiting group" => [:preference_based, :closed],
-        "Draft group" => [:first_come_first_served, :draft]
-      }
-      states.each do |title, (mode, status)|
-        tutorial = create(:tutorial, lecture: lecture, title: title)
-        campaign = create(:registration_campaign, mode, campaignable: lecture)
-        create(:registration_item, registration_campaign: campaign, registerable: tutorial)
-        campaign.update!(status: status, registration_deadline: 1.week.from_now) if status == :open
-        campaign.update!(status: status, registration_deadline: 1.day.ago) if status == :closed
+    # What the dean's office pays for by its quotas: how many students, how
+    # many tutorials; the limits teachers set are not its concern.
+    it "gives each lecture its students, its groups and its registration" do
+      tutorials = [10, 12, nil].map do |capacity|
+        create(:tutorial, lecture: lecture, capacity: capacity)
       end
-      create(:tutorial, lecture: lecture, title: "Unassigned group")
-      create(:tutorial, lecture: lecture, title: "Joined group", skip_campaigns: true,
-                        self_materialization_mode: :add_only)
-      create(:tutorial, lecture: lecture, title: "Teacher's group", skip_campaigns: true)
+      campaign = open_campaign(lecture, tutorials, deadline: Time.zone.local(2030, 10, 11, 18))
+      register(campaign, tutorials.first, create_list(:confirmed_user, 2))
 
-      get deans_office_path
+      get deans_office_path(term: term.dashboard_param)
 
-      rows = Nokogiri::HTML(response.body).css("tr").to_h do |tr|
-        [tr.at_css("th")&.text&.strip, tr.text.squish]
-      end
-      expect(rows["Open group"]).to include("open until", "first come, first served")
-      expect(rows["Waiting group"]).to include("closed, allocation pending")
-      expect(rows["Draft group"]).to include("registration not open yet")
-      expect(rows["Unassigned group"]).to include("waits for a registration")
-      expect(rows["Joined group"]).to include("students join themselves")
-      expect(rows["Teacher's group"]).to include("only through the teacher")
+      deadline = I18n.l(campaign.registration_deadline, format: :short)
+      expect(cells(lecture.course.title))
+        .to eq(["2", "3 tutorials", "Registration open"])
+      expect(row(lecture.course.title).text.squish)
+        .to include("Registration open until #{deadline} · First come, first served")
     end
 
-    it "lists the lectures first and the seminars in a table of their own" do
-      seminar = create(:lecture, :is_seminar, term: term)
+    # The rosters stay empty until the allocation; the table would read as
+    # nobody coming while people register.
+    it "counts a tutorial's registrations while they run, and calls the places provisional" do
+      tutorial = create(:tutorial, lecture: lecture, title: "Tuesday group", capacity: 12,
+                                   location: nil)
+      campaign = open_campaign(lecture, [tutorial])
+      register(campaign, tutorial, create_list(:confirmed_user, 2))
+
+      get deans_office_path(term: term.dashboard_param)
+
+      button = row(lecture.course.title).at_css("button[data-action='deans-office#toggle']")
+      details = page.at_css("##{button["aria-controls"]}")
+      expect(details.at_css("tbody tr:not(.deans-office-group-phase)").text.squish)
+        .to eq("Tuesday group 2")
+      expect(details.at_css(".deans-office-bar-provisional")).to be_present
+    end
+
+    # One figure for everybody: people already in a group and people still
+    # registering, each counted once.
+    it "counts people in groups and people registering together, each once" do
+      allocated, open = create_list(:tutorial, 2, lecture: lecture, skip_campaigns: false)
+      member, both = create_list(:confirmed_user, 2)
+      [member, both].each { |user| create(:tutorial_membership, tutorial: allocated, user: user) }
+      allocated.update!(skip_campaigns: true)
+      campaign = open_campaign(lecture, [open])
+      register(campaign, open, [both, create(:confirmed_user)])
+
+      get deans_office_path(term: term.dashboard_param)
+
+      expect(cells(lecture.course.title).first).to eq("3")
+    end
+
+    it "counts the people in the course once the places are allocated" do
+      tutorial = create(:tutorial, lecture: lecture, capacity: 20)
+      campaign = open_campaign(lecture, [tutorial])
+      # rubocop:disable Rails/SkipsModelValidations
+      campaign.update_columns(status: Registration::Campaign.statuses[:completed])
+      # rubocop:enable Rails/SkipsModelValidations
+      3.times { create(:tutorial_membership, tutorial: tutorial) }
+
+      get deans_office_path(term: term.dashboard_param)
+
+      expect(cells(lecture.course.title))
+        .to eq(["3", "1 tutorial", "Allocated"])
+    end
+
+    # A group such as "Teilnahme ohne Tutorium" is the teacher's choice, not a
+    # tutorial; neither is an exam.
+    it "names further groups apart from tutorials and leaves exams out" do
+      cohort = create(:cohort, context: lecture, title: "Taking part without a tutorial",
+                               capacity: 500, skip_campaigns: true,
+                               self_materialization_mode: :add_only)
+      2.times { create(:cohort_membership, cohort: cohort) }
+      create(:exam, lecture: lecture, capacity: 300)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      expect(cells(lecture.course.title))
+        .to eq(["2", "1 flexible group", "Sign-up open"])
+      button = row(lecture.course.title).at_css("button[data-action='deans-office#toggle']")
+      details = page.at_css("##{button["aria-controls"]}")
+      expect(details.text.squish).to include("Groups")
+      expect(details.text).not_to include("Exam")
+      cohort_row = details.css("tr").find { |tr| tr.text.include?("Taking part") }
+      expect(cohort_row.text.squish).to eq("Taking part without a tutorial 2")
+    end
+
+    # The worker closes a campaign only once a minute; students are turned
+    # away at the deadline already.
+    it "names each phase with its groups where the groups differ" do
+      early, late = create_list(:tutorial, 2, lecture: lecture, capacity: 10)
+      open_campaign(lecture, [late])
+      closed = open_campaign(lecture, [early])
+      closed.update_column(:registration_deadline, 1.minute.ago) # rubocop:disable Rails/SkipsModelValidations
+
+      get deans_office_path(term: term.dashboard_param)
+
+      expect(cells(lecture.course.title).last)
+        .to eq("Allocation to follow (1 tutorial) Registration open (1 tutorial)")
+    end
+
+    # The name from the personal data where given, not an account name.
+    it "lists the teaching team, the teacher first, each with an address to copy" do
+      assistant = create(:confirmed_user, name: "student1", first_name: "Ada",
+                                          last_name: "Lovelace")
+      lecture.teacher.update!(first_name: nil, last_name: nil)
+      lecture.editors << assistant
+      create(:tutorial, lecture: lecture)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      team = row(lecture.course.title).at_css("tr td").css("li")
+      expect(team.map { |li| li.text.squish })
+        .to eq(["#{lecture.teacher.name} (Teacher)", "Ada Lovelace"])
+      expect(team.pluck("data-clipboard-text-value"))
+        .to eq([lecture.teacher.email, assistant.email])
+    end
+
+    it "shows how many each group has, and its location if given, behind a button" do
+      create(:tutorial, lecture: lecture, title: "Tuesday group", capacity: 12, location: "INF 205")
+      create(:tutorial, lecture: lecture, title: "Friday group", capacity: nil, location: nil)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      button = row(lecture.course.title).at_css("button[data-action='deans-office#toggle']")
+      details = page.at_css("##{button["aria-controls"]}")
+      expect(button["aria-expanded"]).to eq("false")
+      expect(details["hidden"]).not_to be_nil
+      rows = details.css("tbody tr:not(.deans-office-group-phase)").map { |tr| tr.text.squish }
+      expect(rows).to eq(["Friday group 0", "Tuesday group 0 INF 205"])
+      expect(details.at_css("[role='progressbar']").ancestors("[aria-hidden='true']"))
+        .to be_present
+    end
+
+    it "lists courses without any registration by name only" do
       lecture
+      other = create(:lecture, term: term)
+      create(:tutorial, lecture: other)
 
-      get deans_office_path
+      get deans_office_path(term: term.dashboard_param)
 
-      sections = Nokogiri::HTML(response.body).css("section[data-deans-office-target='section']")
+      list = page.at_css("details[data-deans-office-target='unregistered']")
+      expect(list.at_css("summary").text.squish).to eq("1 lecture without registration in MaMpf")
+      expect(list.text).to include(lecture.course.title)
+      expect(row(lecture.course.title)).to be_nil
+    end
+
+    # A teacher may hand out places without any registration: such a group
+    # counts as allocated once somebody is in it.
+    it "counts a group outside any registration as allocated once it has people" do
+      given = create_list(:tutorial, 2, lecture: lecture, skip_campaigns: true).last
+      create(:tutorial_membership, tutorial: given)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      expect(cells(lecture.course.title).last)
+        .to eq("Allocated (1 tutorial) Not started yet (1 tutorial)")
+      button = row(lecture.course.title).at_css("button[data-action='deans-office#toggle']")
+      phases = page.css("##{button["aria-controls"]} tr.deans-office-group-phase")
+      expect(phases.map { |tr| tr.text.squish }).to eq(["Allocated", "Not started yet"])
+    end
+
+    # Students who joined stay in a group once its sign-up closes.
+    it "counts a group whose sign-up has closed as allocated if people joined" do
+      joined = create(:cohort, context: lecture, title: "Joined", skip_campaigns: true,
+                               self_materialization_mode: :add_only)
+      create(:cohort_membership, cohort: joined)
+      joined.update!(self_materialization_mode: :disabled)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      expect(cells(lecture.course.title)).to eq(["1", "1 flexible group", "Allocated"])
+    end
+
+    # The dean's office does not know how MaMpf hands out places.
+    it "explains the phases and the modes behind question marks" do
+      tutorial = create(:tutorial, lecture: lecture)
+      open_campaign(lecture, [tutorial])
+
+      get deans_office_path(term: term.dashboard_param)
+
+      helps = page.css("a.deans-office-help")
+      state_help = helps.find { |help| help["aria-label"] == "Explanation: Registration" }
+      phases = Nokogiri::HTML.fragment(state_help["data-bs-content"]).css("li strong")
+      expect(phases.map(&:text)).to eq(["Registration open", "Allocation to follow",
+                                        "Sign-up open", "Allocated", "Not started yet"])
+      mode_help = helps.find { |help| help["aria-label"].include?("First come, first served") }
+      expect(mode_help["data-bs-content"]).to include("gets a place at once")
+      students_help = helps.find { |help| help["aria-label"] == "Explanation: Students" }
+      expect(students_help["data-bs-content"]).to include("each person once")
+    end
+
+    # A preference registration counts first wishes only; the line says so.
+    it "names a preference registration's figures as first choices" do
+      tutorial = create(:tutorial, lecture: lecture, title: "Tuesday group")
+      campaign = create(:registration_campaign, :preference_based, campaignable: lecture)
+      item = create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+      campaign.update!(status: :open)
+      create(:registration_user_registration, registration_campaign: campaign,
+                                              registration_item: item, preference_rank: 1)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      button = row(lecture.course.title).at_css("button[data-action='deans-office#toggle']")
+      details = page.at_css("##{button["aria-controls"]}")
+      expect(details.at_css("tr.deans-office-group-phase").text.squish)
+        .to end_with("By preference, first choices")
+      expect(details.at_css(".deans-office-meter")["title"]).to start_with("First choices")
+    end
+
+    it "lists the lectures first and the seminars with their talks below" do
+      seminar = create(:lecture, :is_seminar, term: term)
+      talks = create_list(:talk, 2, lecture: seminar)
+      create(:speaker_talk_join, talk: talks.first, speaker: create(:confirmed_user))
+      create(:tutorial, lecture: lecture)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      sections = page.css("section[data-deans-office-target='section']")
       expect(sections.map { |section| section.at_css("h2").text.strip })
         .to eq(["Lectures", "Seminars"])
-      expect(sections.last.text).to include(seminar.course.title, seminar.sort_localized)
       expect(sections.first.text).not_to include(seminar.course.title)
+      expect(cells(seminar.course.title)[1]).to eq("2 talks, 1 assigned")
+      # nothing to open: no registration, no groups but the talks
+      expect(row(seminar.course.title).at_css("button[data-action='deans-office#toggle']"))
+        .to be_nil
+    end
+
+    it "orders by the state of the registration when asked to, soonest deadline first" do
+      soon, later, unset = create_list(:lecture, 3, term: term).map do |course|
+        [course, create(:tutorial, lecture: course)]
+      end
+      open_campaign(later.first, [later.last], deadline: 2.weeks.from_now)
+      open_campaign(soon.first, [soon.last], deadline: 1.week.from_now)
+
+      get deans_office_path(term: term.dashboard_param, order: "phase")
+
+      table = page.at_css("table[aria-labelledby='deans-office-lectures']")
+      headings = table.css("tr.deans-office-phase th").map { |th| th.text.strip }
+      titles = table.css("tbody[data-deans-office-target='course'] th[scope='row'] button")
+                    .map { |button| button.text.strip }
+      expect(headings).to eq(["Registration open", "Not started yet"])
+      expect(titles).to eq([soon, later, unset].map { |course, _| course.course.title })
+      expect(page.at_css("a[aria-current='true']").text).to eq("by state of the registration")
     end
 
     it "is in the navbar of admins too" do
@@ -178,37 +323,6 @@ RSpec.describe("Dean's office", type: :request) do
       get deans_office_path
 
       expect(Nokogiri::HTML(response.body).css("nav a[href='#{deans_office_path}']")).to be_present
-    end
-
-    # The worker closes a campaign only once a minute; students are turned
-    # away at the deadline already.
-    it "shows a campaign whose deadline has passed as waiting for its allocation" do
-      tutorial = create(:tutorial, lecture: lecture, title: "Late group", capacity: 12)
-      campaign = create(:registration_campaign, :first_come_first_served, campaignable: lecture)
-      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
-      campaign.update!(status: :open)
-      campaign.update_column(:registration_deadline, 1.minute.ago) # rubocop:disable Rails/SkipsModelValidations
-
-      get deans_office_path
-
-      row = Nokogiri::HTML(response.body).css("tr")
-                    .find { |tr| tr.at_css("th")&.text&.strip == "Late group" }
-      expect(row.text).to include("closed, allocation pending")
-      expect(row.text).not_to include("open until")
-    end
-
-    # Rosters are empty while a registration runs; the bar alone shows no label then.
-    it "writes an empty group's members out as text, beside a bar hidden from screen readers" do
-      create(:tutorial, lecture: lecture, title: "Empty group", capacity: 12)
-
-      get deans_office_path
-
-      doc = Nokogiri::HTML(response.body)
-      row = doc.css("tr").find { |tr| tr.at_css("th")&.text&.strip == "Empty group" }
-      expect(row.css("span").map { |span| span.text.strip }).to include("0 / 12")
-      expect(row.at_css("[role='progressbar']").ancestors("[aria-hidden='true']")).to be_present
-      table = doc.at_css("section[data-deans-office-target='section'] > div > table")
-      expect(table["aria-labelledby"]).to eq("deans-office-lectures")
     end
 
     # The page promises a fixed number of queries per term; a figure read per
@@ -221,6 +335,7 @@ RSpec.describe("Dean's office", type: :request) do
 
     it "shows another term's lectures when it is picked" do
       other = create(:lecture, term: create(:term))
+      create(:tutorial, lecture: other)
 
       get deans_office_path(term: other.term.dashboard_param)
 
@@ -232,7 +347,8 @@ RSpec.describe("Dean's office", type: :request) do
     term = create(:term)
     count.times do
       lecture = create(:lecture, term: term)
-      tutorial = create(:tutorial, lecture: lecture, capacity: 10)
+      lecture.editors << create(:confirmed_user)
+      tutorial = create(:tutorial, lecture: lecture, capacity: 10, location: "INF 205")
       create(:tutorial_membership, tutorial: tutorial)
       create(:cohort, context: lecture)
       create(:exam, lecture: lecture)

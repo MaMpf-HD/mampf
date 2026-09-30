@@ -10,3 +10,82 @@
     transition: none;
   }
 }
+
+.deans-office-phase > th {
+  padding-top: 1.5rem;
+  font-weight: 600;
+  border-bottom-width: 2px;
+}
+
+// On a phone each course is a block with its figures labelled; the roles on
+// the table keep what screen readers announce.
+@media (width < 768px) {
+  .deans-office-table {
+    > thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    > tbody > tr,
+    > tbody > tr > th,
+    > tbody > tr > td {
+      display: block;
+    }
+
+    > tbody > tr > td[data-label]::before {
+      content: attr(data-label) ": ";
+      color: var(--bs-secondary-color);
+    }
+
+    > tbody > tr > td[data-label] {
+      border-bottom: 0;
+      padding-top: 0;
+    }
+  }
+}
+
+// Light like the statistics tab's bars: a picture of the figure beside it,
+// not a verdict on it.
+.deans-office-bar .progress-bar {
+  background-color: var(--bs-primary-border-subtle) !important;
+}
+
+// Stripes for registrations, which are provisional, against people already
+// in a group.
+.deans-office-bar-provisional .progress-bar {
+  background-image: linear-gradient(
+    45deg,
+    rgb(255 255 255 / 60%) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgb(255 255 255 / 60%) 50%,
+    rgb(255 255 255 / 60%) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 0.5rem 0.5rem;
+}
+
+.deans-office-groups {
+  --bs-table-bg: transparent;
+}
+
+.deans-office-group-phase > th {
+  padding-top: 0.75rem;
+  color: var(--bs-secondary-color);
+  font-weight: 600;
+}
+
+// Fixed widths line the bars up however long the figures are.
+.deans-office-count {
+  flex: 0 0 2.5rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.deans-office-meter {
+  flex: 0 0 7rem;
+}
