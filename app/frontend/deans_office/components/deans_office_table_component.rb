@@ -1,14 +1,13 @@
-# Lists a term's lectures or seminars for the dean's office: per course how
-# many students, its tutorials or talks with their places, and how far its
-# registration has got, with the groups behind a button. Courses without any
-# registration are listed by name below the table.
+# Lists course counts, teaching teams and registration phases for the dean's
+# office. Keeps courses without groups or registration in a collapsed list, so
+# the table holds only what can be compared.
 class DeansOfficeTableComponent < ViewComponent::Base
   def initialize(overview:, section:, courses:, by_phase:)
     super()
     @overview = overview
     @section = section
-    registered, @unregistered = courses.partition { |course| overview.registered?(course) }
-    @courses = overview.ordered(registered, by_phase: by_phase)
+    listed, @unregistered = courses.partition { |course| overview.in_table?(course) }
+    @courses = overview.ordered(listed, by_phase: by_phase)
     @by_phase = by_phase
   end
 
@@ -20,8 +19,6 @@ class DeansOfficeTableComponent < ViewComponent::Base
     @section == :seminars
   end
 
-  # One group per phase when ordered by phase; otherwise a single one
-  # without a heading.
   def phase_groups
     return [[nil, @courses]] unless @by_phase
 
@@ -36,12 +33,32 @@ class DeansOfficeTableComponent < ViewComponent::Base
     [course.course.title, course.sort_localized, *people].join(" ").downcase
   end
 
+  # Header ids for every cell, since a course's row and the phase heading
+  # above it sit in separate row groups that scope alone cannot join.
+  def column_id(key)
+    "#{heading_id}-#{key}"
+  end
+
+  def phase_id(phase)
+    "#{heading_id}-phase-#{phase}"
+  end
+
+  def title_id(course)
+    dom_id(course, :deans_office_title)
+  end
+
+  def cell_headers(course, phase, key)
+    [column_id(key), title_id(course), (phase_id(phase) if phase)].compact.join(" ")
+  end
+
+  def teacher_name(course)
+    course.teacher && @overview.person_name(course.teacher)
+  end
+
   def groups_or_talks(course)
     seminars? ? talks(course) : groups(course)
   end
 
-  # The phase of the course's registration; where its groups differ, one
-  # line per phase naming the groups in it.
   def state_lines(course)
     by_phase = @overview.groups_by_phase(course)
     return [t("deans_office.phases.#{@overview.phase(course)}")] if by_phase.size <= 1
@@ -52,16 +69,15 @@ class DeansOfficeTableComponent < ViewComponent::Base
     end
   end
 
-  # Whether opening the course shows anything: its tutorials or further
-  # groups. Talks are only counted.
+  # Omits the toggle for talks-only courses, because talks have no detail rows.
   def details?(course)
     course.tutorials.any? || course.cohorts.any?
   end
 
   private
 
-    # Tutorials and further groups counted apart: only tutorials are what
-    # the dean's office pays for.
+    # Counts tutorials apart from flexible groups, because the dean's office
+    # pays for tutorials.
     def groups(lecture)
       kinds(lecture.tutorials + lecture.cohorts).presence || t("deans_office.groups.none")
     end

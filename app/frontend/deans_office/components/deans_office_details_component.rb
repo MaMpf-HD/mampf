@@ -1,7 +1,6 @@
-# Shows a course's groups and how many people each has, by the registration
-# that hands them out: its deadline and mode say how settled the figures are.
-# Exams and talks stay out; they do not bear on the tutorials the dean's
-# office pays for.
+# Shows tutorial and flexible-group counts for the dean's office's tutorial
+# planning. Leaves out exams and talks, which do not bear on the tutorials it
+# pays for.
 class DeansOfficeDetailsComponent < ViewComponent::Base
   Section = Struct.new(:phase, :campaign, :groups)
 
@@ -13,9 +12,6 @@ class DeansOfficeDetailsComponent < ViewComponent::Base
     @course = course
   end
 
-  # One section per running or prepared registration and one per phase for
-  # the other groups, in the order of the course's line; tutorials first
-  # within each.
   def sections
     @sections ||= begin
       groups = @course.tutorials.sort_by(&:title) + @course.cohorts.sort_by(&:title)
@@ -26,19 +22,23 @@ class DeansOfficeDetailsComponent < ViewComponent::Base
   end
 
   def groups
-    sections.flat_map(&:groups)
+    @groups ||= sections.flat_map(&:groups)
   end
 
+  # Names the phase, and for a registration its deadline and mode, which say
+  # how settled the figures are.
   def heading(section)
-    phase = if section.phase == :open
-      t("deans_office.details.open_until",
-        deadline: l(section.campaign.registration_deadline, format: :short))
-    else
-      t("deans_office.phases.#{section.phase}")
-    end
+    phase = t("deans_office.phases.#{section.phase}")
     return phase unless section.campaign
 
-    t("deans_office.details.by_campaign", phase: phase, mode: mode(section.campaign))
+    deadline = l(section.campaign.registration_deadline, format: :short)
+    phase = t("deans_office.details.open_until", deadline: deadline) if section.phase == :open
+    parts = [phase, mode(section)]
+    unless section.phase == :open
+      key = section.phase == :allocating ? "deadline_passed" : "deadline"
+      parts << t("deans_office.details.#{key}", deadline: deadline)
+    end
+    parts.join(" · ")
   end
 
   def help(section)
@@ -48,11 +48,9 @@ class DeansOfficeDetailsComponent < ViewComponent::Base
   end
 
   def bar_title(section)
-    key = if section.phase.in?([:open, :allocating])
-      preference?(section.campaign) ? "first_choices" : "provisional"
-    else
-      "entered"
-    end
+    return t("deans_office.details.bar.entered") unless provisional?(section)
+
+    key = preference?(section.campaign) ? "first_choices" : "provisional"
     t("deans_office.details.bar.#{key}")
   end
 
@@ -63,11 +61,13 @@ class DeansOfficeDetailsComponent < ViewComponent::Base
   # The bars compare the groups with each other, since the limits teachers set
   # say nothing about the quotas the dean's office pays by.
   def largest_group
-    groups.map { |group| group_count(group) }.max.to_i
+    @largest_group ||= [groups.map { |group| group_count(group) }.max.to_i, 1].max
   end
 
   def located?
-    groups.any? { |group| group.try(:location).present? }
+    return @located if defined?(@located)
+
+    @located = groups.any? { |group| group.try(:location).present? }
   end
 
   private
@@ -80,8 +80,11 @@ class DeansOfficeDetailsComponent < ViewComponent::Base
       campaign.first_come_first_served? ? "first_come" : "preferences"
     end
 
-    def mode(campaign)
-      return t("deans_office.modes.first_come") unless preference?(campaign)
+    # Calls the figures first choices only while they are: a prepared
+    # preference registration still shows the people in the group.
+    def mode(section)
+      return t("deans_office.modes.first_come") unless preference?(section.campaign)
+      return t("deans_office.modes.preferences") unless provisional?(section)
 
       t("deans_office.details.first_choices", mode: t("deans_office.modes.preferences"))
     end

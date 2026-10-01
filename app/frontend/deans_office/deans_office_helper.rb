@@ -1,11 +1,11 @@
-# The question marks that explain the dean's office page's terms to readers
-# who do not know how MaMpf hands out places.
+# Explains registration terms for dean's office readers unfamiliar with how
+# MaMpf hands out places.
 module DeansOfficeHelper
   # Opens on click or keyboard focus; a link with a tabindex, since Safari
   # does not focus a button it is clicked on and the popover would not open.
   def deans_office_help(topic, content, html: false)
     tag.a(tabindex: 0, role: "button",
-          class: "ms-1 text-secondary deans-office-help",
+          class: "ms-1 text-secondary",
           title: topic,
           "aria-label": t("deans_office.help.about", topic: topic),
           data: { controller: "bs-popover", bs_toggle: "popover", bs_trigger: "focus",
@@ -14,7 +14,6 @@ module DeansOfficeHelper
     end
   end
 
-  # Every phase with what it means, for the help on the state column.
   def deans_office_phases_help
     tag.ul(class: "list-unstyled mb-0") do
       safe_join(DeansOffice::TermOverview::PHASE_ORDER.map do |phase|

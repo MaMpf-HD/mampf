@@ -1,8 +1,8 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Filters the dean's office overview by course title or teacher and opens a
- * course's details, so a term can be scanned at once.
+ * Filters courses by title, teaching-team names and addresses, so the dean's
+ * office finds a course within a term.
  */
 export default class extends Controller {
   static targets = ["filter", "section", "table", "phase", "course", "unregistered", "none"];

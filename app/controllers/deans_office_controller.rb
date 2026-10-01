@@ -1,6 +1,6 @@
 # Shows the dean's office every lecture of a term with its groups, how many
-# have registered and how full they are, without asking each teacher.
-# Ordered by title, or with `order=phase` by how far their registration is.
+# students they have and how far their registration is, without asking each
+# teacher.
 class DeansOfficeController < ApplicationController
   authorize_resource class: false
   helper DeansOfficeHelper

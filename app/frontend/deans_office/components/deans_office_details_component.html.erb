@@ -25,7 +25,7 @@
     <% sections.each do |section| %>
       <tbody>
         <tr class="deans-office-group-phase">
-          <th colspan="<%= located? ? 3 : 2 %>" scope="colgroup">
+          <th colspan="<%= located? ? 3 : 2 %>" scope="rowgroup">
             <%= heading(section) %>
             <%= helpers.deans_office_help(heading(section), help(section)) %>
           </th>
@@ -47,7 +47,7 @@
                   title="<%= bar_title(section) %>"
                 >
                   <%= helpers.progress_bar(
-                    count, [largest_group, 1].max,
+                    count, largest_group,
                     show_label: false, height: "0.5rem",
                     container_class: class_names(
                       "progress deans-office-bar",

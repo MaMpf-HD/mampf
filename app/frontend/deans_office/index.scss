@@ -17,8 +17,8 @@
   border-bottom-width: 2px;
 }
 
-// On a phone each course is a block with its figures labelled; the roles on
-// the table keep what screen readers announce.
+// Keeps the table's semantics where the phone layout shows its rows as
+// blocks: the explicit roles survive display: block.
 @media (width < 768px) {
   .deans-office-table {
     > thead {
@@ -35,20 +35,27 @@
       display: block;
     }
 
-    > tbody > tr > td[data-label]::before {
-      content: attr(data-label) ": ";
-      color: var(--bs-secondary-color);
-    }
-
-    > tbody > tr > td[data-label] {
+    > tbody > tr > td:not([colspan]) {
       border-bottom: 0;
       padding-top: 0;
+    }
+
+    .deans-office-label {
+      display: inline;
     }
   }
 }
 
-// Light like the statistics tab's bars: a picture of the figure beside it,
-// not a verdict on it.
+// The column headings name each figure on a wide screen; on a phone, where
+// rows become blocks, these labels do, and screen readers keep the headings.
+.deans-office-label {
+  display: none;
+  margin-right: 0.25rem;
+  color: var(--bs-secondary-color);
+}
+
+// Neutral bar colours: the dean's office observes the counts without judging
+// them.
 .deans-office-bar .progress-bar {
   background-color: var(--bs-primary-border-subtle) !important;
 }

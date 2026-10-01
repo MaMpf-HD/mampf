@@ -30,7 +30,7 @@ test.describe("dean's office", () => {
       await student.page.getByLabel("Term").selectOption({ label: "SS 2030" });
       await expect(student.page).toHaveURL(/term=SS30/);
 
-      // one line per lecture: its students, its tutorials with their places
+      // one line per lecture: its students, its groups and its phase
       const lectures = student.page.getByRole("table", { name: "Lectures" });
       const row = lectures.getByRole("row", { name: /Linear Algebra/ });
       await expect(row).toContainText("Allocated");
@@ -43,6 +43,9 @@ test.describe("dean's office", () => {
       const group = groups.getByRole("row", { name: /Tuesday group/ });
       await expect(group).toContainText("INF 205");
       await expect(group).toContainText("1");
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-expanded", "false");
+      await expect(groups).toBeHidden();
 
       // a lecture without registration is only named, in a list of its own
       const unregistered = student.page.getByText("1 lecture without registration in MaMpf");
@@ -55,16 +58,23 @@ test.describe("dean's office", () => {
       await expect(lectures).toBeHidden();
 
       await search.fill("no such course");
-      await expect(student.page.getByRole("status")).toHaveText("No course matches your search.");
+      // the copy buttons have status messages of their own
+      await expect(student.page.getByText("No course matches your search.")).toBeVisible();
       await search.fill("");
       await expect(lectures).toBeVisible();
 
       await student.page.getByRole("link", { name: "by state of the registration" }).click();
       await expect(student.page).toHaveURL(/order=phase/);
-      await expect(student.page.getByRole("columnheader", { name: "Allocated" }))
+      await expect(student.page.getByRole("rowheader", { name: "Allocated" }))
         .toBeVisible();
 
+      // on a phone the details still open and the help stays in reach
       await student.page.setViewportSize({ width: 390, height: 800 });
+      await toggle.click();
+      await expect(groups).toBeVisible();
+      // the line above the table, since the column headings are hidden here
+      await expect(student.page.getByRole("button", { name: "Explanation: Students" }).first())
+        .toBeVisible();
       const overflow = await student.page.evaluate(() =>
         document.documentElement.scrollWidth > document.documentElement.clientWidth);
       expect(overflow).toBe(false);

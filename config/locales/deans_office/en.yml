@@ -69,26 +69,27 @@ en:
       about: 'Explanation: %{topic}'
       phases:
         open: >-
-          Students can register right now. The figures are registrations;
-          nothing is allocated yet.
+          Students can register right now; the group lists are not settled yet.
         allocating: >-
-          The registration has closed; the places are still being handed out.
-          The figures are registrations.
+          The registration has closed; the places are still being handed out
+          to the groups.
         self_join: >-
-          Students put themselves into the group without a registration. The
-          figures are the people in it.
+          Students put themselves into the group without a registration.
         assigned: >-
-          The group has its people: by an allocation, from the teacher
-          directly, or by a sign-up that has closed again. The figures are the
-          people in it.
-        preparing: 'Nothing is open for this group right now, and nobody is in it.'
+          Handing out is done: by an allocation, by the teacher directly, or
+          by a sign-up that has closed again. Counted is who is in the group
+          now, even if that is nobody.
+        preparing: 'No registration is open for this group yet.'
       modes:
         first_come: >-
-          Whoever registers gets a place at once, while places are left.
+          Whoever registers has a place at once while places are left; they
+          enter the group list when the registration is completed.
         preferences: >-
           Students state their wishes; after the deadline the places are
           handed out by these wishes.
     details:
+      deadline: 'Deadline %{deadline}'
+      deadline_passed: 'Deadline was %{deadline}'
       open_until: 'Registration open until %{deadline}'
       by_campaign: '%{phase} · %{mode}'
       first_choices: '%{mode}, first choices'
@@ -98,5 +99,5 @@ en:
       location: 'Location'
       bar:
         first_choices: 'First choices; places are handed out only after the deadline; length against the largest group'
-        provisional: 'Registrations, not allocated yet; length against the largest group'
+        provisional: 'Registrations, not in the group list yet; length against the largest group'
         entered: 'In the group; length against the largest group'

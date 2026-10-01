@@ -8,6 +8,18 @@
   </h2>
 
   <% if @courses.any? %>
+    <%# On a phone the column headings are hidden; their help stays in reach here. %>
+    <p class="small text-muted d-md-none mb-2">
+      <%= t("deans_office.columns.students") %>
+      <%= helpers.deans_office_help(t("deans_office.columns.students"),
+                                    t("deans_office.help.students")) %>
+      · <%= t("deans_office.columns.state") %>
+      <%= helpers.deans_office_help(t("deans_office.columns.state"),
+                                    helpers.deans_office_phases_help, html: true) %>
+    </p>
+  <% end %>
+
+  <% if @courses.any? %>
     <table
       class="table align-middle deans-office-table"
       role="table"
@@ -16,26 +28,26 @@
     >
       <thead role="rowgroup">
         <tr role="row">
-          <th scope="col" role="columnheader">
+          <th scope="col" role="columnheader" id="<%= column_id(:course) %>">
             <%= t("deans_office.columns.#{seminars? ? "seminar" : "lecture"}") %>
           </th>
 
-          <th scope="col" role="columnheader">
+          <th scope="col" role="columnheader" id="<%= column_id(:team) %>">
             <%= t("deans_office.columns.team.#{seminars? ? "seminar" : "lecture"}") %>
           </th>
 
-          <th scope="col" role="columnheader">
+          <th scope="col" role="columnheader" id="<%= column_id(:students) %>">
             <%= t("deans_office.columns.students") %>
 
             <%= helpers.deans_office_help(t("deans_office.columns.students"),
                                           t("deans_office.help.students")) %>
           </th>
 
-          <th scope="col" role="columnheader">
+          <th scope="col" role="columnheader" id="<%= column_id(:groups) %>">
             <%= t("deans_office.columns.#{seminars? ? "talks" : "groups"}") %>
           </th>
 
-          <th scope="col" role="columnheader">
+          <th scope="col" role="columnheader" id="<%= column_id(:state) %>">
             <%= t("deans_office.columns.state") %>
 
             <%= helpers.deans_office_help(t("deans_office.columns.state"),
@@ -52,7 +64,7 @@
             data-phase="<%= phase %>"
           >
             <tr role="row" class="deans-office-phase">
-              <th colspan="5" scope="colgroup" role="columnheader">
+              <th colspan="5" role="rowheader" id="<%= phase_id(phase) %>">
                 <%= t("deans_office.phases.#{phase}") %>
               </th>
             </tr>
@@ -69,7 +81,13 @@
             data-filter-text="<%= filter_text(course) %>"
           >
             <tr role="row">
-              <th scope="row" role="rowheader" class="fw-normal">
+              <th
+                scope="row"
+                role="rowheader"
+                class="fw-normal"
+                id="<%= title_id(course) %>"
+                headers="<%= [column_id(:course), (phase_id(phase) if phase)].compact.join(" ") %>"
+              >
                 <% if details?(course) %>
                   <button
                     type="button"
@@ -105,8 +123,12 @@
 
               <td
                 role="cell"
-                data-label="<%= t("deans_office.columns.team.#{seminars? ? "seminar" : "lecture"}") %>"
+                headers="<%= cell_headers(course, phase, :team) %>"
               >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.team.#{seminars? ? "seminar" : "lecture"}") %>:
+                </span>
+
                 <ul class="list-unstyled small mb-0">
                   <% @overview.teachers(course).each_with_index do |person, index| %>
                     <li
@@ -153,22 +175,34 @@
               <td
                 role="cell"
                 class="text-nowrap"
-                data-label="<%= t("deans_office.columns.students") %>"
+                headers="<%= cell_headers(course, phase, :students) %>"
               >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.students") %>:
+                </span>
+
                 <%= @overview.students(course) %>
               </td>
 
               <td
                 role="cell"
-                data-label="<%= t("deans_office.columns.#{seminars? ? "talks" : "groups"}") %>"
+                headers="<%= cell_headers(course, phase, :groups) %>"
               >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.#{seminars? ? "talks" : "groups"}") %>:
+                </span>
+
                 <%= groups_or_talks(course) %>
               </td>
 
               <td
                 role="cell"
-                data-label="<%= t("deans_office.columns.state") %>"
+                headers="<%= cell_headers(course, phase, :state) %>"
               >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.state") %>:
+                </span>
+
                 <% state_lines(course).each do |line| %>
                   <div><%= line %></div>
                 <% end %>
@@ -201,7 +235,10 @@
             data-filter-text="<%= filter_text(course) %>"
           >
             <%= course.course.title %>
-            <span class="text-muted">· <%= course.teacher&.name %></span>
+
+            <% if teacher_name(course) %>
+              <span class="text-muted">· <%= teacher_name(course) %></span>
+            <% end %>
           </li>
         <% end %>
       </ul>

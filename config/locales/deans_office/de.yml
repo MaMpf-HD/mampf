@@ -70,29 +70,30 @@ de:
       about: 'Erklärung: %{topic}'
       phases:
         open: >-
-          Studierende können sich gerade anmelden. Die Zahlen sind Anmeldungen;
-          vergeben ist noch nichts.
+          Studierende können sich gerade anmelden; die Gruppenlisten stehen
+          noch nicht fest.
         allocating: >-
-          Die Anmeldung ist beendet, die Plätze werden noch verteilt. Die
-          Zahlen sind Anmeldungen.
+          Die Anmeldung ist beendet; die Plätze werden noch auf die Gruppen
+          verteilt.
         self_join: >-
           Studierende tragen sich ohne Anmeldeverfahren selbst in die Gruppe
-          ein. Die Zahlen sind die Eingetragenen.
+          ein.
         assigned: >-
-          Die Gruppe ist besetzt: durch eine Zuteilung, direkt durch die
-          Lehrenden oder durch Selbsteintragung, die inzwischen wieder
-          geschlossen ist. Die Zahlen sind die Eingetragenen.
-        preparing: >-
-          Für diese Gruppe ist gerade nichts geöffnet, und es ist niemand
-          eingetragen.
+          Die Verteilung ist abgeschlossen: durch eine Zuteilung, direkt durch
+          die Lehrenden oder durch Selbsteintragung, die wieder geschlossen ist.
+          Gezählt wird, wer jetzt in der Gruppe ist, auch wenn das niemand ist.
+        preparing: 'Für diese Gruppe ist noch keine Anmeldung geöffnet.'
       modes:
         first_come: >-
-          Wer sich anmeldet, bekommt sofort einen Platz, solange noch welche
-          frei sind.
+          Wer sich anmeldet, hat sofort einen Platz sicher, solange noch welche
+          frei sind; in die Gruppenliste kommt man, wenn die Anmeldung
+          abgeschlossen wird.
         preferences: >-
           Studierende geben Wünsche an; nach dem Anmeldeschluss werden die
           Plätze nach diesen Wünschen verteilt.
     details:
+      deadline: 'Anmeldeschluss %{deadline}'
+      deadline_passed: 'Anmeldeschluss war %{deadline}'
       open_until: 'Anmeldung läuft bis %{deadline}'
       by_campaign: '%{phase} · %{mode}'
       first_choices: '%{mode}, Erstwünsche'
@@ -102,5 +103,5 @@ de:
       location: 'Ort'
       bar:
         first_choices: 'Erstwünsche; verteilt wird erst nach dem Anmeldeschluss; Länge im Vergleich zur größten Gruppe'
-        provisional: 'Anmeldungen, noch nicht zugeteilt; Länge im Vergleich zur größten Gruppe'
+        provisional: 'Anmeldungen, noch nicht in der Gruppenliste; Länge im Vergleich zur größten Gruppe'
         entered: 'In der Gruppe eingetragen; Länge im Vergleich zur größten Gruppe'
