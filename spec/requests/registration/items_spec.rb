@@ -531,5 +531,22 @@ RSpec.describe("Registration::Items", type: :request) do
       expect(panel.at_css("[data-user-id='#{registrant.id}']").text)
         .to include("Mathematics: B.Sc. 100%")
     end
+
+    it "lists somebody in the group and registered for it only among the registrations" do
+      both = create(:confirmed_user, name_in_tutorials: "Grace Hopper")
+      tutorial.add_user_to_roster!(both)
+      tutorial.add_user_to_roster!(create(:confirmed_user, name_in_tutorials: "Ada Lovelace"))
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: both)
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      panel = Nokogiri::HTML(response.body)
+      members = panel.at_css("section[aria-labelledby='tutorial-roster-members-heading']")
+      expect(members.text).to include("Ada Lovelace")
+      expect(members.text).not_to include("Grace Hopper")
+      expect(panel.at_css("[data-user-id='#{both.id}']")).to be_present
+    end
   end
 end

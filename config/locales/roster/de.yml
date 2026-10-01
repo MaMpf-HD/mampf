@@ -28,8 +28,12 @@ de:
       gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
       enforced_policies: "Richtlinien im Verfahren: %{policies}"
     outside_enrollment:
-      one: "1 Person steht nur in Gruppen ohne Einschreibung und zählt deshalb nicht zu den Teilnehmenden."
-      other: "%{count} Personen stehen nur in Gruppen ohne Einschreibung und zählen deshalb nicht zu den Teilnehmenden."
+      one: >-
+        1 Person steht nur in Gruppen ohne Einschreibung und zählt deshalb nicht zu den
+        Teilnehmenden.
+      other: >-
+        %{count} Personen stehen nur in Gruppen ohne Einschreibung und zählen deshalb nicht zu den
+        Teilnehmenden.
     participants_hint: "Diese Liste enthält alle Personen, die in der Veranstaltung eingeschrieben sind. Nutze die Filter:<ul><li><strong>Alle:</strong> Zeigt alle in der Veranstaltung eingeschriebenen Personen</li><li><strong>Ohne Gruppe:</strong> Zeigt Personen, die eingeschrieben sind, aber keinem Tutorium/keinem Vortrag und keiner flexiblen Gruppe mit automatischer Einschreibung angehören</li></ul>"
     tabs:
       tutorial_maintenance: 'Übungsbetrieb'
@@ -165,7 +169,9 @@ de:
         with_enrollment: "Gruppe mit Einschreibung"
         without_enrollment: "Gruppe ohne Einschreibung"
         without_enrollment_short: "ohne Einschreibung"
-        without_enrollment_tooltip: "Die Mitglieder dieser Gruppe werden nicht in die Veranstaltung eingeschrieben und stehen deshalb nicht unter Teilnehmende."
+        without_enrollment_tooltip: >-
+          Die Mitglieder dieser Gruppe werden nicht in die Veranstaltung eingeschrieben und stehen
+          deshalb nicht im Tab „Teilnehmende“.
       propagate_to_lecture: "Mit automatischer Veranstaltungseinschreibung"
       with_lecture_enrollment: "Mit Veranstaltungseinschreibung"
       without_lecture_enrollment: "Ohne Veranstaltungseinschreibung"
@@ -198,11 +204,15 @@ de:
       member_count:
         one: '1 Mitglied'
         other: '%{count} Mitglieder'
-      without_enrollment_hint: 'Gruppe ohne Einschreibung: Die Mitglieder zählen nicht zu den Teilnehmenden der Veranstaltung.'
+      without_enrollment_hint: >-
+        Gruppe ohne Einschreibung: Die Mitglieder zählen nicht zu den Teilnehmenden der
+        Veranstaltung.
       empty: 'Noch niemand ist in die Veranstaltung eingeschrieben.'
       empty_filtered: 'Keine Studierenden entsprechen dem aktuellen Filter.'
       already_members: 'Schon in der Gruppe'
-      already_members_hint: 'Sind nicht über die Anmeldung hier und bleiben nach ihrem Abschluss in der Gruppe.'
+      already_members_hint: >-
+        Diese Personen sind nicht über die Anmeldung in der Gruppe und bleiben auch nach Abschluss
+        des Verfahrens darin.
     candidates:
       title: 'Unzugeteilte Anmeldungen'
       short_title: 'unzugeteilt'
