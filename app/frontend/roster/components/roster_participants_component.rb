@@ -44,6 +44,25 @@ class RosterParticipantsComponent < ViewComponent::Base
     @participants ||= []
   end
 
+  def filtered?
+    search_string.present? || filter_mode != "all"
+  end
+
+  # Counts people in a group without enrollment who are missing from this
+  # list, since a lecturer finds them in the group and expects them here.
+  def outside_enrollment_count
+    @outside_enrollment_count ||=
+      CohortMembership.joins(:cohort)
+                      .merge(Cohort.for_lectures(lecture).where(propagate_to_lecture: false))
+                      .where.not(user_id: lecture.lecture_memberships.select(:user_id))
+                      .distinct.count(:user_id)
+  end
+
+  def program_columns
+    enrolled = User.where(id: lecture.lecture_memberships.select(:user_id))
+    { t("roster.programs.enrolled") => ProgramDistribution.new(enrolled) }
+  end
+
   # Returns participants who are assigned to at least one functional group
   def assigned_participants
     # Only applicable to current page

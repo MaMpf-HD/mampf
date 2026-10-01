@@ -43,7 +43,7 @@ class VouchersController < ApplicationController
   def redeem
     voucher = Voucher.find_voucher_by_hash(params[:secure_hash])
     if voucher
-      voucher.redeem(params.permit(tutorial_ids: [], talk_ids: []))
+      voucher.redeem(params.permit(tutorial_ids: []))
       redirect_to edit_profile_path, notice: success_message(voucher)
     else
       handle_invalid_voucher
@@ -82,8 +82,6 @@ class VouchersController < ApplicationController
         I18n.t("controllers.become_editor_success")
       elsif voucher.teacher?
         I18n.t("controllers.become_teacher_success")
-      elsif voucher.speaker?
-        I18n.t("controllers.become_speaker_success")
       end
     end
 

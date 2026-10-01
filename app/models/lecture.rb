@@ -979,14 +979,6 @@ class Lecture < ApplicationRecord
     touch
   end
 
-  def update_speaker_status!(user, selected_talks)
-    talks.find_each do |t|
-      t.add_speaker(user) if selected_talks.include?(t)
-    end
-    # touch to invalidate the cache
-    touch
-  end
-
   def ensure_roster_membership!(user_ids)
     # Efficiently insert missing memberships without touching existing rows.
     # Note: Requires a unique index on [:user_id, :lecture_id].
@@ -1100,15 +1092,22 @@ class Lecture < ApplicationRecord
     (User.teachers + editors + course.editors + [teacher]).uniq
   end
 
-  def eligible_as_speakers
-    (speakers + Redemption.speakers_by_redemption_in(self) + editors + [teacher]).uniq
-    # the first one should (in the future) actually be contained in the sum of
-    # the other ones, but in the transition phase where some editor statuses were
-    # still given by the old system, this will not be true
-  end
-
   def editors_and_teacher
     ([teacher] + editors).uniq
+  end
+
+  # Returns everybody the lecture holds as a student: enrolled, in one of its
+  # groups (with enrollment or not), or with a running registration. The
+  # Participants tab lists only the enrolled. Exams stay out, their rosters
+  # and their registrations alike.
+  def students
+    [lecture_memberships.select(:user_id),
+     TutorialMembership.where(tutorial: tutorials).select(:user_id),
+     CohortMembership.where(cohort: Cohort.for_lectures(self)).select(:user_id),
+     SpeakerTalkJoin.where(talk: talks).select(:speaker_id),
+     LectureAudience.running_registrations(id).merge(Registration::Campaign.non_exam)
+                    .select(:user_id)]
+      .map { |ids| User.where(id: ids) }.reduce(:or)
   end
 
   def tutorials_with_tutor(tutor)
@@ -1124,14 +1123,6 @@ class Lecture < ApplicationRecord
   # marking their own sheets.
   def tutorials_open_to(user)
     tutorials_without_tutor(user).where.not(id: user.enrolled_tutorials.select(:id))
-  end
-
-  def talks_with_speaker(speaker)
-    talks.where(id: talk_ids_for_speaker(speaker))
-  end
-
-  def talks_without_speaker(speaker)
-    talks.where.not(id: talk_ids_for_speaker(speaker))
   end
 
   def roster_entries
@@ -1353,9 +1344,5 @@ class Lecture < ApplicationRecord
 
     def tutorial_ids_for_tutor(tutor)
       TutorTutorialJoin.where(tutor: tutor).select(:tutorial_id)
-    end
-
-    def talk_ids_for_speaker(speaker)
-      SpeakerTalkJoin.where(speaker: speaker).select(:talk_id)
     end
 end

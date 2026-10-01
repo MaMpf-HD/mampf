@@ -152,6 +152,17 @@ RSpec.describe(GroupRowComponent, type: :component) do
     end
   end
 
+  describe "type line" do
+    it "marks a flexible group without enrollment" do
+      cohort = create(:cohort, context: create(:lecture), propagate_to_lecture: false)
+      rendered = render_inline(described_class.new(registerable: cohort))
+
+      expect(rendered.css(".group-row__type").text.squish)
+        .to eq("#{I18n.t("roster.group_category.flexible_group")} " \
+               "#{I18n.t("roster.cohorts.kinds.without_enrollment_short")}")
+    end
+  end
+
   describe "people line" do
     it "names no tutors for a flexible group" do
       cohort = create(:cohort, context: create(:lecture))

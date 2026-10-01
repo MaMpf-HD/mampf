@@ -21,14 +21,7 @@ RSpec.describe(Voucher, type: :model) do
 
     describe "#add_expiration_datetime" do
       def expiration_days(role)
-        case role
-        when :speaker
-          Voucher::SPEAKER_EXPIRATION_DAYS
-        when :tutor
-          Voucher::TUTOR_EXPIRATION_DAYS
-        else
-          Voucher::DEFAULT_EXPIRATION_DAYS
-        end
+        role == :tutor ? Voucher::TUTOR_EXPIRATION_DAYS : Voucher::DEFAULT_EXPIRATION_DAYS
       end
 
       it "sets the expiration date correctly based on the role" do
@@ -37,11 +30,6 @@ RSpec.describe(Voucher, type: :model) do
           voucher.save
           expect(voucher.expires_at).to eq(voucher.created_at + expiration_days(role).days)
         end
-      end
-
-      it "gives a speaker voucher its longer run" do
-        voucher = create(:voucher, :speaker, lecture: seminar)
-        expect(voucher.expires_at).to eq(voucher.created_at + Voucher::SPEAKER_EXPIRATION_DAYS.days)
       end
     end
 
@@ -64,17 +52,6 @@ RSpec.describe(Voucher, type: :model) do
         let(:voucher) { build(:voucher, :tutor, lecture: seminar) }
 
         it "rolls back and adds an error" do
-          expect(voucher.save).to be_falsey
-          expect(voucher.errors[:role]).to(
-            include(I18n.t("activerecord.errors.models.voucher.attributes." \
-                           "role.invalid_for_lecture"))
-          )
-        end
-      end
-
-      context "when the role is speaker" do
-        it "refuses even for a seminar, where talks come through registration" do
-          voucher = build(:voucher, :speaker, lecture: seminar)
           expect(voucher.save).to be_falsey
           expect(voucher.errors[:role]).to(
             include(I18n.t("activerecord.errors.models.voucher.attributes." \

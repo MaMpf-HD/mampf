@@ -729,16 +729,11 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  # Lectures of the active term (and those without a term) the user teaches,
-  # edits (also as editor of the course), bookmarked, is on the roster of or
-  # applied to. Listed by lectures/show/_switcher.
+  # Lectures of the active term (and those without a term) that the dashboard
+  # shows the user, so that the switcher in lectures/show/_switcher offers the
+  # same ones.
   def current_lectures
-    [given_lectures, edited_lectures, Lecture.where(course: edited_courses),
-     lectures, roster_lectures.or(lectures_with_registration_application)]
-      .flat_map do |scope|
-        scope.where(term: [Term.active, nil]).includes(:course, :term, :teacher)
-      end
-      .uniq.natural_sort_by(&:title)
+    Dashboard::Board.new(user: self, term: Term.active).lectures.natural_sort_by(&:title)
   end
 
   # The published lectures whose content this user gets to see as a student:

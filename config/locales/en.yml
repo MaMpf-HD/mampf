@@ -915,6 +915,7 @@ en:
           associated to sessions for this section.
     talk:
       speakers: Speaker(s)
+      speakers_managed_in_groups_html: You manage the speakers in the %{link} tab.
       no_media: There are no media associated  to this talk.
       next_talk: next talk
       previous_talk: previous talk
@@ -966,12 +967,6 @@ en:
           talk's page (this box will typically be unchecked if the text is
           still preliminary). You can remove the text from the talk's page
           as teacher.
-        speakers: >
-          Here you can select the speakers of the talk. They can edit the talk
-          and add media to it. You can only select users who have the status of
-          speaker in the seminar, or editors or yourself. Students become
-          speakers through a registration process for the talks, set up on the
-          "Groups" tab.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -2057,22 +2052,6 @@ en:
       The former teacher will be demoted to editor.
     already_teacher_html: >
       You are already the teacher for <strong>%{lecture}</strong>.
-    become_speaker_html: >
-      With this voucher, you will obtain speaker status for the seminar
-      <strong>%{seminar}</strong>.
-    already_speaker_html: >
-      You are already registered as speaker for: <strong>%{talks}</strong>.
-    talks_available: >
-      If you already know which talks you will be responsible for, you can
-      select them here. Otherwise, leave the field empty; then you can still
-      redeem the voucher so that the teacher can assign you talks later.
-    no_talks_redemption: >
-      After having redeemed the voucher, the teacher can assign you to the talks.
-    all_talks_taken: >
-      There are no more talks available for this seminar that you can take over.
-    already_speaker_by_redemption: >
-      You have already redeemed this voucher to become a speaker.
-    select_talks: Select Talks
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2121,17 +2100,11 @@ en:
     became_teacher: >
       %{user} has redeemed a teacher voucher and has therefore become teacher
       in the event series.
-    became_speaker: >
-      %{user} has redeemed a speaker voucher and has therefore become speaker
-      in the seminar.
     tutorial_details: >
       Tutorials taken over: %{tutorials}.
-    talk_details: >
-      Talks taken over: %{talks}.
     redemption: 'Voucher redeemed:'
     redemption_in_lecture: 'Voucher redeemed in %{lecture}'
     no_tutorials_taken: 'No tutorials have been taken over by the redemption.'
-    no_talks_taken: 'No talks have been taken over by the redemption.'
 
   lecture:
     content: 'Event series contents'
@@ -3293,11 +3266,6 @@ en:
       %{new_teacher} has redeemed a teacher voucher and is now the teacher for
       this event series. You are no longer teacher for %{title}, but
       editor instead.
-    new_speaker_subject: 'Additional speaker for %{seminar}, %{title}'
-    new_speaker: >
-      Dear %{username}, in the seminar %{seminar}, %{speaker} has
-      registered as an additional speaker for %{title}.
-      Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
@@ -3691,11 +3659,6 @@ en:
       people who are already registered as editors or who have obtained editor
       status using a voucher. You can generate such a voucher in the
       <i>Vouchers</i> section.
-    no_results_speaker: >
-      No results found.<br><br>Note that from now on you can only search for
-      people who are already registered as speakers or who have obtained speaker
-      status using a voucher. You can generate such a voucher in the
-      <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
     voucher_code: Voucher code
@@ -3967,8 +3930,6 @@ en:
       Your editor status has been updated.
     become_teacher_success: >
       Your teacher status has been updated.
-    become_speaker_success: >
-      Your speaker status has been updated.
     lectures:
       destruction_failed: >
         The event series could not be deleted because some of its content could
@@ -4223,14 +4184,6 @@ en:
           attributes:
             lecture:
               must_be_seminar: "Talks can only be created for seminars."
-            speaker_ids:
-              graded:
-                one: >-
-                  %{names} stays on the talk: it has already been graded for
-                  them. Clear the grade first.
-                other: >-
-                  %{names} stay on the talk: it has already been graded for
-                  them. Clear the grade first.
             title:
               blank: You need to give a title.
         term:

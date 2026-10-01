@@ -18,11 +18,12 @@
 class Voucher < ApplicationRecord
   include Redeemer
 
-  SPEAKER_EXPIRATION_DAYS = 30
   TUTOR_EXPIRATION_DAYS = 14
   DEFAULT_EXPIRATION_DAYS = 3
 
-  ROLE_HASH = { tutor: 0, editor: 1, teacher: 2, speaker: 3 }.freeze
+  # Speakers come through a registration process, which a voucher would
+  # bypass, so there is no speaker role.
+  ROLE_HASH = { tutor: 0, editor: 1, teacher: 2 }.freeze
   enum :role, ROLE_HASH
   validates :role, presence: true
 
@@ -39,19 +40,15 @@ class Voucher < ApplicationRecord
                  }
   scope :for_tutors, -> { where(role: :tutor) }
   scope :for_editors, -> { where(role: :editor) }
-  scope :for_speakers, -> { where(role: :speaker) }
 
   self.implicit_order_column = :created_at
 
-  # Speakers come through a registration process now, which a voucher would
-  # bypass; the enum keeps :speaker for the vouchers still in circulation
-  # and the redemptions on record.
   def self.roles_for_lecture(lecture)
     # Seminars only have talk, not tutorials, so there is no point in creating
     # a tutor voucher for a seminar. That's why we exclude the tutor role here.
-    return ROLE_HASH.keys - [:tutor, :speaker] if lecture.seminar?
+    return ROLE_HASH.keys - [:tutor] if lecture.seminar?
 
-    ROLE_HASH.keys - [:speaker]
+    ROLE_HASH.keys
   end
 
   def self.find_voucher_by_hash(secure_hash)
@@ -97,7 +94,6 @@ class Voucher < ApplicationRecord
     end
 
     def expiration_days
-      return SPEAKER_EXPIRATION_DAYS if speaker?
       return TUTOR_EXPIRATION_DAYS if tutor?
 
       DEFAULT_EXPIRATION_DAYS

@@ -28,7 +28,7 @@
       <% if component.participants.empty? %>
         <tr>
           <td colspan="5" class="text-center py-4 text-muted border-bottom-0">
-            <%= t("roster.details.empty") %>
+            <%= t(component.filtered? ? "roster.details.empty_filtered" : "roster.details.empty") %>
           </td>
         </tr>
       <% else %>

@@ -582,7 +582,7 @@ GEM
     ruby-vips (2.3.0)
       ffi (~> 1.12)
       logger
-    rubyzip (2.4.1)
+    rubyzip (3.7.0)
     sanitize (7.0.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.16.8)
@@ -785,7 +785,7 @@ DEPENDENCIES
   rubocop-performance (~> 1.21)
   rubocop-rails (= 2.34.3)
   ruby-lsp-rspec (~> 0.1.28)
-  rubyzip (~> 2.3)
+  rubyzip (~> 3.4)
   sass-rails (~> 6.0)
   shrine (~> 3.6)
   sidekiq (~> 8.1)

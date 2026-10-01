@@ -30,7 +30,8 @@ test.describe("the support", () => {
 
       await page.getByRole("button", { name: "Unlock" }).click();
       await expect(page.getByText("The account is unlocked")).toBeVisible();
-      await expect(status).toContainText("0 failed sign-ins");
+      await expect(status).not.toContainText("failed sign-in");
+      await expect(page.getByRole("button", { name: "Unlock" })).toHaveCount(0);
 
       await page.getByLabel("Last name").fill("Noether-Lasker");
       await page.getByLabel("Name in tutorials").fill("Emmy");

@@ -1,15 +1,19 @@
 # Renders the side panel in the roster view, showing either unassigned candidates
 # or members of a group.
 class RosterSidePanelComponent < ViewComponent::Base
-  attr_reader :registerable, :students, :campaign, :item
+  attr_reader :registerable, :students, :campaign, :item, :members
 
+  # members: who is in the group already while a registration for it runs.
   # rubocop:disable Metrics/ParameterLists
   def initialize(registerable: nil, students: [], read_only: false,
                  panel_kind: nil, campaign: nil, item: nil,
-                 allocated: false, preference_ranks: {})
+                 allocated: false, preference_ranks: {}, members: [])
     super()
     @registerable = registerable
     @students = User.sort_by_last_name(students)
+    @members = User.sort_by_last_name(members)
+    ActiveRecord::Associations::Preloader.new(records: @students + @members,
+                                              associations: User::PROGRAM_PRELOAD).call
     @read_only = read_only
     @panel_kind = panel_kind&.to_sym
     @campaign = campaign
@@ -106,8 +110,14 @@ class RosterSidePanelComponent < ViewComponent::Base
 
       return t("registration.user_registration.index.title") if read_only?
 
-      t("roster.details.participants")
+      t("roster.details.members")
     end
+  end
+
+  # Such a group's members are not enrolled in the lecture, so they are
+  # missing from its Participants tab.
+  def without_enrollment?
+    registerable.is_a?(Cohort) && !registerable.propagate_to_lecture?
   end
 
   def preference_based_campaign?
@@ -234,6 +244,20 @@ class RosterSidePanelComponent < ViewComponent::Base
 
   def student_display_name(student)
     student.tutorial_name.presence || student.email
+  end
+
+  def program_text(student)
+    student.program&.name_with_subject
+  end
+
+  # Leaves the sum out where every program reads at a glance beside the
+  # names: a talk's few speakers, or a single person.
+  def program_distribution?
+    students.size > 1 && !registerable.is_a?(Talk)
+  end
+
+  def program_distribution
+    ProgramDistribution.new(User.where(id: students.map(&:id)))
   end
 
   # The panel shows no address, so the copy button names the one it copies.

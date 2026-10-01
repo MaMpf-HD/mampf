@@ -58,9 +58,14 @@
     </div>
 
     <div class="row">
-      <div class="col-12 mb-3" data-testid="speaker-select-div">
-        <%= speaker_select(f, talk, with_preselection=true) %>
-        <div class="text-danger small" id="talk-speakers-error"></div>
+      <div class="col-12 mb-3">
+        <div class="form-label"><%= t('admin.talk.speakers') %></div>
+        <p class="mb-1"><%= speaker_list(talk) %></p>
+        <p class="text-muted small mb-0">
+          <%= t('admin.talk.speakers_managed_in_groups_html',
+                link: link_to(t('roster.tabs.groups'),
+                              edit_lecture_path(talk.lecture, tab: 'groups'))) %>
+        </p>
       </div>
     </div>
     <div class="row">

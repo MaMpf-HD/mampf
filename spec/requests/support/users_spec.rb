@@ -126,8 +126,10 @@ RSpec.describe("Support users", type: :request) do
 
     # Every uni address ends in ".de"; the similarity search would find them all.
     it "counts only the beginnings of words below three characters" do
-      create(:confirmed_user, first_name: "Li", last_name: "Wei", email: "wei@uni.de")
-      create(:confirmed_user, last_name: "Hilbert", email: "david@uni.de")
+      create(:confirmed_user, first_name: "Li", last_name: "Wei", name: "Li Wei",
+                              email: "wei@uni.de")
+      create(:confirmed_user, first_name: "David", last_name: "Hilbert", name: "David Hilbert",
+                              email: "david@uni.de")
 
       search(fulltext: "de")
       expect(response.body).not_to include("wei@uni.de", "david@uni.de")
@@ -284,6 +286,19 @@ RSpec.describe("Support users", type: :request) do
       patch unlock_support_user_path(student)
 
       expect(student.reload).to have_attributes(locked_at: nil, failed_attempts: 0)
+    end
+
+    # A failed sign-in short of the lock is reset by the next successful one;
+    # "Unlock" beside an account that is not locked only confuses.
+    it "offers unlocking to a locked account only" do
+      student.update_columns(failed_attempts: 1) # rubocop:disable Rails/SkipsModelValidations
+      get edit_support_user_path(student)
+      expect(response.body).to include("no (1 failed sign-in in a row)")
+      expect(response.body).not_to include(unlock_support_user_path(student))
+
+      student.update_columns(locked_at: 5.minutes.ago, failed_attempts: 5) # rubocop:disable Rails/SkipsModelValidations
+      get edit_support_user_path(student)
+      expect(response.body).to include(unlock_support_user_path(student))
     end
 
     # The mails the forms limit per address go out anyway: the support is

@@ -1,6 +1,15 @@
 <% if section?(:full) %>
   <div class="row">
     <div class="col-12">
+      <% if outside_enrollment_count.positive? %>
+        <p class="small text-muted">
+          <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+          <%= t("roster.outside_enrollment", count: outside_enrollment_count) %>
+        </p>
+      <% end %>
+
+      <%= render ProgramDistributionComponent.new(columns: program_columns) %>
+
       <div
         class="
           d-flex flex-wrap justify-content-between align-items-start gap-3

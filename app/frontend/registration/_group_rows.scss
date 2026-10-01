@@ -111,9 +111,6 @@ $group-row-actions-width: 8rem;
   box-shadow: inset 4px 0 var(--bs-success);
 }
 
-.group-row--without-enrollment {
-  border-left: 2px dashed var(--bs-border-color);
-}
 
 .group-row.roster-trigger--selected {
   background: var(--bs-primary-bg-subtle);
@@ -155,6 +152,21 @@ $group-row-actions-width: 8rem;
   letter-spacing: 0.04em;
   color: var(--bs-secondary-color);
   font-weight: 600;
+}
+
+.group-row__no-enrollment {
+  margin-left: 0.5rem;
+  padding: 0 0.4rem;
+  border: 1px dashed var(--bs-secondary-color);
+  border-radius: var(--bs-border-radius-pill);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  white-space: nowrap;
+
+  .bi {
+    margin-right: 0.2rem;
+  }
 }
 
 .group-row__date {

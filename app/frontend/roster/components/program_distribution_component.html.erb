@@ -1,0 +1,43 @@
+<details class="mb-3">
+  <summary class="small fw-semibold">
+    <%= t("roster.programs.title") %>
+  </summary>
+
+  <% if help %>
+    <p class="small text-muted mt-2 mb-0"><%= help %></p>
+  <% end %>
+
+  <table class="table table-sm small mb-0 mt-2">
+    <thead>
+      <tr>
+        <th scope="col"><%= t("roster.programs.program") %></th>
+
+        <% columns.each_key do |heading| %>
+          <th scope="col" class="text-end"><%= heading %></th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% keys.each do |key| %>
+        <tr>
+          <th scope="row" class="fw-normal"><%= label(key) %></th>
+
+          <% columns.each_value do |distribution| %>
+            <td class="text-end"><%= people(distribution, key) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+
+    <tfoot>
+      <tr>
+        <th scope="row"><%= t("roster.programs.total") %></th>
+
+        <% columns.each_value do |distribution| %>
+          <td class="text-end fw-semibold"><%= distribution.total %></td>
+        <% end %>
+      </tr>
+    </tfoot>
+  </table>
+</details>
