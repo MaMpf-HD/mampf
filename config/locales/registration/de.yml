@@ -499,6 +499,9 @@ de:
         enrolled: "Eingeschrieben"
         assigned: "Zugeteilt"
         leave: "Verlassen"
+        leave_confirm_final: "„%{group}“ verlassen? Selbst eintragen kannst Du Dich danach nicht mehr, nur das Team der Veranstaltung kann Dich wieder aufnehmen."
+        leave_confirm_while_free: "„%{group}“ verlassen? Wieder eintragen kannst Du Dich nur, solange noch ein Platz frei ist."
+        leave_confirm_rejoin: "„%{group}“ verlassen? Du kannst Dich danach wieder eintragen."
         preference_fulfilled: "Dein %{rank} Wunsch."
         outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
       summary:

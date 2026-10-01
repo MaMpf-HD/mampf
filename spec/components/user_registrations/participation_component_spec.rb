@@ -416,4 +416,34 @@ RSpec.describe(ParticipationComponent, type: :component) do
       expect(rendered.text).not_to include("Rushed the last proof")
     end
   end
+
+  # A student clicked "Leave" by mistake in a group they could not join again
+  # themselves; the button now asks first and says what follows.
+  describe "leaving a group" do
+    def confirmation(mode, capacity: nil)
+      tutorial = create(:tutorial, lecture: lecture, title: "Mo 10", capacity: capacity,
+                                   skip_campaigns: true, self_materialization_mode: mode)
+      tutorial.add_user_to_roster!(user)
+      rendered = render_inline(described_class.new(lecture: lecture, user: user))
+      rendered.css("form").find { |form| form.text.include?("Leave") }["data-turbo-confirm"]
+    end
+
+    it "warns that a group which only lets students leave takes nobody back" do
+      expect(confirmation(:remove_only))
+        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_final",
+                      group: "Mo 10"))
+    end
+
+    it "says the way back needs a free place where the group has a limit" do
+      expect(confirmation(:add_and_remove, capacity: 20))
+        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_while_free",
+                      group: "Mo 10"))
+    end
+
+    it "still asks where joining again is always possible" do
+      expect(confirmation(:add_and_remove))
+        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_rejoin",
+                      group: "Mo 10"))
+    end
+  end
 end
