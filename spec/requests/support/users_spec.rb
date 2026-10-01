@@ -126,8 +126,10 @@ RSpec.describe("Support users", type: :request) do
 
     # Every uni address ends in ".de"; the similarity search would find them all.
     it "counts only the beginnings of words below three characters" do
-      create(:confirmed_user, first_name: "Li", last_name: "Wei", email: "wei@uni.de")
-      create(:confirmed_user, last_name: "Hilbert", email: "david@uni.de")
+      create(:confirmed_user, first_name: "Li", last_name: "Wei", name: "Li Wei",
+                              email: "wei@uni.de")
+      create(:confirmed_user, first_name: "David", last_name: "Hilbert", name: "David Hilbert",
+                              email: "david@uni.de")
 
       search(fulltext: "de")
       expect(response.body).not_to include("wei@uni.de", "david@uni.de")

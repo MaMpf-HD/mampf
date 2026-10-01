@@ -366,6 +366,15 @@ test.describe("teacher voucher redemption", () => {
       )).toBeVisible();
       await expect(editorOption(student.page, teacher.user)).toHaveCount(1);
       await expectRoleNotification(student.page, "teacher", student.user);
+    });
+
+  // On its own, since the walk above already fills most of a test's time.
+  test("spends a teacher voucher on redemption",
+    async ({ factory, teacher, student }) => {
+      const { voucher } = await lectureWithVoucher(factory, teacher.user.id, "teacher");
+      await openProfile(student.page);
+      await submitVoucher(student.page, voucher.secure_hash as string);
+      await redeemVoucher(student.page, "teacher");
 
       // A teacher voucher is spent on redemption.
       await openProfile(student.page);
