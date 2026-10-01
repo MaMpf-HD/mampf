@@ -508,5 +508,28 @@ RSpec.describe("Registration::Items", type: :request) do
       expect(response.body).to include(confirmed.email)
       expect(response.body).not_to include(rejected.email)
     end
+
+    # Somebody put into the group past the registration stays there after the
+    # finalization; listing only registrations would hide them.
+    it "lists who is in the group already, apart from the registrations" do
+      program = create(:program, subject: create(:subject, name: "Mathematics"),
+                                 name: "B.Sc. 100%", degree: :bsc100)
+      member = create(:confirmed_user, name_in_tutorials: "Ada Lovelace", program: program)
+      registrant = create(:confirmed_user, name_in_tutorials: "Alan Turing", program: program)
+      tutorial.add_user_to_roster!(member)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: registrant)
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      panel = Nokogiri::HTML(response.body)
+      members = panel.at_css("section[aria-labelledby='tutorial-roster-members-heading']")
+      expect(members.text).to include("Already in the group", "Ada Lovelace",
+                                      "Mathematics: B.Sc. 100%")
+      expect(members.text).not_to include("Alan Turing")
+      expect(panel.at_css("[data-user-id='#{registrant.id}']").text)
+        .to include("Mathematics: B.Sc. 100%")
+    end
   end
 end

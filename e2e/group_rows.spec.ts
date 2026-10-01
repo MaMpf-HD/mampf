@@ -19,8 +19,8 @@ test.describe("the group rows", () => {
       await title.focus();
       await page.keyboard.press("Enter");
 
-      const panel = page.getByRole("complementary", { name: "Participants" });
-      await expect(panel.getByRole("heading", { name: "Participants" })).toBeFocused();
+      const panel = page.getByRole("complementary", { name: "Members" });
+      await expect(panel.getByRole("heading", { name: "Members" })).toBeFocused();
       await expect(title).toHaveAttribute("aria-expanded", "true");
       await expect(panel.getByRole("button", {
         name: `Copy email address: ${student.user.email}`,
@@ -48,8 +48,8 @@ test.describe("the group rows", () => {
         has: page.getByRole("button", { name: `Copy email address: ${student.user.email}` }),
       }).getByRole("link", { name: "Mo 10", exact: true }).click();
 
-      const panel = page.getByRole("complementary", { name: "Participants" });
-      await expect(panel.getByRole("heading", { name: "Participants" })).toBeVisible();
+      const panel = page.getByRole("complementary", { name: "Members" });
+      await expect(panel.getByRole("heading", { name: "Members" })).toBeVisible();
       await expect(panel.getByRole("button", {
         name: `Copy email address: ${student.user.email}`,
       })).toBeVisible();
@@ -120,7 +120,7 @@ test.describe("the group rows", () => {
       await expect(page.getByRole("button", { name: /unplaced/ })).toHaveCount(0);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       page.once("dialog", dialog => dialog.accept());
-      await page.getByRole("complementary", { name: "Participants" })
+      await page.getByRole("complementary", { name: "Members" })
         .getByRole("button", { name: /from this group/ }).click();
 
       await expect(page.getByRole("button", { name: /1 unplaced/ })).toBeVisible();
@@ -143,7 +143,7 @@ test.describe("the group rows", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
 
-      const panel = page.getByRole("complementary", { name: "Participants" });
+      const panel = page.getByRole("complementary", { name: "Members" });
       await panel.getByRole("button", { name: /to another group/ }).click();
 
       const dialog = page.getByRole("dialog", { name: /^Move or add .* to …$/ });
@@ -171,7 +171,7 @@ test.describe("the group rows", () => {
       await page.getByRole("button", { name: "Mo 10", exact: true }).focus();
       await page.keyboard.press("Enter");
 
-      const panel = page.getByRole("complementary", { name: "Participants" });
+      const panel = page.getByRole("complementary", { name: "Members" });
       await panel.getByRole("button", { name: /to another group/ }).focus();
       await page.keyboard.press("Enter");
       const dialog = page.getByRole("dialog", { name: /^Move or add .* to …$/ });
@@ -181,7 +181,7 @@ test.describe("the group rows", () => {
       await expect(page.getByRole("listitem")
         .filter({ has: page.getByRole("heading", { name: "Di 12", exact: true }) }))
         .toContainText("1 / 8 members");
-      await expect(panel.getByRole("heading", { name: "Participants" })).toBeFocused();
+      await expect(panel.getByRole("heading", { name: "Members" })).toBeFocused();
     });
 
   test("offer a group a registration process manages, but not for choosing",
@@ -197,7 +197,7 @@ test.describe("the group rows", () => {
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
-      await page.getByRole("complementary", { name: "Participants" })
+      await page.getByRole("complementary", { name: "Members" })
         .getByRole("button", { name: /to another group/ }).click();
 
       const dialog = page.getByRole("dialog", { name: /^Move or add .* to …$/ });
@@ -219,7 +219,7 @@ test.describe("the group rows", () => {
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
-      const panel = page.getByRole("complementary", { name: "Participants" });
+      const panel = page.getByRole("complementary", { name: "Members" });
       page.once("dialog", dialog => dialog.accept());
       await panel.getByRole("button", { name: /^Remove .* from this group$/ }).click();
 

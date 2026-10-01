@@ -56,15 +56,19 @@
             <% elsif preference_based_campaign? %>
               <%= "#{students.size} " +
                   t("registration.item.badge.first_choice") %>
-            <% elsif campaign %>
+            <% elsif campaign || item %>
               <%= "#{students.size} " +
                   t("registration.item.columns.registrations") %>
             <% else %>
-              <%= "#{students.size} " +
-                  t("basics.participants") %>
+              <%= t("roster.details.member_count", count: students.size) %>
             <% end %>
           </span>
         </div>
+        <% if without_enrollment? %>
+          <div class="text-muted small mt-1">
+            <%= t("roster.details.without_enrollment_hint") %>
+          </div>
+        <% end %>
         <% if allocated? && allocated_choice_pills.any? %>
           <div class="d-flex flex-wrap gap-1 mt-1">
             <% allocated_choice_pills.each do |pill| %>
@@ -120,6 +124,32 @@
             <% end %>
           <% end %>
         </div>
+      <% end %>
+      <% if members.any? %>
+        <section class="mb-3" aria-labelledby="tutorial-roster-members-heading">
+          <h6
+            class="small fw-semibold mb-1"
+            id="tutorial-roster-members-heading"
+          >
+            <%= t("roster.details.already_members") %>
+          </h6>
+
+          <p class="small text-muted mb-2">
+            <%= t("roster.details.already_members_hint") %>
+          </p>
+
+          <ul class="list-unstyled small mb-0">
+            <% members.each do |member| %>
+              <li>
+                <%= student_display_name(member) %>
+
+                <% if program_text(member) %>
+                  <span class="text-muted">· <%= program_text(member) %></span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
       <% end %>
       <div class="mb-3">
         <label class="visually-hidden" for="tutorial-roster-filter">
@@ -229,6 +259,12 @@
                     <% end %>
                   </div>
                 </div>
+
+                <% if program_text(student) %>
+                  <div class="small text-muted">
+                    <%= program_text(student) %>
+                  </div>
+                <% end %>
 
                 <% if show_rejection_reasons?(student) %>
                   <div

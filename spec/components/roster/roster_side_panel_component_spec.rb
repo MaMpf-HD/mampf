@@ -421,8 +421,30 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         .to eq(I18n.t("registration.user_registration.index.title"))
     end
 
-    it "returns default participants title fallback" do
-      expect(described_class.new.panel_title).to eq(I18n.t("roster.details.participants"))
+    it "calls a group's people its members" do
+      expect(described_class.new.panel_title).to eq(I18n.t("roster.details.members"))
+    end
+  end
+
+  # "Participants" is what the lecture's own tab calls the people enrolled in
+  # it; a group without enrollment has members who are not among them.
+  describe "a group without enrollment" do
+    let(:lecture) { create(:lecture) }
+    let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+    it "says its members do not count as participants" do
+      rendered = render_inline(described_class.new(registerable: cohort,
+                                                   students: [create(:confirmed_user)]))
+
+      expect(rendered.text).to include(I18n.t("roster.details.member_count", count: 1),
+                                       I18n.t("roster.details.without_enrollment_hint"))
+    end
+
+    it "says nothing of the kind for a group with enrollment" do
+      cohort = create(:cohort, context: lecture, propagate_to_lecture: true)
+      rendered = render_inline(described_class.new(registerable: cohort))
+
+      expect(rendered.text).not_to include(I18n.t("roster.details.without_enrollment_hint"))
     end
   end
 
