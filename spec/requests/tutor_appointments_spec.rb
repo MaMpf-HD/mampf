@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe("TutorAppointments", type: :request) do
   let(:teacher) { create(:confirmed_user) }
   let(:lecture) { create(:lecture, teacher: teacher) }
-  let(:person) { create(:confirmed_user, email: "grace@example.com") }
+  let(:person) { create(:confirmed_user, name: "Grace Hopper", email: "grace@example.com") }
 
   def add(email)
     post(lecture_tutor_appointments_path(lecture), params: { email: email }, as: :turbo_stream)
