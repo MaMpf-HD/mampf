@@ -128,10 +128,6 @@ class Talk < ApplicationRecord
     (speakers + lecture.editors_with_inheritance).uniq
   end
 
-  def add_speaker(speaker)
-    speakers << speaker unless speaker.in?(speakers)
-  end
-
   # A speaker the talk has been graded for stays on it: dropped, the grade
   # would survive the roster invisibly. Clearing the grade is the way out.
   def speaker_removable?(user)

@@ -11,15 +11,6 @@ module VouchersHelper
     voucher.lecture.tutorials_with_tutor(user).map(&:title).join(", ")
   end
 
-  def talks_with_titles(user, voucher)
-    voucher.lecture.talks_with_speaker(user).map(&:to_label).join(", ")
-  end
-
-  def talk_options(user, voucher)
-    voucher.lecture.talks_without_speaker(user)
-           .map { |t| [t.to_label_with_speakers, t.id] }
-  end
-
   def redeem_voucher_button(voucher)
     link_to(t("profile.redeem_voucher"),
             redeem_voucher_path(params: { secure_hash: voucher.secure_hash }),
@@ -33,15 +24,9 @@ module VouchersHelper
   end
 
   def claim_select_field(form, user, voucher)
-    field_name, options, prompt = if voucher.tutor?
-      [:tutorial_ids, tutorial_options(user, voucher), t("profile.select_tutorials")]
-    elsif voucher.speaker?
-      [:talk_ids, talk_options(user, voucher), t("profile.select_talks")]
-    end
-
-    form.select(field_name,
-                options_for_select(options),
-                { prompt: prompt },
+    form.select(:tutorial_ids,
+                options_for_select(tutorial_options(user, voucher)),
+                { prompt: t("profile.select_tutorials") },
                 { multiple: true, class: "selectize me-2", style: "width: 20rem" })
   end
 end

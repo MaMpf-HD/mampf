@@ -979,14 +979,6 @@ class Lecture < ApplicationRecord
     touch
   end
 
-  def update_speaker_status!(user, selected_talks)
-    talks.find_each do |t|
-      t.add_speaker(user) if selected_talks.include?(t)
-    end
-    # touch to invalidate the cache
-    touch
-  end
-
   def ensure_roster_membership!(user_ids)
     # Efficiently insert missing memberships without touching existing rows.
     # Note: Requires a unique index on [:user_id, :lecture_id].
@@ -1117,14 +1109,6 @@ class Lecture < ApplicationRecord
   # marking their own sheets.
   def tutorials_open_to(user)
     tutorials_without_tutor(user).where.not(id: user.enrolled_tutorials.select(:id))
-  end
-
-  def talks_with_speaker(speaker)
-    talks.where(id: talk_ids_for_speaker(speaker))
-  end
-
-  def talks_without_speaker(speaker)
-    talks.where.not(id: talk_ids_for_speaker(speaker))
   end
 
   def roster_entries
@@ -1346,9 +1330,5 @@ class Lecture < ApplicationRecord
 
     def tutorial_ids_for_tutor(tutor)
       TutorTutorialJoin.where(tutor: tutor).select(:tutorial_id)
-    end
-
-    def talk_ids_for_speaker(speaker)
-      SpeakerTalkJoin.where(speaker: speaker).select(:talk_id)
     end
 end

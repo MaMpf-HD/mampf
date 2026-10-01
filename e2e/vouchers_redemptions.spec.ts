@@ -2,79 +2,61 @@ import { expect, Locator, Page, test } from "./_support/fixtures";
 import { User } from "./_support/auth";
 import { FactoryBot, FactoryBotObject } from "./_support/factorybot";
 
-type Role = "tutor" | "editor" | "teacher" | "speaker";
-type Claimable = "tutorial" | "talk";
+type Role = "tutor" | "editor" | "teacher";
 
 const ROLE_NAMES: Record<Role, string> = {
-  tutor: "Tutor", editor: "Editor", teacher: "Teacher", speaker: "Speaker",
+  tutor: "Tutor", editor: "Editor", teacher: "Teacher",
 };
 
 const REDEMPTION_TEXTS: Record<Role, string> = {
   tutor: "With this voucher, you obtain tutor status for",
   editor: "With this voucher, you obtain editor status for",
   teacher: "With this voucher, you obtain teacher status for",
-  speaker: "With this voucher, you will obtain speaker status for the seminar",
 };
 
 const SUCCESS_MESSAGES: Record<Role, string> = {
   tutor: "Your tutor status has been updated.",
   editor: "Your editor status has been updated.",
   teacher: "Your teacher status has been updated.",
-  speaker: "Your speaker status has been updated.",
 };
 
 const ALREADY_REDEEMED_MESSAGES: Record<Role, string> = {
   tutor: "You have already redeemed this voucher to become a tutor.",
   editor: "You have already redeemed an editor voucher for this event series.",
   teacher: "You are already the teacher for",
-  speaker: "You have already redeemed this voucher to become a speaker.",
 };
 
-const NOTHING_TO_CLAIM_MESSAGES: Record<Claimable, string> = {
-  tutorial: "After having redeemed the voucher, the teacher can assign you to the tutorials.",
-  talk: "After having redeemed the voucher, the teacher can assign you to the talks.",
-};
-
-const NOTHING_CLAIMED_MESSAGES: Record<Claimable, string> = {
-  tutorial: "No tutorials have been taken over by the redemption.",
-  talk: "No talks have been taken over by the redemption.",
-};
-
-const CLAIM_PROMPTS: Record<Claimable, string> = {
-  tutorial: "Select Tutorials", talk: "Select Talks",
-};
+const NOTHING_TO_CLAIM_MESSAGE
+  = "After having redeemed the voucher, the teacher can assign you to the tutorials.";
+const NOTHING_CLAIMED_MESSAGE = "No tutorials have been taken over by the redemption.";
 
 // Fixed titles, since the bridge's title methods answer in the default locale
 // (German) while the pages speak the user's (English).
 const COURSE_TITLE = "Symplectic Geometry";
 const COURSE_SHORT_TITLE = "SymplGeo";
 
-async function lectureWithVoucher(
-  factory: FactoryBot, teacherId: number, role: Role, sort: "lecture" | "seminar" = "lecture",
-) {
+async function lectureWithVoucher(factory: FactoryBot, teacherId: number, role: Role) {
   const course = await factory.create("course", [], {
     title: COURSE_TITLE, short_title: COURSE_SHORT_TITLE,
   });
   const lecture = await factory.create("lecture", [], {
-    course_id: course.id, teacher_id: teacherId, sort,
+    course_id: course.id, teacher_id: teacherId,
   });
-  // The role goes in as a trait: speaker vouchers are no longer issued, and
-  // the trait builds one that is still in circulation.
   const voucher = await factory.create("voucher", [role], { lecture_id: lecture.id });
   return { lecture, voucher };
 }
 
-/** With a user, every tutorial or talk is theirs already, so none is left to claim. */
-async function createClaimables(
-  factory: FactoryBot, lectureId: number, type: Claimable, user?: User, count = 3,
+/** With a user, every tutorial is theirs already, so none is left to claim. */
+async function createTutorials(
+  factory: FactoryBot, lectureId: number, user?: User, count = 3,
 ): Promise<FactoryBotObject[]> {
   const attributes: Record<string, unknown> = { lecture_id: lectureId };
   if (user) {
-    attributes[type === "tutorial" ? "tutor_ids" : "speaker_ids"] = [user.id];
+    attributes.tutor_ids = [user.id];
   }
   const created = [];
   for (let i = 0; i < count; i++) {
-    created.push(await factory.create(type, [], attributes));
+    created.push(await factory.create("tutorial", [], attributes));
   }
   return created;
 }
@@ -106,8 +88,8 @@ async function redeemVoucher(page: Page, role: Role) {
 
 // TomSelect keeps the native options next to its own, so the click goes to
 // its list, the one on screen.
-async function claimAndRedeem(page: Page, role: Role, type: Claimable, titles: string[]) {
-  const picker = page.getByRole("combobox", { name: CLAIM_PROMPTS[type] });
+async function claimAndRedeem(page: Page, role: Role, titles: string[]) {
+  const picker = page.getByRole("combobox", { name: "Select Tutorials" });
   const choices = page.locator(".ts-dropdown");
   for (const title of titles) {
     await picker.fill(title);
@@ -122,7 +104,6 @@ async function expectCancelBringsFormBack(page: Page) {
   await expect(page.getByRole("textbox", { name: "Voucher code" })).toBeVisible();
 }
 
-const BOOKMARKED = "You bookmarked these";
 const TUTORING = "You are tutor in these";
 const STAFF = "You are staff in these";
 
@@ -181,55 +162,36 @@ function editorOption(page: Page, user: User): Locator {
 
 async function redeemWithNothingToClaim(
   factory: FactoryBot, teacher: { page: Page; user: User }, student: { page: Page; user: User },
-  role: Role, type: Claimable,
 ) {
-  const sort = type === "talk" ? "seminar" : "lecture";
-  const { lecture, voucher } = await lectureWithVoucher(factory, teacher.user.id, role, sort);
+  const { lecture, voucher } = await lectureWithVoucher(factory, teacher.user.id, "tutor");
   await openProfile(student.page);
 
   await submitVoucher(student.page, voucher.secure_hash as string);
-  await expect(student.page.getByText(REDEMPTION_TEXTS[role])).toBeVisible();
-  await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGES[type])).toBeVisible();
+  await expect(student.page.getByText(REDEMPTION_TEXTS.tutor)).toBeVisible();
+  await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGE)).toBeVisible();
   await expect(student.page.getByRole("link", { name: "Redeem Voucher" })).toBeVisible();
-  await redeemVoucher(student.page, role);
-  // a tutor is one before having a tutorial; a speaker without a talk is not
-  await expectLectureOnDashboard(student.page, lecture, role === "tutor" ? TUTORING : BOOKMARKED);
+  await redeemVoucher(student.page, "tutor");
+  // a tutor is one before having a tutorial
+  await expectLectureOnDashboard(student.page, lecture, TUTORING);
 
-  if (type === "talk") {
-    await teacher.page.goto(`/lectures/${lecture.id}/edit`);
-    await expect(teacher.page.getByText("There are no talks yet.")).toBeVisible();
-  }
-  else {
-    await teacher.page.goto(peopleTabLink(lecture.id));
-  }
-  await expectRoleNotification(teacher.page, role, student.user);
-  await expect(teacher.page.getByText(NOTHING_CLAIMED_MESSAGES[type])).toBeVisible();
+  await teacher.page.goto(peopleTabLink(lecture.id));
+  await expectRoleNotification(teacher.page, "tutor", student.user);
+  await expect(teacher.page.getByText(NOTHING_CLAIMED_MESSAGE)).toBeVisible();
 }
 
 async function redeemWithSomethingClaimed(
   factory: FactoryBot, teacher: { page: Page; user: User }, student: { page: Page; user: User },
-  role: Role, type: Claimable,
 ) {
-  const sort = type === "talk" ? "seminar" : "lecture";
-  const { lecture, voucher } = await lectureWithVoucher(factory, teacher.user.id, role, sort);
-  const [first, second, third] = await createClaimables(factory, lecture.id, type);
+  const { lecture, voucher } = await lectureWithVoucher(factory, teacher.user.id, "tutor");
+  const [first, second, third] = await createTutorials(factory, lecture.id);
   await openProfile(student.page);
 
   await submitVoucher(student.page, voucher.secure_hash as string);
-  await claimAndRedeem(student.page, role, type, [first.title, second.title]);
-  await expectLectureOnDashboard(student.page, lecture, role === "tutor" ? TUTORING : BOOKMARKED);
+  await claimAndRedeem(student.page, "tutor", [first.title, second.title]);
+  await expectLectureOnDashboard(student.page, lecture, TUTORING);
 
-  if (type === "talk") {
-    await teacher.page.goto(`/lectures/${lecture.id}/edit`);
-    for (const talk of [first, second]) {
-      await expect(teacher.page.getByRole("region", { name: talk.title }))
-        .toContainText(student.user.name_in_tutorials);
-    }
-    await expect(teacher.page.getByRole("region", { name: third.title }))
-      .not.toContainText(student.user.name_in_tutorials);
-  }
-  await expectRoleNotification(teacher.page, role, student.user);
-  const takenOver = teacher.page.getByText(/(Tutorials|Talks) taken over:/);
+  await expectRoleNotification(teacher.page, "tutor", student.user);
+  const takenOver = teacher.page.getByText("Tutorials taken over:");
   await expect(takenOver).toContainText(first.title);
   await expect(takenOver).toContainText(second.title);
   await expect(takenOver).not.toContainText(third.title);
@@ -237,9 +199,9 @@ async function redeemWithSomethingClaimed(
 
 async function redeemTwice(
   factory: FactoryBot, teacher: { page: Page; user: User }, student: { page: Page; user: User },
-  role: Role, sort: "lecture" | "seminar" = "lecture",
+  role: Role,
 ) {
-  const { voucher } = await lectureWithVoucher(factory, teacher.user.id, role, sort);
+  const { voucher } = await lectureWithVoucher(factory, teacher.user.id, role);
   await openProfile(student.page);
 
   await submitVoucher(student.page, voucher.secure_hash as string);
@@ -280,7 +242,7 @@ test.describe("tutor voucher redemption", () => {
   test.describe("when the lecture has no tutorials yet", () => {
     test("allows redemption of the voucher to successfully become tutor",
       async ({ factory, teacher, student }) => {
-        await redeemWithNothingToClaim(factory, teacher, student, "tutor", "tutorial");
+        await redeemWithNothingToClaim(factory, teacher, student);
       });
 
     test("displays a message that the user has already redeemed the voucher",
@@ -292,7 +254,7 @@ test.describe("tutor voucher redemption", () => {
   test.describe("when the lecture has tutorials", () => {
     test("allows the user to successfully submit tutorials and become their tutor",
       async ({ factory, teacher, student }) => {
-        await redeemWithSomethingClaimed(factory, teacher, student, "tutor", "tutorial");
+        await redeemWithSomethingClaimed(factory, teacher, student);
       });
 
     // Tutoring every tutorial leaves none to claim, but the voucher itself is
@@ -300,12 +262,12 @@ test.describe("tutor voucher redemption", () => {
     test("offers to redeem the voucher without a tutorial when the user tutors all of them",
       async ({ factory, teacher, student }) => {
         const { lecture, voucher } = await lectureWithVoucher(factory, teacher.user.id, "tutor");
-        await createClaimables(factory, lecture.id, "tutorial", student.user);
+        await createTutorials(factory, lecture.id, student.user);
         await openProfile(student.page);
 
         await submitVoucher(student.page, voucher.secure_hash as string);
 
-        await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGES.tutorial)).toBeVisible();
+        await expect(student.page.getByText(NOTHING_TO_CLAIM_MESSAGE)).toBeVisible();
         await expect(student.page.getByRole("link", { name: "Redeem Voucher" })).toBeVisible();
         await expectCancelBringsFormBack(student.page);
         await expectNoNotification(teacher.page);
@@ -383,42 +345,4 @@ test.describe("teacher voucher redemption", () => {
         .toContainText(COURSE_TITLE);
       await expectCancelBringsFormBack(teacher.page);
     });
-});
-
-test.describe("speaker voucher redemption", () => {
-  test.describe("when the seminar has no talks yet", () => {
-    test("allows the user to successfully become a speaker",
-      async ({ factory, teacher, student }) => {
-        await redeemWithNothingToClaim(factory, teacher, student, "speaker", "talk");
-      });
-
-    test("displays a message that the user has already redeemed the voucher",
-      async ({ factory, teacher, student }) => {
-        await redeemTwice(factory, teacher, student, "speaker", "seminar");
-      });
-  });
-
-  test.describe("when the seminar has talks", () => {
-    test("allows the user to successfully submit talks and become their speaker",
-      async ({ factory, teacher, student }) => {
-        await redeemWithSomethingClaimed(factory, teacher, student, "speaker", "talk");
-      });
-
-    test("displays a message that the user is already a speaker for all talks",
-      async ({ factory, teacher, student }) => {
-        const { lecture, voucher } = await lectureWithVoucher(
-          factory, teacher.user.id, "speaker", "seminar",
-        );
-        await createClaimables(factory, lecture.id, "talk", student.user);
-        await openProfile(student.page);
-
-        await submitVoucher(student.page, voucher.secure_hash as string);
-
-        await expect(student.page.getByText(
-          "There are no more talks available for this seminar that you can take over.",
-        )).toBeVisible();
-        await expectCancelBringsFormBack(student.page);
-        await expectNoNotification(teacher.page);
-      });
-  });
 });

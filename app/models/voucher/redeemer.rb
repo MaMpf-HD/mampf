@@ -30,8 +30,6 @@ module Redeemer
         redeem_editor_voucher
       when :teacher
         redeem_teacher_voucher
-      when :speaker
-        redeem_speaker_voucher(params[:talk_ids])
       end
     end
 
@@ -65,15 +63,6 @@ module Redeemer
       invalidate!
 
       Redemption.create(user: Current.user, voucher: self)
-    end
-
-    def redeem_speaker_voucher(talk_ids)
-      selected_talks = lecture.talks.where(id: talk_ids)
-      lecture.update_speaker_status!(Current.user, selected_talks)
-      LectureNotifier.notify_cospeakers_by_mail(Current.user, selected_talks)
-
-      Redemption.create(user: Current.user, voucher: self,
-                        claimed_talks: selected_talks)
     end
 
     def create_notifications!(redemption)

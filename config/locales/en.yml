@@ -2052,22 +2052,6 @@ en:
       The former teacher will be demoted to editor.
     already_teacher_html: >
       You are already the teacher for <strong>%{lecture}</strong>.
-    become_speaker_html: >
-      With this voucher, you will obtain speaker status for the seminar
-      <strong>%{seminar}</strong>.
-    already_speaker_html: >
-      You are already registered as speaker for: <strong>%{talks}</strong>.
-    talks_available: >
-      If you already know which talks you will be responsible for, you can
-      select them here. Otherwise, leave the field empty; then you can still
-      redeem the voucher so that the teacher can assign you talks later.
-    no_talks_redemption: >
-      After having redeemed the voucher, the teacher can assign you to the talks.
-    all_talks_taken: >
-      There are no more talks available for this seminar that you can take over.
-    already_speaker_by_redemption: >
-      You have already redeemed this voucher to become a speaker.
-    select_talks: Select Talks
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2116,17 +2100,11 @@ en:
     became_teacher: >
       %{user} has redeemed a teacher voucher and has therefore become teacher
       in the event series.
-    became_speaker: >
-      %{user} has redeemed a speaker voucher and has therefore become speaker
-      in the seminar.
     tutorial_details: >
       Tutorials taken over: %{tutorials}.
-    talk_details: >
-      Talks taken over: %{talks}.
     redemption: 'Voucher redeemed:'
     redemption_in_lecture: 'Voucher redeemed in %{lecture}'
     no_tutorials_taken: 'No tutorials have been taken over by the redemption.'
-    no_talks_taken: 'No talks have been taken over by the redemption.'
 
   lecture:
     content: 'Event series contents'
@@ -3288,11 +3266,6 @@ en:
       %{new_teacher} has redeemed a teacher voucher and is now the teacher for
       this event series. You are no longer teacher for %{title}, but
       editor instead.
-    new_speaker_subject: 'Additional speaker for %{seminar}, %{title}'
-    new_speaker: >
-      Dear %{username}, in the seminar %{seminar}, %{speaker} has
-      registered as an additional speaker for %{title}.
-      Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can find it in the lecture search on your dashboard.'
@@ -3957,8 +3930,6 @@ en:
       Your editor status has been updated.
     become_teacher_success: >
       Your teacher status has been updated.
-    become_speaker_success: >
-      Your speaker status has been updated.
     lectures:
       destruction_failed: >
         The event series could not be deleted because some of its content could
