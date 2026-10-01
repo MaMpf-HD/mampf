@@ -1,7 +1,9 @@
-<% kept = campaign.groups_kept_from_deletion %>
+<% blocking = campaign.groups_blocking_deletion %>
 
 <% names = { campaign: campaign.student_facing_title,
              lecture: campaign.campaignable.title_for_viewers } %>
+
+<% reasons_id = "end-campaign-#{campaign.id}-blocking" %>
 
 <%= turbo_frame_tag campaign_header_frame_id(campaign) do %>
   <div class="fs-6 fw-normal p-4 bg-light">
@@ -14,6 +16,7 @@
 
     <%= form_with url: end_without_allocation_registration_campaign_path(campaign),
                   method: :delete,
+                  namespace: "end-campaign-#{campaign.id}",
                   data: { turbo_stream: true } do |f| %>
       <fieldset class="mb-3">
         <legend class="form-label fs-6 mb-1">
@@ -28,18 +31,30 @@
         </div>
 
         <div class="form-check">
-          <%= f.radio_button :delete_groups, "1", disabled: kept.any?,
-                                                  class: "form-check-input" %>
+          <%= f.radio_button :delete_groups, "1",
+                             disabled: blocking.any?,
+                             class: "form-check-input",
+                             aria: { describedby: (reasons_id if blocking.any?) } %>
 
           <%= f.label :delete_groups_1, t("registration.campaign.end.delete_groups"),
                       class: "form-check-label" %>
         </div>
 
-        <% if kept.any? %>
-          <small class="d-block text-muted">
-            <%= t("registration.campaign.end.groups_kept",
-                  groups: kept.map(&:title).to_sentence) %>
-          </small>
+        <% if blocking.any? %>
+          <div class="small text-muted mt-1" id="<%= reasons_id %>">
+            <%= t("registration.campaign.end.groups_blocking") %>
+
+            <ul class="mb-0">
+              <% blocking.each do |group| %>
+                <li>
+                  <%= group.title %>:
+                  <%= group.destruction_blocker_messages(
+                        group.destruction_blockers_outside_campaign
+                      ).to_sentence %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
         <% end %>
       </fieldset>
 
@@ -73,7 +88,6 @@
         <%= link_to t("buttons.cancel"),
                     registration_campaign_path(campaign),
                     class: "btn btn-secondary",
-                    role: "button",
                     data: { turbo_stream: true } %>
       </div>
     <% end %>

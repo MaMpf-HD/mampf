@@ -67,8 +67,8 @@ module Registration
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 
-    # Before an allocation is computed, nobody holds a place yet, so the
-    # registrations can go without taking anything from anybody.
+    # Before an allocation is computed, nobody is in a group through the
+    # campaign yet: ending it takes registrations, not memberships.
     ENDABLE_STATUSES = ["open", "closed"].freeze
 
     DISCARD_BLOCKER_ERRORS = {
@@ -149,33 +149,39 @@ module Registration
       data_blocker
     end
 
-    # Whether the campaign may end with nobody allocated. An exam's campaign
-    # is ended from the exam; it stands or falls with the exam itself.
+    # Checks whether the campaign may end without allocation. Not an exam's
+    # campaign: the exam controls its lifecycle.
     def endable_without_allocation?
       status.in?(ENDABLE_STATUSES) && last_allocation_calculated_at.nil? &&
         !materialized_roster_entries? && !referencing_prerequisite_policies.exists? &&
         !exam_campaign?
     end
 
-    # The groups that could not go along: they hold something that must not
-    # be lost with them, such as members from outside the campaign.
-    def groups_kept_from_deletion
+    # Lists the groups that cannot be deleted along with the campaign: they
+    # hold members from outside it, a talk's media or uploaded submissions.
+    def groups_blocking_deletion
       registration_items.filter_map(&:registerable).select do |group|
         group.destruction_blockers_outside_campaign.any?
       end
     end
 
-    # Ends the campaign with nobody allocated: the registrations go, then the
-    # campaign, which leaves its groups free of any campaign; with
-    # delete_groups they go as well. Returns false and changes nothing where
-    # the campaign or a group may not go.
+    # Ends the campaign without allocation: deletes its registrations and
+    # itself, and its groups with delete_groups. Yields under the campaign
+    # lock, before the registrations go, so that the caller can snapshot who
+    # was registered. Returns false where a guard refuses; raises
+    # ActiveRecord::RecordNotDestroyed where a group stops being deletable
+    # after the check, and then changes nothing.
     def end_without_allocation!(delete_groups:)
       transaction do
         lock!
-        groups = registration_items.filter_map(&:registerable)
         return false unless endable_without_allocation?
-        return false if delete_groups && groups_kept_from_deletion.any?
+        return false if delete_groups && groups_blocking_deletion.any?
 
+        yield if block_given?
+        # Withdrawing locks the item and then deletes its registration; taking
+        # the items in that order too keeps the two from deadlocking.
+        items = registration_items.lock.to_a
+        groups = items.filter_map(&:registerable)
         user_registrations.delete_all
         destroy!
         groups.each { |group| group.reload.destroy! } if delete_groups

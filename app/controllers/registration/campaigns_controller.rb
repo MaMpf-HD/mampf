@@ -138,26 +138,23 @@ module Registration
       end
     end
 
+    # Shows the choice in place of the campaign's header, as edit does.
     def confirm_end
+      return refuse_end unless @campaign.endable_without_allocation?
+
       render partial: "registration/campaigns/end_form", locals: { campaign: @campaign }
     end
 
-    # The mail to those registered is saved before the registrations go, so
-    # that it still knows their addresses, and sent once the campaign is gone.
+    # Saves the mail under the campaign's lock: nobody can register between
+    # reading the recipients and deleting the registrations.
     def end_without_allocation
       lecture = @campaign.campaignable
-      message = end_notification if params[:notify] == "1"
-      ended = false
-      ActiveRecord::Base.transaction do
+      message = nil
+      ended = @campaign.end_without_allocation!(delete_groups: params[:delete_groups] == "1") do
+        message = end_notification if params[:notify] == "1"
         message&.save!
-        ended = @campaign.end_without_allocation!(delete_groups: params[:delete_groups] == "1")
-        raise(ActiveRecord::Rollback) unless ended
       end
-
-      unless ended
-        return respond_with_flash(:alert, t("registration.campaign.end.not_possible"),
-                                  redirect_path: registration_campaign_path(@campaign))
-      end
+      return refuse_end unless ended
 
       StudentMessageMailer.deliver_by_locale(message) if message
       respond_with_flash(:notice, end_notice(message),
@@ -166,6 +163,11 @@ module Registration
       end
     rescue ActiveRecord::RecordInvalid => e
       respond_with_flash(:alert, e.record.errors.full_messages.to_sentence,
+                         redirect_path: registration_campaign_path(@campaign))
+    rescue ActiveRecord::RecordNotDestroyed => e
+      return refuse_end if e.record == @campaign
+
+      respond_with_flash(:alert, group_kept_message(e.record),
                          redirect_path: registration_campaign_path(@campaign))
     end
 
@@ -283,6 +285,19 @@ module Registration
                       .tap do |message|
           message.address_to(audiences, labels: catalog.labels_by_locale(keys))
         end
+      end
+
+      def refuse_end
+        respond_with_flash(:alert, t("registration.campaign.end.not_possible"),
+                           redirect_path: registration_campaign_path(@campaign))
+      end
+
+      def group_kept_message(group)
+        t("registration.campaign.end.group_kept",
+          group: group.title,
+          reasons: group.destruction_blocker_messages(
+            group.destruction_blockers_outside_campaign
+          ).to_sentence)
       end
 
       def end_notice(message)

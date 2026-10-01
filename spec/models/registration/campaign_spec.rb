@@ -243,7 +243,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
   # group: the registrations go, the campaign with them.
   describe "#end_without_allocation!" do
     let(:campaign) { create(:registration_campaign, :closed, items_count: 2) }
-    let(:groups) { campaign.registration_items.map(&:registerable) }
+    # Read before the campaign goes, which takes its items with it.
+    let!(:groups) { campaign.registration_items.map(&:registerable) }
 
     before do
       create(:registration_user_registration,
@@ -252,6 +253,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "deletes the registrations and the campaign and leaves the groups free" do
+      expect(groups.size).to eq(2)
       expect(campaign.end_without_allocation!(delete_groups: false)).to be(true)
 
       expect(Registration::Campaign.exists?(campaign.id)).to be(false)
@@ -262,6 +264,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
 
     it "deletes the groups along when asked" do
+      expect(groups.size).to eq(2)
       expect(campaign.end_without_allocation!(delete_groups: true)).to be(true)
 
       expect(groups.map { |group| group.class.exists?(group.id) }).to all(be(false))
@@ -270,10 +273,22 @@ RSpec.describe(Registration::Campaign, type: :model) do
     it "keeps everything where a group holds what must not go with it" do
       groups.first.add_user_to_roster!(create(:confirmed_user))
 
-      expect(campaign.groups_kept_from_deletion).to eq([groups.first])
+      expect(campaign.groups_blocking_deletion).to eq([groups.first])
       expect(campaign.end_without_allocation!(delete_groups: true)).to be(false)
       expect(Registration::Campaign.exists?(campaign.id)).to be(true)
       expect(campaign.user_registrations.count).to eq(1)
+    end
+
+    it "yields while the registrations are still there, and not when it refuses" do
+      seen = nil
+      campaign.end_without_allocation!(delete_groups: false) do
+        seen = campaign.user_registrations.count
+      end
+      expect(seen).to eq(1)
+
+      other = create(:registration_campaign, :completed)
+      expect { |block| other.end_without_allocation!(delete_groups: false, &block) }
+        .not_to yield_control
     end
 
     it "refuses once an allocation is computed" do

@@ -160,10 +160,10 @@ test.describe("getting out of a registration process", () => {
       await page.getByRole("link", { name: "End without allocation" }).click();
 
       await expect(page.getByText("The one registration is deleted")).toBeVisible();
-      await expect(page.getByRole("radio", { name: /Keep them/ })).toBeChecked();
+      await expect(page.getByRole("radio", { name: /Keep the groups/ })).toBeChecked();
       await expect(page.getByRole("checkbox", { name: "Notify those registered by email" }))
         .toBeChecked();
-      await page.getByRole("button", { name: "End registration process" }).click();
+      await page.getByRole("button", { name: "Delete process and registrations" }).click();
 
       await expect(page.getByText(
         "The registration process has ended. One person is being notified.")).toBeVisible();
