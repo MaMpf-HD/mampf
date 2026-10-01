@@ -1100,13 +1100,6 @@ class Lecture < ApplicationRecord
     (User.teachers + editors + course.editors + [teacher]).uniq
   end
 
-  def eligible_as_speakers
-    (speakers + Redemption.speakers_by_redemption_in(self) + editors + [teacher]).uniq
-    # the first one should (in the future) actually be contained in the sum of
-    # the other ones, but in the transition phase where some editor statuses were
-    # still given by the old system, this will not be true
-  end
-
   def editors_and_teacher
     ([teacher] + editors).uniq
   end

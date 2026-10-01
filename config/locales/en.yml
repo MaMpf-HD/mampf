@@ -915,6 +915,7 @@ en:
           associated to sessions for this section.
     talk:
       speakers: Speaker(s)
+      speakers_managed_in_groups_html: You manage the speakers in the %{link} tab.
       no_media: There are no media associated  to this talk.
       next_talk: next talk
       previous_talk: previous talk
@@ -966,12 +967,6 @@ en:
           talk's page (this box will typically be unchecked if the text is
           still preliminary). You can remove the text from the talk's page
           as teacher.
-        speakers: >
-          Here you can select the speakers of the talk. They can edit the talk
-          and add media to it. You can only select users who have the status of
-          speaker in the seminar, or editors or yourself. Students become
-          speakers through a registration process for the talks, set up on the
-          "Groups" tab.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -3691,11 +3686,6 @@ en:
       people who are already registered as editors or who have obtained editor
       status using a voucher. You can generate such a voucher in the
       <i>Vouchers</i> section.
-    no_results_speaker: >
-      No results found.<br><br>Note that from now on you can only search for
-      people who are already registered as speakers or who have obtained speaker
-      status using a voucher. You can generate such a voucher in the
-      <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
     voucher_code: Voucher code
@@ -4223,14 +4213,6 @@ en:
           attributes:
             lecture:
               must_be_seminar: "Talks can only be created for seminars."
-            speaker_ids:
-              graded:
-                one: >-
-                  %{names} stays on the talk: it has already been graded for
-                  them. Clear the grade first.
-                other: >-
-                  %{names} stay on the talk: it has already been graded for
-                  them. Clear the grade first.
             title:
               blank: You need to give a title.
         term:
