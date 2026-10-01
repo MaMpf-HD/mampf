@@ -1107,6 +1107,10 @@ class Lecture < ApplicationRecord
     # still given by the old system, this will not be true
   end
 
+  def editors_and_teacher
+    ([teacher] + editors).uniq
+  end
+
   # Returns everybody the lecture holds as a student: enrolled, in one of its
   # groups (with enrollment or not), or with a running registration. The
   # Participants tab lists only the enrolled. Exams stay out, their rosters
@@ -1119,10 +1123,6 @@ class Lecture < ApplicationRecord
      LectureAudience.running_registrations(id).merge(Registration::Campaign.non_exam)
                     .select(:user_id)]
       .map { |ids| User.where(id: ids) }.reduce(:or)
-  end
-
-  def editors_and_teacher
-    ([teacher] + editors).uniq
   end
 
   def tutorials_with_tutor(tutor)
