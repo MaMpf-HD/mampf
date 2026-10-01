@@ -102,7 +102,9 @@ module Registration
           read_only: true,
           item: @item,
           allocated: allocated,
-          preference_ranks: preference_ranks
+          preference_ranks: preference_ranks,
+          members: User.where(id: @item.registerable.allocated_user_ids)
+                       .where.not(id: students.map(&:id))
         ).render_in(view_context)
       )
     end

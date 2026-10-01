@@ -27,6 +27,10 @@ en:
       no_policy_enforcement: "No policy enforcement"
       gated_by_policies: "Gated by policies: %{policies}"
       enforced_policies: "Registration process enforced: %{policies}"
+    outside_enrollment:
+      one: "1 person is only in groups without enrollment and is therefore not a participant."
+      other: >-
+        %{count} people are only in groups without enrollment and are therefore not participants.
     participants_hint: "This list contains all people enrolled in this lecture. Use the filters:<ul><li><strong>All:</strong> Shows everyone enrolled in the lecture</li><li><strong>Without group:</strong> Shows people who are enrolled but not member of any tutorial or flexible group with lecture enrollment</li></ul>"
     tabs:
       tutorial_maintenance: 'Coursework'
@@ -160,6 +164,10 @@ en:
       kinds:
         with_enrollment: "Group with enrollment"
         without_enrollment: "Group without enrollment"
+        without_enrollment_short: "without enrollment"
+        without_enrollment_tooltip: >-
+          Members of this group are not enrolled in the lecture, so they are not listed in the
+          Participants tab.
       with_lecture_enrollment: "With Lecture Enrollment"
       without_lecture_enrollment: "Without Lecture Enrollment"
       propagate_to_lecture: "With automatic lecture enrollment"
@@ -187,10 +195,19 @@ en:
         planning_short: "Needs assessment before semester begins."
         enrollment_warning: "⚠️ This course already has tutorials/talks."
     details:
-      select_group: 'Select a group to inspect and manage participants'
-      participants: 'Participants'
-      empty: 'No participants in this group.'
+      select_group: 'Select a group to inspect and manage its members'
+      members: 'Members'
+      member_count:
+        one: '1 member'
+        other: '%{count} members'
+      without_enrollment_hint: >-
+        Group without enrollment: its members do not count as participants of the lecture.
+      empty: 'Nobody is enrolled in the lecture yet.'
       empty_filtered: 'No students match the current filter.'
+      already_members: 'Already in the group'
+      already_members_hint: >-
+        These people are not in the group through the registration and stay in it after the
+        registration process is finalized.
     candidates:
       title: 'Unplaced Registrations'
       short_title: 'unplaced'

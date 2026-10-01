@@ -22,6 +22,16 @@
     <div class="group-row__type">
       <%= type_text %>
 
+      <% if cohort_without_enrollment? %>
+        <span
+          class="group-row__no-enrollment"
+          title="<%= t("roster.cohorts.kinds.without_enrollment_tooltip") %>"
+        >
+          <i class="bi bi-person-dash" aria-hidden="true"></i>
+          <%= t("roster.cohorts.kinds.without_enrollment_short") %>
+        </span>
+      <% end %>
+
       <% if date_text.present? %>
         <span class="group-row__date">
           ·

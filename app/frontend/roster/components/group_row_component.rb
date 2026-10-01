@@ -25,8 +25,7 @@ class GroupRowComponent < ViewComponent::Base
   def row_classes
     [
       "group-row",
-      ("group-row--self-enrollment" if !item && sm_active?),
-      ("group-row--without-enrollment" if cohort_without_enrollment?)
+      ("group-row--self-enrollment" if !item && sm_active?)
     ].compact.join(" ")
   end
 

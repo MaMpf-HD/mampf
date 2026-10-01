@@ -345,4 +345,23 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       )
     end
   end
+
+  describe "people only in groups without enrollment" do
+    let(:outsider) { create(:confirmed_user) }
+    let(:participants) { LectureMembership.none }
+
+    before do
+      waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+      waitlist.add_user_to_roster!(outsider)
+      enrolled = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: enrolled)
+      waitlist.add_user_to_roster!(enrolled)
+    end
+
+    it "counts those not enrolled and says why they are missing" do
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.outside_enrollment", count: 1))
+    end
+  end
 end
