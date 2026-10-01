@@ -76,12 +76,12 @@ module Dashboard
        bookmarked_lectures].all?(&:empty?)
     end
 
+    def lectures
+      staff_lectures + tutored_lectures + enrolled_lectures + bookmarked_lectures
+    end
+
     def lecture_activity
-      @lecture_activity ||= Dashboard::LectureActivity.new(
-        user: user,
-        lectures: staff_lectures + tutored_lectures + enrolled_lectures +
-                  bookmarked_lectures
-      )
+      @lecture_activity ||= Dashboard::LectureActivity.new(user: user, lectures: lectures)
     end
 
     private

@@ -247,11 +247,15 @@ RSpec.describe(User, type: :model) do
         .to contain_exactly(taught, edited, bookmarked, rostered)
     end
 
-    it "includes lectures the user edits as editor of their course" do
-      lecture = create(:lecture, term: term)
-      create(:editable_user_join, user: user, editable: lecture.course)
+    # The switcher offered lectures the dashboard did not show; both list the
+    # same ones now.
+    it "lists what the dashboard lists: tutored ones, not those of an edited course" do
+      tutored = create(:lecture, term: term)
+      create(:tutorial, lecture: tutored, tutors: [user])
+      of_edited_course = create(:lecture, term: term)
+      create(:editable_user_join, user: user, editable: of_edited_course.course)
 
-      expect(user.current_lectures).to contain_exactly(lecture)
+      expect(user.current_lectures).to contain_exactly(tutored)
     end
 
     it "leaves out lectures of other terms" do
