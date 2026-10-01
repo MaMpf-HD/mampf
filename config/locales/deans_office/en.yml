@@ -2,60 +2,102 @@ en:
   deans_office:
     title: "Dean's office"
     explainer: >-
-      Every lecture of a term with its groups: how many seats they have, how
-      many have registered and how many members they have so far.
+      Every course of the term at a glance. Open one to see its groups; the
+      question marks explain the terms.
     term: 'Term'
-    no_lectures: 'There are no lectures in this term.'
-    lecture: 'Lecture'
-    teacher: 'Teacher'
-    groups: 'Groups'
-    seats: 'Seats'
-    registered: 'Registered'
-    members: 'Members'
-    registration: 'Registration'
+    filter: 'Search'
+    filter_placeholder: 'Course or teacher'
+    no_match: 'No course matches your search.'
+    no_lectures: 'There are no courses in this term.'
+    order:
+      label: 'Order'
+      title: 'by title'
+      phase: 'by state of the registration'
     sections:
       lectures: 'Lectures'
       seminars: 'Seminars'
-    legend:
-      registration: 'How people get into the group.'
-      registered: >-
-        Group: confirmed registrations in the running registration; where
-        places go by preference, the first choices. Lecture: how many people
-        registered for any of its groups, each once, rejected ones left out.
-        "–" where no registration is running.
-      members: >-
-        Group: how many are in the group now. Lecture: how many members the
-        lecture has; this can be more or fewer than in its groups together.
-      seats: >-
-        Group: the most it takes. Lecture: its groups' places added up,
-        tutorials, talks and exams together; these are group places, not
-        people.
-    access:
-      open: 'open until %{deadline} · %{mode}'
+    columns:
+      lecture: 'Lecture'
+      seminar: 'Seminar'
+      team:
+        lecture: 'Teaching team'
+        seminar: 'Teaching team'
+      students: 'Students'
+      groups: 'Groups'
+      talks: 'Talks'
+      state: 'Registration'
+    teacher: 'Teacher'
+    groups:
+      none: 'none'
+      tutorials:
+        one: '1 tutorial'
+        other: '%{count} tutorials'
+      flexible:
+        one: '1 flexible group'
+        other: '%{count} flexible groups'
+    talks:
+      none: 'none'
+      summary: '%{talks}, %{assigned}'
+      count:
+        one: '1 talk'
+        other: '%{count} talks'
+      assigned:
+        all: 'all assigned'
+        none: 'none assigned yet'
+        some: '%{count} assigned'
+    phase_with_groups: '%{phase} (%{groups})'
+    phases:
+      open: 'Registration open'
+      allocating: 'Allocation to follow'
+      self_join: 'Sign-up open'
+      assigned: 'Allocated'
+      preparing: 'Not started yet'
+    unregistered:
+      lectures:
+        one: '1 lecture without registration in MaMpf'
+        other: '%{count} lectures without registration in MaMpf'
+      seminars:
+        one: '1 seminar without registration in MaMpf'
+        other: '%{count} seminars without registration in MaMpf'
+    modes:
+      first_come: 'First come, first served'
+      preferences: 'By preference'
+    help:
+      students: >-
+        Everybody already in the course or one of its groups, and everybody
+        registering right now; each person once, exams not counted.
+      about: 'Explanation: %{topic}'
+      phases:
+        open: >-
+          Students can register right now; the group lists are not settled yet.
+        allocating: >-
+          The registration has closed; the places are still being handed out
+          to the groups.
+        self_join: >-
+          Students put themselves into the group without a registration.
+        assigned: >-
+          Handing out is done: by an allocation, by the teacher directly, or
+          by a sign-up that has closed again. Counted is who is in the group
+          now, even if that is nobody.
+        preparing: 'No registration is open for this group yet.'
       modes:
-        first_come: 'first come, first served'
-        preferences: 'by preference'
-      allocating: 'closed, allocation pending'
-      not_open: 'registration not open yet'
-      no_campaign_yet: 'waits for a registration'
-      self_join: 'students join themselves'
-      completed: 'registration completed'
-      staff_only: 'only through the teacher'
-    unlimited: 'unlimited'
-    seats_and_unlimited: '%{seats} + unlimited'
-    first_choices:
-      one: '1 (first choice)'
-      other: '%{count} (first choices)'
-    groups_of: 'Groups of %{lecture}'
-    filter: 'Filter'
-    filter_placeholder: 'Lecture or teacher'
-    no_match: 'No lecture matches the filter.'
-    open_all: 'Show all groups'
-    close_all: 'Hide all groups'
-    group: 'Group'
-    kind: 'Kind'
-    kinds:
-      tutorial: 'Tutorial'
-      talk: 'Talk'
-      cohort: 'Other group'
-      exam: 'Exam'
+        first_come: >-
+          Whoever registers has a place at once while places are left; they
+          enter the group list when the registration is completed.
+        preferences: >-
+          Students state their wishes; after the deadline the places are
+          handed out by these wishes.
+    details:
+      deadline: 'Deadline %{deadline}'
+      deadline_passed: 'Deadline was %{deadline}'
+      open_until: 'Registration open until %{deadline}'
+      by_campaign: '%{phase} · %{mode}'
+      first_choices: '%{mode}, first choices'
+      groups: 'Groups'
+      group: 'Group'
+      students: 'Students'
+      location: 'Location'
+      bar:
+        first_choices: 'First choices; places are handed out only after the deadline; length against the largest group'
+        provisional: 'Registrations, not in the group list yet; length against the largest group'
+        entered: 'In the group; length against the largest group'

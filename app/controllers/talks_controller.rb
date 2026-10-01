@@ -182,7 +182,7 @@ class TalksController < ApplicationController
 
     def talk_params
       attributes = [:title, :lecture_id, :details, :description, :capacity,
-                    :display_description, { speaker_ids: [], tag_ids: [] }]
+                    :display_description, { tag_ids: [] }]
       if @talk && !current_user.in?(@talk.speakers) &&
          !@talk.display_description
         attributes.delete(:display_description)

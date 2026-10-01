@@ -82,33 +82,21 @@ test.describe("Lecture people edit page: teacher & editor", () => {
 });
 
 test.describe("Seminar speakers (existing talk)", () => {
-  test.describe("when logged in as teacher", () => {
-    test("prohibits searching for arbitrary users in the speakers dropdown",
-      async ({ factory, teacher: { page, user: teacher }, student, student2 }) => {
-        const seminar = await factory.create("seminar", [], { teacher_id: teacher.id });
-        const talk = await factory.create("talk", [],
-          { lecture_id: seminar.id, speaker_ids: [student.user.id] });
+  test("lists the speakers and leaves changing them to the Groups tab",
+    async ({ factory, teacher: { page, user: teacher } }) => {
+      const seminar = await factory.create("seminar", [], { teacher_id: teacher.id });
+      const speaker = await factory.create("confirmed_user", [],
+        { name_in_tutorials: "Ada Lovelace" });
+      const talk = await factory.create("talk", [],
+        { lecture_id: seminar.id, speaker_ids: [speaker.id] });
 
-        await page.goto(`/talks/${talk.id}/edit`);
+      await page.goto(`/talks/${talk.id}/edit`);
 
-        await searchForUserInTomSelect(page, "speaker-select-div", student2.user, false);
-        await expectUsersInDropdown(page, "speaker-select-div", student2.user, false);
-      });
-  });
-
-  test.describe("when logged in as admin", () => {
-    test("allows searching for arbitrary users to assign them as speakers",
-      async ({ factory, admin: { page }, student, student2, teacher }) => {
-        const seminar = await factory.create("seminar", [], { teacher_id: teacher.user.id });
-        const talk = await factory.create("talk", [],
-          { lecture_id: seminar.id, speaker_ids: [student.user.id] });
-
-        await page.goto(`/talks/${talk.id}/edit`);
-
-        await searchForUserInTomSelect(page, "speaker-select-div", student2.user);
-        await expectUsersInDropdown(page, "speaker-select-div", student2.user, true);
-      });
-  });
+      await expect(page.getByText("Ada Lovelace")).toBeVisible();
+      await expect(page.getByRole("link", { name: "Groups", exact: true }))
+        .toHaveAttribute("href", `/lectures/${seminar.id}/edit?tab=groups`);
+      await expect(page.getByRole("combobox", { name: "Speaker(s)" })).toHaveCount(0);
+    });
 });
 
 test.describe("Import Media", () => {

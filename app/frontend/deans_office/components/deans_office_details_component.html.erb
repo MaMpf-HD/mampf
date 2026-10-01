@@ -1,0 +1,69 @@
+<% heading_id = dom_id(@course, :deans_office_groups) %>
+
+<div class="small">
+  <h3 class="h6 mb-2" id="<%= heading_id %>">
+    <%= t("deans_office.details.groups") %>
+  </h3>
+
+  <table
+    class="table table-sm mb-0 deans-office-groups"
+    aria-labelledby="<%= heading_id %>"
+  >
+    <thead>
+      <tr>
+        <th scope="col"><%= t("deans_office.details.group") %></th>
+        <th scope="col"><%= t("deans_office.details.students") %></th>
+
+        <% if located? %>
+          <th scope="col" class="text-end">
+            <%= t("deans_office.details.location") %>
+          </th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <% sections.each do |section| %>
+      <tbody>
+        <tr class="deans-office-group-phase">
+          <th colspan="<%= located? ? 3 : 2 %>" scope="rowgroup">
+            <%= heading(section) %>
+            <%= helpers.deans_office_help(heading(section), help(section)) %>
+          </th>
+        </tr>
+
+        <% section.groups.each do |group| %>
+          <% count = group_count(group) %>
+
+          <tr>
+            <th scope="row" class="fw-normal"><%= group.title %></th>
+
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="deans-office-count"><%= count %></span>
+
+                <div
+                  class="deans-office-meter"
+                  aria-hidden="true"
+                  title="<%= bar_title(section) %>"
+                >
+                  <%= helpers.progress_bar(
+                    count, largest_group,
+                    show_label: false, height: "0.5rem",
+                    container_class: class_names(
+                      "progress deans-office-bar",
+                      "deans-office-bar-provisional": provisional?(section)
+                    )
+                  ) %>
+                </div>
+              </div>
+            </td>
+
+            <% if located? %>
+              <td class="text-end text-muted"><%= group.try(:location) %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    <% end %>
+  </table>
+</div>

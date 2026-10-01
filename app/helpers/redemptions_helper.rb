@@ -2,8 +2,7 @@
 module RedemptionsHelper
   def redemption_notification_card_header(redemption)
     link_to(redemption.voucher.lecture.title_for_viewers,
-            edit_lecture_path(redemption.voucher.lecture,
-                              anchor: ("people" unless redemption.voucher.speaker?)),
+            edit_lecture_path(redemption.voucher.lecture, anchor: "people"),
             class: "text-dark")
   end
 
@@ -17,10 +16,8 @@ module RedemptionsHelper
       tutor_notification_details(redemption)
     elsif redemption.voucher.editor?
       editor_notification_details(redemption)
-    elsif redemption.voucher.teacher?
-      teacher_notification_details(redemption)
     else
-      speaker_notification_details(redemption)
+      teacher_notification_details(redemption)
     end
   end
 
@@ -29,10 +26,8 @@ module RedemptionsHelper
       tutor_notification_item_details(redemption)
     elsif redemption.voucher.editor?
       editor_notification_item_details(redemption)
-    elsif redemption.voucher.teacher?
-      teacher_notification_item_details(redemption)
     else
-      speaker_notification_item_details(redemption)
+      teacher_notification_item_details(redemption)
     end
 
     truncate_result(result)
@@ -56,14 +51,6 @@ module RedemptionsHelper
       "#{t("basics.teacher")} #{redemption.user.tutorial_name}"
     end
 
-    def speaker_notification_item_details(redemption)
-      talks = redemption.claimed_talks
-      talk_details = talks.map(&:to_label).join(", ")
-
-      base_message = "#{t("basics.speaker")} #{redemption.user.tutorial_name}"
-      talks.any? ? "#{base_message}: #{talk_details}" : base_message
-    end
-
     def tutor_notification_details(redemption)
       user_info = I18n.t("notifications.became_tutor", user: redemption.user.info)
       tutorials = redemption.claimed_tutorials
@@ -84,19 +71,5 @@ module RedemptionsHelper
 
     def teacher_notification_details(redemption)
       I18n.t("notifications.became_teacher", user: redemption.user.info)
-    end
-
-    def speaker_notification_details(redemption)
-      user_info = I18n.t("notifications.became_speaker", user: redemption.user.info)
-      talks = redemption.claimed_talks
-
-      talk_details = if talks.present?
-        I18n.t("notifications.talk_details",
-               talks: talks.map(&:to_label).join(", "))
-      else
-        I18n.t("notifications.no_talks_taken")
-      end
-
-      user_info + talk_details
     end
 end

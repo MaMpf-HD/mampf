@@ -11,8 +11,6 @@ class Redemption < ApplicationRecord
   has_many :claims, dependent: :destroy
   has_many :claimed_tutorials, through: :claims, source: :claimable,
                                source_type: Tutorial.name
-  has_many :claimed_talks, through: :claims, source: :claimable,
-                           source_type: Talk.name
 
   has_many :notifications, as: :notifiable, dependent: :destroy
 
@@ -23,10 +21,6 @@ class Redemption < ApplicationRecord
 
     def editors_by_redemption_in(lecture)
       users_that_redeemed_vouchers(lecture.vouchers.for_editors)
-    end
-
-    def speakers_by_redemption_in(lecture)
-      users_that_redeemed_vouchers(lecture.vouchers.for_speakers)
     end
 
     private

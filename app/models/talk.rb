@@ -20,7 +20,6 @@ class Talk < ApplicationRecord
 
   validates :title, presence: true
   validate :lecture_must_be_seminar
-  validate :graded_speakers_stay
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
@@ -129,10 +128,6 @@ class Talk < ApplicationRecord
     (speakers + lecture.editors_with_inheritance).uniq
   end
 
-  def add_speaker(speaker)
-    speakers << speaker unless speaker.in?(speakers)
-  end
-
   # A speaker the talk has been graded for stays on it: dropped, the grade
   # would survive the roster invisibly. Clearing the grade is the way out.
   def speaker_removable?(user)
@@ -148,13 +143,6 @@ class Talk < ApplicationRecord
   # An allocation run again after grading leaves the graded on the talk too.
   def remove_excess_users!(target_ids, campaign)
     super(target_ids | speakers_with_grading_data, campaign)
-  end
-
-  # The form sends the whole list; the graded stay on it and the form is told.
-  def speaker_ids=(ids)
-    wanted = Array(ids).compact_blank.map(&:to_i)
-    @graded_speakers_dropped = (speakers_with_grading_data & speaker_ids) - wanted
-    super((wanted + @graded_speakers_dropped).uniq)
   end
 
   # Deleting a talk takes its media with it, and there is no way to get them
@@ -213,17 +201,6 @@ class Talk < ApplicationRecord
       return if lecture.seminar?
 
       errors.add(:lecture, :must_be_seminar)
-    end
-
-    # Said once, for the assignment that asked; a later save of the same
-    # instance starts clean.
-    def graded_speakers_stay
-      dropped = @graded_speakers_dropped
-      @graded_speakers_dropped = nil
-      return if dropped.blank?
-
-      names = User.where(id: dropped).map(&:tutorial_name)
-      errors.add(:speaker_ids, :graded, names: names.to_sentence, count: names.size)
     end
 
     def setup_assessment
