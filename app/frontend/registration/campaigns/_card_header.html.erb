@@ -31,9 +31,7 @@
                       aria: { label: campaign_discard_title(campaign) } do %>
           <i class="bi bi-trash" aria-hidden="true"></i>
         <% end %>
-      <% end %>
-
-      <% if !campaign.discardable? && campaign.endable_without_allocation? %>
+      <% elsif campaign.endable_without_allocation? %>
         <%= link_to confirm_end_registration_campaign_path(campaign),
                     class: "btn icon-button icon-button--danger",
                     data: { turbo_frame: campaign_header_frame_id(campaign) },

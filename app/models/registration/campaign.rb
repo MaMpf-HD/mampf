@@ -184,7 +184,9 @@ module Registration
         groups = items.filter_map(&:registerable)
         user_registrations.delete_all
         destroy!
-        groups.each { |group| group.reload.destroy! } if delete_groups
+        # Adding a member locks the group; holding that lock through the
+        # group's own destroy check keeps anybody from arriving before it goes.
+        groups.each { |group| group.lock!.destroy! } if delete_groups
         true
       end
     end
