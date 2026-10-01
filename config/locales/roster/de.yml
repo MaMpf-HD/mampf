@@ -33,7 +33,9 @@ de:
       people: "Personen"
       enrolled: "Eingeschrieben"
       everyone: "Insgesamt"
-      everyone_help: "Insgesamt: eingeschrieben, Mitglied einer Gruppe (auch ohne Einschreibung) oder mit laufender Anmeldung, jede Person einmal."
+      everyone_help: >-
+        Insgesamt: eingeschrieben, Mitglied einer Gruppe (auch ohne Einschreibung) oder mit
+        laufender Anmeldung, jede Person einmal.
       total: "Gesamt"
       other: "Anderes Fach oder anderer Abschluss"
       unanswered: "Keine Angabe"

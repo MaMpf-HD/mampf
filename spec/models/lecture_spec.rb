@@ -479,6 +479,12 @@ RSpec.describe(Lecture, type: :model) do
                                                          registration_item: item,
                                                          user: rejected)
       create(:lecture_bookmark, lecture: lecture, user: bookmarked)
+      exam_campaign = create(:exam, lecture: lecture).registration_campaign
+      exam_campaign.update!(status: :open) if exam_campaign.draft?
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: exam_campaign,
+             registration_item: exam_campaign.registration_items.first,
+             user: create(:confirmed_user))
     end
 
     it "holds the enrolled, group members and running registrations, each once" do

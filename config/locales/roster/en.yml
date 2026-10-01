@@ -33,7 +33,9 @@ en:
       people: "People"
       enrolled: "Enrolled"
       everyone: "Overall"
-      everyone_help: "Overall: enrolled, a member of a group (also without enrollment) or with a running registration, each person once."
+      everyone_help: >-
+        Overall: enrolled, a member of a group (also without enrollment) or with a running
+        registration, each person once.
       total: "Total"
       other: "Other subject or degree"
       unanswered: "Not stated"
