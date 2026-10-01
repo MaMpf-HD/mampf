@@ -581,6 +581,8 @@ RSpec.describe("Exams", type: :request) do
   describe "POST /exams/:id/participants" do
     let(:new_student) { create(:confirmed_user, locale: "en") }
 
+    before { exam.registration_campaign.update!(status: :completed) }
+
     context "as a teacher" do
       before { sign_in teacher }
 
@@ -649,7 +651,10 @@ RSpec.describe("Exams", type: :request) do
   describe "DELETE /exams/:id/participants/:user_id" do
     let(:member) { create(:confirmed_user, locale: "en") }
 
-    before { create(:exam_roster_entry, exam: exam, user: member) }
+    before do
+      create(:exam_roster_entry, exam: exam, user: member)
+      exam.registration_campaign.update!(status: :completed)
+    end
 
     context "as a teacher" do
       before { sign_in teacher }
