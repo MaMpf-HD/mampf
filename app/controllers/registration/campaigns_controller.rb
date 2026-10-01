@@ -138,6 +138,39 @@ module Registration
       end
     end
 
+    # Shows the choice in place of the campaign's header, as edit does.
+    def confirm_end
+      return refuse_end unless @campaign.endable_without_allocation?
+
+      render partial: "registration/campaigns/end_form", locals: { campaign: @campaign }
+    end
+
+    # Saves the mail under the campaign's lock: nobody can register between
+    # reading the recipients and deleting the registrations.
+    def end_without_allocation
+      lecture = @campaign.campaignable
+      message = nil
+      ended = @campaign.end_without_allocation!(delete_groups: params[:delete_groups] == "1") do
+        message = end_notification if params[:notify] == "1"
+        message&.save!
+      end
+      return refuse_end unless ended
+
+      StudentMessageMailer.deliver_by_locale(message) if message
+      respond_with_flash(:notice, end_notice(message),
+                         redirect_path: edit_lecture_path(lecture, tab: "groups")) do
+        evaluate_turbo_update_streams(lecture: lecture)
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      respond_with_flash(:alert, e.record.errors.full_messages.to_sentence,
+                         redirect_path: registration_campaign_path(@campaign))
+    rescue ActiveRecord::RecordNotDestroyed => e
+      return refuse_end if e.record == @campaign
+
+      respond_with_flash(:alert, group_kept_message(e.record),
+                         redirect_path: registration_campaign_path(@campaign))
+    end
+
     def open
       update_status(:open, t("registration.campaign.opened"))
     end
@@ -237,6 +270,41 @@ module Registration
     end
 
     private
+
+      # Goes to everybody with a pending or confirmed registration, the
+      # audience the Communication tab offers for a running campaign.
+      def end_notification
+        lecture = @campaign.campaignable
+        catalog = StudentMessages::Catalog.new(lecture, current_user)
+        keys = ["campaign:#{@campaign.id}:all"]
+        audiences = catalog.pick(keys)
+        return if audiences.blank? || audiences.sum(&:count).zero?
+
+        StudentMessage.new(lecture: lecture, sender: current_user, sender_role: :staff,
+                           subject: params[:subject], body: params[:body])
+                      .tap do |message|
+          message.address_to(audiences, labels: catalog.labels_by_locale(keys))
+        end
+      end
+
+      def refuse_end
+        respond_with_flash(:alert, t("registration.campaign.end.not_possible"),
+                           redirect_path: registration_campaign_path(@campaign))
+      end
+
+      def group_kept_message(group)
+        t("registration.campaign.end.group_kept",
+          group: group.title,
+          reasons: group.destruction_blocker_messages(
+            group.destruction_blockers_outside_campaign
+          ).to_sentence)
+      end
+
+      def end_notice(message)
+        return t("registration.campaign.end.ended") unless message
+
+        t("registration.campaign.end.ended_and_notified", count: message.recipients_count)
+      end
 
       def campaign_destruction_error
         @campaign.errors.full_messages.presence&.join(", ") ||

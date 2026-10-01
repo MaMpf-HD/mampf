@@ -31,6 +31,14 @@
                       aria: { label: campaign_discard_title(campaign) } do %>
           <i class="bi bi-trash" aria-hidden="true"></i>
         <% end %>
+      <% elsif campaign.endable_without_allocation? %>
+        <%= link_to confirm_end_registration_campaign_path(campaign),
+                    class: "btn icon-button icon-button--danger",
+                    data: { turbo_frame: campaign_header_frame_id(campaign) },
+                    title: t("registration.campaign.end.action"),
+                    aria: { label: t("registration.campaign.end.action") } do %>
+          <i class="bi bi-x-octagon" aria-hidden="true"></i>
+        <% end %>
       <% end %>
 
       <%= link_to edit_registration_campaign_path(campaign),
