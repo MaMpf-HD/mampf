@@ -138,16 +138,6 @@
                       data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
                       data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
                     >
-                      <span>
-                        <%= @overview.person_name(person) %>
-
-                        <% if index.zero? && person == course.teacher %>
-                          <span class="text-muted">
-                            (<%= t("deans_office.teacher") %>)
-                          </span>
-                        <% end %>
-                      </span>
-
                       <button
                         type="button"
                         class="btn icon-button"
@@ -161,6 +151,16 @@
                           data-clipboard-target="icon"
                         ></i>
                       </button>
+
+                      <span>
+                        <%= @overview.person_name(person) %>
+
+                        <% if index.zero? && person == course.teacher %>
+                          <span class="text-muted text-nowrap">
+                            (<%= t("deans_office.teacher") %>)
+                          </span>
+                        <% end %>
+                      </span>
 
                       <span
                         class="visually-hidden"
