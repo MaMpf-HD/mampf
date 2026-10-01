@@ -58,6 +58,11 @@ class RosterParticipantsComponent < ViewComponent::Base
                       .distinct.count(:user_id)
   end
 
+  def program_columns
+    enrolled = User.where(id: lecture.lecture_memberships.select(:user_id))
+    { t("roster.programs.enrolled") => ProgramDistribution.new(enrolled) }
+  end
+
   # Returns participants who are assigned to at least one functional group
   def assigned_participants
     # Only applicable to current page

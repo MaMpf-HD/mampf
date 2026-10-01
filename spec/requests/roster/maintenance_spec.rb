@@ -41,6 +41,19 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(response.body).to include('turbo-frame id="roster_maintenance_all"')
       end
 
+      it "counts the lecture's students by study program, groups without enrollment too" do
+        program = create(:program, subject: create(:subject, name: "Mathematics"),
+                                   name: "B.Sc. 100%", degree: :bsc100)
+        create(:cohort, context: lecture, propagate_to_lecture: false)
+          .add_user_to_roster!(create(:confirmed_user, program: program))
+
+        get lecture_roster_path(lecture)
+
+        rows = Nokogiri::HTML(response.body).css("details tbody tr")
+                       .map { |row| row.css("th, td").map { |cell| cell.text.squish } }
+        expect(rows).to eq([["Mathematics: B.Sc. 100%", "1"]])
+      end
+
       it "returns turbo stream updates for participants sections" do
         get lecture_roster_participants_path(lecture), as: :turbo_stream
 

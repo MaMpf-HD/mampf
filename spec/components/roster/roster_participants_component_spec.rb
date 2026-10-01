@@ -364,4 +364,27 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       expect(rendered.text).to include(I18n.t("roster.outside_enrollment", count: 1))
     end
   end
+
+  # Counts the people the tab lists: a group without enrollment or a running
+  # registration does not put anybody on it.
+  describe "study programs" do
+    let(:participants) { LectureMembership.none }
+    let(:math) { create(:subject, name: "Mathematics") }
+    let(:bachelor) { create(:program, subject: math, name: "B.Sc. 100%", degree: :bsc100) }
+
+    before do
+      enrolled = create(:confirmed_user, program: bachelor)
+      create(:lecture_membership, lecture: lecture, user: enrolled)
+      waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+      waitlist.add_user_to_roster!(create(:confirmed_user, program: bachelor))
+    end
+
+    it "counts the enrolled only" do
+      table = render_inline(component).css("details tbody tr, details tfoot tr")
+      rows = table.map { |row| row.css("th, td").map { |cell| cell.text.squish } }
+
+      expect(rows).to eq([["Mathematics: B.Sc. 100%", "1"],
+                          [I18n.t("roster.programs.total"), "1"]])
+    end
+  end
 end

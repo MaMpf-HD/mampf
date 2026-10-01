@@ -250,6 +250,16 @@ class RosterSidePanelComponent < ViewComponent::Base
     student.program&.name_with_subject
   end
 
+  # Leaves the sum out where every program reads at a glance beside the
+  # names: a talk's few speakers, or a single person.
+  def program_distribution?
+    students.size > 1 && !registerable.is_a?(Talk)
+  end
+
+  def program_distribution
+    ProgramDistribution.new(User.where(id: students.map(&:id)))
+  end
+
   # The panel shows no address, so the copy button names the one it copies.
   def copy_email_label(student)
     "#{t("buttons.copy_email_address")}: #{student.email}"

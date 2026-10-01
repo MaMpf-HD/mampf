@@ -1096,6 +1096,20 @@ class Lecture < ApplicationRecord
     ([teacher] + editors).uniq
   end
 
+  # Returns everybody the lecture holds as a student: enrolled, in one of its
+  # groups (with enrollment or not), or with a running registration. The
+  # Participants tab lists only the enrolled. Exams stay out, their rosters
+  # and their registrations alike.
+  def students
+    [lecture_memberships.select(:user_id),
+     TutorialMembership.where(tutorial: tutorials).select(:user_id),
+     CohortMembership.where(cohort: Cohort.for_lectures(self)).select(:user_id),
+     SpeakerTalkJoin.where(talk: talks).select(:speaker_id),
+     LectureAudience.running_registrations(id).merge(Registration::Campaign.non_exam)
+                    .select(:user_id)]
+      .map { |ids| User.where(id: ids) }.reduce(:or)
+  end
+
   def tutorials_with_tutor(tutor)
     tutorials.where(id: tutorial_ids_for_tutor(tutor))
   end

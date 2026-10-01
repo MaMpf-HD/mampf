@@ -27,6 +27,18 @@ de:
       no_policy_enforcement: "Keine Richtliniendurchsetzung"
       gated_by_policies: "Durch Richtlinien eingeschränkt: %{policies}"
       enforced_policies: "Richtlinien im Verfahren: %{policies}"
+    programs:
+      title: "Studiengänge"
+      program: "Studiengang"
+      people: "Personen"
+      enrolled: "Eingeschrieben"
+      everyone: "Insgesamt"
+      everyone_help: >-
+        Insgesamt: eingeschrieben, Mitglied einer Gruppe (auch ohne Einschreibung) oder mit
+        laufender Anmeldung, jede Person einmal.
+      total: "Gesamt"
+      other: "Anderes Fach oder anderer Abschluss"
+      unanswered: "Keine Angabe"
     outside_enrollment:
       one: >-
         1 Person steht nur in Gruppen ohne Einschreibung und zählt deshalb nicht zu den

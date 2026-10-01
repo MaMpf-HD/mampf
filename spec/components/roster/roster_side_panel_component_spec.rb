@@ -426,6 +426,25 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
+  describe "#program_distribution?" do
+    let(:people) { create_list(:confirmed_user, 2) }
+
+    it "sums up the programs of a group" do
+      expect(described_class.new(registerable: create(:tutorial), students: people)
+                            .program_distribution?).to be(true)
+    end
+
+    it "leaves them beside the names for a single person" do
+      expect(described_class.new(registerable: create(:tutorial), students: people.first(1))
+                            .program_distribution?).to be(false)
+    end
+
+    it "leaves them beside the names for a talk" do
+      expect(described_class.new(registerable: create(:talk), students: people)
+                            .program_distribution?).to be(false)
+    end
+  end
+
   # "Participants" is what the lecture's own tab calls the people enrolled in
   # it; a group without enrollment has members who are not among them.
   describe "a group without enrollment" do
