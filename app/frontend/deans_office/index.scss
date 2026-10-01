@@ -10,3 +10,89 @@
     transition: none;
   }
 }
+
+.deans-office-phase > th {
+  padding-top: 1.5rem;
+  font-weight: 600;
+  border-bottom-width: 2px;
+}
+
+// Keeps the table's semantics where the phone layout shows its rows as
+// blocks: the explicit roles survive display: block.
+@media (width < 768px) {
+  .deans-office-table {
+    > thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    > tbody > tr,
+    > tbody > tr > th,
+    > tbody > tr > td {
+      display: block;
+    }
+
+    > tbody > tr > td:not([colspan]) {
+      border-bottom: 0;
+      padding-top: 0;
+    }
+
+    .deans-office-label {
+      display: inline;
+    }
+  }
+}
+
+// The column headings name each figure on a wide screen; on a phone, where
+// rows become blocks, these labels do, and screen readers keep the headings.
+.deans-office-label {
+  display: none;
+  margin-right: 0.25rem;
+  color: var(--bs-secondary-color);
+}
+
+// Neutral bar colours: the dean's office observes the counts without judging
+// them.
+.deans-office-bar .progress-bar {
+  background-color: var(--bs-primary-border-subtle) !important;
+}
+
+// Stripes for registrations, which are provisional, against people already
+// in a group.
+.deans-office-bar-provisional .progress-bar {
+  background-image: linear-gradient(
+    45deg,
+    rgb(255 255 255 / 60%) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgb(255 255 255 / 60%) 50%,
+    rgb(255 255 255 / 60%) 75%,
+    transparent 75%,
+    transparent
+  );
+  background-size: 0.5rem 0.5rem;
+}
+
+.deans-office-groups {
+  --bs-table-bg: transparent;
+}
+
+.deans-office-group-phase > th {
+  padding-top: 0.75rem;
+  color: var(--bs-secondary-color);
+  font-weight: 600;
+}
+
+// Fixed widths line the bars up however long the figures are.
+.deans-office-count {
+  flex: 0 0 2.5rem;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.deans-office-meter {
+  flex: 0 0 7rem;
+}

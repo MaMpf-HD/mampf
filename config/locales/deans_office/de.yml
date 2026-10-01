@@ -2,62 +2,106 @@ de:
   deans_office:
     title: 'Dekanat'
     explainer: >-
-      Alle Veranstaltungen eines Semesters mit ihren Gruppen: wie viele Plätze
-      sie haben, wie viele sich angemeldet haben und wie viele Mitglieder sie
-      schon haben.
+      Alle Veranstaltungen des Semesters auf einen Blick. Aufklappen zeigt die
+      Gruppen, die Fragezeichen erklären die Begriffe.
     term: 'Semester'
+    filter: 'Suchen'
+    filter_placeholder: 'Veranstaltung oder Lehrende'
+    no_match: 'Keine Veranstaltung passt zur Suche.'
     no_lectures: 'In diesem Semester gibt es keine Veranstaltungen.'
-    lecture: 'Veranstaltung'
-    teacher: 'DozentIn'
-    groups: 'Gruppen'
-    seats: 'Plätze'
-    registered: 'Angemeldet'
-    members: 'Mitglieder'
-    registration: 'Anmeldung'
+    order:
+      label: 'Ordnen'
+      title: 'alphabetisch'
+      phase: 'nach Stand der Anmeldung'
     sections:
       lectures: 'Vorlesungen'
       seminars: 'Seminare'
-    legend:
-      registration: 'Wie man in die Gruppe kommt.'
-      registered: >-
-        Gruppe: bestätigte Anmeldungen im laufenden Anmeldeverfahren, wo nach
-        Präferenzen verteilt wird die Erstwünsche. Veranstaltung: wie viele
-        Personen sich für eine ihrer Gruppen angemeldet haben, jede einmal,
-        abgelehnte nicht. „–“, wo gerade kein Anmeldeverfahren läuft.
-      members: >-
-        Gruppe: wie viele jetzt in der Gruppe sind. Veranstaltung: wie viele
-        Mitglieder die Veranstaltung hat; das können mehr oder weniger sein als
-        in ihren Gruppen zusammen.
-      seats: >-
-        Gruppe: wie viele sie höchstens aufnimmt. Veranstaltung: die Plätze
-        ihrer Gruppen zusammengezählt, Tutorien, Vorträge und Klausuren
-        gemeinsam; das sind Gruppenplätze, keine Personen.
-    access:
-      open: 'läuft bis %{deadline} · %{mode}'
+    columns:
+      lecture: 'Vorlesung'
+      seminar: 'Seminar'
+      team:
+        lecture: 'Vorlesungsteam'
+        seminar: 'Seminarteam'
+      students: 'Studierende'
+      groups: 'Gruppen'
+      talks: 'Vorträge'
+      state: 'Stand der Anmeldung'
+    teacher: 'Dozent/in'
+    groups:
+      none: 'keine'
+      tutorials:
+        one: '1 Tutorium'
+        other: '%{count} Tutorien'
+      flexible:
+        one: '1 flexible Gruppe'
+        other: '%{count} flexible Gruppen'
+    talks:
+      none: 'keine'
+      summary: '%{talks}, %{assigned}'
+      count:
+        one: '1 Vortrag'
+        other: '%{count} Vorträge'
+      assigned:
+        all: 'alle vergeben'
+        none: 'noch keiner vergeben'
+        some: '%{count} vergeben'
+    phase_with_groups: '%{phase} (%{groups})'
+    phases:
+      open: 'Anmeldung läuft'
+      allocating: 'Zuteilung folgt'
+      self_join: 'Eintragung offen'
+      assigned: 'Zugeteilt'
+      preparing: 'Noch nicht begonnen'
+    unregistered:
+      lectures:
+        one: '1 Vorlesung ohne Anmeldung über MaMpf'
+        other: '%{count} Vorlesungen ohne Anmeldung über MaMpf'
+      seminars:
+        one: '1 Seminar ohne Anmeldung über MaMpf'
+        other: '%{count} Seminare ohne Anmeldung über MaMpf'
+    modes:
+      first_come: 'Direktanmeldung'
+      preferences: 'Präferenzbasiert'
+    help:
+      students: >-
+        Alle, die schon in der Veranstaltung oder einer ihrer Gruppen sind,
+        und alle, die sich gerade anmelden; jede Person einmal, Klausuren nicht
+        mitgezählt.
+      about: 'Erklärung: %{topic}'
+      phases:
+        open: >-
+          Studierende können sich gerade anmelden; die Gruppenlisten stehen
+          noch nicht fest.
+        allocating: >-
+          Die Anmeldung ist beendet; die Plätze werden noch auf die Gruppen
+          verteilt.
+        self_join: >-
+          Studierende tragen sich ohne Anmeldeverfahren selbst in die Gruppe
+          ein.
+        assigned: >-
+          Die Verteilung ist abgeschlossen: durch eine Zuteilung, direkt durch
+          die Lehrenden oder durch Selbsteintragung, die wieder geschlossen ist.
+          Gezählt wird, wer jetzt in der Gruppe ist, auch wenn das niemand ist.
+        preparing: 'Für diese Gruppe ist noch keine Anmeldung geöffnet.'
       modes:
-        first_come: 'wer zuerst kommt'
-        preferences: 'nach Präferenzen'
-      allocating: 'geschlossen, Zuteilung steht aus'
-      not_open: 'Anmeldung noch nicht geöffnet'
-      no_campaign_yet: 'wartet auf ein Anmeldeverfahren'
-      self_join: 'Studierende tragen sich selbst ein'
-      completed: 'Anmeldung abgeschlossen'
-      staff_only: 'nur durch Lehrende'
-    unlimited: 'unbegrenzt'
-    seats_and_unlimited: '%{seats} + unbegrenzt'
-    first_choices:
-      one: '1 (Erstwunsch)'
-      other: '%{count} (Erstwünsche)'
-    groups_of: 'Gruppen von %{lecture}'
-    filter: 'Filtern'
-    filter_placeholder: 'Veranstaltung oder DozentIn'
-    no_match: 'Keine Veranstaltung passt zum Filter.'
-    open_all: 'Alle Gruppen zeigen'
-    close_all: 'Alle Gruppen ausblenden'
-    group: 'Gruppe'
-    kind: 'Art'
-    kinds:
-      tutorial: 'Tutorium'
-      talk: 'Vortrag'
-      cohort: 'Weitere Gruppe'
-      exam: 'Klausur'
+        first_come: >-
+          Wer sich anmeldet, hat sofort einen Platz sicher, solange noch welche
+          frei sind; in die Gruppenliste kommt man, wenn die Anmeldung
+          abgeschlossen wird.
+        preferences: >-
+          Studierende geben Wünsche an; nach dem Anmeldeschluss werden die
+          Plätze nach diesen Wünschen verteilt.
+    details:
+      deadline: 'Anmeldeschluss %{deadline}'
+      deadline_passed: 'Anmeldeschluss war %{deadline}'
+      open_until: 'Anmeldung läuft bis %{deadline}'
+      by_campaign: '%{phase} · %{mode}'
+      first_choices: '%{mode}, Erstwünsche'
+      groups: 'Gruppen'
+      group: 'Gruppe'
+      students: 'Studierende'
+      location: 'Ort'
+      bar:
+        first_choices: 'Erstwünsche; verteilt wird erst nach dem Anmeldeschluss; Länge im Vergleich zur größten Gruppe'
+        provisional: 'Anmeldungen, noch nicht in der Gruppenliste; Länge im Vergleich zur größten Gruppe'
+        entered: 'In der Gruppe eingetragen; Länge im Vergleich zur größten Gruppe'

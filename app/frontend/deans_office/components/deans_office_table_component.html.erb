@@ -1,0 +1,247 @@
+<section
+  class="mb-5"
+  aria-labelledby="<%= heading_id %>"
+  data-deans-office-target="section"
+>
+  <h2 class="h4" id="<%= heading_id %>">
+    <%= t("deans_office.sections.#{@section}") %>
+  </h2>
+
+  <% if @courses.any? %>
+    <%# On a phone the column headings are hidden; their help stays in reach here. %>
+    <p class="small text-muted d-md-none mb-2">
+      <%= t("deans_office.columns.students") %>
+      <%= helpers.deans_office_help(t("deans_office.columns.students"),
+                                    t("deans_office.help.students")) %>
+      · <%= t("deans_office.columns.state") %>
+      <%= helpers.deans_office_help(t("deans_office.columns.state"),
+                                    helpers.deans_office_phases_help, html: true) %>
+    </p>
+  <% end %>
+
+  <% if @courses.any? %>
+    <table
+      class="table align-middle deans-office-table"
+      role="table"
+      aria-labelledby="<%= heading_id %>"
+      data-deans-office-target="table"
+    >
+      <thead role="rowgroup">
+        <tr role="row">
+          <th scope="col" role="columnheader" id="<%= column_id(:course) %>">
+            <%= t("deans_office.columns.#{seminars? ? "seminar" : "lecture"}") %>
+          </th>
+
+          <th scope="col" role="columnheader" id="<%= column_id(:team) %>">
+            <%= t("deans_office.columns.team.#{seminars? ? "seminar" : "lecture"}") %>
+          </th>
+
+          <th scope="col" role="columnheader" id="<%= column_id(:students) %>">
+            <%= t("deans_office.columns.students") %>
+
+            <%= helpers.deans_office_help(t("deans_office.columns.students"),
+                                          t("deans_office.help.students")) %>
+          </th>
+
+          <th scope="col" role="columnheader" id="<%= column_id(:groups) %>">
+            <%= t("deans_office.columns.#{seminars? ? "talks" : "groups"}") %>
+          </th>
+
+          <th scope="col" role="columnheader" id="<%= column_id(:state) %>">
+            <%= t("deans_office.columns.state") %>
+
+            <%= helpers.deans_office_help(t("deans_office.columns.state"),
+                                          helpers.deans_office_phases_help, html: true) %>
+          </th>
+        </tr>
+      </thead>
+
+      <% phase_groups.each do |phase, courses| %>
+        <% if phase %>
+          <tbody
+            role="rowgroup"
+            data-deans-office-target="phase"
+            data-phase="<%= phase %>"
+          >
+            <tr role="row" class="deans-office-phase">
+              <th colspan="5" role="rowheader" id="<%= phase_id(phase) %>">
+                <%= t("deans_office.phases.#{phase}") %>
+              </th>
+            </tr>
+          </tbody>
+        <% end %>
+
+        <% courses.each do |course| %>
+          <% details_id = dom_id(course, :deans_office_details) %>
+
+          <tbody
+            role="rowgroup"
+            data-deans-office-target="course"
+            data-phase="<%= phase %>"
+            data-filter-text="<%= filter_text(course) %>"
+          >
+            <tr role="row">
+              <th
+                scope="row"
+                role="rowheader"
+                class="fw-normal"
+                id="<%= title_id(course) %>"
+                headers="<%= [column_id(:course), (phase_id(phase) if phase)].compact.join(" ") %>"
+              >
+                <% if details?(course) %>
+                  <button
+                    type="button"
+                    class="
+                      btn btn-link p-0 text-start fw-semibold text-body
+                      text-decoration-none
+                    "
+                    aria-expanded="false"
+                    aria-controls="<%= details_id %>"
+                    data-action="deans-office#toggle"
+                  >
+                    <i
+                      class="bi bi-chevron-right deans-office-chevron"
+                      aria-hidden="true"
+                    ></i>
+
+                    <%= course.course.title %>
+                  </button>
+                <% else %>
+                  <span class="fw-semibold">
+                    <i class="bi bi-chevron-right invisible" aria-hidden="true"></i>
+
+                    <%= course.course.title %>
+                  </span>
+                <% end %>
+
+                <% if seminars? %>
+                  <span class="small text-muted">
+                    <%= course.sort_localized %>
+                  </span>
+                <% end %>
+              </th>
+
+              <td
+                role="cell"
+                headers="<%= cell_headers(course, phase, :team) %>"
+              >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.team.#{seminars? ? "seminar" : "lecture"}") %>:
+                </span>
+
+                <ul class="list-unstyled small mb-0">
+                  <% @overview.teachers(course).each_with_index do |person, index| %>
+                    <li
+                      class="d-flex align-items-center gap-1"
+                      data-controller="clipboard"
+                      data-clipboard-text-value="<%= person.email %>"
+                      data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
+                      data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
+                    >
+                      <span>
+                        <%= @overview.person_name(person) %>
+
+                        <% if index.zero? && person == course.teacher %>
+                          <span class="text-muted">
+                            (<%= t("deans_office.teacher") %>)
+                          </span>
+                        <% end %>
+                      </span>
+
+                      <button
+                        type="button"
+                        class="btn icon-button"
+                        data-action="clipboard#copy"
+                        title="<%= t("buttons.copy_email_address") %>: <%= person.email %>"
+                        aria-label="<%= t("buttons.copy_email_address") %>: <%= person.email %>"
+                      >
+                        <i
+                          class="bi bi-envelope"
+                          aria-hidden="true"
+                          data-clipboard-target="icon"
+                        ></i>
+                      </button>
+
+                      <span
+                        class="visually-hidden"
+                        role="status"
+                        data-clipboard-target="status"
+                      ></span>
+                    </li>
+                  <% end %>
+                </ul>
+              </td>
+
+              <td
+                role="cell"
+                class="text-nowrap"
+                headers="<%= cell_headers(course, phase, :students) %>"
+              >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.students") %>:
+                </span>
+
+                <%= @overview.students(course) %>
+              </td>
+
+              <td
+                role="cell"
+                headers="<%= cell_headers(course, phase, :groups) %>"
+              >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.#{seminars? ? "talks" : "groups"}") %>:
+                </span>
+
+                <%= groups_or_talks(course) %>
+              </td>
+
+              <td
+                role="cell"
+                headers="<%= cell_headers(course, phase, :state) %>"
+              >
+                <span class="deans-office-label" aria-hidden="true">
+                  <%= t("deans_office.columns.state") %>:
+                </span>
+
+                <% state_lines(course).each do |line| %>
+                  <div><%= line %></div>
+                <% end %>
+              </td>
+            </tr>
+
+            <% if details?(course) %>
+              <tr role="row" id="<%= details_id %>" hidden>
+                <td colspan="5" role="cell" class="bg-body-tertiary">
+                  <%= render DeansOfficeDetailsComponent.new(overview: @overview, course: course) %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        <% end %>
+      <% end %>
+    </table>
+  <% end %>
+
+  <% if @unregistered.any? %>
+    <details data-deans-office-target="unregistered">
+      <summary>
+        <%= t("deans_office.unregistered.#{@section}", count: @unregistered.size) %>
+      </summary>
+
+      <ul class="list-unstyled small mt-2 mb-0">
+        <% @unregistered.each do |course| %>
+          <li
+            data-deans-office-target="course"
+            data-filter-text="<%= filter_text(course) %>"
+          >
+            <%= course.course.title %>
+
+            <% if teacher_name(course) %>
+              <span class="text-muted">· <%= teacher_name(course) %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+</section>
