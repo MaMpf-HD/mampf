@@ -531,5 +531,22 @@ RSpec.describe("Registration::Items", type: :request) do
       expect(panel.at_css("[data-user-id='#{registrant.id}']").text)
         .to include("Mathematics: B.Sc. 100%")
     end
+
+    it "counts the registrations by study program" do
+      program = create(:program, subject: create(:subject, name: "Mathematics"),
+                                 name: "B.Sc. 100%", degree: :bsc100)
+      tutorial.add_user_to_roster!(create(:confirmed_user, program: program))
+      create_list(:confirmed_user, 2, program: program).each do |registrant|
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign, registration_item: item, user: registrant)
+      end
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      rows = Nokogiri::HTML(response.body).css("details tbody tr")
+                     .map { |row| row.css("th, td").map { |cell| cell.text.squish } }
+      expect(rows).to eq([["Mathematics: B.Sc. 100%", "2"]])
+    end
   end
 end

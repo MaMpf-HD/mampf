@@ -27,6 +27,16 @@ en:
       no_policy_enforcement: "No policy enforcement"
       gated_by_policies: "Gated by policies: %{policies}"
       enforced_policies: "Registration process enforced: %{policies}"
+    programs:
+      title: "Study programs"
+      program: "Study program"
+      people: "People"
+      enrolled: "Enrolled"
+      everyone: "Overall"
+      everyone_help: "Overall: enrolled, a member of a group (also without enrollment) or with a running registration, each person once."
+      total: "Total"
+      other: "Other subject or degree"
+      unanswered: "Not stated"
     outside_enrollment:
       one: "1 person is only in groups without enrollment and is therefore not a participant."
       other: "%{count} people are only in groups without enrollment and are therefore not participants."

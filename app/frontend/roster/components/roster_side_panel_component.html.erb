@@ -125,6 +125,11 @@
           <% end %>
         </div>
       <% end %>
+      <% if program_distribution? %>
+        <%= render ProgramDistributionComponent.new(
+              columns: { t("roster.programs.people") => program_distribution }
+            ) %>
+      <% end %>
       <% if members.any? %>
         <section class="mb-3" aria-labelledby="tutorial-roster-members-heading">
           <h6
