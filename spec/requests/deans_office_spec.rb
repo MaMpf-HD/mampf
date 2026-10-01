@@ -294,7 +294,8 @@ RSpec.describe("Dean's office", type: :request) do
       create_list(:tutorial, 2, lecture: old)
       create(:tutorial, lecture: lecture)
 
-      get deans_office_path(term: past.dashboard_param)
+      # By id: the slug keeps two digits of the year, and factory years run past 2099.
+      get deans_office_path(term: past.id)
       expect(cells("Old Algebra")).to eq(["–", "2 tutorials", "No registration in MaMpf"])
       expect(response.body).to include("who took part was not recorded")
 

@@ -95,7 +95,7 @@ RSpec.describe(Redeemer, type: :model) do
         expect(mail.subject).to include(
           I18n.t("mailer.new_editor_subject", title: lecture.title_for_viewers)
         )
-        expect(mail.html_part.body).to include(
+        expect(mail).to include_in_html_body(
           I18n.t("mailer.new_editor",
                  title: lecture.title_with_teacher, username: user.tutorial_name)
         )
