@@ -1,6 +1,7 @@
 # Shows tutorial and flexible-group counts for the dean's office's tutorial
 # planning. Leaves out exams and talks, which do not bear on the tutorials it
-# pays for.
+# pays for. Counts the students by subject too: other faculties pay for the
+# students of their own subjects.
 class DeansOfficeDetailsComponent < ViewComponent::Base
   Section = Struct.new(:phase, :campaign, :groups)
 
@@ -23,6 +24,10 @@ class DeansOfficeDetailsComponent < ViewComponent::Base
 
   def groups
     @groups ||= sections.flat_map(&:groups)
+  end
+
+  def programs
+    @programs ||= @overview.program_distribution(@course)
   end
 
   # Names the phase, and for a registration its deadline and mode, which say

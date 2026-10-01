@@ -63,6 +63,10 @@ en:
       first_come: 'First come, first served'
       preferences: 'By preference'
     help:
+      programs: >-
+        Students state their subject and program themselves; a click on a subject
+        shows its programs. "Other subject or degree": none of the listed programs
+        picked. "Not stated": not answered yet.
       students: >-
         Everybody already in the course or one of its groups, and everybody
         registering right now; each person once, exams not counted.
@@ -88,6 +92,9 @@ en:
           Students state their wishes; after the deadline the places are
           handed out by these wishes.
     details:
+      programs: 'Students by subject'
+      subject: 'Subject'
+      total: 'Total'
       deadline: 'Deadline %{deadline}'
       deadline_passed: 'Deadline was %{deadline}'
       open_until: 'Registration open until %{deadline}'

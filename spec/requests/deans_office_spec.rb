@@ -257,6 +257,35 @@ RSpec.describe("Dean's office", type: :request) do
         .to be_present
     end
 
+    # Other faculties pay for students of their subjects, so the office needs
+    # each subject's total at a glance and the programs only on demand.
+    it "counts a course's students by subject, programs folded under each" do
+      math = create(:subject, name: "Mathematics")
+      physics = create(:subject, name: "Physics")
+      people = [create(:program, subject: math, name: "B.Sc. 100%", degree: :bsc100),
+                create(:program, subject: math, name: "M.Sc.", degree: :msc),
+                create(:program, subject: physics, name: "B.Sc. 100%", degree: :bsc100)]
+               .map { |program| create(:confirmed_user, program: program) }
+      people << create(:confirmed_user)
+      people << create(:confirmed_user, personal_data_confirmed_at: nil)
+      people.each { |person| create(:lecture_membership, lecture: lecture, user: person) }
+      create(:tutorial, lecture: lecture)
+
+      get deans_office_path(term: term.dashboard_param)
+
+      button = row(lecture.course.title).at_css("button[data-action='deans-office#toggle']")
+      table = page.at_css("##{button["aria-controls"]} table.deans-office-programs")
+      subjects = table.css("tbody tr").map do |tr|
+        [(tr.at_css("summary") || tr.at_css("th")).text.squish, tr.at_css("td").text]
+      end
+      expect(subjects).to eq([["Mathematics", "2"], ["Physics", "1"],
+                              [I18n.t("roster.programs.other"), "1"],
+                              [I18n.t("roster.programs.unanswered"), "1"]])
+      expect(table.css("tbody tr").first.css("li").map { |li| li.text.squish })
+        .to eq(["B.Sc. 100%: 1", "M.Sc.: 1"])
+      expect(table.at_css("tfoot td").text).to eq("5")
+    end
+
     it "lists courses without any registration by name only" do
       lecture
       other = create(:lecture, term: term)
@@ -357,9 +386,11 @@ RSpec.describe("Dean's office", type: :request) do
         .to eq(["Lectures", "Seminars"])
       expect(sections.first.text).not_to include(seminar.course.title)
       expect(cells(seminar.course.title).first(2)).to eq(["2", "3 talks, 2 assigned"])
-      # nothing to open: no registration, no groups but the talks
-      expect(row(seminar.course.title).at_css("button[data-action='deans-office#toggle']"))
-        .to be_nil
+      # no groups to list but the talks; the speakers are counted by subject
+      button = row(seminar.course.title).at_css("button[data-action='deans-office#toggle']")
+      details = page.at_css("##{button["aria-controls"]}")
+      expect(details.at_css("table.deans-office-groups")).to be_nil
+      expect(details.at_css("table.deans-office-programs tfoot td").text).to eq("2")
     end
 
     it "orders by the state of the registration when asked to, soonest deadline first" do
@@ -420,7 +451,9 @@ RSpec.describe("Dean's office", type: :request) do
     count.times do
       lecture = create(:lecture, term: term)
       lecture.editors << create(:confirmed_user, first_name: "Ada", last_name: "Lovelace")
-      create(:lecture_membership, lecture: lecture)
+      create(:lecture_membership, lecture: lecture,
+                                  user: create(:confirmed_user,
+                                               program: create(:program, degree: :bsc100)))
       preferred, direct, settled = create_list(:tutorial, 3, lecture: lecture, location: "SR 1")
       create(:tutorial_membership, tutorial: settled)
       cohort = create(:cohort, context: lecture)

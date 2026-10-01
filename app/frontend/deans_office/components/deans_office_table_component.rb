@@ -69,9 +69,10 @@ class DeansOfficeTableComponent < ViewComponent::Base
     end
   end
 
-  # Omits the toggle for talks-only courses, because talks have no detail rows.
+  # Omits the toggle where the details would be empty: no tutorials or
+  # flexible groups to list, and no students to count by program.
   def details?(course)
-    course.tutorials.any? || course.cohorts.any?
+    course.tutorials.any? || course.cohorts.any? || @overview.students(course).positive?
   end
 
   private

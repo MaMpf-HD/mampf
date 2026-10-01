@@ -63,6 +63,10 @@ de:
       first_come: 'Direktanmeldung'
       preferences: 'Präferenzbasiert'
     help:
+      programs: >-
+        Fach und Studiengang geben die Studierenden selbst an; ein Klick auf ein Fach
+        zeigt seine Studiengänge. „Anderes Fach oder anderer Abschluss“: keinen der
+        angebotenen Studiengänge gewählt. „Keine Angabe“: noch nicht beantwortet.
       students: >-
         Alle, die schon in der Veranstaltung oder einer ihrer Gruppen sind,
         und alle, die sich gerade anmelden; jede Person einmal, Klausuren nicht
@@ -92,6 +96,9 @@ de:
           Studierende geben Wünsche an; nach dem Anmeldeschluss werden die
           Plätze nach diesen Wünschen verteilt.
     details:
+      programs: 'Studierende nach Fach'
+      subject: 'Fach'
+      total: 'Gesamt'
       deadline: 'Anmeldeschluss %{deadline}'
       deadline_passed: 'Anmeldeschluss war %{deadline}'
       open_until: 'Anmeldung läuft bis %{deadline}'
