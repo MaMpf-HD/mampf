@@ -12,10 +12,10 @@ module DeansOffice
     # sections. This order is not a timeline: a registration can reopen.
     PHASES = { open: :open, allocating: :allocating, self_join: :self_join,
                completed: :assigned, not_open: :preparing }.freeze
-    PHASE_ORDER = [:open, :allocating, :self_join, :assigned, :preparing].freeze
+    PHASE_ORDER = [:open, :allocating, :self_join, :assigned, :preparing, :untracked].freeze
     # Shows assigned groups first within a course, so existing membership
     # reads before provisional registration counts.
-    LINE_ORDER = [:assigned, :self_join, :allocating, :open, :preparing].freeze
+    LINE_ORDER = [:assigned, :self_join, :allocating, :open, :preparing, :untracked].freeze
 
     Access = Struct.new(:state, :campaign)
 
@@ -68,10 +68,32 @@ module DeansOffice
     # Uses current membership for groups without a registration, because the
     # teacher may hand out places directly or students may have signed up.
     def group_phase(group)
+      return :untracked if untracked?(group.lecture)
+
       state = access(group).state
       return PHASES[state] if PHASES.key?(state)
 
       roster_count(group).positive? ? :assigned : :preparing
+    end
+
+    def past_term?
+      return @past_term if defined?(@past_term)
+
+      active = Term.active
+      @past_term = @term.present? && active.present? && @term.begin_date < active.begin_date
+    end
+
+    # Tells a course of a past term that never had a registration nor anybody
+    # in it: rosters came to MaMpf later, so its students were not recorded,
+    # and nothing is still to begin.
+    def untracked?(course)
+      past_term? && students(course).zero? && !bare_campaigns.key?(course.id) &&
+        groups(course).none? { |group| item(group) }
+    end
+
+    # Leaves out the phase that only a past term has, where it cannot occur.
+    def listed_phases
+      past_term? ? PHASE_ORDER : PHASE_ORDER - [:untracked]
     end
 
     def groups_by_phase(course)

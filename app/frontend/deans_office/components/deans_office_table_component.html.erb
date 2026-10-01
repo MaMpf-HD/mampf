@@ -15,7 +15,7 @@
                                     t("deans_office.help.students")) %>
       · <%= t("deans_office.columns.state") %>
       <%= helpers.deans_office_help(t("deans_office.columns.state"),
-                                    helpers.deans_office_phases_help, html: true) %>
+                                    helpers.deans_office_phases_help(@overview.listed_phases), html: true) %>
     </p>
   <% end %>
 
@@ -51,7 +51,7 @@
             <%= t("deans_office.columns.state") %>
 
             <%= helpers.deans_office_help(t("deans_office.columns.state"),
-                                          helpers.deans_office_phases_help, html: true) %>
+                                          helpers.deans_office_phases_help(@overview.listed_phases), html: true) %>
           </th>
         </tr>
       </thead>
@@ -181,7 +181,7 @@
                   <%= t("deans_office.columns.students") %>:
                 </span>
 
-                <%= @overview.students(course) %>
+                <%= @overview.untracked?(course) ? "–" : @overview.students(course) %>
               </td>
 
               <td
