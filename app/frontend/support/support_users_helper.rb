@@ -7,9 +7,9 @@ module SupportUsersHelper
 
   def confirmation_status(user)
     status = if user.confirmed?
-      t("support.users.status.confirmed_at", time: l(user.confirmed_at, format: :short))
+      t("support.users.status.confirmed_at", time: l(user.confirmed_at, format: :account))
     else
-      t("support.users.status.unconfirmed", time: l(user.created_at, format: :short))
+      t("support.users.status.unconfirmed", time: l(user.created_at, format: :account))
     end
     return status unless user.pending_reconfirmation?
 
@@ -20,7 +20,7 @@ module SupportUsersHelper
   def lock_status(user)
     if user.access_locked?
       t("support.users.status.locked_until",
-        time: l(user.locked_at + User.unlock_in, format: :short),
+        time: l(user.locked_at + User.unlock_in, format: :account),
         attempts: user.failed_attempts)
     else
       t("support.users.status.not_locked", count: user.failed_attempts)
@@ -32,14 +32,14 @@ module SupportUsersHelper
   def sign_in_status(user)
     return t("support.users.status.never_signed_in") unless user.current_sign_in_at
 
-    t("support.users.status.signed_in", time: l(user.current_sign_in_at, format: :short),
+    t("support.users.status.signed_in", time: l(user.current_sign_in_at, format: :account),
                                         count: user.sign_in_count)
   end
 
   def personal_data_status(user)
     if user.personal_data_confirmed_at
       t("support.users.status.personal_data_confirmed",
-        time: l(user.personal_data_confirmed_at, format: :short))
+        time: l(user.personal_data_confirmed_at, format: :account))
     elsif user.personal_data_declined?
       t("support.users.status.personal_data_declined")
     else

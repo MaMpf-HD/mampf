@@ -2851,6 +2851,8 @@ de:
       # Eine Datei ist ein Detail, keine Schlagzeile: die lange Form gehört
       # zur Frist, wo der Wochentag das ist, wonach man plant.
       file_time: "%d.%m.%Y, %H:%M"
+      # An account's dates on the support page reach back over years.
+      account: "%-d. %b %Y, %H:%M Uhr"
       concise: '%d.%m.%Y'
       student_registration: '%-d. %B %Y, %H:%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'

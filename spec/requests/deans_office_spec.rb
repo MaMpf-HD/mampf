@@ -286,6 +286,23 @@ RSpec.describe("Dean's office", type: :request) do
       expect(table.at_css("tfoot td").text).to eq("5")
     end
 
+    # Rosters came to MaMpf after these terms, so an empty tutorial there says
+    # nothing about who attended, and nothing is still to begin.
+    it "marks a past term's course without registration or students as such" do
+      past = create(:term, season: "SS", year: term.year - 1)
+      old = create(:lecture, term: past, course: create(:course, title: "Old Algebra"))
+      create_list(:tutorial, 2, lecture: old)
+      create(:tutorial, lecture: lecture)
+
+      get deans_office_path(term: past.dashboard_param)
+      expect(cells("Old Algebra")).to eq(["–", "2 tutorials", "No registration in MaMpf"])
+      expect(response.body).to include("who took part was not recorded")
+
+      get deans_office_path(term: term.dashboard_param)
+      expect(cells(lecture.course.title)).to eq(["0", "1 tutorial", "Not started yet"])
+      expect(response.body).not_to include("who took part was not recorded")
+    end
+
     it "lists courses without any registration by name only" do
       lecture
       other = create(:lecture, term: term)
