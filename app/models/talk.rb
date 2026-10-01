@@ -20,7 +20,6 @@ class Talk < ApplicationRecord
 
   validates :title, presence: true
   validate :lecture_must_be_seminar
-  validate :graded_speakers_stay
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
@@ -150,13 +149,6 @@ class Talk < ApplicationRecord
     super(target_ids | speakers_with_grading_data, campaign)
   end
 
-  # The form sends the whole list; the graded stay on it and the form is told.
-  def speaker_ids=(ids)
-    wanted = Array(ids).compact_blank.map(&:to_i)
-    @graded_speakers_dropped = (speakers_with_grading_data & speaker_ids) - wanted
-    super((wanted + @graded_speakers_dropped).uniq)
-  end
-
   # Deleting a talk takes its media with it, and there is no way to get them
   # back, so they have to be moved or deleted deliberately first.
   def destruction_blockers
@@ -213,17 +205,6 @@ class Talk < ApplicationRecord
       return if lecture.seminar?
 
       errors.add(:lecture, :must_be_seminar)
-    end
-
-    # Said once, for the assignment that asked; a later save of the same
-    # instance starts clean.
-    def graded_speakers_stay
-      dropped = @graded_speakers_dropped
-      @graded_speakers_dropped = nil
-      return if dropped.blank?
-
-      names = User.where(id: dropped).map(&:tutorial_name)
-      errors.add(:speaker_ids, :graded, names: names.to_sentence, count: names.size)
     end
 
     def setup_assessment

@@ -1029,6 +1029,7 @@ de:
           Sitzungen aus diesem Abschnitt verknüpft sind.
     talk:
       speakers: Vortragende(r)
+      speakers_managed_in_groups_html: Die Vortragenden verwaltest Du im Reiter %{link}.
       no_media: Für diesen Vortrag sind keine Medien vorhanden.
       next_talk: 'nächster Vortrag'
       previous_talk: 'voriger Vortrag'
@@ -1084,13 +1085,6 @@ de:
           nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
           handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
           entfernen.
-        speakers: >
-          Hier kannst Du die Vortragenden eintragen. Diese können
-          den Vortrag bearbeiten und Medien hinzufügen. Du kannst nur Personen
-          auswählen, die den Status "Vortragender" in dem Seminar haben,
-          dazu EditorInnen und Dich selbst. Studierende werden über ein
-          Anmeldeverfahren für die Vorträge zu Vortragenden, das Du im Reiter
-          "Gruppen" einrichtest.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -3920,12 +3914,6 @@ de:
       Personen suchen kannst, die bereits als EditorInnen eingetragen sind oder
       die den Editor-Status mithilfe eines Gutscheins erhalten haben. Einen
       solchen Gutschein kannst Du im Bereich <i>Gutscheine</i> generieren.
-    no_results_speaker: >
-      Keine Resultate gefunden.<br><br>Beachte, dass Du ab sofort nur noch nach
-      Personen suchen kannst, die bereits als Vortragende eingetragen sind oder
-      die den Vortrags-Status mithilfe eines Gutscheins erhalten haben. Einen
-      solchen Gutschein kannst Du im Bereich <i>Gutscheine</i> generieren, der
-      sich <a href="%{link}">hier</a> im <i>Personen</i>-Tab befindet.
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{role}
@@ -4470,14 +4458,6 @@ de:
           attributes:
             lecture:
               must_be_seminar: "Vorträge können nur für Seminare erstellt werden."
-            speaker_ids:
-              graded:
-                one: >-
-                  %{names} bleibt auf dem Vortrag: er ist schon benotet.
-                  Lösche zuerst die Note.
-                other: >-
-                  %{names} bleiben auf dem Vortrag: er ist für sie schon
-                  benotet. Lösche zuerst die Note.
             title:
               blank: Es muss ein Titel angegeben werden.
         term:
