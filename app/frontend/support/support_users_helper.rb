@@ -23,7 +23,7 @@ module SupportUsersHelper
         time: l(user.locked_at + User.unlock_in, format: :short),
         attempts: user.failed_attempts)
     else
-      t("support.users.status.not_locked", attempts: user.failed_attempts)
+      t("support.users.status.not_locked", count: user.failed_attempts)
     end
   end
 

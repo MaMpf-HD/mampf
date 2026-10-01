@@ -52,7 +52,10 @@ de:
         new_email_pending: 'Die neue Adresse %{email} wartet auf ihre Bestätigung.'
         locked: 'Gesperrt'
         locked_until: 'ja, bis %{time} (%{attempts} fehlgeschlagene Anmeldungen)'
-        not_locked: 'nein (%{attempts} fehlgeschlagene Anmeldungen in Folge)'
+        not_locked:
+          zero: 'nein'
+          one: 'nein (1 fehlgeschlagene Anmeldung in Folge)'
+          other: 'nein (%{count} fehlgeschlagene Anmeldungen in Folge)'
         last_sign_in: 'Letzte Anmeldung'
         never_signed_in: 'nie'
         signed_in:

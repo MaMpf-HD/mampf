@@ -53,7 +53,7 @@
   </dl>
 
   <div class="d-flex flex-wrap gap-2 mb-4">
-    <% if @user.access_locked? || @user.failed_attempts.positive? %>
+    <% if @user.access_locked? %>
       <%= button_to t("support.users.actions.unlock"),
                     unlock_support_user_path(@user, search: search_query),
                     method: :patch, class: "btn btn-sm btn-outline-primary" %>
