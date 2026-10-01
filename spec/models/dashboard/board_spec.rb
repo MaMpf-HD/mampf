@@ -169,10 +169,12 @@ RSpec.describe(Dashboard::Board) do
       expect(board.enrolled_lectures).to contain_exactly(seminar)
     end
 
+    # Both are seminars: the type in front of a title is "(L)" or "(V)" for a
+    # lecture depending on the locale, which an earlier spec may leave set.
     it "sorts its seminar in with the others by title" do
       seminar.course.update!(title: "Algebra Seminar")
-      later = create(:lecture, :released_for_all, term: term,
-                                                  course: create(:course, title: "Zahlentheorie"))
+      later = create(:lecture, :released_for_all, :is_seminar,
+                     term: term, course: create(:course, title: "Zahlentheorie"))
       create(:lecture_membership, user: user, lecture: later)
 
       expect(board.enrolled_lectures).to eq([seminar, later])
