@@ -339,7 +339,8 @@ RSpec.describe("Support users", type: :request) do
       get edit_support_user_path(student)
 
       status = Nokogiri::HTML(response.body).at_css("[data-testid='support-account-status']").text
-      expect(status).to include(I18n.l(Time.zone.local(2026, 9, 20, 10), format: :short))
+      expect(status).to include(I18n.l(Time.zone.local(2026, 9, 20, 10), format: :account))
+      expect(status).to include("2026")
     end
 
     it "offers the confirmation mail only while something waits for confirmation" do

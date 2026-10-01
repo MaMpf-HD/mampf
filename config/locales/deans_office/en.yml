@@ -52,6 +52,7 @@ en:
       self_join: 'Sign-up open'
       assigned: 'Allocated'
       preparing: 'Not started yet'
+      untracked: 'No registration in MaMpf'
     unregistered:
       lectures:
         one: '1 lecture without registration in MaMpf'
@@ -69,7 +70,8 @@ en:
         picked. "Not stated": not answered yet.
       students: >-
         Everybody already in the course or one of its groups, and everybody
-        registering right now; each person once, exams not counted.
+        registering right now; each person once, exams not counted. "–": not
+        recorded in a past term without registration in MaMpf.
       about: 'Explanation: %{topic}'
       phases:
         open: >-
@@ -84,6 +86,9 @@ en:
           by a sign-up that has closed again. Counted is who is in the group
           now, even if that is nobody.
         preparing: 'No registration is open for this group yet.'
+        untracked: >-
+          In this past term, registration did not run through MaMpf; who took
+          part was not recorded.
       modes:
         first_come: >-
           Whoever registers has a place at once while places are left; they

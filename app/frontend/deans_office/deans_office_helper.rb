@@ -14,9 +14,9 @@ module DeansOfficeHelper
     end
   end
 
-  def deans_office_phases_help
+  def deans_office_phases_help(phases)
     tag.ul(class: "list-unstyled mb-0") do
-      safe_join(DeansOffice::TermOverview::PHASE_ORDER.map do |phase|
+      safe_join(phases.map do |phase|
         tag.li(class: "mb-1") do
           safe_join([tag.strong(t("deans_office.phases.#{phase}")),
                      t("deans_office.help.phases.#{phase}")], ": ")

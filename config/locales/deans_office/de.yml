@@ -52,6 +52,7 @@ de:
       self_join: 'Eintragung offen'
       assigned: 'Zugeteilt'
       preparing: 'Noch nicht begonnen'
+      untracked: 'Ohne Anmeldung über MaMpf'
     unregistered:
       lectures:
         one: '1 Vorlesung ohne Anmeldung über MaMpf'
@@ -70,7 +71,8 @@ de:
       students: >-
         Alle, die schon in der Veranstaltung oder einer ihrer Gruppen sind,
         und alle, die sich gerade anmelden; jede Person einmal, Klausuren nicht
-        mitgezählt.
+        mitgezählt. „–“: in einem vergangenen Semester ohne Anmeldung über MaMpf
+        nicht erfasst.
       about: 'Erklärung: %{topic}'
       phases:
         open: >-
@@ -87,6 +89,9 @@ de:
           die Lehrenden oder durch Selbsteintragung, die wieder geschlossen ist.
           Gezählt wird, wer jetzt in der Gruppe ist, auch wenn das niemand ist.
         preparing: 'Für diese Gruppe ist noch keine Anmeldung geöffnet.'
+        untracked: >-
+          In diesem vergangenen Semester lief die Anmeldung nicht über MaMpf;
+          wer teilnahm, ist nicht erfasst.
       modes:
         first_come: >-
           Wer sich anmeldet, hat sofort einen Platz sicher, solange noch welche
