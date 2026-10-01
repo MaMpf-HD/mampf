@@ -51,7 +51,10 @@ en:
         new_email_pending: 'New address %{email} waits to be confirmed.'
         locked: 'Locked'
         locked_until: 'yes, until %{time} (%{attempts} failed sign-ins)'
-        not_locked: 'no (%{attempts} failed sign-ins in a row)'
+        not_locked:
+          zero: 'no'
+          one: 'no (1 failed sign-in in a row)'
+          other: 'no (%{count} failed sign-ins in a row)'
         last_sign_in: 'Last sign-in'
         never_signed_in: 'never'
         signed_in:
