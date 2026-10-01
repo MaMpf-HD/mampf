@@ -35,8 +35,14 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    await home.participation("Self-managed Tutorial")
+    const confirmation = student.page.waitForEvent("dialog");
+    const leave = home.participation("Self-managed Tutorial")
       .getByRole("button", { name: "Leave" }).click();
+    const dialog = await confirmation;
+    expect(dialog.message()).toBe(
+      "Leave “Self-managed Tutorial”? You can join again only while a place is free.");
+    await dialog.accept();
+    await leave;
 
     await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();

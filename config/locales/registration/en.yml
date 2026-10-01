@@ -497,6 +497,9 @@ en:
         enrolled: "Enrolled"
         assigned: "Assigned"
         leave: "Leave"
+        leave_confirm_final: "Leave “%{group}”? You cannot join it again yourself; only the lecture's staff can take you back."
+        leave_confirm_while_free: "Leave “%{group}”? You can join again only while a place is free."
+        leave_confirm_rejoin: "Leave “%{group}”? You can join again afterwards."
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:

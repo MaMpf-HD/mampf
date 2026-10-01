@@ -214,7 +214,21 @@ class ParticipationComponent < ViewComponent::Base
       helpers.button_to(t("registration.user_registration.participation.leave"),
                         helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path",
                                             rosterable.id),
-                        method: :delete, class: "btn btn-sm btn-outline-secondary")
+                        method: :delete, class: "btn btn-sm btn-outline-secondary",
+                        form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
+    end
+
+    # Says whether the way back is open: a group that only lets students leave
+    # takes them back through its staff alone.
+    def leave_confirmation(rosterable)
+      key = if !rosterable.config_allow_self_add?
+        "leave_confirm_final"
+      elsif rosterable.capacity
+        "leave_confirm_while_free"
+      else
+        "leave_confirm_rejoin"
+      end
+      t("registration.user_registration.participation.#{key}", group: rosterable.title)
     end
 
     def preference_note(rosterable)
