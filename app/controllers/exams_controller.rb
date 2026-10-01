@@ -191,6 +191,8 @@ class ExamsController < ApplicationController
 
   def add_participant
     authorize! :add_participant, @exam
+    return refuse_locked_roster if @exam.locked?
+
     user = participant_user
 
     respond_to do |format|
@@ -218,6 +220,8 @@ class ExamsController < ApplicationController
 
   def remove_participant
     authorize! :remove_participant, @exam
+    return refuse_locked_roster if @exam.locked?
+
     user = User.find(params[:user_id])
     status = :ok
 
@@ -242,6 +246,13 @@ class ExamsController < ApplicationController
   end
 
   private
+
+    # The registration tab offers these forms only once nothing locks the
+    # roster; a running registration decides who sits the exam until then.
+    def refuse_locked_roster
+      flash.now[:error] = t("roster.errors.item_locked")
+      render turbo_stream: stream_flash, status: :unprocessable_content
+    end
 
     def participant_user
       return User.find_by(id: params[:user_id]) if params[:user_id].present?
