@@ -92,7 +92,19 @@ module DeansOffice
     # Counts existing participants together with applicants, so settled groups
     # stay represented while another registration is open.
     def students(course)
-      (participants(course) | registered_people(course)).size
+      student_ids(course).size
+    end
+
+    def student_ids(course)
+      @student_ids ||= {}
+      @student_ids[course.id] ||= participants(course) | registered_people(course)
+    end
+
+    # Counts the students column by study program, from one read of every
+    # student's program per term, as the page reads everything else.
+    def program_distribution(course)
+      pairs = student_ids(course).filter_map { |id| student_programs[id] }
+      ProgramDistribution.from_pairs(pairs, programs: programs_by_id)
     end
 
     def talks_assigned(seminar)
@@ -175,6 +187,20 @@ module DeansOffice
           lists << roster_ids.fetch(group.class).fetch(group.id, Set.new)
         end
         lists.reduce(Set.new, :|)
+      end
+
+      def student_programs
+        @student_programs ||= begin
+          ids = lectures.map { |lecture| student_ids(lecture) }.reduce(Set.new, :|)
+          User.where(id: ids.to_a).pluck(:id, :program_id, :personal_data_confirmed_at)
+              .to_h { |id, program_id, confirmed_at| [id, [program_id, confirmed_at.present?]] }
+        end
+      end
+
+      def programs_by_id
+        @programs_by_id ||= Program.includes(:translations, subject: :translations)
+                                   .where(id: student_programs.values.filter_map(&:first).uniq)
+                                   .index_by(&:id)
       end
 
       def all_groups

@@ -43,6 +43,9 @@ test.describe("dean's office", () => {
       const group = groups.getByRole("row", { name: /Tuesday group/ });
       await expect(group).toContainText("INF 205");
       await expect(group).toContainText("1");
+      // the same students by subject, for the faculties that pay for theirs
+      const subjects = student.page.getByRole("table", { name: "Students by subject" });
+      await expect(subjects.getByRole("row", { name: /Total/ })).toContainText("1");
       await toggle.click();
       await expect(toggle).toHaveAttribute("aria-expanded", "false");
       await expect(groups).toBeHidden();

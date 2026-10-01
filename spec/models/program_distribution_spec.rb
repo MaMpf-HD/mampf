@@ -28,4 +28,26 @@ RSpec.describe(ProgramDistribution) do
 
     expect(answered.rows.map(&:key)).not_to include(:unanswered)
   end
+
+  it "groups the programs by subject, the larger subject first" do
+    physics = create(:subject, name: "Physics")
+    student(program: create(:program, subject: physics, name: "B.Sc. 100%", degree: :bsc100))
+    everybody = described_class.new(User.where(id: User.select(:id)))
+
+    expect(everybody.subjects.map { |row| [row.subject.name, row.people] })
+      .to eq([["Mathematics", 3], ["Physics", 1]])
+    expect(everybody.subjects.first.rows.map(&:key)).to eq([bachelor.id, master.id])
+  end
+
+  # The dean's office reads every student's program once per term and counts
+  # each course from that.
+  it "counts the same from pairs read beforehand" do
+    pairs = User.where(id: people.map(&:id))
+                .pluck(:program_id, :personal_data_confirmed_at)
+                .map { |program_id, confirmed_at| [program_id, confirmed_at.present?] }
+    read = described_class.from_pairs(pairs, programs: Program.all.index_by(&:id))
+
+    expect(read.rows.map { |row| [row.key, row.people] })
+      .to eq(distribution.rows.map { |row| [row.key, row.people] })
+  end
 end
