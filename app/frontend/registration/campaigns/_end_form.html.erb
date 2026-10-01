@@ -1,0 +1,81 @@
+<% kept = campaign.groups_kept_from_deletion %>
+
+<% names = { campaign: campaign.student_facing_title,
+             lecture: campaign.campaignable.title_for_viewers } %>
+
+<%= turbo_frame_tag campaign_header_frame_id(campaign) do %>
+  <div class="fs-6 fw-normal p-4 bg-light">
+    <h6 class="fw-semibold"><%= t("registration.campaign.end.action") %></h6>
+
+    <p>
+      <%= t("registration.campaign.end.intro",
+            count: campaign.total_registrations_count) %>
+    </p>
+
+    <%= form_with url: end_without_allocation_registration_campaign_path(campaign),
+                  method: :delete,
+                  data: { turbo_stream: true } do |f| %>
+      <fieldset class="mb-3">
+        <legend class="form-label fs-6 mb-1">
+          <%= t("registration.campaign.end.groups") %>
+        </legend>
+
+        <div class="form-check">
+          <%= f.radio_button :delete_groups, "0", checked: true, class: "form-check-input" %>
+
+          <%= f.label :delete_groups_0, t("registration.campaign.end.keep_groups"),
+                      class: "form-check-label" %>
+        </div>
+
+        <div class="form-check">
+          <%= f.radio_button :delete_groups, "1", disabled: kept.any?,
+                                                  class: "form-check-input" %>
+
+          <%= f.label :delete_groups_1, t("registration.campaign.end.delete_groups"),
+                      class: "form-check-label" %>
+        </div>
+
+        <% if kept.any? %>
+          <small class="d-block text-muted">
+            <%= t("registration.campaign.end.groups_kept",
+                  groups: kept.map(&:title).to_sentence) %>
+          </small>
+        <% end %>
+      </fieldset>
+
+      <div class="form-check mb-2">
+        <%= f.check_box :notify, { checked: true, class: "form-check-input" }, "1", "0" %>
+
+        <%= f.label :notify, t("registration.campaign.end.notify"),
+                    class: "form-check-label" %>
+      </div>
+
+      <div class="mb-2">
+        <%= f.label :subject, t("student_message.subject"), class: "form-label small mb-1" %>
+
+        <%= f.text_field :subject,
+                         value: t("registration.campaign.end.default_subject", **names),
+                         class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :body, t("student_message.body"), class: "form-label small mb-1" %>
+
+        <%= f.text_area :body,
+                        value: t("registration.campaign.end.default_body", **names),
+                        rows: 4,
+                        class: "form-control" %>
+      </div>
+
+      <div class="d-flex gap-2">
+        <%= f.submit t("registration.campaign.end.submit"), class: "btn btn-danger" %>
+
+        <%= link_to t("buttons.cancel"),
+                    registration_campaign_path(campaign),
+                    class: "btn btn-secondary",
+                    role: "button",
+                    data: { turbo_stream: true } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

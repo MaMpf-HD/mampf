@@ -448,6 +448,8 @@ Rails.application.routes.draw do
       patch :reopen
       patch :revert_to_draft
       patch :self_service
+      get :confirm_end
+      delete :end_without_allocation
       get :rejected
       get :unassigned
     end

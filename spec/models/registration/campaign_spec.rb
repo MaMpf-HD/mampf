@@ -239,6 +239,57 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  # A registration used as a poll ends without anybody being put into a
+  # group: the registrations go, the campaign with them.
+  describe "#end_without_allocation!" do
+    let(:campaign) { create(:registration_campaign, :closed, items_count: 2) }
+    let(:groups) { campaign.registration_items.map(&:registerable) }
+
+    before do
+      create(:registration_user_registration,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+    end
+
+    it "deletes the registrations and the campaign and leaves the groups free" do
+      expect(campaign.end_without_allocation!(delete_groups: false)).to be(true)
+
+      expect(Registration::Campaign.exists?(campaign.id)).to be(false)
+      expect(Registration::UserRegistration.where(registration_campaign_id: campaign.id))
+        .to be_empty
+      expect(groups.map { |group| group.reload.skip_campaigns? }).to all(be(true))
+      expect(groups.flat_map { |group| group.roster_entries.to_a }).to be_empty
+    end
+
+    it "deletes the groups along when asked" do
+      expect(campaign.end_without_allocation!(delete_groups: true)).to be(true)
+
+      expect(groups.map { |group| group.class.exists?(group.id) }).to all(be(false))
+    end
+
+    it "keeps everything where a group holds what must not go with it" do
+      groups.first.add_user_to_roster!(create(:confirmed_user))
+
+      expect(campaign.groups_kept_from_deletion).to eq([groups.first])
+      expect(campaign.end_without_allocation!(delete_groups: true)).to be(false)
+      expect(Registration::Campaign.exists?(campaign.id)).to be(true)
+      expect(campaign.user_registrations.count).to eq(1)
+    end
+
+    it "refuses once an allocation is computed" do
+      campaign.update_columns(last_allocation_calculated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+      expect(campaign.endable_without_allocation?).to be(false)
+      expect(campaign.end_without_allocation!(delete_groups: false)).to be(false)
+      expect(Registration::Campaign.exists?(campaign.id)).to be(true)
+    end
+
+    it "is not offered for a completed campaign" do
+      expect(create(:registration_campaign, :completed).endable_without_allocation?)
+        .to be(false)
+    end
+  end
+
   describe "freezing" do
     let(:campaign) { create(:registration_campaign, :open) }
 

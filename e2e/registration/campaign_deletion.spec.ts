@@ -142,6 +142,35 @@ test.describe("getting out of a registration process", () => {
       ).toBeVisible();
     });
 
+  // A registration used as a poll is done once its list is in; nobody is to
+  // be put into a group.
+  test("ends a process with registrations without allocating anybody",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const { lecture, campaign, items } = await setUpCampaign(
+        factory, user.id, ["Monday Tutorial"]);
+      await campaign.__call("open!");
+      await factory.create("registration_user_registration", [], {
+        user_id: student.user.id,
+        registration_campaign_id: campaign.id,
+        registration_item_id: items[0].id,
+        status: "confirmed",
+      });
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      await page.getByRole("link", { name: "End without allocation" }).click();
+
+      await expect(page.getByText("The one registration is deleted")).toBeVisible();
+      await expect(page.getByRole("radio", { name: /Keep them/ })).toBeChecked();
+      await expect(page.getByRole("checkbox", { name: "Notify those registered by email" }))
+        .toBeChecked();
+      await page.getByRole("button", { name: "End registration process" }).click();
+
+      await expect(page.getByText(
+        "The registration process has ended. One person is being notified.")).toBeVisible();
+      await expect(page.getByText("Tutorial registration")).toBeHidden();
+      await expect(noCampaignSection(page).getByText("Monday Tutorial")).toBeVisible();
+    });
+
   test("takes a group out of the process without deleting it",
     async ({ factory, teacher: { page, user } }) => {
       const { lecture } = await setUpCampaign(factory, user.id, ["Monday Tutorial"]);

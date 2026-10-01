@@ -67,6 +67,10 @@ module Registration
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 
+    # Before an allocation is computed, nobody holds a place yet, so the
+    # registrations can go without taking anything from anybody.
+    ENDABLE_STATUSES = ["open", "closed"].freeze
+
     DISCARD_BLOCKER_ERRORS = {
       status: :cannot_delete_active_campaign,
       registrations: :cannot_discard_with_registrations,
@@ -143,6 +147,40 @@ module Registration
       return :status unless status.in?(DISCARDABLE_STATUSES)
 
       data_blocker
+    end
+
+    # Whether the campaign may end with nobody allocated. An exam's campaign
+    # is ended from the exam; it stands or falls with the exam itself.
+    def endable_without_allocation?
+      status.in?(ENDABLE_STATUSES) && last_allocation_calculated_at.nil? &&
+        !materialized_roster_entries? && !referencing_prerequisite_policies.exists? &&
+        !exam_campaign?
+    end
+
+    # The groups that could not go along: they hold something that must not
+    # be lost with them, such as members from outside the campaign.
+    def groups_kept_from_deletion
+      registration_items.filter_map(&:registerable).select do |group|
+        group.destruction_blockers_outside_campaign.any?
+      end
+    end
+
+    # Ends the campaign with nobody allocated: the registrations go, then the
+    # campaign, which leaves its groups free of any campaign; with
+    # delete_groups they go as well. Returns false and changes nothing where
+    # the campaign or a group may not go.
+    def end_without_allocation!(delete_groups:)
+      transaction do
+        lock!
+        groups = registration_items.filter_map(&:registerable)
+        return false unless endable_without_allocation?
+        return false if delete_groups && groups_kept_from_deletion.any?
+
+        user_registrations.delete_all
+        destroy!
+        groups.each { |group| group.reload.destroy! } if delete_groups
+        true
+      end
     end
 
     def revertible_to_draft?
