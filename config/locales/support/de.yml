@@ -49,7 +49,8 @@ de:
         confirmed: 'Bestätigt'
         confirmed_at: 'ja, am %{time}'
         unconfirmed: 'nein, registriert am %{time}'
-        new_email_pending: 'Die neue Adresse %{email} wartet auf ihre Bestätigung.'
+        email_change_pending: 'Änderung auf %{email} beantragt, Bestätigungsmail am %{time} verschickt.'
+        no_email_change: 'Keine Änderung offen.'
         locked: 'Gesperrt'
         locked_until: 'ja, bis %{time} (%{attempts} fehlgeschlagene Anmeldungen)'
         not_locked:
