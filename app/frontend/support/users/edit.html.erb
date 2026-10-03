@@ -12,6 +12,7 @@
 
     <dd class="col-sm-8">
       <%= @user.email %>
+      <div><%= email_change_status(@user) %></div>
       <div class="text-muted"><%= t("support.users.email_hint") %></div>
     </dd>
 

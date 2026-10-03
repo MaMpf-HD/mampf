@@ -6,14 +6,20 @@ module SupportUsersHelper
   end
 
   def confirmation_status(user)
-    status = if user.confirmed?
+    if user.confirmed?
       t("support.users.status.confirmed_at", time: l(user.confirmed_at, format: :account))
     else
       t("support.users.status.unconfirmed", time: l(user.created_at, format: :account))
     end
-    return status unless user.pending_reconfirmation?
+  end
 
-    "#{status} #{t("support.users.status.new_email_pending", email: user.unconfirmed_email)}"
+  # Devise keeps a requested address in unconfirmed_email until its link is
+  # followed; without one, no change mail is outstanding.
+  def email_change_status(user)
+    return t("support.users.status.no_email_change") unless user.pending_reconfirmation?
+
+    t("support.users.status.email_change_pending",
+      email: user.unconfirmed_email, time: l(user.confirmation_sent_at, format: :account))
   end
 
   # Devise lifts a lock by itself after User.unlock_in, so the time says when.
