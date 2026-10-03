@@ -48,7 +48,7 @@ en:
         confirmed: 'Confirmed'
         confirmed_at: 'yes, on %{time}'
         unconfirmed: 'no, registered on %{time}'
-        email_change_pending: 'Change to %{email} requested, confirmation mail sent on %{time}.'
+        email_change_pending: 'Change to %{email} requested on %{time}.'
         no_email_change: 'No change pending.'
         locked: 'Locked'
         locked_until: 'yes, until %{time} (%{attempts} failed sign-ins)'
