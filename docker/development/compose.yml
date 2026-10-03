@@ -51,7 +51,11 @@ services:
     ports:
       - 3000:3000
       - 3036:3036 # Vite server
-
+    networks:
+      default: {}
+      mampf_dev:
+        aliases:
+          - mampf
   app-test:
     <<: *app-base
     environment:
@@ -148,3 +152,7 @@ volumes:
   sprockets-cache:
   bundle_cache:
   clamav-db:
+
+networks:
+  mampf_dev:
+    external: true

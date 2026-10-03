@@ -625,6 +625,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.text "external_link_description"
     t.integer "annotations_status", default: -1, null: false
     t.integer "answers_count", default: 0, null: false
+    t.text "transcript_data"
+    t.integer "transcription_status", default: 0, null: false
+    t.integer "transcription_attempts", default: 0, null: false
+    t.datetime "transcription_requested_at"
+    t.text "transcription_error"
     t.index ["answers_count"], name: "index_media_on_answers_count"
     t.index ["content"], name: "index_media_on_content_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["description"], name: "index_media_on_description_trgm", opclass: :gin_trgm_ops, using: :gin
@@ -633,6 +638,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.index ["sort"], name: "index_media_on_sort"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
     t.index ["text"], name: "index_media_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["transcription_status", "transcription_requested_at"], name: "index_media_on_pending_transcriptions", where: "((transcription_status = ANY (ARRAY[0, 1, 3])) AND (video_data IS NOT NULL))"
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|
@@ -684,7 +690,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.bigint "subject_id"
     t.string "degree"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
-    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying::text, 'bsc50'::character varying::text, 'msc'::character varying::text, 'med'::character varying::text, 'med_extension'::character varying::text, 'phd'::character varying::text])", name: "programs_degree_check"
+    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying, 'bsc50'::character varying, 'msc'::character varying, 'med'::character varying, 'med_extension'::character varying, 'phd'::character varying]::text[])", name: "programs_degree_check"
   end
 
   create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|

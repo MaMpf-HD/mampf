@@ -31,6 +31,7 @@ class Talk < ApplicationRecord
   has_many :tags, through: :talk_tag_joins
 
   after_save :touch_lecture
+  after_update_commit :sync_mampfsearch_hierarchy_if_lecture_changed
 
   # the talks of a lecture form an ordered list
   acts_as_list scope: :lecture
@@ -182,6 +183,12 @@ class Talk < ApplicationRecord
   end
 
   private
+
+    def sync_mampfsearch_hierarchy_if_lecture_changed
+      return unless saved_change_to_lecture_id?
+
+      MampfsearchMetadataSyncJob.enqueue_for(media)
+    end
 
     def touch_lecture
       lecture.touch

@@ -103,6 +103,18 @@
   cursor: pointer;
 }
 
+#subtitle-toggle {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+#subtitle-toggle:focus-visible {
+  outline: 2px solid #282828ff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 #previous-chapter {
   margin-left: 10px;
 }
@@ -185,6 +197,7 @@ input:checked+.slider:before {
 
 #size-buttons {
   display: flex;
+  align-items: center;
   position: absolute;
   right: 0%;
   padding-right: inherit;
@@ -367,4 +380,32 @@ figure {
 
 :full-screen::backdrop {
   background-color: black;
+}
+
+/* --- Custom Subtitle Styling --- */
+.thyme-custom-subtitles {
+  position: absolute;
+  bottom: 25px; /* Default margin when control bar is hidden */
+  left: 0;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+  z-index: 100;
+  transition: bottom 0.2s ease-out;
+}
+
+.thyme-custom-subtitles span {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  line-height: 1.5;
+  font-size: clamp(1rem, 4vw, 2.5rem);
+  white-space: pre-wrap;
+  display: inline-block;
+  max-width: 90%;
+}
+
+.control-bar-visible .thyme-custom-subtitles {
+  bottom: 90px; /* Clears the control bar completely */
 }

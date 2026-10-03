@@ -2432,6 +2432,7 @@ de:
     no_video: 'Es gibt kein Video.'
     play: 'THymE-Player'
     download: 'Video herunterladen'
+    transcribe: 'Transkribieren'
     length: 'Länge'
     resolution: 'Auflösung'
     size: 'Größe'
@@ -2857,9 +2858,13 @@ de:
       student_registration: '%-d. %B %Y, %H:%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
+  search:
+    mampfsearch_unavailable: 'MampfSearch ist derzeit nicht verfügbar.'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
+    toggle_subtitles: 'Untertitel ein-/ausblenden'
+    transcript: 'Transkript'
   thyme_editor:
     add_item: 'Eintrag zum Inhaltsverzeichnis hinzufügen'
     add_referral: 'Referenz hinzufügen'
@@ -3278,6 +3283,82 @@ de:
       Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    invalid_transcript: Die hochgeladene Datei ist kein gültiges WebVTT-Transkript.
+    transcript_too_many_cues: >
+      Das Transkript enthält zu viele Cues (maximal %{max_cues}).
+    too_late_no_saving: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit kann diese Änderung nicht mehr gespeichert werden.
+    too_late_no_editing: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit kann diese Abgabe nicht mehr bearbeitet werden.
+    too_late_no_inviting: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit können zu dieser Abgabe keine Einladungen mehr versandt werden.
+    too_late_no_destroying: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit kann diese Abgabe nicht mehr gelöscht werden.
+    late_submission_warning_html: >
+      Du kannst innerhalb der Kulanzfrist noch bis %{friendly_deadline}
+      Änderungen vornehmen, jedoch nur solange Dein TutorIn noch keine
+      Korrektur zur Abgabe hochgeladen hat. Allerdings
+      wird die Abgabe dann als <b>verspätet</b> eingestuft. Es liegt im Ermessen
+      der DozentIn und der TutorInnen, ob und wie diese gewertet wird.
+      <br>
+      <i>Hinweis.</i>
+      Als Änderung zählen hierbei die folgenden Aktionen:
+      <ul>
+      <li>
+      Anlegen der Abgabe
+      </li>
+      <li>
+      Erfolgreiches Hochladen oder Ersetzen der Datei
+      </li>
+      <li>
+      Beitritt eines Teammitglieds
+      </li>
+      </ul>
+    last_modification: >
+      letzte Änderung
+    last_modification_info_html: >
+      Hier ist protokolliert, wann die letzte Änderung an der Abgabe durch
+      Teammitglieder war.
+      Hierbei wird Folgendes berücksichtigt:
+      <ul>
+      <li>
+      Anlegen der Abgabe
+      </li>
+      <li>
+      Erfolgreiches Hochladen oder Ersetzen der Datei
+      </li>
+      <li>
+      Beitritt eines Teammitglieds
+      </li>
+      </ul>
+      Liegt die letzte Änderung vor dem Abgabetermin, ist die Abgabe gültig.
+      Andernfalls wird sie als verspätet gekennzeichnet.
+    okay: Alles bestens!
+    no_file: Es ist keine Datei hinterlegt.
+    nothing: Es ist keine Abgabe angelegt.
+    with_correction: >
+      Alles bestens! Deine TutorIn hat die Korrektur zu Deiner Abgabe
+      hochgeladen.
+    too_late: >
+      Die Abgabe ist als "zu spät" markiert, da die letzte Änderung
+      nach dem Abgabeschluss erfolgte. Es liegt im Ermessen
+      der DozentIn und der der TutorInnen, ob und wie sie gewertet wird.
+    too_late_accepted: >
+      Deine TutorIn hat die als "zu spät" gekennzeichnete Abgabe akzeptiert
+      und ist jetzt mit der Korrektur beschäftigt.
+    too_late_rejected: >
+      Deine als "zu spät" gekennzeichnete Abgabe wurde abgelehnt.
+    under_review: >
+      Die Abgabe wurde erfolgreich übermittelt, Deine TutorIn ist mit der
+      Korrektur beschäftigt.
     already_corrected: >
       Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
       kannst Du nicht mehr beitreten.
@@ -4191,6 +4272,9 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    media:
+      transcription_started: 'Transkription gestartet.'
+      cannot_transcribe: 'Medium kann nicht transkribiert werden.'
     no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
