@@ -343,6 +343,18 @@ RSpec.describe("Support users", type: :request) do
       expect(status).to include("2026")
     end
 
+    it "shows whether an address change waits for confirmation" do
+      get edit_support_user_path(student)
+      expect(response.body).to include("No change pending.")
+
+      student.update!(email: "emmy.new@example.org")
+      get edit_support_user_path(student)
+
+      status = Nokogiri::HTML(response.body).at_css("[data-testid='support-account-status']").text
+      expect(status).to include("Change to emmy.new@example.org requested")
+      expect(status).to include(I18n.l(student.reload.confirmation_sent_at, format: :account))
+    end
+
     it "offers the confirmation mail only while something waits for confirmation" do
       get edit_support_user_path(student)
 
