@@ -51,6 +51,22 @@ test("asks once for the name and matriculation number after sign-in",
     await expect(page).toHaveURL(/\/$/);
   });
 
+// Safari before 17.4 (iOS 17.4) has no Element#checkVisibility.
+test("leads through the steps in a browser without checkVisibility",
+  async ({ page, request }) => {
+    await page.addInitScript(() => {
+      delete (Element.prototype as Partial<Element>).checkVisibility;
+    });
+    await signInAsking(page, request);
+
+    await page.getByRole("radio", { name: "Yes" }).check();
+    await page.getByLabel("First name", { exact: true }).fill("Ada");
+    await page.getByLabel("Last name", { exact: true }).fill("Lovelace");
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect(page.getByText("Step 2 of 4: Matriculation number")).toBeVisible();
+  });
+
 test("lets a user who takes part in no exercise class skip it",
   async ({ page, request }) => {
     await signInAsking(page, request);
