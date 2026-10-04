@@ -36,8 +36,9 @@ export default class extends Controller {
     if (event.type === "keydown" && !(event.target instanceof HTMLInputElement)) return;
 
     event.preventDefault();
+    // Not checkVisibility(): Safari has it only since 17.4.
     const fields = [...this.stepTargets[this.index].querySelectorAll("input")]
-      .filter(field => field.checkVisibility());
+      .filter(field => field.getClientRects().length > 0);
     if (!fields.every(field => field.reportValidity())) return;
 
     this.moveTo(this.index + 1);
