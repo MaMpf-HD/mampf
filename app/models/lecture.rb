@@ -742,10 +742,6 @@ class Lecture < ApplicationRecord
     false
   end
 
-  def practical?
-    sort == "practical"
-  end
-
   def supported_assessable_types
     seminar? ? ["Talk"] : ["Assignment"]
   end

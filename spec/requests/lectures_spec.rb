@@ -468,15 +468,6 @@ RSpec.describe("Lectures", type: :request) do
       expect(response.body).to include("course_lectures")
     end
 
-    it "gives a lecture the default organizational text, but not a practical course" do
-      post(lectures_path, params: { lecture: attributes }, as: :turbo_stream)
-      expect(Lecture.last.organizational_concept).to be_present
-
-      post(lectures_path, params: { lecture: attributes.merge(sort: "practical") },
-                          as: :turbo_stream)
-      expect(Lecture.last).to have_attributes(sort: "practical", organizational_concept: nil)
-    end
-
     it "opens the new lecture when it was created from the dashboard" do
       post(lectures_path, params: { lecture: attributes.merge(from: "dashboard") },
                           as: :turbo_stream)
