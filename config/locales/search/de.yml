@@ -31,7 +31,7 @@ de:
         Hier kannst Du bestimmen, zu welcher Veranstaltung eine Assoziation bestehen soll.
         Dabei kannst Du alle, nur die von Dir gemerkten oder eine eigene Auswahl an Veranstaltungen berücksichtigen lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator <i>ODER</i> verwendet.
       lecture_type_field: >
-        Hier kannst Du einen, mehrere oder alle der folgenden Veranstaltungstypen auswählen: <i>Lektion</i>, <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i>. Dabei wird der Operator <i>ODER</i> verwendet.
+        Hier kannst Du einen, mehrere oder alle der folgenden Veranstaltungstypen auswählen: <i>Lektion</i>, <i>Seminar</i>, <i>Proseminar</i>, <i>Oberseminar</i> und <i>Praktikum</i>. Dabei wird der Operator <i>ODER</i> verwendet.
       medium_access_field: >
         Wähle die Zugriffsrechte für das Medium aus.
       medium_type_field: >

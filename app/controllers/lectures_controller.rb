@@ -457,7 +457,11 @@ class LecturesController < ApplicationController
     end
 
     # fill organizational_concept with default view
+    # A practical course gets none: the lecture template is about exams and
+    # exercise sheets.
     def set_organizational_defaults
+      return if @lecture.practical?
+
       partial_path = "lectures/organizational/defaults/"
       partial_path += @lecture.seminar? ? "seminar" : "lecture"
       @lecture.update(organizational_concept:
