@@ -31,7 +31,7 @@ en:
         selection, you can choose one or several event series. The operator used is the
         inclusive <i>OR</i>.
       lecture_type_field: >
-        Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>, <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is <i>OR</i>.
+        Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>, <i>Proseminar</i>, <i>Research Seminar</i> and <i>Practical Course</i>. The operator used is <i>OR</i>.
       medium_access_field: >
         Select the access rights for the medium.
       medium_type_field: >
