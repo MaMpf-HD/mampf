@@ -184,6 +184,17 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "a practical course" do
+    let(:lecture) { create(:lecture, sort: "practical") }
+
+    it "is a lecture under its own name" do
+      expect(lecture).to be_valid
+      expect(lecture.seminar?).to be(false)
+      expect(I18n.with_locale(:de) { lecture.sort_localized }).to eq("Praktikum")
+      expect(I18n.with_locale(:en) { lecture.title }).to start_with("(P) ")
+    end
+  end
+
   describe "#script?" do
     let(:lecture) { create(:lecture) }
     let(:user) { create(:confirmed_user) }
