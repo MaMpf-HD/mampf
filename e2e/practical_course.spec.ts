@@ -57,5 +57,5 @@ test("lets a student register for a practical course and join a team", async ({
 
   await student.page.getByRole("heading", { name: "Join a group yourself" }).click();
   await student.page.getByRole("button", { name: "Register for Team 1" }).click();
-  await expect(home.participation("Team 1")).toContainText("Assigned");
+  await expect(home.participation("Team 1")).toContainText("Enrolled");
 });
