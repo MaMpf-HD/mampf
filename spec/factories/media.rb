@@ -67,6 +67,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_transcript do
+      after(:build) do |m|
+        m.transcript = File.open("#{SPEC_FILES}/transcript.vtt", "rb")
+      end
+    end
+
     trait :with_geogebra do
       after(:build) do |m|
         m.geogebra = File.open("#{SPEC_FILES}/geogebra.ggb", "rb")
