@@ -42,9 +42,11 @@
                              disabled: !lecture.absolute_numbering %>
         </div>
 
-        <div class="pref-field pref-field--full">
+        <div class="pref-field pref-field--switch">
           <div class="form-check form-switch">
-            <%= f.check_box :absolute_numbering, class: 'form-check-input', role: 'switch',
+            <%= f.check_box :absolute_numbering,
+                            class: 'form-check-input',
+                            role: 'switch',
                             data: { action: "change->lecture-edit#toggleStartSection" } %>
             <%= f.label :absolute_numbering, t('admin.lecture.absolute_numbering'),
                         class: 'form-check-label' %>
@@ -177,4 +179,33 @@
       </div>
     </div>
   </div>
+<% end %>
+
+
+<% if lecture_deletable?(lecture) %>
+  <section class="pref-danger">
+    <h3 class="pref-danger__title">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <%= t('admin.lecture.danger_zone') %>
+    </h3>
+    <p class="pref-danger__subtitle"><%= t('admin.lecture.danger_zone_hint') %></p>
+
+    <div class="alert alert-danger d-flex align-items-center py-2 small" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= t('admin.lecture.danger_zone_warning') %>
+    </div>
+
+    <div class="pref-danger__row">
+      <span class="pref-danger__icon"><i class="bi bi-trash"></i></span>
+      <div class="pref-danger__text">
+        <div class="pref-danger__row-title"><%= t('admin.lecture.delete_title') %></div>
+        <small class="text-body-secondary"><%= t('admin.lecture.info.delete') %></small>
+      </div>
+      <%= link_to t("buttons.delete"),
+                  lecture_path(lecture),
+                  data: { turbo_method: :delete,
+                          turbo_confirm: lecture_destruction_confirmation(lecture) },
+                  class: "btn btn-sm btn-danger" %>
+    </div>
+  </section>
 <% end %>

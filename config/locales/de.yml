@@ -811,6 +811,7 @@ de:
           DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
           DozentIn wird dann EditorIn. Ein solcher Gutschein wird direkt nach
           dem Einlösen für ungültig erklärt.
+        delete: "Entfernt diese Vorlesung dauerhaft zusammen mit allen zugehörigen Inhalten. Dies kann nicht rückgängig gemacht werden."
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -844,10 +845,14 @@ de:
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
       uses_vignettes: 'Veranstaltung verwendet Vignetten'
+      danger_zone: 'Gefahrenzone'
+      danger_zone_hint: "Diese Aktionen sind unwiderruflich. Bitte lese die folgenden Informationen sorgfältig durch, bevor du fortfährst."
+      danger_zone_warning: "Die folgenden Aktionen sind dauerhaft und können nicht rückgängig gemacht werden."
+      delete_title: 'Veranstaltung löschen'
       students_and_access: 'Studierende & Zugriffsrechte'
       first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
-      absolute_numbering: 'absolute Nummerierung'
+      absolute_numbering: 'Absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
       insert_after_chapter: 'Einfügen nach %{chapter_name}'
       insert_after_section: 'Einfügen nach Abschnitt'

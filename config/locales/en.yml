@@ -713,6 +713,7 @@ en:
           status for this event series. The previous teacher will be demoted
           and becomes an editor. Such a voucher will be invalidated directly
           after its redemption.
+        delete: "Permanently removes this lecture and everything that belongs to it. This cannot be undone."
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -744,10 +745,14 @@ en:
       organizational_visible: 'General information visible'
       organizational_on_top: 'General Information as start page'
       uses_vignettes: 'Event series uses vignettes'
+      danger_zone: 'Danger Zone'
+      danger_zone_hint: "These actions are irreversible. Please read carefully before proceeding."
+      danger_zone_warning: "The actions below are permanent and cannot be undone."
+      delete_title: 'Delete event series'
       students_and_access: 'Students and access'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'
-      absolute_numbering: 'absolute numbering'
+      absolute_numbering: 'Absolute numbering'
       passphrase: 'Passphrase'
       insert_after_chapter: 'Insert after %{chapter_name}'
       insert_after_section: 'Insert after section'
