@@ -195,3 +195,67 @@ h4.lecture-pane-subheader {
 .btn-outline-lecture-edit {
   @include button-outline-variant($mampf-red);
 }
+
+.pref-section {
+  margin-bottom: 2.5rem;
+}
+
+.pref-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+}
+
+.pref-field {
+  min-width: 0;
+  margin-right: 10%;
+
+  .form-label {
+    margin-bottom: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  &--full { grid-column: 1 / -1; }
+}
+
+.pref-switches {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+
+  .form-check-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+}
+
+.pref-savebar {
+  --bs-alert-color: var(--bs-warning-text-emphasis);
+  --bs-alert-bg: var(--bs-warning-bg-subtle);
+  --bs-alert-border-color: var(--bs-warning-border-subtle);
+  --bs-alert-link-color: var(--bs-warning-text-emphasis);
+
+  position: sticky;
+  bottom: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  color: var(--bs-alert-color);
+  background-color: var(--bs-alert-bg);
+  border: var(--bs-border-width) solid var(--bs-alert-border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  &__text {
+    font-size: 0.8125rem;
+    color: var(--bs-secondary-color);
+  }
+}
+
+@media (max-width: 40rem) {
+  .pref-grid { grid-template-columns: 1fr; }
+}

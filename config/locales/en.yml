@@ -475,7 +475,7 @@ en:
       new_posts: 'new forum posts'
       no_rights: 'You are not authorized to subscribe this event series.'
       disable_teacher_display: disable the display of the teacher's name
-      uses_exam_eligibility: enable exam eligibility
+      uses_exam_eligibility: Enable exam eligibility
       submission_max_team_size: >
         maximal team size for submissions
       submission_grace_period: >
@@ -744,6 +744,7 @@ en:
       organizational_visible: 'General information visible'
       organizational_on_top: 'General Information as start page'
       uses_vignettes: 'Event series uses vignettes'
+      students_and_access: 'Students and access'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'
       absolute_numbering: 'absolute numbering'

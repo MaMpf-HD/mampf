@@ -844,6 +844,7 @@ de:
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
       uses_vignettes: 'Veranstaltung verwendet Vignetten'
+      students_and_access: 'Studierende & Zugriffsrechte'
       first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
