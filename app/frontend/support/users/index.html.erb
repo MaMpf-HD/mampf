@@ -15,6 +15,13 @@
 
   <div id="support-user-results">
     <% if @users.any? %>
+      <% if @similar %>
+        <% fulltext = search_values.fulltext.strip %>
+        <p class="mb-2">
+          <%= t(fulltext.include?("@") ? "support.users.similar_addresses" : "support.users.similar_names",
+                fulltext: fulltext) %>
+        </p>
+      <% end %>
       <p class="small text-muted mb-2">
         <%= t("support.users.hits", count: @pagy.count) %>
       </p>

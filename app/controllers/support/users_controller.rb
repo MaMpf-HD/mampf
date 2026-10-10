@@ -23,12 +23,11 @@ module Support
     end
 
     def index
-      @pagy, @users = Search::Searchers::ControllerSearcher.search(
-        controller: self,
-        model_class: User,
-        configurator_class: Search::Configurators::UserSearchConfigurator,
-        options: { default_per_page: 20 }
-      )
+      @pagy, @users = search_users(:search_params)
+      if @users.none? && similar_searchable?
+        @similar = true
+        @pagy, @users = search_users(:similar_params)
+      end
       @users = @users.includes(User::PROGRAM_PRELOAD)
     end
 
@@ -107,6 +106,24 @@ module Support
       def back_to_person(message, kind: :notice)
         redirect_to edit_support_user_path(@user, search: search_query), kind => message,
                                                                          status: :see_other
+      end
+
+      def search_users(params_method_name)
+        Search::Searchers::ControllerSearcher.search(
+          controller: self,
+          model_class: User,
+          configurator_class: Search::Configurators::UserSearchConfigurator,
+          options: { default_per_page: 20, params_method_name: params_method_name }
+        )
+      end
+
+      # Below three characters most names would look alike.
+      def similar_searchable?
+        search_params[:fulltext].to_s.strip.length >= 3
+      end
+
+      def similar_params
+        search_params.merge(similar: true)
       end
 
       def search_params

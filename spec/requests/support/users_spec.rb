@@ -124,19 +124,96 @@ RSpec.describe("Support users", type: :request) do
       end
     end
 
-    # Every uni address ends in ".de"; the similarity search would find them all.
-    it "counts only the beginnings of words below three characters" do
+    # Below three characters most names would look alike.
+    it "suggests no similar names below three characters" do
       create(:confirmed_user, first_name: "Li", last_name: "Wei", name: "Li Wei",
                               email: "wei@uni.de")
       create(:confirmed_user, first_name: "David", last_name: "Hilbert", name: "David Hilbert",
                               email: "david@uni.de")
 
       search(fulltext: "de")
-      expect(response.body).not_to include("wei@uni.de", "david@uni.de")
+      expect(response.body).not_to include("wei@uni.de", "david@uni.de",
+                                           "People with a similar name")
 
       search(fulltext: "Li")
       expect(response.body).to include("wei@uni.de")
       expect(response.body).not_to include("david@uni.de")
+    end
+
+    it "lists only the people whose words begin with what was searched for" do
+      create(:confirmed_user, last_name: "Bergmann", email: "bergmann@example.org")
+      create(:confirmed_user, last_name: "Neumann", email: "neumann@example.org")
+
+      search(fulltext: "Bergmann")
+
+      expect(response.body).to include("bergmann@example.org")
+      expect(response.body).not_to include("neumann@example.org", "People with a similar name")
+    end
+
+    it "suggests similar names when no word begins with what was searched for" do
+      create(:confirmed_user, last_name: "Hilbert", email: "david@example.org")
+
+      search(fulltext: "Nother")
+
+      results = Nokogiri::HTML(response.body).at_css("#support-user-results").text
+      expect(results).to include('Nobody matches "Nother". People with a similar name:',
+                                 "emmy@example.org")
+      expect(results).not_to include("david@example.org")
+    end
+
+    it "keeps the chosen program when it suggests similar names" do
+      program = create(:program, degree: "msc")
+      create(:confirmed_user, last_name: "Noether", email: "fritz@example.org", program: program)
+
+      search(fulltext: "Nother", all_programs: "0", program_ids: [program.id])
+
+      results = Nokogiri::HTML(response.body).at_css("#support-user-results").text
+      expect(results).to include("People with a similar name:", "fritz@example.org")
+      expect(results).not_to include("emmy@example.org")
+    end
+
+    it "finds an address from its beginning" do
+      search(fulltext: "emmy@example")
+
+      expect(response.body).to include("emmy@example.org")
+      expect(response.body).not_to include("People with a similar address")
+    end
+
+    it "suggests an address registered with a typo" do
+      create(:confirmed_user, last_name: "Lang", email: "anna.mueler@uni.de")
+      create(:confirmed_user, last_name: "Mustermann", email: "max.mustermann@uni.de")
+
+      search(fulltext: "anna.mueller@uni.de")
+
+      results = Nokogiri::HTML(response.body).at_css("#support-user-results").text
+      expect(results).to include(
+        'Nobody matches "anna.mueller@uni.de". People with a similar address:', "anna.mueler@uni.de"
+      )
+      expect(results).not_to include("max.mustermann@uni.de")
+    end
+
+    it "lists equally close matches by last name, then first name" do
+      create(:confirmed_user, first_name: "Zoe", last_name: "Keller", email: "zoe@example.org")
+      create(:confirmed_user, first_name: "Anna", last_name: "Keller", email: "anna@example.org")
+      create(:confirmed_user, first_name: "Bert", last_name: "Abel", email: "bert@example.org")
+
+      ["Keller", "Heller"].each do |query|
+        search(fulltext: query)
+
+        rows = Nokogiri::HTML(response.body).css("#support-user-results tbody tr")
+        expect(rows.map { |row| row.text[/\S+@example\.org/] })
+          .to eq(["anna@example.org", "zoe@example.org"])
+      end
+    end
+
+    it "finds a name without its accents" do
+      create(:confirmed_user, last_name: "Müller", email: "mueller@example.org")
+      create(:confirmed_user, last_name: "Mullerson", email: "mullerson@example.org")
+
+      search(fulltext: "Muller")
+
+      expect(response.body).to include("mueller@example.org")
+      expect(response.body).not_to include("People with a similar name")
     end
 
     it "asks for a second character instead of listing" do
