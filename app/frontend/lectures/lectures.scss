@@ -199,6 +199,12 @@ h4.lecture-pane-subheader {
 .pref-section {
   margin-bottom: 2.5rem;
 }
+.pref-section .helpdesk,          // use whatever class helpdesk actually renders
+.pref-section .helpdesk .bi {
+  font-size: 1rem;
+  line-height: 1;
+  vertical-align: middle;
+}
 
 .pref-grid {
   display: grid;
@@ -241,28 +247,34 @@ h4.lecture-pane-subheader {
 }
 
 .pref-savebar {
-  --bs-alert-color: var(--bs-warning-text-emphasis);
-  --bs-alert-bg: var(--bs-warning-bg-subtle);
-  --bs-alert-border-color: var(--bs-warning-border-subtle);
-  --bs-alert-link-color: var(--bs-warning-text-emphasis);
-
   position: sticky;
   bottom: 1rem;
   z-index: 10;
   display: flex;
   align-items: center;
-  width: 95%;
   gap: 0.5rem;
+  width: 95%;
   padding: 0.5rem 0.75rem;
-  color: var(--bs-alert-color);
-  background-color: var(--bs-alert-bg);
-  border: var(--bs-border-width) solid var(--bs-alert-border-color);
+  background: #fff;
+  border: 1px solid var(--bs-border-color);
   border-radius: 0.5rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 
   &__text {
+    margin-right: auto;
     font-size: 0.8125rem;
     color: var(--bs-secondary-color);
+
+    // Small amber dot instead of a yellow background.
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 0.5rem;
+      height: 0.5rem;
+      margin-right: 0.5rem;
+      border-radius: 50%;
+      background: var(--bs-warning);
+    }
   }
 }
 
@@ -283,8 +295,7 @@ h4.lecture-pane-subheader {
   display: flex;
   align-items: center;
   margin: 0;
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.3rem;
   color: var(--bs-danger);
 }
 
