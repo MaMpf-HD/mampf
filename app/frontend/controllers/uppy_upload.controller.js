@@ -27,6 +27,9 @@ const CONFIG = {
   "manuscript": {
     autoProceed: true,
     allowedFileTypes: ["application/pdf"],
+    // The malware scan unpacks every image of a 100 MB PDF, which can keep
+    // the server busy for a minute after the last byte has arrived.
+    responseTimeout: 150_000,
     onSuccess(controller, response) {
       if (response.metadata.pages == null) {
         controller.showError(controller.invalidMessageValue);
@@ -181,6 +184,7 @@ export default class extends Controller {
       allowMultipleFiles: this.config.allowMultipleFiles,
       allowedFileTypes: this.config.allowedFileTypes,
       maxFileSize: this.maxFileSizeValue,
+      responseTimeout: this.config.responseTimeout,
       intent: this.intentValue,
       note: this.noteValue || null,
     });

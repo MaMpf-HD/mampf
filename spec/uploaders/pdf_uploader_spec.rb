@@ -104,6 +104,44 @@ RSpec.describe(PdfUploader) do
     end
   end
 
+  describe "size limit" do
+    def manuscript_of_size(bytes)
+      Tempfile.new(["manuscript", ".pdf"]).tap do |file|
+        file.binmode
+        file.write(File.binread("#{SPEC_FILES}/manuscript.pdf"))
+        file.truncate(bytes)
+        file.rewind
+      end
+    end
+
+    it "accepts a manuscript of 100 MB" do
+      medium = build(:valid_medium)
+      file = manuscript_of_size(100 * 1024 * 1024)
+
+      medium.manuscript = file
+      medium.valid?
+
+      expect(medium.errors[:manuscript]).to be_empty
+    ensure
+      medium&.manuscript&.delete
+      file&.close!
+    end
+
+    it "rejects a manuscript above 100 MB and names the limit" do
+      medium = build(:valid_medium)
+      file = manuscript_of_size((100 * 1024 * 1024) + 1)
+
+      medium.manuscript = file
+
+      expect(medium).not_to be_valid
+      expect(medium.errors[:manuscript])
+        .to include(I18n.t("submission.manuscript_size_too_big", max_size: "100 MB"))
+    ensure
+      medium&.manuscript&.delete
+      file&.close!
+    end
+  end
+
   describe "screenshot derivative" do
     it "renders the first page within the preview bounds" do
       original = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")

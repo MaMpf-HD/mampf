@@ -48,6 +48,7 @@ services:
       - THRUSTER_TARGET_PORT=3001
       - THRUSTER_STORAGE_PATH=/cache/thruster
       - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
+      - THRUSTER_HTTP_WRITE_TIMEOUT=150
     ports:
       - 3000:3000
       - 3036:3036 # Vite server
@@ -70,6 +71,7 @@ services:
       - THRUSTER_TARGET_PORT=3146
       - THRUSTER_STORAGE_PATH=/cache/thruster-test
       - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
+      - THRUSTER_HTTP_WRITE_TIMEOUT=150
     ports:
       - 3145:3145 # Thruster public HTTP (Playwright target)
       - 3037:3037 # Vite server
@@ -93,9 +95,9 @@ services:
     image: clamav/clamav-debian:1.5
     restart: unless-stopped
     environment:
-      - CLAMD_CONF_StreamMaxLength=100M
-      - CLAMD_CONF_MaxFileSize=100M
-      - CLAMD_CONF_MaxScanSize=150M
+      - CLAMD_CONF_StreamMaxLength=110M
+      - CLAMD_CONF_MaxFileSize=110M
+      - CLAMD_CONF_MaxScanSize=800M
       - CLAMD_CONF_MaxScanTime=120000
       - CLAMD_CONF_AlertExceedsMax=yes
       - FRESHCLAM_CHECKS=24

@@ -13,6 +13,7 @@ export function buildUppy({
   allowMultipleFiles = false,
   allowedFileTypes = [],
   maxFileSize = null,
+  responseTimeout = 30_000,
   note = null,
   onBeforeUpload,
   dashboardLocale,
@@ -67,6 +68,7 @@ export function buildUppy({
     formData: true,
     fieldName: "file",
     headers: uploadHeaders(intent),
+    timeout: responseTimeout,
     // A rejected file stays rejected; only a broken connection is worth
     // another round through the malware scanner.
     shouldRetry: xhr => xhr.status === 0 || xhr.status >= 500,

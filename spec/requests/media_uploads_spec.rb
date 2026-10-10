@@ -74,6 +74,21 @@ RSpec.describe("MediaUploads", type: :request) do
     )
   end
 
+  it "refuses a manuscript above 100 MB before scanning it" do
+    file = Tempfile.new(["manuscript", ".pdf"])
+    file.binmode
+    file.write(File.binread(File.join(SPEC_FILES, "manuscript.pdf")))
+    file.truncate((100 * 1024 * 1024) + 1)
+    upload = Rack::Test::UploadedFile.new(file.path, "application/pdf")
+
+    post("/pdfs/upload", params: { file: upload },
+                         headers: upload_intent_headers(PdfUploader, user: user, target: medium))
+
+    expect(response).to have_http_status(:content_too_large)
+  ensure
+    file&.close!
+  end
+
   it "rejects infected geogebra uploads before archive inspection runs" do
     allow(scanner).to receive(:scan)
       .and_return(UploadScanResult.infected("Eicar-Signature"))

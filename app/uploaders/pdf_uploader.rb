@@ -4,7 +4,7 @@ require "timeout"
 
 # PdfUploader Class
 class PdfUploader < Shrine
-  MAX_FILE_SIZE = 50 * 1024 * 1024
+  MAX_FILE_SIZE = 100 * 1024 * 1024
   TOOL_TIMEOUT = 10
   MAX_STRUCTURE_BYTES = 256 * 1024
   STRUCTURE_FILE_NAME = "structure.mampf".freeze
@@ -77,7 +77,7 @@ class PdfUploader < Shrine
     )
     validate_max_size MAX_FILE_SIZE,
                       message: I18n.t("submission.manuscript_size_too_big",
-                                      max_size: "50 MB")
+                                      max_size: "#{MAX_FILE_SIZE / (1024 * 1024)} MB")
   end
 
   # extract a screenshot from pdf and store it beside the pdf
