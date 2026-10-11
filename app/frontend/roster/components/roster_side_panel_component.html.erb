@@ -16,14 +16,46 @@
 >
   <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
     <div>
-      <h5
-        class="mb-1"
-        id="tutorial-roster-panel-heading"
-        tabindex="-1"
-        data-roster-panel-heading
-      >
-        <%= panel_title %>
-      </h5>
+      <div class="d-flex align-items-center gap-1 mb-1">
+        <h5
+          class="mb-0"
+          id="tutorial-roster-panel-heading"
+          tabindex="-1"
+          data-roster-panel-heading
+        >
+          <%= panel_title %>
+        </h5>
+
+        <% if students.any? %>
+          <div
+            class="d-flex"
+            data-controller="clipboard"
+            data-clipboard-text-value="<%= all_emails %>"
+            data-clipboard-confirmation-value="<%= t("basics.emails_copied_to_clipboard") %>"
+            data-clipboard-failure-value="<%= t("basics.emails_copy_failed") %>"
+          >
+            <button
+              type="button"
+              class="btn icon-button"
+              data-action="clipboard#copy"
+              title="<%= t("buttons.copy_all_email_addresses") %>"
+              aria-label="<%= t("buttons.copy_all_email_addresses") %>"
+            >
+              <i
+                class="bi bi-envelope"
+                aria-hidden="true"
+                data-clipboard-target="icon"
+              ></i>
+            </button>
+
+            <span
+              class="visually-hidden"
+              role="status"
+              data-clipboard-target="status"
+            ></span>
+          </div>
+        <% end %>
+      </div>
 
       <% if campaign_panel? %>
         <div class="text-muted small">
