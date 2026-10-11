@@ -103,7 +103,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       end.not_to change(Assessment::Participation, :count)
     end
 
-    it "does not overwrite tutorial_id on re-submission" do
+    it "keeps the row with the hand-in when the student changes tutorial" do
       controller_instance.send(:sync_assessment_participations)
 
       new_tutorial = create(:tutorial, lecture: lecture)
@@ -112,6 +112,17 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       controller_instance.send(:sync_assessment_participations)
 
       expect(Assessment::Participation.last.tutorial_id).to eq(tutorial.id)
+    end
+
+    it "moves the row with the hand-in when the hand-in moves" do
+      controller_instance.send(:sync_assessment_participations)
+
+      new_tutorial = create(:tutorial, lecture: lecture)
+      submission.update!(tutorial: new_tutorial)
+
+      controller_instance.send(:sync_assessment_participations)
+
+      expect(Assessment::Participation.last.tutorial_id).to eq(new_tutorial.id)
     end
   end
 

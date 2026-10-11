@@ -195,15 +195,19 @@ class SubmissionsController < ApplicationController
   # Leaving is refused for the last person on a team - that is a delete, and it
   # is a different button. The card says so rather than quietly doing nothing.
   def leave
-    if @submission.users.one?
-      @card_error = I18n.t("submission.no_partners_no_leave")
-      return render_card(status: :unprocessable_content)
-    end
-    ActiveRecord::Base.transaction do
+    left = ActiveRecord::Base.transaction do
+      @submission.lock!
+      next false if @submission.users.one?
+
       clear_submitted_at([current_user])
       tutorials_before = @submission.member_tutorial_ids
       @submission.users.delete(current_user)
       @submission.reload.place_team!(tutorials_before)
+      true
+    end
+    unless left
+      @card_error = I18n.t("submission.no_partners_no_leave")
+      return render_card(status: :unprocessable_content)
     end
     send_leave_email
     @submission = nil
@@ -744,6 +748,7 @@ class SubmissionsController < ApplicationController
       # reader's own row is held from the check to the write: points entered
       # on it in between would be the mark the check is there to keep.
       joined = ActiveRecord::Base.transaction do
+        @submission.lock!
         own_row&.lock!
         if marked_on_own?
           @error = I18n.t("submission.marked_on_own")

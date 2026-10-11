@@ -209,7 +209,7 @@ test.describe("the card for a sheet that is due", () => {
     await page.uploadSubmission();
     await student.page.getByRole("button", { name: "Save" }).click();
     await expect(first.getByRole("link", { name: "Replace file" })).toBeVisible();
-    const code = await first.locator("code").innerText();
+    const code = await first.getByRole("code").innerText();
 
     await student2.page.goto(`/lectures/${lecture.id}/submissions`);
     const joined = student2.page.getByRole("region", { name: "Homework 1" });
@@ -261,7 +261,7 @@ test.describe("the card for a sheet that is due", () => {
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();
     await page.createSubmission();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     await student2.page.goto(`/lectures/${lecture.id}/submissions`);
     await student2.page.getByRole("link", { name: "Join with a code" }).click();
@@ -286,7 +286,7 @@ test.describe("the card for a sheet that is due", () => {
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();
     await page.createSubmission();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     await student2.page.goto(`/submissions/redeem_code?code=${code}`);
     await expect(student2.page.getByText(
@@ -321,7 +321,7 @@ test.describe("the card for a sheet that is due", () => {
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();
     await page.createSubmission();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     const page2 = new SubmissionsPage(student2.page, lecture.id);
     await page2.goto();

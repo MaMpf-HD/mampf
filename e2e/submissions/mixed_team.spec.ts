@@ -78,7 +78,7 @@ test.describe("a team across tutorials", () => {
     await page.createSubmission();
     const ownCard = student.page.getByRole("region", { name: "Homework 1" });
     await expect(ownCard.getByText(/Monday group/)).toBeVisible();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     await student2.page.goto(`/lectures/${lecture.id}/submissions`);
     const card = student2.page.getByRole("region", { name: "Homework 1" });
@@ -168,7 +168,7 @@ test.describe("a team across tutorials", () => {
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();
     await page.createSubmission();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     const joinWithCode = async () => {
       await student2.page.goto(`/lectures/${lecture.id}/submissions`);
@@ -230,7 +230,7 @@ test.describe("a team across tutorials", () => {
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();
     await page.createSubmission();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     await student2.page.goto(`/lectures/${lecture.id}/submissions`);
     const card = student2.page.getByRole("region", { name: "Homework 1" });

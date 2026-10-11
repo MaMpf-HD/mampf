@@ -3302,7 +3302,7 @@ en:
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
     submission_invitation_html: >
-      %{issuer} issuer has invited you to join a submission to %{assignment}
+      %{issuer} has invited you to join a submission to %{assignment}
       in %{lecture}. The code to join is: %{code}. You can enter and redeem
       it in MaMpf manually or follow this %{link}.
     submission_upload_subject: >

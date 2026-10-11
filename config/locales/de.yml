@@ -3527,7 +3527,7 @@ de:
       Einladung zu Abgabe für %{assignment} in %{lecture}
     submission_invitation_html: >
       %{issuer} hat Dich eingeladen, einer Abgabe zu %{assignment} in %{lecture}
-      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn MaMpf
+      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn in MaMpf
       selbst eingeben und einlösen oder diesen %{link} benutzen.
     submission_upload_subject: >
       Erfolgreicher Upload für Abgabe zu %{assignment} in %{lecture}
