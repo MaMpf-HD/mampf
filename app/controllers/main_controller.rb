@@ -22,7 +22,8 @@ class MainController < ApplicationController
   end
 
   def comments
-    @media_comments = current_user.subscribed_media_with_latest_comments_not_by_creator
+    @lecture = Lecture.find_by(id: params[:lecture_id]) if params[:lecture_id]
+    @media_comments = current_user.media_with_latest_comments_not_by_creator(commented_media)
     @media_comments.select! do |m|
       (Reader.find_by(user: current_user, thread: m[:thread])
             &.updated_at || 1000.years.ago) < m[:latest_comment].created_at &&
@@ -40,6 +41,16 @@ class MainController < ApplicationController
   end
 
   private
+
+    # Filtered to a lecture, the page lists what the lecture's quick action
+    # on the dashboard counted, which includes media of lectures the user
+    # teaches without being subscribed to them.
+    def commented_media
+      return current_user.subscribed_commentable_media_with_comments unless @lecture
+
+      Dashboard::LectureActivity.new(user: current_user, lectures: [@lecture])
+                                .media_with_unread_comments
+    end
 
     def check_for_consent
       return unless user_signed_in?

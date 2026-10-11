@@ -707,9 +707,15 @@ class User < ApplicationRecord
   # - the latest comment by somebody else than the current user
   # - the latest comment by any user (which might include the current user)
   def subscribed_media_with_latest_comments_not_by_creator
+    media_with_latest_comments_not_by_creator(subscribed_commentable_media_with_comments)
+  end
+
+  # The same as subscribed_media_with_latest_comments_not_by_creator, for the
+  # given media instead of the subscribed ones.
+  def media_with_latest_comments_not_by_creator(commented_media)
     media = []
 
-    subscribed_commentable_media_with_comments.each do |m|
+    commented_media.each do |m|
       thread = m.commontator_thread
       comments = thread.comments
       next if comments.blank?

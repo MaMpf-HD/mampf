@@ -2983,6 +2983,8 @@ de:
       </ul>
   comments:
     title: Neue Kommentare zu Medien aus Deinen Veranstaltungen
+    title_for_lecture: Neue Kommentare zu Medien aus %{lecture}
+    all_lectures: Alle Veranstaltungen
     latest_post: Neuster Beitrag
     thread_subscribed: Abo
     who_and_when: vor %{when} von %{who}

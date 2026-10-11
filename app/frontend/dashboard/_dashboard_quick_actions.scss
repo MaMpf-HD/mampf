@@ -57,7 +57,8 @@ $quick-action-tail-offset: -0.3rem; // half the tail's diagonal, tucked under th
     }
 
     &:hover,
-    &:focus-visible {
+    &:focus-visible,
+    &:focus-within {
         rotate: 0deg;
         translate: 0 -2px;
         color: var(--bs-gray-800);
@@ -79,6 +80,18 @@ $quick-action-tail-offset: -0.3rem; // half the tail's diagonal, tucked under th
         margin-right: 0.4rem;
         color: var(--quick-action-ink);
         font-size: 0.95rem;
+    }
+
+    // Not a link itself, so its links have to look like links.
+    &__link {
+        color: var(--quick-action-ink);
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--quick-action-ink);
+        }
     }
 }
 
