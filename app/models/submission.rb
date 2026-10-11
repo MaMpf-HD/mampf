@@ -53,6 +53,47 @@ class Submission < ApplicationRecord
     users.map(&:tutorial_name).natural_sort.join(", ")
   end
 
+  def member_tutorial_ids
+    TutorialMembership.where(user_id: user_ids, lecture_id: assignment.lecture_id)
+                      .distinct.pluck(:tutorial_id)
+  end
+
+  # Once a team has points or a correction, the tutorial that marked it
+  # keeps it.
+  def movable?
+    correction.blank? && !marked?
+  end
+
+  def hand_over_targets
+    return Tutorial.none unless users.many? && movable?
+
+    Tutorial.where(id: member_tutorial_ids - [tutorial_id]).order(:title)
+  end
+
+  # A mixed team goes to the member tutorial with the fewest hand-ins, so the
+  # uploader does not choose the tutor. A tutor's hand-over holds while a
+  # member sits in that tutorial, even across a leave and a rejoin.
+  def place_team!(tutorials_before)
+    with_team_locked do
+      next unless movable?
+
+      tutorials = member_tutorial_ids
+      next if tutorials.empty?
+
+      file_under!(placement_for(tutorials, tutorials_before))
+    end
+  end
+
+  def hand_over!(target)
+    with_team_locked do
+      next false unless target&.in?(hand_over_targets)
+
+      update!(handed_over_to_id: target.id)
+      file_under!(target.id)
+      true
+    end
+  end
+
   def manuscript_filename
     return if manuscript.blank?
 
@@ -291,7 +332,16 @@ class Submission < ApplicationRecord
           report[:rejected].push(submission.team)
           next
         end
-        submission.update(correction: file_shrine.to_json)
+        moved = submission.with_lock do
+          next true unless submission.tutorial_id == tutorial.id
+
+          submission.update(correction: file_shrine.to_json)
+          false
+        end
+        if moved
+          report[:invalid_id].push(filename)
+          next
+        end
         unless submission.valid?
           report[:invalid_file].push(filename)
           next
@@ -305,6 +355,42 @@ class Submission < ApplicationRecord
   end
 
   private
+
+    # Takes the submission first and the team's participations second, the
+    # order a team's point entry takes them in: a move and a point entry or
+    # correction then wait for each other, and each sees the other's result.
+    def with_team_locked
+      with_lock do
+        if assignment.assessable?
+          assessment.assessment_participations.where(user_id: user_ids).lock.load
+        end
+        yield
+      end
+    end
+
+    def placement_for(tutorials, tutorials_before)
+      return handed_over_to_id if handed_over_to_id.in?(tutorials)
+      return tutorials.first if tutorials.one?
+      return tutorial_id if tutorials_before.many? && tutorial_id.in?(tutorials)
+
+      least_busy(tutorials)
+    end
+
+    # The participations move with the submission, so the marking backlog
+    # counts the team in the tutorial that marks it.
+    def file_under!(target_id)
+      update!(tutorial_id: target_id) unless tutorial_id == target_id
+      return unless assignment.assessable?
+
+      assessment.assessment_participations.where(user_id: user_ids)
+                .update_all(tutorial_id: target_id, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    def least_busy(tutorials)
+      counts = Submission.proper.where(assignment: assignment, tutorial_id: tutorials)
+                         .where.not(id: id).group(:tutorial_id).count
+      tutorials.min_by { |tutorial| [counts.fetch(tutorial, 0), tutorial] }
+    end
 
     def matching_lecture
       return true if tutorial&.lecture == assignment&.lecture

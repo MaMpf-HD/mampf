@@ -261,22 +261,18 @@ class User < ApplicationRecord
   SEARCHED_FIELDS = [:first_name, :last_name, :name, :email, :matriculation_number,
                      :uni_id].freeze
 
-  pg_search_scope :search_by_similarity,
-                  against: SEARCHED_FIELDS,
-                  using: {
-                    tsearch: { prefix: true, any_word: true },
-                    trigram: { word_similarity: true, threshold: 0.3 }
-                  }
+  # Only word beginnings count: a similarity search would mix "Neumann" and
+  # "Zimmermann" into the hits for "Bergmann".
   pg_search_scope :search_by_word_start,
                   against: SEARCHED_FIELDS,
-                  using: { tsearch: { prefix: true, any_word: true } }
-
-  # Search::Filters::FulltextFilter calls search_by_title on every model. Below
-  # three characters only word beginnings count: the similarity search would
-  # match most addresses by their ".de".
-  def self.search_by_title(term)
-    term.to_s.strip.length < 3 ? search_by_word_start(term) : search_by_similarity(term)
-  end
+                  using: { tsearch: { prefix: true, any_word: true } },
+                  ignoring: :accents
+  # Names only: addresses share their domains, and a similar matriculation
+  # number belongs to somebody else.
+  pg_search_scope :search_by_similar_name,
+                  against: [:first_name, :last_name, :name],
+                  using: { trigram: { word_similarity: true, threshold: 0.3 } },
+                  ignoring: :accents
 
   def self.default_search_order
     Arel.sql("LOWER(unaccent(users.last_name)), LOWER(unaccent(users.first_name)), " \
@@ -707,9 +703,15 @@ class User < ApplicationRecord
   # - the latest comment by somebody else than the current user
   # - the latest comment by any user (which might include the current user)
   def subscribed_media_with_latest_comments_not_by_creator
+    media_with_latest_comments_not_by_creator(subscribed_commentable_media_with_comments)
+  end
+
+  # The same as subscribed_media_with_latest_comments_not_by_creator, for the
+  # given media instead of the subscribed ones.
+  def media_with_latest_comments_not_by_creator(commented_media)
     media = []
 
-    subscribed_commentable_media_with_comments.each do |m|
+    commented_media.each do |m|
       thread = m.commontator_thread
       comments = thread.comments
       next if comments.blank?
@@ -812,7 +814,7 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
   end
 
   def recent_submission_partners(lecture)
@@ -824,7 +826,19 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
+  end
+
+  # A partner without a tutorial in the lecture could not accept, and neither
+  # could one from another tutorial where the lecture keeps teams within one,
+  # so they are not offered.
+  def partners_who_may_join(lecture, partner_ids)
+    seats = TutorialMembership.where(lecture_id: lecture.id)
+    partners = User.where(id: partner_ids - [id]).where(id: seats.select(:user_id))
+    return partners if lecture.cross_tutorial_teams?
+
+    own = seats.where(user_id: id).select(:tutorial_id)
+    partners.where.not(id: seats.where.not(tutorial_id: own).select(:user_id))
   end
 
   def rostered_tutorial_in(lecture)

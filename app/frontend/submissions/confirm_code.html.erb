@@ -1,0 +1,21 @@
+<div class="container small-width lecture-pane mt-4">
+  <h1 class="h4"><%= t("submission.confirm_code.title") %></h1>
+
+  <p>
+    <%= t("submission.confirm_code.question",
+          team: @submission.users.map(&:tutorial_name).to_sentence,
+          assignment: @assignment.title,
+          lecture: @assignment.lecture.title_for_viewers) %>
+  </p>
+
+  <div class="d-flex gap-2">
+    <%= button_to t("submission.confirm_code.join"),
+                  redeem_submission_code_path,
+                  params: { code: @submission.token },
+                  class: "btn btn-primary" %>
+
+    <%= link_to t("buttons.cancel"),
+                lecture_submissions_path(@assignment.lecture),
+                class: "btn btn-secondary" %>
+  </div>
+</div>

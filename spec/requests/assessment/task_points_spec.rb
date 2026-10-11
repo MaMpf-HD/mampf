@@ -470,8 +470,10 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       # afterwards - the file is in that tutor's stack. Rejected, the row
       # looks blank again and still stays.
       it "leaves a row behind an uploaded hand-in with the group the upload went to" do
+        tutorial_membership.update!(tutorial: tutorial)
         submission = create(:submission, :with_manuscript, assignment: assignment,
                                                            tutorial: tutorial, users: [student])
+        tutorial_membership.update!(tutorial: tutorial2)
         submission.update!(accepted: false)
         participation.update!(submitted_at: nil)
 

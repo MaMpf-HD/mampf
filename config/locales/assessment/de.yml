@@ -291,6 +291,11 @@ de:
       member_added: '%{name} ist jetzt im Team.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
+      hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
+      hand_over_hint: >-
+        Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib
+        es an eines davon; Punkte und Korrektur werden dann dort eingetragen.
+      marked_elsewhere: 'Korrektur in %{tutorial}'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
       no_assessable: 'Hausaufgabe oder Vortrag nicht gefunden.'

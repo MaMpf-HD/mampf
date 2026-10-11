@@ -76,6 +76,15 @@ RSpec.describe(Dashboard::LectureActivity) do
     end
   end
 
+  describe "#media_with_unread_comments" do
+    it "lists the media whose comments #unread_comments counts" do
+      unread = commented_medium(creator: other)
+      commented_medium(creator: user)
+
+      expect(digest.media_with_unread_comments).to contain_exactly(unread)
+    end
+  end
+
   describe "#unread_forum_topics" do
     it "is zero for a lecture without a forum" do
       expect(digest.unread_forum_topics(lecture)).to eq(0)

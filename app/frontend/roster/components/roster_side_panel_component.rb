@@ -265,6 +265,11 @@ class RosterSidePanelComponent < ViewComponent::Base
     "#{t("buttons.copy_email_address")}: #{student.email}"
   end
 
+  # Joined the way a mail client takes several recipients in one field.
+  def all_emails
+    students.map(&:email).join(", ")
+  end
+
   def overbooking_warning
     t("roster.warnings.confirm_overbooking")
   end

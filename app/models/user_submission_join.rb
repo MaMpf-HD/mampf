@@ -4,6 +4,7 @@ class UserSubmissionJoin < ApplicationRecord
 
   validate :only_one_per_assignment, on: :create
   validate :max_team_size, on: :create
+  validate :same_tutorial, on: :create
 
   delegate :assignment, to: :submission
 
@@ -25,5 +26,14 @@ class UserSubmissionJoin < ApplicationRecord
       return true if submission.users.size < lecture.submission_max_team_size
 
       errors.add(:base, :team_size)
+    end
+
+    def same_tutorial
+      lecture = submission.assignment.lecture
+      return if lecture.cross_tutorial_teams?
+      return unless TutorialMembership.where(user: user, lecture_id: lecture.id)
+                                      .where.not(tutorial_id: submission.tutorial_id).exists?
+
+      errors.add(:base, :other_tutorial)
     end
 end
