@@ -328,16 +328,16 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
   describe "the button that copies every address" do
     let(:label) { I18n.t("buttons.copy_all_email_addresses") }
 
-    it "copies the addresses of everyone in the panel" do
-      students = [create(:confirmed_user, email: "alice@example.com"),
-                  create(:confirmed_user, email: "bob@example.com")]
+    it "copies the addresses of everyone in the panel, in the panel's order" do
+      students = [create(:confirmed_user, last_name: "Brown", email: "bob@example.com"),
+                  create(:confirmed_user, last_name: "Adams", email: "alice@example.com")]
       rendered = render_inline(described_class.new(registerable: tutorial,
                                                    students: students))
 
       button = rendered.at_css("button[aria-label='#{label}']")
       expect(button.ancestors("[data-controller='clipboard']").first
                    .attr("data-clipboard-text-value"))
-        .to eq(students.map(&:email).join(", "))
+        .to eq("alice@example.com, bob@example.com")
     end
 
     it "is missing from an empty panel" do
