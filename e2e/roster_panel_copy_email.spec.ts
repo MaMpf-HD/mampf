@@ -45,7 +45,7 @@ test.describe("the roster panel's copy button", () => {
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       await page.getByRole("button", ADDRESS_BUTTON).click();
 
-      await expect(page.getByRole("status"))
+      await expect(page.getByRole("status").filter({ hasText: /\S/ }))
         .toHaveText("The email address could not be copied.");
     });
 });
