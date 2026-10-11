@@ -659,53 +659,65 @@ class SubmissionsController < ApplicationController
     end
 
     def send_upload_email(users)
-      users.email_for_submission_upload.each do |u|
+      mails = users.email_for_submission_upload.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 uploader: current_user,
                                 filename: @submission.manuscript_filename)
-                          .submission_upload_email.deliver_later
+                          .submission_upload_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_upload_removal_email(users)
-      users.email_for_submission_removal.each do |u|
+      mails = users.email_for_submission_removal.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 remover: current_user,
                                 filename: @old_filename)
-                          .submission_upload_removal_email.deliver_later
+                          .submission_upload_removal_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_correction_upload_email(users)
-      users.email_for_correction_upload.each do |u|
+      mails = users.email_for_correction_upload.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 tutor: current_user)
-                          .correction_upload_email.deliver_later
+                          .correction_upload_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_acceptance_email(users)
-      users.email_for_submission_decision.each do |u|
+      mails = users.email_for_submission_decision.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission)
-                          .submission_acceptance_email.deliver_later
+                          .submission_acceptance_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_rejection_email(users)
-      users.email_for_submission_decision.each do |u|
+      mails = users.email_for_submission_decision.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission)
-                          .submission_rejection_email.deliver_later
+                          .submission_rejection_email
       end
+      deliver_after_commit(mails)
+    end
+
+    # The mails are built with the state the action leaves; they are queued
+    # once it commits, so the worker reads that state too, and a rolled-back
+    # action sends nothing.
+    def deliver_after_commit(mails)
+      ActiveRecord.after_all_transactions_commit { mails.each(&:deliver_later) }
     end
 
     def check_code_validity
@@ -790,13 +802,14 @@ class SubmissionsController < ApplicationController
     end
 
     def send_leave_email
-      (@submission.users.email_for_submission_leave - [current_user]).each do |u|
+      mails = (@submission.users.email_for_submission_leave - [current_user]).map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 user: current_user)
-                          .submission_leave_email.deliver_later
+                          .submission_leave_email
       end
+      deliver_after_commit(mails)
     end
 
     def remove_invitee_status

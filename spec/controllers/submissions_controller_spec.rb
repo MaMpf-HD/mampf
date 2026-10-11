@@ -155,4 +155,23 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       expect(partner_p.submitted_at).to be_present
     end
   end
+
+  describe "#send_acceptance_email" do
+    before { user.update!(email_for_submission_decision: true) }
+
+    def accept_within_transaction(rollback:)
+      ActiveRecord::Base.transaction do
+        controller_instance.send(:send_acceptance_email, submission.users)
+        raise(ActiveRecord::Rollback) if rollback
+      end
+    end
+
+    it "queues the mail once the change commits" do
+      expect { accept_within_transaction(rollback: false) }.to have_enqueued_mail
+    end
+
+    it "queues nothing for a change that is rolled back" do
+      expect { accept_within_transaction(rollback: true) }.not_to have_enqueued_mail
+    end
+  end
 end

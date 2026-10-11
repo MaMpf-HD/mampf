@@ -85,9 +85,12 @@ class SubmissionRowComponent < ViewComponent::Base
   def copy_emails
     return @submission.users.map(&:email) unless elsewhere?
 
-    own = @grading_scope.tutorial_memberships.where(user_id: @submission.user_ids)
-                        .pluck(:user_id)
-    @submission.users.select { |user| user.id.in?(own) }.map(&:email)
+    own = if @member_tutorials
+      @submission.users.select { |user| @member_tutorials[user.id] == @grading_scope }
+    else
+      @submission.users.where(id: @grading_scope.tutorial_memberships.select(:user_id))
+    end
+    own.map(&:email)
   end
 
   def tasks

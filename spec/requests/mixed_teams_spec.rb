@@ -276,6 +276,20 @@ RSpec.describe("Teams across tutorials", type: :request) do
     end
   end
 
+  it "does not offer a past partner who sits in no tutorial of the lecture" do
+    seatless = create(:confirmed_user, name_in_tutorials: "Seatless Partner")
+    create(:lecture_membership, lecture: lecture, user: seatless)
+    earlier = create(:assignment, :expired, lecture: lecture, title: "Homework 0")
+    create(:submission, :with_manuscript, assignment: earlier, tutorial: tutorial_x,
+                                          users: [anna, seatless])
+    submission = hand_in(tutorial_x, anna)
+    sign_in anna
+
+    get enter_submission_invitees_path(submission)
+
+    expect(response.body).not_to include("Seatless Partner")
+  end
+
   describe "a lecture that keeps teams within one tutorial" do
     before { lecture.update!(cross_tutorial_teams: false) }
 

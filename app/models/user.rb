@@ -827,13 +827,14 @@ class User < ApplicationRecord
     partners_who_may_join(lecture, partner_ids)
   end
 
-  # Where the lecture keeps teams within one tutorial, a partner who sits in
-  # another tutorial could not accept, so they are not offered.
+  # A partner without a tutorial in the lecture could not accept, and neither
+  # could one from another tutorial where the lecture keeps teams within one,
+  # so they are not offered.
   def partners_who_may_join(lecture, partner_ids)
-    partners = User.where(id: partner_ids - [id])
+    seats = TutorialMembership.where(lecture_id: lecture.id)
+    partners = User.where(id: partner_ids - [id]).where(id: seats.select(:user_id))
     return partners if lecture.cross_tutorial_teams?
 
-    seats = TutorialMembership.where(lecture_id: lecture.id)
     own = seats.where(user_id: id).select(:tutorial_id)
     partners.where.not(id: seats.where.not(tutorial_id: own).select(:user_id))
   end

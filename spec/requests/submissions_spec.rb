@@ -1495,6 +1495,7 @@ RSpec.describe("Submissions", type: :request) do
       # before - the first team-up goes through the code.
       it "offers a past partner when inviting" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])
@@ -1509,6 +1510,7 @@ RSpec.describe("Submissions", type: :request) do
 
       it "answers an invitation with the card naming who was invited_users" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])
