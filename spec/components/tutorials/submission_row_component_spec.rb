@@ -429,4 +429,84 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       expect(rendered_content).to include("submission-row-#{submission.id}")
     end
   end
+
+  describe "a team across tutorials" do
+    let(:other_tutor) { create(:confirmed_user) }
+    let(:other_tutorial) do
+      create(:tutorial, :with_tutor_by_id, tutor_id: other_tutor.id, lecture: lecture,
+                                           title: "Tuesday")
+    end
+    let(:team) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student, student2])
+    end
+
+    before do
+      lecture.update!(cross_tutorial_teams: true)
+      create(:tutorial_membership, tutorial: tutorial, user: student)
+      create(:tutorial_membership, tutorial: other_tutorial, user: student2)
+    end
+
+    def render_for(user, scope)
+      allow(vc_test_controller).to receive(:current_user).and_return(user)
+      render_inline(described_class.new(submission: team, assignment: assignment,
+                                        grading_scope: scope))
+    end
+
+    def labelled(html, label)
+      html.css("[aria-label]").select { |node| node["aria-label"] == label }
+    end
+
+    let(:hand_over) { I18n.t("assessment.task_points.hand_over") }
+
+    it "offers the marking tutor to hand it over to the other member's tutorial" do
+      html = render_for(tutor, tutorial)
+
+      expect(labelled(html, hand_over)).to be_present
+      expect(html.css("button.dropdown-item").map { |item| item.text.strip })
+        .to include(other_tutorial.title_with_tutors)
+    end
+
+    it "shows the other tutor the team read-only, saying who marks it" do
+      create(:assessment_task, assessment: assessment, max_points: 10)
+      html = render_for(other_tutor, other_tutorial)
+
+      expect(html.text).to include(I18n.t("assessment.task_points.marked_elsewhere",
+                                          tutorial: tutorial.title_with_tutors))
+      inputs = html.css("input[type=number]")
+      expect(inputs).to be_present
+      expect(inputs.pluck("disabled")).to all(be_present)
+      expect(labelled(html, I18n.t("assessment.grading_tutorial.save_row"))).to be_empty
+      expect(labelled(html, hand_over)).to be_empty
+      expect(labelled(html, I18n.t("assessment.grading_tutorial.show_hand_in"))).to be_present
+    end
+
+    it "lets the other tutor copy only their own student's address" do
+      html = render_for(other_tutor, other_tutorial)
+
+      expect(html.css("[data-clipboard-text-value]").first["data-clipboard-text-value"])
+        .to eq(student2.email)
+    end
+
+    it "offers the hand-over from the table's tutorials without asking the submission" do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      allow(team).to receive(:hand_over_targets).and_raise("asked")
+
+      html = render_inline(described_class.new(
+                             submission: team, assignment: assignment, grading_scope: tutorial,
+                             participations: [],
+                             member_tutorials: { student.id => tutorial,
+                                                 student2.id => other_tutorial }
+                           ))
+
+      expect(html.css("button.dropdown-item").map { |item| item.text.strip })
+        .to eq([other_tutorial.title_with_tutors])
+    end
+
+    it "offers no hand-over once the team has a correction" do
+      team.update!(correction: File.open("#{SPEC_FILES}/manuscript.pdf", "rb"))
+
+      expect(labelled(render_for(tutor, tutorial), hand_over)).to be_empty
+    end
+  end
 end

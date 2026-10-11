@@ -884,8 +884,11 @@ Rails.application.routes.draw do
       as: "enter_submission_code"
 
   get "submissions/redeem_code",
-      to: "submissions#redeem_code",
+      to: "submissions#confirm_code",
       as: "redeem_submission_code"
+
+  post "submissions/redeem_code",
+       to: "submissions#redeem_code"
 
   delete "submissions/:id/leave",
          to: "submissions#leave",
@@ -934,6 +937,10 @@ Rails.application.routes.draw do
   patch "submissions/:id/reject",
         to: "submissions#reject",
         as: "reject_submission"
+
+  patch "submissions/:id/hand_over",
+        to: "submissions#hand_over",
+        as: "hand_over_submission"
 
   patch "participations/mark_as_participated",
         to: "assessment/task_points#mark_as_participated",

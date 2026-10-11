@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -545,6 +545,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.date "submission_deletion_date", null: false
     t.boolean "uses_exam_eligibility", default: true, null: false
     t.datetime "assignments_complete_at"
+    t.boolean "cross_tutorial_teams", default: false, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
@@ -944,7 +945,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.datetime "last_modification_by_users_at", precision: nil
     t.boolean "accepted"
     t.datetime "corrected_at"
+    t.bigint "handed_over_to_id"
     t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
+    t.index ["handed_over_to_id"], name: "index_submissions_on_handed_over_to_id"
     t.index ["token"], name: "index_submissions_on_token", unique: true
     t.index ["tutorial_id"], name: "index_submissions_on_tutorial_id"
   end
@@ -1591,6 +1594,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
   add_foreign_key "student_performance_rules", "lectures"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
+  add_foreign_key "submissions", "tutorials", column: "handed_over_to_id", on_delete: :nullify
   add_foreign_key "talk_tag_joins", "tags"
   add_foreign_key "talk_tag_joins", "talks"
   add_foreign_key "talks", "lectures"

@@ -347,6 +347,29 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(rendered_content).to include("marking-table")
       end
     end
+
+    describe "a team another tutorial marks" do
+      let(:member) { create(:confirmed_user) }
+      let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:team) do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: other_tutorial,
+                                              users: [member, create(:confirmed_user)])
+      end
+
+      before { create(:tutorial_membership, tutorial: tutorial, user: member) }
+
+      it "shows the row of the member who sits here" do
+        allow(vc_test_controller).to receive(:current_user).and_return(create(:confirmed_user))
+
+        render_inline(component)
+
+        expect(rendered_content).to include("submission-row-#{team.id}")
+      end
+
+      it "leaves it to the marking tutorial's summary" do
+        expect(component.row_statuses).to be_empty
+      end
+    end
   end
 
   describe "when grading_scope is a Lecture" do

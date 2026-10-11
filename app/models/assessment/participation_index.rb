@@ -65,10 +65,9 @@ module Assessment
       # A row behind an uploaded hand-in is the upload's, rejected or not:
       # its group is where the file went.
       def group_holding(row)
-        return row.tutorial unless blank?(row)
-
         hand_in = hand_in_for(row)
         return hand_in.tutorial if hand_in
+        return row.tutorial unless blank?(row)
 
         TutorialMembership.find_by(user_id: row.user_id,
                                    lecture_id: row.assessment.lecture_id)&.tutorial
