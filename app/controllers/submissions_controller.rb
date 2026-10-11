@@ -22,8 +22,8 @@ class SubmissionsController < ApplicationController
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   authorize_resource
-  around_action :hold_submission, only: [:update, :add_correction, :delete_correction,
-                                         :accept, :reject, :hand_over]
+  around_action :hold_submission, only: [:update, :leave, :add_correction,
+                                         :delete_correction, :accept, :reject, :hand_over]
 
   class TutorialNotRosteredError < StandardError; end
   rescue_from TutorialNotRosteredError do
@@ -196,7 +196,6 @@ class SubmissionsController < ApplicationController
   # is a different button. The card says so rather than quietly doing nothing.
   def leave
     left = ActiveRecord::Base.transaction do
-      @submission.lock!
       next false if @submission.users.one?
 
       clear_submitted_at([current_user])
@@ -750,10 +749,8 @@ class SubmissionsController < ApplicationController
       joined = ActiveRecord::Base.transaction do
         @submission.lock!
         own_row&.lock!
-        if marked_on_own?
-          @error = I18n.t("submission.marked_on_own")
-          raise(ActiveRecord::Rollback)
-        end
+        check_code_validity
+        raise(ActiveRecord::Rollback) if @error
 
         tutorials_before = @submission.member_tutorial_ids
         @join = UserSubmissionJoin.new(user: current_user, submission: @submission)
