@@ -85,18 +85,22 @@ test.describe("marking table", () => {
     for (const name of ["Ada Lovelace", "Grace Hopper"]) {
       const student = await factory.create("confirmed_user", [], { name_in_tutorials: name });
       await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: student.id });
-      await factory.create("tutorial_membership", [], {
-        tutorial_id: tutorial.id, user_id: student.id,
-      });
       members.push(student);
     }
     const [ada] = members;
     await handIn(factory, assignment.id, tutorial.id, ada.id);
+    // Before the tutorial memberships: from then on the minutely backfill of
+    // the expired sheet may write a blank participation for each of them.
     const adaRow = await factory.create("assessment_participation", [], {
       assessment_id: assessmentId, user_id: ada.id, tutorial_id: tutorial.id,
       submitted_at: new Date(Date.now() - 2 * 86400000).toISOString(),
     });
     await scoreTask(factory, task.id, adaRow.id, 7);
+    for (const member of members) {
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: member.id,
+      });
+    }
 
     await tutor.page.goto(
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
@@ -138,11 +142,9 @@ test.describe("marking table", () => {
       await factory.create("lecture_membership", [], {
         lecture_id: lecture.id, user_id: student.id,
       });
-      await factory.create("tutorial_membership", [], {
-        tutorial_id: tutorial.id, user_id: student.id,
-      });
       students.push(student);
     }
+    // Before the tutorial memberships, for the backfill: see above.
     const marked = await factory.create("assessment_participation", [], {
       assessment_id: assessmentId,
       user_id: students[0].id,
@@ -151,6 +153,11 @@ test.describe("marking table", () => {
       submitted_at: new Date().toISOString(),
     });
     await scoreTask(factory, task.id, marked.id, 7);
+    for (const student of students) {
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: student.id,
+      });
+    }
 
     await tutor.page.goto(
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
