@@ -172,6 +172,18 @@ RSpec.describe("Support users", type: :request) do
       expect(results).not_to include("emmy@example.org")
     end
 
+    it "keeps suggesting similar names on the next page" do
+      create_list(:confirmed_user, 21, last_name: "Noether")
+
+      search(fulltext: "Nother")
+      next_page = Nokogiri::HTML(response.body).at_xpath("//nav//a[normalize-space()='2']")
+      get(next_page[:href])
+
+      results = Nokogiri::HTML(response.body).at_css("#support-user-results")
+      expect(results.text).to include("People with a similar name:", "22 people")
+      expect(results.css("tbody tr").size).to eq(2)
+    end
+
     it "finds an address from its beginning" do
       search(fulltext: "emmy@example")
 

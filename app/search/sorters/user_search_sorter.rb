@@ -1,6 +1,6 @@
 # Lists people by last name, first name and address. When a fulltext was
-# given, the closest matches come first and only ties go by name. The name
-# columns join the SELECT list because the search runs with DISTINCT.
+# given, the closest matches come first and equally close ones go by name.
+# The name columns join the SELECT list because the search runs with DISTINCT.
 module Search
   module Sorters
     class UserSearchSorter < BaseSorter

@@ -261,8 +261,6 @@ class User < ApplicationRecord
   SEARCHED_FIELDS = [:first_name, :last_name, :name, :email, :matriculation_number,
                      :uni_id].freeze
 
-  ADDRESS_SIMILARITY = 0.5
-
   # Only word beginnings count: a similarity search would mix "Neumann" and
   # "Zimmermann" into the hits for "Bergmann".
   pg_search_scope :search_by_word_start,
@@ -275,38 +273,6 @@ class User < ApplicationRecord
                   against: [:first_name, :last_name, :name],
                   using: { trigram: { word_similarity: true, threshold: 0.3 } },
                   ignoring: :accents
-
-  # Matches addresses from their beginning: the full-text search keeps an
-  # address as one word, so "emmy@example" would match nothing. Selects
-  # pg_search_rank like the pg_search scopes.
-  def self.search_by_address(address)
-    address = address.to_s.strip
-    where(arel_table[:email].matches("#{sanitize_sql_like(address)}%"))
-      .select(arel_table[Arel.star],
-              similarity(Arel::Nodes.build_quoted(address), arel_table[:email])
-                .as("pg_search_rank"))
-  end
-
-  # Compares only what comes before the "@": the addresses of one university
-  # share what comes after it. Finds the owner of an address registered with a
-  # typo. Selects pg_search_rank like the pg_search scopes.
-  def self.search_by_similar_address(address)
-    searched = address.to_s.strip.split("@").first.to_s
-    where(local_part_similarity(searched).gteq(ADDRESS_SIMILARITY))
-      .select(arel_table[Arel.star], local_part_similarity(searched).as("pg_search_rank"))
-  end
-
-  def self.local_part_similarity(searched)
-    local_part = Arel::Nodes::NamedFunction.new(
-      "split_part", [arel_table[:email], Arel::Nodes.build_quoted("@"), Arel::Nodes.build_quoted(1)]
-    )
-    similarity(Arel::Nodes.build_quoted(searched), local_part)
-  end
-
-  def self.similarity(left, right)
-    Arel::Nodes::NamedFunction.new("similarity", [left, right])
-  end
-  private_class_method :local_part_similarity, :similarity
 
   def self.default_search_order
     Arel.sql("LOWER(unaccent(users.last_name)), LOWER(unaccent(users.first_name)), " \
