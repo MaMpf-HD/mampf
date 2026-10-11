@@ -48,6 +48,7 @@ class SubmissionAbility
     can [:show_manuscript, :show_correction], Submission do |submission|
       user.in?(submission.users) || submission.tutorial.correctable_by?(user) ||
         TutorialMembership.exists?(user_id: submission.user_ids,
+                                   lecture_id: submission.assignment.lecture_id,
                                    tutorial_id: user.given_tutorial_ids)
     end
   end

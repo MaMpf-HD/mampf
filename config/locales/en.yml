@@ -685,7 +685,8 @@ en:
           submission team. The hand-in then goes to the tutorial involved that
           has the fewest hand-ins, and its tutor can hand it over to another
           tutorial involved. When it is not ticked, students can only join
-          teams from their own tutorial. Existing teams stay as they are.
+          teams from their own tutorial. Teams that have already handed in keep
+          their members; the setting only applies to new joins.
         submission_max_team_size: >
           Here you can enter how many people are maximally allowed for
           one submission. If you enter nothing, there will be no restriction on

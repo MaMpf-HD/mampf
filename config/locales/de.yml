@@ -782,8 +782,9 @@ de:
           ein Abgabeteam bilden. Die Abgabe geht dann an das beteiligte
           Tutorium mit den wenigsten Abgaben, und dessen TutorIn kann sie an
           ein anderes beteiligtes Tutorium übergeben. Ohne Haken kann man nur
-          Teams aus dem eigenen Tutorium beitreten. Bestehende Teams bleiben
-          so, wie sie sind.
+          Teams aus dem eigenen Tutorium beitreten. Bereits abgegebene Teams
+          behalten ihre Mitglieder; die Einstellung gilt nur für neue
+          Beitritte.
         submission_max_team_size: >
           Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
           gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.

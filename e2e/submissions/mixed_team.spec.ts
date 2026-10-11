@@ -26,8 +26,8 @@ async function seat(
  * the tutorial that has fewer hand-ins, whatever the uploader's own; the
  * tutor it lands with may hand it over to the other member's tutorial; and
  * the other tutor sees the team, its points and its file, without being able
- * to change anything. A lecture can keep its teams within one tutorial
- * instead.
+ * to change anything. All of that only where the lecturer allows teams
+ * across tutorials; by default a join from another tutorial is refused.
  */
 test.describe("a team across tutorials", () => {
   test("is filed by load, handed over by a tutor, and read by the other", async ({
@@ -60,6 +60,15 @@ test.describe("a team across tutorials", () => {
     await factory.create("assessment_task", [], {
       assessment_id: assessment.id, max_points: 10,
     });
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    const form = dashboard.submissionSettingsForm;
+    await form.getByLabel("allow submission teams across tutorials").check();
+    await form.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(teacher.page.getByText("Submission settings successfully updated."))
+      .toBeVisible();
+    await expect(form.getByLabel("allow submission teams across tutorials")).toBeChecked();
     // The Monday group already has a hand-in, so the team goes to Tuesday's,
     // although the student who uploads sits on Monday.
     const busy = await factory.create("confirmed_user", [], { name_in_tutorials: "Ada Lovelace" });
@@ -132,7 +141,7 @@ test.describe("a team across tutorials", () => {
     expect(file.headers()["content-type"]).toContain("application/pdf");
   });
 
-  test("is refused once the lecturer keeps teams within one tutorial", async ({
+  test("is refused unless the lecturer allows it", async ({
     factory,
     teacher,
     student,
@@ -153,17 +162,6 @@ test.describe("a team across tutorials", () => {
       title: "Homework 1",
       deadline: new Date(Date.now() + 7 * 86400000).toISOString(),
     });
-
-    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
-    await dashboard.gotoOverview();
-    const form = dashboard.submissionSettingsForm;
-    const box = form.getByLabel("allow submission teams across tutorials");
-    await expect(box).toBeChecked();
-    await box.uncheck();
-    await form.getByRole("button", { name: "Save", exact: true }).click();
-    await expect(teacher.page.getByText("Submission settings successfully updated."))
-      .toBeVisible();
-    await expect(form.getByLabel("allow submission teams across tutorials")).not.toBeChecked();
 
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();

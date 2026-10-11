@@ -595,7 +595,7 @@ class LecturesController < ApplicationController
 
       flash.now[:notice] = t("admin.lecture.updated")
       streams = [
-        turbo_stream.replace(
+        turbo_stream.update(
           "lecture-submission-settings",
           partial: "assessment/assessments/submission_settings",
           locals: { lecture: @lecture }

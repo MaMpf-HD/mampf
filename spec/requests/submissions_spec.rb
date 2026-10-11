@@ -392,6 +392,7 @@ RSpec.describe("Submissions", type: :request) do
       end
 
       it "opens it with a seat in another group of the lecture" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)
@@ -403,6 +404,7 @@ RSpec.describe("Submissions", type: :request) do
       # The group named on the form is the one the work is filed under - the
       # tutor who has it - not the seat the reader happens to have now.
       it "names the group the work is filed under, not the reader's seat" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)

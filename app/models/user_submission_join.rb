@@ -28,11 +28,11 @@ class UserSubmissionJoin < ApplicationRecord
       errors.add(:base, :team_size)
     end
 
-    # Where the lecture keeps teams within one tutorial, only somebody who
-    # sits in the hand-in's tutorial joins it.
     def same_tutorial
-      return if submission.assignment.lecture.cross_tutorial_teams?
-      return if TutorialMembership.exists?(user: user, tutorial_id: submission.tutorial_id)
+      lecture = submission.assignment.lecture
+      return if lecture.cross_tutorial_teams?
+      return unless TutorialMembership.where(user: user, lecture_id: lecture.id)
+                                      .where.not(tutorial_id: submission.tutorial_id).exists?
 
       errors.add(:base, :other_tutorial)
     end

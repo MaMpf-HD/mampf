@@ -442,6 +442,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
 
     before do
+      lecture.update!(cross_tutorial_teams: true)
       create(:tutorial_membership, tutorial: tutorial, user: student)
       create(:tutorial_membership, tutorial: other_tutorial, user: student2)
     end

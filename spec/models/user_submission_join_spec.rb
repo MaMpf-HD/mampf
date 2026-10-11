@@ -45,13 +45,13 @@ RSpec.describe(UserSubmissionJoin, type: :model) do
       FactoryBot.build(:user_submission_join, submission: submission, user: user)
     end
 
-    it "takes somebody from another tutorial by default" do
+    it "takes somebody from another tutorial where the lecture allows it" do
+      lecture.update!(cross_tutorial_teams: true)
+
       expect(join_from(other_tutorial)).to be_valid
     end
 
-    context "when the lecture keeps teams within one tutorial" do
-      before { lecture.update!(cross_tutorial_teams: false) }
-
+    context "when the lecture keeps teams within one tutorial, as by default" do
       it "takes somebody from the hand-in's tutorial" do
         expect(join_from(tutorial)).to be_valid
       end

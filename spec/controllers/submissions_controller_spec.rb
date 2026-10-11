@@ -67,6 +67,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
     end
 
     it "files the row of a joiner from another group with the hand-in" do
+      lecture.update!(cross_tutorial_teams: true)
       joiner = create(:confirmed_user)
       other_tutorial = create(:tutorial, lecture: lecture)
       create(:lecture_membership, user: joiner, lecture: lecture)

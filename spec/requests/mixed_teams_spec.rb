@@ -6,7 +6,7 @@ require "rails_helper"
 RSpec.describe("Teams across tutorials", type: :request) do
   include ActiveSupport::Testing::TimeHelpers
 
-  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:lecture) { create(:lecture, :released_for_all, cross_tutorial_teams: true) }
   let(:assignment) do
     create(:assignment, lecture: lecture, deadline: 1.week.from_now)
   end
@@ -184,6 +184,18 @@ RSpec.describe("Teams across tutorials", type: :request) do
       sign_in outsider
 
       get show_submission_manuscript_path(submission)
+
+      expect(response).to redirect_to(root_url)
+    end
+
+    it "is not a tutor of a member in another lecture" do
+      elsewhere = create(:tutorial)
+      create(:tutor_tutorial_join, tutorial: elsewhere, tutor: tutor_y)
+      create(:tutorial_membership, tutorial: elsewhere, user: anna)
+      solo = hand_in(tutorial_x, anna)
+      sign_in tutor_y
+
+      get show_submission_manuscript_path(solo)
 
       expect(response).to redirect_to(root_url)
     end
