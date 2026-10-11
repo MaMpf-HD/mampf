@@ -292,10 +292,18 @@ test.describe("the card for a sheet that is due", () => {
     await expect(student2.page.getByText(
       `Do you want to join the submission team of ${student.user.name_in_tutorials}`,
     )).toBeVisible();
-    await student2.page.getByRole("button", { name: "Join" }).click();
 
+    const ownCard = student.page.getByRole("region", { name: "Homework 1" });
+    await student.page.reload();
+    await expect(ownCard.getByRole("link", { name: "Replace file" })).toBeVisible();
+    await expect(ownCard.getByText(student2.user.name_in_tutorials)).toHaveCount(0);
+
+    await student2.page.getByRole("button", { name: "Join" }).click();
     const card = student2.page.getByRole("region", { name: "Homework 1" });
     await expect(card.getByText(student.user.name_in_tutorials)).toBeVisible();
+
+    await student.page.reload();
+    await expect(ownCard.getByText(student2.user.name_in_tutorials)).toBeVisible();
   });
 
   // Both have the form open; whoever saves second would overwrite the other's
