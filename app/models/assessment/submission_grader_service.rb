@@ -83,10 +83,12 @@ module Assessment
       # newcomer hears of it; the team hears of a join as it always does.
       def add_member!(submission, user, scorer)
         assignment = submission.assignment
-        raise_if_errors!(validate_member_of_group(submission, user))
-        raise_if_errors!(validate_team_takes_members(submission))
 
         participation = Participation.transaction do
+          submission.lock!
+          raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
+          raise_if_errors!(validate_member_of_group(submission, user))
+          raise_if_errors!(validate_team_takes_members(submission))
           # The newcomer's own row is held from the check to the write:
           # points entered on it in between would be the decision the
           # check is there to keep.

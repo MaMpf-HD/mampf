@@ -22,8 +22,8 @@ class SubmissionsController < ApplicationController
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   authorize_resource
-  around_action :hold_submission, only: [:add_correction, :delete_correction, :accept,
-                                         :reject, :hand_over]
+  around_action :hold_submission, only: [:update, :add_correction, :delete_correction,
+                                         :accept, :reject, :hand_over]
 
   class TutorialNotRosteredError < StandardError; end
   rescue_from TutorialNotRosteredError do
@@ -348,8 +348,8 @@ class SubmissionsController < ApplicationController
 
   private
 
-    # A tutor's write on a submission waits for a hand-over of it and is then
-    # asked again against the tutorial it has now.
+    # A write on a submission waits for a hand-over of it and is then asked
+    # again against the tutorial it has now.
     def hold_submission
       ActiveRecord::Base.transaction do
         @submission.lock!

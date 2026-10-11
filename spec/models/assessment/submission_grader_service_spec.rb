@@ -913,6 +913,16 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
     after { Timecop.return }
 
+    it "refuses the old tutorial's newcomer" do
+      newcomer = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:tutorial_membership, tutorial: other, user: newcomer)
+
+      expect do
+        described_class.add_member!(team, newcomer, scorer)
+      end.to raise_error(described_class::SubmissionGraderError)
+      expect(team.reload.users).not_to include(newcomer)
+    end
+
     it "refuses the old tutorial's points" do
       expect do
         described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
