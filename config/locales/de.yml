@@ -4016,6 +4016,7 @@ de:
     copy_to_clipboard: 'in die Zwischenablage kopieren'
     copy_email_address: 'E-Mail-Adresse kopieren'
     copy_email_addresses: 'E-Mail-Adressen kopieren'
+    copy_all_email_addresses: 'Alle E-Mail-Adressen kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
