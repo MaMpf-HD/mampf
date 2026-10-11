@@ -161,6 +161,15 @@ RSpec.describe("Support users", type: :request) do
       expect(results).not_to include("david@example.org")
     end
 
+    it "suggests no similar names on a page past the people who match" do
+      create_list(:confirmed_user, 21, last_name: "Noethen")
+
+      get(support_users_path, params: { search: { all_programs: "1", fulltext: "Noether" },
+                                        page: 2 })
+
+      expect(response.body).not_to include("People with a similar name")
+    end
+
     it "keeps the chosen program when it suggests similar names" do
       program = create(:program, degree: "msc")
       create(:confirmed_user, last_name: "Noether", email: "fritz@example.org", program: program)

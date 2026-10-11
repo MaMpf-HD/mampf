@@ -24,7 +24,7 @@ module Support
 
     def index
       @pagy, @users = search_users(:search_params)
-      if @users.none? && similar_searchable?
+      if @users.unscope(:limit, :offset).none? && similar_searchable?
         @similar = true
         @pagy, @users = search_users(:similar_params)
       end
