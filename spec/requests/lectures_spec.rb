@@ -948,6 +948,15 @@ RSpec.describe("Lectures", type: :request) do
         expect(lecture.submission_grace_period).to eq(30)
       end
 
+      it "keeps teams within one tutorial once the box is cleared" do
+        patch lecture_path(lecture),
+              params: { lecture: { cross_tutorial_teams: "0" }, subpage: "assessments" },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response).to have_http_status(:ok)
+        expect(lecture.reload.cross_tutorial_teams).to be(false)
+      end
+
       it "renders turbo_stream replacing submission settings" do
         patch lecture_path(lecture),
               params: {

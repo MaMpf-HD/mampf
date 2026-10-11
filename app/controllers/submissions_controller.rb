@@ -186,7 +186,9 @@ class SubmissionsController < ApplicationController
       return render_card(status: :unprocessable_content)
     end
     clear_submitted_at([current_user])
+    groups_before = @submission.member_tutorial_ids
     @submission.users.delete(current_user)
+    @submission.reload.place_team!(groups_before)
     send_leave_email
     @submission = nil
     render_card_and_standing
@@ -304,6 +306,24 @@ class SubmissionsController < ApplicationController
     clear_submitted_at(@submission.users)
     send_rejection_email(@submission.users)
     rerender_submission_row
+  end
+
+  # The whole table is drawn again: in a group's table the team's row turns
+  # read-only, in the lecture's its group changes.
+  def hand_over
+    @tutorial = @submission.tutorial
+    target = @lecture.tutorials.find_by(id: params[:tutorial_id])
+    unless @submission.hand_over!(target)
+      return respond_with_flash(:alert, t("submission.hand_over_refused"),
+                                status: :unprocessable_content)
+    end
+
+    grading_scope = grading_table(@tutorial, @lecture)
+    flash.now[:notice] = t("submission.handed_over", tutorial: target.title)
+    table = TutorialMarkingTableComponent.new(assignment: @assignment,
+                                              grading_scope: grading_scope)
+    render turbo_stream: [turbo_stream.replace("marking-table", html: render_to_string(table)),
+                          stream_flash]
   end
 
   private
@@ -703,6 +723,7 @@ class SubmissionsController < ApplicationController
           raise(ActiveRecord::Rollback)
         end
 
+        groups_before = @submission.member_tutorial_ids
         @join = UserSubmissionJoin.new(user: current_user, submission: @submission)
         unless @join.save
           @error = @join.errors[:base].join(", ")
@@ -711,6 +732,7 @@ class SubmissionsController < ApplicationController
 
         remove_invitee_status
         sync_assessment_participations(users: [current_user]) if @submission.manuscript
+        @submission.reload.place_team!(groups_before)
         true
       end
       send_join_email if joined
@@ -812,8 +834,7 @@ class SubmissionsController < ApplicationController
         participation.task_points.destroy_all if participation.persisted?
 
         participation.submitted_at = Time.current
-        participation.tutorial_id ||=
-          Assessment::Participation.tutorial_for(user, lecture)
+        participation.tutorial_id = @submission.tutorial_id
         participation.save!
       rescue ActiveRecord::RecordNotUnique
         retry

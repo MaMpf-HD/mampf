@@ -402,6 +402,7 @@ class LecturesController < ApplicationController
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
+                        :cross_tutorial_teams,
                         :submission_deletion_date, :uses_exam_eligibility,
                         :annotations_status,
                         :home_intro, :remove_home_attachment]

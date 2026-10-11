@@ -34,7 +34,7 @@ class SubmissionAbility
     end
 
     can [:add_correction, :delete_correction, :edit_correction,
-         :cancel_edit_correction], Submission do |submission|
+         :cancel_edit_correction, :hand_over], Submission do |submission|
       submission.tutorial.correctable_by?(user)
     end
 
@@ -43,8 +43,12 @@ class SubmissionAbility
       user.in?(submission.tutorial.tutors)
     end
 
+    # The tutor of a member who sits in another group reads along: the
+    # student is theirs, the marking is not.
     can [:show_manuscript, :show_correction], Submission do |submission|
-      user.in?(submission.users) || submission.tutorial.correctable_by?(user)
+      user.in?(submission.users) || submission.tutorial.correctable_by?(user) ||
+        TutorialMembership.exists?(user_id: submission.user_ids,
+                                   tutorial_id: user.given_tutorial_ids)
     end
   end
 end

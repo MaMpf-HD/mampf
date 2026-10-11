@@ -55,7 +55,23 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def allow_grading?
-    @submission.valid_for_marking? && @assignment&.grading_open?
+    !elsewhere? && @submission.valid_for_marking? && @assignment&.grading_open?
+  end
+
+  # A team on another group's table because one of its members sits there:
+  # that group's tutor reads it, the group it is filed under marks it.
+  def elsewhere?
+    @grading_scope.is_a?(Tutorial) && @grading_scope != @tutorial
+  end
+
+  def marked_elsewhere_info
+    t("assessment.task_points.marked_elsewhere", tutorial: @tutorial.title_with_tutors)
+  end
+
+  def hand_over_targets
+    return [] if elsewhere? || !@tutorial.correctable_by?(helpers.current_user)
+
+    @hand_over_targets ||= @submission.hand_over_targets.to_a
   end
 
   def tasks
@@ -157,6 +173,8 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def can_enter_points?
+    return false if elsewhere?
+
     user = helpers.current_user
     user.admin? || user.can_enter_points_in?(@grading_scope)
   end

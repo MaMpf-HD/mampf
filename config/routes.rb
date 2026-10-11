@@ -935,6 +935,10 @@ Rails.application.routes.draw do
         to: "submissions#reject",
         as: "reject_submission"
 
+  patch "submissions/:id/hand_over",
+        to: "submissions#hand_over",
+        as: "hand_over_submission"
+
   patch "participations/mark_as_participated",
         to: "assessment/task_points#mark_as_participated",
         as: "mark_user_as_participated"

@@ -50,10 +50,46 @@
             <% end %>
           </div>
         <% end %>
+
+        <% if elsewhere? %>
+          <div class="small text-secondary"><%= marked_elsewhere_info %></div>
+        <% end %>
       </div>
 
       <%# The copy button closes the row, so it lines up across all rows. %>
       <div class="d-flex align-items-center flex-shrink-0 ms-3">
+        <% if hand_over_targets.any? %>
+          <div class="dropdown me-2">
+            <button
+              type="button"
+              class="btn btn-link p-0 text-secondary"
+              data-bs-toggle="dropdown"
+              data-bs-popper-config='{"strategy": "fixed"}'
+              aria-expanded="false"
+              title="<%= t('assessment.task_points.hand_over') %>"
+              aria-label="<%= t('assessment.task_points.hand_over') %>"
+            >
+              <i class="bi bi-arrow-left-right"></i>
+            </button>
+
+            <div class="dropdown-menu" style="max-width: 18rem;">
+              <h6 class="dropdown-header text-wrap fw-normal">
+                <%= t('assessment.task_points.hand_over_hint') %>
+              </h6>
+
+              <% hand_over_targets.each do |target| %>
+                <%= button_to target.title_with_tutors,
+                              hand_over_submission_path(@submission),
+                              method: :patch,
+                              params: { tutorial_id: target.id,
+                                        grading_scope_type: grading_scope_type },
+                              class: "dropdown-item",
+                              form: { data: { turbo: true } } %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
         <% if addable_members.any? %>
           <%#
             Fixed, or the scrolling table would cut the menu at the pinned

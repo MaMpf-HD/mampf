@@ -21,6 +21,7 @@ type MaMpfFixtures = {
   admin: UserFixture;
   teacher: UserFixture;
   tutor: UserFixture;
+  tutor2: UserFixture;
   factory: FactoryBot;
   timeCop: TimeCop;
 };
@@ -66,6 +67,13 @@ export const test = base.extend<MaMpfFixtures>({
 
   tutor: async ({ browser }, use) => {
     const [user, page, browserContext] = await userPage(browser, "tutor");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
+    await browserContext.close();
+  },
+
+  tutor2: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "tutor2");
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();

@@ -29,6 +29,13 @@
                       participations: team_participations(submission),
                       addable_members: @non_submitters)) %>
                 <% end %>
+                <% @elsewhere.each do |submission| %>
+                  <%= render(SubmissionRowComponent.new(
+                      submission: submission,
+                      assignment: @assignment,
+                      grading_scope: @tutorial,
+                      participations: team_participations(submission))) %>
+                <% end %>
                 <% if grading_enabled? %>
                   <% @non_submitters.each do |user| %>
                     <%= render(ParticipationRowComponent.new(

@@ -812,7 +812,7 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
   end
 
   def recent_submission_partners(lecture)
@@ -824,7 +824,17 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
+  end
+
+  # Where the lecture keeps teams within one tutorial, a partner from another
+  # tutorial could not accept, so they are not offered.
+  def partners_who_may_join(lecture, partner_ids)
+    partners = User.where(id: partner_ids - [id])
+    return partners if lecture.cross_tutorial_teams?
+
+    partners.where(id: TutorialMembership.where(tutorial: rostered_tutorial_in(lecture))
+                                         .select(:user_id))
   end
 
   def rostered_tutorial_in(lecture)

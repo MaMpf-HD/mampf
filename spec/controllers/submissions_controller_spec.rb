@@ -66,7 +66,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       expect(user_ids).to contain_exactly(user.id, partner.id)
     end
 
-    it "creates participation for a specific user on join" do
+    it "files the row of a joiner from another group with the hand-in" do
       joiner = create(:confirmed_user)
       other_tutorial = create(:tutorial, lecture: lecture)
       create(:lecture_membership, user: joiner, lecture: lecture)
@@ -80,7 +80,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
 
       participation = Assessment::Participation.last
       expect(participation.user).to eq(joiner)
-      expect(participation.tutorial_id).to eq(other_tutorial.id)
+      expect(participation.tutorial_id).to eq(tutorial.id)
     end
 
     it "does not create participations for users outside the lecture roster" do
