@@ -154,6 +154,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
   describe ".add_member!" do
     let(:partner) { FactoryBot.create(:confirmed_user) }
+    let(:scorer) { FactoryBot.create(:tutor_tutorial_join, tutorial: tutorial).tutor }
     let(:newcomer) { FactoryBot.create(:confirmed_user) }
     let(:team) do
       submission = FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
@@ -568,6 +569,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
   describe ".score_tasks_by_submission!" do
     let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:scorer) { FactoryBot.create(:tutor_tutorial_join, tutorial: tutorial).tutor }
 
     context "after grace period" do
       before do
@@ -891,6 +893,31 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         )
       end.to raise_error(described_class::SubmissionGraderError,
                          I18n.t("assessment.errors.invalid_assessable_type"))
+    end
+  end
+
+  # A tutor whose request was let in before a hand-over finds the team gone
+  # once it holds the submission.
+  describe "a team handed over while its points were on their way" do
+    let(:other) { FactoryBot.create(:tutorial, lecture: lecture) }
+    let(:scorer) { FactoryBot.create(:tutor_tutorial_join, tutorial: tutorial).tutor }
+    let(:team) do
+      FactoryBot.create(:submission, :with_manuscript, assignment: assignment, tutorial: other,
+                                                       users: [FactoryBot.create(:confirmed_user)])
+    end
+
+    before do
+      task
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
+
+    it "refuses the old tutorial's points" do
+      expect do
+        described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
+      end.to raise_error(described_class::SubmissionGraderError)
+      expect(Assessment::TaskPoint.count).to eq(0)
     end
   end
 end

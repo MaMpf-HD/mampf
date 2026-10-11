@@ -481,6 +481,28 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       expect(labelled(html, I18n.t("assessment.grading_tutorial.show_hand_in"))).to be_present
     end
 
+    it "lets the other tutor copy only their own student's address" do
+      html = render_for(other_tutor, other_tutorial)
+
+      expect(html.css("[data-clipboard-text-value]").first["data-clipboard-text-value"])
+        .to eq(student2.email)
+    end
+
+    it "offers the hand-over from the table's tutorials without asking the submission" do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      allow(team).to receive(:hand_over_targets).and_raise("asked")
+
+      html = render_inline(described_class.new(
+                             submission: team, assignment: assignment, grading_scope: tutorial,
+                             participations: [],
+                             member_tutorials: { student.id => tutorial,
+                                                 student2.id => other_tutorial }
+                           ))
+
+      expect(html.css("button.dropdown-item").map { |item| item.text.strip })
+        .to eq([other_tutorial.title_with_tutors])
+    end
+
     it "offers no hand-over once the team has a correction" do
       team.update!(correction: File.open("#{SPEC_FILES}/manuscript.pdf", "rb"))
 

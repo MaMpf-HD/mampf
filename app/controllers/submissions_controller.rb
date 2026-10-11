@@ -3,12 +3,13 @@ class SubmissionsController < ApplicationController
   include GradingTable
 
   # Throttle group-join code entry so the short join token cannot be brute-forced.
-  rate_limit to: 10, within: 1.minute, only: [:join, :redeem_code],
+  rate_limit to: 10, within: 1.minute, only: [:join, :confirm_code, :redeem_code],
              by: -> { current_user&.id || request.remote_ip },
              with: -> { redirect_to :root, alert: I18n.t("submission.too_many_attempts") }
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
-                                          :redeem_code, :join, :cancel_new,
+                                          :confirm_code, :redeem_code, :join,
+                                          :cancel_new,
                                           :seen, :seen_all]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join,
                                         :seen]
@@ -21,6 +22,8 @@ class SubmissionsController < ApplicationController
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   authorize_resource
+  around_action :hold_submission, only: [:add_correction, :delete_correction, :accept,
+                                         :reject, :hand_over]
 
   class TutorialNotRosteredError < StandardError; end
   rescue_from TutorialNotRosteredError do
@@ -149,6 +152,17 @@ class SubmissionsController < ApplicationController
     @invitations = hub.invitations_for(@assignment)
   end
 
+  # The link in an invitation mail only asks: a GET that joined would let any
+  # page the reader opens put them on a team.
+  def confirm_code
+    @submission = Submission.find_by(token: params[:code])
+    @assignment = @submission&.assignment
+    check_code_validity
+    return redirect_to(:root, alert: t("submission.failed_redemption", message: @error)) if @error
+
+    rostered_tutorial!(@assignment.lecture)
+  end
+
   def redeem_code
     code = params[:code]
     @submission = Submission.find_by(token: code)
@@ -185,10 +199,12 @@ class SubmissionsController < ApplicationController
       @card_error = I18n.t("submission.no_partners_no_leave")
       return render_card(status: :unprocessable_content)
     end
-    clear_submitted_at([current_user])
-    groups_before = @submission.member_tutorial_ids
-    @submission.users.delete(current_user)
-    @submission.reload.place_team!(groups_before)
+    ActiveRecord::Base.transaction do
+      clear_submitted_at([current_user])
+      tutorials_before = @submission.member_tutorial_ids
+      @submission.users.delete(current_user)
+      @submission.reload.place_team!(tutorials_before)
+    end
     send_leave_email
     @submission = nil
     render_card_and_standing
@@ -308,8 +324,8 @@ class SubmissionsController < ApplicationController
     rerender_submission_row
   end
 
-  # The whole table is drawn again: in a group's table the team's row turns
-  # read-only, in the lecture's its group changes.
+  # Answers with the whole marking table: in the old tutorial's table the
+  # team's row turns read-only, in the lecture's its tutorial changes.
   def hand_over
     @tutorial = @submission.tutorial
     target = @lecture.tutorials.find_by(id: params[:tutorial_id])
@@ -327,6 +343,16 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+    # A tutor's write on a submission waits for a hand-over of it and is then
+    # asked again against the tutorial it has now.
+    def hold_submission
+      ActiveRecord::Base.transaction do
+        @submission.lock!
+        authorize!(action_name.to_sym, @submission)
+        yield
+      end
+    end
 
     # A sheet from before there were states has no line above its table.
     def rerender_submission_row
@@ -578,9 +604,10 @@ class SubmissionsController < ApplicationController
     # an edit must work on a sheet nobody may edit any more.
     #
     # `index` is not among them: it takes a lecture rather than a sheet and is
-    # gated by `check_student_status`. Neither is `redeem_code`, which takes a
-    # code and nothing else - there is no sheet to check until the code resolves
-    # to one, and `check_code_validity` ends on the same enrolment test.
+    # gated by `check_student_status`. Neither are `confirm_code` and
+    # `redeem_code`, which take a code and nothing else - there is no sheet to
+    # check until the code resolves to one, and `check_code_validity` ends on
+    # the same enrolment test.
     def authorize_sheet
       authorize!(:create, Submission.new(assignment: @assignment))
     end
@@ -723,7 +750,7 @@ class SubmissionsController < ApplicationController
           raise(ActiveRecord::Rollback)
         end
 
-        groups_before = @submission.member_tutorial_ids
+        tutorials_before = @submission.member_tutorial_ids
         @join = UserSubmissionJoin.new(user: current_user, submission: @submission)
         unless @join.save
           @error = @join.errors[:base].join(", ")
@@ -732,7 +759,7 @@ class SubmissionsController < ApplicationController
 
         remove_invitee_status
         sync_assessment_participations(users: [current_user]) if @submission.manuscript
-        @submission.reload.place_team!(groups_before)
+        @submission.reload.place_team!(tutorials_before)
         true
       end
       send_join_email if joined

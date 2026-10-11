@@ -4,7 +4,7 @@ class SubmissionAbility
   def initialize(user)
     clear_aliased_actions
 
-    can [:index, :new, :join, :cancel_edit, :cancel_new, :redeem_code,
+    can [:index, :new, :join, :cancel_edit, :cancel_new, :confirm_code, :redeem_code,
          :enter_code, :seen, :seen_all], Submission
 
     # Enrolment is what this asks; the group is asked for by
@@ -43,8 +43,8 @@ class SubmissionAbility
       user.in?(submission.tutorial.tutors)
     end
 
-    # The tutor of a member who sits in another group reads along: the
-    # student is theirs, the marking is not.
+    # A tutor of the tutorial a team member sits in reads the team's files:
+    # the student is theirs, even where another tutorial marks the team.
     can [:show_manuscript, :show_correction], Submission do |submission|
       user.in?(submission.users) || submission.tutorial.correctable_by?(user) ||
         TutorialMembership.exists?(user_id: submission.user_ids,

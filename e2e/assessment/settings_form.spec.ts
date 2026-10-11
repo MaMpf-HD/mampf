@@ -113,8 +113,6 @@ test.describe("assessment settings form", () => {
     expect(await lecture.__call("submission_max_team_size")).toBe(3);
   });
 
-  // The answer to a save puts the form back in place; a second save must
-  // find it there again.
   test("saves the lecture submission settings twice in a row", async ({
     factory,
     teacher,

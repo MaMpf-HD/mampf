@@ -25,8 +25,8 @@ class TutorialMarkingTableComponent < ViewComponent::Base
       preload_participations(@non_submitters, @stack + @elsewhere, groups_of(@non_submitters))
   end
 
-  # Teams with a member of this group that another group marks: the tutor
-  # sees them, read-only, and they count in that group's summary, not here.
+  # A tutor reads the teams of their students that another tutorial marks;
+  # the marking tutorial counts them in its summary, this one does not.
   def elsewhere_teams
     member_joins = UserSubmissionJoin.where(user_id: @tutorial.members.select(:id))
     @assignment.submissions.proper.where.not(tutorial: @tutorial)
@@ -168,7 +168,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
 
     def membership_tutorials
       @membership_tutorials ||=
-        TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
+        TutorialMembership.where(tutorial: @lecture.tutorials).includes(tutorial: :tutors)
                           .index_by(&:user_id).transform_values(&:tutorial)
     end
 end

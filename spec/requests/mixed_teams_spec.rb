@@ -1,8 +1,5 @@
 require "rails_helper"
 
-# A team whose members sit in different tutorials: the system files it with
-# the tutorial that has fewer hand-ins, its tutor may hand it over, and the
-# other tutor reads along.
 RSpec.describe("Teams across tutorials", type: :request) do
   include ActiveSupport::Testing::TimeHelpers
 
@@ -101,6 +98,19 @@ RSpec.describe("Teams across tutorials", type: :request) do
       expect(row_tutorials(submission)).to eq([tutorial_x.id])
     end
 
+    it "keeps a tutor's hand-over when a member leaves and joins again" do
+      hand_in(tutorial_y, student_in(tutorial_y))
+      submission = hand_in(tutorial_x, anna, ben)
+      submission.hand_over!(tutorial_y)
+
+      sign_in ben
+      delete leave_submission_path(submission)
+      expect(submission.reload.tutorial).to eq(tutorial_x)
+
+      join(submission, ben)
+      expect(submission.reload.tutorial).to eq(tutorial_y)
+    end
+
     it "leaves a corrected team with the tutor who corrected it" do
       submission = hand_in(tutorial_y, anna, ben)
       submission.update!(correction: File.open("#{SPEC_FILES}/manuscript.pdf", "rb"))
@@ -163,6 +173,68 @@ RSpec.describe("Teams across tutorials", type: :request) do
     end
   end
 
+  # Ben's row is in tutorial Y while the team's submission is filed under X.
+  describe "a team whose rows are split between tutorials" do
+    let(:task) { create(:assessment_task, assessment: assignment.assessment, max_points: 10) }
+    let!(:submission) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial_x,
+                                            users: [anna, ben])
+    end
+    let!(:ben_row) do
+      create(:assessment_participation, assessment: assignment.assessment, user: ben,
+                                        tutorial: tutorial_y, submitted_at: 1.hour.ago)
+    end
+
+    before do
+      task
+      travel_to(assignment.deadline + 1.day)
+    end
+
+    it "keeps Ben's tutor from writing on his row" do
+      sign_in tutor_y
+      patch point_participation_path(ben_row),
+            params: { task_points: { task.id => "7" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+
+      expect(response).to redirect_to(root_path)
+      expect(ben_row.reload.task_points).to be_empty
+    end
+
+    it "brings Ben's row to the marking tutorial when the team is scored" do
+      sign_in tutor_x
+      patch point_submission_tutorial_path(submission),
+            params: { task_points: { task.id => "7" }.to_json, grading_scope_type: "tutorial" },
+            as: :turbo_stream
+
+      expect(ben_row.reload.tutorial).to eq(tutorial_x)
+      expect(ben_row.task_points.pick(:points)).to eq(7)
+    end
+  end
+
+  describe "the tutorial a team was handed over from" do
+    let(:submission) { hand_in(tutorial_x, anna, ben) }
+
+    before do
+      submission.hand_over!(tutorial_y)
+      sign_in tutor_x
+    end
+
+    it "no longer uploads a correction" do
+      post add_correction_path(submission), params: { submission: { correction: "" } }
+
+      expect(response).to redirect_to(root_url)
+      expect(submission.reload.correction).to be_nil
+    end
+
+    it "no longer decides on a late hand-in" do
+      patch reject_submission_path(submission, grading_scope_type: "tutorial"),
+            as: :turbo_stream
+
+      expect(response).to redirect_to(root_url)
+      expect(submission.reload.accepted).to be_nil
+    end
+  end
+
   describe "the other tutor" do
     let(:submission) { hand_in(tutorial_x, anna, ben) }
 
@@ -193,10 +265,13 @@ RSpec.describe("Teams across tutorials", type: :request) do
       create(:tutor_tutorial_join, tutorial: elsewhere, tutor: tutor_y)
       create(:tutorial_membership, tutorial: elsewhere, user: anna)
       solo = hand_in(tutorial_x, anna)
+      solo.update!(correction: File.open("#{SPEC_FILES}/manuscript.pdf", "rb"))
       sign_in tutor_y
 
       get show_submission_manuscript_path(solo)
+      expect(response).to redirect_to(root_url)
 
+      get show_correction_path(solo)
       expect(response).to redirect_to(root_url)
     end
   end
@@ -226,7 +301,6 @@ RSpec.describe("Teams across tutorials", type: :request) do
       expect(submission.reload.users).to contain_exactly(anna, partner)
     end
 
-    # The two teamed up before the lecture kept teams within a tutorial.
     it "does not offer or invite a past partner from another tutorial" do
       lecture.update!(cross_tutorial_teams: true)
       earlier = create(:assignment, :expired, lecture: lecture, title: "Homework 0")

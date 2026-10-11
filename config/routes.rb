@@ -884,8 +884,11 @@ Rails.application.routes.draw do
       as: "enter_submission_code"
 
   get "submissions/redeem_code",
-      to: "submissions#redeem_code",
+      to: "submissions#confirm_code",
       as: "redeem_submission_code"
+
+  post "submissions/redeem_code",
+       to: "submissions#redeem_code"
 
   delete "submissions/:id/leave",
          to: "submissions#leave",

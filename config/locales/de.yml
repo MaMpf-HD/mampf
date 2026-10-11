@@ -3302,6 +3302,12 @@ de:
     bulk_upload: Paketupload der Korrekturen
     file_format: Abgabeformat
     handed_over: 'An %{tutorial} übergeben.'
+    confirm_code:
+      title: Einem Abgabeteam beitreten
+      question: >
+        Möchtest Du dem Abgabeteam von %{team} für %{assignment} in
+        %{lecture} beitreten?
+      join: Beitreten
     hand_over_refused: >
       Dieses Team kann nicht mehr übergeben werden: Es hat schon Punkte oder
       eine Korrektur, oder das Tutorium ist keines seiner Mitglieder.

@@ -53,54 +53,45 @@ class Submission < ApplicationRecord
     users.map(&:tutorial_name).natural_sort.join(", ")
   end
 
-  # The ids of the groups the team's members sit in now.
   def member_tutorial_ids
     TutorialMembership.where(user_id: user_ids, lecture_id: assignment.lecture_id)
                       .distinct.pluck(:tutorial_id)
   end
 
-  # Whether the hand-in may still go to another group: once there are points
-  # or a correction, the work stays with the tutor who did it.
+  # Once a team has points or a correction, the tutorial that marked it
+  # keeps it.
   def movable?
     correction.blank? && !marked?
   end
 
-  # The groups a tutor may hand the team over to: those of its members,
-  # other than the one it is filed under.
   def hand_over_targets
     return Tutorial.none unless users.many? && movable?
 
     Tutorial.where(id: member_tutorial_ids - [tutorial_id]).order(:title)
   end
 
-  # Files the hand-in after its team changed. A team whose members sit in
-  # different groups goes to whichever of them has the fewest hand-ins for
-  # the sheet, so that who uploaded first does not choose the tutor; once
-  # filed there, it stays as long as that group is still among the team's,
-  # which keeps a tutor's hand-over. `groups_before` are the member groups
-  # before the change.
-  def place_team!(groups_before)
-    return unless movable?
+  # A mixed team goes to the member tutorial with the fewest hand-ins, so the
+  # uploader does not choose the tutor. A tutor's hand-over holds while a
+  # member sits in that tutorial, even across a leave and a rejoin.
+  def place_team!(tutorials_before)
+    with_team_locked do
+      next unless movable?
 
-    groups = member_tutorial_ids
-    return if groups.empty?
+      tutorials = member_tutorial_ids
+      next if tutorials.empty?
 
-    target = if groups.one?
-      groups.first
-    elsif groups_before.many? && tutorial_id.in?(groups)
-      tutorial_id
-    else
-      least_busy(groups)
+      file_under!(placement_for(tutorials, tutorials_before))
     end
-    file_under!(target)
   end
 
-  # A tutor's hand-over to another of the team's groups.
   def hand_over!(target)
-    return false unless target&.in?(hand_over_targets)
+    with_team_locked do
+      next false unless target&.in?(hand_over_targets)
 
-    file_under!(target.id)
-    true
+      update!(handed_over_to_id: target.id)
+      file_under!(target.id)
+      true
+    end
   end
 
   def manuscript_filename
@@ -341,7 +332,16 @@ class Submission < ApplicationRecord
           report[:rejected].push(submission.team)
           next
         end
-        submission.update(correction: file_shrine.to_json)
+        moved = submission.with_lock do
+          next true unless submission.tutorial_id == tutorial.id
+
+          submission.update(correction: file_shrine.to_json)
+          false
+        end
+        if moved
+          report[:invalid_id].push(filename)
+          next
+        end
         unless submission.valid?
           report[:invalid_file].push(filename)
           next
@@ -356,23 +356,40 @@ class Submission < ApplicationRecord
 
   private
 
-    # The team's rows go along with the hand-in, so the group that marks it
-    # is the one that counts it among the work still to do.
-    def file_under!(target_id)
-      transaction do
-        update!(tutorial_id: target_id) unless tutorial_id == target_id
-        next unless assignment.assessable?
-
-        assessment.assessment_participations.where(user_id: user_ids)
-                  .update_all(tutorial_id: target_id, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+    # Takes the submission first and the team's participations second, the
+    # order a team's point entry takes them in: a move and a point entry or
+    # correction then wait for each other, and each sees the other's result.
+    def with_team_locked
+      with_lock do
+        if assignment.assessable?
+          assessment.assessment_participations.where(user_id: user_ids).lock.load
+        end
+        yield
       end
     end
 
-    # Ties go to the group created first.
-    def least_busy(groups)
-      counts = Submission.proper.where(assignment: assignment, tutorial_id: groups)
+    def placement_for(tutorials, tutorials_before)
+      return handed_over_to_id if handed_over_to_id.in?(tutorials)
+      return tutorials.first if tutorials.one?
+      return tutorial_id if tutorials_before.many? && tutorial_id.in?(tutorials)
+
+      least_busy(tutorials)
+    end
+
+    # The participations move with the submission, so the marking backlog
+    # counts the team in the tutorial that marks it.
+    def file_under!(target_id)
+      update!(tutorial_id: target_id) unless tutorial_id == target_id
+      return unless assignment.assessable?
+
+      assessment.assessment_participations.where(user_id: user_ids)
+                .update_all(tutorial_id: target_id, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    def least_busy(tutorials)
+      counts = Submission.proper.where(assignment: assignment, tutorial_id: tutorials)
                          .where.not(id: id).group(:tutorial_id).count
-      groups.min_by { |group| [counts.fetch(group, 0), group] }
+      tutorials.min_by { |tutorial| [counts.fetch(tutorial, 0), tutorial] }
     end
 
     def matching_lecture

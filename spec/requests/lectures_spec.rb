@@ -968,7 +968,7 @@ RSpec.describe("Lectures", type: :request) do
           .to include('<turbo-stream action="update" target="lecture-submission-settings">')
       end
 
-      it "renders turbo_stream replacing submission settings" do
+      it "renders turbo_stream filling the submission settings" do
         patch lecture_path(lecture),
               params: {
                 lecture: { submission_max_team_size: 3 },

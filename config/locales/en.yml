@@ -3089,6 +3089,12 @@ en:
     bulk_upload: Bulk upload of corrections
     file_format: Submission format
     handed_over: 'Handed over to %{tutorial}.'
+    confirm_code:
+      title: Join a submission team
+      question: >
+        Do you want to join the submission team of %{team} for %{assignment}
+        in %{lecture}?
+      join: Join
     hand_over_refused: >
       This team can no longer be handed over: it already has points or a
       correction, or the tutorial is not one of its members'.

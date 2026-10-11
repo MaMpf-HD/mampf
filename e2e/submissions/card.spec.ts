@@ -273,6 +273,31 @@ test.describe("the card for a sheet that is due", () => {
     expect(assignment.id).toBeTruthy();
   });
 
+  test("joins through the link in an invitation once the reader confirms", async ({
+    factory,
+    teacher,
+    student,
+    student2,
+  }) => {
+    const { lecture } = await lectureWithSheet(
+      factory, teacher.user.id, [student.user.id, student2.user.id],
+    );
+
+    const page = new SubmissionsPage(student.page, lecture.id);
+    await page.goto();
+    await page.createSubmission();
+    const code = await student.page.locator("code").innerText();
+
+    await student2.page.goto(`/submissions/redeem_code?code=${code}`);
+    await expect(student2.page.getByText(
+      `Do you want to join the submission team of ${student.user.name_in_tutorials}`,
+    )).toBeVisible();
+    await student2.page.getByRole("button", { name: "Join" }).click();
+
+    const card = student2.page.getByRole("region", { name: "Homework 1" });
+    await expect(card.getByText(student.user.name_in_tutorials)).toBeVisible();
+  });
+
   // Both have the form open; whoever saves second would overwrite the other's
   // file unseen. The second save is refused once and goes through the next time.
   test("warns before a file a team member just uploaded is overwritten", async ({

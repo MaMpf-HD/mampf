@@ -2,8 +2,9 @@ class SubmissionRowComponent < ViewComponent::Base
   # The table hands its rows the team's participations and the group's
   # non-submitters, read once for the whole page; a row rendered on its own
   # reads them itself.
+  # rubocop:disable Metrics/ParameterLists
   def initialize(submission:, assignment:, grading_scope:, participations: nil,
-                 addable_members: nil)
+                 addable_members: nil, member_tutorials: nil)
     super()
     @submission = submission
     @tutorial = @submission.tutorial
@@ -13,7 +14,9 @@ class SubmissionRowComponent < ViewComponent::Base
     @lecture = @assignment.lecture
     @participations = (participations || @submission.participations || []).compact
     @addable_members = addable_members
+    @member_tutorials = member_tutorials
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def grading_scope_type
     @grading_scope.class.name.downcase
@@ -58,8 +61,6 @@ class SubmissionRowComponent < ViewComponent::Base
     !elsewhere? && @submission.valid_for_marking? && @assignment&.grading_open?
   end
 
-  # A team on another group's table because one of its members sits there:
-  # that group's tutor reads it, the group it is filed under marks it.
   def elsewhere?
     @grading_scope.is_a?(Tutorial) && @grading_scope != @tutorial
   end
@@ -68,14 +69,34 @@ class SubmissionRowComponent < ViewComponent::Base
     t("assessment.task_points.marked_elsewhere", tutorial: @tutorial.title_with_tutors)
   end
 
+  # Uses the students' tutorials the table read once for the page; a row
+  # rendered on its own asks the submission.
   def hand_over_targets
     return [] if elsewhere? || !@tutorial.correctable_by?(helpers.current_user)
+    return @submission.hand_over_targets.to_a unless @member_tutorials
+    return [] unless @submission.users.many? && movable?
 
-    @hand_over_targets ||= @submission.hand_over_targets.to_a
+    @submission.users.filter_map { |user| @member_tutorials[user.id] }
+               .uniq.excluding(@tutorial).sort_by(&:title)
+  end
+
+  # A tutor of another tutorial reads the team for their own students; the
+  # others' addresses are not theirs to collect.
+  def copy_emails
+    return @submission.users.map(&:email) unless elsewhere?
+
+    own = @grading_scope.tutorial_memberships.where(user_id: @submission.user_ids)
+                        .pluck(:user_id)
+    @submission.users.select { |user| user.id.in?(own) }.map(&:email)
   end
 
   def tasks
     @assessment.persisted_tasks || []
+  end
+
+  def movable?
+    @submission.correction.blank? &&
+      @participations.none? { |participation| @assessment&.marked?(participation) }
   end
 
   # A team is marked as one - every member gets the same points and the same

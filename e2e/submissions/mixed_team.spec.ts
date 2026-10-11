@@ -4,7 +4,6 @@ import { FactoryBot, FactoryBotObject } from "../_support/factorybot";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
 import { SubmissionsPage } from "../page-objects/submissions_page";
 
-/** Puts each student into the lecture and into their tutorial. */
 async function seat(
   factory: FactoryBot,
   lecture: FactoryBotObject,
@@ -21,14 +20,6 @@ async function seat(
   }
 }
 
-/**
- * A team whose members sit in different tutorials. The system files it with
- * the tutorial that has fewer hand-ins, whatever the uploader's own; the
- * tutor it lands with may hand it over to the other member's tutorial; and
- * the other tutor sees the team, its points and its file, without being able
- * to change anything. All of that only where the lecturer allows teams
- * across tutorials; by default a join from another tutorial is refused.
- */
 test.describe("a team across tutorials", () => {
   test("is filed by load, handed over by a tutor, and read by the other", async ({
     factory,
@@ -69,8 +60,8 @@ test.describe("a team across tutorials", () => {
     await expect(teacher.page.getByText("Submission settings successfully updated."))
       .toBeVisible();
     await expect(form.getByLabel("allow submission teams across tutorials")).toBeChecked();
-    // The Monday group already has a hand-in, so the team goes to Tuesday's,
-    // although the student who uploads sits on Monday.
+    // Monday's tutorial already has a hand-in, so the team goes to Tuesday's
+    // although the uploader is in Monday's.
     const busy = await factory.create("confirmed_user", [], { name_in_tutorials: "Ada Lovelace" });
     await factory.create("tutorial_membership", [], {
       tutorial_id: monday.id, user_id: busy.id,
@@ -100,7 +91,6 @@ test.describe("a team across tutorials", () => {
     const deadline = new Date(await assignment.__call("deadline") as string);
     await timeCop.travelToDate(new Date(deadline.getTime() + 2 * 86400000));
 
-    // Tuesday's tutor hands the team over to Monday's.
     const tablePath = (tutorialId: number) =>
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorialId}`;
     await tutor2.page.goto(tablePath(tuesday.id));
@@ -118,7 +108,6 @@ test.describe("a team across tutorials", () => {
     await expect(readOnly.getByRole("button", { name: "Hand this team over to another tutorial" }))
       .toHaveCount(0);
 
-    // Monday's tutor marks it.
     await tutor.page.goto(tablePath(monday.id));
     const teamAtMonday = tutor.page.getByRole("table")
       .getByRole("row", { name: student.user.name_in_tutorials });
@@ -129,7 +118,6 @@ test.describe("a team across tutorials", () => {
       name: "Hand this team over to another tutorial",
     })).toHaveCount(0);
 
-    // Tuesday's tutor sees the points and opens the file.
     await tutor2.page.reload();
     const marked = tutor2.page.getByRole("table")
       .getByRole("row", { name: student.user.name_in_tutorials });
