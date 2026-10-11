@@ -478,6 +478,7 @@ en:
       uses_exam_eligibility: enable exam eligibility
       submission_max_team_size: >
         maximal team size for submissions
+      cross_tutorial_teams: allow submission teams across tutorials
       submission_grace_period: >
         grace period for submissions (in minutes)
       submission_deletion_date: Submission deletion date
@@ -679,6 +680,13 @@ en:
           other: >
             Disabling keeps %{count} certifications, but they will no longer be
             reachable.
+        cross_tutorial_teams: >
+          When this is ticked, students from different tutorials can form a
+          submission team. The hand-in then goes to the tutorial involved that
+          has the fewest hand-ins, and its tutor can hand it over to another
+          tutorial involved. When it is not ticked, students can only join
+          teams from their own tutorial. Teams that have already handed in keep
+          their members; the setting only applies to new joins.
         submission_max_team_size: >
           Here you can enter how many people are maximally allowed for
           one submission. If you enter nothing, there will be no restriction on
@@ -3082,6 +3090,16 @@ en:
     bulk_download_corrections: Bulk download of corrections
     bulk_upload: Bulk upload of corrections
     file_format: Submission format
+    handed_over: 'Handed over to %{tutorial}.'
+    confirm_code:
+      title: Join a submission team
+      question: >
+        Do you want to join the submission team of %{team} for %{assignment}
+        in %{lecture}?
+      join: Join
+    hand_over_refused: >
+      This team can no longer be handed over: it already has points or a
+      correction, or the tutorial is not one of its members'.
   assignment:
     expired: The due date has expired.
     deletion_date: Deletion date
@@ -3286,7 +3304,7 @@ en:
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
     submission_invitation_html: >
-      %{issuer} issuer has invited you to join a submission to %{assignment}
+      %{issuer} has invited you to join a submission to %{assignment}
       in %{lecture}. The code to join is: %{code}. You can enter and redeem
       it in MaMpf manually or follow this %{link}.
     submission_upload_subject: >
@@ -3797,6 +3815,7 @@ en:
     copy_to_clipboard: 'Copy to Clipboard'
     copy_email_address: 'Copy email address'
     copy_email_addresses: 'Copy email addresses'
+    copy_all_email_addresses: 'Copy all email addresses'
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successful'
@@ -4234,6 +4253,10 @@ en:
           team_size: >
             You are not allowed to join as otherwise the submission team would
             have more members than allowed.
+          other_tutorial: >
+            You cannot join, as this submission team belongs to another
+            tutorial. In this event series, all members of a team must be in
+            the same tutorial.
         vignettes/question:
           format: '%{message}'
           attributes:

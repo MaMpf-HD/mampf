@@ -27,7 +27,16 @@
                       assignment: @assignment,
                       grading_scope: @tutorial,
                       participations: team_participations(submission),
-                      addable_members: @non_submitters)) %>
+                      addable_members: @non_submitters,
+                      member_tutorials: membership_tutorials)) %>
+                <% end %>
+                <% @elsewhere.each do |submission| %>
+                  <%= render(SubmissionRowComponent.new(
+                      submission: submission,
+                      assignment: @assignment,
+                      grading_scope: @tutorial,
+                      participations: team_participations(submission),
+                      member_tutorials: membership_tutorials)) %>
                 <% end %>
                 <% if grading_enabled? %>
                   <% @non_submitters.each do |user| %>
@@ -45,7 +54,8 @@
                         assignment: @assignment,
                         grading_scope: @lecture,
                         participations: team_participations(submission),
-                        addable_members: @non_submitters_by_tutorial[tutorial] || [])) %>
+                        addable_members: @non_submitters_by_tutorial[tutorial] || [],
+                        member_tutorials: membership_tutorials)) %>
                   <% end %>
 
                   <% if grading_enabled? %>

@@ -24,8 +24,13 @@ module Assessment
         end
       end
 
+      # The submission is held while its points are written, and the scorer
+      # is asked again under that lock: a hand-over in between would
+      # otherwise leave the old tutorial writing on a team it no longer has.
       def score_tasks_by_submission!(submission, points_by_task_id, scorer)
         raise_if_errors!(validate_submission_present(submission))
+        submission.lock!
+        raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
 
         assignment = submission.assignment
         assessment = assignment&.assessment
@@ -78,10 +83,12 @@ module Assessment
       # newcomer hears of it; the team hears of a join as it always does.
       def add_member!(submission, user, scorer)
         assignment = submission.assignment
-        raise_if_errors!(validate_member_of_group(submission, user))
-        raise_if_errors!(validate_team_takes_members(submission))
 
         participation = Participation.transaction do
+          submission.lock!
+          raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
+          raise_if_errors!(validate_member_of_group(submission, user))
+          raise_if_errors!(validate_team_takes_members(submission))
           # The newcomer's own row is held from the check to the write:
           # points entered on it in between would be the decision the
           # check is there to keep.
@@ -176,6 +183,9 @@ module Assessment
         def enter_points_for_each_team_member!(assessment, submission, points_by_task_id, scorer)
           submission.users.each do |user|
             participation = init_participation(assessment, user, submission.tutorial)
+            if participation.tutorial_id != submission.tutorial_id
+              participation.update!(tutorial: submission.tutorial)
+            end
             PointEntryService.enter_points(participation, points_by_task_id, scorer, submission)
           end
         end

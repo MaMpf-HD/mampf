@@ -66,7 +66,8 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       expect(user_ids).to contain_exactly(user.id, partner.id)
     end
 
-    it "creates participation for a specific user on join" do
+    it "files the row of a joiner from another group with the hand-in" do
+      lecture.update!(cross_tutorial_teams: true)
       joiner = create(:confirmed_user)
       other_tutorial = create(:tutorial, lecture: lecture)
       create(:lecture_membership, user: joiner, lecture: lecture)
@@ -80,7 +81,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
 
       participation = Assessment::Participation.last
       expect(participation.user).to eq(joiner)
-      expect(participation.tutorial_id).to eq(other_tutorial.id)
+      expect(participation.tutorial_id).to eq(tutorial.id)
     end
 
     it "does not create participations for users outside the lecture roster" do
@@ -102,7 +103,7 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       end.not_to change(Assessment::Participation, :count)
     end
 
-    it "does not overwrite tutorial_id on re-submission" do
+    it "keeps the row with the hand-in when the student changes tutorial" do
       controller_instance.send(:sync_assessment_participations)
 
       new_tutorial = create(:tutorial, lecture: lecture)
@@ -111,6 +112,17 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
       controller_instance.send(:sync_assessment_participations)
 
       expect(Assessment::Participation.last.tutorial_id).to eq(tutorial.id)
+    end
+
+    it "moves the row with the hand-in when the hand-in moves" do
+      controller_instance.send(:sync_assessment_participations)
+
+      new_tutorial = create(:tutorial, lecture: lecture)
+      submission.update!(tutorial: new_tutorial)
+
+      controller_instance.send(:sync_assessment_participations)
+
+      expect(Assessment::Participation.last.tutorial_id).to eq(new_tutorial.id)
     end
   end
 
@@ -141,6 +153,25 @@ RSpec.describe(SubmissionsController, "#sync_assessment_participations") do
 
       expect(user_p.submitted_at).to be_nil
       expect(partner_p.submitted_at).to be_present
+    end
+  end
+
+  describe "#send_acceptance_email" do
+    before { user.update!(email_for_submission_decision: true) }
+
+    def accept_within_transaction(rollback:)
+      ActiveRecord::Base.transaction do
+        controller_instance.send(:send_acceptance_email, submission.users)
+        raise(ActiveRecord::Rollback) if rollback
+      end
+    end
+
+    it "queues the mail once the change commits" do
+      expect { accept_within_transaction(rollback: false) }.to have_enqueued_mail
+    end
+
+    it "queues nothing for a change that is rolled back" do
+      expect { accept_within_transaction(rollback: true) }.not_to have_enqueued_mail
     end
   end
 end

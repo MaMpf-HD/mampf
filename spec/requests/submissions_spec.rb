@@ -392,6 +392,7 @@ RSpec.describe("Submissions", type: :request) do
       end
 
       it "opens it with a seat in another group of the lecture" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)
@@ -403,6 +404,7 @@ RSpec.describe("Submissions", type: :request) do
       # The group named on the form is the one the work is filed under - the
       # tutor who has it - not the seat the reader happens to have now.
       it "names the group the work is filed under, not the reader's seat" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)
@@ -1493,6 +1495,7 @@ RSpec.describe("Submissions", type: :request) do
       # before - the first team-up goes through the code.
       it "offers a past partner when inviting" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])
@@ -1507,6 +1510,7 @@ RSpec.describe("Submissions", type: :request) do
 
       it "answers an invitation with the card naming who was invited_users" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])

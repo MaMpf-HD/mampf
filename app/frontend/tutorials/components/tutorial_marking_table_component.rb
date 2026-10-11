@@ -20,8 +20,19 @@ class TutorialMarkingTableComponent < ViewComponent::Base
                         .order(:last_modification_by_users_at)
                         .includes(:users, tutorial: [:tutors, { lecture: :editors }])
     @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
+    @elsewhere = elsewhere_teams
     @participations_by_user_id =
-      preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
+      preload_participations(@non_submitters, @stack + @elsewhere, groups_of(@non_submitters))
+  end
+
+  # A tutor reads the teams of their students that another tutorial marks;
+  # the marking tutorial counts them in its summary, this one does not.
+  def elsewhere_teams
+    member_joins = UserSubmissionJoin.where(user_id: @tutorial.members.select(:id))
+    @assignment.submissions.proper.where.not(tutorial: @tutorial)
+               .where(id: member_joins.select(:submission_id))
+               .order(:last_modification_by_users_at)
+               .includes(:users, tutorial: [:tutors, { lecture: :editors }]).to_a
   end
 
   def init_teacher_case
@@ -136,7 +147,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
 
   # A sheet from before there were points has file rows only.
   def rows?
-    @stack.any? ||
+    @stack.any? || @elsewhere.present? ||
       (grading_enabled? && (@non_submitters.any? || @non_tutorial_participants.present?))
   end
 
@@ -157,7 +168,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
 
     def membership_tutorials
       @membership_tutorials ||=
-        TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
+        TutorialMembership.where(tutorial: @lecture.tutorials).includes(tutorial: :tutors)
                           .index_by(&:user_id).transform_values(&:tutorial)
     end
 end

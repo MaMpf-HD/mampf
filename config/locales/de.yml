@@ -543,6 +543,7 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       uses_exam_eligibility: Prüfungszulassung aktivieren
       submission_max_team_size: maximale Größe von Abgabegruppen
+      cross_tutorial_teams: Abgabeteams über Tutorien hinweg erlauben
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
       submission_deletion_date: Löschdatum für Abgaben
       import_toc: Gliederung aus anderer Veranstaltung importieren
@@ -776,6 +777,14 @@ de:
           other: >
             Beim Deaktivieren bleiben %{count} Zertifizierungen erhalten, sind
             aber nicht mehr erreichbar.
+        cross_tutorial_teams: >
+          Wenn das angehakt ist, können Studierende aus verschiedenen Tutorien
+          ein Abgabeteam bilden. Die Abgabe geht dann an das beteiligte
+          Tutorium mit den wenigsten Abgaben, und dessen TutorIn kann sie an
+          ein anderes beteiligtes Tutorium übergeben. Ohne Haken kann man nur
+          Teams aus dem eigenen Tutorium beitreten. Bereits abgegebene Teams
+          behalten ihre Mitglieder; die Einstellung gilt nur für neue
+          Beitritte.
         submission_max_team_size: >
           Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
           gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.
@@ -3294,6 +3303,16 @@ de:
     bulk_download_corrections: Paketdownload der Korrekturen
     bulk_upload: Paketupload der Korrekturen
     file_format: Abgabeformat
+    handed_over: 'An %{tutorial} übergeben.'
+    confirm_code:
+      title: Einem Abgabeteam beitreten
+      question: >
+        Möchtest Du dem Abgabeteam von %{team} für %{assignment} in
+        %{lecture} beitreten?
+      join: Beitreten
+    hand_over_refused: >
+      Dieses Team kann nicht mehr übergeben werden: Es hat schon Punkte oder
+      eine Korrektur, oder das Tutorium ist keines seiner Mitglieder.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     deletion_date: Löschdatum
@@ -3510,7 +3529,7 @@ de:
       Einladung zu Abgabe für %{assignment} in %{lecture}
     submission_invitation_html: >
       %{issuer} hat Dich eingeladen, einer Abgabe zu %{assignment} in %{lecture}
-      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn MaMpf
+      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn in MaMpf
       selbst eingeben und einlösen oder diesen %{link} benutzen.
     submission_upload_subject: >
       Erfolgreicher Upload für Abgabe zu %{assignment} in %{lecture}
@@ -4018,6 +4037,7 @@ de:
     copy_to_clipboard: 'in die Zwischenablage kopieren'
     copy_email_address: 'E-Mail-Adresse kopieren'
     copy_email_addresses: 'E-Mail-Adressen kopieren'
+    copy_all_email_addresses: 'Alle E-Mail-Adressen kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
@@ -4478,6 +4498,10 @@ de:
           team_size: >
             Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
             hätte als erlaubt.
+          other_tutorial: >
+            Du kannst nicht beitreten, da dieses Abgabeteam zu einem anderen
+            Tutorium gehört. In dieser Veranstaltung müssen alle Mitglieder
+            eines Teams im selben Tutorium sein.
         vignettes/question:
           format: '%{message}'
           attributes:
