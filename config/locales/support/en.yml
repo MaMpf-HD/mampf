@@ -11,6 +11,8 @@ en:
         one: '1 person'
         other: '%{count} people'
       no_hits: 'Nobody matches. Type a name, email or number, or pick a program.'
+      similar_names: 'Nobody matches "%{fulltext}". People with a similar name:'
+      similar_addresses: 'Nobody matches "%{fulltext}". People with a similar address:'
       open: 'Open'
       open_for: 'Open the account of %{user}'
       back: 'Back to the search'
@@ -27,8 +29,9 @@ en:
       nothing_to_confirm: 'The account has nothing left to confirm, so no mail was sent.'
       fulltext_hint: >-
         Searches first and last name, display name, email address,
-        matriculation number and Uni ID. Below three characters, only the
-        beginnings of words count.
+        matriculation number and Uni ID for words that begin with what you
+        type. If none does, from three characters on the search suggests
+        similar names, or similar addresses when what you type contains an @.
       too_short: 'Type at least two characters.'
       delete_title: 'Delete the account'
       delete_hint: >-

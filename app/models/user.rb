@@ -261,22 +261,18 @@ class User < ApplicationRecord
   SEARCHED_FIELDS = [:first_name, :last_name, :name, :email, :matriculation_number,
                      :uni_id].freeze
 
-  pg_search_scope :search_by_similarity,
-                  against: SEARCHED_FIELDS,
-                  using: {
-                    tsearch: { prefix: true, any_word: true },
-                    trigram: { word_similarity: true, threshold: 0.3 }
-                  }
+  # Only word beginnings count: a similarity search would mix "Neumann" and
+  # "Zimmermann" into the hits for "Bergmann".
   pg_search_scope :search_by_word_start,
                   against: SEARCHED_FIELDS,
-                  using: { tsearch: { prefix: true, any_word: true } }
-
-  # Search::Filters::FulltextFilter calls search_by_title on every model. Below
-  # three characters only word beginnings count: the similarity search would
-  # match most addresses by their ".de".
-  def self.search_by_title(term)
-    term.to_s.strip.length < 3 ? search_by_word_start(term) : search_by_similarity(term)
-  end
+                  using: { tsearch: { prefix: true, any_word: true } },
+                  ignoring: :accents
+  # Names only: addresses share their domains, and a similar matriculation
+  # number belongs to somebody else.
+  pg_search_scope :search_by_similar_name,
+                  against: [:first_name, :last_name, :name],
+                  using: { trigram: { word_similarity: true, threshold: 0.3 } },
+                  ignoring: :accents
 
   def self.default_search_order
     Arel.sql("LOWER(unaccent(users.last_name)), LOWER(unaccent(users.first_name)), " \
