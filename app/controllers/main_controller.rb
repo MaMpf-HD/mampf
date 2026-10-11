@@ -22,7 +22,7 @@ class MainController < ApplicationController
   end
 
   def comments
-    @lecture = Lecture.find_by(id: params[:lecture_id]) if params[:lecture_id]
+    @lecture = Lecture.find(params[:lecture_id]) if params[:lecture_id]
     @media_comments = current_user.media_with_latest_comments_not_by_creator(commented_media)
     @media_comments.select! do |m|
       (Reader.find_by(user: current_user, thread: m[:thread])

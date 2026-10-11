@@ -204,6 +204,12 @@ RSpec.describe("Main", type: :request) do
       expect(response.body).to include(comments_path)
     end
 
+    it "answers not found for an unknown lecture instead of listing all" do
+      get comments_path(lecture_id: Lecture.maximum(:id).to_i + 1)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it "lists the media of all bookmarked lectures without a filter" do
       in_bookmarked = commented_medium(bookmarked)
 

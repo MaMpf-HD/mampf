@@ -32,6 +32,15 @@ RSpec.describe("Readers", type: :request) do
       expect(user.reload.unread_comments).to be(true)
     end
 
+    it "marks nothing for an unknown lecture instead of every thread" do
+      commented_medium(lecture)
+
+      patch update_all_readers_path(lecture_id: Lecture.maximum(:id) + 1), xhr: true
+
+      expect(response).to have_http_status(:not_found)
+      expect(Reader.where(user: user)).to be_empty
+    end
+
     it "marks every thread as read without a filter" do
       commented_medium(lecture)
       commented_medium(elsewhere)

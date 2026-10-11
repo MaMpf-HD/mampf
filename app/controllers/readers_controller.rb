@@ -14,7 +14,7 @@ class ReadersController < ApplicationController
   end
 
   def update_all
-    @lecture = Lecture.find_by(id: params[:lecture_id]) if params[:lecture_id]
+    @lecture = Lecture.find(params[:lecture_id]) if params[:lecture_id]
     threads = commented_media.map(&:commontator_thread)
     existing_readers = Reader.where(user: current_user, thread: threads)
     missing_thread_ids = threads.map(&:id) - existing_readers.pluck(:thread_id)
