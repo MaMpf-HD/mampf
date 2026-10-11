@@ -2776,6 +2776,8 @@ en:
       </ul>
   comments:
     title: Comments on media in your event series and courses
+    title_for_lecture: Comments on media in %{lecture}
+    all_lectures: All event series and courses
     latest_post: Latest post
     thread_subscribed: Subscribed
     who_and_when: '%{when} ago by %{who}'

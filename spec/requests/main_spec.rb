@@ -176,4 +176,46 @@ RSpec.describe("Main", type: :request) do
       end
     end
   end
+
+  describe "GET /main/comments" do
+    let(:other) { create(:confirmed_user) }
+    let(:taught) { create(:lecture, :released_for_all, teacher: user, term: term) }
+    let(:bookmarked) { create(:lecture, :released_for_all, term: term) }
+
+    def commented_medium(lecture)
+      medium = create(:lecture_medium, teachable: lecture, released: "all",
+                                       released_at: Time.zone.now)
+      Commontator::Comment.create!(thread: medium.commontator_thread, creator: other,
+                                   body: Faker::Lorem.sentence)
+      medium
+    end
+
+    before { user.bookmark_lecture!(bookmarked) }
+
+    it "lists only the lecture's media when filtered to a lecture, " \
+       "including a lecture the user teaches without having bookmarked it" do
+      in_taught = commented_medium(taught)
+      in_bookmarked = commented_medium(bookmarked)
+
+      get comments_path(lecture_id: taught.id)
+
+      expect(response.body).to include(medium_path(in_taught))
+      expect(response.body).not_to include(medium_path(in_bookmarked))
+      expect(response.body).to include(comments_path)
+    end
+
+    it "answers not found for an unknown lecture instead of listing all" do
+      get comments_path(lecture_id: Lecture.maximum(:id).to_i + 1)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "lists the media of all bookmarked lectures without a filter" do
+      in_bookmarked = commented_medium(bookmarked)
+
+      get comments_path
+
+      expect(response.body).to include(medium_path(in_bookmarked))
+    end
+  end
 end
