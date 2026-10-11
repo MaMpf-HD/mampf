@@ -3795,6 +3795,7 @@ en:
     copy_to_clipboard: 'Copy to Clipboard'
     copy_email_address: 'Copy email address'
     copy_email_addresses: 'Copy email addresses'
+    copy_all_email_addresses: 'Copy all email addresses'
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successful'
