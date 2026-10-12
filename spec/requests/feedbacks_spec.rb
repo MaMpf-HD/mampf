@@ -86,6 +86,23 @@ RSpec.describe("Feedbacks", type: :request) do
     end
   end
 
+  context "when signed in but asked for personal data or a new password first" do
+    it "mails the feedback of a user whose personal data is still due" do
+      sign_in create(:confirmed_user, personal_data_confirmed_at: nil)
+
+      expect { send_feedback }.to change(sent_mails, :count).by(1)
+    end
+
+    it "mails the feedback of a user who must change the password" do
+      # rubocop:disable Rails/SkipsModelValidations
+      user.update_columns(password_policy_version: 0, password_changed_at: nil)
+      # rubocop:enable Rails/SkipsModelValidations
+      sign_in user
+
+      expect { send_feedback }.to change(sent_mails, :count).by(1)
+    end
+  end
+
   context "when signed out" do
     it "does not mail anything" do
       expect { send_feedback }.not_to change(sent_mails, :count)

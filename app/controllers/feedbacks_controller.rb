@@ -7,6 +7,9 @@ class FeedbacksController < ApplicationController
   LIMIT = 6
   THROTTLE_KEY = "feedbacks".freeze
 
+  # The muffin also shows on these pages; a redirect would lose the feedback.
+  skip_before_action :enforce_password_change, :enforce_personal_data, only: :create
+
   def create
     feedback = Feedback.new(feedback_params)
 
