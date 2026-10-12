@@ -41,7 +41,7 @@ $feedback-widget-offset: $support-toggle-size + 0.5rem;
   // fits on a phone, too.
   right: -$feedback-widget-offset;
   bottom: calc(100% + 0.5rem);
-  width: min(22rem, calc(100vw - 2rem));
+  width: min(28rem, calc(100vw - 2rem));
   max-height: calc(100dvh - #{$feedback-widget-size} - 2rem);
   overflow-y: auto;
   transform-origin: bottom right;
