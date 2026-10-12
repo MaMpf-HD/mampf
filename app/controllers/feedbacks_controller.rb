@@ -1,6 +1,6 @@
-# Stores the answers of the temporary feedback survey (the muffin next to the
-# support button) and mails them to the team. Answers are stored without their
-# author; the mail names the author only if they agreed to be contacted.
+# Mails the answers of the temporary feedback survey (the muffin next to the
+# support button) to the team. The mail names the author only if they agreed
+# to be contacted.
 class FeedbacksController < ApplicationController
   THROTTLE_WINDOW = 1.hour
   LIMIT = 6
@@ -15,7 +15,6 @@ class FeedbacksController < ApplicationController
                          throttled: throttled_message(THROTTLE_WINDOW))
     end
 
-    feedback.save!
     FeedbackMailer.with(feedback: mail_details(feedback)).new_feedback_email.deliver_later
     render turbo_stream: turbo_stream.update(
       "feedback-body",
@@ -39,7 +38,7 @@ class FeedbacksController < ApplicationController
                     "user_email" => current_user.email)
     end
 
-    # Only answers that are stored are counted. Without the cache the count is
+    # Only answers that are mailed are counted. Without the cache the count is
     # nil, and the form stays open.
     def over_limit?
       count = Rails.cache.increment("feedbacks:#{current_user.id}", 1,

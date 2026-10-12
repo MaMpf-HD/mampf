@@ -15,7 +15,7 @@ de:
       Feedback anonym.
     send: "Senden"
     sent: "Danke! Wir lesen jede Antwort. Hast Du noch etwas auf dem Herzen?"
-  activerecord:
+  activemodel:
     attributes:
       feedback:
         body: "Feedback"

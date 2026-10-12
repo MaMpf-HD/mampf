@@ -14,7 +14,7 @@ en:
       anonymous.
     send: "Send"
     sent: "Thank you! We read every answer. Anything else on your mind?"
-  activerecord:
+  activemodel:
     attributes:
       feedback:
         body: "Feedback"
