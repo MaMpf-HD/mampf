@@ -13,6 +13,12 @@ en:
       We then see your name and email address. Otherwise, your feedback stays
       anonymous.
     send: "Send"
+    send_failed: >
+      Sorry, your feedback could not be sent. Please copy it, so that it does
+      not get lost, and try again later.
+    copy: "Copy my feedback"
+    copied: "Copied to your clipboard"
+    copy_failed: "Copying did not work. Please select the text and copy it yourself."
     sent: "Thank you! We read every answer. Anything else on your mind?"
   activemodel:
     attributes:

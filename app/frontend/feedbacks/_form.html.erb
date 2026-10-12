@@ -1,4 +1,4 @@
-<%# locals: (feedback:, throttled: nil, intro: true) %>
+<%# locals: (feedback:, throttled: nil, send_failed: false, intro: true) %>
 <% body_invalid = feedback.errors[:body].any? %>
 
 <%= form_with model: feedback, url: feedbacks_path, local: true,
@@ -12,6 +12,32 @@
   <% if throttled %>
     <div class="alert alert-warning py-2 small" role="alert">
       <%= throttled %>
+    </div>
+  <% end %>
+
+  <%# The answer is not stored anywhere, so its text must not get lost. %>
+  <% if send_failed %>
+    <div class="alert alert-danger py-2 small" role="alert">
+      <p class="mb-2"><%= t("feedback.send_failed") %></p>
+
+      <div
+        data-controller="clipboard"
+        data-clipboard-text-value="<%= feedback.body %>"
+        data-clipboard-confirmation-value="<%= t("feedback.copied") %>"
+        data-clipboard-failure-value="<%= t("feedback.copy_failed") %>"
+        data-clipboard-resting-icon-value="bi-clipboard"
+      >
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger"
+          data-action="clipboard#copy"
+        >
+          <i class="bi bi-clipboard me-1" aria-hidden="true"
+             data-clipboard-target="icon"></i>
+          <%= t("feedback.copy") %>
+        </button>
+        <span class="visually-hidden" role="status" data-clipboard-target="status"></span>
+      </div>
     </div>
   <% end %>
 
