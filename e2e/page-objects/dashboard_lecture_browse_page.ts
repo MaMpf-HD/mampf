@@ -75,6 +75,11 @@ export class DashboardLectureBrowsePage {
     return this.page.getByTestId("lecture-search-results");
   }
 
+  /** Holds the next page to load; removed once the last page is rendered. */
+  get nextPageMarker() {
+    return this.page.locator("#pagy-nav-next");
+  }
+
   async getLectureCardCount() {
     const lectureCards = this.page.getByTestId("lecture-search-result-card");
     return await lectureCards.count();

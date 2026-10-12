@@ -8,19 +8,26 @@ async function createLectureSearchTerms(factory: any) {
   return { currentTerm, nextTerm };
 }
 
+/**
+ * Creates `count` released lectures, each with its own course. The requests
+ * are sent concurrently and all lectures share one teacher (if given), since
+ * creating them one by one, each with a new teacher, is too slow for many.
+ */
 async function createLecturesWithCourses(
   factory: any,
   count: number,
   titlePrefix: string,
   termId: number,
+  teacherId?: number,
 ) {
-  for (let i = 1; i <= count; i++) {
-    const course = await factory.create("course", [], { title: `${titlePrefix} ${i}` });
+  await Promise.all(Array.from({ length: count }, async (_, i) => {
+    const course = await factory.create("course", [], { title: `${titlePrefix} ${i + 1}` });
     await factory.create("lecture", ["released_for_all"], {
       course_id: course.id,
       term_id: termId,
+      ...(teacherId && { teacher_id: teacherId }),
     });
-  }
+  }));
 }
 
 test("loads initial results when scrolling to search bar",
@@ -39,9 +46,10 @@ test("loads initial results when scrolling to search bar",
   });
 
 test("loads more results when scrolling to bottom (even multiple times)",
-  async ({ factory, student: { page } }) => {
+  async ({ factory, student: { page }, teacher }) => {
     const { currentTerm } = await createLectureSearchTerms(factory);
-    await createLecturesWithCourses(factory, 50, "Sample Course", currentTerm.id);
+    await createLecturesWithCourses(factory, 50, "Sample Course", currentTerm.id,
+      teacher.user.id);
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
@@ -60,9 +68,10 @@ test("loads more results when scrolling to bottom (even multiple times)",
   });
 
 test("does not duplicate cards when scrolling triggers overlapping page loads",
-  async ({ factory, student: { page } }) => {
+  async ({ factory, student: { page }, teacher }) => {
     const { currentTerm } = await createLectureSearchTerms(factory);
-    await createLecturesWithCourses(factory, 60, "Rapid Course", currentTerm.id);
+    await createLecturesWithCourses(factory, 30, "Rapid Course", currentTerm.id,
+      teacher.user.id);
 
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();
@@ -77,20 +86,16 @@ test("does not duplicate cards when scrolling triggers overlapping page loads",
       setInterval(() => window.dispatchEvent(new Event("scroll")), 3);
     });
 
-    for (let i = 0; i < 8; i++) {
-      const responsePromise = dashboard.getLectureSearchPromise()
-        .catch(() => null);
+    // Newly appended cards push the bottom further down, so keep scrolling
+    // until the last page has removed the "next page" marker
+    await expect(async () => {
       await page.evaluate(() => {
         window.scrollTo(0, document.body.scrollHeight);
       });
-      const response = await Promise.race([
-        responsePromise,
-        page.waitForTimeout(3000).then(() => null),
-      ]);
-      if (!response) break; // no more pages to load
-    }
-    await page.waitForTimeout(300);
+      await expect(dashboard.nextPageMarker).not.toBeAttached({ timeout: 1000 });
+    }).toPass();
 
+    await expect(page.getByTestId("lecture-search-result-card")).toHaveCount(30);
     const hrefs = await dashboard.getLectureCardHrefs();
     const duplicates = hrefs.filter((href, index) => hrefs.indexOf(href) !== index);
     expect(duplicates).toEqual([]);
