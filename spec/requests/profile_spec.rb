@@ -181,16 +181,4 @@ RSpec.describe("Profile", type: :request) do
       end
     end
   end
-
-  describe "PATCH /profile/pin_lecture" do
-    it "pins a lecture the user has not bookmarked and swaps the Quick Access menu" do
-      lecture = create(:lecture, :released_for_all)
-
-      patch(pin_lecture_path(lecture: { id: lecture.id }), as: :turbo_stream)
-
-      expect(user.reload.favorite_lectures).to include(lecture)
-      expect(response.body).to include('target="lecturesDropdown"')
-        .and(include(lecture.short_title))
-    end
-  end
 end

@@ -1,10 +1,9 @@
 import { expect, test } from "./_support/fixtures";
-import { subscribeToLecture } from "./user_registration/helpers";
 
 test.describe("quick access", () => {
-  test("pins a lecture from its page and unpins it again", async ({
+  test("pins a lecture without bookmarking it and unpins it again", async ({
     factory,
-    student: { page, user },
+    student: { page },
   }) => {
     const course = await factory.create("course", [], {
       title: "Advanced Calculus", short_title: "AdvCalc",
@@ -12,7 +11,6 @@ test.describe("quick access", () => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       course_id: course.id,
     });
-    await subscribeToLecture(factory, lecture, user.id);
     const shortTitle = /AdvCalc/;
     const menu = page.getByTestId("quick-access-menu");
     const toggle = page.getByRole("button", { name: "Quick Access", exact: true }).last();
