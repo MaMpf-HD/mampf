@@ -31,17 +31,50 @@ $mama-ink: #4a2614;
   top: 3.5rem;
   left: calc(50% + #{$small-width} / 2 + 1rem);
   width: min(10rem, calc((100% - #{$small-width}) / 2 - 1.5rem));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+}
+
+.mama-muffin__open,
+.mama-muffin__dismiss {
   padding: 0;
   border: 0;
-  background: none;
   color: $mama-ink;
 
   &:focus-visible {
     outline: 2px solid var(--bs-primary);
     outline-offset: 4px;
+  }
+}
+
+.mama-muffin__open {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background: none;
+}
+
+// A pixel cross on the bubble's top-right corner.
+.mama-muffin__dismiss {
+  position: absolute;
+  top: -2 * $mama-pixel;
+  right: -2 * $mama-pixel;
+  display: flex;
+  padding: $mama-pixel;
+  background: $white;
+  box-shadow:
+    0 (-$mama-pixel) $mama-ink,
+    0 $mama-pixel $mama-ink,
+    (-$mama-pixel) 0 $mama-ink,
+    $mama-pixel 0 $mama-ink;
+
+  svg {
+    --muffin-outline: #{$mama-ink};
+
+    width: 5 * $mama-pixel;
+  }
+
+  &:hover svg {
+    --muffin-outline: var(--bs-danger);
   }
 }
 
@@ -98,7 +131,7 @@ $mama-ink: #4a2614;
 .feedback-muffin__d { fill: var(--muffin-cherry-shade); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .mama-muffin:hover .mama-muffin__figure {
+  .mama-muffin__open:hover .mama-muffin__figure {
     animation: mama-muffin-hop 0.3s steps(2) infinite alternate;
   }
 }

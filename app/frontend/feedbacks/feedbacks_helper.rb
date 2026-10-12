@@ -1,5 +1,9 @@
-# Draws the pixel-art muffin of the feedback button.
+# Draws the pixel-art muffins of the feedback button and the dashboard.
 module FeedbacksHelper
+  def show_mama_muffin?
+    cookies[FeedbacksController::MAMA_COOKIE].blank?
+  end
+
   # Draws a pixel grid at the given offset, one rect per run of a color.
   def muffin_pixels(rows, left: 0, top: 0)
     safe_join(rows.each_with_index.flat_map do |row, y|
