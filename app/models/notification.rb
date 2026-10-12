@@ -30,7 +30,7 @@ class Notification < ApplicationRecord
       edit_lecture_path(notifiable.voucher.lecture, anchor: "people")
     elsif lecture_or_course?
       root_path(anchor: "lecture-search")
-    elsif lecture_announcement?
+    elsif announcement?
       lecture_home_path(notifiable.lecture)
     elsif quiz?
       medium_path(notifiable)
@@ -59,10 +59,6 @@ class Notification < ApplicationRecord
 
   def announcement?
     notifiable.is_a?(Announcement)
-  end
-
-  def lecture_announcement?
-    announcement? && notifiable.lecture.present?
   end
 
   def quiz?

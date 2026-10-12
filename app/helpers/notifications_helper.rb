@@ -39,7 +39,7 @@ module NotificationsHelper
       medium_notification_card_header(notifiable)
     elsif notification.course? || notification.lecture?
       t("notifications.course_selection")
-    elsif notification.lecture_announcement?
+    elsif notification.announcement?
       announcement_notification_card_header(notifiable)
     elsif notification.redemption?
       redemption_notification_card_header(notifiable)
