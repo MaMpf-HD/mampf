@@ -52,12 +52,11 @@ test("loads more results when scrolling to bottom (even multiple times)",
     expect(firstCount).toBeGreaterThan(0);
 
     await dashboard.scrollToBottom();
+    await expect.poll(() => dashboard.getLectureCardCount()).toBeGreaterThan(firstCount);
     const secondCount = await dashboard.getLectureCardCount();
-    expect(secondCount).toBeGreaterThan(firstCount);
 
     await dashboard.scrollToBottom();
-    const thirdCount = await dashboard.getLectureCardCount();
-    expect(thirdCount).toBeGreaterThan(secondCount);
+    await expect.poll(() => dashboard.getLectureCardCount()).toBeGreaterThan(secondCount);
   });
 
 test("does not duplicate cards when scrolling triggers overlapping page loads",

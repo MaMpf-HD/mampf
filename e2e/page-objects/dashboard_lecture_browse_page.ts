@@ -153,8 +153,9 @@ export class DashboardLectureBrowsePage {
     await this.openWashiTapePicker(lectureId);
     const answered = this.page.waitForResponse(response =>
       response.url().endsWith("/washi_tape"));
-    await this.dashboardCard(lectureId)
-      .getByRole("radio", { name: colorLabel }).click();
+    // The radio itself is a hidden 1px dot, so click the swatch around it
+    const radio = this.page.getByRole("radio", { name: colorLabel });
+    await this.dashboardCard(lectureId).locator("label").filter({ has: radio }).click();
     await answered;
   }
 

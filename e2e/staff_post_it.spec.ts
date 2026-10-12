@@ -3,7 +3,8 @@ import { expect, Page, test } from "./_support/fixtures";
 async function createLecture(page: Page, course: string) {
   const dialog = page.getByRole("dialog", { name: "Create an event series" });
   await page.getByTestId("new-lecture-course-select").selectOption({ label: course });
-  await page.keyboard.press("Escape");
+  // Bootstrap ignores closing the dialog until it has finished opening
+  await expect(dialog.getByRole("document")).toHaveCSS("transform", "none");
   await dialog.getByRole("button", { name: "Save" }).click();
   return dialog;
 }
