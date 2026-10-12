@@ -26,7 +26,7 @@ test.describe("quick access", () => {
 
     await toggle.click();
     await expect(menu.getByRole("link", { name: "AdvCalc" })).toBeVisible();
-    await expect(menu).not.toContainText("click the pin next to this menu");
+    await expect(menu).not.toContainText("click the pin that will appear next to this menu");
 
     await page.goto("/");
     await toggle.click();
