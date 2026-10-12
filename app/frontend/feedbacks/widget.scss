@@ -8,17 +8,15 @@ $feedback-widget-size: 4.5rem;
 // One pixel of the 24 pixels wide muffin.
 $muffin-pixel: math.div($feedback-widget-size, 24);
 
+// The support button keeps the corner; the muffin sits to its left.
+$support-toggle-size: 2.75rem;
+$feedback-widget-offset: $support-toggle-size + 0.5rem;
+
 .feedback-widget {
   position: fixed;
-  right: 1rem;
+  right: calc(1rem + #{$feedback-widget-offset});
   bottom: 1rem;
   z-index: $zindex-fixed;
-}
-
-// The muffin takes the corner, so the support button moves one place to the
-// left. Removing the feedback widget restores the support button's position.
-.support-widget {
-  right: calc(1rem + #{$feedback-widget-size} + 0.5rem);
 }
 
 .feedback-widget__toggle {
@@ -39,10 +37,12 @@ $muffin-pixel: math.div($feedback-widget-size, 24);
 
 .feedback-widget__panel {
   position: absolute;
-  right: 0;
+  // Flush with the support panel at the right edge of the page, so that it
+  // fits on a phone, too.
+  right: -$feedback-widget-offset;
   bottom: calc(100% + 0.5rem);
   width: min(22rem, calc(100vw - 2rem));
-  max-height: calc(100dvh - 5.25rem);
+  max-height: calc(100dvh - #{$feedback-widget-size} - 2rem);
   overflow-y: auto;
   transform-origin: bottom right;
 
