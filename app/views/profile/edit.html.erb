@@ -4,78 +4,60 @@
   "change->profile#showChangeBanner"
 ].join(" ") %>
 
-<div class="container-md">
-
-  <div class="row">
-
-    <!-- 🌟 Voucher -->
-    <div class="d-flex justify-content-center">
-      <div class="card profile-card voucher-card">
-        <div class="voucher-redemption-pattern"></div>
-        <div class="card-body">
-          <h5 class="card-title">
-            <%= t('profile.redeem_voucher') %>
-            <%= helpdesk(t('profile.redeem_voucher_explainer'), true) %>
-          </h5>
-          <div id="redeem-voucher">
-            <%= render partial: 'profile/verify_voucher' %>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+<div class="container-md profile-page">
 
   <%= bootstrap_form_with url: profile_update_path, scope: 'user',
-                        html: { id: 'profileForm',
-                                data: { controller: 'profile',
-            action: profile_form_actions } } do |f| %>
+                          html: { id: 'profileForm',
+                                  data: { controller: 'profile',
+                                          action: profile_form_actions } } do |f| %>
 
-  <div class="row display-flex mb-md-3">
+  <div class="row mb-md-3">
 
-    <!-- ⭕ Unsaved changes warning/button -->
+    <!-- Unsaved changes warning/button -->
     <div class="w-100 mb-3">
       <%= f.submit t('profile.changes_made_btn'),
             class: 'btn btn-warning mt-3 w-100 d-none text-wrap',
             id: "profileChange",
-          data: { profile_target: 'changeButton' } %>
+            data: { profile_target: 'changeButton' } %>
     </div>
 
-    <!-- 🌟 Account -->
+    <!-- LEFT COLUMN -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="card profile-card">
-        <div class="card-header">
-          <h5 class="mb-0">
-            <%= t('profile.account') %>
-          </h5>
-        </div>
+      <div class="profile-stack">
 
-        <div class="card-body">
-          <div class="mb-3">
-            <%= f.label :name,
-                  t('profile.name'),
-                  class: "form-label fw-bold" %>
-            <%= helpdesk(t('profile.name_information'), true) %>
-            <%= f.text_field_without_bootstrap :name,
-                                               class: 'form-control' %>
-            <div class="invalid-feedback"
-                id="username-error">
-            </div>
+        <!-- Image card: teachers only -->
+        <% if @user.teacher? %>
+          <%= render "profile/teacher_profile", f: f, user: @user %>
+        <% end %>
+
+        <!-- Account info card -->
+        <section class="card profile-card">
+          <div class="card-header">
+            <h5><%= t('profile.account') %></h5>
+            <%= link_to edit_personal_data_path, class: "profile-btn" do %>
+              <%= t("personal_data.edit_link") %>
+              <span class="material-icons profile-icon" aria-hidden="true">edit</span>
+            <% end %>
           </div>
 
-          <% unless @user.full_name %>
-            <div class="mb-3">
-              <%= f.label :name_in_tutorials,
-                          t('profile.name_in_tutorials'),
-                          class: "form-label fw-bold" %>
-              <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
-              <%= f.text_field_without_bootstrap :name_in_tutorials,
-                                                class: 'form-control' %>
+          <div class="card-body">
+            <div class="profile-field">
+              <%= f.label :name, t('profile.name'), class: "profile-label" %>
+              <%= helpdesk(t('profile.name_information'), true) %>
+              <%= f.text_field_without_bootstrap :name, class: 'form-control' %>
+              <div class="invalid-feedback" id="username-error"></div>
             </div>
-          <% end %>
 
-          <div class="mb-3">
-            <div class="fw-bold mb-1"><%= t("personal_data.title") %></div>
+            <% unless @user.full_name %>
+              <div class="profile-field">
+                <%= f.label :name_in_tutorials, t('profile.name_in_tutorials'),
+                            class: "profile-label" %>
+                <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
+                <%= f.text_field_without_bootstrap :name_in_tutorials,
+                                                   class: 'form-control' %>
+              </div>
+            <% end %>
+
             <% if @user.personal_data_confirmed_at %>
               <% details = { t("personal_data.steps.name") => @user.full_name,
                              User.human_attribute_name(:matriculation_number) =>
@@ -83,54 +65,80 @@
                              User.human_attribute_name(:program_id) =>
                                @user.program&.name_with_subject,
                              User.human_attribute_name(:uni_id) => @user.uni_id } %>
-              <dl class="row mb-1">
+              <div class="profile-grid">
                 <% details.each do |label, value| %>
-                  <dt class="col-5 fw-normal text-muted"><%= label %></dt>
-                  <dd class="col-7 mb-1"><%= value.presence || "–" %></dd>
+                  <div>
+                    <div class="profile-label"><%= label %></div>
+                    <div class="profile-value"><%= value.presence || "–" %></div>
+                  </div>
                 <% end %>
-              </dl>
+              </div>
             <% end %>
-            <%= link_to t("personal_data.edit_link"), edit_personal_data_path %>
           </div>
+        </section>
 
-          <% if @user.teacher? %>
-            <%= render "profile/teacher_profile", f: f, user: @user %>
-          <% end %>
+        <!-- Voucher card -->
+        <section class="card profile-card voucher-card">
+          <div class="voucher-redemption-pattern"></div>
+          <div class="card-header">
+            <h5>
+              <%= t('profile.redeem_voucher') %>
+              <%= helpdesk(t('profile.redeem_voucher_explainer'), true) %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <div id="redeem-voucher">
+              <%= render partial: 'profile/verify_voucher' %>
+            </div>
+          </div>
+        </section>
 
-          <%= render partial: 'profile/subscription_type', locals: { f: f } %>
-          <%= render partial: 'profile/account' %>
-        </div>
+        <!-- 🔘 Action card -->
+        <section class="card profile-card">
+          <div class="card-body">
+            <%= render partial: 'profile/account' %>
+          </div>
+        </section>
+
       </div>
     </div>
 
-    <!-- 🌟 Notifications -->
+    <!-- ▶ RIGHT COLUMN -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="card profile-card">
-        <div class="card-header">
-          <h5 class="mb-0">
-            <%= t('profile.email_notifications_header') %>
-          </h5>
-        </div>
+      <div class="profile-stack">
 
-        <div class="card-body">
-          <%= render partial: 'profile/email_notifications' , locals: { f: f } %>
-        </div>
+          <!-- ⚙ Account preferences card -->
+          <section class="card profile-card">
+            <div class="card-header">
+              <h5><%= t('profile.preferences', default: 'Preferences') %></h5>
+            </div>
+            <div class="card-body">
+              <%= render partial: 'profile/subscription_type', locals: { f: f } %>
+            </div>
+          </section>
+
+          <section class="card profile-card">
+            <div class="card-header">
+              <h5><%= t('profile.email_notifications_header') %></h5>
+            </div>
+            <div class="card-body">
+              <%= render partial: 'profile/email_notifications', locals: { f: f } %>
+            </div>
+          </section>
+
       </div>
     </div>
 
   </div>
 
   <div class="row">
-
-    <!-- ⭕ Unsaved changes warning/button -->
-    <!-- Here at the bottom only for small displays -->
+    <!-- Unsaved changes warning/button (small screens only) -->
     <div class="w-100 mt-3 mb-3 d-md-none">
       <%= f.submit t('profile.changes_made_btn'),
-        class: 'btn btn-warning w-100 d-none text-wrap',
-        data: { profile_target: 'changeButton' },
-        id: "profileChangeBottom" %>
+            class: 'btn btn-warning w-100 d-none text-wrap',
+            data: { profile_target: 'changeButton' },
+            id: "profileChangeBottom" %>
     </div>
-
   </div>
 
   <% end %>
