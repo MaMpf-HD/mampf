@@ -142,7 +142,7 @@ en:
       tag_search: 'Tag search'
       terms: 'Terms'
       classification: 'Classification'
-      news: 'News'
+      announcements: 'MaMpf announcements'
       boards: 'Messageboards'
       stats: 'Access statistics'
       export_stats: 'Export statistics'
@@ -371,6 +371,7 @@ en:
         mistake: "toggle mistake annotations"
         presentation: "toggle presentation annotations"
     announcement:
+      title: 'MaMpf announcements'
       help: >
         Here you can enter a text. You may use LaTeX (by putting the
         corresponding expression inside $...$). A preview of your
@@ -3561,7 +3562,6 @@ en:
     number: 'Number'
     hide: 'Hide'
     link: 'Link'
-    news: 'News'
     time: 'Time'
     author: 'Author'
     mark_as_read: 'Mark as read'

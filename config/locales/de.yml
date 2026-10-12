@@ -187,7 +187,7 @@ de:
       tag_search: 'Tagsuche'
       terms: 'Semester'
       classification: 'Systematik'
-      news: 'News'
+      announcements: 'MaMpf-Mitteilungen'
       boards: 'Foren'
       stats: 'Zugriffsstatistik'
       export_stats: 'Statistiken exportieren'
@@ -435,6 +435,7 @@ de:
         mistake: "Fehler-Annotationen ein-/ausblenden"
         presentation: "Darstellung-Annotationen ein-/ausblenden"
     announcement:
+      title: 'MaMpf-Mitteilungen'
       help: >
         Hier kannst Du den Text eingeben. Du kannst LaTeX benutzen
         (indem Du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
@@ -3784,7 +3785,6 @@ de:
     number: 'Nummer'
     hide: 'verstecken'
     link: 'Link'
-    news: 'News'
     time: 'Zeit'
     author: 'Autor'
     mark_as_read: 'als gelesen markieren'
