@@ -8,6 +8,10 @@ RSpec.describe("SupportRequests", type: :request) do
                                 as: :turbo_stream)
   end
 
+  def sent_mails
+    ActionMailer::Base.deliveries
+  end
+
   before { Rails.cache.clear }
 
   context "when signed in" do
@@ -15,24 +19,52 @@ RSpec.describe("SupportRequests", type: :request) do
 
     it "mails the message" do
       expect { send_request }
-        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .to change(sent_mails, :count).by(1)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t("support_request.sent"))
     end
 
-    # The mail job carries the message, the name and the address; the log
-    # keeps only that a mail was queued.
+    # The mail carries the message, the name and the address; the log keeps
+    # only that a request came in, at the level production logs at. (Below
+    # that, Action Mailer logs whole mails.)
     it "keeps the message and the sender out of the log" do
       log = StringIO.new
-      logger = ActiveSupport::Logger.new(log)
-      allow(ActiveJob::Base).to receive(:logger).and_return(logger)
+      logger = ActiveSupport::Logger.new(log, level: :info)
+      allow(ActionMailer::Base).to receive(:logger).and_return(logger)
       allow(ActionController::Base).to receive(:logger).and_return(logger)
 
       send_request(message: "My exam registration for Noether's lecture fails.")
 
-      expect(log.string).to include("Enqueued", "SupportRequestsController")
+      expect(log.string).to include("SupportRequestsController")
       expect(log.string).not_to include("Noether", user.email)
+    end
+
+    context "when the mail cannot be sent" do
+      before do
+        allow_any_instance_of(Mail::TestMailer)
+          .to receive(:deliver!).and_raise(Net::SMTPServerBusy)
+      end
+
+      it "keeps the message and offers to copy it" do
+        send_request
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(response.body).not_to include(I18n.t("support_request.sent"))
+        expect(response.body).to include(I18n.t("form_mail.send_failed").squish)
+
+        page = Nokogiri::HTML(response.body)
+        expect(page.at_css("[data-clipboard-text-value]")["data-clipboard-text-value"])
+          .to eq("My exam registration does not work.")
+        expect(page.at_css("textarea").text.strip).to eq("My exam registration does not work.")
+      end
+
+      it "does not count the message towards the limit" do
+        SupportRequestsController::LIMIT.times { send_request }
+        allow_any_instance_of(Mail::TestMailer).to receive(:deliver!).and_call_original
+
+        expect { send_request }.to change(sent_mails, :count).by(1)
+      end
     end
 
     # A second question should not need a new page.
@@ -45,14 +77,14 @@ RSpec.describe("SupportRequests", type: :request) do
 
     it "sends nothing for a message too short to act on" do
       expect { send_request(message: "Help") }
-        .not_to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .not_to change(sent_mails, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "sends nothing for a message of spaces only" do
       expect { send_request(message: " " * 12) }
-        .not_to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .not_to change(sent_mails, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
     end
@@ -62,7 +94,7 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response).to have_http_status(:ok)
 
       expect { send_request }
-        .not_to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .not_to change(sent_mails, :count)
 
       wait = ActionController::Base.helpers.distance_of_time_in_words(
         SupportRequestsController::THROTTLE_WINDOW
@@ -75,7 +107,7 @@ RSpec.describe("SupportRequests", type: :request) do
       allow(Rails.cache).to receive(:increment).and_return(nil)
 
       expect { send_request }
-        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .to change(sent_mails, :count).by(1)
     end
 
     # Otherwise a few mistakes would lock somebody out of the support.
@@ -83,7 +115,7 @@ RSpec.describe("SupportRequests", type: :request) do
       (SupportRequestsController::LIMIT + 1).times { send_request(message: "Help") }
 
       expect { send_request }
-        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .to change(sent_mails, :count).by(1)
     end
   end
 
@@ -92,7 +124,7 @@ RSpec.describe("SupportRequests", type: :request) do
       sign_in create(:confirmed_user, personal_data_confirmed_at: nil)
 
       expect { send_request }
-        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .to change(sent_mails, :count).by(1)
     end
 
     it "mails the message of a user who must change the password" do
@@ -102,7 +134,7 @@ RSpec.describe("SupportRequests", type: :request) do
       sign_in user
 
       expect { send_request }
-        .to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .to change(sent_mails, :count).by(1)
     end
   end
 
@@ -111,7 +143,7 @@ RSpec.describe("SupportRequests", type: :request) do
   context "when not signed in" do
     it "takes no message" do
       expect { send_request }
-        .not_to have_enqueued_mail(SupportRequestMailer, :new_support_request_email)
+        .not_to change(sent_mails, :count)
 
       expect(response).to redirect_to(new_user_session_path)
     end

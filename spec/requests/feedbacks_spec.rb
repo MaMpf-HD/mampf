@@ -44,7 +44,8 @@ RSpec.describe("Feedbacks", type: :request) do
 
     context "when the mail cannot be sent" do
       before do
-        allow(ENV).to receive(:fetch).with("FEEDBACK_EMAIL").and_raise(KeyError)
+        allow_any_instance_of(Mail::TestMailer)
+          .to receive(:deliver!).and_raise(Net::SMTPServerBusy)
       end
 
       it "does not thank, but offers to copy the feedback" do
@@ -52,7 +53,7 @@ RSpec.describe("Feedbacks", type: :request) do
 
         expect(response).to have_http_status(:service_unavailable)
         expect(response.body).not_to include(I18n.t("feedback.sent"))
-        expect(response.body).to include(I18n.t("feedback.send_failed").squish)
+        expect(response.body).to include(I18n.t("form_mail.send_failed").squish)
 
         page = Nokogiri::HTML(response.body)
         expect(page.at_css("[data-clipboard-text-value]")["data-clipboard-text-value"])
@@ -64,7 +65,7 @@ RSpec.describe("Feedbacks", type: :request) do
         stub_const("FeedbacksController::LIMIT", 1)
         send_feedback
 
-        allow(ENV).to receive(:fetch).with("FEEDBACK_EMAIL").and_return("feedback@example.com")
+        allow_any_instance_of(Mail::TestMailer).to receive(:deliver!).and_call_original
         expect { send_feedback }.to change(sent_mails, :count).by(1)
       end
     end

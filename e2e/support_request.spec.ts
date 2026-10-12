@@ -1,7 +1,7 @@
 import { expect, test } from "./_support/fixtures";
 
-// The mail itself goes out through a job, which the test server only
-// enqueues; the request and mailer specs cover what it says and where it goes.
+// The mail itself goes out during the request, which the test server only
+// collects; the request and mailer specs cover what it says and where it goes.
 test.describe("the support button", () => {
   test("sends a signed-in user's message", async ({ student }) => {
     const { page } = student;

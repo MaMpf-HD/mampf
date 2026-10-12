@@ -1,0 +1,26 @@
+<%# locals: (text:) %>
+<%#
+  Says that a form's message could not be mailed and offers to copy its text,
+  which is stored nowhere else, so that it does not get lost.
+%>
+<div class="alert alert-danger py-2 small" role="alert">
+  <p class="mb-2"><%= t("form_mail.send_failed") %></p>
+
+  <div
+    data-controller="clipboard"
+    data-clipboard-text-value="<%= text %>"
+    data-clipboard-confirmation-value="<%= t("form_mail.copied") %>"
+    data-clipboard-failure-value="<%= t("form_mail.copy_failed") %>"
+    data-clipboard-resting-icon-value="bi-clipboard"
+  >
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-danger"
+      data-action="clipboard#copy"
+    >
+      <i class="bi bi-clipboard me-1" aria-hidden="true" data-clipboard-target="icon"></i>
+      <%= t("form_mail.copy") %>
+    </button>
+    <span class="visually-hidden" role="status" data-clipboard-target="status"></span>
+  </div>
+</div>

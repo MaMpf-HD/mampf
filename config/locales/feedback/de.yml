@@ -14,12 +14,6 @@ de:
       Dann sehen wir Deinen Namen und Deine E-Mail-Adresse. Sonst bleibt Dein
       Feedback anonym.
     send: "Senden"
-    send_failed: >
-      Leider konnte Dein Feedback nicht gesendet werden. Kopiere es Dir bitte,
-      damit es nicht verloren geht, und versuche es später noch einmal.
-    copy: "Mein Feedback kopieren"
-    copied: "In die Zwischenablage kopiert"
-    copy_failed: "Kopieren hat nicht geklappt. Markiere den Text bitte und kopiere ihn selbst."
     sent: "Danke! Wir lesen jede Antwort. Hast Du noch etwas auf dem Herzen?"
   activemodel:
     attributes:
