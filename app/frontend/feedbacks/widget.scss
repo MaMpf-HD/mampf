@@ -3,8 +3,9 @@
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 
-// Three screen pixels per muffin pixel keep the pixel art crisp.
-$feedback-widget-size: 4.5rem;
+// 2.5 screen pixels per muffin pixel, i.e. whole pixels on high-DPI screens,
+// keep the pixel art crisp.
+$feedback-widget-size: 3.75rem;
 // One pixel of the 24 pixels wide muffin.
 $muffin-pixel: math.div($feedback-widget-size, 24);
 
