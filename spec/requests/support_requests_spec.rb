@@ -25,9 +25,8 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response.body).to include(I18n.t("support_request.sent"))
     end
 
-    # The mail carries the message, the name and the address; the log keeps
-    # only that a request came in, at the level production logs at. (Below
-    # that, Action Mailer logs whole mails.)
+    # The mail carries the message, the name and the address; the log at
+    # production's level (info) must not.
     it "keeps the message and the sender out of the log" do
       log = StringIO.new
       logger = ActiveSupport::Logger.new(log, level: :info)

@@ -71,7 +71,7 @@ RSpec.describe("Feedbacks", type: :request) do
     end
 
     it "sends a too short feedback back without mailing it" do
-      expect { send_feedback(body: "") }.not_to change(sent_mails, :count)
+      expect { send_feedback(body: "Meh") }.not_to change(sent_mails, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
     end

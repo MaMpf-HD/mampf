@@ -1,7 +1,7 @@
 import { expect, test } from "./_support/fixtures";
 
-// The mail itself goes out during the request, which the test server only
-// collects; the request and mailer specs cover what it says and where it goes.
+// The test server collects mails instead of sending them; the request and
+// mailer specs cover what they say and where they go.
 test.describe("the support button", () => {
   test("sends a signed-in user's message", async ({ student }) => {
     const { page } = student;

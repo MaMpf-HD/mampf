@@ -1,7 +1,5 @@
-# An answer to the temporary "What can we improve?" survey behind the muffin
-# next to the support button. It is mailed to the team and not stored. It is
-# anonymous unless its author ticks `can_contact`; only then does the mail
-# name them.
+# Feedback from the muffin next to the support button. It is mailed to the
+# team, not stored, and anonymous unless its author sets `can_contact`.
 class Feedback
   include ActiveModel::Model
   include ActiveModel::Attributes

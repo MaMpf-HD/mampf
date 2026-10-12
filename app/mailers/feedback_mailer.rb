@@ -1,6 +1,5 @@
-# Mails an answer of the temporary feedback survey to the feedback address
-# (FEEDBACK_EMAIL). An anonymous answer names nobody; otherwise the sender
-# comes with it and is the one a reply goes to.
+# Mails a `Feedback` to FEEDBACK_EMAIL. With `can_contact`, the answer goes to
+# its author; otherwise the mail names nobody.
 class FeedbackMailer < ApplicationMailer
   layout false
 

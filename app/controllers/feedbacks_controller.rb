@@ -1,6 +1,5 @@
-# Mails the answers of the temporary feedback survey (the muffin next to the
-# support button) to the team, see `FormMail`. The mail names the author only
-# if they agreed to be contacted.
+# Mails a `Feedback` from the muffin next to the support button, see
+# `FormMail`. Only with `can_contact` does the mail name its author.
 class FeedbacksController < ApplicationController
   include FormMail
 
@@ -40,9 +39,7 @@ class FeedbacksController < ApplicationController
       details = { "body" => feedback.body }
       return details unless feedback.can_contact
 
-      details.merge("user_id" => current_user.id,
-                    "user_name" => current_user.tutorial_name,
-                    "user_email" => current_user.email)
+      details.merge(form_mail_sender)
     end
 
     def render_form(feedback, status, throttled: nil, send_failed: false)

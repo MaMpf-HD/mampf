@@ -23,9 +23,7 @@ class SupportRequestsController < ApplicationController
                          throttled: throttled_message(THROTTLE_WINDOW))
     end
 
-    details = support_request.attributes.merge("user_id" => current_user.id,
-                                               "user_name" => current_user.tutorial_name,
-                                               "user_email" => current_user.email)
+    details = support_request.attributes.merge(form_mail_sender)
     mail = SupportRequestMailer.with(support_request: details).new_support_request_email
     unless deliver_form_mail(mail, THROTTLE_KEY)
       return render_form(support_request, :service_unavailable, send_failed: true)

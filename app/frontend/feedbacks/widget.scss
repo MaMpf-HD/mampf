@@ -3,10 +3,9 @@
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
 
-// 2.5 screen pixels per muffin pixel, i.e. whole pixels on high-DPI screens,
-// keep the pixel art crisp.
+// 24 muffin pixels of 2.5px each: whole device pixels on 2x screens, so the
+// pixel art stays crisp.
 $feedback-widget-size: 3.75rem;
-// One pixel of the 24 pixels wide muffin.
 $muffin-pixel: math.div($feedback-widget-size, 24);
 
 // The support button keeps the corner; the muffin sits to its left.
@@ -59,7 +58,7 @@ $feedback-widget-offset: $support-toggle-size + 0.5rem;
   }
 }
 
-// Pixel muffin, one color per letter of its grid.
+// One color per letter of the grid in `_muffin.html.erb`.
 .feedback-muffin {
   --muffin-outline: #4a2614;
   --muffin-cap: #e59a4a;
@@ -106,8 +105,7 @@ $feedback-widget-offset: $support-toggle-size + 0.5rem;
   display: none;
 }
 
-// Once a feedback is sent, the muffin has heart eyes. The thanks stay only
-// until the next page load, and so do the hearts.
+// Heart eyes while the panel shows the thanks from `_sent.html.erb`.
 .feedback-widget:has(.feedback-widget__sent) {
   .feedback-muffin__eyes-love {
     display: inline;
@@ -118,14 +116,13 @@ $feedback-widget-offset: $support-toggle-size + 0.5rem;
   }
 }
 
-// Idle: a slow two-step bob and a blink now and then. Hover: a little hop.
 @media (prefers-reduced-motion: no-preference) {
   .feedback-muffin {
     animation: feedback-muffin-bob 2.4s steps(1) infinite;
   }
 
   .feedback-muffin__eyes-closed {
-    animation: feedback-muffin-wink 4s steps(1) infinite;
+    animation: feedback-muffin-blink 4s steps(1) infinite;
   }
 
   .feedback-widget__toggle:hover .feedback-muffin {
@@ -137,7 +134,7 @@ $feedback-widget-offset: $support-toggle-size + 0.5rem;
   50% { transform: translateY(-$muffin-pixel); }
 }
 
-@keyframes feedback-muffin-wink {
+@keyframes feedback-muffin-blink {
   0%, 94% { visibility: hidden; }
   95%, 97% { visibility: visible; }
   98% { visibility: hidden; }
