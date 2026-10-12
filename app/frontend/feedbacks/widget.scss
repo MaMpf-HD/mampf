@@ -1,0 +1,147 @@
+@use "sass:math";
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+// Three screen pixels per muffin pixel keep the pixel art crisp.
+$feedback-widget-size: 4.5rem;
+// One pixel of the 24 pixels wide muffin.
+$muffin-pixel: math.div($feedback-widget-size, 24);
+
+.feedback-widget {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: $zindex-fixed;
+}
+
+// The muffin takes the corner, so the support button moves one place to the
+// left. Removing the feedback widget restores the support button's position.
+.support-widget {
+  right: calc(1rem + #{$feedback-widget-size} + 0.5rem);
+}
+
+.feedback-widget__toggle {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: $feedback-widget-size;
+  padding: 0;
+  border: 0;
+  background: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+}
+
+.feedback-widget__panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 5.25rem);
+  overflow-y: auto;
+  transform-origin: bottom right;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: feedback-widget-open 0.15s ease-out;
+  }
+}
+
+@keyframes feedback-widget-open {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+// Pixel muffin, one color per letter of its grid.
+.feedback-muffin {
+  --muffin-outline: #4a2614;
+  --muffin-cap: #e59a4a;
+  --muffin-highlight: #f8c985;
+  --muffin-shade: #c4752f;
+  --muffin-chip: #5a2e17;
+  --muffin-chip-light: #8f5634;
+  --muffin-lash: #4a2614;
+  --muffin-eye: #2b160b;
+  --muffin-light: #ffffff;
+  --muffin-cheek: #ff7590;
+  --muffin-mouth: #4a1a12;
+  --muffin-foil: #fbeedd;
+  --muffin-pleat: #e6cba6;
+  --muffin-heart: #e8364f;
+
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 1px 1px rgba($black, 0.25));
+}
+
+.feedback-muffin__o { fill: var(--muffin-outline); }
+.feedback-muffin__c { fill: var(--muffin-cap); }
+.feedback-muffin__h { fill: var(--muffin-highlight); }
+.feedback-muffin__s { fill: var(--muffin-shade); }
+.feedback-muffin__p { fill: var(--muffin-chip); }
+.feedback-muffin__q { fill: var(--muffin-chip-light); }
+.feedback-muffin__b { fill: var(--muffin-lash); }
+.feedback-muffin__e { fill: var(--muffin-eye); }
+.feedback-muffin__l { fill: var(--muffin-light); }
+.feedback-muffin__k { fill: var(--muffin-cheek); }
+.feedback-muffin__m { fill: var(--muffin-mouth); }
+.feedback-muffin__f { fill: var(--muffin-foil); }
+.feedback-muffin__t { fill: var(--muffin-pleat); }
+.feedback-muffin__r { fill: var(--muffin-heart); }
+
+.feedback-muffin__eyes-closed {
+  visibility: hidden;
+}
+
+.feedback-muffin__eyes-love {
+  display: none;
+}
+
+// Once a feedback is sent, the muffin has heart eyes. The thanks stay only
+// until the next page load, and so do the hearts.
+.feedback-widget:has(.feedback-widget__sent) {
+  .feedback-muffin__eyes-love {
+    display: inline;
+  }
+
+  .feedback-muffin__eyes-closed {
+    animation: none;
+  }
+}
+
+// Idle: a slow two-step bob and a blink now and then. Hover: a little hop.
+@media (prefers-reduced-motion: no-preference) {
+  .feedback-muffin {
+    animation: feedback-muffin-bob 2.4s steps(1) infinite;
+  }
+
+  .feedback-muffin__eyes-closed {
+    animation: feedback-muffin-wink 4s steps(1) infinite;
+  }
+
+  .feedback-widget__toggle:hover .feedback-muffin {
+    animation: feedback-muffin-hop 0.3s steps(2) infinite alternate;
+  }
+}
+
+@keyframes feedback-muffin-bob {
+  50% { transform: translateY(-$muffin-pixel); }
+}
+
+@keyframes feedback-muffin-wink {
+  0%, 94% { visibility: hidden; }
+  95%, 97% { visibility: visible; }
+  98% { visibility: hidden; }
+}
+
+@keyframes feedback-muffin-hop {
+  to { transform: translateY(-2 * $muffin-pixel); }
+}

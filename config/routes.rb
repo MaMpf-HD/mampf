@@ -201,6 +201,9 @@ Rails.application.routes.draw do
   # support request routes
   resources :support_requests, only: [:create]
 
+  # temporary feedback survey (the muffin next to the support button)
+  resources :feedbacks, only: [:create]
+
   # items routes
 
   get "items/:id/display",

@@ -1,0 +1,42 @@
+<%# locals: (feedback:, throttled: nil, intro: true) %>
+<% body_invalid = feedback.errors[:body].any? %>
+
+<%= form_with model: feedback, url: feedbacks_path, local: true,
+              data: { feedback_widget_target: "form" } do |f| %>
+  <% if intro %>
+    <p class="small text-muted">
+      <%= t("feedback.intro") %>
+    </p>
+  <% end %>
+
+  <% if throttled %>
+    <div class="alert alert-warning py-2 small" role="alert">
+      <%= throttled %>
+    </div>
+  <% end %>
+
+  <div class="mb-2">
+    <%= f.label :body, t("feedback.body"), class: "visually-hidden" %>
+
+    <%= f.text_area :body,
+                    rows: 6,
+                    class: class_names("form-control", "is-invalid": body_invalid),
+                    placeholder: t("feedback.body_placeholder"),
+                    required: true,
+                    minlength: Feedback::BODY_MIN_LENGTH,
+                    maxlength: Feedback::BODY_MAX_LENGTH,
+                    aria: { invalid: body_invalid,
+                            describedby: ("feedback-body-error" if body_invalid) },
+                    data: { feedback_widget_target: "message" } %>
+
+    <% if body_invalid %>
+      <div id="feedback-body-error" class="invalid-feedback">
+        <%= feedback.errors.full_messages_for(:body).to_sentence %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="text-end">
+    <%= f.submit t("feedback.send"), class: "btn btn-primary btn-sm" %>
+  </div>
+<% end %>
