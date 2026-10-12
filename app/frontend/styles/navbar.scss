@@ -65,6 +65,10 @@
     }
 }
 
+.quick-access-hint {
+    max-width: 18rem;
+}
+
 // On phones the icons, the lecture switcher and the search wrap into rows
 // instead of widening the page.
 @media (max-width: 575.98px) {

@@ -129,8 +129,10 @@ en:
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
-      You have not yet added any lectures as favorites.
+      You have not pinned any lectures yet.
     quick_access: 'Quick Access'
+    quick_access_hint: >
+      To add a lecture to the quick access, open it via your dashboard, then click the pin that will appear next to this menu.
   info: 'Info'
   admin:
     navbar:
@@ -2014,8 +2016,8 @@ en:
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments
     miscellaneous: Miscellaneous
-    star_lecture: Add Lecture to Fast Access
-    unstar_lecture: Remove Lecture from Fast Access
+    pin_lecture: Pin to Quick Access
+    unpin_lecture: Unpin from Quick Access
     media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
