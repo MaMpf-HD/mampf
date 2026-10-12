@@ -81,6 +81,12 @@ class ProfileController < ApplicationController
   end
 
   def pin_lecture
+    if !@lecture.published? && !current_user.admin &&
+       !@lecture.edited_by?(current_user)
+      head :forbidden
+      return
+    end
+
     current_user.favorite_lectures << @lecture unless @lecture.in?(current_user.favorite_lectures)
     # as favorite lectures appear in the navbar which is cached e.g. in
     # the lecture show action, make sure the cache is invalidated by
