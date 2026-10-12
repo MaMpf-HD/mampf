@@ -31,6 +31,14 @@ rspec-parallel *paths="spec":
     {{parallel_env}}
     bundle exec parallel_rspec {{paths}}
 
+# Creates/refreshes the test databases of the extra Playwright workers (rerun
+# after new migrations). Override the worker count via E2E_WORKERS.
+e2e-parallel-setup:
+    #!/usr/bin/env bash
+    set -e
+    cd {{justfile_directory()}}
+    ./docker/development/e2e-databases.sh
+
 # Opens Codecov in the default browser
 codecov:
     xdg-open https://app.codecov.io/gh/MaMpf-HD/mampf

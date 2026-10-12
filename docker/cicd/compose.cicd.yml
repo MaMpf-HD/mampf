@@ -8,6 +8,9 @@ services:
     image: ghcr.io/mampf-hd/mampftest:image
     # Playwright needs a running server; the unit-test job overrides the
     # entrypoint and command to run RSpec directly.
+    # Single app server for now (no parallel Playwright workers in CI yet).
+    environment:
+      - E2E_WORKERS=1
     command: "CI=true RUBY_DEBUG_ENABLE=0 DISABLE_VITE_IN_CI=true /workspaces/mampf/docker/development/init-and-run.sh"
     # REPLACE (not merge) the dev app-base volumes for CI. The dev `bundle_cache` mount
     # uses `nocopy: true` so Docker skips copy-up; on a fresh CI volume that leaves
