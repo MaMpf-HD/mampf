@@ -27,15 +27,16 @@ class AnnouncementsController < ApplicationController
     authorize! :create, @announcement
     @announcement.save
     if @announcement.valid?
-      # trigger creation of notifications for all relevant users
-      create_notifications
-      # send notification email
-      send_notification_email
       # redirection depending from where the announcement was created
+      # (announcements without a lecture only feed the main page banner)
       if @announcement.lecture.blank?
         redirect_to announcements_path
         return
       end
+      # trigger creation of notifications for all relevant users
+      create_notifications
+      # send notification email
+      send_notification_email
       redirect_to "#{edit_lecture_path(@announcement.lecture)}?tab=communication"
       return
     end
@@ -64,11 +65,7 @@ class AnnouncementsController < ApplicationController
     end
 
     def create_notifications
-      users_to_notify = if @announcement.lecture.present?
-        @announcement.lecture.audience
-      else
-        User
-      end
+      users_to_notify = @announcement.lecture.audience
       notifications = []
       users_to_notify.touch_all
       users_to_notify.find_each do |u|
@@ -82,12 +79,8 @@ class AnnouncementsController < ApplicationController
     end
 
     def send_notification_email
-      recipients = if @announcement.lecture.present?
-        @announcement.lecture.audience
-                     .where(email_for_announcement: true)
-      else
-        User.where(email_for_news: true)
-      end
+      recipients = @announcement.lecture.audience
+                                .where(email_for_announcement: true)
       I18n.available_locales.each do |l|
         local_recipients = recipients.where(locale: l)
         next unless local_recipients.any?

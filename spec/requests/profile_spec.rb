@@ -11,7 +11,7 @@ RSpec.describe("Profile", type: :request) do
     def save_profile(**fields)
       post("/profile/update",
            params: { user: { name: user.name, subscription_type: 1, locale: "en",
-                             email_for_news: "0", **fields } },
+                             **fields } },
            xhr: true)
     end
 

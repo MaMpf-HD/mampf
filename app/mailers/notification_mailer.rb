@@ -36,11 +36,7 @@ class NotificationMailer < ApplicationMailer
 
   def announcement_email
     @announcement = params[:announcement]
-    @announcement_details = if @announcement.lecture.present?
-      "#{t("in")} #{@announcement.lecture.title_for_viewers}"
-    else
-      t("mailer.mampf_news")
-    end
+    @announcement_details = "#{t("in")} #{@announcement.lecture.title_for_viewers}"
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: "#{t("mailer.announcement_subject")} #{@announcement_details}")

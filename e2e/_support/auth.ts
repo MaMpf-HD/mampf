@@ -22,7 +22,6 @@ export type User = {
   email_for_medium: string | null;
   email_for_announcement: string | null;
   email_for_teachable: string | null;
-  email_for_news: string | null;
 
   email_for_submission_upload: string | null;
   email_for_submission_removal: string | null;

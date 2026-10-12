@@ -661,10 +661,6 @@ Rails.application.routes.draw do
        to: "notifications#destroy_lecture_media_notifications",
        as: "destroy_lecture_media_notifications"
 
-  post "notifications/destroy_news_notifications",
-       to: "notifications#destroy_news_notifications",
-       as: "destroy_news_notifications"
-
   resources :notifications, only: [:index, :destroy]
 
   # personal data routes
@@ -1297,10 +1293,6 @@ Rails.application.routes.draw do
 
   get "error",
       to: "main#error"
-
-  get "main/news",
-      to: "main#news",
-      as: "news"
 
   get "main/comments",
       to: "main#comments",

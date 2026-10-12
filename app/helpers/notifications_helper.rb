@@ -25,7 +25,6 @@ module NotificationsHelper
 
   # determine the color of a notification card
   def notification_color(notification)
-    return "bg-post-it-blue" if notification.generic_announcement?
     return "bg-post-it-red" if notification.announcement?
     return "bg-post-it-orange" if notification.course? || notification.lecture?
     return "bg-post-it-green" if notification.redemption?
@@ -44,8 +43,6 @@ module NotificationsHelper
       announcement_notification_card_header(notifiable)
     elsif notification.redemption?
       redemption_notification_card_header(notifiable)
-    else
-      link_to(t("mampf_news.title"), news_path, class: "text-dark")
     end
   end
 

@@ -97,7 +97,6 @@ de:
       singular: 'Sonstiges'
       short: 'Sns'
     course: 'Modul'
-    mampf_news: 'MaMpf-News'
     submissions: 'Abgaben'
     tutorials: 'Tutorien'
     cohorts: 'Flexible Gruppen'
@@ -167,7 +166,6 @@ de:
     profile: 'Profil'
     administration: 'Administration'
     comments: 'Kommentare'
-    news: 'News'
     blog: 'Blog'
     logout: 'Logout'
     watchlist: 'Watchlist'
@@ -2124,8 +2122,6 @@ de:
       neue Medien in von mir abonnierten Veranstaltungen oder Modulen
     email_for_teachable:
       neue angelegte Veranstaltungen oder Module
-    email_for_news:
-      Neuigkeiten über MaMpf
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
     please_update: >
@@ -2195,7 +2191,6 @@ de:
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
-    miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
     media_search: Mediensuche
@@ -2247,10 +2242,6 @@ de:
       Die bisherige DozentIn wird zur EditorIn herabgestuft.
     already_teacher_html: >
       Du bist bereits DozentIn für <strong>%{lecture}</strong>.
-  mampf_news:
-    title: 'MaMpf-News'
-    check_notifications: 'Alle erledigen'
-    no_news: 'Es liegen keine MaMpf-News vor.'
   notifications:
     title: 'Neue Benachrichtigungen'
     check_notifications: 'alle erledigen'
@@ -3494,7 +3485,6 @@ de:
     student_message_role:
       staff: "DozentIn oder EditorIn"
       tutor: "TutorIn"
-    mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'VerfasserIn'
     text: 'Text'
@@ -3633,7 +3623,6 @@ de:
       Emails für Medien: %{email_for_medium}<br>
       Emails für Ankündigungen: %{email_for_announcement}<br>
       Emails für Vorlesungen: %{email_for_teachable}<br>
-      Emails für Neuigkeiten: %{email_for_news}<br>
       Ungelesene Kommentare: %{unread_comments}<br>
       Emails für Abgaben-Upload: %{email_for_submission_upload}<br>
       Emails für Abgaben-Löschung: %{email_for_submission_removal}<br>

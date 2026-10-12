@@ -3,9 +3,9 @@ require "rails_helper"
 RSpec.describe(NotificationMailer, type: :mailer) do
   describe "announcement_email" do
     let(:user) { create(:user) }
-    let(:teacher) { create(:confirmed_user) }
     let(:announcement) do
-      create(:announcement, announcer: teacher, details: "<script>alert('xss-in-email')</script>")
+      create(:announcement, :with_lecture,
+             details: "<script>alert('xss-in-email')</script>")
     end
 
     it "escapes or strips script tags in the email body" do

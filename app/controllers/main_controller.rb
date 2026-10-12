@@ -13,11 +13,6 @@ class MainController < ApplicationController
     redirect_to :root, alert: I18n.t("controllers.no_page")
   end
 
-  def news
-    @announcements = Announcement.where(lecture: nil).order(:created_at)
-                                 .reverse
-  end
-
   def sponsors
   end
 
