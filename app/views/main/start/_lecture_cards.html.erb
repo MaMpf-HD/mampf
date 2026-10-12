@@ -62,12 +62,18 @@
 
   <% if @board.empty? %>
     <%= tag.div id: "dashboardEmptyState",
-                class: "text-center text-muted my-5",
+                class: "text-center my-5",
                 data: { testid: "dashboard-empty-state" } do %>
-      <p class="mb-0">
-        <% key = current_user.teacher? ? "no_lectures_teacher" : "no_lectures" %>
+      <%= image_tag "/empty_landing_page_msg.png",
+                    alt: "",
+                    width: "50%",
+                    class: "mb-5",
+                    style: "height: auto; opacity: 0.3;",
+                    aria: { hidden: true } %>
+      <% key = current_user.teacher? ? "no_lectures_teacher" : "no_lectures" %>
+      <p class="mb-0 small" style="color: #9ca3af;">
         <%= @selected_term ? t("main.start.#{key}", term: @selected_term.to_label) :
-                             t("main.start.#{key}_any_term") %>
+                            t("main.start.#{key}_any_term") %>
       </p>
     <% end %>
   <% end %>
