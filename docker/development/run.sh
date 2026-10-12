@@ -19,10 +19,8 @@ fi
 
 # Extra app servers for parallel Playwright workers: worker i gets its own
 # ports (offset by 10 * i) and its own test database ("_e2e<i>" suffix).
-# 60% of the cores, rounded (each worker runs a browser and a Rails server).
-# Override via E2E_WORKERS. Keep in sync with e2e/_support/servers.ts.
-default_workers=$((($(nproc) * 6 + 5) / 10))
-e2e_workers="${E2E_WORKERS:-$((default_workers > 1 ? default_workers : 1))}"
+# Keep the ports in sync with e2e/_support/servers.ts.
+e2e_workers=$(./docker/development/e2e-workers.sh)
 extra_e2e_workers=""
 if [ "$RAILS_ENV" = "test" ] && [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	extra_e2e_workers=$(seq 1 $((e2e_workers - 1)))
@@ -32,7 +30,7 @@ for i in $extra_e2e_workers; do
 done
 for port in $ports_to_clean; do
 	# adapted from https://stackoverflow.com/a/9168553/
-    pid=$(lsof -ti:$port) || true
+    pid=$(lsof -ti:"$port") || true
     if [ -n "$pid" ]; then
 		echo "Killing process $pid on port $port"
         kill -TERM "$pid" || kill -KILL "$pid" || true
@@ -69,7 +67,7 @@ for i in $extra_e2e_workers; do
 		THRUSTER_TARGET_PORT="$worker_target_port" \
 		THRUSTER_STORAGE_PATH="$worker_storage_path" \
 		bundle exec thrust bin/rails s -b '0.0.0.0' -P "tmp/pids/server_e2e$i.pid" \
-		&> /workspaces/mampf/log/runtime_e2e$i.log &
+		&> "/workspaces/mampf/log/runtime_e2e$i.log" &
 done
 # prometheus_exporter --label "{\"container\": \"${HOSTNAME}\"}" -b 0.0.0.0 -p 9394 -a lib/collectors/mampf_collector.rb &> /workspaces/mampf/log/prometheus_exporter.log &!
 

@@ -5,7 +5,8 @@ import { availableParallelism } from "node:os";
  * its own test database), started by `docker/development/run.sh`.
  *
  * 60% of the cores, rounded (each worker runs a browser and a Rails server).
- * Override via `E2E_WORKERS`. Keep in sync with `docker/development/run.sh`.
+ * Override via `E2E_WORKERS`. Keep in sync with
+ * `docker/development/e2e-workers.sh`.
  */
 export const workerCount = Number(
   process.env.E2E_WORKERS ?? Math.max(1, Math.round(availableParallelism() * 0.6)),
