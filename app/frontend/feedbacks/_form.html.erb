@@ -43,7 +43,9 @@
   <div class="form-check form-switch mb-2">
     <%= f.check_box :can_contact, class: "form-check-input", role: "switch",
                                   aria: { describedby: "feedback-can-contact-hint" } %>
+
     <%= f.label :can_contact, t("feedback.can_contact"), class: "form-check-label small" %>
+
     <div id="feedback-can-contact-hint" class="form-text mt-0">
       <%= t("feedback.can_contact_hint") %>
     </div>

@@ -6,6 +6,7 @@
   `closed_eye` (for a blink) and `heart_eye` (once feedback is sent) are drawn
   over the open eyes; the stylesheet decides when they show.
 %>
+
 <% pixels = [
   "......oooooooooooo......",
   "....oohhccccccccccoo....",
@@ -29,6 +30,7 @@
   ".....otfftfffftffto.....",
   ".....oooooooooooooo....."
 ] %>
+
 <% closed_eye = [
   ".ccc.",
   "ccccc",
@@ -37,6 +39,7 @@
   "ccccc",
   ".ccc."
 ] %>
+
 <% heart_eye = [
   ".rcr.",
   "rlrrr",
@@ -45,6 +48,7 @@
   "ccrcc",
   ".ccc."
 ] %>
+
 <svg
   class="feedback-muffin"
   viewBox="0 0 24 21"
@@ -53,10 +57,12 @@
   focusable="false"
 >
   <%= muffin_pixels(pixels) %>
+
   <g class="feedback-muffin__eyes-closed">
     <%= muffin_pixels(closed_eye, left: 4, top: 7) %>
     <%= muffin_pixels(closed_eye, left: 15, top: 7) %>
   </g>
+
   <g class="feedback-muffin__eyes-love">
     <%= muffin_pixels(heart_eye, left: 4, top: 7) %>
     <%= muffin_pixels(heart_eye, left: 15, top: 7) %>
