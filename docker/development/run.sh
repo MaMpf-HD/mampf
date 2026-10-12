@@ -3,6 +3,7 @@ set -Eeuo pipefail
 cd /workspaces/mampf/
 
 public_http_port="${APP_HEALTHCHECK_PORT:-${THRUSTER_HTTP_PORT:-}}"
+target_port="${THRUSTER_TARGET_PORT:-3001}"
 
 echo "RAILS_ENV: $RAILS_ENV"
 echo "NODE_ENV: $NODE_ENV"
@@ -11,7 +12,7 @@ echo "NODE_ENV: $NODE_ENV"
 echo "🧹 Cleaning up stale Vite/Debugger port processes..."
 ports_to_clean="3036 13254"
 if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
-	ports_to_clean="$ports_to_clean $public_http_port ${THRUSTER_TARGET_PORT:-3001}"
+	ports_to_clean="$ports_to_clean $public_http_port $target_port"
 fi
 if [ "$RAILS_ENV" = "test" ]; then
 	ports_to_clean="$ports_to_clean 3145"
@@ -26,7 +27,7 @@ if [ "$RAILS_ENV" = "test" ] && [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	extra_e2e_workers=$(seq 1 $((e2e_workers - 1)))
 fi
 for i in $extra_e2e_workers; do
-	ports_to_clean="$ports_to_clean $((public_http_port + 10 * i)) $((THRUSTER_TARGET_PORT + 10 * i))"
+	ports_to_clean="$ports_to_clean $((public_http_port + 10 * i)) $((target_port + 10 * i))"
 done
 for port in $ports_to_clean; do
 	# adapted from https://stackoverflow.com/a/9168553/
@@ -57,7 +58,7 @@ bundle exec sidekiq &
 
 for i in $extra_e2e_workers; do
 	worker_http_port=$((public_http_port + 10 * i))
-	worker_target_port=$((THRUSTER_TARGET_PORT + 10 * i))
+	worker_target_port=$((target_port + 10 * i))
 	worker_storage_path="${THRUSTER_STORAGE_PATH:-/cache/thruster-test}-e2e$i"
 	mkdir -p "$worker_storage_path"
 	echo "Starting Playwright worker server $i on port $worker_http_port (log/runtime_e2e$i.log)"
@@ -77,7 +78,7 @@ if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	if [ -n "${THRUSTER_STORAGE_PATH:-}" ]; then
 		mkdir -p "$THRUSTER_STORAGE_PATH"
 	fi
-	echo "Starting Thruster on port $public_http_port with Rails on ${THRUSTER_TARGET_PORT:-3001}"
+	echo "Starting Thruster on port $public_http_port with Rails on $target_port"
 	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec thrust bin/rails s -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
 else
 	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p "$MAMPF_PORT" -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
