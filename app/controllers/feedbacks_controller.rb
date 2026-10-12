@@ -3,7 +3,7 @@
 # author; the mail names the author only if they agreed to be contacted.
 class FeedbacksController < ApplicationController
   THROTTLE_WINDOW = 1.hour
-  LIMIT = 20
+  LIMIT = 6
 
   def create
     feedback = Feedback.new(feedback_params)
