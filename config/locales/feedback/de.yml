@@ -15,6 +15,7 @@ de:
       Feedback anonym.
     send: "Senden"
     sent: "Danke! Wir lesen jede Antwort. Hast Du noch etwas auf dem Herzen?"
+    mama: "Psst! Mein Kleines da unten freut sich über Dein Feedback!"
   activemodel:
     attributes:
       feedback:

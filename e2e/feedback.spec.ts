@@ -15,6 +15,16 @@ test.describe("the feedback muffin", () => {
     await expect(body).toHaveValue("");
   });
 
+  test("opens from its mother on a wide dashboard", async ({ student }) => {
+    const { page } = student;
+    await page.setViewportSize({ width: 1600, height: 900 });
+    await page.goto("/");
+
+    await page.getByRole("button", { name: /My little one down there/ }).click();
+
+    await expect(page.getByRole("textbox", { name: "Your feedback" })).toBeFocused();
+  });
+
   test("is not shown to somebody not signed in", async ({ page }) => {
     await page.goto("/users/sign_in?locale=en");
 
