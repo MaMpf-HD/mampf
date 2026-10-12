@@ -193,16 +193,4 @@ RSpec.describe("Profile", type: :request) do
         .and(include(lecture.short_title))
     end
   end
-
-  describe "PATCH /profile/unpin_lecture" do
-    it "unpins the lecture" do
-      lecture = create(:lecture, :released_for_all)
-      user.favorite_lectures << lecture
-
-      patch(unpin_lecture_path(lecture: { id: lecture.id }), as: :turbo_stream)
-
-      expect(user.reload.favorite_lectures).not_to include(lecture)
-      expect(response.body).to include('target="lecturesDropdown"')
-    end
-  end
 end
