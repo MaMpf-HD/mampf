@@ -21,7 +21,6 @@
             data: { profile_target: 'changeButton' } %>
     </div>
 
-    <!-- LEFT COLUMN -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
       <div class="profile-stack">
 
@@ -93,8 +92,11 @@
           </div>
         </section>
 
-        <!-- 🔘 Action card -->
+        <!-- Action card -->
         <section class="card profile-card">
+          <div class="card-header">
+            <h5><%= t('profile.security_and_data') %></h5>
+          </div>
           <div class="card-body">
             <%= render partial: 'profile/account' %>
           </div>
@@ -103,7 +105,6 @@
       </div>
     </div>
 
-    <!-- ▶ RIGHT COLUMN -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
       <div class="profile-stack">
 

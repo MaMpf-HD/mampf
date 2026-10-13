@@ -2157,6 +2157,7 @@ de:
     email_for_submission_decision: >
       Annahme oder Ablehnung einer verspäteten Korrektur
     delete_account: Account löschen
+    security_and_data: Sicherheit und Daten
     password: Passwort
     stored_submissions: >
       Von Dir sind %{submissions} Abgaben zu Hausaufgaben im System gespeichert,
