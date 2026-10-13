@@ -3,10 +3,10 @@ en:
     start:
       no_lectures: >-
         You are not registered for any lecture of %{term}, and have not
-        bookmarked any. Scroll down to discover new lectures.
+        bookmarked any.
       no_lectures_any_term: >-
         You are not registered for any lecture yet, and have not bookmarked
-        any. Scroll down to discover new lectures.
+        any.
       no_lectures_teacher: >-
         You are not teaching any lecture in %{term}. Choose another semester
         above, or scroll down to search for lectures.

@@ -64,12 +64,16 @@
     <%= tag.div id: "dashboardEmptyState",
                 class: "text-center my-5",
                 data: { testid: "dashboard-empty-state" } do %>
-      <%= image_tag "/empty_landing_page_msg.png",
-                    alt: "",
-                    width: "50%",
-                    class: "mb-5",
-                    style: "height: auto; opacity: 0.3;",
-                    aria: { hidden: true } %>
+      <%= link_to "#lecture-search",
+                  id: "go-to-lecture-search",
+                  aria: { label: t("lecture.search.go_to_search") } do %>
+        <% msg_locale = (current_user&.locale.presence || I18n.default_locale).to_s %>
+        <% msg_locale = "en" unless %w[en de].include?(msg_locale) %>
+        <%= image_tag "/empty_landing_page_msg_#{msg_locale}.png",
+                      alt: "",
+                      class: "mb-5",
+                      style: "width: auto; height: 30vh; max-height: 30vw; opacity: 0.7;" %>
+      <% end %>
       <% key = current_user.teacher? ? "no_lectures_teacher" : "no_lectures" %>
       <p class="mb-0 small" style="color: #9ca3af;">
         <%= @selected_term ? t("main.start.#{key}", term: @selected_term.to_label) :

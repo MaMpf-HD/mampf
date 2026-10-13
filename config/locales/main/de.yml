@@ -3,10 +3,10 @@ de:
     start:
       no_lectures: >-
         Du bist zu keiner Veranstaltung im %{term} angemeldet und hast Dir auch
-        keine gemerkt. Scrolle nach unten, um neue Veranstaltungen zu entdecken.
+        keine gemerkt.
       no_lectures_any_term: >-
         Du bist noch zu keiner Veranstaltung angemeldet und hast Dir auch keine
-        gemerkt. Scrolle nach unten, um neue Veranstaltungen zu entdecken.
+        gemerkt.
       no_lectures_teacher: >-
         Du betreust im %{term} keine Veranstaltung. Wähle oben ein anderes
         Semester oder scrolle nach unten, um Veranstaltungen zu suchen.
