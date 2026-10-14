@@ -34,8 +34,8 @@ for (const viewport of viewports) {
     const showAll = student.page.getByRole("link", { name: "Show all", exact: true });
     await expect(showAll).toBeVisible();
     const menu = await showAll.locator("..").boundingBox();
-    expect(menu).not.toBeNull();
-    expect(menu!.x).toBeGreaterThanOrEqual(0);
-    expect(menu!.x + menu!.width).toBeLessThanOrEqual(viewport.width);
+    if (!menu) throw new Error("The notification menu has no bounding box.");
+    expect(menu.x).toBeGreaterThanOrEqual(0);
+    expect(menu.x + menu.width).toBeLessThanOrEqual(viewport.width);
   });
 }
