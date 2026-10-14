@@ -11,7 +11,7 @@
                                   data: { controller: 'profile',
                                           action: profile_form_actions } } do |f| %>
 
-  <div class="row mb-md-3">
+  <div class="row md-3">
 
     <!-- Unsaved changes warning/button -->
     <div class="w-100 mb-3">
@@ -21,14 +21,15 @@
             data: { profile_target: 'changeButton' } %>
     </div>
 
-    <div class="col-12 col-md-6 mb-3 mb-md-0">
+    <% if @user.teacher? %>
+      <div class="col-12 mb-3 md-0">
+      <!-- Image card: teachers only -->
+        <%= render "profile/teacher_profile", f: f, user: @user %>
+      </div>
+    <% end %>
+
+    <div class="col-12 col-md-6 mb-3 md-0">
       <div class="profile-stack">
-
-        <!-- Image card: teachers only -->
-        <% if @user.teacher? %>
-          <%= render "profile/teacher_profile", f: f, user: @user %>
-        <% end %>
-
         <!-- Account info card -->
         <section class="card profile-card">
           <div class="card-header">
@@ -76,22 +77,6 @@
           </div>
         </section>
 
-        <!-- Action card -->
-        <section class="card profile-card">
-          <div class="card-header">
-            <h5><%= t('profile.security_and_data') %></h5>
-          </div>
-          <div class="card-body">
-            <%= render partial: 'profile/account' %>
-          </div>
-        </section>
-
-      </div>
-    </div>
-
-    <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="profile-stack">
-
         <!-- Account preferences card -->
         <section class="card profile-card">
           <div class="card-header">
@@ -102,12 +87,30 @@
           </div>
         </section>
 
+        
+
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 mb-3 md-0">
+      <div class="profile-stack">
+
         <section class="card profile-card">
           <div class="card-header">
             <h5><%= t('profile.email_notifications_header') %></h5>
           </div>
           <div class="card-body">
             <%= render partial: 'profile/email_notifications', locals: { f: f } %>
+          </div>
+        </section>
+
+        <!-- Action card -->
+        <section class="card profile-card">
+          <div class="card-header">
+            <h5><%= t('profile.security_and_data') %></h5>
+          </div>
+          <div class="card-body">
+            <%= render partial: 'profile/account' %>
           </div>
         </section>
 
@@ -129,7 +132,6 @@
   <% end %>
 
   <div class="row mb-3">
-    <div class="col-12 col-md-6"></div>
     <div class="col-12 col-md-6">
       <section class="card profile-card voucher-card">
         <div class="voucher-redemption-pattern"></div>
