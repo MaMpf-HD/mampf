@@ -76,22 +76,6 @@
           </div>
         </section>
 
-        <!-- Voucher card -->
-        <section class="card profile-card voucher-card">
-          <div class="voucher-redemption-pattern"></div>
-          <div class="card-header">
-            <h5>
-              <%= t('profile.redeem_voucher') %>
-              <%= helpdesk(t('profile.redeem_voucher_explainer'), true) %>
-            </h5>
-          </div>
-          <div class="card-body">
-            <div id="redeem-voucher">
-              <%= render partial: 'profile/verify_voucher' %>
-            </div>
-          </div>
-        </section>
-
         <!-- Action card -->
         <section class="card profile-card">
           <div class="card-header">
@@ -108,24 +92,24 @@
     <div class="col-12 col-md-6 mb-3 mb-md-0">
       <div class="profile-stack">
 
-          <!-- ⚙ Account preferences card -->
-          <section class="card profile-card">
-            <div class="card-header">
-              <h5><%= t('profile.preferences') %></h5>
-            </div>
-            <div class="card-body">
-              <%= render partial: 'profile/subscription_type', locals: { f: f } %>
-            </div>
-          </section>
+        <!-- Account preferences card -->
+        <section class="card profile-card">
+          <div class="card-header">
+            <h5><%= t('profile.preferences') %></h5>
+          </div>
+          <div class="card-body">
+            <%= render partial: 'profile/subscription_type', locals: { f: f } %>
+          </div>
+        </section>
 
-          <section class="card profile-card">
-            <div class="card-header">
-              <h5><%= t('profile.email_notifications_header') %></h5>
-            </div>
-            <div class="card-body">
-              <%= render partial: 'profile/email_notifications', locals: { f: f } %>
-            </div>
-          </section>
+        <section class="card profile-card">
+          <div class="card-header">
+            <h5><%= t('profile.email_notifications_header') %></h5>
+          </div>
+          <div class="card-body">
+            <%= render partial: 'profile/email_notifications', locals: { f: f } %>
+          </div>
+        </section>
 
       </div>
     </div>
@@ -144,15 +128,32 @@
 
   <% end %>
 
+  <div class="row mb-3">
+    <div class="col-12 col-md-6"></div>
+    <div class="col-12 col-md-6">
+      <section class="card profile-card voucher-card">
+        <div class="voucher-redemption-pattern"></div>
+        <div class="card-header">
+          <h5>
+            <%= t('profile.redeem_voucher') %>
+            <%= helpdesk(t('profile.redeem_voucher_explainer'), true) %>
+          </h5>
+        </div>
+        <div class="card-body">
+          <div id="redeem-voucher">
+            <%= render partial: 'profile/verify_voucher' %>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
 </div>
 
-<!-- 🔘 Delete Account Modal -->
+<!-- Delete Account Modal -->
 <%= render partial: 'shared/generic_modal',
            locals: { sort: 'deleteAccount',
                      title: t('profile.delete_account') } %>
 
-<!-- 🔘 User Request Data Modal -->
+<!-- User Request Data Modal -->
 <%= render partial: 'profile/request_data_modal' %>
-
-<%= form_with url: verify_voucher_path, method: :post, id: "voucher-form" do %>
-<% end %>
