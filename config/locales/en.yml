@@ -1978,6 +1978,7 @@ en:
       acceptance or rejection of a late submission
     delete_account: Delete Account
     security_and_data: Security and Data
+    preferences: Preferences
     password: Password
     stored_submissions: >
       There are %{submissions} submissions to assignments from you in the

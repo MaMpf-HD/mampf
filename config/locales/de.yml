@@ -2158,6 +2158,7 @@ de:
       Annahme oder Ablehnung einer verspäteten Korrektur
     delete_account: Account löschen
     security_and_data: Sicherheit und Daten
+    preferences: Einstellungen
     password: Passwort
     stored_submissions: >
       Von Dir sind %{submissions} Abgaben zu Hausaufgaben im System gespeichert,
