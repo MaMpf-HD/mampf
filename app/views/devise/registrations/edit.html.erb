@@ -10,10 +10,10 @@
 
 <% if section.nil? %>
   <div class="d-grid gap-3 mt-4 mb-5">
-    <%= link_to t('devise.edit.choose_email', default: 'Change email address'),
+    <%= link_to t('devise.edit.choose_email'),
                 edit_user_registration_path(section: "email", locale: I18n.locale),
                 class: 'btn btn-primary py-3' %>
-    <%= link_to t('devise.edit.choose_password', default: 'Change password'),
+    <%= link_to t('devise.edit.choose_password'),
                 edit_user_registration_path(section: "password", locale: I18n.locale),
                 class: 'btn btn-primary py-3' %>
   </div>
@@ -25,7 +25,7 @@
     <h3 class="h5" id="email-heading"><%= t('devise.edit.email_section') %></h3>
 
     <%= form_for(resource, as: resource_name,
-                           url: registration_path(resource_name, locale: I18n.locale),
+                           url: registration_path(resource_name, locale: I18n.locale, section: "email"),
                            html: { method: :put, id: "email-form" }) do |f| %>
       <div class="mb-3">
         <%= f.label :email, t('devise.edit.email'), class: "form-label" %>
@@ -45,7 +45,7 @@
         </div>
       </div>
 
-      <%= f.submit t('devise.edit.update_email', default: 'Update email'),
+      <%= f.submit t('devise.edit.update_email'),
                    class: 'btn btn-primary' %>
     <% end %>
   </section>
@@ -64,7 +64,7 @@
     </p>
 
     <%= form_for(resource, as: resource_name,
-                          url: registration_path(resource_name, locale: I18n.locale),
+                          url: registration_path(resource_name, locale: I18n.locale, section: "password"),
                           html: { method: :put, id: "password-form" }) do |f| %>
       <%= render layout: "devise/shared/password_strength_wrapper" do %>
         <% if resource.email.present? %>
@@ -118,8 +118,7 @@
         </div>
       <% end %>
 
-      <%= f.submit t(password_change_required ? 'devise.edit.update' : 'devise.edit.update_password',
-                    default: 'Update password'),
+      <%= f.submit t(password_change_required ? 'devise.edit.update' : 'devise.edit.update_password'),
                   class: 'btn btn-primary' %>
     <% end %>
   </section>

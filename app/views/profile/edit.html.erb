@@ -111,7 +111,7 @@
           <!-- ⚙ Account preferences card -->
           <section class="card profile-card">
             <div class="card-header">
-              <h5><%= t('profile.preferences', default: 'Preferences') %></h5>
+              <h5><%= t('profile.preferences') %></h5>
             </div>
             <div class="card-body">
               <%= render partial: 'profile/subscription_type', locals: { f: f } %>
@@ -153,3 +153,6 @@
 
 <!-- 🔘 User Request Data Modal -->
 <%= render partial: 'profile/request_data_modal' %>
+
+<%= form_with url: verify_voucher_path, method: :post, id: "voucher-form" do %>
+<% end %>
