@@ -52,38 +52,24 @@
   flex-grow: 1;
 }
 
-.profile-page {
-  --pf-ink: #1c1c22;
-  --pf-muted: #8a8a93;
-  --pf-border: #e8e8ec;
-  --pf-border-strong: #d9d9df;
-  --pf-surface: #ffffff;
-  --pf-hover: #f6f6f8;
-  --pf-accent: #f26b1d; // orange used for destructive action
-  --pf-accent-border: #f7c7a8;
-  --pf-accent-hover: #fff4ec;
-  --pf-radius-card: 14px;
-  --pf-radius-control: 8px;
- 
+.profile-page { 
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  color: var(--pf-ink);
+  color: var(--bs-body-color);
   font-size: 13px;
   line-height: 1.4;
 }
  
-// ---------- layout ----------
 .profile-stack {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
  
-// ---------- cards ----------
 .profile-page .profile-card {
-  background: var(--pf-surface);
-  border: 1px solid var(--pf-border);
-  border-radius: var(--pf-radius-card);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-xl);
   box-shadow: none;
   overflow: hidden;
  
@@ -100,7 +86,7 @@
       margin: 0;
       font-size: 15px;
       font-weight: 600;
-      color: var(--pf-ink);
+      color: var(--bs-body-color);
     }
   }
  
@@ -117,7 +103,7 @@
 .profile-explainer {
   margin: 0 0 16px;
   font-size: 12px;
-  color: var(--pf-muted);
+  color: var(--bs-secondary-color);
 }
  
 .profile-identity {
@@ -126,7 +112,6 @@
   gap: 16px;
 }
  
-// Avatar is a button: click opens the uploader.
 .profile-avatar {
   position: relative;
   flex: 0 0 64px;
@@ -138,17 +123,16 @@
   display: grid;
   place-items: center;
   background: #eceef2;
-  color: var(--pf-ink);
+  color: var(--bs-body-color);
   font: inherit;
   cursor: pointer;
   overflow: hidden;
  
   &:focus-visible {
-    outline: 2px solid var(--pf-ink);
+    outline: 2px solid var(--bs-body-color);
     outline-offset: 2px;
   }
  
-  // dim + camera icon on hover/focus
   &:hover .profile-avatar__edit,
   &:focus-visible .profile-avatar__edit {
     opacity: 1;
@@ -160,8 +144,6 @@
   font-weight: 600;
 }
  
-// Sits on top of the initials; hidden until a src exists
-// (the uppy preview sets src after upload).
 .profile-avatar__img {
   position: absolute;
   inset: 0;
@@ -197,10 +179,9 @@
  
 .profile-identity__meta {
   font-size: 12px;
-  color: var(--pf-muted);
+  color: var(--bs-secondary-color);
 }
  
-// ---------- labels, values, fields ----------
 .profile-page {
   .profile-label,
   .form-label,
@@ -209,13 +190,13 @@
     margin-bottom: 4px;
     font-size: 12px;
     font-weight: 400;
-    color: var(--pf-muted);
+    color: var(--bs-secondary-color);
   }
  
   .profile-value {
     font-size: 13px;
     font-weight: 500;
-    color: var(--pf-ink);
+    color: var(--bs-body-color);
     overflow-wrap: anywhere;
   }
  
@@ -233,18 +214,17 @@
   .form-control {
     font-size: 13px;
     padding: 8px 12px;
-    border: 1px solid var(--pf-border-strong);
-    border-radius: var(--pf-radius-control);
+    border: 1px solid var(--bs-gray-400);
+    border-radius: var(--bs-border-radius-lg);
     box-shadow: none;
  
     &:focus {
-      border-color: var(--pf-ink);
+      border-color: var(--bs-body-color);
       box-shadow: 0 0 0 3px rgba(28, 28, 34, 0.08);
     }
   }
 }
  
-// ---------- radios & checkboxes (preferences + notifications) ----------
 .profile-page .profile-card {
   .card-body h5,
   .card-body h6,
@@ -252,7 +232,7 @@
     margin: 20px 0 10px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--pf-ink);
+    color: var(--bs-body-color);
  
     &:first-child {
       margin-top: 0;
@@ -269,25 +249,24 @@
  
   .form-check-label {
     font-size: 13px;
-    color: var(--pf-ink);
+    color: var(--bs-body-color);
   }
  
   .form-check-input {
-    border-color: var(--pf-border-strong);
+    border-color: var(--bs-gray-400);
  
     &:checked {
-      background-color: var(--pf-ink);
-      border-color: var(--pf-ink);
+      background-color: var(--bs-body-color);
+      border-color: var(--bs-body-color);
     }
  
     &:focus {
-      border-color: var(--pf-ink);
+      border-color: var(--bs-body-color);
       box-shadow: 0 0 0 3px rgba(28, 28, 34, 0.08);
     }
   }
 }
  
-// ---------- buttons (icon actions) ----------
 .profile-btn {
   display: inline-flex;
   align-items: center;
@@ -297,21 +276,21 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
-  color: var(--pf-ink);
+  color: var(--bs-body-color);
   text-decoration: none;
-  background: var(--pf-surface);
-  border: 1px solid var(--pf-border-strong);
-  border-radius: var(--pf-radius-control);
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-gray-400);
+  border-radius: var(--bs-border-radius-lg);
   cursor: pointer;
   transition: background-color 0.12s ease, border-color 0.12s ease;
  
   &:hover {
-    color: var(--pf-ink);
-    background: var(--pf-hover);
+    color: var(--bs-body-color);
+    background: var(--bs-tertiary-bg);
   }
  
   &:focus-visible {
-    outline: 2px solid var(--pf-ink);
+    outline: 2px solid var(--bs-body-color);
     outline-offset: 2px;
   }
  
@@ -323,17 +302,17 @@
 }
  
 .profile-btn--danger {
-  color: var(--pf-accent);
-  border-color: var(--pf-accent-border);
+  color: var(--bs-danger);
+  border-color: var(--bs-danger-border);
  
   &:hover {
-    color: var(--pf-accent);
-    background: var(--pf-accent-hover);
-    border-color: var(--pf-accent);
+    color: var(--bs-danger);
+    background: var(--bs-tertiary-bg);
+    border-color: var(--bs-danger);
   }
  
   &:focus-visible {
-    outline-color: var(--pf-accent);
+    outline-color: var(--bs-danger);
   }
 }
 
