@@ -1,6 +1,8 @@
 <%= vite_stylesheet_tag "dashboard/dashboard.scss" %>
 
 <div class="dashboard-hero">
+  <%= render "feedbacks/mama_muffin" if show_mama_muffin? %>
+
   <div class="container-md small-width mt-4">
     <%= render(DashboardTermSelectComponent.new(
       terms: @available_terms,

@@ -1,0 +1,8 @@
+de:
+  form_mail:
+    send_failed: >
+      Leider konnte Deine Nachricht nicht gesendet werden. Kopiere sie Dir
+      bitte, damit sie nicht verloren geht, und versuche es später noch einmal.
+    copy: "Meine Nachricht kopieren"
+    copied: "In die Zwischenablage kopiert"
+    copy_failed: "Kopieren hat nicht geklappt. Markiere den Text bitte und kopiere ihn selbst."

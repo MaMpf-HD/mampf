@@ -1,6 +1,5 @@
 # Mails a message from the support button to the address people write to
-# (PROJECT_EMAIL); the answer goes to whoever wrote it. The sender comes with
-# the message, since the account may be gone by the time the job runs.
+# (PROJECT_EMAIL); the answer goes to whoever wrote it.
 class SupportRequestMailer < ApplicationMailer
   layout false
 

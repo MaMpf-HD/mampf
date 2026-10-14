@@ -1,0 +1,91 @@
+<%#
+  The muffin's mother beside the dashboard cards, pointing to the muffin next
+  to the support button. Drawn like `_muffin.html.erb`, with these letters on
+  top: g glasses, w lens, n stem, d cherry shade; r is the cherry.
+%>
+
+<% pixels = [
+  "................n...............",
+  "...............n................",
+  "..............oooo..............",
+  ".............olrrro.............",
+  ".............orrrdo.............",
+  "........oooooorrrdoooooo........",
+  "......oohhhcccccccccccccoo......",
+  ".....ohhcccccccccccppccccso.....",
+  "....ohccccqpccccccccqppcccso....",
+  "...ohcccccppcccpqccccccccccso...",
+  "..ohccccccccccccccccccccccpcso..",
+  ".occccccgggggccccccgggggcccccso.",
+  ".ocggggglwwwwgggggglwwwwgggggso.",
+  ".occcccgwbbbwgccccgwbbbwgccccso.",
+  ".occcccgbwwwbgccccgbwwwbgccccso.",
+  ".occpccgwwwwwgccccgwwwwwgccpcso.",
+  ".occccccgggggccccccgggggcccccso.",
+  ".ockkkkcccccccmccmccccccckkkkso.",
+  ".occkkcccccccccmmccccccccckkcso.",
+  ".osslssslssslssslssslssslssslso.",
+  "...ooofoofoofooffoofoofoofooo...",
+  "...offfftffftffttfftffftffffo...",
+  "....offftffftffttfftffftfffo....",
+  "....offftffftffttfftffftfffo....",
+  ".....offtffftffttfftffftffo.....",
+  ".....offtffftffttfftffftffo.....",
+  "......oftffftffttfftffftfo......",
+  "......oftffftffttfftffftfo......",
+  "......oooooooooooooooooooo......"
+] %>
+
+<%= vite_stylesheet_tag "feedbacks/mama_muffin.scss" %>
+
+<% cross = [
+  "o...o",
+  ".o.o.",
+  "..o..",
+  ".o.o.",
+  "o...o"
+] %>
+
+<div
+  id="mama-muffin"
+  class="mama-muffin-anchor d-print-none"
+  data-controller="mama-muffin"
+  data-mama-muffin-cookie-value="<%= FeedbacksController::MAMA_COOKIE %>"
+>
+  <div class="mama-muffin">
+    <button
+      type="button"
+      class="mama-muffin__open"
+      aria-controls="feedback-widget-panel"
+    >
+      <span class="mama-muffin__bubble"><%= t("feedback.mama") %></span>
+
+      <svg
+        class="feedback-muffin mama-muffin__figure"
+        viewBox="0 0 32 29"
+        shape-rendering="crispEdges"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <%= muffin_pixels(pixels) %>
+      </svg>
+    </button>
+
+    <button
+      type="button"
+      class="mama-muffin__dismiss"
+      title="<%= t("feedback.mama_dismiss") %>"
+      aria-label="<%= t("feedback.mama_dismiss") %>"
+      data-action="mama-muffin#dismiss"
+    >
+      <svg
+        viewBox="0 0 5 5"
+        shape-rendering="crispEdges"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <%= muffin_pixels(cross) %>
+      </svg>
+    </button>
+  </div>
+</div>
