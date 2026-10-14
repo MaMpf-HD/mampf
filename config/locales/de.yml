@@ -846,7 +846,9 @@ de:
       organizational_on_top: 'Organisatorisches als Startseite'
       uses_vignettes: 'Veranstaltung verwendet Vignetten'
       danger_zone: 'Gefahrenzone'
-      danger_zone_hint: "Diese Aktionen sind unwiderruflich. Bitte lese die folgenden Informationen sorgfältig durch, bevor du fortfährst."
+      danger_zone_hint: >
+        Diese Aktionen sind unwiderruflich. Bitte lies die folgenden Informationen
+        sorgfältig durch, bevor Du fortfährst.
       danger_zone_warning: "Die folgenden Aktionen sind dauerhaft und können nicht rückgängig gemacht werden."
       delete_title: 'Veranstaltung löschen'
       students_and_access: 'Studierende & Zugriffsrechte'
