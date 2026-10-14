@@ -65,9 +65,8 @@
                 class: "text-center my-5",
                 data: { testid: "dashboard-empty-state" } do %>
       <%= link_to "#lecture-search",
-                  id: "go-to-lecture-search",
                   aria: { label: t("lecture.search.go_to_search") } do %>
-        <% msg_locale = (current_user&.locale.presence || I18n.default_locale).to_s %>
+        <% msg_locale = I18n.locale.to_s %>
         <% msg_locale = "en" unless %w[en de].include?(msg_locale) %>
         <%= image_tag "/empty_landing_page_msg_#{msg_locale}.png",
                       alt: "",
