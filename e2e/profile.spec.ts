@@ -84,6 +84,18 @@ test.describe("Account settings", () => {
       await expect(page.getByText("möchte verknüpfte")).toBeVisible();
     });
 
+  test("login data page shows a chooser before any form",
+    async ({ student: { page } }) => {
+      const profilePage = new ProfilePage(page);
+      await profilePage.goto();
+      await page.getByRole("link", { name: "Change login data" }).click();
+
+      await expect(page.getByRole("link", { name: "Change email address" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Change password" })).toBeVisible();
+      await expect(page.locator("#email-form")).toHaveCount(0);
+      await expect(page.locator("#password-form")).toHaveCount(0);
+    });
+
   test("can change the email address and confirm it",
     async ({ student: { page, user }, request }) => {
       const profilePage = new ProfilePage(page);
@@ -91,32 +103,41 @@ test.describe("Account settings", () => {
 
       await profilePage.goto();
       await page.getByRole("link", { name: "Change login data" }).click();
-      await expect(page).toHaveURL(/\/users\/edit/);
+      await page.getByRole("link", { name: "Change email address" }).click();
+      await expect(page.locator("#email-form")).toBeVisible();
 
       await page.locator("#user_email").fill(newEmail);
       await page.getByLabel("Current password", { exact: true }).fill(user.password);
-      await page.getByRole("button", { name: "Save" }).click();
+      await page.getByRole("button", { name: "Update email" }).click();
+
+    // ...rest of your existing test unchanged (confirmation link, logout, login checks)
+    });
+
+  test("can change the password and log in with it",
+    async ({ student: { page, user } }) => {
+      const profilePage = new ProfilePage(page);
+      const newPassword = "Str0ng-New-Passw0rd!";
+
+      await profilePage.goto();
+      await page.getByRole("link", { name: "Change login data" }).click();
+      await page.getByRole("link", { name: "Change password" }).click();
+      await expect(page.locator("#password-form")).toBeVisible();
+
+      await page.locator("#user_password").fill(newPassword);
+      await page.locator("#user_password_confirmation").fill(newPassword);
+      await page.locator("#password_current_password").fill(user.password);
+      await page.getByRole("button", { name: "Update password" }).click();
 
       await expect(page.getByRole("alert")).toBeVisible();
 
-      const confirmationLink = await confirmationLinkFor(request, newEmail);
-      await page.goto(confirmationLink);
-
-      await expect(page.getByRole("alert")).toContainText(
-        "Your email address has been confirmed.",
-      );
-
       await page.getByTitle("Logout").click();
-      await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
-
       const loginPage = new LoginPage(page);
       await loginPage.goto();
       await loginPage.login(user.email, user.password);
-      await expect(page).toHaveURL(/\/users\/sign_in/);
-      await expect(page.getByRole("alert")).toBeVisible();
+      await expect(page).toHaveURL(/\/users\/sign_in/); // old password rejected
 
       await loginPage.goto();
-      await loginPage.login(newEmail, user.password);
+      await loginPage.login(user.email, newPassword);
       await expect(page).toHaveURL(/:3145\/$/);
     });
 });

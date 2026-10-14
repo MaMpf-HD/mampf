@@ -1,13 +1,18 @@
-<%= link_to t('profile.change_data'),
-              edit_user_registration_path,
-              class: "btn btn-outline-secondary" %>
+<div class="profile-actions">
+  <%= link_to edit_user_registration_path, class: "profile-btn" do %>
+    <span class="material-icons profile-icon" aria-hidden="true">key</span>
+    <%= t('profile.change_data') %>
+  <% end %>
 
-<button type="button" class="btn btn-outline-secondary" id="open-request-data"
-        data-bs-toggle="modal" data-bs-target="#requestDataModal">
+  <button type="button" class="profile-btn" id="open-request-data"
+          data-bs-toggle="modal" data-bs-target="#requestDataModal">
+    <span class="material-icons profile-icon" aria-hidden="true">download</span>
     <%= t('profile.data_request') %>
-</button>
+  </button>
 
-<%= link_to t('profile.delete_account'),
-            delete_account_path,
-            class: "btn btn-outline-danger",
-            remote: true %>
+  <%= link_to delete_account_path, class: "profile-btn profile-btn--danger",
+                                  remote: true do %>
+    <span class="material-icons profile-icon" aria-hidden="true">delete</span>
+    <%= t('profile.delete_account') %>
+  <% end %>
+</div>

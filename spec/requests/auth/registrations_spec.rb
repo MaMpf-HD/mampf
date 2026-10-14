@@ -412,6 +412,31 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(user.reload.password_policy_version).to eq(0)
       expect(user).to be_password_change_required
     end
+
+    it "re-renders the email form, not the chooser" do
+      user = create(:confirmed_user_en)
+      sign_in user
+      put user_registration_path(locale: :en, section: "email"), params: {
+        user: { email: "not-an-email", current_password: "not-the-password" }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('id="email-form"')
+      expect(response.body).not_to include("section=password")
+    end
+
+    it "re-renders the password form, not the chooser" do
+      user = create(:confirmed_user_en)
+      sign_in user
+      put user_registration_path(locale: :en, section: "password"), params: {
+        user: { current_password: "not-the-password",
+                password: "short", password_confirmation: "different" }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('id="password-form"')
+      expect(response.body).not_to include('id="email-form"')
+    end
   end
 
   describe "GET /users/edit" do
@@ -426,11 +451,11 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response.body).to include(edit_user_registration_path(locale: :de))
     end
 
-    it "points the language switch at the form after a failed update" do
+    it "points the language switch at the same section after a failed update" do
       user = create(:confirmed_user_en)
       sign_in user
 
-      put user_registration_path(locale: :en), params: {
+      put user_registration_path(locale: :en, section: "email"), params: {
         user: { email: user.email, current_password: "not-the-password",
                 password: "", password_confirmation: "" }
       }
@@ -438,14 +463,15 @@ RSpec.describe("Auth registrations", type: :request) do
       switch_target = response.body[%r{<div id="language-switch".*?</div>}m]
                               .to_s[/href="([^"]*)"/, 1]
       expect(switch_target).to include(edit_user_registration_path)
+      expect(switch_target).to include("section=email")
     end
 
     it "keeps the switched locale across a submit" do
       user = create(:confirmed_user_en, password: "correct-horse-battery-staple")
       sign_in user
 
-      get edit_user_registration_path(locale: :de)
-      form_action = response.body[/action="([^"]*users[^"]*)"/, 1].sub("&amp;", "&")
+      get edit_user_registration_path(locale: :de, section: "email")
+      form_action = Nokogiri::HTML(response.body).at_css("#email-form")["action"]
 
       put form_action, params: {
         user: { email: user.email, current_password: "not-the-password",
@@ -465,5 +491,42 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response.body).to include(I18n.with_locale(:de) { I18n.t("devise.edit.title") })
       expect(user.reload.locale).to eq("en")
     end
+  end
+
+  it "offers a chooser and no form without a section" do
+    user = create(:confirmed_user_en)
+    sign_in user
+    get edit_user_registration_path(locale: :en)
+
+    expect(response.body).to include("section=email", "section=password")
+    expect(response.body).not_to include('id="email-form"')
+    expect(response.body).not_to include('id="password-form"')
+  end
+
+  it "shows only the email form for section=email" do
+    user = create(:confirmed_user_en)
+    sign_in user
+    get edit_user_registration_path(locale: :en, section: "email")
+
+    expect(response.body).to include('id="email-form"')
+    expect(response.body).not_to include('id="password-form"')
+  end
+
+  it "shows only the password form for section=password" do
+    user = create(:confirmed_user_en)
+    sign_in user
+    get edit_user_registration_path(locale: :en, section: "password")
+
+    expect(response.body).to include('id="password-form"')
+    expect(response.body).not_to include('id="email-form"')
+  end
+
+  it "falls back to the chooser for an unknown section" do
+    user = create(:confirmed_user_en)
+    sign_in user
+    get edit_user_registration_path(locale: :en, section: "bogus")
+
+    expect(response.body).not_to include('id="email-form"')
+    expect(response.body).not_to include('id="password-form"')
   end
 end
