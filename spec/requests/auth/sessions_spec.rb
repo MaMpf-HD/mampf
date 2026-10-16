@@ -45,21 +45,21 @@ RSpec.describe("Auth sessions", type: :request) do
     end
 
     it "redirects users back to the stored location" do
-      get news_path
+      get comments_path
       expect(response).to redirect_to(new_user_session_path)
 
       post user_session_path, params: {
         user: { email: user.email, password: password }
       }
 
-      expect(response).to redirect_to(news_path)
+      expect(response).to redirect_to(comments_path)
     end
 
     it "redirects stale users to the password change form before restoring their target" do
       # rubocop:disable Rails/SkipsModelValidations
       user.update_columns(password_policy_version: 0, password_changed_at: nil)
       # rubocop:enable Rails/SkipsModelValidations
-      get news_path
+      get comments_path
       expect(response).to redirect_to(new_user_session_path)
 
       post user_session_path, params: {
@@ -77,7 +77,7 @@ RSpec.describe("Auth sessions", type: :request) do
         }
       }
 
-      expect(response).to redirect_to(news_path)
+      expect(response).to redirect_to(comments_path)
       expect(user.reload.password_change_required?).to be(false)
     end
 
@@ -242,7 +242,7 @@ RSpec.describe("Auth sessions", type: :request) do
 
       expect(response).to redirect_to(root_path)
 
-      get news_path
+      get comments_path
       expect(response).to redirect_to(new_user_session_path)
     end
 

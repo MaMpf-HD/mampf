@@ -147,7 +147,7 @@ class ProfileController < ApplicationController
 
     def email_params
       params.expect(user: [:email_for_medium, :email_for_announcement,
-                           :email_for_teachable, :email_for_news,
+                           :email_for_teachable,
                            :email_for_submission_upload,
                            :email_for_submission_removal,
                            :email_for_submission_join,

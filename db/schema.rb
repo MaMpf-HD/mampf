@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_12_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1310,7 +1310,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
     t.boolean "email_for_medium"
     t.boolean "email_for_announcement"
     t.boolean "email_for_teachable"
-    t.boolean "email_for_news"
     t.integer "current_lecture_id"
     t.string "confirmation_token"
     t.datetime "confirmed_at", precision: nil

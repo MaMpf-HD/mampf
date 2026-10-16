@@ -45,14 +45,6 @@ class NotificationsController < ApplicationController
     render turbo_stream: turbo_stream.remove("lecture-home-new-media")
   end
 
-  # destroy all notififications of current user that do not belong
-  # to any lecture
-  def destroy_news_notifications
-    Notification.delete(current_user.active_news.pluck(:id))
-    current_user.touch
-    render :destroy_all
-  end
-
   private
 
     def set_notification
