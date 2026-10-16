@@ -174,8 +174,11 @@ de:
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
-      Du hast dem Schnellzugriff noch keine Veranstaltung hinzugefügt.
+      Du hast noch keine Veranstaltung angeheftet.
     quick_access: 'Schnellzugriff'
+    quick_access_hint: >
+      Um eine Veranstaltung anzuheften, öffne sie über Dein Dashboard
+      und klicke auf die Pinnnadel, die neben diesem Menü erscheint.
   info: 'Info'
   admin:
     navbar:
@@ -2196,8 +2199,8 @@ de:
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
     miscellaneous: Sonstiges
-    star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
-    unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
+    pin_lecture: Im Schnellzugriff anheften
+    unpin_lecture: Aus dem Schnellzugriff lösen
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
