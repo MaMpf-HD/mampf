@@ -720,6 +720,38 @@ test.describe("campaign registration", () => {
     await expect(preferencePodium).toContainText(secondTitle || "");
   });
 
+  test("asks for personal data when saving preferences", async ({
+    factory,
+    student,
+    request,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "preference_based",
+      "Preference tutorial registration",
+    );
+    await new FactoryBotObject(request, "user", student.user).update({
+      personal_data_declined_at: new Date().toISOString(),
+      personal_data_confirmed_at: null,
+    });
+
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    const fold = await home.openCampaign("Preference tutorial registration");
+    const options = fold.getByTestId("registration-option");
+    await options.nth(0).getByRole("button", { name: /1st choice$/ }).click();
+    await options.nth(1).getByRole("button", { name: /2nd choice$/ }).click();
+    await options.nth(2).getByRole("button", { name: /3rd choice$/ }).click();
+    await student.page.getByRole("button", { name: "Save choices" }).click();
+
+    await expect(student.page).toHaveURL(/\/personal_data/);
+    await expect(student.page.getByText("To register, we need your name")).toBeVisible();
+    await expect(student.page.getByText("Content missing")).toHaveCount(0);
+  });
+
   test("limits preference campaigns with two tutorials to two ranks", async ({
     factory,
     student,

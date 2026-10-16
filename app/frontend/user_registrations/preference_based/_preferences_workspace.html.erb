@@ -5,10 +5,11 @@
 <% disabled = local_assigns.fetch(:disabled, false) %>
 <% readonly = disabled || !campaign.open_for_registrations? %>
 
-<%= form_with url: save_preferences_path(campaign), method: :post,
+<%= form_with url: save_preferences_path(campaign), method: :post, local: true,
               data: {
                 controller: "preference-choices",
                 turbo_stream: true,
+                turbo_frame: "_top",
                 preference_choices_empty_label_value: t(
                   "registration.user_registration.preference_podium.empty"
                 ),
