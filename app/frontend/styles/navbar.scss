@@ -65,6 +65,15 @@
     }
 }
 
+// Long lecture titles wrap instead of pushing the menu out of the window.
+#notificationDropdown .dropdown-menu {
+    max-width: min(30rem, calc(100vw - 2rem));
+
+    .dropdown-item {
+        white-space: normal;
+    }
+}
+
 // On phones the icons, the lecture switcher and the search wrap into rows
 // instead of widening the page.
 @media (max-width: 575.98px) {
