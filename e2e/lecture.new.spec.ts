@@ -108,12 +108,17 @@ async function testCreateNewLecture(
   await page.getByTestId(button).click();
   if (lectureNewPromise) await lectureNewPromise;
 
-  if (!isCoursePrefilled) {
+  if (isCoursePrefilled) {
+    // Bootstrap ignores closing the dialog until it has finished opening
+    const dialog = page.getByRole("dialog", { name: "Create an event series" });
+    await expect(dialog.getByRole("document")).toHaveCSS("transform", "none");
+  }
+  else {
     const selectDiv = page.getByTestId("new-lecture-course-select");
     await selectDiv.selectOption({ label: course.title });
+    await page.keyboard.press("Escape"); // close the course dropdown
   }
 
-  await page.keyboard.press("Escape"); // close the course dropdown
   await page.getByTestId("new-lecture-submit").click();
 
   const alert = page.getByRole("alert");
