@@ -5,6 +5,9 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
   let(:lecture) { create(:lecture, teacher: user) }
   let(:campaign) { create(:registration_campaign, campaignable: lecture) }
   let(:student) { create(:confirmed_user) }
+  let(:turbo_stream_headers) do
+    { "Accept" => "text/vnd.turbo-stream.html, text/html, application/xhtml+xml" }
+  end
   let!(:registration) do
     create(:registration_user_registration, registration_campaign: campaign, user: student)
   end
@@ -20,7 +23,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
     it "rejects the registration instead of deleting it" do
       expect do
-        delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+        delete(path, headers: turbo_stream_headers)
       end.not_to change(Registration::UserRegistration, :count)
 
       expect(registration.reload).to be_rejected
@@ -31,7 +34,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     end
 
     it "returns success via turbo stream" do
-      delete path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+      delete path, headers: turbo_stream_headers
       expect(response).to have_http_status(:success)
       expect(response.media_type).to eq(Mime[:turbo_stream])
     end
@@ -45,18 +48,18 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
       it "does not destroy the registration" do
         expect do
-          delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+          delete(path, headers: turbo_stream_headers)
         end.not_to change(Registration::UserRegistration, :count)
       end
 
       it "redirects to root" do
-        delete path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        delete path, headers: turbo_stream_headers
         expect(response).to redirect_to(root_path)
       end
 
       it "denies before the completed-campaign probe (no membership oracle)" do
         campaign.update!(status: :completed)
-        delete path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        delete path, headers: turbo_stream_headers
         expect(response).to redirect_to(root_path)
         expect(response.body)
           .not_to include(I18n.t("registration.campaign.errors.already_finalized"))
@@ -83,12 +86,12 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
 
       it "does not destroy the registration" do
         expect do
-          delete(path, headers: { "Accept" => "text/vnd.turbo-stream.html" })
+          delete(path, headers: turbo_stream_headers)
         end.not_to change(Registration::UserRegistration, :count)
       end
 
       it "shows error message" do
-        delete path, headers: { "Accept" => "text/vnd.turbo-stream.html" }
+        delete path, headers: turbo_stream_headers
         expect(response.body).to include(I18n.t("registration.campaign.errors.already_finalized"))
       end
     end
@@ -109,7 +112,7 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       it "refreshes the whole exam workspace frame" do
         delete(path,
                params: { source: "allocation_embedded" },
-               headers: { "Accept" => "text/vnd.turbo-stream.html" })
+               headers: turbo_stream_headers)
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include(
