@@ -57,7 +57,11 @@ class ApplicationController < ActionController::Base
 
   # show error message if authorization with cancancan fails
   rescue_from CanCan::AccessDenied do |exception|
-    redirect_to main_app.root_url, alert: exception.message
+    if accepts_html?
+      redirect_to main_app.root_url, alert: exception.message
+    else
+      head :forbidden
+    end
   end
 
   rescue_from MalwareScanGate::UntrustedUploadError do
@@ -66,8 +70,12 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from ActionController::InvalidAuthenticityToken do
-    redirect_to main_app.root_url,
-                alert: I18n.t("controllers.session_expired")
+    flash[:alert] = I18n.t("controllers.session_expired")
+    if accepts_html?
+      redirect_to main_app.root_url
+    else
+      head :unprocessable_content
+    end
   end
 
   # determine where to send the user after login
@@ -258,6 +266,16 @@ class ApplicationController < ActionController::Base
 
     def navigational_get?
       request.get? && request.format.html? && !request.xhr?
+    end
+
+    # The page's own fetch calls ask for a Turbo Stream or JSON only. They
+    # follow a redirect with the same Accept header, and the HTML page at its
+    # end answers that with 406 Not Acceptable. The Accept header decides, not
+    # the URL's format: a browser that opens a .csv export shows HTML just fine.
+    def accepts_html?
+      return true if request.get_header("HTTP_ACCEPT").blank?
+
+      request.accepts.any? { |type| type == Mime[:html] || type == Mime::ALL }
     end
 
     # Registration requires personal data even when the user declined the
