@@ -3,7 +3,8 @@
  * Stream, or with JSON when `json` is given as the request body.
  *
  * The server answers a stale CSRF token, e.g. after a sign-in in another tab,
- * with 422. Reloading gives the page a fresh token and shows the notice.
+ * with 422 and an alert for the next page. Reloading gives the page a fresh
+ * token.
  */
 export async function sendDashboardRequest(url, method, json = null) {
   const headers = {

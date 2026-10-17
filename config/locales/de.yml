@@ -4126,7 +4126,7 @@ de:
       moderation_pending: "Ausstehende Moderation"
   controllers:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
-    session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
+    session_expired: 'Die Seite war nicht mehr aktuell, deshalb wurde Deine Änderung nicht gespeichert. Bitte versuche es noch einmal.'
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
     no_talk: Ein Vortrag mit dieser id existiert nicht.
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'

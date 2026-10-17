@@ -270,9 +270,12 @@ class ApplicationController < ActionController::Base
 
     # The page's own fetch calls ask for a Turbo Stream or JSON only. They
     # follow a redirect with the same Accept header, and the HTML page at its
-    # end answers that with 406 Not Acceptable.
+    # end answers that with 406 Not Acceptable. The Accept header decides, not
+    # the URL's format: a browser that opens a .csv export shows HTML just fine.
     def accepts_html?
-      request.formats.any? { |format| format == Mime[:html] || format == Mime::ALL }
+      return true if request.get_header("HTTP_ACCEPT").blank?
+
+      request.accepts.any? { |type| type == Mime[:html] || type == Mime::ALL }
     end
 
     # Registration requires personal data even when the user declined the

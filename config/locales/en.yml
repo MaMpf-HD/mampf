@@ -3898,7 +3898,7 @@ en:
       moderation_pending: "Pending Moderation"
   controllers:
     no_answer: 'There is no answer with this id.'
-    session_expired: 'Your session has expired. Please login again.'
+    session_expired: 'This page was out of date, so your change was not saved. Please try again.'
     no_chapter: 'There is no chapter with this id.'
     no_talk: There is no talk with this id.
     no_course: 'There is no course with this id.'
