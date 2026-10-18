@@ -220,6 +220,17 @@ RSpec.describe("Registration::Allocations", type: :request) do
           expect(flash[:notice]).to include("calculated")
         end
 
+        it "reloads the participants tab, whose registered view shows the allocation" do
+          allow_any_instance_of(Registration::AllocationService).to receive(:allocate!)
+
+          post registration_campaign_allocation_path(campaign),
+               headers: { "Accept" => "text/vnd.turbo-stream.html, text/html" }
+
+          frame = Nokogiri::HTML(response.body.gsub(%r{</?template>}, ""))
+                          .at_css("turbo-frame#roster_participants_panel")
+          expect(frame["src"]).to include("view=registered", "campaign=#{campaign.id}")
+        end
+
         it "redirects back to the dashboard when allocation is blocked by policies" do
           screening_result = Registration::ScreeningService::Result.new(
             violations: [

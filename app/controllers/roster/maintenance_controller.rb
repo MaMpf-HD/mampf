@@ -198,8 +198,11 @@ module Roster
         query = Rosters::ParticipantQuery.new(@lecture, params).call
 
         @participants_filter = query.filter_mode
+        @participants_view = query.view
+        @participants_campaign = query.campaign
         @total_participants_count = query.total_count
         @unassigned_participants_count = query.unassigned_count
+        @registered_participants_count = query.registered_count
         @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
@@ -218,6 +221,8 @@ module Roster
           participants: @participants,
           pagy: @pagy,
           filter_mode: @participants_filter,
+          view: @participants_view,
+          campaign: @participants_campaign,
           search_string: @search_string,
           counts: participants_counts
         }
@@ -226,7 +231,8 @@ module Roster
       def participants_counts
         {
           total: @total_participants_count,
-          unassigned: @unassigned_participants_count
+          unassigned: @unassigned_participants_count,
+          registered: @registered_participants_count
         }
       end
 
@@ -279,9 +285,12 @@ module Roster
             participants: @participants,
             pagy: @pagy,
             filter_mode: @participants_filter,
+            view: @participants_view,
+            campaign: @participants_campaign,
             search_string: @search_string,
             total_count: @total_participants_count,
-            unassigned_count: @unassigned_participants_count
+            unassigned_count: @unassigned_participants_count,
+            registered_count: @registered_participants_count
           },
           refresh_campaigns_stream: lambda do |lecture|
             refresh_campaigns_index_stream(lecture)

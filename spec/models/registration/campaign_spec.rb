@@ -359,6 +359,53 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "#enrolls_in_lecture?" do
+    it "holds for tutorials" do
+      expect(FactoryBot.create(:registration_campaign, :closed).enrolls_in_lecture?).to be(true)
+    end
+
+    it "does not hold for a cohort without enrollment" do
+      campaign = FactoryBot.create(:registration_campaign)
+      cohort = FactoryBot.create(:cohort, context: campaign.campaignable,
+                                          propagate_to_lecture: false)
+      FactoryBot.create(:registration_item, registration_campaign: campaign,
+                                            registerable: cohort)
+
+      expect(campaign.enrolls_in_lecture?).to be(false)
+    end
+  end
+
+  describe "#awaiting_finalization?" do
+    it "holds for a closed campaign" do
+      expect(FactoryBot.create(:registration_campaign, :closed).awaiting_finalization?)
+        .to be(true)
+    end
+
+    it "holds for an open campaign past its deadline" do
+      campaign = FactoryBot.create(:registration_campaign, :open,
+                                   registration_deadline: 1.hour.from_now)
+
+      Timecop.travel(2.hours.from_now) do
+        expect(campaign.awaiting_finalization?).to be(true)
+      end
+    end
+
+    it "holds while the computed allocation waits to be carried out" do
+      expect(FactoryBot.create(:registration_campaign, :processing).awaiting_finalization?)
+        .to be(true)
+    end
+
+    it "does not hold while the registration is open" do
+      expect(FactoryBot.create(:registration_campaign, :open).awaiting_finalization?)
+        .to be(false)
+    end
+
+    it "does not hold once the campaign is completed" do
+      expect(FactoryBot.create(:registration_campaign, :completed).awaiting_finalization?)
+        .to be(false)
+    end
+  end
+
   # This example only verifies delegation to PolicyEngine; both methods
   # evaluate_policies_for and policies_satisfied? are only thin wrappers.
   # Engine behavior is already tested in the policy_engine spec.
