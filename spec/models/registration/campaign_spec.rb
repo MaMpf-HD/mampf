@@ -359,6 +359,22 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "#enrolls_in_lecture?" do
+    it "holds for tutorials" do
+      expect(FactoryBot.create(:registration_campaign, :closed).enrolls_in_lecture?).to be(true)
+    end
+
+    it "does not hold for a cohort without enrollment" do
+      campaign = FactoryBot.create(:registration_campaign)
+      cohort = FactoryBot.create(:cohort, context: campaign.campaignable,
+                                          propagate_to_lecture: false)
+      FactoryBot.create(:registration_item, registration_campaign: campaign,
+                                            registerable: cohort)
+
+      expect(campaign.enrolls_in_lecture?).to be(false)
+    end
+  end
+
   describe "#awaiting_finalization?" do
     it "holds for a closed campaign" do
       expect(FactoryBot.create(:registration_campaign, :closed).awaiting_finalization?)

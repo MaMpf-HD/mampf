@@ -226,7 +226,9 @@ RSpec.describe("Registration::Allocations", type: :request) do
           post registration_campaign_allocation_path(campaign),
                headers: { "Accept" => "text/vnd.turbo-stream.html, text/html" }
 
-          expect(response.body).to include('target="roster_participants_panel"')
+          frame = Nokogiri::HTML(response.body.gsub(%r{</?template>}, ""))
+                          .at_css("turbo-frame#roster_participants_panel")
+          expect(frame["src"]).to include("view=registered", "campaign=#{campaign.id}")
         end
 
         it "redirects back to the dashboard when allocation is blocked by policies" do

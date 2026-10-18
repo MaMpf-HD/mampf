@@ -175,7 +175,7 @@ class RosterParticipantsComponent < ViewComponent::Base
                             querify: lambda { |p|
                               p["filter"] = @filter_mode
                               p["view"] = @view if registered_view?
-                              p["campaign"] = @campaign.id if registered_view? && @campaign
+                              p["campaign"] = @campaign.id if @campaign
                               p["search"] = @search_string if @search_string.present?
                               p["group_type"] =
                                 if @group_type.is_a?(Array)

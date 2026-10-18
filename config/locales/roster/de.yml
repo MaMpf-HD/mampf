@@ -82,7 +82,7 @@ de:
         auf die Teilnehmendenliste, außer bei Gruppen ohne Einschreibung. Wer schon eingeschrieben
         ist, steht trotzdem hier, solange die Anmeldung läuft.
       empty: 'Gerade läuft keine Anmeldung.'
-      empty_campaign: 'Für dieses Anmeldeverfahren gibt es noch keine Anmeldungen.'
+      empty_campaign: 'Für dieses Anmeldeverfahren gibt es derzeit keine Anmeldungen.'
       other_choices: 'Weitere Wünsche'
       columns:
         choice: 'Wahl'

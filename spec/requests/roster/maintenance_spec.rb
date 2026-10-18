@@ -186,6 +186,14 @@ RSpec.describe("Roster::Maintenance", type: :request) do
             end
           end
 
+          it "keeps the chosen campaign when switching views" do
+            get lecture_roster_participants_path(lecture, campaign: later.id)
+
+            link = Nokogiri::HTML(response.body)
+                           .at_css("#roster_participants_view_switch a[href*='view=registered']")
+            expect(link["href"]).to include("campaign=#{later.id}")
+          end
+
           it "points a search without hits to the campaign that has them" do
             get lecture_roster_participants_path(lecture, view: "registered", search: "Krause")
 
@@ -193,6 +201,28 @@ RSpec.describe("Roster::Maintenance", type: :request) do
               CGI.escapeHTML(I18n.t("roster.search_hits", count: 1, place: "Seminar talks"))
             )
           end
+        end
+      end
+
+      context "with a running campaign for a cohort without enrollment" do
+        before do
+          campaign = create(:registration_campaign, campaignable: lecture)
+          cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+          create(:registration_item, registration_campaign: campaign, registerable: cohort)
+          campaign.update!(status: :open)
+        end
+
+        it "does not promise the participants list on the card" do
+          get lecture_roster_path(lecture)
+
+          text = Nokogiri::HTML(response.body).text.squish
+          expect(text).to include(
+            I18n.t("registration.campaign.registrations_hint_without_enrollment_html", link: "")
+                .split(". ").first
+          )
+          expect(text).not_to include(
+            I18n.t("registration.campaign.registrations_hint_html", link: "").split(". ").first
+          )
         end
       end
 

@@ -131,6 +131,14 @@ module Registration
       (open? || closed? || processing?) && registration_deadline <= Time.current
     end
 
+    # Whether finalize! also puts everyone onto the lecture roster, which a
+    # cohort without enrollment does not.
+    def enrolls_in_lecture?
+      registration_items.includes(:registerable).none? do |item|
+        item.registerable.is_a?(Cohort) && !item.registerable.propagate_to_lecture?
+      end
+    end
+
     def open_for_withdrawals?
       open_for_registrations?
     end

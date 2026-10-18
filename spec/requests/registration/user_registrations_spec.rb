@@ -42,7 +42,9 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
     it "reloads the participants tab after a rejection on the campaign card" do
       delete path, params: { source: "allocation_embedded" }, headers: turbo_stream_headers
 
-      expect(response.body).to include('target="roster_participants_panel"')
+      frame = Nokogiri::HTML(response.body.gsub(%r{</?template>}, ""))
+                      .at_css("turbo-frame#roster_participants_panel")
+      expect(frame["src"]).to include("view=registered", "campaign=#{campaign.id}")
     end
 
     context "when user is not authorized" do

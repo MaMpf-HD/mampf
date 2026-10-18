@@ -86,7 +86,8 @@ module Registration
                                lecture: @campaign.campaignable,
                                expanded_campaign_id: @campaign.id
                              }),
-         participants_reload_stream(@campaign.campaignable)]
+         participants_reload_stream(@campaign.campaignable,
+                                    view: "registered", campaign: @campaign.id)]
       end
     rescue Registration::AllocationService::BlockedError
       @dashboard = Registration::AllocationDashboard.new(@campaign)

@@ -2,6 +2,7 @@
   <div class="btn-group btn-group-sm" role="group">
     <%= link_to component.helpers.lecture_roster_participants_path(component.lecture,
                                                                    filter: :all,
+                                                                   campaign: component.campaign&.id,
                                                                    search: component.search_string,
                                                                    group_type: component.group_type),
                 class: "btn btn-outline-secondary #{'active' if component.filter_mode == 'all'}",
@@ -16,6 +17,7 @@
 
     <%= link_to component.helpers.lecture_roster_participants_path(component.lecture,
                                                                    filter: :unassigned,
+                                                                   campaign: component.campaign&.id,
                                                                    search: component.search_string,
                                                                    group_type: component.group_type),
                 class: "btn btn-outline-secondary #{'active' if component.filter_mode == 'unassigned'}",

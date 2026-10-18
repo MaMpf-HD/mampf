@@ -152,7 +152,10 @@ module Registration
                 has_violators: @dashboard.blockers?
               }
             )
-            streams << participants_reload_stream(@campaign.campaignable) unless exam
+            unless exam
+              streams << participants_reload_stream(@campaign.campaignable,
+                                                    view: "registered", campaign: @campaign.id)
+            end
           else
             streams << turbo_stream.replace("allocation-dashboard",
                                             partial: "registration/allocations/dashboard",

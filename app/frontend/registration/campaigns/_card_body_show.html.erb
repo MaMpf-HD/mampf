@@ -14,15 +14,21 @@
                                                    campaign: campaign.id),
                                  data: { turbo_frame: "_top" }) %>
 
+<% hint_suffix = campaign.enrolls_in_lecture? ? "" : "_without_enrollment" %>
+
 <% if campaign.awaiting_finalization? %>
   <p class="small text-muted">
     <i class="bi bi-clock me-1" aria-hidden="true"></i>
-    <%= t("registration.campaign.deadline_passed_hint_html", link: registrations_link) %>
+
+    <%= t("registration.campaign.deadline_passed_hint#{hint_suffix}_html",
+          link: registrations_link) %>
   </p>
 <% elsif campaign.open? %>
   <p class="small text-muted">
     <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-    <%= t("registration.campaign.registrations_hint_html", link: registrations_link) %>
+
+    <%= t("registration.campaign.registrations_hint#{hint_suffix}_html",
+          link: registrations_link) %>
   </p>
 <% end %>
 

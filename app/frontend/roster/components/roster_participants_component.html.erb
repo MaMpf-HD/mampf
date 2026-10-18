@@ -53,8 +53,9 @@
 
             <% if registered_view? %>
               <%= f.hidden_field :view, value: view %>
-              <%= f.hidden_field :campaign, value: campaign&.id %>
             <% end %>
+
+            <%= f.hidden_field :campaign, value: campaign&.id %>
 
             <% if @group_type.is_a?(Array) %>
               <% @group_type.each do |gt| %>
