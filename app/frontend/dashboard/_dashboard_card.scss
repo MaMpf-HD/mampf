@@ -325,3 +325,39 @@ $card-rail-width: 12rem;
         }
     }
 }
+
+@font-face {
+  font-family: "Noto Serif Display";
+  src: url("/fonts/NotoSerifDisplay-Regular.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+.empty-state {
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.empty-state__symbol {
+  font-family: "Noto Serif Display", Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(6rem, 30vh, 12rem);
+  line-height: 1;
+  color: #dfe2e7;
+  user-select: none;
+}
+
+.empty-state__caption {
+  margin: 0.5rem 0 1.25rem;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #9ca3af;
+}
+
+.empty-state__message {
+  max-width: 36rem;
+  margin: 0 auto;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6b7280;
+}
