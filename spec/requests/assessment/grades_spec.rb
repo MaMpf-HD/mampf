@@ -12,7 +12,9 @@ RSpec.describe(Assessment::GradesController, type: :request) do
   let!(:participation) do
     FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
   end
-  let(:turbo_stream_headers) { { "Accept" => "text/vnd.turbo-stream.html" } }
+  let(:turbo_stream_headers) do
+    { "Accept" => "text/vnd.turbo-stream.html, text/html, application/xhtml+xml" }
+  end
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
