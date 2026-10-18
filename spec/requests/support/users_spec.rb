@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe("Support users", type: :request) do
-  let(:support) { create(:confirmed_user_en, support: true) }
+  let(:support) { create(:confirmed_user_en, name: "Olga Taussky", support: true) }
   let!(:student) do
-    create(:confirmed_user, first_name: "Emmy", last_name: "Noether",
+    create(:confirmed_user, first_name: "Emmy", last_name: "Noether", name: "Emmy Noether",
                             matriculation_number: "1234567", email: "emmy@example.org")
   end
 
