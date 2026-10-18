@@ -1,6 +1,7 @@
 module Registration
   class UserRegistrationsController < ApplicationController
     include Lectures::HomeStreams
+    include Registration::RosterStreamRefreshable
 
     helper ::UserRegistrationsHelper,
            ItemsHelper, CampaignsHelper
@@ -151,6 +152,7 @@ module Registration
                 has_violators: @dashboard.blockers?
               }
             )
+            streams << participants_reload_stream(@campaign.campaignable) unless exam
           else
             streams << turbo_stream.replace("allocation-dashboard",
                                             partial: "registration/allocations/dashboard",

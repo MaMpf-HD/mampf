@@ -66,6 +66,30 @@ en:
     filters:
       all: 'All'
       unassigned: 'Without group'
+    search_hits:
+      one: 'There is 1 match under “%{place}”.'
+      other: 'There are %{count} matches under “%{place}”.'
+    views:
+      enrolled: 'Enrolled'
+      registered: 'Registered'
+    registrations:
+      hint: >-
+        These people are registered but not yet placed in their groups. That happens only once the
+        registration has ended and you finalize the allocation. This also puts them onto the
+        participants list, except for groups without enrollment. People already enrolled are listed
+        here too while their registration is running.
+      empty: 'No registration is running right now.'
+      empty_campaign: 'There are no registrations for this registration process yet.'
+      other_choices: 'Further choices'
+      columns:
+        choice: 'Choice'
+        state: 'State'
+      states:
+        confirmed: 'Confirmed'
+        pending: 'Pending'
+        awaiting_allocation: 'Allocation pending'
+        allocated: 'Assigned: %{group}'
+        not_allocated: 'Not assigned'
     dashboard:
       title: 'Dashboard'
       description: 'Manage allocations and view global performance.'

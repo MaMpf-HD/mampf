@@ -39,6 +39,12 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
       expect(response.media_type).to eq(Mime[:turbo_stream])
     end
 
+    it "reloads the participants tab after a rejection on the campaign card" do
+      delete path, params: { source: "allocation_embedded" }, headers: turbo_stream_headers
+
+      expect(response.body).to include('target="roster_participants_panel"')
+    end
+
     context "when user is not authorized" do
       let(:other_user) { create(:confirmed_user) }
 

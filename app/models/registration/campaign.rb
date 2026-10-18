@@ -125,6 +125,12 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
+    # Past its deadline and not finalized: finalize! has not yet put the
+    # registered people into their groups.
+    def awaiting_finalization?
+      (open? || closed? || processing?) && registration_deadline <= Time.current
+    end
+
     def open_for_withdrawals?
       open_for_registrations?
     end

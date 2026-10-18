@@ -1,7 +1,19 @@
 <% if section?(:full) %>
   <div class="row">
     <div class="col-12">
-      <% if outside_enrollment_count.positive? %>
+      <%= helpers.turbo_frame_tag section_target(:view_switch), class: "d-block mb-3" do %>
+        <%= render section_component(:view_switch) %>
+      <% end %>
+
+      <% if registered_view? %>
+        <p class="small text-muted">
+          <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+          <%= t("roster.registrations.hint") %>
+        </p>
+        <%= helpers.turbo_frame_tag section_target(:campaign_switch), class: "d-block" do %>
+          <%= render section_component(:campaign_switch) %>
+        <% end %>
+      <% elsif outside_enrollment_count.positive? %>
         <p class="small text-muted">
           <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
           <%= t("roster.outside_enrollment", count: outside_enrollment_count) %>
@@ -38,6 +50,11 @@
             <%= f.hidden_field :filter,
                                value: @filter_mode,
                                data: { auto_submit_form_target: "filterInput" } %>
+
+            <% if registered_view? %>
+              <%= f.hidden_field :view, value: view %>
+              <%= f.hidden_field :campaign, value: campaign&.id %>
+            <% end %>
 
             <% if @group_type.is_a?(Array) %>
               <% @group_type.each do |gt| %>
