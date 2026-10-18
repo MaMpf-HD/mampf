@@ -63,6 +63,169 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(response.body).to include('target="roster_participants_results"')
       end
 
+      context "with a running registration" do
+        let(:campaign) do
+          create(:registration_campaign, :closed, campaignable: lecture,
+                                                  description: "Tutorials WS")
+        end
+        let(:item) { campaign.registration_items.first }
+        let(:registered) do
+          create(:confirmed_user, first_name: "Anna", last_name: "Becker")
+        end
+
+        before do
+          create(:registration_user_registration, :confirmed,
+                 user: registered, registration_campaign: campaign, registration_item: item)
+        end
+
+        it "lists the registration in the registered view" do
+          get lecture_roster_participants_path(lecture, view: "registered")
+
+          rows = Nokogiri::HTML(response.body).css("#roster_participants_results tbody tr")
+                         .map { |row| row.css("td").first(5).map { |cell| cell.text.squish } }
+          expect(rows).to eq([[registered.tutorial_name, registered.matriculation_number.to_s,
+                               item.title, I18n.t("roster.registrations.states.confirmed"), ""]])
+          expect(response.body).to include(I18n.t("roster.registrations.hint"))
+        end
+
+        it "counts the registered people in the program distribution" do
+          get lecture_roster_participants_path(lecture, view: "registered")
+
+          heading = Nokogiri::HTML(response.body).css("details thead th").map(&:text)
+          expect(heading).to include(I18n.t("roster.views.registered"))
+        end
+
+        it "points a search without roster hits to the registered view" do
+          get lecture_roster_participants_path(lecture, search: "Becker")
+
+          expect(response.body).to include(
+            CGI.escapeHTML(I18n.t("roster.search_hits",
+                                  count: 1, place: I18n.t("roster.views.registered")))
+          )
+        end
+
+        it "points a search without registered hits to the enrolled view" do
+          create(:lecture_membership, lecture: lecture,
+                                      user: create(:confirmed_user, last_name: "Lovelace"))
+
+          get lecture_roster_participants_path(lecture, view: "registered", search: "Lovelace")
+
+          expect(response.body).to include(
+            CGI.escapeHTML(I18n.t("roster.search_hits",
+                                  count: 1, place: I18n.t("roster.views.enrolled")))
+          )
+        end
+
+        context "and a second running campaign" do
+          let(:later) do
+            create(:registration_campaign, :open, campaignable: lecture,
+                                                  description: "Seminar talks")
+          end
+          let(:other) { create(:confirmed_user, first_name: "Jonas", last_name: "Krause") }
+
+          before do
+            create(:registration_user_registration, :confirmed,
+                   user: other, registration_campaign: later,
+                   registration_item: later.registration_items.first)
+          end
+
+          def names
+            Nokogiri::HTML(response.body)
+                    .css("#roster_participants_results tbody tr td:first-child")
+                    .map { |cell| cell.text.squish }
+          end
+
+          it "shows the campaign with the earliest deadline and offers the other" do
+            get lecture_roster_participants_path(lecture, view: "registered")
+
+            expect(names).to eq([registered.tutorial_name])
+            expect(response.body).to include("Seminar talks")
+          end
+
+          it "shows the chosen campaign" do
+            get lecture_roster_participants_path(lecture, view: "registered", campaign: later.id)
+
+            expect(names).to eq([other.tutorial_name])
+          end
+
+          it "counts everyone of the chosen campaign in the statistics, whatever the search" do
+            create(:registration_user_registration, :confirmed,
+                   user: create(:confirmed_user, last_name: "Lovelace"),
+                   registration_campaign: later,
+                   registration_item: later.registration_items.second)
+
+            get lecture_roster_participants_path(lecture, view: "registered",
+                                                          campaign: later.id, search: "Krause")
+
+            expect(names).to eq([other.tutorial_name])
+            totals = Nokogiri::HTML(response.body).css("details tfoot td").map(&:text)
+            expect(totals.map(&:squish)).to eq(["2"])
+          end
+
+          it "falls back to the earliest campaign for one it does not run" do
+            foreign = create(:registration_campaign, :open)
+
+            ["not-a-uuid", foreign.id].each do |id|
+              get lecture_roster_participants_path(lecture, view: "registered", campaign: id)
+
+              expect(names).to eq([registered.tutorial_name])
+            end
+          end
+
+          it "puts a hint with a link to the campaign's registrations on each card" do
+            get lecture_roster_path(lecture)
+
+            links = Nokogiri::HTML(response.body)
+                            .css("a[href*='view=registered']").pluck("href")
+            expect(links).to contain_exactly(include("campaign=#{campaign.id}"),
+                                             include("campaign=#{later.id}"))
+            text = Nokogiri::HTML(response.body).text.squish
+            [:registrations_hint_html, :deadline_passed_hint_html].each do |key|
+              first_sentence = I18n.t("registration.campaign.#{key}", link: "").split(". ").first
+              expect(text).to include(first_sentence)
+            end
+          end
+
+          it "keeps the chosen campaign when switching views" do
+            get lecture_roster_participants_path(lecture, campaign: later.id)
+
+            link = Nokogiri::HTML(response.body)
+                           .at_css("#roster_participants_view_switch a[href*='view=registered']")
+            expect(link["href"]).to include("campaign=#{later.id}")
+          end
+
+          it "points a search without hits to the campaign that has them" do
+            get lecture_roster_participants_path(lecture, view: "registered", search: "Krause")
+
+            expect(response.body).to include(
+              CGI.escapeHTML(I18n.t("roster.search_hits", count: 1, place: "Seminar talks"))
+            )
+          end
+        end
+      end
+
+      context "with a running campaign for a cohort without enrollment" do
+        before do
+          campaign = create(:registration_campaign, campaignable: lecture)
+          cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+          create(:registration_item, registration_campaign: campaign, registerable: cohort)
+          campaign.update!(status: :open)
+        end
+
+        it "does not promise the participants list on the card" do
+          get lecture_roster_path(lecture)
+
+          text = Nokogiri::HTML(response.body).text.squish
+          expect(text).to include(
+            I18n.t("registration.campaign.registrations_hint_without_enrollment_html", link: "")
+                .split(". ").first
+          )
+          expect(text).not_to include(
+            I18n.t("registration.campaign.registrations_hint_html", link: "").split(". ").first
+          )
+        end
+      end
+
       context "with existing groups" do
         let!(:tutorial) { create(:tutorial, lecture: lecture) }
 

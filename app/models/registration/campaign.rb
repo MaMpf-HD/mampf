@@ -125,6 +125,20 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
+    # Past its deadline and not finalized: finalize! has not yet put the
+    # registered people into their groups.
+    def awaiting_finalization?
+      (open? || closed? || processing?) && registration_deadline <= Time.current
+    end
+
+    # Whether finalize! also puts everyone onto the lecture roster, which a
+    # cohort without enrollment does not.
+    def enrolls_in_lecture?
+      registration_items.includes(:registerable).none? do |item|
+        item.registerable.is_a?(Cohort) && !item.registerable.propagate_to_lecture?
+      end
+    end
+
     def open_for_withdrawals?
       open_for_registrations?
     end
