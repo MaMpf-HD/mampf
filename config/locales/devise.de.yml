@@ -174,6 +174,10 @@ de:
       update: "Speichern"
       new_password: "Neues Passwort"
       confirm_new_password: "Bestätigung des neuen Passworts"
+      choose_email: 'E-Mail-Adresse ändern'
+      choose_password: 'Passwort ändern'
+      update_email: "E-Mail-Adresse aktualisieren"
+      update_password: "Passwort aktualisieren"
   errors:
     messages:
       already_confirmed: "Account wurde bereits bestätigt"
