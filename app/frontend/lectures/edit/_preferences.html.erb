@@ -162,20 +162,17 @@
     </div>
   </section>
 
-  <%# Save bar %>
-  <div id="lecture-preferences-warning" class="pref-savebar">
-    <div class="d-flex justify-content-between align-items-center w-100">
-      <span class="pref-savebar__text">
-        <i class="bi bi-info-circle me-1"></i><%= t('warnings.unsaved_changes') %>
-      </span>
-      <div class="w-auto">
+  <div class="row">
+    <div class="col-12 text-center">
+      <div id="lecture-preferences-warning">
+        <%= t('warnings.unsaved_changes') %>
         <%= hidden_field_tag :subpage, "settings" %>
+        <%= f.submit t('buttons.save'), class: "btn btn-primary btn-sm" %>
         <button type="button" id="cancel-lecture-preferences"
                 data-action="click->lecture-edit#reload"
-                class="btn btn-outline-secondary btn-sm">
+                class="btn btn-sm btn-secondary">
           <%= t('buttons.cancel') %>
         </button>
-        <%= f.submit t('buttons.save'), class: "btn btn-primary btn-sm" %>
       </div>
     </div>
   </div>
