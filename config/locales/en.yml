@@ -485,6 +485,11 @@ en:
       import_chapters: import chapters
       import_sections: import sections
       import_tags: import tags
+      delete_modal_title: 'Delete this lecture?'
+      delete_modal_prompt: >
+        Please type the name of the lecture to confirm deletion.
+      delete_modal_input_label: 'Name of the lecture'
+      delete_modal_confirm: 'Delete lecture'
       no_active_voucher: >
         There is no active %{role} for this event series.
       info:

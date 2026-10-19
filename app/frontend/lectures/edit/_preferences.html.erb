@@ -183,6 +183,8 @@
 
 
 <% if lecture_deletable?(lecture) %>
+  <% lecture_name = lecture.title %> <%# use whatever string is shown as the lecture's name %>
+
   <section class="pref-danger">
     <h3 class="pref-danger__title">
       <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -201,11 +203,54 @@
         <div class="pref-danger__row-title"><%= t('admin.lecture.delete_title') %></div>
         <small class="text-body-secondary"><%= t('admin.lecture.info.delete') %></small>
       </div>
-      <%= link_to t("buttons.delete"),
-                  lecture_path(lecture),
-                  data: { turbo_method: :delete,
-                          turbo_confirm: lecture_destruction_confirmation(lecture) },
-                  class: "btn btn-sm btn-danger" %>
+      <button type="button"
+              class="btn btn-sm btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteLectureModal">
+        <%= t("buttons.delete") %>
+      </button>
     </div>
   </section>
+
+  <div class="modal fade" id="deleteLectureModal" tabindex="-1"
+       aria-labelledby="deleteLectureModalLabel" aria-hidden="true"
+       data-controller="delete-lecture-confirm"
+       data-delete-lecture-confirm-expected-value="<%= lecture_name %>"
+       data-action="hidden.bs.modal->delete-lecture-confirm#reset">
+    <div class="modal-dialog modal-dialog-centered">
+      <%= form_with url: lecture_path(lecture), method: :delete, class: "modal-content" do %>
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="deleteLectureModalLabel">
+            <%= t('admin.lecture.delete_modal_title') %>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                  aria-label="<%= t('buttons.close') %>"></button>
+        </div>
+
+        <div class="modal-body">
+          <p><%= lecture_destruction_confirmation(lecture) %></p>
+          <p class="mb-2">
+            <%= t('admin.lecture.delete_modal_prompt') %>
+            <strong class="user-select-all"><%= lecture_name %></strong>
+          </p>
+          <input type="text"
+                 class="form-control"
+                 autocomplete="off"
+                 aria-label="<%= t('admin.lecture.delete_modal_input_label') %>"
+                 data-delete-lecture-confirm-target="input"
+                 data-action="input->delete-lecture-confirm#check">
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <%= t('buttons.cancel') %>
+          </button>
+          <button type="submit" class="btn btn-danger" disabled
+                  data-delete-lecture-confirm-target="submit">
+            <%= t('admin.lecture.delete_modal_confirm') %>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
 <% end %>

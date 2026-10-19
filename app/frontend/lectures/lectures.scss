@@ -284,10 +284,9 @@ h4.lecture-pane-subheader {
 .pref-danger {
   width: 95%;
   margin-top: 2.5rem;
-  padding: 1.25rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
   background: #fff;
-  border: 1px solid var(--bs-border-color);
-  border-radius: 0.75rem;
 }
 
 .pref-danger__title {
@@ -309,12 +308,6 @@ h4.lecture-pane-subheader {
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
-  padding: 0.875rem 1rem;
-  background: var(--bs-tertiary-bg);
-  border: 1px solid var(--bs-border-color);
-  border-radius: 0.5rem;
-
-  & + & { margin-top: 0.75rem; }
 }
 
 .pref-danger__icon {

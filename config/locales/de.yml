@@ -549,6 +549,11 @@ de:
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
       import_tags: Tags importieren
+      delete_modal_title: 'Vorlesung löschen?'
+      delete_modal_prompt: >
+        Bitte gib den Namen der Vorlesung ein, um das Löschen zu bestätigen.
+      delete_modal_input_label: 'Name der Vorlesung'
+      delete_modal_confirm: 'Vorlesung löschen'
       no_active_voucher: >
         Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:

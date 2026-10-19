@@ -67,6 +67,9 @@ window.Stimulus.register("vignettes-data-collection", VignettesDataCollectionCon
 import LectureSearchController from "~/lectures/search/search.controller.js";
 window.Stimulus.register("lecture-search", LectureSearchController);
 
+import DeleteLectureConfirmController from "~/lectures/edit/delete_lecture_confirm_controller.js";
+window.Stimulus.register("delete-lecture-confirm", DeleteLectureConfirmController);
+
 import QuestionCounterController from "~/lectures/quizzes/question_counter.controller.js";
 window.Stimulus.register("question-counter", QuestionCounterController);
 
