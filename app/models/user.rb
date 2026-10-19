@@ -429,13 +429,6 @@ class User < ApplicationRecord
                                               .pluck(:id))
   end
 
-  # returns the array of those notifications that are related to MaMpf news
-  # (i.e. announcements without a lecture)
-  def active_news
-    notifications.where(notifiable_type: "Announcement")
-                 .select { |n| n.notifiable.lecture.nil? }
-  end
-
   # returns the unique user notification that corresponds to the given
   # announcement
   def matching_notification(announcement)

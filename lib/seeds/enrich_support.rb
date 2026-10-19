@@ -227,9 +227,10 @@ module Seeds
         Announcement.where(details: ADMIN_ANNOUNCEMENTS + LECTURE_ANNOUNCEMENTS)
                     .destroy_all
 
+        # Site-wide announcements only show up in the main page banner, so they
+        # notify nobody.
         ADMIN_ANNOUNCEMENTS.each do |text|
-          announce!(Announcement.create!(announcer: admin, details: text,
-                                         on_main_page: false))
+          Announcement.create!(announcer: admin, details: text, on_main_page: false)
         end
 
         current_lectures.each_with_index do |lecture, index|
@@ -241,7 +242,7 @@ module Seeds
       end
 
       def announce!(announcement)
-        recipients = announcement.lecture&.users || User.all
+        recipients = announcement.lecture.users
         recipients.find_each do |user|
           Notification.create!(recipient: user, notifiable: announcement,
                                action: "create")

@@ -58,7 +58,6 @@ en:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
-    mampf_news: 'MaMpf-News'
     submissions: 'Submissions'
     tutorials: 'Tutorials'
     cohorts: 'Flexible Groups'
@@ -121,7 +120,6 @@ en:
     search: 'Search'
     profile: 'Profile'
     administration: 'Administration'
-    news: 'News'
     comments: 'Comments'
     blog: 'Blog'
     logout: 'Logout'
@@ -144,7 +142,7 @@ en:
       tag_search: 'Tag search'
       terms: 'Terms'
       classification: 'Classification'
-      news: 'News'
+      announcements: 'MaMpf announcements'
       boards: 'Messageboards'
       stats: 'Access statistics'
       export_stats: 'Export statistics'
@@ -373,6 +371,7 @@ en:
         mistake: "toggle mistake annotations"
         presentation: "toggle presentation annotations"
     announcement:
+      title: 'MaMpf announcements'
       help: >
         Here you can enter a text. You may use LaTeX (by putting the
         corresponding expression inside $...$). A preview of your
@@ -1944,8 +1943,6 @@ en:
       new media in event series or courses I have subscribed to
     email_for_teachable:
       new event series or courses
-    email_for_news:
-      news about MaMpf
     update: 'Update profile'
     success: 'Profil was updated successfully.'
     please_update: >
@@ -2013,7 +2010,6 @@ en:
     email_notifications_header: E-Mail Notifications
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments
-    miscellaneous: Miscellaneous
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
     media_search: Media Search
@@ -2063,10 +2059,6 @@ en:
       The former teacher will be demoted to editor.
     already_teacher_html: >
       You are already the teacher for <strong>%{lecture}</strong>.
-  mampf_news:
-    title: 'MaMpf News'
-    check_notifications: 'Clear all'
-    no_news: 'There are no MaMpf news available.'
   notifications:
     title: 'New notifications'
     check_notifications: 'Clear all'
@@ -2080,7 +2072,6 @@ en:
     subscribe_course: 'You can find its event series in the lecture search on your dashboard.'
     subscribe_course_html: 'You can find its event series in %{dashboard}.'
     profile: 'profile'
-    mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
@@ -3273,7 +3264,6 @@ en:
     student_message_role:
       staff: "lecture staff"
       tutor: "tutor"
-    mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
@@ -3409,7 +3399,6 @@ en:
       Emails for media: %{email_for_medium}<br>
       Emails for announcements: %{email_for_announcement}<br>
       Emails for lectures: %{email_for_teachable}<br>
-      Emails for news: %{email_for_news}<br>
       Unread comments: %{unread_comments}<br>
       Emails for submission Upload: %{email_for_submission_upload}<br>
       Emails for submission deletion: %{email_for_submission_removal}<br>
@@ -3573,7 +3562,6 @@ en:
     number: 'Number'
     hide: 'Hide'
     link: 'Link'
-    news: 'News'
     time: 'Time'
     author: 'Author'
     mark_as_read: 'Mark as read'

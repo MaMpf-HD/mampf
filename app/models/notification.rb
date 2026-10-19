@@ -22,7 +22,6 @@ class Notification < ApplicationRecord
   # returns the path that the user is sent to when the notification is clicked:
   # the dashboard's lecture search for notifications about new courses or lectures
   # lecture path for announcements in lectures
-  # news path for general announcements
   # all other cases: notifiable path
   def path(_user)
     return if notifiable.blank?
@@ -31,10 +30,8 @@ class Notification < ApplicationRecord
       edit_lecture_path(notifiable.voucher.lecture, anchor: "people")
     elsif lecture_or_course?
       root_path(anchor: "lecture-search")
-    elsif lecture_announcement?
+    elsif announcement?
       lecture_home_path(notifiable.lecture)
-    elsif generic_announcement?
-      news_path
     elsif quiz?
       medium_path(notifiable)
     else
@@ -62,14 +59,6 @@ class Notification < ApplicationRecord
 
   def announcement?
     notifiable.is_a?(Announcement)
-  end
-
-  def generic_announcement?
-    announcement? && notifiable.lecture.nil?
-  end
-
-  def lecture_announcement?
-    announcement? && notifiable.lecture.present?
   end
 
   def quiz?
