@@ -35,7 +35,7 @@ de:
       consequences:
         groups: "Du verlässt %{groups}."
         campaigns: "Deine Anmeldungen zu %{campaigns} werden zurückgezogen."
-        admission_computed: "Deine Klausurzulassung erlischt. Trittst Du wieder ein, wird sie aus Deinen Punkten neu bestimmt."
+        admission_computed: "Deine Klausurzulassung erlischt. Trittst Du wieder ein, müssen die Lehrenden sie anhand Deiner gespeicherten Leistungen erneut feststellen."
         admission_manual: "Deine Klausurzulassung erlischt. Sie wurde von den Lehrenden erteilt und kommt bei einem Wiedereintritt nicht von selbst zurück."
         points: "Deine Punkte bleiben gespeichert und sind wieder da, wenn Du wieder eintrittst."
         dashboard: "Die Veranstaltung verschwindet von Deinem Dashboard."
@@ -46,7 +46,7 @@ de:
       blocked: "Du kannst die Teilnahme gerade nicht selbst beenden:"
       blockers:
         group_fixed: "„%{title}“ kannst Du nicht selbst verlassen."
-        exam_closed: "Die Anmeldung zu „%{title}“ ist geschlossen."
+        exam_closed: "Von „%{title}“ kannst Du Dich nicht selbst abmelden."
         graded: "„%{title}“ ist bereits bewertet."
       contact: "Wende Dich bitte an die Lehrenden der Veranstaltung."
       done: "Du hast „%{lecture}“ verlassen."

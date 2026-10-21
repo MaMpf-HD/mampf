@@ -34,6 +34,13 @@ export default class extends Controller {
 
     if (this.modal) {
       try {
+        // A stream may replace a modal while it is open; Bootstrap restores
+        // the page only on hide, so its scroll lock is lifted here.
+        if (this.element.classList.contains("show")) {
+          document.body.classList.remove("modal-open");
+          document.body.style.removeProperty("overflow");
+          document.body.style.removeProperty("padding-right");
+        }
         const backdrop = document.querySelector(".modal-backdrop");
         if (backdrop) {
           backdrop.remove();

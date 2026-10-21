@@ -1,6 +1,6 @@
-# The dialog behind "Leave course" in a student's participation list: what
-# leaving the lecture does for this student, or why the student cannot do
-# that alone.
+# Shows, behind the lecture row's "Leave course", what leaving the whole
+# lecture does for this student, or why the student has to ask the lecturer
+# instead.
 class LeaveLectureComponent < ViewComponent::Base
   ID = "leave-lecture-dialog".freeze
 
@@ -20,7 +20,6 @@ class LeaveLectureComponent < ViewComponent::Base
     blockers.any?(&:contact)
   end
 
-  # What leaving does for this student, one sentence each.
   def consequences
     [groups_consequence, campaigns_consequence, admission_consequence,
      points_consequence, dashboard_consequence,
@@ -38,10 +37,10 @@ class LeaveLectureComponent < ViewComponent::Base
     end
 
     def campaigns_consequence
-      return if @leave.withdrawn_campaigns.empty?
+      return if @leave.campaigns_to_withdraw.empty?
 
       t("lecture_home.leave.consequences.campaigns",
-        campaigns: @leave.withdrawn_campaigns.map(&:student_facing_title).to_sentence)
+        campaigns: @leave.campaigns_to_withdraw.map(&:student_facing_title).to_sentence)
     end
 
     def admission_consequence

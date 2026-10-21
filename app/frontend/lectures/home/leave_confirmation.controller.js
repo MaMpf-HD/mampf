@@ -2,7 +2,8 @@ import { Controller } from "@hotwired/stimulus";
 
 /**
  * Enables leaving a course only once the student has typed its short title,
- * so the button cannot be pressed in passing.
+ * so the button cannot be pressed in passing. Compares by the rule of
+ * Rosters::LectureLeave.normalize, which the server applies again.
  */
 export default class extends Controller {
   static targets = ["input", "submit"];

@@ -1048,10 +1048,14 @@ class Lecture < ApplicationRecord
   # everyone with a pending or confirmed registration in one of the
   # lecture's campaigns, plus everyone on the roster (union, deduplicated).
   # Before finalization this is "everyone who signed up", afterwards it
-  # also covers manually added roster members.
+  # also covers manually added roster members. A completed group campaign
+  # counts no more: its people are on the roster, or have left it; an exam
+  # campaign still does, since its list may hold people off the roster.
   def registration_mail_recipients
+    campaigns = registration_campaigns.where.not(status: :completed)
+                                      .or(registration_campaigns.exam)
     registered_ids = Registration::UserRegistration
-                     .where(registration_campaign: registration_campaigns,
+                     .where(registration_campaign: campaigns,
                             status: [:pending, :confirmed])
                      .select(:user_id)
     member_ids = lecture_memberships.select(:user_id)

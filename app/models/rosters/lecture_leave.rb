@@ -1,21 +1,25 @@
 module Rosters
-  # Ends a student's participation in one lecture from its home page: the
-  # groups and the lecture roster are left, running registrations withdrawn
-  # and the bookmark removed. Points stay recorded, so they are back when the
-  # student joins again. What the student may not undo alone blocks the whole
-  # step: a group whose staff do not let members leave, an exam list once its
-  # registration has closed, and a graded exam or talk.
+  # Ends a student's participation in a whole lecture, unlike leaving one
+  # group: groups, lecture roster, running registrations and bookmark go
+  # together, recorded points stay. Anything the student may not undo alone
+  # refuses the whole step, see #blockers.
   class LectureLeave
     # `reason` names the locale key, `title` the group, exam or campaign
     # concerned, and `contact` whether the lecture's staff can still help.
     Blocker = Struct.new(:reason, :title, :contact)
 
-    # Raised when the student may not leave the lecture, see #blockers.
     class NotAllowedError < StandardError; end
 
-    # A talk's own title may be empty; its label carries the number.
+    # Talks go by their label, which carries the number, as elsewhere in the
+    # participation list.
     def self.label(group)
       group.is_a?(Talk) ? group.to_label : group.title
+    end
+
+    # Drops every kind of space and lowercases, the same rule
+    # leave_confirmation.controller.js applies in the browser.
+    def self.normalize(text)
+      text.to_s.gsub(/[[:space:]]+/, "").downcase
     end
 
     def initialize(lecture, user)
@@ -23,8 +27,6 @@ module Rosters
       @user = user
     end
 
-    # Whether the user has a place in the lecture to give up: its roster, one
-    # of its groups or an exam list.
     def participating?
       LectureMembership.exists?(lecture: @lecture, user: @user) ||
         groups.any? || exam_entries.any?
@@ -37,14 +39,13 @@ module Rosters
     # What the student types to confirm: the course's short title, as the
     # name of what is left, without spaces, which are easy to miss.
     def confirmation_code
-      @lecture.course.short_title.gsub(/\s+/, "")
+      @lecture.course.short_title.gsub(/[[:space:]]+/, "")
     end
 
     def confirmed?(input)
-      input.to_s.gsub(/\s+/, "").casecmp?(confirmation_code)
+      self.class.normalize(input) == self.class.normalize(confirmation_code)
     end
 
-    # The tutorials, talks and cohorts of the lecture the user is in.
     def groups
       @groups ||=
         Tutorial.where(lecture: @lecture,
@@ -58,39 +59,55 @@ module Rosters
               .order(:title).to_a
     end
 
-    # A graded exam or talk rules out leaving for good, so the others, which
-    # the lecture's staff could lift, are not named next to it.
+    # While a graded exam or talk blocks, the other blockers are not named:
+    # the lecture's staff could lift them, but leaving would stay refused.
     def blockers
       @blockers ||= graded_blockers.presence ||
                     (fixed_group_blockers + closed_exam_blockers)
     end
 
-    # The campaigns whose registrations leaving withdraws.
-    def withdrawn_campaigns
-      @withdrawn_campaigns ||= running_campaigns.where.not(id: closed_exam_campaigns)
-                                                .to_a
+    def campaigns_to_withdraw
+      @campaigns_to_withdraw ||= running_campaigns.to_a - closed_exam_campaigns
     end
 
-    # :computed or :manual for a granted exam admission, which ends with the
-    # roster seat; nil when there is none.
+    # The granted exam admission, :computed or :manual. It goes with the
+    # LectureMembership, whose removal deletes the Certification.
     def admission
       StudentPerformance::Certification.passed
                                        .find_by(lecture: @lecture, user: @user)
                                        &.source&.to_sym
     end
 
-    # Raises NotAllowedError when a blocker stands in the way, and then
-    # changes nothing.
+    # Decides again under the locks, on a fresh instance: a group setting, a
+    # grade or a registration may have changed since this one was read. A
+    # grade entered after that still refuses here rather than failing.
     def leave!
       ActiveRecord::Base.transaction do
-        raise(NotAllowedError) unless allowed?
+        lock_lecture_places!
+        raise(NotAllowedError) unless self.class.new(@lecture, @user).allowed?
 
         UserPlaces.new(@user).leave!([@lecture])
         @user.unbookmark_lecture!(@lecture)
       end
+    rescue MaintenanceService::GradingDataPresentError,
+           Talk::SpeakerRemovalNotAllowedError,
+           Exam::ParticipantRemovalNotAllowedError
+      raise(NotAllowedError)
     end
 
     private
+
+      # Campaigns first, then rosters, the order allocation and finalization
+      # take, and each kind by id, as MaintenanceService does.
+      def lock_lecture_places!
+        Registration::Campaign.where(campaignable: @lecture,
+                                     status: UserPlaces::RUNNING_CAMPAIGN_STATUSES)
+                              .order(:id).lock.load
+        Cohort.where(context: @lecture).order(:id).lock.load
+        Exam.where(lecture: @lecture).order(:id).lock.load
+        Talk.where(lecture: @lecture).order(:id).lock.load
+        Tutorial.where(lecture: @lecture).order(:id).lock.load
+      end
 
       def graded_blockers
         graded_talks.map { |talk| Blocker.new(:graded, self.class.label(talk), false) } +
@@ -145,8 +162,10 @@ module Rosters
                               .order(:registration_deadline)
       end
 
+      # By the deadline, not the status alone: CampaignStatusWorker closes a
+      # campaign only on its next run.
       def closed_exam_campaigns
-        @closed_exam_campaigns ||= running_campaigns.exam.where.not(status: :open).to_a
+        @closed_exam_campaigns ||= running_campaigns.exam.reject(&:open_for_withdrawals?)
       end
   end
 end

@@ -11,11 +11,11 @@ RSpec.describe(Rosters::LectureLeave) do
                       self_materialization_mode: :add_and_remove)
   end
 
-  # An exam opens its own registration process; the status is set past the
-  # transitions, which would ask for dates and items this spec does not need.
-  def exam_campaign(status, title: "Final exam")
+  # An exam opens its own registration process. update_columns skips the
+  # status transitions, which would ask for dates and items not needed here.
+  def exam_campaign(status, title: "Final exam", deadline: nil)
     campaign = create(:exam, lecture: lecture, title: title).registration_campaign
-    deadline = status == :open ? 1.week.from_now : 1.day.ago
+    deadline ||= status == :open ? 1.week.from_now : 1.day.ago
     campaign.update_columns(status: Registration::Campaign.statuses[status], # rubocop:disable Rails/SkipsModelValidations
                             registration_deadline: deadline)
     campaign
@@ -97,6 +97,16 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.blockers.map(&:to_a)).to eq([[:exam_closed, "Final exam", true]])
     end
 
+    it "names an open exam registration whose deadline has passed" do
+      campaign = exam_campaign(:open, deadline: 1.minute.ago)
+      create(:registration_user_registration, :confirmed,
+             user: student, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(leave.blockers.map(&:to_a)).to eq([[:exam_closed, "Final exam", true]])
+      expect(leave.campaigns_to_withdraw).to be_empty
+    end
+
     it "names a graded talk once, though its speakers may not leave it either" do
       seminar = create(:lecture, :is_seminar, :released_for_all)
       talk = create(:talk, lecture: seminar, title: "Groups")
@@ -107,7 +117,7 @@ RSpec.describe(Rosters::LectureLeave) do
     end
   end
 
-  describe "#withdrawn_campaigns" do
+  describe "#campaigns_to_withdraw" do
     it "lists running registrations, an open exam registration among them" do
       lecture.add_user_to_roster!(student)
       tutorials = create(:registration_campaign, :closed, campaignable: lecture)
@@ -118,7 +128,7 @@ RSpec.describe(Rosters::LectureLeave) do
                registration_item: campaign.registration_items.first)
       end
 
-      expect(leave.withdrawn_campaigns).to contain_exactly(tutorials, exam)
+      expect(leave.campaigns_to_withdraw).to contain_exactly(tutorials, exam)
       expect(leave.blockers).to be_empty
     end
   end
@@ -149,6 +159,14 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.confirmed?("La 2")).to be(true)
       expect(leave.confirmed?("LA")).to be(false)
       expect(leave.confirmed?(nil)).to be(false)
+      expect(leave.confirmed?("LA\u00A02")).to be(true)
+    end
+
+    it "lowercases rather than folds, as the browser does" do
+      lecture.course.update!(short_title: "Maß")
+
+      expect(leave.confirmed?("maß")).to be(true)
+      expect(leave.confirmed?("MASS")).to be(false)
     end
   end
 
@@ -173,6 +191,45 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(LectureMembership.exists?(lecture: lecture, user: student)).to be(false)
       expect(campaign.user_registrations.where(user: student)).to be_empty
       expect(student.reload.lectures).not_to include(lecture)
+    end
+
+    it "withdraws a rejected registration too, which a new allocation would revive" do
+      campaign = create(:registration_campaign, :processing, campaignable: lecture)
+      create(:registration_user_registration, :rejected,
+             user: student, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      leave.leave!
+
+      expect(campaign.user_registrations.where(user: student)).to be_empty
+    end
+
+    it "ends the exam admission with the roster seat" do
+      create(:student_performance_certification, :passed, :manual,
+             lecture: lecture, user: student)
+
+      leave.leave!
+
+      expect(StudentPerformance::Certification.where(lecture: lecture, user: student))
+        .to be_empty
+    end
+
+    it "decides again under the locks when a group setting changed after the check" do
+      expect(leave.allowed?).to be(true)
+      tutorial.update!(self_materialization_mode: :add_only)
+
+      expect { leave.leave! }.to raise_error(described_class::NotAllowedError)
+      expect(tutorial.reload.members).to include(student)
+    end
+
+    it "refuses rather than fails when a grade arrives while leaving" do
+      places = instance_double(Rosters::UserPlaces)
+      allow(Rosters::UserPlaces).to receive(:new).and_return(places)
+      allow(places).to receive(:leave!)
+        .and_raise(Rosters::MaintenanceService::GradingDataPresentError)
+
+      expect { leave.leave! }.to raise_error(described_class::NotAllowedError)
+      expect(student.reload.lectures).to include(lecture)
     end
 
     it "keeps recorded points for a later return" do

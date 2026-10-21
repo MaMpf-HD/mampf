@@ -68,10 +68,16 @@ module Rosters
          StudentPerformance::Certification.decided.where(user: @user)]
       end
 
+      # Rejected registrations go too: a new allocation turns them back into
+      # pending ones and could place the student again.
       def withdraw_registrations!(lectures)
-        running_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
+        campaigns = Registration::Campaign.where(
+          campaignable: lectures, status: RUNNING_CAMPAIGN_STATUSES,
+          id: Registration::UserRegistration.where(user: @user).select(:registration_campaign_id)
+        )
+        campaigns.order(:id).each do |campaign|
           campaign.lock!
-          running_registrations.where(registration_campaign: campaign).find_each(&:destroy!)
+          campaign.user_registrations.where(user: @user).find_each(&:destroy!)
         end
       end
 
