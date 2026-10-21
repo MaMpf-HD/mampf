@@ -14,7 +14,7 @@ class LeaveLectureComponent < ViewComponent::Base
     @leave.participating?
   end
 
-  delegate :blockers, to: :@leave
+  delegate :blockers, :confirmation_code, to: :@leave
 
   def contact?
     blockers.any?(&:contact)

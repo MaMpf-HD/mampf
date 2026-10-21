@@ -41,7 +41,7 @@ en:
         dashboard_restricted: "The course disappears from your dashboard, and you need the pass phrase again for its materials."
         rejoin: "You can join again through an open registration or self-enrollment, otherwise only through the lecturer."
       button: "Leave course"
-      confirm: "Leave “%{lecture}”?"
+      confirmation_label: "Type “%{code}” to confirm:"
       blocked: "You cannot leave this course yourself right now:"
       blockers:
         group_fixed: "You cannot leave “%{title}” yourself."
@@ -50,6 +50,7 @@ en:
       contact: "Please contact the lecturer."
       done: "You have left “%{lecture}”."
       not_allowed: "You cannot leave this course yourself right now."
+      not_confirmed: "The short title did not match; you are still taking part."
     intro:
       more: "Read more"
       less: "Show less"

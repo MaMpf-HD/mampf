@@ -1,9 +1,14 @@
 import { expect, test } from "./_support/fixtures";
 import { FactoryBot } from "./_support/factorybot";
-import { createReleasedLecture, subscribeToLecture } from "./user_registration/helpers";
+import { subscribeToLecture } from "./user_registration/helpers";
 
 async function enrollInTutorial(factory: FactoryBot, userId: number, mode: string) {
-  const lecture = await createReleasedLecture(factory, "Linear Algebra");
+  const course = await factory.create("course", [], {
+    title: "Linear Algebra", short_title: "LA",
+  });
+  const lecture = await factory.create("lecture", ["released_for_all"], {
+    course_id: course.id,
+  });
   await subscribeToLecture(factory, lecture, userId);
   const tutorial = await factory.create("tutorial", [], {
     lecture_id: lecture.id,
@@ -29,7 +34,11 @@ test.describe("leaving a course", () => {
     const dialog = page.getByRole("dialog", { name: "Leave this course" });
     await expect(dialog.getByText("You leave Mo 10.")).toBeVisible();
 
-    await dialog.getByRole("button", { name: "Leave course" }).click();
+    const leaveButton = dialog.getByRole("button", { name: "Leave course" });
+    await expect(leaveButton).toBeDisabled();
+    await dialog.getByLabel("Type “LA” to confirm:").fill("la");
+    await expect(leaveButton).toBeEnabled();
+    await leaveButton.click();
 
     await expect(page.getByText(/^You have left “Linear Algebra/)).toBeVisible();
     await expect(page.getByTestId("participation-row")).toHaveCount(0);

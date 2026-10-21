@@ -24,6 +24,9 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(body).to include(%(data-bs-target="##{LeaveLectureComponent::ID}"))
       expect(body).to include(I18n.t("lecture_home.leave.consequences.groups", groups: "Mo 10"))
       expect(body).to include(%(action="#{lecture_membership_path(lecture)}"))
+      expect(CGI.unescapeHTML(body)).to include(
+        I18n.t("lecture_home.leave.confirmation_label", code: lecture.course.short_title)
+      )
     end
 
     it "says in the dialog why the student cannot leave alone, without leaving" do
@@ -48,7 +51,8 @@ RSpec.describe("Lectures::Memberships", type: :request) do
 
   describe "DELETE /lectures/:lecture_id/membership" do
     it "ends the participation and says so" do
-      delete lecture_membership_path(lecture)
+      delete lecture_membership_path(lecture),
+             params: { confirmation: " #{lecture.course.short_title.downcase} " }
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:notice])
@@ -57,10 +61,19 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(tutorial.reload.members).not_to include(user)
     end
 
+    it "keeps the places without the short title typed" do
+      delete lecture_membership_path(lecture), params: { confirmation: "nope" }
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+      expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_confirmed"))
+      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(true)
+    end
+
     it "keeps the places when a group may not be left" do
       tutorial.update!(self_materialization_mode: :add_only)
 
-      delete lecture_membership_path(lecture)
+      delete lecture_membership_path(lecture),
+             params: { confirmation: lecture.course.short_title }
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_allowed"))

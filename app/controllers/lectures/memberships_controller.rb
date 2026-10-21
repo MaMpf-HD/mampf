@@ -5,7 +5,14 @@ module Lectures
     before_action :set_lecture
 
     def destroy
-      Rosters::LectureLeave.new(@lecture, current_user).leave!
+      leave = Rosters::LectureLeave.new(@lecture, current_user)
+      unless leave.confirmed?(params[:confirmation])
+        return redirect_to(lecture_home_path(@lecture),
+                           alert: t("lecture_home.leave.not_confirmed"),
+                           status: :see_other)
+      end
+
+      leave.leave!
       redirect_to lecture_home_path(@lecture),
                   notice: t("lecture_home.leave.done", lecture: @lecture.title_term_info_no_type),
                   status: :see_other

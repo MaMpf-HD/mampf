@@ -140,6 +140,16 @@ RSpec.describe(Rosters::LectureLeave) do
     end
   end
 
+  describe "#confirmed?" do
+    it "takes the course's short title, whatever the case and spaces" do
+      lecture.course.update!(short_title: "LA2")
+
+      expect(leave.confirmed?(" la2 ")).to be(true)
+      expect(leave.confirmed?("LA")).to be(false)
+      expect(leave.confirmed?(nil)).to be(false)
+    end
+  end
+
   describe "#leave!" do
     let(:tutorial) { leavable_tutorial }
 

@@ -34,6 +34,16 @@ module Rosters
       participating? && blockers.empty?
     end
 
+    # What the student types to confirm: the course's short title, as the
+    # name of what is left.
+    def confirmation_code
+      @lecture.course.short_title
+    end
+
+    def confirmed?(input)
+      input.to_s.strip.casecmp?(confirmation_code.strip)
+    end
+
     # The tutorials, talks and cohorts of the lecture the user is in.
     def groups
       @groups ||=
