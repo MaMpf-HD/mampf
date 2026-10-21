@@ -54,6 +54,19 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(rows).to eq([["Mathematics: B.Sc. 100%", "1"]])
       end
 
+      it "names the exam lists in the confirmation for removing a member" do
+        member = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: member)
+        create(:exam, :without_campaign, lecture: lecture, title: "Final exam")
+          .add_user_to_roster!(member)
+
+        get lecture_roster_participants_path(lecture), as: :turbo_stream
+
+        expect(CGI.unescapeHTML(response.body)).to include(
+          I18n.t("roster.warnings.confirm_kick_from_lecture_exams", exams: "Final exam")
+        )
+      end
+
       it "returns turbo stream updates for participants sections" do
         get lecture_roster_participants_path(lecture), as: :turbo_stream
 

@@ -166,6 +166,13 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   # Returns the HTML for the pagination navigation (top and bottom)
   # Uses Pagy with custom querify logic to preserve tabs and filters.
+  def kick_confirmation(user)
+    exams = exam_titles_by_user[user.id]
+    return t("roster.warnings.confirm_kick_from_lecture") if exams.blank?
+
+    t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
+  end
+
   def pagination_nav
     return unless @pagy && @pagy.pages > 1
 
@@ -205,6 +212,15 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   private
+
+    def exam_titles_by_user
+      @exam_titles_by_user ||=
+        ExamRosterEntry.active.joins(:exam)
+                       .where(exams: { lecture_id: @lecture.id },
+                              user_id: participants.map(&:user_id))
+                       .pluck(:user_id, "exams.title")
+                       .group_by(&:first).transform_values { |rows| rows.map(&:last) }
+    end
 
     def section_kwargs
       { lecture: lecture, group_type: group_type, participants: participants,

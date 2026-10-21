@@ -142,6 +142,28 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
                                                      }.by(-1))
                                                 .and(change { isolated_cohort.members.count }.by(0))
       end
+
+      it "takes the user off the lecture's exam lists" do
+        exam = create(:exam, :without_campaign, lecture: lecture)
+        exam.add_user_to_roster!(user)
+
+        subject.remove_user!(user, lecture)
+
+        expect(exam.reload.users).not_to include(user)
+      end
+
+      it "refuses while an exam of the lecture holds a grade for the user" do
+        exam = create(:exam, :without_campaign, lecture: lecture)
+        exam.add_user_to_roster!(user)
+        exam.ensure_assessment!(requires_points: false)
+        Assessment::Participation.create!(assessment: exam.assessment, user: user,
+                                          grade_numeric: 2.0, status: :reviewed)
+
+        expect { subject.remove_user!(user, lecture) }
+          .to raise_error(described_class::GradingDataPresentError)
+        expect(lecture.reload.members).to include(user)
+        expect(exam.reload.users).to include(user)
+      end
     end
   end
 

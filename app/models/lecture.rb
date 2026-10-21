@@ -1047,14 +1047,12 @@ class Lecture < ApplicationRecord
   # All students that lecture staff can reach by registration mail:
   # everyone with a pending or confirmed registration in one of the
   # lecture's campaigns, plus everyone on the roster or in one of its
-  # cohorts (union, deduplicated). A completed group campaign counts no
-  # more, its people are in its groups or have left them; a completed exam
-  # campaign still does, since its list may hold people off the roster.
+  # cohorts (union, deduplicated). A completed campaign counts no more: its
+  # people are on the roster or in a cohort, or have left.
   def registration_mail_recipients
-    campaigns = registration_campaigns.where.not(status: :completed)
-                                      .or(registration_campaigns.exam)
     registered_ids = Registration::UserRegistration
-                     .where(registration_campaign: campaigns,
+                     .where(registration_campaign: registration_campaigns
+                                                     .where.not(status: :completed),
                             status: [:pending, :confirmed])
                      .select(:user_id)
     member_ids = lecture_memberships.select(:user_id)

@@ -558,17 +558,6 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.registration_mail_recipients).not_to include(departed)
     end
 
-    it "keeps a completed exam campaign's registrant off the roster" do
-      exam_campaign = create(:exam, lecture: lecture).registration_campaign
-      exam_campaign.update_columns(status: Registration::Campaign.statuses[:completed]) # rubocop:disable Rails/SkipsModelValidations
-      repeater = create(:confirmed_user)
-      create(:registration_user_registration, :confirmed,
-             registration_campaign: exam_campaign, user: repeater,
-             registration_item: exam_campaign.registration_items.first)
-
-      expect(lecture.registration_mail_recipients).to include(repeater)
-    end
-
     it "includes the members of the lecture's cohorts, also those off the roster" do
       cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
       member = create(:confirmed_user)
