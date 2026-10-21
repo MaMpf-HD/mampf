@@ -4,6 +4,8 @@
 <% preferences_by_rank = item_preferences.index_by(&:rank) %>
 <% disabled = local_assigns.fetch(:disabled, false) %>
 <% readonly = disabled || !campaign.open_for_registrations? %>
+<% withdrawable = item_preferences.any? && campaign.open_for_withdrawals? %>
+<% withdraw_form_id = dom_id(campaign, :withdraw_preferences) %>
 
 <%= form_with url: save_preferences_path(campaign), method: :post, local: true,
               data: {
@@ -99,29 +101,49 @@
       <% end %>
     <% end %>
 
-    <% unless readonly %>
+    <% if !readonly || withdrawable %>
       <div class="registration-savebar" data-testid="preference-savebar">
-        <span
-          class="registration-savebar-status"
-          data-preference-choices-target="status"
-          role="status"
-        >
-          <%= t("registration.user_registration.options.saved") %>
-        </span>
+        <% if withdrawable %>
+          <%= button_tag t("registration.user_registration.withdraw_preferences"),
+                         type: "submit",
+                         form: withdraw_form_id,
+                         class: "btn btn-outline-secondary btn-sm me-auto" %>
+        <% end %>
 
-        <span
-          class="d-inline-block"
-          data-testid="preference-save-tooltip"
-          data-bs-toggle="tooltip"
-          data-preference-choices-target="saveTooltip"
-          tabindex="-1"
-        >
-          <%= submit_tag t("registration.user_registration.save_choices"),
-                         class: "btn btn-primary btn-sm",
-                         disabled: true,
-                         data: { preference_choices_target: "saveButton" } %>
-        </span>
+        <% unless readonly %>
+          <span
+            class="registration-savebar-status"
+            data-preference-choices-target="status"
+            role="status"
+          >
+            <%= t("registration.user_registration.options.saved") %>
+          </span>
+          <span
+            class="d-inline-block"
+            data-testid="preference-save-tooltip"
+            data-bs-toggle="tooltip"
+            data-preference-choices-target="saveTooltip"
+            tabindex="-1"
+          >
+            <%= submit_tag t("registration.user_registration.save_choices"),
+                           class: "btn btn-primary btn-sm",
+                           disabled: true,
+                           data: { preference_choices_target: "saveButton" } %>
+          </span>
+        <% end %>
       </div>
     <% end %>
   </div>
+<% end %>
+
+<% if withdrawable %>
+  <%= form_with url: withdraw_preferences_path(campaign), method: :delete, local: true,
+                id: withdraw_form_id,
+                data: {
+                  turbo_stream: true,
+                  turbo_frame: "_top",
+                  turbo_confirm: t("registration.user_registration." \
+                                   "withdraw_preferences_confirm")
+                } do %>
+  <% end %>
 <% end %>
