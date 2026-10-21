@@ -1,0 +1,40 @@
+<details class="lecture-home-history" data-testid="lecture-home-leave">
+  <summary><%= t("lecture_home.leave.title") %></summary>
+
+  <div class="lecture-home-leave">
+    <% if blockers.any? %>
+      <p class="mb-1"><%= t("lecture_home.leave.blocked") %></p>
+
+      <ul class="mb-2">
+        <% blockers.each do |blocker| %>
+          <li>
+            <%= t("lecture_home.leave.blockers.#{blocker.reason}", title: blocker.title) %>
+          </li>
+        <% end %>
+      </ul>
+
+      <% if contact? %>
+        <p class="mb-0"><%= t("lecture_home.leave.contact") %></p>
+      <% end %>
+    <% else %>
+      <p class="mb-1"><%= t("lecture_home.leave.intro") %></p>
+
+      <ul class="mb-2">
+        <% consequences.each do |consequence| %>
+          <li><%= consequence %></li>
+        <% end %>
+      </ul>
+
+      <%= button_to t("lecture_home.leave.button"),
+                    lecture_membership_path(@lecture),
+                    method: :delete,
+                    class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
+                    form: {
+                      data: {
+                        turbo_confirm: t("lecture_home.leave.confirm",
+                                         lecture: @lecture.title_term_info_no_type)
+                      }
+                    } %>
+    <% end %>
+  </div>
+</details>

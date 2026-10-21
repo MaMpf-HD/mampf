@@ -28,6 +28,28 @@ en:
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
   lecture_home:
+    leave:
+      title: "Leave this course"
+      intro: "What happens when you leave:"
+      consequences:
+        groups: "You leave %{groups}."
+        campaigns: "Your registrations for %{campaigns} are withdrawn."
+        admission_computed: "Your exam admission ends. If you join again, it is decided anew from your points."
+        admission_manual: "Your exam admission ends. It was granted by the lecturer and does not come back by itself if you join again."
+        points: "Your points stay recorded and are back if you join again."
+        dashboard: "The course disappears from your dashboard."
+        dashboard_restricted: "The course disappears from your dashboard, and you need the pass phrase again for its materials."
+        rejoin: "You can join again through an open registration or self-enrollment, otherwise only through the lecturer."
+      button: "Leave course"
+      confirm: "Leave “%{lecture}”?"
+      blocked: "You cannot leave this course yourself right now:"
+      blockers:
+        group_fixed: "You cannot leave “%{title}” yourself."
+        exam_closed: "Registration for “%{title}” has closed."
+        graded: "“%{title}” has already been graded."
+      contact: "Please contact the lecturer."
+      done: "You have left “%{lecture}”."
+      not_allowed: "You cannot leave this course yourself right now."
     intro:
       more: "Read more"
       less: "Show less"

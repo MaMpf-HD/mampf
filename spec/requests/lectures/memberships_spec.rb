@@ -1,0 +1,69 @@
+require "rails_helper"
+
+RSpec.describe("Lectures::Memberships", type: :request) do
+  let(:user) { create(:confirmed_user) }
+  let(:lecture) { create(:lecture, :released_for_all) }
+  let(:tutorial) do
+    create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true,
+                      self_materialization_mode: :add_and_remove)
+  end
+
+  before do
+    lecture.add_user_to_roster!(user)
+    tutorial.add_user_to_roster!(user)
+    user.bookmark_lecture!(lecture)
+    sign_in user
+  end
+
+  describe "the lecture home" do
+    it "lists what leaving does" do
+      get lecture_home_path(lecture)
+
+      body = response.body.squish
+      expect(body).to include(I18n.t("lecture_home.leave.title"))
+      expect(body).to include(I18n.t("lecture_home.leave.consequences.groups", groups: "Mo 10"))
+      expect(body).to include(I18n.t("lecture_home.leave.button"))
+    end
+
+    it "says why the student cannot leave alone, without the button" do
+      tutorial.update!(self_materialization_mode: :add_only)
+
+      get lecture_home_path(lecture)
+
+      body = CGI.unescapeHTML(response.body.squish)
+      expect(body).to include(I18n.t("lecture_home.leave.blockers.group_fixed", title: "Mo 10"))
+      expect(body).to include(I18n.t("lecture_home.leave.contact"))
+      expect(body).not_to include(I18n.t("lecture_home.leave.button"))
+    end
+
+    it "leaves the section out for someone without a place in the lecture" do
+      sign_in create(:confirmed_user)
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).not_to include('data-testid="lecture-home-leave"')
+    end
+  end
+
+  describe "DELETE /lectures/:lecture_id/membership" do
+    it "ends the participation and says so" do
+      delete lecture_membership_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+      expect(flash[:notice])
+        .to eq(I18n.t("lecture_home.leave.done", lecture: lecture.title_term_info_no_type))
+      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(false)
+      expect(tutorial.reload.members).not_to include(user)
+    end
+
+    it "keeps the places when a group may not be left" do
+      tutorial.update!(self_materialization_mode: :add_only)
+
+      delete lecture_membership_path(lecture)
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+      expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_allowed"))
+      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(true)
+    end
+  end
+end

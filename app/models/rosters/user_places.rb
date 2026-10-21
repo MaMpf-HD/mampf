@@ -41,10 +41,17 @@ module Rosters
     # an exam holds a result; either way nothing is given up.
     def give_up!(lectures)
       ActiveRecord::Base.transaction do
-        withdraw_registrations!(lectures)
-        leave_rosters!(lectures)
+        leave!(lectures)
         raise(PlacesChangedError) if any?
       end
+    end
+
+    # Withdraws the running registrations and leaves the rosters of the given
+    # lectures, without asking whether places elsewhere remain. Callers wrap
+    # it in a transaction.
+    def leave!(lectures)
+      withdraw_registrations!(lectures)
+      leave_rosters!(lectures)
     end
 
     private

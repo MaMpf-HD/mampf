@@ -364,6 +364,11 @@ Rails.application.routes.draw do
        to: "lectures/unlocks#create",
        as: "lecture_unlock"
 
+  # end the own participation in a lecture
+  delete "lectures/:lecture_id/membership",
+         to: "lectures/memberships#destroy",
+         as: "lecture_membership"
+
   get "lectures/:id/home/campaigns/:campaign_id",
       to: "lectures/home#campaign",
       as: "lecture_home_campaign"

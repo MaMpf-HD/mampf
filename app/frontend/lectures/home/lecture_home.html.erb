@@ -158,6 +158,8 @@
     <% end %>
 
     <%= render "lectures/home/history", overview: @overview %>
+
+    <%= render LeaveLectureComponent.new(lecture: @lecture, user: current_user) %>
   <% end %>
 
   <% if !@lecture.home_content? && !@can_edit && focus.nil? && @notifications.blank? &&
