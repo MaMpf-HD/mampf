@@ -71,6 +71,16 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.blockers.map(&:to_a)).to eq([[:graded, "Final exam", false]])
     end
 
+    it "names only the graded exam when a group could not be left either" do
+      create(:tutorial, lecture: lecture, skip_campaigns: true,
+                        self_materialization_mode: :add_only).add_user_to_roster!(student)
+      exam = create(:exam, :without_campaign, lecture: lecture, title: "Midterm")
+      exam.add_user_to_roster!(student)
+      grade!(exam)
+
+      expect(leave.blockers.map(&:to_a)).to eq([[:graded, "Midterm", false]])
+    end
+
     it "names an ungraded exam list, which only the staff can change" do
       exam = create(:exam, :without_campaign, lecture: lecture, title: "Final exam")
       exam.add_user_to_roster!(student)

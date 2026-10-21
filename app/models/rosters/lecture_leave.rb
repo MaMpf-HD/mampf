@@ -48,8 +48,11 @@ module Rosters
               .order(:title).to_a
     end
 
+    # A graded exam or talk rules out leaving for good, so the others, which
+    # the lecture's staff could lift, are not named next to it.
     def blockers
-      @blockers ||= graded_blockers + fixed_group_blockers + closed_exam_blockers
+      @blockers ||= graded_blockers.presence ||
+                    (fixed_group_blockers + closed_exam_blockers)
     end
 
     # The campaigns whose registrations leaving withdraws.
