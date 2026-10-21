@@ -54,6 +54,38 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(rows).to eq([["Mathematics: B.Sc. 100%", "1"]])
       end
 
+      context "with someone who has left" do
+        let(:former) { create(:confirmed_user, first_name: "Lina", last_name: "Berg") }
+
+        before do
+          create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+        end
+
+        it "lists them in the left view, saying how they left" do
+          get lecture_roster_participants_path(lecture, view: "left"), as: :turbo_stream
+
+          body = CGI.unescapeHTML(response.body)
+          expect(body).to include(former.tutorial_name)
+          expect(body).to include(I18n.t("roster.left.by_self", date: I18n.l(Time.zone.today)))
+          expect(body).to include(I18n.t("roster.left.readmit"))
+        end
+
+        it "points an enrolled-view search to the left view" do
+          get lecture_roster_participants_path(lecture, search: "Berg"), as: :turbo_stream
+
+          expect(CGI.unescapeHTML(response.body)).to include(I18n.t("roster.views.left"))
+        end
+
+        it "takes them back into the lecture" do
+          post add_member_lecture_path(lecture),
+               params: { user_id: former.id, source: :participants, view: "left" },
+               as: :turbo_stream
+
+          expect(lecture.reload.members).to include(former)
+          expect(lecture.excluded_lecture_memberships).to be_empty
+        end
+      end
+
       it "names the exam lists in the confirmation for removing a member" do
         member = create(:confirmed_user)
         create(:lecture_membership, lecture: lecture, user: member)
@@ -746,6 +778,13 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect do
           delete(remove_member_lecture_path(lecture, user_id: member.id))
         end.to change { lecture.members.count }.by(-1)
+      end
+
+      it "keeps the removal with who did it, for the left view" do
+        delete(remove_member_lecture_path(lecture, user_id: member.id))
+
+        expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
+          .to eq(editor)
       end
 
       it "sends an email when a user is successfully removed" do

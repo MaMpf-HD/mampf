@@ -75,6 +75,19 @@ de:
     views:
       enrolled: 'Eingeschrieben'
       registered: 'Angemeldet'
+      left: 'Ausgetreten'
+    left:
+      hint: >-
+        Wer die Teilnahme beendet hat oder aus der Veranstaltung entfernt wurde.
+        Bewertungen und Abgaben bleiben gespeichert; „Wieder aufnehmen“ trägt die
+        Person wieder in die Veranstaltung ein.
+      column: 'Ausgetreten'
+      by_self: 'Selbst ausgetreten am %{date}'
+      by_staff: 'Entfernt am %{date} von %{name}'
+      removed: 'Entfernt am %{date}'
+      empty: 'Bisher ist niemand ausgetreten.'
+      readmit: 'Wieder aufnehmen'
+      readmit_confirm: '%{user} wieder in die Veranstaltung aufnehmen?'
     registrations:
       hint: >-
         Diese Personen sind angemeldet, aber noch nicht in ihre Gruppen eingetragen. Das geschieht

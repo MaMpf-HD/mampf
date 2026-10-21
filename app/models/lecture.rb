@@ -53,7 +53,15 @@ class Lecture < ApplicationRecord
   has_many :users, -> { distinct }, through: :lecture_bookmarks
 
   # Roster associations
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :all_lecture_memberships,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :lecture
+  has_many :lecture_memberships, -> { active }, inverse_of: :lecture
+  has_many :excluded_lecture_memberships,
+           -> { excluded },
+           class_name: "LectureMembership",
+           inverse_of: :lecture
   has_many :members, through: :lecture_memberships, source: :user
 
   # messages from the lecture staff or a tutor to students of the lecture
@@ -296,7 +304,7 @@ class Lecture < ApplicationRecord
     return true if bookmarked_by?(user)
     return false unless published? || user.admin || edited_by?(user)
 
-    passphrase.blank? || LectureMembership.exists?(user: user, lecture: self)
+    passphrase.blank? || lecture_memberships.exists?(user: user)
   end
 
   # Compared in constant time, since the pass phrase is shared by everyone
@@ -983,9 +991,10 @@ class Lecture < ApplicationRecord
     # Efficiently insert missing memberships without touching existing rows.
     # Note: Requires a unique index on [:user_id, :lecture_id].
     existing_user_ids = lecture_memberships.where(user_id: user_ids).pluck(:user_id)
-    new_user_ids = user_ids.uniq - existing_user_ids
+    readmitted_user_ids = readmit_to_roster!(user_ids)
+    new_user_ids = user_ids.uniq - existing_user_ids - readmitted_user_ids
 
-    attributes = new_user_ids.map do |uid|
+    attributes = (new_user_ids + readmitted_user_ids).map do |uid|
       { user_id: uid, lecture_id: id }
     end
 
@@ -1011,7 +1020,32 @@ class Lecture < ApplicationRecord
     end
     # rubocop:enable Rails/SkipsModelValidations
 
-    sync_student_performance_for_members!(new_user_ids)
+    sync_student_performance_for_members!(new_user_ids + readmitted_user_ids)
+  end
+
+  # Clears the exclusion of those among the users who had left the roster and
+  # returns their ids; their rows keep the date they first joined.
+  def readmit_to_roster!(user_ids)
+    excluded = excluded_lecture_memberships.where(user_id: user_ids)
+    ids = excluded.pluck(:user_id)
+    excluded.update_all(excluded_at: nil, excluded_by_id: nil, # rubocop:disable Rails/SkipsModelValidations
+                        updated_at: Time.current)
+    ids
+  end
+
+  # Takes the user off the roster but keeps the row as an exclusion, see
+  # LectureMembership.
+  def remove_user_from_roster!(user, by: nil)
+    lecture_memberships.find_by(user: user)&.tap { |membership| membership.exclude!(by: by) }
+  end
+
+  def add_user_to_roster!(user, source_campaign = nil)
+    membership = all_lecture_memberships.find_or_initialize_by(user: user)
+    membership.source_campaign ||= source_campaign
+    membership.excluded_at = nil
+    membership.excluded_by = nil
+    membership.save!
+    membership
   end
 
   def assignments_complete?

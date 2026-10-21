@@ -429,6 +429,17 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
 
+    it "takes back those who had left, with their bookmark" do
+      create(:lecture_membership, lecture: lecture, user: users.first).exclude!
+
+      expect do
+        lecture.ensure_roster_membership!([users.first.id])
+      end.not_to change(LectureMembership, :count)
+
+      expect(lecture.members).to include(users.first)
+      expect(lecture.users).to include(users.first)
+    end
+
     it "bookmarks the lecture for roster members" do
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))

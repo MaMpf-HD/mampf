@@ -190,7 +190,8 @@ RSpec.describe(Rosters::LectureLeave) do
       leave.leave!
 
       expect(tutorial.reload.members).not_to include(student)
-      expect(LectureMembership.exists?(lecture: lecture, user: student)).to be(false)
+      expect(lecture.members).not_to include(student)
+      expect(lecture.excluded_lecture_memberships.find_by(user: student)).to be_left_by_self
       expect(campaign.user_registrations.where(user: student)).to be_empty
       expect(student.reload.lectures).not_to include(lecture)
     end
@@ -268,7 +269,7 @@ RSpec.describe(Rosters::LectureLeave) do
 
       expect { leave.leave! }.to raise_error(described_class::NotAllowedError)
       expect(tutorial.reload.members).to include(student)
-      expect(LectureMembership.exists?(lecture: lecture, user: student)).to be(true)
+      expect(lecture.members).to include(student)
     end
   end
 end

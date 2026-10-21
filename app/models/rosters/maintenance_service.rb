@@ -22,11 +22,12 @@ module Rosters
 
     # A caller that removes the user within a larger transaction passes
     # notify: false, since the mail job is enqueued even if that transaction
-    # rolls back.
-    def remove_user!(user, rosterable, notify: true)
+    # rolls back. `by` is who removes the user from a lecture; the
+    # participants tab names them.
+    def remove_user!(user, rosterable, notify: true, by: nil)
       removed = rosterable.with_lock do
         ensure_no_grading_data!(user, rosterable)
-        remove_user_without_lock!(user, rosterable)
+        remove_user_without_lock!(user, rosterable, by: by)
       end
       RosterNotificationMailer.removed(user, rosterable) if removed && notify
       removed
@@ -105,8 +106,12 @@ module Rosters
         membership
       end
 
-      def remove_user_without_lock!(user, rosterable)
-        removed = rosterable.remove_user_from_roster!(user)
+      def remove_user_without_lock!(user, rosterable, by: nil)
+        removed = if rosterable.is_a?(Lecture)
+          rosterable.remove_user_from_roster!(user, by: by)
+        else
+          rosterable.remove_user_from_roster!(user)
+        end
         cascade_removal_from_subgroups!(user, rosterable)
         removed
       end

@@ -30,7 +30,7 @@ module Rosters
     end
 
     def participating?
-      LectureMembership.exists?(lecture: @lecture, user: @user) ||
+      @lecture.lecture_memberships.exists?(user: @user) ||
         groups.any? || exam_entries.any?
     end
 

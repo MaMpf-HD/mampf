@@ -72,6 +72,18 @@ en:
     views:
       enrolled: 'Enrolled'
       registered: 'Registered'
+      left: 'Left'
+    left:
+      hint: >-
+        People who left the course or were removed from it. Their results and
+        hand-ins stay recorded; “Readmit” puts them back into the course.
+      column: 'Left'
+      by_self: 'Left on %{date}'
+      by_staff: 'Removed on %{date} by %{name}'
+      removed: 'Removed on %{date}'
+      empty: 'Nobody has left so far.'
+      readmit: 'Readmit'
+      readmit_confirm: 'Readmit %{user} to the course?'
     registrations:
       hint: >-
         These people are registered but not yet placed in their groups. That happens only once the

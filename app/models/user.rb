@@ -43,7 +43,11 @@ class User < ApplicationRecord
   has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
   # Roster memberships
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :all_lecture_memberships,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :user
+  has_many :lecture_memberships, -> { active }, inverse_of: :user
   has_many :assignment_sightings, dependent: :destroy
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 

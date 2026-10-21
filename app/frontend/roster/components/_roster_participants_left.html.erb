@@ -1,0 +1,67 @@
+<div class="table-responsive mb-4">
+  <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light">
+      <tr>
+        <th scope="col" class="border-top-0 person-name-column">
+          <%= t("basics.name") %>
+        </th>
+
+        <th scope="col" class="border-top-0">
+          <%= User.human_attribute_name(:matriculation_number) %>
+        </th>
+
+        <th scope="col" class="border-top-0">
+          <%= t("roster.left.column") %>
+        </th>
+
+        <th scope="col" class="border-top-0 text-end">
+          <%= t("basics.actions") %>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if component.participants.empty? %>
+        <tr>
+          <td colspan="4" class="text-center py-4 text-muted border-bottom-0">
+            <%= t(component.search_string.present? ? "roster.details.empty_filtered" : "roster.left.empty") %>
+
+            <%= render "roster/components/roster_participants_search_hits",
+                       component: component %>
+          </td>
+        </tr>
+      <% else %>
+        <% component.participants.each do |membership| %>
+          <% user = membership.user %>
+
+          <tr>
+            <td><%= user.tutorial_name %></td>
+            <td><%= user.matriculation_number %></td>
+            <td><%= component.left_description(membership) %></td>
+
+            <td class="text-end">
+              <div class="d-flex justify-content-end gap-1">
+                <%= render "shared/copy_email_button", email: user.email %>
+
+                <%= button_to t("roster.left.readmit"),
+                              component.helpers.add_member_lecture_path(component.lecture),
+                              params: { user_id: user.id,
+                                        source: :participants,
+                                        view: "left",
+                                        group_type: component.group_type,
+                                        page: component.pagy&.page },
+                              class: "btn btn-sm btn-outline-secondary",
+                              form: {
+                                data: {
+                                  turbo_confirm: t("roster.left.readmit_confirm",
+                                                   user: user.tutorial_name)
+                                }
+                              } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

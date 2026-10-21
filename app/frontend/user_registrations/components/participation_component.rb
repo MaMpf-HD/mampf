@@ -52,7 +52,7 @@ class ParticipationComponent < ViewComponent::Base
     end
 
     def lecture_badge
-      return unless LectureMembership.exists?(lecture: @lecture, user: @user)
+      return unless @lecture.lecture_memberships.exists?(user: @user)
 
       [:info, t("registration.user_registration.participation.enrolled")]
     end

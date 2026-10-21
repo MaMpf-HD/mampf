@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_21_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -508,6 +508,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
     t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "excluded_at"
+    t.bigint "excluded_by_id"
+    t.index ["excluded_by_id"], name: "index_lecture_memberships_on_excluded_by_id"
+    t.index ["lecture_id", "excluded_at"], name: "index_lecture_memberships_on_lecture_id_and_excluded_at"
     t.index ["lecture_id"], name: "index_lecture_memberships_on_lecture_id"
     t.index ["source_campaign_id"], name: "index_lecture_memberships_on_source_campaign_id"
     t.index ["user_id", "lecture_id"], name: "index_lecture_memberships_on_user_id_and_lecture_id", unique: true
@@ -1561,6 +1565,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
   add_foreign_key "lecture_memberships", "lectures"
   add_foreign_key "lecture_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "lecture_memberships", "users"
+  add_foreign_key "lecture_memberships", "users", column: "excluded_by_id", on_delete: :nullify
   add_foreign_key "links", "media"
   add_foreign_key "links", "media", column: "linked_medium_id"
   add_foreign_key "medium_tag_joins", "media"

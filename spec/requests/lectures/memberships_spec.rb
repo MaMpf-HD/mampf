@@ -58,7 +58,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:notice])
         .to eq(I18n.t("lecture_home.leave.done", lecture: lecture.title_term_info_no_type))
-      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(false)
+      expect(lecture.members).not_to include(user)
       expect(tutorial.reload.members).not_to include(user)
     end
 
@@ -67,7 +67,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_confirmed"))
-      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(true)
+      expect(lecture.members).to include(user)
     end
 
     it "asks to try again when leaving ran into a deadlock twice" do
@@ -78,7 +78,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.failed"))
-      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(true)
+      expect(lecture.members).to include(user)
     end
 
     it "keeps the places when a group may not be left" do
@@ -89,7 +89,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_allowed"))
-      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(true)
+      expect(lecture.members).to include(user)
     end
   end
 end
