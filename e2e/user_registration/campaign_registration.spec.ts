@@ -892,12 +892,20 @@ test.describe("campaign registration", () => {
     await home.goto();
     await home.openCampaign("Preference tutorial registration");
 
+    const withdrawButton = student.page.getByRole("button", { name: "Withdraw preferences" });
+    await student.page
+      .getByRole("button", { name: "Withdrawn Preference Tutorial as 2nd choice" }).click();
+    await expect(withdrawButton).toBeHidden();
+    await student.page
+      .getByRole("button", { name: "Withdrawn Preference Tutorial as 1st choice" }).click();
+    await expect(withdrawButton).toBeVisible();
+
     let confirmation = "";
     student.page.once("dialog", (dialog) => {
       confirmation = dialog.message();
       void dialog.accept();
     });
-    await student.page.getByRole("button", { name: "Withdraw preferences" }).click();
+    await withdrawButton.click();
 
     await expect(student.page.getByText("Your preferences have been withdrawn."))
       .toBeVisible();
@@ -906,8 +914,7 @@ test.describe("campaign registration", () => {
       .toContainText("No preferences yet");
     await expect(student.page.getByRole("group", { name: "Selected preference ranks" }))
       .not.toContainText("Withdrawn Preference Tutorial");
-    await expect(student.page.getByRole("button", { name: "Withdraw preferences" }))
-      .toHaveCount(0);
+    await expect(withdrawButton).toHaveCount(0);
   });
 
   test("shows an assignment next to a campaign that is still open", async ({
