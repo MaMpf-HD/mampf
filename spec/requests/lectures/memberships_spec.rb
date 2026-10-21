@@ -25,7 +25,8 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(body).to include(I18n.t("lecture_home.leave.consequences.groups", groups: "Mo 10"))
       expect(body).to include(%(action="#{lecture_membership_path(lecture)}"))
       expect(CGI.unescapeHTML(body)).to include(
-        I18n.t("lecture_home.leave.confirmation_label", code: lecture.course.short_title)
+        I18n.t("lecture_home.leave.confirmation_label",
+               code: lecture.course.short_title.delete(" "))
       )
     end
 

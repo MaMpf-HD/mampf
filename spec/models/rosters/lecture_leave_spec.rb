@@ -142,9 +142,11 @@ RSpec.describe(Rosters::LectureLeave) do
 
   describe "#confirmed?" do
     it "takes the course's short title, whatever the case and spaces" do
-      lecture.course.update!(short_title: "LA2")
+      lecture.course.update!(short_title: "LA 2")
 
+      expect(leave.confirmation_code).to eq("LA2")
       expect(leave.confirmed?(" la2 ")).to be(true)
+      expect(leave.confirmed?("La 2")).to be(true)
       expect(leave.confirmed?("LA")).to be(false)
       expect(leave.confirmed?(nil)).to be(false)
     end

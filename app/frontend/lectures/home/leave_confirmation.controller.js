@@ -13,7 +13,7 @@ export default class extends Controller {
   }
 
   check() {
-    const typed = this.inputTarget.value.trim().toLowerCase();
-    this.submitTarget.disabled = typed !== this.codeValue.trim().toLowerCase();
+    const typed = this.inputTarget.value.replace(/\s+/g, "").toLowerCase();
+    this.submitTarget.disabled = typed !== this.codeValue.toLowerCase();
   }
 }

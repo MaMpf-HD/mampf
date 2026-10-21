@@ -35,13 +35,13 @@ module Rosters
     end
 
     # What the student types to confirm: the course's short title, as the
-    # name of what is left.
+    # name of what is left, without spaces, which are easy to miss.
     def confirmation_code
-      @lecture.course.short_title
+      @lecture.course.short_title.gsub(/\s+/, "")
     end
 
     def confirmed?(input)
-      input.to_s.strip.casecmp?(confirmation_code.strip)
+      input.to_s.gsub(/\s+/, "").casecmp?(confirmation_code)
     end
 
     # The tutorials, talks and cohorts of the lecture the user is in.

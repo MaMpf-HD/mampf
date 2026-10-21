@@ -4,7 +4,7 @@ import { subscribeToLecture } from "./user_registration/helpers";
 
 async function enrollInTutorial(factory: FactoryBot, userId: number, mode: string) {
   const course = await factory.create("course", [], {
-    title: "Linear Algebra", short_title: "LA",
+    title: "Linear Algebra", short_title: "LA 1",
   });
   const lecture = await factory.create("lecture", ["released_for_all"], {
     course_id: course.id,
@@ -36,7 +36,7 @@ test.describe("leaving a course", () => {
 
     const leaveButton = dialog.getByRole("button", { name: "Leave course" });
     await expect(leaveButton).toBeDisabled();
-    await dialog.getByLabel("Type “LA” to confirm:").fill("la");
+    await dialog.getByLabel("Type “LA1” to confirm:").fill("la1");
     await expect(leaveButton).toBeEnabled();
     await leaveButton.click();
 
