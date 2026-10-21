@@ -1,11 +1,13 @@
-# The last block of a student's lecture home: ends the participation in the
-# lecture, or says why the student cannot do that alone. Folded, since it is
-# rarely needed and should not be pressed by accident.
+# The dialog behind "Leave course" in a student's participation list: what
+# leaving the lecture does for this student, or why the student cannot do
+# that alone.
 class LeaveLectureComponent < ViewComponent::Base
-  def initialize(lecture:, user:)
+  ID = "leave-lecture-dialog".freeze
+
+  def initialize(lecture:, leave:)
     super()
     @lecture = lecture
-    @leave = Rosters::LectureLeave.new(lecture, user)
+    @leave = leave
   end
 
   def render?

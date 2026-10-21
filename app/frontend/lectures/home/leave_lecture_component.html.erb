@@ -1,40 +1,70 @@
-<details class="lecture-home-history" data-testid="lecture-home-leave">
-  <summary><%= t("lecture_home.leave.title") %></summary>
+<% title_id = "#{LeaveLectureComponent::ID}-title" %>
 
-  <div class="lecture-home-leave">
-    <% if blockers.any? %>
-      <p class="mb-1"><%= t("lecture_home.leave.blocked") %></p>
+<div
+  class="modal fade"
+  id="<%= LeaveLectureComponent::ID %>"
+  tabindex="-1"
+  aria-labelledby="<%= title_id %>"
+  aria-hidden="true"
+  data-testid="leave-lecture-dialog"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="<%= title_id %>">
+          <%= t("lecture_home.leave.title") %>
+        </h5>
 
-      <ul class="mb-2">
-        <% blockers.each do |blocker| %>
-          <li>
-            <%= t("lecture_home.leave.blockers.#{blocker.reason}", title: blocker.title) %>
-          </li>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="<%= t("buttons.close") %>"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <% if blockers.any? %>
+          <p class="mb-1"><%= t("lecture_home.leave.blocked") %></p>
+
+          <ul class="mb-2">
+            <% blockers.each do |blocker| %>
+              <li>
+                <%= t("lecture_home.leave.blockers.#{blocker.reason}", title: blocker.title) %>
+              </li>
+            <% end %>
+          </ul>
+
+          <% if contact? %>
+            <p class="mb-0"><%= t("lecture_home.leave.contact") %></p>
+          <% end %>
+        <% else %>
+          <p class="mb-1"><%= t("lecture_home.leave.intro") %></p>
+
+          <ul class="mb-0">
+            <% consequences.each do |consequence| %>
+              <li><%= consequence %></li>
+            <% end %>
+          </ul>
         <% end %>
-      </ul>
+      </div>
 
-      <% if contact? %>
-        <p class="mb-0"><%= t("lecture_home.leave.contact") %></p>
-      <% end %>
-    <% else %>
-      <p class="mb-1"><%= t("lecture_home.leave.intro") %></p>
+      <div class="modal-footer">
+        <% if blockers.any? %>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <%= t("buttons.close") %>
+          </button>
+        <% else %>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <%= t("buttons.cancel") %>
+          </button>
 
-      <ul class="mb-2">
-        <% consequences.each do |consequence| %>
-          <li><%= consequence %></li>
+          <%= button_to t("lecture_home.leave.button"),
+                        lecture_membership_path(@lecture),
+                        method: :delete,
+                        class: "btn border-0 bg-danger-subtle text-danger-emphasis" %>
         <% end %>
-      </ul>
-
-      <%= button_to t("lecture_home.leave.button"),
-                    lecture_membership_path(@lecture),
-                    method: :delete,
-                    class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
-                    form: {
-                      data: {
-                        turbo_confirm: t("lecture_home.leave.confirm",
-                                         lecture: @lecture.title_term_info_no_type)
-                      }
-                    } %>
-    <% end %>
+      </div>
+    </div>
   </div>
-</details>
+</div>

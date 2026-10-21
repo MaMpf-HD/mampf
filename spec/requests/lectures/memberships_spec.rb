@@ -16,16 +16,17 @@ RSpec.describe("Lectures::Memberships", type: :request) do
   end
 
   describe "the lecture home" do
-    it "lists what leaving does" do
+    it "puts the lecture into the participation list, its dialog listing what leaving does" do
       get lecture_home_path(lecture)
 
       body = response.body.squish
-      expect(body).to include(I18n.t("lecture_home.leave.title"))
+      expect(body).to include("#{lecture.sort_localized} · #{lecture.course.title}")
+      expect(body).to include(%(data-bs-target="##{LeaveLectureComponent::ID}"))
       expect(body).to include(I18n.t("lecture_home.leave.consequences.groups", groups: "Mo 10"))
-      expect(body).to include(I18n.t("lecture_home.leave.button"))
+      expect(body).to include(%(action="#{lecture_membership_path(lecture)}"))
     end
 
-    it "says why the student cannot leave alone, without the button" do
+    it "says in the dialog why the student cannot leave alone, without leaving" do
       tutorial.update!(self_materialization_mode: :add_only)
 
       get lecture_home_path(lecture)
@@ -33,15 +34,15 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       body = CGI.unescapeHTML(response.body.squish)
       expect(body).to include(I18n.t("lecture_home.leave.blockers.group_fixed", title: "Mo 10"))
       expect(body).to include(I18n.t("lecture_home.leave.contact"))
-      expect(body).not_to include(I18n.t("lecture_home.leave.button"))
+      expect(body).not_to include(%(action="#{lecture_membership_path(lecture)}"))
     end
 
-    it "leaves the section out for someone without a place in the lecture" do
+    it "offers nothing to leave to someone without a place in the lecture" do
       sign_in create(:confirmed_user)
 
       get lecture_home_path(lecture)
 
-      expect(response.body).not_to include('data-testid="lecture-home-leave"')
+      expect(response.body).not_to include(LeaveLectureComponent::ID)
     end
   end
 

@@ -24,19 +24,14 @@ test.describe("leaving a course", () => {
     const { page } = student;
 
     await page.goto(`/lectures/${lecture.id}`);
-    await page.getByText("Leave this course", { exact: true }).click();
-    await expect(page.getByText("You leave Mo 10.")).toBeVisible();
+    await page.getByTestId("participation-row").filter({ hasText: "Linear Algebra" })
+      .getByRole("button", { name: "Leave course" }).click();
+    const dialog = page.getByRole("dialog", { name: "Leave this course" });
+    await expect(dialog.getByText("You leave Mo 10.")).toBeVisible();
 
-    let confirmation = "";
-    page.once("dialog", (dialog) => {
-      confirmation = dialog.message();
-      void dialog.accept();
-    });
-    await page.getByRole("button", { name: "Leave course" }).click();
+    await dialog.getByRole("button", { name: "Leave course" }).click();
 
     await expect(page.getByText(/^You have left “Linear Algebra/)).toBeVisible();
-    expect(confirmation).toMatch(/^Leave “Linear Algebra/);
-    await expect(page.getByText("Leave this course", { exact: true })).toHaveCount(0);
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
@@ -45,10 +40,13 @@ test.describe("leaving a course", () => {
     const { page } = student;
 
     await page.goto(`/lectures/${lecture.id}`);
-    await page.getByText("Leave this course", { exact: true }).click();
+    await page.getByRole("button", { name: "Leave course" }).click();
+    const dialog = page.getByRole("dialog", { name: "Leave this course" });
 
-    await expect(page.getByText("You cannot leave “Mo 10” yourself.")).toBeVisible();
-    await expect(page.getByText("Please contact the lecturer.")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Leave course" })).toHaveCount(0);
+    await expect(dialog.getByText("You cannot leave “Mo 10” yourself.")).toBeVisible();
+    await expect(dialog.getByText("Please contact the lecturer.")).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "Leave course" })).toHaveCount(0);
+    await dialog.getByRole("button", { name: "Close" }).last().click();
+    await expect(dialog).toBeHidden();
   });
 });
