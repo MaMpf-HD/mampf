@@ -70,6 +70,17 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(true)
     end
 
+    it "asks to try again when leaving ran into a deadlock twice" do
+      allow(Rosters::UserPlaces).to receive(:new).and_raise(ActiveRecord::Deadlocked)
+
+      delete lecture_membership_path(lecture),
+             params: { confirmation: lecture.course.short_title }
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+      expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.failed"))
+      expect(LectureMembership.exists?(lecture: lecture, user: user)).to be(true)
+    end
+
     it "keeps the places when a group may not be left" do
       tutorial.update!(self_materialization_mode: :add_only)
 

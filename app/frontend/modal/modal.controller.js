@@ -11,6 +11,14 @@ export default class extends Controller {
 
   connect() {
     this.modal = Modal.getOrCreateInstance(this.element);
+    this.markOpen = () => {
+      this.isOpen = true;
+    };
+    this.markClosed = () => {
+      this.isOpen = false;
+    };
+    this.element.addEventListener("show.bs.modal", this.markOpen);
+    this.element.addEventListener("hidden.bs.modal", this.markClosed);
     this.boundHideModalOnSuccess = this.hideModalOnSuccess.bind(this);
     if (!this.keepOpenOnSubmitValue) {
       this.element.addEventListener(
@@ -31,16 +39,16 @@ export default class extends Controller {
     this.element.removeEventListener(
       "turbo:submit-end", this.boundHideModalOnSuccess,
     );
+    this.element.removeEventListener("show.bs.modal", this.markOpen);
+    this.element.removeEventListener("hidden.bs.modal", this.markClosed);
+
+    if (this.isOpen) {
+      this.releasePage();
+      return;
+    }
 
     if (this.modal) {
       try {
-        // A stream may replace a modal while it is open; Bootstrap restores
-        // the page only on hide, so its scroll lock is lifted here.
-        if (this.element.classList.contains("show")) {
-          document.body.classList.remove("modal-open");
-          document.body.style.removeProperty("overflow");
-          document.body.style.removeProperty("padding-right");
-        }
         const backdrop = document.querySelector(".modal-backdrop");
         if (backdrop) {
           backdrop.remove();
@@ -51,6 +59,18 @@ export default class extends Controller {
         // Modal already disposed or element removed
       }
     }
+  }
+
+  /**
+   * A stream may remove the modal from opening until it is hidden, while
+   * Bootstrap holds the page's scroll lock. The lock is lifted here; the
+   * instance is not disposed, since a running fade still calls into it.
+   */
+  releasePage() {
+    document.querySelector(".modal-backdrop")?.remove();
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
   }
 
   hideModalOnSuccess(event) {

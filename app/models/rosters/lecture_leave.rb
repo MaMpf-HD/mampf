@@ -1,8 +1,6 @@
 module Rosters
-  # Ends a student's participation in a whole lecture, unlike leaving one
-  # group: groups, lecture roster, running registrations and bookmark go
-  # together, recorded points stay. Anything the student may not undo alone
-  # refuses the whole step, see #blockers.
+  # Ends a student's participation in a whole lecture, all or nothing;
+  # recorded points stay for a later return.
   class LectureLeave
     # `reason` names the locale key, `title` the group, exam or campaign
     # concerned, and `contact` whether the lecture's staff can still help.
@@ -16,10 +14,14 @@ module Rosters
       group.is_a?(Talk) ? group.to_label : group.title
     end
 
-    # Drops every kind of space and lowercases, the same rule
-    # leave_confirmation.controller.js applies in the browser.
+    # The Unicode white space characters, listed out so that
+    # leave_confirmation.controller.js can match exactly the same ones.
+    SPACES = /[\t\n\v\f\r \u0085\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+/
+
+    # Upcases rather than downcases: both Ruby and JavaScript upcase without
+    # regard to the neighbouring letters, which lowercasing a final sigma does.
     def self.normalize(text)
-      text.to_s.gsub(/[[:space:]]+/, "").downcase
+      text.to_s.gsub(SPACES, "").upcase
     end
 
     def initialize(lecture, user)
@@ -39,7 +41,7 @@ module Rosters
     # What the student types to confirm: the course's short title, as the
     # name of what is left, without spaces, which are easy to miss.
     def confirmation_code
-      @lecture.course.short_title.gsub(/[[:space:]]+/, "")
+      @lecture.course.short_title.gsub(SPACES, "")
     end
 
     def confirmed?(input)
@@ -78,16 +80,23 @@ module Rosters
                                        &.source&.to_sym
     end
 
-    # Decides again under the locks, on a fresh instance: a group setting, a
-    # grade or a registration may have changed since this one was read. A
-    # grade entered after that still refuses here rather than failing.
+    # Decides again under the locks on a fresh instance, since this one keeps
+    # its blockers from before. A removal refused for grading data refuses
+    # the whole step. A deadlock with a lecturer's edit is tried once more.
     def leave!
-      ActiveRecord::Base.transaction do
-        lock_lecture_places!
-        raise(NotAllowedError) unless self.class.new(@lecture, @user).allowed?
+      attempts = 0
+      begin
+        attempts += 1
+        ActiveRecord::Base.transaction do
+          lock_places!
+          raise(NotAllowedError) unless self.class.new(@lecture, @user).allowed?
 
-        UserPlaces.new(@user).leave!([@lecture])
-        @user.unbookmark_lecture!(@lecture)
+          UserPlaces.new(@user).leave!([@lecture])
+          @user.unbookmark_lecture!(@lecture)
+        end
+      rescue ActiveRecord::Deadlocked
+        retry if attempts < 2
+        raise
       end
     rescue MaintenanceService::GradingDataPresentError,
            Talk::SpeakerRemovalNotAllowedError,
@@ -97,16 +106,15 @@ module Rosters
 
     private
 
-      # Campaigns first, then rosters, the order allocation and finalization
-      # take, and each kind by id, as MaintenanceService does.
-      def lock_lecture_places!
-        Registration::Campaign.where(campaignable: @lecture,
-                                     status: UserPlaces::RUNNING_CAMPAIGN_STATUSES)
+      # Every campaign not completed, drafts included, so that none opens,
+      # closes or takes a registration meanwhile; then the user's own groups,
+      # whose settings the check reads, ordered as MaintenanceService orders
+      # them. A group joined in between is not covered.
+      def lock_places!
+        Registration::Campaign.where(campaignable: @lecture)
+                              .where.not(status: :completed)
                               .order(:id).lock.load
-        Cohort.where(context: @lecture).order(:id).lock.load
-        Exam.where(lecture: @lecture).order(:id).lock.load
-        Talk.where(lecture: @lecture).order(:id).lock.load
-        Tutorial.where(lecture: @lecture).order(:id).lock.load
+        groups.sort_by { |group| [group.class.name, group.id] }.each(&:lock!)
       end
 
       def graded_blockers

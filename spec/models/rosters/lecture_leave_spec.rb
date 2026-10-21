@@ -162,11 +162,13 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.confirmed?("LA\u00A02")).to be(true)
     end
 
-    it "lowercases rather than folds, as the browser does" do
-      lecture.course.update!(short_title: "Maß")
+    it "compares upcased, as the browser does, so a final sigma or ß cannot differ" do
+      lecture.course.update!(short_title: "ΟΣ")
+      expect(leave.confirmed?("ος")).to be(true)
 
-      expect(leave.confirmed?("maß")).to be(true)
-      expect(leave.confirmed?("MASS")).to be(false)
+      lecture.course.update!(short_title: "Maß")
+      expect(described_class.new(lecture, student).confirmed?("mass")).to be(true)
+      expect(described_class.new(lecture, student).confirmed?("MASS\uFEFF")).to be(true)
     end
   end
 
@@ -230,6 +232,21 @@ RSpec.describe(Rosters::LectureLeave) do
 
       expect { leave.leave! }.to raise_error(described_class::NotAllowedError)
       expect(student.reload.lectures).to include(lecture)
+    end
+
+    it "tries once more after a deadlock" do
+      places = instance_double(Rosters::UserPlaces)
+      allow(Rosters::UserPlaces).to receive(:new).and_return(places)
+      calls = 0
+      allow(places).to receive(:leave!) do
+        calls += 1
+        raise(ActiveRecord::Deadlocked) if calls == 1
+      end
+
+      leave.leave!
+
+      expect(calls).to eq(2)
+      expect(student.reload.lectures).not_to include(lecture)
     end
 
     it "keeps recorded points for a later return" do

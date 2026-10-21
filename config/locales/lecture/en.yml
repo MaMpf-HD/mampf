@@ -51,6 +51,7 @@ en:
       done: "You have left “%{lecture}”."
       not_allowed: "You cannot leave this course yourself right now."
       not_confirmed: "The short title did not match; you are still taking part."
+      failed: "That did not work just now; you are still taking part. Please try again."
     intro:
       more: "Read more"
       less: "Show less"

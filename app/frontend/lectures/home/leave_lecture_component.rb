@@ -1,6 +1,3 @@
-# Shows, behind the lecture row's "Leave course", what leaving the whole
-# lecture does for this student, or why the student has to ask the lecturer
-# instead.
 class LeaveLectureComponent < ViewComponent::Base
   ID = "leave-lecture-dialog".freeze
 

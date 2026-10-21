@@ -52,6 +52,7 @@ de:
       done: "Du hast „%{lecture}“ verlassen."
       not_allowed: "Du kannst die Teilnahme gerade nicht selbst beenden."
       not_confirmed: "Das Kürzel stimmt nicht; Du nimmst weiter teil."
+      failed: "Das hat gerade nicht geklappt; Du nimmst weiter teil. Versuch es bitte noch einmal."
     intro:
       more: "Weiterlesen"
       less: "Weniger anzeigen"

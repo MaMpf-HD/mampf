@@ -569,6 +569,14 @@ RSpec.describe(Lecture, type: :model) do
       expect(lecture.registration_mail_recipients).to include(repeater)
     end
 
+    it "includes the members of the lecture's cohorts, also those off the roster" do
+      cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+      member = create(:confirmed_user)
+      create(:cohort_membership, cohort: cohort, user: member)
+
+      expect(lecture.registration_mail_recipients).to include(member)
+    end
+
     it "does not include registrants of other lectures" do
       other_campaign = create(:registration_campaign, :open,
                               :first_come_first_served)

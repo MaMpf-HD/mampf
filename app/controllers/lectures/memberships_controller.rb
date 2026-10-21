@@ -20,6 +20,10 @@ module Lectures
       redirect_to lecture_home_path(@lecture),
                   alert: t("lecture_home.leave.not_allowed"),
                   status: :see_other
+    rescue ActiveRecord::Deadlocked
+      redirect_to lecture_home_path(@lecture),
+                  alert: t("lecture_home.leave.failed"),
+                  status: :see_other
     end
 
     private
