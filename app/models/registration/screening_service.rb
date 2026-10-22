@@ -71,7 +71,7 @@ module Registration
           result << {
             user_id: user.id,
             registration_id: registration.id,
-            name: user.name,
+            name: user.tutorial_name,
             email: user.email,
             policy_id: policy.id,
             policy: policy.kind,
