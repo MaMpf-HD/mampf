@@ -213,7 +213,7 @@ class RosterParticipantsComponent < ViewComponent::Base
                             anchor_string: 'data-turbo-stream="true"',
                             querify: lambda { |p|
                               p["filter"] = @filter_mode
-                              p["view"] = @view if registered_view?
+                              p["view"] = @view unless enrolled_view?
                               p["campaign"] = @campaign.id if @campaign
                               p["search"] = @search_string if @search_string.present?
                               p["group_type"] =

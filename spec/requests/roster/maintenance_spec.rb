@@ -70,6 +70,22 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(body).to include(I18n.t("roster.left.readmit"))
         end
 
+        it "keeps the left view in its page links after readmitting someone" do
+          # with Berg, one more than Pagy's default page of 20 stays behind
+          create_list(:confirmed_user, 21).each do |user|
+            create(:lecture_membership, lecture: lecture, user: user).exclude!(by: user)
+          end
+
+          post add_member_lecture_path(lecture),
+               params: { user_id: former.id, source: :participants, view: "left" },
+               as: :turbo_stream
+
+          links = Nokogiri::HTML(CGI.unescapeHTML(response.body))
+                          .css("a[href*='page=2']").pluck("href")
+          expect(links).not_to be_empty
+          expect(links).to all(include("view=left"))
+        end
+
         it "points an enrolled-view search to the left view" do
           get lecture_roster_participants_path(lecture, search: "Berg"), as: :turbo_stream
 
