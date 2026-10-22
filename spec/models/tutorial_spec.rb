@@ -258,4 +258,36 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.destruction_blockers_outside_campaign).to be_empty
     end
   end
+
+  describe "#destroy" do
+    let(:tutorial) { create(:tutorial) }
+    let(:other_tutorial) { create(:tutorial, lecture: tutorial.lecture) }
+
+    it "hands a graded row to the group the person is in now" do
+      graded = create(:assessment_participation, :reviewed, tutorial: tutorial)
+      create(:tutorial_membership, user: graded.user, tutorial: other_tutorial)
+
+      expect(tutorial.destroy).to be_truthy
+      expect(graded.reload.tutorial_id).to eq(other_tutorial.id)
+      expect(graded.points_total).to be_present
+    end
+
+    it "keeps the rows of people in no group, without a group" do
+      blank = create(:assessment_participation, tutorial: tutorial)
+      graded = create(:assessment_participation, :reviewed, tutorial: tutorial)
+
+      expect(tutorial.destroy).to be_truthy
+      expect(blank.reload.tutorial_id).to be_nil
+      expect(graded.reload.tutorial_id).to be_nil
+      expect(graded.points_total).to be_present
+    end
+
+    it "ignores the person's group in another lecture" do
+      graded = create(:assessment_participation, :reviewed, tutorial: tutorial)
+      create(:tutorial_membership, user: graded.user, tutorial: create(:tutorial))
+
+      expect(tutorial.destroy).to be_truthy
+      expect(graded.reload.tutorial_id).to be_nil
+    end
+  end
 end
