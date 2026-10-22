@@ -31,7 +31,8 @@ RSpec.describe("Lectures::Memberships", type: :request) do
     end
 
     it "says in the dialog why the student cannot leave alone, without leaving" do
-      tutorial.update!(self_materialization_mode: :add_only)
+      # held by a campaign; update_column skips the empty-roster check
+      tutorial.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
 
       get lecture_home_path(lecture)
 
@@ -82,7 +83,8 @@ RSpec.describe("Lectures::Memberships", type: :request) do
     end
 
     it "keeps the places when a group may not be left" do
-      tutorial.update!(self_materialization_mode: :add_only)
+      # held by a campaign; update_column skips the empty-roster check
+      tutorial.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
 
       delete lecture_membership_path(lecture),
              params: { confirmation: lecture.course.short_title }

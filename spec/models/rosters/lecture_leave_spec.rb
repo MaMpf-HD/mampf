@@ -11,6 +11,13 @@ RSpec.describe(Rosters::LectureLeave) do
                       self_materialization_mode: :add_and_remove)
   end
 
+  # Campaign-managed and in no completed campaign yet, as a running
+  # allocation holds a tutorial. update_column skips the check that the
+  # roster is empty.
+  def hold_in_campaign(tutorial)
+    tutorial.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+  end
+
   # An exam opens its own registration process. update_columns skips the
   # status transitions, which would ask for dates and items not needed here.
   def exam_campaign(status, title: "Final exam", deadline: nil)
@@ -47,20 +54,33 @@ RSpec.describe(Rosters::LectureLeave) do
   describe "#blockers" do
     before { lecture.add_user_to_roster!(student) }
 
-    it "is empty for a tutorial that lets its members leave" do
-      leavable_tutorial.add_user_to_roster!(student)
+    it "is empty for a tutorial or cohort, whatever its self-service mode" do
+      create(:tutorial, lecture: lecture, skip_campaigns: true,
+                        self_materialization_mode: :disabled).add_user_to_roster!(student)
+      create(:cohort, context: lecture, skip_campaigns: true,
+                      self_materialization_mode: :add_only).add_user_to_roster!(student)
 
       expect(leave.blockers).to be_empty
       expect(leave.allowed?).to be(true)
     end
 
-    it "names a group the student may not leave, and offers the staff" do
-      fixed = create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true,
-                                self_materialization_mode: :add_only)
+    it "names a group still held by a campaign, and offers the staff" do
+      fixed = create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
       fixed.add_user_to_roster!(student)
+      hold_in_campaign(fixed)
 
       expect(leave.blockers.map(&:to_a)).to eq([[:group_fixed, "Mo 10", true]])
       expect(leave.allowed?).to be(false)
+    end
+
+    it "names a talk its speakers may not leave" do
+      seminar = create(:lecture, :is_seminar, :released_for_all)
+      talk = create(:talk, lecture: seminar, skip_campaigns: true,
+                           self_materialization_mode: :add_only)
+      talk.add_user_to_roster!(student)
+
+      expect(described_class.new(seminar, student).blockers.map(&:to_a))
+        .to eq([[:group_fixed, talk.to_label, true]])
     end
 
     it "names a graded exam without offering the staff" do
@@ -72,8 +92,9 @@ RSpec.describe(Rosters::LectureLeave) do
     end
 
     it "names only the graded exam when a group could not be left either" do
-      create(:tutorial, lecture: lecture, skip_campaigns: true,
-                        self_materialization_mode: :add_only).add_user_to_roster!(student)
+      fixed = create(:tutorial, lecture: lecture, skip_campaigns: true)
+      fixed.add_user_to_roster!(student)
+      hold_in_campaign(fixed)
       exam = create(:exam, :without_campaign, lecture: lecture, title: "Midterm")
       exam.add_user_to_roster!(student)
       grade!(exam)
@@ -217,9 +238,9 @@ RSpec.describe(Rosters::LectureLeave) do
         .to be_empty
     end
 
-    it "decides again under the locks when a group setting changed after the check" do
+    it "decides again under the locks when a group changed after the check" do
       expect(leave.allowed?).to be(true)
-      tutorial.update!(self_materialization_mode: :add_only)
+      hold_in_campaign(tutorial)
 
       expect { leave.leave! }.to raise_error(described_class::NotAllowedError)
       expect(tutorial.reload.members).to include(student)
@@ -265,7 +286,7 @@ RSpec.describe(Rosters::LectureLeave) do
     end
 
     it "changes nothing when a blocker stands in the way" do
-      tutorial.update!(self_materialization_mode: :add_only)
+      hold_in_campaign(tutorial)
 
       expect { leave.leave! }.to raise_error(described_class::NotAllowedError)
       expect(tutorial.reload.members).to include(student)

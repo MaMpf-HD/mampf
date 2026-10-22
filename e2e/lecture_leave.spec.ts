@@ -25,7 +25,8 @@ async function enrollInTutorial(factory: FactoryBot, userId: number, mode: strin
 
 test.describe("leaving a course", () => {
   test("lists what happens and leaves after confirming", async ({ factory, student }) => {
-    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
+    // the tutorial's self-service mode is about switching groups, not leaving
+    const lecture = await enrollInTutorial(factory, student.user.id, "disabled");
     const { page } = student;
 
     await page.goto(`/lectures/${lecture.id}`);
@@ -48,14 +49,20 @@ test.describe("leaving a course", () => {
   });
 
   test("says why a student cannot leave alone", async ({ factory, student }) => {
-    const lecture = await enrollInTutorial(factory, student.user.id, "add_only");
+    const lecture = await enrollInTutorial(factory, student.user.id, "disabled");
+    const exam = await factory.create("exam", ["with_date"], {
+      lecture_id: lecture.id,
+      title: "Final Exam",
+    });
+    await factory.create("exam_roster_entry", [], { exam_id: exam.id, user_id: student.user.id });
     const { page } = student;
 
     await page.goto(`/lectures/${lecture.id}`);
     await page.getByRole("button", { name: "Leave course" }).click();
     const dialog = page.getByRole("dialog", { name: "Leave this course" });
 
-    await expect(dialog.getByText("You cannot leave “Mo 10” yourself.")).toBeVisible();
+    await expect(dialog.getByText("You cannot withdraw from “Final Exam” yourself."))
+      .toBeVisible();
     await expect(dialog.getByText("Please contact the lecturer.")).toBeVisible();
     await expect(dialog.getByRole("button", { name: "Leave course" })).toHaveCount(0);
     await dialog.getByRole("button", { name: "Close" }).last().click();

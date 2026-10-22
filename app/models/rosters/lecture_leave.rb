@@ -124,8 +124,18 @@ module Rosters
       end
 
       def fixed_group_blockers
-        groups.reject { |group| group.allow_self_remove?(@user) || group.in?(graded_talks) }
+        groups.select { |group| fixed?(group) && !group.in?(graded_talks) }
               .map { |group| Blocker.new(:group_fixed, self.class.label(group), true) }
+      end
+
+      # A tutorial's or cohort's self-service mode is about moving within the
+      # lecture, so it does not keep anyone from leaving the lecture; only a
+      # roster still held by a running campaign does. A talk is a commitment
+      # to the seminar's schedule and keeps its own setting.
+      def fixed?(group)
+        return !group.allow_self_remove?(@user) if group.is_a?(Talk)
+
+        group.locked?
       end
 
       # An exam list or an exam registration past its deadline: withdrawing
