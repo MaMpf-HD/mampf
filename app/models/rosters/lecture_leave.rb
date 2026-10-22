@@ -68,6 +68,9 @@ module Rosters
                     (fixed_group_blockers + closed_exam_blockers)
     end
 
+    # The campaigns the dialog names. A rejected registration is withdrawn
+    # too (see UserPlaces#leave!), but not named: to the student it is no
+    # registration they give up.
     def campaigns_to_withdraw
       @campaigns_to_withdraw ||= running_campaigns.to_a - closed_exam_campaigns
     end
