@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_22_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1346,6 +1346,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_11_000001) do
     t.bigint "program_id"
     t.boolean "support", default: false, null: false
     t.boolean "deans_office", default: false, null: false
+    t.boolean "email_for_tutorial_change", default: true, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"
