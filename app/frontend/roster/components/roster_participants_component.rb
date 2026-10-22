@@ -194,8 +194,8 @@ class RosterParticipantsComponent < ViewComponent::Base
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
   end
 
-  # Returns the HTML for the pagination navigation (top and bottom)
-  # Uses Pagy with custom querify logic to preserve tabs and filters.
+  # The confirmation for removing the user from the lecture, naming the exam
+  # lists they are taken off too.
   def kick_confirmation(user)
     exams = exam_titles_by_user[user.id]
     return t("roster.warnings.confirm_kick_from_lecture") if exams.blank?
@@ -203,6 +203,8 @@ class RosterParticipantsComponent < ViewComponent::Base
     t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
   end
 
+  # Returns the HTML for the pagination navigation (top and bottom)
+  # Uses Pagy with custom querify logic to preserve tabs and filters.
   def pagination_nav
     return unless @pagy && @pagy.pages > 1
 

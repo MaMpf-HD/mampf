@@ -31,8 +31,14 @@ module Rosters
     end
 
     def participating?
-      @lecture.lecture_memberships.exists?(user: @user) ||
-        groups.any? || exam_entries.any?
+      enrolled? || groups.any? || exam_entries.any?
+    end
+
+    # Whether the user is on the lecture roster itself.
+    def enrolled?
+      return @enrolled if defined?(@enrolled)
+
+      @enrolled = @lecture.lecture_memberships.exists?(user: @user)
     end
 
     def allowed?
