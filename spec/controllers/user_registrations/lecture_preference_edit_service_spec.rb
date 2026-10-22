@@ -162,6 +162,64 @@ RSpec.describe(UserRegistrations::LecturePreferenceEditService, type: :service) 
     end
   end
 
+  describe "#withdraw!" do
+    let(:campaign) { create(:registration_campaign, :preference_based, :open) }
+    let(:other_user) { create(:confirmed_user) }
+
+    def save_preferences(for_user)
+      campaign.registration_items.first(3).each_with_index do |item, index|
+        create(:registration_user_registration,
+               registration_campaign: campaign, registration_item: item,
+               user: for_user, status: :pending, preference_rank: index + 1)
+      end
+    end
+
+    before do
+      save_preferences(user)
+      save_preferences(other_user)
+    end
+
+    it "removes all of the user's preferences and keeps the others'" do
+      result = described_class.new(campaign, user).withdraw!
+
+      expect(result.success?).to be(true)
+      expect(campaign.user_registrations.where(user: user)).to be_empty
+      expect(campaign.user_registrations.where(user: other_user).count).to eq(3)
+    end
+
+    it "keeps the preferences once the campaign is closed" do
+      campaign.update!(status: :closed)
+
+      result = described_class.new(campaign, user).withdraw!
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.campaign_not_opened")
+      )
+      expect(campaign.user_registrations.where(user: user).count).to eq(3)
+    end
+
+    it "fails when the user has no preferences" do
+      campaign.user_registrations.where(user: user).destroy_all
+
+      result = described_class.new(campaign, user).withdraw!
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.user_registration.none"))
+    end
+
+    it "refuses a first-come-first-served campaign" do
+      fcfs_campaign = create(:registration_campaign, :first_come_first_served, :open)
+
+      result = described_class.new(fcfs_campaign, user).withdraw!
+
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(
+        I18n.t("registration.user_registration.messages.not_preference_based_mode")
+      )
+    end
+  end
+
   describe "campaign with only two options" do
     let(:campaign) do
       FactoryBot.create(:registration_campaign, :preference_based, :draft)
