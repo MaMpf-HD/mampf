@@ -3224,6 +3224,7 @@ de:
     optimization_failed: >
       Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
     upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    no_correction_file: Bitte wähle zuerst eine Datei aus.
     upload_failure_empty_file: >
       Die hochgeladene Datei ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.

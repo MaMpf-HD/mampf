@@ -136,6 +136,27 @@ RSpec.describe("SubmissionUploads", type: :request) do
       expect(corrected.reload.correction).to be_nil
     end
 
+    it "sends a save without a file back to the form" do
+      post add_correction_path(corrected), params: { submission: { correction: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("submission.no_correction_file"))
+      expect(Nokogiri::HTML(response.body).at_css("form.correction-upload")).to be_present
+      expect(corrected.reload.correction).to be_nil
+    end
+
+    it "keeps the correction the row had when saved without a new file" do
+      allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
+      corrected = create(:submission, :with_correction, assignment: assignment,
+                                                        tutorial: tutorial)
+      kept = corrected.correction.id
+
+      post add_correction_path(corrected), params: { submission: { correction: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(corrected.reload.correction.id).to eq(kept)
+    end
+
     it "keeps the correction the row had when the new one is refused" do
       allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
       corrected = create(:submission, :with_correction, assignment: assignment,
