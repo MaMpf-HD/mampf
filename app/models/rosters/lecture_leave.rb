@@ -7,6 +7,7 @@ module Rosters
     Blocker = Struct.new(:reason, :title, :contact)
 
     class NotAllowedError < StandardError; end
+    class NotParticipatingError < StandardError; end
 
     # Talks go by their label, which carries the number, as elsewhere in the
     # participation list.
@@ -86,13 +87,16 @@ module Rosters
     # Decides again under the locks on a fresh instance, since this one keeps
     # its blockers from before. A removal refused for grading data refuses
     # the whole step. A deadlock with a lecturer's edit is tried once more.
+    # Someone the staff removed meanwhile has nothing left to give up.
     def leave!
       attempts = 0
       begin
         attempts += 1
         ActiveRecord::Base.transaction do
           lock_places!
-          raise(NotAllowedError) unless self.class.new(@lecture, @user).allowed?
+          fresh = self.class.new(@lecture, @user)
+          raise(NotParticipatingError) unless fresh.participating?
+          raise(NotAllowedError) unless fresh.allowed?
 
           UserPlaces.new(@user).leave!([@lecture])
           @user.unbookmark_lecture!(@lecture)
@@ -113,10 +117,14 @@ module Rosters
       # closes or takes a registration meanwhile; then the user's own groups,
       # whose settings the check reads, ordered as MaintenanceService orders
       # them. A group joined in between is not covered.
+      # The lecture comes before the groups: MaintenanceService locks it
+      # before the memberships when the staff remove someone, so the two
+      # wait for each other instead of deadlocking.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)
                               .order(:id).lock.load
+        @lecture.lock!
         groups.sort_by { |group| [group.class.name, group.id] }.each(&:lock!)
       end
 

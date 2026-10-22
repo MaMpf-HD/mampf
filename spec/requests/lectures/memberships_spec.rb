@@ -63,6 +63,18 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(tutorial.reload.members).not_to include(user)
     end
 
+    it "says the student takes part no more when the staff removed them meanwhile" do
+      Rosters::MaintenanceService.new.remove_user!(user, lecture, notify: false)
+
+      delete lecture_membership_path(lecture),
+             params: { confirmation: lecture.course.short_title }
+
+      expect(response).to redirect_to(lecture_home_path(lecture))
+      expect(flash[:notice])
+        .to eq(I18n.t("lecture_home.leave.not_participating",
+                      lecture: lecture.title_term_info_no_type))
+    end
+
     it "keeps the places without the short title typed" do
       delete lecture_membership_path(lecture), params: { confirmation: "nope" }
 

@@ -246,6 +246,23 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(tutorial.reload.members).to include(student)
     end
 
+    it "says the student takes part no more when the staff removed them meanwhile" do
+      expect(leave.allowed?).to be(true)
+      Rosters::MaintenanceService.new.remove_user!(student, lecture, notify: false)
+
+      expect { leave.leave! }.to raise_error(described_class::NotParticipatingError)
+    end
+
+    it "locks the lecture before the student's groups, as the staff's removal does" do
+      tables = []
+      record = lambda do |*, payload|
+        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
+      end
+      ActiveSupport::Notifications.subscribed(record, "sql.active_record") { leave.leave! }
+
+      expect(tables.index("lectures")).to be < tables.index("tutorials")
+    end
+
     it "refuses rather than fails when a grade arrives while leaving" do
       places = instance_double(Rosters::UserPlaces)
       allow(Rosters::UserPlaces).to receive(:new).and_return(places)

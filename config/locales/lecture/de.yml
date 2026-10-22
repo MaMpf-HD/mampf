@@ -51,6 +51,7 @@ de:
       contact: "Wende Dich bitte an die Lehrenden der Veranstaltung."
       done: "Du hast „%{lecture}“ verlassen."
       not_allowed: "Du kannst die Teilnahme gerade nicht selbst beenden."
+      not_participating: "Du nimmst an „%{lecture}“ nicht mehr teil."
       not_confirmed: "Das Kürzel stimmt nicht; Du nimmst weiter teil."
       failed: "Das hat gerade nicht geklappt; Du nimmst weiter teil. Versuch es bitte noch einmal."
     intro:

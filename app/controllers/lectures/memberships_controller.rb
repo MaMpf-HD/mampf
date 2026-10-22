@@ -16,6 +16,11 @@ module Lectures
       redirect_to lecture_home_path(@lecture),
                   notice: t("lecture_home.leave.done", lecture: @lecture.title_term_info_no_type),
                   status: :see_other
+    rescue Rosters::LectureLeave::NotParticipatingError
+      redirect_to lecture_home_path(@lecture),
+                  notice: t("lecture_home.leave.not_participating",
+                            lecture: @lecture.title_term_info_no_type),
+                  status: :see_other
     rescue Rosters::LectureLeave::NotAllowedError
       redirect_to lecture_home_path(@lecture),
                   alert: t("lecture_home.leave.not_allowed"),

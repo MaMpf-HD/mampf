@@ -50,6 +50,7 @@ en:
       contact: "Please contact the lecturer."
       done: "You have left “%{lecture}”."
       not_allowed: "You cannot leave this course yourself right now."
+      not_participating: "You are no longer taking part in “%{lecture}”."
       not_confirmed: "The short title did not match; you are still taking part."
       failed: "That did not work just now; you are still taking part. Please try again."
     intro:
