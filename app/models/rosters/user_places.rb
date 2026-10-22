@@ -21,9 +21,10 @@ module Rosters
     end
 
     # Names the lectures rather than every group, so that the student
-    # recognizes them in one line.
+    # recognizes them in one line. A lecture with only a rejected registration
+    # is among them, since giving it up withdraws that registration too.
     def lectures
-      (rosterables.map(&:lecture) + running_campaigns.map(&:campaignable))
+      (rosterables.map(&:lecture) + withdrawable_campaigns.map(&:campaignable))
         .grep(Lecture).uniq.sort_by(&:title)
     end
 
@@ -51,6 +52,7 @@ module Rosters
     # it in a transaction.
     def leave!(lectures)
       withdraw_registrations!(lectures)
+      dismiss_rejections!(lectures)
       leave_rosters!(lectures)
     end
 
@@ -69,16 +71,26 @@ module Rosters
       end
 
       # Rejected registrations go too: a new allocation can turn them back
-      # into pending ones and place the student again.
+      # into pending ones and place the student again. A campaign completed
+      # before its lock keeps its registrations, as any completed one does.
       def withdraw_registrations!(lectures)
-        campaigns = Registration::Campaign.where(
-          campaignable: lectures, status: RUNNING_CAMPAIGN_STATUSES,
-          id: Registration::UserRegistration.where(user: @user).select(:registration_campaign_id)
-        )
-        campaigns.order(:id).each do |campaign|
+        withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
           campaign.lock!
+          next unless campaign.status.to_sym.in?(RUNNING_CAMPAIGN_STATUSES)
+
           campaign.user_registrations.where(user: @user).find_each(&:destroy!)
         end
+      end
+
+      # A rejection of a completed campaign would keep the lecture on the
+      # dashboard (see User#lectures_with_registration_application); it is
+      # dismissed rather than deleted, so the application stays on record.
+      def dismiss_rejections!(lectures)
+        completed = Registration::Campaign.where(campaignable: lectures, status: :completed)
+                                          .non_exam
+        Registration::UserRegistration.rejected.not_dismissed
+                                      .where(user: @user, registration_campaign: completed)
+                                      .find_each(&:dismiss!)
       end
 
       def leave_rosters!(lectures)
@@ -121,8 +133,11 @@ module Rosters
           .merge(Registration::Campaign.where(status: RUNNING_CAMPAIGN_STATUSES))
       end
 
-      def running_campaigns
-        Registration::Campaign.where(id: running_registrations.select(:registration_campaign_id))
+      def withdrawable_campaigns
+        Registration::Campaign.where(
+          status: RUNNING_CAMPAIGN_STATUSES,
+          id: Registration::UserRegistration.where(user: @user).select(:registration_campaign_id)
+        )
       end
   end
 end
