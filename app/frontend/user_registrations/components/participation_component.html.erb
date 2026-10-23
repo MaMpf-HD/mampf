@@ -43,4 +43,8 @@
   </div>
 
   <%= render leave_dialog %>
+
+  <% last_group_dialogs.each do |dialog| %>
+    <%= render "user_registrations/components/leave_last_group_dialog", **dialog %>
+  <% end %>
 </section>

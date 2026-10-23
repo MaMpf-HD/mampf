@@ -98,6 +98,16 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
+    it "notes that the student takes part still when they keep the course" do
+      lecture.add_user_to_roster!(user)
+
+      delete self_remove_tutorial_path(tutorial), params: { keep_course: true },
+                                                  as: :turbo_stream
+
+      expect(lecture.lecture_memberships.find_by(user: user).participation_confirmed_at)
+        .to be_present
+    end
+
     it "updates the participation section" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 

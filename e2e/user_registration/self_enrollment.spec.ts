@@ -36,23 +36,21 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
     const leaveButton = home.participation("Self-managed Tutorial")
-      .getByRole("button", { name: "Leave" });
+      .getByRole("button", { name: "Leave tutorial" });
 
-    // Declined, the question leaves the student in the group.
-    const declined = student.page.waitForEvent("dialog");
-    const firstClick = leaveButton.click();
-    const question = await declined;
-    expect(question.message()).toBe(
-      "Leave “Self-managed Tutorial”? You can join again only while a place is free.");
-    await question.dismiss();
-    await firstClick;
+    // The only group: the dialog asks whether to leave just it or the course.
+    await leaveButton.click();
+    const dialog = student.page.getByRole("dialog", { name: "Leave tutorial" });
+    await expect(dialog).toContainText("You can join again only while a place is free.");
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+    await expect(dialog).toBeHidden();
     await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
 
-    const accepted = student.page.waitForEvent("dialog");
-    const secondClick = leaveButton.click();
-    await (await accepted).accept();
-    await secondClick;
+    await leaveButton.click();
+    await dialog.getByRole("button", { name: "Leave tutorial only" }).click();
 
+    await expect(student.page.getByText(/^You have left “Self-managed Tutorial”\. You are still enrolled/))
+      .toBeVisible();
     await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
     await expect(student.page.getByRole("heading", { name: "Your participation" })).toBeFocused();
     await expect(student.page.getByRole("button", {

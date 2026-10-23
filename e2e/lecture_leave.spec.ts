@@ -48,6 +48,23 @@ test.describe("leaving a course", () => {
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
+  test("offers leaving the whole course when the student leaves their only tutorial", async ({
+    factory, student,
+  }) => {
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
+    const { page } = student;
+
+    await page.goto(`/lectures/${lecture.id}`);
+    await page.getByRole("button", { name: "Leave tutorial" }).click();
+    const choice = page.getByRole("dialog", { name: "Leave tutorial" });
+    await expect(choice).toContainText("is your only group in this course");
+
+    await choice.getByRole("button", { name: "Leave course" }).click();
+
+    await expect(page.getByRole("dialog", { name: "Leave this course" })).toBeVisible();
+    await expect(choice).toBeHidden();
+  });
+
   test("releases the page when a stream replaces the open dialog", async ({
     factory, student,
   }) => {

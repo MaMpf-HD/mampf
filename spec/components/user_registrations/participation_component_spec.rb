@@ -445,6 +445,44 @@ RSpec.describe(ParticipationComponent, type: :component) do
         .to include(I18n.t("registration.user_registration.participation.leave_no_sheets"))
     end
 
+    context "when the student is enrolled" do
+      let(:tutorial) do
+        create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true,
+                          self_materialization_mode: :add_and_remove)
+      end
+
+      before do
+        lecture.add_user_to_roster!(user)
+        tutorial.add_user_to_roster!(user)
+      end
+
+      it "offers leaving just the tutorial or the whole course when it is the only group" do
+        rendered = render_inline(described_class.new(lecture: lecture, user: user))
+        dialog = rendered.css("#leave-last-group-tutorial-#{tutorial.id}").first
+
+        expect(rendered.css("[data-bs-target='#leave-last-group-tutorial-#{tutorial.id}']"))
+          .to be_present
+        expect(dialog.text).to include(
+          I18n.t("registration.user_registration.participation.last_group.only",
+                 label: I18n.t("registration.user_registration.participation.leave_tutorial"))
+        )
+        expect(dialog.css("[data-bs-target='##{LeaveLectureComponent.dialog_id(lecture)}']"))
+          .to be_present
+      end
+
+      it "asks as before, saying the course stays, when another group remains" do
+        create(:cohort, context: lecture, skip_campaigns: true).add_user_to_roster!(user)
+
+        rendered = render_inline(described_class.new(lecture: lecture, user: user))
+        form = rendered.css("form").find { |f| f.text.include?("Leave tutorial") }
+
+        expect(form["data-turbo-confirm"]).to include(
+          I18n.t("registration.user_registration.participation.leave_stays_enrolled")
+        )
+        expect(rendered.css("#leave-last-group-tutorial-#{tutorial.id}")).to be_empty
+      end
+    end
+
     it "still asks where joining again is always possible" do
       expect(confirmation(:add_and_remove))
         .to start_with(I18n.t("registration.user_registration.participation.leave_confirm_rejoin",

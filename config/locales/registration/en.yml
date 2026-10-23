@@ -533,6 +533,14 @@ en:
         leave_confirm_rejoin: "Leave “%{group}”? You can join again afterwards."
         leave_no_sheets: "Without a tutorial you cannot hand in sheets."
         leave_stays_enrolled: "You stay enrolled in the course; to leave it altogether, use “Leave course”."
+        last_group:
+          intro: "“%{group}” is your only group in this course. Do you want to leave just the group or the whole course?"
+          only: "%{label} only"
+          only_group: "%{label}: you stay enrolled in the course, but without a group you cannot hand in sheets."
+          whole_course: "%{label}: you leave the course as well; the next step shows what that means."
+          rejoin_final: "You cannot join it again yourself; only the lecture's staff can take you back."
+          rejoin_while_free: "You can join again only while a place is free."
+          rejoin_rejoin: "You can join again afterwards."
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:

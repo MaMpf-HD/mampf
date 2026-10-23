@@ -70,10 +70,18 @@ module Roster
     def self_remove
       service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
       service.self_remove!
+      confirm_participation if params[:keep_course].present?
       respond_with_success(self_removed_message)
     end
 
     private
+
+      # Leaving the last group but not the lecture answers the question the
+      # participation check would ask.
+      def confirm_participation
+        @lecture.lecture_memberships.find_by(user: current_user)
+                &.update!(participation_confirmed_at: Time.current)
+      end
 
       # The lecture stays when a group goes, which students do not expect.
       def self_removed_message

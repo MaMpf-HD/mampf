@@ -22,6 +22,24 @@ class ParticipationComponent < ViewComponent::Base
     LeaveLectureComponent.new(lecture: @lecture, leave: @leave)
   end
 
+  # The groups whose leave button asks whether to leave the lecture as well.
+  def last_group_dialogs
+    leavable = rosterables.select { |rosterable| rosterable.allow_self_remove?(@user) }
+    leavable.select { |rosterable| last_group?(rosterable) }.map do |rosterable|
+      { id: last_group_dialog_id(rosterable), label: leave_label(rosterable),
+        group: rosterable.title,
+        rejoin: t("registration.user_registration.participation.last_group." \
+                  "rejoin_#{rejoin_key(rosterable)}"),
+        path: helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path",
+                                  rosterable.id),
+        lecture_dialog_id: LeaveLectureComponent.dialog_id(@lecture) }
+    end
+  end
+
+  def last_group_dialog_id(rosterable)
+    "leave-last-group-#{rosterable.class.name.underscore}-#{rosterable.id}"
+  end
+
   def render?
     rows.any?
   end
@@ -62,7 +80,7 @@ class ParticipationComponent < ViewComponent::Base
                          type: "button",
                          class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
                          data: { bs_toggle: "modal",
-                                 bs_target: "##{LeaveLectureComponent::ID}" })
+                                 bs_target: "##{LeaveLectureComponent.dialog_id(@lecture)}" })
     end
 
     def roster_rows
@@ -241,12 +259,26 @@ class ParticipationComponent < ViewComponent::Base
 
     def leave_action(rosterable)
       return unless rosterable.allow_self_remove?(@user)
+      return last_group_button(rosterable) if last_group?(rosterable)
 
       helpers.button_to(leave_label(rosterable),
                         helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path",
                                             rosterable.id),
                         method: :delete, class: "btn btn-sm btn-outline-secondary",
                         form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
+    end
+
+    # Leaving the only group would keep the lecture without a group, which is
+    # seldom what a student wants; the dialog offers leaving the lecture too.
+    def last_group?(rosterable)
+      @leave.enrolled? && @leave.groups == [rosterable]
+    end
+
+    def last_group_button(rosterable)
+      helpers.button_tag(leave_label(rosterable),
+                         type: "button", class: "btn btn-sm btn-outline-secondary",
+                         data: { bs_toggle: "modal",
+                                 bs_target: "##{last_group_dialog_id(rosterable)}" })
     end
 
     def leave_label(rosterable)
@@ -258,19 +290,27 @@ class ParticipationComponent < ViewComponent::Base
     # takes them back through its staff alone. Leaving a group keeps the
     # lecture, which students do not expect, so it says that too.
     def leave_confirmation(rosterable)
-      key = if !rosterable.config_allow_self_add?
-        "leave_confirm_final"
-      elsif rosterable.capacity
-        "leave_confirm_while_free"
-      else
-        "leave_confirm_rejoin"
-      end
       notes = []
       notes << "leave_no_sheets" if rosterable.is_a?(Tutorial)
       notes << "leave_stays_enrolled" if @leave.enrolled?
-      [t("registration.user_registration.participation.#{key}", group: rosterable.title),
+      [leave_confirmation_base(rosterable),
        *notes.map { |note| t("registration.user_registration.participation.#{note}") }]
         .join(" ")
+    end
+
+    def leave_confirmation_base(rosterable)
+      t("registration.user_registration.participation.leave_confirm_#{rejoin_key(rosterable)}",
+        group: rosterable.title)
+    end
+
+    def rejoin_key(rosterable)
+      if !rosterable.config_allow_self_add?
+        "final"
+      elsif rosterable.capacity
+        "while_free"
+      else
+        "rejoin"
+      end
     end
 
     def preference_note(rosterable)
