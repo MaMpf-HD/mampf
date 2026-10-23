@@ -430,20 +430,25 @@ RSpec.describe(ParticipationComponent, type: :component) do
 
     it "warns that a group which only lets students leave takes nobody back" do
       expect(confirmation(:remove_only))
-        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_final",
-                      group: "Mo 10"))
+        .to start_with(I18n.t("registration.user_registration.participation.leave_confirm_final",
+                              group: "Mo 10"))
     end
 
     it "says the way back needs a free place where the group has a limit" do
-      expect(confirmation(:add_and_remove, capacity: 20))
-        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_while_free",
-                      group: "Mo 10"))
+      expected = I18n.t("registration.user_registration.participation.leave_confirm_while_free",
+                        group: "Mo 10")
+      expect(confirmation(:add_and_remove, capacity: 20)).to start_with(expected)
+    end
+
+    it "says that without a tutorial no sheet can be handed in" do
+      expect(confirmation(:add_and_remove))
+        .to include(I18n.t("registration.user_registration.participation.leave_no_sheets"))
     end
 
     it "still asks where joining again is always possible" do
       expect(confirmation(:add_and_remove))
-        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_rejoin",
-                      group: "Mo 10"))
+        .to start_with(I18n.t("registration.user_registration.participation.leave_confirm_rejoin",
+                              group: "Mo 10"))
     end
   end
 end

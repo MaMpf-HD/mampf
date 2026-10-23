@@ -87,6 +87,17 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       expect(response).to redirect_to(edit_personal_data_path)
     end
 
+    it "says the lecture stays when the student is enrolled" do
+      lecture.add_user_to_roster!(user)
+
+      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+      expect(CGI.unescapeHTML(response.body)).to include(
+        I18n.t("roster.messages.self_removed_still_enrolled",
+               group: tutorial.title, lecture: lecture.title_term_info_no_type)
+      )
+    end
+
     it "updates the participation section" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
@@ -259,8 +270,8 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       end.to change { tutorial.members.count }.by(-1)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(
-        I18n.t("roster.messages.user_removed", user: user.info)
+      expect(CGI.unescapeHTML(response.body)).to include(
+        I18n.t("roster.messages.self_removed", group: tutorial.title)
       )
     end
 

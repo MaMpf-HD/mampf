@@ -242,15 +242,21 @@ class ParticipationComponent < ViewComponent::Base
     def leave_action(rosterable)
       return unless rosterable.allow_self_remove?(@user)
 
-      helpers.button_to(t("registration.user_registration.participation.leave"),
+      helpers.button_to(leave_label(rosterable),
                         helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path",
                                             rosterable.id),
                         method: :delete, class: "btn btn-sm btn-outline-secondary",
                         form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
     end
 
+    def leave_label(rosterable)
+      kind = { Tutorial => "tutorial", Talk => "talk" }.fetch(rosterable.class, "group")
+      t("registration.user_registration.participation.leave_#{kind}")
+    end
+
     # Says whether the way back is open: a group that only lets students leave
-    # takes them back through its staff alone.
+    # takes them back through its staff alone. Leaving a group keeps the
+    # lecture, which students do not expect, so it says that too.
     def leave_confirmation(rosterable)
       key = if !rosterable.config_allow_self_add?
         "leave_confirm_final"
@@ -259,7 +265,12 @@ class ParticipationComponent < ViewComponent::Base
       else
         "leave_confirm_rejoin"
       end
-      t("registration.user_registration.participation.#{key}", group: rosterable.title)
+      notes = []
+      notes << "leave_no_sheets" if rosterable.is_a?(Tutorial)
+      notes << "leave_stays_enrolled" if @leave.enrolled?
+      [t("registration.user_registration.participation.#{key}", group: rosterable.title),
+       *notes.map { |note| t("registration.user_registration.participation.#{note}") }]
+        .join(" ")
     end
 
     def preference_note(rosterable)

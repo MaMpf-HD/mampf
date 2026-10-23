@@ -433,6 +433,8 @@ de:
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
+      self_removed: "Du hast „%{group}“ verlassen."
+      self_removed_still_enrolled: "Du hast „%{group}“ verlassen. In „%{lecture}“ bist Du weiterhin eingeschrieben."
     no_participants_yet: 'Noch niemand steht auf der Prüfungsliste.'
     registered: 'Registriert'
     mailer:
