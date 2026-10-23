@@ -46,7 +46,7 @@ e2e-setup:
     set -e
     cd {{justfile_directory()}}
     ./docker/development/e2e-databases.sh
-    echo "$(sha1sum < db/schema.rb) $(./docker/development/e2e-workers.sh)" \
+    echo "$(sha1sum < db/schema.rb) $(cat tmp/e2e-workers 2>/dev/null)" \
       > {{e2e_stamp}}
 
 [private]
@@ -54,7 +54,7 @@ e2e-ensure-setup:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}
     [ "$(cat {{e2e_stamp}} 2>/dev/null)" = \
-      "$(sha1sum < db/schema.rb) $(./docker/development/e2e-workers.sh)" ] && exit 0
+      "$(sha1sum < db/schema.rb) $(cat tmp/e2e-workers 2>/dev/null)" ] && exit 0
     echo "🛠️  Test databases are outdated, running e2e-setup"
     {{just_executable()}} --justfile {{justfile_directory()}}/.justfile test e2e-setup
 

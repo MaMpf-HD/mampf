@@ -1,15 +1,15 @@
-import { availableParallelism } from "node:os";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 /**
  * Number of Playwright workers. Each worker gets its own app server (and thus
  * its own test database), started by `docker/development/run.sh`.
  *
- * 60% of the cores, rounded (each worker runs a browser and a Rails server).
- * Override via `E2E_WORKERS`. Keep in sync with
- * `docker/development/e2e-workers.sh`.
+ * `run.sh` writes the number of servers it started to `tmp/e2e-workers`,
+ * so this always matches the servers.
  */
 export const workerCount = Number(
-  process.env.E2E_WORKERS || Math.max(1, Math.round(availableParallelism() * 0.6)),
+  readFileSync(join(process.cwd(), "tmp/e2e-workers"), "utf8").trim(),
 );
 
 /**

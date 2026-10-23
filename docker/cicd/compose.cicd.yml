@@ -9,7 +9,7 @@ services:
     # Playwright needs a running server; the unit-test job overrides the
     # entrypoint and command to run RSpec directly.
     # Three parallel Playwright workers on the 4 vCPUs of GitHub's runners,
-    # one is left for Postgres, Redis & co. (see e2e-workers.sh)
+    # one is left for Postgres, Redis & co. (see run.sh)
     environment:
       - E2E_WORKERS=3
     command: "CI=true RUBY_DEBUG_ENABLE=0 DISABLE_VITE_IN_CI=true /workspaces/mampf/docker/development/init-and-run.sh"

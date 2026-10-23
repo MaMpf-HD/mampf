@@ -8,7 +8,11 @@
 set -Eeuo pipefail
 cd "$(dirname "$0")/../.."
 
-e2e_workers=$(./docker/development/e2e-workers.sh)
+# Written by run.sh, so it matches the app servers that were actually started.
+e2e_workers=$(cat tmp/e2e-workers 2>/dev/null) || {
+	echo "tmp/e2e-workers is missing: start the app-test container first" >&2
+	exit 1
+}
 
 pids=()
 for i in $(seq 0 $((e2e_workers - 1))); do
