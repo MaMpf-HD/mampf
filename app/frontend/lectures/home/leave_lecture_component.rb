@@ -3,10 +3,11 @@ class LeaveLectureComponent < ViewComponent::Base
     "leave-lecture-dialog-#{lecture.id}"
   end
 
-  def initialize(lecture:, leave:)
+  def initialize(lecture:, leave:, from_check: false)
     super()
     @lecture = lecture
     @leave = leave
+    @from_check = from_check
   end
 
   def render?

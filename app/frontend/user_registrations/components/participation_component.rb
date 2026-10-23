@@ -64,9 +64,18 @@ class ParticipationComponent < ViewComponent::Base
 
       [Row.new(label: @lecture.sort_localized,
                title: @lecture.course.title,
-               lines: [],
+               lines: [no_group_line].compact,
                badge: lecture_badge,
                actions: leave_lecture_action)]
+    end
+
+    # Enrolled but in none of the lecture's groups: no sheet can be handed in.
+    def no_group_line
+      return unless @leave.enrolled? && @leave.groups.empty?
+      return unless @lecture.tutorials.exists? || @lecture.talks.exists? ||
+                    @lecture.cohorts.exists?
+
+      t("registration.user_registration.participation.no_group")
     end
 
     def lecture_badge

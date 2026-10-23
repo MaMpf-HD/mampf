@@ -27,6 +27,11 @@ en:
       go_register_for: "Registration open for %{lecture} — go to its page to register"
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
+  participation_check:
+    title: "Are you still taking part?"
+    lead: "We have reworked how you leave a course and need a quick answer from you once. The courses below are still on your dashboard, but you are in no tutorial or other group there. Please tell us for each whether you are still taking part."
+    still_taking_part: "I am still taking part"
+    footnote: "If you no longer take part, you leave the course and it disappears from your dashboard. If you stay, best join a group: without one you cannot hand in sheets."
   lecture_home:
     leave:
       title: "Leave this course"

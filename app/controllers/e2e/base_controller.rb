@@ -13,6 +13,7 @@ module E2e
     rescue_from Exception, with: :show_errors
     skip_before_action :authenticate_user!
     skip_before_action :enforce_personal_data
+    skip_before_action :enforce_participation_check
 
     ATTEMPTS = 3
 

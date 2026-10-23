@@ -61,6 +61,8 @@
               <% end %>
             </ul>
 
+            <%= hidden_field_tag :from_check, 1 if @from_check %>
+
             <%= form.label :confirmation,
                            t("lecture_home.leave.confirmation_label", code: confirmation_code),
                            class: "form-label" %>

@@ -280,6 +280,7 @@ module Rosters
         added_ids = add_missing_users!(target_ids, current_ids, campaign)
         remove_excess_users!(target_ids, campaign)
         propagate_to_lecture!(target_ids)
+        forget_participation_answers!(added_ids)
 
         added_ids
       end
@@ -297,6 +298,17 @@ module Rosters
       return if parent == self
 
       parent.ensure_roster_membership!(user_ids)
+    end
+
+    # Back in a group, a student is asked again should they lose it, see
+    # Rosters::ParticipationCheck. A lecture or an exam is no group.
+    def forget_participation_answers!(user_ids)
+      return if user_ids.empty?
+      return unless is_a?(Tutorial) || is_a?(Talk) || is_a?(Cohort)
+      return unless lecture
+
+      lecture.lecture_memberships.where(user_id: user_ids)
+             .update_all(participation_confirmed_at: nil) # rubocop:disable Rails/SkipsModelValidations
     end
 
     # Identifies users in the target list who are not yet in the roster and
