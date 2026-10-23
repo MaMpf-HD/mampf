@@ -105,6 +105,21 @@ export default tseslint.config(
     },
   },
   {
+    // Each Playwright worker talks to its own app server, which is set up by
+    // the `baseURL` fixture in e2e/_support/fixtures.ts (re-exports everything
+    // from @playwright/test). Plain `test` would use worker 0's server only.
+    files: ["e2e/**/*.spec.ts"],
+    rules: {
+      "no-restricted-imports": ["error", {
+        paths: [{
+          name: "@playwright/test",
+          message: "Import from the e2e/_support/fixtures instead, "
+            + "so that each worker uses its own app server.",
+        }],
+      }],
+    },
+  },
+  {
     // Disable type-checked linting
     // https://typescript-eslint.io/troubleshooting/typed-linting/#how-do-i-disable-type-checked-linting-for-a-file
     // https://typescript-eslint.io/troubleshooting/typed-linting/#i-get-errors-telling-me--was-not-found-by-the-project-service-consider-either-including-it-in-the-tsconfigjson-or-including-it-in-allowdefaultproject
