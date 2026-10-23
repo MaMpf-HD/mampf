@@ -31,6 +31,13 @@ class RosterNotificationMailer < ApplicationMailer
       ).public_send(template).deliver_later
     end
 
+    # A deleted group cannot be loaded by the mail job, so its title travels
+    # in its place.
+    def removed_from_deleted_group(user, title:, lecture:)
+      with(group_title: title, lecture: lecture, recipient: user)
+        .removed_from_group_email.deliver_later
+    end
+
     def moved(user, old_rosterable, new_rosterable)
       return log_unsupported(old_rosterable) unless supported?(old_rosterable)
       return log_unsupported(new_rosterable) unless supported?(new_rosterable)
@@ -170,6 +177,7 @@ class RosterNotificationMailer < ApplicationMailer
 
     def prepare_data(params)
       @rosterable      = params[:rosterable]
+      @group_title     = params[:group_title] || @rosterable&.title
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
@@ -209,7 +217,7 @@ class RosterNotificationMailer < ApplicationMailer
 
     def subject_vars
       {
-        rosterable_title: @rosterable&.title || @new_rosterable&.title,
+        rosterable_title: @group_title || @new_rosterable&.title,
         lecture_title: @lecture&.title || "",
         participant_name: @participant&.tutorial_name
       }
