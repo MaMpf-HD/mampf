@@ -62,7 +62,7 @@ if [ "$RAILS_ENV" = "test" ] && [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	# other's jobs (the others are started in the loop below).
 	redis_base_url="${REDIS_URL%/*}"
 	redis_base_db="${REDIS_URL##*/}"
-	TEST_ENV_NUMBER="_e2e0" bundle exec sidekiq &
+	TEST_ENV_NUMBER="_e2e0" bundle exec sidekiq -c 1 &
 else
 	bundle exec sidekiq &
 fi
@@ -75,7 +75,7 @@ for i in $extra_e2e_workers; do
 	echo "Starting Playwright worker server $i on port $worker_http_port (log/runtime_e2e$i.log)"
 	worker_redis_url="$redis_base_url/$((redis_base_db + i))"
 	TEST_ENV_NUMBER="_e2e$i" REDIS_URL="$worker_redis_url" \
-		bundle exec sidekiq &
+		bundle exec sidekiq -c 1 &
 	TEST_ENV_NUMBER="_e2e$i" \
 		REDIS_URL="$worker_redis_url" \
 		MAMPF_PORT="$worker_target_port" \
