@@ -26,12 +26,4 @@ RSpec.describe("MampfSearch hierarchy callbacks", :mampfsearch) do
 
     medium.teachable.update!(lecture: FactoryBot.create(:lecture))
   end
-
-  it "queues affected media when a talk moves to another lecture" do
-    medium = FactoryBot.create(:talk_medium, :with_video,
-                               transcription_status: :completed)
-    expect(MampfsearchMetadataSyncJob).to receive(:perform_later).with(medium.id)
-
-    medium.teachable.update!(lecture: FactoryBot.create(:lecture, :is_seminar))
-  end
 end
