@@ -76,13 +76,13 @@ RSpec.describe("Dashboard::Bookmarks", type: :request) do
       expect(lecture.in?(user.reload.lectures)).to be(false)
     end
 
-    it "also drops the lecture from favorites" do
+    it "keeps the lecture pinned in the quick access" do
       user.bookmark_lecture!(lecture)
       user.favorite_lectures << lecture
 
       delete dashboard_lecture_bookmark_path(lecture), as: :turbo_stream
 
-      expect(user.reload.favorite_lectures).not_to include(lecture)
+      expect(user.reload.favorite_lectures).to include(lecture)
     end
   end
 end

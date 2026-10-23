@@ -129,8 +129,11 @@ en:
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
-      You have not yet added any lectures as favorites.
+      You haven't pinned any lectures yet.
+      Open a lecture to pin it here.
     quick_access: 'Quick Access'
+    pin_lecture: 'Pin %{title}'
+    unpin_lecture: 'Unpin %{title}'
   info: 'Info'
   admin:
     navbar:
@@ -2017,8 +2020,8 @@ en:
     submissions: Submission of homework assignments
     tutorials: Tutorials
     miscellaneous: Miscellaneous
-    star_lecture: Add Lecture to Fast Access
-    unstar_lecture: Remove Lecture from Fast Access
+    pin_lecture: Pin to Quick Access
+    unpin_lecture: Unpin from Quick Access
     media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
