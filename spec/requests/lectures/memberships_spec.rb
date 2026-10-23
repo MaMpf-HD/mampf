@@ -29,7 +29,8 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       get lecture_home_path(lecture)
 
       body = response.body.squish
-      expect(body).to include("#{lecture.sort_localized} · #{lecture.course.title}")
+      expect(CGI.unescapeHTML(body))
+        .to include("#{lecture.sort_localized} · #{lecture.course.title}")
       expect(body).to include(%(data-bs-target="##{LeaveLectureComponent.dialog_id(lecture)}"))
       expect(body).to include(I18n.t("lecture_home.leave.consequences.groups", groups: "Mo 10"))
       expect(body).to include(%(action="#{lecture_membership_path(lecture)}"))
