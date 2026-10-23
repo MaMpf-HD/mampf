@@ -107,6 +107,7 @@ RSpec.describe(LectureMembership, type: :model) do
       expect(LectureAudience.lectures_of(user)).not_to include(restricted)
       expect(board.enrolled_lectures).not_to include(restricted)
       expect(restricted.bookmarkable_by?(user)).to be(false)
+      expect(Rosters::LectureLeave.new(restricted, user).participating?).to be(false)
       expect(Rosters::UserPlaces.new(user).any?).to be(false)
     end
 
