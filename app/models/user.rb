@@ -787,7 +787,6 @@ class User < ApplicationRecord
     return false unless lecture.in?(lectures)
 
     lecture_bookmarks.where(lecture: lecture).destroy_all
-    favorite_lectures.delete(lecture)
 
     true
   end
