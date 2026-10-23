@@ -1,5 +1,6 @@
 import { test, expect, Page } from "./_support/fixtures";
 import { User } from "./_support/auth";
+import { expectDialogOpened } from "./_support/dialogs";
 
 test.describe("New lecture as admin", () => {
   test("Creates new lecture (via index page)", async ({ factory, admin: { page, user } }) => {
@@ -40,7 +41,7 @@ test.describe("New lecture as admin", () => {
 
     await page.getByTestId("new-lecture-button-admin-index").click();
     await page.getByTestId("new-lecture-course-select").selectOption({ label: course.title });
-    await page.keyboard.press("Escape");
+    await page.keyboard.press("Escape"); // close the course dropdown
     await page.getByTestId("new-lecture-submit").click();
     await expect(page.getByRole("alert")).toBeVisible();
     await expect(frame).not.toHaveAttribute("src", /./);
@@ -109,9 +110,8 @@ async function testCreateNewLecture(
   if (lectureNewPromise) await lectureNewPromise;
 
   if (isCoursePrefilled) {
-    // Bootstrap ignores closing the dialog until it has finished opening
     const dialog = page.getByRole("dialog", { name: "Create an event series" });
-    await expect(dialog.getByRole("document")).toHaveCSS("transform", "none");
+    await expectDialogOpened(dialog);
   }
   else {
     const selectDiv = page.getByTestId("new-lecture-course-select");
