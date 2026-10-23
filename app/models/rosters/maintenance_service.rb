@@ -23,10 +23,10 @@ module Rosters
     # A caller that removes the user within a larger transaction passes
     # notify: false, since the mail job is enqueued even if that transaction
     # rolls back.
-    def remove_user!(user, rosterable, notify: true)
+    def remove_user!(user, rosterable, notify: true, by: nil)
       removed = rosterable.with_lock do
         ensure_no_grading_data!(user, rosterable)
-        remove_user_without_lock!(user, rosterable)
+        remove_user_without_lock!(user, rosterable, by: by)
       end
       RosterNotificationMailer.removed(user, rosterable) if removed && notify
       removed
@@ -57,13 +57,13 @@ module Rosters
       # a talk or an exam owns its assessment, so leaving it means leaving the
       # gradebook behind. A tutorial is merely where a result is graded; the
       # assessment belongs to the assignment and survives the move.
-      # A lecture's removal cascades into its talks, and a talk graded for
-      # the person refuses; asked here first, the refusal reads as this
+      # A lecture's removal cascades into its talks and exams, and one graded
+      # for the person refuses; asked here first, the refusal reads as this
       # service's, not as a crash further down.
       def ensure_no_grading_data!(user, rosterable)
         assessment = rosterable.try(:assessment)
         held = assessment&.grading_data_for_user?(user)
-        held ||= rosterable.is_a?(Lecture) && graded_on_a_talk?(user, rosterable)
+        held ||= rosterable.is_a?(Lecture) && graded_on_a_talk_or_exam?(user, rosterable)
         return unless held
 
         raise(GradingDataPresentError,
@@ -71,10 +71,14 @@ module Rosters
               "for user #{user.id}")
       end
 
-      # The person's rows on the lecture's talks in one read, not one per talk.
-      def graded_on_a_talk?(user, lecture)
+      # The person's rows on the lecture's talks and exams at once, not one
+      # query per talk or exam.
+      def graded_on_a_talk_or_exam?(user, lecture)
+        assessments = Assessment::Assessment
+                      .where(assessable: lecture.talks)
+                      .or(Assessment::Assessment.where(assessable: lecture.exams))
         Assessment::Participation
-          .where(user: user, assessment: Assessment::Assessment.where(assessable: lecture.talks))
+          .where(user: user, assessment: assessments)
           .includes(:task_points, :assessment)
           .any? { |row| row.assessment.grading_data_for?(row) }
       end
@@ -101,8 +105,12 @@ module Rosters
         membership
       end
 
-      def remove_user_without_lock!(user, rosterable)
-        removed = rosterable.remove_user_from_roster!(user)
+      def remove_user_without_lock!(user, rosterable, by: nil)
+        removed = if rosterable.is_a?(Lecture)
+          rosterable.remove_user_from_roster!(user, by: by)
+        else
+          rosterable.remove_user_from_roster!(user)
+        end
         cascade_removal_from_subgroups!(user, rosterable)
         removed
       end
@@ -186,6 +194,10 @@ module Rosters
           next unless cohort.propagate_to_lecture?
 
           cohort.remove_user_from_roster!(user)
+        end
+
+        rosterable.exams.find_each do |exam|
+          exam.remove_user_from_roster!(user)
         end
       end
   end

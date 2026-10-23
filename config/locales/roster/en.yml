@@ -72,6 +72,18 @@ en:
     views:
       enrolled: 'Enrolled'
       registered: 'Registered'
+      left: 'Left'
+    left:
+      hint: >-
+        People who left the course or were removed from it. Their results and
+        hand-ins stay recorded; “Readmit” puts them back into the course.
+      column: 'Left'
+      by_self: 'Left on %{date}'
+      by_staff: 'Removed on %{date} by %{name}'
+      removed: 'Removed on %{date}'
+      empty: 'Nobody has left so far.'
+      readmit: 'Readmit'
+      readmit_confirm: 'Readmit %{user} to the course?'
     registrations:
       hint: >-
         These people are registered but not yet placed in their groups. That happens only once the
@@ -391,6 +403,7 @@ en:
       cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to registration process mode. Please disable self-enrollment first or keep skip registration processes enabled."
     warnings:
       confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in groups without lecture enrollment remain unaffected. Their performance data and any exam admission are deleted, including one granted by hand. Continue?'
+      confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment, and taken off the exam list of %{exams}. Memberships in groups without lecture enrollment remain unaffected. Their performance data and any exam admission are deleted, including one granted by hand. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'

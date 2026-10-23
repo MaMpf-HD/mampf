@@ -85,6 +85,12 @@ class Assignment < ApplicationRecord
     User.where(id: applicable_user_ids_not_in_tutorials_from_memberships)
   end
 
+  # People who left the lecture with work on this sheet that no tutorial
+  # holds, e.g. after their tutorial was deleted; no roster lists them.
+  def left_users_with_unheld_work
+    User.where(id: left_user_ids_with_work(tutorial_id: nil))
+  end
+
   def non_submitters_in_tutorials
     if past_deadline?
       non_submitters_in_tutorials_postdeadline
@@ -320,7 +326,8 @@ class Assignment < ApplicationRecord
     end
 
     def non_submitters_in_tutorial_predeadline(tutorial)
-      User.where(id: non_submitter_ids_in_tutorial_from_memberships(tutorial))
+      User.where(id: non_submitter_ids_in_tutorial_from_memberships(tutorial) |
+                     left_user_ids_with_work(tutorial_id: tutorial.id))
     end
 
     def non_submitters_in_tutorial_postdeadline(tutorial)
@@ -330,7 +337,19 @@ class Assignment < ApplicationRecord
     end
 
     def non_submitters_in_tutorials_predeadline
-      User.where(id: non_submitter_ids_in_tutorials_from_memberships)
+      User.where(id: non_submitter_ids_in_tutorials_from_memberships |
+                     left_user_ids_with_work(tutorial_id: lecture.tutorials.select(:id)))
+    end
+
+    # Before the deadline the rosters alone pick the rows, and they no longer
+    # list someone who has left; a test is marked during its week.
+    def left_user_ids_with_work(tutorial_id:)
+      return [] if assessment.blank?
+
+      rows = assessment.assessment_participations.where(tutorial_id: tutorial_id)
+      rows.with_grading_data.or(rows.submitted)
+          .where(user_id: lecture.excluded_lecture_memberships.select(:user_id))
+          .distinct.pluck(:user_id) - submitter_ids
     end
 
     def non_submitters_in_tutorials_postdeadline

@@ -73,7 +73,7 @@ module Rosters
         named = rosterables.select { |rosterable| rosterable.lecture.in?(lectures) }
         groups, lecture_rosters = named.partition { |rosterable| !rosterable.is_a?(Lecture) }
         (groups + lecture_rosters).each do |rosterable|
-          service.remove_user!(@user, rosterable, notify: false)
+          service.remove_user!(@user, rosterable, notify: false, by: @user)
         end
       end
 
@@ -82,7 +82,7 @@ module Rosters
          SpeakerTalkJoin.where(speaker: @user),
          lecture_cohort_memberships,
          ExamRosterEntry.active.where(user: @user),
-         LectureMembership.where(user: @user)]
+         LectureMembership.active.where(user: @user)]
       end
 
       def rosterables
@@ -90,7 +90,7 @@ module Rosters
           Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).to_a +
           Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).to_a +
           Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id)).to_a +
-          Lecture.where(id: LectureMembership.where(user: @user).select(:lecture_id)).to_a
+          Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id)).to_a
       end
 
       # A cohort outside a lecture names no lecture to give up, so it is not a

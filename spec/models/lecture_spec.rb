@@ -429,6 +429,17 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
 
+    it "takes back those who had left, with their bookmark" do
+      create(:lecture_membership, lecture: lecture, user: users.first).exclude!
+
+      expect do
+        lecture.ensure_roster_membership!([users.first.id])
+      end.not_to change(LectureMembership, :count)
+
+      expect(lecture.members).to include(users.first)
+      expect(lecture.users).to include(users.first)
+    end
+
     it "bookmarks the lecture for roster members" do
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
@@ -546,6 +557,24 @@ RSpec.describe(Lecture, type: :model) do
       create(:lecture_membership, lecture: lecture, user: user)
 
       expect(lecture.registration_mail_recipients.count).to eq(1)
+    end
+
+    it "leaves out a completed group campaign's registrant off the roster" do
+      completed = create(:registration_campaign, :completed, campaignable: lecture)
+      departed = create(:confirmed_user)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: completed, user: departed,
+             registration_item: completed.registration_items.first)
+
+      expect(lecture.registration_mail_recipients).not_to include(departed)
+    end
+
+    it "includes the members of the lecture's cohorts, also those off the roster" do
+      cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+      member = create(:confirmed_user)
+      create(:cohort_membership, cohort: cohort, user: member)
+
+      expect(lecture.registration_mail_recipients).to include(member)
     end
 
     it "does not include registrants of other lectures" do

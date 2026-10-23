@@ -47,6 +47,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     # Somebody who left the groups after handing in sits with the group that
     # has the sheet - as a file row or a roster row - not among those in none.
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
+                                            .or(@assignment.left_users_with_unheld_work)
                                             .where.not(id: @non_submitters.map(&:id) +
                                                            @stack.flat_map(&:user_ids))
     listed = @non_submitters.to_a + @non_tutorial_participants.to_a

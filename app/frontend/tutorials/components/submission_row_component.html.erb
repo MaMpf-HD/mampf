@@ -19,6 +19,18 @@
         <% @submission.users.each_with_index do |user, index| %>
           <div>
             <%= user.tutorial_name %>
+
+            <% if left_lecture?(user) %>
+              <span
+                class="
+                  badge bg-secondary-subtle text-secondary-emphasis
+                  fw-normal ms-1
+                "
+              >
+                <%= t("assessment.grading_tutorial.left_lecture") %>
+              </span>
+            <% end %>
+
             <% movement = movement_info_for_user(user) %>
 
             <% if movement %>
