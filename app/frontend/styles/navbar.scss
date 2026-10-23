@@ -74,13 +74,34 @@
     }
 }
 
-// Bootstrap turns Popper off for dropdowns inside .navbar-nav, so the Quick
-// Access menu is centered under its button by hand.
+// Quick Access: a subtle pill on the navbar gradient.
+.quick-access-toggle {
+    --bs-btn-color: #fff;
+    --bs-btn-border-color: rgba(255, 255, 255, 0.2);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(255, 255, 255, 0.15);
+    --bs-btn-hover-border-color: rgba(255, 255, 255, 0.2);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(255, 255, 255, 0.15);
+    --bs-btn-active-border-color: rgba(255, 255, 255, 0.2);
+}
+
+// Bootstrap turns Popper off for dropdowns inside .navbar-nav, so the menu is
+// centered under its button by hand.
 #lecturesDropdown .dropdown-menu {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    min-width: 16rem;
     max-width: calc(100vw - 2rem);
+}
+
+.quick-access-term {
+    opacity: 0.65;
+}
+
+.dropdown-item:active .quick-access-term {
+    opacity: 1;
 }
 
 // On phones the icons, the lecture switcher and the search wrap into rows

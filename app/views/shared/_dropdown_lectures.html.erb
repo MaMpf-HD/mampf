@@ -3,33 +3,34 @@
 <% pinned_lectures = current_user.quick_access_lectures %>
 <li class="nav-item">
   <div class="dropdown-center me-3">
-    <button class="btn btn-primary btn-sm dropdown-toggle"
+    <button class="btn btn-sm rounded-pill quick-access-toggle dropdown-toggle"
             type="button"
-            data-bs-toggle="dropdown">
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+      <i class="bi bi-pin-angle-fill" aria-hidden="true"></i>
       <%= t("navbar.quick_access") %>
     </button>
-    <div class="dropdown-menu" data-testid="quick-access-menu">
+    <div class="dropdown-menu shadow border-0 rounded-3 p-2" data-testid="quick-access-menu">
       <% if show_pin %>
         <% pinned = lecture.in?(pinned_lectures) %>
         <% pin_params = { lecture: { id: lecture.id } } %>
         <%= link_to pinned ? unpin_lecture_path(pin_params) : pin_lecture_path(pin_params),
-                    class: "dropdown-item",
+                    class: "dropdown-item rounded-2 small",
                     data: { turbo_method: :patch, turbo_stream: true } do %>
           <i class="bi <%= pinned ? "bi-pin-angle-fill" : "bi-pin-angle" %>"
              aria-hidden="true"></i>
           <%= t(pinned ? "navbar.unpin_lecture" : "navbar.pin_lecture",
                 title: lecture.course.short_title) %>
         <% end %>
-        <% if pinned_lectures.any? %>
-          <div class="dropdown-divider"></div>
-        <% end %>
+        <div class="dropdown-divider"></div>
       <% end %>
       <% if pinned_lectures.any? %>
         <% pinned_lectures.each do |l| %>
-          <%= link_to lecture_path(l), class: "dropdown-item" do %>
-            <%= l.course.short_title %>
+          <%= link_to lecture_path(l),
+                      class: "dropdown-item rounded-2 d-flex gap-2" do %>
+            <span class="text-truncate me-auto"><%= l.course.short_title %></span>
             <% if l.term %>
-              <span class="text-muted small">(<%= l.term.to_label_short %>)</span>
+              <span class="quick-access-term small flex-shrink-0"><%= l.term.to_label_short %></span>
             <% end %>
             <% unless l.published? %>
               <i class="fas fa-eye-slash redtext"
@@ -41,7 +42,8 @@
           <% end %>
         <% end %>
       <% else %>
-        <div class="dropdown-item-text text-muted">
+        <div class="dropdown-item-text text-center text-body-secondary">
+          <i class="bi bi-pin-angle d-block fs-4" aria-hidden="true"></i>
           <%= t("navbar.no_favorite_lectures_yet") %>
           <% unless show_pin %>
             <br><%= t("navbar.quick_access_hint") %>
