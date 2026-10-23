@@ -111,6 +111,30 @@ RSpec.describe("Profile", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(user.reload.lectures).to be_empty
     end
+
+    it "lets a tutor stop the mails about participants changing tutorial" do
+      create(:tutor_tutorial_join, tutor: user)
+
+      save_profile(email_for_tutorial_change: "0")
+
+      expect(user.reload.email_for_tutorial_change).to be(false)
+    end
+  end
+
+  describe "GET /profile/edit" do
+    it "offers a tutor the mails about participants changing tutorial" do
+      create(:tutor_tutorial_join, tutor: user)
+
+      get edit_profile_path
+
+      expect(response.body).to include("user[email_for_tutorial_change]")
+    end
+
+    it "does not offer them to someone who gives no tutorial" do
+      get edit_profile_path
+
+      expect(response.body).not_to include("user[email_for_tutorial_change]")
+    end
   end
 
   describe "GET /profile/request_data" do

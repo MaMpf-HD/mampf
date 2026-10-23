@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = [
     "button", "input", "podiumName", "podiumSpot", "saveButton",
-    "saveTooltip", "status",
+    "saveTooltip", "status", "withdrawButton",
   ];
 
   static values = {
@@ -105,6 +105,8 @@ export default class extends Controller {
       this.statusTarget.classList.toggle("registration-savebar-status--unsaved", changed);
     }
     this.dispatch("changed", { detail: { changed } });
+
+    if (this.hasWithdrawButtonTarget) this.withdrawButtonTarget.hidden = changed;
 
     if (this.hasSaveTooltipTarget) {
       this.saveTooltipTarget.tabIndex = showIncompleteTooltip ? 0 : -1;

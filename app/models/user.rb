@@ -237,6 +237,8 @@ class User < ApplicationRecord
         -> { where(email_for_correction_upload: true) }
   scope :email_for_submission_decision,
         -> { where(email_for_submission_decision: true) }
+  scope :email_for_tutorial_change,
+        -> { where(email_for_tutorial_change: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
 

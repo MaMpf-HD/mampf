@@ -2126,6 +2126,8 @@ de:
       neue angelegte Veranstaltungen oder Module
     email_for_news:
       Neuigkeiten über MaMpf
+    email_for_tutorial_change:
+      Wechsel von Teilnehmenden in meine Tutorien oder aus ihnen heraus
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
     please_update: >
@@ -2195,6 +2197,7 @@ de:
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
+    tutorials: Tutorien
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
@@ -3224,6 +3227,7 @@ de:
     optimization_failed: >
       Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
     upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    no_correction_file: Bitte wähle zuerst eine Datei aus.
     upload_failure_empty_file: >
       Die hochgeladene Datei ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
@@ -3641,6 +3645,7 @@ de:
       Emails für Abgaben-Verlassen: %{email_for_submission_leave}<br>
       Emails für Korrektur-Upload: %{email_for_correction_upload}<br>
       Emails für Abgabe-Entscheidung: %{email_for_submission_decision}<br>
+      Emails für Tutoriumswechsel: %{email_for_tutorial_change}<br>
       Name in Tutorials: %{name_in_tutorials}<br>
       Archiviert: %{archived}<br>
       Bild-Daten: %{image_data}<br>

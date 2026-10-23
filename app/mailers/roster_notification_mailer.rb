@@ -91,12 +91,13 @@ class RosterNotificationMailer < ApplicationMailer
 
       # Only a tutorial has someone responsible for it. The two sides hear different
       # news: work handed in before the move stays with the tutorial it was handed in to.
+      # Tutors who turned these mails off in their profile hear nothing.
       def notify_tutors(user, old_rosterable, new_rosterable)
         return unless old_rosterable.is_a?(Tutorial) && new_rosterable.is_a?(Tutorial)
 
         [[old_rosterable, :participant_left_group_email],
          [new_rosterable, :participant_joined_group_email]].each do |tutorial, template|
-          tutorial.tutors.each do |tutor|
+          tutorial.tutors.email_for_tutorial_change.each do |tutor|
             with(participant: user,
                  rosterable: tutorial,
                  old_rosterable: old_rosterable,

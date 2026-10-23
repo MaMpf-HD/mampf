@@ -176,6 +176,14 @@ describe RosterNotificationMailer do
           .with(a_hash_including(params: a_hash_including(recipient: new_tutor)))
       end
 
+      it "spares a tutor who turned these mails off" do
+        old_tutor.update!(email_for_tutorial_change: false)
+
+        expect do
+          described_class.moved(user, old_tutorial, new_tutorial)
+        end.not_to have_enqueued_mail(described_class, :participant_left_group_email)
+      end
+
       it "names the participant and where their earlier work stays" do
         email = described_class.with(
           participant: user,
