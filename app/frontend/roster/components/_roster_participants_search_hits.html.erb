@@ -1,0 +1,5 @@
+<% component.search_hits_elsewhere.each do |place, hits| %>
+  <div class="mt-1">
+    <%= t("roster.search_hits", count: hits, place: place) %>
+  </div>
+<% end %>

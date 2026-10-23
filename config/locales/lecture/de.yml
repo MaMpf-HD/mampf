@@ -19,6 +19,7 @@ de:
     search:
       go_to_search: Vorlesungen suchen
       placeholder: Suche nach Vorlesungen...
+      all_terms: In allen Semestern suchen
       bookmark: Merken
       bookmark_lecture: "%{lecture} merken"
       registration_open: Anmeldung offen
@@ -31,6 +32,10 @@ de:
     intro:
       more: "Weiterlesen"
       less: "Weniger anzeigen"
+    new_result:
+      title: "Dein Ergebnis in %{title}"
+      grade: "Note"
+      close: "Schließen"
     focus:
       campaign: "Anmeldung offen"
       exam: "Deine nächste Klausur"
@@ -55,13 +60,38 @@ de:
       forum:
         one: "1 ungelesenes Thema im Forum"
         other: "%{count} ungelesene Themen im Forum"
+    content:
+      title: "In der Vorlesung"
+      last_lesson: "Letzte Sitzung"
+      what_we_did: "Was wir gemacht haben"
+      notes: "Notizen"
+      video: "Video"
+      new_media: "Neu für Dich"
+      more_media:
+        one: "und 1 weiteres"
+        other: "und %{count} weitere"
+      mark_seen: "als gesehen markieren"
+      position: "Wo wir stehen"
+      progress: "Abschnitt %{reached} von %{total}"
+      over: "Vorlesung beendet"
+      contents: "Inhalt"
+      one_lesson: "1 Sitzung, %{date}"
+      lessons: "%{count} Sitzungen, %{from} – %{to}"
+      chapters:
+        one: "1 Kapitel"
+        other: "%{count} Kapitel"
+      sections:
+        one: "1 Abschnitt"
+        other: "%{count} Abschnitte"
+      revision: "Zum Wiederholen"
+      materials: "Material"
     history:
       title: "Frühere Anmeldungen (%{count})"
       completed: "Abgeschlossen · Frist war %{deadline}"
       ended: "Anmeldung beendet am %{deadline}"
       closed_early: "Anmeldung vor der geplanten Frist (%{deadline}) beendet"
     tutor:
-      title: "Deine Tutorien"
+      title: "Deine Gruppen"
       members:
         one: "1 Person"
         other: "%{count} Personen"

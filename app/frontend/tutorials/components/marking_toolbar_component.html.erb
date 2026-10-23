@@ -19,7 +19,7 @@
       </button>
 
       <ul class="dropdown-menu dropdown-menu-end">
-        <% if tutor? && hand_in_files? %>
+        <% if corrects? && hand_in_files? %>
           <li>
             <%= button_tag t("submission.bulk_upload"),
                            type: "button",

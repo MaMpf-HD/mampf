@@ -2,7 +2,15 @@
   <% if gradable_talks.any? %>
     <div data-controller="status-filter">
       <div class="my-3">
-        <%= render summary %>
+        <div
+          class="
+            d-flex flex-wrap justify-content-between align-items-baseline
+            gap-2
+          "
+        >
+          <%= render summary %>
+          <%= render ResultsReleaseComponent.new(seminar: @seminar) %>
+        </div>
 
         <%= render MarkingFilterComponent.new(id: "talks-#{@seminar.id}",
                                                status_options: status_options) %>

@@ -265,6 +265,88 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
+  describe "#students" do
+    def names(panel)
+      panel.students.map(&:tutorial_name)
+    end
+
+    it "sorts by last name, and by the shown name without one" do
+      students = [
+        create(:confirmed_user, first_name: "Anna", last_name: "Zimmer"),
+        create(:confirmed_user, first_name: "Ben", last_name: "Özdemir"),
+        create(:confirmed_user, first_name: nil, last_name: nil, name_in_tutorials: "Nick"),
+        create(:confirmed_user, first_name: "Clara", last_name: "Becker")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(names(panel)).to eq(["Clara Becker", "Nick", "Ben Özdemir", "Anna Zimmer"])
+    end
+
+    it "puts someone known by first name alone before a last name that equals it" do
+      students = [
+        create(:confirmed_user, first_name: "Ada", last_name: "Max"),
+        create(:confirmed_user, first_name: "Max", last_name: nil)
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(names(panel)).to eq(["Max", "Ada Max"])
+    end
+
+    # The participants tab sorts in SQL, where unaccent spells ß out as ss.
+    it "sorts ß as ss, like the participants tab" do
+      students = [
+        create(:confirmed_user, first_name: "Eva", last_name: "Maße"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Masse")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students.reverse)
+
+      expect(panel.students).to eq(User.where(id: students).by_last_name.to_a)
+    end
+
+    it "keeps letters of other scripts apart" do
+      students = [
+        create(:confirmed_user, first_name: "Eva", last_name: "Ωι"),
+        create(:confirmed_user, first_name: "Eva", last_name: "Άλφα")
+      ]
+      panel = described_class.new(registerable: tutorial, students: students)
+
+      expect(names(panel)).to eq(["Eva Άλφα", "Eva Ωι"])
+    end
+  end
+
+  describe "#copy_email_label" do
+    it "names the address the button copies" do
+      student = build(:confirmed_user, email: "alice@example.com")
+
+      I18n.with_locale(:en) do
+        expect(component.copy_email_label(student))
+          .to eq("Copy email address: alice@example.com")
+      end
+    end
+  end
+
+  describe "the button that copies every address" do
+    let(:label) { I18n.t("buttons.copy_all_email_addresses") }
+
+    it "copies the addresses of everyone in the panel, in the panel's order" do
+      students = [create(:confirmed_user, last_name: "Brown", email: "bob@example.com"),
+                  create(:confirmed_user, last_name: "Adams", email: "alice@example.com")]
+      rendered = render_inline(described_class.new(registerable: tutorial,
+                                                   students: students))
+
+      button = rendered.at_css("button[aria-label='#{label}']")
+      expect(button.ancestors("[data-controller='clipboard']").first
+                   .attr("data-clipboard-text-value"))
+        .to eq("alice@example.com, bob@example.com")
+    end
+
+    it "is missing from an empty panel" do
+      rendered = render_inline(described_class.new(registerable: tutorial))
+
+      expect(rendered.at_css("button[aria-label='#{label}']")).to be_nil
+    end
+  end
+
   describe "#campaign_wishes" do
     let(:campaign) { double(id: 1) }
 
@@ -361,8 +443,49 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         .to eq(I18n.t("registration.user_registration.index.title"))
     end
 
-    it "returns default participants title fallback" do
-      expect(described_class.new.panel_title).to eq(I18n.t("roster.details.participants"))
+    it "calls a group's people its members" do
+      expect(described_class.new.panel_title).to eq(I18n.t("roster.details.members"))
+    end
+  end
+
+  describe "#program_distribution?" do
+    let(:people) { create_list(:confirmed_user, 2) }
+
+    it "sums up the programs of a group" do
+      expect(described_class.new(registerable: create(:tutorial), students: people)
+                            .program_distribution?).to be(true)
+    end
+
+    it "leaves them beside the names for a single person" do
+      expect(described_class.new(registerable: create(:tutorial), students: people.first(1))
+                            .program_distribution?).to be(false)
+    end
+
+    it "leaves them beside the names for a talk" do
+      expect(described_class.new(registerable: create(:talk), students: people)
+                            .program_distribution?).to be(false)
+    end
+  end
+
+  # "Participants" is what the lecture's own tab calls the people enrolled in
+  # it; a group without enrollment has members who are not among them.
+  describe "a group without enrollment" do
+    let(:lecture) { create(:lecture) }
+    let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+    it "says its members do not count as participants" do
+      rendered = render_inline(described_class.new(registerable: cohort,
+                                                   students: [create(:confirmed_user)]))
+
+      expect(rendered.text).to include(I18n.t("roster.details.member_count", count: 1),
+                                       I18n.t("roster.details.without_enrollment_hint"))
+    end
+
+    it "says nothing of the kind for a group with enrollment" do
+      cohort = create(:cohort, context: lecture, propagate_to_lecture: true)
+      rendered = render_inline(described_class.new(registerable: cohort))
+
+      expect(rendered.text).not_to include(I18n.t("roster.details.without_enrollment_hint"))
     end
   end
 

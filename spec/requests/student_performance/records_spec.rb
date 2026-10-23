@@ -517,6 +517,17 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(listed_names).to eq(["Grace Hopper"])
         end
 
+        it "lists the students by last name" do
+          { ada => ["Ada", "Lovelace"], grace => ["Grace", "Hopper"],
+            nina => ["Nina", "Simone"] }.each do |user, (first, last)|
+            user.update!(first_name: first, last_name: last)
+          end
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(listed_names).to eq(["Grace Hopper", "Ada Lovelace", "Nina Simone"])
+        end
+
         # The tutorial filter has its own examples above; what this one is
         # about is that the search narrows what the filter left standing.
         it "searches within the tutorial that is filtered for" do
@@ -614,6 +625,20 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
                            .find { |th| th["aria-sort"] == "descending" }
 
           expect(header.at_css("a")["href"]).to include("dir=asc")
+        end
+
+        # Without a way back, the order by name is gone once a column is
+        # sorted: the third click leaves the sort out.
+        it "offers the order by name on the column it sorted ascending" do
+          get lecture_student_performance_records_path(
+            lecture, sort: "points", dir: "asc"
+          )
+
+          header = Nokogiri::HTML(response.body)
+                           .css("thead tr")[1].css("th")
+                           .find { |th| th["aria-sort"] == "ascending" }
+
+          expect(header.at_css("a")["href"]).not_to include("sort=")
         end
       end
 

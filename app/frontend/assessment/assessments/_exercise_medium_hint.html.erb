@@ -1,0 +1,16 @@
+<%# locals: (lecture:, no_exercises:) %>
+<%#
+  The form cannot show where its media come from: exercises are created in
+  the content tab, and publishing one can create its assignment.
+%>
+
+<div class="form-text">
+  <% if no_exercises %>
+    <%= t("assessment.exercise_medium_hint.empty") %>
+  <% end %>
+
+  <%= t("assessment.exercise_medium_hint.text_html",
+        link: link_to(t("assessment.exercise_medium_hint.link"),
+                      edit_lecture_path(lecture, tab: "content"),
+                      data: { turbo_frame: "_top" })) %>
+</div>

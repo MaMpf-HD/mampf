@@ -101,18 +101,6 @@ FactoryBot.define do
       end
     end
 
-    trait :for_lecture_enrollment do
-      description { "Lecture Enrollment" }
-      allocation_mode { :first_come_first_served }
-
-      after(:create) do |campaign|
-        lecture = campaign.campaignable
-        create(:registration_item,
-               registration_campaign: campaign,
-               registerable: lecture)
-      end
-    end
-
     trait :with_policies do
       after(:build) do |campaign|
         create(:registration_policy, :institutional_email,

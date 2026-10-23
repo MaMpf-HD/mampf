@@ -46,14 +46,14 @@ class ExamRegistrationTabComponent < ViewComponent::Base
     @participants_entries ||= exam.exam_roster_entries
                                   .includes(user: User::PROGRAM_PRELOAD)
                                   .joins(:user)
-                                  .merge(User.order(:name))
+                                  .merge(User.by_last_name)
   end
 
   def excluded_participants_entries
     @excluded_participants_entries ||= exam.excluded_exam_roster_entries
                                            .includes(user: User::PROGRAM_PRELOAD)
                                            .joins(:user)
-                                           .merge(User.order(:name))
+                                           .merge(User.by_last_name)
   end
 
   def registration_header_locals
@@ -95,7 +95,7 @@ class ExamRegistrationTabComponent < ViewComponent::Base
                                         .where(status: :rejected)
                                         .includes(:user)
                                         .joins(:user)
-                                        .merge(User.order(:name))
+                                        .merge(User.by_last_name)
   end
 
   def not_on_roster_entries
@@ -119,9 +119,8 @@ class ExamRegistrationTabComponent < ViewComponent::Base
         }
       end
 
-      entries_by_user_id.values.sort_by do |entry|
-        [entry[:user].name.to_s, entry[:user].email.to_s]
-      end
+      order = User.where(id: entries_by_user_id.keys).by_last_name.pluck(:id)
+      entries_by_user_id.values_at(*order)
     end
   end
 

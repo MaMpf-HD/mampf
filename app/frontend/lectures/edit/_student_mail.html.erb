@@ -11,7 +11,9 @@
   <div class="card-body">
     <%= render partial: "student_messages/form",
                locals: { lecture: lecture, catalog: catalog, fixed_audience: nil,
-                         return_to: edit_lecture_path(lecture, tab: "communication") } %>
+                         return_to: edit_lecture_path(lecture, tab: "communication"),
+                         preset: { audience: params[:mail_audience],
+                                   subject: params[:mail_subject] } } %>
 
     <%= render partial: "student_messages/sent",
                locals: { messages: lecture.student_messages.staff

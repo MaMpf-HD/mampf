@@ -27,4 +27,15 @@ RSpec.describe("E2e::DatabaseCleaner", type: :request) do
     expect(response).to have_http_status(:bad_request)
     expect(response.parsed_body["error"]).to include("Deadlocked")
   end
+
+  # The rate limits count in the cache, and a test run again within the hour
+  # must not be refused by the runs before it.
+  it "clears the cache along with the database" do
+    allow(DatabaseCleaner).to receive(:clean_with).and_return([])
+    Rails.cache.write("rate-limit:support_requests:signed_out:127.0.0.1", 5)
+
+    post "/e2e/database_cleaner"
+
+    expect(Rails.cache.read("rate-limit:support_requests:signed_out:127.0.0.1")).to be_nil
+  end
 end

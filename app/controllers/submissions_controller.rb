@@ -1,12 +1,15 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
+  include GradingTable
+
   # Throttle group-join code entry so the short join token cannot be brute-forced.
-  rate_limit to: 10, within: 1.minute, only: [:join, :redeem_code],
+  rate_limit to: 10, within: 1.minute, only: [:join, :confirm_code, :redeem_code],
              by: -> { current_user&.id || request.remote_ip },
-             with: -> { redirect_to :start, alert: I18n.t("submission.too_many_attempts") }
+             with: -> { redirect_to :root, alert: I18n.t("submission.too_many_attempts") }
 
   before_action :set_submission, except: [:index, :new, :create, :enter_code,
-                                          :redeem_code, :join, :cancel_new,
+                                          :confirm_code, :redeem_code, :join,
+                                          :cancel_new,
                                           :seen, :seen_all]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new, :join,
                                         :seen]
@@ -19,10 +22,12 @@ class SubmissionsController < ApplicationController
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   authorize_resource
+  around_action :hold_submission, only: [:update, :leave, :add_correction,
+                                         :delete_correction, :accept, :reject, :hand_over]
 
   class TutorialNotRosteredError < StandardError; end
   rescue_from TutorialNotRosteredError do
-    redirect_to :start, alert: t("submission.tutorial_not_assigned")
+    redirect_to :root, alert: t("submission.tutorial_not_assigned")
   end
 
   def current_ability
@@ -147,6 +152,17 @@ class SubmissionsController < ApplicationController
     @invitations = hub.invitations_for(@assignment)
   end
 
+  # The link in an invitation mail only asks: a GET that joined would let any
+  # page the reader opens put them on a team.
+  def confirm_code
+    @submission = Submission.find_by(token: params[:code])
+    @assignment = @submission&.assignment
+    check_code_validity
+    return redirect_to(:root, alert: t("submission.failed_redemption", message: @error)) if @error
+
+    rostered_tutorial!(@assignment.lecture)
+  end
+
   def redeem_code
     code = params[:code]
     @submission = Submission.find_by(token: code)
@@ -158,8 +174,8 @@ class SubmissionsController < ApplicationController
                             assignment: @submission.assignment.title)
       return
     end
-    redirect_to :start, alert: t("submission.failed_redemption",
-                                 message: @error)
+    redirect_to :root, alert: t("submission.failed_redemption",
+                                message: @error)
   end
 
   def join
@@ -179,12 +195,19 @@ class SubmissionsController < ApplicationController
   # Leaving is refused for the last person on a team - that is a delete, and it
   # is a different button. The card says so rather than quietly doing nothing.
   def leave
-    if @submission.users.one?
+    left = ActiveRecord::Base.transaction do
+      next false if @submission.users.one?
+
+      clear_submitted_at([current_user])
+      tutorials_before = @submission.member_tutorial_ids
+      @submission.users.delete(current_user)
+      @submission.reload.place_team!(tutorials_before)
+      true
+    end
+    unless left
       @card_error = I18n.t("submission.no_partners_no_leave")
       return render_card(status: :unprocessable_content)
     end
-    clear_submitted_at([current_user])
-    @submission.users.delete(current_user)
     send_leave_email
     @submission = nil
     render_card_and_standing
@@ -204,9 +227,9 @@ class SubmissionsController < ApplicationController
                        disposition: @disposition,
                        fallback: @submission.manuscript_filename || "manuscript")
     elsif @submission
-      redirect_to :start, alert: t("submission.no_manuscript_yet")
+      redirect_to :root, alert: t("submission.no_manuscript_yet")
     else
-      redirect_to :start, alert: t("submission.exists_no_longer")
+      redirect_to :root, alert: t("submission.exists_no_longer")
     end
   end
 
@@ -216,9 +239,9 @@ class SubmissionsController < ApplicationController
                        disposition: @disposition,
                        fallback: @submission.correction_filename || "correction")
     elsif @submission
-      redirect_to :start, alert: t("submission.no_correction_yet")
+      redirect_to :root, alert: t("submission.no_correction_yet")
     else
-      redirect_to :start, alert: t("submission.exists_no_longer")
+      redirect_to :root, alert: t("submission.exists_no_longer")
     end
   end
 
@@ -262,7 +285,13 @@ class SubmissionsController < ApplicationController
 
   # With the refused file still assigned, the row would show it as saved;
   # the reload drops it.
+  # Saved without a file, the form posts an empty string that the attacher
+  # ignores: the row would keep what it had and the team be told again.
   def add_correction
+    if correction_params[:correction].blank?
+      return render_correction_edit([t("submission.no_correction_file")])
+    end
+
     @submission.assign_attributes(correction_params)
     errors = @submission.check_file_properties_any(@submission.correction&.metadata,
                                                    :correction)[:correction]
@@ -273,9 +302,7 @@ class SubmissionsController < ApplicationController
 
     errors = @submission.errors.map(&:message) if errors.blank?
     @submission.reload
-    render partial: "submissions/correction_edit_wrap",
-           locals: { submission: @submission, errors: errors },
-           status: :unprocessable_content
+    render_correction_edit(errors)
   end
 
   def delete_correction
@@ -304,11 +331,45 @@ class SubmissionsController < ApplicationController
     rerender_submission_row
   end
 
+  # Answers with the whole marking table: in the old tutorial's table the
+  # team's row turns read-only, in the lecture's its tutorial changes.
+  def hand_over
+    @tutorial = @submission.tutorial
+    target = @lecture.tutorials.find_by(id: params[:tutorial_id])
+    unless @submission.hand_over!(target)
+      return respond_with_flash(:alert, t("submission.hand_over_refused"),
+                                status: :unprocessable_content)
+    end
+
+    grading_scope = grading_table(@tutorial, @lecture)
+    flash.now[:notice] = t("submission.handed_over", tutorial: target.title)
+    table = TutorialMarkingTableComponent.new(assignment: @assignment,
+                                              grading_scope: grading_scope)
+    render turbo_stream: [turbo_stream.replace("marking-table", html: render_to_string(table)),
+                          stream_flash]
+  end
+
   private
+
+    def render_correction_edit(errors)
+      render partial: "submissions/correction_edit_wrap",
+             locals: { submission: @submission, errors: errors },
+             status: :unprocessable_content
+    end
+
+    # A write on a submission waits for a hand-over of it and is then asked
+    # again against the tutorial it has now.
+    def hold_submission
+      ActiveRecord::Base.transaction do
+        @submission.lock!
+        authorize!(action_name.to_sym, @submission)
+        yield
+      end
+    end
 
     # A sheet from before there were states has no line above its table.
     def rerender_submission_row
-      grading_scope = params[:grading_scope_type] == "tutorial" ? @tutorial : @tutorial.lecture
+      grading_scope = grading_table(@tutorial, @tutorial.lecture)
       respond_to do |format|
         format.turbo_stream do
           row = turbo_stream.replace(
@@ -556,9 +617,10 @@ class SubmissionsController < ApplicationController
     # an edit must work on a sheet nobody may edit any more.
     #
     # `index` is not among them: it takes a lecture rather than a sheet and is
-    # gated by `check_student_status`. Neither is `redeem_code`, which takes a
-    # code and nothing else - there is no sheet to check until the code resolves
-    # to one, and `check_code_validity` ends on the same enrolment test.
+    # gated by `check_student_status`. Neither are `confirm_code` and
+    # `redeem_code`, which take a code and nothing else - there is no sheet to
+    # check until the code resolves to one, and `check_code_validity` ends on
+    # the same enrolment test.
     def authorize_sheet
       authorize!(:create, Submission.new(assignment: @assignment))
     end
@@ -607,53 +669,65 @@ class SubmissionsController < ApplicationController
     end
 
     def send_upload_email(users)
-      users.email_for_submission_upload.each do |u|
+      mails = users.email_for_submission_upload.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 uploader: current_user,
                                 filename: @submission.manuscript_filename)
-                          .submission_upload_email.deliver_later
+                          .submission_upload_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_upload_removal_email(users)
-      users.email_for_submission_removal.each do |u|
+      mails = users.email_for_submission_removal.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 remover: current_user,
                                 filename: @old_filename)
-                          .submission_upload_removal_email.deliver_later
+                          .submission_upload_removal_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_correction_upload_email(users)
-      users.email_for_correction_upload.each do |u|
+      mails = users.email_for_correction_upload.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 tutor: current_user)
-                          .correction_upload_email.deliver_later
+                          .correction_upload_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_acceptance_email(users)
-      users.email_for_submission_decision.each do |u|
+      mails = users.email_for_submission_decision.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission)
-                          .submission_acceptance_email.deliver_later
+                          .submission_acceptance_email
       end
+      deliver_after_commit(mails)
     end
 
     def send_rejection_email(users)
-      users.email_for_submission_decision.each do |u|
+      mails = users.email_for_submission_decision.map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission)
-                          .submission_rejection_email.deliver_later
+                          .submission_rejection_email
       end
+      deliver_after_commit(mails)
+    end
+
+    # The mails are built with the state the action leaves; they are queued
+    # once it commits, so the worker reads that state too, and a rolled-back
+    # action sends nothing.
+    def deliver_after_commit(mails)
+      ActiveRecord.after_all_transactions_commit { mails.each(&:deliver_later) }
     end
 
     def check_code_validity
@@ -695,12 +769,12 @@ class SubmissionsController < ApplicationController
       # reader's own row is held from the check to the write: points entered
       # on it in between would be the mark the check is there to keep.
       joined = ActiveRecord::Base.transaction do
+        @submission.lock!
         own_row&.lock!
-        if marked_on_own?
-          @error = I18n.t("submission.marked_on_own")
-          raise(ActiveRecord::Rollback)
-        end
+        check_code_validity
+        raise(ActiveRecord::Rollback) if @error
 
+        tutorials_before = @submission.member_tutorial_ids
         @join = UserSubmissionJoin.new(user: current_user, submission: @submission)
         unless @join.save
           @error = @join.errors[:base].join(", ")
@@ -709,6 +783,7 @@ class SubmissionsController < ApplicationController
 
         remove_invitee_status
         sync_assessment_participations(users: [current_user]) if @submission.manuscript
+        @submission.reload.place_team!(tutorials_before)
         true
       end
       send_join_email if joined
@@ -737,13 +812,14 @@ class SubmissionsController < ApplicationController
     end
 
     def send_leave_email
-      (@submission.users.email_for_submission_leave - [current_user]).each do |u|
+      mails = (@submission.users.email_for_submission_leave - [current_user]).map do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,
                                 submission: @submission,
                                 user: current_user)
-                          .submission_leave_email.deliver_later
+                          .submission_leave_email
       end
+      deliver_after_commit(mails)
     end
 
     def remove_invitee_status
@@ -754,7 +830,7 @@ class SubmissionsController < ApplicationController
     def check_student_status
       return if current_user.proper_student_in?(@lecture)
 
-      if current_user.in?(@lecture.tutors)
+      if @lecture.tutor?(current_user)
         redirect_to lecture_tutorials_path(@lecture)
       else
         redirect_to lecture_home_path(@lecture)
@@ -810,8 +886,7 @@ class SubmissionsController < ApplicationController
         participation.task_points.destroy_all if participation.persisted?
 
         participation.submitted_at = Time.current
-        participation.tutorial_id ||=
-          Assessment::Participation.tutorial_for(user, lecture)
+        participation.tutorial_id = @submission.tutorial_id
         participation.save!
       rescue ActiveRecord::RecordNotUnique
         retry

@@ -3,16 +3,22 @@
 # and actions to assign/move them.
 class RosterParticipantsComponent < ViewComponent::Base
   SECTION_TARGETS = {
+    view_switch: "roster_participants_view_switch",
+    campaign_switch: "roster_participants_campaign_switch",
     top_nav: "roster_participants_top_nav",
     header_controls: "roster_participants_header_controls",
     results: "roster_participants_results"
   }.freeze
 
   SECTION_PARTIALS = {
+    view_switch: "roster/components/roster_participants_view_switch",
+    campaign_switch: "roster/components/roster_participants_campaign_switch",
     top_nav: "roster/components/roster_participants_top_nav",
     header_controls: "roster/components/roster_participants_header_controls",
     results: "roster/components/roster_participants_results"
   }.freeze
+
+  REGISTRATIONS_PARTIAL = "roster/components/roster_participants_registrations".freeze
 
   def self.section_targets
     SECTION_TARGETS
@@ -24,24 +30,106 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   # rubocop:disable Metrics/ParameterLists
   def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",
-                 search_string: nil, counts: {}, section: :full)
+                 view: "enrolled", campaign: nil, search_string: nil, counts: {},
+                 section: :full)
     super()
     @lecture = lecture
     @group_type = group_type
     @participants = participants
     @pagy = pagy
     @filter_mode = filter_mode
+    @view = view || "enrolled"
+    @campaign = campaign
     @search_string = search_string
     @counts = counts
     @section = section
   end
   # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :group_type, :pagy, :filter_mode, :search_string, :counts, :section
+  attr_reader :lecture, :group_type, :pagy, :filter_mode, :view, :campaign, :search_string,
+              :counts, :section
 
-  # Returns the officially enrolled participants (Lecture Superset).
+  # Returns the officially enrolled participants (Lecture Superset), or in the
+  # registered view the users with a running registration.
   def participants
     @participants ||= []
+  end
+
+  def filtered?
+    search_string.present? || filter_mode != "all"
+  end
+
+  # In this view, the participants are users with a running registration
+  # rather than lecture memberships.
+  def registered_view?
+    view == "registered"
+  end
+
+  def registration_entry(user)
+    @registration_entry_by_user ||=
+      Rosters::RunningRegistrations.new(lecture, campaign: campaign)
+                                   .entry_by_user(participants.map(&:id))
+    @registration_entry_by_user[user.id]
+  end
+
+  # Pairs each running campaign with the number of people the search finds
+  # there, so the selector shows where a search hits.
+  def running_campaigns
+    @running_campaigns ||= begin
+      running = Rosters::RunningRegistrations.new(lecture, search: search_string)
+      counts = running.counts_by_campaign
+      running.campaigns.includes(:registration_items).map { |c| [c, counts.fetch(c.id, 0)] }
+    end
+  end
+
+  def registration_state(entry)
+    if entry.allocated?
+      item = entry.allocated_item
+      return t("roster.registrations.states.not_allocated") unless item
+
+      t("roster.registrations.states.allocated", group: item.title)
+    elsif entry.campaign.preference_based?
+      t("roster.registrations.states.awaiting_allocation")
+    elsif entry.registrations.any?(&:confirmed?)
+      t("roster.registrations.states.confirmed")
+    else
+      t("roster.registrations.states.pending")
+    end
+  end
+
+  # Names the places an empty search result points to, as [label, hits]: the
+  # other view and, in the registered view, the other running campaigns.
+  def search_hits_elsewhere
+    return [] if search_string.blank?
+
+    hits = if registered_view?
+      [[t("roster.views.enrolled"), counts[:total]]] +
+        running_campaigns.reject { |c, _| c == campaign }
+                         .map { |c, n| [c.student_facing_title, n] }
+    else
+      [[t("roster.views.registered"), counts[:registered]]]
+    end
+    hits.select { |_, n| n.to_i.positive? }
+  end
+
+  # Counts people in a group without enrollment who are missing from this
+  # list, since a lecturer finds them in the group and expects them here.
+  def outside_enrollment_count
+    @outside_enrollment_count ||=
+      CohortMembership.joins(:cohort)
+                      .merge(Cohort.for_lectures(lecture).where(propagate_to_lecture: false))
+                      .where.not(user_id: lecture.lecture_memberships.select(:user_id))
+                      .distinct.count(:user_id)
+  end
+
+  def program_columns
+    if registered_view?
+      registered = Rosters::RunningRegistrations.new(lecture, campaign: campaign).people
+      return { t("roster.views.registered") => ProgramDistribution.new(registered) }
+    end
+
+    enrolled = User.where(id: lecture.lecture_memberships.select(:user_id))
+    { t("roster.programs.enrolled") => ProgramDistribution.new(enrolled) }
   end
 
   # Returns participants who are assigned to at least one functional group
@@ -86,6 +174,8 @@ class RosterParticipantsComponent < ViewComponent::Base
                             anchor_string: 'data-turbo-stream="true"',
                             querify: lambda { |p|
                               p["filter"] = @filter_mode
+                              p["view"] = @view if registered_view?
+                              p["campaign"] = @campaign.id if @campaign
                               p["search"] = @search_string if @search_string.present?
                               p["group_type"] =
                                 if @group_type.is_a?(Array)
@@ -109,6 +199,8 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   def section_partial
+    return REGISTRATIONS_PARTIAL if section == :results && registered_view?
+
     self.class.section_partials.fetch(section)
   end
 
@@ -116,8 +208,8 @@ class RosterParticipantsComponent < ViewComponent::Base
 
     def section_kwargs
       { lecture: lecture, group_type: group_type, participants: participants,
-        pagy: pagy, filter_mode: filter_mode, search_string: search_string,
-        counts: counts }
+        pagy: pagy, filter_mode: filter_mode, view: view, campaign: campaign,
+        search_string: search_string, counts: counts }
     end
 
     def all_assignable_groups

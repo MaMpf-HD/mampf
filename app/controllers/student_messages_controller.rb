@@ -21,7 +21,7 @@ class StudentMessagesController < ApplicationController
     render turbo_stream: turbo_stream.replace(
       "student-message-recipients",
       partial: "student_messages/recipients",
-      locals: { emails: emails_of(audiences) }
+      locals: { emails: emails_of(audiences), picker: true }
     )
   end
 

@@ -3,7 +3,7 @@ FactoryBot.define do
           class: "StudentPerformance::Rule" do
     association :lecture, factory: :lecture
     active { false }
-    # A rule must constrain something, so the default carries a threshold.
+    # Most specs are about the threshold, so the default carries one.
     threshold_mode { :percentage }
     min_percentage { 50 }
 

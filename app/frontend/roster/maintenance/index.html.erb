@@ -2,4 +2,11 @@
   <div class="mb-3">
     <%= render "registration/campaigns/index", lecture: @lecture %>
   </div>
+
+  <%= render ProgramDistributionComponent.new(
+        columns: {
+          t("roster.programs.everyone") => ProgramDistribution.new(@lecture.students)
+        },
+        help: t("roster.programs.everyone_help")
+      ) %>
 <% end %>

@@ -12,7 +12,7 @@ export class LoginPage {
   }
 
   async login(email: string, password?: string) {
-    await this.page.getByLabel("Email").fill(email);
+    await this.page.getByLabel("Email", { exact: true }).fill(email);
     if (password) {
       await this.page.getByLabel("Password", { exact: true }).fill(password);
     }

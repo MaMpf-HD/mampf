@@ -26,6 +26,9 @@ class SearchController < ApplicationController
     render partial: "tag_search_frame" if turbo_frame_request?
   end
 
+  def staff
+  end
+
   private
 
     def check_for_consent

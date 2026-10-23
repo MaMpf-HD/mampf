@@ -34,6 +34,33 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
     end
   end
 
+  describe "a new result" do
+    let(:exam) { create(:exam, lecture: lecture, title: "Main Exam") }
+    let!(:participation) do
+      create(:assessment_participation, assessment: exam.assessment, user: user,
+                                        status: :reviewed, grade_numeric: 2.0)
+    end
+
+    it "points at the lecture home once the result is published" do
+      exam.assessment.update!(results_published_at: Time.current)
+
+      action = render_actions.at_css("[data-testid='quick-action-result']")
+
+      expect(action["href"]).to eq("/lectures/#{lecture.id}")
+      expect(action.text)
+        .to include(I18n.t("dashboard.quick_actions.result.label", count: 1, title: "Main Exam"))
+    end
+
+    it "stays quiet before the result is published and after it was closed" do
+      expect(render_actions.css("[data-testid='quick-action-result']")).to be_empty
+
+      exam.assessment.update!(results_published_at: Time.current)
+      participation.update!(result_seen_at: Time.current)
+
+      expect(render_actions.css("[data-testid='quick-action-result']")).to be_empty
+    end
+  end
+
   describe "an open exam registration" do
     let(:exam) { create(:exam, :with_date, lecture: lecture) }
 
@@ -63,18 +90,87 @@ RSpec.describe(LectureQuickActionsComponent, type: :component) do
                       unread_forum_topics: 2,
                       unread_comments: 1)
     end
+    let(:board) { Thredded::Messageboard.create!(name: "Forum #{lecture.id}") }
 
-    it "gathers the forum and the comments into one bubble" do
-      rendered = render_inline(described_class.new(lecture: lecture, user: user,
-                                                   activity: activity))
+    before { lecture.update!(forum_id: board.id) }
 
-      action = rendered.at_css("[data-testid='quick-action-activity']")
+    def render_with_activity
+      render_inline(described_class.new(lecture: lecture, user: user,
+                                        activity: activity))
+    end
 
-      expect(action.text)
+    it "gathers the forum and the comments into one bubble with a link to each" do
+      bubble = render_with_activity.at_css("[data-testid='quick-action-activity']")
+
+      expect(render_with_activity.css(".quick-action").size).to eq(1)
+      expect(bubble.css("a").pluck("data-testid"))
+        .to eq(["quick-action-forum", "quick-action-comments"])
+    end
+
+    it "points the forum posts at the lecture's forum" do
+      link = render_with_activity.at_css("[data-testid='quick-action-forum']")
+
+      expect(link.text)
         .to include(I18n.t("dashboard.quick_actions.activity.forum", count: 2))
-      expect(action.text)
+      expect(link["href"]).to eq("/forum/#{board.slug}")
+    end
+
+    it "points the comments at the comments page filtered to the lecture" do
+      link = render_with_activity.at_css("[data-testid='quick-action-comments']")
+
+      expect(link.text)
         .to include(I18n.t("dashboard.quick_actions.activity.comments", count: 1))
-      expect(action["href"]).to eq("/lectures/#{lecture.id}")
+      expect(link["href"]).to eq("/main/comments?lecture_id=#{lecture.id}")
+    end
+
+    it "names the lecture inside each link" do
+      render_with_activity.css("[data-testid='quick-action-activity'] a").each do |link|
+        expect(link.css(".visually-hidden").text).to include(lecture.title_no_term)
+      end
+    end
+
+    it "leaves out the forum link when only comments are unread" do
+      allow(activity).to receive_messages(unread_forum_topics: 0)
+
+      bubble = render_with_activity.at_css("[data-testid='quick-action-activity']")
+
+      expect(bubble.css("a").pluck("data-testid"))
+        .to eq(["quick-action-comments"])
+    end
+
+    it "stays quiet about what has been read" do
+      allow(activity).to receive_messages(unread_forum_topics: 0, unread_comments: 0)
+
+      expect(render_with_activity.css(".quick-action")).to be_empty
+    end
+  end
+
+  context "when the card belongs to staff or a tutor" do
+    let(:activity) do
+      instance_double(Dashboard::LectureActivity,
+                      unread_forum_topics: 0,
+                      unread_comments: 1)
+    end
+
+    def render_staff_actions
+      render_inline(described_class.new(lecture: lecture, user: user,
+                                        activity: activity, staff: true))
+    end
+
+    it "leaves out the student deadlines and exam registration" do
+      create(:assignment, lecture: lecture, deadline: 2.days.from_now)
+      exam = create(:exam, :with_date, lecture: lecture)
+      exam.registration_campaign.update!(status: :open)
+
+      rendered = render_staff_actions
+
+      expect(rendered.css("[data-testid='quick-action-assignment']")).to be_empty
+      expect(rendered.css("[data-testid='quick-action-exam']")).to be_empty
+    end
+
+    it "still shows unread discussion" do
+      expect(render_staff_actions.at_css("[data-testid='quick-action-activity']"))
+        .to be_present
     end
   end
 

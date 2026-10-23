@@ -200,6 +200,20 @@ RSpec.describe("StudentMessages", type: :request) do
 
         expect(flash[:alert]).to eq(I18n.t("student_message.no_audience"))
       end
+
+      it "sends to those registered for their group while its registration runs" do
+        item = create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+        registrant = create(:confirmed_user)
+        create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                            registration_item: item,
+                                                            user: registrant)
+
+        expect do
+          send_message(audiences: ["item:#{item.id}:provisional"])
+        end.to change(StudentMessage, :count).by(1)
+
+        expect(StudentMessage.last.recipient_emails).to eq([registrant.email])
+      end
     end
 
     # The edit right is inherited from the course, and staff status with it.
@@ -333,6 +347,21 @@ RSpec.describe("StudentMessages", type: :request) do
       expect(response.body).not_to include("Tutor&#39;s own")
     end
 
+    # The hint after a group joined a running process links here.
+    it "opens the staff's form on a group and a subject handed in" do
+      sign_in teacher
+
+      get edit_lecture_path(lecture, tab: "communication",
+                                     mail_audience: "campaign:#{campaign.id}:all",
+                                     mail_subject: "New group: Mo 10")
+
+      page = Nokogiri::HTML(response.body)
+      expect(page.at_css("#audience-groups")["checked"]).to be_present
+      expect(page.at_css("#audience-everyone")["checked"]).to be_nil
+      expect(page.at_css("#audience-campaign-#{campaign.id}-all")["checked"]).to be_present
+      expect(page.at_css("[data-testid='student-mail-subject']")["value"]).to eq("New group: Mo 10")
+    end
+
     it "gives the tutor a mail button for their group on their page" do
       sign_in tutor
       create(:assignment, lecture: lecture)
@@ -349,7 +378,7 @@ RSpec.describe("StudentMessages", type: :request) do
 
       get lecture_tutorials_path(lecture, tutorial: tutorial.id)
 
-      expect(response.body).to include(I18n.t("assignment.nothing_yet_in_lecture").strip)
+      expect(response.body).to include(I18n.t("tutorial.participants.title"))
       expect(response.body).to include(I18n.t("student_message.tutorial.button"))
     end
   end

@@ -11,6 +11,11 @@
   // height they take; anything taller in that row has to change it too.
   $group-row-height: 2.25rem;
 
+  // Sorting brings other students onto the page; widths taken from the
+  // content would shift every column with them, so each column has a fixed
+  // width.
+  table-layout: fixed;
+
   // Sticky on the cells, not on `thead`: a sticky row group keeps its own
   // background, but the rows scrolling underneath paint their text over it,
   // which reads as a smeared header.
@@ -33,6 +38,31 @@
     // scrolling underneath draws a slice of itself between the two bands.
     top: calc(#{$group-row-height} - 1px);
     box-shadow: inset 0 -1px 0 var(--bs-border-color);
+  }
+
+  .records-col-student {
+    width: 12rem;
+  }
+
+  .records-col-points {
+    width: 6rem;
+  }
+
+  .records-col-maximum {
+    width: 7.5rem;
+  }
+
+  .records-col-share {
+    width: 5rem;
+  }
+
+  // Room for a six-letter short title and the hourglass beside it.
+  .records-col-assessment {
+    width: 4.5rem;
+  }
+
+  .records-col-achievement {
+    width: 3.5rem;
   }
 
   // Figures belong under each other, and monospace makes the row read like a

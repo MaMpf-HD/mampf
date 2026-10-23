@@ -114,6 +114,23 @@ RSpec.describe(Registration::Item, type: :model) do
       end
     end
 
+    # Finalizing puts the allocated people into the group's lecture; a group
+    # of another lecture would let this lecture's editor hand out places there.
+    describe "#validate_registerable_of_campaign_lecture" do
+      let(:campaign) { create(:registration_campaign) }
+
+      it "refuses a group of another lecture" do
+        [create(:tutorial), create(:cohort, context: create(:lecture))].each do |group|
+          item = build(:registration_item, registration_campaign: campaign, registerable: group)
+
+          expect(item).not_to be_valid
+          expect(item.errors[:registerable])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes" \
+                               ".registerable.other_lecture"))
+        end
+      end
+    end
+
     describe "#validate_capacity_change_from_registerable!" do
       let(:campaign) { create(:registration_campaign, :first_come_first_served) }
       let(:item) { create(:registration_item, registration_campaign: campaign) }
@@ -249,8 +266,7 @@ RSpec.describe(Registration::Item, type: :model) do
       let(:campaign) { create(:registration_campaign, campaignable: lecture) }
 
       context "with registerables (strict global uniqueness)" do
-        let(:other_lecture) { create(:lecture) }
-        let(:other_campaign) { create(:registration_campaign, campaignable: other_lecture) }
+        let(:other_campaign) { create(:registration_campaign, campaignable: lecture) }
 
         before do
           create(:registration_item, registration_campaign: other_campaign, registerable: tutorial)
@@ -398,6 +414,31 @@ RSpec.describe(Registration::Item, type: :model) do
                                    source_campaign_id: campaign.id)
 
       expect(item.removal_blocker).to eq(:allocation)
+    end
+  end
+
+  describe "#provisional_users" do
+    let(:campaign) { create(:registration_campaign, :preference_based) }
+    let(:item) { create(:registration_item, registration_campaign: campaign) }
+    let(:allocated) { create(:confirmed_user) }
+
+    before do
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: item,
+                                                          user: allocated, preference_rank: 1)
+      create(:registration_user_registration, :pending, registration_campaign: campaign,
+                                                        registration_item: item,
+                                                        preference_rank: 2)
+    end
+
+    it "names nobody before a preference campaign has allocated" do
+      expect(item.provisional_users).to be_nil
+    end
+
+    it "names those allocated once it has" do
+      campaign.update!(last_allocation_calculated_at: Time.current)
+
+      expect(item.provisional_users).to contain_exactly(allocated)
     end
   end
 end

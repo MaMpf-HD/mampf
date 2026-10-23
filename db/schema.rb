@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_22_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -115,6 +115,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.datetime "results_published_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "results_notified_at"
     t.index ["assessable_type", "assessable_id"], name: "index_assessments_on_assessable", unique: true
     t.index ["lecture_id"], name: "index_assessment_assessments_on_lecture_id"
   end
@@ -146,13 +147,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.datetime "submitted_at"
     t.bigint "grader_id"
     t.datetime "graded_at"
-    t.datetime "results_published_at"
-    t.boolean "published", default: false, null: false
-    t.boolean "locked", default: false, null: false
     t.text "note"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "grade_scheme_id"
+    t.datetime "result_seen_at"
     t.index ["assessment_id", "user_id"], name: "index_participations_on_assessment_and_user", unique: true
     t.index ["assessment_id"], name: "index_assessment_participations_on_assessment_id"
     t.index ["grade_scheme_id"], name: "index_assessment_participations_on_grade_scheme_id"
@@ -248,6 +247,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.index ["source_campaign_id"], name: "index_cohort_memberships_on_source_campaign_id"
     t.index ["user_id", "cohort_id"], name: "index_cohort_memberships_on_user_id_and_cohort_id", unique: true
     t.index ["user_id"], name: "index_cohort_memberships_on_user_id"
+  end
+
+  create_table "cohort_tutor_joins", force: :cascade do |t|
+    t.bigint "cohort_id", null: false
+    t.bigint "tutor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cohort_id", "tutor_id"], name: "index_cohort_tutor_joins_on_cohort_id_and_tutor_id", unique: true
+    t.index ["tutor_id"], name: "index_cohort_tutor_joins_on_tutor_id"
   end
 
   create_table "cohorts", force: :cascade do |t|
@@ -419,16 +427,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.index ["self_materialization_mode"], name: "index_exams_on_self_materialization_mode"
   end
 
-  create_table "feedbacks", force: :cascade do |t|
-    t.text "title"
-    t.text "feedback"
-    t.boolean "can_contact", default: false, null: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_feedbacks_on_user_id"
-  end
-
   create_table "flipper_features", force: :cascade do |t|
     t.string "key", null: false
     t.datetime "created_at", null: false
@@ -547,6 +545,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.date "submission_deletion_date", null: false
     t.boolean "uses_exam_eligibility", default: true, null: false
     t.datetime "assignments_complete_at"
+    t.boolean "cross_tutorial_teams", default: false, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
@@ -952,7 +951,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.datetime "last_modification_by_users_at", precision: nil
     t.boolean "accepted"
     t.datetime "corrected_at"
+    t.bigint "handed_over_to_id"
     t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
+    t.index ["handed_over_to_id"], name: "index_submissions_on_handed_over_to_id"
     t.index ["token"], name: "index_submissions_on_token", unique: true
     t.index ["tutorial_id"], name: "index_submissions_on_tutorial_id"
   end
@@ -1231,6 +1232,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.index ["user_id", "postable_id"], name: "thredded_user_topic_read_states_user_postable", unique: true
   end
 
+  create_table "tutor_appointments", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id", "user_id"], name: "index_tutor_appointments_on_lecture_id_and_user_id", unique: true
+    t.index ["user_id"], name: "index_tutor_appointments_on_user_id"
+  end
+
   create_table "tutor_tutorial_joins", force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "tutor_id", null: false
@@ -1340,6 +1350,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
     t.datetime "personal_data_confirmed_at"
     t.datetime "personal_data_declined_at"
     t.bigint "program_id"
+    t.boolean "support", default: false, null: false
+    t.boolean "deans_office", default: false, null: false
+    t.boolean "email_for_tutorial_change", default: true, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"
@@ -1534,6 +1547,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
   add_foreign_key "cohort_memberships", "cohorts"
   add_foreign_key "cohort_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "cohort_memberships", "users"
+  add_foreign_key "cohort_tutor_joins", "cohorts"
+  add_foreign_key "cohort_tutor_joins", "users", column: "tutor_id"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
@@ -1545,7 +1560,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
   add_foreign_key "exam_roster_entries", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "exam_roster_entries", "users"
   add_foreign_key "exams", "lectures"
-  add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
@@ -1587,6 +1601,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
   add_foreign_key "student_performance_rules", "lectures"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
+  add_foreign_key "submissions", "tutorials", column: "handed_over_to_id", on_delete: :nullify
   add_foreign_key "talk_tag_joins", "tags"
   add_foreign_key "talk_tag_joins", "talks"
   add_foreign_key "talks", "lectures"
@@ -1594,6 +1609,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_25_000002) do
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
+  add_foreign_key "tutor_appointments", "lectures"
+  add_foreign_key "tutor_appointments", "users"
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
   add_foreign_key "tutorial_memberships", "lectures"

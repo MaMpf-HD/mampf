@@ -18,9 +18,9 @@ module CoursesHelper
   # create link for notification about new lecture in notification card
   def course_notification_card_link
     t("notifications.subscribe_course_html",
-      profile: link_to(t("notifications.profile"),
-                       edit_profile_path,
-                       class: "darkblue"))
+      dashboard: link_to(t("notifications.dashboard_search"),
+                         root_path(anchor: "lecture-search"),
+                         class: "darkblue"))
   end
 
   def course_link_or_text(course, user)

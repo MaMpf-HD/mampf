@@ -87,6 +87,16 @@ RSpec.describe(SubmissionCleaner, type: :model) do
           cleaner.clean!
         end.to change { ActionMailer::Base.deliveries.count }.by(4)
       end
+
+      # Every past lecture stays due; mailing its staff every night would
+      # reach the teachers of all terms before.
+      it "tells nobody again about lectures cleaned on an earlier night" do
+        FactoryBot.build(:submission_cleaner, date: Time.zone.today + 21.days).clean!
+
+        expect do
+          FactoryBot.build(:submission_cleaner, date: Time.zone.today + 22.days).clean!
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
     end
 
     describe "#clean!" do

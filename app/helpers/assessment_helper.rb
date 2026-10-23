@@ -14,6 +14,9 @@ module AssessmentHelper
                                tab: params[:assessment_tab])
   end
 
+  # The exercise media of a lecture, from which an assignment picks its sheet.
+  def exercise_media(lecture) = Medium.where(teachable: lecture, sort: "Exercise").to_a
+
   def movement_info_for_user_assignment(user, user_movement_map)
     movement = user_movement_map[user.id]
     return nil unless movement

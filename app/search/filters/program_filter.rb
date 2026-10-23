@@ -13,6 +13,8 @@ module Search
         return scope if skip_filter?(all_param: :all_programs, ids_param: :program_ids)
 
         join_path = case scope.klass.name
+                    when "User"
+                      return scope.where(program_id: params[:program_ids])
                     when "Course"
                       :divisions
                     when "Lecture"

@@ -1,0 +1,15 @@
+// The figure stands beside the bar; the bar only hints at its size, so it
+// stays thin and light next to the tables' numbers.
+.statistics-bar {
+  width: 100%;
+  height: 0.5rem;
+
+  // Overrides the bg-primary that progress_bar sets, which is !important.
+  .progress-bar {
+    background-color: var(--bs-primary-border-subtle) !important;
+  }
+}
+
+.statistics-figure {
+  min-width: 3rem;
+}

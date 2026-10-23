@@ -1,0 +1,38 @@
+<% results.each do |result| %>
+  <section
+    class="lecture-home-focus"
+    id="<%= dom_id_for(result) %>"
+    aria-labelledby="<%= dom_id_for(result) %>-heading"
+    data-testid="lecture-home-new-result"
+  >
+    <div class="lecture-home-new-result-head">
+      <h2 class="lecture-home-kicker" id="<%= dom_id_for(result) %>-heading">
+        <%= t("lecture_home.new_result.title", title: result.title) %>
+      </h2>
+
+      <%= button_to t("lecture_home.new_result.close"),
+                    helpers.result_seen_participation_path(result.participation),
+                    method: :patch,
+                    class: "btn btn-sm btn-link lecture-home-quiet-link",
+                    form: { data: { turbo_stream: true } } %>
+    </div>
+
+    <div class="lecture-home-new-result-grade">
+      <% if grade_label?(result) %>
+        <span class="lecture-home-new-result-label">
+          <%= t("lecture_home.new_result.grade") %>
+        </span>
+      <% end %>
+
+      <span class="lecture-home-new-result-value"><%= headline(result) %></span>
+    </div>
+
+    <% if result.lines.any? %>
+      <p class="lecture-home-focus-line"><%= safe_join(result.lines, " · ") %></p>
+    <% end %>
+
+    <% if result.tasks.any? %>
+      <%= render "user_registrations/result_tasks", tasks: result.tasks, open: true %>
+    <% end %>
+  </section>
+<% end %>

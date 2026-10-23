@@ -100,6 +100,7 @@ de:
     mampf_news: 'MaMpf-News'
     submissions: 'Abgaben'
     tutorials: 'Tutorien'
+    cohorts: 'Flexible Gruppen'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.
@@ -111,7 +112,7 @@ de:
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}, %{mupdf}.
       Bugs meldest Du am besten %{bugs}.
-      Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
+      Supportanfragen und Feedback kannst Du an %{feedback} schicken.
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -192,9 +193,7 @@ de:
       boards: 'Foren'
       stats: 'Zugriffsstatistik'
       export_stats: 'Statistiken exportieren'
-      users: 'Nutzerverwaltung'
       course: 'Modul'
-      profile: 'Mein Profil'
     catalog:
       info:
         locked_medium: 'Dieses Medium ist gesperrt.'
@@ -233,10 +232,8 @@ de:
       my_media: 'Meine Medien'
       media_restriction_html: >
         Es werden nur die 25 zuletzt upgedateten Medien angezeigt.
-        Mehr Medien findest Du über die %{media_search} oder in Deinen
-        %{profile}.
+        Mehr Medien findest Du über die %{media_search}.
       media_search: 'Mediensuche'
-      user_profile: 'Nutzerprofil'
       no_media: >
         Es gibt keine Medien, für die Du als EditorIn eingetragen bist.
       other_lectures: 'Sonstige Veranstaltungen'
@@ -455,10 +452,22 @@ de:
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
+      editors_by_email:
+        label: "EditorIn per E-Mail-Adresse hinzufügen"
+        add: "EditorIn hinzufügen"
+        hint: >-
+          Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und steht
+          dann oben bei den EditorInnen, wo sie sich auch wieder entfernen lässt.
       tutors_overview:
-        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten); EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien zugeordnet. Hier steht, wer welches Tutorium betreut."
-        none_yet: "Noch keine TutorInnen. Erstelle unten einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
-        no_tutorial_yet: "Gutschein eingelöst, noch keinem Tutorium zugeordnet"
+        hint_html: "Studierende werden TutorInnen, indem sie einen Gutschein für TutorInnen einlösen (siehe unten) oder indem Du sie über die Adresse ihres Kontos hinzufügst; EditorInnen und die DozentIn können direkt gewählt werden. Im Reiter %{link} werden TutorInnen ihren Tutorien und flexiblen Gruppen zugeordnet. Hier steht, wer welche Gruppe betreut."
+        none_yet: "Noch keine TutorInnen. Füge sie unten über ihre Adresse hinzu, oder erstelle einen Gutschein für TutorInnen und schick ihn den Personen, die TutorInnen werden sollen."
+        no_group_yet: "Gutschein eingelöst, noch keiner Gruppe zugeordnet"
+        added_no_group_yet: "über die Adresse hinzugefügt, noch keiner Gruppe zugeordnet"
+        add_by_email: "TutorIn per E-Mail-Adresse hinzufügen"
+        add_hint: "Die Adresse ihres MaMpf-Kontos. Sie bekommt darüber eine Mail und kann dann einer Gruppe zugeordnet werden."
+        add: "TutorIn hinzufügen"
+        remove: "%{name} entfernen"
+        remove_confirm: "%{name} von den TutorInnen dieser Veranstaltung entfernen? Zuordnungen zu flexiblen Gruppen bleiben bestehen."
       updated: 'Abgabe-Einstellungen erfolgreich aktualisiert.'
       lecture: 'Vorlesung'
       lecture_short: 'V'
@@ -472,6 +481,9 @@ de:
       oberseminar: 'Oberseminar'
       oberseminar_short: 'OS'
       oberseminar_content: 'Oberseminarinhalt'
+      practical: 'Praktikum'
+      practical_short: 'P'
+      practical_content: 'Praktikumsinhalt'
       special: 'Special'
       special_short: ''
       special_content: 'Inhalt'
@@ -531,6 +543,7 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       uses_exam_eligibility: Prüfungszulassung aktivieren
       submission_max_team_size: maximale Größe von Abgabegruppen
+      cross_tutorial_teams: Abgabeteams über Tutorien hinweg erlauben
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
       submission_deletion_date: Löschdatum für Abgaben
       import_toc: Gliederung aus anderer Veranstaltung importieren
@@ -668,15 +681,16 @@ de:
           DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
           Veranstaltung einpflegen. Du kannst nur Personen auswählen,
-          die von Ihrem Rechtestatus her dafür in Frage kommen.
+          die von ihrem Rechtestatus her dafür in Frage kommen.
           Um den entsprechenden Rechtestatus an Personen zu vergeben,
           die ihn bisher noch nicht haben, musst Du einen Gutschein
           erstellen und diesen an die entsprechende Person weitergeben.
           Die Person kann dann den Gutschein auf ihrer Profilseite einlösen
-          und wird dadurch zusätzliche VeranstaltungseditorIn.
+          und wird dadurch zusätzliche VeranstaltungseditorIn. Oder Du fügst
+          sie unten über die E-Mail-Adresse ihres MaMpf-Kontos hinzu.
         subscribers_count: >
-          Das ist die Zahl aller NutzerInnen, die diese
-          Veranstaltung in ihrem Profil abonniert haben.
+          Das ist die Zahl aller NutzerInnen, die diese Veranstaltung gemerkt
+          haben.
         organizational: >
           Wenn Du diesen Haken setzt, wird in der
           Sidebar der Punkt Organisatorisches für alle Studierenden
@@ -763,6 +777,14 @@ de:
           other: >
             Beim Deaktivieren bleiben %{count} Zertifizierungen erhalten, sind
             aber nicht mehr erreichbar.
+        cross_tutorial_teams: >
+          Wenn das angehakt ist, können Studierende aus verschiedenen Tutorien
+          ein Abgabeteam bilden. Die Abgabe geht dann an das beteiligte
+          Tutorium mit den wenigsten Abgaben, und dessen TutorIn kann sie an
+          ein anderes beteiligtes Tutorium übergeben. Ohne Haken kann man nur
+          Teams aus dem eigenen Tutorium beitreten. Bereits abgegebene Teams
+          behalten ihre Mitglieder; die Einstellung gilt nur für neue
+          Beitritte.
         submission_max_team_size: >
           Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
           gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.
@@ -1019,6 +1041,7 @@ de:
           Sitzungen aus diesem Abschnitt verknüpft sind.
     talk:
       speakers: Vortragende(r)
+      speakers_managed_in_groups_html: Die Vortragenden verwaltest Du im Reiter %{link}.
       no_media: Für diesen Vortrag sind keine Medien vorhanden.
       next_talk: 'nächster Vortrag'
       previous_talk: 'voriger Vortrag'
@@ -1074,13 +1097,6 @@ de:
           nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
           handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
           entfernen.
-        speakers: >
-          Hier kannst Du die Vortragenden eintragen. Diese können
-          den Vortrag bearbeiten und Medien hinzufügen. Du kannst nur Personen
-          auswählen, die den Status "Vortragender" in dem Seminar haben,
-          dazu EditorInnen und Dich selbst. Studierende werden über ein
-          Anmeldeverfahren für die Vorträge zu Vortragenden, das Du im Reiter
-          "Gruppen" einrichtest.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -1759,58 +1775,23 @@ de:
           solange sich in dem pdf nichts ändert, wird die Referenz aber
           nichts bewirken, d.h. auf die erste Seite zeigen.
     user:
-      current_lecture: 'Aktuelle Veranstaltung'
       homepage: 'Homepage'
       profile_image: 'Profilbild'
-      index: 'NutzerInnenübersicht'
-      edited_content: 'Betreute Inhalte'
-      no_content: 'Es gibt noch keine entsprechenden Inhalte.'
-      given_lectures: 'Gehaltene Veranstaltungen'
-      edited_courses: 'Editierte Module'
-      edited_lectures: 'Weitere editierte Veranstaltungen'
-      edited_media: 'Editierte Medien'
-      administration: 'Nutzerverwaltung'
-      sorts: 'Admins, EditorInnen und DozentInnen'
-      password_policy_progress: '%{current} von %{total} Accounts erfüllen derzeit den aktualisierten Passwortstandard.'
-      edit_generics: 'Sonstige NutzerInnen bearbeiten'
-      elevate: 'zum Administrator befördern'
+      support: 'Support'
+      deans_office: 'Dekanat'
       info:
-        display_name: >
-          Hier kannst Du den Anzeigename eingeben. Der Anzeigename
-          wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.
-        email: >
-          Hier kannst Du die E-Mail-Adresse eingeben. Mit dieser erfolgt
-          dann auch die Nutzeranmeldung, außerdem werden E-Mails bezüglich
-          Passwortzurücksetzung dorthin geschickt.
+        support: >
+          Findet Personen, korrigiert ihre Stammdaten, entsperrt ihre Konten und
+          schickt ihnen die Mails, mit denen sie wieder hineinkommen. Konten von
+          Admins bleiben außer Reichweite.
+        deans_office: >
+          Sieht alle Veranstaltungen jedes Semesters mit ihren Gruppen, Plätzen,
+          Anmeldungen und Zuteilungen, nur lesend. Für das Dekanat.
         administrator: >
           Hier kannst Du anklicken, ob die NutzerIn
           Administratorenrechte haben soll oder nicht. Dir selbst kannst Du
           nicht die Administratorenrechte entziehen, das kann nur ein von
           Dir verschiedener Administrator.
-        current_lecture: >
-          Hier kannst Du auswählen, welche Veranstaltung aktuell für Dich primär
-          ist. Falls hier eine Veranstaltung ausgewählt ist, führt Dich
-          ein entsprechendes Icon in der Navigationsleiste direkt zu ihr.
-        homepage: >
-          Hier kannst Du die Adresse einer Homepage eingeben.
-        profile_image: >
-          Hier wirst Du demnächst die Möglichkeit haben, ein
-          Profilbild hochzuladen.
-        given_lectures: >
-          Dies ist die Liste aller Veranstaltungen, für die Du als DozentIn
-          die Du als DozentIn verantwortest bzw. verantwortet hast.
-          Unveröffentlichte Veranstaltung sind in rötlicher Farbe gekennzeichnet.
-        edited_courses: >
-          Dies ist die Liste aller Module, für die Du Moduleditorenrechte hast.
-        edited_lectures: >
-          Dies ist die Liste aller Veranstaltungen, für die Du zusätzliche
-          Editorenrechte hast. Unveröffentlichte Veranstaltung
-          sind in rötlicher Farbe gekennzeichnet.
-        edited_media: >
-          Dies ist die Liste aller Medien, für die Du Medieneditorenrechte hast.
-        elevate: >
-          Wenn Du das anklickst, wird die NutzerIn zur
-          AdministratorIn befördert.
     question:
       independent: 'Frage ist unabhängig'
       hint: 'Lösungshinweis'
@@ -2083,7 +2064,6 @@ de:
       edit: 'Teilbereich bearbeiten'
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
-      no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
     tutorial:
       new: 'Neues Tutorium anlegen'
     assignment:
@@ -2116,10 +2096,8 @@ de:
       Dieser Name wird Deinem Tutor bei Deinen Abgaben angezeigt. Wenn
       Du dieses Feld leerlässt, wird dafür der Anzeigename verwendet.
     change_data: 'Zugangsdaten ändern'
-    courses: 'Module'
     primary_lecture: 'Primäre Veranstaltung'
     secondary_lectures: 'Weitere Veranstaltungen'
-    no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Veranstaltungen.'
     passphrase: 'Zugangsschlüssel'
     content_info: >
       Mit dem Tag-Graphen kannst du nach Stichwörtern suchen und verknüpfte
@@ -2148,6 +2126,8 @@ de:
       neue angelegte Veranstaltungen oder Module
     email_for_news:
       Neuigkeiten über MaMpf
+    email_for_tutorial_change:
+      Wechsel von Teilnehmenden in meine Tutorien oder aus ihnen heraus
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
     please_update: >
@@ -2164,6 +2144,12 @@ de:
     changes_made: >
       Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
       damit die Änderungen wirksam werden.
+    teacher_profile:
+      title: "Was Studierende über Dich sehen"
+      explainer: >-
+        Deine Homepage und Dein Foto erscheinen auf Deiner Seite als lehrende Person, auf
+        die Deine Veranstaltungen verlinken.
+      remove_image: "Foto entfernen"
     changes_made_btn: >
       Klicke hier, um Deine Änderungen zu übernehmen.
     email_for_submissions: >
@@ -2211,6 +2197,7 @@ de:
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
+    tutorials: Tutorien
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
@@ -2263,25 +2250,6 @@ de:
       Die bisherige DozentIn wird zur EditorIn herabgestuft.
     already_teacher_html: >
       Du bist bereits DozentIn für <strong>%{lecture}</strong>.
-    become_speaker_html: >
-      Mit diesem Gutschein erhältst Du Vortragendenstatus im Seminar
-      <strong>%{seminar}</strong>.
-    already_speaker_html: >
-      Du bist bereits VortragendeR für: <strong>%{talks}</strong>.
-    talks_available: >
-      Wenn Du schon weißt, welche Vorträge du übernimmst, kannst Du diese hier
-      auswählen. Ansonsten lasse das Feld frei, dann kannst Du dennoch den
-      Gutschein einlösen, damit Dich die DozentIn später den Vorträgen zuweisen
-      kann.
-    no_talks_redemption: >
-      Nachdem Du den Gutschein eingelöst hast, kann Dich die DozentIn den
-      Vorträgen zuweisen.
-    all_talks_taken: >
-      Es sind keine weiteren Vorträge verfügbar, die Du noch übernehmen kannst.
-    already_speaker_by_redemption: >
-      Du hast diesen Gutschein bereits eingelöst, um Vortragendenstatus
-      zu erhalten.
-    select_talks: Vorträge auswählen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2296,16 +2264,20 @@ de:
     course_selection: 'Kursangebot'
     new_course: 'Neues Modul %{title}'
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
-    subscribe_course: 'Abonniere es in Deinem Profil.'
-    subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
-    goto_profile: 'Zu Deinen Profileinstellungen'
+    subscribe_course: 'Seine Veranstaltungen findest Du in der Veranstaltungssuche auf Deinem Dashboard.'
+    subscribe_course_html: 'Seine Veranstaltungen findest Du in %{dashboard}.'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
     edit_lecture: 'Veranstaltung bearbeiten'
-    subscribe_lecture: 'Abonniere sie in Deinem Profil.'
-    subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
+    goto_dashboard: 'Zu Deinem Dashboard'
+    subscribe_lecture: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.'
+    subscribe_lecture_html: 'Du findest sie in %{dashboard}.'
+    subscribe_lecture_in_term: 'Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.'
+    subscribe_lecture_in_term_html: 'Du findest sie in %{dashboard} unter %{term}.'
+    dashboard_search: 'der Veranstaltungssuche auf Deinem Dashboard'
+    goto_dashboard_search: 'Zur Veranstaltungssuche'
     new_lecture_created_html: >
       Neue Veranstaltung angelegt:<br>
       %{title} (%{term}, %{teacher})
@@ -2326,17 +2298,11 @@ de:
     became_teacher: >
       %{user} hat einen DozentInnen-Gutschein eingelöst und ist jetzt DozentIn
       der Veranstaltung.
-    became_speaker: >
-      %{user} hat einen Vortragenden-Gutschein eingelöst und ist jetzt VortragendeR
-      im Seminar.
     tutorial_details: >
       Neu übernommene Tutorien: %{tutorials}.
-    talk_details: >
-      Neu übernommene Vorträge: %{talks}.
     redemption: 'Gutschein eingelöst:'
     redemption_in_lecture: 'Gutschein eingelöst in %{lecture}'
     no_tutorials_taken: 'Dabei wurden keine Tutorien übernommen.'
-    no_talks_taken: 'Dabei wurden keine Vorträge übernommen.'
 
   lecture:
     content: 'Veranstaltungsinhalt'
@@ -2890,6 +2856,8 @@ de:
     formats:
       concise: '%d.%m.%Y'
       test_week_start: '%d.%m.'
+      day_month: '%-d. %b'
+      weekday_day: '%a, %-d. %b'
       test_week_end: '%d.%m.%Y'
   datetimepicker:
     invalid_date: 'Ungültiges Datums-Zeit-Format.'
@@ -2899,6 +2867,8 @@ de:
       # Eine Datei ist ein Detail, keine Schlagzeile: die lange Form gehört
       # zur Frist, wo der Wochentag das ist, wonach man plant.
       file_time: "%d.%m.%Y, %H:%M"
+      # An account's dates on the support page reach back over years.
+      account: "%-d. %b %Y, %H:%M Uhr"
       concise: '%d.%m.%Y'
       student_registration: '%-d. %B %Y, %H:%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
@@ -3030,6 +3000,8 @@ de:
       </ul>
   comments:
     title: Neue Kommentare zu Medien aus Deinen Veranstaltungen
+    title_for_lecture: Neue Kommentare zu Medien aus %{lecture}
+    all_lectures: Alle Veranstaltungen
     latest_post: Neuster Beitrag
     thread_subscribed: Abo
     who_and_when: vor %{when} von %{who}
@@ -3046,7 +3018,7 @@ de:
       standing:
         mark_percentage: "%{percentage} %"
         heading: Klausurzulassung
-        of_marked: "von %{max} bisher korrigierten Punkten"
+        of_marked: "von %{max} bisher möglichen Punkten"
         of_needed: "von %{max} nötigen Punkten"
         no_max: "Punkte, noch nichts korrigiert"
         nothing_marked: Es ist noch nichts korrigiert.
@@ -3260,6 +3232,7 @@ de:
     optimization_failed: >
       Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
     upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    no_correction_file: Bitte wähle zuerst eine Datei aus.
     upload_failure_empty_file: >
       Die hochgeladene Datei ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
@@ -3415,10 +3388,18 @@ de:
     bulk_download_corrections: Paketdownload der Korrekturen
     bulk_upload: Paketupload der Korrekturen
     file_format: Abgabeformat
+    handed_over: 'An %{tutorial} übergeben.'
+    confirm_code:
+      title: Einem Abgabeteam beitreten
+      question: >
+        Möchtest Du dem Abgabeteam von %{team} für %{assignment} in
+        %{lecture} beitreten?
+      join: Beitreten
+    hand_over_refused: >
+      Dieses Team kann nicht mehr übergeben werden: Es hat schon Punkte oder
+      eine Korrektur, oder das Tutorium ist keines seiner Mitglieder.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
-    nothing_yet_in_lecture: >
-      In dieser Vorlesung war bisher noch nichts abzugeben.
     deletion_date: Löschdatum
     destruction_info:
       <i>
@@ -3431,7 +3412,34 @@ de:
         Diese Hausaufgabe wird bei der Veröffentlichung des assoziierten
         Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
         Veröffentlichungseinstellungen des Mediums bearbeiten.
+  lecture_editors:
+    create:
+      no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
+      already: "%{name} ist bereits EditorIn oder DozentIn dieser Veranstaltung."
+      added: "%{name} ist jetzt EditorIn und bekommt eine Mail darüber."
+  tutor_appointments:
+    create:
+      no_account: "Es gibt kein MaMpf-Konto mit dieser Adresse."
+      already: "%{name} kann bereits einem Tutorium zugeordnet werden."
+      added: "%{name} ist jetzt TutorIn und bekommt eine Mail darüber."
   tutorial:
+    not_assigned_yet: >
+      Du bist TutorIn in dieser Veranstaltung, aber noch keinem Tutorium
+      zugeordnet. Sobald Du eines übernimmst, erscheint es hier.
+    tutors_missing_html: "Fehlt jemand? Im Reiter %{link} machst Du Leute zu TutorInnen: mit einem Gutschein oder über die E-Mail-Adresse ihres MaMpf-Kontos."
+    participants:
+      button: "Teilnehmende"
+      pick: "Auswählen …"
+      title: "Teilnehmende"
+      none: "In dieser Gruppe ist noch niemand."
+      registered_title: "Angemeldet, noch nicht endgültig"
+      no_program: "ohne Angabe"
+      registered_hint: >
+        Sie kommen in die Gruppe, sobald die Anmeldung „%{campaign}“
+        abgeschlossen ist. Bis dahin können sich Anmeldungen noch ändern.
+      allocation_pending: >
+        Die Anmeldung „%{campaign}“ teilt die Gruppen nach ihrem Ende
+        (%{deadline}) zu; bis dahin steht nicht fest, wer in diese Gruppe kommt.
     title_placeholder: "z. B. Mo 14–16"
     location_placeholder: "z. B. SR 3"
     no_tutorials_yet: >
@@ -3477,11 +3485,9 @@ de:
         Diese können Abgaben einsehen und Korrekturen hochladen.
         Du kannst nur Personen auswählen, die den Status "TutorIn" in der
         Veranstaltung haben, dazu EditorInnen und Dich selbst.
-        Um Studierenden den Status einer TutorIn zu geben, musst Du
-        im Reiter "Personal" einen Gutschein erstellen, den die Studierenden
-        einlösen können.
-        Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
-        werden.
+        Im Reiter "Personal" machst Du Leute zu TutorInnen: mit einem
+        Gutschein, den Du ihnen außerhalb von MaMpf gibst und den sie einlösen,
+        oder über die E-Mail-Adresse ihres MaMpf-Kontos.
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
@@ -3578,6 +3584,11 @@ de:
     author: 'VerfasserIn'
     text: 'Text'
     new_editor_subject: 'EditorInnenrechte für %{title}'
+    new_tutor_subject: 'TutorIn in %{title}'
+    new_tutor: >
+      Hallo %{username}, Du wurdest als TutorIn in %{title} eingetragen. Die
+      Veranstaltung steht auf Deinem Dashboard; Deine Gruppen erscheinen dort,
+      sobald Du ihnen zugeordnet bist.
     new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_teacher_subject: 'DozentInnenstatus für %{title}'
     new_teacher: 'Hallo %{username}, Du hast soeben DozentInnenstatus für %{title} erhalten.'
@@ -3587,28 +3598,23 @@ de:
       DozentInnenwechsel. %{new_teacher} hat einen DozentInnengutschein eingelöst
       und ist jetzt DozentIn. Du bist nicht mehr DozentIn in %{title}, sondern
       stattdessen VeranstaltungseditorIn.
-    new_speaker_subject: 'WeitereR VortragendeR für %{seminar}, %{title}'
-    new_speaker: >
-      Hallo %{username}, im Seminar %{seminar} hat sich %{speaker}
-      als weitereR VortragendeR für %{title} eingetragen.
-      Wende Dich bitte an Deine DozentIn, wenn Du denkst, dass hier ein Fehler
-      passiert ist.
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
-      Du kannst sie über Deine Profileinstellungen abonnieren.
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
     subscribe_lecture_text: >
-      Du kannst sie über Deine Profileinstellungen abonnieren.
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard.
+    subscribe_lecture_in_term: >
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.
+    subscribe_lecture_in_term_text: >
+      Du findest sie in der Veranstaltungssuche auf Deinem Dashboard unter %{term}.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
-    subscribe_course: 'Du kannst es über Deine Profileinstellungen abonnieren.'
-    subscribe_course_text: >
-      Du kannst es über Deine Profileinstellungen abonnieren.
     submission_invitation_subject: >
       Einladung zu Abgabe für %{assignment} in %{lecture}
     submission_invitation_html: >
       %{issuer} hat Dich eingeladen, einer Abgabe zu %{assignment} in %{lecture}
-      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn MaMpf
+      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn in MaMpf
       selbst eingeben und einlösen oder diesen %{link} benutzen.
     submission_upload_subject: >
       Erfolgreicher Upload für Abgabe zu %{assignment} in %{lecture}
@@ -3720,6 +3726,7 @@ de:
       Emails für Abgaben-Verlassen: %{email_for_submission_leave}<br>
       Emails für Korrektur-Upload: %{email_for_correction_upload}<br>
       Emails für Abgabe-Entscheidung: %{email_for_submission_decision}<br>
+      Emails für Tutoriumswechsel: %{email_for_tutorial_change}<br>
       Name in Tutorials: %{name_in_tutorials}<br>
       Archiviert: %{archived}<br>
       Bild-Daten: %{image_data}<br>
@@ -3964,9 +3971,11 @@ de:
     as: als
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
-    emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    emails_copied_to_clipboard: Die E-Mail-Adressen wurden in die Zwischenablage kopiert.
+    emails_copy_failed: Die E-Mail-Adressen konnten nicht kopiert werden.
     email_copied_to_clipboard: Die E-Mail-Adresse wurde in die Zwischenablage kopiert.
     email_copy_failed: Die E-Mail-Adresse konnte nicht kopiert werden.
+    code_copy_failed: Der Code konnte nicht kopiert werden.
     lecture_search: Veranstaltungssuche
     course_search: Modulsuche
     immediately: sofort
@@ -3986,12 +3995,6 @@ de:
       Personen suchen kannst, die bereits als EditorInnen eingetragen sind oder
       die den Editor-Status mithilfe eines Gutscheins erhalten haben. Einen
       solchen Gutschein kannst Du im Bereich <i>Gutscheine</i> generieren.
-    no_results_speaker: >
-      Keine Resultate gefunden.<br><br>Beachte, dass Du ab sofort nur noch nach
-      Personen suchen kannst, die bereits als Vortragende eingetragen sind oder
-      die den Vortrags-Status mithilfe eines Gutscheins erhalten haben. Einen
-      solchen Gutschein kannst Du im Bereich <i>Gutscheine</i> generieren, der
-      sich <a href="%{link}">hier</a> im <i>Personen</i>-Tab befindet.
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{role}
@@ -4010,7 +4013,6 @@ de:
     saved_at: "Gespeichert %{time}"
     last_saved_at: "Zuletzt gespeichert %{time}"
     available: "Verfügbar"
-    full: "Ausgebucht"
     position: "Position"
     room: "Raum"
     confirmed: "Bestätigt"
@@ -4091,7 +4093,6 @@ de:
     i_consent: 'Ich stimme zu'
     delete_account: 'Account löschen'
     create_term: 'Semester anlegen'
-    edit_users: 'Sonstige NutzerInnen (%{count}) bearbeiten'
     close: 'Schließen'
     add_answer: 'Antwort hinzufügen'
     create_copy: 'Kopie erstellen'
@@ -4120,8 +4121,9 @@ de:
     open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
     join: 'Beitreten'
     copy_to_clipboard: 'in die Zwischenablage kopieren'
-    copy_email_to_clipboard: 'E-Mail-Adressen in die Zwischenablage kopieren'
     copy_email_address: 'E-Mail-Adresse kopieren'
+    copy_email_addresses: 'E-Mail-Adressen kopieren'
+    copy_all_email_addresses: 'Alle E-Mail-Adressen kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
@@ -4210,7 +4212,7 @@ de:
       moderation_pending: "Ausstehende Moderation"
   controllers:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
-    session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
+    session_expired: 'Die Seite war nicht mehr aktuell, deshalb wurde Deine Änderung nicht gespeichert. Bitte versuche es noch einmal.'
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
     no_talk: Ein Vortrag mit dieser id existiert nicht.
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
@@ -4225,7 +4227,6 @@ de:
     no_geogebra: 'Zu diesem Medium existiert kein Geogebra-Applet.'
     invalid_download: 'Der angeforderte Download ist ungültig.'
     no_medium: 'Ein Medium mit der angeforderten id existiert nicht.'
-    no_user: 'Ein(e) BenutzerIn mit der angeforderten id existiert nicht.'
     contradiction: 'Widersprüchliche Suchanfrage.'
     no_notification: >
       Eine Benachrichtigung mit der angeforderten id existiert nicht.
@@ -4268,7 +4269,6 @@ de:
     become_tutor_success: 'Dein Tutorenstatus wurde geupdatet.'
     become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
     become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
-    become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
     lectures:
       destruction_failed: >
         Die Veranstaltung konnte nicht gelöscht werden, weil sich Inhalte nicht
@@ -4422,10 +4422,10 @@ de:
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:
+              format: '%{message}'
               required: 'Es muss ein Semester angegeben werden.'
               present: >
-                Semester angeben, assoziiertes Modul ist jedoch
-                semesterunabhängig
+                Für ein semesterunabhängiges Modul wird kein Semester angegeben.
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
             uses_exam_eligibility:
@@ -4542,14 +4542,6 @@ de:
           attributes:
             lecture:
               must_be_seminar: "Vorträge können nur für Seminare erstellt werden."
-            speaker_ids:
-              graded:
-                one: >-
-                  %{names} bleibt auf dem Vortrag: er ist schon benotet.
-                  Lösche zuerst die Note.
-                other: >-
-                  %{names} bleiben auf dem Vortrag: er ist für sie schon
-                  benotet. Lösche zuerst die Note.
             title:
               blank: Es muss ein Titel angegeben werden.
         term:
@@ -4580,6 +4572,7 @@ de:
             lecture:
               does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
+          admin_rights_lost: 'Du bist nicht mehr Admin, deshalb wurde nichts gespeichert.'
           attributes:
             consents:
               accepted: 'Du musst der Datenschutzerklärung zustimmen, um ein Konto anzulegen.'
@@ -4594,6 +4587,10 @@ de:
           team_size: >
             Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
             hätte als erlaubt.
+          other_tutorial: >
+            Du kannst nicht beitreten, da dieses Abgabeteam zu einem anderen
+            Tutorium gehört. In dieser Veranstaltung müssen alle Mitglieder
+            eines Teams im selben Tutorium sein.
         vignettes/question:
           format: '%{message}'
           attributes:

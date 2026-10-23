@@ -67,6 +67,10 @@ module Registration
 
     REVERTIBLE_STATUSES = ["open", "closed"].freeze
 
+    # Before an allocation is computed, nobody is in a group through the
+    # campaign yet: ending it takes registrations, not memberships.
+    ENDABLE_STATUSES = ["open", "closed"].freeze
+
     DISCARD_BLOCKER_ERRORS = {
       status: :cannot_delete_active_campaign,
       registrations: :cannot_discard_with_registrations,
@@ -121,6 +125,20 @@ module Registration
       open? && registration_deadline > Time.current
     end
 
+    # Past its deadline and not finalized: finalize! has not yet put the
+    # registered people into their groups.
+    def awaiting_finalization?
+      (open? || closed? || processing?) && registration_deadline <= Time.current
+    end
+
+    # Whether finalize! also puts everyone onto the lecture roster, which a
+    # cohort without enrollment does not.
+    def enrolls_in_lecture?
+      registration_items.includes(:registerable).none? do |item|
+        item.registerable.is_a?(Cohort) && !item.registerable.propagate_to_lecture?
+      end
+    end
+
     def open_for_withdrawals?
       open_for_registrations?
     end
@@ -145,6 +163,48 @@ module Registration
       data_blocker
     end
 
+    # Checks whether the campaign may end without allocation. Not an exam's
+    # campaign: the exam controls its lifecycle.
+    def endable_without_allocation?
+      status.in?(ENDABLE_STATUSES) && last_allocation_calculated_at.nil? &&
+        !materialized_roster_entries? && !referencing_prerequisite_policies.exists? &&
+        !exam_campaign?
+    end
+
+    # Lists the groups that cannot be deleted along with the campaign: they
+    # hold members from outside it, a talk's media or uploaded submissions.
+    def groups_blocking_deletion
+      registration_items.filter_map(&:registerable).select do |group|
+        group.destruction_blockers_outside_campaign.any?
+      end
+    end
+
+    # Ends the campaign without allocation: deletes its registrations and
+    # itself, and its groups with delete_groups. Yields under the campaign
+    # lock, before the registrations go, so that the caller can snapshot who
+    # was registered. Returns false where a guard refuses; raises
+    # ActiveRecord::RecordNotDestroyed where a group stops being deletable
+    # after the check, and then changes nothing.
+    def end_without_allocation!(delete_groups:)
+      transaction do
+        lock!
+        return false unless endable_without_allocation?
+        return false if delete_groups && groups_blocking_deletion.any?
+
+        yield if block_given?
+        # Withdrawing locks the item and then deletes its registration; taking
+        # the items in that order too keeps the two from deadlocking.
+        items = registration_items.lock.to_a
+        groups = items.filter_map(&:registerable)
+        user_registrations.delete_all
+        destroy!
+        # Adding a member locks the group; holding that lock through the
+        # group's own destroy check keeps anybody from arriving before it goes.
+        groups.each { |group| group.lock!.destroy! } if delete_groups
+        true
+      end
+    end
+
     def revertible_to_draft?
       revert_blocker.nil?
     end
@@ -167,6 +227,31 @@ module Registration
       last_allocation_calculated_at.present? ||
         allocation_decided_at.present? ||
         materialized_roster_entries?
+    end
+
+    # A group may join until an allocation is computed: while the campaign is
+    # open, students see it at once; after the deadline, the allocation can
+    # still fill it with those left without a place. A computed allocation
+    # does not know the group, and a completed campaign has its rosters.
+    def accepts_new_items?
+      (draft? || open? || closed?) && !allocation_present?
+    end
+
+    # Adds a group under the campaign's lock, which the allocation and
+    # finalize! take as well: a group asked for while they run is checked
+    # against the campaign they leave behind. Returns the item, unsaved with errors when
+    # the campaign takes no new groups.
+    def add_item(attributes)
+      item = nil
+      with_lock do
+        item = registration_items.build(attributes)
+        if accepts_new_items?
+          item.save
+        else
+          item.errors.add(:base, I18n.t("registration.campaign.takes_no_new_items"))
+        end
+      end
+      item
     end
 
     def exam_campaign?
@@ -239,7 +324,7 @@ module Registration
       user_registrations.where.not(status: :rejected)
                         .includes(:user, :registration_item)
                         .joins(:user)
-                        .order("users.name")
+                        .merge(User.by_last_name)
                         .group_by(&:user)
     end
 
@@ -269,6 +354,8 @@ module Registration
                 finalized_at: Time.current,
                 allocation_decided_at: allocation_decided_at || Time.current)
       end
+
+      notify_rejected_users
     end
 
     def reopen!(registration_deadline: nil)
@@ -354,8 +441,8 @@ module Registration
     # and shown in the rejected queue instead.
     #
     # When preload_registrations is true, the returned relation also eager-loads
-    # the registration data needed by the "unassigned side panel" and orders by
-    # name and email.
+    # the registration data needed by the "unassigned side panel", which sorts
+    # the users itself.
     def unassigned_users(preload_registrations: false)
       return User.none if draft?
 
@@ -372,7 +459,7 @@ module Registration
           :registration_campaign,
           { registration_item: :registerable }
         ]
-      ).order(:name, :email)
+      )
     end
 
     def rejected_users(preload_registrations: false)
@@ -388,7 +475,7 @@ module Registration
           :registration_campaign,
           { registration_item: :registerable }
         ]
-      ).order(:name, :email)
+      )
     end
 
     def open_rejected_registrations
@@ -694,6 +781,34 @@ module Registration
           # Fallback: Load instances and use the Rosterable interface.
           # This is slower but guarantees correctness if the association name differs.
           scope.flat_map(&:allocated_user_ids)
+        end
+      end
+
+      def notify_rejected_users
+        rejected_registrations = user_registrations.where(status: :rejected).includes(:user)
+        user_ids = rejected_registrations.map(&:user_id).uniq
+
+        confirmed_user_ids = user_registrations
+                             .where(user_id: user_ids, status: :confirmed)
+                             .distinct.pluck(:user_id).to_set
+
+        rejected_to_notify = rejected_registrations
+                             .group_by(&:user)
+                             .filter_map do |user, regs|
+          next if confirmed_user_ids.include?(user.id)
+
+          reasons = I18n.with_locale(user.locale.presence || I18n.default_locale) do
+            regs.map(&:resolved_rejection_reason_label).uniq
+          end
+
+          [user, reasons]
+        end
+        exam_campaign = exam_campaign?
+        exam_rosterable = exam_campaign ? exam : nil
+        rejected_to_notify.each do |user, reasons|
+          RosterNotificationMailer
+            .rejected(user, reasons: reasons, exam_campaign: exam_campaign,
+                            exam: exam_rosterable, lecture: campaignable)
         end
       end
   end

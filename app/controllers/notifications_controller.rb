@@ -35,6 +35,16 @@ class NotificationsController < ApplicationController
     render :destroy_all
   end
 
+  # Marks the lecture's new media as seen, which the lecture home lists.
+  def destroy_lecture_media_notifications
+    lecture = Lecture.find_by(id: params[:lecture_id])
+    return head(:not_found) if lecture.blank?
+
+    Notification.delete(current_user.active_media_notifications(lecture).pluck(:id))
+    current_user.touch
+    render turbo_stream: turbo_stream.remove("lecture-home-new-media")
+  end
+
   # destroy all notififications of current user that do not belong
   # to any lecture
   def destroy_news_notifications

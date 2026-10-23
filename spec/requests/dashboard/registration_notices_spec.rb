@@ -13,6 +13,9 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
            registration_item: campaign.registration_items.first)
   end
 
+  # Built lazily, so only after the request under test.
+  let(:board) { Dashboard::Board.new(user: user.reload, term: lecture.term) }
+
   before do
     sign_in user
   end
@@ -35,9 +38,9 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
     it "drops the lecture from the dashboard entirely once dismissed" do
       delete dashboard_lecture_registration_notice_path(lecture), as: :turbo_stream
 
-      expect(user.reload.current_enrolled_lectures(lecture.term))
+      expect(board.enrolled_lectures)
         .not_to include(lecture)
-      expect(user.current_bookmarked_lectures(lecture.term))
+      expect(board.bookmarked_lectures)
         .not_to include(lecture)
     end
 
@@ -46,7 +49,7 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
              params: { keep_bookmarked: true }, as: :turbo_stream
 
       expect(lecture.in?(user.reload.lectures)).to be(true)
-      expect(user.current_bookmarked_lectures(lecture.term)).to include(lecture)
+      expect(board.bookmarked_lectures).to include(lecture)
     end
 
     it "removes an existing bookmark when removing the lecture entirely" do
@@ -56,7 +59,7 @@ RSpec.describe("Dashboard::RegistrationNotices", type: :request) do
              params: { keep_bookmarked: false }, as: :turbo_stream
 
       expect(lecture.in?(user.reload.lectures)).to be(false)
-      expect(user.current_bookmarked_lectures(lecture.term))
+      expect(board.bookmarked_lectures)
         .not_to include(lecture)
     end
 

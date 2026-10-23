@@ -1,0 +1,94 @@
+<div class="dashboard-card-slot">
+  <aside class="staff-post-it" aria-labelledby="staff-post-it-title">
+    <h3 class="staff-post-it__title" id="staff-post-it-title">
+      <%= t("dashboard.staff_post_it.title") %>
+    </h3>
+
+    <ul class="staff-post-it__list">
+      <% if create_lecture? %>
+        <li>
+          <%= button_tag type: "button",
+                         class: "staff-post-it__item",
+                         data: { controller: "turbo-modal",
+                                 turbo_modal_selector_value: "#newLectureModal",
+                                 turbo_modal_frame_id_value: "new_lecture",
+                                 turbo_modal_url_value: new_lecture_path(from: "dashboard"),
+                                 action: "turbo-modal#open" } do %>
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+            <%= t("dashboard.staff_post_it.new_lecture") %>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% if courses.any? %>
+        <li>
+          <button
+            type="button"
+            class="staff-post-it__item"
+            data-bs-toggle="modal"
+            data-bs-target="#<%= StaffPostItComponent::COURSES_MODAL_ID %>"
+          >
+            <i class="bi bi-journal-bookmark" aria-hidden="true"></i>
+            <%= t("dashboard.staff_post_it.my_courses") %>
+          </button>
+        </li>
+      <% end %>
+
+      <li>
+        <%= link_to helpers.staff_search_path, class: "staff-post-it__item" do %>
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <%= t("dashboard.staff_post_it.search") %>
+        <% end %>
+      </li>
+    </ul>
+  </aside>
+</div>
+
+<% if create_lecture? %>
+  <%= render partial: "lectures/extern/modal" %>
+<% end %>
+
+<% if courses.any? %>
+  <div
+    class="modal fade"
+    id="<%= StaffPostItComponent::COURSES_MODAL_ID %>"
+    tabindex="-1"
+    aria-labelledby="staff-courses-title"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="staff-courses-title">
+            <%= t("dashboard.staff_post_it.my_courses") %>
+          </h2>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="<%= t("buttons.close") %>"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="text-muted small">
+            <%= t("dashboard.staff_post_it.courses_explainer") %>
+          </p>
+
+          <ul class="list-unstyled mb-0">
+            <% courses.each do |course| %>
+              <li class="d-flex justify-content-between py-1 border-bottom">
+                <span><%= course.title %></span>
+
+                <%= link_to t("buttons.edit"), edit_course_path(course),
+                            "aria-label": t("dashboard.staff_post_it.edit_course",
+                                            course: course.title) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

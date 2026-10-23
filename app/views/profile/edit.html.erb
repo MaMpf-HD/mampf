@@ -93,6 +93,10 @@
             <%= link_to t("personal_data.edit_link"), edit_personal_data_path %>
           </div>
 
+          <% if @user.teacher? %>
+            <%= render "profile/teacher_profile", f: f, user: @user %>
+          <% end %>
+
           <%= render partial: 'profile/subscription_type', locals: { f: f } %>
           <%= render partial: 'profile/account' %>
         </div>
@@ -117,22 +121,6 @@
   </div>
 
   <div class="row">
-
-    <!-- 🌟 Courses -->
-    <div class="col">
-      <div class="card profile-card" id="courses-accordion"
-           data-testid="courses-accordion">
-        <div class="card-header">
-          <h5 class="mb-0">
-            <%= t('profile.courses') %>
-          </h5>
-        </div>
-    
-        <div class="card-body">
-          <%= render partial: 'profile/subscriptions' , locals: { f: f } %>
-        </div>
-      </div>
-    </div>
 
     <!-- ⭕ Unsaved changes warning/button -->
     <!-- Here at the bottom only for small displays -->

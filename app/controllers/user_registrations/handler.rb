@@ -45,6 +45,14 @@ module UserRegistrations
       I18n.t("registration.user_registration.messages.requirements_not_met")
     end
 
+    def check_lecture_membership(item)
+      exam = item.registerable
+      return nil unless exam.is_a?(Exam)
+      return nil if exam.registrable_by?(@user)
+
+      I18n.t("registration.user_registration.messages.not_on_lecture_roster")
+    end
+
     def check_unremovable_roster_assignment(joining: nil)
       return if joining.present? &&
                 !joining.roster_exclusive_within_lecture?

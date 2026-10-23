@@ -20,7 +20,7 @@ class Notification < ApplicationRecord
   end
 
   # returns the path that the user is sent to when the notification is clicked:
-  # profile path for notifications about new courses or lectures
+  # the dashboard's lecture search for notifications about new courses or lectures
   # lecture path for announcements in lectures
   # news path for general announcements
   # all other cases: notifiable path
@@ -30,7 +30,7 @@ class Notification < ApplicationRecord
     if redemption?
       edit_lecture_path(notifiable.voucher.lecture, anchor: "people")
     elsif lecture_or_course?
-      edit_profile_path
+      root_path(anchor: "lecture-search")
     elsif lecture_announcement?
       lecture_home_path(notifiable.lecture)
     elsif generic_announcement?

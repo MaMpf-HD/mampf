@@ -22,7 +22,8 @@ class MainController < ApplicationController
   end
 
   def comments
-    @media_comments = current_user.subscribed_media_with_latest_comments_not_by_creator
+    @lecture = Lecture.find(params[:lecture_id]) if params[:lecture_id]
+    @media_comments = current_user.media_with_latest_comments_not_by_creator(commented_media)
     @media_comments.select! do |m|
       (Reader.find_by(user: current_user, thread: m[:thread])
             &.updated_at || 1000.years.ago) < m[:latest_comment].created_at &&
@@ -33,35 +34,27 @@ class MainController < ApplicationController
 
   def start
     @available_terms = Dashboard::TermSelector.terms
-    @selected_term = Dashboard::TermSelector.selected(params)
+    @selected_term = selected_dashboard_term
+    @next_term_lecture_count = Dashboard::TermSelector.next_term_lecture_count
 
     load_board(@selected_term)
-    next_term_banner
   end
 
   private
+
+    # Filtered to a lecture, the page lists what the lecture's quick action
+    # on the dashboard counted, which includes media of lectures the user
+    # teaches without being subscribed to them.
+    def commented_media
+      return current_user.subscribed_commentable_media_with_comments unless @lecture
+
+      Dashboard::LectureActivity.new(user: current_user, lectures: [@lecture])
+                                .media_with_unread_comments
+    end
 
     def check_for_consent
       return unless user_signed_in?
 
       redirect_to consent_profile_path unless current_user.consents
-    end
-
-    # Transitional banner pointing to the lectures of the upcoming term
-    # (see main/start/_next_term_banner). It is only shown when the
-    # feature flag is enabled and there is at least one lecture for the next
-    # term that is visible to students (i.e. published).
-    def next_term_banner
-      return unless Flipper.enabled?(:next_term_banner)
-
-      @next_term = Term.active&.next
-      return if @next_term.blank?
-
-      # matches Search::Filters::DashboardTermFilter: term-independent
-      # lectures (term: nil) are part of the results the banner links to,
-      # so they are part of the count as well
-      @next_term_lecture_count = Lecture.published
-                                        .where(term: [@next_term, nil])
-                                        .count
     end
 end

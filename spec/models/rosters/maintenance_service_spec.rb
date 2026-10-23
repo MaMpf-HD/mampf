@@ -42,7 +42,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
     end
 
     context "when a registration exists" do
-      let(:campaign) { create(:registration_campaign) }
+      let(:campaign) { create(:registration_campaign, campaignable: tutorial.lecture) }
       let(:item) do
         create(:registration_item, registration_campaign: campaign,
                                    registerable: tutorial)

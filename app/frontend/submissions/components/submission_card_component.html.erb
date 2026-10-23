@@ -195,7 +195,8 @@
           %>
 
           <% unless before_groups? %>
-            <%= link_to t("submission.hub.card.where_to_enrol"), lecture_home_path %>
+            <%= link_to t("submission.hub.card.where_to_enrol"), lecture_home_path,
+                        data: { turbo_frame: "main" } %>
           <% end %>
         </p>
       <% end %>

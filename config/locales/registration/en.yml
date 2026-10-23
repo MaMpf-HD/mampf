@@ -7,6 +7,10 @@ en:
         already_finalized: "Registration process is already finalized."
       created: "Registration process created successfully."
       create_failed: "Registration process could not be created."
+      takes_no_new_items: "No group can be added to this registration process any more: its allocation has been computed or it is completed."
+      new_group_mail_hint: "%{group} is new in a registration process that people have already registered for."
+      new_group_mail_link: "Let them know"
+      new_group_mail_subject: "New group: %{group}"
       destroyed: "Registration process deleted successfully."
       discarded: "Registration process discarded. Its groups were kept and can now be managed manually."
       cannot_delete: "Registration process cannot be deleted."
@@ -14,6 +18,25 @@ en:
       confirm_revert_to_draft: "Take this registration process back to draft? Students cannot register while it is a draft, and you can change its settings, rules and groups again. Nothing is lost, because nobody has registered yet."
       confirm_discard_untouched: "Discard this finished registration process? Nobody registered for it and nothing was allocated, so its record holds nothing."
       confirm_discard: "Discard this registration process? It will be deleted along with its groups' registration settings and rules. The groups themselves are kept and can be managed manually afterwards. This is only possible because nobody has registered yet."
+      end:
+        action: "End without allocation"
+        intro:
+          one: "The one registration is deleted and the registration process disappears. Nobody is allocated to a group. This cannot be undone."
+          other: "The %{count} registrations are deleted and the registration process disappears. Nobody is allocated to a group. This cannot be undone."
+        groups: "The groups of the process"
+        keep_groups: "Keep the groups and manage them freely afterwards"
+        delete_groups: "Delete the groups as well"
+        groups_blocking: "Deleting them is not possible, since these groups still hold something:"
+        group_kept: "Nothing was deleted: “%{group}” can no longer be deleted (%{reasons})."
+        notify: "Notify those registered by email"
+        default_subject: "Registration “%{campaign}” ended"
+        default_body: "The registration process “%{campaign}” in %{lecture} has ended. No groups will be allocated through it, so your registration no longer applies."
+        submit: "Delete process and registrations"
+        ended: "The registration process has ended."
+        ended_and_notified:
+          one: "The registration process has ended. One person is being notified."
+          other: "The registration process has ended. %{count} people are being notified."
+        not_possible: "This registration process can no longer be ended without an allocation."
       opened: "Registration process opened."
       closed: "Registration process closed."
       reopened: "Registration process reopened."
@@ -34,6 +57,11 @@ en:
       active_campaign_title: "Active registration process"
       completed_description: "The registration period has ended and allocations have been finalized. Please use the group management to make any adjustments."
       go_to_roster: "Go to Roster"
+      deadline_passed_hint_html: "The registration deadline has passed, but the allocation is still pending. Only with “Finalize Allocation” do the registered people get into their groups and onto the participants list. Click a group to see its registrations, or see all of them under %{link}."
+      deadline_passed_hint_without_enrollment_html: "The registration deadline has passed, but the allocation is still pending. Only with “Finalize Allocation” do the registered people get into their groups. Click a group to see its registrations, or see all of them under %{link}."
+      registrations_hint_html: "Registered people get into the groups and onto the participants list only once the registration has ended and you finalize the allocation. Click a group to see its registrations, or see all of them under %{link}."
+      registrations_hint_without_enrollment_html: "Registered people get into the groups only once the registration has ended and you finalize the allocation. Click a group to see its registrations, or see all of them under %{link}."
+      registrations_link: "Participants → Registered"
       self_service:
         title: "Finalized — can students join and leave groups themselves?"
         description: "Self-enrollment is currently disabled: students are assigned but cannot join or leave groups on their own. You can allow it now for all of the campaign's groups — e.g. to let them self-balance or admit latecomers. You can fine-tune each group later."
@@ -54,7 +82,7 @@ en:
       helpdesk:
         campaigns: "Registration processes manage enrollment for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
         description: "A short description of the registration process (max. 100 characters). This will be displayed in overviews and tables."
-        allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
+        allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline. In both cases, registered people get into their groups and onto the participants list only once the registration has ended and you finalize the allocation; for groups without enrollment, only into the group."
         registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
         allocation_mode_frozen: "The allocation mode cannot be changed once the registration process has been opened or is no longer a draft."
         first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
@@ -69,12 +97,15 @@ en:
         choice:
           question: "Do you need a registration process?"
           hint: >-
-            If you are unsure, we recommend choosing a registration process.
-            It gives you a clear registration window, lets you review demand
-            before assignments are finalized, and helps you handle
-            eligibility rules or limited capacities more fairly. It can also
-            assign students to groups automatically, based on the preferences
-            they submit.
+            With a registration process you set a fixed registration window,
+            see the demand before the places are given out, and can handle
+            policies and limited places fairly; if you like, students are
+            allocated automatically by their preferences. Registered people
+            appear in the groups and on the participants list only after the
+            allocation. Without one you are
+            more flexible: you put people into groups directly or let them join
+            themselves, at any time and without a deadline. In return there is
+            no choice by preference and there are no policies.
         columns:
           description: "Short description"
           type: "Type"
@@ -338,6 +369,7 @@ en:
         exams: "Exam registration"
       eligibility_title: "Eligibility"
       first_come_first_served_instruction: "Register for a group. Final allocation will automatically take place after the registration deadline."
+      first_come_first_served_instruction_talk: "Register for a talk. Final allocation will automatically take place after the registration deadline."
       first_come_first_served_instruction_exam: "Register for this exam. Your place is confirmed right away."
       preference_instruction:
         one: "Rank %{count} option. Allocation is calculated after the deadline."
@@ -351,6 +383,8 @@ en:
         empty: "Choose an option"
       save_choices: "Save choices"
       save_choices_incomplete_tooltip: "Choose an option for every rank before saving."
+      withdraw_preferences: "Withdraw preferences"
+      withdraw_preferences_confirm: "Withdraw all your preferences? You will then no longer take part in the allocation. You can submit new preferences until the deadline."
       eligible: "Eligible"
       not_eligible: "Not eligible"
       prerequisite_campaign: "Prerequisite registration process"
@@ -457,9 +491,11 @@ en:
         no_slots: "No seats available."
         requirements_not_met: "You do not meet the requirements."
         unremovable_assignment: "You cannot register for another group because you cannot leave your current tutorial."
+        not_on_lecture_roster: "Only participants of this lecture can register for the exam. If you are meant to take it, please contact the lecturer."
         invalid_options: "Invalid options selected."
         withdrawn: "You have withdrawn your registration."
         preferences_saved: "Your preferences have been saved."
+        preferences_withdrawn: "Your preferences have been withdrawn."
         dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following registration processes are confirmed: %{names}"
         not_preference_based_mode: "This registration process is not in preference-based mode. Preferences cannot be saved here."
         invalid_preferences: "Please choose exactly one option for each available preference rank."
@@ -480,9 +516,19 @@ en:
         rejected_by_teacher: "The lecture staff rejected this registration."
         excluded_from_exam: "Removed from the exam list"
         on_exam_list: "On the exam list"
+        grade: "Grade %{grade}"
+        marked: "Marked"
+        absent: "Did not take part"
+        exempt: "Exempt"
+        points: "%{points} of %{total} points"
+        points_per_problem: "Points per problem"
+        problem: "Problem %{number}"
         enrolled: "Enrolled"
         assigned: "Assigned"
         leave: "Leave"
+        leave_confirm_final: "Leave “%{group}”? You cannot join it again yourself; only the lecture's staff can take you back."
+        leave_confirm_while_free: "Leave “%{group}”? You can join again only while a place is free."
+        leave_confirm_rejoin: "Leave “%{group}”? You can join again afterwards."
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:
@@ -502,6 +548,7 @@ en:
         choose: "Choose preferences"
         register: "Register"
         show_and_register: "Show groups"
+        show_talks: "Show talks"
         days_left:
           zero: "ends today"
           one: "1 day left"
@@ -522,7 +569,6 @@ en:
         no_match: "No option matches your search."
         show_all: "Show all %{count}"
         withdraw_from: "Withdraw from %{title}"
-        no_places: "No places left."
         switch: "Switch here"
         switch_to: "Switch to %{title}"
         register_for: "Register for %{title}"
@@ -541,6 +587,13 @@ en:
         instruction: "You join these groups right away, without a registration period."
         joined: "Joined"
         join: "Join"
+      self_enrollment_talks:
+        title: "Take a talk yourself"
+        meta:
+          one: "%{count} talk, no deadline"
+          other: "%{count} talks, no deadline"
+        show: "Show talks"
+        instruction: "You take these talks right away, without a registration period."
     allocation:
       violations_table:
         override_pass: "Override to passed"
@@ -717,6 +770,7 @@ en:
               taken: "This item is already part of a registration process."
             registerable:
               not_registerable: "cannot be part of a registration process"
+              other_lecture: "belongs to another lecture"
             base:
               capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
               frozen: "Configuration cannot be changed because the registration process is no longer in draft mode."

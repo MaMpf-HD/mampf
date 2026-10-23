@@ -1,0 +1,31 @@
+<div class="d-flex flex-wrap align-items-end gap-3 m-3">
+  <div class="col-12 col-md-4">
+    <label class="form-label fw-semibold mb-2" for="cohort-select">
+      <%= t('roster.group_category.flexible_group') %>
+    </label>
+
+    <% if @cohorts.size > 1 %>
+      <select id="cohort-select"
+              class="form-select form-select-sm"
+              data-controller="select-navigation"
+              data-action="change->select-navigation#visit">
+        <option selected><%= @cohort.title %></option>
+        <% (@cohorts - [@cohort]).each do |cohort| %>
+          <option value="<%= lecture_cohort_participants_path(@lecture, cohort: cohort.id) %>">
+            <%= cohort.title %>
+          </option>
+        <% end %>
+      </select>
+    <% else %>
+      <input id="cohort-select" class="form-control form-control-sm" disabled
+             value="<%= @cohort.title %>">
+    <% end %>
+  </div>
+
+  <div class="col-12 col-md-auto d-flex flex-wrap gap-2">
+    <%= render partial: 'tutorials/mail_buttons',
+               locals: { group: @cohort, key: "cohort:#{@cohort.id}" } %>
+  </div>
+</div>
+
+<%= render TutorialParticipantsComponent.new(group: @cohort) %>

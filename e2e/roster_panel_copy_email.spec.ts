@@ -21,6 +21,8 @@ test.describe("the roster panel's copy button", () => {
 
       const copied = await page.evaluate(() => navigator.clipboard.readText());
       expect(copied).toBe(student.user.email);
+      await expect(page.getByRole("tooltip"))
+        .toHaveText("The email address has been copied to the clipboard.");
     });
 
   test("says so when the browser refuses the clipboard",
@@ -43,7 +45,7 @@ test.describe("the roster panel's copy button", () => {
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       await page.getByRole("button", ADDRESS_BUTTON).click();
 
-      await expect(page.getByRole("status"))
+      await expect(page.getByRole("status").filter({ hasText: /\S/ }))
         .toHaveText("The email address could not be copied.");
     });
 });

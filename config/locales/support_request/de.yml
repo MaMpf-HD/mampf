@@ -1,0 +1,19 @@
+de:
+  support_request:
+    open: "Support kontaktieren"
+    title: "Support kontaktieren"
+    intro_html: >
+      Deine Nachricht geht an das MaMpf-Team, das Dir per E-Mail antwortet. Fragen
+      zu einer Veranstaltung richtest Du am besten an ihre Verantwortlichen. Du
+      kannst uns auch an %{email} schreiben.
+    signed_out_html: >
+      Schreib uns an %{email}, wir antworten Dir per E-Mail. Fragen zu einer
+      Veranstaltung richtest Du am besten an ihre Verantwortlichen.
+    message: "Deine Nachricht"
+    message_placeholder: "Wie können wir helfen?"
+    send: "Senden"
+    sent: "Danke! Deine Nachricht ist unterwegs. Wir antworten per E-Mail."
+  activemodel:
+    attributes:
+      support_request:
+        message: "Nachricht"

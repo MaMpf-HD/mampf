@@ -160,6 +160,7 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 - **Finalize results:** in the current implementation, the controller runs `Registration::FinalizationGuard#check(...)` before calling `Registration::Campaign#finalize!`. Finalization materializes confirmed results, sets `materialized_at` for materialized registrations, converts remaining `pending` registrations to `rejected`, and transitions the campaign to `completed`. All campaigns materialize—non-propagating cohorts simply do not update the lecture roster.
   - **Materialization Timestamp:** During finalization, the `materialized_at` timestamp is set on the `Registration::UserRegistration` records of all confirmed users. This timestamp serves as a permanent record that the user was successfully allocated, even if they are later removed from the domain roster (e.g. manually). This allows the system to distinguish between "fresh" candidates and those who were previously assigned.
 - **Planning surveys:** Non-propagating cohorts (`propagate_to_lecture: false`) can be used for interest surveys. They go through the full campaign lifecycle including finalization, but don't affect lecture rosters.
+- **End without allocation:** an open or closed campaign with no computed allocation can also be ended without finalizing (`Registration::Campaign#end_without_allocation!`), for a registration that only served as a poll. Its registrations and the campaign itself are deleted; its groups are released from campaign management (`skip_campaigns`) or deleted along, unless one still holds members, a talk's media or uploaded submissions. Exam campaigns and campaigns another one requires as a prerequisite are excluded. Nothing remains for students: the staff's mail to those still registered, saved under the campaign lock before the registrations go, is their notice and the record of who was registered.
 - **Lecture performance completeness checks:****
   - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
   - **Campaign open:** Hard-fails if any students have missing/pending certifications (registration or both phase)
@@ -210,7 +211,7 @@ Campaigns transition through several states to ensure data integrity and fair us
 
 | Action | Freeze Point | Modification Rules |
 |--------|--------------|-------------------|
-| Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
+| Add item | Allocation computed | An item can join while the campaign is `draft`, `open` or `closed` and no allocation has been computed (`Campaign#accepts_new_items?`). Gives students more options without invalidating existing choices; in a preference campaign the allocation can place those left without a place in it. `Campaign#add_item` checks this under the campaign's lock, which allocation and finalization take as well. |
 | Remove item | `processing` | An item can leave its campaign while the campaign is `draft`, `open` or `closed`, as long as nobody registered for it, no allocation has been computed, and (outside `draft`) at least one other item remains. |
 
 Removing an item and deleting the group behind it are two separate actions, see

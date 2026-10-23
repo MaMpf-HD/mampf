@@ -3,6 +3,7 @@
 <aside
   id="tutorial-roster-side-panel"
   class="card tutorial-roster-side-panel"
+  aria-labelledby="tutorial-roster-panel-heading"
   data-tutorial-roster-panel-target="panelCard"
   <% if drag_controller? %>
     data-controller="roster-drag"
@@ -15,7 +16,46 @@
 >
   <div class="p-3 border-bottom d-flex justify-content-between align-items-start gap-2">
     <div>
-      <h5 class="mb-1"><%= panel_title %></h5>
+      <div class="d-flex align-items-center gap-1 mb-1">
+        <h5
+          class="mb-0"
+          id="tutorial-roster-panel-heading"
+          tabindex="-1"
+          data-roster-panel-heading
+        >
+          <%= panel_title %>
+        </h5>
+
+        <% if students.any? %>
+          <div
+            class="d-flex"
+            data-controller="clipboard"
+            data-clipboard-text-value="<%= all_emails %>"
+            data-clipboard-confirmation-value="<%= t("basics.emails_copied_to_clipboard") %>"
+            data-clipboard-failure-value="<%= t("basics.emails_copy_failed") %>"
+          >
+            <button
+              type="button"
+              class="btn icon-button"
+              data-action="clipboard#copy"
+              title="<%= t("buttons.copy_all_email_addresses") %>"
+              aria-label="<%= t("buttons.copy_all_email_addresses") %>"
+            >
+              <i
+                class="bi bi-envelope"
+                aria-hidden="true"
+                data-clipboard-target="icon"
+              ></i>
+            </button>
+
+            <span
+              class="visually-hidden"
+              role="status"
+              data-clipboard-target="status"
+            ></span>
+          </div>
+        <% end %>
+      </div>
 
       <% if campaign_panel? %>
         <div class="text-muted small">
@@ -48,15 +88,19 @@
             <% elsif preference_based_campaign? %>
               <%= "#{students.size} " +
                   t("registration.item.badge.first_choice") %>
-            <% elsif campaign %>
+            <% elsif campaign || item %>
               <%= "#{students.size} " +
                   t("registration.item.columns.registrations") %>
             <% else %>
-              <%= "#{students.size} " +
-                  t("basics.participants") %>
+              <%= t("roster.details.member_count", count: students.size) %>
             <% end %>
           </span>
         </div>
+        <% if without_enrollment? %>
+          <div class="text-muted small mt-1">
+            <%= t("roster.details.without_enrollment_hint") %>
+          </div>
+        <% end %>
         <% if allocated? && allocated_choice_pills.any? %>
           <div class="d-flex flex-wrap gap-1 mt-1">
             <% allocated_choice_pills.each do |pill| %>
@@ -77,8 +121,10 @@
       type="button"
       class="btn btn-sm btn-outline-secondary tutorial-roster-close-btn"
       data-action="click->tutorial-roster-panel#close"
+      title="<%= t("buttons.close") %>"
+      aria-label="<%= t("buttons.close") %>"
     >
-      <i class="bi bi-x-lg"></i>
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
     </button>
   </div>
 
@@ -111,6 +157,37 @@
           <% end %>
         </div>
       <% end %>
+      <% if program_distribution? %>
+        <%= render ProgramDistributionComponent.new(
+              columns: { t("roster.programs.people") => program_distribution }
+            ) %>
+      <% end %>
+      <% if members.any? %>
+        <section class="mb-3" aria-labelledby="tutorial-roster-members-heading">
+          <h6
+            class="small fw-semibold mb-1"
+            id="tutorial-roster-members-heading"
+          >
+            <%= t("roster.details.already_members") %>
+          </h6>
+
+          <p class="small text-muted mb-2">
+            <%= t("roster.details.already_members_hint") %>
+          </p>
+
+          <ul class="list-unstyled small mb-0">
+            <% members.each do |member| %>
+              <li>
+                <%= student_display_name(member) %>
+
+                <% if program_text(member) %>
+                  <span class="text-muted">· <%= program_text(member) %></span>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
       <div class="mb-3">
         <label class="visually-hidden" for="tutorial-roster-filter">
           <%= t("roster.actions.search") %>
@@ -134,54 +211,97 @@
         <% students.each do |student| %>
           <div
             class="tutorial-roster-student card rounded-3"
-            data-student-search="<%= "#{student_display_name(student)} #{student.email}".downcase %>"
+            data-student-search="<%= student_display_name(student).downcase %>"
             data-user-id="<%= student.id %>"
           >
-            <div
-              class="
-                card-body border-0 py-2 px-3 d-flex gap-2 pe-5
-                position-relative
-              "
-            >
-              <div>
-                <div class="d-flex justify-content-between align-items-start">
-                  <div class="fw-semibold">
+            <div class="card-body border-0 py-2 px-3 d-flex gap-2">
+              <div class="tutorial-roster-student-main">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="fw-semibold tutorial-roster-student-name">
                     <%= student_display_name(student) %>
                   </div>
 
                   <% if allocated? %>
                     <% rank = preference_rank_for(student) %>
-                    <span class="badge <%= rank_badge_color(rank) %> ms-2 flex-shrink-0 roster-badge-sm">
+                    <span class="badge <%= rank_badge_color(rank) %> flex-shrink-0 roster-badge-sm">
                       <%= rank_badge_label(rank) %>
                     </span>
                   <% end %>
+
+                  <div class="ms-auto d-flex align-items-center gap-2 flex-shrink-0">
+                    <% if drag_controller? %>
+                      <button
+                        type="button"
+                        class="btn icon-button"
+                        data-action="roster-drag#pickTarget"
+                        data-user-id="<%= student.id %>"
+                        data-user-name="<%= student_display_name(student) %>"
+                        title="<%= t("roster.group_row.move.button",
+                                     name: student_display_name(student)) %>"
+                        aria-label="<%= t("roster.group_row.move.button",
+                                          name: student_display_name(student)) %>"
+                      >
+                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                      </button>
+                    <% end %>
+
+                    <div
+                      class="d-flex"
+                      data-controller="clipboard"
+                      data-clipboard-text-value="<%= student.email %>"
+                      data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
+                      data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
+                    >
+                      <button
+                        type="button"
+                        class="btn icon-button"
+                        data-action="clipboard#copy"
+                        title="<%= copy_email_label(student) %>"
+                        aria-label="<%= copy_email_label(student) %>"
+                      >
+                        <i
+                          class="bi bi-envelope"
+                          aria-hidden="true"
+                          data-clipboard-target="icon"
+                        ></i>
+                      </button>
+
+                      <span
+                        class="visually-hidden"
+                        role="status"
+                        data-clipboard-target="status"
+                      ></span>
+                    </div>
+
+                    <% path = show_remove_button? && remove_member_path(student) %>
+
+                    <% if path %>
+                      <%= button_to path,
+                                    method: :delete,
+                                    class: "btn icon-button icon-button--danger " \
+                                           "tutorial-roster-student-remove",
+                                    title: t("roster.group_row.remove",
+                                             name: student_display_name(student)),
+                                    "aria-label": t("roster.group_row.remove",
+                                                    name: student_display_name(student)),
+                                    form: {
+                                      class: "mb-0 d-flex",
+                                      data: {
+                                        turbo_confirm:
+                                          t("roster.warnings.confirm_kick_from_group")
+                                      }
+                                    } do %>
+                        <i class="bi bi-trash" aria-hidden="true"></i>
+                      <% end %>
+                    <% end %>
+                  </div>
                 </div>
 
-                <div
-                  class="text-muted small"
-                  data-controller="clipboard"
-                  data-clipboard-text-value="<%= student.email %>"
-                  data-clipboard-confirmation-value="<%= t("basics.email_copied_to_clipboard") %>"
-                  data-clipboard-failure-value="<%= t("basics.email_copy_failed") %>"
-                >
-                  <button
-                    type="button"
-                    class="btn btn-link btn-sm p-0 border-0 align-baseline text-muted"
-                    data-action="clipboard#copy"
-                    title="<%= t("buttons.copy_email_address") %>"
-                    aria-label="<%= t("buttons.copy_email_address") %>"
-                  >
-                    <i class="bi bi-envelope" data-clipboard-target="icon"></i>
-                  </button>
-
-                  <%= student.email %>
-
-                  <span
-                    class="visually-hidden"
-                    role="status"
-                    data-clipboard-target="status"
-                  ></span>
-                </div>
+                <% if program_text(student) %>
+                  <div class="small text-muted">
+                    <%= program_text(student) %>
+                  </div>
+                <% end %>
 
                 <% if show_rejection_reasons?(student) %>
                   <div
@@ -204,27 +324,6 @@
                   </div>
                 <% end %>
               </div>
-
-              <% if show_remove_button? %>
-                <% path = remove_member_path(student) %>
-                <% if path %>
-                  <%= button_to path,
-                                method: :delete,
-                                class: "btn btn-sm btn-outline-danger " \
-                                       "tutorial-roster-student-remove",
-                                form: {
-                                  class: "mb-0 d-flex h-100
-                                          position-absolute top-50 end-0
-                                          translate-middle-y",
-                                  data: {
-                                    turbo_confirm:
-                                      t("roster.warnings.confirm_kick_from_group")
-                                  }
-                                } do %>
-                    <i class="bi bi-trash"></i>
-                  <% end %>
-                <% end %>
-              <% end %>
             </div>
           </div>
         <% end %>
@@ -243,42 +342,101 @@
     <% end %>
   </div>
 
+  <% if drag_controller? %>
+    <dialog
+      class="roster-modal"
+      data-roster-drag-target="targetDialog"
+      data-action="cancel->roster-drag#cancelPick click->roster-drag#cancelOnBackdrop"
+      aria-labelledby="roster-drag-target-title"
+      data-title-template="<%= t("roster.group_row.move.title", name: "__NAME__") %>"
+      data-locked-note="<%= t("roster.group_row.move.locked") %>"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <p
+            class="modal-title h5"
+            id="roster-drag-target-title"
+            data-role="dialog-title"
+          ></p>
+
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="<%= t("buttons.close") %>"
+            data-action="click->roster-drag#cancelPick"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="list-group" data-roster-drag-target="targetList"></div>
+
+          <p class="small text-muted mb-0 d-none" data-role="no-targets">
+            <%= t("roster.group_row.move.none") %>
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-action="click->roster-drag#cancelPick"
+          >
+            <%= t("buttons.cancel") %>
+          </button>
+        </div>
+      </div>
+    </dialog>
+  <% end %>
+
   <% unless read_only? || registerable.nil? %>
     <dialog
-      class="roster-drag-choice-dialog"
+      class="roster-modal"
       data-roster-drag-target="choiceDialog"
+      data-action="cancel->roster-drag#cancelChoice click->roster-drag#cancelOnBackdrop"
+      aria-labelledby="roster-drag-choice-title"
     >
-      <p class="fw-semibold mb-3">
-        <%= t("roster.drag.choice_title") %>
-        <span data-role="target-name" class="text-primary"></span>
-      </p>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="roster-drag-choice-title">
+            <%= t("roster.drag.choice_title") %>
+            <span data-role="target-name"></span>
+          </h2>
 
-      <div class="d-flex gap-2 justify-content-end">
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-secondary"
-          data-action="click->roster-drag#cancelChoice"
-        >
-          <%= t("buttons.cancel") %>
-        </button>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="<%= t("buttons.close") %>"
+            data-action="click->roster-drag#cancelChoice"
+          ></button>
+        </div>
 
-        <button
-          type="button"
-          class="btn btn-sm btn-outline-primary"
-          data-action="click->roster-drag#chooseAdd"
-        >
-          <i class="bi bi-plus-lg me-1"></i>
-          <%= t("roster.drag.add_only") %>
-        </button>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-action="click->roster-drag#cancelChoice"
+          >
+            <%= t("buttons.cancel") %>
+          </button>
 
-        <button
-          type="button"
-          class="btn btn-sm btn-primary"
-          data-action="click->roster-drag#chooseMove"
-        >
-          <i class="bi bi-arrow-right me-1"></i>
-          <%= t("roster.drag.move") %>
-        </button>
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-action="click->roster-drag#chooseAdd"
+          >
+            <i class="bi bi-plus-lg me-1"></i>
+            <%= t("roster.drag.add_only") %>
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-action="click->roster-drag#chooseMove"
+          >
+            <i class="bi bi-arrow-right me-1"></i>
+            <%= t("roster.drag.move") %>
+          </button>
+        </div>
       </div>
     </dialog>
   <% end %>

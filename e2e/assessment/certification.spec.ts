@@ -169,6 +169,47 @@ test.describe("exam eligibility decisions", () => {
     )).toBeVisible();
   });
 
+  test("keeps a manual decision once the teacher confirms it", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await lectureWithRule(factory, teacher.user.id, []);
+    const user = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Ada Lovelace",
+    });
+    await factory.create("student_performance_record", [], {
+      lecture_id: lecture.id,
+      user_id: user.id,
+      points_total_materialized: 40,
+      points_max_materialized: 100,
+      percentage_materialized: 40,
+    });
+    // decided by hand before the rule was saved, so the rule has changed since
+    await factory.create("student_performance_certification", ["passed", "manual"], {
+      lecture_id: lecture.id,
+      user_id: user.id,
+      certified_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    });
+
+    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await openEligibility(page);
+    await expect(teacher.page.getByText(
+      "1 manual decision: rule or performance data changed since.",
+    )).toBeVisible();
+
+    teacher.page.on("dialog", dialog => dialog.accept());
+    const confirmation = teacher.page.waitForEvent("dialog");
+    await teacher.page
+      .getByRole("button", { name: "Confirm individual decisions" }).click();
+    expect((await confirmation).message()).toContain("Keeps 1 manual decision as it is");
+
+    await expect(teacher.page.getByText("1 individual decision confirmed."))
+      .toBeVisible();
+    await expect(teacher.page.getByRole("button", {
+      name: "Confirm individual decisions",
+    })).toHaveCount(0);
+  });
+
   test("reports an empty lecture instead of an empty table", async ({
     factory,
     teacher,

@@ -17,7 +17,7 @@ A topic folder (e.g. `lectures`)
 - May contain one of the following special subfolders:
   - `shared`: for shared partials, components etc. used in multiple actions.
   - `form`: for form-related partials, components etc. used in multiple actions, e.g. see `vignettes/slides/form/_form.html.erb` and the related `_form.js`.
-  - `mails`: for email views, e.g. see `feedbacks/mails`.
+  - `mails`: for email views, e.g. see `support_requests/mails`.
 - May contain a root-level `.js` and `.scss` file with the same name as the topic folder (e.g. `lectures.js` and `lectures.scss`) for code that is used across multiple actions. If parts of the code inside these files are only used in a specific action, move these parts to the corresponding folder. Only code that is really *needed* (not just only imported) from multiple other files should live in these root-level files. A `.scss` is more common to find here than a `.js` file since CSS-rultes usually apply to multiple actions.
 - These rules may be bent in some very specific cases, but should serve as a guideline for most scenarios. Always critically question the structure.
 

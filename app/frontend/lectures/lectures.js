@@ -1,16 +1,3 @@
-$(document).on("change", "#lecture_course_id", function () {
-  $("#lecture_term_id").removeClass("is-invalid");
-  $("#new-lecture-term-error").empty();
-  const courseId = parseInt($(this).val());
-  const termInfo = $(this).data("terminfo").filter(x => x[0] === courseId);
-  if (!termInfo[0]) return;
-
-  const termIndependent = termInfo[0][1];
-  $("#newLectureTerm").toggle(!termIndependent);
-  $("#lecture_term_id").prop("disabled", termIndependent);
-  $("#newLectureSort").toggle(!termIndependent);
-});
-
 $(document).on("change", "#medium_publish_media_0", function () {
   $('[id^="medium_released_"]').attr("disabled", true);
   $("#access-text").css("color", "grey");
@@ -32,12 +19,10 @@ $(document).on("turbo:load", function () {
     $("#secondnav").show();
     $("#lecturesDropdown").appendTo($("#secondnav"));
     $("#notificationDropdown").appendTo($("#secondnav"));
-    $("#feedback-btn").appendTo($("#secondnav"));
     $("#searchField").appendTo($("#secondnav"));
     $("#second-admin-nav").show();
     $("#adminDetails").appendTo($("#second-admin-nav"));
     $("#adminUsers").appendTo($("#second-admin-nav"));
-    $("#adminProfile").appendTo($("#second-admin-nav"));
     $("#teachableDrop").prependTo($("#second-admin-nav"));
     $("#adminMain").css("flex-direction", "row");
     $("#adminHome").css("padding-right", "0.5rem");
@@ -55,13 +40,11 @@ $(document).on("turbo:load", function () {
     $("#secondnav").hide();
     $("#lecturesDropdown").appendTo($("#firstnav"));
     $("#notificationDropdown").appendTo($("#firstnav"));
-    $("#feedback-btn").appendTo($("#firstnav"));
     $("#searchField").appendTo($("#firstnav"));
     $("#second-admin-nav").hide();
     $("#teachableDrop").appendTo($("#first-admin-nav"));
     $("#adminDetails").appendTo($("#first-admin-nav"));
     $("#adminUsers").appendTo($("#first-admin-nav"));
-    $("#adminProfile").appendTo($("#first-admin-nav"));
     $("#adminMain").removeAttr("style");
     $("#adminHome").removeAttr("style");
     $("#adminCurrentLecture").removeAttr("style");

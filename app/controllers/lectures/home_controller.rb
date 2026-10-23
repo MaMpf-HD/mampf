@@ -23,6 +23,9 @@ module Lectures
                              !LectureMembership.exists?(user: current_user,
                                                         lecture: @lecture)
       @notifications = current_user.active_notifications(@lecture)
+      if @content_accessible
+        @content = LectureContentComponent.new(lecture: @lecture, user: current_user)
+      end
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       load_student_registration if Registration::Participation.allowed?(current_user, @lecture)
       load_tutor_work
@@ -87,7 +90,7 @@ module Lectures
       end
 
       def student_work?
-        @content_accessible && !@can_edit && @tutorials_given.empty? &&
+        @content_accessible && !@can_edit && !@lecture.tutor?(current_user) &&
           @lecture.assignments.exists?
       end
 
@@ -102,6 +105,9 @@ module Lectures
 
       def load_tutor_work
         @tutorials_given = current_user.given_tutorials.where(lecture: @lecture).to_a
+        @cohorts_given = current_user.given_cohorts.where(context: @lecture).to_a
+        @cohort_member_counts = CohortMembership.where(cohort_id: @cohorts_given.map(&:id))
+                                                .group(:cohort_id).count
         return if @tutorials_given.empty?
 
         @member_counts = TutorialMembership.where(tutorial_id: @tutorials_given.map(&:id))
@@ -114,7 +120,6 @@ module Lectures
                                                    .includes(registration_items: :registerable)
                                                    .order(:registration_deadline).to_a
         @campaign_counts = CampaignCounts.new(@managed_campaigns).to_h
-        @lecture_backlog = MarkingBacklog.new(@lecture)
       end
 
       def next_exam

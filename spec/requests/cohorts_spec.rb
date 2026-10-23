@@ -126,6 +126,15 @@ RSpec.describe("Cohorts", type: :request) do
                 as: :turbo_stream
           expect(response).to have_http_status(:ok)
         end
+
+        it "names the cohort's tutors" do
+          tutor = create(:confirmed_user)
+
+          patch cohort_path(cohort), params: { cohort: { tutor_ids: [tutor.id] } },
+                                     as: :turbo_stream
+
+          expect(cohort.reload.tutors).to contain_exactly(tutor)
+        end
       end
 
       context "with invalid parameters" do

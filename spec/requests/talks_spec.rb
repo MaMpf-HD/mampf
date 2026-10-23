@@ -67,6 +67,18 @@ RSpec.describe("Talks", type: :request) do
         get edit_talk_path(talk), as: :turbo_stream
         expect(response).to have_http_status(:success)
       end
+
+      it "lists the speakers and points to the Groups tab for changing them" do
+        talk.speakers << create(:confirmed_user, name_in_tutorials: "Ada Lovelace")
+
+        get edit_talk_path(talk)
+
+        page = Nokogiri::HTML(response.body)
+        expect(page.text).to include("Ada Lovelace")
+        expect(page.at_css("a[href='#{edit_lecture_path(lecture, tab: "groups")}']").text)
+          .to eq("Groups")
+        expect(page.at_css("[name='talk[speaker_ids][]']")).to be_nil
+      end
     end
 
     describe "DELETE /talks/:id" do
@@ -162,6 +174,19 @@ RSpec.describe("Talks", type: :request) do
               as: :turbo_stream
         expect(response).to have_http_status(:ok)
         expect(response.media_type).to eq(Mime[:turbo_stream])
+      end
+
+      # Speakers come through the Groups tab, where a running registration
+      # locks the roster; the talk form would step around that lock.
+      it "leaves the speakers alone" do
+        speaker = create(:confirmed_user)
+        talk.speakers << speaker
+
+        patch talk_path(talk),
+              params: { talk: valid_attributes.merge(speaker_ids: [editor.id]) },
+              as: :turbo_stream
+
+        expect(talk.reload.speakers).to eq([speaker])
       end
     end
   end

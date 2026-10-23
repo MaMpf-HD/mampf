@@ -6,13 +6,13 @@ en:
           attributes:
             base:
               percentage_and_absolute_exclusive: "Cannot specify both a percentage and an absolute point threshold"
-              no_criteria: "The rule needs at least one criterion: a point threshold or a required achievement. Without one, every student would be certified."
               threshold_without_mode: "A point threshold is set although no threshold mode was chosen"
         student_performance/rule_achievement:
           attributes:
             achievement:
               must_belong_to_same_lecture: "must belong to the same lecture as the rule"
   student_performance:
+    eligibility_in_use: "The registration for %{campaigns} still asks for these decisions. Finalize it first, or, while it is still a draft, remove its Student Performance policy."
     lists:
       search: "Search students"
       no_match: "No students found."
@@ -95,6 +95,8 @@ en:
       show:
         of_total_points: "of total points required"
         points_absolute: "points required (absolute)"
+        no_requirement: "No requirement"
+        no_requirement_hint: "every student is proposed as eligible"
         edit_button: "Edit Rule"
         value_types:
           boolean: "Required"
@@ -107,7 +109,7 @@ en:
         save: "Save Rule"
         threshold_section: "Point Threshold"
         none_mode: "No point threshold"
-        none_hint: "Eligibility is determined solely by achievements."
+        none_hint: "Only the required achievements count. Without any, every student is proposed as eligible, and you refuse single students by hand."
         percentage_mode: "Percentage of total points"
         percentage_hint: "Students must reach this percentage of total points."
         absolute_mode: "Absolute points"
@@ -117,8 +119,17 @@ en:
         absolute_field: "Minimum points"
         achievements_section: "Required Achievements"
         achievements_hint: "Select which achievements students must complete."
+        remove: "Remove rule"
+        remove_confirm:
+          zero: "Removes the rule; every student is decided by hand again. Individual decisions stay."
+          one: "Removes the rule and resets the %{count} decision taken by it; every student is decided by hand again. Individual decisions stay."
+          other: "Removes the rule and resets the %{count} decisions taken by it; every student is decided by hand again. Individual decisions stay."
       flash:
         updated: "Eligibility rule updated."
+        removed:
+          zero: "Eligibility rule removed."
+          one: "Eligibility rule removed, %{count} decision reset."
+          other: "Eligibility rule removed, %{count} decisions reset."
       preview:
         button: "Preview"
         impact: "Impact"
@@ -216,7 +227,13 @@ en:
           one: "%{count} manual decision: rule or performance data changed since."
           other: "%{count} manual decisions: rule or performance data changed since."
         reevaluate: "Reconcile with rule"
+        reevaluate_confirm:
+          one: "Sets 1 decision to what the rule gives today. Continue?"
+          other: "Sets %{count} decisions to what the rule gives today. Continue?"
         confirm_manual: "Confirm individual decisions"
+        confirm_manual_confirm:
+          one: "Keeps 1 manual decision as it is, although the rule or the performance data changed since. Continue?"
+          other: "Keeps %{count} manual decisions as they are, although the rule or the performance data changed since. Continue?"
       status:
         passed: "Eligible"
         failed: "Not Eligible"

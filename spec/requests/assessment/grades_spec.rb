@@ -12,11 +12,29 @@ RSpec.describe(Assessment::GradesController, type: :request) do
   let!(:participation) do
     FactoryBot.create(:assessment_participation, assessment: assessment, user: speaker)
   end
-  let(:turbo_stream_headers) { { "Accept" => "text/vnd.turbo-stream.html" } }
+  let(:turbo_stream_headers) do
+    { "Accept" => "text/vnd.turbo-stream.html, text/html, application/xhtml+xml" }
+  end
 
   before do
     FactoryBot.create(:speaker_talk_join, talk: talk, speaker: speaker)
     sign_in grader
+  end
+
+  describe "the logs" do
+    it "leave out grades, points and the notes on them, not the table asked for" do
+      filter = ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters)
+      sent = { "grade" => "1.3", "comment" => "ill", "task_points" => { "1" => "4" }.to_json,
+               "participations" => "[]", "certification" => { "note" => "certificate" },
+               "grading_scope_type" => "lecture" }
+
+      filtered = filter.filter(sent)
+
+      expect(filtered.except("grading_scope_type", "certification").values)
+        .to all(eq("[FILTERED]"))
+      expect(filtered["certification"]["note"]).to eq("[FILTERED]")
+      expect(filtered["grading_scope_type"]).to eq("lecture")
+    end
   end
 
   describe "PATCH #update" do

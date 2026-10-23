@@ -5,7 +5,13 @@ module Assessment
 
       def exam_streams(participations = [@participation])
         participations.flat_map { |participation| exam_row_streams(participation) } +
-          exam_summary_streams + [exam_scheme_stream]
+          exam_summary_streams + [exam_scheme_stream, exam_release_stream]
+      end
+
+      # A new result changes how many people publishing would reach.
+      def exam_release_stream
+        turbo_stream.replace(ResultsReleaseComponent::ID,
+                             html: render_to_string(ResultsReleaseComponent.new(exam: @assessable)))
       end
 
       def exam_row_streams(participation)

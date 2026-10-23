@@ -19,6 +19,13 @@ class Tutorial < ApplicationRecord
 
   has_many :claims, as: :claimable, dependent: :destroy
 
+  # Grading rows outlive the group: they move to the group the person is in
+  # now, so that group's tutor holds them; without one they keep no group.
+  # Declared before the association, so it runs before the nullify.
+  before_destroy :rehome_assessment_participations
+  has_many :assessment_participations, class_name: "Assessment::Participation",
+                                       dependent: :nullify
+
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validate :lecture_must_not_be_seminar
   validate :lecture_id_immutable, on: :update
@@ -53,6 +60,12 @@ class Tutorial < ApplicationRecord
     blockers = super
     blockers << :submissions if submissions.with_uploads.exists?
     blockers
+  end
+
+  # Who may upload, replace and delete the group's corrections: its tutors,
+  # and the lecture's teacher and editors, who stand in for a tutor.
+  def correctable_by?(user)
+    user.in?(tutors) || user.editor_or_teacher_in?(lecture)
   end
 
   def teams_to_csv(assignment)
@@ -103,6 +116,17 @@ class Tutorial < ApplicationRecord
   end
 
   private
+
+    def rehome_assessment_participations
+      current_group = TutorialMembership
+                      .where(lecture_id: lecture_id)
+                      .where("tutorial_memberships.user_id = " \
+                             "assessment_participations.user_id")
+                      .select(:tutorial_id)
+      assessment_participations.update_all( # rubocop:disable Rails/SkipsModelValidations
+        "tutorial_id = (#{current_group.to_sql})"
+      )
+    end
 
     def lecture_id_immutable
       errors.add(:lecture_id, :immutable) if lecture_id_changed?

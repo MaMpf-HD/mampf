@@ -25,4 +25,14 @@ RSpec.describe(Notification, type: :model) do
       expect(notification.notifiable).to be_kind_of(Lecture)
     end
   end
+
+  describe "#path" do
+    it "leads a new lecture's notification to the dashboard's lecture search" do
+      notification = FactoryBot.build(:notification, :with_notifiable,
+                                      notifiable_sort: "Lecture")
+      expect(notification.path(notification.recipient))
+        .to eq(Rails.application.routes.url_helpers
+                    .root_path(anchor: "lecture-search"))
+    end
+  end
 end

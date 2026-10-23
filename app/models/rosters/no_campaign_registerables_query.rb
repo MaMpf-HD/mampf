@@ -51,7 +51,7 @@ module Rosters
       end
 
       def cohorts_scope(active_items)
-        @lecture.cohorts.where.not(
+        @lecture.cohorts.includes(:tutors).where.not(
           id: active_items
             .where(registerable_type: "Cohort")
             .select(:registerable_id)

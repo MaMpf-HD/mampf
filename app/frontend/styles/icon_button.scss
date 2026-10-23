@@ -1,0 +1,29 @@
+// A bare icon that acts, for rows with a few small actions: grey until the
+// pointer or the keyboard reaches it.
+// The glyphs differ in size; equal boxes line the buttons up.
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--bs-secondary-color);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--bs-emphasis-color);
+    background: var(--bs-secondary-bg);
+  }
+}
+
+.icon-button--danger {
+  &:hover,
+  &:focus-visible {
+    color: var(--bs-danger);
+  }
+}

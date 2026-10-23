@@ -318,7 +318,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
       document = Nokogiri::HTML.fragment(rendered_content)
       expect(document.css("th").map { |th| th.text.strip }).not_to include(I18n.t("basics.email"))
-      expect(document.at_css("button[aria-label='#{I18n.t("buttons.copy_email_address")}']"))
+      expect(document.at_css("button[aria-label^='#{I18n.t("buttons.copy_email_address")}: ']"))
         .to be_present
     end
   end
@@ -339,10 +339,54 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
   describe ".section_targets" do
     it "defines turbo stream target IDs for streamable sections" do
       expect(described_class.section_targets).to eq(
+        view_switch: "roster_participants_view_switch",
+        campaign_switch: "roster_participants_campaign_switch",
         top_nav: "roster_participants_top_nav",
         header_controls: "roster_participants_header_controls",
         results: "roster_participants_results"
       )
+    end
+  end
+
+  describe "people only in groups without enrollment" do
+    let(:outsider) { create(:confirmed_user) }
+    let(:participants) { LectureMembership.none }
+
+    before do
+      waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+      waitlist.add_user_to_roster!(outsider)
+      enrolled = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: enrolled)
+      waitlist.add_user_to_roster!(enrolled)
+    end
+
+    it "counts those not enrolled and says why they are missing" do
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.outside_enrollment", count: 1))
+    end
+  end
+
+  # Counts the people the tab lists: a group without enrollment or a running
+  # registration does not put anybody on it.
+  describe "study programs" do
+    let(:participants) { LectureMembership.none }
+    let(:math) { create(:subject, name: "Mathematics") }
+    let(:bachelor) { create(:program, subject: math, name: "B.Sc. 100%", degree: :bsc100) }
+
+    before do
+      enrolled = create(:confirmed_user, program: bachelor)
+      create(:lecture_membership, lecture: lecture, user: enrolled)
+      waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+      waitlist.add_user_to_roster!(create(:confirmed_user, program: bachelor))
+    end
+
+    it "counts the enrolled only" do
+      table = render_inline(component).css("details tbody tr, details tfoot tr")
+      rows = table.map { |row| row.css("th, td").map { |cell| cell.text.squish } }
+
+      expect(rows).to eq([["Mathematics: B.Sc. 100%", "1"],
+                          [I18n.t("roster.programs.total"), "1"]])
     end
   end
 end

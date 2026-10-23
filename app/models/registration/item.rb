@@ -32,6 +32,13 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_item
 
+    # Items of a campaign that has opened and is not finalized yet: the
+    # registrations, not the rosters, say who will be in their groups.
+    scope :running, lambda {
+      joins(:registration_campaign)
+        .merge(Registration::Campaign.where(status: [:open, :closed, :processing]))
+    }
+
     validates :registerable_id,
               uniqueness: {
                 scope: :registerable_type
@@ -39,6 +46,7 @@ module Registration
 
     validate :validate_registerable_is_registerable, on: :create
     validate :validate_registerable_allows_campaigns, on: :create
+    validate :validate_registerable_of_campaign_lecture, on: :create
     validate :ensure_compatible_with_existing_items, on: :create
     validate :ensure_exam_campaign_holds_one_exam, on: :create
     validate :validate_capacity_reduction, on: :update
@@ -115,6 +123,16 @@ module Registration
 
     def confirmed_user_ids
       user_registrations.confirmed.pluck(:user_id)
+    end
+
+    # Who the group will hold once the campaign is finalized, as far as that is
+    # decided: the confirmed registrations. Nil while a preference campaign has
+    # not allocated, since a wish does not say who gets in.
+    def provisional_users
+      campaign = registration_campaign
+      return if campaign.preference_based? && campaign.last_allocation_calculated_at.nil?
+
+      User.where(id: user_registrations.confirmed.select(:user_id))
     end
 
     # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial
@@ -197,6 +215,16 @@ module Registration
         return if registerable.nil? || registerable.is_a?(Registration::Registerable)
 
         errors.add(:registerable, :not_registerable)
+      end
+
+      # A campaign fills the groups of its own lecture: another lecture's group
+      # would hand its seats, and with them a place in that lecture, to
+      # whoever registers here.
+      def validate_registerable_of_campaign_lecture
+        return unless registerable && registration_campaign
+        return if registerable.try(:lecture) == registration_campaign.campaignable
+
+        errors.add(:registerable, :other_lecture)
       end
 
       # Registerables that have the skip_campaigns flag set are excluded from

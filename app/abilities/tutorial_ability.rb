@@ -10,13 +10,12 @@ class TutorialAbility
     end
 
     can :index, Tutorial do |_tutorial, lecture|
-      user.in?(lecture.tutors) || user.editor_or_teacher_in?(lecture)
+      lecture.tutor?(user) || user.editor_or_teacher_in?(lecture)
     end
 
     can [:bulk_download_submissions, :bulk_download_corrections, :bulk_upload,
          :export_teams], Tutorial do |tutorial|
-      user.in?(tutorial.tutors) ||
-        user.editor_or_teacher_in?(tutorial.lecture)
+      tutorial.correctable_by?(user)
     end
 
     can :validate_certificate, Tutorial do

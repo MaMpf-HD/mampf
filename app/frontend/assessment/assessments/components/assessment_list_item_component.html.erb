@@ -25,18 +25,28 @@
       <%= I18n.t("assessment.legacy_description") %>
 
       <% if edit_path.present? || delete_path.present? %>
-        <div class="float-end d-flex gap-2">
+        <div class="float-end d-flex gap-1">
           <% if edit_path.present? %>
-            <%= link_to t("basics.edit"), edit_path,
-                class: "btn btn-sm btn-outline-primary", remote: true %>
+            <%= link_to edit_path,
+                class: "btn icon-button",
+                title: t("basics.edit"),
+                aria: { label: t("basics.edit") },
+                remote: true do %>
+              <i class="bi bi-pencil" aria-hidden="true"></i>
+            <% end %>
           <% end %>
 
           <% if delete_path.present? %>
-            <%= button_to t("basics.delete"), delete_path,
+            <%= button_to delete_path,
                 method: :delete,
                 data: { confirm: t("basics.confirm_delete") },
-                class: "btn btn-sm btn-outline-danger",
-                remote: true %>
+                class: "btn icon-button icon-button--danger",
+                form: { class: "d-flex" },
+                title: t("basics.delete"),
+                aria: { label: t("basics.delete") },
+                remote: true do %>
+              <i class="bi bi-trash" aria-hidden="true"></i>
+            <% end %>
           <% end %>
         </div>
       <% end %>

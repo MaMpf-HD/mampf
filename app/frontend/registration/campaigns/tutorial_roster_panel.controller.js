@@ -1,9 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 
+const SELECTED = "roster-trigger--selected";
+
 export default class extends Controller {
   static targets = [
-    "tile",
+    "trigger",
     "panelShell",
     "panelCard",
     "filterInput",
@@ -11,24 +13,26 @@ export default class extends Controller {
     "noResults",
   ];
 
-  activeTile = null;
+  activeTrigger = null;
   activeRosterKey = null;
   isOpen = false;
   lecturePaneElement = null;
+  focusedRosterKey = null;
+  focusPanelOnLoad = false;
 
   connect() {
     this.lecturePaneElement = this.element.querySelector(".lecture-pane");
     this.close();
   }
 
-  tileTargetConnected(tile) {
+  triggerTargetConnected(trigger) {
     const params = new URLSearchParams(window.location.search);
     const openRoster = params.get("open_roster");
 
-    if (openRoster && tile.dataset.rosterKey === openRoster && tile.dataset.rosterPanelPath) {
-      this.activateTile(tile);
+    if (openRoster && trigger.dataset.rosterKey === openRoster && trigger.dataset.rosterPanelPath) {
+      this.activate(trigger);
       this.openPanel();
-      this.requestPanel(tile.dataset.rosterPanelPath);
+      this.requestPanel(trigger.dataset.rosterPanelPath);
 
       params.delete("open_roster");
       const newSearch = params.toString();
@@ -37,36 +41,38 @@ export default class extends Controller {
       return;
     }
 
+    this.restoreFocus(trigger);
+
     if (!this.isOpen || !this.activeRosterKey) {
       return;
     }
 
-    if (tile.dataset.rosterKey !== this.activeRosterKey) {
+    if (trigger.dataset.rosterKey !== this.activeRosterKey) {
       return;
     }
 
-    this.activateTile(tile);
+    this.activate(trigger);
   }
 
-  tileTargetDisconnected(tile) {
-    if (tile !== this.activeTile) {
+  triggerTargetDisconnected(trigger) {
+    if (trigger !== this.activeTrigger) {
       return;
     }
 
     const rosterKey = this.activeRosterKey;
-    this.activeTile = null;
+    this.activeTrigger = null;
 
     requestAnimationFrame(() => {
       if (!this.isOpen || !rosterKey) {
         return;
       }
 
-      const replacementTile = this.tileTargets.find(
+      const replacement = this.triggerTargets.find(
         candidate => candidate.dataset.rosterKey === rosterKey,
       );
 
-      if (replacementTile) {
-        this.activateTile(replacementTile);
+      if (replacement) {
+        this.activate(replacement);
         return;
       }
 
@@ -74,43 +80,81 @@ export default class extends Controller {
     });
   }
 
-  openFromTile(event) {
+  /**
+   * Opens the roster on a click anywhere on the trigger except its own
+   * controls. Opened by keyboard, the panel takes the focus, so that reading
+   * continues there.
+   */
+  openFromTrigger(event) {
+    const opener = event.target.closest("[data-roster-open]");
     const clickInsideAction = event.target.closest(
-      ".tutorial-gtile-actions, .tutorial-roster-student-remove, a, button, form",
+      ".group-row__actions, .group-row__self-enrollment, "
+      + ".tutorial-roster-student-remove, a, button, form",
     );
 
-    if (clickInsideAction) {
+    if (clickInsideAction && !opener) {
       return;
     }
 
-    const tile = event.currentTarget;
-    const panelPath = tile?.dataset?.rosterPanelPath;
-    if (!tile || !panelPath) {
+    if (!opener && window.getSelection()?.toString()) {
       return;
     }
 
-    if (this.isOpen && tile.dataset.rosterKey === this.activeRosterKey) {
+    const trigger = event.currentTarget;
+    const panelPath = trigger?.dataset?.rosterPanelPath;
+    if (!trigger || !panelPath) {
+      return;
+    }
+
+    if (this.isOpen && trigger.dataset.rosterKey === this.activeRosterKey) {
       this.close();
       return;
     }
 
-    this.activateTile(tile);
+    this.focusPanelOnLoad = event.detail === 0;
+    this.activate(trigger);
     this.openPanel();
     this.requestPanel(panelPath);
   }
 
+  rememberFocus(event) {
+    this.focusedRosterKey = event.currentTarget.dataset.rosterKey || null;
+  }
+
+  /**
+   * Puts the focus back on the row's title: a Turbo Stream that replaces the
+   * row the keyboard was on leaves it on <body>.
+   */
+  restoreFocus(trigger) {
+    if (!this.focusedRosterKey || trigger.dataset.rosterKey !== this.focusedRosterKey) {
+      return;
+    }
+    if (document.activeElement && document.activeElement !== document.body) {
+      return;
+    }
+
+    this.openerOf(trigger)?.focus();
+  }
+
   close() {
+    const wasOpen = this.isOpen;
+    const trigger = this.activeTrigger;
+
     this.isOpen = false;
     this.element.classList.remove("tutorial-roster-layout--open");
     this.element.classList.add("tutorial-roster-layout--closed");
     this.lecturePaneElement?.classList.remove("lecture-pane--roster-panel-open");
 
-    if (this.hasActiveTile()) {
-      this.activeTile.classList.remove("tutorial-gtile--selected");
+    if (trigger) {
+      this.markSelected(trigger, false);
     }
 
-    this.activeTile = null;
+    this.activeTrigger = null;
     this.activeRosterKey = null;
+
+    if (wasOpen && trigger && this.panelHasFocus()) {
+      this.openerOf(trigger)?.focus();
+    }
   }
 
   closeOnLeavingLanes(event) {
@@ -124,8 +168,8 @@ export default class extends Controller {
     this.close();
   }
 
-  hasActiveTile() {
-    return this.activeTile && this.activeTile.classList;
+  panelHasFocus() {
+    return this.hasPanelCardTarget && this.panelCardTarget.contains(document.activeElement);
   }
 
   openPanel() {
@@ -148,6 +192,15 @@ export default class extends Controller {
     return shellStyles.position === "static";
   }
 
+  panelCardTargetConnected(panel) {
+    if (!this.focusPanelOnLoad) {
+      return;
+    }
+
+    this.focusPanelOnLoad = false;
+    panel.querySelector("[data-roster-panel-heading]")?.focus();
+  }
+
   filter() {
     if (!this.hasListTarget || !this.hasNoResultsTarget) {
       return;
@@ -168,14 +221,25 @@ export default class extends Controller {
     this.noResultsTarget.classList.toggle("d-none", !showNoResults);
   }
 
-  activateTile(tile) {
-    if (this.activeTile) {
-      this.activeTile.classList.remove("tutorial-gtile--selected");
+  activate(trigger) {
+    if (this.activeTrigger) {
+      this.markSelected(this.activeTrigger, false);
     }
 
-    this.activeTile = tile;
-    this.activeRosterKey = tile.dataset.rosterKey || null;
-    this.activeTile.classList.add("tutorial-gtile--selected");
+    this.activeTrigger = trigger;
+    this.activeRosterKey = trigger.dataset.rosterKey || null;
+    this.markSelected(trigger, true);
+  }
+
+  markSelected(trigger, selected) {
+    trigger.classList.toggle(SELECTED, selected);
+    this.openerOf(trigger)?.setAttribute("aria-expanded", String(selected));
+  }
+
+  openerOf(trigger) {
+    return trigger.matches("[data-roster-open]")
+      ? trigger
+      : trigger.querySelector("[data-roster-open]");
   }
 
   async requestPanel(panelPath) {

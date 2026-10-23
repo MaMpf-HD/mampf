@@ -184,6 +184,17 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "a practical course" do
+    let(:lecture) { create(:lecture, sort: "practical") }
+
+    it "is a lecture under its own name" do
+      expect(lecture).to be_valid
+      expect(lecture.seminar?).to be(false)
+      expect(I18n.with_locale(:de) { lecture.sort_localized }).to eq("Praktikum")
+      expect(I18n.with_locale(:en) { lecture.title }).to start_with("(P) ")
+    end
+  end
+
   describe "#script?" do
     let(:lecture) { create(:lecture) }
     let(:user) { create(:confirmed_user) }
@@ -454,6 +465,47 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  # The Groups tab counts these people by study program; the Participants tab
+  # shows only the enrolled among them.
+  describe "#students" do
+    let(:lecture) { create(:lecture) }
+    let(:enrolled) { create(:confirmed_user) }
+    let(:on_waitlist) { create(:confirmed_user) }
+    let(:registered) { create(:confirmed_user) }
+    let(:rejected) { create(:confirmed_user) }
+    let(:bookmarked) { create(:confirmed_user) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: enrolled)
+      create(:cohort, context: lecture, propagate_to_lecture: false)
+        .add_user_to_roster!(on_waitlist)
+      campaign = create(:registration_campaign, campaignable: lecture)
+      item = create(:registration_item, registration_campaign: campaign,
+                                        registerable: create(:tutorial, lecture: lecture))
+      campaign.update!(status: :open)
+      create(:registration_user_registration, :confirmed, registration_campaign: campaign,
+                                                          registration_item: item,
+                                                          user: registered)
+      create(:registration_user_registration, :rejected, registration_campaign: campaign,
+                                                         registration_item: item,
+                                                         user: rejected)
+      create(:lecture_bookmark, lecture: lecture, user: bookmarked)
+      exam_campaign = create(:exam, lecture: lecture).registration_campaign
+      exam_campaign.update!(status: :open) if exam_campaign.draft?
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: exam_campaign,
+             registration_item: exam_campaign.registration_items.first,
+             user: create(:confirmed_user))
+    end
+
+    it "holds the enrolled, group members and running registrations, each once" do
+      enrolled_member = create(:tutorial, lecture: lecture)
+      enrolled_member.add_user_to_roster!(enrolled)
+
+      expect(lecture.students).to contain_exactly(enrolled, on_waitlist, registered)
+    end
+  end
+
   describe "#registration_mail_recipients" do
     let(:lecture) { create(:lecture, :released_for_all) }
     let(:users) { create_list(:confirmed_user, 3) }
@@ -606,6 +658,31 @@ RSpec.describe(Lecture, type: :model) do
       lecture.update!(assignments_complete: true)
 
       expect(record.reload.computed_at).to be > before
+    end
+  end
+
+  describe "#reset_computed_certifications!" do
+    let(:lecture) do
+      create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)
+    end
+    let!(:computed) { create(:student_performance_certification, :passed, lecture: lecture) }
+    let!(:manual) do
+      create(:student_performance_certification, :failed, :manual, lecture: lecture)
+    end
+
+    it "drops the computed decisions, keeps the manual ones and counts them" do
+      expect(lecture.reset_computed_certifications!).to eq(1)
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(manual)
+    end
+
+    it "drops nothing while a running registration asks for the decisions" do
+      create(:registration_policy, :student_performance,
+             config: { "lecture_ids" => [lecture.id.to_s] })
+
+      expect(lecture.reset_computed_certifications!).to be_nil
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(computed, manual)
     end
   end
 

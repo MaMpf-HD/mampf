@@ -50,7 +50,7 @@ module SearchForm
     }
 
     attr_reader :url, :scope, :method, :context, :hidden_fields,
-                :container_class, :turbo_frame
+                :container_class, :turbo_frame, :local, :values
 
     # Initializes a new SearchForm component.
     #
@@ -62,14 +62,21 @@ module SearchForm
     # @param turbo_frame [String, nil] Id of the turbo frame the results go into.
     #   Only pass it where such a frame exists; the other searches still answer
     #   with JavaScript and write into a plain container.
+    # @param local [Boolean] Leaves the form to Turbo instead of Rails UJS, so a
+    #   GET search keeps its query in the URL.
+    # @param values [Object, nil] Supplies values through methods named after the
+    #   fields, so a search shown again fills them.
     # rubocop:disable Metrics/ParameterLists
     def initialize(url:, scope: :search, method: :get, context: nil,
-                   container_class: "row mb-3 p-2", turbo_frame: nil)
+                   container_class: "row mb-3 p-2", turbo_frame: nil, local: false,
+                   values: nil)
       super()
       @url = url
       @scope = scope
       @method = method
       @turbo_frame = turbo_frame
+      @local = local
+      @values = values
       @context = context || SecureRandom.hex(4)
       @form_state = Services::FormState.new(context: @context)
       @hidden_fields = {}

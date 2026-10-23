@@ -6,5 +6,9 @@ module StudentPerformance
     :min_points_absolute,
     :required_achievements,
     keyword_init: true
-  )
+  ) do
+    def points_threshold?
+      min_percentage.present? || min_points_absolute.present?
+    end
+  end
 end

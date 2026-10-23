@@ -56,21 +56,23 @@
           <span class="policy-badge-actions">
             <%= link_to edit_registration_campaign_policy_path(campaign, policy,
                           frame_id: frame_id),
-                        class: "policy-badge-action text-secondary",
+                        class: "policy-badge-action",
                         data: { turbo_frame: campaign_policy_form_frame_id(campaign) },
-                        title: t("basics.edit") do %>
-              <i class="bi bi-pencil-fill"></i>
+                        title: t("basics.edit"),
+                        aria: { label: t("basics.edit") } do %>
+              <i class="bi bi-pencil" aria-hidden="true"></i>
             <% end %>
 
             <%= button_to registration_campaign_policy_path(campaign, policy),
                           method: :delete,
-                          class: "policy-badge-action text-danger",
+                          class: "policy-badge-action policy-badge-action--delete",
                           form: { class: "d-inline" },
                           params: frame_id ? { frame_id: frame_id } : {},
                           data: { turbo_confirm: t("registration.policy.confirm_delete"),
                                   turbo_stream: true },
-                          title: t("buttons.delete") do %>
-              <i class="bi bi-x-circle-fill"></i>
+                          title: t("buttons.delete"),
+                          aria: { label: t("buttons.delete") } do %>
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
             <% end %>
           </span>
         <% end %>
@@ -80,13 +82,10 @@
     <% if draft %>
       <%= link_to new_registration_campaign_policy_path(campaign,
                     frame_id: frame_id),
-                  class: class_names(
-                    "policy-add-link btn btn-sm",
-                    "btn-link text-secondary p-0"
-                  ),
-                  title: t("registration.policy.index.add"),
+                  class: "policy-add-link btn btn-sm btn-outline-primary py-0",
                   data: { turbo_frame: campaign_policy_form_frame_id(campaign) } do %>
-        <i class="bi bi-plus-circle"></i>
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        <%= t("registration.policy.index.add") %>
       <% end %>
     <% end %>
   </div>

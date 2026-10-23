@@ -2,13 +2,16 @@ module StudentPerformance
   module RecordsHelper
     # Column headers that sort by themselves. The first click on a number asks
     # for the largest, because that is the question staff arrive with; clicking
-    # the column that is already sorted turns it around. Everything else in the
-    # query string travels along, so a sort does not drop the filters - only
-    # the page number goes, since the first page is where the new order starts.
+    # the column that is already sorted turns it around, and a third click
+    # returns to the order by name. Everything else in the query string travels
+    # along, so a sort does not drop the filters - only the page number goes,
+    # since the first page is where the new order starts.
     def records_sort_link(lecture, column, &)
-      direction = records_sort_state(column) == "descending" ? "asc" : "desc"
-      query = request.query_parameters.except("page")
-                     .merge("sort" => column, "dir" => direction)
+      query = request.query_parameters.except("page", "sort", "dir")
+      case records_sort_state(column)
+      when "none" then query.merge!("sort" => column, "dir" => "desc")
+      when "descending" then query.merge!("sort" => column, "dir" => "asc")
+      end
 
       link_to(lecture_student_performance_records_path(lecture, query),
               class: "text-reset text-decoration-none",

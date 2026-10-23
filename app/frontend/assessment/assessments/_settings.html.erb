@@ -99,12 +99,12 @@
       <% end %>
 
       <% unless assessable.kind_test? %>
+        <% exercises = exercise_media(lecture) %>
         <div class="col-md-6">
           <%= af.label :medium_id, t('medium.singular'), class: "form-label" %>
 
           <%= af.select :medium_id,
-                     options_for_select(Medium.where(teachable: lecture, sort: 'Exercise')
-                                              .map { |m| [m.local_title_for_viewers, m.id] },
+                     options_for_select(exercises.map { |m| [m.local_title_for_viewers, m.id] },
                                         assessable.medium_id),
                      { include_blank: t('basics.select') },
                      { class: 'form-select selectize',
@@ -112,6 +112,9 @@
                          assessments__dirty_form_target: 'field',
                          action: 'change->assessments--dirty-form#checkForChanges'
                        } } %>
+
+          <%= render "assessment/assessments/exercise_medium_hint",
+                     lecture: lecture, no_exercises: exercises.empty? %>
         </div>
         <div class="col-md-6">
           <%= af.label :accepted_file_type, t('submission.file_format'), class: "form-label" %>

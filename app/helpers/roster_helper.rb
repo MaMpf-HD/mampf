@@ -45,6 +45,14 @@ module RosterHelper
     roster_bulk_update_self_materialization_lecture_path(lecture, mode: mode)
   end
 
+  # Loads the tutors of the items' tutorials and cohorts at once, which the
+  # group rows name, rather than once per row.
+  def preload_group_tutors(items)
+    groups = items.map(&:registerable).grep(Tutorial) + items.map(&:registerable).grep(Cohort)
+    ActiveRecord::Associations::Preloader.new(records: groups, associations: :tutors).call
+    items
+  end
+
   def roster_tutors_text(registerable)
     if registerable.respond_to?(:tutor_names)
       registerable.tutor_names.presence || I18n.t("basics.tba")
@@ -90,19 +98,14 @@ module RosterHelper
     end
   end
 
-  def roster_group_badge(group, _group_type)
-    isolating = group.is_a?(Cohort) && !group.propagate_to_lecture?
-    # Use secondary (gray) for normal propagating groups to reduce visual noise.
-    # Use light/border (ghost) for isolating groups to differentiate them.
-    badge_class = isolating ? "bg-light text-dark border" : "bg-secondary text-white"
-
+  # Links a participant's group to its roster on the lecture's groups tab.
+  def roster_group_link(group)
     lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
 
     link_to(group.title,
             edit_lecture_path(lecture, tab: "groups",
                                        open_roster: "#{group.class.name}-#{group.id}"),
-            class: "badge #{badge_class} me-1 text-decoration-none",
-            style: "cursor: pointer;",
+            class: "badge roster-group-badge",
             data: { turbo: false })
   end
 

@@ -1,4 +1,4 @@
-import { Page } from "../_support/fixtures";
+import { expect, Page } from "../_support/fixtures";
 
 export class DashboardLectureBrowsePage {
   readonly page: Page;
@@ -49,15 +49,18 @@ export class DashboardLectureBrowsePage {
    * Picks a semester in the dashboard's term dropdown, by its visible label.
    * This refreshes the term-dependent regions in place via Turbo Stream (no
    * navigation) and updates the URL to `/?term=<slug>`; we wait for the
-   * `?term=` value to change.
+   * `?term=` value to change, and for the response too: the URL changes before
+   * the request that remembers the term is sent.
    */
   async selectTerm(label: string) {
     const before = new URL(this.page.url()).searchParams.get("term");
     const urlUpdated = this.page.waitForURL(
       url => (url.searchParams.get("term") ?? null) !== before,
     );
+    const remembered = this.page.waitForResponse(response =>
+      response.url().includes("/dashboard/term"));
     await this.termSelect.selectOption({ label });
-    await urlUpdated;
+    await Promise.all([urlUpdated, remembered]);
   }
 
   async scrollToBottom() {
@@ -68,22 +71,36 @@ export class DashboardLectureBrowsePage {
     await this.page.waitForTimeout(500);
   }
 
+  get searchBar() {
+    return this.page.getByTestId("lecture-search-bar");
+  }
+
+  /**
+   * Lets every stylesheet arrive late, as on a slow connection. Routing also
+   * turns off the browser cache, so a stylesheet put back on the page is
+   * fetched again.
+   */
+  async delayStylesheets(milliseconds: number) {
+    await this.page.route(/\.s?css(\?|$)/, async (route) => {
+      await new Promise(resolve => setTimeout(resolve, milliseconds));
+      await route.continue();
+    });
+  }
+
+  /**
+   * Waits until every stylesheet of MaMpf on the page has loaded; only then
+   * do the board and the search have their final height.
+   */
+  async waitForStylesheets() {
+    await expect.poll(() => this.page.evaluate(() =>
+      [...document.querySelectorAll<HTMLLinkElement>("link[rel=stylesheet]")]
+        .filter(link => link.href.startsWith(window.location.origin))
+        .every(link => link.sheet !== null),
+    )).toBe(true);
+  }
+
   get results() {
     return this.page.getByTestId("lecture-search-results");
-  }
-
-  get nextTermBanner() {
-    return this.page.getByTestId("next-term-banner");
-  }
-
-  async clickNextTermBannerCta() {
-    const lectureSearchPromise = this.getLectureSearchPromise();
-    const termUrlPromise = this.page.waitForURL(url =>
-      url.searchParams.has("term"),
-    );
-
-    await this.page.getByTestId("next-term-banner-cta").click();
-    await Promise.all([lectureSearchPromise, termUrlPromise]);
   }
 
   async getLectureCardCount() {
@@ -156,10 +173,17 @@ export class DashboardLectureBrowsePage {
     await this.dashboardCard(lectureId).getByTestId("washi-tape-strip").click();
   }
 
+  /**
+   * Returns once the server has answered, since the card shows the new color
+   * before it is saved and a reload in between would bring back the old one.
+   */
   async chooseWashiTapeColor(lectureId: number, colorLabel: string) {
     await this.openWashiTapePicker(lectureId);
+    const answered = this.page.waitForResponse(response =>
+      response.url().endsWith("/washi_tape"));
     await this.dashboardCard(lectureId)
       .getByRole("radio", { name: colorLabel }).click();
+    await answered;
   }
 
   sectionToggle(sectionTestid: string, title: string) {

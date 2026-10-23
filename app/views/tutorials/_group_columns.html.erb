@@ -11,12 +11,14 @@
   <% end %>
 </div>
 
-<% group_audience = StudentMessages::Catalog.new(@lecture, current_user)
-                                            .pick(["tutorial:#{tutorial.id}"])&.first %>
-<% if group_audience %>
-  <div class="col-12 col-md-3">
-    <%= render partial: 'student_messages/tutorial_modal',
-               locals: { lecture: @lecture, audience: group_audience,
-                         return_to: request.fullpath } %>
-  </div>
-<% end %>
+<% participants_path = local_assigns[:participants_path] %>
+<div class="col-12 col-md-auto d-flex flex-wrap gap-2">
+  <% if participants_path %>
+    <%= link_to participants_path, class: 'btn btn-sm btn-outline-primary text-nowrap' do %>
+      <i class="bi bi-people me-1" aria-hidden="true"></i>
+      <%= t('tutorial.participants.button') %>
+    <% end %>
+  <% end %>
+  <%= render partial: 'tutorials/mail_buttons',
+             locals: { group: tutorial, key: "tutorial:#{tutorial.id}" } %>
+</div>

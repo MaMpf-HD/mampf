@@ -34,5 +34,5 @@ test("deletes an account that has redeemed a voucher", async ({ page, request, f
   await page.goto("/profile/edit?locale=en");
 
   await expect(page).toHaveURL(/\/users\/sign_in/);
-  await expect(page.getByLabel("Email")).toBeVisible();
+  await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
 });

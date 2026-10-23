@@ -1,0 +1,15 @@
+<% if @username %>
+<%= t('roster.mailer.greeting_name', name: @username) %>
+<% else %>
+<%= t('roster.mailer.greeting') %>
+<% end %>
+<%= t('roster.mailer.roster_added_to_exam_email_body',
+      lecture_title: @lecture&.title || '',
+      rosterable_title: @rosterable.title) %>
+<% if @info[:exam_schedule] %>
+<%= @info[:exam_schedule] %>
+<% end %>
+<% if @rosterable_link %>
+<%= t('roster.mailer.link_text_exam', rosterable_link: @rosterable_link) %>
+<% end %>
+<%= t('roster.mailer.end_mail') %>

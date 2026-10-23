@@ -238,6 +238,40 @@ RSpec.describe(StudentMessages::Catalog) do
       expect(catalog.pick(["tutorial:#{other_tutorial.id}"])).to be_nil
       expect(catalog.pick(["lecture:all"])).to be_nil
     end
+
+    context "while the group's registration runs" do
+      let(:registrant) { create(:confirmed_user) }
+
+      def register(campaign_traits, group, status: :confirmed, rank: nil)
+        campaign = create(:registration_campaign, *campaign_traits, campaignable: lecture)
+        item = create(:registration_item, registration_campaign: campaign, registerable: group)
+        create(:registration_user_registration, status, registration_campaign: campaign,
+                                                        registration_item: item, user: registrant,
+                                                        preference_rank: rank)
+        campaign.update!(status: :open)
+        item
+      end
+
+      it "offers those registered for their group so far" do
+        item = register([:first_come_first_served], tutorial)
+
+        picked = catalog.pick(["item:#{item.id}:provisional"])
+
+        expect(picked.first.user_ids).to eq([registrant.id])
+      end
+
+      it "offers nobody before a preference campaign has allocated" do
+        item = register([:preference_based], tutorial, status: :pending, rank: 1)
+
+        expect(catalog.pick(["item:#{item.id}:provisional"])).to be_nil
+      end
+
+      it "offers nobody registered for another group" do
+        item = register([:first_come_first_served], other_tutorial)
+
+        expect(catalog.pick(["item:#{item.id}:provisional"])).to be_nil
+      end
+    end
   end
 
   it "offers a student nothing" do

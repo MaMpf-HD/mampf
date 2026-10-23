@@ -96,6 +96,25 @@
   <% else %>
     <div class="table-responsive performance-records-scroll">
       <table class="table table-sm table-hover align-middle performance-records">
+        <colgroup>
+          <col class="records-col-student">
+          <col class="records-col-points">
+          <col class="records-col-maximum">
+          <col class="records-col-share">
+
+          <% @assessments.each do %>
+            <col class="records-col-assessment">
+          <% end %>
+
+          <% if @test_points %>
+            <col class="records-col-share">
+          <% end %>
+
+          <% @achievements.each do %>
+            <col class="records-col-achievement">
+          <% end %>
+        </colgroup>
+
         <thead class="table-light">
           <tr>
             <th scope="col" rowspan="2" class="text-nowrap align-bottom">
@@ -277,9 +296,10 @@
         <tbody>
           <% @records.each do |record| %>
             <tr id="<%= dom_id(record) %>">
-              <td class="text-nowrap">
+              <td class="text-truncate">
                 <%= link_to record.user.tutorial_name,
                             lecture_student_performance_record_path(@lecture, record),
+                            title: record.user.tutorial_name,
                             data: { turbo_frame: "performance-records-frame" } %>
               </td>
 

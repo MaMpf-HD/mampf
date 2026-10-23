@@ -4,6 +4,13 @@ require "tmpdir"
 RSpec.describe(ApplicationMailer, type: :mailer) do
   describe "#mail" do
     let(:temp_view_path) { Dir.mktmpdir }
+    # A resolver, unlike a path, stays out of Rails' view watcher. Watched,
+    # the templates deleted after each example make a later job reload the
+    # app, and specs defined before it then look up constants in the
+    # unloaded namespace.
+    let(:temp_view_resolver) do
+      ActionView::FileSystemResolver.new(temp_view_path)
+    end
 
     after do
       FileUtils.remove_entry(temp_view_path)
@@ -32,7 +39,7 @@ RSpec.describe(ApplicationMailer, type: :mailer) do
       target_dir = File.join(temp_view_path, "special_location")
       FileUtils.mkdir_p(target_dir)
       File.write(File.join(target_dir, "test_email.html.erb"), "Content from special location")
-      mailer_class.prepend_view_path(temp_view_path)
+      mailer_class.prepend_view_path(temp_view_resolver)
       email = mailer_class.test_email
 
       expect(email.body.encoded).to include("Content from special location")
@@ -44,7 +51,7 @@ RSpec.describe(ApplicationMailer, type: :mailer) do
       FileUtils.mkdir_p(target_dir)
       File.write(File.join(target_dir, "test_email.html.erb"), "Content from custom path")
 
-      mailer_class.prepend_view_path(temp_view_path)
+      mailer_class.prepend_view_path(temp_view_resolver)
       email = mailer_class.test_email
       expect(email.body.encoded).to include("Content from custom path")
     end
@@ -55,7 +62,7 @@ RSpec.describe(ApplicationMailer, type: :mailer) do
       FileUtils.mkdir_p(target_dir)
       File.write(File.join(target_dir, "test_email.html.erb"), "Content from usual path")
 
-      mailer_class.prepend_view_path(temp_view_path)
+      mailer_class.prepend_view_path(temp_view_resolver)
       email = mailer_class.test_email
       expect(email.body.encoded).to include("Content from usual path")
     end

@@ -39,7 +39,7 @@ test.describe("email to students", () => {
       await expect(page.getByRole("button", { name: "Send to 2 students" })).toBeVisible();
 
       await page.getByLabel("Subject").fill("Room change");
-      await page.getByLabel("Message").fill("We meet in room 3 from now on.");
+      await page.getByLabel("Message", { exact: true }).fill("We meet in room 3 from now on.");
       await page.getByRole("button", { name: "Send to 2 students" }).click();
 
       await expect(page.getByText("Your message is being sent to 2 students.")).toBeVisible();
@@ -61,7 +61,7 @@ test.describe("email to students", () => {
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=communication`);
       await page.getByLabel("Subject").fill("Program");
-      await page.getByLabel("Message").fill("The program is attached.");
+      await page.getByLabel("Message", { exact: true }).fill("The program is attached.");
       const attachment = page.getByLabel("Attachment (optional)");
       await attachment.setInputFiles({
         name: "program.pdf", mimeType: "application/pdf",

@@ -34,7 +34,7 @@ module Rosters
         Float::INFINITY
       end
 
-      title_key = registerable.title.to_s.downcase
+      title_key = registerable.title.to_s.to_sort_atoms
 
       [type_rank, cohort_rank, position_key, title_key]
     end

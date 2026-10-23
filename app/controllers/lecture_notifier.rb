@@ -8,23 +8,16 @@ module LectureNotifier
                              .new_editor_email.deliver_later
   end
 
+  def notify_new_tutor_by_mail(tutor, lecture)
+    LectureNotificationMailer.with(recipient: tutor,
+                                   locale: tutor.locale,
+                                   lecture: lecture)
+                             .new_tutor_email.deliver_later
+  end
+
   def notify_about_teacher_change_by_mail(lecture, previous_teacher)
     notify_new_teacher_by_mail(lecture)
     notify_previous_teacher_by_mail(previous_teacher, lecture)
-  end
-
-  def notify_cospeakers_by_mail(speaker, talks)
-    talks.each do |talk|
-      talk.speakers.each do |cospeaker|
-        next if cospeaker == speaker
-
-        LectureNotificationMailer.with(recipient: cospeaker,
-                                       locale: cospeaker.locale,
-                                       talk: talk,
-                                       speaker: speaker)
-                                 .new_speaker_email.deliver_later
-      end
-    end
   end
 
   private

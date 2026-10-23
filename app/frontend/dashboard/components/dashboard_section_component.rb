@@ -1,5 +1,5 @@
-# One collapsible band of the dashboard (registered lectures, talks,
-# bookmarks), labeled with a hairline. Fold state is remembered per browser
+# One collapsible band of the dashboard (staff, tutored, registered and
+# bookmarked lectures), labeled with a hairline. Fold state is remembered per browser
 # by the dashboard-section Stimulus controller.
 class DashboardSectionComponent < ViewComponent::Base
   def initialize(title:, testid:)

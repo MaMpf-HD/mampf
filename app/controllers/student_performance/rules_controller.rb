@@ -16,8 +16,8 @@ module StudentPerformance
       @source_frame = params[:source_frame]
       @rule = StudentPerformance::Rule
               .find_or_initialize_by(lecture: @lecture)
-      @achievements = Achievement.where(lecture: @lecture).order(:title)
       @selected_achievement_ids = @rule.rule_achievement_ids_set
+      load_edit_form
     end
 
     def update
@@ -30,21 +30,43 @@ module StudentPerformance
       build_rule_achievements
       @rule.save!
 
-      target = if @source_frame == "performance-records-frame"
-        lecture_student_performance_records_path(@lecture)
-      else
-        lecture_student_performance_certifications_path(@lecture)
-      end
-
-      redirect_to target,
+      redirect_to source_path,
                   notice: I18n.t("student_performance.rules.flash.updated")
     rescue ActiveRecord::RecordInvalid
       @threshold_mode = params.dig(:rule, :threshold_mode)
-      @achievements = Achievement.where(lecture: @lecture).order(:title)
+      load_edit_form
       @selected_achievement_ids = Set.new(
         Array(params.dig(:rule, :achievement_ids)).map(&:to_i)
       )
       render :edit, status: :unprocessable_content
+    end
+
+    # Sets the rule inactive instead of deleting it, because certifications
+    # keep its rule_id. Resets the computed certifications, which only the rule
+    # backed; manual ones stay. #update activates the rule again.
+    def destroy
+      @source_frame = params[:source_frame].presence
+      rule = StudentPerformance::Rule.find_by(lecture: @lecture, active: true)
+      unless rule
+        redirect_to source_path, alert: I18n.t("student_performance.evaluator.no_rule")
+        return
+      end
+
+      count = StudentPerformance::Rule.transaction do
+        # Leaves updated_at alone: every manual decision made before it would
+        # otherwise count as stale.
+        rule.update_column(:active, false) # rubocop:disable Rails/SkipsModelValidations
+        @lecture.reset_computed_certifications! || raise(ActiveRecord::Rollback)
+      end
+
+      if count
+        redirect_to source_path,
+                    notice: I18n.t("student_performance.rules.flash.removed", count: count)
+      else
+        redirect_to source_path,
+                    alert: I18n.t("student_performance.eligibility_in_use",
+                                  campaigns: @lecture.eligibility_in_use_by)
+      end
     end
 
     def preview
@@ -75,6 +97,20 @@ module StudentPerformance
     end
 
     private
+
+      def load_edit_form
+        @achievements = Achievement.where(lecture: @lecture).order(:title)
+        @computed_count = @lecture.student_performance_certifications.computed.decided.count
+        @eligibility_in_use_by = @lecture.eligibility_in_use_by
+      end
+
+      def source_path
+        if @source_frame == "performance-records-frame"
+          lecture_student_performance_records_path(@lecture)
+        else
+          lecture_student_performance_certifications_path(@lecture)
+        end
+      end
 
       def apply_threshold_params
         mode = params.dig(:rule, :threshold_mode)
@@ -122,6 +158,8 @@ module StudentPerformance
         mode = params.dig(:rule, :threshold_mode)
         pct = (params.dig(:rule, :min_percentage).presence&.to_f if mode == "percentage")
         pts = (params.dig(:rule, :min_points_absolute).presence&.to_f if mode == "absolute")
+        pct = nil if pct&.zero?
+        pts = nil if pts&.zero?
 
         achievement_ids = Set.new(
           Array(params.dig(:rule, :achievement_ids))

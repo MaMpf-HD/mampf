@@ -1,28 +1,36 @@
-# Speech bubbles beside a lecture's card, one per actionable item (deadlines,
-# open exam registration, unread activity). Purely informational state stays
-# on the card itself.
+# Speech bubbles beside a lecture's card, one per actionable item (a new
+# result, deadlines, open exam registration, unread activity). Purely
+# informational state stays on the card itself.
 class LectureQuickActionsComponent < ViewComponent::Base
   DUE_SOON_WINDOW = 7.days
   MAX_TILT = 1.5
 
-  Action = Struct.new(:kind, :icon, :label, :href, keyword_init: true)
+  Action = Struct.new(:kind, :icon, :label, :href, :links, keyword_init: true)
+  Link = Struct.new(:kind, :label, :href, keyword_init: true)
 
-  def initialize(lecture:, user:, activity: nil)
+  # `staff` keeps only the unread activity, since results, deadlines and exam
+  # registration are student actions.
+  def initialize(lecture:, user:, activity: nil, staff: false)
     super()
     @lecture = lecture
     @user = user
     @activity = activity
+    @staff = staff
   end
 
-  attr_reader :lecture, :user
+  attr_reader :lecture, :user, :staff
+  alias staff? staff
 
   def render?
     actions.any?
   end
 
   def actions
-    @actions ||= [assignment_action, exam_registration_action, activity_action]
-                 .compact
+    @actions ||= if staff?
+      [activity_action].compact
+    else
+      [result_action, assignment_action, exam_registration_action, activity_action].compact
+    end
   end
 
   def list_label
@@ -39,11 +47,37 @@ class LectureQuickActionsComponent < ViewComponent::Base
     "--quick-action-tilt: #{tilt(index)}deg"
   end
 
+  # The links of a bubble with several, as one sentence ("… and …"), each
+  # naming the lecture for screen readers like a bubble that is one link.
+  def links_sentence(action)
+    to_sentence(action.links.map do |link|
+      link_to(link.href, class: "quick-action__link",
+                         data: { testid: "quick-action-#{link.kind}" }) do
+        safe_join([link.label, tag.span(lecture.title_no_term, class: "visually-hidden")], " ")
+      end
+    end)
+  end
+
   private
 
     def activity
       @activity ||= Dashboard::LectureActivity.new(user: user,
                                                    lectures: [lecture])
+    end
+
+    # Leads to the lecture home. Once the student closes the result's block
+    # there (result_seen_at), the bubble is gone as well.
+    def result_action
+      titles = Assessment::Participation.new_results_for(user, lecture)
+                                        .map { |participation| participation.assessment.title }
+      return if titles.empty?
+
+      Action.new(
+        kind: "result",
+        icon: "bi-award",
+        label: t("dashboard.quick_actions.result.label", count: titles.size, title: titles.first),
+        href: lecture_path(lecture)
+      )
     end
 
     def next_assignment_deadline
@@ -76,27 +110,30 @@ class LectureQuickActionsComponent < ViewComponent::Base
       )
     end
 
-    # Forum and comment activity share one bubble since both link to the lecture page.
+    # Forum and comments share one bubble, with a link to each, since they
+    # lead to different pages.
     def activity_action
-      parts = activity_parts
-      return if parts.empty?
+      links = [forum_link, comments_link].compact
+      return if links.empty?
 
-      Action.new(
-        kind: "activity",
-        icon: "bi-chat-left-text",
-        label: parts.to_sentence,
-        href: lecture_path(lecture)
-      )
+      Action.new(kind: "activity", icon: "bi-chat-left-text", links: links)
     end
 
-    def activity_parts
-      counts = { forum: activity.unread_forum_topics(lecture),
-                 comments: activity.unread_comments(lecture) }
+    def forum_link
+      count = activity.unread_forum_topics(lecture)
+      return unless count.positive?
 
-      counts.filter_map do |kind, count|
-        next unless count.positive?
+      Link.new(kind: "forum",
+               label: t("dashboard.quick_actions.activity.forum", count: count),
+               href: "/forum/#{lecture.forum.slug}")
+    end
 
-        t("dashboard.quick_actions.activity.#{kind}", count: count)
-      end
+    def comments_link
+      count = activity.unread_comments(lecture)
+      return unless count.positive?
+
+      Link.new(kind: "comments",
+               label: t("dashboard.quick_actions.activity.comments", count: count),
+               href: comments_path(lecture_id: lecture.id))
     end
 end

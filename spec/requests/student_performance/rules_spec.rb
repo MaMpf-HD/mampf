@@ -29,6 +29,24 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
+      it "says why the rule cannot be removed while a registration asks for it" do
+        FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                          lecture: lecture)
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+
+        get edit_lecture_student_performance_rules_path(lecture)
+
+        remove = Nokogiri::HTML(response.body).css("button").find do |button|
+          button.text.strip == I18n.t("student_performance.rules.edit.remove")
+        end
+        expect(remove["disabled"]).not_to be_nil
+        expect(response.body).to include(
+          CGI.escapeHTML(policy.registration_campaign.campaignable.title)
+        )
+      end
+
       it "renders inside rule-editor-frame by default" do
         get edit_lecture_student_performance_rules_path(lecture)
         expect(response.body).to include("rule-editor-frame")
@@ -116,16 +134,20 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(rule.min_percentage).to be_nil
       end
 
-      it "rejects a rule with neither a threshold nor an achievement" do
+      it "saves a rule with neither a threshold nor an achievement" do
         expect do
           patch(lecture_student_performance_rules_path(lecture),
                 params: { rule: { threshold_mode: "none" } })
-        end.not_to change(StudentPerformance::Rule, :count)
+        end.to change(StudentPerformance::Rule, :count).by(1)
 
-        expect(response).to have_http_status(:unprocessable_content)
-        expect(response.body)
-          .to include(I18n.t("activerecord.errors.models." \
-                             "student_performance/rule.attributes.base.no_criteria"))
+        expect(StudentPerformance::Rule.find_by(lecture: lecture)).not_to be_points_threshold
+      end
+
+      it "saves a percentage of zero as no threshold" do
+        patch(lecture_student_performance_rules_path(lecture),
+              params: { rule: { threshold_mode: "percentage", min_percentage: "0" } })
+
+        expect(StudentPerformance::Rule.find_by(lecture: lecture)).to be_threshold_mode_none
       end
 
       it "redirects to records when source_frame is performance-records-frame" do
@@ -307,6 +329,42 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to include("is-invalid")
         expect(response.body).to include("blank")
+      end
+
+      context "when an existing rule fails to save" do
+        let!(:rule) do
+          FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                            lecture: lecture)
+        end
+
+        def remove_form
+          Nokogiri::HTML(response.body).css("form[data-turbo-confirm]").first
+        end
+
+        it "asks for the removal with the number of computed decisions" do
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, rule: rule, source: :computed)
+
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: { threshold_mode: "percentage", min_percentage: "" } }
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(remove_form["data-turbo-confirm"]).to eq(
+            I18n.t("student_performance.rules.edit.remove_confirm", count: 1)
+          )
+        end
+
+        it "offers no removal for a rule that is out of use" do
+          rule.update!(active: false)
+
+          patch lecture_student_performance_rules_path(lecture),
+                params: { rule: { threshold_mode: "percentage", min_percentage: "" } }
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.body).not_to include(
+            I18n.t("student_performance.rules.edit.remove")
+          )
+        end
       end
 
       it "renders edit inside records frame when source_frame is records" do
@@ -547,6 +605,103 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
             I18n.t("student_performance.rules.preview.no_rule")
           )
         end
+      end
+    end
+  end
+
+  describe "DELETE /lectures/:lecture_id/performance/rules" do
+    let!(:rule) do
+      FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                        lecture: lecture)
+    end
+    let(:computed_user) { FactoryBot.create(:confirmed_user) }
+    let(:manual_user) { FactoryBot.create(:confirmed_user) }
+
+    before do
+      FactoryBot.create(:student_performance_certification, :passed,
+                        lecture: lecture, user: computed_user, rule: rule,
+                        source: :computed)
+      FactoryBot.create(:student_performance_certification, :failed,
+                        lecture: lecture, user: manual_user, rule: rule,
+                        source: :manual)
+    end
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "takes the rule out of use and resets only its own decisions" do
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).not_to be_active
+        expect(lecture.reload.active_performance_rule).to be_nil
+        certifications = StudentPerformance::Certification.where(lecture: lecture)
+        expect(certifications.map(&:user)).to eq([manual_user])
+        expect(flash[:notice]).to eq(
+          I18n.t("student_performance.rules.flash.removed", count: 1)
+        )
+      end
+
+      # Nothing a manual decision rests on changes when the rule goes.
+      it "leaves the manual decisions unflagged" do
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(StudentPerformance::Certification.where(lecture: lecture).stale_manual)
+          .to be_empty
+      end
+
+      it "refuses while an open registration asks for the decisions" do
+        lecture.update!(uses_exam_eligibility: true)
+        campaign = FactoryBot.create(:registration_campaign, :with_items)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   registration_campaign: campaign,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+        campaign.update!(status: :open)
+
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).to be_active
+        expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(2)
+        expect(flash[:alert]).to include(policy.registration_campaign.campaignable.title)
+      end
+
+      it "is not held up by a completed registration" do
+        lecture.update!(uses_exam_eligibility: true)
+        policy = FactoryBot.create(:registration_policy, :student_performance,
+                                   config: { "lecture_ids" => [lecture.id.to_s] })
+        policy.registration_campaign.update!(status: :completed)
+
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).not_to be_active
+        expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(1)
+      end
+
+      it "says so when there is no rule in use to remove" do
+        rule.update!(active: false)
+
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(StudentPerformance::Certification.where(lecture: lecture).count).to eq(2)
+        expect(flash[:notice]).to be_nil
+        expect(flash[:alert]).to eq(I18n.t("student_performance.evaluator.no_rule"))
+      end
+
+      it "brings the rule back when the form is saved again" do
+        delete lecture_student_performance_rules_path(lecture)
+        patch lecture_student_performance_rules_path(lecture),
+              params: { rule: { threshold_mode: "percentage", min_percentage: "40" } }
+
+        expect(lecture.reload.active_performance_rule).to eq(rule)
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "leaves the rule alone" do
+        delete lecture_student_performance_rules_path(lecture)
+
+        expect(rule.reload).to be_active
       end
     end
   end

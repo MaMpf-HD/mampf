@@ -35,6 +35,12 @@ class SelfEnrollmentComponent < ViewComponent::Base
     from if from&.allow_self_remove?(user)
   end
 
+  # Speaks of talks when every option is one, as in a seminar.
+  def fold_text(key, **)
+    scope = rosterables.all?(Talk) ? "self_enrollment_talks" : "self_enrollment"
+    t("registration.user_registration.#{scope}.#{key}", **)
+  end
+
   def path_for(action, rosterable)
     helpers.public_send("#{action}_#{rosterable.class.name.underscore}_path", rosterable.id)
   end

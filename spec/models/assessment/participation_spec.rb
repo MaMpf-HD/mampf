@@ -517,6 +517,66 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe ".new_results_for" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:exam) { FactoryBot.create(:exam, lecture: lecture) }
+
+    def result(assessable, status: :reviewed, published: true, owner: user)
+      assessable.assessment.update!(results_published_at: (Time.current if published))
+      FactoryBot.create(:assessment_participation, assessment: assessable.assessment,
+                                                   user: owner, status: status)
+    end
+
+    it "lists the student's published results that are not closed yet" do
+      shown = result(exam)
+
+      expect(described_class.new_results_for(user, lecture)).to eq([shown])
+    end
+
+    it "leaves out a result that is closed, unpublished, pending or someone else's" do
+      result(exam).update!(result_seen_at: Time.current)
+      result(FactoryBot.create(:exam, lecture: lecture), published: false)
+      result(FactoryBot.create(:exam, lecture: lecture), status: :pending)
+      result(FactoryBot.create(:exam, lecture: lecture), owner: FactoryBot.create(:confirmed_user))
+
+      expect(described_class.new_results_for(user, lecture)).to be_empty
+    end
+
+    it "leaves out assignments" do
+      assignment = FactoryBot.create(:assignment, :expired, lecture: lecture, expired_since: 2.days)
+      result(assignment)
+
+      expect(described_class.new_results_for(user, lecture)).to be_empty
+    end
+  end
+
+  describe "#result_released?" do
+    let(:assessment) { FactoryBot.create(:exam).assessment }
+
+    def released?(status)
+      FactoryBot.create(:assessment_participation, assessment: assessment, status: status)
+                .result_released?
+    end
+
+    it "is false before the results are published" do
+      expect(released?(:reviewed)).to be(false)
+    end
+
+    it "is true once they are, for every row with a result" do
+      assessment.update!(results_published_at: Time.current)
+
+      expect([:reviewed, :absent, :exempt].map { |status| released?(status) })
+        .to all(be(true))
+    end
+
+    it "is false for a row still waiting for its result" do
+      assessment.update!(results_published_at: Time.current)
+
+      expect(released?(:pending)).to be(false)
+    end
+  end
+
   describe "#results_visible?" do
     let(:participation) { FactoryBot.create(:assessment_participation, :marked) }
     let(:task_points) { participation.task_points }

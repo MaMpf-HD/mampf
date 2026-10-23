@@ -7,7 +7,12 @@ FactoryBot.define do
     end
 
     season { index.even? ? "SS" : "WS" }
-    year { 2000 + index }
+    # Steps over a term an example has already created with an explicit year.
+    year do
+      counted = 2000 + index
+      counted += 1 while Term.exists?(season: season, year: counted)
+      counted
+    end
 
     trait :summer do
       season { "SS" }

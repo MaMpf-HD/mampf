@@ -10,10 +10,32 @@ class User < ApplicationRecord
   # What a group or an exam lists a student by: once saved, only the support
   # changes it. Program and Uni ID stay the user's to change.
   LOCKED_PERSONAL_DATA_FIELDS = [:first_name, :last_name, :matriculation_number].freeze
+  # The name a row shows first, see User#tutorial_name.
+  FULL_NAME_SQL = "CONCAT_WS(' ', NULLIF(users.first_name, ''), NULLIF(users.last_name, ''))"
+                  .freeze
+  # The name a row shows, as User#tutorial_name picks it. The search looks
+  # only at what the row shows, so a hidden display name or address never
+  # explains a hit.
+  SHOWN_NAME_SQL = "COALESCE(NULLIF(#{FULL_NAME_SQL}, ''), NULLIF(users.name_in_tutorials, ''), " \
+                   "users.name)".freeze
+  # Sorts the participants tab and, through User.sort_by_last_name, the lists
+  # loaded otherwise, so that all of them list the same people in the same
+  # order; "C" compares bytes, whatever the database's collation.
+  # Ends in users.id: a page cut with OFFSET needs rows the order can tell
+  # apart, or a student shows twice and another not at all.
+  LAST_NAME_ORDER = Arel.sql(
+    "LOWER(unaccent(COALESCE(NULLIF(users.last_name, ''), NULLIF(#{FULL_NAME_SQL}, ''), " \
+    "NULLIF(users.name_in_tutorials, ''), NULLIF(users.name, ''), users.email))) " \
+    "COLLATE \"C\", " \
+    "CASE WHEN NULLIF(users.last_name, '') IS NULL THEN '' " \
+    "ELSE LOWER(unaccent(COALESCE(users.first_name, ''))) END COLLATE \"C\", users.id"
+  ).freeze
 
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
+
+  include PgSearch::Model
 
   # a user has many bookmarked lectures (formerly: subscribed lectures)
   has_many :lecture_bookmarks, dependent: :destroy
@@ -69,6 +91,12 @@ class User < ApplicationRecord
            inverse_of: :tutor
   has_many :given_tutorials, -> { order(:title) },
            through: :tutor_tutorial_joins, source: :tutorial
+  has_many :cohort_tutor_joins,
+           foreign_key: "tutor_id",
+           dependent: :destroy,
+           inverse_of: :tutor
+  has_many :given_cohorts, -> { order(:title) },
+           through: :cohort_tutor_joins, source: :cohort
 
   # a user has many given talks
   has_many :speaker_talk_joins,
@@ -106,10 +134,30 @@ class User < ApplicationRecord
   # a user has a watchlist with watchlist_entries
   has_many :watchlists, dependent: :destroy
 
-  has_many :feedbacks, dependent: :destroy
-
   # a user has redemptions of vouchers
   has_many :redemptions, dependent: :destroy
+  has_many :tutor_appointments, dependent: :destroy
+
+  # A deleted account takes the person's own results along. What they
+  # entered for others stays, with grader, certifier and applier cleared.
+  has_many :exam_roster_entries, dependent: :delete_all
+  has_many :student_performance_records, class_name: "StudentPerformance::Record",
+                                         dependent: :delete_all
+  has_many :student_performance_certifications,
+           class_name: "StudentPerformance::Certification", dependent: :delete_all
+  has_many :given_certifications, class_name: "StudentPerformance::Certification",
+                                  foreign_key: :certified_by_id, dependent: :nullify,
+                                  inverse_of: :certified_by
+  has_many :graded_participations, class_name: "Assessment::Participation",
+                                   foreign_key: :grader_id, dependent: :nullify,
+                                   inverse_of: false
+  has_many :graded_task_points, class_name: "Assessment::TaskPoint",
+                                foreign_key: :grader_id, dependent: :nullify, inverse_of: false
+  has_many :applied_grade_schemes, class_name: "Assessment::GradeScheme",
+                                   foreign_key: :applied_by_id, dependent: :nullify,
+                                   inverse_of: :applied_by
+  has_many :sent_student_messages, class_name: "StudentMessage", foreign_key: :sender_id,
+                                   dependent: :destroy, inverse_of: :sender
 
   include ProfileimageUploader[:image]
 
@@ -185,6 +233,8 @@ class User < ApplicationRecord
         -> { where(email_for_correction_upload: true) }
   scope :email_for_submission_decision,
         -> { where(email_for_submission_decision: true) }
+  scope :email_for_tutorial_change,
+        -> { where(email_for_tutorial_change: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
 
@@ -196,9 +246,40 @@ class User < ApplicationRecord
   scope :confirmed, -> { where.not(confirmed_at: nil) }
   scope :unconfirmed, -> { where(confirmed_at: nil) }
   scope :no_sign_in_data, -> { where(current_sign_in_at: nil) }
+  # Sorts people as the participants tab does: by last name, then first name;
+  # without a last name by the name the row shows.
+  scope :by_last_name, -> { order(LAST_NAME_ORDER) }
+
+  # Sorts people already loaded as by_last_name does. The database decides:
+  # Ruby folds a good hundred Latin letters differently from unaccent.
+  def self.sort_by_last_name(users)
+    position = where(id: users.map(&:id)).by_last_name.ids.each_with_index.to_h
+    users.sort_by { |user| position.fetch(user.id) }
+  end
   scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
+
+  SEARCHED_FIELDS = [:first_name, :last_name, :name, :email, :matriculation_number,
+                     :uni_id].freeze
+
+  # Only word beginnings count: a similarity search would mix "Neumann" and
+  # "Zimmermann" into the hits for "Bergmann".
+  pg_search_scope :search_by_word_start,
+                  against: SEARCHED_FIELDS,
+                  using: { tsearch: { prefix: true, any_word: true } },
+                  ignoring: :accents
+  # Names only: addresses share their domains, and a similar matriculation
+  # number belongs to somebody else.
+  pg_search_scope :search_by_similar_name,
+                  against: [:first_name, :last_name, :name],
+                  using: { trigram: { word_similarity: true, threshold: 0.3 } },
+                  ignoring: :accents
+
+  def self.default_search_order
+    Arel.sql("LOWER(unaccent(users.last_name)), LOWER(unaccent(users.first_name)), " \
+             "LOWER(users.email)")
+  end
 
   # returns the array of all teachers
   def self.teachers
@@ -585,7 +666,7 @@ class User < ApplicationRecord
     # The same rule as Medium#visible_for_user?: "all" and "users" media are
     # everybody's, "subscribers" media ("only participants") need the user in
     # the audience of the lecture, or of one of the course's lectures.
-    participating = LectureAudience.lectures_of(self)
+    participating = LectureAudience.lectures_of(self, media: true)
     visible = media.where(released: ["all", "users"])
     [participating, Lesson.where(lecture: participating), Talk.where(lecture: participating),
      Course.where(id: participating.select(:course_id))].each do |teachables|
@@ -624,9 +705,15 @@ class User < ApplicationRecord
   # - the latest comment by somebody else than the current user
   # - the latest comment by any user (which might include the current user)
   def subscribed_media_with_latest_comments_not_by_creator
+    media_with_latest_comments_not_by_creator(subscribed_commentable_media_with_comments)
+  end
+
+  # The same as subscribed_media_with_latest_comments_not_by_creator, for the
+  # given media instead of the subscribed ones.
+  def media_with_latest_comments_not_by_creator(commented_media)
     media = []
 
-    subscribed_commentable_media_with_comments.each do |m|
+    commented_media.each do |m|
       thread = m.commontator_thread
       comments = thread.comments
       next if comments.blank?
@@ -646,14 +733,11 @@ class User < ApplicationRecord
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  # Lectures of the active term (and those without a term) the user teaches,
-  # edits (also as editor of the course), bookmarked, is on the roster of or
-  # applied to. Listed by lectures/show/_switcher.
+  # Lectures of the active term (and those without a term) that the dashboard
+  # shows the user, so that the switcher in lectures/show/_switcher offers the
+  # same ones.
   def current_lectures
-    [given_lectures, edited_lectures, Lecture.where(course: edited_courses),
-     lectures, roster_lectures.or(lectures_with_registration_application)]
-      .flat_map { |scope| lectures_of_term(scope, Term.active) }
-      .uniq.natural_sort_by(&:title)
+    Dashboard::Board.new(user: self, term: Term.active).lectures.natural_sort_by(&:title)
   end
 
   # The published lectures whose content this user gets to see as a student:
@@ -674,8 +758,8 @@ class User < ApplicationRecord
     true
   end
 
-  # The check of unlock_lecture! without the bookmark, for a form that must
-  # vet every lecture before it saves any of them.
+  # The check of unlock_lecture! without the bookmark, for callers that must
+  # refuse before they change anything else.
   def may_unlock_lecture?(lecture, passphrase: nil)
     return false unless lecture.published? || admin || lecture.edited_by?(self)
 
@@ -725,27 +809,6 @@ class User < ApplicationRecord
     )
   end
 
-  # The lectures this user holds a place in for the given term, or has an
-  # open application for (see `lectures_with_registration_application`).
-  # Sorted by Registration::StatusQuery.sort_priority (confirmed first,
-  # rejected last), ties kept in `lectures_of_term`'s title order.
-  def current_enrolled_lectures(term = Term.active)
-    combined = roster_lectures.or(lectures_with_registration_application)
-    enrolled = lectures_of_term(combined, term)
-    statuses = Registration::StatusQuery.new(self, enrolled.map(&:id)).statuses
-
-    enrolled.sort_by.with_index do |lecture, index|
-      [Registration::StatusQuery.sort_priority(statuses[lecture.id]), index]
-    end
-  end
-
-  # Bookmarked but not already listed in `current_enrolled_lectures`. Pass
-  # `enrolled` when the caller already computed it, to avoid recomputing it.
-  def current_bookmarked_lectures(term = Term.active,
-                                  enrolled: current_enrolled_lectures(term))
-    lectures_of_term(lectures, term) - enrolled
-  end
-
   def submission_partners(lecture)
     lecture_submissions = Submission.where(assignment: lecture.assignments)
     own_submissions = UserSubmissionJoin.where(user: self,
@@ -753,7 +816,7 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
   end
 
   def recent_submission_partners(lecture)
@@ -765,7 +828,19 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
+  end
+
+  # A partner without a tutorial in the lecture could not accept, and neither
+  # could one from another tutorial where the lecture keeps teams within one,
+  # so they are not offered.
+  def partners_who_may_join(lecture, partner_ids)
+    seats = TutorialMembership.where(lecture_id: lecture.id)
+    partners = User.where(id: partner_ids - [id]).where(id: seats.select(:user_id))
+    return partners if lecture.cross_tutorial_teams?
+
+    own = seats.where(user_id: id).select(:tutorial_id)
+    partners.where.not(id: seats.where.not(tutorial_id: own).select(:user_id))
   end
 
   def rostered_tutorial_in(lecture)
@@ -825,7 +900,7 @@ class User < ApplicationRecord
 
   def proper_student_in?(lecture)
     lecture.published? && lecture.unlocked_for?(self) &&
-      !in?(lecture.tutors) && !in?(lecture.editors) && self != lecture.teacher
+      !lecture.tutor?(self) && !in?(lecture.editors) && self != lecture.teacher
   end
 
   def original_image_file
@@ -901,6 +976,20 @@ class User < ApplicationRecord
     !(admin? || teacher? || editor?)
   end
 
+  # Saves a change of admin rights after every other one: the rows of all
+  # admins are locked, and its author must still be an admin then. Two admins
+  # taking each other's rights at once would otherwise leave none.
+  def save_admin_change(by:)
+    self.class.transaction do
+      self.class.where(admin: true).lock.load
+      unless by.reload.admin?
+        errors.add(:base, :admin_rights_lost)
+        raise(ActiveRecord::Rollback)
+      end
+      save || raise(ActiveRecord::Rollback)
+    end
+  end
+
   # for lectures that are too old, only the teacher or an editor
   # of the course it belongs to can update the personell of to the lecture
   def can_update_personell?(lecture)
@@ -927,6 +1016,16 @@ class User < ApplicationRecord
   def current_sign_in_ip=(_ip)
   end
 
+  # Answers the unlock form with the password reset mail when the account is
+  # not locked: whoever cannot sign in without a lock has lost the password,
+  # and a lock ends by itself after `unlock_in`, so the unlock mail would
+  # never come. Setting the new password unlocks the account as well.
+  def resend_unlock_instructions
+    return super if access_locked?
+
+    send_reset_password_instructions
+  end
+
   ##############################################################################
   # Annotations
   ##############################################################################
@@ -941,17 +1040,6 @@ class User < ApplicationRecord
   end
 
   private
-
-    # Term-independent lectures belong to every term, so they follow the ones
-    # of the selected term rather than being left out.
-    def lectures_of_term(scope, term)
-      independent = scope.where(term: nil).includes(:course, :teacher)
-                         .natural_sort_by(&:title)
-      return independent if term.nil?
-
-      scope.where(term: term).includes(:course, :term, :teacher)
-           .natural_sort_by(&:title) + independent
-    end
 
     def program_offered_to_students
       return if program.nil? || program.degree.present?

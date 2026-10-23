@@ -144,4 +144,27 @@ RSpec.describe(TalkGradingTableComponent, type: :component) do
       expect { render_inline(component) }.not_to raise_error
     end
   end
+
+  it "marks the rows whose speaker sees the grade" do
+    published, hidden = ["Sylow theorems", "Compilers"].map do |title|
+      talk = create(:talk, lecture: seminar, title: title)
+      speaker = create(:confirmed_user)
+      create(:speaker_talk_join, talk: talk, speaker: speaker)
+      create(:assessment_participation, assessment: talk.assessment, user: speaker,
+                                        status: :reviewed, grade_numeric: 2.0)
+      talk
+    end
+    published.assessment.update!(results_published_at: Time.current)
+    allow(vc_test_controller).to receive(:current_user).and_return(teacher)
+
+    rendered = I18n.with_locale(:en) { render_inline(described_class.new(seminar: seminar)) }
+    marked = rendered.css("tr").select do |row|
+      row.at_css("[aria-label='The speaker sees this grade']")
+    end
+
+    expect(marked.map { |row| row.text.squish }).to contain_exactly(include(published.title))
+    expect(rendered.text).to include(hidden.title)
+    expect(rendered.at_css("[data-testid=results-release]").text.squish)
+      .to include("1 of 2 published")
+  end
 end

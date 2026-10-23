@@ -5,34 +5,32 @@ module Dashboard
   module BoardRenderer
     extend ActiveSupport::Concern
 
+    TERM_COOKIE = :dashboard_term
+
     private
 
-      # Populates the board's term-dependent instance variables:
-      # @enrolled_lectures, @bookmarked_lectures, @talks, @lecture_activity.
+      # The term to show on the dashboard: the one picked via ?term=, else
+      # Dashboard::TermSelector.fallback. A valid ?term= pick is stored in a
+      # cookie, so the dashboard opens on that term next time.
+      def selected_dashboard_term
+        term_picked = Term.from_dashboard_param(params[:term])
+        remember_dashboard_term(term_picked) if term_picked
+        term_picked || Dashboard::TermSelector.fallback(cookies[TERM_COOKIE])
+      end
+
+      def remember_dashboard_term(term)
+        cookies[TERM_COOKIE] = { value: term.dashboard_param, expires: 1.year,
+                                 httponly: true, same_site: :lax }
+      end
+
+      # Populates @selected_term and @board (see Dashboard::Board).
       def load_board(term)
         @selected_term = term
-        @enrolled_lectures = current_user.current_enrolled_lectures(term)
-        @bookmarked_lectures = current_user.current_bookmarked_lectures(
-          term, enrolled: @enrolled_lectures
-        )
-        @talks = current_user.talks.includes(lecture: :term)
-                             .select do |talk|
-                               talk.lecture.term_id == term&.id &&
-                                 talk.visible_for_user?(current_user)
-                             end
-                             .sort_by(&:position)
-
-        # Gathered once for the whole board: every card asks the same two
-        # questions of it, and asking them per card would multiply the
-        # queries by the number of cards.
-        @lecture_activity = Dashboard::LectureActivity.new(
-          user: current_user,
-          lectures: @enrolled_lectures + @bookmarked_lectures
-        )
+        @board = Dashboard::Board.new(user: current_user, term: term)
       end
 
       def render_board
-        load_board(Dashboard::TermSelector.selected(params))
+        load_board(selected_dashboard_term)
 
         respond_to do |format|
           format.turbo_stream do

@@ -18,9 +18,27 @@ export default class extends Controller {
    * page load.
    */
   setActive(event) {
+    this.activate(event.currentTarget);
+  }
+
+  /**
+   * Marks the entry of the page the main frame has loaded, so that a page
+   * reached from a link in the content marks its entry as a click on the
+   * entry itself does.
+   */
+  markLoaded(event) {
+    if (event.target.id !== "main" || !event.target.src) return;
+
+    const path = new URL(event.target.src, window.location.href).pathname;
+    const link = [...this.element.querySelectorAll(".sidebar-item a[href]")]
+      .find(candidate => new URL(candidate.href).pathname === path);
+    if (link) this.activate(link);
+  }
+
+  activate(link) {
     this.removeActiveStyling();
     this.removeIconFill();
-    this.setActiveLink(event);
+    this.setActiveLink(link);
     this.fillActiveIcon();
   }
 
@@ -43,8 +61,8 @@ export default class extends Controller {
     });
   }
 
-  setActiveLink(event) {
-    this.active_link = event.currentTarget.closest("li");
+  setActiveLink(link) {
+    this.active_link = link.closest("li");
     this.active_link.classList.add(ACTIVE_ITEM_CSS_CLASS);
   }
 

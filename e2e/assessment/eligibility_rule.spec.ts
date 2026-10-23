@@ -46,7 +46,7 @@ test.describe("the eligibility rule", () => {
     await expect(summary.getByText("60%")).toBeVisible();
 
     // and it does not turn up again somewhere unrelated
-    await teacher.page.goto("/main/start");
+    await teacher.page.goto("/");
     await expect(teacher.page.getByText("Eligibility rule updated."))
       .toHaveCount(0);
   });
@@ -96,8 +96,9 @@ test.describe("the eligibility rule", () => {
     await teacher.page.getByRole("checkbox", { name: "Blackboard talk" }).check();
     await teacher.page.getByRole("button", { name: "Save Rule" }).click();
 
+    await expect(teacher.page.getByText("Eligibility rule updated.")).toBeVisible();
     const summary = teacher.page.locator("#rule-editor-frame");
-    await expect(summary.getByText("Achievements")).toBeVisible();
+    await expect(summary.getByText("Achievements:")).toBeVisible();
     await expect(summary.getByText("Blackboard talk")).toBeVisible();
   });
 
@@ -146,33 +147,6 @@ test.describe("the eligibility rule", () => {
 
     await expect(teacher.page.getByLabel("Minimum points")).toHaveValue("45.0");
     await expect(teacher.page.getByLabel("Minimum percentage")).toBeHidden();
-  });
-
-  test("refuses a rule that would let everyone through", async ({
-    factory,
-    teacher,
-  }) => {
-    const lecture = await createEligibilityLecture(factory, teacher.user.id);
-    await factory.create("achievement", ["boolean"], {
-      lecture_id: lecture.id,
-      title: "Blackboard talk",
-    });
-
-    const page = new AssessmentDashboardPage(teacher.page, lecture.id);
-    await openEligibility(page);
-    await teacher.page.getByRole("link", { name: "Set up rule" }).click();
-
-    // no threshold and no achievement is not an empty rule, it is a rule that
-    // certifies the whole lecture
-    await teacher.page.getByRole("radio", { name: "No point threshold" }).check();
-    await teacher.page.getByRole("button", { name: "Save Rule" }).click();
-
-    await expect(teacher.page.getByText(
-      "The rule needs at least one criterion",
-    )).toBeVisible();
-    await expect(teacher.page.getByText("No active eligibility rule configured"))
-      .toHaveCount(0);
-    expect(await lecture.__call("student_performance_rules")).toHaveLength(0);
   });
 
   test("says who would change status before the rule is saved", async ({

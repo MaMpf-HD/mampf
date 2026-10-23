@@ -1,0 +1,119 @@
+de:
+  deans_office:
+    title: 'Dekanat'
+    explainer: >-
+      Alle Veranstaltungen des Semesters auf einen Blick. Aufklappen zeigt die
+      Gruppen, die Fragezeichen erklären die Begriffe.
+    term: 'Semester'
+    filter: 'Suchen'
+    filter_placeholder: 'Veranstaltung oder Lehrende'
+    no_match: 'Keine Veranstaltung passt zur Suche.'
+    no_lectures: 'In diesem Semester gibt es keine Veranstaltungen.'
+    order:
+      label: 'Ordnen'
+      title: 'alphabetisch'
+      phase: 'nach Stand der Anmeldung'
+    sections:
+      lectures: 'Vorlesungen'
+      seminars: 'Seminare'
+    columns:
+      lecture: 'Vorlesung'
+      seminar: 'Seminar'
+      team:
+        lecture: 'Vorlesungsteam'
+        seminar: 'Seminarteam'
+      students: 'Studierende'
+      groups: 'Gruppen'
+      talks: 'Vorträge'
+      state: 'Stand der Anmeldung'
+    teacher: 'Dozent/in'
+    groups:
+      none: 'keine'
+      tutorials:
+        one: '1 Tutorium'
+        other: '%{count} Tutorien'
+      flexible:
+        one: '1 flexible Gruppe'
+        other: '%{count} flexible Gruppen'
+    talks:
+      none: 'keine'
+      summary: '%{talks}, %{assigned}'
+      count:
+        one: '1 Vortrag'
+        other: '%{count} Vorträge'
+      assigned:
+        all: 'alle vergeben'
+        none: 'noch keiner vergeben'
+        some: '%{count} vergeben'
+    phase_with_groups: '%{phase} (%{groups})'
+    phases:
+      open: 'Anmeldung läuft'
+      allocating: 'Zuteilung folgt'
+      self_join: 'Eintragung offen'
+      assigned: 'Zugeteilt'
+      preparing: 'Noch nicht begonnen'
+      untracked: 'Ohne Anmeldung über MaMpf'
+    unregistered:
+      lectures:
+        one: '1 Vorlesung ohne Anmeldung über MaMpf'
+        other: '%{count} Vorlesungen ohne Anmeldung über MaMpf'
+      seminars:
+        one: '1 Seminar ohne Anmeldung über MaMpf'
+        other: '%{count} Seminare ohne Anmeldung über MaMpf'
+    modes:
+      first_come: 'Direktanmeldung'
+      preferences: 'Präferenzbasiert'
+    help:
+      programs: >-
+        Fach und Studiengang geben die Studierenden selbst an; ein Klick auf ein Fach
+        zeigt seine Studiengänge. „Anderes Fach oder anderer Abschluss“: keinen der
+        angebotenen Studiengänge gewählt. „Keine Angabe“: noch nicht beantwortet.
+      students: >-
+        Alle, die schon in der Veranstaltung oder einer ihrer Gruppen sind,
+        und alle, die sich gerade anmelden; jede Person einmal, Klausuren nicht
+        mitgezählt. „–“: in einem vergangenen Semester ohne Anmeldung über MaMpf
+        nicht erfasst.
+      about: 'Erklärung: %{topic}'
+      phases:
+        open: >-
+          Studierende können sich gerade anmelden; die Gruppenlisten stehen
+          noch nicht fest.
+        allocating: >-
+          Die Anmeldung ist beendet; die Plätze werden noch auf die Gruppen
+          verteilt.
+        self_join: >-
+          Studierende tragen sich ohne Anmeldeverfahren selbst in die Gruppe
+          ein.
+        assigned: >-
+          Die Verteilung ist abgeschlossen: durch eine Zuteilung, direkt durch
+          die Lehrenden oder durch Selbsteintragung, die wieder geschlossen ist.
+          Gezählt wird, wer jetzt in der Gruppe ist, auch wenn das niemand ist.
+        preparing: 'Für diese Gruppe ist noch keine Anmeldung geöffnet.'
+        untracked: >-
+          In diesem vergangenen Semester lief die Anmeldung nicht über MaMpf;
+          wer teilnahm, ist nicht erfasst.
+      modes:
+        first_come: >-
+          Wer sich anmeldet, hat sofort einen Platz sicher, solange noch welche
+          frei sind; in die Gruppenliste kommt man, wenn die Anmeldung
+          abgeschlossen wird.
+        preferences: >-
+          Studierende geben Wünsche an; nach dem Anmeldeschluss werden die
+          Plätze nach diesen Wünschen verteilt.
+    details:
+      programs: 'Studierende nach Fach'
+      subject: 'Fach'
+      total: 'Gesamt'
+      deadline: 'Anmeldeschluss %{deadline}'
+      deadline_passed: 'Anmeldeschluss war %{deadline}'
+      open_until: 'Anmeldung läuft bis %{deadline}'
+      by_campaign: '%{phase} · %{mode}'
+      first_choices: '%{mode}, Erstwünsche'
+      groups: 'Gruppen'
+      group: 'Gruppe'
+      students: 'Studierende'
+      location: 'Ort'
+      bar:
+        first_choices: 'Erstwünsche; verteilt wird erst nach dem Anmeldeschluss; Länge im Vergleich zur größten Gruppe'
+        provisional: 'Anmeldungen, noch nicht in der Gruppenliste; Länge im Vergleich zur größten Gruppe'
+        entered: 'In der Gruppe eingetragen; Länge im Vergleich zur größten Gruppe'

@@ -578,7 +578,7 @@ All controllers follow Rails conventions:
 Controllers integrate with CanCanCan abilities:
 - `load_and_authorize_resource` for standard CRUD.
 - Custom checks for special actions (allocation, grading).
-- Role-based access (student, tutor, teacher, editor, admin).
+- Role-based access (student, tutor, teacher, editor, support, admin). The support corrects personal data and account states on `/support/users`; only admins grant the support and admin roles there.
 ```
 
 ## Error Handling
@@ -586,7 +586,7 @@ Controllers integrate with CanCanCan abilities:
 ```admonish bug "Error handling"
 Controllers should handle:
 - ActiveRecord validation errors (display form errors).
-- Authorization failures (redirect with flash message).
+- Authorization failures (redirect with flash message; a request that does not accept HTML gets 403).
 - Background job failures (show status and retry option).
 - Constraint violations (e.g., deleting campaign with registrations).
 ```

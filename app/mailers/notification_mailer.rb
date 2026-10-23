@@ -1,4 +1,6 @@
 class NotificationMailer < ApplicationMailer
+  helper LecturesHelper
+
   before_action :set_sender_and_locale
   before_action :set_recipients, only: [:medium_email, :announcement_email,
                                         :new_lecture_email,

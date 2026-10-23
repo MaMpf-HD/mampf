@@ -1,0 +1,23 @@
+<div
+  id="<%= ResultsReleaseComponent::ID %>"
+  class="d-flex flex-wrap align-items-center gap-2"
+  data-testid="results-release"
+>
+  <span class="small text-muted" title="<%= status_tooltip %>">
+    <%= status %>
+  </span>
+
+  <% if published.any? %>
+    <%= button_to withdraw_label, path,
+                  method: :delete,
+                  class: "btn btn-sm btn-outline-secondary",
+                  form: { data: { turbo_confirm: withdraw_confirm } } %>
+  <% end %>
+
+  <% if to_publish.any? %>
+    <%= button_to publish_label, path,
+                  method: :patch,
+                  class: "btn btn-sm btn-primary",
+                  form: { data: { turbo_confirm: publish_confirm } } %>
+  <% end %>
+</div>

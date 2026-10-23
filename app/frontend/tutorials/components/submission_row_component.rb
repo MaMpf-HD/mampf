@@ -2,8 +2,9 @@ class SubmissionRowComponent < ViewComponent::Base
   # The table hands its rows the team's participations and the group's
   # non-submitters, read once for the whole page; a row rendered on its own
   # reads them itself.
+  # rubocop:disable Metrics/ParameterLists
   def initialize(submission:, assignment:, grading_scope:, participations: nil,
-                 addable_members: nil)
+                 addable_members: nil, member_tutorials: nil)
     super()
     @submission = submission
     @tutorial = @submission.tutorial
@@ -13,7 +14,9 @@ class SubmissionRowComponent < ViewComponent::Base
     @lecture = @assignment.lecture
     @participations = (participations || @submission.participations || []).compact
     @addable_members = addable_members
+    @member_tutorials = member_tutorials
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def grading_scope_type
     @grading_scope.class.name.downcase
@@ -35,8 +38,7 @@ class SubmissionRowComponent < ViewComponent::Base
   def addable_members
     return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
 
-    @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial)
-    @addable_members.sort_by { |member| member.tutorial_name.to_s.downcase }
+    @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
   end
 
   # The earliest join founded the team; whether that was late is the
@@ -56,11 +58,48 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def allow_grading?
-    @submission.valid_for_marking? && @assignment&.grading_open?
+    !elsewhere? && @submission.valid_for_marking? && @assignment&.grading_open?
+  end
+
+  def elsewhere?
+    @grading_scope.is_a?(Tutorial) && @grading_scope != @tutorial
+  end
+
+  def marked_elsewhere_info
+    t("assessment.task_points.marked_elsewhere", tutorial: @tutorial.title_with_tutors)
+  end
+
+  # Uses the students' tutorials the table read once for the page; a row
+  # rendered on its own asks the submission.
+  def hand_over_targets
+    return [] if elsewhere? || !@tutorial.correctable_by?(helpers.current_user)
+    return @submission.hand_over_targets.to_a unless @member_tutorials
+    return [] unless @submission.users.many? && movable?
+
+    @submission.users.filter_map { |user| @member_tutorials[user.id] }
+               .uniq.excluding(@tutorial).sort_by(&:title)
+  end
+
+  # A tutor of another tutorial reads the team for their own students; the
+  # others' addresses are not theirs to collect.
+  def copy_emails
+    return @submission.users.map(&:email) unless elsewhere?
+
+    own = if @member_tutorials
+      @submission.users.select { |user| @member_tutorials[user.id] == @grading_scope }
+    else
+      @submission.users.where(id: @grading_scope.tutorial_memberships.select(:user_id))
+    end
+    own.map(&:email)
   end
 
   def tasks
     @assessment.persisted_tasks || []
+  end
+
+  def movable?
+    @submission.correction.blank? &&
+      @participations.none? { |participation| @assessment&.marked?(participation) }
   end
 
   # A team is marked as one - every member gets the same points and the same
@@ -158,6 +197,8 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def can_enter_points?
+    return false if elsewhere?
+
     user = helpers.current_user
     user.admin? || user.can_enter_points_in?(@grading_scope)
   end

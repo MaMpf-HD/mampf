@@ -245,7 +245,9 @@ $(document).on 'turbo:load', ->
         headers: { 'Accept': 'text/vnd.turbo-stream.html' }
         data: JSON.stringify(media_ids: selected)
         success: (response) -> Turbo.renderStreamMessage(response)
-        error: (xhr) -> console.log("Turbo Import Error: #{xhr.status}")
+        error: (xhr) ->
+          return window.location.reload() if xhr.status in [403, 422]
+          console.log("Turbo Import Error: #{xhr.status}")
     else if $(this).data('purpose') == 'quiz'
       quizId = $('#new_vertex').data('quiz')
       $.ajax Routes.quiz_vertices_path(quiz_id: quizId),

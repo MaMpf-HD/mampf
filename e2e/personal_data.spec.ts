@@ -47,8 +47,24 @@ test("asks once for the name and matriculation number after sign-in",
     await page.getByRole("button", { name: "Save" }).click();
 
     await expect(page.getByText("Thank you, your details are saved.")).toBeVisible();
-    await page.goto("/main/start");
-    await expect(page).toHaveURL(/\/main\/start/);
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/$/);
+  });
+
+// Safari before 17.4 (iOS 17.4) has no Element#checkVisibility.
+test("leads through the steps in a browser without checkVisibility",
+  async ({ page, request }) => {
+    await page.addInitScript(() => {
+      delete (Element.prototype as Partial<Element>).checkVisibility;
+    });
+    await signInAsking(page, request);
+
+    await page.getByRole("radio", { name: "Yes" }).check();
+    await page.getByLabel("First name", { exact: true }).fill("Ada");
+    await page.getByLabel("Last name", { exact: true }).fill("Lovelace");
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect(page.getByText("Step 2 of 4: Matriculation number")).toBeVisible();
   });
 
 test("lets a user who takes part in no exercise class skip it",
@@ -62,8 +78,8 @@ test("lets a user who takes part in no exercise class skip it",
     await page.getByRole("button", { name: "Continue" }).click();
 
     await expect(page).not.toHaveURL(/\/personal_data/);
-    await page.goto("/main/start");
-    await expect(page).toHaveURL(/\/main\/start/);
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/$/);
 
     await page.goto("/profile/edit");
     await expect(page.getByLabel("Display name")).toHaveValue("Ada L.");
@@ -139,6 +155,6 @@ test("lets a student with a place give it up instead of entering the details",
     await page.getByRole("button", { name: "Give up places and continue" }).click();
 
     await expect(page).not.toHaveURL(/\/personal_data/);
-    await page.goto("/main/start");
-    await expect(page).toHaveURL(/\/main\/start/);
+    await page.goto("/");
+    await expect(page).toHaveURL(/\/$/);
   });

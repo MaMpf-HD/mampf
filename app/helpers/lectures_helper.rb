@@ -41,8 +41,8 @@ module LecturesHelper
   end
 
   # create text for notification card
-  def lecture_notification_item_details(_lecture)
-    t("notifications.subscribe_lecture")
+  def lecture_notification_item_details(lecture)
+    t(lecture_search_hint_key(lecture, "notifications"), term: lecture.term_to_label)
   end
 
   # create text for notification about new course in notification card
@@ -54,11 +54,19 @@ module LecturesHelper
   end
 
   # create link for notification about new course in notification card
-  def lecture_notification_card_link
-    t("notifications.subscribe_lecture_html",
-      profile: link_to(t("notifications.profile"),
-                       edit_profile_path,
-                       class: "darkblue"))
+  def lecture_notification_card_link(lecture)
+    t(lecture_search_hint_key(lecture, "notifications", "_html"),
+      term: lecture.term_to_label,
+      dashboard: link_to(t("notifications.dashboard_search"),
+                         root_path(anchor: "lecture-search"),
+                         class: "darkblue"))
+  end
+
+  # Names the lecture's term where it has one: the dashboard's search shows
+  # the term picked there, which need not be the lecture's.
+  def lecture_search_hint_key(lecture, scope, suffix = "")
+    in_term = lecture.term ? "_in_term" : ""
+    "#{scope}.subscribe_lecture#{in_term}#{suffix}"
   end
 
   def days_short
@@ -106,18 +114,23 @@ module LecturesHelper
     "text-primary"
   end
 
-  def tutors_with_tutorials(lecture)
-    by_tutor = lecture.tutorials.includes(:tutors).each_with_object({}) do |tutorial, hash|
-      tutorial.tutors.each { |tutor| (hash[tutor] ||= []) << tutorial }
+  # Each tutor of the lecture with their tutorials and cohorts, and :address
+  # or :voucher if that is how they became one. Those still without a group
+  # are listed too, so that the lecturer sees who is waiting.
+  def lecture_tutors_overview(lecture)
+    groups = {}
+    lecture.tutorials.includes(:tutors).find_each do |tutorial|
+      tutorial.tutors.each { |tutor| (groups[tutor] ||= []) << tutorial }
     end
-    by_tutor.sort_by { |tutor, _| tutor.tutorial_name.to_s.downcase }
-  end
+    lecture.cohorts.includes(:tutors).find_each do |cohort|
+      cohort.tutors.each { |tutor| (groups[tutor] ||= []) << cohort }
+    end
+    sources = Redemption.tutors_by_redemption_in(lecture).index_with(:voucher)
+                        .merge(lecture.appointed_tutors.index_with(:address))
+    sources.each_key { |tutor| groups[tutor] ||= [] }
 
-  # Redeemed a tutor voucher, not put on a tutorial yet - listed so the
-  # lecturer sees who is waiting.
-  def tutors_without_tutorial(lecture)
-    (Redemption.tutors_by_redemption_in(lecture) - lecture.tutors)
-      .sort_by { |tutor| tutor.tutorial_name.to_s.downcase }
+    groups.map { |tutor, list| [tutor, list, sources[tutor]] }
+          .sort_by { |tutor, _, _| tutor.tutorial_name.to_s.downcase }
   end
 
   def lecture_header_color(subscribed, lecture)
@@ -129,12 +142,6 @@ module LecturesHelper
     else
       "bg-info"
     end
-  end
-
-  def circle_icon(subscribed)
-    return "fas fa-check-circle" if subscribed
-
-    "far fa-circle"
   end
 
   def lecture_border(lecture)

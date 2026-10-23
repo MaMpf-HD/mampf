@@ -43,12 +43,14 @@ class AssessmentsIndexComponent < ViewComponent::Base
   end
 
   # Both directions have consequences, so both are asked about: the tick sets
-  # the rule judging, taking it back puts every verdict to deferred again.
-  # Taking it back on top of computed decisions has one more thing to say, and
-  # it is the only dialog with a third button.
+  # the rule judging, taking it back puts every verdict of a rule with a points
+  # threshold to deferred again. Taking it back on top of computed decisions of
+  # such a rule has one more thing to say, and it is the only dialog with a
+  # third button.
   def confirmation
     return :close unless lecture.assignments_complete?
-    return :reopen if computed_decisions_count.positive?
+    return :reopen if computed_decisions_count.positive? &&
+                      lecture.active_performance_rule&.points_threshold?
 
     :open
   end
@@ -58,6 +60,10 @@ class AssessmentsIndexComponent < ViewComponent::Base
   end
 
   def confirmation_body
+    if confirmation == :reopen && reset_blocked_by
+      return t("assessment.assignments_complete.reopen_dialog.body_in_use",
+               count: computed_decisions_count, campaigns: reset_blocked_by)
+    end
     if confirmation == :reopen
       return t("assessment.assignments_complete.reopen_dialog.body",
                count: computed_decisions_count)
@@ -68,6 +74,14 @@ class AssessmentsIndexComponent < ViewComponent::Base
 
   def confirmation_button
     t("assessment.assignments_complete.#{confirmation}_dialog.confirm")
+  end
+
+  # A registration campaign that is not completed screens against the computed
+  # certifications, so they may not be reset under it.
+  def reset_blocked_by
+    return @reset_blocked_by if defined?(@reset_blocked_by)
+
+    @reset_blocked_by = lecture.eligibility_in_use_by
   end
 
   def computed_decisions_count

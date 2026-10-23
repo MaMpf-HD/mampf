@@ -12,9 +12,9 @@ test.describe("lecture group registration sections", () => {
       await expect(
         choice.getByRole("heading", { name: "Do you need a registration process?" }),
       ).toBeVisible();
-      await expect(choice).toContainText(
-        "If you are unsure, we recommend choosing a registration process.",
-      );
+      // both ways, with what each gives and costs
+      await expect(choice).toContainText("With a registration process you set");
+      await expect(choice).toContainText("Without one you are more flexible");
       await expect(page.getByTestId("registration-campaign-section")).toHaveCount(0);
       await expect(page.getByTestId("registration-no-campaign-section")).toHaveCount(0);
     });

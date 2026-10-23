@@ -80,7 +80,7 @@ class UserCleaner
       # deletion date, that's why we skip validation here.
       user.save(validate: false)
 
-      if user.generic?
+      if deletable?(user)
         UserCleanerMailer.pending_deletion_email(user.email, user.locale, 40)
                          .deliver_later
       end
@@ -121,7 +121,7 @@ class UserCleaner
     num_intended_to_delete = 0
 
     User.where(deletion_date: ..Date.current).find_each do |user|
-      next unless user.generic?
+      next unless deletable?(user)
 
       UserCleanerMailer.deletion_email(user.email, user.locale).deliver_later
       num_intended_to_delete += 1
@@ -144,7 +144,7 @@ class UserCleaner
   # sends warning mails 14, 7 and 2 days before the account is deleted.
   def send_additional_warning_mails
     User.where.not(deletion_date: nil).find_each do |user|
-      next unless user.generic?
+      next unless deletable?(user)
 
       num_days_until_deletion = (user.deletion_date - Date.current).to_i
 
@@ -166,4 +166,10 @@ class UserCleaner
 
     send_additional_warning_mails
   end
+
+  private
+
+    def deletable?(user)
+      user.generic? && !user.support? && !user.deans_office?
+    end
 end

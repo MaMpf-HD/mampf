@@ -35,4 +35,18 @@ RSpec.describe(SelfEnrollmentComponent, type: :component) do
 
     expect(render_body.css("button[aria-label='Switch to Friday Tutorial']")).to be_empty
   end
+
+  it "speaks of talks when every option is a talk" do
+    seminar = create(:seminar, :released_for_all)
+    talks = create_list(:talk, 2, lecture: seminar, self_materialization_mode: "add_and_remove")
+
+    summary = with_controller_class(Lectures::HomeController) do
+      allow(vc_test_controller).to receive(:current_user).and_return(user)
+      render_inline(described_class.new(lecture: seminar, user: user,
+                                        rosterables: talks, part: :summary))
+    end
+
+    expect(summary.text).to include("Take a talk yourself", "2 talks, no deadline", "Show talks")
+    expect(summary.text).not_to include("group")
+  end
 end

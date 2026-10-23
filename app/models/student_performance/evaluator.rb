@@ -65,7 +65,7 @@ module StudentPerformance
       Result.new(
         proposed_status: propose(points, achievements),
         details: {
-          assignments_incomplete: !@assignments_complete,
+          assignments_incomplete: held_back_by_list?,
           meets_points: points == :met,
           points_not_due: points == :pending && not_yet_due(record).positive?,
           points_pending: points == :pending && awaiting_marking(record).positive?,
@@ -107,11 +107,16 @@ module StudentPerformance
       # the points needed for min_percentage, so a passed or failed
       # proposal may change while assignments_complete is false.
       def propose(*statuses)
-        return :inconclusive unless @assignments_complete
+        return :inconclusive if held_back_by_list?
         return :failed if statuses.include?(:not_met)
         return :inconclusive if statuses.intersect?(UNDECIDED)
 
         :passed
+      end
+
+      # Without a points threshold another sheet changes nothing the rule asks.
+      def held_back_by_list?
+        !@assignments_complete && rule.points_threshold?
       end
 
       def points_status(record)

@@ -122,6 +122,13 @@
             </div>
           </div>
 
+          <p
+            class="small text-muted mb-0"
+            data-threshold-mode-target="noneHint"
+          >
+            <%= t("student_performance.rules.edit.none_hint") %>
+          </p>
+
           <div data-threshold-mode-target="percentageInput">
             <div class="input-group input-group-sm" style="max-width: 160px">
               <input
@@ -221,6 +228,37 @@
       </div>
 
       <%= turbo_frame_tag "rule-preview-frame" %>
+    <% end %>
+
+    <% if @rule.persisted? && @rule.active_in_database %>
+      <div class="border-top mt-3 pt-3 text-end">
+        <% if @eligibility_in_use_by %>
+          <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            aria-describedby="rule-remove-blocked-note"
+            disabled
+          >
+            <%= t("student_performance.rules.edit.remove") %>
+          </button>
+          <p id="rule-remove-blocked-note" class="small text-muted mt-1 mb-0">
+            <%= t("student_performance.eligibility_in_use", campaigns: @eligibility_in_use_by) %>
+          </p>
+        <% else %>
+          <%= button_to t("student_performance.rules.edit.remove"),
+                      lecture_student_performance_rules_path(@lecture),
+                      method: :delete,
+                      params: { source_frame: submit_frame },
+                      class: "btn btn-outline-danger btn-sm",
+                      form: {
+                        data: {
+                          turbo_frame: submit_frame,
+                          turbo_confirm: t("student_performance.rules.edit.remove_confirm",
+                                           count: @computed_count)
+                        }
+                      } %>
+        <% end %>
+      </div>
     <% end %>
   </div>
 <% end %>

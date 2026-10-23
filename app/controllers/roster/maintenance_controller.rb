@@ -2,6 +2,8 @@ module Roster
   # Manages group allocations through a lecture-level overview and a polymorphic
   # item dashboard. Handles student membership visualization and maintenance actions.
   class MaintenanceController < ApplicationController
+    include Registration::RosterStreamRefreshable
+
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
 
@@ -71,7 +73,7 @@ module Roster
 
     def show
       if @mparams.panel?
-        render_with_streams(stream_builder.streams(update_tiles: false))
+        render_with_streams(stream_builder.streams(update_rows: false))
       else
         redirect_to lecture_roster_path(@lecture)
       end
@@ -97,12 +99,12 @@ module Roster
 
       source = find_panel_source
       if source
-        render_with_streams(
+        render_membership_streams(
           stream_builder(rosterable: source, target: @rosterable)
             .streams(variant: :move_panel)
         )
       else
-        render_with_streams(stream_builder.streams)
+        render_membership_streams(stream_builder.streams)
       end
     end
 
@@ -114,7 +116,7 @@ module Roster
 
       flash.now[:notice] = t("roster.messages.user_removed", user: user.info)
 
-      render_with_streams(stream_builder.streams)
+      render_membership_streams(stream_builder.streams)
     end
 
     def move_member
@@ -149,11 +151,11 @@ module Roster
       end
 
       if @mparams.panel?
-        render_with_streams(
+        render_membership_streams(
           stream_builder(target: target).streams(variant: :move_panel)
         )
       else
-        render_with_streams(stream_builder.streams)
+        render_membership_streams(stream_builder.streams)
       end
     end
 
@@ -163,7 +165,7 @@ module Roster
       if @rosterable.update(self_materialization_mode: mode)
         render turbo_stream: turbo_stream.replace(
           @rosterable,
-          html: GroupTileComponent.new(
+          html: GroupRowComponent.new(
             registerable: @rosterable
           ).render_in(view_context)
         )
@@ -196,8 +198,11 @@ module Roster
         query = Rosters::ParticipantQuery.new(@lecture, params).call
 
         @participants_filter = query.filter_mode
+        @participants_view = query.view
+        @participants_campaign = query.campaign
         @total_participants_count = query.total_count
         @unassigned_participants_count = query.unassigned_count
+        @registered_participants_count = query.registered_count
         @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
@@ -216,6 +221,8 @@ module Roster
           participants: @participants,
           pagy: @pagy,
           filter_mode: @participants_filter,
+          view: @participants_view,
+          campaign: @participants_campaign,
           search_string: @search_string,
           counts: participants_counts
         }
@@ -224,7 +231,8 @@ module Roster
       def participants_counts
         {
           total: @total_participants_count,
-          unassigned: @unassigned_participants_count
+          unassigned: @unassigned_participants_count,
+          registered: @registered_participants_count
         }
       end
 
@@ -254,6 +262,14 @@ module Roster
         end
       end
 
+      # A change of membership also changes the participants tab, which the
+      # groups tab does not render; it is reloaded when next shown. A change
+      # made in the participants tab updates that tab itself.
+      def render_membership_streams(streams)
+        streams += [participants_reload_stream(@lecture)] unless @mparams.participants?
+        render_with_streams(streams)
+      end
+
       def stream_builder(target: nil, rosterable: nil)
         ensure_participants_state!
 
@@ -269,9 +285,12 @@ module Roster
             participants: @participants,
             pagy: @pagy,
             filter_mode: @participants_filter,
+            view: @participants_view,
+            campaign: @participants_campaign,
             search_string: @search_string,
             total_count: @total_participants_count,
-            unassigned_count: @unassigned_participants_count
+            unassigned_count: @unassigned_participants_count,
+            registered_count: @registered_participants_count
           },
           refresh_campaigns_stream: lambda do |lecture|
             refresh_campaigns_index_stream(lecture)

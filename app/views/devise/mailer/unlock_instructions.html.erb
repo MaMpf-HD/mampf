@@ -5,3 +5,10 @@
 <p><%= t('.instruction') %></p>
 
 <p><%= link_to t('.action'), unlock_url(@resource, unlock_token: @token, locale: I18n.locale) %></p>
+
+<p>
+  <%= t('.forgot_password',
+        unlock_in: distance_of_time_in_words(0, Devise.unlock_in)) %>
+</p>
+
+<p><%= link_to t('.reset_password'), new_user_password_url(locale: I18n.locale) %></p>

@@ -13,10 +13,10 @@ import { addDataToForm } from "~/js/form_helper.js";
  * The semester the results are scoped to is not chosen here: it comes from the
  * dashboard's semester picker as a server-rendered hidden `search[term]`
  * field, so the search and the dashboard above it always show the same
- * semester.
+ * semester. The `allTerms` switch only lifts that scope for the search.
  */
 export default class extends Controller {
-  static targets = ["form", "scrollObserver"];
+  static targets = ["form", "scrollObserver", "allTerms"];
 
   connect() {
     addDataToForm(this.formTarget, { infinite_scroll: true });
@@ -73,9 +73,10 @@ export default class extends Controller {
    * The semester picker changed the term (and our hidden `search[term]` field
    * with it). Re-run the search from the first page if results are already on
    * screen; otherwise the new term is picked up when the user scrolls down to
-   * the search.
+   * the search. Picking a semester also ends a search across all of them.
    */
   reloadForTermChange() {
+    if (this.hasAllTermsTarget) this.allTermsTarget.checked = false;
     if (!this.initiallyLoaded) return;
 
     this.search();

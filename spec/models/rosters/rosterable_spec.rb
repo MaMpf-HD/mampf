@@ -49,7 +49,8 @@ RSpec.describe(Rosters::Rosterable) do
 
       context "with an open campaign" do
         before do
-          campaign = create(:registration_campaign, status: :draft)
+          campaign = create(:registration_campaign, status: :draft,
+                                                    campaignable: rosterable.lecture)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
           campaign.update(status: :open)
         end
@@ -61,7 +62,8 @@ RSpec.describe(Rosters::Rosterable) do
 
       context "with a completed campaign" do
         before do
-          campaign = create(:registration_campaign, status: :completed)
+          campaign = create(:registration_campaign, status: :completed,
+                                                    campaignable: rosterable.lecture)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         end
 
@@ -74,7 +76,8 @@ RSpec.describe(Rosters::Rosterable) do
         it "reflects the new completed campaign state" do
           expect(rosterable.locked?).to(be(true))
 
-          campaign = create(:registration_campaign, status: :completed)
+          campaign = create(:registration_campaign, status: :completed,
+                                                    campaignable: rosterable.lecture)
           create(:registration_item, registration_campaign: campaign, registerable: rosterable)
 
           expect(rosterable.locked?).to(be(false))
@@ -557,7 +560,8 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when in a campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft)
+        campaign = create(:registration_campaign, status: :draft,
+                                                  campaignable: rosterable.lecture)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end
@@ -571,7 +575,8 @@ RSpec.describe(Rosters::Rosterable) do
       it "reflects the new campaign membership" do
         expect(rosterable.destructible?).to(be(true))
 
-        campaign = create(:registration_campaign, status: :draft)
+        campaign = create(:registration_campaign, status: :draft,
+                                                  campaignable: rosterable.lecture)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
 
         expect(rosterable.destructible?).to(be(false))
@@ -594,7 +599,8 @@ RSpec.describe(Rosters::Rosterable) do
 
     context "when in a campaign" do
       before do
-        campaign = create(:registration_campaign, status: :draft)
+        campaign = create(:registration_campaign, status: :draft,
+                                                  campaignable: rosterable.lecture)
         create(:registration_item, registration_campaign: campaign, registerable: rosterable)
         campaign.update(status: :open)
       end

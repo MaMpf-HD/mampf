@@ -1,0 +1,19 @@
+en:
+  support_request:
+    open: "Contact support"
+    title: "Contact support"
+    intro_html: >
+      Your message goes to the MaMpf team, who will reply by email. Questions about
+      a lecture are best sent to those responsible for it. You can also write to us
+      at %{email}.
+    signed_out_html: >
+      Write to us at %{email}, and we will reply by email. Questions about a
+      lecture are best sent to those responsible for it.
+    message: "Your message"
+    message_placeholder: "How can we help?"
+    send: "Send"
+    sent: "Thank you! Your message is on its way. We will reply by email."
+  activemodel:
+    attributes:
+      support_request:
+        message: "Message"

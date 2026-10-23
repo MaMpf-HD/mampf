@@ -105,6 +105,12 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.assessment.persisted_tasks || []
   end
 
+  # A seminar publishes its talks with one button, so a talk's row shows
+  # whether its speaker already sees the grade.
+  def talk?
+    @assessable.is_a?(Talk)
+  end
+
   # An achievement's row has no marking queue: it is met, not met, or waits
   # for a value - or the person was excused.
   def status

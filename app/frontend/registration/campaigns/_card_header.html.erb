@@ -9,12 +9,12 @@
                         turbo_confirm: campaign_revert_confirmation,
                         turbo_stream: true
                       },
-                      class: "btn btn-sm btn-outline-secondary",
+                      class: "btn icon-button",
                       title: t("registration.campaign.actions.revert_to_draft"),
                       aria: {
                         label: t("registration.campaign.actions.revert_to_draft")
                       } do %>
-          <i class="bi bi-arrow-90deg-left"></i>
+          <i class="bi bi-arrow-90deg-left" aria-hidden="true"></i>
         <% end %>
       <% end %>
 
@@ -26,19 +26,27 @@
                         turbo_confirm: campaign_discard_confirmation(campaign),
                         turbo_stream: true
                       },
-                      class: "btn btn-sm btn-outline-danger",
+                      class: "btn icon-button icon-button--danger",
                       title: campaign_discard_title(campaign),
                       aria: { label: campaign_discard_title(campaign) } do %>
-          <i class="bi bi-trash"></i>
+          <i class="bi bi-trash" aria-hidden="true"></i>
+        <% end %>
+      <% elsif campaign.endable_without_allocation? %>
+        <%= link_to confirm_end_registration_campaign_path(campaign),
+                    class: "btn icon-button icon-button--danger",
+                    data: { turbo_frame: campaign_header_frame_id(campaign) },
+                    title: t("registration.campaign.end.action"),
+                    aria: { label: t("registration.campaign.end.action") } do %>
+          <i class="bi bi-x-octagon" aria-hidden="true"></i>
         <% end %>
       <% end %>
 
       <%= link_to edit_registration_campaign_path(campaign),
-                  class: "btn btn-sm btn-outline-secondary",
+                  class: "btn icon-button",
                   data: { turbo_frame: campaign_header_frame_id(campaign) },
                   title: t("basics.edit"),
                   aria: { label: t("basics.edit") } do %>
-        <i class="bi bi-pencil"></i>
+        <i class="bi bi-pencil" aria-hidden="true"></i>
       <% end %>
     </div>
 

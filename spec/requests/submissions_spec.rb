@@ -140,7 +140,7 @@ RSpec.describe("Submissions", type: :request) do
       expect { post(submissions_path, params: create_params) }
         .not_to change(Submission, :count)
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
       follow_redirect!
       expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
     end
@@ -192,7 +192,7 @@ RSpec.describe("Submissions", type: :request) do
         expect { post(submissions_path(format: :js), params: create_params) }
           .not_to change(Submission, :count)
 
-        expect(response).to redirect_to(start_path)
+        expect(response).to redirect_to(root_path)
         follow_redirect!
         expect(flash[:alert]).to eq(
           I18n.t("submission.tutorial_not_assigned")
@@ -339,7 +339,7 @@ RSpec.describe("Submissions", type: :request) do
     it "is told what is missing rather than crashing on the form" do
       get new_submission_path(assignment_id: assignment.id)
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
       follow_redirect!
       expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
     end
@@ -387,11 +387,12 @@ RSpec.describe("Submissions", type: :request) do
       it "does not open the form to replace the file without a seat" do
         get edit_submission_path(submission)
 
-        expect(response).to redirect_to(:start)
+        expect(response).to redirect_to(:root)
         expect(flash[:alert]).to eq(I18n.t("submission.tutorial_not_assigned"))
       end
 
       it "opens it with a seat in another group of the lecture" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)
@@ -403,6 +404,7 @@ RSpec.describe("Submissions", type: :request) do
       # The group named on the form is the one the work is filed under - the
       # tutor who has it - not the seat the reader happens to have now.
       it "names the group the work is filed under, not the reader's seat" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)
@@ -1493,6 +1495,7 @@ RSpec.describe("Submissions", type: :request) do
       # before - the first team-up goes through the code.
       it "offers a past partner when inviting" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])
@@ -1507,6 +1510,7 @@ RSpec.describe("Submissions", type: :request) do
 
       it "answers an invitation with the card naming who was invited_users" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])

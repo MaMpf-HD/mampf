@@ -115,6 +115,16 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).not_to include("Here Now")
       end
 
+      it "shows talks of a seminar without a term in every semester" do
+        seminar = create(:seminar, :released_for_all, :term_independent)
+        talk = create(:talk, lecture: seminar, title: "Divisibility")
+        talk.speakers << user
+
+        get root_path(term: other_term.dashboard_param)
+
+        expect(response.body).to include("Divisibility")
+      end
+
       it "still understands a bare id" do
         there = create(:lecture, course: create(:course, title: "Over There"),
                                  term: other_term)
@@ -134,6 +144,28 @@ RSpec.describe("Main", type: :request) do
         expect(response.body).to include("Here Now")
       end
 
+      it "ignores a remembered term that no longer exists" do
+        here = lecture_with_title("Here Now")
+        here.lecture_memberships.create!(user: user)
+        cookies[:dashboard_term] = "SS99"
+
+        get root_path
+
+        expect(response.body).to include("Here Now")
+      end
+
+      it "keeps the remembered term for a garbage value without rewriting it" do
+        there = create(:lecture, course: create(:course, title: "Over There"),
+                                 term: other_term)
+        there.lecture_memberships.create!(user: user)
+        cookies[:dashboard_term] = other_term.dashboard_param
+
+        get root_path(term: "garbage")
+
+        expect(response.body).to include("Over There")
+        expect(response.headers["Set-Cookie"].to_s).not_to include("dashboard_term")
+      end
+
       it "never renders as a Turbo Stream, even with that Accept header " \
          "(as happens on the GET Turbo tags after a redirecting sign-in " \
          "or sign-out POST)" do
@@ -142,6 +174,48 @@ RSpec.describe("Main", type: :request) do
 
         expect(response.media_type).to eq("text/html")
       end
+    end
+  end
+
+  describe "GET /main/comments" do
+    let(:other) { create(:confirmed_user) }
+    let(:taught) { create(:lecture, :released_for_all, teacher: user, term: term) }
+    let(:bookmarked) { create(:lecture, :released_for_all, term: term) }
+
+    def commented_medium(lecture)
+      medium = create(:lecture_medium, teachable: lecture, released: "all",
+                                       released_at: Time.zone.now)
+      Commontator::Comment.create!(thread: medium.commontator_thread, creator: other,
+                                   body: Faker::Lorem.sentence)
+      medium
+    end
+
+    before { user.bookmark_lecture!(bookmarked) }
+
+    it "lists only the lecture's media when filtered to a lecture, " \
+       "including a lecture the user teaches without having bookmarked it" do
+      in_taught = commented_medium(taught)
+      in_bookmarked = commented_medium(bookmarked)
+
+      get comments_path(lecture_id: taught.id)
+
+      expect(response.body).to include(medium_path(in_taught))
+      expect(response.body).not_to include(medium_path(in_bookmarked))
+      expect(response.body).to include(comments_path)
+    end
+
+    it "answers not found for an unknown lecture instead of listing all" do
+      get comments_path(lecture_id: Lecture.maximum(:id).to_i + 1)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "lists the media of all bookmarked lectures without a filter" do
+      in_bookmarked = commented_medium(bookmarked)
+
+      get comments_path
+
+      expect(response.body).to include(medium_path(in_bookmarked))
     end
   end
 end

@@ -4,6 +4,7 @@ module Assessment
   # achievement's dashboard.
   class AchievementValuesController < ApplicationController
     include AchievementStreams
+    include GradingTable
 
     before_action :set_resources
     before_action :authorize_entry!
@@ -61,7 +62,7 @@ module Assessment
       # grading_scope_type selects the table to answer into, not the permission
       # scope.
       def table_scope
-        (@participation.tutorial if params[:grading_scope_type] == "tutorial") || @lecture
+        grading_table(ParticipationIndex.group_holding(@participation), @lecture)
       end
 
       def row_stream

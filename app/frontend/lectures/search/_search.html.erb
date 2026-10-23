@@ -6,10 +6,13 @@
 
   <div id="lecture-search-wrapper" class="glass">
     <% if @available_terms.present? %>
-      <%= render(DashboardTermSelectComponent.new(terms: @available_terms,
-                                                  selected: @selected_term,
-                                                  id: "lecture-search-term-select",
-                                                  anchor: "lecture-search")) %>
+      <%= render(DashboardTermSelectComponent.new(
+        terms: @available_terms,
+        selected: @selected_term,
+        next_term_lecture_count: @next_term_lecture_count,
+        id: "lecture-search-term-select",
+        anchor: "lecture-search"
+      )) %>
     <% end %>
 
     <%= form_with url: search_lectures_path,
@@ -41,6 +44,21 @@
                                   testid: "lecture-search-bar" } %>
         <i class="fas fa-search" id="lecture-search-icon"></i>
       </div>
+
+      <%# Widens one search without moving the dashboard to another semester,
+          so it is not remembered either. %>
+      <% if @available_terms.to_a.size > 1 %>
+        <div class="form-check form-switch mt-2 ms-3">
+          <%= check_box_tag "search[all_terms]", "1", false,
+                            id: "lecture-search-all-terms",
+                            class: "form-check-input",
+                            role: "switch",
+                            data: { lecture_search_target: "allTerms",
+                                    action: "change->lecture-search#search" } %>
+          <%= label_tag "lecture-search-all-terms", t("lecture.search.all_terms"),
+                        class: "form-check-label" %>
+        </div>
+      <% end %>
 
     <% end %>
   </div>

@@ -98,8 +98,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
     end
 
     context "with a rule that has no points threshold" do
-      # A rule must constrain something, so a threshold-less rule carries an
-      # achievement instead; points are then irrelevant to the outcome.
+      # The achievement is all this rule asks for; points are then irrelevant
+      # to the outcome.
       let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
 
       let(:rule) do
@@ -536,6 +536,66 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.proposed_status).to eq(:failed)
         expect(result.details[:points_pending]).to be(false)
         expect(result.details[:not_due_sheets]).to eq(1)
+      end
+    end
+
+    context "with a rule that asks for nothing, while the list is open" do
+      let(:rule) do
+        FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                          lecture: lecture)
+      end
+
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: false, due_points: due_points)
+      end
+
+      it "proposes every student as eligible" do
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture,
+                                   points_total_materialized: 0,
+                                   points_max_materialized: 100,
+                                   percentage_materialized: 0)
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:passed)
+        expect(result.details[:assignments_incomplete]).to be(false)
+      end
+    end
+
+    context "with a rule that asks only for an achievement, while the list is open" do
+      let(:achievement) { FactoryBot.create(:achievement, :boolean, lecture: lecture) }
+
+      let(:rule) do
+        FactoryBot.build(:student_performance_rule, :active, :without_criteria,
+                         lecture: lecture).tap do |r|
+          r.rule_achievements.build(achievement: achievement, position: 1)
+          r.save!
+        end
+      end
+
+      let(:evaluator) do
+        described_class.new(rule, assignments_complete: false, due_points: due_points)
+      end
+
+      it "proposes a student who has the achievement as eligible" do
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture,
+                                   achievements_met_ids: [achievement.id])
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:passed)
+        expect(result.details[:assignments_incomplete]).to be(false)
+      end
+
+      it "defers a student whose achievement is ungraded for that reason only" do
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture,
+                                   achievements_met_ids: [],
+                                   achievements_ungraded_ids: [achievement.id])
+
+        result = evaluator.evaluate(record)
+        expect(result.proposed_status).to eq(:inconclusive)
+        expect(result.verdict_deferral_reasons).to eq([:achievements_ungraded])
       end
     end
 

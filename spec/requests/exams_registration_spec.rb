@@ -248,6 +248,34 @@ RSpec.describe("Exams registration", type: :request) do
     end
   end
 
+  # Until the registration is finalized it decides who sits the exam; the tab
+  # hides the forms, and the endpoints refuse too.
+  describe "participants while the registration runs" do
+    before { sign_in teacher }
+
+    it "refuses to add a participant" do
+      expect do
+        post(participants_exam_path(exam),
+             params: { user_id: student.id },
+             as: :turbo_stream)
+      end.not_to(change { exam.reload.all_exam_roster_entries.count })
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(I18n.t("roster.errors.item_locked"))
+    end
+
+    it "refuses to remove a participant" do
+      exam.add_user_to_roster!(student)
+
+      expect do
+        delete(remove_participant_exam_path(exam, user_id: student.id),
+               as: :turbo_stream)
+      end.not_to(change { exam.reload.exam_roster_entries.count })
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
   describe "DELETE /exams/:id/participants/:user_id" do
     let(:campaign) { exam.registration_campaign }
 

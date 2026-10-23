@@ -24,9 +24,36 @@ RSpec.describe("Auth passwords", type: :request) do
       ActionMailer::Base.deliveries.clear
 
       params = { user: { email: user.email } }
-      6.times { post(user_password_path, params: params) }
+      # Eleven minutes apart: past the pause per address, within the hour
+      # the limit per source counts.
+      start = Time.current
+      6.times do |i|
+        Timecop.travel(start + (i * 11).minutes) { post(user_password_path, params: params) }
+      end
 
       expect(ActionMailer::Base.deliveries.count).to eq(5)
+    end
+
+    it "pauses reset emails to one address from any source for ten minutes" do
+      Rails.cache.clear
+      user = create(:confirmed_user_en)
+      ActionMailer::Base.deliveries.clear
+
+      params = { user: { email: user.email }, locale: "en" }
+      2.times do |i|
+        post(user_password_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.#{i}" })
+      end
+
+      expect(ActionMailer::Base.deliveries.count).to eq(1)
+      expect(flash[:alert]).to eq(
+        I18n.t("devise.failure.too_many_requests", wait: "10 minutes", locale: :en)
+      )
+
+      # Whoever asked in between, the owner is through again after the pause.
+      Timecop.travel(11.minutes.from_now) do
+        post(user_password_path, params: params, env: { "REMOTE_ADDR" => "10.0.0.9" })
+      end
+      expect(ActionMailer::Base.deliveries.count).to eq(2)
     end
 
     it "does not send mail for an unknown email in paranoid mode" do
@@ -152,7 +179,7 @@ RSpec.describe("Auth passwords", type: :request) do
       post user_session_path,
            params: { user: { email: user.email, password: new_password } }
 
-      expect(response).to redirect_to(start_path)
+      expect(response).to redirect_to(root_path)
     end
 
     it "rejects an invalid reset token" do

@@ -23,6 +23,14 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
       expect(component.rows.map(&:user)).to eq([adam, zoe])
     end
 
+    # The row shows the real name, so the display name must not decide.
+    it "sorts by last name rather than by display name" do
+      adam.update!(first_name: "Adam", last_name: "Zuse")
+      zoe.update!(first_name: "Zoe", last_name: "Abel")
+
+      expect(component.rows.map(&:user)).to eq([zoe, adam])
+    end
+
     it "creates the participation a candidate does not have yet, and keeps one they have" do
       existing = create(:assessment_participation, assessment: assessment, user: zoe)
 

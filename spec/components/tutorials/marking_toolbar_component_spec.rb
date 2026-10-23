@@ -7,7 +7,8 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
   let(:assignment) { create(:assignment, :expired, lecture: lecture) }
 
   def toolbar(scope:, statuses: [], submissions: [], tutorials: [])
-    described_class.new(assignment: assignment, grading_scope: scope, statuses: statuses,
+    described_class.new(assignment: assignment, grading_scope: scope,
+                        summary: MarkingSummaryComponent.new(statuses: statuses),
                         submissions: submissions, tutorials: tutorials)
   end
 
@@ -62,6 +63,26 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
 
       expect(rendered.text).to include(I18n.t("submission.bulk_download_submissions"))
       expect(rendered.text).not_to include(I18n.t("submission.bulk_download_corrections"))
+    end
+
+    it "offers the upload to the lecture's teacher, who stands in for a tutor" do
+      submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                         tutorial: tutorial,
+                                                         users: [create(:confirmed_user)])
+      rendered = render_inline(toolbar(scope: tutorial, submissions: [submission]))
+
+      expect(rendered.text).to include(I18n.t("submission.bulk_upload"))
+    end
+
+    it "offers no upload to a tutor of another group" do
+      other_tutor = create(:confirmed_user)
+      create(:tutorial, lecture: lecture).tutors << other_tutor
+      allow(vc_test_controller).to receive(:current_user).and_return(other_tutor)
+      submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                         tutorial: tutorial,
+                                                         users: [create(:confirmed_user)])
+      rendered = render_inline(toolbar(scope: tutorial, submissions: [submission]))
+
       expect(rendered.text).not_to include(I18n.t("submission.bulk_upload"))
     end
 

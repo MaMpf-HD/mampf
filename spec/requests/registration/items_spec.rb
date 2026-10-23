@@ -35,6 +35,14 @@ RSpec.describe("Registration::Items", type: :request) do
         expect(response.body).to include(I18n.t("registration.item.created"))
       end
 
+      it "adds no group once the process is completed" do
+        completed = create(:registration_campaign, :completed, campaignable: lecture)
+
+        expect do
+          post(registration_campaign_items_path(completed), params: valid_params)
+        end.not_to change(Registration::Item, :count)
+      end
+
       context "with invalid parameters" do
         it "does not create an item" do
           expect do
@@ -470,6 +478,92 @@ RSpec.describe("Registration::Items", type: :request) do
         follow_redirect!
         expect(response.body).to include(I18n.t("roster.errors.cannot_delete_not_empty"))
       end
+    end
+  end
+
+  describe "GET .../items/:id/roster in a first come, first served campaign" do
+    let(:campaign) do
+      create(:registration_campaign, :first_come_first_served, campaignable: lecture)
+    end
+    let!(:item) do
+      create(:registration_item, registration_campaign: campaign, registerable: tutorial)
+    end
+
+    before do
+      campaign.update!(status: :open)
+      sign_in editor
+    end
+
+    it "lists the confirmed registrations the row counts, not the rejected ones" do
+      confirmed = create(:confirmed_user, name: "Confirmed Student")
+      rejected = create(:confirmed_user, name: "Rejected Student")
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: confirmed)
+      create(:registration_user_registration, :rejected,
+             registration_campaign: campaign, registration_item: item, user: rejected)
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      expect(response.body).to include(confirmed.email)
+      expect(response.body).not_to include(rejected.email)
+    end
+
+    # Somebody put into the group past the registration stays there after the
+    # finalization; listing only registrations would hide them.
+    it "lists who is in the group already, apart from the registrations" do
+      program = create(:program, subject: create(:subject, name: "Mathematics"),
+                                 name: "B.Sc. 100%", degree: :bsc100)
+      member = create(:confirmed_user, name_in_tutorials: "Ada Lovelace", program: program)
+      registrant = create(:confirmed_user, name_in_tutorials: "Alan Turing", program: program)
+      tutorial.add_user_to_roster!(member)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: registrant)
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      panel = Nokogiri::HTML(response.body)
+      members = panel.at_css("section[aria-labelledby='tutorial-roster-members-heading']")
+      expect(members.text).to include("Already in the group", "Ada Lovelace",
+                                      "Mathematics: B.Sc. 100%")
+      expect(members.text).not_to include("Alan Turing")
+      expect(panel.at_css("[data-user-id='#{registrant.id}']").text)
+        .to include("Mathematics: B.Sc. 100%")
+    end
+
+    it "counts the registrations by study program" do
+      program = create(:program, subject: create(:subject, name: "Mathematics"),
+                                 name: "B.Sc. 100%", degree: :bsc100)
+      tutorial.add_user_to_roster!(create(:confirmed_user, program: program))
+      create_list(:confirmed_user, 2, program: program).each do |registrant|
+        create(:registration_user_registration, :confirmed,
+               registration_campaign: campaign, registration_item: item, user: registrant)
+      end
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      rows = Nokogiri::HTML(response.body).css("details tbody tr")
+                     .map { |row| row.css("th, td").map { |cell| cell.text.squish } }
+      expect(rows).to eq([["Mathematics: B.Sc. 100%", "2"]])
+    end
+
+    it "lists somebody in the group and registered for it only among the registrations" do
+      both = create(:confirmed_user, name_in_tutorials: "Grace Hopper")
+      tutorial.add_user_to_roster!(both)
+      tutorial.add_user_to_roster!(create(:confirmed_user, name_in_tutorials: "Ada Lovelace"))
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: both)
+
+      get roster_registration_campaign_item_path(campaign, item, source: :panel),
+          as: :turbo_stream
+
+      panel = Nokogiri::HTML(response.body)
+      members = panel.at_css("section[aria-labelledby='tutorial-roster-members-heading']")
+      expect(members.text).to include("Ada Lovelace")
+      expect(members.text).not_to include("Grace Hopper")
+      expect(panel.at_css("[data-user-id='#{both.id}']")).to be_present
     end
   end
 end

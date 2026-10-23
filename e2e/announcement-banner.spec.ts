@@ -12,7 +12,7 @@ test("shows the site announcement banner above the regular navbar",
       on_main_page: true,
     });
 
-    await page.goto("/main/start");
+    await page.goto("/");
 
     await expect(page.getByRole("alert").filter({ hasText: "Scheduled maintenance tonight" }))
       .toBeVisible();

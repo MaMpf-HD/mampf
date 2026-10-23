@@ -145,6 +145,17 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.attachments.map(&:filename)).to include("program.pdf")
     end
 
+    # A PDF under a name like page.html would reach the student's mail
+    # client as a web page, sent from MaMpf's address.
+    it "sends the attachment as a PDF whatever the sender named it" do
+      message.attachment = StringIO.new("%PDF-1.4 demo")
+      message.attachment_attacher.file.metadata["filename"] = "program.html"
+      message.save!
+
+      expect(mail.attachments.map(&:filename)).not_to include("program.html")
+      expect(mail.attachments["program.pdf"].mime_type).to eq("application/pdf")
+    end
+
     it "delivers to the audience snapshotted at creation time" do
       message # create (and snapshot) now
       latecomer = create(:confirmed_user)

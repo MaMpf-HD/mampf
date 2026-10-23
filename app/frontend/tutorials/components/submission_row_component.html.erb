@@ -50,65 +50,88 @@
             <% end %>
           </div>
         <% end %>
+
+        <% if elsewhere? %>
+          <div class="small text-secondary"><%= marked_elsewhere_info %></div>
+        <% end %>
       </div>
 
-      <button
-        type="button"
-        class="
-          clipboardpopup btn btn-link p-0 ms-3 text-secondary
-          clipboard-btn clipboard-button
-        "
-        data-clipboard-text="<%= @submission.users.map(&:email).join(', ') %>"
-        data-id="<%= @submission.id %>"
-        title="<%= t('buttons.copy_email_to_clipboard') %>"
-        aria-label="<%= t('buttons.copy_email_to_clipboard') %>"
-      >
-        <i class="bi bi-clipboard"></i>
+      <%# The copy button closes the row, so it lines up across all rows. %>
+      <div class="d-flex align-items-center flex-shrink-0 ms-3">
+        <% if hand_over_targets.any? %>
+          <div class="dropdown me-2">
+            <button
+              type="button"
+              class="btn btn-link p-0 text-secondary"
+              data-bs-toggle="dropdown"
+              data-bs-popper-config='{"strategy": "fixed"}'
+              aria-expanded="false"
+              title="<%= t('assessment.task_points.hand_over') %>"
+              aria-label="<%= t('assessment.task_points.hand_over') %>"
+            >
+              <i class="bi bi-arrow-left-right"></i>
+            </button>
 
-        <span
-          class="clipboardpopuptext token-clipboard-popup"
-          data-id="<%= @submission.id %>"
-        >
-          <%= t('basics.emails_copied_to_clipboard') %>
-        </span>
-      </button>
+            <div class="dropdown-menu" style="max-width: 18rem;">
+              <h6 class="dropdown-header text-wrap fw-normal">
+                <%= t('assessment.task_points.hand_over_hint') %>
+              </h6>
 
-      <% if addable_members.any? %>
-        <%#
-          Fixed, or the scrolling table would cut the menu at the pinned
-          column's edge. One item per name: a click adds, and the arrow keys
-          walk the names as they walk any menu.
-        %>
-        <div class="dropdown">
-          <button
-            type="button"
-            class="btn btn-link p-0 ms-2 text-secondary"
-            data-bs-toggle="dropdown"
-            data-bs-popper-config='{"strategy": "fixed"}'
-            aria-expanded="false"
-            title="<%= t('assessment.task_points.add_member') %>"
-            aria-label="<%= t('assessment.task_points.add_member') %>"
-          >
-            <i class="bi bi-person-plus"></i>
-          </button>
-
-          <div class="dropdown-menu" style="max-width: 18rem;">
-            <h6 class="dropdown-header text-wrap fw-normal">
-              <%= t('assessment.task_points.add_member_hint') %>
-            </h6>
-
-            <% addable_members.each do |member| %>
-              <%= button_to member.tutorial_name,
-                            add_member_submission_path(@submission),
-                            method: :patch,
-                            params: { user_id: member.id,
-                                      grading_scope_type: grading_scope_type },
-                            class: "dropdown-item",
-                            form: { data: { turbo: true } } %>
-            <% end %>
+              <% hand_over_targets.each do |target| %>
+                <%= button_to target.title_with_tutors,
+                              hand_over_submission_path(@submission),
+                              method: :patch,
+                              params: { tutorial_id: target.id,
+                                        grading_scope_type: grading_scope_type },
+                              class: "dropdown-item",
+                              form: { data: { turbo: true } } %>
+              <% end %>
+            </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
+
+        <% if addable_members.any? %>
+          <%#
+            Fixed, or the scrolling table would cut the menu at the pinned
+            column's edge. One item per name: a click adds, and the arrow keys
+            walk the names as they walk any menu.
+          %>
+          <div class="dropdown">
+            <button
+              type="button"
+              class="btn btn-link p-0 text-secondary"
+              data-bs-toggle="dropdown"
+              data-bs-popper-config='{"strategy": "fixed"}'
+              aria-expanded="false"
+              title="<%= t('assessment.task_points.add_member') %>"
+              aria-label="<%= t('assessment.task_points.add_member') %>"
+            >
+              <i class="bi bi-person-plus"></i>
+            </button>
+
+            <div class="dropdown-menu" style="max-width: 18rem;">
+              <h6 class="dropdown-header text-wrap fw-normal">
+                <%= t('assessment.task_points.add_member_hint') %>
+              </h6>
+
+              <% addable_members.each do |member| %>
+                <%= button_to member.tutorial_name,
+                              add_member_submission_path(@submission),
+                              method: :patch,
+                              params: { user_id: member.id,
+                                        grading_scope_type: grading_scope_type },
+                              class: "dropdown-item",
+                              form: { data: { turbo: true } } %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <span class="ms-2">
+          <%= render "shared/copy_email_button",
+                     email: copy_emails %>
+        </span>
+      </div>
     </div>
   </td>
 
@@ -202,7 +225,7 @@
     class="text-center <%= layout.column_class(:correction) %>"
     data-id="<%= @submission.id %>"
   >
-    <% if helpers.current_user.in?(@submission.tutorial.tutors) %>
+    <% if @submission.tutorial.correctable_by?(helpers.current_user) %>
       <%= render partial: 'submissions/correction_column',
                 locals: { submission: @submission } %>
     <% else %>

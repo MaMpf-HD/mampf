@@ -35,8 +35,23 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    await home.participation("Self-managed Tutorial")
-      .getByRole("button", { name: "Leave" }).click();
+    const leaveButton = home.participation("Self-managed Tutorial")
+      .getByRole("button", { name: "Leave" });
+
+    // Declined, the question leaves the student in the group.
+    const declined = student.page.waitForEvent("dialog");
+    const firstClick = leaveButton.click();
+    const question = await declined;
+    expect(question.message()).toBe(
+      "Leave “Self-managed Tutorial”? You can join again only while a place is free.");
+    await question.dismiss();
+    await firstClick;
+    await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
+
+    const accepted = student.page.waitForEvent("dialog");
+    const secondClick = leaveButton.click();
+    await (await accepted).accept();
+    await secondClick;
 
     await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
@@ -69,9 +84,44 @@ test.describe("student self-enrollment", () => {
 
     const option = student.page.getByTestId("registration-option")
       .filter({ hasText: "Full Self-managed Tutorial" });
-    await expect(option.getByText("No places left.")).toBeVisible();
-    await expect(option.getByRole("button", { name: "Full" })).toBeDisabled();
-    await expect(option.getByRole("button", { name: /^Register for / })).toHaveCount(0);
+    await expect(option.getByText("Full", { exact: true })).toBeVisible();
+    await expect(option.getByRole("button")).toHaveCount(0);
+  });
+
+  test("tells how many places are left, and nothing of a limit where there is none", async ({
+    factory,
+    student,
+    student2,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const limited = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Limited Tutorial",
+      capacity: 4,
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: limited.id,
+      user_id: student2.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Open Tutorial",
+      capacity: null,
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    await new CampaignRegistrationPage(student.page, lecture.id).goto();
+    await openSelfEnrollment(student.page);
+
+    const option = (title: string) => student.page.getByTestId("registration-option")
+      .filter({ hasText: title });
+    await expect(option("Limited Tutorial").getByText("3 of 4 places free")).toBeVisible();
+    await expect(option("Open Tutorial").getByText("No limit")).toBeVisible();
+    await expect(option("Open Tutorial")).not.toContainText("places free");
   });
 
   test("leaves out the registrations when no campaigns or free groups exist", async ({

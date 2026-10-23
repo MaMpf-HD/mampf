@@ -37,6 +37,11 @@
                       model: 'user',
                       no_results: t('basics.no_results'),
                       controller: "selectize" } } %>
+      <div class="form-text">
+        <%= t('tutorial.tutors_missing_html',
+              link: link_to(t('basics.personnel'), edit_lecture_path(tutorial.lecture, tab: 'people'),
+                            data: { turbo_frame: '_top' })) %>
+      </div>
     </div>
 
     <div class="mb-3">

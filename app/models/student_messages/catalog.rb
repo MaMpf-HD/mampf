@@ -110,9 +110,13 @@ module StudentMessages
       end
 
       def cohorts
-        return [] unless staff?
+        cohorts = if staff?
+          @lecture.cohorts.to_a
+        else
+          @sender.given_cohorts.where(context: @lecture).to_a
+        end
+        return [] if cohorts.empty?
 
-        cohorts = @lecture.cohorts.to_a
         counts = CohortMembership.where(cohort_id: cohorts.map(&:id))
                                  .group(:cohort_id).distinct.count(:user_id)
         cohorts.map do |cohort|
@@ -134,9 +138,29 @@ module StudentMessages
       end
 
       def registrations
-        return [] unless staff?
+        return tutor_registrations unless staff?
 
         running_campaigns.flat_map { |campaign| campaign_audiences(campaign) }
+      end
+
+      # A tutor reaches those registered for their group while its roster is
+      # still to be filled - as far as the registration has decided who gets
+      # in, so nobody before a preference campaign has allocated.
+      def tutor_registrations
+        running = Registration::Item.running
+        items = running.where(registerable: @sender.given_tutorials.where(lecture: @lecture))
+                       .or(running.where(registerable: @sender.given_cohorts
+                                                             .where(context: @lecture)))
+                       .preload(:registerable, :registration_campaign)
+        items.filter_map do |item|
+          users = item.provisional_users
+          next unless users
+
+          audience("item:#{item.id}:provisional",
+                   I18n.t("student_message.audiences.provisional",
+                          group: item.registerable.title),
+                   :registrations, users)
+        end
       end
 
       def running_campaigns

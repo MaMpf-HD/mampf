@@ -35,7 +35,10 @@ RSpec.shared_examples("a registerable model") do
         record.try(:registration_campaign)&.destroy
       end
     end
-    let(:campaign) { create(:registration_campaign, :first_come_first_served) }
+    let(:campaign) do
+      create(:registration_campaign, :first_come_first_served,
+             campaignable: registerable.lecture)
+    end
     let!(:item) do
       create(:registration_item, registration_campaign: campaign, registerable: registerable)
     end
@@ -79,7 +82,10 @@ RSpec.shared_examples("a registerable model") do
         record.try(:registration_campaign)&.destroy
       end
     end
-    let(:campaign) { create(:registration_campaign, :first_come_first_served) }
+    let(:campaign) do
+      create(:registration_campaign, :first_come_first_served,
+             campaignable: registerable.lecture)
+    end
     let!(:item) do
       create(:registration_item, registration_campaign: campaign, registerable: registerable)
     end

@@ -40,4 +40,18 @@ RSpec.describe(CohortsHelper, type: :helper) do
       end
     end
   end
+
+  describe "#cohort_tutors_preselection" do
+    # A tutor removed from the lecture's people who still runs the cohort.
+    it "keeps a tutor of the cohort selected who is no longer eligible otherwise" do
+      lecture = create(:lecture)
+      tutor = create(:confirmed_user)
+      cohort = create(:cohort, context: lecture)
+      cohort.tutors << tutor
+
+      options = Nokogiri::HTML.fragment(helper.cohort_tutors_preselection(cohort))
+
+      expect(options.at_css("option[value='#{tutor.id}']")["selected"]).to be_present
+    end
+  end
 end

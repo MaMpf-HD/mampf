@@ -2,6 +2,7 @@ module Assessment
   class TaskPointsController < ApplicationController
     include ExamStreams
     include AchievementStreams
+    include GradingTable
 
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_exam_multi, :update_team,
@@ -22,6 +23,7 @@ module Assessment
     # An exemption changes what counts for a candidate; that is the
     # lecturer's call, not the grader's.
     before_action :authorize_lecture_edit!, only: [:mark_as_exempt, :remove_exempt]
+    before_action :authorize_some_grading!, only: :mark_as_participated
     before_action :refuse_without_row, only: [:update_participation, :refresh_participation]
     before_action :refuse_unless_sheet, only: [:mark_as_participated, :remove_participated]
     before_action :refuse_unless_attended, only: [:mark_as_absent, :remove_absent]
@@ -51,6 +53,15 @@ module Assessment
 
     def authorize_lecture_edit!
       authorize!(:update, @lecture)
+    end
+
+    # Checks grading permission before the student is looked up, so a request
+    # without it cannot tell lecture members from other users.
+    def authorize_some_grading!
+      return if current_user.can_enter_points_in?(@lecture)
+      return if current_user.given_tutorials.exists?(lecture: @lecture)
+
+      raise(CanCan::AccessDenied)
     end
 
     def update_team_multi
@@ -221,7 +232,7 @@ module Assessment
       # grading_scope_type selects the table to update, not the permission scope;
       # a lecture table can contain participations from several tutorials.
       def table_scope
-        (@tutorial if @grading_scope_type == "tutorial") || @lecture
+        grading_table(@tutorial, @lecture)
       end
 
       def participation_row(participation = @participation)
@@ -238,6 +249,7 @@ module Assessment
         row_before = @assessment.assessment_participations.find_by(user: user)
         scope = row_before ? row_before.tutorial : roster_tutorial
         authorize!(:enter_points, scope || @lecture)
+        @tutorial = scope
         row_ids = own_row_ids(user)
         participation = SubmissionGraderService.init_participation(@assessment, user,
                                                                    roster_tutorial)
@@ -396,7 +408,6 @@ module Assessment
       end
 
       def set_assessable_resource
-        @grading_scope_type = params[:grading_scope_type]
         if params[:submissions]
           set_resources_from_bulk_params_submissions
         elsif params[:exam_id]
@@ -513,8 +524,8 @@ module Assessment
                                     status: :not_found)
         end
 
-        @tutorial = Tutorial.find_by(id: params[:tutorial_id])
         @lecture = @assessable.lecture
+        @tutorial = @lecture.tutorials.find_by(id: params[:tutorial_id])
         @assessment = @assessable.assessment
         return if @assessment
 
