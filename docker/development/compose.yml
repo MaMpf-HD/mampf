@@ -94,6 +94,8 @@ services:
 
   redis:
     image: "redis:8.8-alpine"
+    # One database per Playwright worker's Sidekiq, see run.sh
+    command: ["redis-server", "--databases", "256"]
 
   clamav:
     image: clamav/clamav-debian:1.5

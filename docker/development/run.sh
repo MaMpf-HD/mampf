@@ -54,7 +54,18 @@ echo ""
 echo "----------------------------------------------------"
 echo "Running MaMpf (in RAILS_ENV: $RAILS_ENV)"
 echo "----------------------------------------------------"
-bundle exec sidekiq &
+
+if [ "$RAILS_ENV" = "test" ] && [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
+	# e2e stack: each Rails server gets its own Sidekiq so that jobs run
+	# against the server's own database. Worker i uses Redis database
+	# REDIS_URL's number + i, so that the Sidekiq servers don't fetch each
+	# other's jobs (the others are started in the loop below).
+	redis_base_url="${REDIS_URL%/*}"
+	redis_base_db="${REDIS_URL##*/}"
+	TEST_ENV_NUMBER="_e2e0" bundle exec sidekiq &
+else
+	bundle exec sidekiq &
+fi
 
 for i in $extra_e2e_workers; do
 	worker_http_port=$((public_http_port + 10 * i))
@@ -62,7 +73,11 @@ for i in $extra_e2e_workers; do
 	worker_storage_path="${THRUSTER_STORAGE_PATH:-/cache/thruster-test}-e2e$i"
 	mkdir -p "$worker_storage_path"
 	echo "Starting Playwright worker server $i on port $worker_http_port (log/runtime_e2e$i.log)"
+	worker_redis_url="$redis_base_url/$((redis_base_db + i))"
+	TEST_ENV_NUMBER="_e2e$i" REDIS_URL="$worker_redis_url" \
+		bundle exec sidekiq &
 	TEST_ENV_NUMBER="_e2e$i" \
+		REDIS_URL="$worker_redis_url" \
 		MAMPF_PORT="$worker_target_port" \
 		THRUSTER_HTTP_PORT="$worker_http_port" \
 		THRUSTER_TARGET_PORT="$worker_target_port" \
