@@ -18,10 +18,8 @@ if [ "$RAILS_ENV" = "test" ]; then
 	ports_to_clean="$ports_to_clean 3145"
 fi
 
-# Extra app servers for parallel Playwright workers: worker i gets its own
-# ports (offset by 10 * i) and its own test database ("_e2e<i>" suffix).
-# Worker 0 runs on the regular ports, but also on its own database ("_e2e0"),
-# such that RSpec can use the regular test database at the same time.
+# Worker i serves on APP_HEALTHCHECK_PORT + 10 * i with database suffix
+# "_e2e<i>"; worker 0 has its own database too, so RSpec keeps "mampf-test".
 # Keep the ports in sync with e2e/_support/servers.ts.
 e2e_workers=$(./docker/development/e2e-workers.sh)
 extra_e2e_workers=""
