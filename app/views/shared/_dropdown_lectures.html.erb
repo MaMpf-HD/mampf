@@ -2,8 +2,8 @@
 <% show_pin = lecture.present? && !on_start_page %>
 <% pinned_lectures = current_user.quick_access_lectures %>
 <li class="nav-item">
-  <div class="dropdown">
-    <button class="btn btn-primary btn-sm dropdown-toggle me-3"
+  <div class="dropdown-center me-3">
+    <button class="btn btn-primary btn-sm dropdown-toggle"
             type="button"
             data-bs-toggle="dropdown">
       <%= t("navbar.quick_access") %>

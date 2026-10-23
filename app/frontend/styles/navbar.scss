@@ -74,6 +74,15 @@
     }
 }
 
+// Bootstrap turns Popper off for dropdowns inside .navbar-nav, so the Quick
+// Access menu is centered under its button by hand.
+#lecturesDropdown .dropdown-menu {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 2rem);
+}
+
 // On phones the icons, the lecture switcher and the search wrap into rows
 // instead of widening the page.
 @media (max-width: 575.98px) {
@@ -100,7 +109,7 @@
         width: 100%;
         margin: 0 !important;
 
-        .btn-group {
+        .dropdown-center {
             max-width: 100%;
         }
 
