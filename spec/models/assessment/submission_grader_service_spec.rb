@@ -564,6 +564,19 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
         expect(participation.reload.submitted_at).to be_nil
         expect(participation).to be_pending
       end
+
+      # The single-row and the bulk save both end here.
+      it "keeps a test's stamp for someone who has left, so the row stays" do
+        assignment.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+        described_class.score_tasks_by_participation!(participation, points_by_task_id, scorer)
+        FactoryBot.create(:lecture_membership, lecture: assessment.lecture,
+                                               user: participation.user)
+                  .exclude!(by: participation.user)
+
+        described_class.score_tasks_by_participation!(participation, { task.id => "" }, scorer)
+
+        expect(participation.reload.submitted_at).to be_present
+      end
     end
   end
 
