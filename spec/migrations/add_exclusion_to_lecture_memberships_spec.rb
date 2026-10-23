@@ -6,6 +6,7 @@ RSpec.describe(AddExclusionToLectureMemberships) do
     create(:lecture_membership).exclude!
 
     expect { described_class.new.down }.to raise_error(ActiveRecord::IrreversibleMigration)
-    expect(LectureMembership.column_names).to include("excluded_at")
+    expect(LectureMembership.connection.column_exists?(:lecture_memberships, :excluded_at))
+      .to be(true)
   end
 end
