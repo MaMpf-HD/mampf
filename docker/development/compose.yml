@@ -30,6 +30,9 @@ services:
       context: ./../..
       dockerfile: docker/development/Dockerfile
     environment:
+      # Playwright worker count, see docker/development/e2e-workers.sh. Set it
+      # on the host (or in CI) and recreate the containers; empty = default.
+      - E2E_WORKERS=${E2E_WORKERS:-}
       - RAILS_ENV=development
       - NODE_ENV=development
       - MAMPF_PORT=3001
@@ -55,6 +58,9 @@ services:
   app-test:
     <<: *app-base
     environment:
+      # Playwright worker count, see docker/development/e2e-workers.sh. Set it
+      # on the host (or in CI) and recreate the containers; empty = default.
+      - E2E_WORKERS=${E2E_WORKERS:-}
       - RAILS_ENV=test
       - NODE_ENV=test
       # Run the e2e stack behind Thruster, like dev/prod. Streamed media goes
