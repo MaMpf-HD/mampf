@@ -20,6 +20,12 @@ class LeaveLectureComponent < ViewComponent::Base
     self.class.dialog_id(@lecture)
   end
 
+  # The participation check shows one dialog per lecture, each with its own
+  # field.
+  def confirmation_id
+    "#{dialog_id}-confirmation"
+  end
+
   def contact?
     blockers.any?(&:contact)
   end

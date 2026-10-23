@@ -65,8 +65,10 @@
 
             <%= form.label :confirmation,
                            t("lecture_home.leave.confirmation_label", code: confirmation_code),
+                           for: confirmation_id,
                            class: "form-label" %>
             <%= form.text_field :confirmation,
+                                id: confirmation_id,
                                 class: "form-control",
                                 autocomplete: "off",
                                 data: {

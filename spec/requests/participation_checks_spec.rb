@@ -31,6 +31,19 @@ RSpec.describe("ParticipationChecks", type: :request) do
       .to include(I18n.t("registration.user_registration.participation.no_group"))
   end
 
+  it "labels each lecture's confirmation field on its own" do
+    other = create(:lecture, :released_for_all, term: term)
+    create(:tutorial, lecture: other, skip_campaigns: true)
+    other.add_user_to_roster!(student)
+
+    get participation_check_path
+
+    [lecture, other].each do |each_lecture|
+      field = "#{LeaveLectureComponent.dialog_id(each_lecture)}-confirmation"
+      expect(response.body).to include(%(for="#{field}")).and(include(%(id="#{field}")))
+    end
+  end
+
   it "comes back to the check after leaving a lecture from it" do
     delete lecture_membership_path(lecture),
            params: { confirmation: lecture.course.short_title, from_check: 1 }
