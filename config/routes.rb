@@ -1248,6 +1248,9 @@ Rails.application.routes.draw do
     post "campaign_registrations/:campaign_id/preferences",
          to: "user_registrations#save_preferences",
          as: :save_preferences
+    delete "campaign_registrations/:campaign_id/preferences",
+           to: "user_registrations#withdraw_preferences",
+           as: :withdraw_preferences
   end
 
   # participations routes

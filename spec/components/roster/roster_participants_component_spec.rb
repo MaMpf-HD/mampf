@@ -339,6 +339,8 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
   describe ".section_targets" do
     it "defines turbo stream target IDs for streamable sections" do
       expect(described_class.section_targets).to eq(
+        view_switch: "roster_participants_view_switch",
+        campaign_switch: "roster_participants_campaign_switch",
         top_nav: "roster_participants_top_nav",
         header_controls: "roster_participants_header_controls",
         results: "roster_participants_results"

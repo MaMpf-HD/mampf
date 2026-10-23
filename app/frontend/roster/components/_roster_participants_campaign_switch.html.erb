@@ -1,0 +1,16 @@
+<% if component.registered_view? && component.running_campaigns.size > 1 %>
+  <nav class="nav nav-underline small mb-3">
+    <% component.running_campaigns.each do |campaign, count| %>
+      <%= link_to component.helpers.lecture_roster_participants_path(component.lecture,
+                                                                     view: "registered",
+                                                                     campaign: campaign.id,
+                                                                     search: component.search_string,
+                                                                     group_type: component.group_type),
+                  class: class_names("nav-link py-1", active: campaign == component.campaign),
+                  data: { turbo_frame: "roster_participants_panel" },
+                  aria: { current: ("true" if campaign == component.campaign) } do %>
+        <%= campaign.student_facing_title %> (<span><%= count %></span>)
+      <% end %>
+    <% end %>
+  </nav>
+<% end %>

@@ -1,0 +1,117 @@
+<div class="table-responsive mb-4">
+  <table class="table table-hover mb-0 align-middle">
+    <thead class="table-light">
+      <tr>
+        <th scope="col" class="border-top-0 person-name-column">
+          <%= t("basics.name") %>
+        </th>
+
+        <th scope="col" class="border-top-0">
+          <%= User.human_attribute_name(:matriculation_number) %>
+        </th>
+
+        <th scope="col" class="border-top-0">
+          <%= t("roster.registrations.columns.choice") %>
+        </th>
+
+        <th scope="col" class="border-top-0">
+          <%= t("roster.registrations.columns.state") %>
+        </th>
+
+        <th scope="col" class="border-top-0 text-end">
+          <%= t("basics.actions") %>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if component.participants.empty? %>
+        <tr>
+          <td colspan="5" class="text-center py-4 text-muted border-bottom-0">
+            <% if component.campaign.nil? %>
+              <%= t("roster.registrations.empty") %>
+            <% elsif component.search_string.present? %>
+              <%= t("roster.details.empty_filtered") %>
+            <% else %>
+              <%= t("roster.registrations.empty_campaign") %>
+            <% end %>
+
+            <%= render "roster/components/roster_participants_search_hits",
+                       component: component %>
+          </td>
+        </tr>
+      <% else %>
+        <% component.participants.each do |user| %>
+          <% entry = component.registration_entry(user) %>
+          <% first, *more = entry.chosen_items %>
+          <% ranked = entry.campaign.preference_based? %>
+
+          <tr>
+            <td><%= user.tutorial_name %></td>
+            <td><%= user.matriculation_number %></td>
+
+            <td>
+              <% more_id = "registration-choices-#{user.id}" %>
+
+              <div class="d-flex align-items-start gap-1">
+                <% if more.any? %>
+                  <button
+                    type="button"
+                    class="btn btn-link p-0 text-muted registration-choices-toggle"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#<%= more_id %>"
+                    aria-expanded="false"
+                    aria-controls="<%= more_id %>"
+                    aria-label="<%= t("roster.registrations.other_choices") %>"
+                  >
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                  </button>
+                <% elsif ranked %>
+                  <span class="registration-choices-toggle" aria-hidden="true"></span>
+                <% end %>
+
+                <div>
+                  <div>
+                    <% if ranked %>
+                      <span class="text-muted me-1">1.</span>
+                    <% end %>
+
+                    <%= first&.title %>
+                  </div>
+
+                  <% if more.any? %>
+                    <div id="<%= more_id %>" class="collapse">
+                      <% more.each.with_index(2) do |item, rank| %>
+                        <div>
+                          <% if ranked %>
+                            <span class="text-muted me-1"><%= rank %>.</span>
+                          <% end %>
+
+                          <%= item.title %>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+
+            <td class="text-nowrap">
+              <%= component.registration_state(entry) %>
+            </td>
+
+            <td class="text-end">
+              <%= render "shared/copy_email_button", email: user.email %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% if (nav = component.pagination_nav) %>
+  <div class="d-flex justify-content-center pb-3">
+    <%== nav %>
+  </div>
+<% end %>

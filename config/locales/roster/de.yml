@@ -69,6 +69,30 @@ de:
     filters:
       all: 'Alle'
       unassigned: 'Ohne Gruppe'
+    search_hits:
+      one: 'Unter „%{place}“ gibt es 1 Treffer.'
+      other: 'Unter „%{place}“ gibt es %{count} Treffer.'
+    views:
+      enrolled: 'Eingeschrieben'
+      registered: 'Angemeldet'
+    registrations:
+      hint: >-
+        Diese Personen sind angemeldet, aber noch nicht in ihre Gruppen eingetragen. Das geschieht
+        erst, wenn die Anmeldung beendet ist und Du die Zuteilung durchführst. Dabei kommen sie auch
+        auf die Teilnehmendenliste, außer bei Gruppen ohne Einschreibung. Wer schon eingeschrieben
+        ist, steht trotzdem hier, solange die Anmeldung läuft.
+      empty: 'Gerade läuft keine Anmeldung.'
+      empty_campaign: 'Für dieses Anmeldeverfahren gibt es derzeit keine Anmeldungen.'
+      other_choices: 'Weitere Wünsche'
+      columns:
+        choice: 'Wahl'
+        state: 'Stand'
+      states:
+        confirmed: 'Bestätigt'
+        pending: 'Ausstehend'
+        awaiting_allocation: 'Zuteilung ausstehend'
+        allocated: 'Zugewiesen: %{group}'
+        not_allocated: 'Nicht zugewiesen'
     dashboard:
       title: 'Dashboard'
       description: 'Verwaltung der Zuteilungen und globale Übersicht.'
