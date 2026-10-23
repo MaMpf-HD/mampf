@@ -112,6 +112,12 @@ test.describe("people who left a course", () => {
     });
     const { page } = teacher;
 
+    await page.goto(`/lectures/${lecture.id}/performance/records`);
+    await page.getByRole("combobox", { name: "All participants" })
+      .selectOption({ label: "Left the course" });
+    await expect(page.getByRole("row").filter({ hasText: "Lina Berg" }))
+      .toContainText("Left the course");
+
     await page.goto(`/lectures/${lecture.id}/edit?tab=participants`);
     await page.getByRole("link", { name: /^Left/ }).click();
     const row = page.getByRole("row").filter({ hasText: "Lina Berg" });

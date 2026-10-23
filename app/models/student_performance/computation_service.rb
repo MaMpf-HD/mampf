@@ -24,6 +24,17 @@ module StudentPerformance
       upsert_records([build_row(user.id, stats, met_ids, ungraded_ids)])
     end
 
+    # The records the users would have, unsaved: someone who has left keeps
+    # no record, but their points stay and can be summed up for a look.
+    def unsaved_records_for(users)
+      users.map do |user|
+        grade_texts = achievement_grade_texts_for(user.id)
+        Record.new(build_row(user.id, aggregate_points(user),
+                             achievement_ids_met(grade_texts),
+                             achievement_ids_ungraded(grade_texts)).merge(user: user))
+      end
+    end
+
     def compute_and_upsert_all_records!
       user_ids = lecture.members.pluck(:id)
       return if user_ids.empty?
