@@ -55,6 +55,20 @@ RSpec.describe(Rosters::ParticipationCheck) do
     expect(check.due?).to be(false)
   end
 
+  it "answers in one query for someone who only waits for a group" do
+    campaign = create(:registration_campaign, :open, campaignable: lecture)
+    create(:registration_user_registration, :pending,
+           user: student, registration_campaign: campaign,
+           registration_item: campaign.registration_items.first)
+    queries = 0
+    count = ->(*, payload) { queries += 1 unless payload[:name] == "SCHEMA" }
+
+    ActiveSupport::Notifications.subscribed(count, "sql.active_record") { check.due? }
+
+    expect(check.due?).to be(false)
+    expect(queries).to eq(1)
+  end
+
   it "asks again after the student joined a group and lost it" do
     membership = lecture.lecture_memberships.find_by(user: student)
     membership.update!(participation_confirmed_at: Time.current)

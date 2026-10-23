@@ -1,57 +1,62 @@
 module Rosters
   # The lectures of the running term in which the user is enrolled but in no
-  # group and has not said yet that they still take part. Without a group
-  # nobody can hand in a sheet, and a student who left their tutorial often
-  # believes they left the lecture; the participation check asks them.
+  # group and has not said yet that they still take part. A student who left
+  # their tutorial often believes they left the lecture, which stays on their
+  # dashboard; the participation check asks them.
   class ParticipationCheck
     def initialize(user)
       @user = user
     end
 
-    # One query, since it runs on every request of a signed-in user.
+    # One query for most users, since it runs on every request of a
+    # signed-in user.
     def due?
       return @due if defined?(@due)
 
       @due = candidates.exists? && lectures.any?
     end
 
+    # The editors and admins that #candidates lets through drop out here.
     def lectures
       @lectures ||= candidates.includes(:course, :term)
-                              .select { |lecture| asked_in?(lecture) }
+                              .select { |lecture| Registration::Participation.allowed?(@user, lecture) }
                               .sort_by(&:title)
     end
 
     private
 
+      # Leaves out in SQL whom the check never asks: a tutor or the teacher of
+      # the lecture, and someone whose registration for a group still runs,
+      # who waits for a group rather than being without one.
       def candidates
-        term = Term.active
-        return Lecture.none unless term
-
         unanswered = @user.lecture_memberships.where(participation_confirmed_at: nil)
-        base = Lecture.where(term: term, id: unanswered.select(:lecture_id))
+        base = Lecture.published.where(term: Term.where(active: true),
+                                       id: unanswered.select(:lecture_id))
+                      .where.not(teacher_id: @user.id)
         with_groups = base.where(id: Tutorial.select(:lecture_id))
                           .or(base.where(id: Talk.select(:lecture_id)))
                           .or(base.where(id: lecture_cohorts.select(:context_id)))
         with_groups.where.not(id: own_tutorials.select(:lecture_id))
                    .where.not(id: own_talks.select(:lecture_id))
                    .where.not(id: lecture_cohorts.where(id: own_cohort_ids).select(:context_id))
+                   .where.not(id: tutored_lecture_ids)
+                   .where.not(id: TutorAppointment.where(user: @user).select(:lecture_id))
+                   .where.not(id: awaited_lecture_ids)
       end
 
-      # Staff and tutors are no students here; someone whose registration
-      # still runs waits for a group rather than being without one.
-      def asked_in?(lecture)
-        Registration::Participation.allowed?(@user, lecture) && !waiting_for_group?(lecture)
+      def awaited_lecture_ids
+        registered = Registration::UserRegistration.where(user: @user)
+                                                   .where.not(status: :rejected)
+        Registration::Campaign.non_exam
+                              .where(campaignable_type: "Lecture",
+                                     status: UserPlaces::RUNNING_CAMPAIGN_STATUSES,
+                                     id: registered.select(:registration_campaign_id))
+                              .select(:campaignable_id)
       end
 
-      def waiting_for_group?(lecture)
-        Registration::UserRegistration
-          .where(user: @user)
-          .where.not(status: :rejected)
-          .joins(:registration_campaign)
-          .merge(Registration::Campaign.non_exam
-                                       .where(campaignable: lecture,
-                                              status: UserPlaces::RUNNING_CAMPAIGN_STATUSES))
-          .exists?
+      def tutored_lecture_ids
+        Tutorial.where(id: TutorTutorialJoin.where(tutor: @user).select(:tutorial_id))
+                .select(:lecture_id)
       end
 
       def lecture_cohorts
