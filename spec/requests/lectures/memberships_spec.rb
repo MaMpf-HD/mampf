@@ -81,6 +81,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(flash[:notice])
         .to eq(I18n.t("lecture_home.leave.not_participating",
                       lecture: lecture.title_term_info_no_type))
+      expect(user.reload.lectures).not_to include(lecture)
     end
 
     it "keeps the places without the short title typed" do

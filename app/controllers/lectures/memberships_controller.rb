@@ -17,6 +17,7 @@ module Lectures
                   notice: t("lecture_home.leave.done", lecture: @lecture.title_term_info_no_type),
                   status: :see_other
     rescue Rosters::LectureLeave::NotParticipatingError
+      current_user.unbookmark_lecture!(@lecture)
       redirect_to lecture_home_path(@lecture),
                   notice: t("lecture_home.leave.not_participating",
                             lecture: @lecture.title_term_info_no_type),
