@@ -27,9 +27,12 @@ module StudentPerformance
     # The records the users would have, unsaved: someone who has left keeps
     # no record, but their points stay and can be summed up for a look.
     def unsaved_records_for(users)
+      participations_by_user = prefetch_participations(users.map(&:id))
+
       users.map do |user|
-        grade_texts = achievement_grade_texts_for(user.id)
-        Record.new(build_row(user.id, aggregate_points(user),
+        grade_texts = achievement_participations_cache.fetch(user.id, {})
+        stats = aggregate_points_from(participations_by_user.fetch(user.id, []))
+        Record.new(build_row(user.id, stats,
                              achievement_ids_met(grade_texts),
                              achievement_ids_ungraded(grade_texts)).merge(user: user))
       end

@@ -489,6 +489,24 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(row.css("a[data-turbo-method='patch']")).to be_empty
       end
 
+      it "does not offer them for a team, which takes only the tutorial's members" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, submitted_at: 3.days.ago)
+        submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                           tutorial: tutorial,
+                                                           users: [create(:confirmed_user)])
+        create(:tutorial_membership, tutorial: tutorial,
+                                     user: create(:confirmed_user, name_in_tutorials: "Max Kurz"))
+
+        rendered = render_inline(described_class.new(assignment: assignment.reload,
+                                                     grading_scope: tutorial))
+        path = Rails.application.routes.url_helpers.add_member_submission_path(submission)
+        offered = rendered.css("form[action='#{path}']").map(&:text).join
+
+        expect(offered).to include("Max Kurz")
+        expect(offered).not_to include("Lina Berg")
+      end
+
       it "says so in the old tutorial's table too" do
         create(:assessment_participation, assessment: assessment, user: former,
                                           tutorial: tutorial, submitted_at: 3.days.ago)
