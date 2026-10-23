@@ -1,7 +1,13 @@
 module Rosters
   # Service object to query participants of a Lecture with filtering options.
+  # The "registered" view lists users instead of lecture memberships, since
+  # people with a running registration need not be on the roster yet; it shows
+  # one campaign at a time.
   class ParticipantQuery
-    Result = Struct.new(:scope, :total_count, :unassigned_count, :filter_mode, keyword_init: true)
+    Result = Struct.new(:scope, :total_count, :unassigned_count, :registered_count,
+                        :filter_mode, :view, :campaign, keyword_init: true)
+
+    SEARCH_SQL = "#{User::SHOWN_NAME_SQL} ILIKE :q OR users.matriculation_number ILIKE :q".freeze
 
     def initialize(lecture, params)
       @lecture = lecture
@@ -10,6 +16,7 @@ module Rosters
 
     def call
       filter_mode = @params[:filter] || "all"
+      view = @params[:view] == "registered" ? "registered" : "enrolled"
       search = @params[:search].presence
 
       base_scope =
@@ -18,17 +25,15 @@ module Rosters
                 .includes(user: User::PROGRAM_PRELOAD)
                 .merge(User.by_last_name)
 
-      if search
-        base_scope = base_scope.where(
-          "#{User::SHOWN_NAME_SQL} ILIKE :q OR users.matriculation_number ILIKE :q",
-          q: "%#{search}%"
-        )
-      end
+      base_scope = base_scope.where(SEARCH_SQL, q: "%#{search}%") if search
 
       total_count = base_scope.count
 
       unassigned_scope = build_unassigned_scope(base_scope)
       unassigned_count = unassigned_scope.count
+
+      running = RunningRegistrations.new(@lecture, search: search)
+      campaign = running.campaigns.find_by(id: @params[:campaign]) || running.campaigns.first
 
       scope = case filter_mode
               when "unassigned"
@@ -36,12 +41,19 @@ module Rosters
               else
                 base_scope
       end
+      if view == "registered"
+        scope = RunningRegistrations.new(@lecture, search: search, campaign: campaign).users
+        scope = scope.none unless campaign
+      end
 
       Result.new(
         scope: scope,
         total_count: total_count,
         unassigned_count: unassigned_count,
-        filter_mode: filter_mode
+        registered_count: running.count,
+        filter_mode: filter_mode,
+        view: view,
+        campaign: campaign
       )
     end
 

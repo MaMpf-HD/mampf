@@ -45,6 +45,23 @@ test("loads initial results when scrolling to search bar",
     await expect(dashboard.results).toContainText("Course 5");
   });
 
+test("jumps to the search below the board while stylesheets load slowly",
+  async ({ factory, student: { page } }) => {
+    const { currentTerm } = await createLectureSearchTerms(factory);
+    await createLecturesWithCourses(factory, 1, "Course", currentTerm.id);
+
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    await expect(dashboard.searchBar).not.toBeInViewport();
+
+    await dashboard.delayStylesheets(2000);
+    await page.getByRole("link", { name: "Search lectures" }).click();
+
+    await expect(dashboard.results).toContainText("Course 1");
+    await dashboard.waitForStylesheets();
+    await expect(dashboard.searchBar).toBeInViewport();
+  });
+
 test("loads more results when scrolling to bottom (even multiple times)",
   async ({ factory, student: { page }, teacher }) => {
     const { currentTerm } = await createLectureSearchTerms(factory);

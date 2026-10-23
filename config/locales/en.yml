@@ -1946,6 +1946,8 @@ en:
       new event series or courses
     email_for_news:
       news about MaMpf
+    email_for_tutorial_change:
+      participants switching into or out of my tutorials
     update: 'Update profile'
     success: 'Profil was updated successfully.'
     please_update: >
@@ -2013,6 +2015,7 @@ en:
     email_notifications_header: E-Mail Notifications
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments
+    tutorials: Tutorials
     miscellaneous: Miscellaneous
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
@@ -3011,6 +3014,7 @@ en:
     optimization_failed: >
       Optimization failed: File is still to big.
     upload_failure: "Error while uploading! Please try again."
+    no_correction_file: Please choose a file first.
     upload_failure_empty_file: >
       The uploaded file is empty.
       Please make sure that the file is not corrupted.
@@ -3417,6 +3421,7 @@ en:
       Emails for submission leave: %{email_for_submission_leave}<br>
       Emails for correction upload: %{email_for_correction_upload}<br>
       Emails for submission decision: %{email_for_submission_decision}<br>
+      Emails for tutorial change: %{email_for_tutorial_change}<br>
       Name in tutorials: %{name_in_tutorials}<br>
       Archived: %{archived}<br>
       Image data: %{image_data}<br>
@@ -3898,7 +3903,7 @@ en:
       moderation_pending: "Pending Moderation"
   controllers:
     no_answer: 'There is no answer with this id.'
-    session_expired: 'Your session has expired. Please login again.'
+    session_expired: 'This page was out of date, so your change was not saved. Please try again.'
     no_chapter: 'There is no chapter with this id.'
     no_talk: There is no talk with this id.
     no_course: 'There is no course with this id.'

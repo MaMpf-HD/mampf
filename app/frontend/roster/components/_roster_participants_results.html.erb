@@ -29,6 +29,9 @@
         <tr>
           <td colspan="5" class="text-center py-4 text-muted border-bottom-0">
             <%= t(component.filtered? ? "roster.details.empty_filtered" : "roster.details.empty") %>
+
+            <%= render "roster/components/roster_participants_search_hits",
+                       component: component %>
           </td>
         </tr>
       <% else %>

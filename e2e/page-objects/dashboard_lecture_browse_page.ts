@@ -1,4 +1,4 @@
-import { Page } from "../_support/fixtures";
+import { expect, Page } from "../_support/fixtures";
 
 export class DashboardLectureBrowsePage {
   readonly page: Page;
@@ -69,6 +69,34 @@ export class DashboardLectureBrowsePage {
     });
     // Hack such that scrolling itself is really finished before we continue
     await this.page.waitForTimeout(500);
+  }
+
+  get searchBar() {
+    return this.page.getByTestId("lecture-search-bar");
+  }
+
+  /**
+   * Lets every stylesheet arrive late, as on a slow connection. Routing also
+   * turns off the browser cache, so a stylesheet put back on the page is
+   * fetched again.
+   */
+  async delayStylesheets(milliseconds: number) {
+    await this.page.route(/\.s?css(\?|$)/, async (route) => {
+      await new Promise(resolve => setTimeout(resolve, milliseconds));
+      await route.continue();
+    });
+  }
+
+  /**
+   * Waits until every stylesheet of MaMpf on the page has loaded; only then
+   * do the board and the search have their final height.
+   */
+  async waitForStylesheets() {
+    await expect.poll(() => this.page.evaluate(() =>
+      [...document.querySelectorAll<HTMLLinkElement>("link[rel=stylesheet]")]
+        .filter(link => link.href.startsWith(window.location.origin))
+        .every(link => link.sheet !== null),
+    )).toBe(true);
   }
 
   get results() {
