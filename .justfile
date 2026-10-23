@@ -18,6 +18,14 @@ seed:
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     ./docker/development/init.sh | tee /proc/1/fd/1
 
+# Preseeds the database with extended data (includes full-length lectures for MampfSearch)
+seed-extended:
+    #!/usr/bin/env bash
+    just ensure-dev-dependencies
+    export DB_SQL_PRESEED_URL="https://github.com/f-buerckel/mampf-init-data/releases/download/mampf-extended-data/mampf.sql"
+    export UPLOADS_PRESEED_URL="https://github.com/f-buerckel/mampf-init-data/releases/download/mampf-extended-data/uploads.zip"
+    ./docker/development/init.sh | tee /proc/1/fd/1
+
 # Starts the app
 up:
     #!/usr/bin/env bash
