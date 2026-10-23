@@ -16,8 +16,9 @@ test.describe("quick access", () => {
 
     await page.goto("/");
     await toggle.click();
-    await expect(menu).toContainText("You haven't pinned any lectures yet.");
-    await expect(menu).toContainText("Open a lecture to pin it here.");
+    await expect(menu).toContainText(
+      "You haven't pinned any lectures yet. Open a lecture to pin it here.",
+    );
 
     await page.goto(`/lectures/${lecture.id}`);
     await toggle.click();
@@ -28,7 +29,6 @@ test.describe("quick access", () => {
     await toggle.click();
     await expect(menu.getByRole("link", { name: "Unpin AdvCalc" })).toBeVisible();
     await expect(menu.getByRole("link", { name: /^AdvCalc/ })).toBeVisible();
-    await expect(menu).not.toContainText("Open a lecture to pin it here.");
 
     await page.goto("/");
     await toggle.click();
@@ -40,6 +40,5 @@ test.describe("quick access", () => {
     await expect(menu.getByText("Pin AdvCalc")).toBeAttached();
     await toggle.click();
     await expect(menu.getByRole("link", { name: "Pin AdvCalc" })).toBeVisible();
-    await expect(menu).toContainText("You haven't pinned any lectures yet.");
   });
 });

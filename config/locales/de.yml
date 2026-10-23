@@ -175,9 +175,8 @@ de:
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
       Du hast noch keine Veranstaltung angeheftet.
-    quick_access: 'Schnellzugriff'
-    quick_access_hint: >
       Öffne eine Veranstaltung, um sie hier anzuheften.
+    quick_access: 'Schnellzugriff'
     pin_lecture: '%{title} anheften'
     unpin_lecture: '%{title} lösen'
   info: 'Info'

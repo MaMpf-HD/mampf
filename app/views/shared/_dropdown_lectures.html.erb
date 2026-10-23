@@ -22,7 +22,9 @@
           <%= t(pinned ? "navbar.unpin_lecture" : "navbar.pin_lecture",
                 title: lecture.course.short_title) %>
         <% end %>
-        <div class="dropdown-divider"></div>
+        <% if pinned_lectures.any? %>
+          <div class="dropdown-divider"></div>
+        <% end %>
       <% end %>
       <% if pinned_lectures.any? %>
         <% pinned_lectures.each do |l| %>
@@ -41,13 +43,10 @@
             <% end %>
           <% end %>
         <% end %>
-      <% else %>
+      <% elsif !show_pin %>
         <div class="dropdown-item-text text-center text-body-secondary">
           <i class="bi bi-pin-angle d-block fs-4" aria-hidden="true"></i>
           <%= t("navbar.no_favorite_lectures_yet") %>
-          <% unless show_pin %>
-            <br><%= t("navbar.quick_access_hint") %>
-          <% end %>
         </div>
       <% end %>
     </div>

@@ -130,9 +130,8 @@ en:
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
       You haven't pinned any lectures yet.
-    quick_access: 'Quick Access'
-    quick_access_hint: >
       Open a lecture to pin it here.
+    quick_access: 'Quick Access'
     pin_lecture: 'Pin %{title}'
     unpin_lecture: 'Unpin %{title}'
   info: 'Info'
