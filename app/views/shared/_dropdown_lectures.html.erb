@@ -1,74 +1,51 @@
-<% on_start_page = controller_name == 'main' && action_name == 'start' %>
+<% on_start_page = controller_name == "main" && action_name == "start" %>
 <% show_pin = lecture.present? && !on_start_page %>
+<% pinned_lectures = current_user.quick_access_lectures %>
 <li class="nav-item">
-  <div class="btn-group dropdown">
-    <% if lecture.nil? || on_start_page %>
-      <button class="btn btn-sm btn-primary">
-        <%= t('navbar.quick_access') %>
-      </button>
-    <% else %>
-      <%= link_to lecture_path(lecture),
-                  class: 'btn btn-primary btn-sm' do %>
-      <%= lecture.title_for_viewers %>
-        <% unless lecture.published? %>
-          <i class="fas fa-eye-slash redtext"
-             tabindex="-1"
-             data-bs-toggle="tooltip"
-             title="<%=t('lecture.unpublished') %>">
-          </i>
-        <% end %>
-      <% end %>
-    <% end %>
-    <% if show_pin %>
-      <% pinned = lecture.in?(current_user.favorite_lectures) %>
-      <% pin_label = t(pinned ? 'profile.unpin_lecture' : 'profile.pin_lecture') %>
-      <% pin_params = { lecture: { id: lecture.id } } %>
-      <%= link_to "",
-                  pinned ? unpin_lecture_path(pin_params) : pin_lecture_path(pin_params),
-                  class: "btn btn-primary btn-sm bi #{pinned ? 'bi-pin-angle-fill' : 'bi-pin-angle'}",
-                  role: 'button',
-                  title: pin_label,
-                  aria: { label: pin_label, pressed: pinned },
-                  data: { turbo_method: :patch,
-                          turbo_stream: true,
-                          testid: 'quick-access-pin' } %>
-    <% end %>
+  <div class="dropdown">
     <button class="btn btn-primary btn-sm dropdown-toggle me-3"
             type="button"
-            data-bs-toggle="dropdown"
-            aria-label="<%= t('navbar.quick_access') %>">
+            data-bs-toggle="dropdown">
+      <%= t("navbar.quick_access") %>
     </button>
     <div class="dropdown-menu" data-testid="quick-access-menu">
-      <% unless lecture.nil? || on_start_page %>
-        <h6 class="dropdown-header">
-          <%= t('navbar.quick_access') %>
-        </h6>
+      <% if show_pin %>
+        <% pinned = lecture.in?(pinned_lectures) %>
+        <% pin_params = { lecture: { id: lecture.id } } %>
+        <%= link_to pinned ? unpin_lecture_path(pin_params) : pin_lecture_path(pin_params),
+                    class: "dropdown-item",
+                    data: { turbo_method: :patch, turbo_stream: true } do %>
+          <i class="bi <%= pinned ? "bi-pin-angle-fill" : "bi-pin-angle" %>"
+             aria-hidden="true"></i>
+          <%= t(pinned ? "navbar.unpin_lecture" : "navbar.pin_lecture",
+                title: lecture.course.short_title) %>
+        <% end %>
+        <% if pinned_lectures.any? %>
+          <div class="dropdown-divider"></div>
+        <% end %>
       <% end %>
-      <% if current_user.favorite_lectures.any? %>
-        <% current_user.favorite_lectures.natural_sort_by(&:short_title)
-                       .each do |l| %>
-          <%= link_to lecture_path(l),
-                      class: 'dropdown-item' do %>
-          <%= l.short_title %>
+      <% if pinned_lectures.any? %>
+        <% pinned_lectures.each do |l| %>
+          <%= link_to lecture_path(l), class: "dropdown-item" do %>
+            <%= l.course.short_title %>
+            <% if l.term %>
+              <span class="text-muted small">(<%= l.term.to_label_short %>)</span>
+            <% end %>
             <% unless l.published? %>
               <i class="fas fa-eye-slash redtext"
                  tabindex="-1"
                  data-bs-toggle="tooltip"
-                 title="<%=t('lecture.unpublished') %>">
+                 title="<%= t("lecture.unpublished") %>">
               </i>
             <% end %>
           <% end %>
         <% end %>
       <% else %>
         <div class="dropdown-item-text text-muted">
-          <%= t('navbar.no_favorite_lectures_yet') %>
-        </div>
-      <% end %>
-      <% unless show_pin %>
-        <div class="dropdown-divider"></div>
-        <div class="dropdown-item-text small text-muted quick-access-hint">
-          <i class="bi bi-pin-angle" aria-hidden="true"></i>
-          <%= t('navbar.quick_access_hint') %>
+          <%= t("navbar.no_favorite_lectures_yet") %>
+          <% unless show_pin %>
+            <br><%= t("navbar.quick_access_hint") %>
+          <% end %>
         </div>
       <% end %>
     </div>

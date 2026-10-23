@@ -177,8 +177,9 @@ de:
       Du hast noch keine Veranstaltung angeheftet.
     quick_access: 'Schnellzugriff'
     quick_access_hint: >
-      Um eine Veranstaltung anzuheften, öffne sie über Dein Dashboard
-      und klicke auf die Pinnnadel, die neben diesem Menü erscheint.
+      Öffne eine Veranstaltung, um sie hier anzuheften.
+    pin_lecture: '%{title} anheften'
+    unpin_lecture: '%{title} lösen'
   info: 'Info'
   admin:
     navbar:

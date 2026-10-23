@@ -129,10 +129,12 @@ en:
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
-      You have not pinned any lectures yet.
+      You haven't pinned any lectures yet.
     quick_access: 'Quick Access'
     quick_access_hint: >
-      To add a lecture to the quick access, open it via your dashboard, then click the pin that will appear next to this menu.
+      Open a lecture to pin it here.
+    pin_lecture: 'Pin %{title}'
+    unpin_lecture: 'Unpin %{title}'
   info: 'Info'
   admin:
     navbar:
