@@ -6,7 +6,7 @@
 # clashes with the regular test database of RSpec ("mampf-test") or the
 # numeric suffixes of the parallel RSpec workers ("mampf-test1", ...).
 set -Eeuo pipefail
-cd /workspaces/mampf/
+cd "$(dirname "$0")/../.."
 
 e2e_workers=$(./docker/development/e2e-workers.sh)
 
