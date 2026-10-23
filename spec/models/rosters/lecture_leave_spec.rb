@@ -51,6 +51,24 @@ RSpec.describe(Rosters::LectureLeave) do
         rosterable.remove_user_from_roster!(student)
       end
     end
+
+    it "is true with a registration past its withdrawal, before any place" do
+      campaign = create(:registration_campaign, :closed, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: student, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(leave.participating?).to be(true)
+    end
+
+    it "is false with a registration its campaign still lets the student withdraw" do
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: student, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(leave.participating?).to be(false)
+    end
   end
 
   describe "#blockers" do
@@ -243,6 +261,20 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(tutorial.reload.members).not_to include(student)
       expect(lecture.members).not_to include(student)
       expect(lecture.excluded_lecture_memberships.find_by(user: student)).to be_left_by_self
+      expect(campaign.user_registrations.where(user: student)).to be_empty
+      expect(student.reload.lectures).not_to include(lecture)
+    end
+
+    it "withdraws a registration past its deadline for someone with no place yet" do
+      lecture.lecture_memberships.find_by(user: student).destroy!
+      tutorial.remove_user_from_roster!(student)
+      campaign = create(:registration_campaign, :closed, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: student, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      described_class.new(lecture, student).leave!
+
       expect(campaign.user_registrations.where(user: student)).to be_empty
       expect(student.reload.lectures).not_to include(lecture)
     end
