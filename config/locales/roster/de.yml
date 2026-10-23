@@ -201,6 +201,18 @@ de:
       modal:
         create_title: "Flexible Gruppe anlegen"
         edit_title: "Flexible Gruppe bearbeiten"
+      destroy:
+        title: "„%{title}“ löschen"
+        members:
+          one: "Die Gruppe hat 1 Mitglied."
+          other: "Die Gruppe hat %{count} Mitglieder."
+        without_group:
+          one: "1 davon ist danach in keiner Gruppe dieser Veranstaltung."
+          other: "%{count} davon sind danach in keiner Gruppe dieser Veranstaltung."
+        enrollment_stays: "Die Veranstaltungseinschreibung bleibt bestehen."
+        registrations: "Mitgelöscht wird, was ihr abgeschlossenes Anmeldeverfahren hinterlassen hat: %{total}, davon %{confirmed}."
+        notify: "Mitglieder per Mail benachrichtigen"
+        submit: "Gruppe löschen"
       kinds:
         with_enrollment: "Gruppe mit Einschreibung"
         without_enrollment: "Gruppe ohne Einschreibung"

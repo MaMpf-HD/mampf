@@ -197,6 +197,18 @@ en:
       modal:
         create_title: "Create Flexible Group"
         edit_title: "Edit Flexible Group"
+      destroy:
+        title: "Delete “%{title}”"
+        members:
+          one: "The group has 1 member."
+          other: "The group has %{count} members."
+        without_group:
+          one: "1 of them is then in no group of this course."
+          other: "%{count} of them are then in no group of this course."
+        enrollment_stays: "The course enrollment remains."
+        registrations: "This also deletes what its finished registration process left on it: %{total}, %{confirmed}."
+        notify: "Notify the members by email"
+        submit: "Delete group"
       kinds:
         with_enrollment: "Group with enrollment"
         without_enrollment: "Group without enrollment"
