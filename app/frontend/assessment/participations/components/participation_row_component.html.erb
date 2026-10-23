@@ -33,6 +33,12 @@
       <div>
         <%= @user.tutorial_name %>
 
+        <% if left_lecture? %>
+          <span class="badge bg-secondary-subtle text-secondary-emphasis fw-normal ms-1">
+            <%= t("assessment.grading_tutorial.left_lecture") %>
+          </span>
+        <% end %>
+
         <% movement = movement_info_for_user(@user) %>
 
         <% if movement %>

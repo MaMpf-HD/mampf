@@ -213,4 +213,8 @@ class SubmissionRowComponent < ViewComponent::Base
   def movement_info_for_user(user)
     helpers.movement_info_for_user_assignment(user, users_movement_map)
   end
+
+  def left_lecture?(user)
+    helpers.left_lecture_user_ids(@lecture).include?(user.id)
+  end
 end

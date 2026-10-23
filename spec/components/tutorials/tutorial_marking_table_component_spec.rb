@@ -420,6 +420,47 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(rendered_content).to include("marking-table")
       end
     end
+
+    context "with somebody who left the lecture" do
+      let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        assignment.update_column(:deadline, 2.days.ago) # rubocop:disable Rails/SkipsModelValidations
+        create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+      end
+
+      it "lists their work that no tutorial holds, saying they left" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: nil, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: lecture)).css("tr")
+
+        expect(rows.find { |row| row.text.include?("Lina Berg") }&.text)
+          .to include(I18n.t("assessment.grading_tutorial.left_lecture"))
+      end
+
+      it "leaves out a blank row of theirs" do
+        create(:assessment_participation, assessment: assessment, user: former, tutorial: nil)
+
+        rendered = render_inline(described_class.new(assignment: assignment.reload,
+                                                     grading_scope: lecture))
+
+        expect(rendered.text).not_to include("Lina Berg")
+      end
+
+      it "says so in the old tutorial's table too" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: tutorial)).css("tr")
+
+        expect(rows.find { |row| row.text.include?("Lina Berg") }&.text)
+          .to include(I18n.t("assessment.grading_tutorial.left_lecture"))
+      end
+    end
   end
 
   describe "#preload_participations" do

@@ -449,6 +449,13 @@ class ParticipationRowComponent < ViewComponent::Base
       helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
   end
 
+  # A sheet's row stays after its person has left the lecture, so the row
+  # says so.
+  def left_lecture?
+    @assessable.is_a?(Assignment) &&
+      helpers.left_lecture_user_ids(@assessable.lecture).include?(@user.id)
+  end
+
   # Tutorial movement compares a sheet's participation with the user's
   # tutorial membership; a talk or an exam has nothing handed in to compare.
   def movement_info_for_user(user)

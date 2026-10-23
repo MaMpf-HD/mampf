@@ -17,6 +17,12 @@ module AssessmentHelper
   # The exercise media of a lecture, from which an assignment picks its sheet.
   def exercise_media(lecture) = Medium.where(teachable: lecture, sort: "Exercise").to_a
 
+  # Who has left the lecture, read once per rendered response for all rows.
+  def left_lecture_user_ids(lecture)
+    left_lecture_user_ids_cache[lecture.id] ||=
+      lecture.excluded_lecture_memberships.pluck(:user_id).to_set
+  end
+
   def movement_info_for_user_assignment(user, user_movement_map)
     movement = user_movement_map[user.id]
     return nil unless movement
