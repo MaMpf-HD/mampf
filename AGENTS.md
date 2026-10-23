@@ -23,7 +23,7 @@ Müsli is a system previously used to handle tutorial groups for lectures & to a
 - For many spec files or the whole suite, run them in parallel instead. Each worker gets its own test database (`mampf-test1..N`).
   - `just test rspec` for the whole suite, or `just test rspec <paths...>`, e.g. `just test rspec spec/models spec/services`.
   - The worker count is already set up (CPU cores minus one), so don't count cores or pass a count yourself.
-  - If it fails because a database is missing or the schema is outdated (e.g. after new migrations), run `just test rspec-setup` once and try again.
+  - Databases are set up automatically when `db/schema.rb` changed. To force it, run `just test rspec-setup`.
   - For a single file or a few examples, the plain `rspec` command above is faster (no extra boot per worker).
 - We use Playwright for end-to-end tests (in `e2e/`). Make sure to use page.locator() as little as possible, and rather rely on the page.getBy*() methods, e.g. page.getByRole(), page.getByText(), etc. This will make the tests more robust and less prone to breakage when we change the UI.
 
