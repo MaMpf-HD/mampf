@@ -51,6 +51,19 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(body).not_to include(%(action="#{lecture_membership_path(lecture)}"))
     end
 
+    it "offers leaving to someone whose registration is past its withdrawal" do
+      waiting = create(:confirmed_user)
+      campaign = create(:registration_campaign, :closed, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: waiting, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+      sign_in waiting
+
+      get lecture_home_path(lecture)
+
+      expect(response.body).to include(%(action="#{lecture_membership_path(lecture)}"))
+    end
+
     it "offers nothing to leave to someone without a place in the lecture" do
       sign_in create(:confirmed_user)
 

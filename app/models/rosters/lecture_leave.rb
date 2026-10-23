@@ -34,8 +34,11 @@ module Rosters
       @user = user
     end
 
+    # A registration that its campaign no longer lets the student withdraw
+    # counts too: nothing else would withdraw it, and the lecture stays on the
+    # dashboard until the allocation.
     def participating?
-      enrolled? || groups.any? || exam_entries.any?
+      enrolled? || groups.any? || exam_entries.any? || registration_past_withdrawal?
     end
 
     def enrolled?
@@ -191,6 +194,10 @@ module Rosters
                               .map do |campaign|
           Blocker.new(:prerequisite, campaign.student_facing_title, true)
         end
+      end
+
+      def registration_past_withdrawal?
+        running_campaigns.any? { |campaign| !campaign.open_for_withdrawals? }
       end
 
       def exam_entries
