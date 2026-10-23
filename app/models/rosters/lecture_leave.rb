@@ -75,7 +75,7 @@ module Rosters
     # the lecture's staff could lift them, but leaving would stay refused.
     def blockers
       @blockers ||= graded_blockers.presence ||
-                    (fixed_group_blockers + closed_exam_blockers)
+                    (fixed_group_blockers + closed_exam_blockers + prerequisite_blockers)
     end
 
     # The campaigns the dialog names. A rejected registration is withdrawn
@@ -168,6 +168,29 @@ module Rosters
           closed_exam_campaigns.map do |campaign|
             Blocker.new(:exam_closed, campaign.student_facing_title, true)
           end
+      end
+
+      # A confirmed registration in another lecture may require one that
+      # leaving withdraws; withdrawing that one alone is refused as well, see
+      # UserRegistrations::Handler#check_not_referenced_as_prerequisite.
+      def prerequisite_blockers
+        withdrawn = Registration::Campaign.where(
+          campaignable: @lecture, status: UserPlaces::RUNNING_CAMPAIGN_STATUSES,
+          id: Registration::UserRegistration.where(user: @user).select(:registration_campaign_id)
+        )
+        requiring = withdrawn.pluck(:id).flat_map do |campaign_id|
+          Registration::Policy.prerequisite_campaign.referencing_campaign(campaign_id)
+                              .pluck(:registration_campaign_id)
+        end
+        return [] if requiring.empty?
+
+        confirmed = Registration::UserRegistration.confirmed.where(user: @user)
+        Registration::Campaign.where(id: requiring)
+                              .where(id: confirmed.select(:registration_campaign_id))
+                              .where.not(campaignable: @lecture)
+                              .map do |campaign|
+          Blocker.new(:prerequisite, campaign.student_facing_title, true)
+        end
       end
 
       def exam_entries

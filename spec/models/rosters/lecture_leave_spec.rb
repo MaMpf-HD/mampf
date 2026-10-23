@@ -138,6 +138,26 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.campaigns_to_withdraw).to be_empty
     end
 
+    it "names a registration elsewhere that requires one leaving withdraws" do
+      tutorials = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: student, registration_campaign: tutorials,
+             registration_item: tutorials.registration_items.first)
+      # A policy changes only while its campaign is a draft.
+      seminar = create(:registration_campaign, :open, description: "Seminar")
+      seminar.update_column(:status, Registration::Campaign.statuses[:draft]) # rubocop:disable Rails/SkipsModelValidations
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: seminar,
+             config: { "prerequisite_campaign_id" => tutorials.id })
+      seminar.update_column(:status, Registration::Campaign.statuses[:open]) # rubocop:disable Rails/SkipsModelValidations
+      create(:registration_user_registration, :confirmed,
+             user: student, registration_campaign: seminar,
+             registration_item: seminar.registration_items.first)
+
+      expect(leave.blockers.map(&:to_a))
+        .to eq([[:prerequisite, seminar.student_facing_title, true]])
+    end
+
     it "names a graded talk once, though its speakers may not leave it either" do
       seminar = create(:lecture, :is_seminar, :released_for_all)
       talk = create(:talk, lecture: seminar, title: "Groups")

@@ -48,6 +48,7 @@ de:
         group_fixed: "„%{title}“ kannst Du nicht selbst verlassen."
         exam_closed: "Von „%{title}“ kannst Du Dich nicht selbst abmelden."
         graded: "„%{title}“ ist bereits bewertet."
+        prerequisite: "Deine Anmeldung zu „%{title}“ setzt Deine Anmeldung in dieser Veranstaltung voraus."
       contact: "Wende Dich bitte an die Lehrenden der Veranstaltung."
       done: "Du hast „%{lecture}“ verlassen."
       not_allowed: "Du kannst die Teilnahme gerade nicht selbst beenden."
