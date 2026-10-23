@@ -48,6 +48,34 @@ test.describe("leaving a course", () => {
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
+  test("releases the page when a stream replaces the open dialog", async ({
+    factory, student,
+  }) => {
+    const lecture = await enrollInTutorial(factory, student.user.id, "disabled");
+    const { page } = student;
+
+    await page.goto(`/lectures/${lecture.id}`);
+    await page.getByRole("button", { name: "Leave course" }).click();
+    const dialog = page.getByRole("dialog", { name: "Leave this course" });
+    await expect(dialog).toBeVisible();
+
+    // what leaving a group or saving preferences sends back
+    await page.evaluate(() => {
+      const turbo = (window as unknown as {
+        Turbo: { renderStreamMessage: (_html: string) => void };
+      }).Turbo;
+      turbo.renderStreamMessage(
+        "<turbo-stream action=\"update\" target=\"student_registration_participation\">"
+        + "<template><p>Replaced</p></template></turbo-stream>",
+      );
+    });
+
+    await expect(page.getByText("Replaced")).toBeVisible();
+    await expect(dialog).toHaveCount(0);
+    await expect(page.locator(".modal-backdrop")).toHaveCount(0);
+    await expect(page.locator("body")).not.toHaveClass(/modal-open/);
+  });
+
   test("says why a student cannot leave alone", async ({ factory, student }) => {
     const lecture = await enrollInTutorial(factory, student.user.id, "disabled");
     const exam = await factory.create("exam", ["with_date"], {

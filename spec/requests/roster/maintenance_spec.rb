@@ -71,7 +71,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "keeps the left view in its page links after readmitting someone" do
-          # with Berg, one more than Pagy's default page of 20 stays behind
+          # 21 more who have left, so a second page remains once Berg is back
           create_list(:confirmed_user, 21).each do |user|
             create(:lecture_membership, lecture: lecture, user: user).exclude!(by: user)
           end

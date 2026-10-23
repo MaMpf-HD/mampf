@@ -71,8 +71,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     view == "enrolled"
   end
 
-  # In this view, the participants are the excluded memberships of those who
-  # have left the roster.
   def left_view?
     view == "left"
   end
@@ -194,8 +192,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
   end
 
-  # The confirmation for removing the user from the lecture, naming the exam
-  # lists they are taken off too.
   def kick_confirmation(user)
     exams = exam_titles_by_user[user.id]
     return t("roster.warnings.confirm_kick_from_lecture") if exams.blank?

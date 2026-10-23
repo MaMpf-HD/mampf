@@ -8,6 +8,15 @@ RSpec.describe("Lectures::Memberships", type: :request) do
                       self_materialization_mode: :add_and_remove)
   end
 
+  # An open campaign takes the group in. update_column skips the checks that
+  # the roster is empty and that a campaign opens with all its dates.
+  def hold_in_campaign(group)
+    group.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+    campaign = create(:registration_campaign, campaignable: lecture)
+    create(:registration_item, registration_campaign: campaign, registerable: group)
+    campaign.update_column(:status, Registration::Campaign.statuses[:open]) # rubocop:disable Rails/SkipsModelValidations
+  end
+
   before do
     lecture.add_user_to_roster!(user)
     tutorial.add_user_to_roster!(user)
@@ -31,8 +40,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
     end
 
     it "says in the dialog why the student cannot leave alone, without leaving" do
-      # held by a campaign; update_column skips the empty-roster check
-      tutorial.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+      hold_in_campaign(tutorial)
 
       get lecture_home_path(lecture)
 
@@ -95,8 +103,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
     end
 
     it "keeps the places when a group may not be left" do
-      # held by a campaign; update_column skips the empty-roster check
-      tutorial.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+      hold_in_campaign(tutorial)
 
       delete lecture_membership_path(lecture),
              params: { confirmation: lecture.course.short_title }

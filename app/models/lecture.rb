@@ -1023,8 +1023,8 @@ class Lecture < ApplicationRecord
     sync_student_performance_for_members!(new_user_ids + readmitted_user_ids)
   end
 
-  # Clears the exclusion of those among the users who had left the roster and
-  # returns their ids; their rows keep the date they first joined.
+  # Clears the exclusion of those who had left the roster; their rows keep
+  # the date they first joined.
   def readmit_to_roster!(user_ids)
     excluded = excluded_lecture_memberships.where(user_id: user_ids)
     ids = excluded.pluck(:user_id)
@@ -1033,8 +1033,6 @@ class Lecture < ApplicationRecord
     ids
   end
 
-  # Takes the user off the roster but keeps the row as an exclusion, see
-  # LectureMembership.
   def remove_user_from_roster!(user, by: nil)
     lecture_memberships.find_by(user: user)&.tap { |membership| membership.exclude!(by: by) }
   end
@@ -1080,9 +1078,9 @@ class Lecture < ApplicationRecord
 
   # All students that lecture staff can reach by registration mail:
   # everyone with a pending or confirmed registration in one of the
-  # lecture's campaigns, plus everyone on the roster or in one of its
-  # cohorts (union, deduplicated). A completed campaign counts no more: its
-  # people are on the roster or in a cohort, or have left.
+  # lecture's campaigns that are not completed, plus everyone on the roster
+  # or in one of its cohorts (union, deduplicated). After completion the
+  # roster, not the old registration, says who takes part.
   def registration_mail_recipients
     registered_ids = Registration::UserRegistration
                      .where(registration_campaign: registration_campaigns

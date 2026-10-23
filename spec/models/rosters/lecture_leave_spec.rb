@@ -11,11 +11,13 @@ RSpec.describe(Rosters::LectureLeave) do
                       self_materialization_mode: :add_and_remove)
   end
 
-  # Campaign-managed and in no completed campaign yet, as a running
-  # allocation holds a tutorial. update_column skips the check that the
-  # roster is empty.
-  def hold_in_campaign(tutorial)
-    tutorial.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+  # An open campaign takes the group in. update_column skips the checks that
+  # the roster is empty and that a campaign opens with all its dates.
+  def hold_in_campaign(group)
+    group.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+    campaign = create(:registration_campaign, campaignable: lecture)
+    create(:registration_item, registration_campaign: campaign, registerable: group)
+    campaign.update_column(:status, Registration::Campaign.statuses[:open]) # rubocop:disable Rails/SkipsModelValidations
   end
 
   # An exam opens its own registration process. update_columns skips the
@@ -71,6 +73,14 @@ RSpec.describe(Rosters::LectureLeave) do
 
       expect(leave.blockers.map(&:to_a)).to eq([[:group_fixed, "Mo 10", true]])
       expect(leave.allowed?).to be(false)
+    end
+
+    it "is empty for a campaign-managed group that no running campaign holds" do
+      group = create(:tutorial, lecture: lecture, skip_campaigns: true)
+      group.add_user_to_roster!(student)
+      group.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+
+      expect(leave.blockers).to be_empty
     end
 
     it "names a talk its speakers may not leave" do
@@ -253,14 +263,18 @@ RSpec.describe(Rosters::LectureLeave) do
       expect { leave.leave! }.to raise_error(described_class::NotParticipatingError)
     end
 
-    it "locks the lecture before the student's groups, as the staff's removal does" do
-      tables = []
+    it "locks the groups before the lecture, and the lecture before any membership goes" do
+      statements = []
       record = lambda do |*, payload|
-        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
+        sql = payload[:sql]
+        statements << "lock #{sql[/FROM "(\w+)"/, 1]}" if sql.include?("FOR UPDATE")
+        statements << "delete #{sql[/DELETE FROM "(\w+)"/, 1]}" if sql.start_with?("DELETE")
       end
       ActiveSupport::Notifications.subscribed(record, "sql.active_record") { leave.leave! }
 
-      expect(tables.index("lectures")).to be < tables.index("tutorials")
+      expect(statements.index("lock tutorials")).to be < statements.index("lock lectures")
+      expect(statements.index("lock lectures"))
+        .to be < statements.index("delete tutorial_memberships")
     end
 
     it "refuses rather than fails when a grade arrives while leaving" do

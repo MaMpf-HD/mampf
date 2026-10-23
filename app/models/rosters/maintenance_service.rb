@@ -22,8 +22,7 @@ module Rosters
 
     # A caller that removes the user within a larger transaction passes
     # notify: false, since the mail job is enqueued even if that transaction
-    # rolls back. `by` is who removes the user from a lecture; the
-    # participants tab names them.
+    # rolls back.
     def remove_user!(user, rosterable, notify: true, by: nil)
       removed = rosterable.with_lock do
         ensure_no_grading_data!(user, rosterable)
@@ -72,8 +71,8 @@ module Rosters
               "for user #{user.id}")
       end
 
-      # The person's rows on the lecture's talks and exams in one read, not
-      # one per talk or exam.
+      # The person's rows on the lecture's talks and exams at once, not one
+      # query per talk or exam.
       def graded_on_a_talk_or_exam?(user, lecture)
         assessments = Assessment::Assessment
                       .where(assessable: lecture.talks)

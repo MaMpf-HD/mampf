@@ -43,7 +43,7 @@ export default class extends Controller {
     this.element.removeEventListener("hidden.bs.modal", this.markClosed);
 
     if (this.isOpen) {
-      this.releasePage();
+      this.closeRemoved();
       return;
     }
 
@@ -62,15 +62,19 @@ export default class extends Controller {
   }
 
   /**
-   * A stream may remove the modal from opening until it is hidden, while
-   * Bootstrap holds the page's scroll lock. The lock is lifted here; the
-   * instance is not disposed, since a running fade still calls into it.
+   * A stream may remove the modal while it opens, shows or closes. It is
+   * closed the regular way, which lifts the focus trap and the page's scroll
+   * lock; one still opening is closed once shown. Bootstrap puts an opening
+   * modal back into the page, so it is removed again when hidden.
    */
-  releasePage() {
-    document.querySelector(".modal-backdrop")?.remove();
-    document.body.classList.remove("modal-open");
-    document.body.style.removeProperty("overflow");
-    document.body.style.removeProperty("padding-right");
+  closeRemoved() {
+    const { element, modal } = this;
+    element.addEventListener("hidden.bs.modal", () => {
+      element.remove();
+      modal.dispose();
+    }, { once: true });
+    element.addEventListener("shown.bs.modal", () => modal.hide(), { once: true });
+    modal.hide();
   }
 
   hideModalOnSuccess(event) {
@@ -91,6 +95,7 @@ export default class extends Controller {
 
       // Dispose modal immediately to prevent Bootstrap trying to access
       // removed DOM elements during hide animation
+      this.isOpen = false;
       this.modal.dispose();
 
       // Clear modal container

@@ -34,7 +34,6 @@ module Rosters
       enrolled? || groups.any? || exam_entries.any?
     end
 
-    # Whether the user is on the lecture roster itself.
     def enrolled?
       return @enrolled if defined?(@enrolled)
 
@@ -90,10 +89,9 @@ module Rosters
                                        &.source&.to_sym
     end
 
-    # Decides again under the locks on a fresh instance, since this one keeps
-    # its blockers from before. A removal refused for grading data refuses
-    # the whole step. A deadlock with a lecturer's edit is tried once more.
-    # Someone the staff removed meanwhile has nothing left to give up.
+    # Decides again under the locks on a fresh instance, since this one
+    # memoizes its blockers. Grading data found during the removal refuses
+    # like a blocker; one retry covers a deadlock this side lost.
     def leave!
       attempts = 0
       begin
@@ -119,19 +117,17 @@ module Rosters
 
     private
 
-      # Every campaign not completed, drafts included, so that none opens,
-      # closes or takes a registration meanwhile; then the user's own groups,
-      # whose settings the check reads, ordered as MaintenanceService orders
-      # them. A group joined in between is not covered.
-      # The lecture comes before the groups: MaintenanceService locks it
-      # before the memberships when the staff remove someone, so the two
-      # wait for each other instead of deadlocking.
+      # In the order the other writers take: campaigns first, drafts too so
+      # none opens meanwhile, as allocation does; the user's groups before the
+      # lecture, as a tutorial's or talk's update touching the lecture does;
+      # the lecture before any membership goes, as the staff's removal does.
+      # A group joined in between is not covered.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)
                               .order(:id).lock.load
-        @lecture.lock!
         groups.sort_by { |group| [group.class.name, group.id] }.each(&:lock!)
+        @lecture.lock!
       end
 
       def graded_blockers
@@ -146,13 +142,16 @@ module Rosters
       end
 
       # A tutorial's or cohort's self-service mode is about moving within the
-      # lecture, so it does not keep anyone from leaving the lecture; only a
-      # roster still held by a running campaign does. A talk is a commitment
-      # to the seminar's schedule and keeps its own setting.
+      # lecture, so only a running campaign holding the group keeps anyone
+      # from leaving. A talk is a commitment to the seminar's schedule and
+      # keeps its own setting.
       def fixed?(group)
         return !group.allow_self_remove?(@user) if group.is_a?(Talk)
 
-        group.locked?
+        group.registration_items
+             .joins(:registration_campaign)
+             .merge(Registration::Campaign.where(status: UserPlaces::RUNNING_CAMPAIGN_STATUSES))
+             .exists?
       end
 
       # An exam list or an exam registration past its deadline: withdrawing
