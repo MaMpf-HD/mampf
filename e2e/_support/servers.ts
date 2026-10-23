@@ -9,7 +9,7 @@ import { availableParallelism } from "node:os";
  * `docker/development/e2e-workers.sh`.
  */
 export const workerCount = Number(
-  process.env.E2E_WORKERS ?? Math.max(1, Math.round(availableParallelism() * 0.6)),
+  process.env.E2E_WORKERS || Math.max(1, Math.round(availableParallelism() * 0.6)),
 );
 
 /**
