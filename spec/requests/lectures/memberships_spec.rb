@@ -8,13 +8,13 @@ RSpec.describe("Lectures::Memberships", type: :request) do
                       self_materialization_mode: :add_and_remove)
   end
 
-  # An open campaign takes the group in. update_column skips the checks that
-  # the roster is empty and that a campaign opens with all its dates.
+  # An open campaign with the group as its item. update_column skips the
+  # check that a group only joins campaigns while its roster is empty.
   def hold_in_campaign(group)
     group.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
     campaign = create(:registration_campaign, campaignable: lecture)
     create(:registration_item, registration_campaign: campaign, registerable: group)
-    campaign.update_column(:status, Registration::Campaign.statuses[:open]) # rubocop:disable Rails/SkipsModelValidations
+    campaign.update!(status: :open)
   end
 
   before do

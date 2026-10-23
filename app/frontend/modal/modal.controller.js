@@ -11,6 +11,7 @@ export default class extends Controller {
 
   connect() {
     this.modal = Modal.getOrCreateInstance(this.element);
+    this.inContainer = Boolean(this.element.closest("#modal-container"));
     this.markOpen = () => {
       this.isOpen = true;
     };
@@ -41,14 +42,16 @@ export default class extends Controller {
     );
     this.element.removeEventListener("show.bs.modal", this.markOpen);
     this.element.removeEventListener("hidden.bs.modal", this.markClosed);
+    if (this.element.dataset.modalClosingRemoved) return;
 
-    if (this.isOpen) {
+    if (this.isOpen && !this.inContainer) {
       this.closeRemoved();
       return;
     }
 
     if (this.modal) {
       try {
+        if (this.isOpen) this.releasePage();
         const backdrop = document.querySelector(".modal-backdrop");
         if (backdrop) {
           backdrop.remove();
@@ -62,19 +65,27 @@ export default class extends Controller {
   }
 
   /**
-   * A stream may remove the modal while it opens, shows or closes. It is
-   * closed the regular way, which lifts the focus trap and the page's scroll
-   * lock; one still opening is closed once shown. Bootstrap puts an opening
-   * modal back into the page, so it is removed again when hidden.
+   * A modal in the page that a stream removes is closed the regular way,
+   * which ends its focus trap and scroll lock; one still opening is closed
+   * once shown. Not disposed, as that would also drop the window handlers of
+   * the modal that replaced it.
    */
   closeRemoved() {
     const { element, modal } = this;
-    element.addEventListener("hidden.bs.modal", () => {
-      element.remove();
-      modal.dispose();
-    }, { once: true });
+    element.dataset.modalClosingRemoved = "true";
+    element.addEventListener("hidden.bs.modal", () => element.remove(), { once: true });
     element.addEventListener("shown.bs.modal", () => modal.hide(), { once: true });
     modal.hide();
+  }
+
+  /**
+   * One in #modal-container is replaced by the next dialog, which opens at
+   * once, so its page state goes right away rather than after a fade.
+   */
+  releasePage() {
+    document.body.classList.remove("modal-open");
+    document.body.style.removeProperty("overflow");
+    document.body.style.removeProperty("padding-right");
   }
 
   hideModalOnSuccess(event) {

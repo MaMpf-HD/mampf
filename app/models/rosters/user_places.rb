@@ -110,10 +110,13 @@ module Rosters
          LectureMembership.active.where(user: @user)]
       end
 
+      # Groups in the order LectureLeave and the bulk self-service setting lock
+      # them, so that leaving and giving up wait for each other.
       def rosterables
-        Tutorial.where(id: TutorialMembership.where(user: @user).select(:tutorial_id)).to_a +
-          Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).to_a +
-          Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).to_a +
+        Tutorial.where(id: TutorialMembership.where(user: @user).select(:tutorial_id))
+                .order(:id).to_a +
+          Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).order(:id).to_a +
+          Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).order(:id).to_a +
           Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id)).to_a +
           Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id)).to_a
       end

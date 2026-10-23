@@ -6,6 +6,10 @@ module Rosters
     # concerned, and `contact` whether the lecture's staff can still help.
     Blocker = Struct.new(:reason, :title, :contact)
 
+    # Tutorials, then cohorts, then talks, each by id: the order the bulk
+    # self-service setting and UserPlaces take them in.
+    GROUP_LOCK_ORDER = ["Tutorial", "Cohort", "Talk"].freeze
+
     class NotAllowedError < StandardError; end
     class NotParticipatingError < StandardError; end
 
@@ -90,8 +94,9 @@ module Rosters
     end
 
     # Decides again under the locks on a fresh instance, since this one
-    # memoizes its blockers. Grading data found during the removal refuses
-    # like a blocker; one retry covers a deadlock this side lost.
+    # memoizes its blockers. Grading data found during the removal raises
+    # NotAllowedError too; an ActiveRecord::Deadlocked that aborted this
+    # transaction is retried once.
     def leave!
       attempts = 0
       begin
@@ -117,16 +122,18 @@ module Rosters
 
     private
 
-      # In the order the other writers take: campaigns first, drafts too so
-      # none opens meanwhile, as allocation does; the user's groups before the
-      # lecture, as a tutorial's or talk's update touching the lecture does;
-      # the lecture before any membership goes, as the staff's removal does.
-      # A group joined in between is not covered.
+      # Campaigns first, drafts too so none opens meanwhile, as allocation
+      # does; the groups before the lecture, as a group's update touching the
+      # lecture does; the lecture before any membership goes, as the staff's
+      # removal does. Reordering talks and the self-service setting after
+      # finalization lock groups in their own order; a deadlock with them
+      # aborts one side, and only leaving tries again.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)
                               .order(:id).lock.load
-        groups.sort_by { |group| [group.class.name, group.id] }.each(&:lock!)
+        groups.sort_by { |group| [GROUP_LOCK_ORDER.index(group.class.name), group.id] }
+              .each(&:lock!)
         @lecture.lock!
       end
 
@@ -142,9 +149,8 @@ module Rosters
       end
 
       # A tutorial's or cohort's self-service mode is about moving within the
-      # lecture, so only a running campaign holding the group keeps anyone
-      # from leaving. A talk is a commitment to the seminar's schedule and
-      # keeps its own setting.
+      # lecture, so only a running campaign holds it; a talk is a commitment
+      # to the seminar's schedule and keeps its own setting.
       def fixed?(group)
         return !group.allow_self_remove?(@user) if group.is_a?(Talk)
 

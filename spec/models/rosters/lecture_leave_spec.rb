@@ -11,13 +11,13 @@ RSpec.describe(Rosters::LectureLeave) do
                       self_materialization_mode: :add_and_remove)
   end
 
-  # An open campaign takes the group in. update_column skips the checks that
-  # the roster is empty and that a campaign opens with all its dates.
+  # An open campaign with the group as its item. update_column skips the
+  # check that a group only joins campaigns while its roster is empty.
   def hold_in_campaign(group)
     group.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
     campaign = create(:registration_campaign, campaignable: lecture)
     create(:registration_item, registration_campaign: campaign, registerable: group)
-    campaign.update_column(:status, Registration::Campaign.statuses[:open]) # rubocop:disable Rails/SkipsModelValidations
+    campaign.update!(status: :open)
   end
 
   # An exam opens its own registration process. update_columns skips the
@@ -275,6 +275,17 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(statements.index("lock tutorials")).to be < statements.index("lock lectures")
       expect(statements.index("lock lectures"))
         .to be < statements.index("delete tutorial_memberships")
+    end
+
+    it "locks a tutorial before a cohort, as the bulk self-service setting does" do
+      create(:cohort, context: lecture, skip_campaigns: true).add_user_to_roster!(student)
+      tables = []
+      record = lambda do |*, payload|
+        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
+      end
+      ActiveSupport::Notifications.subscribed(record, "sql.active_record") { leave.leave! }
+
+      expect(tables.index("tutorials")).to be < tables.index("cohorts")
     end
 
     it "refuses rather than fails when a grade arrives while leaving" do

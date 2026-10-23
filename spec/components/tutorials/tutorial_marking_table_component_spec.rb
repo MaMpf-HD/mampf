@@ -421,6 +421,32 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       end
     end
 
+    context "with somebody who left during a test's week" do
+      let!(:assignment) do
+        create(:assignment, :with_lecture, lecture: lecture, kind: :test,
+                                           deadline: Time.zone.now.end_of_week)
+      end
+      let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, points_total: 4,
+                                          status: :reviewed)
+      end
+
+      it "lists their marked row before the deadline, for the lecturer and the old tutor" do
+        [lecture, tutorial].each do |scope|
+          rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                   grading_scope: scope)).css("tr")
+
+          expect(rows.find { |tr| tr.text.include?("Lina Berg") }&.text)
+            .to include(I18n.t("assessment.grading_tutorial.left_lecture")), scope.class.name
+        end
+      end
+    end
+
     context "with somebody who left the lecture" do
       let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
 
@@ -448,6 +474,19 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
                                                      grading_scope: lecture))
 
         expect(rendered.text).not_to include("Lina Berg")
+      end
+
+      it "keeps their hand-in as it was, with no button to take it back" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: nil, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: lecture)).css("tr")
+        row = rows.find { |tr| tr.text.include?("Lina Berg") }
+
+        kept = I18n.t("assessment.grading_tutorial.paper_hand_in_kept")
+        expect(row.css("[aria-label='#{kept}']")).to be_present
+        expect(row.css("a[data-turbo-method='patch']")).to be_empty
       end
 
       it "says so in the old tutorial's table too" do

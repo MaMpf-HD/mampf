@@ -297,7 +297,7 @@
                     aria: { label: t("assessment.grading_tutorial.paper_hand_in_remove") } do %>
             <i class="bi bi-inbox-fill"></i>
           <% end %>
-        <% else %>
+        <% elsif !left_lecture? %>
           <%= link_to paper_hand_in_url,
                     class: "btn btn-sm btn-link row-action text-secondary d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
                     data: { turbo_method: :patch },

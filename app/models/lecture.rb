@@ -1076,11 +1076,9 @@ class Lecture < ApplicationRecord
     end
   end
 
-  # All students that lecture staff can reach by registration mail:
-  # everyone with a pending or confirmed registration in one of the
-  # lecture's campaigns that are not completed, plus everyone on the roster
-  # or in one of its cohorts (union, deduplicated). After completion the
-  # roster, not the old registration, says who takes part.
+  # All students that lecture staff can reach by registration mail: the
+  # roster, the cohorts, and the registrations of campaigns not completed;
+  # after completion the roster, not the old registration, says who is in.
   def registration_mail_recipients
     registered_ids = Registration::UserRegistration
                      .where(registration_campaign: registration_campaigns
