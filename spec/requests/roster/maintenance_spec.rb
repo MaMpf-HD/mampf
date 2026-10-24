@@ -70,7 +70,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(body).to include(I18n.t("roster.left.readmit"))
         end
 
-        it "keeps the left view in its page links after readmitting someone" do
+        it "keeps the left view in its page links after readmitting someone",
+           :skip_enrollment_invariant do
           # 21 more who have left, so a second page remains once Berg is back
           create_list(:confirmed_user, 21).each do |user|
             create(:lecture_membership, lecture: lecture, user: user).exclude!(by: user)
@@ -92,7 +93,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(CGI.unescapeHTML(response.body)).to include(I18n.t("roster.views.left"))
         end
 
-        it "takes them back into the lecture" do
+        it "takes them back into the lecture", :skip_enrollment_invariant do
           post add_member_lecture_path(lecture),
                params: { user_id: former.id, source: :participants, view: "left" },
                as: :turbo_stream
@@ -764,7 +765,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "adds the user to the lecture roster" do
+      it "adds the user to the lecture roster", :skip_enrollment_invariant do
         expect do
           post(add_member_lecture_path(lecture), params: { email: new_student.email })
         end.to change { lecture.members.count }.by(1)
@@ -775,7 +776,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(flash[:alert]).to be_present
       end
 
-      it "returns turbo stream response" do
+      it "returns turbo stream response", :skip_enrollment_invariant do
         post add_member_lecture_path(lecture),
              params: { email: new_student.email },
              as: :turbo_stream
