@@ -63,9 +63,6 @@ en:
       status_unassigned: 'Without group'
       action_required: 'Action required'
       group_distribution: 'Group Distribution'
-    filters:
-      all: 'All'
-      unassigned: 'Without group'
     search_hits:
       one: 'There is 1 match under “%{place}”.'
       other: 'There are %{count} matches under “%{place}”.'
@@ -143,8 +140,8 @@ en:
           title: "Superset Principle"
           description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional group to enroll students from tutorials/talks into the lecture is not needed."
         sticky_enrollment:
-          title: "Sticky Enrollment"
-          description: "Once a student joins the lecture roster (via tutorial, talk, or enrollment group), they remain enrolled even if they leave all groups later. This keeps a record of who was enrolled at some point in time. To remove a student completely, use the remove action in the Enrolled tab."
+          title: "Enrollment through groups"
+          description: "A student is enrolled while in a tutorial, a talk or a group with enrollment. Whoever leaves the last of these leaves the lecture too and is listed under 'Left'; points and admission stay stored and count again once the person joins a group."
       phase1:
         title: "1. Choose Your Setup Method"
         campaigns:

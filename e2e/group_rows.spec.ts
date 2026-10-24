@@ -83,7 +83,7 @@ test.describe("the group rows", () => {
       await expect(title).toHaveAttribute("aria-expanded", "true");
     });
 
-  test("show a student removed from a group as unplaced and without group",
+  test("take a student removed from their last group off the lecture, still unplaced",
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });
       const campaign = await factory.create("registration_campaign",
@@ -119,14 +119,19 @@ test.describe("the group rows", () => {
       await page.getByRole("tab", { name: "Groups" }).click();
       await expect(page.getByRole("button", { name: /unplaced/ })).toHaveCount(0);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
-      page.once("dialog", dialog => dialog.accept());
+      page.once("dialog", (dialog) => {
+        expect(dialog.message()).toContain("They are therefore removed from the lecture");
+        void dialog.accept();
+      });
       await page.getByRole("complementary", { name: "Members" })
         .getByRole("button", { name: /from this group/ }).click();
 
       await expect(page.getByRole("button", { name: /1 unplaced/ })).toBeVisible();
 
       await page.getByRole("tab", { name: "Participants" }).click();
-      await expect(participant).toContainText("Without group");
+      await expect(participant).toHaveCount(0);
+      await page.getByRole("link", { name: /^Left/ }).click();
+      await expect(participant).toContainText("Removed on");
     });
 
   test("move a student to another tutorial without dragging",
