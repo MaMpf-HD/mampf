@@ -1,7 +1,6 @@
 namespace :enrollment do
   desc "Report who is enrolled without a place and campaigns that go wrong on their own; " \
-       "APPLY=1 takes the former off their lectures, LECTURE_IDS=1,2 narrows it to some. " \
-       "Run APPLY=1 while nobody can use the app: it takes no locks"
+       "APPLY=1 takes the former off their lectures, LECTURE_IDS=1,2 narrows it to some"
   task reconcile: :environment do
     ids = ENV["LECTURE_IDS"]&.split(",")&.map { |id| Integer(id.strip) }
     if ids

@@ -57,6 +57,23 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(limbo.reload.lectures).not_to include(lecture)
     end
 
+    # A place joined meanwhile takes the same lock (see
+    # Rosters::MaintenanceService#add_user!), so it is not missed.
+    it "decides under the lecture's lock" do
+      statements = []
+      record = lambda do |*, payload|
+        sql = payload[:sql]
+        statements << "lock #{sql[/FROM "(\w+)"/, 1]}" if sql.include?("FOR UPDATE")
+        statements << "update #{sql[/UPDATE "(\w+)"/, 1]}" if sql.start_with?("UPDATE")
+      end
+      ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
+        reconciliation.apply!
+      end
+
+      expect(statements.index("lock lectures"))
+        .to be < statements.index("update lecture_memberships")
+    end
+
     it "keeps their list, so that they stay in its audience" do
       list = create(:cohort, context: lecture)
       list.add_user_to_roster!(limbo)
