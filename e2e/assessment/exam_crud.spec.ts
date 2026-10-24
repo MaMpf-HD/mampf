@@ -124,6 +124,9 @@ test.describe("exams", () => {
     const candidate = await factory.create("confirmed_user", [], {
       name_in_tutorials: "Ada Lovelace",
     });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: candidate.id,
+    });
 
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await page.open("Main Exam");
@@ -137,6 +140,31 @@ test.describe("exams", () => {
       .toBeVisible();
     await expect(page.pane.getByRole("cell", { name: "Ada Lovelace" }))
       .toBeVisible();
+  });
+
+  test("refuses somebody not enrolled in the lecture, saying how they come in", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    await factory.create("exam", ["with_date"], {
+      lecture_id: lecture.id,
+      title: "Main Exam",
+      skip_campaigns: true,
+    });
+    const stranger = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Grace Hopper",
+    });
+
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await page.open("Main Exam");
+    await page.tab("Roster").click();
+    await page.pane.getByLabel("Add person by email").fill(stranger.email);
+    await page.pane.getByRole("button", { name: "Add", exact: true }).click();
+
+    await expect(teacher.page.getByText(/^Grace Hopper is not enrolled in the lecture/))
+      .toBeVisible();
+    await expect(page.pane.getByRole("cell", { name: "Grace Hopper" })).toHaveCount(0);
   });
 
   test("removes somebody from the participants again", async ({

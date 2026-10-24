@@ -584,12 +584,27 @@ RSpec.describe("Exams", type: :request) do
     before { exam.registration_campaign.update!(status: :completed) }
 
     context "as a teacher" do
-      before { sign_in teacher }
+      before do
+        sign_in teacher
+        exam.lecture.add_user_to_roster!(new_student)
+      end
 
       it "adds the user as a participant" do
         expect do
           post(participants_exam_path(exam), params: { user_id: new_student.id }, as: :turbo_stream)
         end.to change { exam.roster_entries.count }.by(1)
+      end
+
+      # Whoever is to sit the exam without a tutorial comes in through a group.
+      it "refuses someone not enrolled in the lecture, saying how they come in" do
+        stranger = create(:confirmed_user, locale: "en")
+
+        expect do
+          post(participants_exam_path(exam), params: { user_id: stranger.id }, as: :turbo_stream)
+        end.not_to(change { exam.roster_entries.count })
+        expect(CGI.unescapeHTML(response.body))
+          .to include(I18n.t("roster.errors.exam_requires_enrollment",
+                             user: stranger.tutorial_name.presence || stranger.email))
       end
 
       it "sends an email when a participant is successfully added" do
