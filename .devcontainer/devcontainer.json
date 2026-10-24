@@ -73,9 +73,8 @@
             "label": "MaMpf App (needs manual start)",
             "onAutoForward": "openBrowserOnce"
         },
-        // Rails/Puma behind Thruster; serves no assets, so never open it
         "3001": {
-            "label": "Rails behind Thruster (use 3000 instead)",
+            "label": "Rails/Puma (use 3000 instead)",
             "onAutoForward": "ignore"
         },
         // Vite
