@@ -31,9 +31,14 @@ module Roster
                          fallback_location: fallback_path)
     end
 
-    rescue_from "Rosters::MaintenanceService::NotEnrolledError" do
-      respond_with_flash(:alert, t("roster.errors.exam_requires_enrollment",
-                                   user: @member_user&.info),
+    rescue_from "Rosters::MaintenanceService::LectureGradingDataPresentError" do
+      respond_with_flash(:alert, t("roster.errors.lecture_grading_data_present"),
+                         fallback_location: fallback_path)
+    end
+
+    rescue_from "Rosters::MaintenanceService::MoveLeavesLectureError" do
+      respond_with_flash(:alert, t("roster.errors.move_leaves_lecture",
+                                   user: @member_user&.info, group: @rosterable.title),
                          fallback_location: fallback_path)
     end
 

@@ -4,7 +4,9 @@ module Rosters
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
     class GradingDataPresentError < StandardError; end
+    class LectureGradingDataPresentError < GradingDataPresentError; end
     class NotEnrolledError < StandardError; end
+    class MoveLeavesLectureError < StandardError; end
 
     # Raised to unwind the move. ActiveRecord::Rollback cannot do that job here:
     # the nested with_lock transactions swallow it and commit anyway.
@@ -12,6 +14,7 @@ module Rosters
 
     def add_user!(user, rosterable, force: false, source_campaign_id: nil)
       added = rosterable.with_lock do
+        lock_lecture_of!(rosterable)
         add_user_without_lock!(user,
                                rosterable,
                                force: force,
@@ -25,25 +28,25 @@ module Rosters
     # notify: false, since the mail job is enqueued even if that transaction
     # rolls back.
     #
-    # Enrollment follows the places: whoever loses their last place leaves
-    # the lecture with it, everything they had there included (see
-    # LectureLeave#only_place?), so that nobody stays enrolled without one.
-    # The group is locked before the lecture, as leaving the lecture does.
-    # Returns the roster the user was taken off, the lecture in that case,
-    # or nil.
+    # Whoever loses their last place leaves the lecture with it, and their
+    # registrations there are withdrawn. Locks the campaigns, the group and
+    # then the lecture, as finalization and leaving do. Returns the roster
+    # the user was taken off, the lecture in that case, or nil.
     def remove_user!(user, rosterable, notify: true, by: nil)
-      lecture = rosterable.lecture if place?(rosterable)
+      lecture = rosterable.is_a?(Lecture) ? rosterable : (rosterable.lecture if rosterable.place?)
+      places = UserPlaces.new(user)
       left = ActiveRecord::Base.transaction do
-        withdraw_registrations!(user, rosterable)
+        places.lock_campaigns!([lecture]) if lecture && leaves_lecture?(user, rosterable, lecture)
         rosterable.lock!
         lecture&.lock!
-        last = lecture && LectureLeave.new(lecture, user).only_place?(rosterable)
+        leaving = lecture.present? && leaves_lecture?(user, rosterable, lecture)
         ensure_no_grading_data!(user, rosterable)
-        ensure_no_grading_data!(user, lecture) if last
+        ensure_no_grading_data!(user, lecture) if leaving && lecture != rosterable
         next unless remove_user_without_lock!(user, rosterable, by: by)
-        next rosterable unless last
+        next rosterable unless leaving
 
-        remove_user_without_lock!(user, lecture, by: by)
+        remove_user_without_lock!(user, lecture, by: by) unless lecture == rosterable
+        places.withdraw_registrations!([lecture])
         lecture
       end
       RosterNotificationMailer.removed(user, left) if left && notify
@@ -62,8 +65,9 @@ module Rosters
       return false if from_rosterable == to_rosterable
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
+        lock_lecture_of!(from_rosterable, to_rosterable)
         raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
-        raise(MoveWithoutEffectError) if leaves_last_place?(user, from_rosterable, to_rosterable)
+        raise(MoveLeavesLectureError) if leaves_last_place?(user, from_rosterable, to_rosterable)
 
         ensure_no_grading_data!(user, from_rosterable)
 
@@ -80,14 +84,25 @@ module Rosters
 
     private
 
-      def place?(rosterable)
-        LectureLeave.place?(rosterable)
+      # Whether taking the user off the rosterable takes them out of the
+      # lecture: the lecture itself, or their last place in it.
+      def leaves_lecture?(user, rosterable, lecture)
+        leave = LectureLeave.new(lecture, user)
+        rosterable == lecture ? leave.enrolled? : leave.only_place?(rosterable)
+      end
+
+      # Locks the lecture after the groups, as remove_user! does, wherever a
+      # change can enroll or rests on enrollment: a place, or an exam list,
+      # which takes members only.
+      def lock_lecture_of!(*rosterables)
+        rosterables.find { |rosterable| rosterable.place? || rosterable.is_a?(Exam) }
+                   &.lecture&.lock!
       end
 
       # A move onto a list or an exam would take the last place without
       # anything that enrolls in its stead.
       def leaves_last_place?(user, from_rosterable, to_rosterable)
-        return false unless place?(from_rosterable) && !place?(to_rosterable)
+        return false unless from_rosterable.place? && !to_rosterable.place?
 
         lecture = from_rosterable.lecture
         lecture.present? && LectureLeave.new(lecture, user).only_place?(from_rosterable)
@@ -104,16 +119,6 @@ module Rosters
               "User #{user.id} is not enrolled in lecture #{rosterable.lecture_id}")
       end
 
-      # Withdraws the registrations of someone removed from a lecture, lest a
-      # finalization put them back into its groups or exam lists. Before the
-      # lecture is locked, since finalization locks its campaign first.
-      def withdraw_registrations!(user, rosterable)
-        return unless rosterable.is_a?(Lecture)
-        return unless rosterable.lecture_memberships.exists?(user: user)
-
-        UserPlaces.new(user).withdraw_registrations!([rosterable])
-      end
-
       # Only rosterables that *are* the assessable can lose a result this way —
       # a talk or an exam owns its assessment, so leaving it means leaving the
       # gradebook behind. A tutorial is merely where a result is graded; the
@@ -127,7 +132,8 @@ module Rosters
         held ||= rosterable.is_a?(Lecture) && graded_on_a_talk_or_exam?(user, rosterable)
         return unless held
 
-        raise(GradingDataPresentError,
+        error = rosterable.is_a?(Lecture) ? LectureGradingDataPresentError : GradingDataPresentError
+        raise(error,
               "#{rosterable.class.name} #{rosterable.id} holds grading data " \
               "for user #{user.id}")
       end
@@ -232,7 +238,7 @@ module Rosters
       end
 
       def propagate_to_lecture!(user, rosterable)
-        return unless place?(rosterable)
+        return unless rosterable.place?
 
         lecture = rosterable.lecture
         return unless lecture.is_a?(Lecture)

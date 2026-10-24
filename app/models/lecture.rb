@@ -1187,6 +1187,18 @@ class Lecture < ApplicationRecord
     student_performance_certifications.reset_computed!
   end
 
+  # One query per kind of place (see Rosters::Rosterable#place?), each
+  # selecting the ids of the users holding one, a user once per place held;
+  # user_ids narrows them.
+  def place_user_id_queries(user_ids = nil)
+    { TutorialMembership.where(tutorial: tutorials) => :user_id,
+      SpeakerTalkJoin.where(talk: talks) => :speaker_id,
+      CohortMembership.where(cohort: cohorts.where(propagate_to_lecture: true)) => :user_id }
+      .map do |scope, column|
+        (user_ids ? scope.where(column => user_ids) : scope).select(column)
+      end
+  end
+
   # The certifications of everybody but those who have left. Theirs stay
   # stored for a return, but have no record behind them while they are away,
   # so the eligibility pages neither count nor flag them.

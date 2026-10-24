@@ -19,8 +19,8 @@ module Rosters
       Rosters::MaintenanceService.new.add_user!(@user, @rosterable, force: false)
     end
 
-    # An enrolled student's last place goes with the lecture alone (see
-    # Rosters::LectureLeave), so that nobody stays enrolled without one.
+    # Refuses an enrolled student's last place, which they leave only by
+    # leaving the lecture (see Rosters::LectureLeave).
     # The group is locked before the lecture, as leaving the lecture does; the
     # lecture's lock keeps two tabs from each leaving a group while counting
     # on the other one.

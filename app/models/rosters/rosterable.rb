@@ -141,6 +141,13 @@ module Rosters
       nil
     end
 
+    # Whether being here enrolls in the lecture: a tutorial, a talk or a
+    # cohort with enrollment. Any other cohort is a list, and an exam list
+    # takes members rather than making them (see Lecture#place_user_id_queries).
+    def place?
+      is_a?(Tutorial) || is_a?(Talk) || (is_a?(Cohort) && propagate_to_lecture?)
+    end
+
     def config_allow_self_add?
       SELF_ADD_MODES.include?(self_materialization_mode.to_sym)
     end
@@ -285,19 +292,12 @@ module Rosters
       end
     end
 
-    # Only the groups that enroll do; an exam list takes members already
-    # (see Exam#registrable_by?) and a list without enrollment is none.
+    # Enrolls the users in the lecture when this group is a place there.
     def propagate_to_lecture!(user_ids)
-      return if user_ids.empty?
-
-      return if is_a?(Exam)
-      return if is_a?(Cohort) && !propagate_to_lecture
-
-      return unless respond_to?(:lecture)
+      return if user_ids.empty? || !place?
 
       parent = lecture
       return unless parent.is_a?(Lecture)
-      return if parent == self
 
       parent.ensure_roster_membership!(user_ids)
     end
