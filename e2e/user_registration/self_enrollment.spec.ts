@@ -10,7 +10,7 @@ async function openSelfEnrollment(page: Page): Promise<void> {
 }
 
 test.describe("student self-enrollment", () => {
-  test("adds and removes the student from a self-managed tutorial", async ({
+  test("adds the student to a self-managed tutorial, kept until they leave the course", async ({
     factory,
     student,
   }) => {
@@ -35,29 +35,12 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    const leaveButton = home.participation("Self-managed Tutorial")
-      .getByRole("button", { name: "Leave" });
-
-    // Declined, the question leaves the student in the group.
-    const declined = student.page.waitForEvent("dialog");
-    const firstClick = leaveButton.click();
-    const question = await declined;
-    expect(question.message()).toBe(
-      "Leave “Self-managed Tutorial”? You can join again only while a place is free.");
-    await question.dismiss();
-    await firstClick;
-    await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
-
-    const accepted = student.page.waitForEvent("dialog");
-    const secondClick = leaveButton.click();
-    await (await accepted).accept();
-    await secondClick;
-
-    await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
-    await expect(student.page.getByRole("heading", { name: "Your participation" })).toBeFocused();
-    await expect(student.page.getByRole("button", {
-      name: "Register for Self-managed Tutorial",
-    })).toBeVisible();
+    // Joining enrolled the student, so this is their only group now: it goes
+    // with the course alone.
+    await expect(home.participation("Self-managed Tutorial"))
+      .toContainText("Your only group: you leave it only together with the course.");
+    await expect(home.participation("Self-managed Tutorial")
+      .getByRole("button", { name: "Leave tutorial" })).toHaveCount(0);
   });
 
   test("shows a full self-managed tutorial without an unsafe action", async ({

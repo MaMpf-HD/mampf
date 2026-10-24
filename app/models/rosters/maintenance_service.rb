@@ -4,6 +4,7 @@ module Rosters
     # constraints and ensuring transactional integrity
     class CapacityExceededError < StandardError; end
     class GradingDataPresentError < StandardError; end
+    class NotEnrolledError < StandardError; end
 
     # Raised to unwind the move. ActiveRecord::Rollback cannot do that job here:
     # the nested with_lock transactions swallow it and commit anyway.
@@ -23,13 +24,29 @@ module Rosters
     # A caller that removes the user within a larger transaction passes
     # notify: false, since the mail job is enqueued even if that transaction
     # rolls back.
+    #
+    # Enrollment follows the places: whoever loses their last place leaves
+    # the lecture with it, everything they had there included (see
+    # LectureLeave#only_place?), so that nobody stays enrolled without one.
+    # The group is locked before the lecture, as leaving the lecture does.
+    # Returns the roster the user was taken off, the lecture in that case,
+    # or nil.
     def remove_user!(user, rosterable, notify: true, by: nil)
-      removed = rosterable.with_lock do
+      lecture = rosterable.lecture if place?(rosterable)
+      left = ActiveRecord::Base.transaction do
+        rosterable.lock!
+        lecture&.lock!
+        last = lecture && LectureLeave.new(lecture, user).only_place?(rosterable)
         ensure_no_grading_data!(user, rosterable)
-        remove_user_without_lock!(user, rosterable, by: by)
+        ensure_no_grading_data!(user, lecture) if last
+        next unless remove_user_without_lock!(user, rosterable, by: by)
+        next rosterable unless last
+
+        remove_user_without_lock!(user, lecture, by: by)
+        lecture
       end
-      RosterNotificationMailer.removed(user, rosterable) if removed && notify
-      removed
+      RosterNotificationMailer.removed(user, left) if left && notify
+      left
     end
 
     # Moving out of the lecture itself means out of the group the target
@@ -44,6 +61,7 @@ module Rosters
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
         raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
+        raise(MoveWithoutEffectError) if leaves_last_place?(user, from_rosterable, to_rosterable)
 
         ensure_no_grading_data!(user, from_rosterable)
 
@@ -59,6 +77,30 @@ module Rosters
     end
 
     private
+
+      def place?(rosterable)
+        LectureLeave.place?(rosterable)
+      end
+
+      # A move onto a list or an exam would take the last place without
+      # anything that enrolls in its stead.
+      def leaves_last_place?(user, from_rosterable, to_rosterable)
+        return false unless place?(from_rosterable) && !place?(to_rosterable)
+
+        lecture = from_rosterable.lecture
+        lecture.present? && LectureLeave.new(lecture, user).only_place?(from_rosterable)
+      end
+
+      # An exam list takes the lecture's members only, as registering for it
+      # does (see Exam#registrable_by?); whoever is to sit it without a
+      # tutorial comes in through a group first.
+      def ensure_enrolled_for_exam!(user, rosterable)
+        return unless rosterable.is_a?(Exam)
+        return if rosterable.lecture.lecture_memberships.exists?(user: user)
+
+        raise(NotEnrolledError,
+              "User #{user.id} is not enrolled in lecture #{rosterable.lecture_id}")
+      end
 
       # Only rosterables that *are* the assessable can lose a result this way —
       # a talk or an exam owns its assessment, so leaving it means leaving the
@@ -98,6 +140,7 @@ module Rosters
         return if user_in_roster?(user, rosterable)
 
         ensure_uniqueness!(user, rosterable)
+        ensure_enrolled_for_exam!(user, rosterable)
 
         unless force || within_capacity?(rosterable)
           raise(CapacityExceededError,
@@ -177,8 +220,7 @@ module Rosters
       end
 
       def propagate_to_lecture!(user, rosterable)
-        return if rosterable.is_a?(Cohort) && !rosterable.propagate_to_lecture?
-        return unless rosterable.respond_to?(:lecture)
+        return unless place?(rosterable)
 
         lecture = rosterable.lecture
         return unless lecture.is_a?(Lecture)

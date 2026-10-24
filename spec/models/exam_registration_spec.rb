@@ -396,13 +396,11 @@ RSpec.describe(Exam, type: :model) do
     let(:user1) { create(:confirmed_user) }
     let(:user2) { create(:confirmed_user) }
 
-    it "propagates users to the lecture roster" do
-      expect(lecture.lecture_memberships.where(user: [user1, user2])).to be_empty
-
+    # An exam list takes the lecture's members; it is no group that enrolls.
+    it "enrolls nobody in the lecture" do
       exam.materialize_allocation!(user_ids: [user1.id, user2.id], campaign: campaign)
 
-      expect(lecture.lecture_memberships.where(user: user1)).to exist
-      expect(lecture.lecture_memberships.where(user: user2)).to exist
+      expect(lecture.lecture_memberships.where(user: [user1, user2])).to be_empty
     end
 
     it "adds new users to the exam roster" do

@@ -30,17 +30,17 @@ de:
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
   lecture_home:
     leave:
-      title: "Teilnahme beenden"
+      title: "Veranstaltung verlassen"
       intro: "Das passiert, wenn Du die Teilnahme beendest:"
       consequences:
         groups: "Du verlässt %{groups}."
         campaigns: "Deine Anmeldungen zu %{campaigns} werden zurückgezogen."
         admission: "Deine Klausurzulassung bleibt gespeichert und gilt wieder, wenn Du zurückkommst. Zur Klausur anmelden kannst Du Dich aber nur, solange Du teilnimmst."
         points: "Deine Punkte bleiben gespeichert und sind wieder da, wenn Du wieder eintrittst."
-        dashboard: "Die Veranstaltung verschwindet von Deinem Dashboard."
-        dashboard_restricted: "Die Veranstaltung verschwindet von Deinem Dashboard, und für ihre Materialien brauchst Du wieder den Zugangsschlüssel."
+        dashboard: "Die Veranstaltung verschwindet von Deinem Dashboard, und Du bekommst keine Mails mehr von ihr."
+        dashboard_restricted: "Die Veranstaltung verschwindet von Deinem Dashboard, Du bekommst keine Mails mehr von ihr, und für ihre Materialien brauchst Du wieder den Zugangsschlüssel."
         rejoin: "Wieder eintreten kannst Du über eine offene Anmeldung oder die Selbsteintragung, sonst nur über die Lehrenden."
-      button: "Teilnahme beenden"
+      button: "Veranstaltung verlassen"
       confirmation_label: "Gib zum Bestätigen „%{code}“ ein:"
       blocked: "Du kannst die Teilnahme gerade nicht selbst beenden:"
       blockers:

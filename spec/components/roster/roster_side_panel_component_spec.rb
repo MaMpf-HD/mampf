@@ -674,4 +674,38 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       expect(c.preference_based_campaign?).to be_nil
     end
   end
+
+  # Removing someone from their last place takes them off the lecture, which
+  # the confirmation has to say before it happens.
+  describe "#remove_confirmation" do
+    let(:lecture) { create(:lecture) }
+    let(:mo) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
+    let(:student) { create(:confirmed_user) }
+    let(:panel) { described_class.new(registerable: mo, students: [student]) }
+
+    before do
+      lecture.add_user_to_roster!(student)
+      mo.add_user_to_roster!(student)
+    end
+
+    it "says that the last place takes the lecture along" do
+      expect(panel.remove_confirmation(student))
+        .to eq(I18n.t("roster.warnings.confirm_kick_from_only_group"))
+    end
+
+    it "names the exam lists the lecture takes along" do
+      create(:exam, :without_campaign, lecture: lecture, title: "Final")
+        .add_user_to_roster!(student)
+
+      expect(panel.remove_confirmation(student))
+        .to eq(I18n.t("roster.warnings.confirm_kick_from_only_group_exams", exams: "Final"))
+    end
+
+    it "asks as before while another place remains" do
+      create(:cohort, :enrollment, context: lecture).add_user_to_roster!(student)
+
+      expect(panel.remove_confirmation(student))
+        .to eq(I18n.t("roster.warnings.confirm_kick_from_group"))
+    end
+  end
 end

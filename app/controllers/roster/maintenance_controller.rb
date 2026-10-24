@@ -31,6 +31,12 @@ module Roster
                          fallback_location: fallback_path)
     end
 
+    rescue_from "Rosters::MaintenanceService::NotEnrolledError" do
+      respond_with_flash(:alert, t("roster.errors.exam_requires_enrollment",
+                                   user: @member_user&.info),
+                         fallback_location: fallback_path)
+    end
+
     rescue_from RosterLockedError do
       respond_with_flash(:alert, t("roster.errors.item_locked"), fallback_location: fallback_path)
     end
@@ -112,9 +118,9 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
-      Rosters::MaintenanceService.new.remove_user!(user, @rosterable, by: current_user)
+      left = Rosters::MaintenanceService.new.remove_user!(user, @rosterable, by: current_user)
 
-      flash.now[:notice] = t("roster.messages.user_removed", user: user.info)
+      flash.now[:notice] = removal_notice(user, left)
 
       render_membership_streams(stream_builder.streams)
     end
@@ -197,11 +203,9 @@ module Roster
       def setup_participants
         query = Rosters::ParticipantQuery.new(@lecture, params).call
 
-        @participants_filter = query.filter_mode
         @participants_view = query.view
         @participants_campaign = query.campaign
         @total_participants_count = query.total_count
-        @unassigned_participants_count = query.unassigned_count
         @registered_participants_count = query.registered_count
         @left_participants_count = query.left_count
         @search_string = @mparams.search
@@ -221,7 +225,6 @@ module Roster
           group_type: @group_type,
           participants: @participants,
           pagy: @pagy,
-          filter_mode: @participants_filter,
           view: @participants_view,
           campaign: @participants_campaign,
           search_string: @search_string,
@@ -232,7 +235,6 @@ module Roster
       def participants_counts
         {
           total: @total_participants_count,
-          unassigned: @unassigned_participants_count,
           registered: @registered_participants_count,
           left: @left_participants_count
         }
@@ -286,12 +288,10 @@ module Roster
           participants_state: {
             participants: @participants,
             pagy: @pagy,
-            filter_mode: @participants_filter,
             view: @participants_view,
             campaign: @participants_campaign,
             search_string: @search_string,
             total_count: @total_participants_count,
-            unassigned_count: @unassigned_participants_count,
             registered_count: @registered_participants_count,
             left_count: @left_participants_count
           },
@@ -306,6 +306,15 @@ module Roster
 
         @group_type ||= @mparams.group_type
         setup_participants
+      end
+
+      def removal_notice(user, left)
+        if left.is_a?(Lecture) && !@rosterable.is_a?(Lecture)
+          return t("roster.messages.user_removed_with_only_group",
+                   user: user.info, group: @rosterable.title)
+        end
+
+        t("roster.messages.user_removed", user: user.info)
       end
 
       def move_notice(user, target)

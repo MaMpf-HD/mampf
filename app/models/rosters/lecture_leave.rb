@@ -61,6 +61,48 @@ module Rosters
       self.class.normalize(input) == self.class.normalize(confirmation_code)
     end
 
+    # Of the given members of a group, those for whom it is the last place in
+    # the lecture they are enrolled in (see #only_place?), for a whole roster
+    # at once.
+    def self.only_place_user_ids(group, user_ids)
+      return [] unless place?(group)
+
+      lecture = group.lecture
+      return [] if lecture.nil? || user_ids.empty?
+
+      places = TutorialMembership.where(tutorial: Tutorial.where(lecture: lecture),
+                                        user_id: user_ids).pluck(:user_id) +
+               SpeakerTalkJoin.where(talk: Talk.where(lecture: lecture),
+                                     speaker_id: user_ids).pluck(:speaker_id) +
+               CohortMembership.where(cohort: Cohort.where(context: lecture,
+                                                           propagate_to_lecture: true),
+                                      user_id: user_ids).pluck(:user_id)
+      single = places.tally.select { |_, count| count == 1 }.keys
+      return [] if single.empty?
+
+      members = group.roster_entries.where(group.roster_user_id_column => single)
+                     .select(group.roster_user_id_column)
+      lecture.lecture_memberships.where(user_id: members).pluck(:user_id)
+    end
+
+    # Whether the group enrolls: a tutorial, a talk or a cohort with
+    # enrollment. A cohort without enrollment is a list one can leave, but no
+    # place; an exam list takes members, it does not make them.
+    def self.place?(group)
+      group.is_a?(Tutorial) || group.is_a?(Talk) ||
+        (group.is_a?(Cohort) && group.propagate_to_lecture?)
+    end
+
+    def places
+      @places ||= groups.select { |group| self.class.place?(group) }
+    end
+
+    # Whether the group is the last place of an enrolled student: it goes
+    # with the lecture alone, so that nobody stays enrolled without a place.
+    def only_place?(group)
+      enrolled? && places == [group]
+    end
+
     def groups
       @groups ||=
         Tutorial.where(lecture: @lecture,

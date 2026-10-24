@@ -62,7 +62,7 @@ class ParticipationComponent < ViewComponent::Base
                          type: "button",
                          class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
                          data: { bs_toggle: "modal",
-                                 bs_target: "##{LeaveLectureComponent::ID}" })
+                                 bs_target: "##{LeaveLectureComponent.dialog_id(@lecture)}" })
     end
 
     def roster_rows
@@ -70,7 +70,8 @@ class ParticipationComponent < ViewComponent::Base
         result = released_result(rosterable)
         Row.new(label: helpers.roster_type_text(rosterable),
                 title: rosterable.title,
-                lines: meta_lines(rosterable) + result_lines(result),
+                lines: meta_lines(rosterable) + result_lines(result) +
+                       [only_group_line(rosterable)].compact,
                 badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
                 actions: leave_action(rosterable),
@@ -241,25 +242,58 @@ class ParticipationComponent < ViewComponent::Base
 
     def leave_action(rosterable)
       return unless rosterable.allow_self_remove?(@user)
+      return if only_group?(rosterable)
 
-      helpers.button_to(t("registration.user_registration.participation.leave"),
+      helpers.button_to(leave_label(rosterable),
                         helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path",
                                             rosterable.id),
                         method: :delete, class: "btn btn-sm btn-outline-secondary",
                         form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
     end
 
+    # An enrolled student's only group is left with the lecture alone, so
+    # that nobody stays enrolled without a group; its row says so where the
+    # leave button would be.
+    def only_group?(rosterable)
+      @leave.only_place?(rosterable)
+    end
+
+    def only_group_line(rosterable)
+      return unless rosterable.allow_self_remove?(@user) && only_group?(rosterable)
+
+      t("registration.user_registration.participation.only_group")
+    end
+
+    def leave_label(rosterable)
+      kind = { Tutorial => "tutorial", Talk => "talk" }.fetch(rosterable.class, "group")
+      t("registration.user_registration.participation.leave_#{kind}")
+    end
+
     # Says whether the way back is open: a group that only lets students leave
-    # takes them back through its staff alone.
+    # takes them back through its staff alone. Leaving a group keeps the
+    # lecture, which students do not expect, so it says that too.
     def leave_confirmation(rosterable)
-      key = if !rosterable.config_allow_self_add?
-        "leave_confirm_final"
+      notes = []
+      notes << "leave_no_sheets" if rosterable.is_a?(Tutorial)
+      notes << "leave_stays_enrolled" if @leave.enrolled?
+      [leave_confirmation_base(rosterable),
+       *notes.map { |note| t("registration.user_registration.participation.#{note}") }]
+        .join(" ")
+    end
+
+    def leave_confirmation_base(rosterable)
+      t("registration.user_registration.participation.leave_confirm_#{rejoin_key(rosterable)}",
+        group: rosterable.title)
+    end
+
+    def rejoin_key(rosterable)
+      if !rosterable.config_allow_self_add?
+        "final"
       elsif rosterable.capacity
-        "leave_confirm_while_free"
+        "while_free"
       else
-        "leave_confirm_rejoin"
+        "rejoin"
       end
-      t("registration.user_registration.participation.#{key}", group: rosterable.title)
     end
 
     def preference_note(rosterable)

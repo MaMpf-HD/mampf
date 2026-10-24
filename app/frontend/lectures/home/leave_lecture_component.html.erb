@@ -1,8 +1,8 @@
-<% title_id = "#{LeaveLectureComponent::ID}-title" %>
+<% title_id = "#{dialog_id}-title" %>
 
 <div
   class="modal fade"
-  id="<%= LeaveLectureComponent::ID %>"
+  id="<%= dialog_id %>"
   tabindex="-1"
   aria-labelledby="<%= title_id %>"
   aria-hidden="true"
@@ -63,8 +63,10 @@
 
             <%= form.label :confirmation,
                            t("lecture_home.leave.confirmation_label", code: confirmation_code),
+                           for: confirmation_id,
                            class: "form-label" %>
             <%= form.text_field :confirmation,
+                                id: confirmation_id,
                                 class: "form-control",
                                 autocomplete: "off",
                                 data: {

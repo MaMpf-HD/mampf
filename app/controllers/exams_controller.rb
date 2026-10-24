@@ -207,6 +207,9 @@ class ExamsController < ApplicationController
                                     name: user.tutorial_name.presence || user.email)
           rescue ActiveRecord::RecordInvalid
             flash.now[:error] = t("assessment.registration_tab.already_registered")
+          rescue Rosters::MaintenanceService::NotEnrolledError
+            flash.now[:error] = t("roster.errors.exam_requires_enrollment",
+                                  user: user.tutorial_name.presence || user.email)
           end
         end
         @active_tab = "registration"

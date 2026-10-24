@@ -5,6 +5,7 @@ module Rosters
     class SelfAddNotAllowedError < StandardError; end
     class SelfRemoveNotAllowedError < StandardError; end
     class LectureHasOtherRosterEntryError < StandardError; end
+    class LastGroupError < StandardError; end
 
     def initialize(rosterable, user)
       @rosterable = rosterable
@@ -18,10 +19,20 @@ module Rosters
       Rosters::MaintenanceService.new.add_user!(@user, @rosterable, force: false)
     end
 
+    # An enrolled student's last place goes with the lecture alone (see
+    # Rosters::LectureLeave), so that nobody stays enrolled without one.
+    # The group is locked before the lecture, as leaving the lecture does; the
+    # lecture's lock keeps two tabs from each leaving a group while counting
+    # on the other one.
     def self_remove!
-      ensure_rosterable_unlocked!
-      ensure_rosterable_allow_self_remove!
-      Rosters::MaintenanceService.new.remove_user!(@user, @rosterable)
+      ActiveRecord::Base.transaction do
+        @rosterable.lock!
+        @rosterable.lecture&.lock!
+        ensure_rosterable_unlocked!
+        ensure_rosterable_allow_self_remove!
+        ensure_not_last_group!
+        Rosters::MaintenanceService.new.remove_user!(@user, @rosterable)
+      end
     end
 
     # Leaves `from` for this rosterable in one step, so the old place is kept
@@ -42,6 +53,13 @@ module Rosters
     end
 
     private
+
+      def ensure_not_last_group!
+        lecture = @rosterable.lecture
+        return unless lecture
+
+        raise(LastGroupError) if Rosters::LectureLeave.new(lecture, @user).only_place?(@rosterable)
+      end
 
       def ensure_rosterable_unlocked!
         raise(RosterLockedError) if @rosterable.locked?

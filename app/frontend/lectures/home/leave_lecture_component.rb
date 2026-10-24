@@ -1,5 +1,7 @@
 class LeaveLectureComponent < ViewComponent::Base
-  ID = "leave-lecture-dialog".freeze
+  def self.dialog_id(lecture)
+    "leave-lecture-dialog-#{lecture.id}"
+  end
 
   def initialize(lecture:, leave:)
     super()
@@ -12,6 +14,16 @@ class LeaveLectureComponent < ViewComponent::Base
   end
 
   delegate :blockers, :confirmation_code, to: :@leave
+
+  def dialog_id
+    self.class.dialog_id(@lecture)
+  end
+
+  # Named after the dialog, which is named after its lecture, so that the
+  # label finds its own field.
+  def confirmation_id
+    "#{dialog_id}-confirmation"
+  end
 
   def contact?
     blockers.any?(&:contact)

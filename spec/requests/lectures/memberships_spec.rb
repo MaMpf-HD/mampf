@@ -31,7 +31,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       body = response.body.squish
       expect(CGI.unescapeHTML(body))
         .to include("#{lecture.sort_localized} · #{lecture.course.title}")
-      expect(body).to include(%(data-bs-target="##{LeaveLectureComponent::ID}"))
+      expect(body).to include(%(data-bs-target="##{LeaveLectureComponent.dialog_id(lecture)}"))
       expect(body).to include(I18n.t("lecture_home.leave.consequences.groups", groups: "Mo 10"))
       expect(body).to include(%(action="#{lecture_membership_path(lecture)}"))
       expect(CGI.unescapeHTML(body)).to include(
@@ -69,7 +69,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
 
       get lecture_home_path(lecture)
 
-      expect(response.body).not_to include(LeaveLectureComponent::ID)
+      expect(response.body).not_to include(LeaveLectureComponent.dialog_id(lecture))
     end
   end
 

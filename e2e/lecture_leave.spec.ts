@@ -48,6 +48,21 @@ test.describe("leaving a course", () => {
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
+  test("leaves the only tutorial with the course alone", async ({ factory, student }) => {
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
+    const { page } = student;
+
+    await page.goto(`/lectures/${lecture.id}`);
+    const tutorialRow = page.getByTestId("participation-row").filter({ hasText: "Mo 10" });
+    await expect(tutorialRow)
+      .toContainText("Your only group: you leave it only together with the course.");
+    await expect(tutorialRow.getByRole("button")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Leave course" }).click();
+    await expect(page.getByRole("dialog", { name: "Leave this course" })
+      .getByText("You leave Mo 10.")).toBeVisible();
+  });
+
   test("releases the page when a stream replaces the open dialog", async ({
     factory, student,
   }) => {

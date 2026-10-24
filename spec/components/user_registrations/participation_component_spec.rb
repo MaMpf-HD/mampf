@@ -430,20 +430,61 @@ RSpec.describe(ParticipationComponent, type: :component) do
 
     it "warns that a group which only lets students leave takes nobody back" do
       expect(confirmation(:remove_only))
-        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_final",
-                      group: "Mo 10"))
+        .to start_with(I18n.t("registration.user_registration.participation.leave_confirm_final",
+                              group: "Mo 10"))
     end
 
     it "says the way back needs a free place where the group has a limit" do
-      expect(confirmation(:add_and_remove, capacity: 20))
-        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_while_free",
-                      group: "Mo 10"))
+      expected = I18n.t("registration.user_registration.participation.leave_confirm_while_free",
+                        group: "Mo 10")
+      expect(confirmation(:add_and_remove, capacity: 20)).to start_with(expected)
+    end
+
+    it "says that without a tutorial no sheet can be handed in" do
+      expect(confirmation(:add_and_remove))
+        .to include(I18n.t("registration.user_registration.participation.leave_no_sheets"))
+    end
+
+    context "when the student is enrolled" do
+      let(:tutorial) do
+        create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true,
+                          self_materialization_mode: :add_and_remove)
+      end
+
+      before do
+        lecture.add_user_to_roster!(user)
+        tutorial.add_user_to_roster!(user)
+      end
+
+      # Leaving it alone would keep the student enrolled without a group.
+      it "offers no leave button on the only group, saying it goes with the course" do
+        rendered = render_inline(described_class.new(lecture: lecture, user: user))
+        row = rendered.css("[data-testid='participation-row']")
+                      .find { |r| r.text.include?("Mo 10") }
+
+        expect(row.text)
+          .to include(I18n.t("registration.user_registration.participation.only_group"))
+        expect(row.css("form, button")).to be_empty
+      end
+
+      it "asks as before, saying the course stays, when another place remains" do
+        create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
+          .add_user_to_roster!(user)
+
+        rendered = render_inline(described_class.new(lecture: lecture, user: user))
+        form = rendered.css("form").find { |f| f.text.include?("Leave tutorial") }
+
+        expect(form["data-turbo-confirm"]).to include(
+          I18n.t("registration.user_registration.participation.leave_stays_enrolled")
+        )
+        expect(rendered.css("#leave-last-group-tutorial-#{tutorial.id}")).to be_empty
+      end
     end
 
     it "still asks where joining again is always possible" do
       expect(confirmation(:add_and_remove))
-        .to eq(I18n.t("registration.user_registration.participation.leave_confirm_rejoin",
-                      group: "Mo 10"))
+        .to start_with(I18n.t("registration.user_registration.participation.leave_confirm_rejoin",
+                              group: "Mo 10"))
     end
   end
 end
