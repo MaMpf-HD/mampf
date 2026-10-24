@@ -1162,7 +1162,7 @@ class Lecture < ApplicationRecord
   # and the cohorts with enrollment. Students enter the lecture through one
   # of them.
   def enrolling_groups
-    tutorials.to_a + talks.to_a + cohorts.select(&:propagate_to_lecture?).sort_by(&:title)
+    tutorials.to_a + talks.to_a + cohorts.select(&:place?).sort_by(&:title)
   end
 
   def roster_entries

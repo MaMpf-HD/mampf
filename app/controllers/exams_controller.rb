@@ -1,6 +1,8 @@
 class ExamsController < ApplicationController
   include Flash
 
+  class GroupUnavailableError < StandardError; end
+
   before_action :set_lecture, only: [:index, :new]
   before_action :set_exam, only: [:show, :edit, :update, :destroy,
                                   :add_participant, :remove_participant]
@@ -201,16 +203,21 @@ class ExamsController < ApplicationController
           flash.now[:error] = t("assessment.registration_tab.user_not_found")
         else
           service = Rosters::MaintenanceService.new
+          name = user.tutorial_name.presence || user.email
           begin
-            enroll_through_group!(user)
+            group = enroll_through_group!(user)
             service.add_user!(user, @exam, force: true)
-            flash.now[:success] = t("assessment.registration_tab.participant_added",
-                                    name: user.tutorial_name.presence || user.email)
+            flash.now[:success] = participant_added_notice(name, group)
+            flash.now[:alert] = t("roster.warnings.capacity_exceeded") if group&.over_capacity?
           rescue ActiveRecord::RecordInvalid
             flash.now[:error] = t("assessment.registration_tab.already_registered")
           rescue Rosters::MaintenanceService::NotEnrolledError
-            flash.now[:error] = t("roster.errors.exam_requires_enrollment",
-                                  user: user.tutorial_name.presence || user.email)
+            flash.now[:error] = t("roster.errors.exam_requires_enrollment", user: name)
+          rescue GroupUnavailableError
+            flash.now[:error] = t("assessment.registration_tab.group_unavailable")
+          rescue Rosters::UserAlreadyInBundleError => e
+            flash.now[:error] = t("roster.errors.user_already_in_bundle",
+                                  user: name, group: e.conflicting_group.title)
           end
         end
         @active_tab = "registration"
@@ -260,13 +267,22 @@ class ExamsController < ApplicationController
 
     # Someone not enrolled comes in through the chosen group first, since an
     # exam list takes the lecture's members only; without one, the exam's
-    # own refusal says so.
+    # own refusal says so. Returns the group they came in through.
     def enroll_through_group!(user)
       return if params[:group].blank? || @lecture.lecture_memberships.exists?(user: user)
 
-      group = @lecture.enrolling_groups.reject(&:locked?)
-                      .find { |candidate| helpers.roster_group_key(candidate) == params[:group] }
-      Rosters::MaintenanceService.new.add_user!(user, group, force: true) if group
+      group = Rosters::RosterableResolver.find_place(params[:group], lecture: @lecture)
+      raise(GroupUnavailableError) if group.nil? || group.locked?
+
+      Rosters::MaintenanceService.new.add_user!(user, group, force: true)
+      group
+    end
+
+    def participant_added_notice(name, group)
+      return t("assessment.registration_tab.participant_added", name: name) unless group
+
+      t("assessment.registration_tab.participant_added_through_group",
+        name: name, group: Rosters::LectureLeave.label(group))
     end
 
     def participant_user

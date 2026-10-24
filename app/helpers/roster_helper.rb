@@ -104,10 +104,14 @@ module RosterHelper
   end
 
   # The lecture's groups that enroll and take people by hand, as select
-  # options: the way in for someone readmitted or put on an exam list.
+  # options grouped by kind: the way in for someone readmitted or put on an
+  # exam list.
   def roster_enrolling_group_options(lecture)
     lecture.enrolling_groups.reject(&:locked?)
-           .map { |group| [Rosters::LectureLeave.label(group), roster_group_key(group)] }
+           .group_by { |group| group.class.model_name.human(count: 2) }
+           .transform_values do |groups|
+             groups.map { |group| [Rosters::LectureLeave.label(group), roster_group_key(group)] }
+           end
   end
 
   # Links a participant's group to its roster on the lecture's groups tab.

@@ -63,6 +63,17 @@ module Rosters
       end
     end
 
+    # The place a RosterHelper#roster_group_key names among the lecture's
+    # groups (see Rosterable#place?), or nil for one of another lecture, a
+    # list or anything else.
+    def self.find_place(key, lecture:)
+      type, id = key.to_s.split("-", 2)
+      return if type.blank? || type == "Lecture"
+
+      group = find_target(id, type: type, lecture: lecture, default_type: nil)
+      group if group&.place?
+    end
+
     def self.collection_for(type_name, lecture)
       assoc = COLLECTION_MAP[type_name]
       return nil unless assoc

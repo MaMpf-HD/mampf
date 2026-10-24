@@ -607,6 +607,39 @@ RSpec.describe("Exams", type: :request) do
         expect(repeaters.reload.members).to include(stranger)
         expect(exam.lecture.reload.members).to include(stranger)
         expect(exam.roster_entries.map(&:user_id)).to include(stranger.id)
+        expect(CGI.unescapeHTML(response.body)).to include("is now in “Repeaters”")
+      end
+
+      # Staff chose a group; that it is gone is the reason to name.
+      it "says so when the chosen group takes nobody by hand any more" do
+        stranger = create(:confirmed_user, locale: "en")
+        other = create(:cohort, :enrollment, context: create(:lecture), skip_campaigns: true)
+
+        post(participants_exam_path(exam),
+             params: { email: stranger.email, group: "Cohort-#{other.id}" },
+             as: :turbo_stream)
+
+        expect(CGI.unescapeHTML(response.body))
+          .to include(I18n.t("assessment.registration_tab.group_unavailable"))
+        expect(other.reload.members).not_to include(stranger)
+        expect(exam.roster_entries.map(&:user_id)).not_to include(stranger.id)
+      end
+
+      # A tutorial member who never got onto the lecture roster cannot join a
+      # second tutorial.
+      it "names the tutorial someone already sits in" do
+        stranger = create(:confirmed_user, locale: "en")
+        create(:tutorial, lecture: exam.lecture, title: "Mo 10", skip_campaigns: true)
+          .add_user_to_roster!(stranger)
+        other = create(:tutorial, lecture: exam.lecture, skip_campaigns: true)
+
+        post(participants_exam_path(exam),
+             params: { email: stranger.email, group: "Tutorial-#{other.id}" },
+             as: :turbo_stream)
+
+        expect(response).to have_http_status(:ok)
+        expect(CGI.unescapeHTML(response.body)).to include("Mo 10")
+        expect(exam.roster_entries.map(&:user_id)).not_to include(stranger.id)
       end
 
       # Whoever is to sit the exam without a tutorial comes in through a group.

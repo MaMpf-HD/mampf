@@ -325,7 +325,7 @@ module Roster
       def readmission_group
         return unless @rosterable.is_a?(Lecture)
 
-        group = @lecture.enrolling_groups.find { |g| helpers.roster_group_key(g) == @mparams.group }
+        group = Rosters::RosterableResolver.find_place(@mparams.group, lecture: @lecture)
         raise(GroupRequiredError) unless group
         raise(RosterLockedError) if group.locked?
 
