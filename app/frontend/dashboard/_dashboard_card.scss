@@ -328,7 +328,7 @@ $card-rail-width: 12rem;
 
 @font-face {
   font-family: "Noto Serif Display";
-  src: url("/fonts/NotoSerifDisplay-Regular.ttf") format("truetype");
+  src: url("/fonts/NotoSerifDisplay-Light.ttf") format("truetype");
   font-weight: 500;
   font-display: swap;
 }
@@ -348,7 +348,7 @@ $card-rail-width: 12rem;
 }
 
 .empty-state__caption {
-  margin: 0.5rem 0 1.25rem;
+  margin: 1rem 0 1.25rem;
   font-style: italic;
   font-size: 1.1rem;
   color: #9ca3af;
@@ -360,4 +360,5 @@ $card-rail-width: 12rem;
   font-size: 0.95rem;
   line-height: 1.6;
   color: #6b7280;
+  margin-top: 3rem;
 }
