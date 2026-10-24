@@ -175,6 +175,10 @@ en:
       update: "Save"
       new_password: "New password"
       confirm_new_password: "Confirm new password"
+      choose_email: 'Change email address'
+      choose_password: 'Change password'
+      update_email: "Update email"
+      update_password: "Update password"
   errors:
     messages:
       already_confirmed: "was already confirmed, please try signing in"
