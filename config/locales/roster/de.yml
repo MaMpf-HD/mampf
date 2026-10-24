@@ -81,7 +81,7 @@ de:
       column: 'Ausgetreten'
       by_self: 'Selbst ausgetreten am %{date}'
       by_staff: 'Entfernt am %{date} von %{name}'
-      removed: 'Entfernt am %{date}'
+      removed: 'Ausgetragen am %{date}'
       empty: 'Bisher ist niemand ausgetreten.'
       readmit: 'Wieder aufnehmen'
       readmit_confirm: '%{user} wieder in die Veranstaltung aufnehmen?'

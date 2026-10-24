@@ -77,7 +77,7 @@ en:
       column: 'Left'
       by_self: 'Left on %{date}'
       by_staff: 'Removed on %{date} by %{name}'
-      removed: 'Removed on %{date}'
+      removed: 'Taken off on %{date}'
       empty: 'Nobody has left so far.'
       readmit: 'Readmit'
       readmit_confirm: 'Readmit %{user} to the course?'
