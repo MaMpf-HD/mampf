@@ -539,7 +539,7 @@ de:
         last_group:
           intro: "„%{group}“ ist Deine einzige Gruppe in dieser Veranstaltung. Besuchst Du die Veranstaltung nicht mehr, verlässt Du sie am besten ganz."
           only: "Nur %{label}"
-          only_group: "%{label}: etwa, wenn Du danach einer anderen Gruppe beitreten willst. Du bleibst in der Veranstaltung eingeschrieben, kannst ohne Gruppe aber keine Blätter abgeben."
+          only_group: "%{label}: etwa, wenn Du danach einer anderen Gruppe beitreten willst. Du bleibst eingeschrieben und bekommst weiter die Mails der Veranstaltung, kannst ohne Gruppe aber keine Blätter abgeben."
           whole_course: "%{label}: Du verlässt die Veranstaltung samt „%{group}“; was dabei passiert, siehst Du im nächsten Schritt."
           rejoin_final: "Selbst eintragen kannst Du Dich danach nicht mehr, nur das Team der Veranstaltung kann Dich wieder aufnehmen."
           rejoin_while_free: "Wieder eintragen kannst Du Dich nur, solange noch ein Platz frei ist."

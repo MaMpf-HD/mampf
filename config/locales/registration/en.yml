@@ -537,7 +537,7 @@ en:
         last_group:
           intro: "“%{group}” is your only group in this course. If you no longer attend the course, best leave it altogether."
           only: "%{label} only"
-          only_group: "%{label}: for instance if you want to join another group afterwards. You stay enrolled in the course, but without a group you cannot hand in sheets."
+          only_group: "%{label}: for instance if you want to join another group afterwards. You stay enrolled and keep getting the course's mails, but without a group you cannot hand in sheets."
           whole_course: "%{label}: you leave the course along with “%{group}”; the next step shows what that means."
           rejoin_final: "You cannot join it again yourself; only the lecture's staff can take you back."
           rejoin_while_free: "You can join again only while a place is free."

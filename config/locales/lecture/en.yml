@@ -29,9 +29,9 @@ en:
       no_results: No lectures found, try a different search term.
   participation_check:
     title: "Are you still taking part?"
-    lead: "We have reworked how you leave a course and need a quick answer from you once. The courses below are still on your dashboard, but you are in no tutorial or other group there. Please tell us for each whether you are still taking part."
+    lead: "We have reworked how you leave a course and need a quick answer from you once. The courses below are still on your dashboard and you still get their mails, but you are in no tutorial or other group there. Please tell us for each whether you are still taking part."
     still_taking_part: "I am still taking part"
-    footnote: "If you no longer take part, you leave the course and it disappears from your dashboard. If you stay, best join a group: without one you cannot hand in sheets."
+    footnote: "If you no longer take part, you leave the course; it disappears from your dashboard and its mails stop. If you stay, best join a group: without one you cannot hand in sheets."
   lecture_home:
     leave:
       title: "Leave this course"
@@ -42,8 +42,8 @@ en:
         admission_computed: "Your exam admission ends. If you join again, the lecturer has to decide it again from your recorded results."
         admission_manual: "Your exam admission ends. It was granted by the lecturer and does not come back by itself if you join again."
         points: "Your points stay recorded and are back if you join again."
-        dashboard: "The course disappears from your dashboard."
-        dashboard_restricted: "The course disappears from your dashboard, and you need the pass phrase again for its materials."
+        dashboard: "The course disappears from your dashboard, and you get no more mails from it."
+        dashboard_restricted: "The course disappears from your dashboard, you get no more mails from it, and you need the pass phrase again for its materials."
         rejoin: "You can join again through an open registration or self-enrollment, otherwise only through the lecturer."
       button: "Leave course"
       confirmation_label: "Type “%{code}” to confirm:"
