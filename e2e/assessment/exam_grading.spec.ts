@@ -33,7 +33,7 @@ test.describe("exam grading", () => {
     await page.tab("Points").click();
     await expect(page.pane.getByText("2 pending grading")).toBeVisible();
     const ada = page.pane.getByRole("row", { name: /Ada Lovelace/ });
-    await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("7");
+    await ada.getByRole("spinbutton", { name: "Prove it for Ada Lovelace" }).fill("7");
     await ada.getByRole("button", { name: "Save this row's points" }).click();
     await expect(ada.getByText("Reviewed")).toBeVisible();
     await expect(page.pane.getByText("1 reviewed · 1 pending grading")).toBeVisible();
@@ -53,7 +53,7 @@ test.describe("exam grading", () => {
 
     // points corrected after grading leave the grade, but not unnoticed
     await page.tab("Points").click();
-    await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("9");
+    await ada.getByRole("spinbutton", { name: "Prove it for Ada Lovelace" }).fill("9");
     const corrected = teacher.page.waitForResponse(
       response => response.url().includes("/point_participation") && response.ok(),
     );
@@ -111,8 +111,8 @@ test.describe("exam grading", () => {
 
     const saveAll = page.pane.getByRole("button", { name: /Save all changes/ });
     await expect(saveAll).toBeDisabled();
-    await page.pane.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("7");
-    await page.pane.getByRole("spinbutton", { name: "Task 1 for Grace Hopper" }).fill("4");
+    await page.pane.getByRole("spinbutton", { name: "Prove it for Ada Lovelace" }).fill("7");
+    await page.pane.getByRole("spinbutton", { name: "Prove it for Grace Hopper" }).fill("4");
     await expect(saveAll).toContainText("2");
     await saveAll.click();
 
