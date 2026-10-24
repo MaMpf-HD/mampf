@@ -178,7 +178,7 @@ de:
       Öffne eine Veranstaltung, um sie hier anzuheften.
     quick_access: 'Schnellzugriff'
     pin_lecture: '%{title} anheften'
-    unpin_lecture: '%{title} lösen'
+    unpin_lecture: '%{title} nicht mehr anheften'
   info: 'Info'
   admin:
     navbar:
