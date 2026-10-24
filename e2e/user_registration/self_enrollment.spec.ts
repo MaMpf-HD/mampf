@@ -35,12 +35,58 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    // Joining enrolled the student, so this is their only group now: it goes
-    // with the course alone.
+    // Joining enrolled the student through this tutorial, which they now
+    // leave only by leaving the course.
     await expect(home.participation("Self-managed Tutorial"))
-      .toContainText("Your only group: you leave it only together with the course.");
+      .toContainText("you leave it only together with the course.");
     await expect(home.participation("Self-managed Tutorial")
       .getByRole("button", { name: "Leave tutorial" })).toHaveCount(0);
+  });
+
+  test("leaves a self-managed tutorial while a group with enrollment remains", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const repeaters = await factory.create("cohort", ["enrollment"], {
+      context_type: "Lecture", context_id: lecture.id, title: "Repeaters", skip_campaigns: true,
+    });
+    await factory.create("cohort_membership", [], {
+      cohort_id: repeaters.id, user_id: student.user.id,
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Self-managed Tutorial",
+      capacity: 2,
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    await openSelfEnrollment(student.page);
+    await student.page.getByRole("button", { name: "Register for Self-managed Tutorial" })
+      .click();
+    await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
+
+    const asked = student.page.waitForEvent("dialog");
+    const click = home.participation("Self-managed Tutorial")
+      .getByRole("button", { name: "Leave tutorial" }).click();
+    const question = await asked;
+    expect(question.message()).toContain("You stay enrolled in the course");
+    await question.accept();
+    await click;
+
+    await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
+    await expect(student.page.getByText("You are still enrolled in")).toBeVisible();
+    await expect(student.page.getByRole("heading", { name: "Your participation" })).toBeFocused();
+    await expect(student.page.getByRole("button", {
+      name: "Register for Self-managed Tutorial",
+    })).toBeVisible();
   });
 
   test("shows a full self-managed tutorial without an unsafe action", async ({

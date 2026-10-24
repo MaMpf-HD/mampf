@@ -1,15 +1,10 @@
 module Rosters
-  # Brings the lecture rosters back in line with the places (see
-  # LectureLeave.place?), for data from before enrollment followed them or
-  # data that drifted since. Whoever is enrolled without a place is taken
-  # off, as left without anybody's doing; their lists, registrations,
-  # points and admission stay. Whoever is on an exam list without a place
-  # is only reported: taking them off the lecture would take them off the
-  # exam. The report also names registration campaigns that would go wrong
-  # on their own, by their deadline or at the allocation.
+  # Brings the lecture rosters in line with the places (see
+  # Rosters::Rosterable#place?), for data from before enrollment followed
+  # them. The report also names campaigns that would go wrong on their own.
   class EnrollmentReconciliation
-    Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :on_exam, :awaiting,
-                     keyword_init: true)
+    Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :admitted,
+                     :on_exam, :exam_registered, :staff, keyword_init: true)
 
     RUNNING = [:open, :closed, :processing].freeze
     FAR_DEADLINE = 8.weeks
@@ -26,8 +21,10 @@ module Rosters
       @rows ||= lectures.includes(:term, :course).order(:id).filter_map { |lecture| row(lecture) }
     end
 
-    # Takes those without a place off, the ones on an exam list aside, and
-    # returns how many it took off.
+    # Excludes whoever is enrolled without a place, excluded_by left empty,
+    # and removes their bookmark; lists, registrations, points and admission
+    # stay. Takes no locks, so it runs while nobody can use the app. Returns
+    # how many it excluded.
     def apply!
       rows.sum do |row|
         removable(row.lecture).each do |membership|
@@ -65,14 +62,19 @@ module Rosters
                 without_place: count,
                 lists_only: CohortMembership.where(cohort: lists(lecture), user_id: ids)
                                             .distinct.count(:user_id),
+                awaiting: awaiting(lecture, ids).distinct.count(:user_id),
+                admitted: admitted(lecture, removable(lecture).map(&:user_id)).count,
                 on_exam: on_exam(lecture, ids).distinct.count(:user_id),
-                awaiting: awaiting(lecture, ids).distinct.count(:user_id))
+                exam_registered: awaiting(lecture, ids, exam: true).distinct.count(:user_id),
+                staff: without.where(user_id: staff_ids(lecture)).count)
       end
 
       def row_line(row)
         "#{row.lecture.id} #{row.lecture.title_term_info_no_type}: #{row.without_place} of " \
           "#{row.enrolled} without a place (#{row.lists_only} on a list only, " \
-          "#{row.awaiting} awaiting a group, #{row.on_exam} on an exam list - kept)"
+          "#{row.awaiting} awaiting a group, #{row.admitted} admitted; kept: " \
+          "#{row.on_exam} on an exam list, #{row.exam_registered} registered for an exam, " \
+          "#{row.staff} staff)"
       end
 
       def without_place(lecture)
@@ -81,28 +83,42 @@ module Rosters
         end
       end
 
+      # The lecture's staff are no students, and taking anyone on an exam list
+      # or registered for an exam off the lecture would take them off the exam.
       def removable(lecture)
         without = without_place(lecture)
-        without.where.not(user_id: on_exam(lecture, without.select(:user_id)).select(:user_id))
+        ids = without.select(:user_id)
+        without.where.not(user_id: on_exam(lecture, ids).select(:user_id))
+               .where.not(user_id: awaiting(lecture, ids, exam: true).select(:user_id))
+               .where.not(user_id: staff_ids(lecture))
                .includes(:user).to_a
       end
 
       def place_user_ids(lecture)
-        [TutorialMembership.where(tutorial: lecture.tutorials).select(:user_id),
-         SpeakerTalkJoin.where(talk: lecture.talks).select(:speaker_id),
-         CohortMembership.where(cohort: lists(lecture, enrolling: true)).select(:user_id)]
+        lecture.place_user_id_queries
       end
 
-      def lists(lecture, enrolling: false)
-        Cohort.where(context: lecture, propagate_to_lecture: enrolling)
+      def staff_ids(lecture)
+        ([lecture.teacher_id] + lecture.editor_ids + lecture.course.editor_ids +
+          TutorTutorialJoin.where(tutorial: lecture.tutorials).pluck(:tutor_id) +
+          TutorAppointment.where(lecture: lecture).pluck(:user_id)).compact.uniq
+      end
+
+      def admitted(lecture, user_ids)
+        StudentPerformance::Certification.passed.where(lecture: lecture, user_id: user_ids)
+      end
+
+      def lists(lecture)
+        Cohort.where(context: lecture, propagate_to_lecture: false)
       end
 
       def on_exam(lecture, user_ids)
         ExamRosterEntry.active.where(exam: lecture.exams, user_id: user_ids)
       end
 
-      def awaiting(lecture, user_ids)
-        campaigns = Registration::Campaign.non_exam.where(campaignable: lecture, status: RUNNING)
+      def awaiting(lecture, user_ids, exam: false)
+        campaigns = Registration::Campaign.where(campaignable: lecture, status: RUNNING)
+        campaigns = exam ? campaigns.exam : campaigns.non_exam
         Registration::UserRegistration.where(registration_campaign: campaigns,
                                              status: [:pending, :confirmed], user_id: user_ids)
       end
@@ -135,26 +151,29 @@ module Rosters
         flags = []
         flags << "its term is over" if past_term?(lecture.term)
         flags << "allocated but never finalized" if campaign.processing?
+        if campaign.closed? && campaign.registration_deadline&.before?(FAR_DEADLINE.ago)
+          flags << "closed since #{campaign.registration_deadline.to_date}, never finalized"
+        end
         if campaign.registration_deadline&.after?(FAR_DEADLINE.from_now)
           flags << "deadline only on #{campaign.registration_deadline.to_date}"
         end
         clash = clashing(lecture, groups.grep(Tutorial), registered)
-        flags << "#{clash} registered sit in another tutorial already" if clash.positive?
+        flags << "#{clash} registered would be moved out of their tutorial" if clash.positive?
         if count >= MANY_REGISTRATIONS && groups.sum { |group| group.roster_entries.count }.zero?
           flags << "all groups empty with #{count} registrations"
         end
         flags
       end
 
-      # Before the running term, that is; a campaign for the next term is
-      # where registrations belong.
+      # Whether the term ended before the active one began; a campaign of the
+      # next term is not stale.
       def past_term?(term)
         @active_term = Term.active unless defined?(@active_term)
         term.present? && @active_term.present? && term.end_date < @active_term.begin_date
       end
 
-      # An allocation would put them into a second tutorial of the lecture,
-      # which a student cannot hold.
+      # An allocation moves them out of the tutorial they sit in, since
+      # Tutorial#persist_missing_roster_entries! upserts on user and lecture.
       def clashing(lecture, tutorials, registered)
         return 0 if tutorials.empty?
 

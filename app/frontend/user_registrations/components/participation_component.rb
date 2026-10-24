@@ -62,7 +62,7 @@ class ParticipationComponent < ViewComponent::Base
                          type: "button",
                          class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
                          data: { bs_toggle: "modal",
-                                 bs_target: "##{LeaveLectureComponent.dialog_id(@lecture)}" })
+                                 bs_target: "##{LeaveLectureComponent::ID}" })
     end
 
     def roster_rows
@@ -251,9 +251,8 @@ class ParticipationComponent < ViewComponent::Base
                         form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
     end
 
-    # An enrolled student's only group is left with the lecture alone, so
-    # that nobody stays enrolled without a group; its row says so where the
-    # leave button would be.
+    # An enrolled student leaves their last place only by leaving the
+    # lecture, so the row says so instead of offering the button.
     def only_group?(rosterable)
       @leave.only_place?(rosterable)
     end

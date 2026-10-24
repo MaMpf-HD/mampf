@@ -41,6 +41,10 @@ module Roster
       respond_with_error(t("roster.errors.#{key}", group: @rosterable.title))
     end
 
+    rescue_from "Rosters::MaintenanceService::MoveLeavesLectureError" do
+      respond_with_error(t("roster.errors.switch_failed"))
+    end
+
     rescue_from "Rosters::SelfMaterializationService::LastGroupError" do
       respond_with_error(t("roster.errors.self_remove_last_group", group: @rosterable.title))
     end

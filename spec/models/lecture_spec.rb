@@ -724,16 +724,16 @@ RSpec.describe(Lecture, type: :model) do
         .to contain_exactly(manual)
     end
 
-    # Without a record nothing would decide it again, and the return would
-    # find the admission gone.
-    it "keeps the computed decision of someone who has left" do
+    # A reset withdraws what the rule decided, for everybody alike: a return
+    # must not bring back an admission the rule no longer backs.
+    it "drops the computed decision of someone who has left too" do
       former = create(:confirmed_user)
       create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
-      kept = create(:student_performance_certification, :passed, lecture: lecture, user: former)
+      create(:student_performance_certification, :passed, lecture: lecture, user: former)
 
-      expect(lecture.reset_computed_certifications!).to eq(1)
+      expect(lecture.reset_computed_certifications!).to eq(2)
       expect(StudentPerformance::Certification.where(lecture: lecture))
-        .to contain_exactly(manual, kept)
+        .to contain_exactly(manual)
     end
 
     it "drops nothing while a running registration asks for the decisions" do

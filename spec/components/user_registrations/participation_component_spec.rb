@@ -456,8 +456,9 @@ RSpec.describe(ParticipationComponent, type: :component) do
         tutorial.add_user_to_roster!(user)
       end
 
-      # Leaving it alone would keep the student enrolled without a group.
-      it "offers no leave button on the only group, saying it goes with the course" do
+      # Leaving the tutorial on its own would keep the student enrolled without
+      # a place.
+      it "offers no leave button on the last place, saying it goes with the course" do
         rendered = render_inline(described_class.new(lecture: lecture, user: user))
         row = rendered.css("[data-testid='participation-row']")
                       .find { |r| r.text.include?("Mo 10") }
@@ -477,7 +478,6 @@ RSpec.describe(ParticipationComponent, type: :component) do
         expect(form["data-turbo-confirm"]).to include(
           I18n.t("registration.user_registration.participation.leave_stays_enrolled")
         )
-        expect(rendered.css("#leave-last-group-tutorial-#{tutorial.id}")).to be_empty
       end
     end
 

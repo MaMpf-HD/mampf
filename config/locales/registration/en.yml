@@ -353,6 +353,7 @@ en:
         solver_unassigned: "Not placed by solver"
         withdrawn_by_teacher: "Manually rejected by teacher"
         deferred_due_to_blocker: "Manually rejected for now because of a blocker"
+        not_enrolled: "No longer enrolled in the lecture"
       none: "No registrations found."
       preferences: "Preferences"
       actions:
@@ -533,7 +534,7 @@ en:
         leave_confirm_rejoin: "Leave “%{group}”? You can join again afterwards."
         leave_no_sheets: "Without a tutorial you cannot hand in sheets."
         leave_stays_enrolled: "You stay enrolled in the course; to leave it altogether, use “Leave course”."
-        only_group: "Your only group: you leave it only together with the course."
+        only_group: "Through this group you take part in the course; you leave it only together with the course."
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:

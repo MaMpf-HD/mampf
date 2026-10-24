@@ -177,9 +177,8 @@ class RosterSidePanelComponent < ViewComponent::Base
     )
   end
 
-  # Someone whose last place this is leaves the lecture with it (see
-  # Rosters::MaintenanceService#remove_user!), which the confirmation says,
-  # pointing to moving for a switch of groups.
+  # Names the lecture and its exam lists when this is the person's last
+  # place, since removing them takes those too.
   def remove_confirmation(student)
     return t("roster.warnings.confirm_kick_from_group") unless only_place_ids.include?(student.id)
 

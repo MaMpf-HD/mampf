@@ -54,8 +54,7 @@ test.describe("leaving a course", () => {
 
     await page.goto(`/lectures/${lecture.id}`);
     const tutorialRow = page.getByTestId("participation-row").filter({ hasText: "Mo 10" });
-    await expect(tutorialRow)
-      .toContainText("Your only group: you leave it only together with the course.");
+    await expect(tutorialRow).toContainText("you leave it only together with the course.");
     await expect(tutorialRow.getByRole("button")).toHaveCount(0);
 
     await page.getByRole("button", { name: "Leave course" }).click();

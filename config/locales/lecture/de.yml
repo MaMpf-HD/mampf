@@ -31,7 +31,7 @@ de:
   lecture_home:
     leave:
       title: "Veranstaltung verlassen"
-      intro: "Das passiert, wenn Du die Teilnahme beendest:"
+      intro: "Das passiert, wenn Du die Veranstaltung verlässt:"
       consequences:
         groups: "Du verlässt %{groups}."
         campaigns: "Deine Anmeldungen zu %{campaigns} werden zurückgezogen."
@@ -42,7 +42,7 @@ de:
         rejoin: "Wieder eintreten kannst Du über eine offene Anmeldung oder die Selbsteintragung, sonst nur über die Lehrenden."
       button: "Veranstaltung verlassen"
       confirmation_label: "Gib zum Bestätigen „%{code}“ ein:"
-      blocked: "Du kannst die Teilnahme gerade nicht selbst beenden:"
+      blocked: "Du kannst die Veranstaltung gerade nicht selbst verlassen:"
       blockers:
         group_fixed: "„%{title}“ kannst Du nicht selbst verlassen."
         exam_closed: "Von „%{title}“ kannst Du Dich nicht selbst abmelden."
@@ -50,7 +50,7 @@ de:
         prerequisite: "Deine Anmeldung zu „%{title}“ setzt Deine Anmeldung in dieser Veranstaltung voraus."
       contact: "Wende Dich bitte an die Lehrenden der Veranstaltung."
       done: "Du hast „%{lecture}“ verlassen."
-      not_allowed: "Du kannst die Teilnahme gerade nicht selbst beenden."
+      not_allowed: "Du kannst die Veranstaltung gerade nicht selbst verlassen."
       not_participating: "Du nimmst an „%{lecture}“ nicht mehr teil."
       not_confirmed: "Das Kürzel stimmt nicht; Du nimmst weiter teil."
       failed: "Das hat gerade nicht geklappt; Du nimmst weiter teil. Versuch es bitte noch einmal."

@@ -788,6 +788,28 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
       end
     end
+
+    context "when the source is the user's last place and the target a list" do
+      let(:source) do
+        create(:cohort, context: lecture, skip_campaigns: true, propagate_to_lecture: true)
+      end
+
+      before do
+        create(:cohort_membership, cohort: source, user: member)
+        lecture.ensure_roster_membership!([member.id])
+      end
+
+      it "keeps the user and names the reason" do
+        patch move_member_cohort_path(source, user_id: member.id),
+              params: { target_id: target.id, target_type: "Cohort" }
+
+        expect(flash[:alert]).to eq(
+          I18n.t("roster.errors.move_leaves_lecture", user: member.info, group: source.title)
+        )
+        expect(source.reload.members).to include(member)
+        expect(lecture.reload.members).to include(member)
+      end
+    end
   end
 
   describe "POST /lectures/:id/roster/members" do
@@ -902,7 +924,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         delete remove_member_lecture_path(seminar, user_id: member.id), as: :turbo_stream
 
-        expect(response.body).to include(I18n.t("roster.errors.grading_data_present"))
+        expect(response.body).to include(I18n.t("roster.errors.lecture_grading_data_present"))
         expect(seminar.reload.members).to include(member)
         expect(talk.reload.speakers).to include(member)
       end

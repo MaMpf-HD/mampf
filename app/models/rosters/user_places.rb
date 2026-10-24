@@ -52,8 +52,26 @@ module Rosters
     # it in a transaction.
     def leave!(lectures)
       withdraw_registrations!(lectures)
-      dismiss_rejections!(lectures)
       leave_rosters!(lectures)
+    end
+
+    # Withdraws the registrations in the given lectures, rejected ones too,
+    # since a new allocation can turn them back into pending ones. Locks each
+    # campaign first, as allocation and finalization do.
+    def withdraw_registrations!(lectures)
+      withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
+        campaign.lock!
+        next unless campaign.status.to_sym.in?(RUNNING_CAMPAIGN_STATUSES)
+
+        campaign.user_registrations.where(user: @user).find_each(&:destroy!)
+      end
+      dismiss_rejections!(lectures)
+    end
+
+    # Locks the campaigns #withdraw_registrations! would withdraw from, for a
+    # caller that decides only under later locks whether to.
+    def lock_campaigns!(lectures)
+      withdrawable_campaigns.where(campaignable: lectures).order(:id).lock.load
     end
 
     private
@@ -70,18 +88,6 @@ module Rosters
          StudentPerformance::Certification.decided.where(user: @user)]
       end
 
-      # Rejected registrations go too: a new allocation can turn them back
-      # into pending ones and place the student again. A campaign completed
-      # before its lock keeps its registrations, as any completed one does.
-      def withdraw_registrations!(lectures)
-        withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
-          campaign.lock!
-          next unless campaign.status.to_sym.in?(RUNNING_CAMPAIGN_STATUSES)
-
-          campaign.user_registrations.where(user: @user).find_each(&:destroy!)
-        end
-      end
-
       # A rejection of a completed campaign would keep the lecture on the
       # dashboard (see User#lectures_with_registration_application); it is
       # dismissed rather than deleted, so the application stays on record.
@@ -93,9 +99,13 @@ module Rosters
                                       .find_each(&:dismiss!)
       end
 
+      # Locks every roster before the first is left, the lectures last, as
+      # LectureLeave does: taken one at a time, a group's removal would lock
+      # its lecture before the next group.
       def leave_rosters!(lectures)
         service = MaintenanceService.new
         named = rosterables.select { |rosterable| rosterable.lecture.in?(lectures) }
+        named.each(&:lock!)
         groups, lecture_rosters = named.partition { |rosterable| !rosterable.is_a?(Lecture) }
         (groups + lecture_rosters).each do |rosterable|
           service.remove_user!(@user, rosterable, notify: false, by: @user)
@@ -118,7 +128,8 @@ module Rosters
           Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).order(:id).to_a +
           Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).order(:id).to_a +
           Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id)).to_a +
-          Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id)).to_a
+          Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id))
+                 .order(:id).to_a
       end
 
       # A cohort outside a lecture names no lecture to give up, so it is not a
