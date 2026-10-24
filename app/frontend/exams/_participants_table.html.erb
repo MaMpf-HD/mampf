@@ -66,6 +66,16 @@
                               label: t("assessment.registration_tab.add_form_label")
                             } %>
 
+          <% group_options = roster_enrolling_group_options(exam.lecture) %>
+
+          <% if group_options.any? %>
+            <%= f.select :group,
+                         group_options,
+                         { include_blank: t("assessment.registration_tab.add_group_blank") },
+                         class: "form-select form-select-sm w-auto",
+                         aria: { label: t("assessment.registration_tab.add_group_label") } %>
+          <% end %>
+
           <%= f.submit t("assessment.registration_tab.add_button"),
                        class: "btn btn-sm btn-outline-primary flex-shrink-0" %>
         <% end %>

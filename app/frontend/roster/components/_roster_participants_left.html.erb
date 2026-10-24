@@ -43,20 +43,38 @@
               <div class="d-flex justify-content-end gap-1">
                 <%= render "shared/copy_email_button", email: user.email %>
 
-                <%= button_to t("roster.left.readmit"),
-                              component.helpers.add_member_lecture_path(component.lecture),
-                              params: { user_id: user.id,
-                                        source: :participants,
-                                        view: "left",
-                                        group_type: component.group_type,
-                                        page: component.pagy&.page },
-                              class: "btn btn-sm btn-outline-secondary",
-                              form: {
+                <% if component.readmission_options.any? %>
+                  <%= form_with url: component.helpers.add_member_lecture_path(component.lecture),
+                                method: :post,
+                                local: true,
+                                class: "d-flex gap-1",
                                 data: {
-                                  turbo_confirm: t("roster.left.readmit_confirm",
+                                  turbo_confirm: t("roster.left.readmit_into_group_confirm",
                                                    user: user.tutorial_name)
-                                }
-                              } %>
+                                } do |f| %>
+                    <%= f.hidden_field :user_id, value: user.id, id: nil %>
+                    <%= f.hidden_field :source, value: :participants, id: nil %>
+                    <%= f.hidden_field :view, value: "left", id: nil %>
+                    <%= component.helpers.hidden_group_type_field(component.group_type, id: nil) %>
+                    <%= f.hidden_field :page, value: component.pagy&.page, id: nil %>
+
+                    <%= f.select :group,
+                                 component.readmission_options,
+                                 { prompt: t("roster.left.choose_group") },
+                                 required: true,
+                                 id: nil,
+                                 class: "form-select form-select-sm w-auto",
+                                 "aria-label": t("roster.left.group_for",
+                                                 user: user.tutorial_name) %>
+
+                    <%= f.submit t("roster.left.readmit"),
+                                 class: "btn btn-sm btn-outline-secondary" %>
+                  <% end %>
+                <% else %>
+                  <span class="small text-muted">
+                    <%= t("roster.left.no_open_group") %>
+                  </span>
+                <% end %>
               </div>
             </td>
           </tr>

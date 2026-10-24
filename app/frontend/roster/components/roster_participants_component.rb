@@ -88,6 +88,12 @@ class RosterParticipantsComponent < ViewComponent::Base
     end
   end
 
+  # The groups the staff can add someone who has left to, as select options:
+  # a group a running registration process manages takes nobody by hand.
+  def readmission_options
+    @readmission_options ||= helpers.roster_enrolling_group_options(lecture)
+  end
+
   def registration_entry(user)
     @registration_entry_by_user ||=
       Rosters::RunningRegistrations.new(lecture, campaign: campaign)

@@ -142,6 +142,34 @@ test.describe("exams", () => {
       .toBeVisible();
   });
 
+  test("puts somebody not enrolled on the list through the group chosen for them", async ({
+    factory,
+    teacher,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    await factory.create("exam", ["with_date"], {
+      lecture_id: lecture.id,
+      title: "Main Exam",
+      skip_campaigns: true,
+    });
+    await factory.create("cohort", ["enrollment"], {
+      context_type: "Lecture", context_id: lecture.id, title: "Repeaters", skip_campaigns: true,
+    });
+    const repeater = await factory.create("confirmed_user", [], {
+      name_in_tutorials: "Alan Turing",
+    });
+
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await page.open("Main Exam");
+    await page.tab("Roster").click();
+    await page.pane.getByLabel("Add person by email").fill(repeater.email);
+    await page.pane.getByLabel("Group for someone not enrolled").selectOption("Repeaters");
+    await page.pane.getByRole("button", { name: "Add", exact: true }).click();
+
+    await expect(teacher.page.getByText("Alan Turing has been added.")).toBeVisible();
+    await expect(page.pane.getByRole("cell", { name: "Alan Turing" })).toBeVisible();
+  });
+
   test("refuses somebody not enrolled in the lecture, saying how they come in", async ({
     factory,
     teacher,

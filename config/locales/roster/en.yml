@@ -72,15 +72,18 @@ en:
       left: 'Left'
     left:
       hint: >-
-        People who left the course or were removed from it. Their results and
-        hand-ins stay recorded; “Readmit” puts them back into the course.
+        People who left the course or were removed from it. Their results, hand-ins
+        and admission stay recorded; “Readmit” puts them back into the course through a group.
       column: 'Left'
       by_self: 'Left on %{date}'
       by_staff: 'Removed on %{date} by %{name}'
       removed: 'Taken off on %{date}'
       empty: 'Nobody has left so far.'
       readmit: 'Readmit'
-      readmit_confirm: 'Readmit %{user} to the course?'
+      readmit_into_group_confirm: 'Readmit %{user} to the course, into the chosen group?'
+      choose_group: 'Choose a group'
+      group_for: 'Group for %{user}'
+      no_open_group: 'Readmission goes through a group, and no group with enrollment takes anybody by hand right now.'
     registrations:
       hint: >-
         These people are registered but not yet placed in their groups. That happens only once the
@@ -386,6 +389,7 @@ en:
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
+      readmission_group_required: "Choose a group for the person to come back into."
       user_already_in_bundle: "%{user} is already assigned to %{group}."
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
       exam_requires_enrollment: "%{user} is not enrolled in the lecture. Only members of a group go on the exam list; add the person to a group first, for instance a group for repeaters."

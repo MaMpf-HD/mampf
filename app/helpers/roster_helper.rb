@@ -90,12 +90,24 @@ module RosterHelper
     "roster_maintenance_#{suffix}"
   end
 
-  def hidden_group_type_field(group_type)
+  def hidden_group_type_field(group_type, **)
     if group_type.is_a?(Array)
-      safe_join(group_type.map { |t| hidden_field_tag("group_type[]", t) })
+      safe_join(group_type.map { |t| hidden_field_tag("group_type[]", t, **) })
     else
-      hidden_field_tag(:group_type, group_type)
+      hidden_field_tag(:group_type, group_type, **)
     end
+  end
+
+  # Names a group of whatever kind in a parameter, e.g. "Tutorial-12".
+  def roster_group_key(group)
+    "#{group.class.name}-#{group.id}"
+  end
+
+  # The lecture's groups that enroll and take people by hand, as select
+  # options: the way in for someone readmitted or put on an exam list.
+  def roster_enrolling_group_options(lecture)
+    lecture.enrolling_groups.reject(&:locked?)
+           .map { |group| [Rosters::LectureLeave.label(group), roster_group_key(group)] }
   end
 
   # Links a participant's group to its roster on the lecture's groups tab.
@@ -103,8 +115,7 @@ module RosterHelper
     lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
 
     link_to(group.title,
-            edit_lecture_path(lecture, tab: "groups",
-                                       open_roster: "#{group.class.name}-#{group.id}"),
+            edit_lecture_path(lecture, tab: "groups", open_roster: roster_group_key(group)),
             class: "badge roster-group-badge",
             data: { turbo: false })
   end
