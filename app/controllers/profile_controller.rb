@@ -66,8 +66,7 @@ class ProfileController < ApplicationController
 
   def subscribe_lecture
     @success = false
-    if !@lecture.published? && !current_user.admin &&
-       !@lecture.edited_by?(current_user)
+    unless lecture_visible_to_user?
       @unpublished = true
       return
     end
@@ -81,8 +80,7 @@ class ProfileController < ApplicationController
   end
 
   def pin_lecture
-    if !@lecture.published? && !current_user.admin &&
-       !@lecture.edited_by?(current_user)
+    unless lecture_visible_to_user?
       head :forbidden
       return
     end
@@ -168,6 +166,12 @@ class ProfileController < ApplicationController
       @current = !@parent.in?(["lectureSearch", "inactive",
                                "next_term_subscribed", "next_term_registered"])
       redirect_to root_path unless @lecture
+    end
+
+    # Unpublished lectures are only open to admins and the lecture's editors.
+    def lecture_visible_to_user?
+      @lecture.published? || current_user.admin ||
+        @lecture.edited_by?(current_user)
     end
 
     # The pin in the navbar gets its Quick Access menu swapped via Turbo Stream,
