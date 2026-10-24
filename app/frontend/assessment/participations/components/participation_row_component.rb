@@ -450,9 +450,9 @@ class ParticipationRowComponent < ViewComponent::Base
       helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
   end
 
-  # Points of someone who has left may still be entered for what they handed
-  # in; whether they handed in or attended stays as it was, since changing it
-  # would empty the row and take it out of the table.
+  # Whether the user has left the lecture. Their points may still be entered,
+  # but the hand-in and absence buttons stay hidden (see
+  # Assessment::TaskPointsController#refuse_after_leaving).
   def left_lecture?
     @assessable.is_a?(Assignment) &&
       helpers.left_lecture_user_ids(@assessable.lecture).include?(@user.id)
