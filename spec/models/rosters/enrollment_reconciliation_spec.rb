@@ -29,7 +29,18 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       row = reconciliation.rows.sole
 
       expect(row.to_h.except(:lecture))
-        .to eq(enrolled: 4, without_place: 3, lists_only: 1, on_exam: 1, awaiting: 1)
+        .to eq(enrolled: 4, without_place: 3, lists_only: 1, awaiting: 1, admitted: 0,
+               on_exam: 1, exam_registered: 0, staff: 0)
+    end
+
+    # An admitted student taken off needs a group before registering for a
+    # resit, so the lecturer has to know of them.
+    it "counts the admitted among those it would take off" do
+      admitted = create(:confirmed_user)
+      enroll_without_place(admitted)
+      create(:student_performance_certification, :passed, lecture: lecture, user: admitted)
+
+      expect(reconciliation.rows.sole.admitted).to eq(1)
     end
   end
 
@@ -61,7 +72,31 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
 
       expect(reconciliation.apply!).to eq(0)
       expect(lecture.reload.members).to include(limbo)
-      expect(reconciliation.report.join("\n")).to include("1 on an exam list - kept")
+      expect(reconciliation.report.join("\n")).to include("kept: 1 on an exam list")
+    end
+
+    # A finalization would put them on the exam list as strangers, or reject
+    # them, though they registered while enrolled.
+    it "keeps whoever is registered for an exam, and reports them" do
+      exam = create(:exam, :without_campaign, lecture: lecture)
+      campaign = create(:registration_campaign, campaignable: lecture)
+      item = create(:registration_item, registration_campaign: campaign, registerable: exam)
+      campaign.update!(status: :open)
+      create(:registration_user_registration, :confirmed,
+             user: limbo, registration_campaign: campaign, registration_item: item)
+
+      expect(reconciliation.apply!).to eq(0)
+      expect(lecture.reload.members).to include(limbo)
+      expect(reconciliation.report.join("\n")).to include("1 registered for an exam")
+    end
+
+    # Staff are no students; their seat and bookmark stay.
+    it "keeps a tutor of the lecture, and reports them" do
+      create(:tutor_tutorial_join, tutorial: tutorial, tutor: limbo)
+
+      expect(reconciliation.apply!).to eq(0)
+      expect(limbo.reload.lectures).to include(lecture)
+      expect(reconciliation.report.join("\n")).to include("1 staff")
     end
 
     it "keeps to the lectures it is narrowed to" do
@@ -83,7 +118,7 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
     end
   end
 
-  # Enrollment follows the places on every way through the roster, so a
+  # Enrollment follows the places through MaintenanceService, so a
   # reconciliation afterwards has nothing to do.
   it "finds nothing after joining, moving and losing places" do
     users = create_list(:confirmed_user, 3)
@@ -110,7 +145,15 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
              registration_item: campaign.registration_items.first)
 
       line = reconciliation.report.find { |text| text.include?("\"Sign-up\" (open)") }
-      expect(line).to include("1 registered sit in another tutorial already")
+      expect(line).to include("1 registered would be moved out of their tutorial")
+    end
+
+    it "names a campaign closed long ago and never finalized" do
+      create(:registration_campaign, :closed, campaignable: lecture, description: "Stale",
+                                              registration_deadline: 1.year.ago)
+
+      line = reconciliation.report.find { |text| text.include?("\"Stale\" (closed)") }
+      expect(line).to include("never finalized")
     end
 
     it "calls a term over only before the running one, not the next" do
