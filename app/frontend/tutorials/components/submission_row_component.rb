@@ -150,7 +150,7 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def points_input_label(task)
     t("assessment.grading_tutorial.points_input_label",
-      task: "#{t("assessment.grading_tutorial.task")} #{task.position}",
+      task: task.label,
       name: @submission.users.map(&:tutorial_name).join(", "))
   end
 
