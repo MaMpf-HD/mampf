@@ -34,9 +34,9 @@ module Rosters
       @user = user
     end
 
-    # A registration that its campaign no longer lets the student withdraw
-    # counts too: nothing else would withdraw it, and the lecture stays on the
-    # dashboard until the allocation.
+    # Whether "Leave course" is offered: also for a registration its campaign
+    # no longer lets the student withdraw, since nothing else would withdraw
+    # it and the lecture stays on the dashboard until the allocation.
     def participating?
       enrolled? || groups.any? || exam_entries.any? || registration_past_withdrawal?
     end
@@ -123,12 +123,9 @@ module Rosters
 
     private
 
-      # Campaigns first, drafts too so none opens meanwhile, as allocation
-      # does; the groups before the lecture, as a group's update touching the
-      # lecture does; the lecture before any membership goes, as the staff's
-      # removal does. Reordering talks and the self-service setting after
-      # finalization lock groups in their own order; a deadlock with them
-      # aborts one side, and only leaving tries again.
+      # Locks the campaigns first, drafts too so none opens meanwhile, as
+      # allocation does; then the groups and then the lecture, as a group's
+      # update touching the lecture and the staff's removal do.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)
