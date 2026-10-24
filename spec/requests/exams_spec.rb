@@ -610,7 +610,7 @@ RSpec.describe("Exams", type: :request) do
         expect(CGI.unescapeHTML(response.body)).to include("is now in “Repeaters”")
       end
 
-      # Staff chose a group; that it is gone is the reason to name.
+      # Staff did choose a group, so the message says it is gone, not missing.
       it "says so when the chosen group takes nobody by hand any more" do
         stranger = create(:confirmed_user, locale: "en")
         other = create(:cohort, :enrollment, context: create(:lecture), skip_campaigns: true)
