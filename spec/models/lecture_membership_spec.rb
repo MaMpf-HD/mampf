@@ -43,37 +43,22 @@ RSpec.describe(LectureMembership, type: :model) do
         .not_to exist
     end
 
-    # An admission whose performance data is gone is one nobody could account
-    # for later, and it would still admit: the screening reads the row alone.
-    it "removes the exam admission as well, decided by hand or not" do
-      membership = FactoryBot.create(:lecture_membership,
-                                     lecture: lecture, user: user)
-      FactoryBot.create(:student_performance_certification, :passed, :manual,
-                        lecture: lecture, user: user)
-
-      membership.destroy!
-
-      expect(StudentPerformance::Certification.where(lecture: lecture,
-                                                     user: user))
-        .not_to exist
-    end
-
-    it "removes the performance data on exclusion and rebuilds the record on return" do
+    # The admission is a decision, which leaving does not undo: whoever comes
+    # back is admitted at once, without the lecturer deciding again.
+    it "keeps the exam admission on exclusion, decided by hand or not, for the return" do
       membership = FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
-      FactoryBot.create(:student_performance_certification, :passed,
-                        lecture: lecture, user: user)
+      admission = FactoryBot.create(:student_performance_certification, :passed, :manual,
+                                    lecture: lecture, user: user)
 
       membership.exclude!(by: user)
 
       expect(StudentPerformance::Record.where(lecture: lecture, user: user)).not_to exist
-      expect(StudentPerformance::Certification.where(lecture: lecture, user: user))
-        .not_to exist
+      expect(admission.reload).to be_passed
 
       lecture.add_user_to_roster!(user)
 
       expect(StudentPerformance::Record.where(lecture: lecture, user: user)).to exist
-      expect(StudentPerformance::Certification.where(lecture: lecture, user: user))
-        .not_to exist
+      expect(admission.reload).to be_passed
     end
   end
 

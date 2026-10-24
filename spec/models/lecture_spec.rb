@@ -705,6 +705,18 @@ RSpec.describe(Lecture, type: :model) do
         .to contain_exactly(manual)
     end
 
+    # Without a record nothing would decide it again, and the return would
+    # find the admission gone.
+    it "keeps the computed decision of someone who has left" do
+      former = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+      kept = create(:student_performance_certification, :passed, lecture: lecture, user: former)
+
+      expect(lecture.reset_computed_certifications!).to eq(1)
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(manual, kept)
+    end
+
     it "drops nothing while a running registration asks for the decisions" do
       create(:registration_policy, :student_performance,
              config: { "lecture_ids" => [lecture.id.to_s] })
