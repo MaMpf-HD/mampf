@@ -349,7 +349,7 @@ en:
     overbooked: 'Overbooked'
     empty_hint: 'Use registration processes to enroll participants. While a registration process is active, manual assignment to groups is locked.'
     tooltips:
-      kick_from_lecture: "Removes lecture enrollment and all memberships in tutorials and groups (that have enrollment enabled)"
+      kick_from_lecture: "Removes lecture enrollment and all memberships in tutorials and groups"
       kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
       locked_manage: "Roster is locked during active registration process"
@@ -403,8 +403,8 @@ en:
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
       cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to registration process mode. Please disable self-enrollment first or keep skip registration processes enabled."
     warnings:
-      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment. Memberships in groups without lecture enrollment remain unaffected. Points and any exam admission stay stored and count again if the person comes back. Continue?'
-      confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including all memberships in groups which have automatic lecture enrollment, and taken off the exam list of %{exams}. Memberships in groups without lecture enrollment remain unaffected. Points and any exam admission stay stored and count again if the person comes back. Continue?'
+      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment; the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
+      confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment, and taken off the exam list of %{exams}; the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
