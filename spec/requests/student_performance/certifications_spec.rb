@@ -189,6 +189,27 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                                 filters[:uncertified] => 1, filters[:flagged] => 0 })
         end
 
+        # Someone who has left keeps their admission for a return, but is no
+        # student of the lecture meanwhile.
+        it "leaves out the admission of someone who has left" do
+          [user_a, user_b, user_c].each do |user|
+            FactoryBot.create(:student_performance_record, lecture: lecture, user: user)
+          end
+          former = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: former)
+                    .exclude!(by: former)
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: former)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          pills = Nokogiri::HTML(response.body).css(".count-pills a").to_h do |pill|
+            [pill.text.squish.sub(/ \d+\z/, ""), pill.at_css(".badge").text.to_i]
+          end
+          filters = I18n.t("student_performance.certifications.filters")
+          expect(pills).to include(filters[:passed] => 1, filters[:uncertified] => 1)
+        end
+
         it "shows certification badges for each student" do
           FactoryBot.create(:student_performance_record,
                             lecture: lecture, user: user_a)
