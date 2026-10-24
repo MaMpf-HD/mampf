@@ -15,10 +15,15 @@ module Rosters
     FAR_DEADLINE = 8.weeks
     MANY_REGISTRATIONS = 20
 
+    # `lecture_ids` narrows the reconciliation to some lectures, for a first
+    # run on a few; nil means all.
+    def initialize(lecture_ids: nil)
+      @lecture_ids = lecture_ids
+    end
+
     # One row per lecture with somebody enrolled without a place.
     def rows
-      @rows ||= Lecture.where(id: LectureMembership.active.select(:lecture_id))
-                       .includes(:term, :course).order(:id).filter_map { |lecture| row(lecture) }
+      @rows ||= lectures.includes(:term, :course).order(:id).filter_map { |lecture| row(lecture) }
     end
 
     # Takes those without a place off, the ones on an exam list aside, and
@@ -44,6 +49,11 @@ module Rosters
     end
 
     private
+
+      def lectures
+        scope = Lecture.where(id: LectureMembership.active.select(:lecture_id))
+        @lecture_ids ? scope.where(id: @lecture_ids) : scope
+      end
 
       def row(lecture)
         without = without_place(lecture)
@@ -98,9 +108,13 @@ module Rosters
       end
 
       def campaign_lines
-        Registration::Campaign.where(campaignable_type: "Lecture", status: RUNNING)
-                              .includes(:campaignable, registration_items: :registerable)
-                              .order(:id).filter_map { |campaign| campaign_line(campaign) }
+        running_campaigns.includes(:campaignable, registration_items: :registerable)
+                         .order(:id).filter_map { |campaign| campaign_line(campaign) }
+      end
+
+      def running_campaigns
+        campaigns = Registration::Campaign.where(campaignable_type: "Lecture", status: RUNNING)
+        @lecture_ids ? campaigns.where(campaignable_id: @lecture_ids) : campaigns
       end
 
       def campaign_line(campaign)
@@ -150,8 +164,7 @@ module Rosters
       end
 
       def member_lines
-        Registration::Item.joins(:registration_campaign)
-                          .merge(Registration::Campaign.where(status: RUNNING))
+        Registration::Item.where(registration_campaign: running_campaigns)
                           .where.not(registerable_type: "Exam")
                           .includes(:registerable).filter_map do |item|
           group = item.registerable
