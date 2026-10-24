@@ -32,7 +32,14 @@ module Rosters
       removed
     end
 
+    # Moving out of the lecture itself means out of the group the target
+    # would clash with, or, without one, into the target alone: leaving the
+    # lecture on the way would take the person's lists and bookmark along.
     def move_user!(user, from_rosterable, to_rosterable, force: false)
+      if from_rosterable.is_a?(Lecture)
+        from_rosterable = to_rosterable.conflicting_lecture_membership(user)
+        return add_user!(user, to_rosterable, force: force).present? unless from_rosterable
+      end
       return false if from_rosterable == to_rosterable
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
@@ -113,6 +120,7 @@ module Rosters
           rosterable.remove_user_from_roster!(user)
         end
         cascade_removal_from_subgroups!(user, rosterable)
+        user.unbookmark_lecture!(rosterable) if removed && rosterable.is_a?(Lecture)
         removed
       end
 
@@ -180,6 +188,9 @@ module Rosters
         lecture.ensure_roster_membership!([user.id])
       end
 
+      # Removal from a lecture takes everything the person has in it: every
+      # group, lists without enrollment too, and the exam lists, as leaving
+      # it oneself does; the bookmark goes with the seat.
       def cascade_removal_from_subgroups!(user, rosterable)
         return unless rosterable.is_a?(Lecture)
 
@@ -192,8 +203,6 @@ module Rosters
         end
 
         rosterable.cohorts.find_each do |cohort|
-          next unless cohort.propagate_to_lecture?
-
           cohort.remove_user_from_roster!(user)
         end
 
