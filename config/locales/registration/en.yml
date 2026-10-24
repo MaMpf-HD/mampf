@@ -353,6 +353,7 @@ en:
         solver_unassigned: "Not placed by solver"
         withdrawn_by_teacher: "Manually rejected by teacher"
         deferred_due_to_blocker: "Manually rejected for now because of a blocker"
+        not_enrolled: "No longer enrolled in the lecture"
       none: "No registrations found."
       preferences: "Preferences"
       actions:
