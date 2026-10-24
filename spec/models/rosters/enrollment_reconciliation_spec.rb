@@ -64,6 +64,15 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(reconciliation.report.join("\n")).to include("1 on an exam list - kept")
     end
 
+    it "keeps to the lectures it is narrowed to" do
+      other = create(:lecture)
+      stray = create(:confirmed_user)
+      other.add_user_to_roster!(stray)
+
+      expect(described_class.new(lecture_ids: [other.id]).apply!).to eq(1)
+      expect(lecture.reload.members).to include(limbo)
+    end
+
     it "leaves members with a place alone" do
       seated = create(:confirmed_user)
       service.add_user!(seated, tutorial, force: true)
