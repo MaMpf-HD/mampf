@@ -5,8 +5,8 @@ import { join } from "node:path";
  * Number of Playwright workers. Each worker gets its own app server (and thus
  * its own test database), started by `docker/development/run.sh`.
  *
- * `run.sh` writes the number of servers it started to `tmp/e2e-workers`,
- * so this always matches the servers.
+ * `e2e-workers.sh` (called by `init.sh`) writes the number of servers to
+ * `tmp/e2e-workers`, so this always matches the servers.
  */
 export const workerCount = Number(
   readFileSync(join(process.cwd(), "tmp/e2e-workers"), "utf8").trim(),

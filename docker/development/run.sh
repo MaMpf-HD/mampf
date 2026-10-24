@@ -21,13 +21,8 @@ fi
 # Worker i serves on APP_HEALTHCHECK_PORT + 10 * i with database suffix
 # "_e2e<i>"; worker 0 has its own database too, so RSpec keeps "mampf-test".
 # Keep the ports in sync with e2e/_support/servers.ts.
-# Default: 60% of the cores, rounded (each worker runs a browser and a Rails
-# server). Override via E2E_WORKERS. The result is the single source of truth
-# for Playwright, e2e-databases.sh etc., which read it from tmp/e2e-workers.
-default_e2e_workers=$((($(nproc) * 6 + 5) / 10))
-e2e_workers="${E2E_WORKERS:-$((default_e2e_workers > 1 ? default_e2e_workers : 1))}"
-mkdir -p tmp
-echo "$e2e_workers" > tmp/e2e-workers
+# The worker count is written by e2e-workers.sh (called from init.sh).
+e2e_workers=$(cat tmp/e2e-workers 2>/dev/null || echo 1)
 extra_e2e_workers=""
 if [ "$RAILS_ENV" = "test" ] && [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	extra_e2e_workers=$(seq 1 $((e2e_workers - 1)))
