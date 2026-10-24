@@ -75,8 +75,7 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(reconciliation.report.join("\n")).to include("kept: 1 on an exam list")
     end
 
-    # A finalization would put them on the exam list as strangers, or reject
-    # them, though they registered while enrolled.
+    # A finalization would reject them, though they registered while enrolled.
     it "keeps whoever is registered for an exam, and reports them" do
       exam = create(:exam, :without_campaign, lecture: lecture)
       campaign = create(:registration_campaign, campaignable: lecture)
@@ -90,7 +89,7 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(reconciliation.report.join("\n")).to include("1 registered for an exam")
     end
 
-    # Staff are no students; their seat and bookmark stay.
+    # Staff are not students; their seat and bookmark stay.
     it "keeps a tutor of the lecture, and reports them" do
       create(:tutor_tutorial_join, tutorial: tutorial, tutor: limbo)
 

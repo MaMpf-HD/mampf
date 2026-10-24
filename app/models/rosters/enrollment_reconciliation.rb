@@ -83,8 +83,8 @@ module Rosters
         end
       end
 
-      # The lecture's staff are no students, and taking anyone on an exam list
-      # or registered for an exam off the lecture would take them off the exam.
+      # The lecture's staff are not its students, and taking anyone on an exam
+      # list or registered for an exam off the lecture would take them off it.
       def removable(lecture)
         without = without_place(lecture)
         ids = without.select(:user_id)
