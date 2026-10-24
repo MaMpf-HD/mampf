@@ -103,6 +103,13 @@ module RosterHelper
     "#{group.class.name}-#{group.id}"
   end
 
+  # The lecture's groups that enroll and take people by hand, as select
+  # options: the way in for someone readmitted or put on an exam list.
+  def roster_enrolling_group_options(lecture)
+    lecture.enrolling_groups.reject(&:locked?)
+           .map { |group| [Rosters::LectureLeave.label(group), roster_group_key(group)] }
+  end
+
   # Links a participant's group to its roster on the lecture's groups tab.
   def roster_group_link(group)
     lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture

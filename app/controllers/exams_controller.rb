@@ -202,6 +202,7 @@ class ExamsController < ApplicationController
         else
           service = Rosters::MaintenanceService.new
           begin
+            enroll_through_group!(user)
             service.add_user!(user, @exam, force: true)
             flash.now[:success] = t("assessment.registration_tab.participant_added",
                                     name: user.tutorial_name.presence || user.email)
@@ -255,6 +256,17 @@ class ExamsController < ApplicationController
     def refuse_locked_roster
       flash.now[:error] = t("roster.errors.item_locked")
       render turbo_stream: stream_flash, status: :unprocessable_content
+    end
+
+    # Someone not enrolled comes in through the chosen group first, since an
+    # exam list takes the lecture's members only; without one, the exam's
+    # own refusal says so.
+    def enroll_through_group!(user)
+      return if params[:group].blank? || @lecture.lecture_memberships.exists?(user: user)
+
+      group = @lecture.enrolling_groups.reject(&:locked?)
+                      .find { |candidate| helpers.roster_group_key(candidate) == params[:group] }
+      Rosters::MaintenanceService.new.add_user!(user, group, force: true) if group
     end
 
     def participant_user

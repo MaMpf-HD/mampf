@@ -595,6 +595,20 @@ RSpec.describe("Exams", type: :request) do
         end.to change { exam.roster_entries.count }.by(1)
       end
 
+      it "puts someone not enrolled on the list through the chosen group" do
+        stranger = create(:confirmed_user, locale: "en")
+        repeaters = create(:cohort, :enrollment, context: exam.lecture, title: "Repeaters",
+                                                 skip_campaigns: true)
+
+        post(participants_exam_path(exam),
+             params: { email: stranger.email, group: "Cohort-#{repeaters.id}" },
+             as: :turbo_stream)
+
+        expect(repeaters.reload.members).to include(stranger)
+        expect(exam.lecture.reload.members).to include(stranger)
+        expect(exam.roster_entries.map(&:user_id)).to include(stranger.id)
+      end
+
       # Whoever is to sit the exam without a tutorial comes in through a group.
       it "refuses someone not enrolled in the lecture, saying how they come in" do
         stranger = create(:confirmed_user, locale: "en")
