@@ -98,14 +98,17 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
-    it "notes that the student takes part still when they keep the course" do
+    # Otherwise the student would stay enrolled without a group.
+    it "keeps an enrolled student in their only group" do
       lecture.add_user_to_roster!(user)
+      tutorial.add_user_to_roster!(user)
 
-      delete self_remove_tutorial_path(tutorial), params: { keep_course: true },
-                                                  as: :turbo_stream
+      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
 
-      expect(lecture.lecture_memberships.find_by(user: user).participation_confirmed_at)
-        .to be_present
+      expect(CGI.unescapeHTML(response.body)).to include(
+        I18n.t("roster.errors.self_remove_last_group", group: tutorial.title)
+      )
+      expect(tutorial.reload.members).to include(user)
     end
 
     it "updates the participation section" do

@@ -10,7 +10,7 @@ async function openSelfEnrollment(page: Page): Promise<void> {
 }
 
 test.describe("student self-enrollment", () => {
-  test("adds and removes the student from a self-managed tutorial", async ({
+  test("adds the student to a self-managed tutorial, kept until they leave the course", async ({
     factory,
     student,
   }) => {
@@ -35,27 +35,12 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    const leaveButton = home.participation("Self-managed Tutorial")
-      .getByRole("button", { name: "Leave tutorial" });
-
-    // The only group: the dialog asks whether to leave just it or the course.
-    await leaveButton.click();
-    const dialog = student.page.getByRole("dialog", { name: "Leave tutorial" });
-    await expect(dialog).toContainText("You can join again only while a place is free.");
-    await dialog.getByRole("button", { name: "Cancel" }).click();
-    await expect(dialog).toBeHidden();
-    await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
-
-    await leaveButton.click();
-    await dialog.getByRole("button", { name: "Leave tutorial only" }).click();
-
-    await expect(student.page.getByText(/^You have left “Self-managed Tutorial”\. You are still enrolled/))
-      .toBeVisible();
-    await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
-    await expect(student.page.getByRole("heading", { name: "Your participation" })).toBeFocused();
-    await expect(student.page.getByRole("button", {
-      name: "Register for Self-managed Tutorial",
-    })).toBeVisible();
+    // Joining enrolled the student, so this is their only group now: it goes
+    // with the course alone.
+    await expect(home.participation("Self-managed Tutorial"))
+      .toContainText("Your only group: you leave it only together with the course.");
+    await expect(home.participation("Self-managed Tutorial")
+      .getByRole("button", { name: "Leave tutorial" })).toHaveCount(0);
   });
 
   test("shows a full self-managed tutorial without an unsafe action", async ({

@@ -456,21 +456,15 @@ RSpec.describe(ParticipationComponent, type: :component) do
         tutorial.add_user_to_roster!(user)
       end
 
-      it "offers leaving the whole course first, and just the tutorial too, when it is the " \
-         "only group" do
+      # Leaving it alone would keep the student enrolled without a group.
+      it "offers no leave button on the only group, saying it goes with the course" do
         rendered = render_inline(described_class.new(lecture: lecture, user: user))
-        dialog = rendered.css("#leave-last-group-tutorial-#{tutorial.id}").first
-        only_tutorial = I18n.t("registration.user_registration.participation.last_group.only",
-                               label: I18n.t("registration.user_registration.participation" \
-                                             ".leave_tutorial"))
+        row = rendered.css("[data-testid='participation-row']")
+                      .find { |r| r.text.include?("Mo 10") }
 
-        expect(rendered.css("[data-bs-target='#leave-last-group-tutorial-#{tutorial.id}']"))
-          .to be_present
-        expect(dialog.css("li").map { |item| item.text.squish })
-          .to match([a_string_starting_with("#{I18n.t("lecture_home.leave.button")}:"),
-                     a_string_including(only_tutorial)])
-        expect(dialog.css("[data-bs-target='##{LeaveLectureComponent.dialog_id(lecture)}']"))
-          .to be_present
+        expect(row.text)
+          .to include(I18n.t("registration.user_registration.participation.only_group"))
+        expect(row.css("form, button")).to be_empty
       end
 
       it "asks as before, saying the course stays, when another group remains" do
