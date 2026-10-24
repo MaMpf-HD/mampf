@@ -15,6 +15,11 @@ class ParticipationComponent < ViewComponent::Base
     @lecture = lecture
     @user = user
     @overview = overview || UserRegistrations::LectureOverview.new(lecture, user)
+    @leave = Rosters::LectureLeave.new(lecture, user)
+  end
+
+  def leave_dialog
+    LeaveLectureComponent.new(lecture: @lecture, leave: @leave)
   end
 
   def render?
@@ -22,7 +27,8 @@ class ParticipationComponent < ViewComponent::Base
   end
 
   def rows
-    @rows ||= roster_rows + standing_rows + rejection_rows + excluded_exam_rows
+    @rows ||= lecture_rows + roster_rows + standing_rows + rejection_rows +
+              excluded_exam_rows
   end
 
   private
@@ -32,6 +38,31 @@ class ParticipationComponent < ViewComponent::Base
         Rosters::StudentMaterializedResultResolver.new(@user)
                                                  .all_rosterized_for_lecture(@lecture)
       )
+    end
+
+    # The lecture itself, so that leaving it sits where its groups are left.
+    def lecture_rows
+      return [] unless @leave.participating?
+
+      [Row.new(label: @lecture.sort_localized,
+               title: @lecture.course.title,
+               lines: [],
+               badge: lecture_badge,
+               actions: leave_lecture_action)]
+    end
+
+    def lecture_badge
+      return unless @leave.enrolled?
+
+      [:info, t("registration.user_registration.participation.enrolled")]
+    end
+
+    def leave_lecture_action
+      helpers.button_tag(t("lecture_home.leave.button"),
+                         type: "button",
+                         class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
+                         data: { bs_toggle: "modal",
+                                 bs_target: "##{LeaveLectureComponent::ID}" })
     end
 
     def roster_rows
