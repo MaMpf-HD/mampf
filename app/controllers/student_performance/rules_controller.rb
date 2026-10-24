@@ -100,7 +100,7 @@ module StudentPerformance
 
       def load_edit_form
         @achievements = Achievement.where(lecture: @lecture).order(:title)
-        @computed_count = @lecture.current_certifications.computed.decided.count
+        @computed_count = @lecture.student_performance_certifications.computed.decided.count
         @eligibility_in_use_by = @lecture.eligibility_in_use_by
       end
 

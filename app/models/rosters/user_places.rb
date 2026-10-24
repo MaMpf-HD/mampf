@@ -52,8 +52,20 @@ module Rosters
     # it in a transaction.
     def leave!(lectures)
       withdraw_registrations!(lectures)
-      dismiss_rejections!(lectures)
       leave_rosters!(lectures)
+    end
+
+    # Withdraws the registrations in the given lectures, rejected ones too,
+    # since a new allocation can turn them back into pending ones. Locks each
+    # campaign first, as allocation and finalization do.
+    def withdraw_registrations!(lectures)
+      withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
+        campaign.lock!
+        next unless campaign.status.to_sym.in?(RUNNING_CAMPAIGN_STATUSES)
+
+        campaign.user_registrations.where(user: @user).find_each(&:destroy!)
+      end
+      dismiss_rejections!(lectures)
     end
 
     private
@@ -68,18 +80,6 @@ module Rosters
       def result_scopes
         [Assessment::Participation.with_grading_data.where(user: @user),
          StudentPerformance::Certification.decided.where(user: @user)]
-      end
-
-      # Rejected registrations go too: a new allocation can turn them back
-      # into pending ones and place the student again. A campaign completed
-      # before its lock keeps its registrations, as any completed one does.
-      def withdraw_registrations!(lectures)
-        withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
-          campaign.lock!
-          next unless campaign.status.to_sym.in?(RUNNING_CAMPAIGN_STATUSES)
-
-          campaign.user_registrations.where(user: @user).find_each(&:destroy!)
-        end
       end
 
       # A rejection of a completed campaign would keep the lecture on the

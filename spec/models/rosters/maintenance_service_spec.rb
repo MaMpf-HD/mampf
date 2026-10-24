@@ -133,9 +133,8 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         create(:cohort_membership, cohort: isolated_cohort, user: user)
       end
 
-      # Removal takes everything the person has in the lecture, as leaving it
-      # oneself does: a list without enrollment would otherwise keep them in
-      # its audience.
+      # A list without enrollment would otherwise keep them in the lecture's
+      # audience.
       it "removes the user from every group of the lecture, with enrollment or without" do
         expect do
           subject.remove_user!(user, lecture)
@@ -154,6 +153,28 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         subject.remove_user!(user, lecture)
 
         expect(user.reload.lectures).not_to include(lecture)
+      end
+
+      # A finalization would otherwise put them back into a group or onto an
+      # exam list.
+      it "withdraws the user's registrations in the lecture's running campaigns" do
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        registration = create(:registration_user_registration, :pending,
+                              user: user, registration_campaign: campaign)
+
+        subject.remove_user!(user, lecture)
+
+        expect { registration.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "withdraws nothing for someone not on the lecture roster" do
+        stranger = create(:confirmed_user)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        registration = create(:registration_user_registration, :pending,
+                              user: stranger, registration_campaign: campaign)
+
+        expect(subject.remove_user!(stranger, lecture)).to be_falsey
+        expect(registration.reload).to be_persisted
       end
 
       it "takes the user off the lecture's exam lists" do

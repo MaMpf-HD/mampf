@@ -79,8 +79,8 @@ export default class extends Controller {
   }
 
   /**
-   * One in #modal-container is replaced by the next dialog, which opens at
-   * once, so its page state goes right away rather than after a fade.
+   * Removes modal-open, the overflow and the padding from the body at once:
+   * the next dialog in #modal-container opens before a fade would end.
    */
   releasePage() {
     document.body.classList.remove("modal-open");
