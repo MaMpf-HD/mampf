@@ -503,6 +503,18 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         )
       end
 
+      # The removal takes the user off the lists too, whose rows would show
+      # them until a reload.
+      it "redraws the rows of the lists the user loses along with the lecture" do
+        create(:lecture_membership, lecture: lecture, user: member)
+        list = create(:cohort, context: lecture, skip_campaigns: true)
+        list.add_user_to_roster!(member)
+
+        delete remove_member_tutorial_path(tutorial, user_id: member.id), as: :turbo_stream
+
+        expect(response.body).to include(%(target="#{ActionView::RecordIdentifier.dom_id(list)}"))
+      end
+
       it "includes user name in the flash" do
         delete remove_member_tutorial_path(tutorial, user_id: member.id)
         expect(flash[:notice]).to eq(
