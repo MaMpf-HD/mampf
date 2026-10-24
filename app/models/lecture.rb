@@ -1184,12 +1184,12 @@ class Lecture < ApplicationRecord
   def reset_computed_certifications!
     return if eligibility_in_use_by
 
-    current_certifications.reset_computed!
+    student_performance_certifications.reset_computed!
   end
 
   # The certifications of everybody but those who have left. Theirs stay
-  # stored for a return, but without a record behind them nothing could decide
-  # them again, so the eligibility pages neither count, flag nor reset them.
+  # stored for a return, but have no record behind them while they are away,
+  # so the eligibility pages neither count nor flag them.
   def current_certifications
     student_performance_certifications
       .where.not(user_id: excluded_lecture_memberships.select(:user_id))
