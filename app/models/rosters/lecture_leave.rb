@@ -191,8 +191,14 @@ module Rosters
         end
       end
 
+      # Rejected registrations count too, since a new allocation can turn them
+      # back into pending ones; the dialog does not name them.
       def registration_past_withdrawal?
-        running_campaigns.any? { |campaign| !campaign.open_for_withdrawals? }
+        registered = Registration::UserRegistration.where(user: @user)
+        Registration::Campaign.where(campaignable: @lecture,
+                                     status: UserPlaces::RUNNING_CAMPAIGN_STATUSES,
+                                     id: registered.select(:registration_campaign_id))
+                              .any? { |campaign| !campaign.open_for_withdrawals? }
       end
 
       def exam_entries

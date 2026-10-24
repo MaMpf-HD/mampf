@@ -61,6 +61,20 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.participating?).to be(true)
     end
 
+    # A new allocation could turn the rejection back into a place.
+    it "is true with only a rejected registration past its withdrawal" do
+      campaign = create(:registration_campaign, :processing, campaignable: lecture)
+      registration = create(:registration_user_registration, :rejected,
+                            user: student, registration_campaign: campaign,
+                            registration_item: campaign.registration_items.first)
+
+      expect(leave.participating?).to be(true)
+      expect(leave.campaigns_to_withdraw).to be_empty
+
+      leave.leave!
+      expect { registration.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
     it "is false with a registration its campaign still lets the student withdraw" do
       campaign = create(:registration_campaign, :open, campaignable: lecture)
       create(:registration_user_registration, :pending,
