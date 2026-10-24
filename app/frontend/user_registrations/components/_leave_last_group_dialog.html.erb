@@ -27,16 +27,16 @@
 
         <ul class="mb-0">
           <li>
+            <%= t("registration.user_registration.participation.last_group.whole_course",
+                  label: t("lecture_home.leave.button"), group: group) %>
+          </li>
+
+          <li>
             <%= t("registration.user_registration.participation.last_group.only_group",
                   label: t("registration.user_registration.participation.last_group.only",
                            label: label)) %>
 
             <%= rejoin %>
-          </li>
-
-          <li>
-            <%= t("registration.user_registration.participation.last_group.whole_course",
-                  label: t("lecture_home.leave.button")) %>
           </li>
         </ul>
       </div>
@@ -55,7 +55,7 @@
 
         <button
           type="button"
-          class="btn border-0 bg-danger-subtle text-danger-emphasis"
+          class="btn btn-primary"
           data-bs-toggle="modal"
           data-bs-target="#<%= lecture_dialog_id %>"
         >

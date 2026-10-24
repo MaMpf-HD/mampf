@@ -14,11 +14,11 @@
         <%= button_to t("participation_check.still_taking_part"),
                       confirm_participation_path(lecture),
                       method: :patch,
-                      class: "btn btn-sm btn-primary" %>
+                      class: "btn btn-sm btn-outline-secondary" %>
 
         <button
           type="button"
-          class="btn btn-sm border-0 bg-danger-subtle text-danger-emphasis"
+          class="btn btn-sm btn-outline-secondary"
           data-bs-toggle="modal"
           data-bs-target="#<%= LeaveLectureComponent.dialog_id(lecture) %>"
         >
