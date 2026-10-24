@@ -13,10 +13,10 @@
     <div class="dropdown-menu shadow border-0 rounded-3 p-2" data-testid="quick-access-menu">
       <% if show_pin %>
         <% pinned = lecture.in?(pinned_lectures) %>
-        <% pin_params = { lecture: { id: lecture.id } } %>
-        <%= link_to pinned ? unpin_lecture_path(pin_params) : pin_lecture_path(pin_params),
-                    class: "dropdown-item rounded-2 small",
-                    data: { turbo_method: :patch, turbo_stream: true } do %>
+        <%= button_to pinned ? unpin_lecture_path : pin_lecture_path,
+                      method: :patch,
+                      params: { lecture: { id: lecture.id } },
+                      class: "dropdown-item rounded-2 small" do %>
           <i class="bi <%= pinned ? "bi-pin-angle-fill" : "bi-pin-angle" %>"
              aria-hidden="true"></i>
           <%= t(pinned ? "navbar.unpin_lecture" : "navbar.pin_lecture",

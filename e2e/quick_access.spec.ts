@@ -22,12 +22,12 @@ test.describe("quick access", () => {
 
     await page.goto(`/lectures/${lecture.id}`);
     await toggle.click();
-    await menu.getByRole("link", { name: "Pin AdvCalc" }).click();
+    await menu.getByRole("button", { name: "Pin AdvCalc" }).click();
     // wait for the Turbo Stream to swap the menu before reopening it
     await expect(menu.getByText("Unpin AdvCalc")).toBeAttached();
 
     await toggle.click();
-    await expect(menu.getByRole("link", { name: "Unpin AdvCalc" })).toBeVisible();
+    await expect(menu.getByRole("button", { name: "Unpin AdvCalc" })).toBeVisible();
     await expect(menu.getByRole("link", { name: /^AdvCalc/ })).toBeVisible();
 
     await page.goto("/");
@@ -36,9 +36,9 @@ test.describe("quick access", () => {
     await expect(page).toHaveURL(`/lectures/${lecture.id}`);
 
     await toggle.click();
-    await menu.getByRole("link", { name: "Unpin AdvCalc" }).click();
+    await menu.getByRole("button", { name: "Unpin AdvCalc" }).click();
     await expect(menu.getByText("Pin AdvCalc")).toBeAttached();
     await toggle.click();
-    await expect(menu.getByRole("link", { name: "Pin AdvCalc" })).toBeVisible();
+    await expect(menu.getByRole("button", { name: "Pin AdvCalc" })).toBeVisible();
   });
 });
