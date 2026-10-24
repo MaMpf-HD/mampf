@@ -504,10 +504,12 @@ test.describe("campaign registration", () => {
     const newEmail = `fixed_${Date.now()}@example.com`;
     await new ProfilePage(student.page).goto();
     await student.page.getByRole("link", { name: "Change login data" }).click();
+    await student.page.getByRole("link", { name: "Change email address" }).click();
+    await expect(student.page.locator("#email-form")).toBeVisible();
     await student.page.locator("#user_email").fill(newEmail);
     await student.page.getByLabel("Current password", { exact: true })
       .fill(student.user.password);
-    await student.page.getByRole("button", { name: "Save" }).click();
+    await student.page.getByRole("button", { name: "Update email" }).click();
     await expect(student.page.getByRole("alert")).toBeVisible();
 
     const confirmationLink = await confirmationLinkFor(request, newEmail);

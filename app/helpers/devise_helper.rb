@@ -7,7 +7,10 @@ module DeviseHelper
     when ["registrations", "create"]
       new_user_registration_path(locale: locale)
     when ["registrations", "update"]
-      edit_user_registration_path(locale: locale)
+      edit_user_registration_path(
+        locale: locale,
+        section: params[:section].presence_in(["email", "password"])
+      )
     when ["passwords", "create"]
       new_user_password_path(locale: locale)
     when ["passwords", "edit"], ["passwords", "update"]
