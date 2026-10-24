@@ -62,7 +62,7 @@ class ParticipationComponent < ViewComponent::Base
                          type: "button",
                          class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
                          data: { bs_toggle: "modal",
-                                 bs_target: "##{LeaveLectureComponent.dialog_id(@lecture)}" })
+                                 bs_target: "##{LeaveLectureComponent::ID}" })
     end
 
     def roster_rows

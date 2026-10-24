@@ -63,7 +63,7 @@ module Roster
     def index
       if params[:tab] == "participants"
         return redirect_to lecture_roster_participants_path(
-          @lecture, params.permit(:filter, :search, :group_type)
+          @lecture, params.permit(:search, :group_type)
         )
       end
 

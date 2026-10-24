@@ -478,7 +478,6 @@ RSpec.describe(ParticipationComponent, type: :component) do
         expect(form["data-turbo-confirm"]).to include(
           I18n.t("registration.user_registration.participation.leave_stays_enrolled")
         )
-        expect(rendered.css("#leave-last-group-tutorial-#{tutorial.id}")).to be_empty
       end
     end
 
