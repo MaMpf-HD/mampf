@@ -88,12 +88,10 @@ module Rosters
       @campaigns_to_withdraw ||= running_campaigns.to_a - closed_exam_campaigns
     end
 
-    # The granted exam admission, :computed or :manual. It goes with the
-    # LectureMembership, whose removal deletes the Certification.
-    def admission
-      StudentPerformance::Certification.passed
-                                       .find_by(lecture: @lecture, user: @user)
-                                       &.source&.to_sym
+    # Whether the exam admission is granted. Leaving keeps it for a return,
+    # but only the lecture's members register for its exams.
+    def admitted?
+      StudentPerformance::Certification.passed.exists?(lecture: @lecture, user: @user)
     end
 
     # Decides again under the locks on a fresh instance, since this one

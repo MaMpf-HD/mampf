@@ -202,20 +202,20 @@ RSpec.describe(Rosters::LectureLeave) do
     end
   end
 
-  describe "#admission" do
-    it "tells a computed admission from one granted by hand" do
+  describe "#admitted?" do
+    it "is true for a granted admission, computed or by hand" do
       certification = create(:student_performance_certification, :passed,
                              lecture: lecture, user: student)
-      expect(leave.admission).to eq(:computed)
+      expect(leave.admitted?).to be(true)
 
       certification.update!(source: :manual, note: "Medical certificate")
-      expect(described_class.new(lecture, student).admission).to eq(:manual)
+      expect(described_class.new(lecture, student).admitted?).to be(true)
     end
 
-    it "is nil for a refused admission" do
+    it "is false for a refused admission" do
       create(:student_performance_certification, :failed, lecture: lecture, user: student)
 
-      expect(leave.admission).to be_nil
+      expect(leave.admitted?).to be(false)
     end
   end
 
@@ -290,14 +290,13 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(campaign.user_registrations.where(user: student)).to be_empty
     end
 
-    it "ends the exam admission with the roster seat" do
-      create(:student_performance_certification, :passed, :manual,
-             lecture: lecture, user: student)
+    it "keeps the exam admission for a return" do
+      admission = create(:student_performance_certification, :passed, :manual,
+                         lecture: lecture, user: student)
 
       leave.leave!
 
-      expect(StudentPerformance::Certification.where(lecture: lecture, user: student))
-        .to be_empty
+      expect(admission.reload).to be_passed
     end
 
     it "decides again under the locks when a group changed after the check" do

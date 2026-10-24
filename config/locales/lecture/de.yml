@@ -35,8 +35,7 @@ de:
       consequences:
         groups: "Du verlässt %{groups}."
         campaigns: "Deine Anmeldungen zu %{campaigns} werden zurückgezogen."
-        admission_computed: "Deine Klausurzulassung erlischt. Trittst Du wieder ein, müssen die Lehrenden sie anhand Deiner gespeicherten Leistungen erneut feststellen."
-        admission_manual: "Deine Klausurzulassung erlischt. Sie wurde von den Lehrenden erteilt und kommt bei einem Wiedereintritt nicht von selbst zurück."
+        admission: "Deine Klausurzulassung bleibt gespeichert und gilt wieder, wenn Du zurückkommst. Zur Klausur anmelden kannst Du Dich aber nur, solange Du teilnimmst."
         points: "Deine Punkte bleiben gespeichert und sind wieder da, wenn Du wieder eintrittst."
         dashboard: "Die Veranstaltung verschwindet von Deinem Dashboard."
         dashboard_restricted: "Die Veranstaltung verschwindet von Deinem Dashboard, und für ihre Materialien brauchst Du wieder den Zugangsschlüssel."
