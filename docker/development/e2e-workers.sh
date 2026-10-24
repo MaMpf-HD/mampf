@@ -10,5 +10,9 @@ cd "$(dirname "$0")/../.."
 
 default_e2e_workers=$((($(nproc) * 6 + 5) / 10))
 e2e_workers="${E2E_WORKERS:-$((default_e2e_workers > 1 ? default_e2e_workers : 1))}"
+if ! [[ "$e2e_workers" =~ ^[1-9][0-9]*$ ]]; then
+  echo "E2E_WORKERS must be a positive integer, got: '$e2e_workers'" >&2
+  exit 1
+fi
 mkdir -p tmp
 echo "$e2e_workers" > tmp/e2e-workers
