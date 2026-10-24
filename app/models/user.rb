@@ -773,17 +773,6 @@ class User < ApplicationRecord
                      .previously_new_record?
   end
 
-  # Pinned lectures for the navbar's Quick Access menu: by course title,
-  # then newest term first (lectures without a term last).
-  def quick_access_lectures
-    favorite_lectures.includes(:course, :term).sort_by do |lecture|
-      term = lecture.term
-      winter = term&.season == "WS" ? 1 : 0
-      term_rank = term ? (term.year * 2) + winter : -1
-      [lecture.course.short_title.to_s.to_sort_atoms, -term_rank]
-    end
-  end
-
   def unbookmark_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
     return false unless lecture.in?(lectures)

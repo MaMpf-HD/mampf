@@ -1,6 +1,6 @@
 <% on_start_page = controller_name == "main" && action_name == "start" %>
 <% show_pin = lecture.present? && !on_start_page %>
-<% pinned_lectures = current_user.quick_access_lectures %>
+<% pinned_lectures = quick_access_lectures(current_user) %>
 <li class="nav-item">
   <div class="dropdown-center me-3">
     <button class="btn btn-sm rounded-pill quick-access-toggle dropdown-toggle"
