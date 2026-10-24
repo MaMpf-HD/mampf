@@ -6,6 +6,7 @@ module Roster
 
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
+    class GroupRequiredError < StandardError; end
 
     before_action :set_lecture, only: [:index, :participants]
     before_action :set_rosterable,
@@ -43,6 +44,11 @@ module Roster
 
     rescue_from UserNotFoundError do
       respond_with_flash(:alert, t("roster.errors.user_not_found"),
+                         fallback_location: fallback_path)
+    end
+
+    rescue_from GroupRequiredError do
+      respond_with_flash(:alert, t("roster.errors.readmission_group_required"),
                          fallback_location: fallback_path)
     end
 
@@ -89,19 +95,20 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
+      rosterable = readmission_group || @rosterable
       added = Rosters::MaintenanceService.new.add_user!(
         user,
-        @rosterable,
+        rosterable,
         force: true,
         source_campaign_id: (@mparams.source_id if @mparams.rejected?)
       )
 
       flash.now[:notice] = if added
-        t("roster.messages.user_added", user: user.info, group: @rosterable.title)
+        t("roster.messages.user_added", user: user.info, group: rosterable.title)
       else
-        t("roster.messages.user_already_member", user: user.info, group: @rosterable.title)
+        t("roster.messages.user_already_member", user: user.info, group: rosterable.title)
       end
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if rosterable.over_capacity?
 
       source = find_panel_source
       if source
@@ -306,6 +313,18 @@ module Roster
 
         @group_type ||= @mparams.group_type
         setup_participants
+      end
+
+      # Someone comes back into the lecture through one of its groups that
+      # the staff can add to, so that nobody is enrolled without a place.
+      def readmission_group
+        return unless @rosterable.is_a?(Lecture)
+
+        group = @lecture.enrolling_groups.find { |g| helpers.roster_group_key(g) == @mparams.group }
+        raise(GroupRequiredError) unless group
+        raise(RosterLockedError) if group.locked?
+
+        group
       end
 
       def removal_notice(user, left)

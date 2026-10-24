@@ -268,6 +268,55 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
+  # Students enter the lecture through a group, so readmitting someone who has
+  # left goes through one too, unless the lecture has no group that enrolls.
+  describe "readmitting someone who has left" do
+    let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+    let(:participants) { lecture.excluded_lecture_memberships }
+    let(:component) do
+      lecture.reload
+      described_class.new(lecture: lecture, group_type: group_type,
+                          participants: participants, view: "left")
+    end
+    let(:group_select) do
+      label = I18n.t("roster.left.group_for", user: "Lina Berg")
+      render_inline(component).at_css("select[aria-label='#{label}']")
+    end
+
+    before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
+
+    it "offers the groups that enroll and that the staff can add to" do
+      create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
+      create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: false)
+      create(:cohort, context: lecture, title: "Repeaters", propagate_to_lecture: true,
+                      skip_campaigns: true)
+      create(:cohort, context: lecture, title: "Waitlist", propagate_to_lecture: false)
+
+      expect(group_select.css("option").map(&:text))
+        .to eq([I18n.t("roster.left.choose_group"), "Mo 10", "Repeaters"])
+      expect(group_select["required"]).to be_present
+    end
+
+    it "says why nobody can be readmitted while a registration process manages every group" do
+      create(:tutorial, lecture: lecture, skip_campaigns: false)
+
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.left.no_open_group"))
+      expect(rendered.css("select")).to be_empty
+    end
+
+    # Readmission goes through a place; a list gives none.
+    it "readmits nobody into a lecture without groups that enroll" do
+      create(:cohort, context: lecture, propagate_to_lecture: false)
+
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.left.no_open_group"))
+      expect(rendered.css("form[action$='/roster/members']")).to be_empty
+    end
+  end
+
   # Counts the people the tab lists: a group without enrollment or a running
   # registration does not put anybody on it.
   describe "study programs" do

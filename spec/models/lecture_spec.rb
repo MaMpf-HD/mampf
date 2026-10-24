@@ -517,6 +517,25 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  # Someone who has left is readmitted through one of these.
+  describe "#enrolling_groups" do
+    it "holds the tutorials and the cohorts with enrollment" do
+      lecture = create(:lecture)
+      tutorial = create(:tutorial, lecture: lecture)
+      repeaters = create(:cohort, context: lecture, propagate_to_lecture: true)
+      create(:cohort, context: lecture, propagate_to_lecture: false)
+
+      expect(lecture.enrolling_groups).to eq([tutorial, repeaters])
+    end
+
+    it "holds a seminar's talks" do
+      seminar = create(:lecture, :is_seminar)
+      talk = create(:talk, lecture: seminar)
+
+      expect(seminar.enrolling_groups).to eq([talk])
+    end
+  end
+
   describe "#registration_mail_recipients" do
     let(:lecture) { create(:lecture, :released_for_all) }
     let(:users) { create_list(:confirmed_user, 3) }

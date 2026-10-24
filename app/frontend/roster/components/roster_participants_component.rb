@@ -88,6 +88,15 @@ class RosterParticipantsComponent < ViewComponent::Base
     end
   end
 
+  # The groups the staff can add someone who has left to, as select options:
+  # a group a running registration process manages takes nobody by hand.
+  def readmission_options
+    @readmission_options ||=
+      enrolling_groups.reject(&:locked?).map do |group|
+        [Rosters::LectureLeave.label(group), helpers.roster_group_key(group)]
+      end
+  end
+
   def registration_entry(user)
     @registration_entry_by_user ||=
       Rosters::RunningRegistrations.new(lecture, campaign: campaign)
@@ -212,6 +221,10 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   private
+
+    def enrolling_groups
+      @enrolling_groups ||= lecture.enrolling_groups
+    end
 
     def exam_titles_by_user
       @exam_titles_by_user ||=

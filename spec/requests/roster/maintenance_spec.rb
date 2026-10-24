@@ -62,6 +62,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "lists them in the left view, saying how they left" do
+          create(:tutorial, lecture: lecture, skip_campaigns: true)
+
           get lecture_roster_participants_path(lecture, view: "left"), as: :turbo_stream
 
           body = CGI.unescapeHTML(response.body)
@@ -71,13 +73,15 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "keeps the left view in its page links after readmitting someone" do
+          tutorial = create(:tutorial, lecture: lecture, skip_campaigns: true)
           # 21 more who have left, so a second page remains once Berg is back
           create_list(:confirmed_user, 21).each do |user|
             create(:lecture_membership, lecture: lecture, user: user).exclude!(by: user)
           end
 
           post add_member_lecture_path(lecture),
-               params: { user_id: former.id, source: :participants, view: "left" },
+               params: { user_id: former.id, group: "Tutorial-#{tutorial.id}",
+                         source: :participants, view: "left" },
                as: :turbo_stream
 
           links = Nokogiri::HTML(CGI.unescapeHTML(response.body))
@@ -92,13 +96,63 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(CGI.unescapeHTML(response.body)).to include(I18n.t("roster.views.left"))
         end
 
-        it "takes them back into the lecture" do
+        # Readmission goes through a place, and this lecture offers none.
+        it "does not take them back into a lecture without a group that enrolls" do
           post add_member_lecture_path(lecture),
                params: { user_id: former.id, source: :participants, view: "left" },
                as: :turbo_stream
 
-          expect(lecture.reload.members).to include(former)
-          expect(lecture.excluded_lecture_memberships).to be_empty
+          expect(response.body).to include(I18n.t("roster.errors.readmission_group_required"))
+          expect(lecture.reload.members).not_to include(former)
+        end
+
+        context "when the lecture has groups" do
+          let!(:tutorial) do
+            create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
+          end
+
+          def readmit(group)
+            post(add_member_lecture_path(lecture),
+                 params: { user_id: former.id, group: group, source: :participants,
+                           view: "left" },
+                 as: :turbo_stream)
+          end
+
+          it "takes them back into the lecture through the chosen group" do
+            readmit("Tutorial-#{tutorial.id}")
+
+            expect(tutorial.reload.members).to include(former)
+            expect(lecture.reload.members).to include(former)
+            expect(lecture.excluded_lecture_memberships).to be_empty
+            expect(CGI.unescapeHTML(response.body)).to include(
+              I18n.t("roster.messages.user_added", user: former.info, group: "Mo 10")
+            )
+          end
+
+          it "does not take them back without a group" do
+            readmit(nil)
+
+            expect(response.body).to include(I18n.t("roster.errors.readmission_group_required"))
+            expect(lecture.reload.members).not_to include(former)
+          end
+
+          it "does not take them back through a group without enrollment" do
+            waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+
+            readmit("Cohort-#{waitlist.id}")
+
+            expect(response.body).to include(I18n.t("roster.errors.readmission_group_required"))
+            expect(waitlist.reload.members).not_to include(former)
+          end
+
+          it "does not take them back through a group a registration process manages" do
+            managed = create(:tutorial, lecture: lecture, skip_campaigns: false)
+
+            readmit("Tutorial-#{managed.id}")
+
+            expect(response.body).to include(I18n.t("roster.errors.item_locked"))
+            expect(lecture.reload.members).not_to include(former)
+          end
         end
       end
 
@@ -742,10 +796,22 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "adds the user to the lecture roster" do
+      it "adds the user to the lecture through a group" do
+        tutorial = create(:tutorial, lecture: lecture, skip_campaigns: true)
+
+        expect do
+          post(add_member_lecture_path(lecture),
+               params: { email: new_student.email, group: "Tutorial-#{tutorial.id}" })
+        end.to change { lecture.members.count }.by(1)
+        expect(tutorial.reload.members).to include(new_student)
+      end
+
+      # Nobody is enrolled without a place.
+      it "does not add the user to the lecture alone" do
         expect do
           post(add_member_lecture_path(lecture), params: { email: new_student.email })
-        end.to change { lecture.members.count }.by(1)
+        end.not_to(change { lecture.members.count })
+        expect(flash[:alert]).to eq(I18n.t("roster.errors.readmission_group_required"))
       end
 
       it "handles invalid email" do

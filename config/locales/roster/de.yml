@@ -76,15 +76,18 @@ de:
     left:
       hint: >-
         Wer die Teilnahme beendet hat oder aus der Veranstaltung entfernt wurde.
-        Bewertungen und Abgaben bleiben gespeichert; „Wieder aufnehmen“ trägt die
-        Person wieder in die Veranstaltung ein.
+        Bewertungen, Abgaben und Zulassung bleiben gespeichert; „Wieder aufnehmen“ trägt
+        die Person über eine Gruppe wieder in die Veranstaltung ein.
       column: 'Ausgetreten'
       by_self: 'Selbst ausgetreten am %{date}'
       by_staff: 'Entfernt am %{date} von %{name}'
       removed: 'Ausgetragen am %{date}'
       empty: 'Bisher ist niemand ausgetreten.'
       readmit: 'Wieder aufnehmen'
-      readmit_confirm: '%{user} wieder in die Veranstaltung aufnehmen?'
+      readmit_into_group_confirm: '%{user} in die gewählte Gruppe und damit wieder in die Veranstaltung aufnehmen?'
+      choose_group: 'Gruppe wählen'
+      group_for: 'Gruppe für %{user}'
+      no_open_group: 'Wieder aufnehmen geht nur über eine Gruppe, und gerade nimmt keine Gruppe mit Einschreibung jemanden von Hand auf.'
     registrations:
       hint: >-
         Diese Personen sind angemeldet, aber noch nicht in ihre Gruppen eingetragen. Das geschieht
@@ -395,6 +398,7 @@ de:
       target_not_found: "Zielgruppe nicht gefunden."
       target_locked: "Zielgruppe ist gesperrt."
       user_not_found: "Studierende/r nicht gefunden."
+      readmission_group_required: "Wähle eine Gruppe, in die die Person zurückkommt."
       user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
       exam_requires_enrollment: "%{user} ist nicht in der Veranstaltung eingeschrieben. Auf die Klausurliste kommt nur, wer in einer Gruppe ist; füge die Person zuerst einer Gruppe hinzu, etwa einer Sondergruppe für Wiederholer."

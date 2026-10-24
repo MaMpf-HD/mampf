@@ -1158,6 +1158,13 @@ class Lecture < ApplicationRecord
     tutorials_without_tutor(user).where.not(id: user.enrolled_tutorials.select(:id))
   end
 
+  # The groups whose members the lecture enrolls: its tutorials and talks,
+  # and the cohorts with enrollment. Students enter the lecture through one
+  # of them.
+  def enrolling_groups
+    tutorials.to_a + talks.to_a + cohorts.select(&:propagate_to_lecture?).sort_by(&:title)
+  end
+
   def roster_entries
     lecture_memberships
   end
