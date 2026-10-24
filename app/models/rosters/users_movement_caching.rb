@@ -4,5 +4,9 @@ module Rosters
     def users_movement_map_cache
       @users_movement_map_cache ||= {}
     end
+
+    def left_lecture_user_ids_cache
+      @left_lecture_user_ids_cache ||= {}
+    end
   end
 end

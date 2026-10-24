@@ -43,19 +43,69 @@ RSpec.describe(LectureMembership, type: :model) do
         .not_to exist
     end
 
-    # An admission whose performance data is gone is one nobody could account
-    # for later, and it would still admit: the screening reads the row alone.
-    it "removes the exam admission as well, decided by hand or not" do
-      membership = FactoryBot.create(:lecture_membership,
-                                     lecture: lecture, user: user)
-      FactoryBot.create(:student_performance_certification, :passed, :manual,
-                        lecture: lecture, user: user)
+    # The admission is a decision, which leaving does not undo: whoever comes
+    # back is admitted at once, without the lecturer deciding again.
+    it "keeps the exam admission on exclusion, decided by hand or not, for the return" do
+      membership = FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      admission = FactoryBot.create(:student_performance_certification, :passed, :manual,
+                                    lecture: lecture, user: user)
 
-      membership.destroy!
+      membership.exclude!(by: user)
 
-      expect(StudentPerformance::Certification.where(lecture: lecture,
-                                                     user: user))
-        .not_to exist
+      expect(StudentPerformance::Record.where(lecture: lecture, user: user)).not_to exist
+      expect(admission.reload).to be_passed
+
+      lecture.add_user_to_roster!(user)
+
+      expect(StudentPerformance::Record.where(lecture: lecture, user: user)).to exist
+      expect(admission.reload).to be_passed
+    end
+  end
+
+  describe "exclusion" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:staff) { FactoryBot.create(:confirmed_user) }
+
+    it "keeps the row but takes the user off the roster, noting who did it" do
+      membership = FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+
+      lecture.remove_user_from_roster!(user, by: staff)
+
+      expect(lecture.members).not_to include(user)
+      expect(lecture.excluded_lecture_memberships).to contain_exactly(membership)
+      expect(membership.reload.excluded_by).to eq(staff)
+      expect(membership.left_by_self?).to be(false)
+    end
+
+    # A reader that forgot the active scope would still count them.
+    it "counts the user as a member nowhere once excluded" do
+      restricted = FactoryBot.create(:lecture, :released_for_all, passphrase: "secret")
+      FactoryBot.create(:lecture_membership, lecture: restricted, user: user).exclude!(by: user)
+      board = Dashboard::Board.new(user: user, term: restricted.term)
+
+      expect(restricted.members).not_to include(user)
+      expect(user.enrolled_lectures).not_to include(restricted)
+      expect(user.roster_lectures).not_to include(restricted)
+      expect(restricted.registration_mail_recipients).not_to include(user)
+      expect(LectureAudience.users([restricted.id])).not_to include(user)
+      expect(LectureAudience.lectures_of(user)).not_to include(restricted)
+      expect(board.enrolled_lectures).not_to include(restricted)
+      expect(restricted.bookmarkable_by?(user)).to be(false)
+      expect(Rosters::UserPlaces.new(user).any?).to be(false)
+    end
+
+    it "takes the same row back when the user is added again" do
+      membership = FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      membership.exclude!(by: user)
+
+      joined_at = membership.created_at
+      lecture.add_user_to_roster!(user)
+
+      expect(lecture.members).to include(user)
+      expect(membership.reload.excluded_at).to be_nil
+      expect(membership.created_at).to eq(joined_at)
+      expect(LectureMembership.where(lecture: lecture, user: user).count).to eq(1)
     end
   end
 end

@@ -43,7 +43,11 @@ class User < ApplicationRecord
   has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
   # Roster memberships
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :all_lecture_memberships,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :user
+  has_many :lecture_memberships, -> { active }, inverse_of: :user
   has_many :assignment_sightings, dependent: :destroy
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 
@@ -794,11 +798,12 @@ class User < ApplicationRecord
 
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
-  # is normally already covered by `roster_lectures`; this catches it before
-  # rostering happens, or if the campaign never rosters the user at all.
+  # counts only until its campaign is completed; from then on the roster
+  # says whether the student is still there.
   def lectures_with_registration_application
+    unfinished = Registration::Campaign.where.not(status: :completed).select(:id)
     campaign_ids = user_registrations
-                   .where(status: [:pending, :confirmed])
+                   .where(status: [:pending, :confirmed], registration_campaign_id: unfinished)
                    .or(user_registrations.rejected.not_dismissed)
                    .select(:registration_campaign_id)
     Lecture.where(

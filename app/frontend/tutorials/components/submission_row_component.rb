@@ -35,10 +35,13 @@ class SubmissionRowComponent < ViewComponent::Base
 
   # Whom the tutor may put on this team: the group's members on no team
   # for this sheet. A rejected hand-in takes nobody; it counts as none.
+  # Someone who has left keeps their row but joins no team: adding takes
+  # only members of the tutorial.
   def addable_members
     return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
 
     @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
+    @addable_members.reject { |member| left_lecture?(member) }
   end
 
   # The earliest join founded the team; whether that was late is the
@@ -212,5 +215,9 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def movement_info_for_user(user)
     helpers.movement_info_for_user_assignment(user, users_movement_map)
+  end
+
+  def left_lecture?(user)
+    helpers.left_lecture_user_ids(@lecture).include?(user.id)
   end
 end

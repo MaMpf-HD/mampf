@@ -103,6 +103,17 @@ RSpec.describe(Dashboard::Board) do
       expect(board.enrolled_lectures).to contain_exactly(lecture)
     end
 
+    it "leaves out a lecture whose completed campaign the user has left since" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :completed, campaignable: lecture)
+      create(:registration_user_registration, :confirmed,
+             user: user,
+             registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(board.enrolled_lectures).to be_empty
+    end
+
     it "includes a lecture with a rejected, not-yet-dismissed registration" do
       lecture = create(:lecture, term: term)
       campaign = create(:registration_campaign, :open, campaignable: lecture)

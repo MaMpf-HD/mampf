@@ -1233,6 +1233,18 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
             as: :turbo_stream
     end
 
+    it "keeps the hand-in of someone who has left the course" do
+      participation.update!(submitted_at: 1.day.ago)
+      lecture_membership.exclude!(by: student)
+
+      patch remove_participation_path(participation),
+            params: { grading_scope_type: "tutorial" },
+            as: :turbo_stream
+
+      expect(response.body).to include(I18n.t("assessment.grading_tutorial.left_lecture_frozen"))
+      expect(participation.reload.submitted_at).to be_present
+    end
+
     it "answers with the row alone" do
       patch remove_participation_path(participation),
             params: { grading_scope_type: "tutorial" },

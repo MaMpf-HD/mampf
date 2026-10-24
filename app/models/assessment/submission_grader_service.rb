@@ -137,12 +137,20 @@ module Assessment
           participation.update!(submitted_at: Time.current)
         end
 
+        # Someone who has left keeps the stamp: without it and without points
+        # their row would leave the marking table.
         def stamp_test!(participation)
           participation.task_points.reset
           started = participation.results_visible?
           return if participation.submitted_at.present? == started
+          return if !started && left_lecture?(participation)
 
           participation.update!(submitted_at: started ? Time.current : nil)
+        end
+
+        def left_lecture?(participation)
+          participation.assessment.lecture.excluded_lecture_memberships
+                       .exists?(user_id: participation.user_id)
         end
 
         def score_submission_entry!(entry, scorer, validated_scopes)

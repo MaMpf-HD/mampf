@@ -230,7 +230,8 @@ module DeansOffice
       end
 
       def lecture_member_ids
-        @lecture_member_ids ||= id_sets(LectureMembership.where(lecture: lectures), :lecture_id)
+        @lecture_member_ids ||= id_sets(LectureMembership.active.where(lecture: lectures),
+                                        :lecture_id)
       end
 
       def roster_ids

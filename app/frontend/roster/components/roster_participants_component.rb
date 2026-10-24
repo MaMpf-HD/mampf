@@ -19,6 +19,8 @@ class RosterParticipantsComponent < ViewComponent::Base
   }.freeze
 
   REGISTRATIONS_PARTIAL = "roster/components/roster_participants_registrations".freeze
+  LEFT_PARTIAL = "roster/components/roster_participants_left".freeze
+  COUNT_KEYS = { "enrolled" => :total, "registered" => :registered, "left" => :left }.freeze
 
   def self.section_targets
     SECTION_TARGETS
@@ -65,6 +67,29 @@ class RosterParticipantsComponent < ViewComponent::Base
     view == "registered"
   end
 
+  def enrolled_view?
+    view == "enrolled"
+  end
+
+  def left_view?
+    view == "left"
+  end
+
+  def view_count(name)
+    counts[COUNT_KEYS.fetch(name)] || 0
+  end
+
+  def left_description(membership)
+    date = l(membership.excluded_at.to_date)
+    if membership.left_by_self?
+      t("roster.left.by_self", date: date)
+    elsif membership.excluded_by
+      t("roster.left.by_staff", date: date, name: membership.excluded_by.name)
+    else
+      t("roster.left.removed", date: date)
+    end
+  end
+
   def registration_entry(user)
     @registration_entry_by_user ||=
       Rosters::RunningRegistrations.new(lecture, campaign: campaign)
@@ -102,12 +127,11 @@ class RosterParticipantsComponent < ViewComponent::Base
   def search_hits_elsewhere
     return [] if search_string.blank?
 
-    hits = if registered_view?
-      [[t("roster.views.enrolled"), counts[:total]]] +
-        running_campaigns.reject { |c, _| c == campaign }
-                         .map { |c, n| [c.student_facing_title, n] }
-    else
-      [[t("roster.views.registered"), counts[:registered]]]
+    others = COUNT_KEYS.keys - [view]
+    hits = others.map { |name| [t("roster.views.#{name}"), view_count(name)] }
+    if registered_view?
+      hits += running_campaigns.reject { |c, _| c == campaign }
+                               .map { |c, n| [c.student_facing_title, n] }
     end
     hits.select { |_, n| n.to_i.positive? }
   end
@@ -126,6 +150,10 @@ class RosterParticipantsComponent < ViewComponent::Base
     if registered_view?
       registered = Rosters::RunningRegistrations.new(lecture, campaign: campaign).people
       return { t("roster.views.registered") => ProgramDistribution.new(registered) }
+    end
+    if left_view?
+      left = User.where(id: lecture.excluded_lecture_memberships.select(:user_id))
+      return { t("roster.views.left") => ProgramDistribution.new(left) }
     end
 
     enrolled = User.where(id: lecture.lecture_memberships.select(:user_id))
@@ -164,6 +192,13 @@ class RosterParticipantsComponent < ViewComponent::Base
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
   end
 
+  def kick_confirmation(user)
+    exams = exam_titles_by_user[user.id]
+    return t("roster.warnings.confirm_kick_from_lecture") if exams.blank?
+
+    t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
+  end
+
   # Returns the HTML for the pagination navigation (top and bottom)
   # Uses Pagy with custom querify logic to preserve tabs and filters.
   def pagination_nav
@@ -174,7 +209,7 @@ class RosterParticipantsComponent < ViewComponent::Base
                             anchor_string: 'data-turbo-stream="true"',
                             querify: lambda { |p|
                               p["filter"] = @filter_mode
-                              p["view"] = @view if registered_view?
+                              p["view"] = @view unless enrolled_view?
                               p["campaign"] = @campaign.id if @campaign
                               p["search"] = @search_string if @search_string.present?
                               p["group_type"] =
@@ -200,11 +235,21 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   def section_partial
     return REGISTRATIONS_PARTIAL if section == :results && registered_view?
+    return LEFT_PARTIAL if section == :results && left_view?
 
     self.class.section_partials.fetch(section)
   end
 
   private
+
+    def exam_titles_by_user
+      @exam_titles_by_user ||=
+        ExamRosterEntry.active.joins(:exam)
+                       .where(exams: { lecture_id: @lecture.id },
+                              user_id: participants.map(&:user_id))
+                       .pluck(:user_id, "exams.title")
+                       .group_by(&:first).transform_values { |rows| rows.map(&:last) }
+    end
 
     def section_kwargs
       { lecture: lecture, group_type: group_type, participants: participants,

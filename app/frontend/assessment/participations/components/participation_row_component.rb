@@ -280,6 +280,7 @@ class ParticipationRowComponent < ViewComponent::Base
   def absence_button
     return unless can_enter_points?
     return if test? && elsewhere?
+    return if left_lecture?
 
     if @participation.absent?
       row_action_link(remove_absent_path(@participation, grading_scope_type: grading_scope_type),
@@ -346,7 +347,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def paper_hand_in_removable?
-    @participation.task_points.all? { |point| point.points.nil? }
+    !left_lecture? && @participation.task_points.all? { |point| point.points.nil? }
   end
 
   def task_points_participation_input(task, allow_grading)
@@ -447,6 +448,14 @@ class ParticipationRowComponent < ViewComponent::Base
   def users_movement_map
     helpers.users_movement_map_cache[@assessable.id] ||=
       helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
+  end
+
+  # Points of someone who has left may still be entered for what they handed
+  # in; whether they handed in or attended stays as it was, since changing it
+  # would empty the row and take it out of the table.
+  def left_lecture?
+    @assessable.is_a?(Assignment) &&
+      helpers.left_lecture_user_ids(@assessable.lecture).include?(@user.id)
   end
 
   # Tutorial movement compares a sheet's participation with the user's

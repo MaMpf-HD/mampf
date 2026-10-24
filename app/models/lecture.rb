@@ -53,7 +53,15 @@ class Lecture < ApplicationRecord
   has_many :users, -> { distinct }, through: :lecture_bookmarks
 
   # Roster associations
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :all_lecture_memberships,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :lecture
+  has_many :lecture_memberships, -> { active }, inverse_of: :lecture
+  has_many :excluded_lecture_memberships,
+           -> { excluded },
+           class_name: "LectureMembership",
+           inverse_of: :lecture
   has_many :members, through: :lecture_memberships, source: :user
 
   # messages from the lecture staff or a tutor to students of the lecture
@@ -296,7 +304,7 @@ class Lecture < ApplicationRecord
     return true if bookmarked_by?(user)
     return false unless published? || user.admin || edited_by?(user)
 
-    passphrase.blank? || LectureMembership.exists?(user: user, lecture: self)
+    passphrase.blank? || lecture_memberships.exists?(user: user)
   end
 
   # Compared in constant time, since the pass phrase is shared by everyone
@@ -983,9 +991,10 @@ class Lecture < ApplicationRecord
     # Efficiently insert missing memberships without touching existing rows.
     # Note: Requires a unique index on [:user_id, :lecture_id].
     existing_user_ids = lecture_memberships.where(user_id: user_ids).pluck(:user_id)
-    new_user_ids = user_ids.uniq - existing_user_ids
+    readmitted_user_ids = readmit_to_roster!(user_ids)
+    new_user_ids = user_ids.uniq - existing_user_ids - readmitted_user_ids
 
-    attributes = new_user_ids.map do |uid|
+    attributes = (new_user_ids + readmitted_user_ids).map do |uid|
       { user_id: uid, lecture_id: id }
     end
 
@@ -1011,7 +1020,30 @@ class Lecture < ApplicationRecord
     end
     # rubocop:enable Rails/SkipsModelValidations
 
-    sync_student_performance_for_members!(new_user_ids)
+    sync_student_performance_for_members!(new_user_ids + readmitted_user_ids)
+  end
+
+  # Clears the exclusion of those who had left the roster; their rows keep
+  # the date they first joined.
+  def readmit_to_roster!(user_ids)
+    excluded = excluded_lecture_memberships.where(user_id: user_ids)
+    ids = excluded.pluck(:user_id)
+    excluded.update_all(excluded_at: nil, excluded_by_id: nil, # rubocop:disable Rails/SkipsModelValidations
+                        updated_at: Time.current)
+    ids
+  end
+
+  def remove_user_from_roster!(user, by: nil)
+    lecture_memberships.find_by(user: user)&.tap { |membership| membership.exclude!(by: by) }
+  end
+
+  def add_user_to_roster!(user, source_campaign = nil)
+    membership = all_lecture_memberships.find_or_initialize_by(user: user)
+    membership.source_campaign ||= source_campaign
+    membership.excluded_at = nil
+    membership.excluded_by = nil
+    membership.save!
+    membership
   end
 
   def assignments_complete?
@@ -1044,19 +1076,20 @@ class Lecture < ApplicationRecord
     end
   end
 
-  # All students that lecture staff can reach by registration mail:
-  # everyone with a pending or confirmed registration in one of the
-  # lecture's campaigns, plus everyone on the roster (union, deduplicated).
-  # Before finalization this is "everyone who signed up", afterwards it
-  # also covers manually added roster members.
+  # All students that lecture staff can reach by registration mail: the
+  # roster, the cohorts, and the registrations of campaigns not completed;
+  # after completion the roster, not the old registration, says who is in.
   def registration_mail_recipients
     registered_ids = Registration::UserRegistration
-                     .where(registration_campaign: registration_campaigns,
+                     .where(registration_campaign: registration_campaigns
+                                                     .where.not(status: :completed),
                             status: [:pending, :confirmed])
                      .select(:user_id)
     member_ids = lecture_memberships.select(:user_id)
+    cohort_member_ids = CohortMembership.where(cohort: cohorts).select(:user_id)
 
     User.where(id: registered_ids).or(User.where(id: member_ids))
+        .or(User.where(id: cohort_member_ids))
   end
 
   def eligible_as_tutors
@@ -1151,7 +1184,15 @@ class Lecture < ApplicationRecord
   def reset_computed_certifications!
     return if eligibility_in_use_by
 
-    student_performance_certifications.reset_computed!
+    current_certifications.reset_computed!
+  end
+
+  # The certifications of everybody but those who have left. Theirs stay
+  # stored for a return, but without a record behind them nothing could decide
+  # them again, so the eligibility pages neither count, flag nor reset them.
+  def current_certifications
+    student_performance_certifications
+      .where.not(user_id: excluded_lecture_memberships.select(:user_id))
   end
 
   private

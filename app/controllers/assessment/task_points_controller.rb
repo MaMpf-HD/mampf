@@ -32,6 +32,8 @@ module Assessment
     before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
                                                    :remove_absent, :mark_as_exempt,
                                                    :remove_exempt]
+    before_action :refuse_after_leaving, only: [:remove_participated, :mark_as_absent,
+                                                :remove_absent]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -324,6 +326,15 @@ module Assessment
         ParticipationIndex.follow_membership(@participation)
         @tutorial = @participation.tutorial
         authorize_assessment!
+      end
+
+      # Whether someone who has left the course handed in or attended stays
+      # as it was; their row would otherwise empty and leave the table.
+      def refuse_after_leaving
+        return unless @assessable.is_a?(Assignment)
+        return unless @lecture.excluded_lecture_memberships.exists?(user_id: @participation.user_id)
+
+        respond_with_flash(:alert, t("assessment.grading_tutorial.left_lecture_frozen"))
       end
 
       def refuse_unless_candidate
