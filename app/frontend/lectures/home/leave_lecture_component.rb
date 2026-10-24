@@ -54,9 +54,7 @@ class LeaveLectureComponent < ViewComponent::Base
     end
 
     def admission_consequence
-      return unless @leave.admission
-
-      t("lecture_home.leave.consequences.admission_#{@leave.admission}")
+      t("lecture_home.leave.consequences.admission") if @leave.admitted?
     end
 
     def points_consequence
