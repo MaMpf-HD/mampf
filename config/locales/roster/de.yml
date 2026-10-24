@@ -400,6 +400,7 @@ de:
       user_not_found: "Studierende/r nicht gefunden."
       user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
+      exam_requires_enrollment: "%{user} ist nicht in der Veranstaltung eingeschrieben. Auf die Klausurliste kommt nur, wer in einer Gruppe ist; füge die Person zuerst einer Gruppe hinzu, etwa einer Sondergruppe für Wiederholer."
       switch_failed: "Der Wechsel hat nicht geklappt; Du bist in Deiner bisherigen Gruppe geblieben."
       self_remove_graded: "Für Dich liegt in „%{group}“ bereits eine Bewertung vor, deshalb kannst Du nicht austreten."
       self_remove_last_group: "„%{group}“ ist Deine einzige Gruppe; Du verlässt sie nur zusammen mit der Veranstaltung."
@@ -416,6 +417,8 @@ de:
       confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung; das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_lecture_exams: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
+      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Sie wird damit aus der Veranstaltung entfernt, auch aus Sondergruppen ohne Einschreibung; das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Für einen Wechsel der Gruppe nutze „Verschieben“. Fortfahren?'
+      confirm_kick_from_only_group_exams: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Sie wird damit aus der Veranstaltung entfernt, auch aus Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Für einen Wechsel der Gruppe nutze „Verschieben“. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'
@@ -434,6 +437,7 @@ de:
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
+      user_removed_with_only_group: "%{user} wurde mit %{group}, der letzten Gruppe mit Einschreibung, aus der Veranstaltung entfernt."
       self_removed: "Du hast „%{group}“ verlassen."
       self_removed_still_enrolled: "Du hast „%{group}“ verlassen. In „%{lecture}“ bist Du weiterhin eingeschrieben."
     no_participants_yet: 'Noch niemand steht auf der Prüfungsliste.'

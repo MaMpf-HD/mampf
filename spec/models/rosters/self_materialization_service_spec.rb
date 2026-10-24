@@ -94,8 +94,9 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
         expect { service.self_remove! }.to raise_error(described_class::LastGroupError)
       end
 
-      it "lets them leave it while another group remains" do
-        create(:cohort, context: lecture, skip_campaigns: true).add_user_to_roster!(user)
+      it "lets them leave it while another place remains" do
+        create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
+          .add_user_to_roster!(user)
 
         expect(maintenance_service).to receive(:remove_user!).with(user, rosterable)
         service.self_remove!

@@ -535,7 +535,6 @@ de:
         leave_confirm_rejoin: "„%{group}“ verlassen? Du kannst Dich danach wieder eintragen."
         leave_no_sheets: "Ohne Tutorium kannst Du keine Blätter abgeben."
         leave_stays_enrolled: "In der Veranstaltung bleibst Du eingeschrieben; ganz verlässt Du sie mit „Veranstaltung verlassen“."
-        no_group: "Du bist in keiner Gruppe dieser Veranstaltung. Ohne Tutorium kannst Du keine Blätter abgeben."
         only_group: "Deine einzige Gruppe: Du verlässt sie nur zusammen mit der Veranstaltung."
         preference_fulfilled: "Dein %{rank} Wunsch."
         outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."

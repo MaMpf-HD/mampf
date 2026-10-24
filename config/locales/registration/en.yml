@@ -533,7 +533,6 @@ en:
         leave_confirm_rejoin: "Leave “%{group}”? You can join again afterwards."
         leave_no_sheets: "Without a tutorial you cannot hand in sheets."
         leave_stays_enrolled: "You stay enrolled in the course; to leave it altogether, use “Leave course”."
-        no_group: "You are in no group of this course. Without a tutorial you cannot hand in sheets."
         only_group: "Your only group: you leave it only together with the course."
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."

@@ -285,9 +285,12 @@ module Rosters
       end
     end
 
+    # Only the groups that enroll do; an exam list takes members already
+    # (see Exam#registrable_by?) and a list without enrollment is none.
     def propagate_to_lecture!(user_ids)
       return if user_ids.empty?
 
+      return if is_a?(Exam)
       return if is_a?(Cohort) && !propagate_to_lecture
 
       return unless respond_to?(:lecture)

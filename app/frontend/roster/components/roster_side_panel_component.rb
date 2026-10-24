@@ -177,6 +177,18 @@ class RosterSidePanelComponent < ViewComponent::Base
     )
   end
 
+  # Someone whose last place this is leaves the lecture with it (see
+  # Rosters::MaintenanceService#remove_user!), which the confirmation says,
+  # pointing to moving for a switch of groups.
+  def remove_confirmation(student)
+    return t("roster.warnings.confirm_kick_from_group") unless only_place_ids.include?(student.id)
+
+    exams = only_place_exam_titles[student.id]
+    return t("roster.warnings.confirm_kick_from_only_group") if exams.blank?
+
+    t("roster.warnings.confirm_kick_from_only_group_exams", exams: exams.to_sentence)
+  end
+
   def drag_controller?
     !read_only? && (campaign_panel? || (registerable.present? && !panel_mode?))
   end
@@ -279,6 +291,16 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   private
+
+    def only_place_ids
+      @only_place_ids ||=
+        Rosters::LectureLeave.only_place_user_ids(registerable, students.map(&:id)).to_set
+    end
+
+    def only_place_exam_titles
+      @only_place_exam_titles ||=
+        ExamRosterEntry.exam_titles_by_user(registerable.lecture, only_place_ids.to_a)
+    end
 
     def relevant_registrations(student)
       student.user_registrations.select do |r|

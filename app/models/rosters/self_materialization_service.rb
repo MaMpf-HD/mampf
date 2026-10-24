@@ -19,8 +19,8 @@ module Rosters
       Rosters::MaintenanceService.new.add_user!(@user, @rosterable, force: false)
     end
 
-    # An enrolled student's only group goes with the lecture alone (see
-    # Rosters::LectureLeave), so that nobody stays enrolled without a group.
+    # An enrolled student's last place goes with the lecture alone (see
+    # Rosters::LectureLeave), so that nobody stays enrolled without one.
     # The group is locked before the lecture, as leaving the lecture does; the
     # lecture's lock keeps two tabs from each leaving a group while counting
     # on the other one.
@@ -58,8 +58,7 @@ module Rosters
         lecture = @rosterable.lecture
         return unless lecture
 
-        leave = Rosters::LectureLeave.new(lecture, @user)
-        raise(LastGroupError) if leave.enrolled? && leave.groups == [@rosterable]
+        raise(LastGroupError) if Rosters::LectureLeave.new(lecture, @user).only_place?(@rosterable)
       end
 
       def ensure_rosterable_unlocked!

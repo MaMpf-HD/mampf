@@ -180,6 +180,85 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
     end
   end
 
+  describe "enrollment following the places" do
+    let(:lecture) { create(:lecture) }
+    let(:mo) { create(:tutorial, lecture: lecture) }
+    let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+    let(:staff) { create(:confirmed_user) }
+
+    before { subject.add_user!(user, mo, force: true) }
+
+    it "takes the user off the lecture with their last place, lists and exam lists too" do
+      subject.add_user!(user, list, force: true)
+      exam = create(:exam, :without_campaign, lecture: lecture)
+      exam.add_user_to_roster!(user)
+
+      expect(subject.remove_user!(user, mo, by: staff)).to eq(lecture)
+
+      expect(lecture.reload.members).not_to include(user)
+      expect(lecture.excluded_lecture_memberships.find_by(user: user).excluded_by).to eq(staff)
+      expect(list.reload.members).not_to include(user)
+      expect(exam.reload.users).not_to include(user)
+    end
+
+    it "keeps the lecture while another place remains" do
+      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), force: true)
+
+      expect(subject.remove_user!(user, mo)).to eq(mo)
+      expect(lecture.reload.members).to include(user)
+    end
+
+    # A list without enrollment is no place to stay enrolled through.
+    it "does not count a list as a place" do
+      subject.add_user!(user, list, force: true)
+
+      subject.remove_user!(user, mo)
+
+      expect(lecture.reload.members).not_to include(user)
+    end
+
+    it "lets the user leave a list without touching the lecture" do
+      subject.add_user!(user, list, force: true)
+
+      subject.remove_user!(user, list)
+
+      expect(lecture.reload.members).to include(user)
+    end
+
+    it "refuses taking the last place while a talk or exam holds a grade" do
+      exam = create(:exam, :without_campaign, lecture: lecture)
+      exam.add_user_to_roster!(user)
+      exam.ensure_assessment!(requires_points: false)
+      Assessment::Participation.create!(assessment: exam.assessment, user: user,
+                                        grade_numeric: 2.0, status: :reviewed)
+
+      expect { subject.remove_user!(user, mo) }
+        .to raise_error(described_class::GradingDataPresentError)
+      expect(mo.reload.members).to include(user)
+    end
+
+    it "refuses moving the last place onto a list" do
+      expect(subject.move_user!(user, mo, list)).to be(false)
+      expect(mo.reload.members).to include(user)
+    end
+
+    describe "exam lists" do
+      let(:exam) { create(:exam, :without_campaign, lecture: lecture) }
+      let(:stranger) { create(:confirmed_user) }
+
+      it "take the lecture's members" do
+        expect(subject.add_user!(user, exam)).to be_present
+      end
+
+      # Whoever is to sit the exam without a tutorial comes in through a group.
+      it "refuse someone not enrolled, rather than enrolling them" do
+        expect { subject.add_user!(stranger, exam) }
+          .to raise_error(described_class::NotEnrolledError)
+        expect(lecture.reload.members).not_to include(stranger)
+      end
+    end
+  end
+
   describe "#move_user!" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 

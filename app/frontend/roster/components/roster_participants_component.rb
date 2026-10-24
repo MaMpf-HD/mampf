@@ -244,11 +244,7 @@ class RosterParticipantsComponent < ViewComponent::Base
 
     def exam_titles_by_user
       @exam_titles_by_user ||=
-        ExamRosterEntry.active.joins(:exam)
-                       .where(exams: { lecture_id: @lecture.id },
-                              user_id: participants.map(&:user_id))
-                       .pluck(:user_id, "exams.title")
-                       .group_by(&:first).transform_values { |rows| rows.map(&:last) }
+        ExamRosterEntry.exam_titles_by_user(@lecture, participants.map(&:user_id))
     end
 
     def section_kwargs

@@ -467,8 +467,9 @@ RSpec.describe(ParticipationComponent, type: :component) do
         expect(row.css("form, button")).to be_empty
       end
 
-      it "asks as before, saying the course stays, when another group remains" do
-        create(:cohort, context: lecture, skip_campaigns: true).add_user_to_roster!(user)
+      it "asks as before, saying the course stays, when another place remains" do
+        create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
+          .add_user_to_roster!(user)
 
         rendered = render_inline(described_class.new(lecture: lecture, user: user))
         form = rendered.css("form").find { |f| f.text.include?("Leave tutorial") }

@@ -46,18 +46,9 @@ class ParticipationComponent < ViewComponent::Base
 
       [Row.new(label: @lecture.sort_localized,
                title: @lecture.course.title,
-               lines: [no_group_line].compact,
+               lines: [],
                badge: lecture_badge,
                actions: leave_lecture_action)]
-    end
-
-    # Enrolled but in none of the lecture's groups: no sheet can be handed in.
-    def no_group_line
-      return unless @leave.enrolled? && @leave.groups.empty?
-      return unless @lecture.tutorials.exists? || @lecture.talks.exists? ||
-                    @lecture.cohorts.exists?
-
-      t("registration.user_registration.participation.no_group")
     end
 
     def lecture_badge
@@ -264,7 +255,7 @@ class ParticipationComponent < ViewComponent::Base
     # that nobody stays enrolled without a group; its row says so where the
     # leave button would be.
     def only_group?(rosterable)
-      @leave.enrolled? && @leave.groups == [rosterable]
+      @leave.only_place?(rosterable)
     end
 
     def only_group_line(rosterable)

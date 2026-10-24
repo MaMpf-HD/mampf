@@ -499,12 +499,28 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(email.subject).to eq(expected_subject)
       end
 
-      it "does not remove the user from the lecture roster" do
+      it "keeps the user on the lecture roster while another place remains" do
         create(:lecture_membership, lecture: lecture, user: member)
+        create(:cohort, :enrollment, context: lecture).add_user_to_roster!(member)
 
         expect do
           delete(remove_member_tutorial_path(tutorial, user_id: member.id))
         end.not_to(change { lecture.members.count })
+      end
+
+      # Otherwise the user would stay enrolled without a place.
+      it "takes the user off the lecture along with their last place, as removed by staff" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        delete remove_member_tutorial_path(tutorial, user_id: member.id)
+
+        expect(lecture.reload.members).not_to include(member)
+        expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
+          .to eq(editor)
+        expect(flash[:notice]).to eq(
+          I18n.t("roster.messages.user_removed_with_only_group",
+                 user: member.info, group: tutorial.title)
+        )
       end
 
       it "includes user name in the flash" do
