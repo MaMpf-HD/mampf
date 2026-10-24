@@ -133,14 +133,27 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         create(:cohort_membership, cohort: isolated_cohort, user: user)
       end
 
-      it "removes the user from propagating subgroups but keeps them in isolated ones" do
+      # Removal takes everything the person has in the lecture, as leaving it
+      # oneself does: a list without enrollment would otherwise keep them in
+      # its audience.
+      it "removes the user from every group of the lecture, with enrollment or without" do
         expect do
           subject.remove_user!(user, lecture)
         end.to change { tutorial.members.count }.by(-1)
                                                 .and(change {
                                                        propagating_cohort.members.count
                                                      }.by(-1))
-                                                .and(change { isolated_cohort.members.count }.by(0))
+                                                .and(change {
+                                                       isolated_cohort.members.count
+                                                     }.by(-1))
+      end
+
+      it "takes the bookmark along with the seat" do
+        expect(user.reload.lectures).to include(lecture)
+
+        subject.remove_user!(user, lecture)
+
+        expect(user.reload.lectures).not_to include(lecture)
       end
 
       it "takes the user off the lecture's exam lists" do
@@ -278,6 +291,28 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
           expect do
             subject.move_user!(user, lecture, cohort_b, force: true)
           end.not_to(change { tutorial_of_lecture.roster_entries.reload.count })
+        end
+      end
+
+      # Leaving the lecture on the way would take the lists along.
+      context "when the source is the lecture and the target clashes with a group" do
+        let(:tutorial_of_lecture) { create(:tutorial, lecture: lecture) }
+        let(:other_tutorial_of_lecture) { create(:tutorial, lecture: lecture) }
+        let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+        before do
+          subject.add_user!(user, tutorial_of_lecture, force: true)
+          subject.add_user!(user, list, force: true)
+        end
+
+        it "moves out of that group and keeps the enrollment and the lists" do
+          expect(subject.move_user!(user, lecture, other_tutorial_of_lecture, force: true))
+            .to be(true)
+
+          expect(other_tutorial_of_lecture.members).to include(user)
+          expect(tutorial_of_lecture.members).not_to include(user)
+          expect(list.members).to include(user)
+          expect(lecture.members).to include(user)
         end
       end
     end
