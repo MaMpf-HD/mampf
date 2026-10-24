@@ -47,6 +47,15 @@ module Rosters
       end
     end
 
+    # Withdraws the running registrations in the given lectures, locking each
+    # campaign first, as allocation and finalization lock them.
+    def withdraw_registrations!(lectures)
+      running_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
+        campaign.lock!
+        running_registrations.where(registration_campaign: campaign).find_each(&:destroy!)
+      end
+    end
+
     private
 
       def exists?(scopes)
@@ -59,13 +68,6 @@ module Rosters
       def result_scopes
         [Assessment::Participation.with_grading_data.where(user: @user),
          StudentPerformance::Certification.decided.where(user: @user)]
-      end
-
-      def withdraw_registrations!(lectures)
-        running_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
-          campaign.lock!
-          running_registrations.where(registration_campaign: campaign).find_each(&:destroy!)
-        end
       end
 
       def leave_rosters!(lectures)

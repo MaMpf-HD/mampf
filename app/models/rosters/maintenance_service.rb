@@ -24,17 +24,21 @@ module Rosters
     # notify: false, since the mail job is enqueued even if that transaction
     # rolls back.
     def remove_user!(user, rosterable, notify: true, by: nil)
-      removed = rosterable.with_lock do
-        ensure_no_grading_data!(user, rosterable)
-        remove_user_without_lock!(user, rosterable, by: by)
+      removed = ActiveRecord::Base.transaction do
+        withdraw_registrations!(user, rosterable)
+        rosterable.with_lock do
+          ensure_no_grading_data!(user, rosterable)
+          remove_user_without_lock!(user, rosterable, by: by)
+        end
       end
       RosterNotificationMailer.removed(user, rosterable) if removed && notify
       removed
     end
 
-    # Moving out of the lecture itself means out of the group the target
-    # would clash with, or, without one, into the target alone: leaving the
-    # lecture on the way would take the person's lists and bookmark along.
+    # Moves out of the target's conflicting_lecture_membership when asked to
+    # move out of the lecture itself, or only adds to the target without one:
+    # leaving the lecture on the way would take the person's lists,
+    # registrations and bookmark along.
     def move_user!(user, from_rosterable, to_rosterable, force: false)
       if from_rosterable.is_a?(Lecture)
         from_rosterable = to_rosterable.conflicting_lecture_membership(user)
@@ -59,6 +63,16 @@ module Rosters
     end
 
     private
+
+      # Withdraws the registrations of someone removed from a lecture, lest a
+      # finalization put them back into its groups or exam lists. Before the
+      # lecture is locked, since finalization locks its campaign first.
+      def withdraw_registrations!(user, rosterable)
+        return unless rosterable.is_a?(Lecture)
+        return unless rosterable.lecture_memberships.exists?(user: user)
+
+        UserPlaces.new(user).withdraw_registrations!([rosterable])
+      end
 
       # Only rosterables that *are* the assessable can lose a result this way —
       # a talk or an exam owns its assessment, so leaving it means leaving the
@@ -187,9 +201,8 @@ module Rosters
         lecture.ensure_roster_membership!([user.id])
       end
 
-      # Removal from a lecture takes everything the person has in it: every
-      # group, lists without enrollment too, and the exam lists, as leaving
-      # it oneself does; the bookmark goes with the seat.
+      # Removal from a lecture takes every group, lists without enrollment
+      # too, and the exam lists; the bookmark goes with the seat.
       def cascade_removal_from_subgroups!(user, rosterable)
         return unless rosterable.is_a?(Lecture)
 
