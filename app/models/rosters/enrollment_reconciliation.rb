@@ -23,16 +23,16 @@ module Rosters
 
     # Excludes whoever is enrolled without a place, excluded_by left empty,
     # and removes their bookmark; lists, registrations, points and admission
-    # stay. Takes no locks, so it runs while nobody can use the app. Returns
-    # how many it excluded.
+    # stay. Decides under each lecture's lock, which every change to a place
+    # takes too. Returns how many it excluded.
     def apply!
       rows.sum do |row|
-        removable(row.lecture).each do |membership|
-          ActiveRecord::Base.transaction do
+        row.lecture.with_lock do
+          removable(row.lecture).each do |membership|
             membership.exclude!
             membership.user.unbookmark_lecture!(row.lecture)
-          end
-        end.size
+          end.size
+        end
       end
     end
 

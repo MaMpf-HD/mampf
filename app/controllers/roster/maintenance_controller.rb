@@ -130,11 +130,14 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
+      lists = other_cohorts(user)
       left = Rosters::MaintenanceService.new.remove_user!(user, @rosterable, by: current_user)
 
       flash.now[:notice] = removal_notice(user, left)
 
-      render_membership_streams(stream_builder.streams)
+      streams = stream_builder.streams
+      streams += stream_builder.row_streams(lists) if left.is_a?(Lecture) && left != @rosterable
+      render_membership_streams(streams)
     end
 
     def move_member
@@ -330,6 +333,13 @@ module Roster
         raise(RosterLockedError) if group.locked?
 
         group
+      end
+
+      # The lecture's other cohorts the user is in, whose rows change when the
+      # removal takes the user out of the lecture.
+      def other_cohorts(user)
+        @lecture.cohorts.where(id: CohortMembership.where(user: user).select(:cohort_id))
+                .reject { |cohort| cohort == @rosterable }
       end
 
       def removal_notice(user, left)

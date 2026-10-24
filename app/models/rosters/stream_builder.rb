@@ -38,6 +38,14 @@ module Rosters
       end
     end
 
+    # Replaces the rows of further groups, e.g. the lists someone lost along
+    # with their last place.
+    def row_streams(rosterables)
+      rosterables.each_with_object([]) do |rosterable, streams|
+        row_replacements_for(rosterable.reload, streams)
+      end
+    end
+
     private
 
       def participants_streams
