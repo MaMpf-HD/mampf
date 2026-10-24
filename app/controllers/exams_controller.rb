@@ -1,5 +1,6 @@
 class ExamsController < ApplicationController
   include Flash
+  include Registration::RosterStreamRefreshable
 
   class GroupUnavailableError < StandardError; end
 
@@ -199,6 +200,7 @@ class ExamsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
+        group = nil
         if user.nil?
           flash.now[:error] = t("assessment.registration_tab.user_not_found")
         else
@@ -223,7 +225,8 @@ class ExamsController < ApplicationController
         @active_tab = "registration"
         render turbo_stream: [
           turbo_stream.update("exams_container", build_dashboard_component),
-          stream_flash
+          stream_flash,
+          *(refresh_roster_streams(@lecture) if group)
         ]
       end
     end

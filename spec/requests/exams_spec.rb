@@ -608,6 +608,7 @@ RSpec.describe("Exams", type: :request) do
         expect(exam.lecture.reload.members).to include(stranger)
         expect(exam.roster_entries.map(&:user_id)).to include(stranger.id)
         expect(CGI.unescapeHTML(response.body)).to include("is now in “Repeaters”")
+        expect(response.body).to include('target="roster_participants_panel"')
       end
 
       # Staff did choose a group, so the message says it is gone, not missing.
