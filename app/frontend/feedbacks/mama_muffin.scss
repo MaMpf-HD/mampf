@@ -1,0 +1,141 @@
+@import "~/styles/branding";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+@font-face {
+  font-family: "Pixelify Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("~/fonts/PixelifySans.ttf") format("truetype");
+}
+
+// One muffin pixel; 3px keeps the pixel art crisp on every screen.
+$mama-pixel: 3px;
+$mama-ink: #4a2614;
+
+// Spans the dashboard's width, so that the mother can sit in the free space
+// right of the cards. Below xxl, that space is too narrow for her.
+.mama-muffin-anchor {
+  display: none;
+  position: relative;
+
+  @include media-breakpoint-up(xxl) {
+    display: block;
+  }
+}
+
+.mama-muffin {
+  position: absolute;
+  top: 3.5rem;
+  left: calc(50% + #{$small-width} / 2 + 1rem);
+  width: min(10rem, calc((100% - #{$small-width}) / 2 - 1.5rem));
+}
+
+.mama-muffin__open,
+.mama-muffin__dismiss {
+  padding: 0;
+  border: 0;
+  color: $mama-ink;
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 4px;
+  }
+}
+
+.mama-muffin__open {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background: none;
+}
+
+// A pixel cross on the bubble's top-right corner.
+.mama-muffin__dismiss {
+  position: absolute;
+  top: -2 * $mama-pixel;
+  right: -2 * $mama-pixel;
+  display: flex;
+  padding: $mama-pixel;
+  background: $white;
+  box-shadow:
+    0 (-$mama-pixel) $mama-ink,
+    0 $mama-pixel $mama-ink,
+    (-$mama-pixel) 0 $mama-ink,
+    $mama-pixel 0 $mama-ink;
+
+  svg {
+    --muffin-outline: #{$mama-ink};
+
+    width: 5 * $mama-pixel;
+  }
+
+  &:hover svg {
+    --muffin-outline: var(--bs-danger);
+  }
+}
+
+// The corners stay notched: each shadow draws one side only.
+.mama-muffin__bubble {
+  position: relative;
+  margin: $mama-pixel $mama-pixel 6 * $mama-pixel;
+  padding: 0.375rem 0.5rem;
+  background: $white;
+  font-family: "Pixelify Sans", monospace;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  box-shadow:
+    0 (-$mama-pixel) $mama-ink,
+    0 $mama-pixel $mama-ink,
+    (-$mama-pixel) 0 $mama-ink,
+    $mama-pixel 0 $mama-ink;
+
+  // The tail, one shadow per pixel, opening the bottom edge towards her.
+  &::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 55%;
+    width: $mama-pixel;
+    height: $mama-pixel;
+    background: $mama-ink;
+    box-shadow:
+      $mama-pixel 0 $white,
+      2 * $mama-pixel 0 $white,
+      3 * $mama-pixel 0 $mama-ink,
+      0 $mama-pixel $mama-ink,
+      $mama-pixel $mama-pixel $white,
+      2 * $mama-pixel $mama-pixel $mama-ink,
+      0 2 * $mama-pixel $mama-ink,
+      $mama-pixel 2 * $mama-pixel $mama-ink,
+      0 3 * $mama-pixel $mama-ink;
+  }
+}
+
+// Nested, since `widget.scss` loads later and sets `.feedback-muffin` to 100%.
+.mama-muffin .mama-muffin__figure {
+  --muffin-glasses: #c8962e;
+  --muffin-lens: #fde4c4;
+  --muffin-stem: #5f8f3a;
+  --muffin-cherry-shade: #b0283c;
+
+  width: 32 * $mama-pixel;
+}
+
+.feedback-muffin__g { fill: var(--muffin-glasses); }
+.feedback-muffin__w { fill: var(--muffin-lens); }
+.feedback-muffin__n { fill: var(--muffin-stem); }
+.feedback-muffin__d { fill: var(--muffin-cherry-shade); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mama-muffin__open:hover .mama-muffin__figure {
+    animation: mama-muffin-hop 0.3s steps(2) infinite alternate;
+  }
+}
+
+@keyframes mama-muffin-hop {
+  to { transform: translateY(-2 * $mama-pixel); }
+}
