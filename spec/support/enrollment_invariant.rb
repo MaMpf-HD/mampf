@@ -33,7 +33,6 @@ module EnrollmentInvariant
     ActiveRecord::Base.connection.raw_connection.exec(sql).column_values(0).map(&:to_i)
   end
 
-  # Wraps each request of an integration session.
   module SessionCheck
     def process(...)
       return super unless EnrollmentInvariant.enabled
