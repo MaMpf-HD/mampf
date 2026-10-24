@@ -6,8 +6,7 @@ class SupportRequestsController < ApplicationController
   LIMIT = 20
 
   # Somebody stuck on these pages is the one who needs to reach the support.
-  skip_before_action :enforce_password_change, :enforce_personal_data,
-                     :enforce_participation_check, only: :create
+  skip_before_action :enforce_password_change, :enforce_personal_data, only: :create
 
   def create
     support_request = SupportRequest.new(support_request_params)

@@ -3,11 +3,10 @@ class LeaveLectureComponent < ViewComponent::Base
     "leave-lecture-dialog-#{lecture.id}"
   end
 
-  def initialize(lecture:, leave:, from_check: false)
+  def initialize(lecture:, leave:)
     super()
     @lecture = lecture
     @leave = leave
-    @from_check = from_check
   end
 
   def render?
@@ -20,8 +19,8 @@ class LeaveLectureComponent < ViewComponent::Base
     self.class.dialog_id(@lecture)
   end
 
-  # The participation check shows one dialog per lecture, each with its own
-  # field.
+  # Named after the dialog, which is named after its lecture, so that the
+  # label finds its own field.
   def confirmation_id
     "#{dialog_id}-confirmation"
   end

@@ -106,7 +106,6 @@ module Rosters
 
         membership = rosterable.add_user_to_roster!(user)
         propagate_to_lecture!(user, rosterable)
-        rosterable.forget_participation_answers!([user.id])
         update_registration_materialization(user,
                                             rosterable,
                                             source_campaign_id: source_campaign_id)

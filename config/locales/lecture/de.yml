@@ -28,11 +28,6 @@ de:
       go_register_for: "Anmeldung für %{lecture} offen — zur Veranstaltungsseite, um Dich anzumelden"
       scroll_for_more_results: Scrolle nach unten für mehr Ergebnisse
       no_results: Keine Vorlesungen gefunden, versuche einen anderen Suchbegriff.
-  participation_check:
-    title: "Bist Du noch dabei?"
-    lead: "Wir haben überarbeitet, wie man Veranstaltungen verlässt, und brauchen dafür einmal eine kurze Rückmeldung von Dir. Die folgenden Veranstaltungen stehen noch auf Deinem Dashboard, und Du bekommst noch ihre Mails, bist dort aber in keinem Tutorium und keiner anderen Gruppe. Sag uns bitte für jede, ob Du noch teilnimmst."
-    still_taking_part: "Ich nehme noch teil"
-    footnote: "Nimmst Du nicht mehr teil, verlässt Du die Veranstaltung; sie verschwindet von Deinem Dashboard, und ihre Mails hören auf. Bleibst Du dabei, tritt am besten einer Gruppe bei, denn ohne Gruppe kannst Du keine Blätter abgeben."
   lecture_home:
     leave:
       title: "Veranstaltung verlassen"

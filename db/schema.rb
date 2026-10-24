@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_000001) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_23_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -510,7 +510,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_000001) do
     t.datetime "updated_at", null: false
     t.datetime "excluded_at"
     t.bigint "excluded_by_id"
-    t.datetime "participation_confirmed_at"
     t.index ["excluded_by_id"], name: "index_lecture_memberships_on_excluded_by_id"
     t.index ["lecture_id", "excluded_at"], name: "index_lecture_memberships_on_lecture_id_and_excluded_at"
     t.index ["lecture_id"], name: "index_lecture_memberships_on_lecture_id"

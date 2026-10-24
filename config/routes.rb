@@ -364,11 +364,6 @@ Rails.application.routes.draw do
        to: "lectures/unlocks#create",
        as: "lecture_unlock"
 
-  get "participation_check", to: "participation_checks#show", as: "participation_check"
-  patch "participation_check/:lecture_id",
-        to: "participation_checks#confirm",
-        as: "confirm_participation"
-
   delete "lectures/:lecture_id/membership",
          to: "lectures/memberships#destroy",
          as: "lecture_membership"

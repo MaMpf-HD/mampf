@@ -25,7 +25,6 @@ class ApplicationController < ActionController::Base
   before_action :set_current_user
   before_action :enforce_password_change
   before_action :enforce_personal_data
-  before_action :enforce_participation_check
 
   include LocaleSetter
 
@@ -243,27 +242,6 @@ class ApplicationController < ActionController::Base
 
       render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
              layout: false
-    end
-
-    # Someone enrolled in a lecture of the running term without any group
-    # is asked whether they still take part, see Rosters::ParticipationCheck.
-    def enforce_participation_check
-      return unless user_signed_in?
-      return if participation_check_request_allowed?
-      return unless Rosters::ParticipationCheck.new(current_user).due?
-
-      session[:after_participation_check] ||= request.fullpath if navigational_get?
-      return redirect_to(participation_check_path) unless turbo_frame_request?
-
-      render html: helpers.tag.meta(name: "turbo-visit-control", content: "reload"),
-             layout: false
-    end
-
-    # Leaving the lecture is one of the answers, so it stays reachable.
-    def participation_check_request_allowed?
-      personal_data_request_allowed? ||
-        controller_name == "participation_checks" ||
-        controller_path == "lectures/memberships"
     end
 
     # Asks again after a no once the user has a place on a roster, a running

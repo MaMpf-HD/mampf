@@ -4,7 +4,6 @@ module Internal
     skip_before_action :authenticate_user!
     skip_before_action :set_current_user
     skip_before_action :enforce_personal_data
-    skip_before_action :enforce_participation_check
 
     def show
       authorize = authorization_for(params[:uploader])
