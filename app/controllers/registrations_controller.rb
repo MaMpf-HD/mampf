@@ -75,10 +75,15 @@ class RegistrationsController < Devise::RegistrationsController
     end
 
     def after_update_path_for(resource)
-      return super unless session[:enforce_password_change]
-      return edit_user_registration_path if resource.password_change_required?
+      if session[:enforce_password_change]
+        return edit_user_registration_path if resource.password_change_required?
 
-      after_password_change_path_for(resource)
+        return after_password_change_path_for(resource)
+      end
+
+      return edit_profile_path(locale: I18n.locale) if params[:origin] == "profile"
+
+      super
     end
 
   private
