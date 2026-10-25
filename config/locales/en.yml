@@ -3984,6 +3984,9 @@ en:
       created: 'Group successfully created.'
       updated: 'Group successfully updated.'
       destroyed: 'Group successfully deleted.'
+      destroyed_and_notified:
+        one: 'Group deleted; 1 member is notified by email.'
+        other: 'Group deleted; %{count} members are notified by email.'
       destruction_failed: 'Group could not be deleted.'
     talks:
       created: 'Talk successfully created.'
