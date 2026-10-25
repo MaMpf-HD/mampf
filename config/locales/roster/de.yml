@@ -509,8 +509,13 @@ de:
       roster_group_deleted_email_body_html: |
         <p>Hallo %{name},</p>
         <p>
-          die Gruppe <strong>%{rosterable_title}</strong> in der Veranstaltung
-          <strong>%{lecture_title}</strong> wurde gelöscht.
+          Du warst Mitglied der Gruppe <strong>%{rosterable_title}</strong> in der
+          Veranstaltung <strong>%{lecture_title}</strong>. Diese Gruppe wurde gelöscht,
+          damit bist Du dort kein Mitglied mehr.
+        </p>
+        <p>
+          Sonst ändert sich für Dich nichts: Deine Einschreibung in die Veranstaltung
+          und Deine übrigen Gruppen dort bleiben bestehen.
         </p>
         <p>
           Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
@@ -518,8 +523,12 @@ de:
       roster_group_deleted_email_body: |
         Hallo %{name},
 
-        die Gruppe „%{rosterable_title}“ in der Veranstaltung „%{lecture_title}“
-        wurde gelöscht.
+        Du warst Mitglied der Gruppe „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“. Diese Gruppe wurde gelöscht, damit bist Du dort kein
+        Mitglied mehr.
+
+        Sonst ändert sich für Dich nichts: Deine Einschreibung in die Veranstaltung
+        und Deine übrigen Gruppen dort bleiben bestehen.
 
         Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_group_deleted_email_subject: 'Gruppe %{rosterable_title} in %{lecture_title} gelöscht'
