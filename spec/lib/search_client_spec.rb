@@ -457,5 +457,10 @@ RSpec.describe(SearchClient, :mampfsearch) do
       expect { unconfigured.health }
         .to raise_error(SearchClient::ServiceUnavailableError, /not configured/)
     end
+
+    it "reports that it is not configured" do
+      expect(unconfigured.configured?).to be(false)
+      expect(client.configured?).to be(true)
+    end
   end
 end

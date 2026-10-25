@@ -109,6 +109,10 @@ class SearchClient
     end
   end
 
+  def configured?
+    @base_url.present?
+  end
+
   private
 
     def perform_request(scope: nil)

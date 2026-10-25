@@ -9,6 +9,8 @@ class MampfsearchMetadataSyncJob < ApplicationJob
   end
 
   def perform(medium_id)
+    return unless SearchClient.instance.configured?
+
     medium = Medium.find_by(id: medium_id)
     return unless medium&.transcribable? && medium.completed?
 
@@ -17,5 +19,9 @@ class MampfsearchMetadataSyncJob < ApplicationJob
       video_version: medium.video_fingerprint,
       hierarchy: Mampfsearch::Hierarchy.for(medium)
     )
+  rescue SearchClient::MampfSearchError => e
+    # MampfsearchSyncJob reconciles hierarchies that could not be synced here.
+    Rails.logger.warn("Failed to sync hierarchy of medium #{medium_id} to MampfSearch: " \
+                      "#{e.message}")
   end
 end

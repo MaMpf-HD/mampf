@@ -2,6 +2,8 @@ class MampfsearchSyncJob < ApplicationJob
   queue_as :default
 
   def perform
+    return unless SearchClient.instance.configured?
+
     recover_stuck_jobs
     feed_next_batch
     reconcile_search_index
@@ -98,7 +100,11 @@ class MampfsearchSyncJob < ApplicationJob
       end
     end
 
+    # Only claims media while the health job confirms that MampfSearch can ingest,
+    # so an unavailable service never uses up transcription attempts.
     def enqueue_batch(relation)
+      return unless MampfsearchHealth.ingest_available?
+
       batch_size = available_batch_capacity
       return if batch_size.zero?
 
