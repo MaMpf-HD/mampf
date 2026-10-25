@@ -197,6 +197,18 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
       expect(groups).to match_array([tutorial, cohort])
     end
+
+    # Whoever sits only the exam is enrolled through its list, not without group.
+    it "includes the exam lists the user is on" do
+      user = create(:confirmed_user)
+      exam = create(:exam, :without_campaign, lecture: lecture, title: "Final")
+      exam.add_user_to_roster!(user)
+
+      c = described_class.new(lecture: lecture, group_type: "tutorial",
+                              participants: [double(user_id: user.id, user: user)])
+
+      expect(c.participant_groups(user)).to eq([exam])
+    end
   end
 
   describe "the study program column" do

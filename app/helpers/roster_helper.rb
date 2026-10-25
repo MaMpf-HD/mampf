@@ -114,14 +114,17 @@ module RosterHelper
            end
   end
 
-  # Links a participant's group to its roster on the lecture's groups tab.
+  # Links a participant's group to its roster on the lecture's groups tab,
+  # and an exam list to the exams tab.
   def roster_group_link(group)
     lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
+    path = if group.is_a?(Exam)
+      edit_lecture_path(lecture, tab: "exams")
+    else
+      edit_lecture_path(lecture, tab: "groups", open_roster: roster_group_key(group))
+    end
 
-    link_to(group.title,
-            edit_lecture_path(lecture, tab: "groups", open_roster: roster_group_key(group)),
-            class: "badge roster-group-badge",
-            data: { turbo: false })
+    link_to(group.title, path, class: "badge roster-group-badge", data: { turbo: false })
   end
 
   def rosterable_display_type(rosterable)
