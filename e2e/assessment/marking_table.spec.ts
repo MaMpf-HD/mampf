@@ -164,10 +164,12 @@ test.describe("marking table", () => {
     await expect(teamRow.getByRole("button", { name: "Grace Hopper" })).toBeVisible();
     await expect(teamRow.getByRole("button", { name: "Alan Turing" })).toBeHidden();
 
+    const noMatch = teamRow.getByText("Nobody by that name is without a team.");
     await search.fill("Lovelace");
-    await expect(teamRow.getByText("Nobody by that name is without a team.")).toBeVisible();
+    await expect(noMatch).toBeVisible();
 
     await search.fill("");
+    await expect(noMatch).toBeHidden();
     await teamRow.getByRole("button", { name: "Sophie Germain" }).click();
     await expect(tutor.page.getByText("Sophie Germain is on the team now.")).toBeVisible();
     await expect(teamRow).toContainText("Sophie Germain");
