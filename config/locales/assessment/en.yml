@@ -114,8 +114,8 @@ en:
       points_abbrev: 'pts'
       description: 'Task name'
       description_placeholder: 'e.g., Problem 1'
-      default_name: 'T%{number}'
-      description_hint: 'Columns in the points table default to T1, T2, ... – changeable via the task name when editing.'
+      default_name: 'Task %{number}'
+      description_hint: 'Without a task name, the columns in the points table are called Task 1, Task 2, … – you set the name when editing.'
       total_points: 'Total points'
       count:
         one: '1 task'

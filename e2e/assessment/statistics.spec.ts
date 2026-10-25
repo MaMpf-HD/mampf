@@ -35,8 +35,8 @@ test.describe("the statistics of a sheet", () => {
     await expect(dashboard.tab("Statistics")).toHaveAttribute("aria-selected", "true");
 
     const tasks = teacher.page.getByRole("region", { name: "Tasks" });
-    await expect(tasks.getByRole("row", { name: /Task 1/ })).toContainText("67%");
-    await expect(tasks.getByRole("row", { name: /Task 2/ })).toContainText("50%");
+    await expect(tasks.getByRole("row", { name: /Warm-up/ })).toContainText("67%");
+    await expect(tasks.getByRole("row", { name: /Proof/ })).toContainText("50%");
 
     const programs = teacher.page.getByRole("region", { name: "By program" });
     await expect(programs.getByRole("row", { name: programName })

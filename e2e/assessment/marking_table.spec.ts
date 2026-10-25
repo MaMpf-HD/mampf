@@ -117,7 +117,7 @@ test.describe("marking table", () => {
     const joined = table.getByRole("row", { name: /Ada Lovelace/ });
     await expect(joined).toContainText("Grace Hopper");
     await expect(table.getByRole("row", { name: /Grace Hopper/ })).toHaveCount(1);
-    await expect(joined.getByRole("spinbutton", { name: /Task 1 for Ada Lovelace/ }))
+    await expect(joined.getByRole("spinbutton", { name: /Warm-up for Ada Lovelace/ }))
       .toHaveValue("7.0");
   });
 
@@ -271,7 +271,7 @@ test.describe("marking table", () => {
     const saveAll = tutor.page.getByRole("button", { name: /Save all changes/ });
     await expect(saveAll).toBeDisabled();
 
-    await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("7");
+    await ada.getByRole("spinbutton", { name: "Warm-up for Ada Lovelace" }).fill("7");
     await expect(saveAll).toBeEnabled();
     await expect(saveAll).toContainText("1");
     await ada.getByRole("button", { name: "Save this row's points" }).click();
@@ -280,7 +280,7 @@ test.describe("marking table", () => {
     // the saved row left the pile of unsaved changes
     await expect(saveAll).toBeDisabled();
 
-    await grace.getByRole("spinbutton", { name: "Task 1 for Grace Hopper" }).fill("4");
+    await grace.getByRole("spinbutton", { name: "Warm-up for Grace Hopper" }).fill("4");
     await saveAll.click();
     await expect(grace.getByText("Reviewed")).toBeVisible();
     await expect(tutor.page.getByText("2 handed in · 2 reviewed")).toBeVisible();
@@ -317,7 +317,7 @@ test.describe("marking table", () => {
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
     );
     const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
-    const points = row.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" });
+    const points = row.getByRole("spinbutton", { name: "Warm-up for Ada Lovelace" });
 
     const amber = "rgb(255, 193, 7)";
     await points.fill("25");
