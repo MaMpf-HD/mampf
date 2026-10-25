@@ -230,7 +230,7 @@ class ExamsController < ApplicationController
 
     left = nil
     if @exam.participant_removable?(user)
-      left = Rosters::MaintenanceService.new.remove_user!(user, @exam)
+      left = Rosters::MaintenanceService.new.remove_user!(user, @exam, by: current_user)
       key = left.is_a?(Lecture) ? "participant_removed_with_lecture" : "participant_removed"
       flash.now[:success] = t("assessment.registration_tab.#{key}",
                               name: user.tutorial_name.presence || user.email)
