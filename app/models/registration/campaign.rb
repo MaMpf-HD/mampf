@@ -346,7 +346,6 @@ module Registration
           apply_rejections!(screening.auto_reject_violations)
         end
 
-        reject_non_members! if exam_campaign?
         Registration::AllocationMaterializer.new(self).materialize!
 
         reject_pending_registrations!
@@ -782,21 +781,6 @@ module Registration
           # Fallback: Load instances and use the Rosterable interface.
           # This is slower but guarantees correctness if the association name differs.
           scope.flat_map(&:allocated_user_ids)
-        end
-      end
-
-      # An exam list takes the lecture's members only (see
-      # Exam#registrable_by?). Asked under the campaign's lock, which leaving
-      # and a removal by staff take before they withdraw a registration.
-      def reject_non_members!
-        members = exam.lecture.lecture_memberships.select(:user_id)
-        now = Time.current
-        user_registrations.confirmed.where.not(user_id: members).find_each do |registration|
-          registration.reject!(
-            reason_type: Registration::UserRegistration::REJECTION_REASON_TYPE_POLICY,
-            reason_code: Registration::UserRegistration::REJECTION_REASON_CODE_NOT_ENROLLED,
-            rejected_at: now
-          )
         end
       end
 

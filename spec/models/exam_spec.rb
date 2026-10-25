@@ -39,16 +39,37 @@ RSpec.describe(Exam, type: :model) do
     let(:exam) { create(:exam) }
     let(:user) { create(:confirmed_user) }
 
-    it "lets a member of the lecture register" do
-      create(:lecture_membership, lecture: exam.lecture, user: user)
-
+    # The exam list enrolls them.
+    it "lets anybody register when the registration checks no admission" do
       expect(exam.registrable_by?(user)).to be(true)
     end
 
-    it "keeps out somebody who only bookmarked the lecture" do
-      create(:lecture_bookmark, lecture: exam.lecture, user: user)
+    context "when the registration checks the admission" do
+      before do
+        create(:registration_policy, :student_performance,
+               registration_campaign: exam.registration_campaign)
+      end
 
-      expect(exam.registrable_by?(user)).to be(false)
+      it "lets a member of the lecture register" do
+        create(:lecture_membership, lecture: exam.lecture, user: user)
+
+        expect(exam.registrable_by?(user)).to be(true)
+      end
+
+      # Without a decision of the lecture, the check would hold up the
+      # finalization.
+      it "keeps out somebody who only bookmarked the lecture" do
+        create(:lecture_bookmark, lecture: exam.lecture, user: user)
+
+        expect(exam.registrable_by?(user)).to be(false)
+      end
+
+      it "lets someone who left with an admission decision register" do
+        create(:lecture_membership, lecture: exam.lecture, user: user).exclude!(by: user)
+        create(:student_performance_certification, :passed, lecture: exam.lecture, user: user)
+
+        expect(exam.registrable_by?(user)).to be(true)
+      end
     end
   end
 

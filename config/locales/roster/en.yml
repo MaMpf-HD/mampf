@@ -144,7 +144,7 @@ en:
           description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional group to enroll students from tutorials/talks into the lecture is not needed."
         sticky_enrollment:
           title: "Enrollment through groups"
-          description: "A student is enrolled while in a tutorial, a talk or a group with enrollment. Whoever leaves the last of these leaves the lecture too and is listed under 'Left'; points and admission stay stored and count again once the person joins a group with enrollment."
+          description: "A student is enrolled while in a tutorial, a talk, a group with enrollment or on an exam list. Whoever leaves the last of these leaves the lecture too and is listed under 'Left'; points and admission stay stored and count again once the person joins a group with enrollment."
       phase1:
         title: "1. Choose Your Setup Method"
         campaigns:
@@ -394,7 +394,6 @@ en:
       readmission_group_required: "Choose a group for the person to come back into."
       user_already_in_bundle: "%{user} is already assigned to %{group}."
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
-      exam_requires_enrollment: "%{user} is not enrolled in the lecture. Only someone in a tutorial, a talk or a group with enrollment goes on the exam list; add the person to one first, for instance a group for repeaters."
       switch_failed: "The switch did not work; you stay in your current group."
       self_remove_graded: "You already have a result in “%{group}”, so you cannot leave it."
       self_remove_last_group: "“%{group}” is what keeps you in the course; you leave it only together with the course."
@@ -412,7 +411,6 @@ en:
       confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment, and taken off the exam list of %{exams}; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
       confirm_kick_from_only_group: 'This group is what enrolls the person in the lecture; they have no other. They are therefore removed from the lecture, also from groups without lecture enrollment; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. To switch groups, use “Move”. Continue?'
-      confirm_kick_from_only_group_exams: 'This group is what enrolls the person in the lecture; they have no other. They are therefore removed from the lecture, also from groups without lecture enrollment, and taken off the exam list of %{exams}; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. To switch groups, use “Move”. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'

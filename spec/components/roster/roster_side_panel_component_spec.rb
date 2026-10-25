@@ -693,12 +693,13 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         .to eq(I18n.t("roster.warnings.confirm_kick_from_only_group"))
     end
 
-    it "names the exam lists the lecture takes along" do
+    # Whoever sits the exam stays a member through its list.
+    it "asks as before while the person is on an exam list" do
       create(:exam, :without_campaign, lecture: lecture, title: "Final")
         .add_user_to_roster!(student)
 
       expect(panel.remove_confirmation(student))
-        .to eq(I18n.t("roster.warnings.confirm_kick_from_only_group_exams", exams: "Final"))
+        .to eq(I18n.t("roster.warnings.confirm_kick_from_group"))
     end
 
     it "asks as before while another place remains" do

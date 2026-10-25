@@ -141,11 +141,11 @@ module Rosters
       nil
     end
 
-    # Whether being here enrolls in the lecture: a tutorial, a talk or a
-    # cohort with enrollment. Any other cohort is a list, and an exam list
-    # takes members rather than making them (see Lecture#place_user_id_queries).
+    # Whether being here enrolls in the lecture: a tutorial, a talk, an exam
+    # list or a cohort with enrollment. Any other cohort is a list (see
+    # Lecture#place_user_id_queries).
     def place?
-      is_a?(Tutorial) || is_a?(Talk) || (is_a?(Cohort) && propagate_to_lecture?)
+      is_a?(Tutorial) || is_a?(Talk) || is_a?(Exam) || (is_a?(Cohort) && propagate_to_lecture?)
     end
 
     def config_allow_self_add?

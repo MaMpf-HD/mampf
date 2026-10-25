@@ -81,7 +81,7 @@ module Rosters
     end
 
     def places
-      @places ||= groups.select(&:place?)
+      @places ||= groups.select(&:place?) + exam_entries.map(&:exam)
     end
 
     # Whether the group is the last place of an enrolled student, which is

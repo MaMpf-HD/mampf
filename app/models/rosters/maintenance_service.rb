@@ -5,7 +5,6 @@ module Rosters
     class CapacityExceededError < StandardError; end
     class GradingDataPresentError < StandardError; end
     class LectureGradingDataPresentError < GradingDataPresentError; end
-    class NotEnrolledError < StandardError; end
     class MoveLeavesLectureError < StandardError; end
 
     # Raised to unwind the move. ActiveRecord::Rollback cannot do that job here:
@@ -92,31 +91,18 @@ module Rosters
       end
 
       # Locks the lecture after the groups, as remove_user! does, wherever a
-      # change can enroll or rests on enrollment: a place, or an exam list,
-      # which takes members only.
+      # place changes and with it the enrollment.
       def lock_lecture_of!(*rosterables)
-        rosterables.find { |rosterable| rosterable.place? || rosterable.is_a?(Exam) }
-                   &.lecture&.lock!
+        rosterables.find(&:place?)&.lecture&.lock!
       end
 
-      # A move onto a list or an exam would take the last place without
-      # anything that enrolls in its stead.
+      # A move onto a list would take the last place without anything that
+      # enrolls in its stead.
       def leaves_last_place?(user, from_rosterable, to_rosterable)
         return false unless from_rosterable.place? && !to_rosterable.place?
 
         lecture = from_rosterable.lecture
         lecture.present? && LectureLeave.new(lecture, user).only_place?(from_rosterable)
-      end
-
-      # An exam list takes the lecture's members only, as registering for it
-      # does (see Exam#registrable_by?); whoever is to sit it without a
-      # tutorial comes in through a group first.
-      def ensure_enrolled_for_exam!(user, rosterable)
-        return unless rosterable.is_a?(Exam)
-        return if rosterable.lecture.lecture_memberships.exists?(user: user)
-
-        raise(NotEnrolledError,
-              "User #{user.id} is not enrolled in lecture #{rosterable.lecture_id}")
       end
 
       # Only rosterables that *are* the assessable can lose a result this way —
@@ -158,7 +144,6 @@ module Rosters
         return if user_in_roster?(user, rosterable)
 
         ensure_uniqueness!(user, rosterable)
-        ensure_enrolled_for_exam!(user, rosterable)
 
         unless force || within_capacity?(rosterable)
           raise(CapacityExceededError,

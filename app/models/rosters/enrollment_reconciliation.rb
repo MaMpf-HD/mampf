@@ -4,7 +4,7 @@ module Rosters
   # them. The report also names campaigns that would go wrong on their own.
   class EnrollmentReconciliation
     Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :admitted,
-                     :on_exam, :exam_registered, :staff, keyword_init: true)
+                     :staff, keyword_init: true)
 
     RUNNING = [:open, :closed, :processing].freeze
     FAR_DEADLINE = 8.weeks
@@ -64,16 +64,13 @@ module Rosters
                                             .distinct.count(:user_id),
                 awaiting: awaiting(lecture, ids).distinct.count(:user_id),
                 admitted: admitted(lecture, removable(lecture).map(&:user_id)).count,
-                on_exam: on_exam(lecture, ids).distinct.count(:user_id),
-                exam_registered: awaiting(lecture, ids, exam: true).distinct.count(:user_id),
                 staff: without.where(user_id: staff_ids(lecture)).count)
       end
 
       def row_line(row)
         "#{row.lecture.id} #{row.lecture.title_term_info_no_type}: #{row.without_place} of " \
           "#{row.enrolled} without a place (#{row.lists_only} on a list only, " \
-          "#{row.awaiting} awaiting a group, #{row.admitted} admitted; kept: " \
-          "#{row.on_exam} on an exam list, #{row.exam_registered} registered for an exam, " \
+          "#{row.awaiting} awaiting a place, #{row.admitted} admitted; kept: " \
           "#{row.staff} staff)"
       end
 
@@ -83,15 +80,9 @@ module Rosters
         end
       end
 
-      # The lecture's staff are not its students, and taking anyone on an exam
-      # list or registered for an exam off the lecture would take them off it.
+      # The lecture's staff are not its students.
       def removable(lecture)
-        without = without_place(lecture)
-        ids = without.select(:user_id)
-        without.where.not(user_id: on_exam(lecture, ids).select(:user_id))
-               .where.not(user_id: awaiting(lecture, ids, exam: true).select(:user_id))
-               .where.not(user_id: staff_ids(lecture))
-               .includes(:user).to_a
+        without_place(lecture).where.not(user_id: staff_ids(lecture)).includes(:user).to_a
       end
 
       def place_user_ids(lecture)
@@ -112,13 +103,8 @@ module Rosters
         Cohort.where(context: lecture, propagate_to_lecture: false)
       end
 
-      def on_exam(lecture, user_ids)
-        ExamRosterEntry.active.where(exam: lecture.exams, user_id: user_ids)
-      end
-
-      def awaiting(lecture, user_ids, exam: false)
+      def awaiting(lecture, user_ids)
         campaigns = Registration::Campaign.where(campaignable: lecture, status: RUNNING)
-        campaigns = exam ? campaigns.exam : campaigns.non_exam
         Registration::UserRegistration.where(registration_campaign: campaigns,
                                              status: [:pending, :confirmed], user_id: user_ids)
       end

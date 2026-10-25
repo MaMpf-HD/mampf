@@ -209,17 +209,22 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
 
     before { subject.add_user!(user, mo, force: true) }
 
-    it "takes the user off the lecture with their last place, lists and exam lists too" do
+    it "takes the user off the lecture with their last place, lists too" do
       subject.add_user!(user, list, force: true)
-      exam = create(:exam, :without_campaign, lecture: lecture)
-      exam.add_user_to_roster!(user)
 
       expect(subject.remove_user!(user, mo, by: staff)).to eq(lecture)
 
       expect(lecture.reload.members).not_to include(user)
       expect(lecture.excluded_lecture_memberships.find_by(user: user).excluded_by).to eq(staff)
       expect(list.reload.members).not_to include(user)
-      expect(exam.reload.users).not_to include(user)
+    end
+
+    # Whoever sits the exam stays a member through its list.
+    it "keeps the lecture while the user is on an exam list" do
+      create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(user)
+
+      expect(subject.remove_user!(user, mo)).to eq(mo)
+      expect(lecture.reload.members).to include(user)
     end
 
     # A finalization would otherwise place them again.
@@ -299,18 +304,6 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(lecture.reload.members).to include(user)
     end
 
-    it "refuses taking the last place while a talk or exam holds a grade" do
-      exam = create(:exam, :without_campaign, lecture: lecture)
-      exam.add_user_to_roster!(user)
-      exam.ensure_assessment!(requires_points: false)
-      Assessment::Participation.create!(assessment: exam.assessment, user: user,
-                                        grade_numeric: 2.0, status: :reviewed)
-
-      expect { subject.remove_user!(user, mo) }
-        .to raise_error(described_class::GradingDataPresentError)
-      expect(mo.reload.members).to include(user)
-    end
-
     it "refuses moving the last place onto a list" do
       expect { subject.move_user!(user, mo, list) }
         .to raise_error(described_class::MoveLeavesLectureError)
@@ -326,14 +319,21 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         expect(subject.add_user!(user, exam)).to be_present
       end
 
-      # Whoever is to sit the exam without a tutorial comes in through a group.
-      it "refuse someone not enrolled, rather than enrolling them" do
-        expect { subject.add_user!(stranger, exam) }
-          .to raise_error(described_class::NotEnrolledError)
+      # An exam list is a place: whoever sits only the exam is a member.
+      it "enroll someone not yet in the lecture" do
+        subject.add_user!(stranger, exam)
+
+        expect(lecture.reload.members).to include(stranger)
+      end
+
+      it "take someone off the lecture with it when it was their last place" do
+        subject.add_user!(stranger, exam)
+
+        expect(subject.remove_user!(stranger, exam)).to eq(lecture)
         expect(lecture.reload.members).not_to include(stranger)
       end
 
-      it "ask for the membership under the lecture's lock" do
+      it "lock the lecture after the exam" do
         tables = []
         record = lambda do |*, payload|
           tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")

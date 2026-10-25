@@ -354,7 +354,6 @@ de:
         solver_unassigned: "Nicht durch Solver zugeteilt"
         withdrawn_by_teacher: "Manuell von Lehrperson abgelehnt"
         deferred_due_to_blocker: "Vorerst wegen ungeklärter Richtlinienprüfung manuell abgelehnt"
-        not_enrolled: "Nicht mehr in der Veranstaltung eingeschrieben"
       none: "Keine Anmeldungen gefunden."
       preferences: "Präferenzen"
       actions:

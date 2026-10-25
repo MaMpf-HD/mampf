@@ -334,18 +334,17 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     )
   end
 
-  # Someone not enrolled comes onto the list through a group that enrolls.
-  it "offers the groups that enroll and take people by hand in the add form" do
+  # The list is the person's only place, so removing them takes the lecture.
+  it "warns that removing someone whose only place the list is takes the lecture" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)
-    create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
-    create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: false)
-    create(:cohort, context: lecture, title: "Waitlist", propagate_to_lecture: false)
+    student = create(:confirmed_user)
+    Rosters::MaintenanceService.new.add_user!(student, exam, force: true)
 
     render_inline(described_class.new(exam: exam))
 
-    select = Nokogiri::HTML.fragment(rendered_content).at_css("select[name='group']")
-    expect(select.css("option").map(&:text))
-      .to eq([I18n.t("assessment.registration_tab.add_group_blank"), "Mo 10"])
+    expect(rendered_content).to include(
+      CGI.escapeHTML(I18n.t("assessment.registration_tab.remove_confirm_last_place"))
+    )
   end
 end

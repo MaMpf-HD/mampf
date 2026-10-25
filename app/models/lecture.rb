@@ -1200,6 +1200,7 @@ class Lecture < ApplicationRecord
   def place_user_id_queries(user_ids = nil)
     { TutorialMembership.where(tutorial: tutorials) => :user_id,
       SpeakerTalkJoin.where(talk: talks) => :speaker_id,
+      ExamRosterEntry.active.where(exam: exams) => :user_id,
       CohortMembership.where(cohort: cohorts.where(propagate_to_lecture: true)) => :user_id }
       .map do |scope, column|
         (user_ids ? scope.where(column => user_ids) : scope).select(column)

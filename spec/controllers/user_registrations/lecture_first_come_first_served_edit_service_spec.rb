@@ -160,9 +160,10 @@ RSpec.describe(UserRegistrations::LectureFirstComeFirstServedEditService, type: 
         )
       end
 
-      it "refuses an exam to somebody who is not a member of the lecture" do
+      it "refuses an admission-checked exam to somebody who is not a member of the lecture" do
         exam = create(:exam, :with_date, lecture: campaign.campaignable)
         exam_campaign = exam.registration_campaign
+        create(:registration_policy, :student_performance, registration_campaign: exam_campaign)
         exam_campaign.update!(status: :open, registration_deadline: 1.week.from_now)
 
         result = described_class.new(exam_campaign, user)

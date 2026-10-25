@@ -20,12 +20,10 @@ module EnrollmentInvariant
       scope.where.not(user_id: query)
     end
     unenrolled = queries.map { |query| User.where(id: query).where.not(id: members) }
-    strangers = ExamRosterEntry.active.where(exam: lecture.exams).where.not(user_id: members)
 
     ids(without_place.select(:user_id)).map { |id| [:without_place, lecture.id, id] } +
       unenrolled.flat_map { |scope| ids(scope.select(:id)) }.uniq
-                .map { |id| [:place_without_membership, lecture.id, id] } +
-      ids(strangers.select(:user_id)).map { |id| [:exam_without_membership, lecture.id, id] }
+                .map { |id| [:place_without_membership, lecture.id, id] }
   end
 
   def self.ids(query)

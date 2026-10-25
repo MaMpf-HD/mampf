@@ -595,64 +595,15 @@ RSpec.describe("Exams", type: :request) do
         end.to change { exam.roster_entries.count }.by(1)
       end
 
-      it "puts someone not enrolled on the list through the chosen group" do
+      # An exam list is a place: whoever sits only the exam is a member.
+      it "enrolls someone not yet in the lecture, and reloads the roster tabs" do
         stranger = create(:confirmed_user, locale: "en")
-        repeaters = create(:cohort, :enrollment, context: exam.lecture, title: "Repeaters",
-                                                 skip_campaigns: true)
 
-        post(participants_exam_path(exam),
-             params: { email: stranger.email, group: "Cohort-#{repeaters.id}" },
-             as: :turbo_stream)
+        post(participants_exam_path(exam), params: { email: stranger.email }, as: :turbo_stream)
 
-        expect(repeaters.reload.members).to include(stranger)
-        expect(exam.lecture.reload.members).to include(stranger)
         expect(exam.roster_entries.map(&:user_id)).to include(stranger.id)
-        expect(CGI.unescapeHTML(response.body)).to include("is now in “Repeaters”")
+        expect(exam.lecture.reload.members).to include(stranger)
         expect(response.body).to include('target="roster_participants_panel"')
-      end
-
-      # Staff did choose a group, so the message says it is gone, not missing.
-      it "says so when the chosen group takes nobody by hand any more" do
-        stranger = create(:confirmed_user, locale: "en")
-        other = create(:cohort, :enrollment, context: create(:lecture), skip_campaigns: true)
-
-        post(participants_exam_path(exam),
-             params: { email: stranger.email, group: "Cohort-#{other.id}" },
-             as: :turbo_stream)
-
-        expect(CGI.unescapeHTML(response.body))
-          .to include(I18n.t("assessment.registration_tab.group_unavailable"))
-        expect(other.reload.members).not_to include(stranger)
-        expect(exam.roster_entries.map(&:user_id)).not_to include(stranger.id)
-      end
-
-      # A tutorial member who never got onto the lecture roster cannot join a
-      # second tutorial.
-      it "names the tutorial someone already sits in" do
-        stranger = create(:confirmed_user, locale: "en")
-        create(:tutorial, lecture: exam.lecture, title: "Mo 10", skip_campaigns: true)
-          .add_user_to_roster!(stranger)
-        other = create(:tutorial, lecture: exam.lecture, skip_campaigns: true)
-
-        post(participants_exam_path(exam),
-             params: { email: stranger.email, group: "Tutorial-#{other.id}" },
-             as: :turbo_stream)
-
-        expect(response).to have_http_status(:ok)
-        expect(CGI.unescapeHTML(response.body)).to include("Mo 10")
-        expect(exam.roster_entries.map(&:user_id)).not_to include(stranger.id)
-      end
-
-      # Whoever is to sit the exam without a tutorial comes in through a group.
-      it "refuses someone not enrolled in the lecture, saying how they come in" do
-        stranger = create(:confirmed_user, locale: "en")
-
-        expect do
-          post(participants_exam_path(exam), params: { user_id: stranger.id }, as: :turbo_stream)
-        end.not_to(change { exam.roster_entries.count })
-        expect(CGI.unescapeHTML(response.body))
-          .to include(I18n.t("roster.errors.exam_requires_enrollment",
-                             user: stranger.tutorial_name.presence || stranger.email))
       end
 
       it "sends an email when a participant is successfully added" do
@@ -726,6 +677,18 @@ RSpec.describe("Exams", type: :request) do
         expect do
           delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
         end.to change { exam.roster_entries.count }.by(-1)
+      end
+
+      it "takes someone whose last place the list was out of the lecture, and says so" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
+
+        expect(lecture.reload.members).not_to include(member)
+        expect(CGI.unescapeHTML(response.body)).to include(
+          I18n.t("assessment.registration_tab.participant_removed_with_lecture",
+                 name: member.tutorial_name.presence || member.email)
+        )
       end
 
       it "sends an email when a participant is successfully removed" do

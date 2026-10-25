@@ -66,16 +66,6 @@
                               label: t("assessment.registration_tab.add_form_label")
                             } %>
 
-          <% group_options = roster_enrolling_group_options(exam.lecture) %>
-
-          <% if group_options.any? %>
-            <%= f.select :group,
-                         group_options,
-                         { include_blank: t("assessment.registration_tab.add_group_blank") },
-                         class: "form-select form-select-sm w-auto",
-                         aria: { label: t("assessment.registration_tab.add_group_label") } %>
-          <% end %>
-
           <%= f.submit t("assessment.registration_tab.add_button"),
                        class: "btn btn-sm btn-outline-primary flex-shrink-0" %>
         <% end %>
@@ -99,9 +89,14 @@
           </thead>
 
           <tbody>
+            <% user_ids = entries.map(&:user_id) %>
+            <% last_place_ids = Rosters::LectureLeave.only_place_user_ids(exam, user_ids) %>
+
             <% entries.each do |entry| %>
               <% user = entry.user %>
               <% removable = exam.participant_removable?(user) %>
+              <% last_place = last_place_ids.include?(user.id) %>
+              <% confirm_key = last_place ? "remove_confirm_last_place" : "remove_confirm" %>
 
               <tr
                 data-exams--registration-list-target="entry"
@@ -128,7 +123,7 @@
                                     form: {
                                       class: "d-inline-flex mb-0",
                                       data: {
-                                        turbo_confirm: t("assessment.registration_tab.remove_confirm")
+                                        turbo_confirm: t("assessment.registration_tab.#{confirm_key}")
                                       }
                                     } do %>
                         <i class="bi bi-trash" aria-hidden="true"></i>

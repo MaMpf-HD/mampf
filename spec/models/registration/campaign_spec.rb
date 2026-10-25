@@ -598,38 +598,6 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.user_registrations.confirmed.count).to eq(1)
     end
 
-    context "with an exam" do
-      let(:lecture) { create(:lecture) }
-      let(:exam) { create(:exam, :without_campaign, lecture: lecture) }
-      let(:campaign) { create(:registration_campaign, campaignable: lecture) }
-      let(:item) { create(:registration_item, registration_campaign: campaign, registerable: exam) }
-      let(:member) { create(:confirmed_user) }
-      let(:former) { create(:confirmed_user) }
-
-      before do
-        item
-        campaign.update!(status: :closed, registration_deadline: 1.day.ago)
-        lecture.add_user_to_roster!(member)
-        lecture.add_user_to_roster!(former)
-        [member, former].each do |user|
-          create(:registration_user_registration, :confirmed,
-                 user: user, registration_campaign: campaign, registration_item: item)
-        end
-        lecture.remove_user_from_roster!(former)
-      end
-
-      # An exam list takes the lecture's members only.
-      it "rejects someone who has left the lecture since registering, and says why" do
-        campaign.finalize!
-
-        expect(exam.reload.users).to contain_exactly(member)
-        rejection = campaign.user_registrations.find_by(user: former)
-        expect(rejection).to be_rejected
-        expect(rejection.resolved_rejection_reason_label)
-          .to eq(I18n.t("registration.user_registration.reason_labels.not_enrolled"))
-      end
-    end
-
     context "concurrency protection" do
       it "executes within a database lock" do
         expect(campaign).to receive(:with_lock).and_yield

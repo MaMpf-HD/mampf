@@ -15,12 +15,12 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
 
   describe "#rows" do
     it "counts who is enrolled without a place, and of them who is where else" do
-      seated = create(:confirmed_user)
+      seated, on_exam = create_list(:confirmed_user, 2)
       service.add_user!(seated, tutorial, force: true)
-      on_list, on_exam, waiting = create_list(:confirmed_user, 3)
-      [on_list, on_exam, waiting].each { |user| enroll_without_place(user) }
+      service.add_user!(on_exam, create(:exam, :without_campaign, lecture: lecture))
+      on_list, waiting = create_list(:confirmed_user, 2)
+      [on_list, waiting].each { |user| enroll_without_place(user) }
       create(:cohort, context: lecture).add_user_to_roster!(on_list)
-      create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(on_exam)
       campaign = create(:registration_campaign, :open, campaignable: lecture)
       create(:registration_user_registration, :pending,
              user: waiting, registration_campaign: campaign,
@@ -29,8 +29,8 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       row = reconciliation.rows.sole
 
       expect(row.to_h.except(:lecture))
-        .to eq(enrolled: 4, without_place: 3, lists_only: 1, awaiting: 1, admitted: 0,
-               on_exam: 1, exam_registered: 0, staff: 0)
+        .to eq(enrolled: 4, without_place: 2, lists_only: 1, awaiting: 1, admitted: 0,
+               staff: 0)
     end
 
     # An admitted student taken off needs a group before registering for a
@@ -83,27 +83,12 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(list.reload.members).to include(limbo)
     end
 
-    # Taking them off the lecture would take them off the exam.
-    it "keeps whoever is on an exam list, and reports them" do
+    # An exam list is a place.
+    it "leaves whoever is on an exam list alone" do
       create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(limbo)
 
       expect(reconciliation.apply!).to eq(0)
       expect(lecture.reload.members).to include(limbo)
-      expect(reconciliation.report.join("\n")).to include("kept: 1 on an exam list")
-    end
-
-    # A finalization would reject them, though they registered while enrolled.
-    it "keeps whoever is registered for an exam, and reports them" do
-      exam = create(:exam, :without_campaign, lecture: lecture)
-      campaign = create(:registration_campaign, campaignable: lecture)
-      item = create(:registration_item, registration_campaign: campaign, registerable: exam)
-      campaign.update!(status: :open)
-      create(:registration_user_registration, :confirmed,
-             user: limbo, registration_campaign: campaign, registration_item: item)
-
-      expect(reconciliation.apply!).to eq(0)
-      expect(lecture.reload.members).to include(limbo)
-      expect(reconciliation.report.join("\n")).to include("1 registered for an exam")
     end
 
     # Staff are not students; their seat and bookmark stay.

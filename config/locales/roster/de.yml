@@ -148,7 +148,7 @@ de:
           description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnahmeliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
         sticky_enrollment:
           title: "Einschreibung über Gruppen"
-          description: "Eingeschrieben ist, wer in einem Tutorium, einem Vortrag oder einer Gruppe mit Einschreibung ist. Wer die letzte davon verlässt, verlässt auch die Veranstaltung und steht dann unter 'Ausgetreten'; Punkte und Zulassung bleiben gespeichert und gelten wieder, sobald die Person einer Gruppe mit Einschreibung beitritt."
+          description: "Eingeschrieben ist, wer in einem Tutorium, einem Vortrag oder einer Gruppe mit Einschreibung ist oder auf einer Klausurliste steht. Wer den letzten dieser Plätze verlässt, verlässt auch die Veranstaltung und steht dann unter 'Ausgetreten'; Punkte und Zulassung bleiben gespeichert und gelten wieder, sobald die Person einer Gruppe mit Einschreibung beitritt."
       phase1:
         title: "1. Wähle Deine Einrichtungsmethode"
         campaigns:
@@ -403,7 +403,6 @@ de:
       readmission_group_required: "Wähle eine Gruppe, in die die Person zurückkommt."
       user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
-      exam_requires_enrollment: "%{user} ist nicht in der Veranstaltung eingeschrieben. Auf die Klausurliste kommt nur, wer in einem Tutorium, einem Vortrag oder einer Gruppe mit Einschreibung ist; füge die Person zuerst einer solchen Gruppe hinzu, etwa einer Sondergruppe für Wiederholer."
       switch_failed: "Der Wechsel hat nicht geklappt; Du bist in Deiner bisherigen Gruppe geblieben."
       self_remove_graded: "Für Dich liegt in „%{group}“ bereits eine Bewertung vor, deshalb kannst Du nicht austreten."
       self_remove_last_group: "Über „%{group}“ nimmst Du an der Veranstaltung teil; Du verlässt sie nur zusammen mit der Veranstaltung."
@@ -421,7 +420,6 @@ de:
       confirm_kick_from_lecture_exams: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
       confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Sie wird damit aus der Veranstaltung entfernt, auch aus Sondergruppen ohne Einschreibung; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Für einen Wechsel der Gruppe nutze „Verschieben“. Fortfahren?'
-      confirm_kick_from_only_group_exams: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Sie wird damit aus der Veranstaltung entfernt, auch aus Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Für einen Wechsel der Gruppe nutze „Verschieben“. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'
