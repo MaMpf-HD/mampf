@@ -33,8 +33,8 @@ class RosterNotificationMailer < ApplicationMailer
 
     # A deleted group cannot be loaded by the mail job, so its title travels
     # in its place.
-    def group_deleted(user, title:, lecture:)
-      with(group_title: title, lecture: lecture, recipient: user)
+    def group_deleted(user, title:, lecture:, left_lecture: false)
+      with(group_title: title, lecture: lecture, recipient: user, left_lecture: left_lecture)
         .group_deleted_email.deliver_later
     end
 
@@ -182,6 +182,7 @@ class RosterNotificationMailer < ApplicationMailer
     def prepare_data(params)
       @rosterable      = params[:rosterable]
       @group_title     = params[:group_title] || @rosterable&.title
+      @left_lecture    = params[:left_lecture]
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]

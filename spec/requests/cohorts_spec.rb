@@ -180,6 +180,21 @@ RSpec.describe("Cohorts", type: :request) do
       expect(body).to include(I18n.t("roster.cohorts.destroy.notify"))
     end
 
+    it "says how many leave the lecture with a cohort with enrollment" do
+      sign_in editor
+      enrolling = create(:cohort, :enrollment, context: lecture)
+      alone, tutored = create_list(:confirmed_user, 2)
+      [alone, tutored].each { |user| Rosters::MaintenanceService.new.add_user!(user, enrolling) }
+      Rosters::MaintenanceService.new.add_user!(tutored, create(:tutorial, lecture: lecture))
+
+      get confirm_destroy_cohort_path(enrolling), as: :turbo_stream
+
+      body = CGI.unescapeHTML(response.body)
+      expect(body).to include(I18n.t("roster.cohorts.destroy.members", count: 2))
+      expect(body).to include(I18n.t("roster.cohorts.destroy.leaves_lecture", count: 1))
+      expect(body).not_to include(I18n.t("roster.cohorts.destroy.without_group", count: 1))
+    end
+
     it "redirects a student to root (unauthorized)" do
       sign_in student
 
@@ -216,6 +231,45 @@ RSpec.describe("Cohorts", type: :request) do
 
           expect(CGI.unescapeHTML(response.body))
             .to include(I18n.t("controllers.cohorts.destroyed_and_notified", count: 1))
+        end
+      end
+
+      context "with enrollment" do
+        let(:enrolling) { create(:cohort, :enrollment, context: lecture) }
+        let(:member) { create(:confirmed_user) }
+
+        before { Rosters::MaintenanceService.new.add_user!(member, enrolling) }
+
+        it "takes whom it was the last place for out of the lecture" do
+          delete(cohort_path(enrolling), as: :turbo_stream)
+
+          expect(Cohort.exists?(enrolling.id)).to be(false)
+          expect(lecture.members).not_to include(member)
+          expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
+            .to eq(editor)
+        end
+
+        it "tells them by mail that they left the lecture with it" do
+          expect do
+            delete(cohort_path(enrolling), params: { notify: "1" }, as: :turbo_stream)
+          end.to have_enqueued_mail(RosterNotificationMailer, :group_deleted_email)
+            .with(a_hash_including(params: a_hash_including(recipient: member,
+                                                            left_lecture: true)))
+        end
+
+        # Leaving the lecture would leave the exam result without its roster
+        # entry, so the cohort stays.
+        it "keeps the cohort when a member it would take out has an exam result" do
+          exam = create(:exam, lecture: lecture)
+          exam.assessment.assessment_participations.create!(user: member, status: :reviewed,
+                                                            grade_numeric: 2.0)
+
+          delete(cohort_path(enrolling), as: :turbo_stream)
+
+          expect(CGI.unescapeHTML(response.body))
+            .to include(I18n.t("roster.errors.lecture_grading_data_present"))
+          expect(Cohort.exists?(enrolling.id)).to be(true)
+          expect(lecture.members).to include(member)
         end
       end
 

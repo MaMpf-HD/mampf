@@ -47,26 +47,43 @@ class Cohort < ApplicationRecord
     false
   end
 
+  # The members a deleted cohort had, and of those the ones who left the
+  # lecture with it.
+  Deletion = Struct.new(:former_members, :left_lecture_ids)
+
   # Members do not block deleting a cohort, only a campaign that is not
-  # completed does; the lecture keeps whom the cohort enrolled.
+  # completed does.
   def destruction_blockers_with_members
     destruction_blockers - [:roster_not_empty]
   end
 
-  # Deletes the cohort together with its memberships. Returns the former
-  # members, or nil when a campaign still holds the cohort.
-  def destroy_with_members
-    with_lock do
+  # Deletes the cohort together with its memberships. Whoever loses their
+  # last place with it leaves the lecture, as on removal by hand (see
+  # Rosters::MaintenanceService#remove_user!), whose lock order this
+  # follows: campaigns, cohort, lecture. Returns a Deletion, or nil when a
+  # campaign still holds the cohort.
+  def destroy_with_members(by: nil)
+    transaction do
+      lock_running_campaigns!
+      lock!
+      lecture&.lock!
       former_members = members.to_a
+      left_ids = leave_lecture!(former_members, by)
       cohort_memberships.destroy_all
       raise(ActiveRecord::Rollback) unless destroy
 
-      former_members
+      Deletion.new(former_members, left_ids)
     end
   end
 
-  # Members in no tutorial, talk or other cohort of the lecture, whom
-  # deleting the cohort leaves without a group.
+  # Members for whom the cohort is the last place in the lecture, who leave
+  # the lecture when it is deleted.
+  def member_ids_leaving_the_lecture
+    Rosters::LectureLeave.only_place_user_ids(self, cohort_memberships.pluck(:user_id))
+  end
+
+  # Members in no tutorial, talk, exam list or other cohort of the lecture,
+  # whom deleting the cohort leaves without a group.
   def members_without_other_group
     return members unless lecture
 
@@ -76,5 +93,27 @@ class Cohort < ApplicationRecord
                                          .select(:speaker_id))
            .where.not(id: CohortMembership.where(cohort: lecture.cohorts.where.not(id: id))
                                           .select(:user_id))
+           .where.not(id: ExamRosterEntry.active.where(exam: lecture.exams).select(:user_id))
   end
+
+  private
+
+    # Leaving the lecture withdraws the registrations there, so their
+    # campaigns come first; only a cohort with lecture enrollment takes
+    # anyone out.
+    def lock_running_campaigns!
+      return unless place? && lecture
+
+      Registration::Campaign.where(campaignable: lecture,
+                                   status: Rosters::UserPlaces::RUNNING_CAMPAIGN_STATUSES)
+                            .order(:id).lock.load
+    end
+
+    def leave_lecture!(former_members, by)
+      left_ids = member_ids_leaving_the_lecture
+      service = Rosters::MaintenanceService.new
+      former_members.select { |user| user.id.in?(left_ids) }
+                    .each { |user| service.remove_user!(user, self, notify: false, by: by) }
+      left_ids
+    end
 end

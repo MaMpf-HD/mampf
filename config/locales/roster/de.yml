@@ -225,7 +225,9 @@ de:
         without_group:
           one: "1 davon ist danach in keiner Gruppe dieser Veranstaltung."
           other: "%{count} davon sind danach in keiner Gruppe dieser Veranstaltung."
-        enrollment_stays: "Die Veranstaltungseinschreibung bleibt bestehen."
+        leaves_lecture:
+          one: "Für 1 davon ist es die einzige Gruppe mit Einschreibung: Diese Person wird damit aus der Veranstaltung entfernt, auch aus Gruppen ohne Einschreibung, und ihre Anmeldungen werden zurückgezogen. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert."
+          other: "Für %{count} davon ist es die einzige Gruppe mit Einschreibung: Sie werden damit aus der Veranstaltung entfernt, auch aus Gruppen ohne Einschreibung, und ihre Anmeldungen werden zurückgezogen. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert."
         registrations: "Mitgelöscht wird, was ihr abgeschlossenes Anmeldeverfahren hinterlassen hat: %{total}, davon %{confirmed}."
         notify: "Mitglieder per Mail benachrichtigen"
         submit: "Gruppe löschen"
@@ -539,23 +541,37 @@ de:
           Veranstaltung <strong>%{lecture_title}</strong>. Diese Gruppe wurde gelöscht,
           damit bist Du dort kein Mitglied mehr.
         </p>
-        <p>
-          Sonst ändert sich für Dich nichts: Deine Einschreibung in die Veranstaltung
-          und Deine übrigen Gruppen dort bleiben bestehen.
-        </p>
-        <p>
-          Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
-        </p>
       roster_group_deleted_email_body: |
         Hallo %{name},
 
         Du warst Mitglied der Gruppe „%{rosterable_title}“ in der Veranstaltung
         „%{lecture_title}“. Diese Gruppe wurde gelöscht, damit bist Du dort kein
         Mitglied mehr.
-
+      roster_group_deleted_email_unchanged_html: |
+        <p>
+          Sonst ändert sich für Dich nichts: Deine Einschreibung in die Veranstaltung
+          und Deine übrigen Gruppen dort bleiben bestehen.
+        </p>
+      roster_group_deleted_email_unchanged: |
         Sonst ändert sich für Dich nichts: Deine Einschreibung in die Veranstaltung
         und Deine übrigen Gruppen dort bleiben bestehen.
-
+      roster_group_deleted_email_left_lecture_html: |
+        <p>
+          Über diese Gruppe warst Du in der Veranstaltung eingeschrieben, eine andere
+          hattest Du dort nicht. Du bist deshalb nicht mehr in der Veranstaltung
+          eingeschrieben. Deine Punkte und eine erteilte Prüfungszulassung bleiben
+          gespeichert und gelten wieder, wenn Du zurückkommst.
+        </p>
+      roster_group_deleted_email_left_lecture: |
+        Über diese Gruppe warst Du in der Veranstaltung eingeschrieben, eine andere
+        hattest Du dort nicht. Du bist deshalb nicht mehr in der Veranstaltung
+        eingeschrieben. Deine Punkte und eine erteilte Prüfungszulassung bleiben
+        gespeichert und gelten wieder, wenn Du zurückkommst.
+      roster_group_deleted_email_questions_html: |
+        <p>
+          Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_group_deleted_email_questions: |
         Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
       roster_group_deleted_email_subject: 'Gruppe %{rosterable_title} in %{lecture_title} gelöscht'
       roster_removed_from_exam_email_body_html: |

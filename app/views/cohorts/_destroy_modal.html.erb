@@ -1,4 +1,5 @@
 <% members_count = cohort.members.count %>
+<% leaving_count = cohort.member_ids_leaving_the_lecture.size %>
 <% without_group_count = cohort.members_without_other_group.count %>
 <% registrations = cohort.registration_counts_by_status %>
 
@@ -31,12 +32,12 @@
           <p>
             <%= t("roster.cohorts.destroy.members", count: members_count) %>
 
-            <% if without_group_count.positive? %>
+            <% if cohort.place? %>
+              <% if leaving_count.positive? %>
+                <%= t("roster.cohorts.destroy.leaves_lecture", count: leaving_count) %>
+              <% end %>
+            <% elsif without_group_count.positive? %>
               <%= t("roster.cohorts.destroy.without_group", count: without_group_count) %>
-            <% end %>
-
-            <% if cohort.propagate_to_lecture? %>
-              <%= t("roster.cohorts.destroy.enrollment_stays") %>
             <% end %>
           </p>
 
