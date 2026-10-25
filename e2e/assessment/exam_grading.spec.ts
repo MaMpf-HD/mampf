@@ -137,7 +137,9 @@ test.describe("exam grading", () => {
       lecture_id: lecture.id,
       title: "Group A",
     });
-    for (let index = 1; index <= 26; index++) {
+    // concurrently, since creating 26 candidates one by one takes long
+    await Promise.all(Array.from({ length: 26 }, async (_, i) => {
+      const index = i + 1;
       const student = await factory.create("confirmed_user", [], {
         name_in_tutorials: `Candidate ${index}`,
       });
@@ -148,7 +150,7 @@ test.describe("exam grading", () => {
           user_id: student.id,
         });
       }
-    }
+    }));
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await page.open("Main Exam");
     await page.tab("Grades").click();

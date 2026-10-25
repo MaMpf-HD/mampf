@@ -88,7 +88,6 @@ test("can detach course image", async ({ factory, admin: { page } }) => {
   await factory.create("lecture", [], { term_id: term.id, course_id: course.id });
 
   await page.goto(`/courses/${course.id}/edit`);
-  await page.locator("#image_heading").getByText("Toggle").click();
   await expect(page.getByText("image.png")).toBeVisible();
 
   await page.locator("#detach-image").click();
