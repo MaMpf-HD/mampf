@@ -1,12 +1,21 @@
 import { expect, Page, test } from "./_support/fixtures";
 
 test.describe("Create new medium button", () => {
+  /**
+   * Closes the dialog until it is gone: Bootstrap ignores a Close while the
+   * modal is still sliding in, which a busy CI runner makes likely.
+   */
   async function expectSort(page: Page, sort: string, expectedString: RegExp) {
     await page.getByRole("tab", { name: sort }).click();
     await page.getByTitle("create medium").click();
-    await expect(page.getByRole("dialog", { name: "create new medium" }).getByLabel("Type"))
-      .toHaveValue(expectedString);
-    await page.getByRole("button", { name: "Close" }).click();
+    const dialog = page.getByRole("dialog", { name: "create new medium" });
+    await expect(dialog.getByLabel("Type")).toHaveValue(expectedString);
+    await expect(async () => {
+      if (await dialog.isVisible()) {
+        await dialog.getByRole("button", { name: "Close" }).click({ timeout: 1000 });
+      }
+      await expect(dialog).toBeHidden({ timeout: 1000 });
+    }).toPass();
   }
 
   test("lecture edit view: sort is synced with currently selected tab",

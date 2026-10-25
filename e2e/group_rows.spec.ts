@@ -1,6 +1,30 @@
 import { expect, test } from "./_support/fixtures";
 
 test.describe("the group rows", () => {
+  test("delete a cohort with members after saying who ends up without a group",
+    async ({ factory, student, teacher: { page, user } }) => {
+      const lecture = await factory.create("lecture", [], { teacher_id: user.id });
+      const cohort = await factory.create("cohort", [], {
+        context_type: "Lecture", context_id: lecture.id, title: "Collection",
+      });
+      await cohort.__call("add_user_to_roster!", student.user);
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
+      const row = page.getByRole("listitem")
+        .filter({ has: page.getByRole("heading", { name: "Collection", exact: true }) });
+      await row.getByRole("link", { name: "Delete: Collection" }).click();
+
+      const dialog = page.getByRole("dialog", { name: "Delete “Collection”" });
+      await expect(dialog).toContainText("The group has 1 member.");
+      await expect(dialog).toContainText("1 of them is then in no group of this course.");
+      await expect(dialog.getByLabel("Notify the members by email")).not.toBeChecked();
+      await dialog.getByRole("button", { name: "Delete group" }).click();
+
+      await expect(page.getByText("Group successfully deleted.")).toBeVisible();
+      await expect(dialog).toBeHidden();
+      await expect(row).toHaveCount(0);
+    });
+
   test("open a roster from the title with the keyboard and take the focus back",
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });

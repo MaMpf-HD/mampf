@@ -146,4 +146,43 @@ RSpec.describe(Cohort, type: :model) do
       expect(cohort.reload.propagate_to_lecture).to be(false)
     end
   end
+
+  describe "#destroy_with_members" do
+    let(:lecture) { create(:lecture) }
+    let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+    let(:member) { create(:confirmed_user) }
+
+    before { Rosters::MaintenanceService.new.add_user!(member, cohort) }
+
+    it "deletes the cohort with its memberships, keeping the lecture enrollment" do
+      expect(cohort.destroy_with_members).to eq([member])
+
+      expect(cohort).to be_destroyed
+      expect(CohortMembership.where(user: member)).to be_empty
+      expect(lecture.members).to include(member)
+    end
+
+    it "keeps cohort and members while a campaign holds the cohort" do
+      create(:registration_item, registerable: cohort,
+                                 registration_campaign: create(:registration_campaign,
+                                                               campaignable: lecture))
+
+      expect(cohort.destroy_with_members).to be_nil
+      expect(cohort.reload.members).to contain_exactly(member)
+    end
+  end
+
+  describe "#members_without_other_group" do
+    let(:lecture) { create(:lecture) }
+    let(:cohort) { create(:cohort, context: lecture) }
+
+    it "counts only the members in no tutorial, talk or other cohort of the lecture" do
+      alone, tutored, elsewhere = create_list(:confirmed_user, 3)
+      [alone, tutored, elsewhere].each { |user| cohort.add_user_to_roster!(user) }
+      create(:tutorial, lecture: lecture).add_user_to_roster!(tutored)
+      create(:cohort, context: lecture).add_user_to_roster!(elsewhere)
+
+      expect(cohort.members_without_other_group).to contain_exactly(alone)
+    end
+  end
 end

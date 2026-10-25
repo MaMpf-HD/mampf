@@ -167,9 +167,57 @@ RSpec.describe("Cohorts", type: :request) do
     end
   end
 
+  describe "GET /cohorts/:id/confirm_destroy" do
+    it "says how many members end up without a group" do
+      sign_in editor
+      2.times { cohort.add_user_to_roster!(create(:confirmed_user)) }
+
+      get confirm_destroy_cohort_path(cohort), as: :turbo_stream
+
+      body = CGI.unescapeHTML(response.body)
+      expect(body).to include(I18n.t("roster.cohorts.destroy.members", count: 2))
+      expect(body).to include(I18n.t("roster.cohorts.destroy.without_group", count: 2))
+      expect(body).to include(I18n.t("roster.cohorts.destroy.notify"))
+    end
+
+    it "redirects a student to root (unauthorized)" do
+      sign_in student
+
+      get confirm_destroy_cohort_path(cohort), as: :turbo_stream
+
+      expect(response).to redirect_to(root_path)
+    end
+  end
+
   describe "DELETE /cohorts/:id" do
     context "as an editor" do
       before { sign_in editor }
+
+      context "with members" do
+        let(:member) { create(:confirmed_user) }
+
+        before { cohort.add_user_to_roster!(member) }
+
+        it "deletes the cohort without mail unless asked to" do
+          expect do
+            delete(cohort_path(cohort), as: :turbo_stream)
+          end.not_to have_enqueued_mail
+
+          expect(Cohort.exists?(cohort.id)).to be(false)
+          expect(CohortMembership.where(user: member)).to be_empty
+        end
+
+        it "tells each member by mail when asked to" do
+          expect do
+            delete(cohort_path(cohort), params: { notify: "1" }, as: :turbo_stream)
+          end.to have_enqueued_mail(RosterNotificationMailer, :group_deleted_email)
+            .with(a_hash_including(params: a_hash_including(group_title: cohort.title,
+                                                            recipient: member)))
+
+          expect(CGI.unescapeHTML(response.body))
+            .to include(I18n.t("controllers.cohorts.destroyed_and_notified", count: 1))
+        end
+      end
 
       it "destroys the requested cohort" do
         expect do

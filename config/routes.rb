@@ -1137,6 +1137,7 @@ Rails.application.routes.draw do
     get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
 
     member do
+      get :confirm_destroy
       scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do
         patch "self_materialization", action: :update_self_materialization,
                                       as: :update_self_materialization

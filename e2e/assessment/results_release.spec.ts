@@ -28,7 +28,7 @@ test.describe("publishing results", () => {
     await dashboard.open("Main Exam");
     await dashboard.tab("Points").click();
     const pointsRow = dashboard.pane.getByRole("row", { name });
-    await pointsRow.getByRole("spinbutton", { name: `Task 1 for ${name}` }).fill("7");
+    await pointsRow.getByRole("spinbutton", { name: `Prove it for ${name}` }).fill("7");
     await pointsRow.getByRole("button", { name: "Save this row's points" }).click();
     await expect(pointsRow.getByText("Reviewed")).toBeVisible();
 

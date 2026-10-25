@@ -108,7 +108,12 @@
             column's edge. One item per name: a click adds, and the arrow keys
             walk the names as they walk any menu.
           %>
-          <div class="dropdown">
+          <div
+            class="dropdown"
+            data-controller="add-member-menu"
+            data-action="shown.bs.dropdown->add-member-menu#open
+                         hidden.bs.dropdown->add-member-menu#close"
+          >
             <button
               type="button"
               class="btn btn-link p-0 text-secondary"
@@ -121,20 +126,47 @@
               <i class="bi bi-person-plus"></i>
             </button>
 
-            <div class="dropdown-menu" style="max-width: 18rem;">
+            <div class="dropdown-menu add-member-menu">
               <h6 class="dropdown-header text-wrap fw-normal">
                 <%= t('assessment.task_points.add_member_hint') %>
               </h6>
 
-              <% addable_members.each do |member| %>
-                <%= button_to member.tutorial_name,
-                              add_member_submission_path(@submission),
-                              method: :patch,
-                              params: { user_id: member.id,
-                                        grading_scope_type: grading_scope_type },
-                              class: "dropdown-item",
-                              form: { data: { turbo: true } } %>
+              <% if member_search? %>
+                <div class="px-3 pb-2">
+                  <input
+                    type="search"
+                    class="form-control form-control-sm"
+                    placeholder="<%= t('assessment.task_points.add_member_search') %>"
+                    aria-label="<%= t('assessment.task_points.add_member_search') %>"
+                    autocomplete="off"
+                    data-add-member-menu-target="query"
+                    data-action="input->add-member-menu#filter
+                                 keydown.down->add-member-menu#enterList"
+                  >
+                </div>
               <% end %>
+
+              <div class="add-member-list" data-add-member-menu-target="list">
+                <% addable_members.each do |member| %>
+                  <%= button_to member.tutorial_name,
+                                add_member_submission_path(@submission),
+                                method: :patch,
+                                params: { user_id: member.id,
+                                          grading_scope_type: grading_scope_type },
+                                class: "dropdown-item",
+                                form: { data: { turbo: true,
+                                                add_member_menu_target: "item",
+                                                add_member_menu_name: member.tutorial_name } } %>
+                <% end %>
+
+                <p
+                  class="dropdown-item-text small text-secondary mb-0"
+                  data-add-member-menu-target="empty"
+                  hidden
+                >
+                  <%= t('assessment.task_points.add_member_no_match') %>
+                </p>
+              </div>
             </div>
           </div>
         <% end %>

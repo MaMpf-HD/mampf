@@ -36,6 +36,25 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       end
     end
 
+    describe "the blank points hint" do
+      let(:hint) { I18n.t("assessment.grading_tutorial.blank_points_hint") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
+      end
+
+      it "stands above the points inputs" do
+        create(:assessment_task, assessment: assessment)
+
+        expect(render_inline(component).text).to include(hint)
+      end
+
+      it "is left out while the sheet has no tasks to enter points on" do
+        expect(render_inline(component).text).not_to include(hint)
+      end
+    end
+
     describe "#rows?" do
       context "when there are submissions" do
         let!(:submission) do
@@ -256,6 +275,8 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(rendered.css("tr[id^=participation-row]")).to be_empty
         expect(rendered.text).to include(I18n.t("submission.bulk_download_submissions"))
         expect(rendered.text).not_to include(I18n.t("assessment.grading_tutorial.save_all"))
+        expect(rendered.text)
+          .not_to include(I18n.t("assessment.grading_tutorial.blank_points_hint"))
       end
     end
 

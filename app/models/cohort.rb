@@ -46,4 +46,35 @@ class Cohort < ApplicationRecord
   def exclusive_assignment?
     false
   end
+
+  # Members do not block deleting a cohort, only a campaign that is not
+  # completed does; the lecture keeps whom the cohort enrolled.
+  def destruction_blockers_with_members
+    destruction_blockers - [:roster_not_empty]
+  end
+
+  # Deletes the cohort together with its memberships. Returns the former
+  # members, or nil when a campaign still holds the cohort.
+  def destroy_with_members
+    with_lock do
+      former_members = members.to_a
+      cohort_memberships.destroy_all
+      raise(ActiveRecord::Rollback) unless destroy
+
+      former_members
+    end
+  end
+
+  # Members in no tutorial, talk or other cohort of the lecture, whom
+  # deleting the cohort leaves without a group.
+  def members_without_other_group
+    return members unless lecture
+
+    members.where.not(id: TutorialMembership.where(tutorial: Tutorial.where(lecture: lecture))
+                                            .select(:user_id))
+           .where.not(id: SpeakerTalkJoin.where(talk: Talk.where(lecture: lecture))
+                                         .select(:speaker_id))
+           .where.not(id: CohortMembership.where(cohort: lecture.cohorts.where.not(id: id))
+                                          .select(:user_id))
+  end
 end
