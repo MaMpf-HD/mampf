@@ -111,13 +111,13 @@ class CohortsController < ApplicationController
 
   def destroy
     title = @cohort.title
-    former_members = @cohort.destroy_with_members
-    if former_members.nil?
-      flash.now[:alert] = t("controllers.cohorts.destruction_failed")
-    elsif params[:notify] == "1" && former_members.any?
-      notify_former_members(former_members, title)
+    deletion = destroy_cohort
+    if deletion.nil?
+      flash.now[:alert] ||= t("controllers.cohorts.destruction_failed")
+    elsif params[:notify] == "1" && deletion.former_members.any?
+      notify_former_members(deletion, title)
       flash.now[:notice] = t("controllers.cohorts.destroyed_and_notified",
-                             count: former_members.size)
+                             count: deletion.former_members.size)
     else
       flash.now[:notice] = t("controllers.cohorts.destroyed")
     end
@@ -136,9 +136,20 @@ class CohortsController < ApplicationController
 
   private
 
-    def notify_former_members(users, title)
-      users.each do |user|
-        RosterNotificationMailer.group_deleted(user, title: title, lecture: @lecture)
+    # A member graded on a talk or an exam of the lecture cannot leave it,
+    # so the cohort stays when deleting it would take them out.
+    def destroy_cohort
+      @cohort.destroy_with_members(by: current_user)
+    rescue Rosters::MaintenanceService::LectureGradingDataPresentError
+      flash.now[:alert] = t("roster.errors.lecture_grading_data_present")
+      nil
+    end
+
+    def notify_former_members(deletion, title)
+      deletion.former_members.each do |user|
+        left = deletion.left_lecture_ids.include?(user.id)
+        RosterNotificationMailer.group_deleted(user, title: title, lecture: @lecture,
+                                                     left_lecture: left)
       end
     end
 
