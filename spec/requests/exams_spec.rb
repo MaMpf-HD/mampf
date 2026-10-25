@@ -685,6 +685,8 @@ RSpec.describe("Exams", type: :request) do
         delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
 
         expect(lecture.reload.members).not_to include(member)
+        expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
+          .to eq(teacher)
         expect(CGI.unescapeHTML(response.body)).to include(
           I18n.t("assessment.registration_tab.participant_removed_with_lecture",
                  name: member.tutorial_name.presence || member.email)
