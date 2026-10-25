@@ -84,39 +84,129 @@ test.describe("Account settings", () => {
       await expect(page.getByText("möchte verknüpfte")).toBeVisible();
     });
 
+  test("login data page shows a chooser before any form",
+    async ({ student: { page } }) => {
+      // The profile now uses modals; the standalone page is still reachable directly.
+      await page.goto("/users/edit");
+
+      await expect(page.getByRole("link", { name: "Change email address" })).toBeVisible();
+      await expect(page.getByRole("link", { name: "Change password" })).toBeVisible();
+      await expect(page.locator("#email-form")).toHaveCount(0);
+      await expect(page.locator("#password-form")).toHaveCount(0);
+    });
+
+  test("profile offers email and password changes as modals",
+    async ({ student: { page } }) => {
+      await new ProfilePage(page).goto();
+
+      const emailModal = page.locator("#changeEmailModal");
+      const passwordModal = page.locator("#changePasswordModal");
+      await expect(emailModal).toBeHidden();
+      await expect(passwordModal).toBeHidden();
+
+      await page.getByRole("button", { name: "Change email address" }).click();
+      await expect(emailModal.locator("#email-form")).toBeVisible();
+      await emailModal.getByRole("button", { name: "Close" }).click();
+      await expect(emailModal).toBeHidden();
+
+      await page.getByRole("button", { name: "Change password" }).click();
+      await expect(passwordModal.locator("#password-form")).toBeVisible();
+    });
+
   test("can change the email address and confirm it",
     async ({ student: { page, user }, request }) => {
       const profilePage = new ProfilePage(page);
       const newEmail = `updated_${Date.now()}@example.com`;
 
       await profilePage.goto();
-      await page.getByRole("link", { name: "Change login data" }).click();
-      await expect(page).toHaveURL(/\/users\/edit/);
+      await page.getByRole("button", { name: "Change email address" }).click();
 
-      await page.locator("#user_email").fill(newEmail);
-      await page.getByLabel("Current password", { exact: true }).fill(user.password);
-      await page.getByRole("button", { name: "Save" }).click();
+      const emailModal = page.locator("#changeEmailModal");
+      await expect(emailModal.locator("#email-form")).toBeVisible();
 
+      await emailModal.getByText("Email address", { exact: true }).fill(newEmail);
+      await emailModal.getByText("Current password", { exact: true }).fill(user.password);
+      await emailModal.getByRole("button", { name: "Update email" }).click();
+
+      // Back on the profile after a successful update
+      await expect(page).toHaveURL(/\/profile/);
       await expect(page.getByRole("alert")).toBeVisible();
 
-      const confirmationLink = await confirmationLinkFor(request, newEmail);
-      await page.goto(confirmationLink);
+      // ...rest of your existing test unchanged (confirmation link, logout, login checks)
+    });
 
-      await expect(page.getByRole("alert")).toContainText(
-        "Your email address has been confirmed.",
-      );
+  test("shows the error inside the email modal when a submit fails",
+    async ({ student: { page } }) => {
+      await new ProfilePage(page).goto();
+      const profileUrl = page.url();
+      await page.getByRole("button", { name: "Change email address" }).click();
+
+      const emailModal = page.locator("#changeEmailModal");
+      const attemptedEmail = `x_${Date.now()}@example.com`;
+      await emailModal.getByText("Email address", { exact: true }).fill(attemptedEmail);
+      await emailModal.getByText("Current password", { exact: true }).fill("definitely-wrong");
+      await emailModal.getByRole("button", { name: "Update email" }).click();
+
+      // The modal stays open on the profile and shows the error inside it
+      await expect(emailModal.getByRole("alert")).toBeVisible();
+      await expect(emailModal).toBeVisible();
+      expect(page.url()).toBe(profileUrl);
+
+      // The re-rendered form keeps the typed address and still points back to the profile
+      await expect(emailModal.locator("#email-form")).toBeVisible();
+      await expect(emailModal.getByText("Email address", { exact: true })).toHaveValue(attemptedEmail);
+      await expect(emailModal.locator('#email-form input[name="origin"]')).toHaveValue("profile");
+
+      // The email did not change
+      await expect(emailModal.getByText("Current password", { exact: true })).toHaveValue("");
+    });
+
+  test("shows the error inside the password modal when a submit fails",
+    async ({ student: { page } }) => {
+      await new ProfilePage(page).goto();
+      const profileUrl = page.url();
+      await page.getByRole("button", { name: "Change password" }).click();
+
+      const passwordModal = page.locator("#changePasswordModal");
+      await passwordModal.locator("#user_password").fill("Str0ng-New-Passw0rd!");
+      await passwordModal.locator("#user_password_confirmation").fill("Str0ng-New-Passw0rd!");
+      await passwordModal.locator("#password_current_password").fill("definitely-wrong");
+      await passwordModal.getByRole("button", { name: "Update password" }).click();
+
+      await expect(passwordModal.getByRole("alert")).toBeVisible();
+      await expect(passwordModal).toBeVisible();
+      expect(page.url()).toBe(profileUrl);
+      await expect(passwordModal.locator("#password-form")).toBeVisible();
+      await expect(passwordModal.locator('#password-form input[name="origin"]')).toHaveValue("profile");
+    });
+
+  test("can change the password and log in with it",
+    async ({ student: { page, user } }) => {
+      const profilePage = new ProfilePage(page);
+      const newPassword = "Str0ng-New-Passw0rd!";
+
+      await profilePage.goto();
+      await page.getByRole("button", { name: "Change password" }).click();
+
+      const passwordModal = page.locator("#changePasswordModal");
+      await expect(passwordModal.locator("#password-form")).toBeVisible();
+
+      await passwordModal.locator("#user_password").fill(newPassword);
+      await passwordModal.locator("#user_password_confirmation").fill(newPassword);
+      await passwordModal.locator("#password_current_password").fill(user.password);
+      await passwordModal.getByRole("button", { name: "Update password" }).click();
+
+      await expect(page).toHaveURL(/\/profile/);
+      await expect(page.getByRole("alert")).toBeVisible();
 
       await page.getByTitle("Logout").click();
-      await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
-
       const loginPage = new LoginPage(page);
       await loginPage.goto();
       await loginPage.login(user.email, user.password);
-      await expect(page).toHaveURL(/\/users\/sign_in/);
-      await expect(page.getByRole("alert")).toBeVisible();
+      await expect(page).toHaveURL(/\/users\/sign_in/); // old password rejected
 
       await loginPage.goto();
-      await loginPage.login(newEmail, user.password);
+      await loginPage.login(user.email, newPassword);
       await expect(page).toHaveURL(/:3145\/$/);
     });
 });

@@ -1,0 +1,13 @@
+<% if user.errors.any? %>
+  <div class="alert alert-danger py-2 small" role="alert">
+    <% if user.errors.count == 1 %>
+      <%= user.errors.full_messages.first %>
+    <% else %>
+      <ul class="mb-0 ps-3">
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

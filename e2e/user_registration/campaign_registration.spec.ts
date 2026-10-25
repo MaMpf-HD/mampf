@@ -500,14 +500,21 @@ test.describe("campaign registration", () => {
     )).toBeVisible();
 
     // The student now fixes their email *after* the campaign was finalized:
-    // they change it to an allowed domain and confirm the change.
+    // they change it to an allowed domain via the profile modal and confirm it.
     const newEmail = `fixed_${Date.now()}@example.com`;
     await new ProfilePage(student.page).goto();
-    await student.page.getByRole("link", { name: "Change login data" }).click();
-    await student.page.locator("#user_email").fill(newEmail);
-    await student.page.getByLabel("Current password", { exact: true })
+    await student.page.getByRole("button", { name: "Change email address" }).click();
+
+    const emailModal = student.page.locator("#changeEmailModal");
+    await expect(emailModal).toBeVisible();
+    await expect(emailModal.locator("#email-form")).toBeVisible();
+    await emailModal.getByText("Email address", { exact: true }).fill(newEmail);
+    await emailModal.getByText("Current password", { exact: true })
       .fill(student.user.password);
-    await student.page.getByRole("button", { name: "Save" }).click();
+    await emailModal.getByRole("button", { name: "Update email" }).click();
+
+    // Successful update redirects back to the profile (origin=profile).
+    await expect(student.page).toHaveURL(/\/profile/);
     await expect(student.page.getByRole("alert")).toBeVisible();
 
     const confirmationLink = await confirmationLinkFor(request, newEmail);

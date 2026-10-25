@@ -32,6 +32,27 @@ class RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def update
+    self.resource = resource_class.to_adapter.get!(send(:"current_#{resource_name}").to_key)
+    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
+
+    if update_resource(resource, account_update_params)
+      set_flash_message_for_update(resource, prev_unconfirmed_email)
+      bypass_sign_in(resource, scope: resource_name) if sign_in_after_change_password?
+      respond_with(resource, location: after_update_path_for(resource))
+    else
+      clean_up_passwords(resource)
+      set_minimum_password_length
+      section = params[:section].presence_in(["email", "password"])
+
+      if request.format.turbo_stream? && section
+        render_form_errors(section)
+      else
+        respond_with(resource)
+      end
+    end
+  end
+
   def destroy
     password_correct = resource.valid_password?(deletion_params[:password])
     unless password_correct
@@ -75,10 +96,15 @@ class RegistrationsController < Devise::RegistrationsController
     end
 
     def after_update_path_for(resource)
-      return super unless session[:enforce_password_change]
-      return edit_user_registration_path if resource.password_change_required?
+      if session[:enforce_password_change]
+        return edit_user_registration_path if resource.password_change_required?
 
-      after_password_change_path_for(resource)
+        return after_password_change_path_for(resource)
+      end
+
+      return edit_profile_path(locale: I18n.locale) if params[:origin] == "profile"
+
+      super
     end
 
   private
@@ -152,5 +178,28 @@ class RegistrationsController < Devise::RegistrationsController
 
     def deletion_params
       params.permit(:archive_name, :password)
+    end
+
+    # Swaps only the submitted form, so a failed update from a profile modal
+    # keeps the modal open and shows the errors inside it.
+    def render_form_errors(section)
+      locals = { user: resource,
+                 origin: params[:origin].presence_in(["profile"]),
+                 autofocus: false }
+
+      stream =
+        if section == "email"
+          turbo_stream.replace("email-form-container",
+                               partial: "devise/registrations/email_form",
+                               locals: locals)
+        else
+          turbo_stream.replace("password-form-container",
+                               partial: "devise/registrations/password_form",
+                               locals: locals.merge(
+                                 password_change_required: resource.password_change_required?
+                               ))
+        end
+
+      render turbo_stream: stream, status: :unprocessable_content
     end
 end

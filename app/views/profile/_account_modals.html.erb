@@ -1,0 +1,33 @@
+<!-- 🔘 Change Email Modal -->
+<div class="modal fade" id="changeEmailModal" tabindex="-1"
+     aria-labelledby="changeEmailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changeEmailModalLabel"><%= t('devise.edit.email_section') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= render "devise/registrations/email_form",
+                   user: @user, origin: "profile", autofocus: false %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🔘 Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1"
+     aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModalLabel"><%= t('devise.edit.password_section') %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= render "devise/registrations/password_form",
+                   user: @user, origin: "profile", autofocus: false %>
+      </div>
+    </div>
+  </div>
+</div>
