@@ -76,6 +76,13 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
       expect(page.css("tr[id^=points-participation-row-]").size).to eq(1)
     end
 
+    it "says what a blank points field means" do
+      create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
+
+      expect(render_inline(component).text)
+        .to include(I18n.t("assessment.grading_tutorial.blank_points_hint"))
+    end
+
     it "cuts the rows into pages of 20 unless the reader picks another size" do
       create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
 
