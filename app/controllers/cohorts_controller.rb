@@ -138,8 +138,7 @@ class CohortsController < ApplicationController
 
     def notify_former_members(users, title)
       users.each do |user|
-        RosterNotificationMailer.removed_from_deleted_group(user, title: title,
-                                                                  lecture: @lecture)
+        RosterNotificationMailer.group_deleted(user, title: title, lecture: @lecture)
       end
     end
 

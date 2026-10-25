@@ -506,6 +506,23 @@ de:
 
         Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
+      roster_group_deleted_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          die Gruppe <strong>%{rosterable_title}</strong> in der Veranstaltung
+          <strong>%{lecture_title}</strong> wurde gelöscht.
+        </p>
+        <p>
+          Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_group_deleted_email_body: |
+        Hallo %{name},
+
+        die Gruppe „%{rosterable_title}“ in der Veranstaltung „%{lecture_title}“
+        wurde gelöscht.
+
+        Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
+      roster_group_deleted_email_subject: 'Gruppe %{rosterable_title} in %{lecture_title} gelöscht'
       roster_removed_from_exam_email_body_html: |
         <p>Hallo %{name},</p>
         <p>

@@ -291,17 +291,19 @@ describe RosterNotificationMailer do
     end
   end
 
-  describe ".removed_from_deleted_group" do
-    it "names the deleted group in the mail" do
+  describe ".group_deleted" do
+    it "says the group was deleted and names it" do
       lecture = create(:lecture)
 
       expect do
-        described_class.removed_from_deleted_group(user, title: "Sammelgruppe", lecture: lecture)
-      end.to have_enqueued_mail(described_class, :removed_from_group_email)
+        described_class.group_deleted(user, title: "Sammelgruppe", lecture: lecture)
+      end.to have_enqueued_mail(described_class, :group_deleted_email)
 
       delivered = deliver(described_class.with(group_title: "Sammelgruppe", lecture: lecture,
-                                               recipient: user).removed_from_group_email)
+                                               recipient: user).group_deleted_email)
       expect(delivered.subject).to include("Sammelgruppe")
+      expect(delivered_body(delivered)).to include("gelöscht")
+      expect(delivered_body(delivered)).not_to include("entfernt")
     end
   end
 

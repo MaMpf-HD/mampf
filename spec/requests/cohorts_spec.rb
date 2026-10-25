@@ -210,7 +210,7 @@ RSpec.describe("Cohorts", type: :request) do
         it "tells each member by mail when asked to" do
           expect do
             delete(cohort_path(cohort), params: { notify: "1" }, as: :turbo_stream)
-          end.to have_enqueued_mail(RosterNotificationMailer, :removed_from_group_email)
+          end.to have_enqueued_mail(RosterNotificationMailer, :group_deleted_email)
             .with(a_hash_including(params: a_hash_including(group_title: cohort.title,
                                                             recipient: member)))
 

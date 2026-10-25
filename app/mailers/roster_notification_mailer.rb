@@ -33,9 +33,9 @@ class RosterNotificationMailer < ApplicationMailer
 
     # A deleted group cannot be loaded by the mail job, so its title travels
     # in its place.
-    def removed_from_deleted_group(user, title:, lecture:)
+    def group_deleted(user, title:, lecture:)
       with(group_title: title, lecture: lecture, recipient: user)
-        .removed_from_group_email.deliver_later
+        .group_deleted_email.deliver_later
     end
 
     def moved(user, old_rosterable, new_rosterable)
@@ -136,6 +136,10 @@ class RosterNotificationMailer < ApplicationMailer
 
   def removed_from_group_email
     email { t("roster.mailer.roster_removed_from_group_email_subject", **subject_vars) }
+  end
+
+  def group_deleted_email
+    email { t("roster.mailer.roster_group_deleted_email_subject", **subject_vars) }
   end
 
   def removed_from_exam_email
