@@ -291,6 +291,8 @@ de:
       member_added: '%{name} ist jetzt im Team.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
+      add_member_search: 'Nach Namen suchen'
+      add_member_no_match: 'Niemand mit diesem Namen ist ohne Team.'
       hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
       hand_over_hint: >-
         Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib

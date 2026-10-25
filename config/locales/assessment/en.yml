@@ -291,6 +291,8 @@ en:
       member_added: '%{name} is on the team now.'
       add_member: 'Put somebody on this team'
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
+      add_member_search: 'Search by name'
+      add_member_no_match: 'Nobody by that name is without a team.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
         The members of this team sit in different tutorials. Hand it over to
