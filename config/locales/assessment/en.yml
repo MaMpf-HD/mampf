@@ -358,6 +358,7 @@ en:
       page_size_label: 'Per page'
       pager_label: 'Pages'
       more_actions: 'More actions'
+      blank_points_hint: 'A blank field means not marked yet: the row then stays "Pending Grading" and does not count yet. For a task left unattempted, enter 0.'
       summary:
         handed_in:
           one: '1 handed in'
