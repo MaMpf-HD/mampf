@@ -7,8 +7,8 @@ module Rosters
   class ParticipantQuery
     VIEWS = ["enrolled", "registered", "left"].freeze
 
-    Result = Struct.new(:scope, :total_count, :registered_count, :left_count, :view,
-                        :campaign, keyword_init: true)
+    Result = Struct.new(:scope, :total_count, :unassigned_count, :registered_count,
+                        :left_count, :filter_mode, :view, :campaign, keyword_init: true)
 
     SEARCH_SQL = "#{User::SHOWN_NAME_SQL} ILIKE :q OR users.matriculation_number ILIKE :q".freeze
 
@@ -18,6 +18,7 @@ module Rosters
     end
 
     def call
+      filter_mode = @params[:filter] || "all"
       view = VIEWS.include?(@params[:view]) ? @params[:view] : "enrolled"
       search = @params[:search].presence
 
@@ -31,10 +32,18 @@ module Rosters
 
       total_count = base_scope.count
 
+      unassigned_scope = build_unassigned_scope(base_scope)
+      unassigned_count = unassigned_scope.count
+
       running = RunningRegistrations.new(@lecture, search: search)
       campaign = running.campaigns.find_by(id: @params[:campaign]) || running.campaigns.first
 
-      scope = base_scope
+      scope = case filter_mode
+              when "unassigned"
+                unassigned_scope
+              else
+                base_scope
+      end
       if view == "registered"
         scope = RunningRegistrations.new(@lecture, search: search, campaign: campaign).users
         scope = scope.none unless campaign
@@ -45,8 +54,10 @@ module Rosters
       Result.new(
         scope: scope,
         total_count: total_count,
+        unassigned_count: unassigned_count,
         registered_count: running.count,
         left_count: left.count,
+        filter_mode: filter_mode,
         view: view,
         campaign: campaign
       )
@@ -60,6 +71,32 @@ module Rosters
                         .includes(:excluded_by, user: User::PROGRAM_PRELOAD)
                         .merge(User.by_last_name)
         search ? scope.where(SEARCH_SQL, q: "%#{search}%") : scope
+      end
+
+      def build_unassigned_scope(base_scope)
+        tutorial_user_ids = TutorialMembership
+                            .joins(:tutorial)
+                            .where(tutorials: { lecture_id: @lecture.id })
+                            .select(:user_id)
+
+        talk_user_ids = SpeakerTalkJoin
+                        .joins(:talk)
+                        .where(talks: { lecture_id: @lecture.id })
+                        .select(:speaker_id)
+
+        cohort_user_ids = CohortMembership
+                          .joins(:cohort)
+                          .where(cohorts: {
+                                   context_id: @lecture.id,
+                                   context_type: "Lecture",
+                                   propagate_to_lecture: true
+                                 })
+                          .select(:user_id)
+
+        base_scope
+          .where.not(user_id: tutorial_user_ids)
+          .where.not(user_id: talk_user_ids)
+          .where.not(user_id: cohort_user_ids)
       end
   end
 end

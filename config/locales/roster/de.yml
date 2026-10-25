@@ -66,6 +66,9 @@ de:
       status_unassigned: 'Ohne Gruppe'
       action_required: 'Handlung erforderlich'
       group_distribution: 'Gruppenverteilung'
+    filters:
+      all: 'Alle'
+      unassigned: 'Ohne Gruppe'
     search_hits:
       one: 'Unter „%{place}“ gibt es 1 Treffer.'
       other: 'Unter „%{place}“ gibt es %{count} Treffer.'
