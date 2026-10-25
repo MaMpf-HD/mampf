@@ -121,6 +121,60 @@ test.describe("marking table", () => {
       .toHaveValue("7.0");
   });
 
+  // Seven names on a short screen stand in for a group of thirty on a
+  // laptop: the tutor narrows the list by typing, or scrolls it to the end.
+  test("finds the member to put on the team by name", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const { lecture, assignment, assessmentId } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    await addTask(factory, assessmentId, "Warm-up", 10);
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Tuesday group",
+    });
+    const members = [];
+    for (const name of [
+      "Ada Lovelace", "Sophie Germain", "Grace Hopper", "Katherine Johnson",
+      "Emmy Noether", "Mary Somerville", "Alan Turing",
+    ]) {
+      const student = await factory.create("confirmed_user", [], { name_in_tutorials: name });
+      await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: student.id });
+      members.push(student);
+    }
+    await handIn(factory, assignment.id, tutorial.id, members[0].id);
+    for (const member of members) {
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: member.id,
+      });
+    }
+
+    await tutor.page.setViewportSize({ width: 1280, height: 400 });
+    await tutor.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
+    );
+    const teamRow = tutor.page.getByRole("table").getByRole("row", { name: /Ada Lovelace/ });
+    await teamRow.getByRole("button", { name: "Put somebody on this team" }).click();
+    const search = teamRow.getByRole("searchbox", { name: "Search by name" });
+    await expect(search).toBeFocused();
+
+    await search.fill("hop");
+    await expect(teamRow.getByRole("button", { name: "Grace Hopper" })).toBeVisible();
+    await expect(teamRow.getByRole("button", { name: "Alan Turing" })).toBeHidden();
+
+    const noMatch = teamRow.getByText("Nobody by that name is without a team.");
+    await search.fill("Lovelace");
+    await expect(noMatch).toBeVisible();
+
+    await search.fill("");
+    await expect(noMatch).toBeHidden();
+    await teamRow.getByRole("button", { name: "Sophie Germain" }).click();
+    await expect(tutor.page.getByText("Sophie Germain is on the team now.")).toBeVisible();
+    await expect(teamRow).toContainText("Sophie Germain");
+  });
+
   test("says where the sheet stands and narrows the rows", async ({
     factory,
     teacher,
