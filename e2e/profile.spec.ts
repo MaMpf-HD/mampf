@@ -200,10 +200,13 @@ test.describe("Account settings", () => {
       await expect(page.getByRole("alert")).toBeVisible();
 
       await page.getByTitle("Logout").click();
+      await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
+
       const loginPage = new LoginPage(page);
       await loginPage.goto();
       await loginPage.login(user.email, user.password);
-      await expect(page).toHaveURL(/\/users\/sign_in/); // old password rejected
+      await expect(page).toHaveURL(/\/users\/sign_in/);
+      await expect(page.getByRole("alert")).toBeVisible();
 
       await loginPage.goto();
       await loginPage.login(user.email, newPassword);
