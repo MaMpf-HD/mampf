@@ -424,6 +424,21 @@ RSpec.describe(GroupRowComponent, type: :component) do
     end
   end
 
+  describe "deleting a cohort with members" do
+    let(:cohort) { create(:cohort, context: create(:lecture), skip_campaigns: true) }
+
+    before { cohort.add_user_to_roster!(create(:confirmed_user)) }
+
+    it "opens the dialog rather than asking in the browser" do
+      link = render_inline(described_class.new(registerable: cohort))
+             .css("a[href='#{Rails.application.routes.url_helpers
+                                 .confirm_destroy_cohort_path(cohort)}']").first
+
+      expect(link["data-turbo-stream"]).to eq("true")
+      expect(link["data-turbo-confirm"]).to be_nil
+    end
+  end
+
   describe "the deletion confirmation" do
     let(:seminar) { create(:lecture, :is_seminar) }
     let(:talk) { create(:talk, lecture: seminar) }

@@ -31,6 +31,12 @@
         <% end %>
       </div>
 
+      <% if @assessment&.persisted_tasks&.any? %>
+        <p class="text-muted small mb-0">
+          <%= t("assessment.grading_tutorial.blank_points_hint") %>
+        </p>
+      <% end %>
+
       <div
         class="table-wrapper"
         style="<%= layout.css_vars %>"
