@@ -1,29 +1,32 @@
 <% origin    = local_assigns[:origin] %>
 <% autofocus = local_assigns.fetch(:autofocus, true) %>
 
-<%= form_for(user, as: :user,
-                   url: user_registration_path(locale: I18n.locale, section: "email"),
-                   html: { method: :put, id: "email-form" }) do |f| %>
-  <%= hidden_field_tag :origin, origin if origin.present? %>
+<div id="email-form-container">
+  <%= render "devise/registrations/form_errors", user: user %>
+  <%= form_for(user, as: :user,
+                    url: user_registration_path(locale: I18n.locale, section: "email"),
+                    html: { method: :put, id: "email-form", data: { turbo: true } }) do |f| %>
+    <%= hidden_field_tag :origin, origin if origin.present? %>
 
-  <div class="mb-3">
-    <%= f.label :email, t('devise.edit.email'), class: "form-label", for: "email_email" %>
-    <%= f.email_field :email, id: "email_email", autofocus: autofocus,
-                      autocomplete: "email", class: 'form-control',
-                      "aria-describedby": "email-hint" %>
-    <div class="form-text" id="email-hint"><%= t('devise.edit.email_hint') %></div>
-  </div>
-
-  <div class="mb-3">
-    <%= f.label :current_password, t('devise.edit.current_password'),
-                class: "form-label", for: "email_current_password" %>
-    <%= f.password_field :current_password, id: "email_current_password",
-                         autocomplete: "current-password", class: 'form-control',
-                         "aria-describedby": "email-current-password-hint" %>
-    <div class="form-text" id="email-current-password-hint">
-      <%= t('devise.edit.need_password') %>
+    <div class="mb-3">
+      <%= f.label :email, t('devise.edit.email'), class: "form-label", for: "email_email" %>
+      <%= f.email_field :email, id: "email_email", autofocus: autofocus,
+                        autocomplete: "email", class: 'form-control',
+                        "aria-describedby": "email-hint" %>
+      <div class="form-text" id="email-hint"><%= t('devise.edit.email_hint') %></div>
     </div>
-  </div>
 
-  <%= f.submit t('devise.edit.update_email'), class: 'btn btn-primary' %>
-<% end %>
+    <div class="mb-3">
+      <%= f.label :current_password, t('devise.edit.current_password'),
+                  class: "form-label", for: "email_current_password" %>
+      <%= f.password_field :current_password, id: "email_current_password",
+                          autocomplete: "current-password", class: 'form-control',
+                          "aria-describedby": "email-current-password-hint" %>
+      <div class="form-text" id="email-current-password-hint">
+        <%= t('devise.edit.need_password') %>
+      </div>
+    </div>
+
+    <%= f.submit t('devise.edit.update_email'), class: 'btn btn-primary' %>
+  <% end %>
+</div>

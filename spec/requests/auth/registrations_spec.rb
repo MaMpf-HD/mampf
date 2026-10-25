@@ -437,6 +437,73 @@ RSpec.describe("Auth registrations", type: :request) do
       expect(response.body).to include('id="password-form"')
       expect(response.body).not_to include('id="email-form"')
     end
+
+    describe "from the profile modals" do
+      it "sends an email change back to the profile" do
+        user = create(:confirmed_user_en)
+        new_email = "modal_#{SecureRandom.hex(4)}@example.com"
+        sign_in user
+
+        put user_registration_path(locale: :en, section: "email"), params: {
+          origin: "profile",
+          user: { email: new_email, current_password: user.password }
+        }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include(edit_profile_path)
+        expect(user.reload.unconfirmed_email).to eq(new_email)
+      end
+
+      it "sends a password change back to the profile" do
+        user = create(:confirmed_user_en, password: "zitrone-diskette-vorhang-42")
+        sign_in user
+
+        put user_registration_path(locale: :en, section: "password"), params: {
+          origin: "profile",
+          user: { current_password: "zitrone-diskette-vorhang-42",
+                  password: "andere-melone-tafel-77",
+                  password_confirmation: "andere-melone-tafel-77" }
+        }
+
+        expect(response).to have_http_status(:redirect)
+        expect(response.location).to include(edit_profile_path)
+        expect(user.reload.valid_password?("andere-melone-tafel-77")).to be(true)
+      end
+
+      it "keeps the origin on the re-rendered form after a failed update" do
+        user = create(:confirmed_user_en)
+        sign_in user
+
+        put user_registration_path(locale: :en, section: "email"), params: {
+          origin: "profile",
+          user: { email: "not-an-email", current_password: "not-the-password" }
+        }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        origin_field = Nokogiri::HTML(response.body).at_css('#email-form input[name="origin"]')
+        expect(origin_field&.[]("value")).to eq("profile")
+      end
+
+      it "ignores the origin while a password change is enforced" do
+        user = create(:confirmed_user_en, password: "zitrone-diskette-vorhang-42")
+        # rubocop:disable Rails/SkipsModelValidations
+        user.update_columns(password_policy_version: 0, password_changed_at: nil,
+                            sign_in_count: 0)
+        # rubocop:enable Rails/SkipsModelValidations
+
+        post user_session_path, params: { user: { email: user.email,
+                                                  password: "zitrone-diskette-vorhang-42" } }
+        put user_registration_path, params: {
+          origin: "profile",
+          user: { current_password: "zitrone-diskette-vorhang-42",
+                  password: "andere-melone-tafel-77",
+                  password_confirmation: "andere-melone-tafel-77" }
+        }
+
+        expect(response).to redirect_to(edit_profile_path)
+        expect(user.reload).not_to be_password_change_required
+      end
+    end
   end
 
   describe "GET /users/edit" do
