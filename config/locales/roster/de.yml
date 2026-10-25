@@ -214,6 +214,18 @@ de:
       modal:
         create_title: "Flexible Gruppe anlegen"
         edit_title: "Flexible Gruppe bearbeiten"
+      destroy:
+        title: "„%{title}“ löschen"
+        members:
+          one: "Die Gruppe hat 1 Mitglied."
+          other: "Die Gruppe hat %{count} Mitglieder."
+        without_group:
+          one: "1 davon ist danach in keiner Gruppe dieser Veranstaltung."
+          other: "%{count} davon sind danach in keiner Gruppe dieser Veranstaltung."
+        enrollment_stays: "Die Veranstaltungseinschreibung bleibt bestehen."
+        registrations: "Mitgelöscht wird, was ihr abgeschlossenes Anmeldeverfahren hinterlassen hat: %{total}, davon %{confirmed}."
+        notify: "Mitglieder per Mail benachrichtigen"
+        submit: "Gruppe löschen"
       kinds:
         with_enrollment: "Gruppe mit Einschreibung"
         without_enrollment: "Gruppe ohne Einschreibung"
@@ -509,6 +521,32 @@ de:
 
         Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
+      roster_group_deleted_email_body_html: |
+        <p>Hallo %{name},</p>
+        <p>
+          Du warst Mitglied der Gruppe <strong>%{rosterable_title}</strong> in der
+          Veranstaltung <strong>%{lecture_title}</strong>. Diese Gruppe wurde gelöscht,
+          damit bist Du dort kein Mitglied mehr.
+        </p>
+        <p>
+          Sonst ändert sich für Dich nichts: Deine Einschreibung in die Veranstaltung
+          und Deine übrigen Gruppen dort bleiben bestehen.
+        </p>
+        <p>
+          Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
+        </p>
+      roster_group_deleted_email_body: |
+        Hallo %{name},
+
+        Du warst Mitglied der Gruppe „%{rosterable_title}“ in der Veranstaltung
+        „%{lecture_title}“. Diese Gruppe wurde gelöscht, damit bist Du dort kein
+        Mitglied mehr.
+
+        Sonst ändert sich für Dich nichts: Deine Einschreibung in die Veranstaltung
+        und Deine übrigen Gruppen dort bleiben bestehen.
+
+        Wenn Du Fragen hast, wende Dich bitte an Deine Lehrperson oder das Support-Team.
+      roster_group_deleted_email_subject: 'Gruppe %{rosterable_title} in %{lecture_title} gelöscht'
       roster_removed_from_exam_email_body_html: |
         <p>Hallo %{name},</p>
         <p>

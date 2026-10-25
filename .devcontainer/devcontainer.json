@@ -73,6 +73,10 @@
             "label": "MaMpf App (needs manual start)",
             "onAutoForward": "openBrowserOnce"
         },
+        "3001": {
+            "label": "Rails/Puma (use 3000 instead)",
+            "onAutoForward": "ignore"
+        },
         // Vite
         "3036": {
             "label": "Vite Server (dev & unit tests, starts with MaMpf App)",
