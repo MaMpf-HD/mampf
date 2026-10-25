@@ -5,7 +5,7 @@
         <%= render toolbar %>
       </div>
 
-      <% if layout.show?(:tasks) %>
+      <% if tasks.any? %>
         <p class="text-muted small mb-0">
           <%= t("assessment.grading_tutorial.blank_points_hint") %>
         </p>

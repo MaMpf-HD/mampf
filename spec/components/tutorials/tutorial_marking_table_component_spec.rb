@@ -36,6 +36,25 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       end
     end
 
+    describe "the blank points hint" do
+      let(:hint) { I18n.t("assessment.grading_tutorial.blank_points_hint") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
+      end
+
+      it "stands above the points inputs" do
+        create(:assessment_task, assessment: assessment)
+
+        expect(render_inline(component).text).to include(hint)
+      end
+
+      it "is left out while the sheet has no tasks to enter points on" do
+        expect(render_inline(component).text).not_to include(hint)
+      end
+    end
+
     describe "#rows?" do
       context "when there are submissions" do
         let!(:submission) do
@@ -93,11 +112,6 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(row.text).not_to include(I18n.t("assessment.grading_tutorial.record_first"))
         expect(assessment.assessment_participations.find_by(user: member).tutorial)
           .to eq(tutorial)
-      end
-
-      it "says what a blank points field means" do
-        expect(render_inline(component).text)
-          .to include(I18n.t("assessment.grading_tutorial.blank_points_hint"))
       end
 
       # Three hundred rows made one by one would be three hundred commits,
