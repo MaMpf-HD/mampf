@@ -59,7 +59,6 @@ module Rosters
             group_type: @mparams.group_type,
             participants: participants,
             pagy: pagy,
-            filter_mode: filter_mode,
             view: @participants_state[:view],
             campaign: @participants_state[:campaign],
             search_string: search_string,
@@ -241,10 +240,6 @@ module Rosters
         @participants_state[:pagy]
       end
 
-      def filter_mode
-        @participants_state[:filter_mode]
-      end
-
       def search_string
         @participants_state[:search_string]
       end
@@ -252,7 +247,6 @@ module Rosters
       def component_counts
         {
           total: @participants_state[:total_count],
-          unassigned: @participants_state[:unassigned_count],
           registered: @participants_state[:registered_count],
           left: @participants_state[:left_count]
         }

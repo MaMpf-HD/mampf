@@ -63,9 +63,6 @@ en:
       status_unassigned: 'Without group'
       action_required: 'Action required'
       group_distribution: 'Group Distribution'
-    filters:
-      all: 'All'
-      unassigned: 'Without group'
     search_hits:
       one: 'There is 1 match under “%{place}”.'
       other: 'There are %{count} matches under “%{place}”.'

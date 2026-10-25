@@ -52,10 +52,6 @@
                           },
                           class: "m-0"
                         } do |f| %>
-            <%= f.hidden_field :filter,
-                               value: @filter_mode,
-                               data: { auto_submit_form_target: "filterInput" } %>
-
             <% unless enrolled_view? %>
               <%= f.hidden_field :view, value: view %>
             <% end %>
@@ -103,8 +99,7 @@
           <% end %>
 
           <%= helpers.turbo_frame_tag section_target(:header_controls),
-                                      class: "d-flex flex-wrap align-items-center gap-3",
-                                      data: { filter_mode: @filter_mode } do %>
+                                      class: "d-flex flex-wrap align-items-center gap-3" do %>
             <%= render section_component(:header_controls) %>
           <% end %>
         </div>

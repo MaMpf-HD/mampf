@@ -348,27 +348,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           get lecture_roster_path(lecture)
           expect(response).to have_http_status(:success)
         end
-
-        context "when filtering unassigned participants" do
-          let(:assigned_user) { create(:user) }
-          let(:unassigned_user) { create(:user) }
-
-          before do
-            create(:lecture_membership, lecture: lecture, user: assigned_user)
-            create(:lecture_membership, lecture: lecture, user: unassigned_user)
-            create(:tutorial_membership, tutorial: tutorial, user: assigned_user)
-          end
-
-          it "only returns unassigned participants" do
-            get lecture_roster_path(lecture, tab: "participants",
-                                             filter: "unassigned")
-            expect(response).to have_http_status(:redirect)
-            follow_redirect!
-            expect(response).to have_http_status(:success)
-            expect(response.body).to include(unassigned_user.email)
-            expect(response.body).not_to include(assigned_user.email)
-          end
-        end
       end
     end
 
