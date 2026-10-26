@@ -100,6 +100,21 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(reconciliation.report.join("\n")).to include("1 staff")
     end
 
+    # Lecture#tutor? counts them before they have a tutorial.
+    it "keeps a tutor by a redeemed voucher who has no tutorial yet" do
+      Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: limbo)
+
+      expect(reconciliation.apply!).to eq(0)
+      expect(lecture.reload.members).to include(limbo)
+    end
+
+    it "keeps a tutor of a cohort" do
+      CohortTutorJoin.create!(cohort: create(:cohort, context: lecture), tutor: limbo)
+
+      expect(reconciliation.apply!).to eq(0)
+      expect(lecture.reload.members).to include(limbo)
+    end
+
     it "keeps to the lectures it is narrowed to" do
       other = create(:lecture)
       stray = create(:confirmed_user)

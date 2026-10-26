@@ -89,10 +89,14 @@ module Rosters
         lecture.place_user_id_queries
       end
 
+      # Tutors as Lecture#tutor? knows them, by a redeemed voucher too, and the
+      # tutors of the lecture's cohorts.
       def staff_ids(lecture)
         ([lecture.teacher_id] + lecture.editor_ids + lecture.course.editor_ids +
           TutorTutorialJoin.where(tutorial: lecture.tutorials).pluck(:tutor_id) +
-          TutorAppointment.where(lecture: lecture).pluck(:user_id)).compact.uniq
+          TutorAppointment.where(lecture: lecture).pluck(:user_id) +
+          Redemption.where(voucher: lecture.vouchers.for_tutors).pluck(:user_id) +
+          CohortTutorJoin.where(cohort: lecture.cohorts).pluck(:tutor_id)).compact.uniq
       end
 
       def admitted(lecture, user_ids)
