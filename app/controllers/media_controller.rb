@@ -289,8 +289,9 @@ class MediaController < ApplicationController
     @medium.with_lock do
       next unless verify_transcription_token!(purpose: :transcript)
 
-      if params[:transcript].present?
-        @medium.transcript = params[:transcript]
+      upload = params[:transcript]
+      if upload.respond_to?(:tempfile)
+        attach_scanned_transcript(upload)
         @medium.transcription_status = :completed
         @medium.transcription_error = nil
         if @medium.save
@@ -302,6 +303,12 @@ class MediaController < ApplicationController
         head :bad_request
       end
     end
+  rescue MalwareScanGate::InfectedUploadError
+    render json: { errors: [t("submission.upload_failure_malware")] },
+           status: :unprocessable_content
+  rescue MalwareScanGate::ScannerUnavailableError
+    render json: { errors: [t("submission.upload_failure_scanner_unavailable")] },
+           status: :service_unavailable
   end
 
   def transcription_failed
@@ -721,6 +728,16 @@ class MediaController < ApplicationController
     rescue TranscriptionToken::InvalidTokenError
       head :forbidden
       false
+    end
+
+    # Caches the transcript through the malware scan; the attacher refuses a
+    # request file assigned directly.
+    def attach_scanned_transcript(upload)
+      File.open(upload.tempfile.path) do |file|
+        @medium.transcript_attacher.attach_cached(
+          file, metadata: { "filename" => upload.original_filename }
+        )
+      end
     end
 
     def medium_params
