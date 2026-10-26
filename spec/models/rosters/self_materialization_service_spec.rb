@@ -60,6 +60,22 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
       service.self_remove!
     end
 
+    it "locks the student's campaigns before the group, as the removal takes them" do
+      lecture = create(:lecture)
+      order = []
+      allow(rosterable).to receive_messages(lecture: lecture, place?: true)
+      allow(rosterable).to receive(:lock!) { order << :group }
+      allow(lecture).to receive(:lock!) { order << :lecture }
+      allow_any_instance_of(Rosters::UserPlaces).to receive(:lock_campaigns!) { order << :campaigns }
+      allow(Rosters::LectureLeave).to receive(:new)
+        .and_return(instance_double(Rosters::LectureLeave, only_place?: false))
+      allow(maintenance_service).to receive(:remove_user!)
+
+      service.self_remove!
+
+      expect(order).to eq([:campaigns, :group, :lecture])
+    end
+
     context "when rosterable is locked" do
       before { allow(rosterable).to receive(:locked?).and_return(true) }
 

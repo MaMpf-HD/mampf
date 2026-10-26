@@ -31,11 +31,16 @@ module Rosters
     # registrations there are withdrawn. Locks the campaigns, the group and
     # then the lecture, as finalization and leaving do. Returns the roster
     # the user was taken off, the lecture in that case, or nil.
+    #
+    # The campaigns are locked even when another place seems to remain: only
+    # under the group's lock is it certain, and locking them then would come
+    # after the group. A caller that locks the group itself locks them first
+    # (see SelfMaterializationService#self_remove!).
     def remove_user!(user, rosterable, notify: true, by: nil)
       lecture = rosterable.is_a?(Lecture) ? rosterable : (rosterable.lecture if rosterable.place?)
       places = UserPlaces.new(user)
       left = ActiveRecord::Base.transaction do
-        places.lock_campaigns!([lecture]) if lecture && leaves_lecture?(user, rosterable, lecture)
+        places.lock_campaigns!([lecture]) if lecture
         rosterable.lock!
         lecture&.lock!
         leaving = lecture.present? && leaves_lecture?(user, rosterable, lecture)

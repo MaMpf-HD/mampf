@@ -23,11 +23,14 @@ module Rosters
     # leaving the lecture (see Rosters::LectureLeave).
     # The group is locked before the lecture, as leaving the lecture does; the
     # lecture's lock keeps two tabs from each leaving a group while counting
-    # on the other one.
+    # on the other one. The student's campaigns come before both, as
+    # MaintenanceService#remove_user! takes them.
     def self_remove!
       ActiveRecord::Base.transaction do
+        lecture = @rosterable.lecture
+        Rosters::UserPlaces.new(@user).lock_campaigns!([lecture]) if lecture && @rosterable.place?
         @rosterable.lock!
-        @rosterable.lecture&.lock!
+        lecture&.lock!
         ensure_rosterable_unlocked!
         ensure_rosterable_allow_self_remove!
         ensure_not_last_group!
