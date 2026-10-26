@@ -4291,6 +4291,9 @@ de:
       created: 'Gruppe erfolgreich erstellt.'
       updated: 'Gruppe erfolgreich aktualisiert.'
       destroyed: 'Gruppe erfolgreich gelöscht.'
+      destroyed_and_notified:
+        one: 'Gruppe gelöscht; 1 Mitglied wird per Mail benachrichtigt.'
+        other: 'Gruppe gelöscht; %{count} Mitglieder werden per Mail benachrichtigt.'
       destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
     talks:
       created: 'Vortrag erfolgreich erstellt.'

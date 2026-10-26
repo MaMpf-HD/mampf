@@ -1,0 +1,5 @@
+<%= t('roster.mailer.roster_group_deleted_email_body_html',
+      name: @username,
+      lecture_title: @lecture&.title || '',
+      rosterable_title: @group_title) %>
+<%= t('roster.mailer.end_mail_html') %>

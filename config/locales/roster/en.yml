@@ -197,6 +197,18 @@ en:
       modal:
         create_title: "Create Flexible Group"
         edit_title: "Edit Flexible Group"
+      destroy:
+        title: "Delete “%{title}”"
+        members:
+          one: "The group has 1 member."
+          other: "The group has %{count} members."
+        without_group:
+          one: "1 of them is then in no group of this course."
+          other: "%{count} of them are then in no group of this course."
+        enrollment_stays: "The course enrollment remains."
+        registrations: "This also deletes what its finished registration process left on it: %{total}, %{confirmed}."
+        notify: "Notify the members by email"
+        submit: "Delete group"
       kinds:
         with_enrollment: "Group with enrollment"
         without_enrollment: "Group without enrollment"
@@ -485,6 +497,32 @@ en:
 
         Your enrollment in the corresponding lecture %{lecture_title} remains unchanged.
       roster_removed_from_group_email_subject: 'Removed from group %{rosterable_title} in %{lecture_title}'
+      roster_group_deleted_email_body_html: |
+        <p>Hello %{name},</p>
+        <p>
+          You were a member of the group <strong>%{rosterable_title}</strong> in the
+          lecture <strong>%{lecture_title}</strong>. This group has been deleted,
+          so you are no longer a member of it.
+        </p>
+        <p>
+          Nothing else changes for you: your enrollment in the lecture and your
+          other groups there remain as they are.
+        </p>
+        <p>
+          If you have any questions, please contact your instructor or the support team.
+        </p>
+      roster_group_deleted_email_body: |
+        Hello %{name},
+
+        You were a member of the group "%{rosterable_title}" in the lecture
+        "%{lecture_title}". This group has been deleted, so you are no longer
+        a member of it.
+
+        Nothing else changes for you: your enrollment in the lecture and your
+        other groups there remain as they are.
+
+        If you have any questions, please contact your instructor or the support team.
+      roster_group_deleted_email_subject: 'Group %{rosterable_title} in %{lecture_title} deleted'
       roster_removed_from_exam_email_body_html: |
         <p>Hello %{name},</p>
         <p>

@@ -59,6 +59,9 @@ services:
   app-test:
     <<: *app-base
     environment:
+      # Playwright worker count, see docker/development/run.sh. Set it
+      # on the host (or in CI) and recreate app-test; empty = default.
+      - E2E_WORKERS=${E2E_WORKERS:-}
       - RAILS_ENV=test
       - NODE_ENV=test
       # Run the e2e stack behind Thruster, like dev/prod. Streamed media goes
@@ -80,6 +83,10 @@ services:
 
   db:
     image: postgres:18-trixie
+    # Rails servers of the Playwright workers & Sidekiq & RSpec worker
+    # open connections to the databases (main and the interaction DB). So, here
+    # we increase the default of 100 connections to 500 as a matter of caution.
+    command: ["postgres", "-c", "max_connections=500"]
     environment:
       - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -92,6 +99,8 @@ services:
 
   redis:
     image: "redis:8.8-alpine"
+    # One database per Playwright worker's Sidekiq, see run.sh
+    command: ["redis-server", "--databases", "256"]
 
   clamav:
     image: clamav/clamav-debian:1.5

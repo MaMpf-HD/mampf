@@ -76,6 +76,24 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
       expect(page.css("tr[id^=points-participation-row-]").size).to eq(1)
     end
 
+    describe "the blank points hint" do
+      let(:hint) { I18n.t("assessment.grading_tutorial.blank_points_hint") }
+
+      before { create(:exam_roster_entry, exam: exam, user: create(:confirmed_user)) }
+
+      it "stands above the points inputs" do
+        expect(render_inline(component).text).to include(hint)
+      end
+
+      context "when the exam has no tasks yet" do
+        let!(:task) { nil }
+
+        it "is left out" do
+          expect(render_inline(component).text).not_to include(hint)
+        end
+      end
+    end
+
     it "cuts the rows into pages of 20 unless the reader picks another size" do
       create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
 

@@ -57,9 +57,17 @@ class GroupRowComponent < ViewComponent::Base
       helpers.with_registerable_registration_campaign_item_path(
         item.registration_campaign, item
       )
+    elsif delete_dialog?
+      helpers.confirm_destroy_cohort_path(registerable)
     else
       helpers.roster_delete_group_path(registerable)
     end
+  end
+
+  # A cohort with members asks in a dialog, which says how many end up
+  # without a group and offers to tell them.
+  def delete_dialog?
+    !item && registerable.is_a?(Cohort) && count.positive?
   end
 
   def remove_path
@@ -99,6 +107,8 @@ class GroupRowComponent < ViewComponent::Base
   end
 
   def delete_data
+    return { turbo_stream: true, bs_toggle: "tooltip" } if delete_dialog?
+
     {
       turbo_method: :delete,
       turbo_confirm: delete_confirmation,
@@ -121,10 +131,7 @@ class GroupRowComponent < ViewComponent::Base
   # Registrations per status. A completed campaign leaves them on the group,
   # and deleting the group deletes them, so the confirmation counts them.
   def campaign_registrations
-    @campaign_registrations ||=
-      Registration::UserRegistration
-      .where(registration_item_id: registerable.registration_items.select(:id))
-      .group(:status).count
+    @campaign_registrations ||= registerable.registration_counts_by_status
   end
 
   def remove_data
@@ -179,8 +186,16 @@ class GroupRowComponent < ViewComponent::Base
             registerable.destruction_blockers_outside_campaign
           )
       else
-        registerable.destruction_blocker_messages
+        registerable.destruction_blocker_messages(row_destruction_blockers)
       end
+  end
+
+  # Members do not keep a cohort from being deleted, see
+  # Cohort#destruction_blockers_with_members.
+  def row_destruction_blockers
+    return registerable.destruction_blockers_with_members if registerable.is_a?(Cohort)
+
+    registerable.destruction_blockers
   end
 
   def count_kind

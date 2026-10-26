@@ -154,6 +154,18 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+      - name: Upload server logs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: ${{ !cancelled() }}
+        with:
+          name: server-logs
+          # Servers of Playwright workers 1.. log only to their own files
+          path: |
+            log/runtime*.log
+            log/test.log
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: Show app-test logs on failure
         if: failure()
         working-directory: docker/development/
