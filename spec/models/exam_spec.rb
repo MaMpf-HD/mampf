@@ -70,6 +70,14 @@ RSpec.describe(Exam, type: :model) do
 
         expect(exam.registrable_by?(user)).to be(true)
       end
+
+      # A pending row is no decision, and the finalization would stop at it.
+      it "keeps out someone who left with the admission still pending" do
+        create(:lecture_membership, lecture: exam.lecture, user: user).exclude!(by: user)
+        create(:student_performance_certification, :pending, lecture: exam.lecture, user: user)
+
+        expect(exam.registrable_by?(user)).to be(false)
+      end
     end
   end
 

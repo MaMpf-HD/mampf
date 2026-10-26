@@ -99,7 +99,7 @@ class Exam < ApplicationRecord
     return true unless checks_admission?
 
     lecture.members.exists?(user.id) ||
-      lecture.student_performance_certifications.exists?(user: user)
+      lecture.student_performance_certifications.decided.exists?(user: user)
   end
 
   def checks_admission?

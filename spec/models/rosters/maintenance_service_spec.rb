@@ -113,6 +113,28 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
   describe "#remove_user!" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
+    # Whether another place remains is certain only under the group's lock,
+    # and an allocation locks its campaign before the group.
+    it "locks the user's campaigns before the group when another place remains" do
+      lecture = tutorial.lecture
+      create(:cohort_membership, cohort: create(:cohort, :enrollment, context: lecture), user: user)
+      order = []
+      allow_any_instance_of(Rosters::UserPlaces).to(
+        receive(:lock_campaigns!).and_wrap_original do |original, *args|
+          order << :campaigns
+          original.call(*args)
+        end
+      )
+      allow(tutorial).to(receive(:lock!).and_wrap_original do |original, *args|
+        order << :group
+        original.call(*args)
+      end)
+
+      subject.remove_user!(user, tutorial)
+
+      expect(order).to eq([:campaigns, :group])
+    end
+
     it "removes the user from the roster" do
       expect do
         subject.remove_user!(user, tutorial)
