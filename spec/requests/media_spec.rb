@@ -616,6 +616,22 @@ RSpec.describe("Media", type: :request) do
       expect(medium.transcription_error).to eq("Whisper unavailable")
     end
 
+    it "truncates an overly long error message" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcription_failed,
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
+      )
+
+      post transcription_failed_path(medium),
+           params: { token: token, error: "x" * 5000 },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(medium.reload.transcription_error.length).to eq(1000)
+    end
+
     it "marks the medium as permanently failed at the attempt limit" do
       medium.update!(transcription_attempts: SearchClient::MAX_TRANSCRIPTION_ATTEMPTS - 1)
       token = TranscriptionToken.generate(

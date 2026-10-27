@@ -319,7 +319,8 @@ class MediaController < ApplicationController
       @medium.update!(
         transcription_status: status,
         transcription_attempts: attempts,
-        transcription_error: params[:error].presence || "MampfSearch transcription failed."
+        transcription_error: params[:error].to_s.truncate(1000).presence ||
+                             "MampfSearch transcription failed."
       )
       head :ok
     end
