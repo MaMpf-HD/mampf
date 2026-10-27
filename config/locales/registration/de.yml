@@ -72,6 +72,7 @@ de:
           add_and_remove: "Ein- & Austragen erlauben"
         current_state_suffix: "(aktueller Zustand)"
         keep_closed: "Selbsteinschreibung deaktiviert lassen"
+        leave_warning_html: "<strong>Wichtig:</strong> Ohne Austragen („Selbsteinschreibung deaktiviert“ oder „Nur Eintragen erlauben“) kann niemand diese Gruppen selbst verlassen und damit auch die Veranstaltung nicht. Wer abbrechen will, muss sich dann an Dich oder Dein Team wenden."
         apply: "Übernehmen"
         updated: "Die Selbstverwaltungs-Einstellung der Gruppen wurde aktualisiert."
         only_when_completed: "Die Selbstverwaltung kann erst nach Abschluss des Anmeldeverfahrens geändert werden."

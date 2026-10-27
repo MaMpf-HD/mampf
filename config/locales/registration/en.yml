@@ -72,6 +72,7 @@ en:
           add_and_remove: "Allow joining and leaving"
         current_state_suffix: "(current state)"
         keep_closed: "Keep self-enrollment disabled"
+        leave_warning_html: "<strong>Important:</strong> Without leaving (“Self-enrollment disabled” or “Allow joining only”), nobody can leave these groups themselves, and so nobody can leave the course either. Anyone who wants to drop it has to ask you or your staff."
         apply: "Apply"
         updated: "Self-service setting updated for the campaign's groups."
         only_when_completed: "Self-service can only be changed once the campaign is finalized."

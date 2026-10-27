@@ -25,8 +25,8 @@ async function enrollInTutorial(factory: FactoryBot, userId: number, mode: strin
 
 test.describe("leaving a course", () => {
   test("lists what happens and leaves after confirming", async ({ factory, student }) => {
-    // the tutorial's self-service mode is about switching groups, not leaving
-    const lecture = await enrollInTutorial(factory, student.user.id, "disabled");
+    // a tutorial its members may leave, which leaving the course needs
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
     const { page } = student;
 
     await page.goto(`/lectures/${lecture.id}`);
@@ -65,7 +65,7 @@ test.describe("leaving a course", () => {
   test("releases the page when a stream replaces the open dialog", async ({
     factory, student,
   }) => {
-    const lecture = await enrollInTutorial(factory, student.user.id, "disabled");
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
     const { page } = student;
 
     await page.goto(`/lectures/${lecture.id}`);
@@ -103,6 +103,7 @@ test.describe("leaving a course", () => {
     await page.getByRole("button", { name: "Leave course" }).click();
     const dialog = page.getByRole("dialog", { name: "Leave this course" });
 
+    await expect(dialog.getByText("You cannot leave “Mo 10” yourself.")).toBeVisible();
     await expect(dialog.getByText("You cannot withdraw from “Final Exam” yourself."))
       .toBeVisible();
     await expect(dialog.getByText("Please contact the lecturer.")).toBeVisible();

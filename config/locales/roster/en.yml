@@ -348,6 +348,15 @@ en:
         This changes the self-enrollment mode for all groups
         without a registration process in this lecture to '%{mode}'.
         Continue?
+      confirm_no_leaving: >-
+        Without leaving, the %{count} members of this group can leave neither
+        the group nor the lecture themselves; only you or your staff can take
+        them out then. Continue?
+      bulk_no_leaving: >-
+        Without leaving, the members of these groups can leave neither the
+        groups nor the lecture themselves; only you or your staff can take
+        them out then.
+      no_leaving_hint: 'Members cannot leave the lecture themselves'
     policy_bypass_warning:
       title: "Policy Bypass Warning"
       message: "The last registration process '%{campaign_name}' had a registration policy '%{policy_name}'. Enabling self-enrollment will allow students to join without meeting those requirements."

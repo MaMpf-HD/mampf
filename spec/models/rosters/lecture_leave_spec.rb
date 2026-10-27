@@ -88,14 +88,33 @@ RSpec.describe(Rosters::LectureLeave) do
   describe "#blockers" do
     before { lecture.add_user_to_roster!(student) }
 
-    it "is empty for a tutorial or cohort, whatever its self-service mode" do
-      create(:tutorial, lecture: lecture, skip_campaigns: true,
-                        self_materialization_mode: :disabled).add_user_to_roster!(student)
-      create(:cohort, context: lecture, skip_campaigns: true,
-                      self_materialization_mode: :add_only).add_user_to_roster!(student)
+    it "is empty for groups their members may leave" do
+      leavable_tutorial.add_user_to_roster!(student)
+      create(:cohort, :enrollment, context: lecture, skip_campaigns: true,
+                                   self_materialization_mode: :remove_only)
+        .add_user_to_roster!(student)
 
       expect(leave.blockers).to be_empty
       expect(leave.allowed?).to be(true)
+    end
+
+    it "names a tutorial or cohort its members may not leave, and offers the staff" do
+      create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true,
+                        self_materialization_mode: :disabled).add_user_to_roster!(student)
+      create(:cohort, :enrollment, context: lecture, title: "Repeaters", skip_campaigns: true,
+                                   self_materialization_mode: :add_only)
+        .add_user_to_roster!(student)
+
+      expect(leave.blockers.map(&:to_a))
+        .to eq([[:group_fixed, "Mo 10", true], [:group_fixed, "Repeaters", true]])
+      expect(leave.allowed?).to be(false)
+    end
+
+    it "ignores the setting of a cohort without enrollment" do
+      create(:cohort, context: lecture, skip_campaigns: true,
+                      self_materialization_mode: :disabled).add_user_to_roster!(student)
+
+      expect(leave.blockers).to be_empty
     end
 
     it "names a group still held by a campaign, and offers the staff" do
@@ -107,10 +126,12 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.allowed?).to be(false)
     end
 
-    it "is empty for a campaign-managed group that no running campaign holds" do
-      group = create(:tutorial, lecture: lecture, skip_campaigns: true)
+    it "is empty for a group of a completed campaign its members may leave" do
+      group = leavable_tutorial
       group.add_user_to_roster!(student)
-      group.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
+      hold_in_campaign(group)
+      group.registration_items.first.registration_campaign
+           .update_column(:status, Registration::Campaign.statuses[:completed]) # rubocop:disable Rails/SkipsModelValidations
 
       expect(leave.blockers).to be_empty
     end
