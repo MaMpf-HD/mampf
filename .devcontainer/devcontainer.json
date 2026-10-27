@@ -29,7 +29,19 @@
             "/workspace",
             "/workspace-parent"
         ],
-        "mampf-network": "docker network inspect mampf_dev >/dev/null 2>&1 || docker network create mampf_dev"
+        // Shared network with the MampfSearch devcontainer. Runs in the Docker CLI
+        // image for the same reason; needs the daemon socket at /var/run/docker.sock.
+        "mampf-network": [
+            "docker",
+            "run",
+            "--rm",
+            "--mount",
+            "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock",
+            "docker:28-cli",
+            "sh",
+            "-c",
+            "docker network inspect mampf_dev >/dev/null 2>&1 || docker network create mampf_dev"
+        ]
     },
     "service": "app",
     // https://github.com/orgs/community/discussions/15506
