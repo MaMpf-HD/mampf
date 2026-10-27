@@ -107,10 +107,7 @@ class MampfsearchSyncJob < ApplicationJob
 
     def available_batch_capacity
       in_flight = Medium.where(transcription_status: :queued).count
-      return 0 if in_flight >= SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS
-
-      [SearchClient::SYNC_BATCH_SIZE,
-       SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS - in_flight].min
+      [SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS - in_flight, 0].max
     end
 
     def claim_and_enqueue(medium)

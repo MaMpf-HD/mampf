@@ -69,7 +69,8 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
     end
 
     it "caps enqueuing when in-flight queued jobs approach threshold" do
-      FactoryBot.create_list(:valid_medium, 12, :with_video,
+      FactoryBot.create_list(:valid_medium, SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS - 3,
+                             :with_video,
                              transcription_status: :queued,
                              transcription_requested_at: 5.minutes.ago)
 
@@ -78,7 +79,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
 
-      # 15 max in-flight - 12 existing = 3 batch size
+      # max in-flight - (max in-flight - 3) existing = 3 batch size
       expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
 
       described_class.perform_now
@@ -204,7 +205,8 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
     end
 
     it "caps enqueuing of missing media when in-flight jobs approach threshold" do
-      FactoryBot.create_list(:valid_medium, 12, :with_video,
+      in_flight = SearchClient::MAX_IN_FLIGHT_TRANSCRIPTIONS - 3
+      FactoryBot.create_list(:valid_medium, in_flight, :with_video,
                              transcription_status: :queued,
                              transcription_requested_at: 5.minutes.ago)
       missing_media = FactoryBot.create_list(:valid_medium, 5, :with_video,
@@ -212,12 +214,12 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       allow(search_client).to receive(:list_media_versions).and_return({})
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
-      # 15 max in-flight - 12 existing queued = 3 batch size
+      # max in-flight - (max in-flight - 3) existing queued = 3 batch size
       expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
 
       described_class.perform_now
 
-      expect(Medium.where(transcription_status: :queued).count).to eq(12)
+      expect(Medium.where(transcription_status: :queued).count).to eq(in_flight)
       expect(missing_media.count { |m| m.reload.completed? }).to eq(5)
     end
 
