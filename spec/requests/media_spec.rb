@@ -494,6 +494,27 @@ RSpec.describe("Media", type: :request) do
       expect(medium.transcription_attempts).to eq(2)
     end
 
+    it "deletes the replaced transcript file after saving the new one" do
+      medium.update!(transcript: File.open(File.join(SPEC_FILES, "toc.vtt")))
+      old_transcript = medium.transcript
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
+      )
+      file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "toc.vtt"),
+                                          "text/vtt")
+
+      post add_transcript_path(medium),
+           params: { token: token, transcript: file },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(medium.reload.transcript.id).not_to eq(old_transcript.id)
+      expect(old_transcript.exists?).to be(false)
+    end
+
     it "rejects an upload that is not a valid vtt" do
       token = TranscriptionToken.generate(
         medium_id: medium.id,
