@@ -352,6 +352,15 @@ de:
         Dies ändert den Selbsteinschreibungsmodus für alle
         Gruppen ohne Anmeldeverfahren in dieser Veranstaltung
         auf '%{mode}'. Fortfahren?
+      confirm_no_leaving: >-
+        Ohne Austragen können die %{count} Mitglieder dieser Gruppe weder die
+        Gruppe noch die Veranstaltung selbst verlassen; das geht dann nur über
+        Dich oder Dein Team. Fortfahren?
+      bulk_no_leaving: >-
+        Ohne Austragen können die Mitglieder dieser Gruppen weder die Gruppen
+        noch die Veranstaltung selbst verlassen; das geht dann nur über Dich
+        oder Dein Team.
+      no_leaving_hint: 'Mitglieder können die Veranstaltung nicht selbst verlassen'
     policy_bypass_warning:
       title: "Warnung zur Richtlinienumgehung"
       message: "Das letzte Anmeldeverfahren '%{campaign_name}' hatte eine Registrierungsrichtlinie '%{policy_name}'. Die Aktivierung der Selbsteinschreibung ermöglicht Studierenden den Beitritt ohne Erfüllung dieser Anforderungen."
