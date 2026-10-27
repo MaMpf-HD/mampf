@@ -18,7 +18,7 @@
     "@zxcvbn-ts/language-en": "^3.0.2",
     "altcha": "^3.1.0",
     "jquery": "^3.7.1",
-    "katex": "^0.16.27",
+    "katex": "^0.18.10",
     "sortablejs": "^1.15.6",
     "tom-select": "^2.4.3",
     "trix": "^2.1.8"
@@ -43,7 +43,7 @@
     "sass-embedded": "^1.93.3",
     "typescript": "^6.0",
     "typescript-eslint": "^8.46.3",
-    "vite": "^7.0.0",
+    "vite": "^7.3.7",
     "vite-plugin-coffee3": "^1.0.1",
     "vite-plugin-full-reload": "^1.2.0",
     "vite-plugin-ruby": "^5.1.0"
