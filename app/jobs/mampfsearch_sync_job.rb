@@ -45,7 +45,11 @@ class MampfsearchSyncJob < ApplicationJob
       search_versions = SearchClient.instance.list_media_versions
       return unless search_versions.is_a?(Hash)
 
-      current_media = Medium.where.not(video_data: nil).index_by(&:id)
+      current_media = Medium.where.not(video_data: nil)
+                            .select(:id, :video_data, :transcription_status,
+                                    :teachable_type, :teachable_id)
+                            .includes(:teachable)
+                            .index_by(&:id)
       # 1. Invalidate orphaned or outdated index entries without deleting newer versions.
       indexed_ids = invalidate_outdated_index_entries(search_versions, current_media)
       # 2. Re-ingest media marked completed in MaMpf but missing from index (e.g. after reset)
