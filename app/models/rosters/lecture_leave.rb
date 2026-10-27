@@ -19,6 +19,13 @@ module Rosters
       group.is_a?(Talk) ? group.to_label : group.title
     end
 
+    # Whether the group's self-service mode decides whether its members may
+    # leave the lecture: any place but an exam list, which follows its
+    # registration deadline instead.
+    def self.held_by_mode?(group)
+      group.place? && !group.is_a?(Exam)
+    end
+
     # The Unicode white space characters, listed out so that
     # leave_confirmation.controller.js can match exactly the same ones.
     SPACES = /[\t\n\v\f\r \u0085\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+/
@@ -141,16 +148,20 @@ module Rosters
                       .map { |entry| Blocker.new(:graded, entry.exam.title, false) }
       end
 
+      # A cohort without enrollment is a list, not a way into the lecture,
+      # and is left along with it whatever its setting.
       def fixed_group_blockers
-        groups.select { |group| fixed?(group) && !group.in?(graded_talks) }
+        groups.select { |group| self.class.held_by_mode?(group) }
+              .select { |group| fixed?(group) && !group.in?(graded_talks) }
               .map { |group| Blocker.new(:group_fixed, self.class.label(group), true) }
       end
 
-      # A tutorial's or cohort's self-service mode is about moving within the
-      # lecture, so only a running campaign holds it; a talk is a commitment
-      # to the seminar's schedule and keeps its own setting.
+      # Leaving the lecture gives up every group at once, so a group the
+      # student may not leave on its own holds them, whatever its kind: its
+      # self-service mode is the staff's say on leaving it, and a running
+      # campaign holds it until the allocation.
       def fixed?(group)
-        return !group.allow_self_remove?(@user) if group.is_a?(Talk)
+        return true unless group.allow_self_remove?(@user)
 
         group.registration_items
              .joins(:registration_campaign)
