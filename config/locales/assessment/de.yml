@@ -283,6 +283,7 @@ de:
       participation_id_has_no_assignment: 'Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe'
       participation_has_task_points: 'Für diese Teilnahme wurden bereits Punkte eingetragen, daher kann sie nicht gelöscht werden.'
       not_in_group: 'Nur ein Mitglied der Gruppe kann in eines ihrer Teams aufgenommen werden.'
+      not_in_any_group: 'Nur ein Mitglied eines Tutoriums der Veranstaltung kann in ein Team aufgenommen werden.'
       team_rejected: 'Eine abgelehnte Abgabe nimmt niemanden auf.'
       joined_late: 'Nach der Deadline zum Team gekommen, am %{time}.'
       marked_on_own: >-
@@ -293,6 +294,9 @@ de:
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
       add_member_search: 'Nach Namen suchen'
       add_member_no_match: 'Niemand mit diesem Namen ist ohne Team.'
+      add_member_search_elsewhere: 'Ab zwei Buchstaben erscheinen auch Personen aus anderen Tutorien.'
+      add_member_elsewhere: 'Andere Tutorien'
+      add_member_elsewhere_more: 'Es gibt weitere Treffer. Tippe mehr vom Namen.'
       hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
       hand_over_hint: >-
         Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib

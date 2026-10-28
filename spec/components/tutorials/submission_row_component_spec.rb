@@ -442,6 +442,36 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       expect(search.first["aria-label"])
         .to eq(I18n.t("assessment.task_points.add_member_search"))
     end
+
+    it "offers no menu without names where teams stay within one tutorial" do
+      expect(render_with(0).css("[data-controller=add-member-menu]")).to be_empty
+    end
+
+    # The other tutorials are reached only by typing a name.
+    context "where teams may span tutorials" do
+      before { lecture.update!(cross_tutorial_teams: true) }
+
+      it "offers the search even without names of the group's own" do
+        html = render_with(0)
+        menu = html.at_css("[data-controller=add-member-menu]")
+
+        expect(menu["data-add-member-menu-url-value"])
+          .to eq(Rails.application.routes.url_helpers
+                      .add_member_candidates_submission_path(submission,
+                                                             grading_scope_type: "tutorial"))
+        expect(html.css("input[type=search]").size).to eq(1)
+        expect(html.text).to include(I18n.t("assessment.task_points.add_member_search_elsewhere"))
+        expect(html.css("#add-member-elsewhere-#{submission.id}").size).to eq(1)
+      end
+
+      it "offers no search on a rejected hand-in" do
+        html = render_inline(described_class.new(submission: late_rejected_submission,
+                                                 assignment: assignment, grading_scope: tutorial,
+                                                 addable_members: []))
+
+        expect(html.css("[data-controller=add-member-menu]")).to be_empty
+      end
+    end
   end
 
   describe "rendering" do

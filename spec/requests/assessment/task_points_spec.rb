@@ -846,6 +846,106 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(response).to have_http_status(:not_found)
       expect(team.reload.users).not_to include(stranger)
     end
+
+    it "takes nobody from another tutorial where teams stay within one" do
+      add(student2, as: tutor)
+
+      expect(response).to have_http_status(:not_found)
+      expect(team.reload.users).not_to include(student2)
+    end
+
+    it "takes a member of another tutorial where teams may span tutorials" do
+      lecture.update!(cross_tutorial_teams: true)
+      add(student2, as: tutor)
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to include(student2)
+    end
+  end
+
+  describe "GET /submissions/:submission_id/add_member_candidates" do
+    let(:team) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student])
+    end
+
+    before do
+      lecture.update!(cross_tutorial_teams: true)
+      tutorial.tutors << tutor
+      tutorial2.update!(title: "Tuesday group")
+    end
+
+    def member(name, of:)
+      user = create(:confirmed_user, name_in_tutorials: name)
+      create(:lecture_membership, lecture: lecture, user: user)
+      create(:tutorial_membership, tutorial: of, user: user)
+      user
+    end
+
+    def search(query, as: tutor)
+      sign_in(as)
+      get(add_member_candidates_submission_path(team, q: query, grading_scope_type: "tutorial"),
+          as: :turbo_stream)
+    end
+
+    def found
+      Nokogiri::HTML(response.body).css("button.dropdown-item").map { |item| item.text.squish }
+    end
+
+    it "finds members of other tutorials by name, each with their tutorial" do
+      member("Clara Wieck", of: tutorial2)
+      search("wiec")
+
+      expect(response).to have_http_status(:success)
+      assert_turbo_stream action: :update, target: "add-member-elsewhere-#{team.id}"
+      expect(found).to eq(["Clara Wieck Tuesday group"])
+    end
+
+    # The group's own are on the page already; anyone on a team for the
+    # sheet cannot join another.
+    it "leaves out the group's own members and anyone on a team for the sheet" do
+      member("Clara Own", of: tutorial)
+      teamed = member("Clara Teamed", of: tutorial2)
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial2,
+                                            users: [teamed])
+      member("Clara Free", of: tutorial2)
+      search("clara")
+
+      expect(found).to eq(["Clara Free Tuesday group"])
+    end
+
+    it "asks about nobody for a single letter" do
+      member("Clara Wieck", of: tutorial2)
+      search("c")
+
+      expect(found).to be_empty
+    end
+
+    it "finds nobody where teams stay within one tutorial" do
+      lecture.update!(cross_tutorial_teams: false)
+      member("Clara Wieck", of: tutorial2)
+      search("clara")
+
+      expect(found).to be_empty
+    end
+
+    it "says when there are more than it shows" do
+      11.times { |i| member("Clara #{i}", of: tutorial2) }
+      search("clara")
+
+      expect(found.size).to eq(10)
+      expect(response.body)
+        .to include(I18n.t("assessment.task_points.add_member_elsewhere_more"))
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      tutorial2.tutors << other
+      member("Clara Wieck", of: tutorial2)
+      search("clara", as: other)
+
+      expect(response).to redirect_to(root_path)
+    end
   end
 
   describe "PATCH /submissions/:submission_id/refresh_point_submission" do

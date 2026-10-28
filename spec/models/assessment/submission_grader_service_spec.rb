@@ -231,6 +231,36 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(team.reload.users).not_to include(stranger)
     end
 
+    context "where teams may span tutorials" do
+      let(:elsewhere) { FactoryBot.create(:confirmed_user) }
+
+      before do
+        lecture.update!(cross_tutorial_teams: true)
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: elsewhere)
+        FactoryBot.create(:tutorial_membership,
+                          tutorial: FactoryBot.create(:tutorial, lecture: lecture),
+                          user: elsewhere)
+      end
+
+      # The team stays where it is marked, and so does the newcomer's row.
+      it "takes a member of another tutorial into the team's" do
+        row = described_class.add_member!(team, elsewhere, scorer)
+
+        expect(team.reload.users).to include(elsewhere)
+        expect(team.tutorial).to eq(tutorial)
+        expect(row.tutorial).to eq(tutorial)
+      end
+
+      it "takes nobody without a tutorial in the lecture" do
+        stranger = FactoryBot.create(:confirmed_user)
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: stranger)
+
+        expect { described_class.add_member!(team, stranger, scorer) }
+          .to raise_error(described_class::SubmissionGraderError,
+                          I18n.t("assessment.task_points.not_in_any_group"))
+      end
+    end
+
     # Marks of their own are a decision taken; the team's would replace it.
     it "refuses somebody marked on a row of their own" do
       own = FactoryBot.create(:assessment_participation, assessment: assessment, user: newcomer,

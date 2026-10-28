@@ -202,7 +202,11 @@ module Assessment
         end
 
         def validate_member_of_group(submission, user)
-          return if submission.tutorial.members.exists?(id: user.id)
+          return if submission.member_candidates.exists?(id: user.id)
+
+          if submission.assignment.lecture.cross_tutorial_teams?
+            return I18n.t("assessment.task_points.not_in_any_group")
+          end
 
           I18n.t("assessment.task_points.not_in_group")
         end

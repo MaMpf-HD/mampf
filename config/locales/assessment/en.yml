@@ -283,6 +283,7 @@ en:
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
       participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
       not_in_group: 'Only a member of the group can be put on one of its teams.'
+      not_in_any_group: 'Only a member of one of the lecture''s tutorials can be put on a team.'
       team_rejected: 'A rejected hand-in takes nobody.'
       joined_late: 'Joined the team after the deadline, on %{time}.'
       marked_on_own: >-
@@ -293,6 +294,9 @@ en:
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
       add_member_search: 'Search by name'
       add_member_no_match: 'Nobody by that name is without a team.'
+      add_member_search_elsewhere: 'From two letters on, people from other tutorials show up too.'
+      add_member_elsewhere: 'Other tutorials'
+      add_member_elsewhere_more: 'There are more matches. Type more of the name.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
         The members of this team sit in different tutorials. Hand it over to
