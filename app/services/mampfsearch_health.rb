@@ -22,10 +22,11 @@ class MampfsearchHealth
     read_capability("ingest")
   end
 
-  # Unknown counts as unavailable, e.g. after a restart before the first probe.
+  # Unknown health: unavailable in production, so no jobs are sent before the first probe.
+  # Available in development: the cache is per process, so only Sidekiq sees the probe result.
   def self.read_capability(capability)
     cached = Rails.cache.read(CACHE_KEY)
-    return false if cached.nil?
+    return Rails.env.development? if cached.nil?
 
     cached[capability] == true
   end

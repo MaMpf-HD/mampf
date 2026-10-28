@@ -9,6 +9,14 @@ RSpec.describe(MampfsearchHealth, :mampfsearch) do
       expect(described_class.ingest_available?).to be(false)
     end
 
+    it "is available in development when no health state is cached" do
+      Rails.cache.delete(MampfsearchHealth::CACHE_KEY)
+      allow(Rails.env).to receive(:development?).and_return(true)
+
+      expect(described_class.search_available?).to be(true)
+      expect(described_class.ingest_available?).to be(true)
+    end
+
     it "reflects the cached capabilities" do
       Rails.cache.write(MampfsearchHealth::CACHE_KEY,
                         { "search" => true, "ingest" => false },
