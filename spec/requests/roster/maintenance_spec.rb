@@ -115,6 +115,27 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         )
       end
 
+      # Removing them would be refused; the button says why instead of asking.
+      it "locks removing a member with a result on an exam, naming the exam" do
+        member = create(:confirmed_user)
+        create(:lecture_membership, lecture: lecture, user: member)
+        exam = create(:exam, :without_campaign, lecture: lecture, title: "Final exam")
+        exam.add_user_to_roster!(member)
+        exam.ensure_assessment!(requires_points: false)
+        Assessment::Participation.create!(assessment: exam.assessment, user: member,
+                                          grade_numeric: 2.0, status: :reviewed)
+
+        get lecture_roster_participants_path(lecture), as: :turbo_stream
+
+        body = CGI.unescapeHTML(response.body)
+        expect(body).to include(
+          I18n.t("roster.tooltips.kick_blocked_by_result", titles: "Final exam")
+        )
+        expect(body).not_to include(
+          I18n.t("roster.warnings.confirm_kick_from_lecture_exams", exams: "Final exam")
+        )
+      end
+
       it "returns turbo stream updates for participants sections" do
         get lecture_roster_participants_path(lecture), as: :turbo_stream
 
