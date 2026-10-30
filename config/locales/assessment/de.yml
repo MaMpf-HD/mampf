@@ -285,7 +285,7 @@ de:
       not_in_group: 'Nur ein Mitglied der Gruppe kann in eines ihrer Teams aufgenommen werden.'
       not_in_any_group: 'Nur ein Mitglied eines Tutoriums der Veranstaltung kann in ein Team aufgenommen werden.'
       team_rejected: 'Eine abgelehnte Abgabe nimmt niemanden auf.'
-      joined_late: 'Nach der Deadline mit dem Code des Teams beigetreten, am %{time}.'
+      joined_late: 'Nach der Deadline zum Team gekommen, am %{time}.'
       added_by_tutor: 'Von %{tutor} ins Team aufgenommen, am %{time}.'
       late_submission: 'Verspätete Abgabe, hochgeladen am %{time}.'
       marked_on_own: >-
@@ -300,9 +300,7 @@ de:
       remove_member_hint: >-
         Für jemanden, der versehentlich aufgenommen wurde. Die Person verliert
         die Punkte des Teams und bekommt eine E-Mail.
-      joined_by_code: >-
-        %{name} ist dem Team mit seinem Code beigetreten und kann nicht
-        herausgenommen werden.
+      not_removable: '%{name} kann nicht aus diesem Team genommen werden.'
       last_member: 'Die letzte Person in einem Team kann nicht herausgenommen werden.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
@@ -311,6 +309,7 @@ de:
       add_member_search_elsewhere: 'Ab zwei Buchstaben erscheinen auch Personen aus anderen Tutorien.'
       add_member_elsewhere: 'Andere Tutorien'
       add_member_elsewhere_more: 'Es gibt weitere Treffer. Tippe mehr vom Namen.'
+      add_member_search_failed: 'Die anderen Tutorien konnten nicht durchsucht werden. Versuch es noch einmal.'
       hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
       hand_over_hint: >-
         Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib

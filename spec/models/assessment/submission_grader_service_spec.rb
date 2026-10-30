@@ -374,6 +374,8 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(row.submitted_at).to be_nil
       expect(row).to be_pending
       expect(row.graded_at).to be_nil
+      expect(row.points_total).to be_nil
+      expect(Assessment::Participation.with_grading_data).not_to include(row)
       expect(assessment.assessment_participations.find_by(user: partner)
                        .task_points.sole.points).to eq(7)
     end
@@ -408,7 +410,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
 
       expect { described_class.remove_member!(team, newcomer, scorer) }
         .to raise_error(described_class::SubmissionGraderError,
-                        I18n.t("assessment.task_points.joined_by_code",
+                        I18n.t("assessment.task_points.not_removable",
                                name: newcomer.tutorial_name))
       expect(team.reload.users).to include(newcomer)
     end

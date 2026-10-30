@@ -544,7 +544,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
 
     it "offers the menu on a rejected hand-in that a moved deadline made in time" do
-      submission.update!(accepted: false)
+      submission.update!(accepted: false,
+                         last_modification_by_users_at: assignment.deadline - 1.hour)
 
       expect(render_with(1).css("[data-controller=add-member-menu]").size).to eq(1)
     end

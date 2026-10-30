@@ -18,7 +18,8 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @mode = "tutor"
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+                        .includes(:users, { user_submission_joins: :added_by },
+                                  tutorial: [:tutors, { lecture: :editors }])
     @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
     @elsewhere = elsewhere_teams
     @participations_by_user_id =
@@ -33,7 +34,8 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @assignment.submissions.proper.where.not(tutorial: @tutorial)
                .where(id: member_joins.select(:submission_id))
                .order(:last_modification_by_users_at)
-               .includes(:users, tutorial: [:tutors, { lecture: :editors }]).to_a
+               .includes(:users, { user_submission_joins: :added_by },
+                         tutorial: [:tutors, { lecture: :editors }]).to_a
   end
 
   def init_teacher_case
@@ -41,7 +43,8 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @tutorials = @lecture.tutorials
     @stack = @assignment.submissions.proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+                        .includes(:users, { user_submission_joins: :added_by },
+                                  tutorial: [:tutors, { lecture: :editors }])
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
 
     @non_submitters = @assignment.non_submitters_in_tutorials.by_last_name
@@ -83,8 +86,8 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     users.to_h { |user| [user.id, membership_tutorials[user.id]] }
   end
 
-  # Leaves out of a team row's menu whoever is marked on a row of their own,
-  # read off the rows loaded for the page: they are done with the sheet.
+  # Whoever is marked on a row of their own cannot be put on a team. Read off
+  # the rows loaded for the page, so the table needs no query per row.
   def unmarked(users)
     assessment = @assignment.assessment
     return users unless assessment

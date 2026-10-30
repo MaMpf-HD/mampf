@@ -125,6 +125,8 @@ module Assessment
           submission.reload.place_team!(tutorials_before)
         end
         tell_of_removal(submission, user, scorer)
+      rescue ActiveRecord::RecordInvalid => e
+        raise(SubmissionGraderError, e.record.errors.full_messages.to_sentence)
       end
 
       # The other way round: the sheet did not come in after all. Only while
@@ -246,7 +248,7 @@ module Assessment
           return I18n.t("assessment.errors.user_not_found") unless join
           return if join.added_by_id?
 
-          I18n.t("assessment.task_points.joined_by_code", name: user.tutorial_name)
+          I18n.t("assessment.task_points.not_removable", name: user.tutorial_name)
         end
 
         # A team without members would be a deleted hand-in, which is not the
@@ -267,7 +269,7 @@ module Assessment
           I18n.t("assessment.task_points.not_in_group")
         end
 
-        # A rejected hand-in counts as none; nobody is put on it.
+        # A hand-in rejected as late counts as none; nobody is put on it.
         def validate_team_takes_members(submission)
           return if submission.takes_members?
 

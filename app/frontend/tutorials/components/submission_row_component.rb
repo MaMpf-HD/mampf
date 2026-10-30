@@ -50,8 +50,9 @@ class SubmissionRowComponent < ViewComponent::Base
     added_joins.key?(user.id)
   end
 
-  # Says how somebody came onto the team later: with the code after the
-  # deadline, or by a tutor at any time, who is then named.
+  # Says how somebody came onto the team later: after the deadline, or at any
+  # time by a tutor, who is then named. A join without added_by may be a
+  # tutor's from before that column, so it does not claim the code.
   def joined_info(user)
     join = added_joins[user.id] || late_joins.fetch(user.id)
     time = l(join.created_at, format: :file_time)
@@ -61,10 +62,10 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   # Whom the tutor may put on this team: the group's members on no team
-  # for this sheet. A rejected hand-in takes nobody; it counts as none.
+  # for this sheet. A hand-in rejected as late takes nobody; it counts as none.
   # Somebody marked on a row of their own is done with the sheet.
   def addable_members
-    return [] unless takes_members?
+    return [] unless may_add_members?
 
     @addable_members ||=
       @assignment.non_submitters_in_tutorial(@tutorial)
@@ -72,7 +73,7 @@ class SubmissionRowComponent < ViewComponent::Base
                  .by_last_name
   end
 
-  def takes_members?
+  def may_add_members?
     can_enter_points? && grading_enabled? && @submission.takes_members?
   end
 
@@ -80,7 +81,7 @@ class SubmissionRowComponent < ViewComponent::Base
   # team too; the menu asks for them by name, see
   # Assessment::TaskPointsController#add_member_candidates.
   def search_elsewhere?
-    takes_members? && @lecture.cross_tutorial_teams?
+    may_add_members? && @lecture.cross_tutorial_teams?
   end
 
   def add_member_menu?

@@ -838,6 +838,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(team.reload.users).not_to include(newcomer)
     end
 
+    it "keeps a student out" do
+      add(newcomer, as: student)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).not_to include(newcomer)
+    end
+
     it "takes nobody from outside the group" do
       stranger = create(:confirmed_user)
       create(:lecture_membership, lecture: lecture, user: stranger)
@@ -933,7 +940,7 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       remove(student, as: tutor)
 
       expect(response.body)
-        .to include(ERB::Util.html_escape(I18n.t("assessment.task_points.joined_by_code",
+        .to include(ERB::Util.html_escape(I18n.t("assessment.task_points.not_removable",
                                                  name: student.tutorial_name)))
       expect(team.reload.users).to include(student)
     end
@@ -942,6 +949,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       other = create(:confirmed_user)
       create(:tutorial, lecture: lecture).tutors << other
       remove(newcomer, as: other)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).to include(newcomer)
+    end
+
+    it "keeps a student out, also the one taken off" do
+      remove(newcomer, as: newcomer)
 
       expect(response).to redirect_to(root_path)
       expect(team.reload.users).to include(newcomer)
@@ -1016,6 +1030,20 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       end
 
       expect(found).to eq(["Clara Free Tuesday group"])
+    end
+
+    it "keeps a student out" do
+      member("Clara Wieck", of: tutorial2)
+      search("clara", as: student)
+
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "takes a percent sign for itself, not for any name" do
+      member("Clara Wieck", of: tutorial2)
+      search("%%")
+
+      expect(found).to be_empty
     end
 
     it "asks about nobody for a single letter" do

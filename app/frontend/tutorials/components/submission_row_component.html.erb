@@ -158,6 +158,16 @@
                 >
                   <%= t('assessment.task_points.add_member_no_match') %>
                 </p>
+
+                <% if search_elsewhere? %>
+                  <p
+                    class="dropdown-item-text small text-secondary mb-0"
+                    data-add-member-menu-target="failed"
+                    hidden
+                  >
+                    <%= t('assessment.task_points.add_member_search_failed') %>
+                  </p>
+                <% end %>
               </div>
             </div>
           </div>

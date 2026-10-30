@@ -285,7 +285,7 @@ en:
       not_in_group: 'Only a member of the group can be put on one of its teams.'
       not_in_any_group: 'Only a member of one of the lecture''s tutorials can be put on a team.'
       team_rejected: 'A rejected hand-in takes nobody.'
-      joined_late: 'Joined with the team''s code after the deadline, on %{time}.'
+      joined_late: 'Joined the team after the deadline, on %{time}.'
       added_by_tutor: 'Put on the team by %{tutor}, on %{time}.'
       late_submission: 'Late submission, uploaded on %{time}.'
       marked_on_own: >-
@@ -300,7 +300,7 @@ en:
       remove_member_hint: >-
         For somebody put on the team by mistake. They lose the team's points
         and get an email.
-      joined_by_code: '%{name} joined the team with its code and cannot be taken off it.'
+      not_removable: '%{name} cannot be taken off this team.'
       last_member: 'The last person on a team cannot be taken off it.'
       add_member: 'Put somebody on this team'
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
@@ -309,6 +309,7 @@ en:
       add_member_search_elsewhere: 'From two letters on, people from other tutorials show up too.'
       add_member_elsewhere: 'Other tutorials'
       add_member_elsewhere_more: 'There are more matches. Type more of the name.'
+      add_member_search_failed: 'The other tutorials could not be searched. Try again.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
         The members of this team sit in different tutorials. Hand it over to
