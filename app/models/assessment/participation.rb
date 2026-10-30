@@ -34,6 +34,14 @@ module Assessment
            .or(where.not(grade_text: nil))
            .or(where(id: TaskPoint.select(:assessment_participation_id)))
     }
+    # The rows ParticipationIndex.blank? does not call blank, as one query:
+    # points taken back again leave task points of nil, which carry nothing.
+    scope :with_recorded_work, lambda {
+      where.not(status: :pending)
+           .or(where.not(submitted_at: nil))
+           .or(where(id: TaskPoint.where.not(points: nil).select(:assessment_participation_id)))
+           .or(where.not(grade_text: [nil, ""]))
+    }
 
     after_commit :recompute_performance_record,
                  if: :should_recompute_performance_record?
