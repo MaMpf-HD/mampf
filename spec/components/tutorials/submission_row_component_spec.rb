@@ -336,7 +336,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
   end
 
-  describe "the mark of somebody a tutor put on the team" do
+  describe "somebody a tutor put on the team" do
     let(:added) { create(:confirmed_user) }
     let!(:join) { submission.user_submission_joins.create!(user: added, added_by: tutor) }
     let(:added_info) do
@@ -350,39 +350,42 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                                         assignment: assignment, grading_scope: scope))
     end
 
-    def remove_items(html, user)
-      label = I18n.t("assessment.task_points.remove_member", name: user.tutorial_name)
-      html.css("button.dropdown-item").select { |item| item.text.squish == label }
-    end
-
     def marks(html)
       html.css("[aria-label]").pluck("aria-label").grep(added_info)
     end
 
-    it "names the tutor, and offers the tutor who marks the team to take the member off" do
+    def remove_items(html)
+      toggle = html.css("button[aria-label]").find do |button|
+        button["aria-label"] == I18n.t("assessment.task_points.remove_member")
+      end
+      return [] unless toggle
+
+      toggle.parent.css("button.dropdown-item").map { |item| item.text.squish }
+    end
+
+    it "is named with the tutor, and offered to take off to the tutor who marks the team" do
       html = render_as(tutor)
 
       expect(marks(html)).to eq([added_info])
-      expect(remove_items(html, added).size).to eq(1)
-      expect(remove_items(html, student)).to be_empty
+      expect(remove_items(html)).to eq([added.tutorial_name])
     end
 
-    it "offers the lecturer the same on the lecture's table" do
-      expect(remove_items(render_as(teacher, scope: lecture), added).size).to eq(1)
+    it "is offered to the lecturer on the lecture's table" do
+      expect(remove_items(render_as(teacher, scope: lecture))).to eq([added.tutorial_name])
     end
 
-    it "offers nothing for the last one on the team, and still names the tutor" do
+    it "is not offered as the last one on the team, and still named with the tutor" do
       submission.user_submission_joins.find_by(user: student).destroy!
       html = render_as(tutor)
 
-      expect(remove_items(html, added)).to be_empty
+      expect(remove_items(html)).to be_empty
       expect(marks(html)).to eq([added_info])
     end
 
-    it "offers nothing to a tutor who reads the team from another tutorial" do
+    it "is not offered to a tutor who reads the team from another tutorial" do
       html = render_as(tutor, scope: create(:tutorial, lecture: lecture))
 
-      expect(remove_items(html, added)).to be_empty
+      expect(remove_items(html)).to be_empty
       expect(marks(html)).to eq([added_info])
     end
   end

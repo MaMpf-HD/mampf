@@ -71,14 +71,13 @@ class SubmissionRowComponent < ViewComponent::Base
     add_member_candidates_submission_path(@submission, grading_scope_type: grading_scope_type)
   end
 
-  # Whoever marks the team may take off it somebody a tutor put on; who
-  # joined with the code stays, and so does the last member.
-  def removable?(user)
-    can_enter_points? && grading_enabled? && @submission.users.many? && tutor_added?(user)
-  end
+  # Lists those a tutor put on the team, for whoever marks it to take off
+  # again. Who joined with the code stays, and so does the last member.
+  def removable_members
+    return [] unless can_enter_points? && grading_enabled? && @submission.users.many?
+    return [] if added_joins.empty?
 
-  def remove_member_label(user)
-    t("assessment.task_points.remove_member", name: user.tutorial_name)
+    @removable_members ||= @submission.users.where(id: added_joins.keys).by_last_name.to_a
   end
 
   # A few names are read at a glance; a longer list gets a search field, and

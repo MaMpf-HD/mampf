@@ -121,13 +121,13 @@ test.describe("marking table", () => {
     await expect(joined.getByRole("spinbutton", { name: /Warm-up for Ada Lovelace/ }))
       .toHaveValue("7.0");
 
-    const added = joined.getByRole("button", { name: /^Put on the team by/ });
-    await expect(added).toHaveCount(1);
-    await added.click();
-    await joined.getByRole("button", { name: "Take Grace Hopper off this team" }).click();
+    await expect(joined.getByRole("img", { name: /^Put on the team by/ })).toHaveCount(1);
+    const takeOff = joined.getByRole("button", { name: "Take somebody off this team again" });
+    await takeOff.click();
+    await joined.getByRole("button", { name: "Grace Hopper", exact: true }).click();
 
     await expect(tutor.page.getByText("Grace Hopper is no longer on the team.")).toBeVisible();
-    await expect(added).toHaveCount(0);
+    await expect(takeOff).toHaveCount(0);
     await expect(table.getByRole("row", { name: /Grace Hopper/ }).getByText("Not Submitted"))
       .toBeVisible();
   });

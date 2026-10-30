@@ -30,36 +30,7 @@
               ></i>
             <% end %>
 
-            <% if removable?(user) %>
-              <span class="dropdown">
-                <button
-                  type="button"
-                  class="btn btn-link p-0 ms-1 align-baseline text-secondary"
-                  data-bs-toggle="dropdown"
-                  data-bs-popper-config='{"strategy": "fixed"}'
-                  aria-expanded="false"
-                  title="<%= joined_info(user) %>"
-                  aria-label="<%= joined_info(user) %>"
-                >
-                  <i class="bi bi-box-arrow-in-right"></i>
-                </button>
-
-                <div class="dropdown-menu" style="max-width: 18rem;">
-                  <h6 class="dropdown-header text-wrap fw-normal">
-                    <%= joined_info(user) %>
-                    <%= t('assessment.task_points.remove_member_hint') %>
-                  </h6>
-
-                  <%= button_to remove_member_label(user),
-                                remove_member_submission_path(@submission),
-                                method: :patch,
-                                params: { user_id: user.id,
-                                          grading_scope_type: grading_scope_type },
-                                class: "dropdown-item",
-                                form: { data: { turbo: true } } %>
-                </div>
-              </span>
-            <% elsif joined_late?(user) || tutor_added?(user) %>
+            <% if joined_late?(user) || tutor_added?(user) %>
               <i
                 class="bi bi-box-arrow-in-right ms-1 text-secondary"
                 role="img"
@@ -196,6 +167,38 @@
                   <%= t('assessment.task_points.add_member_no_match') %>
                 </p>
               </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if removable_members.any? %>
+          <div class="dropdown ms-2">
+            <button
+              type="button"
+              class="btn btn-link p-0 text-secondary"
+              data-bs-toggle="dropdown"
+              data-bs-popper-config='{"strategy": "fixed"}'
+              aria-expanded="false"
+              title="<%= t('assessment.task_points.remove_member') %>"
+              aria-label="<%= t('assessment.task_points.remove_member') %>"
+            >
+              <i class="bi bi-person-dash"></i>
+            </button>
+
+            <div class="dropdown-menu" style="max-width: 18rem;">
+              <h6 class="dropdown-header text-wrap fw-normal">
+                <%= t('assessment.task_points.remove_member_hint') %>
+              </h6>
+
+              <% removable_members.each do |member| %>
+                <%= button_to member.tutorial_name,
+                              remove_member_submission_path(@submission),
+                              method: :patch,
+                              params: { user_id: member.id,
+                                        grading_scope_type: grading_scope_type },
+                              class: "dropdown-item text-wrap",
+                              form: { data: { turbo: true } } %>
+              <% end %>
             </div>
           </div>
         <% end %>

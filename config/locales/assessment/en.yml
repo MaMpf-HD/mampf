@@ -295,10 +295,10 @@ en:
       member_removed_team_moved: >-
         %{name} is no longer on the team. The team is marked in %{tutorial}
         now.
-      remove_member: 'Take %{name} off this team'
+      remove_member: 'Take somebody off this team again'
       remove_member_hint: >-
-        If you take them off, the team's points for this sheet no longer count
-        for them, and they get an email.
+        For somebody put on the team by mistake. They lose the team's points
+        and get an email.
       joined_by_code: '%{name} joined the team with its code and cannot be taken off it.'
       last_member: 'The last person on a team cannot be taken off it.'
       add_member: 'Put somebody on this team'

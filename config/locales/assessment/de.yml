@@ -295,10 +295,10 @@ de:
       member_removed_team_moved: >-
         %{name} ist nicht mehr im Team. Das Team wird jetzt in %{tutorial}
         korrigiert.
-      remove_member: '%{name} aus diesem Team nehmen'
+      remove_member: 'Jemanden wieder aus diesem Team nehmen'
       remove_member_hint: >-
-        Nimmst Du die Person heraus, zählen die Punkte des Teams für dieses
-        Blatt nicht mehr für sie, und sie bekommt eine E-Mail.
+        Für jemanden, der versehentlich aufgenommen wurde. Die Person verliert
+        die Punkte des Teams und bekommt eine E-Mail.
       joined_by_code: >-
         %{name} ist dem Team mit seinem Code beigetreten und kann nicht
         herausgenommen werden.
