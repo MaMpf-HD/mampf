@@ -317,7 +317,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       expect(marker.first["aria-label"])
         .to eq(I18n.t("assessment.task_points.joined_late",
                       time: I18n.l(Time.current, format: :file_time)))
-      expect(marker.first.parent.text).to include(student2.tutorial_name)
+      expect(marker.first.ancestors("div").first.text.squish).to include(student2.tutorial_name)
       expect(html.css(".bi-exclamation-triangle-fill")).to be_empty
     end
 
@@ -368,6 +368,21 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
       expect(marks(html)).to eq([added_info])
       expect(remove_items(html)).to eq([added.tutorial_name])
+    end
+
+    # A double name can still wrap at its hyphen.
+    it "keeps its mark with the last part of the name" do
+      { "Mia Zimmermann" => "Zimmermann",
+        "Anna Müller-Lüdenscheidt" => "Lüdenscheidt" }.each do |name, last_part|
+        added.update!(name_in_tutorials: name)
+        mark = render_as(tutor).css("[aria-label]").find do |node|
+          node["aria-label"] == added_info
+        end
+
+        expect(mark.parent["class"]).to include("text-nowrap")
+        expect(mark.parent.text.squish).to eq(last_part)
+        expect(mark.ancestors("div").first.text.squish).to eq(name)
+      end
     end
 
     it "is offered to the lecturer on the lecture's table" do

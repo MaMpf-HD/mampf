@@ -28,6 +28,16 @@ class SubmissionRowComponent < ViewComponent::Base
     late_joins.key?(user.id)
   end
 
+  # Keeps the marks after a name with its last part, after the last space or
+  # hyphen: the team column is narrow, and a mark alone on a line belongs to
+  # nobody. The name still wraps between its other parts.
+  def name_with_marks(user, &)
+    name = user.tutorial_name.to_s
+    cut = name.rindex(/[\s-]/)&.succ || 0
+    safe_join([name[0...cut],
+               tag.span(class: "text-nowrap") { safe_join([name[cut..], capture(&)]) }])
+  end
+
   def tutor_added?(user)
     added_joins.key?(user.id)
   end
