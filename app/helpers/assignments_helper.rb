@@ -16,11 +16,14 @@ module AssignmentsHelper
     week_label(assignment.test_week)
   end
 
+  # A new test is set to this week. Last week, offered for a test set up after
+  # the fact, comes first in the list and would otherwise be the default.
   def test_week_options(assignment)
     choices = assignment.test_week_choices.map do |monday|
       [week_label(monday..(monday + 6)), monday.iso8601]
     end
-    options_for_select(choices, assignment.deadline&.to_date&.beginning_of_week&.iso8601)
+    selected = (assignment.deadline&.to_date || Time.zone.today).beginning_of_week
+    options_for_select(choices, selected.iso8601)
   end
 
   def test_badge

@@ -42,7 +42,8 @@ class Assignment < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
-  validate :deadline_not_in_past, if: -> { deadline_changed? }
+  validate :deadline_not_in_past, if: -> { kind_homework? && deadline_changed? }
+  validate :test_week_not_before_last, if: -> { kind_test? && deadline_changed? }
   # Changing kind would reinterpret existing submissions and grading data.
   validate :kind_immutable, if: -> { persisted? && kind_changed? }
   # The form offers a test no sheet to attach; a request that names one
@@ -133,7 +134,7 @@ class Assignment < ApplicationRecord
 
   # Lecture#begin_date falls back to Term.active, which may also be absent.
   def test_week_choices
-    first = [lecture.term&.begin_date, Time.zone.today].compact.max.beginning_of_week
+    first = [lecture.term&.begin_date, earliest_test_week].compact.max.beginning_of_week
     term_end = lecture.term&.end_date
     last = (term_end && term_end >= first ? term_end : first + 6.months).beginning_of_week
     weeks = []
@@ -268,6 +269,18 @@ class Assignment < ApplicationRecord
       return if deadline.blank?
 
       errors.add(:deadline, :in_past) if deadline < Time.zone.now
+    end
+
+    def test_week_not_before_last
+      return if deadline.blank?
+
+      errors.add(:deadline, :before_last_week) if deadline.to_date < earliest_test_week
+    end
+
+    # Last week's Monday. A test written unannounced can only be set up once
+    # its last group has sat it, and that may be on the last day of its week.
+    def earliest_test_week
+      Time.zone.today.prev_week
     end
 
     def kind_immutable

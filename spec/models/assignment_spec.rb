@@ -30,6 +30,12 @@ RSpec.describe(Assignment, type: :model) do
     expect(assignment).to be_invalid
   end
 
+  it "is invalid with a deadline in the past" do
+    assignment = FactoryBot.build(:valid_assignment, deadline: 1.day.ago)
+    expect(assignment).to be_invalid
+    expect(assignment.errors.details[:deadline]).to include(error: :in_past)
+  end
+
   # A test is a sheet written in the tutorial: nothing is uploaded, its week
   # is its deadline, and its groups write it on different days of that week.
   describe "a test" do
@@ -53,7 +59,7 @@ RSpec.describe(Assignment, type: :model) do
       expect(test.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
     end
 
-    it "offers the weeks from this one to the term's end, and its own" do
+    it "offers the weeks from last one to the term's end, and its own" do
       season = Time.zone.today.month < 10 ? "SS" : "WS"
       term = Term.find_by(year: Time.zone.today.year, season: season) ||
              FactoryBot.create(:term, year: Time.zone.today.year, season: season)
@@ -64,7 +70,8 @@ RSpec.describe(Assignment, type: :model) do
                                            deadline: term.end_date.end_of_week)
 
       choices = test.test_week_choices
-      expect(choices.first).to eq([term.begin_date, Time.zone.today].max.beginning_of_week)
+      expect(choices.first)
+        .to eq([term.begin_date, Time.zone.today.prev_week].max.beginning_of_week)
       expect(choices).to all(be_monday)
       expect(choices).to include(test.deadline.to_date.beginning_of_week)
       expect(choices.last).to eq(term.end_date.beginning_of_week)
@@ -79,7 +86,7 @@ RSpec.describe(Assignment, type: :model) do
       test = FactoryBot.build(:assignment, lecture: over, kind: :test)
       choices = test.test_week_choices
 
-      expect(choices.first).to eq(Time.zone.today.beginning_of_week)
+      expect(choices.first).to eq(Time.zone.today.prev_week)
       expect(choices.size).to be_between(26, 28)
     end
 
@@ -90,7 +97,7 @@ RSpec.describe(Assignment, type: :model) do
       loose = FactoryBot.create(:lecture, :term_independent)
       test = FactoryBot.build(:assignment, lecture: loose, kind: :test)
 
-      expect(test.test_week_choices.first).to eq(Time.zone.today.beginning_of_week)
+      expect(test.test_week_choices.first).to eq(Time.zone.today.prev_week)
     end
 
     it "leaves the deadline empty for a week that is no date" do
@@ -100,6 +107,16 @@ RSpec.describe(Assignment, type: :model) do
 
       test.test_week = ""
       expect(test).to be_invalid
+    end
+
+    # Written unannounced, a test is set up once its last group has sat it.
+    it "may be set up for last week, but not for the week before" do
+      test.test_week = Time.zone.today.prev_week.iso8601
+      expect(test).to be_valid
+
+      test.test_week = (Time.zone.today.prev_week - 7).iso8601
+      expect(test).to be_invalid
+      expect(test.errors.details[:deadline]).to include(error: :before_last_week)
     end
 
     it "takes no sheet to read, whatever the form sends" do
