@@ -233,7 +233,16 @@ class TutorialsController < ApplicationController
     # running test counts - and, before any is, the first still to come.
     def current_assignment
       open, ahead = @assignments.partition(&:grading_open?)
-      open.first || ahead.last
+      open.max_by { |a| ranking_deadline(a) } || ahead.min_by { |a| ranking_deadline(a) }
+    end
+
+    # A test counts with the end of its first week, as a test of one week does;
+    # one of several weeks would otherwise keep the sheets that fall due in its
+    # later weeks out of sight.
+    def ranking_deadline(assignment)
+      return assignment.deadline unless assignment.kind_test?
+
+      assignment.test_week.in_time_zone.end_of_week
     end
 
     def set_tutorial
