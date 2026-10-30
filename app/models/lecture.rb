@@ -53,7 +53,7 @@ class Lecture < ApplicationRecord
   has_many :users, -> { distinct }, through: :lecture_bookmarks
 
   # Roster associations
-  has_many :all_lecture_memberships,
+  has_many :lecture_memberships_including_excluded,
            class_name: "LectureMembership",
            dependent: :destroy,
            inverse_of: :lecture
@@ -1038,7 +1038,7 @@ class Lecture < ApplicationRecord
   end
 
   def add_user_to_roster!(user, source_campaign = nil)
-    membership = all_lecture_memberships.find_or_initialize_by(user: user)
+    membership = lecture_memberships_including_excluded.find_or_initialize_by(user: user)
     membership.source_campaign ||= source_campaign
     membership.excluded_at = nil
     membership.excluded_by = nil

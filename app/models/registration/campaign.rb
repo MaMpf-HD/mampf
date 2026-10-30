@@ -754,7 +754,7 @@ module Registration
       # Registrations of users excluded from the lecture since: someone who
       # registers again after leaving counts as unassigned once more.
       def left_after_registering
-        user_registrations.joins(user: :all_lecture_memberships)
+        user_registrations.joins(user: :lecture_memberships_including_excluded)
                           .merge(LectureMembership.excluded.where(lecture_id: campaignable_id))
                           .where("lecture_memberships.excluded_at > " \
                                  "registration_user_registrations.created_at")
