@@ -3354,9 +3354,11 @@ de:
       Du bist TutorIn in dieser Veranstaltung, aber noch keinem Tutorium
       zugeordnet. Sobald Du eines übernimmst, erscheint es hier.
     tutors_missing_html: "Fehlt jemand? Im Reiter %{link} machst Du Leute zu TutorInnen: mit einem Gutschein oder über die E-Mail-Adresse ihres MaMpf-Kontos."
+    tabs:
+      label: "Ansichten der Gruppe"
+      marking: "Bewerten"
     participants:
       button: "Teilnehmende"
-      pick: "Auswählen …"
       title: "Teilnehmende"
       none: "In dieser Gruppe ist noch niemand."
       registered_title: "Angemeldet, noch nicht endgültig"

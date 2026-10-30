@@ -1,11 +1,49 @@
 <%# The page shows one sheet, test or achievement at a time; `subject` is whichever it is. %>
 <% subject = achievement || assignment %>
-<% participants_path = lecture_tutorials_path(@lecture, params: { view: 'participants',
-                                                                  tutorial: tutorial.id }) %>
-<% performance_path = lecture_tutorials_path(@lecture, params: { view: 'performance',
-                                                                 tutorial: tutorial.id }) %>
-<div class="d-flex flex-wrap align-items-end gap-3 m-3">
-  <% if assignments.any? || achievements.any? %>
+<% markable = assignments.any? || achievements.any? %>
+
+<%#
+  The group frames the page and the mail is an action on it; the tabs are the
+  page's views of the group, the way the lecturer's assessments page has tabs.
+%>
+<div class="d-flex flex-wrap align-items-end gap-3 mx-3 mt-3">
+  <%= render partial: 'tutorials/group_columns',
+             locals: { tutorials: tutorials, tutorial: tutorial } %>
+</div>
+
+<nav class="mx-3 mt-3" aria-label="<%= t('tutorial.tabs.label') %>">
+  <ul class="nav nav-tabs">
+    <% if markable %>
+      <li class="nav-item">
+        <%= link_to t('tutorial.tabs.marking'),
+                    lecture_tutorials_path(@lecture, params: { tutorial: tutorial.id }),
+                    class: ['nav-link', ('active' if subject)],
+                    aria: { current: ('page' if subject) } %>
+      </li>
+    <% end %>
+
+    <li class="nav-item">
+      <%= link_to t('tutorial.participants.button'),
+                  lecture_tutorials_path(@lecture, params: { view: 'participants',
+                                                             tutorial: tutorial.id }),
+                  class: ['nav-link', ('active' if @participants)],
+                  aria: { current: ('page' if @participants) } %>
+    </li>
+
+    <% unless @lecture.seminar? %>
+      <li class="nav-item">
+        <%= link_to t('assessment.tabs.performance'),
+                    lecture_tutorials_path(@lecture, params: { view: 'performance',
+                                                               tutorial: tutorial.id }),
+                    class: ['nav-link', ('active' if @performance)],
+                    aria: { current: ('page' if @performance) } %>
+      </li>
+    <% end %>
+  </ul>
+</nav>
+
+<% if subject %>
+  <div class="d-flex flex-wrap align-items-end gap-3 m-3">
     <div class="col-12 col-md-4">
       <label class="form-label fw-semibold mb-2" for="assignment-select">
         <% if achievements.any? %>
@@ -21,7 +59,7 @@
               class="form-select form-select-sm"
               data-controller="select-navigation"
               data-action="change->select-navigation#visit">
-        <option selected><%= subject ? subject.title : t('tutorial.participants.pick') %></option>
+        <option selected><%= subject.title %></option>
         <% (assignments - [assignment]).each do |a| %>
           <option value="<%= lecture_tutorials_path(@lecture, params: { assignment: a.id, tutorial: tutorial.id }) %>">
             <%= a.title %>
@@ -38,14 +76,8 @@
         <% end %>
       </select>
     </div>
-  <% end %>
-
-  <%= render partial: 'tutorials/group_columns',
-             locals: { tutorials: tutorials, tutorial: tutorial,
-                       participants_path: (participants_path unless @participants),
-                       performance_path: (performance_path unless @performance ||
-                                                                  @lecture.seminar?) } %>
-</div>
+  </div>
+<% end %>
 
 
 <% if achievement %>
