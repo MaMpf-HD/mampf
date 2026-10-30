@@ -153,6 +153,19 @@
     <div class="form-text"><%= t("student_message.attachment_hint") %></div>
   </div>
 
+  <% if catalog %>
+    <div class="form-check mb-3">
+      <%= check_box_tag "student_message[copy_tutors]", "1", true,
+                        id: "student-message-copy-tutors", class: "form-check-input" %>
+
+      <%= render partial: "student_messages/tutor_copy",
+                 locals: { tutors: StudentMessages::Audience.tutors_of(
+                   StudentMessages::Audience.recipients([preset_audience || catalog.everyone]),
+                   lecture
+                 ).by_last_name.to_a } %>
+    </div>
+  <% end %>
+
   <%= render partial: "student_messages/recipients",
              locals: { emails: (preset_audience || (catalog ? catalog.everyone : fixed_audience)).emails,
                        picker: catalog.present? } %>

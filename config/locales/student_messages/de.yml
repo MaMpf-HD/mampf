@@ -21,6 +21,7 @@ de:
     nobody_picked: "Noch niemand ausgewählt."
     addresses_copy_failed: "Die Adressen konnten nicht kopiert werden."
     copy_addresses: "E-Mail-Adressen kopieren"
+    copy_tutors: "Kopie an die Tutorinnen und Tutoren dieser Studierenden"
     addresses_copied: "Adressen in die Zwischenablage kopiert"
     subject: "Betreff"
     body: "Nachricht"

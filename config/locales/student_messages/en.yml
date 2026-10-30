@@ -21,6 +21,7 @@ en:
     nobody_picked: "Nobody picked yet."
     addresses_copy_failed: "The addresses could not be copied."
     copy_addresses: "Copy email addresses"
+    copy_tutors: "Copy to the tutors of these students"
     addresses_copied: "Addresses copied to clipboard"
     subject: "Subject"
     body: "Message"
