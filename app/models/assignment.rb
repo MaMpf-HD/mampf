@@ -341,15 +341,19 @@ class Assignment < ApplicationRecord
                      left_user_ids_with_work(tutorial_id: lecture.tutorials.select(:id)))
     end
 
-    # Before the deadline the rosters alone pick the rows, and they no longer
-    # list someone who has left; a test is marked during its week.
+    # Who has left the lecture with work on a row these tutorials hold.
+    # Before the deadline the table lists only the tutorials' members, and
+    # someone who has left is none of them; a test, though, is marked during
+    # its own week, before its deadline, so its marked rows must stay listed.
+    # Work is what the table counts as such: a row whose points were taken
+    # back is blank, and no tutorial would hold it once listed.
     def left_user_ids_with_work(tutorial_id:)
       return [] if assessment.blank?
 
-      rows = assessment.assessment_participations.where(tutorial_id: tutorial_id)
-      rows.with_grading_data.or(rows.submitted)
-          .where(user_id: lecture.excluded_lecture_memberships.select(:user_id))
-          .distinct.pluck(:user_id) - submitter_ids
+      assessment.assessment_participations.where(tutorial_id: tutorial_id)
+                .with_recorded_work
+                .where(user_id: lecture.excluded_lecture_memberships.select(:user_id))
+                .distinct.pluck(:user_id) - submitter_ids
     end
 
     def non_submitters_in_tutorials_postdeadline
