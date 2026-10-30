@@ -285,7 +285,8 @@ en:
       not_in_group: 'Only a member of the group can be put on one of its teams.'
       not_in_any_group: 'Only a member of one of the lecture''s tutorials can be put on a team.'
       team_rejected: 'A rejected hand-in takes nobody.'
-      joined_late: 'Joined the team after the deadline, on %{time}.'
+      joined_late: 'Joined with the team''s code after the deadline, on %{time}.'
+      added_by_tutor: 'Put on the team by %{tutor}, on %{time}.'
       marked_on_own: >-
         %{name} is already marked for this sheet on a row of their own. Clear
         that first.
@@ -295,9 +296,9 @@ en:
         %{name} is no longer on the team. The team is marked in %{tutorial}
         now.
       remove_member: 'Take %{name} off this team'
-      remove_member_confirm: >-
-        Take %{name} off this team? The team's points for this sheet no longer
-        count for them, and they get an email.
+      remove_member_hint: >-
+        If you take them off, the team's points for this sheet no longer count
+        for them, and they get an email.
       joined_by_code: '%{name} joined the team with its code and cannot be taken off it.'
       last_member: 'The last person on a team cannot be taken off it.'
       add_member: 'Put somebody on this team'

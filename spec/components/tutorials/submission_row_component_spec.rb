@@ -336,50 +336,54 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
   end
 
-  describe "the button for taking somebody off the team" do
+  describe "the mark of somebody a tutor put on the team" do
     let(:added) { create(:confirmed_user) }
-
-    before do
-      submission.user_submission_joins.create!(user: added, added_by: tutor)
+    let!(:join) { submission.user_submission_joins.create!(user: added, added_by: tutor) }
+    let(:added_info) do
+      I18n.t("assessment.task_points.added_by_tutor",
+             tutor: tutor.tutorial_name, time: I18n.l(join.created_at, format: :file_time))
     end
 
-    def buttons_for(user, scope: tutorial)
-      html = render_inline(described_class.new(submission: submission.reload,
-                                               assignment: assignment, grading_scope: scope))
-      html.css("button[aria-label]").select do |button|
-        button["aria-label"] == I18n.t("assessment.task_points.remove_member",
-                                       name: user.tutorial_name)
-      end
+    def render_as(user, scope: tutorial)
+      allow(vc_test_controller).to receive(:current_user).and_return(user)
+      render_inline(described_class.new(submission: submission.reload,
+                                        assignment: assignment, grading_scope: scope))
     end
 
-    it "is there for somebody a tutor put on the team, and asks first" do
-      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
-      button = buttons_for(added).sole
-
-      expect(button.ancestors("form").first["data-turbo-confirm"])
-        .to eq(I18n.t("assessment.task_points.remove_member_confirm",
-                      name: added.tutorial_name))
-      expect(buttons_for(student)).to be_empty
+    def remove_items(html, user)
+      label = I18n.t("assessment.task_points.remove_member", name: user.tutorial_name)
+      html.css("button.dropdown-item").select { |item| item.text.squish == label }
     end
 
-    it "is there for the lecturer on the lecture's table" do
-      allow(vc_test_controller).to receive(:current_user).and_return(teacher)
-
-      expect(buttons_for(added, scope: lecture).size).to eq(1)
+    def marks(html)
+      html.css("[aria-label]").pluck("aria-label").grep(added_info)
     end
 
-    it "is not there for the last one on the team" do
-      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+    it "names the tutor, and offers the tutor who marks the team to take the member off" do
+      html = render_as(tutor)
+
+      expect(marks(html)).to eq([added_info])
+      expect(remove_items(html, added).size).to eq(1)
+      expect(remove_items(html, student)).to be_empty
+    end
+
+    it "offers the lecturer the same on the lecture's table" do
+      expect(remove_items(render_as(teacher, scope: lecture), added).size).to eq(1)
+    end
+
+    it "offers nothing for the last one on the team, and still names the tutor" do
       submission.user_submission_joins.find_by(user: student).destroy!
+      html = render_as(tutor)
 
-      expect(buttons_for(added)).to be_empty
+      expect(remove_items(html, added)).to be_empty
+      expect(marks(html)).to eq([added_info])
     end
 
-    it "is not there for a tutor who reads the team from another tutorial" do
-      other = create(:tutorial, lecture: lecture)
-      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+    it "offers nothing to a tutor who reads the team from another tutorial" do
+      html = render_as(tutor, scope: create(:tutorial, lecture: lecture))
 
-      expect(buttons_for(added, scope: other)).to be_empty
+      expect(remove_items(html, added)).to be_empty
+      expect(marks(html)).to eq([added_info])
     end
   end
 

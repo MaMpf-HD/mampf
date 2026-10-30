@@ -28,9 +28,18 @@ class SubmissionRowComponent < ViewComponent::Base
     late_joins.key?(user.id)
   end
 
-  def joined_late_info(user)
-    t("assessment.task_points.joined_late",
-      time: l(late_joins.fetch(user.id).created_at, format: :file_time))
+  def tutor_added?(user)
+    added_joins.key?(user.id)
+  end
+
+  # Says how somebody came onto the team later: with the code after the
+  # deadline, or by a tutor at any time, who is then named.
+  def joined_info(user)
+    join = added_joins[user.id] || late_joins.fetch(user.id)
+    time = l(join.created_at, format: :file_time)
+    return t("assessment.task_points.joined_late", time: time) unless join.added_by_id?
+
+    t("assessment.task_points.added_by_tutor", tutor: join.added_by.tutorial_name, time: time)
   end
 
   # Whom the tutor may put on this team: the group's members on no team
@@ -65,16 +74,11 @@ class SubmissionRowComponent < ViewComponent::Base
   # Whoever marks the team may take off it somebody a tutor put on; who
   # joined with the code stays, and so does the last member.
   def removable?(user)
-    can_enter_points? && grading_enabled? && @submission.users.many? &&
-      user.id.in?(added_by_tutor)
+    can_enter_points? && grading_enabled? && @submission.users.many? && tutor_added?(user)
   end
 
   def remove_member_label(user)
     t("assessment.task_points.remove_member", name: user.tutorial_name)
-  end
-
-  def remove_member_confirm(user)
-    t("assessment.task_points.remove_member_confirm", name: user.tutorial_name)
   end
 
   # A few names are read at a glance; a longer list gets a search field, and
@@ -91,9 +95,9 @@ class SubmissionRowComponent < ViewComponent::Base
                                .index_by(&:user_id)
   end
 
-  def added_by_tutor
-    @added_by_tutor ||= @submission.user_submission_joins.select(&:added_by_id?)
-                                   .map(&:user_id)
+  def added_joins
+    @added_joins ||= @submission.user_submission_joins.select(&:added_by_id?)
+                                .index_by(&:user_id)
   end
 
   def grading_enabled?
