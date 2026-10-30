@@ -1,10 +1,11 @@
 require "rails_helper"
 
 RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
-  let(:search_client) { instance_double(SearchClient) }
+  let(:search_client) { instance_double(SearchClient, configured?: true) }
 
   before do
     allow(SearchClient).to receive(:instance).and_return(search_client)
+    allow(MampfsearchHealth).to receive(:ingest_available?).and_return(true)
     allow(search_client).to receive(:list_media_versions).and_return({})
     allow(search_client).to receive(:list_media_hierarchies).and_return(nil)
   end
@@ -238,6 +239,83 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       described_class.perform_now
 
       expect(missing_medium.reload.transcription_status).to eq("completed")
+    end
+  end
+
+  describe "availability gating" do
+    let!(:pending_medium) do
+      FactoryBot.create(:valid_medium, :with_video, transcription_status: :not_transcribed)
+    end
+    let!(:missing_medium) do
+      FactoryBot.create(:valid_medium, :with_video, transcription_status: :completed)
+    end
+
+    before do
+      allow(MampfsearchIngestJob).to receive(:perform_later)
+    end
+
+    context "when MampfSearch is not configured" do
+      let(:search_client) { instance_double(SearchClient, configured?: false) }
+
+      it "neither contacts MampfSearch nor changes any medium" do
+        stuck = FactoryBot.create(:valid_medium, :with_video,
+                                  transcription_status: :queued,
+                                  transcription_attempts: 1,
+                                  transcription_requested_at: 3.hours.ago)
+        expect(search_client).not_to receive(:list_media_versions)
+        expect(Rails.logger).not_to receive(:warn)
+
+        described_class.perform_now
+
+        expect(MampfsearchIngestJob).not_to have_received(:perform_later)
+        expect(pending_medium.reload).to be_not_transcribed
+        expect(stuck.reload.transcription_attempts).to eq(1)
+      end
+    end
+
+    context "when MampfSearch is configured but unreachable" do
+      before do
+        allow(MampfsearchHealth).to receive(:ingest_available?).and_return(false)
+        allow(search_client).to receive(:list_media_versions)
+          .and_raise(SearchClient::ServiceUnavailableError, "offline")
+      end
+
+      it "claims no media and skips reconciliation with a warning" do
+        expect(Rails.logger).to receive(:warn).with(/reconciliation skipped.*offline/)
+
+        described_class.perform_now
+
+        expect(MampfsearchIngestJob).not_to have_received(:perform_later)
+        expect(pending_medium.reload).to be_not_transcribed
+      end
+    end
+
+    context "when MampfSearch is reachable but cannot ingest" do
+      before do
+        allow(MampfsearchHealth).to receive(:ingest_available?).and_return(false)
+        allow(search_client).to receive(:list_media_versions).and_return(99_999 => "old-version")
+      end
+
+      it "reconciles the index without claiming or re-ingesting media" do
+        expect(search_client).to receive(:invalidate_media)
+          .with(99_999, expected_video_version: "old-version").and_return(true)
+
+        described_class.perform_now
+
+        expect(MampfsearchIngestJob).not_to have_received(:perform_later)
+        expect(pending_medium.reload).to be_not_transcribed
+        expect(missing_medium.reload).to be_completed
+      end
+    end
+
+    context "when MampfSearch is fully available" do
+      it "claims pending media and re-ingests media missing from the index" do
+        described_class.perform_now
+
+        expect(MampfsearchIngestJob).to have_received(:perform_later).with(pending_medium.id)
+        expect(MampfsearchIngestJob).to have_received(:perform_later).with(missing_medium.id)
+        expect(pending_medium.reload).to be_queued
+      end
     end
   end
 end

@@ -2,8 +2,11 @@ require "rails_helper"
 
 RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
   let(:medium) { FactoryBot.create(:valid_medium, :with_video) }
+  let(:search_client) { instance_double(SearchClient, configured?: true) }
 
   before do
+    allow(SearchClient).to receive(:instance).and_return(search_client)
+    allow(MampfsearchHealth).to receive(:ingest_available?).and_return(true)
     allow(described_class).to receive(:perform_later)
     medium.update!(transcription_attempts: 0, transcription_status: :not_transcribed)
   end
@@ -42,7 +45,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
       transcription_attempts: SearchClient::MAX_TRANSCRIPTION_ATTEMPTS - 1
     )
     allow(Mampfsearch::IngestionService).to receive(:transcribe).and_raise(
-      SearchClient::ServiceUnavailableError, "service unavailable"
+      SearchClient::TimeoutError, "timed out"
     )
     expect(Rails.logger).to receive(:error).with(/permanently failed/)
 
@@ -50,12 +53,12 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
 
     medium.reload
     expect(medium.transcription_status).to eq("failed_permanently")
-    expect(medium.transcription_error).to include("service unavailable")
+    expect(medium.transcription_error).to include("timed out")
   end
 
-  it "increments attempts and marks failed_temporarily on an ingestion error" do
+  it "increments attempts and marks failed_temporarily on a timeout" do
     allow(Mampfsearch::IngestionService).to receive(:transcribe).and_raise(
-      SearchClient::ServiceUnavailableError, "503 unavailable"
+      SearchClient::TimeoutError, "timed out"
     )
 
     described_class.perform_now(medium.id)
@@ -63,7 +66,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     medium.reload
     expect(medium.transcription_attempts).to eq(1)
     expect(medium.transcription_status).to eq("failed_temporarily")
-    expect(medium.transcription_error).to include("503 unavailable")
+    expect(medium.transcription_error).to include("timed out")
   end
 
   it "marks MampfSearchError as failed_temporarily until the attempt limit" do
@@ -92,5 +95,77 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     expect(medium.transcription_attempts).to eq(1)
     expect(medium.transcription_status).to eq("failed_temporarily")
     expect(medium.transcription_error).to eq("Unexpected DB connection drop")
+  end
+
+  describe "availability gating" do
+    context "when MampfSearch is not configured" do
+      let(:search_client) { instance_double(SearchClient, configured?: false) }
+
+      it "leaves an uploaded medium untouched" do
+        expect(Mampfsearch::IngestionService).not_to receive(:transcribe)
+
+        described_class.perform_now(medium.id)
+
+        medium.reload
+        expect(medium).to be_not_transcribed
+        expect(medium.transcription_error).to be_nil
+      end
+    end
+
+    context "when MampfSearch is configured but unreachable" do
+      it "releases the medium without counting an attempt" do
+        medium.update!(transcription_attempts: 1)
+        allow(Mampfsearch::IngestionService).to receive(:transcribe).and_raise(
+          SearchClient::ServiceUnavailableError, "offline"
+        )
+
+        described_class.perform_now(medium.id)
+
+        medium.reload
+        expect(medium).to be_not_transcribed
+        expect(medium.transcription_attempts).to eq(1)
+        expect(medium.transcription_requested_at).to be_nil
+        expect(medium.transcription_error).to eq("offline")
+      end
+
+      it "keeps a completed medium completed" do
+        medium.update!(transcription_status: :completed)
+        allow(Mampfsearch::IngestionService).to receive(:transcribe).and_raise(
+          SearchClient::ServiceUnavailableError, "offline"
+        )
+
+        described_class.perform_now(medium.id)
+
+        expect(medium.reload).to be_completed
+        expect(medium.transcription_attempts).to eq(0)
+      end
+    end
+
+    context "when MampfSearch is reachable but cannot ingest" do
+      before do
+        allow(MampfsearchHealth).to receive(:ingest_available?).and_return(false)
+      end
+
+      it "releases a medium claimed by the scheduler without dispatching it" do
+        medium.update!(transcription_status: :queued, transcription_requested_at: Time.current)
+        expect(Mampfsearch::IngestionService).not_to receive(:transcribe)
+
+        described_class.perform_now(medium.id)
+
+        medium.reload
+        expect(medium).to be_not_transcribed
+        expect(medium.transcription_attempts).to eq(0)
+      end
+    end
+
+    context "when MampfSearch is fully available" do
+      it "dispatches the medium" do
+        expect(Mampfsearch::IngestionService).to receive(:transcribe).with(medium)
+
+        described_class.perform_now(medium.id)
+
+        expect(medium.reload).to be_queued
+      end
+    end
   end
 end
