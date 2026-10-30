@@ -133,10 +133,14 @@ class Assignment < ApplicationRecord
   end
 
   # Lecture#begin_date falls back to Term.active, which may also be absent.
+  # Whether the term is over is asked of this week, not of the list's first:
+  # a term that ended last week would otherwise end the list before the week
+  # a new test is set to.
   def test_week_choices
+    this_week = Time.zone.today.beginning_of_week
     first = [lecture.term&.begin_date, earliest_test_week].compact.max.beginning_of_week
     term_end = lecture.term&.end_date
-    last = (term_end && term_end >= first ? term_end : first + 6.months).beginning_of_week
+    last = (term_end && term_end >= this_week ? term_end : this_week + 6.months).beginning_of_week
     weeks = []
     monday = first
     while monday <= last

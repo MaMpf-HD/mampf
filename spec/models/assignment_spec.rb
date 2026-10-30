@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe(Assignment, type: :model) do
+  include ActiveSupport::Testing::TimeHelpers
+
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_assignment)).to be_valid
   end
@@ -88,6 +90,20 @@ RSpec.describe(Assignment, type: :model) do
 
       expect(choices.first).to eq(Time.zone.today.prev_week)
       expect(choices.size).to be_between(26, 28)
+    end
+
+    # Last week still lies in the term then, and this week, which a new test is
+    # set to, must be on offer all the same.
+    it "offers this week in the week after the term's end" do
+      gone = Term.find_by(year: 2000, season: "SS") ||
+             FactoryBot.create(:term, year: 2000, season: "SS")
+      over = FactoryBot.create(:lecture, term: gone)
+      test = FactoryBot.build(:assignment, lecture: over, kind: :test)
+
+      travel_to(gone.end_date.next_week + 2.days) do
+        expect(test.test_week_choices)
+          .to start_with(Time.zone.today.prev_week, Time.zone.today.beginning_of_week)
+      end
     end
 
     # A lecture bound to no term, while no term is active either: the form
