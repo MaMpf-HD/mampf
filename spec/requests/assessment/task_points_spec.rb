@@ -1005,6 +1005,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(found).to eq(["Clara Free Tuesday group"])
     end
 
+    it "leaves out anyone marked on a row of their own" do
+      marked = member("Clara Marked", of: tutorial2)
+      member("Clara Free", of: tutorial2)
+      Timecop.travel(3.hours.from_now) do
+        row = create(:assessment_participation, :submitted, assessment: assessment,
+                                                            user: marked, tutorial: tutorial2)
+        create(:assessment_task_point, task: task, assessment_participation: row, points: 2)
+        search("clara")
+      end
+
+      expect(found).to eq(["Clara Free Tuesday group"])
+    end
+
     it "asks about nobody for a single letter" do
       member("Clara Wieck", of: tutorial2)
       search("c")

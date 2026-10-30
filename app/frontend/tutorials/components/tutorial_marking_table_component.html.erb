@@ -33,7 +33,7 @@
                       assignment: @assignment,
                       grading_scope: @tutorial,
                       participations: team_participations(submission),
-                      addable_members: @non_submitters,
+                      addable_members: @addable_members,
                       member_tutorials: membership_tutorials)) %>
                 <% end %>
                 <% @elsewhere.each do |submission| %>
@@ -60,7 +60,7 @@
                         assignment: @assignment,
                         grading_scope: @lecture,
                         participations: team_participations(submission),
-                        addable_members: @non_submitters_by_tutorial[tutorial] || [],
+                        addable_members: @addable_by_tutorial[tutorial] || [],
                         member_tutorials: membership_tutorials)) %>
                   <% end %>
 

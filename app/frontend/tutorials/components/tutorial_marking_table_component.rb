@@ -23,6 +23,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @elsewhere = elsewhere_teams
     @participations_by_user_id =
       preload_participations(@non_submitters, @stack + @elsewhere, groups_of(@non_submitters))
+    @addable_members = unmarked(@non_submitters)
   end
 
   # A tutor reads the teams of their students that another tutorial marks;
@@ -57,6 +58,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @non_submitters_by_tutorial = @non_submitters.group_by do |user|
       @participations_by_user_id[user.id]&.tutorial || membership_tutorials[user.id]
     end
+    @addable_by_tutorial = @non_submitters_by_tutorial.transform_values { |users| unmarked(users) }
   end
 
   # Batch creation avoids per-student inserts and validation queries.
@@ -79,6 +81,15 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   # row behind, so the page's own group is not the answer.
   def groups_of(users)
     users.to_h { |user| [user.id, membership_tutorials[user.id]] }
+  end
+
+  # Leaves out of a team row's menu whoever is marked on a row of their own,
+  # read off the rows loaded for the page: they are done with the sheet.
+  def unmarked(users)
+    assessment = @assignment.assessment
+    return users unless assessment
+
+    users.reject { |user| assessment.marked?(@participations_by_user_id[user.id]) }
   end
 
   def team_participations(submission)

@@ -526,6 +526,23 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         .to eq(I18n.t("assessment.task_points.add_member_search"))
     end
 
+    # A row drawn on its own, after a save, reads the names itself.
+    it "offers nobody marked on a row of their own when it reads the names itself" do
+      marked, free = create_list(:confirmed_user, 2)
+      [marked, free].each { |user| create(:tutorial_membership, tutorial: tutorial, user: user) }
+      Timecop.travel(3.hours.from_now) do
+        row = create(:assessment_participation, :submitted, assessment: assessment,
+                                                            user: marked, tutorial: tutorial)
+        create(:assessment_task_point, task: create(:assessment_task, assessment: assessment),
+                                       assessment_participation: row, points: 2)
+        html = render_inline(described_class.new(submission: submission, assignment: assignment,
+                                                 grading_scope: tutorial))
+
+        expect(html.css("[data-controller=add-member-menu] button.dropdown-item")
+                   .map { |item| item.text.squish }).to eq([free.tutorial_name])
+      end
+    end
+
     it "offers no menu without names where teams stay within one tutorial" do
       expect(render_with(0).css("[data-controller=add-member-menu]")).to be_empty
     end

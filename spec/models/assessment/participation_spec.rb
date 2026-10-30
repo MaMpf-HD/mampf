@@ -481,6 +481,27 @@ RSpec.describe(Assessment::Participation, type: :model) do
     end
   end
 
+  describe ".marked" do
+    it "picks the rows Assessment#marked? calls marked" do
+      assessment = create(:assessment, :for_expired_assignment, :with_points)
+      task = create(:assessment_task, assessment: assessment, max_points: 4)
+      empty = create(:assessment_participation, :submitted, assessment: assessment)
+      blank = create(:assessment_participation, :submitted, assessment: assessment)
+      create(:assessment_task_point, task: task, assessment_participation: blank, points: nil)
+      pointed = create(:assessment_participation, :submitted, assessment: assessment)
+      create(:assessment_task_point, task: task, assessment_participation: pointed, points: 1)
+      no_text = create(:assessment_participation, :submitted, assessment: assessment,
+                                                              grade_text: "")
+      absent = create(:assessment_participation, :absent, assessment: assessment)
+      rows = [empty, blank, pointed, no_text, absent].map(&:reload)
+
+      marked = rows.select { |row| assessment.marked?(row) }
+
+      expect(marked).to contain_exactly(pointed, absent)
+      expect(described_class.marked.where(id: rows)).to match_array(marked)
+    end
+  end
+
   describe "#display_status" do
     # The enum has four values, the views need five: `pending` covers both
     # "has not handed in" and "waiting to be marked", told apart by submitted_at.
