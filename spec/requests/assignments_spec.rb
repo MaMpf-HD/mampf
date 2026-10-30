@@ -168,6 +168,10 @@ RSpec.describe("Assignments", type: :request) do
                  as: :turbo_stream)
           end.not_to change(Assignment, :count)
           expect(response).to have_http_status(:unprocessable_content)
+          week = Nokogiri::HTML(response.body).at_css("select[name='assignment[test_week]']")
+          expect(week["class"]).to include("is-invalid")
+          expect(week.next_element.text)
+            .to eq("The test week can't lie more than one week back.")
         end
 
         it "creates it due with its week, taking no hand-in" do

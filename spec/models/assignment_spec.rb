@@ -116,7 +116,7 @@ RSpec.describe(Assignment, type: :model) do
 
       test.test_week = (Time.zone.today.prev_week - 7).iso8601
       expect(test).to be_invalid
-      expect(test.errors.details[:deadline]).to include(error: :before_last_week)
+      expect(test.errors.details[:test_week]).to include(error: :before_last_week)
     end
 
     it "takes no sheet to read, whatever the form sends" do

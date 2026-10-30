@@ -274,7 +274,7 @@ class Assignment < ApplicationRecord
     def test_week_not_before_last
       return if deadline.blank?
 
-      errors.add(:deadline, :before_last_week) if deadline.to_date < earliest_test_week
+      errors.add(:test_week, :before_last_week) if deadline.to_date < earliest_test_week
     end
 
     # Last week's Monday. A test written unannounced can only be set up once
