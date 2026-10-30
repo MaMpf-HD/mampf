@@ -38,6 +38,14 @@ class SubmissionRowComponent < ViewComponent::Base
                tag.span(class: "text-nowrap") { safe_join([name[cut..], capture(&)]) }])
   end
 
+  # Puts everything to know about a member behind one info mark: a change of
+  # tutorial since the hand-in, and how they came onto the team later.
+  def member_info(user)
+    notes = [movement_info_for_user(user)]
+    notes << joined_info(user) if joined_late?(user) || tutor_added?(user)
+    notes.compact.join(" ").presence
+  end
+
   def tutor_added?(user)
     added_joins.key?(user.id)
   end
@@ -250,10 +258,12 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def late_submission_info(submission, tutorial)
-    text = t("submission.late")
+    uploaded_at = submission.last_modification_by_users_at || submission.created_at
+    text = t("assessment.task_points.late_submission",
+             time: l(uploaded_at, format: :file_time))
     return text unless submission.accepted.nil? && helpers.current_user.in?(tutorial.tutors)
 
-    "#{text} (#{t("tutorial.late_submission_decision")})"
+    "#{text} #{t("tutorial.late_submission_decision").strip}"
   end
 
   def can_enter_points?

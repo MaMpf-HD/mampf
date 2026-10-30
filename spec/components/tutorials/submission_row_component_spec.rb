@@ -255,6 +255,11 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   describe "#late_submission_info" do
+    let(:late_text) do
+      I18n.t("assessment.task_points.late_submission",
+             time: I18n.l(submission.created_at, format: :file_time))
+    end
+
     context "when submission decision is already made (accepted is not nil)" do
       before do
         allow(vc_test_controller).to receive(:current_user).and_return(tutor)
@@ -262,9 +267,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         allow(submission).to receive(:accepted).and_return(true)
       end
 
-      it "returns just the late text" do
-        expect(component_tutorial.late_submission_info(submission, tutorial))
-          .to eq(component_tutorial.send(:t, "submission.late"))
+      it "says when it was uploaded, and no more" do
+        expect(component_tutorial.late_submission_info(submission, tutorial)).to eq(late_text)
       end
     end
 
@@ -275,9 +279,9 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         render_inline(component_tutorial)
       end
 
-      it "includes the late-submission-decision hint" do
+      it "says when it was uploaded, and that the tutor decides" do
         result = component_tutorial.late_submission_info(submission, tutorial)
-        expect(result).to include(component_tutorial.send(:t, "tutorial.late_submission_decision"))
+        expect(result).to eq("#{late_text} #{I18n.t("tutorial.late_submission_decision").strip}")
       end
     end
 
@@ -288,9 +292,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         render_inline(component_tutorial)
       end
 
-      it "returns just the late text" do
-        expect(component_tutorial.late_submission_info(submission, tutorial))
-          .to eq(component_tutorial.send(:t, "submission.late"))
+      it "says when it was uploaded, and no more" do
+        expect(component_tutorial.late_submission_info(submission, tutorial)).to eq(late_text)
       end
     end
   end
@@ -312,7 +315,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                                                assignment: assignment,
                                                grading_scope: tutorial))
 
-      marker = html.css(".bi-box-arrow-in-right")
+      marker = html.css(".bi-info-circle")
       expect(marker.size).to eq(1)
       expect(marker.first["aria-label"])
         .to eq(I18n.t("assessment.task_points.joined_late",
@@ -331,7 +334,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                                                assignment: assignment,
                                                grading_scope: tutorial))
 
-      expect(html.css(".bi-box-arrow-in-right")).to be_empty
+      expect(html.css(".bi-info-circle")).to be_empty
       expect(html.css(".bi-exclamation-triangle-fill").size).to eq(1)
     end
   end
@@ -383,6 +386,17 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         expect(mark.parent.text.squish).to eq(last_part)
         expect(mark.ancestors("div").first.text.squish).to eq(name)
       end
+    end
+
+    it "shares one info mark with a change of tutorial" do
+      component = described_class.new(submission: submission.reload, assignment: assignment,
+                                      grading_scope: tutorial)
+      allow(component).to receive(:movement_info_for_user).and_call_original
+      allow(component).to receive(:movement_info_for_user).with(added).and_return("Moved.")
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      html = render_inline(component)
+
+      expect(html.css(".bi-info-circle").pluck("aria-label")).to eq(["Moved. #{added_info}"])
     end
 
     it "is offered to the lecturer on the lecture's table" do

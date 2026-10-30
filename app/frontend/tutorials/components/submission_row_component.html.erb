@@ -19,23 +19,14 @@
         <% @submission.users.each_with_index do |user, index| %>
           <div>
             <%= name_with_marks(user) do %>
-              <% movement = movement_info_for_user(user) %>
+              <% info = member_info(user) %>
 
-              <% if movement %>
+              <% if info %>
                 <i
                   class="bi bi-info-circle ms-1 text-secondary"
                   role="img"
-                  title="<%= movement %>"
-                  aria-label="<%= movement %>"
-                ></i>
-              <% end %>
-
-              <% if joined_late?(user) || tutor_added?(user) %>
-                <i
-                  class="bi bi-box-arrow-in-right ms-1 text-secondary"
-                  role="img"
-                  title="<%= joined_info(user) %>"
-                  aria-label="<%= joined_info(user) %>"
+                  title="<%= info %>"
+                  aria-label="<%= info %>"
                 ></i>
               <% end %>
 
