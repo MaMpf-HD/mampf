@@ -3428,6 +3428,7 @@ de:
       invalid_filenames: ungültige Dateinamen
       invalid_files: ungültige Dateien
       invalid_submission_id: ungültige Abgabe-ID
+      elsewhere: liegt bei einem anderen Tutorium
       no_decision: noch keine Entscheidung über Akzeptanz getroffen
       rejected: Korrektur bereits abgelehnt
       files_in_cache: Datei(en) erfolgreich in den Zwischenspeicher hochgeladen.
@@ -3449,6 +3450,11 @@ de:
           Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
           die zwar in das von MaMpf vorgegebene Namensschema passen, deren dort
           enthaltene Abgaben-ID aber zu keiner Abgabe passt.
+        elsewhere: >
+          Hier sind die Abgabeteams aufgelistet, deren Abgabe inzwischen ein
+          anderes Tutorium korrigiert, etwa nach einer Übergabe. Ihre
+          Korrekturen wurden nicht gespeichert. Schick sie an das genannte
+          Tutorium.
         no_decision: >
           Hier sind diejenigen Abgabeteams aufgelistet, für die eine
           Korrektur hochgeladen wurde, aber noch keine Entscheidung darüber

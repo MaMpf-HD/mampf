@@ -3212,7 +3212,8 @@ en:
       successfully_saved: Number of successfully saved corrections
       invalid_filenames: invalid filenames
       invalid_files: invalid files
-      invalid_submission_id: invalid submision id
+      invalid_submission_id: invalid submission id
+      elsewhere: with another tutorial
       no_decision: no decision abou acceptance yet
       rejected: correction already rejected
       files_in_cache: file(s) successfully uploaded to temporary storage
@@ -3233,6 +3234,10 @@ en:
           This is the list of all uploaded files that fit into
           the naming schem provided by MaMpf, but whose submission ids do not
           match any submissions.
+        elsewhere: >
+          These are the teams whose hand-in another tutorial corrects now, for
+          example after a hand-over. Their corrections were not saved. Send
+          them to the tutorial named.
         no_decision: >
           This is the list of submission teams for which you uploaded a
           correction but have not yet made a decision on whether to accept the

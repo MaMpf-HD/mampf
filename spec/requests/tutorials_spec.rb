@@ -307,6 +307,22 @@ RSpec.describe("Tutorials", type: :request) do
       expect(flash[:alert]).to eq(until_final)
     end
 
+    it "names the tutorial a handed-over team went to in the report" do
+      other = create(:tutorial, lecture: lecture, title: "Tuesday group")
+      handed_over = create(:submission, :with_manuscript, assignment: assignment,
+                                                          tutorial: other)
+      handed_over.users << create(:confirmed_user, name_in_tutorials: "Anna Keller")
+      travel_to(assignment.friendly_deadline + 1.minute)
+      files = [{ metadata: { filename: "correction-ID-#{handed_over.id}.pdf" } }]
+
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: assignment.id),
+            params: { cached_files: files.to_json }, xhr: true
+
+      expect(response.body).to include(I18n.t("tutorial.bulk_upload.elsewhere"))
+      expect(response.body).to include("Anna Keller")
+      expect(response.body).to include(ERB::Util.html_escape(other.title_with_tutors))
+    end
+
     it "sends the bundle once the grace period is over" do
       travel_to(assignment.friendly_deadline + 1.minute)
       get bulk_download_submissions_path(id: tutorial.id, ass_id: assignment.id)

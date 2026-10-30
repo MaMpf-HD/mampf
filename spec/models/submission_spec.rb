@@ -173,6 +173,22 @@ RSpec.describe(Submission, type: :model) do
       # the in-scope submission is found (not rejected as an unknown id)
       expect(report[:invalid_id]).not_to include(in_scope_file)
     end
+
+    # After a hand-over the tutor still has the file from the bundle.
+    it "names the tutorial a hand-in of the same sheet went to, and leaves it be" do
+      other = create(:tutorial, lecture: lecture, title: "Tuesday group")
+      handed_over = create(:submission, :with_manuscript, assignment: assignment,
+                                                          tutorial: other,
+                                                          users: [create(:confirmed_user)])
+      file = "correction-ID-#{handed_over.id}.pdf"
+
+      report = Submission.bulk_corrections!(tutorial, assignment,
+                                            [{ "metadata" => { "filename" => file } }])
+
+      expect(report[:elsewhere]).to eq([[handed_over.team, other.title_with_tutors]])
+      expect(report[:invalid_id]).to be_empty
+      expect(handed_over.reload.correction).to be_blank
+    end
   end
 
   describe "assessments" do

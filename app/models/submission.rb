@@ -314,7 +314,7 @@ class Submission < ApplicationRecord
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
     report = { successful_saves: [], submissions: submissions.size,
-               invalid_filenames: [], invalid_id: [], in_subfolder: [],
+               invalid_filenames: [], invalid_id: [], elsewhere: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
     begin
       files.each do |file_shrine|
@@ -329,7 +329,8 @@ class Submission < ApplicationRecord
         # uploaded filename cannot target a submission in another tutorial.
         submission = submissions.find_by(id: submission_id)
         unless submission
-          report[:invalid_id].push(filename)
+          report[:invalid_id].push(filename) unless report_elsewhere(report, assignment,
+                                                                     submission_id)
           next
         end
         if submission.too_late? && submission.accepted.nil?
@@ -347,7 +348,7 @@ class Submission < ApplicationRecord
           false
         end
         if moved
-          report[:invalid_id].push(filename)
+          report_elsewhere(report, assignment, submission.id)
           next
         end
         unless submission.valid?
@@ -361,6 +362,19 @@ class Submission < ApplicationRecord
     end
     report
   end
+
+  # A hand-in of the same sheet that another tutorial corrects now, after a
+  # hand-over: the report names the team and the tutorial, so the correction
+  # can go there. Nothing is written on it.
+  def self.report_elsewhere(report, assignment, submission_id)
+    elsewhere = where(assignment: assignment).includes(:users, tutorial: :tutors)
+                                             .find_by(id: submission_id)
+    return false unless elsewhere
+
+    report[:elsewhere].push([elsewhere.team, elsewhere.tutorial.title_with_tutors])
+    true
+  end
+  private_class_method :report_elsewhere
 
   private
 
