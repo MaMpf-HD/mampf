@@ -863,6 +863,72 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
     end
   end
 
+  describe "PATCH /submissions/:submission_id/remove_member" do
+    let(:team) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student])
+    end
+    let(:newcomer) { create(:confirmed_user) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: newcomer)
+      create(:tutorial_membership, tutorial: tutorial, user: newcomer)
+      tutorial.tutors << tutor
+      Timecop.travel(3.hours.from_now)
+      Assessment::SubmissionGraderService.add_member!(team, newcomer, tutor)
+    end
+
+    after { Timecop.return }
+
+    def remove(user, as:, scope: "tutorial")
+      sign_in(as)
+      patch(remove_member_submission_path(team),
+            params: { user_id: user.id, grading_scope_type: scope }, as: :turbo_stream)
+    end
+
+    # The newcomer's own row is back, so the whole table comes along.
+    it "lets the group's tutor take somebody they put on the team off it" do
+      remove(newcomer, as: tutor)
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to contain_exactly(student)
+      assert_turbo_stream action: :replace, target: "marking-table"
+      row = assessment.assessment_participations.find_by(user: newcomer)
+      expect(response.body).to include("points-participation-row-#{row.id}")
+    end
+
+    it "lets the lecturer do so from the lecture's table" do
+      remove(newcomer, as: teacher, scope: "lecture")
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to contain_exactly(student)
+    end
+
+    it "keeps somebody who joined with the code on the team" do
+      remove(student, as: tutor)
+
+      expect(response.body)
+        .to include(ERB::Util.html_escape(I18n.t("assessment.task_points.joined_by_code",
+                                                 name: student.tutorial_name)))
+      expect(team.reload.users).to include(student)
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      create(:tutorial, lecture: lecture).tutors << other
+      remove(newcomer, as: other)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).to include(newcomer)
+    end
+
+    it "takes nobody off who is not on the team" do
+      remove(student2, as: tutor)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "GET /submissions/:submission_id/add_member_candidates" do
     let(:team) do
       create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,

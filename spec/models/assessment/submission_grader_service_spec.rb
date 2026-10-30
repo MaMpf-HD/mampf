@@ -183,6 +183,13 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(row.task_points).to be_empty
     end
 
+    it "records the tutor who put the newcomer on the team" do
+      described_class.add_member!(team, newcomer, scorer)
+
+      expect(team.user_submission_joins.find_by(user: newcomer).added_by).to eq(scorer)
+      expect(team.user_submission_joins.find_by(user: partner).added_by).to be_nil
+    end
+
     # The tutor says "this one too": what the team has, the newcomer gets.
     it "gives the newcomer the points the team already has" do
       described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
@@ -321,6 +328,100 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect { described_class.add_member!(team, newcomer, scorer) }
         .to raise_error(described_class::SubmissionGraderError)
       expect(team.reload.users).not_to include(newcomer)
+    end
+  end
+
+  describe ".remove_member!" do
+    let(:partner) { FactoryBot.create(:confirmed_user) }
+    let(:scorer) { FactoryBot.create(:tutor_tutorial_join, tutorial: tutorial).tutor }
+    let(:newcomer) { FactoryBot.create(:confirmed_user) }
+    let(:team) do
+      submission = FactoryBot.create(:submission, :with_manuscript, assignment: assignment,
+                                                                    tutorial: tutorial)
+      submission.users << partner
+      submission
+    end
+
+    before do
+      [partner, newcomer].each do |member|
+        FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+        FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: member)
+      end
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
+
+    it "takes the newcomer off with the team's points and the hand-in stamp" do
+      described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      described_class.remove_member!(team, newcomer, scorer)
+
+      expect(team.reload.users).to contain_exactly(partner)
+      row.reload
+      expect(row.task_points).to be_empty
+      expect(row.submitted_at).to be_nil
+      expect(row).to be_pending
+      expect(row.graded_at).to be_nil
+      expect(assessment.assessment_participations.find_by(user: partner)
+                       .task_points.sole.points).to eq(7)
+    end
+
+    it "gives the row back to the newcomer's own group" do
+      lecture.update!(cross_tutorial_teams: true)
+      elsewhere = FactoryBot.create(:tutorial, lecture: lecture)
+      TutorialMembership.find_by(user: newcomer).update!(tutorial: elsewhere)
+      row = described_class.add_member!(team, newcomer, scorer)
+
+      described_class.remove_member!(team, newcomer, scorer)
+
+      expect(row.reload.tutorial).to eq(elsewhere)
+      expect(team.reload.tutorial).to eq(tutorial)
+    end
+
+    it "tells the person taken off and the team" do
+      described_class.add_member!(team, newcomer, scorer)
+      partner.update!(email_for_submission_leave: true)
+
+      expect do
+        described_class.remove_member!(team, newcomer, scorer)
+      end.to have_enqueued_mail(NotificationMailer, :submission_removed_email)
+        .with(params: hash_including(recipient: newcomer, user: scorer), args: [])
+        .and(have_enqueued_mail(NotificationMailer, :submission_leave_email)
+        .with(params: hash_including(recipient: partner, user: newcomer), args: []))
+    end
+
+    # The code is the team's own word that somebody belongs.
+    it "leaves somebody who joined with the code on the team" do
+      team.users << newcomer
+
+      expect { described_class.remove_member!(team, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.joined_by_code",
+                               name: newcomer.tutorial_name))
+      expect(team.reload.users).to include(newcomer)
+    end
+
+    it "leaves the last person on the team" do
+      described_class.add_member!(team, newcomer, scorer)
+      team.user_submission_joins.find_by(user: partner).destroy!
+
+      expect { described_class.remove_member!(team.reload, newcomer, scorer) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.task_points.last_member"))
+      expect(team.reload.users).to contain_exactly(newcomer)
+    end
+
+    it "keeps the tutor of another group out" do
+      described_class.add_member!(team, newcomer, scorer)
+      other = FactoryBot.create(:tutor_tutorial_join,
+                                tutorial: FactoryBot.create(:tutorial, lecture: lecture)).tutor
+
+      expect { described_class.remove_member!(team, newcomer, other) }
+        .to raise_error(described_class::SubmissionGraderError,
+                        I18n.t("assessment.errors.user_cannot_enter_points"))
+      expect(team.reload.users).to include(newcomer)
     end
   end
 

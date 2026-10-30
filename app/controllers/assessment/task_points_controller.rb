@@ -9,7 +9,7 @@ module Assessment
 
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_exam_multi, :update_team,
-                         :add_member, :add_member_candidates,
+                         :add_member, :add_member_candidates, :remove_member,
                          :update_participation, :refresh_submission,
                          :refresh_participation, :mark_as_participated,
                          :remove_participated, :mark_as_absent, :remove_absent,
@@ -19,6 +19,7 @@ module Assessment
                                                  :update_team,
                                                  :add_member,
                                                  :add_member_candidates,
+                                                 :remove_member,
                                                  :update_participation,
                                                  :refresh_submission,
                                                  :refresh_participation,
@@ -172,6 +173,24 @@ module Assessment
                   tutorials: tutorials_of(found),
                   grading_scope_type: params[:grading_scope_type] }
       )
+    end
+
+    # Takes back what add_member did. The person has a row of their own
+    # again, which may sort anywhere in the table, so the table is drawn
+    # anew, as for a hand-over.
+    def remove_member
+      user = @submission.users.find_by(id: params[:user_id])
+      unless user
+        return respond_with_flash(:alert, t("assessment.errors.user_not_found"),
+                                  status: :not_found)
+      end
+
+      SubmissionGraderService.remove_member!(@submission, user, current_user)
+
+      flash.now[:notice] = t("assessment.task_points.member_removed", name: user.tutorial_name)
+      table = TutorialMarkingTableComponent.new(assignment: @assessable, grading_scope: table_scope)
+      render turbo_stream: [turbo_stream.replace("marking-table", html: render_to_string(table)),
+                            stream_flash]
     end
 
     def update_participation

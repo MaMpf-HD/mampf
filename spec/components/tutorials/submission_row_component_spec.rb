@@ -336,6 +336,53 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
   end
 
+  describe "the button for taking somebody off the team" do
+    let(:added) { create(:confirmed_user) }
+
+    before do
+      submission.user_submission_joins.create!(user: added, added_by: tutor)
+    end
+
+    def buttons_for(user, scope: tutorial)
+      html = render_inline(described_class.new(submission: submission.reload,
+                                               assignment: assignment, grading_scope: scope))
+      html.css("button[aria-label]").select do |button|
+        button["aria-label"] == I18n.t("assessment.task_points.remove_member",
+                                       name: user.tutorial_name)
+      end
+    end
+
+    it "is there for somebody a tutor put on the team, and asks first" do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      button = buttons_for(added).sole
+
+      expect(button.ancestors("form").first["data-turbo-confirm"])
+        .to eq(I18n.t("assessment.task_points.remove_member_confirm",
+                      name: added.tutorial_name))
+      expect(buttons_for(student)).to be_empty
+    end
+
+    it "is there for the lecturer on the lecture's table" do
+      allow(vc_test_controller).to receive(:current_user).and_return(teacher)
+
+      expect(buttons_for(added, scope: lecture).size).to eq(1)
+    end
+
+    it "is not there for the last one on the team" do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      submission.user_submission_joins.find_by(user: student).destroy!
+
+      expect(buttons_for(added)).to be_empty
+    end
+
+    it "is not there for a tutor who reads the team from another tutorial" do
+      other = create(:tutorial, lecture: lecture)
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+
+      expect(buttons_for(added, scope: other)).to be_empty
+    end
+  end
+
   describe "#can_enter_points?" do
     context "when grading_scope is a Tutorial" do
       context "when current_user is an admin" do

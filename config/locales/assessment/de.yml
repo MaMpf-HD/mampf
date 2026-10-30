@@ -290,6 +290,15 @@ de:
         %{name} ist für dieses Blatt schon auf einer eigenen Zeile bewertet.
         Lösche das zuerst.
       member_added: '%{name} ist jetzt im Team.'
+      member_removed: '%{name} ist nicht mehr im Team.'
+      remove_member: '%{name} aus diesem Team nehmen'
+      remove_member_confirm: >-
+        %{name} aus diesem Team nehmen? Die Punkte des Teams für dieses Blatt
+        zählen dann nicht mehr für diese Person, und sie bekommt eine E-Mail.
+      joined_by_code: >-
+        %{name} ist dem Team mit seinem Code beigetreten und kann nicht
+        herausgenommen werden.
+      last_member: 'Die letzte Person in einem Team kann nicht herausgenommen werden.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
       add_member_search: 'Nach Namen suchen'

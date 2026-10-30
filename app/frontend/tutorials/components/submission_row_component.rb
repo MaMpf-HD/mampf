@@ -62,6 +62,21 @@ class SubmissionRowComponent < ViewComponent::Base
     add_member_candidates_submission_path(@submission, grading_scope_type: grading_scope_type)
   end
 
+  # Whoever marks the team may take off it somebody a tutor put on; who
+  # joined with the code stays, and so does the last member.
+  def removable?(user)
+    can_enter_points? && grading_enabled? && @submission.users.many? &&
+      user.id.in?(added_by_tutor)
+  end
+
+  def remove_member_label(user)
+    t("assessment.task_points.remove_member", name: user.tutorial_name)
+  end
+
+  def remove_member_confirm(user)
+    t("assessment.task_points.remove_member_confirm", name: user.tutorial_name)
+  end
+
   # A few names are read at a glance; a longer list gets a search field, and
   # so does a menu that searches the other tutorials.
   def member_search?
@@ -74,6 +89,11 @@ class SubmissionRowComponent < ViewComponent::Base
     @late_joins ||= @submission.user_submission_joins.sort_by(&:created_at).drop(1)
                                .select { |join| join.created_at > @assignment.deadline }
                                .index_by(&:user_id)
+  end
+
+  def added_by_tutor
+    @added_by_tutor ||= @submission.user_submission_joins.select(&:added_by_id?)
+                                   .map(&:user_id)
   end
 
   def grading_enabled?

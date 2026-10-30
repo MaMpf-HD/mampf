@@ -1,6 +1,10 @@
 class UserSubmissionJoin < ApplicationRecord
   belongs_to :user
   belongs_to :submission
+  # The tutor who put the user on the team; nil for a join by code. Only a
+  # tutor's addition can be taken back, see
+  # Assessment::SubmissionGraderService.remove_member!.
+  belongs_to :added_by, class_name: "User", optional: true, inverse_of: false
 
   validate :only_one_per_assignment, on: :create
   validate :max_team_size, on: :create

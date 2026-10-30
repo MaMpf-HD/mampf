@@ -68,8 +68,9 @@ test.describe("marking table", () => {
   });
 
   // Somebody forgot to join their team's upload; the tutor puts them on it,
-  // and the points the team already has come along.
-  test("puts a member who forgot to join onto the team, with its points", async ({
+  // and the points the team already has come along. Somebody put on by
+  // mistake is taken off again from the same row.
+  test("puts a member who forgot to join onto the team, with its points, and off again", async ({
     factory,
     teacher,
     tutor,
@@ -119,6 +120,17 @@ test.describe("marking table", () => {
     await expect(table.getByRole("row", { name: /Grace Hopper/ })).toHaveCount(1);
     await expect(joined.getByRole("spinbutton", { name: /Warm-up for Ada Lovelace/ }))
       .toHaveValue("7.0");
+
+    await expect(joined.getByRole("button", { name: "Take Ada Lovelace off this team" }))
+      .toHaveCount(0);
+    tutor.page.once("dialog", confirmation => confirmation.accept());
+    await joined.getByRole("button", { name: "Take Grace Hopper off this team" }).click();
+
+    await expect(tutor.page.getByText("Grace Hopper is no longer on the team.")).toBeVisible();
+    await expect(joined.getByRole("button", { name: "Take Grace Hopper off this team" }))
+      .toHaveCount(0);
+    await expect(table.getByRole("row", { name: /Grace Hopper/ }).getByText("Not Submitted"))
+      .toBeVisible();
   });
 
   // Seven names on a short screen stand in for a group of thirty on a

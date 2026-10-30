@@ -39,6 +39,21 @@
               ></i>
             <% end %>
 
+            <% if removable?(user) %>
+              <%= button_to remove_member_submission_path(@submission),
+                            method: :patch,
+                            params: { user_id: user.id,
+                                      grading_scope_type: grading_scope_type },
+                            class: "btn btn-link p-0 ms-1 align-baseline text-secondary",
+                            title: remove_member_label(user),
+                            aria: { label: remove_member_label(user) },
+                            form: { class: "d-inline",
+                                    data: { turbo: true,
+                                            turbo_confirm: remove_member_confirm(user) } } do %>
+                <i class="bi bi-person-dash-fill"></i>
+              <% end %>
+            <% end %>
+
             <%# The hand-in is late as a whole. %>
             <% if index.zero? && @submission.too_late? %>
               <i

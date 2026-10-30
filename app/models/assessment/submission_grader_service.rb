@@ -94,7 +94,7 @@ module Assessment
           # check is there to keep.
           own_row = lock_own_row(assignment.assessment, user)
           raise_if_errors!(validate_unmarked_on_own(assignment.assessment, own_row))
-          UserSubmissionJoin.create!(user: user, submission: submission)
+          UserSubmissionJoin.create!(user: user, submission: submission, added_by: scorer)
           row = init_participation(assignment.assessment, user, submission.tutorial)
           # The row is the upload's now, wherever it was seeded.
           row.update!(tutorial: submission.tutorial) if row.tutorial_id != submission.tutorial_id
@@ -106,6 +106,25 @@ module Assessment
         participation
       rescue ActiveRecord::RecordInvalid => e
         raise(SubmissionGraderError, e.record.errors.full_messages.to_sentence)
+      end
+
+      # Takes somebody a tutor put on the team off it again: the join goes, and
+      # the row is left as before the addition - nothing handed in, no points,
+      # held by the person's own group. Who joined with the code stays. The
+      # person hears of it; the team hears of a leave as it always does.
+      def remove_member!(submission, user, scorer)
+        Participation.transaction do
+          submission.lock!
+          raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
+          join = submission.user_submission_joins.find_by(user: user)
+          raise_if_errors!(validate_added_by_tutor(join, user))
+          raise_if_errors!(validate_not_last_member(submission))
+          tutorials_before = submission.member_tutorial_ids
+          join.destroy!
+          clear_team_row!(submission.assignment.assessment, user)
+          submission.reload.place_team!(tutorials_before)
+        end
+        tell_of_removal(submission, user, scorer)
       end
 
       # The other way round: the sheet did not come in after all. Only while
@@ -199,6 +218,43 @@ module Assessment
                                     submission: submission, user: newcomer)
                               .submission_join_email.deliver_later
           end
+        end
+
+        def tell_of_removal(submission, removed, tutor)
+          NotificationMailer.with(recipient: removed, locale: removed.locale,
+                                  submission: submission, user: tutor)
+                            .submission_removed_email.deliver_later
+          submission.users.email_for_submission_leave.each do |member|
+            NotificationMailer.with(recipient: member, locale: member.locale,
+                                    submission: submission, user: removed)
+                              .submission_leave_email.deliver_later
+          end
+        end
+
+        # Nothing on the row was the person's own: the team's points and its
+        # hand-in stamp go, and the group they sit in takes the row back.
+        def clear_team_row!(assessment, user)
+          row = lock_own_row(assessment, user)
+          return unless row
+
+          row.task_points.destroy_all
+          row.update!(submitted_at: nil, status: :pending, graded_at: nil, grader: nil)
+          ParticipationIndex.follow_membership(row)
+        end
+
+        def validate_added_by_tutor(join, user)
+          return I18n.t("assessment.errors.user_not_found") unless join
+          return if join.added_by_id?
+
+          I18n.t("assessment.task_points.joined_by_code", name: user.tutorial_name)
+        end
+
+        # A team without members would be a deleted hand-in, which is not the
+        # tutor's to do.
+        def validate_not_last_member(submission)
+          return if submission.users.many?
+
+          I18n.t("assessment.task_points.last_member")
         end
 
         def validate_member_of_group(submission, user)
