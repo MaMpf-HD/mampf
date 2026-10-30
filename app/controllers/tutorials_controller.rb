@@ -47,8 +47,12 @@ class TutorialsController < ApplicationController
     # so the page opens on the first one; nil only while the lecture has none.
     @tutorial = @tutorials.find_by(id: params[:tutorial]) ||
                 current_user.tutorials(@lecture).first || @tutorials.first
-    @participants = params[:view] == "participants" || (@assignment.nil? && @achievement.nil?)
-    @assignment = @achievement = nil if @participants
+    # The group's points over all sheets, as the lecturer's performance tab
+    # shows them; a seminar has no sheets to sum.
+    @performance = params[:view] == "performance" && !@lecture.seminar?
+    @participants = params[:view] == "participants" ||
+                    (@assignment.nil? && @achievement.nil? && !@performance)
+    @assignment = @achievement = nil if @participants || @performance
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
 

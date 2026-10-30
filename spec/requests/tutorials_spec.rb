@@ -203,6 +203,60 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
+  # The lecturer's performance table, for the tutor's own group.
+  describe "GET /lectures/:id/tutorials, the group's performance" do
+    before { sign_in tutor }
+
+    def body
+      Nokogiri::HTML(response.body)
+    end
+
+    def performance_link
+      body.css("a").find { |a| a.text.strip == I18n.t("assessment.tabs.performance") }
+    end
+
+    it "is offered next to the sheet and next to the participants" do
+      create(:assignment, lecture: lecture)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+      expect(performance_link["href"]).to include("view=performance")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
+      expect(performance_link["href"]).to include("view=performance")
+    end
+
+    it "loads the table for the group, with the way back to its participants" do
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "performance" })
+
+      frame = body.at_css("turbo-frame#performance-records-frame")
+      expect(frame["src"]).to eq(lecture_student_performance_records_path(lecture,
+                                                                          tutorial_id: tutorial.id))
+      expect(performance_link).to be_nil
+      expect(body.css("a").map { |a| a.text.strip })
+        .to include(I18n.t("tutorial.participants.button"))
+    end
+
+    it "stays on the performance when the tutor switches to another group" do
+      other = create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: tutor.id,
+                                                   title: "Other group")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "performance" })
+      option = body.css("#tutorial-select option").find { |o| o.text.strip == "Other group" }
+
+      expect(option["value"]).to include("view=performance", "tutorial=#{other.id}")
+    end
+
+    # A seminar's talks are graded one by one; there are no sheets to sum.
+    it "is not offered in a seminar" do
+      lecture.update!(sort: "seminar")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "performance" })
+
+      expect(performance_link).to be_nil
+      expect(body.at_css("turbo-frame#performance-records-frame")).to be_nil
+    end
+  end
+
   # A tutor by address or voucher may have no tutorial of their own yet.
   describe "GET /lectures/:id/tutorials for a tutor without a tutorial" do
     it "says so instead of turning them away" do

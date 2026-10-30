@@ -12,11 +12,18 @@
 </div>
 
 <% participants_path = local_assigns[:participants_path] %>
+<% performance_path = local_assigns[:performance_path] %>
 <div class="col-12 col-md-auto d-flex flex-wrap gap-2">
   <% if participants_path %>
     <%= link_to participants_path, class: 'btn btn-sm btn-outline-primary text-nowrap' do %>
       <i class="bi bi-people me-1" aria-hidden="true"></i>
       <%= t('tutorial.participants.button') %>
+    <% end %>
+  <% end %>
+  <% if performance_path %>
+    <%= link_to performance_path, class: 'btn btn-sm btn-outline-primary text-nowrap' do %>
+      <i class="bi bi-table me-1" aria-hidden="true"></i>
+      <%= t('assessment.tabs.performance') %>
     <% end %>
   <% end %>
   <%= render partial: 'tutorials/mail_buttons',

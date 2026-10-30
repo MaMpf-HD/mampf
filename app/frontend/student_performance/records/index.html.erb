@@ -19,6 +19,11 @@
         <%= hidden_field_tag :dir, params[:dir] %>
       <% end %>
 
+      <%# A tutor's page picks the tutorial above the table. %>
+      <% if @own_tutorial %>
+        <%= hidden_field_tag :tutorial_id, @own_tutorial.id %>
+      <% end %>
+
       <div class="col-12 col-md-4">
         <div class="position-relative">
           <span
@@ -50,38 +55,40 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-4">
-        <select
-          name="tutorial_id"
-          class="form-select"
-          aria-label="<%= t("student_performance.records.index.all_participants") %>"
-          data-action="change->auto-submit-form#submit"
-        >
-          <option value="">
-            <%= t("student_performance.records.index.all_participants") %>
-          </option>
+      <% unless @own_tutorial %>
+        <div class="col-12 col-md-4">
+          <select
+            name="tutorial_id"
+            class="form-select"
+            aria-label="<%= t("student_performance.records.index.all_participants") %>"
+            data-action="change->auto-submit-form#submit"
+          >
+            <option value="">
+              <%= t("student_performance.records.index.all_participants") %>
+            </option>
 
-          <% @lecture.tutorials.each do |tutorial| %>
+            <% @lecture.tutorials.each do |tutorial| %>
+              <option
+                value="<%= tutorial.id %>"
+                <% if params[:tutorial_id] == tutorial.id.to_s %>
+                  selected
+                <% end %>
+              >
+                <%= tutorial.title %>
+              </option>
+            <% end %>
+
             <option
-              value="<%= tutorial.id %>"
-              <% if params[:tutorial_id] == tutorial.id.to_s %>
+              value="none"
+              <% if params[:tutorial_id] == "none" %>
                 selected
               <% end %>
             >
-              <%= tutorial.title %>
+              <%= t("student_performance.records.index.without_tutorial") %>
             </option>
-          <% end %>
-
-          <option
-            value="none"
-            <% if params[:tutorial_id] == "none" %>
-              selected
-            <% end %>
-          >
-            <%= t("student_performance.records.index.without_tutorial") %>
-          </option>
-        </select>
-      </div>
+          </select>
+        </div>
+      <% end %>
     <% end %>
   </div>
 
@@ -297,10 +304,14 @@
           <% @records.each do |record| %>
             <tr id="<%= dom_id(record) %>">
               <td class="text-truncate">
-                <%= link_to record.user.tutorial_name,
-                            lecture_student_performance_record_path(@lecture, record),
-                            title: record.user.tutorial_name,
-                            data: { turbo_frame: "performance-records-frame" } %>
+                <% if @own_tutorial %>
+                  <%= record.user.tutorial_name %>
+                <% else %>
+                  <%= link_to record.user.tutorial_name,
+                              lecture_student_performance_record_path(@lecture, record),
+                              title: record.user.tutorial_name,
+                              data: { turbo_frame: "performance-records-frame" } %>
+                <% end %>
               </td>
 
               <td class="text-end text-nowrap numeric due-points">

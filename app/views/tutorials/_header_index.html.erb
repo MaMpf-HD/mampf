@@ -2,6 +2,8 @@
 <% subject = achievement || assignment %>
 <% participants_path = lecture_tutorials_path(@lecture, params: { view: 'participants',
                                                                   tutorial: tutorial.id }) %>
+<% performance_path = lecture_tutorials_path(@lecture, params: { view: 'performance',
+                                                                 tutorial: tutorial.id }) %>
 <div class="d-flex flex-wrap align-items-end gap-3 m-3">
   <% if assignments.any? || achievements.any? %>
     <div class="col-12 col-md-4">
@@ -40,7 +42,9 @@
 
   <%= render partial: 'tutorials/group_columns',
              locals: { tutorials: tutorials, tutorial: tutorial,
-                       participants_path: (participants_path if subject) } %>
+                       participants_path: (participants_path unless @participants),
+                       performance_path: (performance_path unless @performance ||
+                                                                  @lecture.seminar?) } %>
 </div>
 
 
