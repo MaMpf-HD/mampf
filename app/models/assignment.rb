@@ -4,6 +4,8 @@ class Assignment < ApplicationRecord
   # Prefix the enum methods to avoid colliding with Kernel#test.
   enum :kind, { homework: 0, test: 1 }, prefix: true
 
+  TEST_WEEK_COUNTS = (1..6)
+
   # The form posts "1"/"0"; as strings both would count as true.
   def requires_submission=(value)
     @requires_submission = ActiveModel::Type::Boolean.new.cast(value)
@@ -43,7 +45,11 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
   validate :deadline_not_in_past, if: -> { kind_homework? && deadline_changed? }
-  validate :test_week_not_before_last, if: -> { kind_test? && deadline_changed? }
+  validate :test_week_not_before_last, if: -> { kind_test? && test_week_moved? }
+  validates :test_week_count, inclusion: { in: TEST_WEEK_COUNTS }, if: :kind_test?
+  # A sheet has a deadline and no weeks; a request that gives it some is
+  # refused like a test that names a sheet to read.
+  validates :test_week_count, inclusion: { in: [1] }, unless: :kind_test?
   # Changing kind would reinterpret existing submissions and grading data.
   validate :kind_immutable, if: -> { persisted? && kind_changed? }
   # The form offers a test no sheet to attach; a request that names one
@@ -110,26 +116,44 @@ class Assignment < ApplicationRecord
     Time.zone.now <= deadline
   end
 
-  # A test's deadline is the end of its week; the groups write it during that
-  # week, each in its own session, so marking opens with the week and not
-  # after it. Homework is marked once its deadline and grace period are over.
+  # A test's deadline is the end of its last week; the groups write it during
+  # its weeks, each in its own session, so marking opens with the first week
+  # and not after the last. Homework is marked once its deadline and grace
+  # period are over.
   def grading_open?
-    return Time.zone.now >= deadline.beginning_of_week if kind_test?
+    return Time.zone.now >= test_week.in_time_zone if kind_test?
 
     totally_expired?
   end
 
+  # The Monday a test opens with.
   def test_week
-    return unless deadline
-
-    deadline.beginning_of_week.to_date..deadline.to_date
+    first_test_week(deadline, test_week_count)
   end
 
   # Invalid dates must reach the deadline presence validation, not raise.
+  # The test keeps its number of weeks.
   def test_week=(monday)
-    self.deadline = Time.zone.parse(monday.to_s)&.end_of_week
+    first = Time.zone.parse(monday.to_s)
+    self.deadline = first && test_deadline_from(first)
   rescue ArgumentError
     self.deadline = nil
+  end
+
+  # The test keeps its first week, whichever of the two the form sends first.
+  # The kind may not be set yet, so a sheet is told apart by its count alone:
+  # it stays at 1, and nothing moves.
+  def test_week_count=(count)
+    first = test_week
+    before = test_week_count
+    super
+    self.deadline = test_deadline_from(first) if first && test_week_count != before
+  end
+
+  def test_period
+    return unless deadline
+
+    test_week..deadline.to_date
   end
 
   # Lecture#begin_date falls back to Term.active, which may also be absent.
@@ -147,7 +171,7 @@ class Assignment < ApplicationRecord
       weeks << monday
       monday += 7
     end
-    weeks |= [deadline.to_date.beginning_of_week] if deadline
+    weeks |= [test_week] if deadline
     weeks.sort
   end
 
@@ -278,7 +302,27 @@ class Assignment < ApplicationRecord
     def test_week_not_before_last
       return if deadline.blank?
 
-      errors.add(:test_week, :before_last_week) if deadline.to_date < earliest_test_week
+      errors.add(:test_week, :before_last_week) if test_week < earliest_test_week
+    end
+
+    # Only where a test begins is held to last week. A running test may be
+    # made longer or shorter without moving its start, even weeks into it.
+    def test_week_moved?
+      return true if new_record?
+
+      test_week != first_test_week(deadline_was, test_week_count_was)
+    end
+
+    # The deadline is the end of a test's last week, so its first lies
+    # `count - 1` weeks before.
+    def first_test_week(due, count)
+      return unless due
+
+      due.to_date.beginning_of_week - (count.to_i - 1).weeks
+    end
+
+    def test_deadline_from(first)
+      first.in_time_zone.end_of_week + (test_week_count.to_i - 1).weeks
     end
 
     # Last week's Monday. A test written unannounced can only be set up once

@@ -17,9 +17,16 @@ en:
       heading: 'Tests'
       homework_heading: 'Homework'
       week: 'Test week'
+      week_count: 'Duration'
+      week_count_option:
+        one: '%{count} week'
+        other: '%{count} weeks'
+      period:
+        one: 'Test week'
+        other: 'Test weeks'
       sheet_or_test: 'Sheet or test'
       title_placeholder: 'e.g. Test 1'
-      week_hint: 'Students take the test in their tutorial that week; tutors can enter points from the Monday on. You can add an unannounced test until the end of the following week.'
+      week_hint: 'Students take the test in their tutorial that week, or spread over the weeks after it for a longer duration; tutors can enter points from the Monday of the first week on. You can add an unannounced test until the end of the following week.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
     scheduled_sheet:

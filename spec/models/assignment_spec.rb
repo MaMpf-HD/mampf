@@ -38,8 +38,15 @@ RSpec.describe(Assignment, type: :model) do
     expect(assignment.errors.details[:deadline]).to include(error: :in_past)
   end
 
+  it "is invalid with test weeks" do
+    assignment = FactoryBot.build(:valid_assignment, test_week_count: 2)
+    expect(assignment).to be_invalid
+    expect(assignment.errors[:test_week_count]).to be_present
+  end
+
   # A test is a sheet written in the tutorial: nothing is uploaded, its week
   # is its deadline, and its groups write it on different days of that week.
+  # It may last several weeks; then the last one ends it.
   describe "a test" do
     let(:lecture) { FactoryBot.create(:lecture, submission_grace_period: 60) }
     let(:test) do
@@ -49,9 +56,44 @@ RSpec.describe(Assignment, type: :model) do
 
     it "is due with the end of the week it was given a day of" do
       expect(test.deadline).to eq((1.week.from_now.beginning_of_week + 2.days).end_of_week)
-      expect(test.test_week).to eq(
+      expect(test.test_week).to eq(1.week.from_now.to_date.beginning_of_week)
+      expect(test.test_period).to eq(
         1.week.from_now.beginning_of_week.to_date..(1.week.from_now.end_of_week.to_date)
       )
+    end
+
+    it "lasts its weeks, due with the end of the last" do
+      monday = 2.weeks.from_now.to_date.beginning_of_week
+      test.update!(test_week: monday.iso8601, test_week_count: 3)
+
+      expect(test.test_week).to eq(monday)
+      expect(test.deadline).to be_within(1.second).of((monday + 20).end_of_day)
+      expect(test.test_period).to eq(monday..(monday + 20))
+    end
+
+    # The form sends both, in an order nobody promises.
+    it "comes out the same whichever of week and count is set first" do
+      monday = 2.weeks.from_now.to_date.beginning_of_week
+      week_first = Assignment.new(test_week: monday.iso8601, test_week_count: 2)
+      count_first = Assignment.new(test_week_count: 2, test_week: monday.iso8601)
+
+      expect(week_first.deadline).to eq(count_first.deadline)
+      expect(week_first.test_period).to eq(monday..(monday + 13))
+    end
+
+    it "keeps its first week when its count changes, and its count when its week does" do
+      first = test.test_week
+      test.update!(test_week_count: 2)
+      expect(test.test_week).to eq(first)
+
+      test.update!(test_week: (first + 7).iso8601)
+      expect(test.test_period).to eq((first + 7)..(first + 20))
+    end
+
+    it "lasts at most six weeks" do
+      test.test_week_count = 7
+      expect(test).to be_invalid
+      expect(test.errors[:test_week_count]).to be_present
     end
 
     it "is set for a week by its Monday" do
@@ -135,6 +177,20 @@ RSpec.describe(Assignment, type: :model) do
       expect(test.errors.details[:test_week]).to include(error: :before_last_week)
     end
 
+    # Only its start is held to last week.
+    it "may be made longer weeks after it began, but not moved further back" do
+      running = travel_to(2.weeks.ago) do
+        FactoryBot.create(:valid_assignment, lecture: lecture, kind: :test,
+                                             deadline: Time.zone.now)
+      end
+
+      running.test_week_count = 4
+      expect(running).to be_valid
+
+      running.test_week = (running.test_week - 7).iso8601
+      expect(running).to be_invalid
+    end
+
     it "takes no sheet to read, whatever the form sends" do
       test.medium = FactoryBot.create(:lecture_medium, :with_lecture_by_id,
                                       lecture_id: lecture.id, sort: "Exercise")
@@ -158,6 +214,17 @@ RSpec.describe(Assignment, type: :model) do
       Timecop.travel(test.deadline.beginning_of_week + 1.hour) do
         expect(test.grading_open?).to be(true)
         expect(test.active?).to be(true)
+      end
+    end
+
+    it "opens for marking with its first week when it lasts several" do
+      test.update!(test_week_count: 3)
+
+      Timecop.travel(test.test_week.in_time_zone + 1.hour) do
+        expect(test.grading_open?).to be(true)
+      end
+      Timecop.travel(test.test_week.in_time_zone - 1.hour) do
+        expect(test.grading_open?).to be(false)
       end
     end
 

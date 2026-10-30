@@ -106,4 +106,59 @@ test.describe("a test written in the tutorial", () => {
     await expect(entry.getByText("Test", { exact: true })).toBeVisible();
     await expect(entry.getByText("8", { exact: true })).toBeVisible();
   });
+
+  test("lasts several weeks and stays open until the last is over", async ({
+    factory,
+    timeCop,
+    teacher,
+    tutor,
+    student,
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+    });
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Thursday group",
+    });
+    await factory.create("lecture_bookmark", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+
+    // the teacher keeps the week the form offers and gives the test two of
+    // them; the week's Monday is read off the form, as above
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    await teacher.page.getByRole("link", { name: "Add test" }).click();
+    await dashboard.container.getByLabel("Title").fill("Test 2");
+    const monday = new Date(
+      `${await dashboard.container.getByLabel("Test week").inputValue()}T12:00:00`,
+    );
+    await dashboard.container.getByLabel("Duration").selectOption({ label: "2 weeks" });
+    await dashboard.container.getByRole("button", { name: "Save" }).click();
+    await expect(dashboard.dashboard.getByRole("heading", { name: "Test 2" })).toBeVisible();
+
+    // the student is told both weeks
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByRole("heading", { name: "Test 2" })).toBeVisible();
+    await expect(student.page.getByText("Test weeks:")).toBeVisible();
+
+    // in the second week the test is still ahead of the later groups
+    const day = 24 * 60 * 60 * 1000;
+    await timeCop.travelToDate(new Date(monday.getTime() + 8 * day));
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByRole("heading", { name: "Test 2" })).toBeVisible();
+
+    // once both weeks are over, it moves to the list
+    await timeCop.travelToDate(new Date(monday.getTime() + 15 * day));
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByRole("heading", { name: "Test 2" })).toHaveCount(0);
+    const list = student.page.getByRole("region", { name: "Earlier sheets and tests" });
+    await expect(list.getByRole("group").filter({ hasText: "Test 2" })).toBeVisible();
+  });
 });

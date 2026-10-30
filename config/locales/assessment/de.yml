@@ -17,9 +17,16 @@ de:
       heading: 'Tests'
       homework_heading: 'Hausaufgaben'
       week: 'Testwoche'
+      week_count: 'Dauer'
+      week_count_option:
+        one: '%{count} Woche'
+        other: '%{count} Wochen'
+      period:
+        one: 'Testwoche'
+        other: 'Testwochen'
       sheet_or_test: 'Blatt oder Test'
       title_placeholder: 'z. B. Test 1'
-      week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen; Punkte lassen sich ab Montag eintragen. Einen unangekündigten Test kannst Du bis zum Ende der Folgewoche nachtragen.'
+      week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen, bei längerer Dauer verteilt auf die Wochen danach. Punkte lassen sich ab dem Montag der ersten Woche eintragen. Einen unangekündigten Test kannst Du bis zum Ende der Folgewoche nachtragen.'
       week_label: '%{from}–%{to}'
       badge: 'Test'
     scheduled_sheet:

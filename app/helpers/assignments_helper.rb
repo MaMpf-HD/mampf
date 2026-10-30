@@ -13,7 +13,11 @@ module AssignmentsHelper
   end
 
   def test_week_label(assignment)
-    week_label(assignment.test_week)
+    week_label(assignment.test_period)
+  end
+
+  def test_period_heading(assignment)
+    I18n.t("assessment.test.period", count: assignment.test_week_count)
   end
 
   # A new test is set to this week. Last week, offered for a test set up after
@@ -22,8 +26,15 @@ module AssignmentsHelper
     choices = assignment.test_week_choices.map do |monday|
       [week_label(monday..(monday + 6)), monday.iso8601]
     end
-    selected = (assignment.deadline&.to_date || Time.zone.today).beginning_of_week
+    selected = assignment.test_week || Time.zone.today.beginning_of_week
     options_for_select(choices, selected.iso8601)
+  end
+
+  def test_week_count_options(assignment)
+    choices = Assignment::TEST_WEEK_COUNTS.map do |count|
+      [I18n.t("assessment.test.week_count_option", count: count), count]
+    end
+    options_for_select(choices, assignment.test_week_count)
   end
 
   def test_badge

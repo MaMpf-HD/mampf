@@ -131,7 +131,22 @@ RSpec.describe("Assignments", type: :request) do
           weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
           expect(weeks.pluck("value")).to include(monday.iso8601)
           expect(weeks.first["value"]).to eq(first_week.iso8601)
+          counts = Nokogiri::HTML(response.body)
+                           .css("select[name='assignment[test_week_count]'] option")
+          expect(counts.map(&:text)).to eq(["1 week", "2 weeks", "3 weeks", "4 weeks",
+                                            "5 weeks", "6 weeks"])
+          expect(counts.select { |count| count["selected"] }.map(&:text)).to eq(["1 week"])
           expect(response.body).not_to include("Digital submission via MaMpf")
+        end
+
+        it "creates one lasting several weeks, due with the end of the last" do
+          post(assignments_path,
+               params: { assignment: test_attributes.merge(test_week_count: "2") },
+               as: :turbo_stream)
+
+          test = Assignment.order(:created_at).last
+          expect(test.test_week).to eq(monday)
+          expect(test.deadline).to be_within(1.second).of((monday + 13).end_of_day)
         end
 
         # Without a term, last week opens the list, and the form must not take

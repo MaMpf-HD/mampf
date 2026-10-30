@@ -50,14 +50,29 @@
 
       <% if assessable.kind_test? %>
         <div class="col-md-6">
-          <%= af.label :test_week, t('assessment.test.week'), class: "form-label" %>
+          <div class="row g-2">
+            <div class="col-8">
+              <%= af.label :test_week, t('assessment.test.week'), class: "form-label" %>
 
-          <%= af.select :test_week, test_week_options(assessable), {},
-                        { class: "form-select",
-                          data: {
-                            assessments__dirty_form_target: 'field',
-                            action: 'change->assessments--dirty-form#checkForChanges'
-                          } } %>
+              <%= af.select :test_week, test_week_options(assessable), {},
+                            { class: "form-select",
+                              data: {
+                                assessments__dirty_form_target: 'field',
+                                action: 'change->assessments--dirty-form#checkForChanges'
+                              } } %>
+            </div>
+
+            <div class="col-4">
+              <%= af.label :test_week_count, t('assessment.test.week_count'), class: "form-label" %>
+
+              <%= af.select :test_week_count, test_week_count_options(assessable), {},
+                            { class: "form-select",
+                              data: {
+                                assessments__dirty_form_target: 'field',
+                                action: 'change->assessments--dirty-form#checkForChanges'
+                              } } %>
+            </div>
+          </div>
 
           <div class="form-text text-muted">
             <%= t('assessment.test.week_hint') %>
