@@ -3390,12 +3390,18 @@ de:
       Eigene Tutorien
     other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
-      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Frist kann der Bewertungsprozess erfolgen und die Korrekturen können von den Tutoren hochgeladen werden.
+      Bis %{deadline} läuft noch die Abgabefrist. Paketdownload, Korrekturen
+      und Punkte gibt es erst, wenn die Abgaben feststehen, ab
+      %{friendly_deadline}.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
       sind (was jedoch zur Einstufung der entsprechenden Abgaben als
-      verspätet führt).
+      verspätet führt). Paketdownload, Korrekturen und Punkte gibt es erst
+      danach.
+    hand_ins_not_final: >
+      Bis %{time} läuft noch die Kulanzfrist. Erst danach stehen die Abgaben
+      fest.
     certificate_check: Quiz-Zertifikat validieren
     certificate_check_info: >
       Hier kannst Du Zertifikats-Codes überprüfen, die NutzerInnen nach dem

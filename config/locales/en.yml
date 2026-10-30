@@ -3177,11 +3177,16 @@ en:
       Own Tutorials
     other_tutorials: 'Other Tutorials'
     deadline_warning: >
-      The deadline for submission is still %{deadline}. Only after the deadline, the grading process can take place and the corrections can be uploaded by the tutors.
+      The deadline for submission is still %{deadline}. Bulk download,
+      corrections and points open once the hand-ins are final, from
+      %{friendly_deadline}.
     grace_period_warning: >
       The grace period lasts until %{friendly_deadline}. Within the grace
-      period, submisions and retrospective changes by the students are possible
-      (the corresponding submissions will be marked as late.)
+      period, submissions and retrospective changes by the students are possible
+      (the corresponding submissions will be marked as late.) Bulk download,
+      corrections and points open after it.
+    hand_ins_not_final: >
+      The grace period runs until %{time}. Only then are the hand-ins final.
     certificate_check: >
       Validate Quiz Certificate
     certificate_check_info: >

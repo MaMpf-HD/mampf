@@ -64,7 +64,9 @@
   <div class="alert alert-danger m-3">
     <strong><%= t('basics.attention') %>:</strong>
     <% if assignment.active? %>
-      <%= t('tutorial.deadline_warning', deadline: l(assignment.deadline, format: :short)) %>
+      <%= t('tutorial.deadline_warning',
+            deadline: l(assignment.deadline, format: :short),
+            friendly_deadline: l(assignment.friendly_deadline, format: :short)) %>
     <% else %>
       <%= t('tutorial.grace_period_warning', friendly_deadline: l(assignment.friendly_deadline, format: :short)) %>
     <% end %>

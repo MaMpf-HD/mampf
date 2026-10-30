@@ -64,8 +64,11 @@ class Submission < ApplicationRecord
     correction.blank? && !marked?
   end
 
+  # A team of one sits in another tutorial when its member moved after
+  # handing in; its tutor hands it over like any other. Until the grace
+  # period is over, a join or a leave still places the team, not a tutor.
   def hand_over_targets
-    return Tutorial.none unless users.many? && movable?
+    return Tutorial.none unless movable? && assignment.totally_expired?
 
     Tutorial.where(id: member_tutorial_ids - [tutorial_id]).order(:title)
   end
@@ -73,7 +76,12 @@ class Submission < ApplicationRecord
   # A mixed team goes to the member tutorial with the fewest hand-ins, so the
   # uploader does not choose the tutor. A tutor's hand-over holds while a
   # member sits in that tutorial, even across a leave and a rejoin.
+  # Once the grace period is over a team stays where it is: its tutor may be
+  # marking it from a bulk download already, which leaves no trace here.
+  # Only a hand-over moves it then.
   def place_team!(tutorials_before)
+    return if assignment.totally_expired?
+
     with_team_locked do
       next unless movable?
 
