@@ -78,7 +78,8 @@ de:
       left: 'Ausgetreten'
     left:
       hint: >-
-        Wer die Teilnahme beendet hat oder aus der Veranstaltung entfernt wurde.
+        Studierende, die die Teilnahme beendet haben oder aus der Veranstaltung
+        entfernt wurden.
         Bewertungen und Abgaben bleiben gespeichert; „Wieder aufnehmen“ trägt die
         Person wieder in die Veranstaltung ein.
       column: 'Ausgetreten'
