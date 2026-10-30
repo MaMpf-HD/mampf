@@ -66,9 +66,14 @@
             Always shown, since keeping the groups closed only dismisses the
             modal and sends nothing a confirmation could hang on.
           %>
+
           <% if campaign.registerables.any? { |group| Rosters::LectureLeave.held_by_mode?(group) } %>
             <div class="alert alert-warning small mt-3 mb-0" role="note">
-              <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
+              <i
+                class="bi bi-exclamation-triangle-fill me-1"
+                aria-hidden="true"
+              ></i>
+
               <%= t("registration.campaign.self_service.leave_warning_html") %>
             </div>
           <% end %>
