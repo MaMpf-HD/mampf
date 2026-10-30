@@ -178,6 +178,16 @@ class RosterParticipantsComponent < ViewComponent::Base
     t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
   end
 
+  # Removing someone with a result on one of the lecture's talks or exams is
+  # refused (see Rosters::MaintenanceService#ensure_no_grading_data!), so
+  # their button names the result instead of asking to go ahead.
+  def kick_blocked_by(user)
+    titles = result_titles_by_user[user.id]
+    return if titles.blank?
+
+    t("roster.tooltips.kick_blocked_by_result", titles: titles.to_sentence)
+  end
+
   # Returns the HTML for the pagination navigation (top and bottom)
   # Uses Pagy with custom querify logic to preserve tabs and filters.
   def pagination_nav
@@ -223,6 +233,23 @@ class RosterParticipantsComponent < ViewComponent::Base
     def exam_titles_by_user
       @exam_titles_by_user ||=
         ExamRosterEntry.exam_titles_by_user(@lecture, participants.map(&:user_id))
+    end
+
+    # The talks and exams each person on the page has a result on, counted
+    # as the removal counts them, in one query.
+    def result_titles_by_user
+      @result_titles_by_user ||= begin
+        assessments = Assessment::Assessment.where(assessable: @lecture.talks)
+        assessments = assessments.or(Assessment::Assessment.where(assessable: @lecture.exams))
+        Assessment::Participation.with_grading_data
+                                 .where(assessment: assessments,
+                                        user_id: participants.map(&:user_id))
+                                 .includes(assessment: :assessable)
+                                 .group_by(&:user_id)
+                                 .transform_values do |rows|
+                                   rows.map { |row| row.assessment.assessable.title }.uniq
+                                 end
+      end
     end
 
     def section_kwargs

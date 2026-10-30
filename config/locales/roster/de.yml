@@ -75,9 +75,10 @@ de:
       left: 'Ausgetreten'
     left:
       hint: >-
-        Wer die Veranstaltung verlassen hat oder aus ihr entfernt wurde.
-        Bewertungen, Abgaben und Zulassung bleiben gespeichert; „Wieder aufnehmen“ trägt
-        die Person über eine Gruppe wieder in die Veranstaltung ein.
+        Studierende, die die Teilnahme beendet haben oder aus der Veranstaltung
+        entfernt wurden. Bewertungen, Abgaben und Zulassung bleiben gespeichert;
+        „Wieder aufnehmen“ trägt die Person über eine Gruppe wieder in die
+        Veranstaltung ein.
       column: 'Ausgetreten'
       by_self: 'Selbst ausgetreten am %{date}'
       by_staff: 'Entfernt am %{date} von %{name}'
@@ -382,6 +383,7 @@ de:
       Abschluss der Verfahren möglich.'
     tooltips:
       kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen"
+      kick_blocked_by_result: 'Hat ein Ergebnis in %{titles}. Lösche es zuerst, um die Person aus der Veranstaltung zu entfernen.'
       kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
       locked_manage: "Liste ist während aktiver Anmeldeverfahren gesperrt"
