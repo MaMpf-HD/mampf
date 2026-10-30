@@ -550,6 +550,18 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       expect(render_with(1).css("[data-controller=add-member-menu]").size).to eq(1)
     end
 
+    # The server would refuse anybody more; the menu says why instead.
+    it "says the team is full instead of offering names" do
+      submission
+      assignment.lecture.update!(submission_max_team_size: 1)
+      html = render_with(2)
+
+      expect(html.at_css("[data-controller=add-member-menu]").text)
+        .to include(I18n.t("assessment.task_points.team_full", max: 1))
+      expect(html.css("[data-controller=add-member-menu] button.dropdown-item")).to be_empty
+      expect(html.css("input[type=search]")).to be_empty
+    end
+
     it "offers no menu without names where teams stay within one tutorial" do
       expect(render_with(0).css("[data-controller=add-member-menu]")).to be_empty
     end
@@ -567,7 +579,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                       .add_member_candidates_submission_path(submission,
                                                              grading_scope_type: "tutorial"))
         expect(html.css("input[type=search]").size).to eq(1)
-        expect(html.text).to include(I18n.t("assessment.task_points.add_member_search_elsewhere"))
+        expect(html.text).to include(I18n.t("assessment.task_points.add_member_search_elsewhere",
+                                            min: Submission::MEMBER_SEARCH_MIN_LENGTH))
         expect(html.css("#add-member-elsewhere-#{submission.id}").size).to eq(1)
       end
 

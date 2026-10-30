@@ -3088,7 +3088,6 @@ en:
       cannot join anymore.
     already_rejected: >
       This submission was rejected, so it can no longer be joined.
-    late: late submission
     rejected: rejected
     bulk_download_submissions: Bulk download of submissions
     bulk_download_corrections: Bulk download of corrections

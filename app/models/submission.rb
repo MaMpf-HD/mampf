@@ -75,8 +75,9 @@ class Submission < ApplicationRecord
 
   # The candidates from the lecture's other tutorials whose shown name
   # matches, on no team for the sheet yet; the group's own are on the page
-  # already. A shorter query would match much of a large lecture. Somebody
-  # marked on a row of their own is done with the sheet.
+  # already, also anybody who moved away and left their row with it. A shorter
+  # query would match much of a large lecture. Somebody marked on a row of
+  # their own is done with the sheet.
   def member_candidates_elsewhere(query)
     return User.none if query.length < MEMBER_SEARCH_MIN_LENGTH
 
@@ -84,6 +85,7 @@ class Submission < ApplicationRecord
     marked = Assessment::Participation.marked.where(assessment: assessment)
     member_candidates
       .where.not(id: TutorialMembership.where(tutorial_id: tutorial_id).select(:user_id))
+      .where.not(id: assignment.non_submitters_in_tutorial(tutorial).select(:id))
       .where.not(id: joined.select(:user_id))
       .where.not(id: marked.select(:user_id))
       .where("#{User::SHOWN_NAME_SQL} ILIKE :q",

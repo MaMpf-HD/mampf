@@ -1019,6 +1019,19 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(found).to eq(["Clara Free Tuesday group"])
     end
 
+    # After the deadline the group's list holds whoever left their row with it.
+    it "leaves out who moved away and is listed with the group already" do
+      moved = member("Clara Moved", of: tutorial2)
+      member("Clara Free", of: tutorial2)
+      Timecop.travel(3.hours.from_now) do
+        create(:assessment_participation, assessment: assessment, user: moved,
+                                          tutorial: tutorial)
+        search("clara")
+      end
+
+      expect(found).to eq(["Clara Free Tuesday group"])
+    end
+
     it "leaves out anyone marked on a row of their own" do
       marked = member("Clara Marked", of: tutorial2)
       member("Clara Free", of: tutorial2)

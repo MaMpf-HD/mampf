@@ -64,7 +64,7 @@
               <i class="bi bi-arrow-left-right"></i>
             </button>
 
-            <div class="dropdown-menu" style="max-width: 18rem;">
+            <div class="dropdown-menu team-menu">
               <h6 class="dropdown-header text-wrap fw-normal">
                 <%= t('assessment.task_points.hand_over_hint') %>
               </h6>
@@ -108,9 +108,14 @@
               <i class="bi bi-person-plus"></i>
             </button>
 
-            <div class="dropdown-menu add-member-menu">
+            <div class="dropdown-menu team-menu add-member-menu">
               <h6 class="dropdown-header text-wrap fw-normal">
-                <%= t('assessment.task_points.add_member_hint') %>
+                <% if team_full? %>
+                  <%= t('assessment.task_points.team_full',
+                        max: @lecture.submission_max_team_size) %>
+                <% else %>
+                  <%= t('assessment.task_points.add_member_hint') %>
+                <% end %>
               </h6>
 
               <% if member_search? %>
@@ -128,7 +133,8 @@
 
                   <% if search_elsewhere? %>
                     <div class="form-text">
-                      <%= t('assessment.task_points.add_member_search_elsewhere') %>
+                      <%= t('assessment.task_points.add_member_search_elsewhere',
+                            min: Submission::MEMBER_SEARCH_MIN_LENGTH) %>
                     </div>
                   <% end %>
                 </div>
@@ -187,7 +193,7 @@
               <i class="bi bi-person-dash"></i>
             </button>
 
-            <div class="dropdown-menu" style="max-width: 18rem;">
+            <div class="dropdown-menu team-menu">
               <h6 class="dropdown-header text-wrap fw-normal">
                 <%= t('assessment.task_points.remove_member_hint') %>
               </h6>

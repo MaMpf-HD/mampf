@@ -65,7 +65,7 @@ class SubmissionRowComponent < ViewComponent::Base
   # for this sheet. A hand-in rejected as late takes nobody; it counts as none.
   # Somebody marked on a row of their own is done with the sheet.
   def addable_members
-    return [] unless may_add_members?
+    return [] unless may_add_members? && !team_full?
 
     @addable_members ||=
       @assignment.non_submitters_in_tutorial(@tutorial)
@@ -81,11 +81,18 @@ class SubmissionRowComponent < ViewComponent::Base
   # team too; the menu asks for them by name, see
   # Assessment::TaskPointsController#add_member_candidates.
   def search_elsewhere?
-    may_add_members? && @lecture.cross_tutorial_teams?
+    may_add_members? && !team_full? && @lecture.cross_tutorial_teams?
   end
 
+  # A full team still opens the menu, which says so rather than offering
+  # names the server would refuse.
   def add_member_menu?
-    addable_members.any? || search_elsewhere?
+    addable_members.any? || search_elsewhere? || (may_add_members? && team_full?)
+  end
+
+  def team_full?
+    max = @lecture.submission_max_team_size
+    max.present? && @submission.users.size >= max
   end
 
   def add_member_candidates_url
