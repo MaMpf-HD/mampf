@@ -543,6 +543,12 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       end
     end
 
+    it "offers the menu on a rejected hand-in that a moved deadline made in time" do
+      submission.update!(accepted: false)
+
+      expect(render_with(1).css("[data-controller=add-member-menu]").size).to eq(1)
+    end
+
     it "offers no menu without names where teams stay within one tutorial" do
       expect(render_with(0).css("[data-controller=add-member-menu]")).to be_empty
     end

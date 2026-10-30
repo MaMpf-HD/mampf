@@ -91,6 +91,13 @@ class Submission < ApplicationRecord
       .by_last_name
   end
 
+  # Whether a tutor may put somebody on the team: not while the hand-in is
+  # rejected as late. A deadline moved past it since makes it count again,
+  # as it does for marking.
+  def takes_members?
+    !(too_late? && accepted == false)
+  end
+
   # Once a team has points or a correction, the tutorial that marked it
   # keeps it.
   def movable?

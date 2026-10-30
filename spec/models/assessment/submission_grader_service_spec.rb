@@ -300,12 +300,22 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
     end
 
     it "puts nobody on a rejected hand-in" do
-      team.update!(accepted: false)
+      team.update!(accepted: false, last_modification_by_users_at: assignment.deadline + 1.hour)
 
       expect { described_class.add_member!(team, newcomer, scorer) }
         .to raise_error(described_class::SubmissionGraderError,
                         I18n.t("assessment.task_points.team_rejected"))
       expect(team.reload.users).not_to include(newcomer)
+    end
+
+    # Rejected as late, then the deadline moved past it: the hand-in counts
+    # again, as it does for marking.
+    it "puts somebody on a rejected hand-in that a moved deadline made in time" do
+      team.update!(accepted: false, last_modification_by_users_at: assignment.deadline - 1.hour)
+
+      described_class.add_member!(team, newcomer, scorer)
+
+      expect(team.reload.users).to include(newcomer)
     end
 
     # A blank row seeded elsewhere becomes the upload's, as every row behind

@@ -269,7 +269,7 @@ module Assessment
 
         # A rejected hand-in counts as none; nobody is put on it.
         def validate_team_takes_members(submission)
-          return unless submission.accepted == false
+          return if submission.takes_members?
 
           I18n.t("assessment.task_points.team_rejected")
         end

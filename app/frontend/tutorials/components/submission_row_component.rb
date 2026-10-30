@@ -73,7 +73,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def takes_members?
-    can_enter_points? && grading_enabled? && @submission.accepted != false
+    can_enter_points? && grading_enabled? && @submission.takes_members?
   end
 
   # Where teams may span tutorials, members of the others can be put on the
