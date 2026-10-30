@@ -3008,6 +3008,10 @@ de:
   submission:
     hub:
       page_title: "Abgaben - %{lecture}"
+      tutorial_line_html:
+        zero: "Du bist im Tutorium %{tutorial}."
+        one: "Du bist im Tutorium %{tutorial} bei %{tutor}, per E-Mail erreichbar unter %{email}."
+        other: "Du bist im Tutorium %{tutorial} bei %{tutors}."
       heading: Frühere Blätter
       heading_with_tests: Frühere Blätter und Tests
       standing:
