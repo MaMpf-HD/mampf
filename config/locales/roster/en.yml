@@ -75,8 +75,9 @@ en:
       left: 'Left'
     left:
       hint: >-
-        People who left the course or were removed from it. Their results and
-        hand-ins stay recorded; “Readmit” puts them back into the course.
+        Students who ended their participation or were removed from the lecture.
+        Their results and hand-ins stay recorded; “Readmit” puts them back into
+        the lecture.
       column: 'Left'
       by_self: 'Left on %{date}'
       by_staff: 'Removed on %{date} by %{name}'
@@ -371,6 +372,7 @@ en:
     empty_hint: 'Use registration processes to enroll participants. While a registration process is active, manual assignment to groups is locked.'
     tooltips:
       kick_from_lecture: "Removes lecture enrollment and all memberships in tutorials and groups"
+      kick_blocked_by_result: 'Has a result in %{titles}. Delete it first to remove this person from the lecture.'
       kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
       locked_manage: "Roster is locked during active registration process"

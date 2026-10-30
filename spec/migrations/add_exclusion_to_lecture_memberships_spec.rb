@@ -5,7 +5,8 @@ RSpec.describe(AddExclusionToLectureMemberships) do
   it "refuses to go down while someone has left a lecture" do
     create(:lecture_membership).exclude!
 
-    expect { described_class.new.down }.to raise_error(ActiveRecord::IrreversibleMigration)
+    expect { ActiveRecord::Migration.suppress_messages { described_class.new.migrate(:down) } }
+      .to raise_error(ActiveRecord::IrreversibleMigration)
     expect(LectureMembership.connection.column_exists?(:lecture_memberships, :excluded_at))
       .to be(true)
   end

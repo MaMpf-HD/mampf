@@ -466,6 +466,26 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
             .to include(I18n.t("assessment.grading_tutorial.left_lecture")), scope.class.name
         end
       end
+
+      # Points entered and taken back again leave a task point of nothing
+      # behind: the row is blank, and no group would hold it once listed.
+      it "lists a row by its points, not by task points of nothing" do
+        task = create(:assessment_task, assessment: assessment)
+        { "Mia Roth" => nil, "Ben Ott" => 3 }.each do |name, points|
+          former = create(:confirmed_user, name_in_tutorials: name)
+          create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+          row = create(:assessment_participation, assessment: assessment, user: former,
+                                                  tutorial: tutorial)
+          create(:assessment_task_point, assessment_participation: row, task: task,
+                                         points: points)
+        end
+
+        text = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: tutorial)).text
+
+        expect(text).to include("Ben Ott")
+        expect(text).not_to include("Mia Roth")
+      end
     end
 
     context "with somebody who left the lecture" do
