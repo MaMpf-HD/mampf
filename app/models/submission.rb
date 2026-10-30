@@ -7,6 +7,8 @@ class Submission < ApplicationRecord
 
   self.implicit_order_column = "created_at"
 
+  MEMBER_SEARCH_MIN_LENGTH = 2
+
   include SubmissionUploader[:manuscript]
   include CorrectionUploader[:correction]
 
@@ -56,6 +58,46 @@ class Submission < ApplicationRecord
   def member_tutorial_ids
     TutorialMembership.where(user_id: user_ids, lecture_id: assignment.lecture_id)
                       .distinct.pluck(:tutorial_id)
+  end
+
+  # Whom a tutor may put on the team: a member of its tutorial, or of any of
+  # the lecture's tutorials where teams may span them, as a join by code
+  # allows.
+  def member_candidates
+    lecture = assignment.lecture
+    memberships = if lecture.cross_tutorial_teams?
+      TutorialMembership.where(lecture_id: lecture.id)
+    else
+      TutorialMembership.where(tutorial_id: tutorial_id)
+    end
+    User.where(id: memberships.select(:user_id))
+  end
+
+  # The candidates from the lecture's other tutorials whose shown name
+  # matches, on no team for the sheet yet; the group's own are on the page
+  # already, also anybody who moved away and left their row with it. A shorter
+  # query would match much of a large lecture. Somebody marked on a row of
+  # their own is done with the sheet.
+  def member_candidates_elsewhere(query)
+    return User.none if query.length < MEMBER_SEARCH_MIN_LENGTH
+
+    joined = UserSubmissionJoin.where(submission: assignment.submissions)
+    marked = Assessment::Participation.marked.where(assessment: assessment)
+    member_candidates
+      .where.not(id: TutorialMembership.where(tutorial_id: tutorial_id).select(:user_id))
+      .where.not(id: assignment.non_submitters_in_tutorial(tutorial).select(:id))
+      .where.not(id: joined.select(:user_id))
+      .where.not(id: marked.select(:user_id))
+      .where("#{User::SHOWN_NAME_SQL} ILIKE :q",
+             q: "%#{User.sanitize_sql_like(query)}%")
+      .by_last_name
+  end
+
+  # Whether a tutor may put somebody on the team: not while the hand-in is
+  # rejected as late. A deadline moved past it since makes it count again,
+  # as it does for marking.
+  def takes_members?
+    !(too_late? && accepted == false)
   end
 
   # Once a team has points or a correction, the tutorial that marked it

@@ -283,16 +283,34 @@ de:
       participation_id_has_no_assignment: 'Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe'
       participation_has_task_points: 'Für diese Teilnahme wurden bereits Punkte eingetragen, daher kann sie nicht gelöscht werden.'
       not_in_group: 'Nur ein Mitglied der Gruppe kann in eines ihrer Teams aufgenommen werden.'
+      not_in_any_group: 'Nur ein Mitglied eines Tutoriums der Veranstaltung kann in ein Team aufgenommen werden.'
       team_rejected: 'Eine abgelehnte Abgabe nimmt niemanden auf.'
+      team_full: 'Das Team ist voll: höchstens %{max} pro Team.'
       joined_late: 'Nach der Deadline zum Team gekommen, am %{time}.'
+      added_by_tutor: 'Von %{tutor} ins Team aufgenommen, am %{time}.'
+      late_submission: 'Verspätete Abgabe, hochgeladen am %{time}.'
       marked_on_own: >-
         %{name} ist für dieses Blatt schon auf einer eigenen Zeile bewertet.
         Lösche das zuerst.
       member_added: '%{name} ist jetzt im Team.'
+      member_removed: '%{name} ist nicht mehr im Team.'
+      member_removed_team_moved: >-
+        %{name} ist nicht mehr im Team. Das Team wird jetzt in %{tutorial}
+        korrigiert.
+      remove_member: 'Jemanden wieder aus diesem Team nehmen'
+      remove_member_hint: >-
+        Für jemanden, der versehentlich aufgenommen wurde. Die Person verliert
+        die Punkte des Teams und bekommt eine E-Mail.
+      not_removable: '%{name} kann nicht aus diesem Team genommen werden.'
+      last_member: 'Die letzte Person in einem Team kann nicht herausgenommen werden.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
       add_member_search: 'Nach Namen suchen'
       add_member_no_match: 'Niemand mit diesem Namen ist ohne Team.'
+      add_member_search_elsewhere: 'Ab %{min} Buchstaben erscheinen auch Personen aus anderen Tutorien.'
+      add_member_elsewhere: 'Andere Tutorien'
+      add_member_elsewhere_more: 'Es gibt weitere Treffer. Tippe mehr vom Namen.'
+      add_member_search_failed: 'Die anderen Tutorien konnten nicht durchsucht werden. Versuch es noch einmal.'
       hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
       hand_over_hint: >-
         Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib

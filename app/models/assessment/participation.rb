@@ -35,6 +35,14 @@ module Assessment
            .or(where(id: TaskPoint.select(:assessment_participation_id)))
     }
 
+    # The rows Assessment#marked? calls marked, as one query.
+    scope :marked, lambda {
+      where.not(status: :pending)
+           .or(where.not(grade_numeric: nil))
+           .or(where.not(grade_text: [nil, ""]))
+           .or(where(id: TaskPoint.where.not(points: nil).select(:assessment_participation_id)))
+    }
+
     after_commit :recompute_performance_record,
                  if: :should_recompute_performance_record?
 

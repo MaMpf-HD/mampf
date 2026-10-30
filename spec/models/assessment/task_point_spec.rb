@@ -106,6 +106,13 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
         .to(task_point.points)
     end
 
+    it "leaves no total once the last task point is gone" do
+      task_point.destroy!
+
+      expect(participation.reload.points_total).to be_nil
+      expect(Assessment::Participation.with_grading_data).not_to include(participation)
+    end
+
     it "refreshes points_total even when participation validations are closed" do
       # rubocop:disable Rails/SkipsModelValidations
       participation.update_column(:points_total, nil)

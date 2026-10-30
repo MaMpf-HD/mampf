@@ -18,35 +18,27 @@
       <div>
         <% @submission.users.each_with_index do |user, index| %>
           <div>
-            <%= user.tutorial_name %>
-            <% movement = movement_info_for_user(user) %>
+            <%= name_with_marks(user) do %>
+              <% info = member_info(user) %>
 
-            <% if movement %>
-              <i
-                class="bi bi-info-circle ms-1 text-secondary"
-                role="img"
-                title="<%= movement %>"
-                aria-label="<%= movement %>"
-              ></i>
-            <% end %>
+              <% if info %>
+                <i
+                  class="bi bi-info-circle ms-1 text-secondary"
+                  role="img"
+                  title="<%= info %>"
+                  aria-label="<%= info %>"
+                ></i>
+              <% end %>
 
-            <% if joined_late?(user) %>
-              <i
-                class="bi bi-box-arrow-in-right ms-1 text-secondary"
-                role="img"
-                title="<%= joined_late_info(user) %>"
-                aria-label="<%= joined_late_info(user) %>"
-              ></i>
-            <% end %>
-
-            <%# The hand-in is late as a whole. %>
-            <% if index.zero? && @submission.too_late? %>
-              <i
-                class="bi bi-exclamation-triangle-fill ms-1 text-warning-emphasis"
-                role="img"
-                title="<%= late_submission_info(@submission, @submission.tutorial) %>"
-                aria-label="<%= late_submission_info(@submission, @submission.tutorial) %>"
-              ></i>
+              <%# The hand-in is late as a whole. %>
+              <% if index.zero? && @submission.too_late? %>
+                <i
+                  class="bi bi-exclamation-triangle-fill ms-1 text-warning-emphasis"
+                  role="img"
+                  title="<%= late_submission_info(@submission, @submission.tutorial) %>"
+                  aria-label="<%= late_submission_info(@submission, @submission.tutorial) %>"
+                ></i>
+              <% end %>
             <% end %>
           </div>
         <% end %>
@@ -72,7 +64,7 @@
               <i class="bi bi-arrow-left-right"></i>
             </button>
 
-            <div class="dropdown-menu" style="max-width: 18rem;">
+            <div class="dropdown-menu team-menu">
               <h6 class="dropdown-header text-wrap fw-normal">
                 <%= t('assessment.task_points.hand_over_hint') %>
               </h6>
@@ -90,7 +82,7 @@
           </div>
         <% end %>
 
-        <% if addable_members.any? %>
+        <% if add_member_menu? %>
           <%#
             Fixed, or the scrolling table would cut the menu at the pinned
             column's edge. One item per name: a click adds, and the arrow keys
@@ -101,6 +93,8 @@
             data-controller="add-member-menu"
             data-action="shown.bs.dropdown->add-member-menu#open
                          hidden.bs.dropdown->add-member-menu#close"
+            data-add-member-menu-url-value="<%= add_member_candidates_url %>"
+            data-add-member-menu-min-length-value="<%= Submission::MEMBER_SEARCH_MIN_LENGTH %>"
           >
             <button
               type="button"
@@ -114,9 +108,14 @@
               <i class="bi bi-person-plus"></i>
             </button>
 
-            <div class="dropdown-menu add-member-menu">
+            <div class="dropdown-menu team-menu add-member-menu">
               <h6 class="dropdown-header text-wrap fw-normal">
-                <%= t('assessment.task_points.add_member_hint') %>
+                <% if team_full? %>
+                  <%= t('assessment.task_points.team_full',
+                        max: @lecture.submission_max_team_size) %>
+                <% else %>
+                  <%= t('assessment.task_points.add_member_hint') %>
+                <% end %>
               </h6>
 
               <% if member_search? %>
@@ -131,6 +130,13 @@
                     data-action="input->add-member-menu#filter
                                  keydown.down->add-member-menu#enterList"
                   >
+
+                  <% if search_elsewhere? %>
+                    <div class="form-text">
+                      <%= t('assessment.task_points.add_member_search_elsewhere',
+                            min: Submission::MEMBER_SEARCH_MIN_LENGTH) %>
+                    </div>
+                  <% end %>
                 </div>
               <% end %>
 
@@ -147,6 +153,10 @@
                                                 add_member_menu_name: member.tutorial_name } } %>
                 <% end %>
 
+                <% if search_elsewhere? %>
+                  <div id="add-member-elsewhere-<%= @submission.id %>"></div>
+                <% end %>
+
                 <p
                   class="dropdown-item-text small text-secondary mb-0"
                   data-add-member-menu-target="empty"
@@ -154,7 +164,49 @@
                 >
                   <%= t('assessment.task_points.add_member_no_match') %>
                 </p>
+
+                <% if search_elsewhere? %>
+                  <p
+                    class="dropdown-item-text small text-secondary mb-0"
+                    data-add-member-menu-target="failed"
+                    hidden
+                  >
+                    <%= t('assessment.task_points.add_member_search_failed') %>
+                  </p>
+                <% end %>
               </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if removable_members.any? %>
+          <div class="dropdown ms-2">
+            <button
+              type="button"
+              class="btn btn-link p-0 text-secondary"
+              data-bs-toggle="dropdown"
+              data-bs-popper-config='{"strategy": "fixed"}'
+              aria-expanded="false"
+              title="<%= t('assessment.task_points.remove_member') %>"
+              aria-label="<%= t('assessment.task_points.remove_member') %>"
+            >
+              <i class="bi bi-person-dash"></i>
+            </button>
+
+            <div class="dropdown-menu team-menu">
+              <h6 class="dropdown-header text-wrap fw-normal">
+                <%= t('assessment.task_points.remove_member_hint') %>
+              </h6>
+
+              <% removable_members.each do |member| %>
+                <%= button_to member.tutorial_name,
+                              remove_member_submission_path(@submission),
+                              method: :patch,
+                              params: { user_id: member.id,
+                                        grading_scope_type: grading_scope_type },
+                              class: "dropdown-item text-wrap",
+                              form: { data: { turbo: true } } %>
+              <% end %>
             </div>
           </div>
         <% end %>

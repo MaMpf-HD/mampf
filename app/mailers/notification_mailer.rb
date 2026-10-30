@@ -13,6 +13,7 @@ class NotificationMailer < ApplicationMailer
                        :submission_upload_removal_email,
                        :submission_join_email,
                        :submission_added_email,
+                       :submission_removed_email,
                        :submission_leave_email,
                        :correction_upload_email,
                        :submission_acceptance_email,
@@ -23,6 +24,7 @@ class NotificationMailer < ApplicationMailer
   before_action :set_user,
                 only: [:submission_join_email,
                        :submission_added_email,
+                       :submission_removed_email,
                        :submission_leave_email]
 
   def medium_email
@@ -98,6 +100,15 @@ class NotificationMailer < ApplicationMailer
     mail(from: @sender,
          to: @recipient.email,
          subject: t("mailer.submission_added_subject",
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  # To the person a tutor took off the team again; `@user` is the tutor.
+  def submission_removed_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t("mailer.submission_removed_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end
