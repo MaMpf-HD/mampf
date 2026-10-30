@@ -10,6 +10,9 @@
 <%= vite_stylesheet_tag "application.scss",
                         media: "all",
                         "data-turbo-track": "reload" %>
+<%# In the head, which a Turbo visit keeps: loaded with the navbar in the body,
+    it went and came back on every visit, and the icons flashed dark. %>
+<%= vite_stylesheet_tag "styles/navbar.scss", "data-turbo-track": "reload" %>
 
 <!-- For old sprockets assets (commontator, thredded, exception_handler) -->
 <%= stylesheet_link_tag "sprockets" , media: "all" %>
