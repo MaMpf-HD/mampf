@@ -109,9 +109,9 @@ module Assessment
       end
 
       # Takes somebody a tutor put on the team off it again: the join goes, and
-      # the row is left as before the addition - nothing handed in, no points,
-      # held by the person's own group. Who joined with the code stays. The
-      # person hears of it; the team hears of a leave as it always does.
+      # the row is left as before the addition, held by the person's own group.
+      # Who joined with the code stays. The person hears of it; the team hears
+      # of a leave as it always does.
       def remove_member!(submission, user, scorer)
         Participation.transaction do
           submission.lock!
@@ -121,7 +121,7 @@ module Assessment
           raise_if_errors!(validate_not_last_member(submission))
           tutorials_before = submission.member_tutorial_ids
           join.destroy!
-          clear_team_row!(submission.assignment.assessment, user)
+          clear_team_row!(submission.assignment.assessment, user, join.created_at)
           submission.reload.place_team!(tutorials_before)
         end
         tell_of_removal(submission, user, scorer)
@@ -233,15 +233,18 @@ module Assessment
           end
         end
 
-        # Nothing on the row was the person's own: the team's points and its
-        # hand-in stamp go, and the group they sit in takes the row back.
-        def clear_team_row!(assessment, user)
+        # The team's points go, and so does the hand-in stamp the addition set.
+        # A stamp from before it, a paper hand-in, was the person's own and
+        # stays; a stamped row does not follow the membership by itself, so the
+        # group the person sits in is set here.
+        def clear_team_row!(assessment, user, added_at)
           row = lock_own_row(assessment, user)
           return unless row
 
+          own_stamp = row.submitted_at if row.submitted_at&.before?(added_at)
           row.task_points.destroy_all
-          row.update!(submitted_at: nil, status: :pending, graded_at: nil, grader: nil)
-          ParticipationIndex.follow_membership(row)
+          row.update!(submitted_at: own_stamp, status: :pending, graded_at: nil, grader: nil,
+                      tutorial_id: Participation.tutorial_for(user, assessment.lecture))
         end
 
         def validate_added_by_tutor(join, user)

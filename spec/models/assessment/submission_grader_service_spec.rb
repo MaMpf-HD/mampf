@@ -392,6 +392,21 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(team.reload.tutorial).to eq(tutorial)
     end
 
+    it "keeps a paper hand-in the person had before, in their own group" do
+      lecture.update!(cross_tutorial_teams: true)
+      elsewhere = FactoryBot.create(:tutorial, lecture: lecture)
+      TutorialMembership.find_by(user: newcomer).update!(tutorial: elsewhere)
+      own = described_class.init_participation(assessment, newcomer, elsewhere)
+      stamp = own.submitted_at
+      Timecop.travel(1.minute.from_now)
+      described_class.add_member!(team, newcomer, scorer)
+
+      described_class.remove_member!(team, newcomer, scorer)
+
+      expect(own.reload.submitted_at).to be_within(1.second).of(stamp)
+      expect(own.tutorial).to eq(elsewhere)
+    end
+
     it "tells the person taken off and the team" do
       described_class.add_member!(team, newcomer, scorer)
       partner.update!(email_for_submission_leave: true)
