@@ -18,7 +18,11 @@ class TranscriptUploader < Shrine
   plugin :validation_helpers
   plugin :pretty_location
 
+  Attacher.prepend(MalwareScannableAttacher)
+
   Attacher.validate do
+    MalwareScanGate.validate_cached_file!(self)
+
     extension = file&.extension
 
     validate_mime_type_inclusion(

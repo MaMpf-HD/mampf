@@ -494,6 +494,86 @@ RSpec.describe("Media", type: :request) do
       expect(medium.transcription_attempts).to eq(2)
     end
 
+    it "rejects a transcript that is not a file upload" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
+      )
+
+      post add_transcript_path(medium),
+           params: { token: token, transcript: "WEBVTT" },
+           headers: auth_headers
+
+      expect(response).to have_http_status(:bad_request)
+      expect(medium.reload.transcript).to be_nil
+    end
+
+    it "stores the transcript with clean scan metadata" do
+      token = TranscriptionToken.generate(
+        medium_id: medium.id,
+        purpose: :transcript,
+        ttl: 5.minutes,
+        video_version: medium.video_fingerprint
+      )
+      file = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "toc.vtt"),
+                                          "text/vtt")
+
+      post add_transcript_path(medium),
+           params: { token: token, transcript: file },
+           headers: auth_headers
+
+      scan = medium.reload.transcript.metadata[MalwareScanGate::METADATA_KEY]
+      expect(scan[MalwareScanGate::STATUS_KEY]).to eq(MalwareScanGate::CLEAN_STATUS)
+    end
+
+    context "when the malware scan does not pass" do
+      let(:scanner) { instance_double(ClamavScanner) }
+      let(:token) do
+        TranscriptionToken.generate(
+          medium_id: medium.id,
+          purpose: :transcript,
+          ttl: 5.minutes,
+          video_version: medium.video_fingerprint
+        )
+      end
+      let(:file) do
+        Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "toc.vtt"), "text/vtt")
+      end
+
+      before do
+        # The factory's video goes through the scan, too.
+        medium
+        allow(MalwareScanGate).to receive(:scanner).and_return(scanner)
+      end
+
+      it "rejects an infected transcript" do
+        allow(scanner).to receive(:scan)
+          .and_return(UploadScanResult.infected("Eicar-Signature"))
+
+        post add_transcript_path(medium),
+             params: { token: token, transcript: file },
+             headers: auth_headers
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(medium.reload.transcript).to be_nil
+        expect(medium.transcription_status).not_to eq("completed")
+      end
+
+      it "answers 503 while the scanner is unavailable" do
+        allow(scanner).to receive(:scan)
+          .and_return(UploadScanResult.unavailable("connection refused"))
+
+        post add_transcript_path(medium),
+             params: { token: token, transcript: file },
+             headers: auth_headers
+
+        expect(response).to have_http_status(:service_unavailable)
+        expect(medium.reload.transcript).to be_nil
+      end
+    end
+
     it "deletes the replaced transcript file after saving the new one" do
       medium.update!(transcript: File.open(File.join(SPEC_FILES, "toc.vtt")))
       old_transcript = medium.transcript
