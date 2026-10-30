@@ -230,7 +230,7 @@ class TutorialsController < ApplicationController
   private
 
     # The sheet a tutor has work on: the newest whose marking is open - a
-    # test in its week counts - and, before any is, the first still to come.
+    # running test counts - and, before any is, the first still to come.
     def current_assignment
       open, ahead = @assignments.partition(&:grading_open?)
       open.first || ahead.last

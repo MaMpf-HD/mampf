@@ -51,7 +51,7 @@
       <% if assessable.kind_test? %>
         <div class="col-md-6">
           <div class="row g-2">
-            <div class="col-8">
+            <div class="col-12 col-sm-7">
               <%= af.label :test_week, t('assessment.test.week'), class: "form-label" %>
 
               <%= af.select :test_week, test_week_options(assessable), {},
@@ -62,7 +62,7 @@
                               } } %>
             </div>
 
-            <div class="col-4">
+            <div class="col-12 col-sm-5">
               <%= af.label :test_week_count, t('assessment.test.week_count'), class: "form-label" %>
 
               <%= af.select :test_week_count, test_week_count_options(assessable), {},

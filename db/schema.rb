@@ -214,6 +214,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_30_000001) do
     t.index ["deadline", "deletion_date"], name: "index_assignments_on_deadline_and_deletion_date"
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
+    t.check_constraint "kind = 1 OR test_week_count = 1", name: "test_week_count_only_for_tests"
     t.check_constraint "test_week_count >= 1", name: "test_week_count_positive"
   end
 

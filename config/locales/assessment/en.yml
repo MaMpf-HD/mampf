@@ -26,7 +26,7 @@ en:
         other: 'Test weeks'
       sheet_or_test: 'Sheet or test'
       title_placeholder: 'e.g. Test 1'
-      week_hint: 'Students take the test in their tutorial that week, or spread over the weeks after it for a longer duration; tutors can enter points from the Monday of the first week on. You can add an unannounced test until the end of the following week.'
+      week_hint: 'Students take the test in their tutorial that week; with a longer duration, the tutorials spread it over the weeks after. Tutors can enter points from the Monday of the first week. You can add an unannounced test until the end of the following week.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
     scheduled_sheet:

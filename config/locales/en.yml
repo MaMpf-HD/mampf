@@ -4050,7 +4050,9 @@ en:
               blank: You need to give a due date.
               in_past: Due date can't be in the past.
             test_week:
-              before_last_week: The test week can't lie more than one week back.
+              before_last_week: The test week can't be earlier than last week.
+            test_week_count:
+              ends_before_last_week: The test can't end before last week.
             deletion_date:
               blank: You need to give a deletion date.
               in_past: Deletion date can't lie in the past.

@@ -144,12 +144,16 @@ test.describe("a test written in the tutorial", () => {
     await expect(dashboard.dashboard.getByRole("heading", { name: "Test 2" })).toBeVisible();
 
     // the student is told both weeks
+    const day = 24 * 60 * 60 * 1000;
+    const short = { month: "short", day: "numeric" } as const;
+    const from = monday.toLocaleDateString("en-US", short);
+    const to = new Date(monday.getTime() + 13 * day)
+      .toLocaleDateString("en-US", { ...short, year: "numeric" });
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     await expect(student.page.getByRole("heading", { name: "Test 2" })).toBeVisible();
-    await expect(student.page.getByText("Test weeks:")).toBeVisible();
+    await expect(student.page.getByText(`Test weeks: ${from} – ${to}`)).toBeVisible();
 
     // in the second week the test is still ahead of the later groups
-    const day = 24 * 60 * 60 * 1000;
     await timeCop.travelToDate(new Date(monday.getTime() + 8 * day));
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     await expect(student.page.getByRole("heading", { name: "Test 2" })).toBeVisible();
@@ -160,5 +164,49 @@ test.describe("a test written in the tutorial", () => {
     await expect(student.page.getByRole("heading", { name: "Test 2" })).toHaveCount(0);
     const list = student.page.getByRole("region", { name: "Earlier sheets and tests" });
     await expect(list.getByRole("group").filter({ hasText: "Test 2" })).toBeVisible();
+  });
+
+  test("can be set up for last week and marked at once", async ({
+    factory,
+    teacher,
+    tutor,
+    student,
+  }) => {
+    // without a term, last week heads the list on any day of the year
+    const lecture = await factory.create("lecture", ["term_independent", "released_for_all"], {
+      teacher_id: teacher.user.id,
+    });
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Friday group",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+    const studentName = student.user.name_in_tutorials;
+
+    // the teacher picks last week over the week the form offers
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    await teacher.page.getByRole("link", { name: "Add test" }).click();
+    await dashboard.container.getByLabel("Title").fill("Test 3");
+    const week = dashboard.container.getByLabel("Test week");
+    const lastWeek = await week.getByRole("option").first().getAttribute("value") ?? "";
+    await expect(week).not.toHaveValue(lastWeek);
+    await week.selectOption(lastWeek);
+    await dashboard.container.getByRole("button", { name: "Save" }).click();
+    await expect(dashboard.dashboard.getByRole("heading", { name: "Test 3" })).toBeVisible();
+    await dashboard.pane.getByLabel("Max Points").fill("10");
+    await dashboard.pane.getByRole("button", { name: "Add Task" }).click();
+    await expect(dashboard.tasks).toHaveText([/10 pts/]);
+
+    // the tutor enters the points straight away
+    await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
+    const row = tutor.page.getByRole("table").getByRole("row", { name: studentName });
+    await row.getByRole("spinbutton", { name: `Task 1 for ${studentName}` }).fill("7");
+    await row.getByRole("button", { name: "Save this row's points" }).click();
+    await expect(row.getByText("Reviewed")).toBeVisible();
   });
 });

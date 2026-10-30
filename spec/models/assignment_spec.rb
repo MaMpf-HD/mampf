@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Assignment, type: :model) do
-  include ActiveSupport::Testing::TimeHelpers
-
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_assignment)).to be_valid
   end
@@ -42,6 +40,10 @@ RSpec.describe(Assignment, type: :model) do
     assignment = FactoryBot.build(:valid_assignment, test_week_count: 2)
     expect(assignment).to be_invalid
     expect(assignment.errors[:test_week_count]).to be_present
+
+    homework = FactoryBot.create(:valid_assignment)
+    expect { homework.update_column(:test_week_count, 2) } # rubocop:disable Rails/SkipsModelValidations
+      .to raise_error(ActiveRecord::StatementInvalid)
   end
 
   # A test is a sheet written in the tutorial: nothing is uploaded, its week
@@ -142,7 +144,7 @@ RSpec.describe(Assignment, type: :model) do
       over = FactoryBot.create(:lecture, term: gone)
       test = FactoryBot.build(:assignment, lecture: over, kind: :test)
 
-      travel_to(gone.end_date.next_week + 2.days) do
+      Timecop.travel(gone.end_date.next_week + 2.days) do
         expect(test.test_week_choices)
           .to start_with(Time.zone.today.prev_week, Time.zone.today.beginning_of_week)
       end
@@ -177,9 +179,8 @@ RSpec.describe(Assignment, type: :model) do
       expect(test.errors.details[:test_week]).to include(error: :before_last_week)
     end
 
-    # Only its start is held to last week.
     it "may be made longer weeks after it began, but not moved further back" do
-      running = travel_to(2.weeks.ago) do
+      running = Timecop.travel(2.weeks.ago) do
         FactoryBot.create(:valid_assignment, lecture: lecture, kind: :test,
                                              deadline: Time.zone.now)
       end
@@ -189,6 +190,22 @@ RSpec.describe(Assignment, type: :model) do
 
       running.test_week = (running.test_week - 7).iso8601
       expect(running).to be_invalid
+      expect(running.errors.details[:test_week]).to include(error: :before_last_week)
+    end
+
+    # Ended before last week, it would be due for the groups still to write it.
+    it "may be made shorter, but not so short that it ended before last week" do
+      running = Timecop.travel(2.weeks.ago) do
+        FactoryBot.create(:valid_assignment, lecture: lecture, kind: :test,
+                                             deadline: Time.zone.now, test_week_count: 3)
+      end
+
+      running.test_week_count = 2
+      expect(running).to be_valid
+
+      running.test_week_count = 1
+      expect(running).to be_invalid
+      expect(running.errors.details[:test_week_count]).to include(error: :ends_before_last_week)
     end
 
     it "takes no sheet to read, whatever the form sends" do

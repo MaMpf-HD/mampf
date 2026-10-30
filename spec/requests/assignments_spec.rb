@@ -161,6 +161,17 @@ RSpec.describe("Assignments", type: :request) do
             .to eq([Time.zone.today.beginning_of_week.iso8601])
         end
 
+        it "picks the term's first week for a new one while the term lies ahead" do
+          ahead = Term.find_by(year: Time.zone.today.year + 1, season: "SS") ||
+                  create(:term, year: Time.zone.today.year + 1, season: "SS")
+          later = create(:lecture, term: ahead, teacher: teacher)
+          get new_assignment_path(lecture_id: later.id, kind: "test"), as: :turbo_stream
+
+          weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
+          expect(weeks.select { |week| week["selected"] }.pluck("value"))
+            .to eq([ahead.begin_date.beginning_of_week.iso8601])
+        end
+
         it "creates one for last week, written before it was set up" do
           last_monday = Time.zone.today.prev_week
 
@@ -186,7 +197,7 @@ RSpec.describe("Assignments", type: :request) do
           week = Nokogiri::HTML(response.body).at_css("select[name='assignment[test_week]']")
           expect(week["class"]).to include("is-invalid")
           expect(week.next_element.text)
-            .to eq("The test week can't lie more than one week back.")
+            .to eq("The test week can't be earlier than last week.")
         end
 
         it "creates it due with its week, taking no hand-in" do

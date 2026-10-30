@@ -219,7 +219,7 @@ module StudentPerformance
       end
 
       # Marked before its deadline was moved forward, or recorded absent from a
-      # test in its week: those points are settled - in the total or lost - so
+      # running test: those points are settled - in the total or lost - so
       # they are in the base, and they are not still to be had, which is what
       # `not_yet_due_for` would otherwise say about them.
       def settled_coming

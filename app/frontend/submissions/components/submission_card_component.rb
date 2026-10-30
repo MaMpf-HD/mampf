@@ -41,9 +41,7 @@ class SubmissionCardComponent < ViewComponent::Base
   end
 
   def due_line
-    if test?
-      return "#{helpers.test_period_heading(assignment)}: #{helpers.test_week_label(assignment)}"
-    end
+    return helpers.test_period_line(assignment) if test?
 
     t("submission.hub.card.due", time: l(assignment.deadline,
                                          format: :submission_deadline))
