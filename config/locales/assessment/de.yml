@@ -291,6 +291,9 @@ de:
         Lösche das zuerst.
       member_added: '%{name} ist jetzt im Team.'
       member_removed: '%{name} ist nicht mehr im Team.'
+      member_removed_team_moved: >-
+        %{name} ist nicht mehr im Team. Das Team wird jetzt in %{tutorial}
+        korrigiert.
       remove_member: '%{name} aus diesem Team nehmen'
       remove_member_confirm: >-
         %{name} aus diesem Team nehmen? Die Punkte des Teams für dieses Blatt

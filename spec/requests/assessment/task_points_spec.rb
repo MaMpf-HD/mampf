@@ -897,6 +897,31 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(response.body).to include("points-participation-row-#{row.id}")
     end
 
+    # Unmarked, the team follows its members out of the tutor's table.
+    it "says where the team went when it leaves the group with the person" do
+      lecture.update!(cross_tutorial_teams: true)
+      tutorial2.tutors << create(:confirmed_user)
+      moved = create(:submission, :with_manuscript, assignment: assignment,
+                                                    tutorial: tutorial2, users: [student2])
+      latecomer = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: latecomer)
+      create(:tutorial_membership, tutorial: tutorial, user: latecomer)
+      Assessment::SubmissionGraderService.add_member!(moved, latecomer, tutorial2.tutors.first)
+      moved.reload.hand_over!(tutorial)
+
+      sign_in(tutor)
+      patch(remove_member_submission_path(moved),
+            params: { user_id: latecomer.id, grading_scope_type: "tutorial" }, as: :turbo_stream)
+
+      expect(moved.reload.tutorial).to eq(tutorial2)
+      expect(response.body)
+        .to include(ERB::Util.html_escape(
+                      I18n.t("assessment.task_points.member_removed_team_moved",
+                             name: latecomer.tutorial_name,
+                             tutorial: tutorial2.title_with_tutors)
+                    ))
+    end
+
     it "lets the lecturer do so from the lecture's table" do
       remove(newcomer, as: teacher, scope: "lecture")
 

@@ -291,6 +291,9 @@ en:
         that first.
       member_added: '%{name} is on the team now.'
       member_removed: '%{name} is no longer on the team.'
+      member_removed_team_moved: >-
+        %{name} is no longer on the team. The team is marked in %{tutorial}
+        now.
       remove_member: 'Take %{name} off this team'
       remove_member_confirm: >-
         Take %{name} off this team? The team's points for this sheet no longer
