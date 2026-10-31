@@ -57,6 +57,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    clearTimeout(this.timeout);
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -104,11 +105,16 @@ export default class extends Controller {
    *
    * We use a small delay to avoid too many requests.
    * This method is called whenever the user types in the search field.
+   * While a page is still loading, the search waits for it instead of getting
+   * lost.
    */
   search() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      if (this.isSubmitting) return;
+      if (this.isSubmitting) {
+        this.search();
+        return;
+      }
 
       // Indicate to controller that we want the initial page for a new search.
       // This is especially important when the user has already scrolled down
