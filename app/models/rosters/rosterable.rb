@@ -292,15 +292,10 @@ module Rosters
     end
 
     def propagate_to_lecture!(user_ids)
-      return if user_ids.empty?
-
-      return if is_a?(Cohort) && !propagate_to_lecture
-
-      return unless respond_to?(:lecture)
+      return if user_ids.empty? || !place?
 
       parent = lecture
       return unless parent.is_a?(Lecture)
-      return if parent == self
 
       parent.ensure_roster_membership!(user_ids)
     end

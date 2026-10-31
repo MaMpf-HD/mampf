@@ -134,9 +134,7 @@ module Registration
     # Whether finalize! also puts everyone onto the lecture roster, which a
     # cohort without enrollment does not.
     def enrolls_in_lecture?
-      registration_items.includes(:registerable).none? do |item|
-        item.registerable.is_a?(Cohort) && !item.registerable.propagate_to_lecture?
-      end
+      registration_items.includes(:registerable).all? { |item| item.registerable.place? }
     end
 
     def open_for_withdrawals?

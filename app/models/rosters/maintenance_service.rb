@@ -119,7 +119,7 @@ module Rosters
         end
 
         membership = rosterable.add_user_to_roster!(user)
-        propagate_to_lecture!(user, rosterable)
+        rosterable.propagate_to_lecture!([user.id])
         update_registration_materialization(user,
                                             rosterable,
                                             source_campaign_id: source_campaign_id)
@@ -188,17 +188,6 @@ module Rosters
         return unless conflicting
 
         raise(UserAlreadyInBundleError, conflicting)
-      end
-
-      def propagate_to_lecture!(user, rosterable)
-        return if rosterable.is_a?(Cohort) && !rosterable.propagate_to_lecture?
-        return unless rosterable.respond_to?(:lecture)
-
-        lecture = rosterable.lecture
-        return unless lecture.is_a?(Lecture)
-        return if lecture == rosterable
-
-        lecture.ensure_roster_membership!([user.id])
       end
 
       # Removal from a lecture takes every group, lists without enrollment
