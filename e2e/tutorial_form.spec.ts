@@ -18,7 +18,8 @@ test("asks before a member of the group becomes its tutor",
     const dialog = page.getByRole("dialog", { name: "Edit Tutorial" });
     await dialog.getByRole("combobox", { name: "Tutors" }).fill(student.user.email);
     // the native <option> and TomSelect's copy share the name; the copy is the one on screen
-    await dialog.getByRole("option", { name: new RegExp(student.user.email) }).last().click();
+    await dialog.locator(".ts-dropdown")
+      .getByRole("option", { name: new RegExp(student.user.email) }).click();
 
     // dismissed first: the form stays open
     page.once("dialog", async (confirm) => {
