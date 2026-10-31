@@ -1157,9 +1157,8 @@ class Lecture < ApplicationRecord
     tutorials_without_tutor(user).where.not(id: user.enrolled_tutorials.select(:id))
   end
 
-  # The groups whose members the lecture enrolls: its tutorials and talks,
-  # and the cohorts with enrollment. Students enter the lecture through one
-  # of them.
+  # Tutorials, talks and cohorts with enrollment: the groups through which the
+  # staff can take someone back into the lecture.
   def enrolling_groups
     tutorials.to_a + talks.to_a + cohorts.select(&:enrolls_in_lecture?).sort_by(&:title)
   end
@@ -1195,9 +1194,10 @@ class Lecture < ApplicationRecord
     shown
   end
 
-  # One query per kind of place (see Rosters::Rosterable#enrolls_in_lecture?), each
-  # selecting the ids of the users holding one, a user once per place held;
-  # user_ids narrows them.
+  # One query per kind of group that enrolls (see
+  # Rosters::Rosterable#enrolls_in_lecture?), each selecting its members' user
+  # ids. A user appears once per such group, so counting tells how many they
+  # have. user_ids limits the queries to these users.
   def place_user_id_queries(user_ids = nil)
     { TutorialMembership.where(tutorial: tutorials) => :user_id,
       SpeakerTalkJoin.where(talk: talks) => :speaker_id,

@@ -177,8 +177,6 @@ class RosterSidePanelComponent < ViewComponent::Base
     )
   end
 
-  # Names the lecture when this is the person's last place, since removing
-  # them takes it too.
   def remove_confirmation(student)
     return t("roster.warnings.confirm_kick_from_group") unless only_place_ids.include?(student.id)
 

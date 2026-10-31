@@ -87,7 +87,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       expect(response).to redirect_to(edit_personal_data_path)
     end
 
-    # Otherwise the student would stay enrolled without a group.
     it "keeps an enrolled student in their only group" do
       lecture.add_user_to_roster!(user)
       tutorial.add_user_to_roster!(user)

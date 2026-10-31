@@ -323,8 +323,8 @@ module Roster
         setup_participants
       end
 
-      # Someone comes back into the lecture through one of its groups that
-      # the staff can add to, so that nobody is enrolled without a place.
+      # The group the staff picked for taking back someone who has left.
+      # Readmission needs one, because nobody may be enrolled without a group.
       def readmission_group
         return unless @rosterable.is_a?(Lecture)
 
@@ -335,8 +335,9 @@ module Roster
         group
       end
 
-      # The lecture's other cohorts the user is in, whose rows change when the
-      # removal takes the user out of the lecture.
+      # The user's cohorts in this lecture other than the one being edited.
+      # Their rows need redrawing when the removal takes the user out of the
+      # lecture.
       def other_cohorts(user)
         @lecture.cohorts.where(id: CohortMembership.where(user: user).select(:cohort_id))
                 .reject { |cohort| cohort == @rosterable }

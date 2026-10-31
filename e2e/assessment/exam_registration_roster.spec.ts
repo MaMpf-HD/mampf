@@ -2,8 +2,6 @@ import { expect, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { createLecture } from "./helpers";
 
-// Checking the admission needs a decision of the lecture, which only its
-// members have.
 test.describe("registering for an admission-checked exam without a place in the lecture", () => {
   test("is refused, and the student is told whom to ask", async ({
     factory,

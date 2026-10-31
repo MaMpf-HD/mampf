@@ -334,7 +334,6 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     )
   end
 
-  # The list is the person's only place, so removing them takes the lecture.
   it "warns that removing someone whose only place the list is takes the lecture" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)

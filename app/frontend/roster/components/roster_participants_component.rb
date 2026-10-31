@@ -88,8 +88,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     end
   end
 
-  # The groups the staff can add someone who has left to, as select options:
-  # a group a running registration process manages takes nobody by hand.
   def readmission_options
     @readmission_options ||= helpers.roster_enrolling_group_options(lecture)
   end
@@ -164,8 +162,8 @@ class RosterParticipantsComponent < ViewComponent::Base
     { t("roster.programs.enrolled") => ProgramDistribution.new(enrolled) }
   end
 
-  # Returns the groups the user is currently a member of, cohorts and exam
-  # lists included: an exam list is a place in the lecture too.
+  # Returns the groups the user is currently a member of, cohorts and exam lists
+  # included.
   def participant_groups(user)
     ids = user_memberships[user.id]
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)

@@ -198,7 +198,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       expect(groups).to match_array([tutorial, cohort])
     end
 
-    # Whoever sits only the exam is enrolled through its list, not without group.
     it "includes the exam lists the user is on" do
       user = create(:confirmed_user)
       exam = create(:exam, :without_campaign, lecture: lecture, title: "Final")
@@ -280,8 +279,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
-  # Students enter the lecture through a group, so readmitting someone who has
-  # left goes through one too, unless the lecture has no group that enrolls.
   describe "readmitting someone who has left" do
     let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
     let(:participants) { lecture.excluded_lecture_memberships }
@@ -318,7 +315,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       expect(rendered.css("select")).to be_empty
     end
 
-    # Readmission goes through a place; a list gives none.
     it "readmits nobody into a lecture without groups that enroll" do
       create(:cohort, context: lecture, propagate_to_lecture: false)
 

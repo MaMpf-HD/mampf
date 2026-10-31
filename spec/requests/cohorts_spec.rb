@@ -257,8 +257,8 @@ RSpec.describe("Cohorts", type: :request) do
                                                             left_lecture: true)))
         end
 
-        # Leaving the lecture would leave the exam result without its roster
-        # entry, so the cohort stays.
+        # Taking the member out of the lecture would leave their exam result
+        # without its exam list entry.
         it "keeps the cohort when a member it would take out has an exam result" do
           exam = create(:exam, lecture: lecture)
           exam.assessment.assessment_participations.create!(user: member, status: :reviewed,

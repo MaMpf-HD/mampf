@@ -19,12 +19,11 @@ module Rosters
       Rosters::MaintenanceService.new.add_user!(@user, @rosterable, force: false)
     end
 
-    # Refuses an enrolled student's last place, which they leave only by
-    # leaving the lecture (see Rosters::LectureLeave).
-    # The group is locked before the lecture, as leaving the lecture does; the
-    # lecture's lock keeps two tabs from each leaving a group while counting
-    # on the other one. The student's campaigns come before both, as
-    # MaintenanceService#remove_user! takes them.
+    # Refuses to let an enrolled student leave their last group; they can only
+    # leave the lecture as a whole. Locks the campaigns, then the group, then
+    # the lecture, like MaintenanceService#remove_user!. Without the lecture's
+    # lock, two browser tabs could each leave a different group, each assuming
+    # the other one remains, and the student would end up with none.
     def self_remove!
       ActiveRecord::Base.transaction do
         lecture = @rosterable.lecture

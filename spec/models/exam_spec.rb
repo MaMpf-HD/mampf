@@ -39,7 +39,6 @@ RSpec.describe(Exam, type: :model) do
     let(:exam) { create(:exam) }
     let(:user) { create(:confirmed_user) }
 
-    # The exam list enrolls them.
     it "lets anybody register when the registration checks no admission" do
       expect(exam.registrable_by?(user)).to be(true)
     end
@@ -56,8 +55,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.registrable_by?(user)).to be(true)
       end
 
-      # Without a decision of the lecture, the check would hold up the
-      # finalization.
+      # The admission check needs a decision; without one, the finalization
+      # would stop at this person.
       it "keeps out somebody who only bookmarked the lecture" do
         create(:lecture_bookmark, lecture: exam.lecture, user: user)
 
@@ -71,7 +70,8 @@ RSpec.describe(Exam, type: :model) do
         expect(exam.registrable_by?(user)).to be(true)
       end
 
-      # A pending row is no decision, and the finalization would stop at it.
+      # A pending admission is no decision, and the finalization would stop at
+      # it.
       it "keeps out someone who left with the admission still pending" do
         create(:lecture_membership, lecture: exam.lecture, user: user).exclude!(by: user)
         create(:student_performance_certification, :pending, lecture: exam.lecture, user: user)

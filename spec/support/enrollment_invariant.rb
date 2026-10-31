@@ -1,12 +1,13 @@
-# Fails a request that leaves the rosters against the rules of enrollment
-# (see Rosters::Rosterable#enrolls_in_lecture?). Only what the request changes counts, so a
-# spec may build such a state first; skip_enrollment_invariant opts out.
+# Fails a request that breaks the enrollment rules (see
+# Rosters::Rosterable#enrolls_in_lecture?). Only states the request itself
+# creates count, so a spec may set up a broken state first. Tag a spec with
+# skip_enrollment_invariant to opt out.
 module EnrollmentInvariant
   class ViolationError < StandardError; end
 
-  # Returns [[kind, lecture_id, user_id], ...] across every lecture. Runs
-  # past Active Record's instrumentation, so that specs counting a request's
-  # queries do not count these.
+  # Returns [[kind, lecture_id, user_id], ...] for all lectures. Bypasses Active
+  # Record's instrumentation, so specs that count a request's queries don't
+  # count these.
   def self.violations
     ids("SELECT id FROM lectures").flat_map do |id|
       violations_in(Lecture.instantiate("id" => id))

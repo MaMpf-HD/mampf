@@ -482,8 +482,6 @@ RSpec.describe(ParticipationComponent, type: :component) do
         tutorial.add_user_to_roster!(user)
       end
 
-      # Leaving the tutorial on its own would keep the student enrolled without
-      # a place.
       it "offers no leave button on the last place, saying it goes with the course" do
         rendered = render_inline(described_class.new(lecture: lecture, user: user))
         row = rendered.css("[data-testid='participation-row']")

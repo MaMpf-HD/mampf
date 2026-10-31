@@ -136,8 +136,6 @@ class CohortsController < ApplicationController
 
   private
 
-    # A member graded on a talk or an exam of the lecture cannot leave it,
-    # so the cohort stays when deleting it would take them out.
     def destroy_cohort
       @cohort.destroy_with_members(by: current_user)
     rescue Rosters::MaintenanceService::LectureGradingDataPresentError
