@@ -38,7 +38,7 @@ en:
         points: "Your points stay recorded and are back if you join again."
         dashboard: "The course disappears from your dashboard."
         dashboard_restricted: "The course disappears from your dashboard, and you need the pass phrase again for its materials."
-        rejoin: "You can join again through an open registration or self-enrollment, otherwise only through the lecturer."
+        rejoin: "You can join again through an open registration or by joining a group yourself, otherwise only through the lecturer."
       button: "Leave course"
       confirmation_label: "Type “%{code}” to confirm:"
       blocked: "You cannot leave this course yourself right now:"
@@ -52,7 +52,7 @@ en:
       not_allowed: "You cannot leave this course yourself right now."
       not_participating: "You are no longer taking part in “%{lecture}”."
       not_confirmed: "The short title did not match; you are still taking part."
-      failed: "That did not work just now; you are still taking part. Please try again."
+      failed: "Unfortunately, that did not work. You are still taking part. Please try again."
     intro:
       more: "Read more"
       less: "Show less"

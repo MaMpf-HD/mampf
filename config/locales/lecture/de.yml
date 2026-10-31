@@ -39,7 +39,7 @@ de:
         points: "Deine Punkte bleiben gespeichert und sind wieder da, wenn Du wieder eintrittst."
         dashboard: "Die Veranstaltung verschwindet von Deinem Dashboard."
         dashboard_restricted: "Die Veranstaltung verschwindet von Deinem Dashboard, und für ihre Materialien brauchst Du wieder den Zugangsschlüssel."
-        rejoin: "Wieder eintreten kannst Du über eine offene Anmeldung oder die Selbsteintragung, sonst nur über die Lehrenden."
+        rejoin: "Wieder eintreten kannst Du über eine offene Anmeldung oder indem Du Dich selbst in eine Gruppe einträgst, sonst nur über die Lehrenden."
       button: "Teilnahme beenden"
       confirmation_label: "Gib zum Bestätigen „%{code}“ ein:"
       blocked: "Du kannst die Teilnahme gerade nicht selbst beenden:"
@@ -53,7 +53,7 @@ de:
       not_allowed: "Du kannst die Teilnahme gerade nicht selbst beenden."
       not_participating: "Du nimmst an „%{lecture}“ nicht mehr teil."
       not_confirmed: "Das Kürzel stimmt nicht; Du nimmst weiter teil."
-      failed: "Das hat gerade nicht geklappt; Du nimmst weiter teil. Versuch es bitte noch einmal."
+      failed: "Das hat leider nicht geklappt. Du nimmst weiter teil. Versuch es bitte noch einmal."
     intro:
       more: "Weiterlesen"
       less: "Weniger anzeigen"
