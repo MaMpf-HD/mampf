@@ -7,7 +7,6 @@ module Rosters
     Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :admitted,
                      :staff, keyword_init: true)
 
-    RUNNING = [:open, :closed, :processing].freeze
     FAR_DEADLINE = 8.weeks
     MANY_REGISTRATIONS = 20
 
@@ -109,7 +108,7 @@ module Rosters
       end
 
       def awaiting(lecture, user_ids)
-        campaigns = Registration::Campaign.where(campaignable: lecture, status: RUNNING)
+        campaigns = Registration::Campaign.running.where(campaignable: lecture)
         Registration::UserRegistration.where(registration_campaign: campaigns,
                                              status: [:pending, :confirmed], user_id: user_ids)
       end
@@ -120,7 +119,7 @@ module Rosters
       end
 
       def running_campaigns
-        campaigns = Registration::Campaign.where(campaignable_type: "Lecture", status: RUNNING)
+        campaigns = Registration::Campaign.running.where(campaignable_type: "Lecture")
         @lecture_ids ? campaigns.where(campaignable_id: @lecture_ids) : campaigns
       end
 
