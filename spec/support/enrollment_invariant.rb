@@ -16,7 +16,7 @@ module EnrollmentInvariant
 
   def self.violations_in(lecture)
     members = lecture.lecture_memberships.select(:user_id)
-    queries = lecture.place_user_id_queries
+    queries = lecture.enrolling_memberships
     without_place = queries.reduce(lecture.lecture_memberships) do |scope, query|
       scope.where.not(user_id: query)
     end

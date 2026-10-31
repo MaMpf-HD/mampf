@@ -78,18 +78,14 @@ module Rosters
       end
 
       def without_place(lecture)
-        place_user_ids(lecture).reduce(lecture.lecture_memberships) do |scope, ids|
-          scope.where.not(user_id: ids)
+        lecture.enrolling_memberships.reduce(lecture.lecture_memberships) do |scope, memberships|
+          scope.where.not(user_id: memberships)
         end
       end
 
       # Leaves out the lecture's staff, who are not its students.
       def removable(lecture)
         without_place(lecture).where.not(user_id: staff_ids(lecture)).includes(:user).to_a
-      end
-
-      def place_user_ids(lecture)
-        lecture.place_user_id_queries
       end
 
       # Teacher, editors and tutors of the lecture. Counts tutors as

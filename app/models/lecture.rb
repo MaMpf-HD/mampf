@@ -1194,11 +1194,11 @@ class Lecture < ApplicationRecord
     shown
   end
 
-  # One query per kind of group that enrolls (see
-  # Rosters::Rosterable#enrolls_in_lecture?), each selecting its members' user
+  # One query per kind of membership that enrolls in the lecture (see
+  # Rosters::Rosterable#enrolls_in_lecture?), each selecting the members' user
   # ids. A user appears once per such group, so counting tells how many they
   # have. user_ids limits the queries to these users.
-  def place_user_id_queries(user_ids = nil)
+  def enrolling_memberships(user_ids = nil)
     { TutorialMembership.where(tutorial: tutorials) => :user_id,
       SpeakerTalkJoin.where(talk: talks) => :speaker_id,
       ExamRosterEntry.active.where(exam: exams) => :user_id,
