@@ -13,7 +13,7 @@ module Rosters
 
     def add_user!(user, rosterable, force: false, source_campaign_id: nil)
       added = rosterable.with_lock do
-        lock_lecture_of!(rosterable)
+        rosterable.lecture&.lock! if rosterable.enrolls_in_lecture?
         add_user_without_lock!(user,
                                rosterable,
                                force: force,
@@ -69,7 +69,7 @@ module Rosters
       return false if from_rosterable == to_rosterable
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
-        lock_lecture_of!(from_rosterable, to_rosterable)
+        [from_rosterable, to_rosterable].find(&:enrolls_in_lecture?)&.lecture&.lock!
         raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
         raise(MoveLeavesLectureError) if leaves_last_place?(user, from_rosterable, to_rosterable)
 
@@ -93,12 +93,6 @@ module Rosters
       def leaves_lecture?(user, rosterable, lecture)
         leave = LectureLeave.new(lecture, user)
         rosterable == lecture ? leave.enrolled? : leave.only_place?(rosterable)
-      end
-
-      # Locks the lecture after the groups, as remove_user! does, wherever a
-      # place changes and with it the enrollment.
-      def lock_lecture_of!(*rosterables)
-        rosterables.find(&:enrolls_in_lecture?)&.lecture&.lock!
       end
 
       # A move onto a list would take the last place without anything that
