@@ -160,7 +160,7 @@ export default class extends Controller {
   submitForm() {
     this.isSubmitting = true;
     const unlockHandler = () => this.isSubmitting = false;
-    document.addEventListener("turbo:submit-end", unlockHandler, { once: true });
+    this.formTarget.addEventListener("turbo:submit-end", unlockHandler, { once: true });
     this.formTarget.requestSubmit();
   }
 }
