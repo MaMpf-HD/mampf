@@ -8,10 +8,7 @@ en:
       bit by bit. Your feedback shows us where to start.
     body: "Your feedback"
     body_placeholder: "What bothers you, what is missing, what would you change?"
-    can_contact: "You may contact me about this feedback"
-    can_contact_hint: >
-      We then see your name and email address. Otherwise, your feedback stays
-      anonymous.
+    sender_hint: "We see your name and email address and may answer you."
     send: "Send"
     sent: "Thank you! We read every answer. Anything else on your mind?"
   activemodel:

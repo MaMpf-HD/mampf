@@ -4,9 +4,8 @@ RSpec.describe("Feedbacks", type: :request) do
   let(:user) { create(:confirmed_user) }
   let(:body) { "The search could find more." }
 
-  def send_feedback(body: self.body, can_contact: "0")
-    post(feedbacks_path, params: { feedback: { body: body, can_contact: can_contact } },
-                         as: :turbo_stream)
+  def send_feedback(body: self.body)
+    post(feedbacks_path, params: { feedback: { body: body } }, as: :turbo_stream)
   end
 
   def sent_mails
@@ -29,17 +28,11 @@ RSpec.describe("Feedbacks", type: :request) do
       expect(response.body).to include(I18n.t("feedback.sent"))
     end
 
-    it "mails an anonymous feedback without its author" do
+    it "mails the author along" do
       send_feedback
 
-      expect(sent_mails.last.reply_to).to be_blank
-      expect(sent_mails.last.body.encoded).not_to include(user.email)
-    end
-
-    it "mails the author along when they may be contacted" do
-      send_feedback(can_contact: "1")
-
       expect(sent_mails.last.reply_to).to eq([user.email])
+      expect(sent_mails.last.body.encoded).to include(user.email)
     end
 
     context "when the mail cannot be sent" do

@@ -1,8 +1,4 @@
 <% name, email, id = @feedback.values_at("user_name", "user_email", "user_id") %>
-<% if email %>
 From: <%= name %> (<%= email %>, id <%= id %>)
-<% else %>
-From: anonymous
-<% end %>
 -----
 <%= @feedback["body"] %>

@@ -1,5 +1,4 @@
-# Mails a `Feedback` to FEEDBACK_EMAIL. With `can_contact`, the answer goes to
-# its author; otherwise the mail names nobody.
+# Mails a `Feedback` to FEEDBACK_EMAIL. The answer goes to its author.
 class FeedbackMailer < ApplicationMailer
   layout false
 
@@ -7,7 +6,7 @@ class FeedbackMailer < ApplicationMailer
     @feedback = params[:feedback]
     email = @feedback["user_email"]
     mail(to: ENV.fetch("FEEDBACK_EMAIL"),
-         subject: email ? "Feedback: #{email}" : "Feedback (anonymous)",
+         subject: "Feedback: #{email}",
          content_type: "text/plain",
          reply_to: email)
   end

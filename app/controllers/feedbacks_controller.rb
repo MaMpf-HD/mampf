@@ -1,5 +1,5 @@
 # Mails a `Feedback` from the muffin next to the support button, see
-# `FormMail`. Only with `can_contact` does the mail name its author.
+# `FormMail`. The mail names its author.
 class FeedbacksController < ApplicationController
   include FormMail
 
@@ -35,14 +35,11 @@ class FeedbacksController < ApplicationController
   private
 
     def feedback_params
-      params.expect(feedback: [:body, :can_contact])
+      params.expect(feedback: [:body])
     end
 
     def mail_details(feedback)
-      details = { "body" => feedback.body }
-      return details unless feedback.can_contact
-
-      details.merge(form_mail_sender)
+      { "body" => feedback.body }.merge(form_mail_sender)
     end
 
     def render_form(feedback, status, throttled: nil, send_failed: false)
