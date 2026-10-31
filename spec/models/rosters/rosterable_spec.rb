@@ -282,6 +282,20 @@ RSpec.describe(Rosters::Rosterable) do
       expect(rosterable.allocated_user_ids).to include(user3.id)
     end
 
+    # A removal or enrollment:reconcile decides under the lecture's lock
+    # whether someone still has a place.
+    it "locks the lecture before it changes the roster of a place" do
+      roster_at_lock = nil
+      allow(rosterable.lecture).to receive(:lock!).and_wrap_original do |original, *args|
+        roster_at_lock = rosterable.roster_entries.pluck(:user_id)
+        original.call(*args)
+      end
+
+      rosterable.materialize_allocation!(user_ids: [user3.id], campaign: campaign)
+
+      expect(roster_at_lock).to contain_exactly(user1.id, user2.id)
+    end
+
     it "removes users not in the list who were added by this campaign" do
       rosterable.materialize_allocation!(user_ids: [user3.id], campaign: campaign)
       expect(rosterable.allocated_user_ids).not_to include(user1.id)

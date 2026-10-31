@@ -90,23 +90,41 @@ module RosterHelper
     "roster_maintenance_#{suffix}"
   end
 
-  def hidden_group_type_field(group_type)
+  def hidden_group_type_field(group_type, **)
     if group_type.is_a?(Array)
-      safe_join(group_type.map { |t| hidden_field_tag("group_type[]", t) })
+      safe_join(group_type.map { |t| hidden_field_tag("group_type[]", t, **) })
     else
-      hidden_field_tag(:group_type, group_type)
+      hidden_field_tag(:group_type, group_type, **)
     end
   end
 
-  # Links a participant's group to its roster on the lecture's groups tab.
+  # Names a group of whatever kind in a parameter, e.g. "Tutorial-12".
+  def roster_group_key(group)
+    "#{group.class.name}-#{group.id}"
+  end
+
+  # The lecture's groups that enroll and take people by hand, as select
+  # options grouped by kind: the way in for someone readmitted or put on an
+  # exam list.
+  def roster_enrolling_group_options(lecture)
+    lecture.enrolling_groups.reject(&:locked?)
+           .group_by { |group| group.class.model_name.human(count: 2) }
+           .transform_values do |groups|
+             groups.map { |group| [Rosters::LectureLeave.label(group), roster_group_key(group)] }
+           end
+  end
+
+  # Links a participant's group to its roster on the lecture's groups tab,
+  # and an exam list to the exams tab.
   def roster_group_link(group)
     lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
+    path = if group.is_a?(Exam)
+      edit_lecture_path(lecture, tab: "exams")
+    else
+      edit_lecture_path(lecture, tab: "groups", open_roster: roster_group_key(group))
+    end
 
-    link_to(group.title,
-            edit_lecture_path(lecture, tab: "groups",
-                                       open_roster: "#{group.class.name}-#{group.id}"),
-            class: "badge roster-group-badge",
-            data: { turbo: false })
+    link_to(group.title, path, class: "badge roster-group-badge", data: { turbo: false })
   end
 
   def rosterable_display_type(rosterable)

@@ -38,6 +38,36 @@ module Rosters
       participating? && blockers.empty?
     end
 
+    # Of the given members of a group, those for whom it is the last place in
+    # the lecture they are enrolled in (see #only_place?), for a whole roster
+    # at once.
+    def self.only_place_user_ids(group, user_ids)
+      return [] unless group.place?
+
+      lecture = group.lecture
+      return [] if lecture.nil? || user_ids.empty?
+
+      places = lecture.place_user_id_queries(user_ids)
+                      .flat_map { |query| query.pluck(query.select_values.first) }
+      single = places.tally.select { |_, count| count == 1 }.keys
+      return [] if single.empty?
+
+      members = group.roster_entries.where(group.roster_user_id_column => single)
+                     .select(group.roster_user_id_column)
+      lecture.lecture_memberships.where(user_id: members).pluck(:user_id)
+    end
+
+    def places
+      @places ||= groups.select(&:place?) + exam_entries.map(&:exam)
+    end
+
+    # Whether the group is the last place of an enrolled student, which is
+    # left only by leaving the lecture, so that nobody stays enrolled without
+    # a place.
+    def only_place?(group)
+      enrolled? && places == [group]
+    end
+
     def groups
       @groups ||=
         Tutorial.where(lecture: @lecture,

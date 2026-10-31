@@ -333,4 +333,18 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
       I18n.t("registration.campaign.actions.reopen")
     )
   end
+
+  # The list is the person's only place, so removing them takes the lecture.
+  it "warns that removing someone whose only place the list is takes the lecture" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    exam.registration_campaign.update!(status: :completed)
+    student = create(:confirmed_user)
+    Rosters::MaintenanceService.new.add_user!(student, exam, force: true)
+
+    render_inline(described_class.new(exam: exam))
+
+    expect(rendered_content).to include(
+      CGI.escapeHTML(I18n.t("assessment.registration_tab.remove_confirm_last_place"))
+    )
+  end
 end

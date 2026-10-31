@@ -236,6 +236,40 @@ RSpec.describe(Rosters::LectureLeave) do
     end
   end
 
+  describe "#only_place?" do
+    let(:mo) { leavable_tutorial }
+    let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+    before do
+      lecture.add_user_to_roster!(student)
+      mo.add_user_to_roster!(student)
+    end
+
+    it "is true for the last group that enrolls, a list beside it notwithstanding" do
+      list.add_user_to_roster!(student)
+
+      expect(described_class.new(lecture, student).only_place?(mo)).to be(true)
+      expect(described_class.new(lecture, student).only_place?(list)).to be(false)
+    end
+
+    it "is false while another place remains" do
+      create(:cohort, :enrollment, context: lecture).add_user_to_roster!(student)
+
+      expect(described_class.new(lecture, student).only_place?(mo)).to be(false)
+    end
+
+    it "agrees with the lookup for a whole roster" do
+      other = create(:confirmed_user)
+      lecture.add_user_to_roster!(other)
+      mo.add_user_to_roster!(other)
+      create(:cohort, :enrollment, context: lecture).add_user_to_roster!(other)
+
+      expect(described_class.only_place_user_ids(mo, [student.id, other.id]))
+        .to contain_exactly(student.id)
+      expect(described_class.only_place_user_ids(list, [student.id])).to be_empty
+    end
+  end
+
   describe "#admitted?" do
     it "is true for a granted admission, computed or by hand" do
       certification = create(:student_performance_certification, :passed,

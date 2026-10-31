@@ -62,6 +62,8 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "lists them in the left view, saying how they left" do
+          create(:tutorial, lecture: lecture, skip_campaigns: true)
+
           get lecture_roster_participants_path(lecture, view: "left"), as: :turbo_stream
 
           body = CGI.unescapeHTML(response.body)
@@ -71,13 +73,15 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
 
         it "keeps the left view in its page links after readmitting someone" do
+          tutorial = create(:tutorial, lecture: lecture, skip_campaigns: true)
           # 21 more who have left, so a second page remains once Berg is back
           create_list(:confirmed_user, 21).each do |user|
             create(:lecture_membership, lecture: lecture, user: user).exclude!(by: user)
           end
 
           post add_member_lecture_path(lecture),
-               params: { user_id: former.id, source: :participants, view: "left" },
+               params: { user_id: former.id, group: "Tutorial-#{tutorial.id}",
+                         source: :participants, view: "left" },
                as: :turbo_stream
 
           links = Nokogiri::HTML(CGI.unescapeHTML(response.body))
@@ -92,13 +96,63 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(CGI.unescapeHTML(response.body)).to include(I18n.t("roster.views.left"))
         end
 
-        it "takes them back into the lecture" do
+        # Readmission goes through a place, and this lecture offers none.
+        it "does not take them back into a lecture without a group that enrolls" do
           post add_member_lecture_path(lecture),
                params: { user_id: former.id, source: :participants, view: "left" },
                as: :turbo_stream
 
-          expect(lecture.reload.members).to include(former)
-          expect(lecture.excluded_lecture_memberships).to be_empty
+          expect(response.body).to include(I18n.t("roster.errors.readmission_group_required"))
+          expect(lecture.reload.members).not_to include(former)
+        end
+
+        context "when the lecture has groups" do
+          let!(:tutorial) do
+            create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
+          end
+
+          def readmit(group)
+            post(add_member_lecture_path(lecture),
+                 params: { user_id: former.id, group: group, source: :participants,
+                           view: "left" },
+                 as: :turbo_stream)
+          end
+
+          it "takes them back into the lecture through the chosen group" do
+            readmit("Tutorial-#{tutorial.id}")
+
+            expect(tutorial.reload.members).to include(former)
+            expect(lecture.reload.members).to include(former)
+            expect(lecture.excluded_lecture_memberships).to be_empty
+            expect(CGI.unescapeHTML(response.body)).to include(
+              I18n.t("roster.messages.user_added", user: former.info, group: "Mo 10")
+            )
+          end
+
+          it "does not take them back without a group" do
+            readmit(nil)
+
+            expect(response.body).to include(I18n.t("roster.errors.readmission_group_required"))
+            expect(lecture.reload.members).not_to include(former)
+          end
+
+          it "does not take them back through a group without enrollment" do
+            waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+
+            readmit("Cohort-#{waitlist.id}")
+
+            expect(response.body).to include(I18n.t("roster.errors.readmission_group_required"))
+            expect(waitlist.reload.members).not_to include(former)
+          end
+
+          it "does not take them back through a group a registration process manages" do
+            managed = create(:tutorial, lecture: lecture, skip_campaigns: false)
+
+            readmit("Tutorial-#{managed.id}")
+
+            expect(response.body).to include(I18n.t("roster.errors.item_locked"))
+            expect(lecture.reload.members).not_to include(former)
+          end
         end
       end
 
@@ -520,12 +574,40 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(email.subject).to eq(expected_subject)
       end
 
-      it "does not remove the user from the lecture roster" do
+      it "keeps the user on the lecture roster while another place remains" do
         create(:lecture_membership, lecture: lecture, user: member)
+        create(:cohort, :enrollment, context: lecture).add_user_to_roster!(member)
 
         expect do
           delete(remove_member_tutorial_path(tutorial, user_id: member.id))
         end.not_to(change { lecture.members.count })
+      end
+
+      # Otherwise the user would stay enrolled without a place.
+      it "takes the user off the lecture along with their last place, as removed by staff" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        delete remove_member_tutorial_path(tutorial, user_id: member.id)
+
+        expect(lecture.reload.members).not_to include(member)
+        expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
+          .to eq(editor)
+        expect(flash[:notice]).to eq(
+          I18n.t("roster.messages.user_removed_with_only_group",
+                 user: member.info, group: tutorial.title)
+        )
+      end
+
+      # The removal takes the user off the lists too, whose rows would show
+      # them until a reload.
+      it "redraws the rows of the lists the user loses along with the lecture" do
+        create(:lecture_membership, lecture: lecture, user: member)
+        list = create(:cohort, context: lecture, skip_campaigns: true)
+        list.add_user_to_roster!(member)
+
+        delete remove_member_tutorial_path(tutorial, user_id: member.id), as: :turbo_stream
+
+        expect(response.body).to include(%(target="#{ActionView::RecordIdentifier.dom_id(list)}"))
       end
 
       it "includes user name in the flash" do
@@ -760,6 +842,28 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
       end
     end
+
+    context "when the source is the user's last place and the target a list" do
+      let(:source) do
+        create(:cohort, context: lecture, skip_campaigns: true, propagate_to_lecture: true)
+      end
+
+      before do
+        create(:cohort_membership, cohort: source, user: member)
+        lecture.ensure_roster_membership!([member.id])
+      end
+
+      it "keeps the user and names the reason" do
+        patch move_member_cohort_path(source, user_id: member.id),
+              params: { target_id: target.id, target_type: "Cohort" }
+
+        expect(flash[:alert]).to eq(
+          I18n.t("roster.errors.move_leaves_lecture", user: member.info, group: source.title)
+        )
+        expect(source.reload.members).to include(member)
+        expect(lecture.reload.members).to include(member)
+      end
+    end
   end
 
   describe "POST /lectures/:id/roster/members" do
@@ -768,10 +872,22 @@ RSpec.describe("Roster::Maintenance", type: :request) do
     context "as an editor" do
       before { sign_in editor }
 
-      it "adds the user to the lecture roster" do
+      it "adds the user to the lecture through a group" do
+        tutorial = create(:tutorial, lecture: lecture, skip_campaigns: true)
+
+        expect do
+          post(add_member_lecture_path(lecture),
+               params: { email: new_student.email, group: "Tutorial-#{tutorial.id}" })
+        end.to change { lecture.members.count }.by(1)
+        expect(tutorial.reload.members).to include(new_student)
+      end
+
+      # Nobody is enrolled without a place.
+      it "does not add the user to the lecture alone" do
         expect do
           post(add_member_lecture_path(lecture), params: { email: new_student.email })
-        end.to change { lecture.members.count }.by(1)
+        end.not_to(change { lecture.members.count })
+        expect(flash[:alert]).to eq(I18n.t("roster.errors.readmission_group_required"))
       end
 
       it "handles invalid email" do
@@ -862,7 +978,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         delete remove_member_lecture_path(seminar, user_id: member.id), as: :turbo_stream
 
-        expect(response.body).to include(I18n.t("roster.errors.grading_data_present"))
+        expect(response.body).to include(I18n.t("roster.errors.lecture_grading_data_present"))
         expect(seminar.reload.members).to include(member)
         expect(talk.reload.speakers).to include(member)
       end

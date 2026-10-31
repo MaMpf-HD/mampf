@@ -120,6 +120,22 @@ RSpec.describe(Rosters::UserPlaces) do
       expect(described_class.new(student).any?).to be(false)
     end
 
+    # Taken one at a time, a group's removal would lock the lecture before the
+    # next group, the reverse of a removal by staff from that group.
+    it "locks every group before the first lecture" do
+      [create(:tutorial, lecture: lecture), create(:cohort, :enrollment, context: lecture),
+       lecture].each { |rosterable| rosterable.add_user_to_roster!(student) }
+      tables = []
+      record = lambda do |*, payload|
+        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
+      end
+      ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
+        places.give_up!([lecture])
+      end
+
+      expect(tables.index("cohorts")).to be < tables.index("lectures")
+    end
+
     it "counts a withdrawn confirmed registration off its item" do
       campaign = create(:registration_campaign, :closed, campaignable: lecture)
       registration = create(:registration_user_registration, :confirmed,

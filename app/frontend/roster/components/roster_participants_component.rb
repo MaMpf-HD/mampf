@@ -90,6 +90,12 @@ class RosterParticipantsComponent < ViewComponent::Base
     end
   end
 
+  # The groups the staff can add someone who has left to, as select options:
+  # a group a running registration process manages takes nobody by hand.
+  def readmission_options
+    @readmission_options ||= helpers.roster_enrolling_group_options(lecture)
+  end
+
   def registration_entry(user)
     @registration_entry_by_user ||=
       Rosters::RunningRegistrations.new(lecture, campaign: campaign)
@@ -186,7 +192,8 @@ class RosterParticipantsComponent < ViewComponent::Base
     is_assigned ? :assigned : :unassigned
   end
 
-  # Returns the groups the user is currently a member of (including Cohorts)
+  # Returns the groups the user is currently a member of, cohorts and exam
+  # lists included: an exam list is a place in the lecture too.
   def participant_groups(user)
     ids = user_memberships[user.id]
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
@@ -273,6 +280,7 @@ class RosterParticipantsComponent < ViewComponent::Base
                                           registration_items: :registration_campaign).to_a)
           .concat(@lecture.cohorts.includes(:cohort_memberships,
                                             registration_items: :registration_campaign).to_a)
+          .concat(@lecture.exams.to_a)
           .sort_by(&:title)
     end
 
@@ -318,6 +326,10 @@ class RosterParticipantsComponent < ViewComponent::Base
                             .pluck(:user_id, :cohort_id)
                             .each { |uid, cid| map[uid].add("Cohort-#{cid}") }
           end
+
+          ExamRosterEntry.active.where(exam: @lecture.exams, user_id: user_ids)
+                         .pluck(:user_id, :exam_id)
+                         .each { |uid, eid| map[uid].add("Exam-#{eid}") }
         end
 
         map

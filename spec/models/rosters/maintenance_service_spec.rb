@@ -113,6 +113,28 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
   describe "#remove_user!" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
+    # Whether another place remains is certain only under the group's lock,
+    # and an allocation locks its campaign before the group.
+    it "locks the user's campaigns before the group when another place remains" do
+      lecture = tutorial.lecture
+      create(:cohort_membership, cohort: create(:cohort, :enrollment, context: lecture), user: user)
+      order = []
+      allow_any_instance_of(Rosters::UserPlaces).to(
+        receive(:lock_campaigns!).and_wrap_original do |original, *args|
+          order << :campaigns
+          original.call(*args)
+        end
+      )
+      allow(tutorial).to(receive(:lock!).and_wrap_original do |original, *args|
+        order << :group
+        original.call(*args)
+      end)
+
+      subject.remove_user!(user, tutorial)
+
+      expect(order).to eq([:campaigns, :group])
+    end
+
     it "removes the user from the roster" do
       expect do
         subject.remove_user!(user, tutorial)
@@ -197,6 +219,152 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
           .to raise_error(described_class::GradingDataPresentError)
         expect(lecture.reload.members).to include(user)
         expect(exam.reload.users).to include(user)
+      end
+    end
+  end
+
+  describe "enrollment following the places" do
+    let(:lecture) { create(:lecture) }
+    let(:mo) { create(:tutorial, lecture: lecture) }
+    let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+    let(:staff) { create(:confirmed_user) }
+
+    before { subject.add_user!(user, mo, force: true) }
+
+    it "takes the user off the lecture with their last place, lists too" do
+      subject.add_user!(user, list, force: true)
+
+      expect(subject.remove_user!(user, mo, by: staff)).to eq(lecture)
+
+      expect(lecture.reload.members).not_to include(user)
+      expect(lecture.excluded_lecture_memberships.find_by(user: user).excluded_by).to eq(staff)
+      expect(list.reload.members).not_to include(user)
+    end
+
+    # Whoever sits the exam stays a member through its list.
+    it "keeps the lecture while the user is on an exam list" do
+      create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(user)
+
+      expect(subject.remove_user!(user, mo)).to eq(mo)
+      expect(lecture.reload.members).to include(user)
+    end
+
+    # A finalization would otherwise place them again.
+    it "withdraws the registrations in the lecture with the last place" do
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      registration = create(:registration_user_registration, :pending,
+                            user: user, registration_campaign: campaign)
+
+      subject.remove_user!(user, mo)
+
+      expect { registration.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it "keeps the registrations while another place remains" do
+      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), force: true)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      registration = create(:registration_user_registration, :pending,
+                            user: user, registration_campaign: campaign)
+
+      subject.remove_user!(user, mo)
+
+      expect(registration.reload).to be_persisted
+    end
+
+    it "locks the campaign, the group and then the lecture when the last place goes" do
+      create(:registration_user_registration, :pending,
+             user: user,
+             registration_campaign: create(:registration_campaign, :open, campaignable: lecture))
+      tables = []
+      record = lambda do |*, payload|
+        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
+      end
+      ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
+        subject.remove_user!(user, mo)
+      end
+
+      expect(tables.index("registration_campaigns")).to be < tables.index("tutorials")
+      expect(tables.index("tutorials")).to be < tables.index("lectures")
+    end
+
+    # A removal of the last place decides under the lecture's lock; a place
+    # joined meanwhile has to wait for it, or it would be missed.
+    it "locks the lecture after a group with enrollment that it adds to" do
+      cohort = create(:cohort, :enrollment, context: lecture)
+      tables = []
+      record = lambda do |*, payload|
+        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
+      end
+      ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
+        subject.add_user!(user, cohort, force: true)
+      end
+
+      expect(tables.index("cohorts")).to be < tables.index("lectures")
+    end
+
+    it "keeps the lecture while another place remains" do
+      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), force: true)
+
+      expect(subject.remove_user!(user, mo)).to eq(mo)
+      expect(lecture.reload.members).to include(user)
+    end
+
+    # A list without enrollment is no place to stay enrolled through.
+    it "does not count a list as a place" do
+      subject.add_user!(user, list, force: true)
+
+      subject.remove_user!(user, mo)
+
+      expect(lecture.reload.members).not_to include(user)
+    end
+
+    it "lets the user leave a list without touching the lecture" do
+      subject.add_user!(user, list, force: true)
+
+      subject.remove_user!(user, list)
+
+      expect(lecture.reload.members).to include(user)
+    end
+
+    it "refuses moving the last place onto a list" do
+      expect { subject.move_user!(user, mo, list) }
+        .to raise_error(described_class::MoveLeavesLectureError)
+      expect(mo.reload.members).to include(user)
+      expect(list.reload.members).not_to include(user)
+    end
+
+    describe "exam lists" do
+      let(:exam) { create(:exam, :without_campaign, lecture: lecture) }
+      let(:stranger) { create(:confirmed_user) }
+
+      it "take the lecture's members" do
+        expect(subject.add_user!(user, exam)).to be_present
+      end
+
+      # An exam list is a place: whoever sits only the exam is a member.
+      it "enroll someone not yet in the lecture" do
+        subject.add_user!(stranger, exam)
+
+        expect(lecture.reload.members).to include(stranger)
+      end
+
+      it "take someone off the lecture with it when it was their last place" do
+        subject.add_user!(stranger, exam)
+
+        expect(subject.remove_user!(stranger, exam)).to eq(lecture)
+        expect(lecture.reload.members).not_to include(stranger)
+      end
+
+      it "lock the lecture after the exam" do
+        tables = []
+        record = lambda do |*, payload|
+          tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
+        end
+        ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
+          subject.add_user!(user, exam)
+        end
+
+        expect(tables.index("exams")).to be < tables.index("lectures")
       end
     end
   end

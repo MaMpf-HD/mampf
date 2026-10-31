@@ -1157,6 +1157,13 @@ class Lecture < ApplicationRecord
     tutorials_without_tutor(user).where.not(id: user.enrolled_tutorials.select(:id))
   end
 
+  # The groups whose members the lecture enrolls: its tutorials and talks,
+  # and the cohorts with enrollment. Students enter the lecture through one
+  # of them.
+  def enrolling_groups
+    tutorials.to_a + talks.to_a + cohorts.select(&:place?).sort_by(&:title)
+  end
+
   def roster_entries
     lecture_memberships
   end
@@ -1186,6 +1193,19 @@ class Lecture < ApplicationRecord
     shown = current_certifications.computed.decided.count
     student_performance_certifications.reset_computed!
     shown
+  end
+
+  # One query per kind of place (see Rosters::Rosterable#place?), each
+  # selecting the ids of the users holding one, a user once per place held;
+  # user_ids narrows them.
+  def place_user_id_queries(user_ids = nil)
+    { TutorialMembership.where(tutorial: tutorials) => :user_id,
+      SpeakerTalkJoin.where(talk: talks) => :speaker_id,
+      ExamRosterEntry.active.where(exam: exams) => :user_id,
+      CohortMembership.where(cohort: cohorts.where(propagate_to_lecture: true)) => :user_id }
+      .map do |scope, column|
+        (user_ids ? scope.where(column => user_ids) : scope).select(column)
+      end
   end
 
   # Certifications without those of people who have left the lecture. Theirs

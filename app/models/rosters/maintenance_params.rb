@@ -7,14 +7,14 @@ module Rosters
 
     attr_reader :group_type, :source, :source_id, :source_type, :target_id,
                 :target_type, :user_id, :email, :mode, :search,
-                :roster_tab
+                :roster_tab, :group
 
     def initialize(params, lecture: nil)
       @group_type_given = params.key?(:group_type)
       permitted = params.permit(
         :group_type, :source, :source_id, :source_type, :target_id,
         :target_type, :user_id, :email, :type, :mode,
-        :search, :tab, :id,
+        :search, :tab, :id, :group,
         group_type: []
       )
 
@@ -29,6 +29,7 @@ module Rosters
       @mode = permitted[:mode]
       @search = permitted[:search]
       @roster_tab = permitted[:tab]&.to_sym
+      @group = permitted[:group]
     end
 
     def group_type_given?

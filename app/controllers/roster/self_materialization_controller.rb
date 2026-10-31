@@ -41,6 +41,14 @@ module Roster
       respond_with_error(t("roster.errors.#{key}", group: @rosterable.title))
     end
 
+    rescue_from "Rosters::MaintenanceService::MoveLeavesLectureError" do
+      respond_with_error(t("roster.errors.switch_failed"))
+    end
+
+    rescue_from "Rosters::SelfMaterializationService::LastGroupError" do
+      respond_with_error(t("roster.errors.self_remove_last_group", group: @rosterable.title))
+    end
+
     rescue_from "Rosters::SelfMaterializationService::SelfRemoveNotAllowedError" do
       respond_with_error(t("roster.errors.self_remove_not_allowed",
                            type: @rosterable.class.model_name.human))
@@ -70,11 +78,20 @@ module Roster
     def self_remove
       service = Rosters::SelfMaterializationService.new(@rosterable, current_user)
       service.self_remove!
-      respond_with_success(t("roster.messages.user_removed",
-                             user: roster_message_user))
+      respond_with_success(self_removed_message)
     end
 
     private
+
+      # The lecture stays when a group goes, which students do not expect.
+      def self_removed_message
+        if @lecture.lecture_memberships.exists?(user: current_user)
+          t("roster.messages.self_removed_still_enrolled",
+            group: @rosterable.title, lecture: @lecture.title_term_info_no_type)
+        else
+          t("roster.messages.self_removed", group: @rosterable.title)
+        end
+      end
 
       def authorize_lecture
         authorize! :self_materialize, @lecture

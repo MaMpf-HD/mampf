@@ -122,6 +122,13 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
           expect(subject.scope.map(&:user)).to contain_exactly(user2, user3)
           expect(subject.scope.count).to eq(2)
         end
+
+        # An exam list is a place as well.
+        it "leaves out whoever is on an exam list" do
+          create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(user2)
+
+          expect(subject.scope.map(&:user)).to contain_exactly(user3)
+        end
       end
     end
 

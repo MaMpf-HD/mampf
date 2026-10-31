@@ -76,15 +76,18 @@ en:
     left:
       hint: >-
         Students who ended their participation or were removed from the lecture.
-        Their results and hand-ins stay recorded; “Readmit” puts them back into
-        the lecture.
+        Their results, hand-ins and admission stay recorded; “Readmit” puts them
+        back into the lecture through a group.
       column: 'Left'
       by_self: 'Left on %{date}'
       by_staff: 'Removed on %{date} by %{name}'
-      removed: 'Removed on %{date}'
+      removed: 'Taken off on %{date}'
       empty: 'Nobody has left so far.'
       readmit: 'Readmit'
-      readmit_confirm: 'Readmit %{user} to the course?'
+      readmit_into_group_confirm: 'Readmit %{user} to the course, into the chosen group?'
+      choose_group: 'Choose a group'
+      group_for: 'Group for %{user}'
+      no_open_group: 'Readmission goes through a group, and no group with enrollment takes anybody by hand right now.'
     registrations:
       hint: >-
         These people are registered but not yet placed in their groups. That happens only once the
@@ -144,8 +147,8 @@ en:
           title: "Superset Principle"
           description: "Students always join the course via a group. Tutorials and talks automatically transfer students to the course roster. An additional group to enroll students from tutorials/talks into the lecture is not needed."
         sticky_enrollment:
-          title: "Sticky Enrollment"
-          description: "Once a student joins the lecture roster (via tutorial, talk, or enrollment group), they remain enrolled even if they leave all groups later. This keeps a record of who was enrolled at some point in time. To remove a student completely, use the remove action in the Enrolled tab."
+          title: "Enrollment through groups"
+          description: "A student is enrolled while in a tutorial, a talk, a group with enrollment or on an exam list. Whoever leaves the last of these leaves the lecture too and is listed under 'Left'; points and admission stay stored and count again once the person joins a group with enrollment."
       phase1:
         title: "1. Choose Your Setup Method"
         campaigns:
@@ -218,7 +221,9 @@ en:
         without_group:
           one: "1 of them is then in no group of this course."
           other: "%{count} of them are then in no group of this course."
-        enrollment_stays: "The course enrollment remains."
+        leaves_lecture:
+          one: "For 1 of them it is the only group that enrolls them in the course: they are removed from the course with it, also from groups without enrollment, and their registrations are withdrawn. Points and any exam admission stay stored."
+          other: "For %{count} of them it is the only group that enrolls them in the course: they are removed from the course with it, also from groups without enrollment, and their registrations are withdrawn. Points and any exam admission stay stored."
         registrations: "This also deletes what its finished registration process left on it: %{total}, %{confirmed}."
         notify: "Notify the members by email"
         submit: "Delete group"
@@ -409,13 +414,17 @@ en:
       capacity_exceeded: "Group capacity exceeded."
       lecture_has_other_roster_entry: "You are already enrolled in another group of this lecture and cannot join another group at the same time."
       grading_data_present: "This person already has a result here. Delete it first if you really want to remove or move them."
+      lecture_grading_data_present: "This person already has a result on a talk or an exam of the lecture, which they would leave with this. Delete the result first if you really want to remove them."
+      move_leaves_lecture: "%{user} was not moved: “%{group}” is their last group with enrollment, so the move would take them out of the lecture. Move them into a group with enrollment, or remove them instead."
       target_not_found: "Target group not found."
       target_locked: "Target group is locked."
       user_not_found: "Student not found."
+      readmission_group_required: "Choose a group for the person to come back into."
       user_already_in_bundle: "%{user} is already assigned to %{group}."
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
       switch_failed: "The switch did not work; you stay in your current group."
       self_remove_graded: "You already have a result in “%{group}”, so you cannot leave it."
+      self_remove_last_group: "“%{group}” is what keeps you in the course; you leave it only together with the course."
       self_add_not_allowed: "Self-enrollment in this %{type} is not permitted for students."
       self_remove_not_allowed: "Self-leaving from this %{type} is not permitted for students."
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
@@ -429,6 +438,7 @@ en:
       confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment, and taken off the exam list of %{exams}; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
+      confirm_kick_from_only_group: 'This group is what enrolls the person in the lecture; they have no other. They are therefore removed from the lecture, also from groups without lecture enrollment; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. To switch groups, use “Move”. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
@@ -447,6 +457,9 @@ en:
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
+      user_removed_with_only_group: "%{user} was removed from the lecture along with %{group}, their last group with enrollment."
+      self_removed: "You have left “%{group}”."
+      self_removed_still_enrolled: "You have left “%{group}”. You are still enrolled in “%{lecture}”."
     no_participants_yet: 'Nobody is on the exam roster yet.'
     registered: 'Registered'
     mailer:
@@ -529,23 +542,35 @@ en:
           lecture <strong>%{lecture_title}</strong>. This group has been deleted,
           so you are no longer a member of it.
         </p>
-        <p>
-          Nothing else changes for you: your enrollment in the lecture and your
-          other groups there remain as they are.
-        </p>
-        <p>
-          If you have any questions, please contact your instructor or the support team.
-        </p>
       roster_group_deleted_email_body: |
         Hello %{name},
 
         You were a member of the group "%{rosterable_title}" in the lecture
         "%{lecture_title}". This group has been deleted, so you are no longer
         a member of it.
-
+      roster_group_deleted_email_unchanged_html: |
+        <p>
+          Nothing else changes for you: your enrollment in the lecture and your
+          other groups there remain as they are.
+        </p>
+      roster_group_deleted_email_unchanged: |
         Nothing else changes for you: your enrollment in the lecture and your
         other groups there remain as they are.
-
+      roster_group_deleted_email_left_lecture_html: |
+        <p>
+          This group was what enrolled you in the lecture; you had no other there.
+          You are therefore no longer enrolled in the lecture. Your points and any
+          exam admission stay stored and count again if you come back.
+        </p>
+      roster_group_deleted_email_left_lecture: |
+        This group was what enrolled you in the lecture; you had no other there.
+        You are therefore no longer enrolled in the lecture. Your points and any
+        exam admission stay stored and count again if you come back.
+      roster_group_deleted_email_questions_html: |
+        <p>
+          If you have any questions, please contact your instructor or the support team.
+        </p>
+      roster_group_deleted_email_questions: |
         If you have any questions, please contact your instructor or the support team.
       roster_group_deleted_email_subject: 'Group %{rosterable_title} in %{lecture_title} deleted'
       roster_removed_from_exam_email_body_html: |

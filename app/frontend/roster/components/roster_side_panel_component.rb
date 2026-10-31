@@ -177,6 +177,14 @@ class RosterSidePanelComponent < ViewComponent::Base
     )
   end
 
+  # Names the lecture when this is the person's last place, since removing
+  # them takes it too.
+  def remove_confirmation(student)
+    return t("roster.warnings.confirm_kick_from_group") unless only_place_ids.include?(student.id)
+
+    t("roster.warnings.confirm_kick_from_only_group")
+  end
+
   def drag_controller?
     !read_only? && (campaign_panel? || (registerable.present? && !panel_mode?))
   end
@@ -279,6 +287,11 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   private
+
+    def only_place_ids
+      @only_place_ids ||=
+        Rosters::LectureLeave.only_place_user_ids(registerable, students.map(&:id)).to_set
+    end
 
     def relevant_registrations(student)
       student.user_registrations.select do |r|

@@ -47,6 +47,20 @@ test.describe("leaving a course", () => {
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
+  test("leaves the only tutorial with the course alone", async ({ factory, student }) => {
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
+    const { page } = student;
+
+    await page.goto(`/lectures/${lecture.id}`);
+    const tutorialRow = page.getByTestId("participation-row").filter({ hasText: "Mo 10" });
+    await expect(tutorialRow).toContainText("you leave it only together with the course.");
+    await expect(tutorialRow.getByRole("button")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Leave course" }).click();
+    await expect(page.getByRole("dialog", { name: "Leave this course" })
+      .getByText("You leave Mo 10.")).toBeVisible();
+  });
+
   test("says why a student cannot leave alone", async ({ factory, student }) => {
     const lecture = await enrollInTutorial(factory, student.user.id, "disabled");
     const exam = await factory.create("exam", ["with_date"], {
@@ -71,7 +85,9 @@ test.describe("leaving a course", () => {
 });
 
 test.describe("people who left a course", () => {
-  test("are listed for the lecturer, who can readmit them", async ({ factory, teacher }) => {
+  test("are listed for the lecturer, in the overview and the left view", async ({
+    factory, teacher,
+  }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,
     });
@@ -94,12 +110,35 @@ test.describe("people who left a course", () => {
     await page.getByRole("link", { name: /^Left/ }).click();
     const row = page.getByRole("row").filter({ hasText: "Lina Berg" });
     await expect(row).toContainText("Left on");
+  });
 
+  test("are readmitted into the group the lecturer chooses", async ({ factory, teacher }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Mo 10", skip_campaigns: true,
+    });
+    const former = await factory.create("confirmed_user", [], { name_in_tutorials: "Lina Berg" });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id,
+      user_id: former.id,
+      excluded_at: new Date().toISOString(),
+      excluded_by_id: former.id,
+    });
+    const { page } = teacher;
+
+    await page.goto(`/lectures/${lecture.id}/edit?tab=participants`);
+    await page.getByRole("link", { name: /^Left/ }).click();
+    const row = page.getByRole("row").filter({ hasText: "Lina Berg" });
+    await row.getByRole("combobox", { name: "Group for Lina Berg" })
+      .selectOption({ label: "Mo 10" });
     page.once("dialog", dialog => void dialog.accept());
     await row.getByRole("button", { name: "Readmit" }).click();
 
     await expect(page.getByRole("row").filter({ hasText: "Lina Berg" })).toHaveCount(0);
     await page.getByRole("link", { name: /^Enrolled/ }).click();
-    await expect(page.getByRole("row").filter({ hasText: "Lina Berg" })).toBeVisible();
+    await expect(page.getByRole("row").filter({ hasText: "Lina Berg" })
+      .getByRole("link", { name: "Mo 10" })).toBeVisible();
   });
 });
