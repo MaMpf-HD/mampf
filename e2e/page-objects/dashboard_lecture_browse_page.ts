@@ -1,3 +1,4 @@
+import { expectDialogOpened } from "../_support/dialogs";
 import { expect, Page } from "../_support/fixtures";
 
 export class DashboardLectureBrowsePage {
@@ -142,26 +143,40 @@ export class DashboardLectureBrowsePage {
       .getByTestId("lecture-search-bookmark-button");
   }
 
+  /**
+   * Turbo changes the URL when a visit starts, so the card going away and
+   * coming back tells when each page is actually on screen.
+   */
   async openLectureAndGoBack(lectureId: number) {
-    await this.dashboardCard(lectureId).click();
+    const card = this.dashboardCard(lectureId);
+    await card.click();
     await this.page.waitForURL(/\/lectures\//);
+    await expect(card).toBeHidden();
     await this.page.goBack();
     await this.page.waitForURL("/");
+    await expect(card).toBeVisible();
   }
 
+  /** The dashboard's own requests, not the assets under vite-public/dashboard. */
   async waitForBoardRefresh(action: () => Promise<void>) {
     const refreshed = this.page.waitForResponse(response =>
-      response.url().includes("/dashboard/") && response.status() === 200,
+      new URL(response.url()).pathname.startsWith("/dashboard/")
+        && response.status() === 200,
     );
     await action();
     await refreshed;
   }
 
-  /** Removes a bookmarked lecture from the dashboard, confirming the modal. */
+  /**
+   * Removes a bookmarked lecture from the dashboard, confirming the modal.
+   * The card goes once the modal has closed, and Bootstrap does not close one
+   * that is still opening.
+   */
   async removeBookmark(lectureId: number) {
     const card = this.dashboardCard(lectureId);
     await this.waitForBoardRefresh(async () => {
       await card.getByRole("button", { name: "Remove bookmark" }).click();
+      await expectDialogOpened(this.page.getByRole("dialog", { name: "Remove bookmark?" }));
       await this.page.getByRole("button", { name: "Remove", exact: true }).click();
     });
   }
@@ -175,6 +190,7 @@ export class DashboardLectureBrowsePage {
 
     await this.waitForBoardRefresh(async () => {
       await card.getByRole("button", { name: "Dismiss" }).click();
+      await expectDialogOpened(this.page.getByRole("dialog", { name: "Dismiss the notice?" }));
       await this.page.getByRole("button", { name: buttonName }).click();
     });
   }
