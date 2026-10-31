@@ -671,8 +671,6 @@ GEM
       mize (~> 0.6)
       readline
       sync
-    trix-rails (2.4.0)
-      rails (> 4.1)
     tsort (0.2.0)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
@@ -809,7 +807,6 @@ DEPENDENCIES
   thredded-markdown_katex!
   thruster (~> 0.1)
   timecop (~> 0.9.10)
-  trix-rails (~> 2.4)
   turbo-rails (~> 2.0)
   view_component (~> 4.0)
   vite_rails (~> 3.0, >= 3.0.17)
