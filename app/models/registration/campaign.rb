@@ -438,7 +438,8 @@ module Registration
     # through another campaign. A user is considered unassigned if they haven't
     # secured a spot in any of the campaign's registerables, even if they are
     # members of the lecture roster. Open rejected registrations are excluded
-    # and shown in the rejected queue instead.
+    # and shown in the rejected queue instead. People who left the lecture
+    # after registering are left out too.
     #
     # When preload_registrations is true, the returned relation also eager-loads
     # the registration data needed by the "unassigned side panel", which sorts
@@ -452,6 +453,7 @@ module Registration
 
       relation = users.where.not(id: allocated_ids)
                       .where.not(id: open_rejected_registrations.select(:user_id))
+                      .where.not(id: left_after_registering.select(:user_id))
       return relation unless preload_registrations
 
       relation.includes(
@@ -747,6 +749,15 @@ module Registration
         else
           registration_items.pluck(:registerable_type).uniq
         end
+      end
+
+      # Registrations made before their user left the lecture. Someone who
+      # registers again after leaving shows up as unassigned again.
+      def left_after_registering
+        user_registrations.joins(user: :lecture_memberships_including_excluded)
+                          .merge(LectureMembership.excluded.where(lecture_id: campaignable_id))
+                          .where("lecture_memberships.excluded_at > " \
+                                 "registration_user_registrations.created_at")
       end
 
       def allocated_user_ids_for_type(type)

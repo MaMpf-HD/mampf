@@ -1,5 +1,5 @@
 <div class="btn-group btn-group-sm" role="group">
-  <% ["enrolled", "registered"].each do |view| %>
+  <% RosterParticipantsComponent::COUNT_KEYS.each_key do |view| %>
     <%= link_to component.helpers.lecture_roster_participants_path(component.lecture,
                                                                    view: view,
                                                                    campaign: component.campaign&.id,
@@ -9,7 +9,7 @@
                 data: { turbo_frame: "roster_participants_panel" },
                 aria: { current: ("true" if component.view == view) } do %>
       <%= t("roster.views.#{view}") %>
-      (<span><%= component.counts[view == "registered" ? :registered : :total] || 0 %></span>)
+      (<span><%= component.view_count(view) %></span>)
     <% end %>
   <% end %>
 </div>
