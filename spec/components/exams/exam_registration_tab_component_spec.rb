@@ -338,7 +338,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)
     student = create(:confirmed_user)
-    Rosters::MaintenanceService.new.add_user!(student, exam, force: true)
+    Rosters::MaintenanceService.new.add_user!(student, exam, ignore_capacity: true)
 
     render_inline(described_class.new(exam: exam))
 

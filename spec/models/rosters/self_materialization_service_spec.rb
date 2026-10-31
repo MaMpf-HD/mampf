@@ -17,8 +17,9 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
       allow(rosterable).to receive(:config_allow_self_add?).and_return(true)
     end
 
-    it "delegates to MaintenanceService#add_user! with force: false" do
-      expect(maintenance_service).to receive(:add_user!).with(user, rosterable, force: false)
+    it "delegates to MaintenanceService#add_user! with ignore_capacity: false" do
+      expect(maintenance_service).to receive(:add_user!)
+        .with(user, rosterable, ignore_capacity: false)
       service.self_add!
     end
 

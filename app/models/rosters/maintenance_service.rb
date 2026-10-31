@@ -11,13 +11,13 @@ module Rosters
     # the nested with_lock transactions swallow it and commit anyway.
     class MoveWithoutEffectError < StandardError; end
 
-    def add_user!(user, rosterable, force: false, source_campaign_id: nil)
+    def add_user!(user, rosterable, ignore_capacity: false, override_rejection_in: nil)
       added = rosterable.with_lock do
         rosterable.lecture&.lock! if rosterable.enrolls_in_lecture?
         add_user_without_lock!(user,
                                rosterable,
-                               force: force,
-                               source_campaign_id: source_campaign_id)
+                               ignore_capacity: ignore_capacity,
+                               override_rejection_in: override_rejection_in)
       end
       RosterNotificationMailer.added(user, rosterable) if added
       added
@@ -62,22 +62,29 @@ module Rosters
     # A move from the lecture to a group never takes the person out of the
     # lecture. It moves them out of the group that conflicts with the target,
     # or only adds them to the target if there is none.
-    def move_user!(user, from_rosterable, to_rosterable, force: false)
+    def move_user!(user, from_rosterable, to_rosterable, ignore_capacity: false)
       if from_rosterable.is_a?(Lecture)
         from_rosterable = to_rosterable.conflicting_lecture_membership(user)
-        return add_user!(user, to_rosterable, force: force).present? unless from_rosterable
+        unless from_rosterable
+          return add_user!(user, to_rosterable, ignore_capacity: ignore_capacity).present?
+        end
       end
       return false if from_rosterable == to_rosterable
+      unless from_rosterable.lecture == to_rosterable.lecture
+        raise(ArgumentError, "A move stays within one lecture")
+      end
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
-        [from_rosterable, to_rosterable].find(&:enrolls_in_lecture?)&.lecture&.lock!
+        if from_rosterable.enrolls_in_lecture? || to_rosterable.enrolls_in_lecture?
+          from_rosterable.lecture.lock!
+        end
         raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
         raise(MoveLeavesLectureError) if leaves_last_place?(user, from_rosterable, to_rosterable)
 
         ensure_no_grading_data!(user, from_rosterable)
 
         removed = remove_user_without_lock!(user, from_rosterable)
-        added   = add_user_without_lock!(user, to_rosterable, force: force)
+        added   = add_user_without_lock!(user, to_rosterable, ignore_capacity: ignore_capacity)
 
         raise(MoveWithoutEffectError) unless removed && added
       end
@@ -126,12 +133,13 @@ module Rosters
         rosterable.roster_entries.exists?(rosterable.roster_user_id_column => user.id)
       end
 
-      def add_user_without_lock!(user, rosterable, force: false, source_campaign_id: nil)
+      def add_user_without_lock!(user, rosterable, ignore_capacity: false,
+                                 override_rejection_in: nil)
         return if user_in_roster?(user, rosterable)
 
         ensure_uniqueness!(user, rosterable)
 
-        unless force || within_capacity?(rosterable)
+        unless ignore_capacity || within_capacity?(rosterable)
           raise(CapacityExceededError,
                 "Capacity exceeded for #{rosterable.class.name} #{rosterable.id}")
         end
@@ -140,7 +148,7 @@ module Rosters
         rosterable.propagate_to_lecture!([user.id])
         update_registration_materialization(user,
                                             rosterable,
-                                            source_campaign_id: source_campaign_id)
+                                            override_rejection_in: override_rejection_in)
         membership
       end
 
@@ -179,7 +187,7 @@ module Rosters
         rosterable.roster_entries.count < rosterable.capacity
       end
 
-      def update_registration_materialization(user, rosterable, source_campaign_id: nil)
+      def update_registration_materialization(user, rosterable, override_rejection_in: nil)
         now = Time.current
 
         Registration::Item.where(registerable: rosterable).find_each do |item|
@@ -189,12 +197,12 @@ module Rosters
           # rubocop:enable Rails/SkipsModelValidations
         end
 
-        return if source_campaign_id.blank?
+        return if override_rejection_in.blank?
 
         # rubocop:disable Rails/SkipsModelValidations
         Registration::UserRegistration.rejected
                                       .where(user: user,
-                                             registration_campaign_id: source_campaign_id,
+                                             registration_campaign_id: override_rejection_in,
                                              rejection_overridden_at: nil)
                                       .update_all(rejection_overridden_at: now,
                                                   updated_at: now)

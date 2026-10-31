@@ -204,7 +204,7 @@ class ExamsController < ApplicationController
         else
           service = Rosters::MaintenanceService.new
           begin
-            added = service.add_user!(user, @exam, force: true)
+            added = service.add_user!(user, @exam, ignore_capacity: true)
             flash.now[:success] = t("assessment.registration_tab.participant_added",
                                     name: user.tutorial_name.presence || user.email)
           rescue ActiveRecord::RecordInvalid
