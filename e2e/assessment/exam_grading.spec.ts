@@ -1,3 +1,4 @@
+import { expectDialogOpened } from "../_support/dialogs";
 import { expect, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { addTask, createLecture } from "./helpers";
@@ -82,9 +83,11 @@ test.describe("exam grading", () => {
     await excuse.focus();
     await teacher.page.keyboard.press("Enter");
     const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the exam" });
+    await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Cancel" }).click();
     await expect(excuse).toBeFocused();
     await excuse.click();
+    await expectDialogOpened(dialog);
     await dialog.getByLabel("Reason (optional, teaching staff only)").fill("sick note");
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(grace.getByRole("img", { name: "Exempt: sick note" })).toBeVisible();
@@ -98,6 +101,7 @@ test.describe("exam grading", () => {
     await page.pane.getByLabel("Status").selectOption("pending_grading");
     await expect(adaGrade).toBeHidden();
     await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(grace).toBeHidden();
     await expect(page.pane.getByLabel("Name")).toBeFocused();
@@ -119,6 +123,7 @@ test.describe("exam grading", () => {
     const grace = page.pane.getByRole("row", { name: /Grace Hopper/ });
     await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
     const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the exam" });
+    await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(dialog).toBeHidden();
 
