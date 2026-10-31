@@ -1180,13 +1180,15 @@ class Lecture < ApplicationRecord
     blocking_campaign_titles(policies)
   end
 
-  # Drops the computed certifications and returns how many decisions went, or
-  # returns nil and drops nothing while eligibility_in_use_by names a
-  # registration that still reads them.
+  # Deletes the computed certifications, those of people who have left too.
+  # Returns how many decisions the eligibility page showed, or nil while a
+  # registration still uses them.
   def reset_computed_certifications!
     return if eligibility_in_use_by
 
+    shown = current_certifications.computed.decided.count
     student_performance_certifications.reset_computed!
+    shown
   end
 
   # The certifications of everybody but those who have left. Theirs stay
