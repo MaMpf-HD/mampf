@@ -178,7 +178,6 @@ RSpec.describe("StudentMessages", type: :request) do
       end
     end
 
-    # A tutor writes to their own group, as themselves, and to nobody else.
     # The tutors should know what their students were told.
     context "as the teacher, with a copy to the tutors" do
       let(:other_tutor) { create(:confirmed_user) }
@@ -208,6 +207,7 @@ RSpec.describe("StudentMessages", type: :request) do
       end
     end
 
+    # A tutor writes to their own group, as themselves, and to nobody else.
     context "as a tutor" do
       before { sign_in tutor }
 
