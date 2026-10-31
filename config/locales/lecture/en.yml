@@ -44,7 +44,7 @@ en:
       confirmation_word: "Leave"
       blocked: "You cannot leave this course yourself right now:"
       blockers:
-        group_fixed: "You cannot leave “%{title}” yourself."
+        group_held: "You cannot leave “%{title}” yourself."
         exam_closed: "You cannot withdraw from “%{title}” yourself."
         graded: "“%{title}” has already been graded."
         prerequisite: "Your registration for “%{title}” requires your registration in this course."

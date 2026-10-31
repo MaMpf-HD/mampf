@@ -45,7 +45,7 @@ de:
       confirmation_word: "Austreten"
       blocked: "Du kannst die Teilnahme gerade nicht selbst beenden:"
       blockers:
-        group_fixed: "„%{title}“ kannst Du nicht selbst verlassen."
+        group_held: "„%{title}“ kannst Du nicht selbst verlassen."
         exam_closed: "Von „%{title}“ kannst Du Dich nicht selbst abmelden."
         graded: "„%{title}“ ist bereits bewertet."
         prerequisite: "Deine Anmeldung zu „%{title}“ setzt Deine Anmeldung in dieser Veranstaltung voraus."

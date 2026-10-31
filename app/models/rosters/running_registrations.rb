@@ -3,8 +3,6 @@ module Rosters
   # people reach their groups only with Registration::Campaign#finalize!.
   # Exam campaigns are left out: they fill exam rosters, not the lecture's.
   class RunningRegistrations
-    STATUSES = ["open", "closed", "processing"].freeze
-
     Entry = Struct.new(:campaign, :registrations, keyword_init: true) do
       # Leaves out a forced assignment, which the person never chose.
       def chosen_items
@@ -34,7 +32,7 @@ module Rosters
     end
 
     def campaigns
-      Registration::Campaign.where(campaignable: @lecture, status: STATUSES).non_exam
+      Registration::Campaign.running.where(campaignable: @lecture).non_exam
                             .order(:registration_deadline, :created_at, :id)
     end
 

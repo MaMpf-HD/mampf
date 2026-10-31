@@ -46,7 +46,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       get lecture_home_path(lecture)
 
       body = CGI.unescapeHTML(response.body.squish)
-      expect(body).to include(I18n.t("lecture_home.leave.blockers.group_fixed", title: "Mo 10"))
+      expect(body).to include(I18n.t("lecture_home.leave.blockers.group_held", title: "Mo 10"))
       expect(body).to include(I18n.t("lecture_home.leave.contact"))
       expect(body).not_to include(%(action="#{lecture_membership_path(lecture)}"))
     end

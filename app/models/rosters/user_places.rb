@@ -5,8 +5,6 @@ module Rosters
   # number, so a student with a place may not decline to give them, but may
   # give up the places instead; a student with results may not.
   class UserPlaces
-    RUNNING_CAMPAIGN_STATUSES = [:open, :closed, :processing].freeze
-
     # Raised when giving up the places of the named lectures leaves a place
     # the student was not shown.
     class PlacesChangedError < StandardError; end
@@ -61,7 +59,7 @@ module Rosters
     def withdraw_registrations!(lectures)
       withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
         campaign.lock!
-        next unless campaign.status.to_sym.in?(RUNNING_CAMPAIGN_STATUSES)
+        next unless campaign.running?
 
         campaign.user_registrations.where(user: @user).find_each(&:destroy!)
       end
@@ -133,12 +131,11 @@ module Rosters
           .where(user: @user)
           .where.not(status: :rejected)
           .joins(:registration_campaign)
-          .merge(Registration::Campaign.where(status: RUNNING_CAMPAIGN_STATUSES))
+          .merge(Registration::Campaign.running)
       end
 
       def withdrawable_campaigns
-        Registration::Campaign.where(
-          status: RUNNING_CAMPAIGN_STATUSES,
+        Registration::Campaign.running.where(
           id: Registration::UserRegistration.where(user: @user).select(:registration_campaign_id)
         )
       end

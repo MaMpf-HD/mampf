@@ -47,6 +47,10 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    RUNNING_STATUSES = [:open, :closed, :processing].freeze
+
+    scope :running, -> { where(status: RUNNING_STATUSES) }
+
     scope :non_exam, lambda {
       where.not(
         id: Registration::Item.where(registerable_type: "Exam")
@@ -135,6 +139,10 @@ module Registration
     # cohort without enrollment does not.
     def enrolls_in_lecture?
       registration_items.includes(:registerable).all? { |item| item.registerable.place? }
+    end
+
+    def running?
+      status.to_sym.in?(RUNNING_STATUSES)
     end
 
     def open_for_withdrawals?
