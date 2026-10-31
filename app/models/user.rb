@@ -325,6 +325,16 @@ class User < ApplicationRecord
                .name_in_tutorials_or_email_like(search_string))
   end
 
+  def self.shown_name_like(search_string)
+    where(Arel.sql(SHOWN_NAME_SQL).matches("%#{sanitize_sql_like(search_string)}%"))
+  end
+
+  def self.shown_name_or_matriculation_number_like(search_string)
+    pattern = "%#{sanitize_sql_like(search_string)}%"
+    where(Arel.sql(SHOWN_NAME_SQL).matches(pattern)
+            .or(arel_table[:matriculation_number].matches(pattern)))
+  end
+
   def self.values_for_select
     pluck(:id, :name, :name_in_tutorials, :email)
       .map do |u|
