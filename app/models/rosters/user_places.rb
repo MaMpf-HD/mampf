@@ -19,8 +19,8 @@ module Rosters
     end
 
     # Names the lectures rather than every group, so that the student
-    # recognizes them in one line. A lecture with only a rejected registration
-    # is among them, since giving it up withdraws that registration too.
+    # recognizes them in one line. Lectures with only a rejected registration
+    # are included, because giving up the places withdraws it too.
     def lectures
       (rosterables.map(&:lecture) + withdrawable_campaigns.map(&:campaignable))
         .grep(Lecture).uniq.sort_by(&:title)
@@ -45,17 +45,16 @@ module Rosters
       end
     end
 
-    # Withdraws the running registrations and leaves the rosters of the given
-    # lectures, without asking whether places elsewhere remain. Callers wrap
-    # it in a transaction.
+    # Doesn't check whether leaving is allowed; callers do that and wrap it in
+    # a transaction.
     def leave!(lectures)
       withdraw_registrations!(lectures)
       leave_rosters!(lectures)
     end
 
-    # Withdraws the registrations in the given lectures, rejected ones too,
-    # since a new allocation can turn them back into pending ones. Locks each
-    # campaign first, as allocation and finalization do.
+    # Withdraws the registrations in the given lectures, rejected ones too: a
+    # new allocation can still give them a place. Locks each campaign first,
+    # like allocation and finalization do.
     def withdraw_registrations!(lectures)
       withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
         campaign.lock!
@@ -86,9 +85,9 @@ module Rosters
          StudentPerformance::Certification.decided.where(user: @user)]
       end
 
-      # A rejection of a completed campaign would keep the lecture on the
-      # dashboard (see User#lectures_with_registration_application); it is
-      # dismissed rather than deleted, so the application stays on record.
+      # Marks the rejections in completed campaigns as dismissed; otherwise the
+      # lecture would stay on the student's dashboard. Dismissing rather than
+      # deleting keeps the application on record.
       def dismiss_rejections!(lectures)
         completed = Registration::Campaign.where(campaignable: lectures, status: :completed)
                                           .non_exam
@@ -118,8 +117,9 @@ module Rosters
          LectureMembership.active.where(user: @user)]
       end
 
-      # Groups in the order LectureLeave and the bulk self-service setting lock
-      # them, so that leaving and giving up wait for each other.
+      # The user's groups, sorted in the order LectureLeave and the bulk
+      # self-service setting lock them, so they wait for each other instead of
+      # deadlocking.
       def rosterables
         Tutorial.where(id: TutorialMembership.where(user: @user).select(:tutorial_id))
                 .order(:id).to_a +

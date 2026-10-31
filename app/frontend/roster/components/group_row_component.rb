@@ -366,15 +366,12 @@ class GroupRowComponent < ViewComponent::Base
     "#{t("roster.self_materialization.bulk_no_leaving")} #{confirm}"
   end
 
-  # Asked before a mode without leaving takes effect on members, who could
-  # then leave neither the group nor the lecture (see Rosters::LectureLeave).
   def sm_confirm(mode)
     return if mode == sm_mode || leaving_allowed?(mode) || count.zero?
 
     t("roster.self_materialization.confirm_no_leaving", count: count)
   end
 
-  # Shown on the mode while it keeps the members in the lecture.
   def sm_title
     return if leaving_allowed?(sm_mode)
 
