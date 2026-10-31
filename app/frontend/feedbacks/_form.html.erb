@@ -32,8 +32,7 @@
                     minlength: Feedback::BODY_MIN_LENGTH,
                     maxlength: Feedback::BODY_MAX_LENGTH,
                     aria: { invalid: body_invalid,
-                            describedby: token_list("feedback-body-error": body_invalid,
-                                                    "feedback-sender-hint": true) },
+                            describedby: ("feedback-body-error" if body_invalid) },
                     data: { feedback_widget_target: "message" } %>
 
     <% if body_invalid %>
@@ -43,9 +42,6 @@
     <% end %>
   </div>
 
-  <div id="feedback-sender-hint" class="form-text mb-2">
-    <%= t("feedback.sender_hint") %>
-  </div>
 
   <div class="text-end">
     <%= f.submit t("feedback.send"), class: "btn btn-primary btn-sm" %>

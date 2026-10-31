@@ -11,9 +11,6 @@ de:
     issue: "Issue"
     body: "Dein Feedback"
     body_placeholder: "Was stört Dich, was fehlt Dir, was würdest Du ändern?"
-    sender_hint: >
-      Wir sehen Deinen Namen und Deine E-Mail-Adresse und antworten Dir
-      eventuell.
     send: "Senden"
     sent: "Danke! Wir lesen jede Antwort. Hast Du noch etwas auf dem Herzen?"
   activemodel:
