@@ -99,7 +99,7 @@ module RosterHelper
   end
 
   def roster_group_key(group)
-    "#{group.class.name}-#{group.id}"
+    Rosters::RosterableResolver.group_key(group)
   end
 
   # Select options, grouped by kind, for the groups through which the staff take

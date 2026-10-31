@@ -63,8 +63,14 @@ module Rosters
       end
     end
 
-    # Finds the group a RosterHelper#roster_group_key names, if it belongs to
-    # the lecture and enrolls in it. Returns nil for anything else.
+    # Names a group in a parameter or a data attribute, e.g. "Tutorial-12";
+    # find_place reads it back.
+    def self.group_key(group)
+      "#{group.class.name}-#{group.id}"
+    end
+
+    # Finds the group a group_key names, if it belongs to the lecture and
+    # enrolls in it. Returns nil for anything else.
     def self.find_place(key, lecture:)
       type, id = key.to_s.split("-", 2)
       return if type.blank? || type == "Lecture"
