@@ -31,7 +31,7 @@ module Assessment
       where.not(status: :pending)
            .or(where.not(points_total: nil))
            .or(where.not(grade_numeric: nil))
-           .or(where.not(grade_text: nil))
+           .or(where.not(grade_text: [nil, ""]))
            .or(where(id: TaskPoint.select(:assessment_participation_id)))
     }
     # The rows ParticipationIndex.blank? does not call blank, as one query:

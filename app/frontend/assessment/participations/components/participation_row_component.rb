@@ -455,7 +455,7 @@ class ParticipationRowComponent < ViewComponent::Base
   # Assessment::TaskPointsController#refuse_after_leaving).
   def left_lecture?
     @assessable.is_a?(Assignment) &&
-      helpers.left_lecture_user_ids(@assessable.lecture).include?(@user.id)
+      @assessable.lecture.left_user_ids.include?(@user.id)
   end
 
   # Tutorial movement compares a sheet's participation with the user's

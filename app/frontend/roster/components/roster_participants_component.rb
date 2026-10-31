@@ -253,29 +253,12 @@ class RosterParticipantsComponent < ViewComponent::Base
   private
 
     def exam_titles_by_user
-      @exam_titles_by_user ||=
-        ExamRosterEntry.active.joins(:exam)
-                       .where(exams: { lecture_id: @lecture.id },
-                              user_id: participants.map(&:user_id))
-                       .pluck(:user_id, "exams.title")
-                       .group_by(&:first).transform_values { |rows| rows.map(&:last) }
+      @exam_titles_by_user ||= @lecture.exam_titles_by_user(participants.map(&:user_id))
     end
 
-    # The talks and exams each person on the page has a result on, counted
-    # as the removal counts them, in one query.
     def result_titles_by_user
-      @result_titles_by_user ||= begin
-        assessments = Assessment::Assessment.where(assessable: @lecture.talks)
-        assessments = assessments.or(Assessment::Assessment.where(assessable: @lecture.exams))
-        Assessment::Participation.with_grading_data
-                                 .where(assessment: assessments,
-                                        user_id: participants.map(&:user_id))
-                                 .includes(assessment: :assessable)
-                                 .group_by(&:user_id)
-                                 .transform_values do |rows|
-                                   rows.map { |row| row.assessment.assessable.title }.uniq
-                                 end
-      end
+      @result_titles_by_user ||=
+        @lecture.graded_talk_and_exam_titles_by_user(participants.map(&:user_id))
     end
 
     def section_kwargs

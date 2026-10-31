@@ -1199,6 +1199,33 @@ class Lecture < ApplicationRecord
       .where.not(user_id: excluded_lecture_memberships.select(:user_id))
   end
 
+  # Loaded once per lecture object, so a table asks once for all its rows.
+  def left_user_ids
+    @left_user_ids ||= excluded_lecture_memberships.pluck(:user_id).to_set
+  end
+
+  # Titles of the exams each user is on the list of, by user id.
+  def exam_titles_by_user(user_ids)
+    ExamRosterEntry.active.joins(:exam)
+                   .where(exams: { lecture_id: id }, user_id: user_ids)
+                   .pluck(:user_id, "exams.title")
+                   .group_by(&:first).transform_values { |rows| rows.map(&:last) }
+  end
+
+  # Titles of the talks and exams each user has a result on, by user id.
+  # A result here keeps the user from being removed from the lecture.
+  def graded_talk_and_exam_titles_by_user(user_ids)
+    assessments = Assessment::Assessment.where(assessable: talks)
+                                        .or(Assessment::Assessment.where(assessable: exams))
+    Assessment::Participation.with_grading_data
+                             .where(assessment: assessments, user_id: user_ids)
+                             .includes(assessment: :assessable)
+                             .group_by(&:user_id)
+                             .transform_values do |rows|
+                               rows.map { |row| row.assessment.assessable.title }.uniq
+                             end
+  end
+
   private
 
     def sync_mampfsearch_hierarchy_if_course_changed

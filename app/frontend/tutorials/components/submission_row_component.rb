@@ -223,6 +223,6 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def left_lecture?(user)
-    helpers.left_lecture_user_ids(@lecture).include?(user.id)
+    @lecture.left_user_ids.include?(user.id)
   end
 end
