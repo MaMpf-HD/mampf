@@ -15,6 +15,11 @@ class ParticipationComponent < ViewComponent::Base
     @lecture = lecture
     @user = user
     @overview = overview || UserRegistrations::LectureOverview.new(lecture, user)
+    @leave = Rosters::LectureLeave.new(lecture, user)
+  end
+
+  def leave_dialog
+    LeaveLectureComponent.new(lecture: @lecture, leave: @leave)
   end
 
   def render?
@@ -22,7 +27,8 @@ class ParticipationComponent < ViewComponent::Base
   end
 
   def rows
-    @rows ||= roster_rows + standing_rows + rejection_rows + excluded_exam_rows
+    @rows ||= lecture_rows + roster_rows + standing_rows + rejection_rows +
+              excluded_exam_rows
   end
 
   private
@@ -34,12 +40,36 @@ class ParticipationComponent < ViewComponent::Base
       )
     end
 
+    def lecture_rows
+      return [] unless @leave.participating?
+
+      [Row.new(label: @lecture.sort_localized,
+               title: @lecture.course.title,
+               lines: [],
+               badge: lecture_badge,
+               actions: leave_lecture_action)]
+    end
+
+    def lecture_badge
+      return unless @leave.enrolled?
+
+      [:info, t("registration.user_registration.participation.enrolled")]
+    end
+
+    def leave_lecture_action
+      helpers.button_tag(t("lecture_home.leave.button"),
+                         type: "button",
+                         class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
+                         data: { bs_toggle: "modal",
+                                 bs_target: "##{LeaveLectureComponent::ID}" })
+    end
+
     def roster_rows
       rosterables.map do |rosterable|
         result = released_result(rosterable)
         Row.new(label: helpers.roster_type_text(rosterable),
                 title: rosterable.title,
-                lines: meta_lines(rosterable) + result_lines(result),
+                lines: member_lines(rosterable) + result_lines(result),
                 badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
                 actions: leave_action(rosterable),
@@ -198,6 +228,21 @@ class ParticipationComponent < ViewComponent::Base
       else
         []
       end
+    end
+
+    # Gives a tutorial's members the address of each tutor, so they can write
+    # to them; a student merely registered for the tutorial sees names only.
+    def member_lines(rosterable)
+      return meta_lines(rosterable) unless rosterable.is_a?(Tutorial) && rosterable.tutors.any?
+
+      [tutor_contacts(rosterable), rosterable.location.presence].compact
+    end
+
+    def tutor_contacts(tutorial)
+      contacts = tutorial.tutors.map do |tutor|
+        safe_join([tutor.tutorial_name, " (", mail_to(tutor.email), ")"])
+      end
+      safe_join(contacts, ", ")
     end
 
     def roster_badge(rosterable)

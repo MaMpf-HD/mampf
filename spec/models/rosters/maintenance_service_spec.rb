@@ -133,14 +133,70 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         create(:cohort_membership, cohort: isolated_cohort, user: user)
       end
 
-      it "removes the user from propagating subgroups but keeps them in isolated ones" do
+      # A list without enrollment would otherwise keep them in the lecture's
+      # audience.
+      it "removes the user from every group of the lecture, with enrollment or without" do
         expect do
           subject.remove_user!(user, lecture)
         end.to change { tutorial.members.count }.by(-1)
                                                 .and(change {
                                                        propagating_cohort.members.count
                                                      }.by(-1))
-                                                .and(change { isolated_cohort.members.count }.by(0))
+                                                .and(change {
+                                                       isolated_cohort.members.count
+                                                     }.by(-1))
+      end
+
+      it "takes the bookmark along with the seat" do
+        expect(user.reload.lectures).to include(lecture)
+
+        subject.remove_user!(user, lecture)
+
+        expect(user.reload.lectures).not_to include(lecture)
+      end
+
+      # A finalization would otherwise put them back into a group or onto an
+      # exam list.
+      it "withdraws the user's registrations in the lecture's running campaigns" do
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        registration = create(:registration_user_registration, :pending,
+                              user: user, registration_campaign: campaign)
+
+        subject.remove_user!(user, lecture)
+
+        expect { registration.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it "withdraws nothing for someone not on the lecture roster" do
+        stranger = create(:confirmed_user)
+        campaign = create(:registration_campaign, :open, campaignable: lecture)
+        registration = create(:registration_user_registration, :pending,
+                              user: stranger, registration_campaign: campaign)
+
+        expect(subject.remove_user!(stranger, lecture)).to be_falsey
+        expect(registration.reload).to be_persisted
+      end
+
+      it "takes the user off the lecture's exam lists" do
+        exam = create(:exam, :without_campaign, lecture: lecture)
+        exam.add_user_to_roster!(user)
+
+        subject.remove_user!(user, lecture)
+
+        expect(exam.reload.users).not_to include(user)
+      end
+
+      it "refuses while an exam of the lecture holds a grade for the user" do
+        exam = create(:exam, :without_campaign, lecture: lecture)
+        exam.add_user_to_roster!(user)
+        exam.ensure_assessment!(requires_points: false)
+        Assessment::Participation.create!(assessment: exam.assessment, user: user,
+                                          grade_numeric: 2.0, status: :reviewed)
+
+        expect { subject.remove_user!(user, lecture) }
+          .to raise_error(described_class::GradingDataPresentError)
+        expect(lecture.reload.members).to include(user)
+        expect(exam.reload.users).to include(user)
       end
     end
   end
@@ -256,6 +312,28 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
           expect do
             subject.move_user!(user, lecture, cohort_b, force: true)
           end.not_to(change { tutorial_of_lecture.roster_entries.reload.count })
+        end
+      end
+
+      # Leaving the lecture on the way would take the lists along.
+      context "when the source is the lecture and the target clashes with a group" do
+        let(:tutorial_of_lecture) { create(:tutorial, lecture: lecture) }
+        let(:other_tutorial_of_lecture) { create(:tutorial, lecture: lecture) }
+        let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+        before do
+          subject.add_user!(user, tutorial_of_lecture, force: true)
+          subject.add_user!(user, list, force: true)
+        end
+
+        it "moves out of that group and keeps the enrollment and the lists" do
+          expect(subject.move_user!(user, lecture, other_tutorial_of_lecture, force: true))
+            .to be(true)
+
+          expect(other_tutorial_of_lecture.members).to include(user)
+          expect(tutorial_of_lecture.members).not_to include(user)
+          expect(list.members).to include(user)
+          expect(lecture.members).to include(user)
         end
       end
     end

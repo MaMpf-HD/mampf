@@ -20,8 +20,8 @@ module Lectures
       # Roster members may unlock without the passphrase, see
       # Lectures::UnlocksController#create.
       @passphrase_required = @locked &&
-                             !LectureMembership.exists?(user: current_user,
-                                                        lecture: @lecture)
+                             !LectureMembership.active.exists?(user: current_user,
+                                                               lecture: @lecture)
       @notifications = current_user.active_notifications(@lecture)
       if @content_accessible
         @content = LectureContentComponent.new(lecture: @lecture, user: current_user)

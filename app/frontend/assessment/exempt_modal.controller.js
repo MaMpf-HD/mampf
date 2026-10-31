@@ -31,11 +31,26 @@ export default class extends Controller {
 
   // The arrival listener belongs to this one request: a refusal answers
   // with a flash and no row, and must not leave it waiting for a later one.
+  // The dialog can be sent again while the answer is read; that request keeps
+  // its own listener.
   submit() {
     this.focusRowOnArrival();
-    this.formTarget.addEventListener("turbo:submit-end", () => this.forgetArrival(),
-      { once: true });
+    const { rowId, onArrival } = this;
+    this.formTarget.addEventListener("turbo:submit-end", async ({ detail }) => {
+      const answer = detail.success ? await detail.fetchResponse.responseHTML : "";
+      if (!this.bringsRow(answer, rowId) && this.onArrival === onArrival) {
+        this.forgetArrival();
+      }
+    }, { once: true });
     this.hide();
+  }
+
+  // Whether the answer replaces the row; Turbo renders it only after this.
+  bringsRow(answer, rowId) {
+    const template = document.createElement("template");
+    template.innerHTML = answer ?? "";
+    return template.content.querySelector(`turbo-stream[target="${CSS.escape(rowId)}"]`)
+      !== null;
   }
 
   restoreFocus = () => {
@@ -82,6 +97,8 @@ export default class extends Controller {
   }
 
   // Wait for the row replacement before focusing a control in the new row.
+  // `turbo:submit-end` comes before the streams render, so the wait goes on
+  // until the row itself arrives, however late the answer is.
   focusRowOnArrival() {
     const rowId = this.rowId;
     this.onArrival = (event) => {
@@ -90,14 +107,25 @@ export default class extends Controller {
       }
       this.forgetArrival();
       const render = event.detail.render;
-      // The filter hides or shows the new row in a microtask of its own;
-      // focus goes after that has run.
+      // The filter hides or shows the new row in a microtask of its own,
+      // queued only once Stimulus has seen the row; focus goes after that has run.
       event.detail.render = (stream) => {
+        const leftAlone = this.keyboardLeftAlone(document.getElementById(rowId));
         render(stream);
-        queueMicrotask(() => this.focusRow());
+        if (leftAlone) {
+          setTimeout(() => this.focusRow());
+        }
       };
     };
     document.addEventListener("turbo:before-stream-render", this.onArrival);
+  }
+
+  // A late answer must not take the keyboard from where the user has moved
+  // it since; it only takes it from the dialog, the row, or nowhere.
+  keyboardLeftAlone(row) {
+    const focused = document.activeElement;
+    return !focused || focused === document.body
+      || this.element.contains(focused) || !!row?.contains(focused);
   }
 
   forgetArrival() {

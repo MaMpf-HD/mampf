@@ -39,6 +39,7 @@ class SubmissionRowComponent < ViewComponent::Base
     return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
 
     @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
+    @addable_members.reject { |member| left_lecture?(member) }
   end
 
   # A few names are read at a glance; a longer list gets a search field.
@@ -218,5 +219,9 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def movement_info_for_user(user)
     helpers.movement_info_for_user_assignment(user, users_movement_map)
+  end
+
+  def left_lecture?(user)
+    @lecture.left_user_ids.include?(user.id)
   end
 end
