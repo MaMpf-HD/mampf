@@ -112,7 +112,7 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
-      Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
+      Rosters::MaintenanceService.new.remove_user!(user, @rosterable, by: current_user)
 
       flash.now[:notice] = t("roster.messages.user_removed", user: user.info)
 
@@ -203,6 +203,7 @@ module Roster
         @total_participants_count = query.total_count
         @unassigned_participants_count = query.unassigned_count
         @registered_participants_count = query.registered_count
+        @left_participants_count = query.left_count
         @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
@@ -232,7 +233,8 @@ module Roster
         {
           total: @total_participants_count,
           unassigned: @unassigned_participants_count,
-          registered: @registered_participants_count
+          registered: @registered_participants_count,
+          left: @left_participants_count
         }
       end
 
@@ -290,7 +292,8 @@ module Roster
             search_string: @search_string,
             total_count: @total_participants_count,
             unassigned_count: @unassigned_participants_count,
-            registered_count: @registered_participants_count
+            registered_count: @registered_participants_count,
+            left_count: @left_participants_count
           },
           refresh_campaigns_stream: lambda do |lecture|
             refresh_campaigns_index_stream(lecture)

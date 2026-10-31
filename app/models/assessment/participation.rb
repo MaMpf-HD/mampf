@@ -31,8 +31,16 @@ module Assessment
       where.not(status: :pending)
            .or(where.not(points_total: nil))
            .or(where.not(grade_numeric: nil))
-           .or(where.not(grade_text: nil))
+           .or(where.not(grade_text: [nil, ""]))
            .or(where(id: TaskPoint.select(:assessment_participation_id)))
+    }
+    # Rows with a result, a hand-in, points or a grade text (the opposite of
+    # ParticipationIndex.blank?). Task points set back to nil don't count.
+    scope :with_recorded_work, lambda {
+      where.not(status: :pending)
+           .or(where.not(submitted_at: nil))
+           .or(where(id: TaskPoint.where.not(points: nil).select(:assessment_participation_id)))
+           .or(where.not(grade_text: [nil, ""]))
     }
 
     after_commit :recompute_performance_record,

@@ -184,7 +184,7 @@ module StudentPerformance
 
     def bulk_confirm_manual
       # rubocop:disable Rails/SkipsModelValidations
-      confirmed = @lecture.student_performance_certifications
+      confirmed = @lecture.current_certifications
                           .stale_manual
                           .update_all(certified_at: Time.current)
       # rubocop:enable Rails/SkipsModelValidations
@@ -255,7 +255,7 @@ module StudentPerformance
       end
 
       def load_certifications
-        @certifications = @lecture.student_performance_certifications
+        @certifications = @lecture.current_certifications
                                   .includes(:user, :certified_by)
                                   .order(:created_at)
         @cert_by_user = @certifications.index_by(&:user_id)
@@ -290,7 +290,7 @@ module StudentPerformance
           cert.computed? && !cert.pending? && proposal &&
             cert.disagrees_with?(proposal.proposed_status)
         end.to_set(&:user_id)
-        @stale_manual_user_ids = @lecture.student_performance_certifications
+        @stale_manual_user_ids = @lecture.current_certifications
                                          .stale_manual.pluck(:user_id).to_set
         @flagged_user_ids = @disagreeing_user_ids | @stale_manual_user_ids
       end

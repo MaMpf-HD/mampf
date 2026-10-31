@@ -36,7 +36,7 @@ module Registration
     # registrations, not the rosters, say who will be in their groups.
     scope :running, lambda {
       joins(:registration_campaign)
-        .merge(Registration::Campaign.where(status: [:open, :closed, :processing]))
+        .merge(Registration::Campaign.running)
     }
 
     validates :registerable_id,

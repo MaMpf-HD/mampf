@@ -50,6 +50,11 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
         expect(described_class.new(lecture, search: "Bob").call.scope).to be_empty
       end
 
+      it "takes a percent sign or an underscore in the search literally" do
+        expect(described_class.new(lecture, search: "A_a").call.scope).to be_empty
+        expect(described_class.new(lecture, search: "%").call.scope).to be_empty
+      end
+
       it "ignores the email address" do
         user3.update!(email: "someone19@example.com")
 

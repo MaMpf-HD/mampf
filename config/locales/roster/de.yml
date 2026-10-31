@@ -75,6 +75,20 @@ de:
     views:
       enrolled: 'Eingeschrieben'
       registered: 'Angemeldet'
+      left: 'Ausgetreten'
+    left:
+      hint: >-
+        Studierende, die die Teilnahme beendet haben oder aus der Veranstaltung
+        entfernt wurden.
+        Bewertungen und Abgaben bleiben gespeichert; „Wieder aufnehmen“ trägt die
+        Person wieder in die Veranstaltung ein.
+      column: 'Ausgetreten'
+      by_self: 'Selbst ausgetreten am %{date}'
+      by_staff: 'Entfernt am %{date} von %{name}'
+      removed: 'Entfernt am %{date}'
+      empty: 'Bisher ist niemand ausgetreten.'
+      readmit: 'Wieder aufnehmen'
+      readmit_confirm: '%{user} wieder in die Veranstaltung aufnehmen?'
     registrations:
       hint: >-
         Diese Personen sind angemeldet, aber noch nicht in ihre Gruppen eingetragen. Das geschieht
@@ -337,6 +351,15 @@ de:
         Dies ändert den Selbsteinschreibungsmodus für alle
         Gruppen ohne Anmeldeverfahren in dieser Veranstaltung
         auf '%{mode}'. Fortfahren?
+      confirm_no_leaving: >-
+        Ohne Austragen können die %{count} Mitglieder dieser Gruppe weder die
+        Gruppe noch die Veranstaltung selbst verlassen; das geht dann nur über
+        Dich oder Dein Team. Fortfahren?
+      bulk_no_leaving: >-
+        Ohne Austragen können die Mitglieder dieser Gruppen weder die Gruppen
+        noch die Veranstaltung selbst verlassen; das geht dann nur über Dich
+        oder Dein Team.
+      no_leaving_hint: 'Mitglieder können die Veranstaltung nicht selbst verlassen'
     policy_bypass_warning:
       title: "Warnung zur Richtlinienumgehung"
       message: "Das letzte Anmeldeverfahren '%{campaign_name}' hatte eine Registrierungsrichtlinie '%{policy_name}'. Die Aktivierung der Selbsteinschreibung ermöglicht Studierenden den Beitritt ohne Erfüllung dieser Anforderungen."
@@ -357,7 +380,8 @@ de:
       einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
       Abschluss der Verfahren möglich.'
     tooltips:
-      kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen (mit Einschreibung)"
+      kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen"
+      kick_blocked_by_result: 'Hat ein Ergebnis in %{titles}. Lösche es zuerst, um die Person aus der Veranstaltung zu entfernen.'
       kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
       locked_manage: "Liste ist während aktiver Anmeldeverfahren gesperrt"
@@ -400,6 +424,7 @@ de:
       user_already_in_bundle: "%{user} ist bereits %{group} zugewiesen."
       item_locked: "Diese Gruppe wird durch ein aktives Anmeldeverfahren verwaltet und kann nicht manuell bearbeitet werden."
       switch_failed: "Der Wechsel hat nicht geklappt; Du bist in Deiner bisherigen Gruppe geblieben."
+      self_remove_graded: "Für Dich liegt in „%{group}“ bereits eine Bewertung vor, deshalb kannst Du nicht austreten."
       self_add_not_allowed: "Die Selbstanmeldung zu diesem %{type} ist für Studierende nicht erlaubt."
       self_remove_not_allowed: "Das selbstständige Verlassen dieses %{type} ist für Studierende nicht erlaubt."
       campaign_associated: "Selbst-Einschreibung ist nicht verfügbar, da diese Gruppe Teil eines Anmeldeverfahrens ist."
@@ -410,7 +435,8 @@ de:
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
       cannot_enable_both_campaign_and_self_materialization: "Selbsteinschreibung kann nicht aktiviert werden, während auf Anmeldeverfahren-Modus umgestellt wird. Bitte deaktiviere zuerst die Selbsteinschreibung oder behalte 'Anmeldeverfahren überspringen' aktiviert."
     warnings:
-      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppenzugehörigkeiten, die mit automatischer Vorlesungseinschreibung verbunden sind. Mitgliedschaften in Sondergruppen ohne Einschreibung bleiben bestehen. Ihre Leistungsdaten und eine erteilte Prüfungszulassung werden gelöscht — auch eine von Hand erteilte. Fortfahren?'
+      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
+      confirm_kick_from_lecture_exams: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
