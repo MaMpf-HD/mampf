@@ -14,11 +14,14 @@ class PasswordStrengthValidator < ActiveModel::EachValidator
                        "student", "studentin", "studium", "universitaet",
                        "universität"].freeze
 
+  TESTER_LOCK = Mutex.new
+
   # `Zxcvbn.test` reads and ranks its dictionaries anew on every call, which
   # takes longer than the rest of a sign-up. A tester keeps them in memory and
-  # only reads them, so the threads of a process can share one.
+  # only reads them, so the threads of a process can share one. Threads that
+  # ask while the first one builds it wait instead of building their own.
   def self.tester
-    @tester ||= Zxcvbn::Tester.new
+    @tester || TESTER_LOCK.synchronize { @tester ||= Zxcvbn::Tester.new }
   end
 
   def validate_each(record, attribute, value)
