@@ -5,7 +5,9 @@
               data: { feedback_widget_target: "form" } do |f| %>
   <% if intro %>
     <p class="small text-muted">
-      <%= t("feedback.intro") %>
+      <%= t("feedback.intro_html",
+            issue: link_to(t("feedback.issue"), "https://github.com/MaMpf-HD/mampf/issues/new",
+                           target: "_blank", rel: "noopener")) %>
     </p>
   <% end %>
 

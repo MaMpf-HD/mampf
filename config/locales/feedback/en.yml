@@ -2,10 +2,12 @@ en:
   feedback:
     open: "Tell us what we can improve"
     title: "What can we improve?"
-    intro: >
+    intro_html: >
       MaMpf is built by students for students. We know it is far from perfect
       and still has plenty of rough edges, but we do our best to improve it
-      bit by bit. Your feedback shows us where to start.
+      bit by bit. Your feedback shows us where to start. If you have a GitHub
+      account, please rather open an %{issue}.
+    issue: "issue"
     body: "Your feedback"
     body_placeholder: "What bothers you, what is missing, what would you change?"
     sender_hint: "We see your name and email address and may answer you."

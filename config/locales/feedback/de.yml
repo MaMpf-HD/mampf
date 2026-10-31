@@ -2,11 +2,13 @@ de:
   feedback:
     open: "Sag uns, was wir verbessern können"
     title: "Was können wir verbessern?"
-    intro: >
+    intro_html: >
       MaMpf wird von Studierenden für Studierende entwickelt. Wir wissen, dass
       noch längst nicht alles perfekt ist und es an vielen Ecken hakt, aber wir
       geben unser Bestes, MaMpf Stück für Stück besser zu machen. Dein Feedback
-      zeigt uns, wo wir anfangen sollten.
+      zeigt uns, wo wir anfangen sollten. Falls Du einen GitHub-Account hast,
+      eröffne bitte lieber ein %{issue}.
+    issue: "Issue"
     body: "Dein Feedback"
     body_placeholder: "Was stört Dich, was fehlt Dir, was würdest Du ändern?"
     sender_hint: >
