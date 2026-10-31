@@ -26,16 +26,6 @@ module Rosters
       group.place? && !group.is_a?(Exam)
     end
 
-    # The Unicode white space characters, listed out so that
-    # leave_confirmation.controller.js can match exactly the same ones.
-    SPACES = /[\t\n\v\f\r \u0085\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+/
-
-    # Upcases rather than downcases: both Ruby and JavaScript upcase without
-    # regard to the neighbouring letters, which lowercasing a final sigma does.
-    def self.normalize(text)
-      text.to_s.gsub(SPACES, "").upcase
-    end
-
     def initialize(lecture, user)
       @lecture = lecture
       @user = user
@@ -56,16 +46,6 @@ module Rosters
 
     def allowed?
       participating? && blockers.empty?
-    end
-
-    # What the student types to confirm: the course's short title, as the
-    # name of what is left, without spaces, which are easy to miss.
-    def confirmation_code
-      @lecture.course.short_title.gsub(SPACES, "")
-    end
-
-    def confirmed?(input)
-      self.class.normalize(input) == self.class.normalize(confirmation_code)
     end
 
     def groups

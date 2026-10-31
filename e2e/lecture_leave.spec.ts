@@ -37,10 +37,10 @@ test.describe("leaving a course", () => {
 
     const leaveButton = dialog.getByRole("button", { name: "Leave course" });
     await expect(leaveButton).toBeDisabled();
-    const code = dialog.getByLabel("Type “LA1” to confirm:");
-    await code.fill("LA2");
+    const word = dialog.getByLabel("Type “Leave” to confirm:");
+    await word.fill("leave");
     await expect(leaveButton).toBeDisabled();
-    await code.fill("la1");
+    await word.fill(" Leave ");
     await expect(leaveButton).toBeEnabled();
     await leaveButton.click();
 

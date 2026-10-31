@@ -41,7 +41,8 @@ de:
         dashboard_restricted: "Die Veranstaltung verschwindet von Deinem Dashboard, und für ihre Materialien brauchst Du wieder den Zugangsschlüssel."
         rejoin: "Wieder eintreten kannst Du über eine offene Anmeldung oder indem Du Dich selbst in eine Gruppe einträgst, sonst nur über die Lehrenden."
       button: "Teilnahme beenden"
-      confirmation_label: "Gib zum Bestätigen „%{code}“ ein:"
+      confirmation_label: "Gib zum Bestätigen „%{word}“ ein:"
+      confirmation_word: "Austreten"
       blocked: "Du kannst die Teilnahme gerade nicht selbst beenden:"
       blockers:
         group_fixed: "„%{title}“ kannst Du nicht selbst verlassen."
@@ -52,7 +53,7 @@ de:
       done: "Du hast „%{lecture}“ verlassen."
       not_allowed: "Du kannst die Teilnahme gerade nicht selbst beenden."
       not_participating: "Du nimmst an „%{lecture}“ nicht mehr teil."
-      not_confirmed: "Das Kürzel stimmt nicht; Du nimmst weiter teil."
+      not_confirmed: "Das Bestätigungswort stimmt nicht. Du nimmst weiter teil."
       failed: "Das hat leider nicht geklappt. Du nimmst weiter teil. Versuch es bitte noch einmal."
     intro:
       more: "Weiterlesen"
