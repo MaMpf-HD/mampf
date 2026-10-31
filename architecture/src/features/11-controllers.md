@@ -586,7 +586,7 @@ Controllers integrate with CanCanCan abilities:
 ```admonish bug "Error handling"
 Controllers should handle:
 - ActiveRecord validation errors (display form errors).
-- Authorization failures (redirect with flash message).
+- Authorization failures (redirect with flash message; a request that does not accept HTML gets 403).
 - Background job failures (show status and retry option).
 - Constraint violations (e.g., deleting campaign with registrations).
 ```

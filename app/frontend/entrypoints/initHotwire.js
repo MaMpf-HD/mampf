@@ -216,6 +216,8 @@ import StatusFilterController from "~/tutorials/status_filter.controller.js";
 window.Stimulus.register("status-filter", StatusFilterController);
 import SelectNavigationController from "~/tutorials/select_navigation.controller.js";
 window.Stimulus.register("select-navigation", SelectNavigationController);
+import AddMemberMenuController from "~/tutorials/add_member_menu.controller.js";
+window.Stimulus.register("add-member-menu", AddMemberMenuController);
 import ExamFormController from "~/exams/form.controller.js";
 window.Stimulus.register("exams--form", ExamFormController);
 

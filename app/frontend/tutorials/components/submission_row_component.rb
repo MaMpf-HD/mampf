@@ -41,6 +41,11 @@ class SubmissionRowComponent < ViewComponent::Base
     @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
   end
 
+  # A few names are read at a glance; a longer list gets a search field.
+  def member_search?
+    addable_members.size > 5
+  end
+
   # The earliest join founded the team; whether that was late is the
   # triangle's business, not a name's.
   def late_joins
@@ -150,7 +155,7 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def points_input_label(task)
     t("assessment.grading_tutorial.points_input_label",
-      task: "#{t("assessment.grading_tutorial.task")} #{task.position}",
+      task: task.label,
       name: @submission.users.map(&:tutorial_name).join(", "))
   end
 

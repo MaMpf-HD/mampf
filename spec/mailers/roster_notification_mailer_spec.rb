@@ -176,6 +176,14 @@ describe RosterNotificationMailer do
           .with(a_hash_including(params: a_hash_including(recipient: new_tutor)))
       end
 
+      it "spares a tutor who turned these mails off" do
+        old_tutor.update!(email_for_tutorial_change: false)
+
+        expect do
+          described_class.moved(user, old_tutorial, new_tutorial)
+        end.not_to have_enqueued_mail(described_class, :participant_left_group_email)
+      end
+
       it "names the participant and where their earlier work stays" do
         email = described_class.with(
           participant: user,
@@ -280,6 +288,22 @@ describe RosterNotificationMailer do
 
       expect(delivered.subject).to include("Übung 3")
       expect(delivered_body(delivered)).to include("entfernt")
+    end
+  end
+
+  describe ".group_deleted" do
+    it "says the group was deleted and names it" do
+      lecture = create(:lecture)
+
+      expect do
+        described_class.group_deleted(user, title: "Sammelgruppe", lecture: lecture)
+      end.to have_enqueued_mail(described_class, :group_deleted_email)
+
+      delivered = deliver(described_class.with(group_title: "Sammelgruppe", lecture: lecture,
+                                               recipient: user).group_deleted_email)
+      expect(delivered.subject).to include("Sammelgruppe")
+      expect(delivered_body(delivered)).to include("gelöscht")
+      expect(delivered_body(delivered)).not_to include("entfernt")
     end
   end
 

@@ -4,11 +4,14 @@
 <% preferences_by_rank = item_preferences.index_by(&:rank) %>
 <% disabled = local_assigns.fetch(:disabled, false) %>
 <% readonly = disabled || !campaign.open_for_registrations? %>
+<% withdrawable = item_preferences.any? && campaign.open_for_withdrawals? %>
+<% withdraw_form_id = dom_id(campaign, :withdraw_preferences) %>
 
-<%= form_with url: save_preferences_path(campaign), method: :post,
+<%= form_with url: save_preferences_path(campaign), method: :post, local: true,
               data: {
                 controller: "preference-choices",
                 turbo_stream: true,
+                turbo_frame: "_top",
                 preference_choices_empty_label_value: t(
                   "registration.user_registration.preference_podium.empty"
                 ),
@@ -24,36 +27,47 @@
                 )
               } do %>
   <div class="d-grid gap-3">
-    <p
-      class="registration-choice-summary mb-0"
-      role="group"
-      data-testid="preference-podium"
-      aria-label="<%= t("registration.user_registration.preference_podium.label") %>"
-    >
-      <% ranks.each do |rank| %>
-        <% preference = preferences_by_rank[rank] %>
-
-        <span
-          class="registration-choice"
-          data-testid="preference-podium-spot"
-          data-preference-choices-target="podiumSpot"
-          data-rank="<%= rank %>"
-        >
-          <%= t("registration.user_registration.preference_rank_options.#{rank}") %>
+    <div class="d-flex flex-wrap align-items-center gap-2">
+      <p
+        class="registration-choice-summary mb-0"
+        role="group"
+        data-testid="preference-podium"
+        aria-label="<%= t("registration.user_registration.preference_podium.label") %>"
+      >
+        <% ranks.each do |rank| %>
+          <% preference = preferences_by_rank[rank] %>
 
           <span
-            data-preference-choices-target="podiumName"
+            class="registration-choice"
+            data-testid="preference-podium-spot"
+            data-preference-choices-target="podiumSpot"
             data-rank="<%= rank %>"
           >
-            <%= preference&.item&.registerable&.title.presence ||
-                t("registration.user_registration.preference_podium.empty") %>
-          </span>
-        </span>
+            <%= t("registration.user_registration.preference_rank_options.#{rank}") %>
 
-        <%= hidden_field_tag "preferences[#{rank}]", preference&.item&.id,
-                             data: { preference_choices_target: "input", rank: rank } %>
+            <span
+              data-preference-choices-target="podiumName"
+              data-rank="<%= rank %>"
+            >
+              <%= preference&.item&.registerable&.title.presence ||
+                  t("registration.user_registration.preference_podium.empty") %>
+            </span>
+          </span>
+
+          <%= hidden_field_tag "preferences[#{rank}]", preference&.item&.id,
+                               data: { preference_choices_target: "input", rank: rank } %>
+        <% end %>
+      </p>
+
+      <% if withdrawable %>
+        <%= button_tag t("registration.user_registration.withdraw_preferences"),
+                       type: "submit",
+                       form: withdraw_form_id,
+                       class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis " \
+                              "ms-auto",
+                       data: { preference_choices_target: "withdrawButton" } %>
       <% end %>
-    </p>
+    </div>
 
     <%= render layout: "user_registrations/option_list", locals: { count: sorted_items.size } do %>
       <% sorted_items.each do |item| %>
@@ -123,4 +137,16 @@
       </div>
     <% end %>
   </div>
+<% end %>
+
+<% if withdrawable %>
+  <%= form_with url: withdraw_preferences_path(campaign), method: :delete, local: true,
+                id: withdraw_form_id,
+                data: {
+                  turbo_stream: true,
+                  turbo_frame: "_top",
+                  turbo_confirm: t("registration.user_registration." \
+                                   "withdraw_preferences_confirm")
+                } do %>
+  <% end %>
 <% end %>

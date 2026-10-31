@@ -2126,6 +2126,8 @@ de:
       neue angelegte Veranstaltungen oder Module
     email_for_news:
       Neuigkeiten über MaMpf
+    email_for_tutorial_change:
+      Wechsel von Teilnehmenden in meine Tutorien oder aus ihnen heraus
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
     please_update: >
@@ -2195,6 +2197,7 @@ de:
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
+    tutorials: Tutorien
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
@@ -2444,6 +2447,7 @@ de:
     no_video: 'Es gibt kein Video.'
     play: 'THymE-Player'
     download: 'Video herunterladen'
+    transcribe: 'Transkribieren'
     length: 'Länge'
     resolution: 'Auflösung'
     size: 'Größe'
@@ -2869,9 +2873,13 @@ de:
       student_registration: '%-d. %B %Y, %H:%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
+  search:
+    mampfsearch_unavailable: 'MampfSearch ist derzeit nicht verfügbar.'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
+    toggle_subtitles: 'Untertitel ein-/ausblenden'
+    transcript: 'Transkript'
   thyme_editor:
     add_item: 'Eintrag zum Inhaltsverzeichnis hinzufügen'
     add_referral: 'Referenz hinzufügen'
@@ -3005,6 +3013,10 @@ de:
   submission:
     hub:
       page_title: "Abgaben - %{lecture}"
+      tutorial_line_html:
+        zero: "Du bist im Tutorium %{tutorial}."
+        one: "Du bist im Tutorium %{tutorial} bei %{tutor}, per E-Mail erreichbar unter %{email}."
+        other: "Du bist im Tutorium %{tutorial} bei %{tutors}."
       heading: Frühere Blätter
       heading_with_tests: Frühere Blätter und Tests
       standing:
@@ -3224,6 +3236,7 @@ de:
     optimization_failed: >
       Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
     upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    no_correction_file: Bitte wähle zuerst eine Datei aus.
     upload_failure_empty_file: >
       Die hochgeladene Datei ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
@@ -3292,6 +3305,9 @@ de:
       Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    invalid_transcript: Die hochgeladene Datei ist kein gültiges WebVTT-Transkript.
+    transcript_too_many_cues: >
+      Das Transkript enthält zu viele Cues (maximal %{max_cues}).
     already_corrected: >
       Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
       kannst Du nicht mehr beitreten.
@@ -3641,6 +3657,7 @@ de:
       Emails für Abgaben-Verlassen: %{email_for_submission_leave}<br>
       Emails für Korrektur-Upload: %{email_for_correction_upload}<br>
       Emails für Abgabe-Entscheidung: %{email_for_submission_decision}<br>
+      Emails für Tutoriumswechsel: %{email_for_tutorial_change}<br>
       Name in Tutorials: %{name_in_tutorials}<br>
       Archiviert: %{archived}<br>
       Bild-Daten: %{image_data}<br>
@@ -4126,7 +4143,7 @@ de:
       moderation_pending: "Ausstehende Moderation"
   controllers:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
-    session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
+    session_expired: 'Die Seite war nicht mehr aktuell, deshalb wurde Deine Änderung nicht gespeichert. Bitte versuche es noch einmal.'
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
     no_talk: Ein Vortrag mit dieser id existiert nicht.
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
@@ -4205,6 +4222,9 @@ de:
       created: 'Gruppe erfolgreich erstellt.'
       updated: 'Gruppe erfolgreich aktualisiert.'
       destroyed: 'Gruppe erfolgreich gelöscht.'
+      destroyed_and_notified:
+        one: 'Gruppe gelöscht; 1 Mitglied wird per Mail benachrichtigt.'
+        other: 'Gruppe gelöscht; %{count} Mitglieder werden per Mail benachrichtigt.'
       destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
     talks:
       created: 'Vortrag erfolgreich erstellt.'
@@ -4216,6 +4236,9 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    media:
+      transcription_started: 'Transkription gestartet.'
+      cannot_transcribe: 'Medium kann nicht transkribiert werden.'
     no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.

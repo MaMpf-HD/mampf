@@ -52,6 +52,8 @@ module Rosters
             participants: participants,
             pagy: pagy,
             filter_mode: filter_mode,
+            view: @participants_state[:view],
+            campaign: @participants_state[:campaign],
             search_string: search_string,
             counts: component_counts
           )
@@ -242,7 +244,8 @@ module Rosters
       def component_counts
         {
           total: @participants_state[:total_count],
-          unassigned: @participants_state[:unassigned_count]
+          unassigned: @participants_state[:unassigned_count],
+          registered: @participants_state[:registered_count]
         }
       end
   end

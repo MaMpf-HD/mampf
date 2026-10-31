@@ -3,6 +3,7 @@ set -Eeuo pipefail
 cd /workspaces/mampf/
 
 public_http_port="${APP_HEALTHCHECK_PORT:-${THRUSTER_HTTP_PORT:-}}"
+target_port="${THRUSTER_TARGET_PORT:-3001}"
 
 echo "RAILS_ENV: $RAILS_ENV"
 echo "NODE_ENV: $NODE_ENV"
@@ -11,14 +12,27 @@ echo "NODE_ENV: $NODE_ENV"
 echo "🧹 Cleaning up stale Vite/Debugger port processes..."
 ports_to_clean="3036 13254"
 if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
-	ports_to_clean="$ports_to_clean $public_http_port ${THRUSTER_TARGET_PORT:-3001}"
+	ports_to_clean="$ports_to_clean $public_http_port $target_port"
 fi
 if [ "$RAILS_ENV" = "test" ]; then
 	ports_to_clean="$ports_to_clean 3145"
 fi
+
+# Worker i serves on APP_HEALTHCHECK_PORT + 10 * i with database suffix
+# "_e2e<i>"; worker 0 has its own database too, so RSpec keeps "mampf-test".
+# Keep the ports in sync with e2e/_support/servers.ts.
+# The worker count is written by e2e-workers.sh (called from init.sh).
+e2e_workers=$(cat tmp/e2e-workers 2>/dev/null || echo 1)
+extra_e2e_workers=""
+if [ "$RAILS_ENV" = "test" ] && [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
+	extra_e2e_workers=$(seq 1 $((e2e_workers - 1)))
+fi
+for i in $extra_e2e_workers; do
+	ports_to_clean="$ports_to_clean $((public_http_port + 10 * i)) $((target_port + 10 * i))"
+done
 for port in $ports_to_clean; do
 	# adapted from https://stackoverflow.com/a/9168553/
-    pid=$(lsof -ti:$port) || true
+    pid=$(lsof -ti:"$port") || true
     if [ -n "$pid" ]; then
 		echo "Killing process $pid on port $port"
         kill -TERM "$pid" || kill -KILL "$pid" || true
@@ -34,14 +48,44 @@ else
 	echo "Vite dev server disabled due to DISABLE_VITE_IN_CI=true"
 fi
 
-rm -f tmp/pids/server.pid
+rm -f tmp/pids/server.pid tmp/pids/server_e2e*.pid
 
 echo ""
 echo ""
 echo "----------------------------------------------------"
 echo "Running MaMpf (in RAILS_ENV: $RAILS_ENV)"
 echo "----------------------------------------------------"
-bundle exec sidekiq &
+
+if [ "$RAILS_ENV" = "test" ] && [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
+	# e2e stack: each Rails server gets its own Sidekiq so that jobs run
+	# against the server's own database. Worker i uses Redis database
+	# REDIS_URL's number + i, so that the Sidekiq servers don't fetch each
+	# other's jobs (the others are started in the loop below).
+	redis_base_url="${REDIS_URL%/*}"
+	redis_base_db="${REDIS_URL##*/}"
+	TEST_ENV_NUMBER="_e2e0" bundle exec sidekiq -c 1 &
+else
+	bundle exec sidekiq &
+fi
+
+for i in $extra_e2e_workers; do
+	worker_http_port=$((public_http_port + 10 * i))
+	worker_target_port=$((target_port + 10 * i))
+	worker_storage_path="${THRUSTER_STORAGE_PATH:-/cache/thruster-test}-e2e$i"
+	mkdir -p "$worker_storage_path"
+	echo "Starting Playwright worker server $i on port $worker_http_port (log/runtime_e2e$i.log)"
+	worker_redis_url="$redis_base_url/$((redis_base_db + i))"
+	TEST_ENV_NUMBER="_e2e$i" REDIS_URL="$worker_redis_url" \
+		bundle exec sidekiq -c 1 &
+	TEST_ENV_NUMBER="_e2e$i" \
+		REDIS_URL="$worker_redis_url" \
+		MAMPF_PORT="$worker_target_port" \
+		THRUSTER_HTTP_PORT="$worker_http_port" \
+		THRUSTER_TARGET_PORT="$worker_target_port" \
+		THRUSTER_STORAGE_PATH="$worker_storage_path" \
+		bundle exec thrust bin/rails s -b '0.0.0.0' -P "tmp/pids/server_e2e$i.pid" \
+		&> "/workspaces/mampf/log/runtime_e2e$i.log" &
+done
 # prometheus_exporter --label "{\"container\": \"${HOSTNAME}\"}" -b 0.0.0.0 -p 9394 -a lib/collectors/mampf_collector.rb &> /workspaces/mampf/log/prometheus_exporter.log &!
 
 # https://shopify.github.io/ruby-lsp/vscode-extension.html#debugging-live-processes
@@ -50,7 +94,10 @@ if [ -n "${THRUSTER_HTTP_PORT:-}" ]; then
 	if [ -n "${THRUSTER_STORAGE_PATH:-}" ]; then
 		mkdir -p "$THRUSTER_STORAGE_PATH"
 	fi
-	echo "Starting Thruster on port $public_http_port with Rails on ${THRUSTER_TARGET_PORT:-3001}"
+	if [ "$RAILS_ENV" = "test" ]; then
+		export TEST_ENV_NUMBER="_e2e0"
+	fi
+	echo "Starting Thruster on port $public_http_port with Rails on $target_port"
 	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec thrust bin/rails s -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)
 else
 	RUBY_DEBUG_ENABLE="${RUBY_DEBUG_ENABLE:-}" RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p "$MAMPF_PORT" -b '0.0.0.0' &> >(tee -a /workspaces/mampf/log/runtime.log)

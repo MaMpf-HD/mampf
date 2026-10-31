@@ -114,8 +114,8 @@ en:
       points_abbrev: 'pts'
       description: 'Task name'
       description_placeholder: 'e.g., Problem 1'
-      default_name: 'T%{number}'
-      description_hint: 'Columns in the points table default to T1, T2, ... – changeable via the task name when editing.'
+      default_name: 'Task %{number}'
+      description_hint: 'Without a task name, the columns in the points table are called Task 1, Task 2, … – you set the name when editing.'
       total_points: 'Total points'
       count:
         one: '1 task'
@@ -291,6 +291,8 @@ en:
       member_added: '%{name} is on the team now.'
       add_member: 'Put somebody on this team'
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
+      add_member_search: 'Search by name'
+      add_member_no_match: 'Nobody by that name is without a team.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
         The members of this team sit in different tutorials. Hand it over to
@@ -358,6 +360,7 @@ en:
       page_size_label: 'Per page'
       pager_label: 'Pages'
       more_actions: 'More actions'
+      blank_points_hint: 'A blank field means not marked yet: the row then stays "Pending Grading" and does not count yet. For a task left unattempted, enter 0.'
       summary:
         handed_in:
           one: '1 handed in'
