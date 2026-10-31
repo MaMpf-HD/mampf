@@ -30,15 +30,13 @@
                   aria: { current: ('page' if @participants) } %>
     </li>
 
-    <% unless @lecture.seminar? %>
-      <li class="nav-item">
-        <%= link_to t('assessment.tabs.performance'),
-                    lecture_tutorials_path(@lecture, params: { view: 'performance',
-                                                               tutorial: tutorial.id }),
-                    class: ['nav-link', ('active' if @performance)],
-                    aria: { current: ('page' if @performance) } %>
-      </li>
-    <% end %>
+    <li class="nav-item">
+      <%= link_to t('assessment.tabs.performance'),
+                  lecture_tutorials_path(@lecture, params: { view: 'performance',
+                                                             tutorial: tutorial.id }),
+                  class: ['nav-link', ('active' if @performance)],
+                  aria: { current: ('page' if @performance) } %>
+    </li>
   </ul>
 </nav>
 

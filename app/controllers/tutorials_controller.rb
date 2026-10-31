@@ -48,8 +48,8 @@ class TutorialsController < ApplicationController
     @tutorial = @tutorials.find_by(id: params[:tutorial]) ||
                 current_user.tutorials(@lecture).first || @tutorials.first
     # The group's points over all sheets, as the lecturer's performance tab
-    # shows them; a seminar has no sheets to sum.
-    @performance = params[:view] == "performance" && !@lecture.seminar?
+    # shows them.
+    @performance = params[:view] == "performance"
     @participants = params[:view] == "participants" ||
                     (@assignment.nil? && @achievement.nil? && !@performance)
     @assignment = @achievement = nil if @participants || @performance

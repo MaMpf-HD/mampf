@@ -264,16 +264,6 @@ RSpec.describe("Tutorials", type: :request) do
 
       expect(option["value"]).to include("view=performance", "tutorial=#{other.id}")
     end
-
-    # A seminar's talks are graded one by one; there are no sheets to sum.
-    it "is not offered in a seminar" do
-      lecture.update!(sort: "seminar")
-
-      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "performance" })
-
-      expect(performance_link).to be_nil
-      expect(body.at_css("turbo-frame#performance-records-frame")).to be_nil
-    end
   end
 
   # A tutor by address or voucher may have no tutorial of their own yet.
