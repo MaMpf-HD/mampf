@@ -3148,9 +3148,11 @@ en:
       You are a tutor in this lecture, but not on a tutorial yet. Once you are
       given one, it shows here.
     tutors_missing_html: "Somebody missing? On the %{link} tab you make people tutors: with a voucher, or by the email address of their MaMpf account."
+    tabs:
+      label: "Views of the group"
+      marking: "Marking"
     participants:
       button: "Participants"
-      pick: "Choose …"
       title: "Participants"
       none: "Nobody is in this group yet."
       registered_title: "Registered, not final yet"

@@ -810,6 +810,77 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       end
     end
 
+    # The table of the lecturer's tab, for the tutor's own group only.
+    context "as a tutor" do
+      let(:tutor) { FactoryBot.create(:confirmed_user) }
+      let(:monday) { FactoryBot.create(:tutorial, lecture: lecture, title: "Monday") }
+      let(:tuesday) { FactoryBot.create(:tutorial, lecture: lecture, title: "Tuesday") }
+      let(:elsewhere) { FactoryBot.create(:tutorial, lecture: lecture, title: "Friday") }
+
+      def member_of(tutorial, name, points: 0)
+        FactoryBot.create(:confirmed_user, name_in_tutorials: name).tap do |user|
+          FactoryBot.create(:tutorial_membership, tutorial: tutorial, user: user)
+          FactoryBot.create(:student_performance_record, lecture: lecture, user: user,
+                                                         points_total_materialized: points)
+        end
+      end
+
+      def names
+        Nokogiri::HTML(response.body).css("tbody tr td:first-child").map { |td| td.text.strip }
+      end
+
+      before do
+        monday.tutors << tutor
+        tuesday.tutors << tutor
+        member_of(monday, "Ada Lovelace")
+        member_of(tuesday, "Grace Hopper")
+        member_of(elsewhere, "Clara Wieck")
+        sign_in tutor
+      end
+
+      it "lists the members of the tutorial asked for, and no link to a record" do
+        get lecture_student_performance_records_path(lecture, tutorial_id: tuesday.id)
+
+        expect(response).to have_http_status(:success)
+        expect(names).to eq(["Grace Hopper"])
+        expect(Nokogiri::HTML(response.body).css("tbody a")).to be_empty
+      end
+
+      it "lists their first tutorial for another one or none asked for" do
+        [elsewhere.id, nil, "none", "left"].each do |asked|
+          get lecture_student_performance_records_path(lecture, tutorial_id: asked)
+
+          expect(names).to eq(["Ada Lovelace"])
+        end
+      end
+
+      it "offers no choice of tutorial, and keeps the one shown when searching" do
+        get lecture_student_performance_records_path(lecture, tutorial_id: tuesday.id)
+        page = Nokogiri::HTML(response.body)
+
+        expect(page.css("select[name=tutorial_id]")).to be_empty
+        expect(page.at_css("input[type=hidden][name=tutorial_id]")["value"])
+          .to eq(tuesday.id.to_s)
+      end
+
+      it "sorts as the lecturer's table does" do
+        member_of(tuesday, "Hedy Lamarr", points: 9)
+        get lecture_student_performance_records_path(lecture, tutorial_id: tuesday.id,
+                                                              sort: "points", dir: "desc")
+
+        expect(names).to eq(["Hedy Lamarr", "Grace Hopper"])
+      end
+
+      it "reads no single record" do
+        record = StudentPerformance::Record.find_by(lecture: lecture,
+                                                    user: User.find_by(name_in_tutorials:
+                                                                         "Grace Hopper"))
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response).to redirect_to(root_path)
+      end
+    end
+
     context "as a student" do
       before { sign_in student }
 

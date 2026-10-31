@@ -3,6 +3,9 @@
 // rows stay put — a sheet column says nothing once its number has scrolled off.
 .performance-records-scroll {
   max-height: 75vh;
+  // Holds the visually hidden labels in the cells, which are positioned
+  // absolutely and would otherwise widen the whole page.
+  position: relative;
 }
 
 .performance-records {
