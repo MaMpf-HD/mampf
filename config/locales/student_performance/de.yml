@@ -58,6 +58,7 @@ de:
         subtitle: "Faktische Leistungsdaten, berechnet aus Bewertungen."
         all_participants: "Alle Teilnehmenden"
         without_tutorial: "Ohne Übungsgruppe"
+        left: "Ausgetreten"
         awaiting_marking:
           one: "1 noch nicht bewertet"
           other: "%{count} noch nicht bewertet"

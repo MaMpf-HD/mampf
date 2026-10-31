@@ -394,7 +394,10 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
         before { lecture.update!(assignments_complete: true) }
 
-        it "asks before reopening the list" do
+        it "asks before reopening the list, counting nobody who has left" do
+          former = create(:confirmed_user)
+          create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+          create(:student_performance_certification, :passed, lecture: lecture, user: former)
           # Creating an assignment clears `assignments_complete`, so it is
           # set again here.
           create(:valid_assignment, lecture: lecture)

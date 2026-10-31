@@ -333,6 +333,8 @@ en:
       max_points: 'pts'
       no_submissions: 'No submissions for this assignment.'
       no_tutorial_badge: 'No tutorial'
+      left_lecture: "Left the course"
+      left_lecture_frozen: "For someone who has left the course, hand-in and attendance stay as they were."
       paper_hand_in: 'Record a hand-in on paper or by other means'
       paper_hand_in_remove: 'Take the hand-in record back'
       paper_hand_in_kept: 'Handed in on paper or by other means; with points entered the record stays'

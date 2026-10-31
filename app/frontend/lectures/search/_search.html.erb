@@ -25,7 +25,8 @@
           Server-rendered, so the search and the dashboard above it always
           agree on the term. %>
       <%= hidden_field_tag "search[term]", @selected_term&.dashboard_param,
-                           id: "lecture-search-term-field" %>
+                           id: "lecture-search-term-field",
+                           data: { lecture_search_target: "term" } %>
 
       <%# The term on each result card is redundant when the search is already
           scoped to one semester (the dashboard); callers that span all

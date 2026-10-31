@@ -93,6 +93,12 @@ class Assignment < ApplicationRecord
     User.where(id: applicable_user_ids_not_in_tutorials_from_memberships)
   end
 
+  # People who have left the lecture and have work on this sheet that belongs
+  # to no tutorial, for example because their tutorial was deleted.
+  def left_users_with_unheld_work
+    User.where(id: left_user_ids_with_work(tutorial_id: nil))
+  end
+
   def non_submitters_in_tutorials
     if past_deadline?
       non_submitters_in_tutorials_postdeadline
@@ -386,7 +392,8 @@ class Assignment < ApplicationRecord
     end
 
     def non_submitters_in_tutorial_predeadline(tutorial)
-      User.where(id: non_submitter_ids_in_tutorial_from_memberships(tutorial))
+      User.where(id: non_submitter_ids_in_tutorial_from_memberships(tutorial) |
+                     left_user_ids_with_work(tutorial_id: tutorial.id))
     end
 
     def non_submitters_in_tutorial_postdeadline(tutorial)
@@ -396,7 +403,20 @@ class Assignment < ApplicationRecord
     end
 
     def non_submitters_in_tutorials_predeadline
-      User.where(id: non_submitter_ids_in_tutorials_from_memberships)
+      User.where(id: non_submitter_ids_in_tutorials_from_memberships |
+                     left_user_ids_with_work(tutorial_id: lecture.tutorials.select(:id)))
+    end
+
+    # Ids of people who have left the lecture but have work on this sheet in
+    # the given tutorials. Before the deadline the table lists only members,
+    # so a test marked during its week would otherwise lose their rows.
+    def left_user_ids_with_work(tutorial_id:)
+      return [] if assessment.blank?
+
+      assessment.assessment_participations.where(tutorial_id: tutorial_id)
+                .with_recorded_work
+                .where(user_id: lecture.excluded_lecture_memberships.select(:user_id))
+                .distinct.pluck(:user_id) - submitter_ids
     end
 
     def non_submitters_in_tutorials_postdeadline

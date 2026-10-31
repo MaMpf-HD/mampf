@@ -23,16 +23,26 @@ module Rosters
     # A caller that removes the user within a larger transaction passes
     # notify: false, since the mail job is enqueued even if that transaction
     # rolls back.
-    def remove_user!(user, rosterable, notify: true)
-      removed = rosterable.with_lock do
-        ensure_no_grading_data!(user, rosterable)
-        remove_user_without_lock!(user, rosterable)
+    def remove_user!(user, rosterable, notify: true, by: nil)
+      removed = ActiveRecord::Base.transaction do
+        withdraw_registrations!(user, rosterable)
+        rosterable.with_lock do
+          ensure_no_grading_data!(user, rosterable)
+          remove_user_without_lock!(user, rosterable, by: by)
+        end
       end
       RosterNotificationMailer.removed(user, rosterable) if removed && notify
       removed
     end
 
+    # A move from the lecture to a group never takes the person out of the
+    # lecture. It moves them out of the group that conflicts with the target,
+    # or only adds them to the target if there is none.
     def move_user!(user, from_rosterable, to_rosterable, force: false)
+      if from_rosterable.is_a?(Lecture)
+        from_rosterable = to_rosterable.conflicting_lecture_membership(user)
+        return add_user!(user, to_rosterable, force: force).present? unless from_rosterable
+      end
       return false if from_rosterable == to_rosterable
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
@@ -53,30 +63,33 @@ module Rosters
 
     private
 
+      # Withdraws the registrations of someone removed from a lecture, so that
+      # a finalization doesn't put them back. Runs before the lecture is locked,
+      # because finalization also locks the campaign before the lecture.
+      def withdraw_registrations!(user, rosterable)
+        return unless rosterable.is_a?(Lecture)
+        return unless rosterable.lecture_memberships.exists?(user: user)
+
+        UserPlaces.new(user).withdraw_registrations!([rosterable])
+      end
+
       # Only rosterables that *are* the assessable can lose a result this way —
       # a talk or an exam owns its assessment, so leaving it means leaving the
       # gradebook behind. A tutorial is merely where a result is graded; the
       # assessment belongs to the assignment and survives the move.
-      # A lecture's removal cascades into its talks, and a talk graded for
-      # the person refuses; asked here first, the refusal reads as this
-      # service's, not as a crash further down.
+      # Removing someone from a lecture also removes them from its talks and
+      # exams, which fails if they have a result there. Checking here first
+      # gives a clear error instead of a failure further down.
       def ensure_no_grading_data!(user, rosterable)
         assessment = rosterable.try(:assessment)
         held = assessment&.grading_data_for_user?(user)
-        held ||= rosterable.is_a?(Lecture) && graded_on_a_talk?(user, rosterable)
+        held ||= rosterable.is_a?(Lecture) &&
+                 rosterable.graded_talk_and_exam_titles_by_user([user.id]).any?
         return unless held
 
         raise(GradingDataPresentError,
               "#{rosterable.class.name} #{rosterable.id} holds grading data " \
               "for user #{user.id}")
-      end
-
-      # The person's rows on the lecture's talks in one read, not one per talk.
-      def graded_on_a_talk?(user, lecture)
-        Assessment::Participation
-          .where(user: user, assessment: Assessment::Assessment.where(assessable: lecture.talks))
-          .includes(:task_points, :assessment)
-          .any? { |row| row.assessment.grading_data_for?(row) }
       end
 
       def user_in_roster?(user, rosterable)
@@ -94,16 +107,21 @@ module Rosters
         end
 
         membership = rosterable.add_user_to_roster!(user)
-        propagate_to_lecture!(user, rosterable)
+        rosterable.propagate_to_lecture!([user.id])
         update_registration_materialization(user,
                                             rosterable,
                                             source_campaign_id: source_campaign_id)
         membership
       end
 
-      def remove_user_without_lock!(user, rosterable)
-        removed = rosterable.remove_user_from_roster!(user)
+      def remove_user_without_lock!(user, rosterable, by: nil)
+        removed = if rosterable.is_a?(Lecture)
+          rosterable.remove_user_from_roster!(user, by: by)
+        else
+          rosterable.remove_user_from_roster!(user)
+        end
         cascade_removal_from_subgroups!(user, rosterable)
+        user.unbookmark_lecture!(rosterable) if removed && rosterable.is_a?(Lecture)
         removed
       end
 
@@ -160,17 +178,6 @@ module Rosters
         raise(UserAlreadyInBundleError, conflicting)
       end
 
-      def propagate_to_lecture!(user, rosterable)
-        return if rosterable.is_a?(Cohort) && !rosterable.propagate_to_lecture?
-        return unless rosterable.respond_to?(:lecture)
-
-        lecture = rosterable.lecture
-        return unless lecture.is_a?(Lecture)
-        return if lecture == rosterable
-
-        lecture.ensure_roster_membership!([user.id])
-      end
-
       def cascade_removal_from_subgroups!(user, rosterable)
         return unless rosterable.is_a?(Lecture)
 
@@ -183,9 +190,11 @@ module Rosters
         end
 
         rosterable.cohorts.find_each do |cohort|
-          next unless cohort.propagate_to_lecture?
-
           cohort.remove_user_from_roster!(user)
+        end
+
+        rosterable.exams.find_each do |exam|
+          exam.remove_user_from_roster!(user)
         end
       end
   end

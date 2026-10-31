@@ -54,7 +54,7 @@ test.describe("student self-enrollment", () => {
     await secondClick;
 
     await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
-    await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
+    await expect(student.page.getByRole("heading", { name: "Your participation" })).toBeFocused();
     await expect(student.page.getByRole("button", {
       name: "Register for Self-managed Tutorial",
     })).toBeVisible();

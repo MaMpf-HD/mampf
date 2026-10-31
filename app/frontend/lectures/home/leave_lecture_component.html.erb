@@ -1,0 +1,90 @@
+<% title_id = "#{LeaveLectureComponent::ID}-title" %>
+
+<div
+  class="modal fade"
+  id="<%= LeaveLectureComponent::ID %>"
+  tabindex="-1"
+  aria-labelledby="<%= title_id %>"
+  aria-hidden="true"
+  data-testid="leave-lecture-dialog"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="<%= title_id %>">
+          <%= t("lecture_home.leave.title") %>
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="<%= t("buttons.close") %>"
+        ></button>
+      </div>
+
+      <% if blockers.any? %>
+        <div class="modal-body">
+          <p class="mb-1"><%= t("lecture_home.leave.blocked") %></p>
+
+          <ul class="mb-2">
+            <% blockers.each do |blocker| %>
+              <li>
+                <%= t("lecture_home.leave.blockers.#{blocker.reason}", title: blocker.title) %>
+              </li>
+            <% end %>
+          </ul>
+
+          <% if contact? %>
+            <p class="mb-0"><%= t("lecture_home.leave.contact") %></p>
+          <% end %>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <%= t("buttons.close") %>
+          </button>
+        </div>
+      <% else %>
+        <%= form_with url: lecture_membership_path(@lecture), method: :delete, local: true,
+                      data: {
+                        turbo: false,
+                        controller: "leave-confirmation",
+                        leave_confirmation_word_value: confirmation_word
+                      } do |form| %>
+          <div class="modal-body">
+            <p class="mb-1"><%= t("lecture_home.leave.intro") %></p>
+
+            <ul class="mb-3">
+              <% consequences.each do |consequence| %>
+                <li><%= consequence %></li>
+              <% end %>
+            </ul>
+
+            <%= form.label :confirmation,
+                           t("lecture_home.leave.confirmation_label", word: confirmation_word),
+                           class: "form-label" %>
+            <%= form.text_field :confirmation,
+                                class: "form-control",
+                                autocomplete: "off",
+                                data: {
+                                  leave_confirmation_target: "input",
+                                  action: "input->leave-confirmation#check"
+                                } %>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <%= t("buttons.cancel") %>
+            </button>
+
+            <%= form.submit t("lecture_home.leave.button"),
+                            class: "btn border-0 bg-danger-subtle text-danger-emphasis",
+                            disabled: true,
+                            data: { leave_confirmation_target: "submit" } %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
