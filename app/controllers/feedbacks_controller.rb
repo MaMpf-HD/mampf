@@ -6,9 +6,6 @@ class FeedbacksController < ApplicationController
   THROTTLE_WINDOW = 1.hour
   LIMIT = 6
   THROTTLE_KEY = "feedbacks".freeze
-  # Set once Mama Muffin on the dashboard should not ask anymore: after a sent
-  # feedback, or when the user clicked her away.
-  MAMA_COOKIE = "feedback_mama_hidden".freeze
 
   # The muffin also shows on these pages; a redirect would lose the feedback.
   skip_before_action :enforce_password_change, :enforce_personal_data, only: :create
@@ -28,12 +25,11 @@ class FeedbacksController < ApplicationController
       return render_form(feedback, :service_unavailable, send_failed: true)
     end
 
-    cookies[MAMA_COOKIE] = { value: "1", expires: 1.year, same_site: :lax }
-    render turbo_stream: [
-      turbo_stream.update("feedback-body", partial: "feedbacks/sent",
-                                           locals: { feedback: Feedback.new }),
-      turbo_stream.remove("mama-muffin")
-    ]
+    render turbo_stream: turbo_stream.update(
+      "feedback-body",
+      partial: "feedbacks/sent",
+      locals: { feedback: Feedback.new }
+    )
   end
 
   private

@@ -29,13 +29,6 @@ RSpec.describe("Feedbacks", type: :request) do
       expect(response.body).to include(I18n.t("feedback.sent"))
     end
 
-    it "hides Mama Muffin once the feedback is mailed" do
-      send_feedback
-
-      expect(cookies[FeedbacksController::MAMA_COOKIE]).to be_present
-      expect(response.body).to include('action="remove" target="mama-muffin"')
-    end
-
     it "mails an anonymous feedback without its author" do
       send_feedback
 
@@ -66,12 +59,6 @@ RSpec.describe("Feedbacks", type: :request) do
         expect(page.at_css("[data-clipboard-text-value]")["data-clipboard-text-value"])
           .to eq(body)
         expect(page.at_css("textarea").text.strip).to eq(body)
-      end
-
-      it "keeps Mama Muffin" do
-        send_feedback
-
-        expect(cookies[FeedbacksController::MAMA_COOKIE]).to be_blank
       end
 
       it "does not count the feedback towards the limit" do

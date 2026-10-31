@@ -14,8 +14,6 @@ en:
       anonymous.
     send: "Send"
     sent: "Thank you! We read every answer. Anything else on your mind?"
-    mama: "Psst! My little one down there would love your feedback!"
-    mama_dismiss: "Don't show again"
   activemodel:
     attributes:
       feedback:

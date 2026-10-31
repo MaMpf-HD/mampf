@@ -1,30 +1,24 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Opens and closes the support or feedback panel above its button. The panel
- * does not block the page: a click elsewhere closes it, and Escape or the close
- * button also return the focus to the button. Any other button with
- * `aria-controls` set to the panel opens it, too.
+ * Opens and closes the support or feedback panel above its button. The panel does not
+ * block the page: a click elsewhere closes it, and Escape or the close button
+ * also return the focus to the button.
  */
 export default class extends Controller {
   static targets = ["panel", "toggle", "message", "contact", "result", "form"];
 
   connect() {
-    this.onOutsideClick = (event) => {
-      if (this.element.contains(event.target)) return;
-
-      if (event.target.closest(`[aria-controls="${this.panelTarget.id}"]`)) {
-        this.open();
-      }
-      else if (!this.panelTarget.hidden) {
+    this.closeOnOutsideClick = (event) => {
+      if (!this.panelTarget.hidden && !this.element.contains(event.target)) {
         this.hide();
       }
     };
-    document.addEventListener("click", this.onOutsideClick);
+    document.addEventListener("click", this.closeOnOutsideClick);
   }
 
   disconnect() {
-    document.removeEventListener("click", this.onOutsideClick);
+    document.removeEventListener("click", this.closeOnOutsideClick);
   }
 
   toggle() {

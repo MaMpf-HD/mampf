@@ -177,22 +177,6 @@ RSpec.describe("Main", type: :request) do
     end
   end
 
-  describe "Mama Muffin on the start page" do
-    it "asks for feedback" do
-      get root_path
-
-      expect(response.body).to include('id="mama-muffin"')
-    end
-
-    it "stays away once hidden" do
-      cookies[FeedbacksController::MAMA_COOKIE] = "1"
-
-      get root_path
-
-      expect(response.body).not_to include('id="mama-muffin"')
-    end
-  end
-
   describe "GET /main/comments" do
     let(:other) { create(:confirmed_user) }
     let(:taught) { create(:lecture, :released_for_all, teacher: user, term: term) }
