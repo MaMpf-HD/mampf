@@ -2,8 +2,7 @@ module Rosters
   # Service object to query participants of a Lecture with filtering options.
   # The "registered" view lists users instead of lecture memberships, since
   # people with a running registration need not be on the roster yet; it shows
-  # one campaign at a time. The "left" view lists the excluded memberships of
-  # those who have left the roster or been removed from it.
+  # one campaign at a time.
   class ParticipantQuery
     VIEWS = ["enrolled", "registered", "left"].freeze
 

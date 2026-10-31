@@ -798,8 +798,7 @@ class User < ApplicationRecord
 
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
-  # counts only until its campaign is completed; from then on the roster
-  # says whether the student is still there.
+  # counts only until its campaign is completed. After that, the roster decides.
   def lectures_with_registration_application
     unfinished = Registration::Campaign.where.not(status: :completed).select(:id)
     campaign_ids = user_registrations

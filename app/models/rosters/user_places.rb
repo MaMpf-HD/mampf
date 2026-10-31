@@ -47,8 +47,8 @@ module Rosters
       end
     end
 
-    # Withdraws the running registrations in the given lectures, locking each
-    # campaign first, as allocation and finalization lock them.
+    # Withdraws the running registrations in the given lectures. Locks each
+    # campaign first, like allocation and finalization do.
     def withdraw_registrations!(lectures)
       running_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
         campaign.lock!

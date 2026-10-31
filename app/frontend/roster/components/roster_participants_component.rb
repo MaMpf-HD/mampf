@@ -199,9 +199,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
   end
 
-  # Removing someone with a result on one of the lecture's talks or exams is
-  # refused (see Rosters::MaintenanceService#ensure_no_grading_data!), so
-  # their button names the result instead of asking to go ahead.
   def kick_blocked_by(user)
     titles = result_titles_by_user[user.id]
     return if titles.blank?

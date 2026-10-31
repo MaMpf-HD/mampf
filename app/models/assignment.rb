@@ -85,8 +85,8 @@ class Assignment < ApplicationRecord
     User.where(id: applicable_user_ids_not_in_tutorials_from_memberships)
   end
 
-  # People who left the lecture with work on this sheet that no tutorial
-  # holds, e.g. after their tutorial was deleted; no roster lists them.
+  # People who have left the lecture and have work on this sheet that belongs
+  # to no tutorial, for example because their tutorial was deleted.
   def left_users_with_unheld_work
     User.where(id: left_user_ids_with_work(tutorial_id: nil))
   end
@@ -341,12 +341,9 @@ class Assignment < ApplicationRecord
                      left_user_ids_with_work(tutorial_id: lecture.tutorials.select(:id)))
     end
 
-    # Who has left the lecture with work on a row these tutorials hold.
-    # Before the deadline the table lists only the tutorials' members, and
-    # someone who has left is none of them; a test, though, is marked during
-    # its own week, before its deadline, so its marked rows must stay listed.
-    # Work is what the table counts as such: a row whose points were taken
-    # back is blank, and no tutorial would hold it once listed.
+    # Ids of people who have left the lecture but have work on this sheet in
+    # the given tutorials. Before the deadline the table lists only members,
+    # so a test marked during its week would otherwise lose their rows.
     def left_user_ids_with_work(tutorial_id:)
       return [] if assessment.blank?
 

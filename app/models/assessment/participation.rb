@@ -34,8 +34,8 @@ module Assessment
            .or(where.not(grade_text: [nil, ""]))
            .or(where(id: TaskPoint.select(:assessment_participation_id)))
     }
-    # The rows ParticipationIndex.blank? does not call blank, as one query:
-    # points taken back again leave task points of nil, which carry nothing.
+    # Rows with a result, a hand-in, points or a grade text (the opposite of
+    # ParticipationIndex.blank?). Task points set back to nil don't count.
     scope :with_recorded_work, lambda {
       where.not(status: :pending)
            .or(where.not(submitted_at: nil))

@@ -35,10 +35,9 @@ module Rosters
       removed
     end
 
-    # Moves out of the target's conflicting_lecture_membership when asked to
-    # move out of the lecture itself, or only adds to the target without one:
-    # leaving the lecture on the way would take the person's lists,
-    # registrations and bookmark along.
+    # A move from the lecture to a group never takes the person out of the
+    # lecture. It moves them out of the group that conflicts with the target,
+    # or only adds them to the target if there is none.
     def move_user!(user, from_rosterable, to_rosterable, force: false)
       if from_rosterable.is_a?(Lecture)
         from_rosterable = to_rosterable.conflicting_lecture_membership(user)
@@ -64,9 +63,9 @@ module Rosters
 
     private
 
-      # Withdraws the registrations of someone removed from a lecture, lest a
-      # finalization put them back into its groups or exam lists. Before the
-      # lecture is locked, since finalization locks its campaign first.
+      # Withdraws the registrations of someone removed from a lecture, so that
+      # a finalization doesn't put them back. Runs before the lecture is locked,
+      # because finalization also locks the campaign before the lecture.
       def withdraw_registrations!(user, rosterable)
         return unless rosterable.is_a?(Lecture)
         return unless rosterable.lecture_memberships.exists?(user: user)
@@ -78,9 +77,9 @@ module Rosters
       # a talk or an exam owns its assessment, so leaving it means leaving the
       # gradebook behind. A tutorial is merely where a result is graded; the
       # assessment belongs to the assignment and survives the move.
-      # A lecture's removal cascades into its talks and exams, and one graded
-      # for the person refuses; asked here first, the refusal reads as this
-      # service's, not as a crash further down.
+      # Removing someone from a lecture also removes them from its talks and
+      # exams, which fails if they have a result there. Checking here first
+      # gives a clear error instead of a failure further down.
       def ensure_no_grading_data!(user, rosterable)
         assessment = rosterable.try(:assessment)
         held = assessment&.grading_data_for_user?(user)
@@ -190,8 +189,6 @@ module Rosters
         lecture.ensure_roster_membership!([user.id])
       end
 
-      # Removal from a lecture takes every group, lists without enrollment
-      # too, and the exam lists; the bookmark goes with the seat.
       def cascade_removal_from_subgroups!(user, rosterable)
         return unless rosterable.is_a?(Lecture)
 
