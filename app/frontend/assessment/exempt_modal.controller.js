@@ -33,8 +33,11 @@ export default class extends Controller {
   // with a flash and no row, and must not leave it waiting for a later one.
   submit() {
     this.focusRowOnArrival();
-    this.formTarget.addEventListener("turbo:submit-end", () => this.forgetArrival(),
-      { once: true });
+    this.formTarget.addEventListener("turbo:submit-end", ({ detail }) => {
+      if (!detail.success) {
+        this.forgetArrival();
+      }
+    }, { once: true });
     this.hide();
   }
 
@@ -82,9 +85,12 @@ export default class extends Controller {
   }
 
   // Wait for the row replacement before focusing a control in the new row.
+  // `turbo:submit-end` comes before the streams render, so the wait ends with
+  // the response's streams instead: Turbo inserts them all at once.
   focusRowOnArrival() {
     const rowId = this.rowId;
     this.onArrival = (event) => {
+      queueMicrotask(() => this.forgetArrival());
       if (event.target.target !== rowId) {
         return;
       }

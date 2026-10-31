@@ -103,6 +103,29 @@ test.describe("exam grading", () => {
     await expect(page.pane.getByLabel("Name")).toBeFocused();
   });
 
+  test("hands the keyboard to the row when the answer comes after the dialog closed", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await examWithCandidates(factory, teacher.user.id);
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await page.open("Main Exam");
+    await page.tab("Grades").click();
+    await teacher.page.route("**/mark_as_exempt*", async (route) => {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      await route.continue();
+    });
+
+    const grace = page.pane.getByRole("row", { name: /Grace Hopper/ });
+    await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the exam" });
+    await dialog.getByRole("button", { name: "Excuse" }).click();
+    await expect(dialog).toBeHidden();
+
+    await expect(grace.getByRole("img", { name: /^Exempt/ })).toBeVisible();
+    await expect(grace.getByRole("link", { name: "Take the exemption back" })).toBeFocused();
+  });
+
   test("saves every candidate's points at once", async ({ factory, teacher }) => {
     const { lecture } = await examWithCandidates(factory, teacher.user.id);
     const page = new ExamDashboardPage(teacher.page, lecture.id);
