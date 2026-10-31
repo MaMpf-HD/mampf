@@ -142,7 +142,8 @@ module Rosters
     end
 
     def enrolls_in_lecture?
-      is_a?(Tutorial) || is_a?(Talk) || is_a?(Exam) || (is_a?(Cohort) && propagate_to_lecture?)
+      is_a?(Tutorial) || is_a?(Talk) || is_a?(Exam) ||
+        (is_a?(Cohort) && propagate_to_lecture? && lecture_id.present?)
     end
 
     def config_allow_self_add?
@@ -288,7 +289,7 @@ module Rosters
     #   whether someone keeps a group that enrolls them.
     def materialize_allocation!(user_ids:, campaign:)
       transaction do
-        lecture.lock! if enrolls_in_lecture? && lecture.is_a?(Lecture)
+        lecture&.lock! if enrolls_in_lecture?
         current_ids = roster_entries.pluck(roster_user_id_column)
         target_ids = user_ids.uniq
 
@@ -303,10 +304,7 @@ module Rosters
     def propagate_to_lecture!(user_ids)
       return if user_ids.empty? || !enrolls_in_lecture?
 
-      parent = lecture
-      return unless parent.is_a?(Lecture)
-
-      parent.ensure_roster_membership!(user_ids)
+      lecture&.ensure_roster_membership!(user_ids)
     end
 
     # Identifies users in the target list who are not yet in the roster and
