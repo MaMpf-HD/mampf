@@ -1,3 +1,4 @@
+import { expectDialogOpened } from "./_support/dialogs";
 import { expect, test } from "./_support/fixtures";
 import { attachToUploadArea } from "./_support/uploads";
 
@@ -6,6 +7,8 @@ test("can add tag to course", async ({ factory, admin: { page } }) => {
 
   await page.goto(`/courses/${course.id}/edit`);
   await page.locator("#new-tag-button").click();
+  // once shown, the dialog focuses the first title, wherever the typing was
+  await expectDialogOpened(page.getByRole("dialog", { name: "Create Tag" }));
   await page.locator("#tag_notions_attributes_0_title").fill("Geometrie");
   await page.locator("#tag_notions_attributes_1_title").fill("Geometry");
   await page.locator("#newTagModal").getByRole("button", { name: "Save" }).click();
