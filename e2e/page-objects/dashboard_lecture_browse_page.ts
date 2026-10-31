@@ -25,10 +25,15 @@ export class DashboardLectureBrowsePage {
     );
   }
 
+  /**
+   * Waits for the results on screen, not only for the response: Turbo renders
+   * the stream a moment later, and until then there is no "next page" marker.
+   */
   async scrollToSearchAndWaitForResults() {
     const lectureSearchPromise = this.getLectureSearchPromise();
     await this.scrollToSearchBar();
     await lectureSearchPromise;
+    await expect(this.results).toBeVisible();
   }
 
   async searchFor(query: string) {
