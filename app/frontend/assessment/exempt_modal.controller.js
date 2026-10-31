@@ -96,11 +96,11 @@ export default class extends Controller {
       }
       this.forgetArrival();
       const render = event.detail.render;
-      // The filter hides or shows the new row in a microtask of its own;
-      // focus goes after that has run.
+      // The filter hides or shows the new row in a microtask of its own,
+      // queued only once Stimulus has seen the row; focus goes after that has run.
       event.detail.render = (stream) => {
         render(stream);
-        queueMicrotask(() => this.focusRow());
+        setTimeout(() => this.focusRow());
       };
     };
     document.addEventListener("turbo:before-stream-render", this.onArrival);
