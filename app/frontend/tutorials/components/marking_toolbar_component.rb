@@ -37,8 +37,14 @@ class MarkingToolbarComponent < ViewComponent::Base
     @assignment.assessable?
   end
 
-  def upload_open?
-    !@assignment.active?
+  # Until the grace period is over the hand-ins may still change and their
+  # teams still move; the bundle and the corrections wait for it.
+  def hand_ins_final?
+    @assignment.totally_expired?
+  end
+
+  def final_from
+    l(@assignment.friendly_deadline, format: :short)
   end
 
   def can_enter_points?

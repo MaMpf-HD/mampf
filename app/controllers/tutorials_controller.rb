@@ -194,6 +194,8 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_download_submissions
+    return redirect_to_marking(alert: not_final_yet) unless @assignment.totally_expired?
+
     @zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
     bulk_download(@zipped_submissions)
   end
@@ -203,7 +205,13 @@ class TutorialsController < ApplicationController
     bulk_download(@zipped_corrections, "-Corrections")
   end
 
+  # Without a report, the answer reloads the page, which shows the alert.
   def bulk_upload
+    unless @assignment.totally_expired?
+      flash[:alert] = not_final_yet
+      return
+    end
+
     files = JSON.parse(params[:cached_files].to_s)
     @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
     send_correction_upload_emails
@@ -291,13 +299,22 @@ class TutorialsController < ApplicationController
                   type: "application/zip",
                   disposition: "attachment")
       else
-        flash[:alert] = I18n.t("controllers.tutorials.bulk_download_failed",
-                               message: zipped)
-        redirect_to lecture_tutorials_path(@tutorial.lecture,
-                                           params:
-                                            { assignment: @assignment.id,
-                                              tutorial: @tutorial.id })
+        redirect_to_marking(alert: I18n.t("controllers.tutorials.bulk_download_failed",
+                                          message: zipped))
       end
+    end
+
+    def redirect_to_marking(alert:)
+      redirect_to lecture_tutorials_path(@tutorial.lecture,
+                                         params: { assignment: @assignment.id,
+                                                   tutorial: @tutorial.id }),
+                  alert: alert
+    end
+
+    # Until the grace period is over the hand-ins may still change and their
+    # teams still move.
+    def not_final_yet
+      t("tutorial.hand_ins_not_final", time: l(@assignment.friendly_deadline, format: :short))
     end
 
     def send_correction_upload_emails
