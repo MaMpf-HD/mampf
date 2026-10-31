@@ -205,4 +205,32 @@ RSpec.describe("Profile", type: :request) do
       end
     end
   end
+
+  describe "PATCH /profile/pin_lecture" do
+    def pin(lecture)
+      patch(pin_lecture_path,
+            params: { lecture: { id: lecture.id } },
+            as: :turbo_stream)
+    end
+
+    context "with an unpublished lecture" do
+      let(:lecture) { create(:lecture) }
+
+      it "refuses a student and pins nothing" do
+        pin(lecture)
+
+        expect(response).to have_http_status(:forbidden)
+        expect(user.reload.favorite_lectures).not_to include(lecture)
+      end
+
+      it "lets an editor pin it" do
+        create(:editable_user_join, user: user, editable: lecture)
+
+        pin(lecture)
+
+        expect(response).to have_http_status(:ok)
+        expect(user.reload.favorite_lectures).to include(lecture)
+      end
+    end
+  end
 end

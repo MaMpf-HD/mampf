@@ -245,7 +245,8 @@ module Rosters
         {
           total: @participants_state[:total_count],
           unassigned: @participants_state[:unassigned_count],
-          registered: @participants_state[:registered_count]
+          registered: @participants_state[:registered_count],
+          left: @participants_state[:left_count]
         }
       end
   end

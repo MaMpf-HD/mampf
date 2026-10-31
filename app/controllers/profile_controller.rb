@@ -4,7 +4,7 @@ class ProfileController < ApplicationController
   before_action :set_user
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
-                                     :star_lecture, :unstar_lecture]
+                                     :pin_lecture, :unpin_lecture]
   # A passphrase is shared by the whole lecture, so guessing it is throttled
   # as in Lectures::UnlocksController.
   rate_limit to: 10, within: 1.minute, only: :subscribe_lecture,
@@ -66,8 +66,7 @@ class ProfileController < ApplicationController
 
   def subscribe_lecture
     @success = false
-    if !@lecture.published? && !current_user.admin &&
-       !@lecture.edited_by?(current_user)
+    unless lecture_visible_to_user?
       @unpublished = true
       return
     end
@@ -80,8 +79,11 @@ class ProfileController < ApplicationController
     @success = current_user.unbookmark_lecture!(@lecture)
   end
 
-  def star_lecture
-    return unless @lecture&.in?(current_user.lectures)
+  def pin_lecture
+    unless lecture_visible_to_user?
+      head :forbidden
+      return
+    end
 
     current_user.favorite_lectures << @lecture unless @lecture.in?(current_user.favorite_lectures)
     # as favorite lectures appear in the navbar which is cached e.g. in
@@ -89,13 +91,13 @@ class ProfileController < ApplicationController
     # touching the user
     current_user.touch
     @success = true
+    respond_with_quick_access
   end
 
-  def unstar_lecture
-    return unless @lecture
-
+  def unpin_lecture
     current_user.favorite_lectures.delete(@lecture)
     current_user.touch
+    respond_with_quick_access
   end
 
   # Firefox scrolls a newly-opened accordion fold out of view (see
@@ -164,6 +166,25 @@ class ProfileController < ApplicationController
       @current = !@parent.in?(["lectureSearch", "inactive",
                                "next_term_subscribed", "next_term_registered"])
       redirect_to root_path unless @lecture
+    end
+
+    # Unpublished lectures are only open to admins and the lecture's editors.
+    def lecture_visible_to_user?
+      @lecture.published? || current_user.admin ||
+        @lecture.edited_by?(current_user)
+    end
+
+    # The pin in the navbar gets its Quick Access menu swapped via Turbo Stream,
+    # the old lecture card (search page) its JS response.
+    def respond_with_quick_access
+      respond_to do |format|
+        format.js
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.update("lecturesDropdown",
+                                                   partial: "shared/dropdown_lectures",
+                                                   locals: { lecture: @lecture })
+        end
+      end
     end
 
     def lecture_params

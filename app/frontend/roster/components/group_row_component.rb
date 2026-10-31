@@ -305,7 +305,7 @@ class GroupRowComponent < ViewComponent::Base
   end
 
   def cohort_without_enrollment?
-    registerable.is_a?(Cohort) && !registerable.propagate_to_lecture?
+    !registerable.enrolls_in_lecture?
   end
 
   def show_self_enrollment_dropdown?
@@ -359,7 +359,27 @@ class GroupRowComponent < ViewComponent::Base
     mode_label = t(sm_mode,
                    scope: "roster.self_materialization.modes",
                    default: sm_mode.titleize)
-    t("roster.self_materialization.confirm_bulk_update",
-      mode: mode_label)
+    confirm = t("roster.self_materialization.confirm_bulk_update",
+                mode: mode_label)
+    return confirm if leaving_allowed?(sm_mode)
+
+    "#{t("roster.self_materialization.bulk_no_leaving")} #{confirm}"
+  end
+
+  def sm_confirm(mode)
+    return if mode == sm_mode || leaving_allowed?(mode) || count.zero?
+
+    t("roster.self_materialization.confirm_no_leaving", count: count)
+  end
+
+  def sm_title
+    return if leaving_allowed?(sm_mode)
+
+    t("roster.self_materialization.no_leaving_hint")
+  end
+
+  def leaving_allowed?(mode)
+    !Rosters::LectureLeave.held_by_mode?(registerable) ||
+      mode.to_sym.in?(Rosters::Rosterable::SELF_REMOVE_MODES)
   end
 end
