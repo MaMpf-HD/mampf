@@ -441,6 +441,147 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(rendered_content).to include("marking-table")
       end
     end
+
+    context "with somebody who left during a test's week" do
+      let!(:assignment) do
+        create(:assignment, :with_lecture, lecture: lecture, kind: :test,
+                                           deadline: Time.zone.now.end_of_week)
+      end
+      let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, points_total: 4,
+                                          status: :reviewed)
+      end
+
+      it "lists their marked row before the deadline, for the lecturer and the old tutor" do
+        [lecture, tutorial].each do |scope|
+          rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                   grading_scope: scope)).css("tr")
+
+          expect(rows.find { |tr| tr.text.include?("Lina Berg") }&.text)
+            .to include(I18n.t("assessment.grading_tutorial.left_lecture")), scope.class.name
+        end
+      end
+
+      # Points entered and taken back again leave a task point of nothing
+      # behind: the row is blank, and no group would hold it once listed.
+      it "lists a row by its points, not by task points of nothing" do
+        task = create(:assessment_task, assessment: assessment)
+        { "Mia Roth" => nil, "Ben Ott" => 3 }.each do |name, points|
+          former = create(:confirmed_user, name_in_tutorials: name)
+          create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+          row = create(:assessment_participation, assessment: assessment, user: former,
+                                                  tutorial: tutorial)
+          create(:assessment_task_point, assessment_participation: row, task: task,
+                                         points: points)
+        end
+
+        text = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: tutorial)).text
+
+        expect(text).to include("Ben Ott")
+        expect(text).not_to include("Mia Roth")
+      end
+    end
+
+    context "with somebody who left the lecture" do
+      let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        assignment.update_column(:deadline, 2.days.ago) # rubocop:disable Rails/SkipsModelValidations
+        create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+      end
+
+      it "lists their work that no tutorial holds, saying they left" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: nil, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: lecture)).css("tr")
+
+        expect(rows.find { |row| row.text.include?("Lina Berg") }&.text)
+          .to include(I18n.t("assessment.grading_tutorial.left_lecture"))
+      end
+
+      it "leaves out a blank row of theirs" do
+        create(:assessment_participation, assessment: assessment, user: former, tutorial: nil)
+
+        rendered = render_inline(described_class.new(assignment: assignment.reload,
+                                                     grading_scope: lecture))
+
+        expect(rendered.text).not_to include("Lina Berg")
+      end
+
+      it "keeps their hand-in as it was, with no button to take it back" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: nil, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: lecture)).css("tr")
+        row = rows.find { |tr| tr.text.include?("Lina Berg") }
+
+        kept = I18n.t("assessment.grading_tutorial.paper_hand_in_kept")
+        expect(row.css("[aria-label='#{kept}']")).to be_present
+        expect(row.css("a[data-turbo-method='patch']")).to be_empty
+      end
+
+      it "does not offer them for a team, which takes only the tutorial's members" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, submitted_at: 3.days.ago)
+        submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                           tutorial: tutorial,
+                                                           users: [create(:confirmed_user)])
+        create(:tutorial_membership, tutorial: tutorial,
+                                     user: create(:confirmed_user, name_in_tutorials: "Max Kurz"))
+
+        rendered = render_inline(described_class.new(assignment: assignment.reload,
+                                                     grading_scope: tutorial))
+        path = Rails.application.routes.url_helpers.add_member_submission_path(submission)
+        offered = rendered.css("form[action='#{path}']").map(&:text).join
+
+        expect(offered).to include("Max Kurz")
+        expect(offered).not_to include("Lina Berg")
+      end
+
+      it "asks once who has left, however many rows the table has" do
+        members = create_list(:confirmed_user, 3)
+        members.each do |member|
+          create(:tutorial_membership, tutorial: tutorial, user: member)
+          create(:assessment_participation, assessment: assessment, user: member,
+                                            tutorial: tutorial, submitted_at: 3.days.ago)
+        end
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+        lookups = 0
+        callback = lambda { |*, payload|
+          lookups += 1 if payload[:sql].start_with?('SELECT "lecture_memberships"."user_id"') &&
+                          payload[:sql].include?('"excluded_at" IS NOT NULL')
+        }
+
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          render_inline(described_class.new(assignment: assignment.reload,
+                                            grading_scope: tutorial))
+        end
+
+        expect(lookups).to eq(1)
+      end
+
+      it "says so in the old tutorial's table too" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: tutorial)).css("tr")
+
+        expect(rows.find { |row| row.text.include?("Lina Berg") }&.text)
+          .to include(I18n.t("assessment.grading_tutorial.left_lecture"))
+      end
+    end
   end
 
   describe "#preload_participations" do

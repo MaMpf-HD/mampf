@@ -62,6 +62,7 @@
           data-bs-toggle="dropdown"
           data-bs-boundary="window"
           aria-expanded="false"
+          <%= tag.attributes(title: sm_title) %>
         >
           <i class="bi <%= sm_icon_class %> me-1" aria-hidden="true"></i>
           <%= sm_text %>
@@ -81,7 +82,7 @@
             <li>
               <%= link_to path,
                   class: "dropdown-item #{'active' if sm_mode == mode}",
-                  data: { turbo_method: :patch } do %>
+                  data: { turbo_method: :patch, turbo_confirm: sm_confirm(mode) } do %>
                 <i class="bi <%= sm_icon_for(mode) %> me-2" aria-hidden="true"></i>
 
                 <%= t(mode,
