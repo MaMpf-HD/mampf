@@ -11,8 +11,8 @@ RSpec.describe(Rosters::LectureLeave) do
                       self_materialization_mode: :add_and_remove)
   end
 
-  # An open campaign with the group as its item. update_column skips the
-  # check that a group only joins campaigns while its roster is empty.
+  # Puts the group into an open campaign. update_column skips the check that
+  # only groups with an empty roster join a campaign.
   def hold_in_campaign(group)
     group.update_column(:skip_campaigns, false) # rubocop:disable Rails/SkipsModelValidations
     campaign = create(:registration_campaign, campaignable: lecture)
@@ -20,8 +20,8 @@ RSpec.describe(Rosters::LectureLeave) do
     campaign.update!(status: :open)
   end
 
-  # An exam opens its own registration process. update_columns skips the
-  # status transitions, which would ask for dates and items not needed here.
+  # Sets the status with update_columns: the regular transitions would need
+  # dates and items this spec doesn't set up.
   def exam_campaign(status, title: "Final exam", deadline: nil)
     campaign = create(:exam, lecture: lecture, title: title).registration_campaign
     deadline ||= status == :open ? 1.week.from_now : 1.day.ago
@@ -61,7 +61,6 @@ RSpec.describe(Rosters::LectureLeave) do
       expect(leave.participating?).to be(true)
     end
 
-    # A new allocation could turn the rejection back into a place.
     it "is true with only a rejected registration past its withdrawal" do
       campaign = create(:registration_campaign, :processing, campaignable: lecture)
       registration = create(:registration_user_registration, :rejected,
@@ -196,7 +195,7 @@ RSpec.describe(Rosters::LectureLeave) do
       create(:registration_user_registration, :pending,
              user: student, registration_campaign: tutorials,
              registration_item: tutorials.registration_items.first)
-      # A policy changes only while its campaign is a draft.
+      # Policies can only be added while the campaign is a draft.
       seminar = create(:registration_campaign, :open, description: "Seminar")
       seminar.update_column(:status, Registration::Campaign.statuses[:draft]) # rubocop:disable Rails/SkipsModelValidations
       create(:registration_policy, :prerequisite_campaign,

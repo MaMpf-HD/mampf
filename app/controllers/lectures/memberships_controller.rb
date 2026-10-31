@@ -1,6 +1,4 @@
 module Lectures
-  # Ends the current user's participation in a lecture from its home page,
-  # see Rosters::LectureLeave.
   class MembershipsController < ApplicationController
     before_action :set_lecture
 

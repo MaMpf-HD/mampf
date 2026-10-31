@@ -25,7 +25,6 @@ async function enrollInTutorial(factory: FactoryBot, userId: number, mode: strin
 
 test.describe("leaving a course", () => {
   test("lists what happens and leaves after confirming", async ({ factory, student }) => {
-    // a tutorial its members may leave, which leaving the course needs
     const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
     const { page } = student;
 

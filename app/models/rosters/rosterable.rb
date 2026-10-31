@@ -141,8 +141,8 @@ module Rosters
       nil
     end
 
-    # Whether being here enrolls in the lecture: a tutorial, a talk, an exam
-    # list or a cohort with enrollment. Any other cohort is a list.
+    # Whether being a member here also enrolls the user in the lecture. Cohorts
+    # without enrollment don't.
     def place?
       is_a?(Tutorial) || is_a?(Talk) || is_a?(Exam) || (is_a?(Cohort) && propagate_to_lecture?)
     end

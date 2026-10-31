@@ -18,7 +18,7 @@ class LeaveLectureComponent < ViewComponent::Base
   end
 
   def contact?
-    blockers.any?(&:contact)
+    blockers.any?(&:staff_can_help)
   end
 
   def consequences

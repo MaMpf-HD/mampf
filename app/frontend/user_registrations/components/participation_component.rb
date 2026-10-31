@@ -40,7 +40,6 @@ class ParticipationComponent < ViewComponent::Base
       )
     end
 
-    # The lecture itself, so that leaving it sits where its groups are left.
     def lecture_rows
       return [] unless @leave.participating?
 
