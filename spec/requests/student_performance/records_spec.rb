@@ -451,6 +451,44 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(response.body).to include(CGI.escapeHTML(non_member.tutorial_name))
         end
 
+        # Leaving deletes the record but keeps the points, so the filter sums
+        # them up on the spot.
+        it "works out the points of people who have left" do
+          former = FactoryBot.create(:confirmed_user, name_in_tutorials: "Lina Berg")
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: former)
+                    .exclude!(by: former)
+          assignment = FactoryBot.create(:assignment, lecture: lecture,
+                                                      deadline: 1.year.from_now)
+          assignment.update_column(:deadline, 2.days.ago) # rubocop:disable Rails/SkipsModelValidations
+          FactoryBot.create(:assessment_task, assessment: assignment.assessment, max_points: 10)
+          FactoryBot.create(:assessment_participation, assessment: assignment.assessment,
+                                                       user: former, status: :reviewed,
+                                                       points_total: 7)
+
+          get lecture_student_performance_records_path(lecture, tutorial_id: "left")
+
+          row = Nokogiri::HTML(response.body).css("tbody tr")
+                        .find { |tr| tr.text.include?("Lina Berg") }
+          expect(row.text).to include(I18n.t("assessment.grading_tutorial.left_lecture"))
+          expect(row.css("td")[1].text.strip).to eq("7")
+          expect(row.css("a")).to be_empty
+          expect(response.body).not_to include(CGI.escapeHTML(member.tutorial_name))
+
+          get lecture_student_performance_records_path(lecture, tutorial_id: "left",
+                                                                sort: "percentage", dir: "desc")
+          expect(response.body).to include("Lina Berg")
+        end
+
+        it "leaves people who have left out of the other views" do
+          former = FactoryBot.create(:confirmed_user, name_in_tutorials: "Lina Berg")
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: former)
+                    .exclude!(by: former)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(response.body).not_to include("Lina Berg")
+        end
+
         it "shows everyone when no filter is given" do
           get lecture_student_performance_records_path(lecture)
 
@@ -809,7 +847,7 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
       end
 
       it "lists their first tutorial for another one or none asked for" do
-        [elsewhere.id, nil, "none"].each do |asked|
+        [elsewhere.id, nil, "none", "left"].each do |asked|
           get lecture_student_performance_records_path(lecture, tutorial_id: asked)
 
           expect(names).to eq(["Ada Lovelace"])

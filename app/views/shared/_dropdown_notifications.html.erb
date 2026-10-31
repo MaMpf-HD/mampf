@@ -23,7 +23,7 @@
             <%= t('buttons.toggle') %>
           </span>
         </button>
-        <div class="dropdown-menu dropdown-menu-sm-end">
+        <div class="dropdown-menu dropdown-menu-end">
           <% relevant_notifications.first(5).each do |n| %>
             <a href="<%= n.path(current_user) %>"
                class="dropdown-item border-top"

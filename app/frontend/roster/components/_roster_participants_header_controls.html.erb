@@ -1,4 +1,4 @@
-<% unless component.registered_view? %>
+<% if component.enrolled_view? %>
   <div class="btn-group btn-group-sm" role="group">
     <%= link_to component.helpers.lecture_roster_participants_path(component.lecture,
                                                                    filter: :all,

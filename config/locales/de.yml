@@ -174,8 +174,11 @@ de:
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
-      Du hast dem Schnellzugriff noch keine Veranstaltung hinzugefügt.
+      Du hast noch keine Veranstaltung angeheftet.
+      Öffne eine Veranstaltung, um sie hier anzuheften.
     quick_access: 'Schnellzugriff'
+    pin_lecture: '%{title} anheften'
+    unpin_lecture: '%{title} nicht mehr anheften'
   info: 'Info'
   admin:
     navbar:
@@ -2199,8 +2202,8 @@ de:
     submissions: Abgabe von Übungsaufgaben
     tutorials: Tutorien
     miscellaneous: Sonstiges
-    star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
-    unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
+    pin_lecture: Im Schnellzugriff anheften
+    unpin_lecture: Aus dem Schnellzugriff lösen
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
@@ -3013,6 +3016,10 @@ de:
   submission:
     hub:
       page_title: "Abgaben - %{lecture}"
+      tutorial_line_html:
+        zero: "Du bist im Tutorium %{tutorial}."
+        one: "Du bist im Tutorium %{tutorial} bei %{tutor}, per E-Mail erreichbar unter %{email}."
+        other: "Du bist im Tutorium %{tutorial} bei %{tutors}."
       heading: Frühere Blätter
       heading_with_tests: Frühere Blätter und Tests
       standing:

@@ -86,6 +86,10 @@
             >
               <%= t("student_performance.records.index.without_tutorial") %>
             </option>
+
+            <option value="left" <% if @left %> selected <% end %>>
+              <%= t("student_performance.records.index.left") %>
+            </option>
           </select>
         </div>
       <% end %>
@@ -96,6 +100,8 @@
     <p class="text-center text-muted py-4">
       <% if params[:q].present? %>
         <%= t("student_performance.lists.no_match") %>
+      <% elsif @left %>
+        <%= t("roster.left.empty") %>
       <% else %>
         <%= t("student_performance.records.index.empty") %>
       <% end %>
@@ -302,15 +308,29 @@
 
         <tbody>
           <% @records.each do |record| %>
-            <tr id="<%= dom_id(record) %>">
+            <tr
+              id="<%= record.persisted? ? dom_id(record) : dom_id(record.user, :left) %>"
+            >
               <td class="text-truncate">
                 <% if @own_tutorial %>
                   <%= record.user.tutorial_name %>
-                <% else %>
+                <% elsif record.persisted? %>
                   <%= link_to record.user.tutorial_name,
                               lecture_student_performance_record_path(@lecture, record),
                               title: record.user.tutorial_name,
                               data: { turbo_frame: "performance-records-frame" } %>
+                <% else %>
+                  <span title="<%= record.user.tutorial_name %>">
+                    <%= record.user.tutorial_name %>
+                  </span>
+                  <span
+                    class="
+                      badge bg-secondary-subtle text-secondary-emphasis
+                      fw-normal ms-1
+                    "
+                  >
+                    <%= t("assessment.grading_tutorial.left_lecture") %>
+                  </span>
                 <% end %>
               </td>
 
