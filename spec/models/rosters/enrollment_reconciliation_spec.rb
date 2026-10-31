@@ -6,8 +6,8 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
   let(:service) { Rosters::MaintenanceService.new }
   let(:reconciliation) { described_class.new }
 
-  # Data from before enrollment followed the places: a seat on the roster
-  # with nothing behind it.
+  # Enrolls the user without any group, as data from before enrollment was tied
+  # to groups can look.
   def enroll_without_place(user)
     lecture.add_user_to_roster!(user)
     create(:lecture_bookmark, lecture: lecture, user: user)
@@ -33,8 +33,8 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
                staff: 0)
     end
 
-    # An admitted student taken off needs a group before registering for a
-    # resit, so the lecturer has to know of them.
+    # An admitted student who is taken off needs a group before they can
+    # register for a resit, so the lecturer has to know about them.
     it "counts the admitted among those it would take off" do
       admitted = create(:confirmed_user)
       enroll_without_place(admitted)
@@ -57,8 +57,9 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(limbo.reload.lectures).not_to include(lecture)
     end
 
-    # A place joined meanwhile takes the same lock (see
-    # Rosters::MaintenanceService#add_user!), so it is not missed.
+    # Joining a group takes the same lock (see
+    # Rosters::MaintenanceService#add_user!), so a group joined meanwhile is not
+    # missed.
     it "decides under the lecture's lock" do
       statements = []
       record = lambda do |*, payload|
@@ -83,7 +84,6 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(list.reload.members).to include(limbo)
     end
 
-    # An exam list is a place.
     it "leaves whoever is on an exam list alone" do
       create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(limbo)
 
@@ -91,7 +91,6 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(lecture.reload.members).to include(limbo)
     end
 
-    # Staff are not students; their seat and bookmark stay.
     it "keeps a tutor of the lecture, and reports them" do
       create(:tutor_tutorial_join, tutorial: tutorial, tutor: limbo)
 
@@ -100,7 +99,6 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(reconciliation.report.join("\n")).to include("1 staff")
     end
 
-    # Lecture#tutor? counts them before they have a tutorial.
     it "keeps a tutor by a redeemed voucher who has no tutorial yet" do
       Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: limbo)
 
@@ -134,8 +132,6 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
     end
   end
 
-  # Enrollment follows the places through MaintenanceService, so a
-  # reconciliation afterwards has nothing to do.
   it "finds nothing after joining, moving and losing places" do
     users = create_list(:confirmed_user, 3)
     other = create(:tutorial, lecture: lecture, skip_campaigns: true)

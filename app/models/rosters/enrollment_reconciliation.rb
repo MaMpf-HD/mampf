@@ -1,8 +1,9 @@
 module Rosters
-  # Brings the lecture rosters in line with the places (see
-  # Rosters::Rosterable#enrolls_in_lecture?), for data from before enrollment
-  # followed them. The report also names campaigns that would go wrong on their
-  # own.
+  # Takes out of their lectures the students enrolled without a group that
+  # enrolls them (see Rosters::Rosterable#enrolls_in_lecture?); only data from
+  # before enrollment was tied to groups looks like that. The report also lists
+  # running campaigns with problems of their own, e.g. never finalized, or an
+  # allocation that would move students out of their tutorial.
   class EnrollmentReconciliation
     Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :admitted,
                      :staff, keyword_init: true)
@@ -10,21 +11,23 @@ module Rosters
     FAR_DEADLINE = 8.weeks
     MANY_REGISTRATIONS = 20
 
-    # `lecture_ids` narrows the reconciliation to some lectures, for a first
-    # run on a few; nil means all.
+    # lecture_ids limits the run to these lectures, e.g. to try it on a few
+    # first; nil means all.
     def initialize(lecture_ids: nil)
       @lecture_ids = lecture_ids
     end
 
-    # One row per lecture with somebody enrolled without a place.
+    # One row per lecture that has someone enrolled without a group that enrolls
+    # them.
     def rows
       @rows ||= lectures.includes(:term, :course).order(:id).filter_map { |lecture| row(lecture) }
     end
 
-    # Excludes whoever is enrolled without a place, excluded_by left empty,
-    # and removes their bookmark; lists, registrations, points and admission
-    # stay. Decides under each lecture's lock, which every change to a place
-    # takes too. Returns how many it excluded.
+    # Excludes everyone enrolled without a group that enrolls them, with
+    # excluded_by left empty, and removes their bookmark. Their lists,
+    # registrations, points and admission stay. Decides under each lecture's
+    # lock, which every change to such a group takes too, so none is missed.
+    # Returns how many it excluded.
     def apply!
       rows.sum do |row|
         row.lecture.with_lock do
@@ -80,7 +83,7 @@ module Rosters
         end
       end
 
-      # The lecture's staff are not its students.
+      # Leaves out the lecture's staff, who are not its students.
       def removable(lecture)
         without_place(lecture).where.not(user_id: staff_ids(lecture)).includes(:user).to_a
       end
@@ -89,8 +92,9 @@ module Rosters
         lecture.place_user_id_queries
       end
 
-      # Tutors as Lecture#tutor? knows them, by a redeemed voucher too, and the
-      # tutors of the lecture's cohorts.
+      # Teacher, editors and tutors of the lecture. Counts tutors as
+      # Lecture#tutor? does, including those who redeemed a tutor voucher, plus
+      # the tutors of its cohorts.
       def staff_ids(lecture)
         ([lecture.teacher_id] + lecture.editor_ids + lecture.course.editor_ids +
           TutorTutorialJoin.where(tutorial: lecture.tutorials).pluck(:tutor_id) +
@@ -155,14 +159,15 @@ module Rosters
         flags
       end
 
-      # Whether the term ended before the active one began; a campaign of the
-      # next term is not stale.
+      # Whether the term ended before the active term began, so that a campaign
+      # for the next term is not flagged.
       def past_term?(term)
         @active_term = Term.active unless defined?(@active_term)
         term.present? && @active_term.present? && term.end_date < @active_term.begin_date
       end
 
-      # An allocation moves them out of the tutorial they sit in, since
+      # Counts registered students who already sit in another tutorial of the
+      # lecture. The allocation would move them out of it, because
       # Tutorial#persist_missing_roster_entries! upserts on user and lecture.
       def clashing(lecture, tutorials, registered)
         return 0 if tutorials.empty?
