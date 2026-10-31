@@ -46,7 +46,7 @@ module Rosters
       scope = people.by_last_name
       return scope unless @search
 
-      scope.where(ParticipantQuery::SEARCH_SQL, q: "%#{@search}%")
+      scope.shown_name_or_matriculation_number_like(@search)
     end
 
     delegate :count, to: :users

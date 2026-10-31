@@ -7,8 +7,6 @@ module StudentPerformance
     # A lecture member without a tutorial cannot hand anything in, so they read
     # as 0 % — the filter is how staff find them, not a tutorial id.
     NO_TUTORIAL = "none".freeze
-    # Someone who has left keeps no record; this filter works theirs out from
-    # the points they keep.
     LEFT = "left".freeze
 
     before_action :set_record, only: [:show, :exempt, :unexempt]

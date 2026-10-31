@@ -707,12 +707,13 @@ RSpec.describe(Lecture, type: :model) do
 
     # A reset withdraws what the rule decided, for everybody alike: a return
     # must not bring back an admission the rule no longer backs.
-    it "drops the computed decision of someone who has left too" do
+    # The count is the one the eligibility page showed, which leaves them out.
+    it "drops the computed decision of someone who has left too, without counting it" do
       former = create(:confirmed_user)
       create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
       create(:student_performance_certification, :passed, lecture: lecture, user: former)
 
-      expect(lecture.reset_computed_certifications!).to eq(2)
+      expect(lecture.reset_computed_certifications!).to eq(1)
       expect(StudentPerformance::Certification.where(lecture: lecture))
         .to contain_exactly(manual)
     end

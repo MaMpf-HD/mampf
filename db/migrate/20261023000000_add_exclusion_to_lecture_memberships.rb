@@ -16,7 +16,6 @@ class AddExclusionToLectureMemberships < ActiveRecord::Migration[8.0]
 
   private
 
-    # Without the column, everyone who has left would count as a member again.
     def refuse_to_drop_exclusions!
       return unless LectureMembership.where.not(excluded_at: nil).exists?
 

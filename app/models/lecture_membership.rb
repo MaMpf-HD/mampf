@@ -1,7 +1,7 @@
 # Represents a user's official membership in a lecture's roster, distinct from
 # casual subscriptions, and tracks the source campaign for automated management.
-# Leaving the roster keeps the row as an exclusion, so the lecture's staff can
-# still find who has left and take them back.
+# When someone leaves, the row stays and is marked as excluded, so the staff
+# can see who left and take them back.
 class LectureMembership < ApplicationRecord
   belongs_to :user
   belongs_to :lecture
@@ -42,10 +42,8 @@ class LectureMembership < ApplicationRecord
       destroyed? || (saved_change_to_excluded_at? && excluded?)
     end
 
-    # The record is worked out from the points, which stay, and is built again
-    # on return. The exam admission is a decision and stays too: it counts
-    # again the moment the person is back, while the eligibility pages leave it
-    # out meanwhile (see Lecture#current_certifications).
+    # Deletes the performance record of someone who leaves; it is rebuilt from
+    # their points when they come back. Their exam admission is kept.
     def delete_performance_record
       StudentPerformance::Record
         .where(lecture_id: lecture_id, user_id: user_id)
