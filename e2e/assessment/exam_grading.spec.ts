@@ -1,5 +1,5 @@
 import { expectDialogOpened } from "../_support/dialogs";
-import { expect, Route, test } from "../_support/fixtures";
+import { expect, Page, Route, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { addTask, createLecture } from "./helpers";
 
@@ -21,6 +21,18 @@ test.describe("exam grading", () => {
       await factory.create("exam_roster_entry", [], { exam_id: exam.id, user_id: student.id });
     }
     return { lecture, exam };
+  }
+
+  /** Holds back the answers to these requests; each call lets the next one through. */
+  async function holdAnswers(page: Page, url: string) {
+    const held: Route[] = [];
+    await page.route(url, (route) => {
+      held.push(route);
+    });
+    return async () => {
+      await expect.poll(() => held.length).toBeGreaterThan(0);
+      await held.shift()?.continue();
+    };
   }
 
   test("enters points and a grade, records an absence and an exemption", async ({
@@ -115,15 +127,7 @@ test.describe("exam grading", () => {
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await page.open("Main Exam");
     await page.tab("Grades").click();
-    // each answer is held back until the dialog has closed
-    const held: Route[] = [];
-    await teacher.page.route("**/mark_as_exempt*", (route) => {
-      held.push(route);
-    });
-    const answer = async () => {
-      await expect.poll(() => held.length).toBeGreaterThan(0);
-      await held.shift()?.continue();
-    };
+    const answerExemption = await holdAnswers(teacher.page, "**/mark_as_exempt*");
 
     const grace = page.pane.getByRole("row", { name: /Grace Hopper/ });
     await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
@@ -131,24 +135,39 @@ test.describe("exam grading", () => {
     await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(dialog).toBeHidden();
-    await answer();
+    await answerExemption();
 
     await expect(grace.getByRole("img", { name: /^Exempt/ })).toBeVisible();
     await expect(grace.getByRole("link", { name: "Take the exemption back" })).toBeFocused();
+
+    // a late answer leaves the keyboard where the user has taken it since
+    const name = page.pane.getByLabel("Name");
+    await grace.getByRole("link", { name: "Take the exemption back" }).click();
+    await expect(grace.getByRole("combobox", { name: "Grade for Grace Hopper" })).toBeVisible();
+    await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    await expectDialogOpened(dialog);
+    await dialog.getByRole("button", { name: "Excuse" }).click();
+    await expect(grace.getByRole("button", { name: "Excuse with a certificate" })).toBeFocused();
+    await name.focus();
+    await answerExemption();
+    await expect(grace.getByRole("img", { name: /^Exempt/ })).toBeVisible();
+    // the row would take the keyboard a task after it arrived
+    await teacher.page.evaluate(() => new Promise(resolve => setTimeout(resolve)));
+    await expect(name).toBeFocused();
 
     // the filter hides the row once it is exempt; with nobody else shown,
     // the keyboard lands on the filter
     await grace.getByRole("link", { name: "Take the exemption back" }).click();
     await expect(grace.getByRole("combobox", { name: "Grade for Grace Hopper" })).toBeVisible();
-    await page.pane.getByLabel("Name").fill("Grace");
+    await name.fill("Grace");
     await page.pane.getByLabel("Status").selectOption("pending_grading");
     await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
     await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(dialog).toBeHidden();
-    await answer();
+    await answerExemption();
     await expect(grace).toBeHidden();
-    await expect(page.pane.getByLabel("Name")).toBeFocused();
+    await expect(name).toBeFocused();
   });
 
   test("saves every candidate's points at once", async ({ factory, teacher }) => {
