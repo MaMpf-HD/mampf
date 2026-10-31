@@ -31,12 +31,14 @@ export default class extends Controller {
 
   // The arrival listener belongs to this one request: a refusal answers
   // with a flash and no row, and must not leave it waiting for a later one.
+  // The dialog can be sent again while the answer is read; that request keeps
+  // its own listener.
   submit() {
     this.focusRowOnArrival();
-    const rowId = this.rowId;
+    const { rowId, onArrival } = this;
     this.formTarget.addEventListener("turbo:submit-end", async ({ detail }) => {
       const answer = detail.success ? await detail.fetchResponse.responseHTML : "";
-      if (!this.bringsRow(answer, rowId)) {
+      if (!this.bringsRow(answer, rowId) && this.onArrival === onArrival) {
         this.forgetArrival();
       }
     }, { once: true });
