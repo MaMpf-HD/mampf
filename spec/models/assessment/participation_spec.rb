@@ -472,7 +472,8 @@ RSpec.describe(Assessment::Participation, type: :model) do
       create(:assessment_task_point, task: task, assessment_participation: pointed, points: 1)
       reviewed = create(:assessment_participation, :reviewed)
       absent = create(:assessment_participation, :absent, assessment: assessment)
-      rows = [empty, pointed, reviewed, absent].map(&:reload)
+      blank_text = create(:assessment_participation, assessment: assessment, grade_text: "")
+      rows = [empty, pointed, reviewed, absent, blank_text].map(&:reload)
 
       graded = rows.select { |row| row.assessment.grading_data_for?(row) }
 

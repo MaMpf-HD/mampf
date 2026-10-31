@@ -129,8 +129,11 @@ en:
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
-      You have not yet added any lectures as favorites.
+      You haven't pinned any lectures yet.
+      Open a lecture to pin it here.
     quick_access: 'Quick Access'
+    pin_lecture: 'Pin %{title}'
+    unpin_lecture: 'Unpin %{title}'
   info: 'Info'
   admin:
     navbar:
@@ -2017,8 +2020,8 @@ en:
     submissions: Submission of homework assignments
     tutorials: Tutorials
     miscellaneous: Miscellaneous
-    star_lecture: Add Lecture to Fast Access
-    unstar_lecture: Remove Lecture from Fast Access
+    pin_lecture: Pin to Quick Access
+    unpin_lecture: Unpin from Quick Access
     media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
@@ -2260,6 +2263,7 @@ en:
     no_video: 'There is no video.'
     play: 'THymE Player'
     download: 'download video'
+    transcribe: 'Transcribe'
     length: 'Length'
     resolution: 'Resolution'
     size: 'Size'
@@ -2666,9 +2670,13 @@ en:
       student_registration: '%B %-d, %Y, %H:%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
+  search:
+    mampfsearch_unavailable: 'MampfSearch is currently unavailable.'
   thyme:
     back: 'back'
     back_to: 'back to '
+    toggle_subtitles: 'Toggle subtitles'
+    transcript: 'Transcript'
   thyme_editor:
     add_item: 'Add Item to Table of Contents'
     add_referral: 'Add Reference'
@@ -2795,6 +2803,10 @@ en:
   submission:
     hub:
       page_title: "Submissions - %{lecture}"
+      tutorial_line_html:
+        zero: "You are in the tutorial %{tutorial}."
+        one: "You are in the tutorial %{tutorial} with %{tutor}, reachable by email at %{email}."
+        other: "You are in the tutorial %{tutorial} with %{tutors}."
       heading: Earlier sheets
       heading_with_tests: Earlier sheets and tests
       standing:
@@ -3083,6 +3095,9 @@ en:
       %{accepted_mime_types}.
     correction_size_too_big: >
       The uploaded file is too big. Maximum file size is 15 MB.
+    invalid_transcript: The uploaded file is not a valid WebVTT transcript.
+    transcript_too_many_cues: >
+      The transcript contains too many cues (maximum is %{max_cues}).
     already_corrected: >
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
@@ -4002,6 +4017,9 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+    media:
+      transcription_started: 'Transcription started.'
+      cannot_transcribe: 'Medium cannot be transcribed.'
     no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.

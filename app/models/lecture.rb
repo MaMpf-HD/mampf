@@ -53,7 +53,15 @@ class Lecture < ApplicationRecord
   has_many :users, -> { distinct }, through: :lecture_bookmarks
 
   # Roster associations
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :lecture_memberships_including_excluded,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :lecture
+  has_many :lecture_memberships, -> { active }, inverse_of: :lecture
+  has_many :excluded_lecture_memberships,
+           -> { excluded },
+           class_name: "LectureMembership",
+           inverse_of: :lecture
   has_many :members, through: :lecture_memberships, source: :user
 
   # messages from the lecture staff or a tutor to students of the lecture
@@ -165,6 +173,8 @@ class Lecture < ApplicationRecord
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_media
   after_save :touch_lessons
+  after_update_commit :sync_mampfsearch_hierarchy_if_course_changed
+
   after_save :touch_chapters
   after_save :touch_sections
 
@@ -296,7 +306,7 @@ class Lecture < ApplicationRecord
     return true if bookmarked_by?(user)
     return false unless published? || user.admin || edited_by?(user)
 
-    passphrase.blank? || LectureMembership.exists?(user: user, lecture: self)
+    passphrase.blank? || lecture_memberships.exists?(user: user)
   end
 
   # Compared in constant time, since the pass phrase is shared by everyone
@@ -983,9 +993,10 @@ class Lecture < ApplicationRecord
     # Efficiently insert missing memberships without touching existing rows.
     # Note: Requires a unique index on [:user_id, :lecture_id].
     existing_user_ids = lecture_memberships.where(user_id: user_ids).pluck(:user_id)
-    new_user_ids = user_ids.uniq - existing_user_ids
+    readmitted_user_ids = readmit_to_roster!(user_ids)
+    new_user_ids = user_ids.uniq - existing_user_ids - readmitted_user_ids
 
-    attributes = new_user_ids.map do |uid|
+    attributes = (new_user_ids + readmitted_user_ids).map do |uid|
       { user_id: uid, lecture_id: id }
     end
 
@@ -1011,7 +1022,28 @@ class Lecture < ApplicationRecord
     end
     # rubocop:enable Rails/SkipsModelValidations
 
-    sync_student_performance_for_members!(new_user_ids)
+    sync_student_performance_for_members!(new_user_ids + readmitted_user_ids)
+  end
+
+  def readmit_to_roster!(user_ids)
+    excluded = excluded_lecture_memberships.where(user_id: user_ids)
+    ids = excluded.pluck(:user_id)
+    excluded.update_all(excluded_at: nil, excluded_by_id: nil, # rubocop:disable Rails/SkipsModelValidations
+                        updated_at: Time.current)
+    ids
+  end
+
+  def remove_user_from_roster!(user, by: nil)
+    lecture_memberships.find_by(user: user)&.tap { |membership| membership.exclude!(by: by) }
+  end
+
+  def add_user_to_roster!(user, source_campaign = nil)
+    membership = lecture_memberships_including_excluded.find_or_initialize_by(user: user)
+    membership.source_campaign ||= source_campaign
+    membership.excluded_at = nil
+    membership.excluded_by = nil
+    membership.save!
+    membership
   end
 
   def assignments_complete?
@@ -1044,19 +1076,19 @@ class Lecture < ApplicationRecord
     end
   end
 
-  # All students that lecture staff can reach by registration mail:
-  # everyone with a pending or confirmed registration in one of the
-  # lecture's campaigns, plus everyone on the roster (union, deduplicated).
-  # Before finalization this is "everyone who signed up", afterwards it
-  # also covers manually added roster members.
+  # Students the staff can write to about registration: the roster, the
+  # cohorts, and everyone registered in a campaign that isn't completed yet.
   def registration_mail_recipients
     registered_ids = Registration::UserRegistration
-                     .where(registration_campaign: registration_campaigns,
+                     .where(registration_campaign: registration_campaigns
+                                                     .where.not(status: :completed),
                             status: [:pending, :confirmed])
                      .select(:user_id)
     member_ids = lecture_memberships.select(:user_id)
+    cohort_member_ids = CohortMembership.where(cohort: cohorts).select(:user_id)
 
     User.where(id: registered_ids).or(User.where(id: member_ids))
+        .or(User.where(id: cohort_member_ids))
   end
 
   def eligible_as_tutors
@@ -1145,16 +1177,52 @@ class Lecture < ApplicationRecord
     blocking_campaign_titles(policies)
   end
 
-  # Drops the computed certifications and returns how many decisions went, or
-  # returns nil and drops nothing while eligibility_in_use_by names a
-  # registration that still reads them.
+  # Deletes the computed certifications, including those of people who have
+  # left. Returns how many of them the eligibility page showed, or nil while a
+  # registration still uses them.
   def reset_computed_certifications!
     return if eligibility_in_use_by
 
+    shown = current_certifications.computed.decided.count
     student_performance_certifications.reset_computed!
+    shown
+  end
+
+  # Certifications without those of people who have left the lecture. Theirs
+  # are kept in case they come back.
+  def current_certifications
+    student_performance_certifications
+      .where.not(user_id: excluded_lecture_memberships.select(:user_id))
+  end
+
+  def left_user_ids
+    @left_user_ids ||= excluded_lecture_memberships.pluck(:user_id).to_set
+  end
+
+  def graded_talk_and_exam_titles_by_user(user_ids)
+    assessments = Assessment::Assessment.where(assessable: talks)
+                                        .or(Assessment::Assessment.where(assessable: exams))
+    Assessment::Participation.with_grading_data
+                             .where(assessment: assessments, user_id: user_ids)
+                             .includes(assessment: :assessable)
+                             .group_by(&:user_id)
+                             .transform_values do |rows|
+                               rows.map { |row| row.assessment.assessable.title }.uniq
+                             end
   end
 
   private
+
+    def sync_mampfsearch_hierarchy_if_course_changed
+      return unless saved_change_to_course_id?
+
+      affected = Medium.where(teachable_type: "Lecture", teachable_id: id)
+                       .or(Medium.where(teachable_type: "Lesson",
+                                        teachable_id: lessons.select(:id)))
+                       .or(Medium.where(teachable_type: "Talk",
+                                        teachable_id: talks.select(:id)))
+      MampfsearchMetadataSyncJob.enqueue_for(affected)
+    end
 
     def scheduled_release(medium)
       publisher = medium.publisher

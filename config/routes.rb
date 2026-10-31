@@ -364,6 +364,10 @@ Rails.application.routes.draw do
        to: "lectures/unlocks#create",
        as: "lecture_unlock"
 
+  delete "lectures/:lecture_id/membership",
+         to: "lectures/memberships#destroy",
+         as: "lecture_membership"
+
   get "lectures/:id/home/campaigns/:campaign_id",
       to: "lectures/home#campaign",
       as: "lecture_home_campaign"
@@ -495,6 +499,14 @@ Rails.application.routes.draw do
 
   # media routes
 
+  post "api/webhooks/media/:id/transcripts",
+       to: "media#add_transcript",
+       as: "add_transcript"
+
+  post "api/webhooks/media/:id/transcription_failed",
+       to: "media#transcription_failed",
+       as: "transcription_failed"
+
   get "media/search",
       to: "media#search",
       as: "search_media"
@@ -530,6 +542,14 @@ Rails.application.routes.draw do
   get "media/:id/video/stream",
       to: "media#stream_video",
       as: "stream_video_medium"
+
+  get "media/:id/video/transcription_stream",
+      to: "media#transcription_stream_video",
+      as: "transcription_stream_video_medium"
+
+  get "media/:id/transcript/stream",
+      to: "media#stream_transcript",
+      as: "stream_transcript_medium"
 
   get "media/:id/display",
       to: "media#display",
@@ -590,6 +610,10 @@ Rails.application.routes.draw do
   post "media/update_tags",
        to: "media#update_tags",
        as: "update_tags"
+
+  post "media/:id/transcribe",
+       to: "media#transcribe",
+       as: "transcribe_medium"
 
   get "media/:id/statistics",
       to: "media#statistics",
@@ -704,11 +728,11 @@ Rails.application.routes.draw do
   get "profile/show_accordion",
       as: "show_accordion"
 
-  patch "profile/star_lecture",
-        as: "star_lecture"
+  patch "profile/pin_lecture",
+        as: "pin_lecture"
 
-  patch "profile/unstar_lecture",
-        as: "unstar_lecture"
+  patch "profile/unpin_lecture",
+        as: "unpin_lecture"
 
   namespace :dashboard do
     resources :lectures, only: [] do

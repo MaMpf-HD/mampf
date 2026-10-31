@@ -37,7 +37,8 @@ module Roster
     end
 
     rescue_from "Rosters::MaintenanceService::GradingDataPresentError" do
-      respond_with_error(t("roster.errors.switch_failed"))
+      key = action_name == "self_remove" ? "self_remove_graded" : "switch_failed"
+      respond_with_error(t("roster.errors.#{key}", group: @rosterable.title))
     end
 
     rescue_from "Rosters::SelfMaterializationService::SelfRemoveNotAllowedError" do

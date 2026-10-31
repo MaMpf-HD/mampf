@@ -182,12 +182,12 @@ GEM
       simplecov (>= 0.7)
       term-ansicolor
       thor
-    crass (1.0.7)
+    crass (1.0.8)
     cronex (0.15.0)
       tzinfo
       unicode (>= 0.4.4.5)
     csv (3.3.6)
-    dalli (5.1.0)
+    dalli (5.2.5)
       logger
     database_cleaner-active_record (2.2.2)
       activerecord (>= 5.a)
@@ -261,6 +261,9 @@ GEM
       activesupport (>= 2)
       nokogiri (>= 1.4)
     htmlentities (4.4.2)
+    http (6.0.3)
+      http-cookie (~> 1.0)
+      llhttp (~> 0.6.1)
     http-accept (1.7.0)
     http-cookie (1.1.6)
       domain_name (~> 0.5)
@@ -325,6 +328,7 @@ GEM
       logger
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    llhttp (0.6.1)
     logger (1.7.0)
     loofah (2.25.2)
       crass (~> 1.0.2)
@@ -650,11 +654,11 @@ GEM
     terser (1.2.8)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
-    thruster (0.1.25)
-    thruster (0.1.25-aarch64-linux)
-    thruster (0.1.25-arm64-darwin)
-    thruster (0.1.25-x86_64-darwin)
-    thruster (0.1.25-x86_64-linux)
+    thruster (0.1.27)
+    thruster (0.1.27-aarch64-linux)
+    thruster (0.1.27-arm64-darwin)
+    thruster (0.1.27-x86_64-darwin)
+    thruster (0.1.27-x86_64-linux)
     tilt (2.9.0)
     timeago_js (3.0.2.2)
     timecop (0.9.11)
@@ -753,6 +757,7 @@ DEPENDENCIES
   filesize (~> 0.2)
   flipper (~> 1.4)
   flipper-active_record (~> 1.4)
+  http (~> 6.0, >= 6.0.1)
   i18n-tasks (~> 1.1)
   image_processing (~> 1.13)
   jbuilder (~> 2.12)
@@ -811,7 +816,7 @@ DEPENDENCIES
   zxcvbn-ruby (~> 1.4)
 
 RUBY VERSION
-  ruby 3.4.10
+  ruby 3.4.12
 
 BUNDLED WITH
   4.0.19

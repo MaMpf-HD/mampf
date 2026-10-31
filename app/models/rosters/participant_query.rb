@@ -4,10 +4,10 @@ module Rosters
   # people with a running registration need not be on the roster yet; it shows
   # one campaign at a time.
   class ParticipantQuery
-    Result = Struct.new(:scope, :total_count, :unassigned_count, :registered_count,
-                        :filter_mode, :view, :campaign, keyword_init: true)
+    VIEWS = ["enrolled", "registered", "left"].freeze
 
-    SEARCH_SQL = "#{User::SHOWN_NAME_SQL} ILIKE :q OR users.matriculation_number ILIKE :q".freeze
+    Result = Struct.new(:scope, :total_count, :unassigned_count, :registered_count,
+                        :left_count, :filter_mode, :view, :campaign, keyword_init: true)
 
     def initialize(lecture, params)
       @lecture = lecture
@@ -16,7 +16,7 @@ module Rosters
 
     def call
       filter_mode = @params[:filter] || "all"
-      view = @params[:view] == "registered" ? "registered" : "enrolled"
+      view = VIEWS.include?(@params[:view]) ? @params[:view] : "enrolled"
       search = @params[:search].presence
 
       base_scope =
@@ -25,7 +25,7 @@ module Rosters
                 .includes(user: User::PROGRAM_PRELOAD)
                 .merge(User.by_last_name)
 
-      base_scope = base_scope.where(SEARCH_SQL, q: "%#{search}%") if search
+      base_scope = base_scope.merge(search_scope(search)) if search
 
       total_count = base_scope.count
 
@@ -45,12 +45,15 @@ module Rosters
         scope = RunningRegistrations.new(@lecture, search: search, campaign: campaign).users
         scope = scope.none unless campaign
       end
+      left = left_scope(search)
+      scope = left if view == "left"
 
       Result.new(
         scope: scope,
         total_count: total_count,
         unassigned_count: unassigned_count,
         registered_count: running.count,
+        left_count: left.count,
         filter_mode: filter_mode,
         view: view,
         campaign: campaign
@@ -58,6 +61,18 @@ module Rosters
     end
 
     private
+
+      def left_scope(search)
+        scope = @lecture.excluded_lecture_memberships
+                        .joins(:user)
+                        .includes(:excluded_by, user: User::PROGRAM_PRELOAD)
+                        .merge(User.by_last_name)
+        search ? scope.merge(search_scope(search)) : scope
+      end
+
+      def search_scope(search)
+        User.shown_name_or_matriculation_number_like(search)
+      end
 
       def build_unassigned_scope(base_scope)
         tutorial_user_ids = TutorialMembership

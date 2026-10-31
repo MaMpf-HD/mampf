@@ -2,7 +2,7 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.4.10"
+ruby "3.4.12"
 
 gem "active_model_serializers", "~> 0.10"
 gem "activerecord-import", "~> 2.0"
@@ -30,6 +30,7 @@ gem "fastimage", "~> 2.3"
 gem "filesize", "~> 0.2"
 gem "flipper", "~> 1.4"
 gem "flipper-active_record", "~> 1.4"
+gem "http", "~> 6.0", ">= 6.0.1"
 gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"

@@ -344,6 +344,8 @@ de:
       max_points: 'Pkt'
       no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
       no_tutorial_badge: 'Ohne Übungsgruppe'
+      left_lecture: "Ausgetreten"
+      left_lecture_frozen: "Wer ausgetreten ist, behält Abgabe und Anwesenheit, wie sie waren."
       paper_hand_in: 'Abgabe auf Papier oder anderem Weg vermerken'
       paper_hand_in_remove: 'Vermerk „abgegeben“ zurücknehmen'
       paper_hand_in_kept: 'Auf Papier oder anderem Weg abgegeben; mit eingetragenen Punkten bleibt der Vermerk'
