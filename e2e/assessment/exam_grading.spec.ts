@@ -1,5 +1,5 @@
 import { expectDialogOpened } from "../_support/dialogs";
-import { expect, test } from "../_support/fixtures";
+import { expect, Route, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { addTask, createLecture } from "./helpers";
 
@@ -115,10 +115,15 @@ test.describe("exam grading", () => {
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await page.open("Main Exam");
     await page.tab("Grades").click();
-    await teacher.page.route("**/mark_as_exempt*", async (route) => {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      await route.continue();
+    // each answer is held back until the dialog has closed
+    const held: Route[] = [];
+    await teacher.page.route("**/mark_as_exempt*", (route) => {
+      held.push(route);
     });
+    const answer = async () => {
+      await expect.poll(() => held.length).toBeGreaterThan(0);
+      await held.shift()?.continue();
+    };
 
     const grace = page.pane.getByRole("row", { name: /Grace Hopper/ });
     await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
@@ -126,6 +131,7 @@ test.describe("exam grading", () => {
     await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(dialog).toBeHidden();
+    await answer();
 
     await expect(grace.getByRole("img", { name: /^Exempt/ })).toBeVisible();
     await expect(grace.getByRole("link", { name: "Take the exemption back" })).toBeFocused();
@@ -140,6 +146,7 @@ test.describe("exam grading", () => {
     await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(dialog).toBeHidden();
+    await answer();
     await expect(grace).toBeHidden();
     await expect(page.pane.getByLabel("Name")).toBeFocused();
   });
