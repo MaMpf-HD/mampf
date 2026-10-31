@@ -2800,6 +2800,10 @@ en:
   submission:
     hub:
       page_title: "Submissions - %{lecture}"
+      tutorial_line_html:
+        zero: "You are in the tutorial %{tutorial}."
+        one: "You are in the tutorial %{tutorial} with %{tutor}, reachable by email at %{email}."
+        other: "You are in the tutorial %{tutorial} with %{tutors}."
       heading: Earlier sheets
       heading_with_tests: Earlier sheets and tests
       standing:

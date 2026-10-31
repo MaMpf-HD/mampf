@@ -542,6 +542,15 @@ RSpec.describe("Submissions", type: :request) do
 
       expect(response).to have_http_status(:success)
     end
+
+    it "tells the reader how to reach the tutor of their tutorial" do
+      tutorial.tutors << create(:confirmed_user, email: "tara@play")
+
+      get lecture_submissions_path(lecture)
+
+      expect(response.body).to include("submissions-tutorial-line")
+      expect(response.body).to include('href="mailto:tara@play"')
+    end
   end
 
   # Sighted readers get the lecture from the navbar; somebody moving by heading
