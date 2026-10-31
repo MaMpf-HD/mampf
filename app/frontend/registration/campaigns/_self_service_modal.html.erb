@@ -62,11 +62,6 @@
                          class: "form-select",
                          data: { testid: "self-service-mode" } %>
 
-          <%#
-            Always shown, since keeping the groups closed only dismisses the
-            modal and sends nothing a confirmation could hang on.
-          %>
-
           <% if campaign.registerables.any? { |group| Rosters::LectureLeave.held_by_mode?(group) } %>
             <div class="alert alert-warning small mt-3 mb-0" role="note">
               <i

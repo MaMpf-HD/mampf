@@ -4,8 +4,6 @@
 # to participants. Reading an open lecture needs none of these, so a reader
 # who wants its news bookmarks it.
 module LectureAudience
-  RUNNING_CAMPAIGN_STATUSES = [:open, :closed, :processing].freeze
-
   module_function
 
   def users(lecture_ids)
@@ -33,10 +31,10 @@ module LectureAudience
   end
 
   def lecture_id_scopes(user, media: false)
-    running = Registration::Campaign.where(
+    running = Registration::Campaign.running.where(
       id: Registration::UserRegistration.where(user: user).where.not(status: :rejected)
                                         .select(:registration_campaign_id),
-      status: RUNNING_CAMPAIGN_STATUSES, campaignable_type: "Lecture"
+      campaignable_type: "Lecture"
     )
     registered = running.select(:campaignable_id)
     registered = Lecture.where(id: registered, passphrase: nil).select(:id) if media
@@ -55,8 +53,7 @@ module LectureAudience
     Registration::UserRegistration
       .where.not(status: :rejected)
       .joins(:registration_campaign)
-      .merge(Registration::Campaign.where(status: RUNNING_CAMPAIGN_STATUSES,
-                                          campaignable_type: "Lecture",
-                                          campaignable_id: lecture_ids))
+      .merge(Registration::Campaign.running.where(campaignable_type: "Lecture",
+                                                  campaignable_id: lecture_ids))
   end
 end

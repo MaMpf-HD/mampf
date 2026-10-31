@@ -26,16 +26,6 @@ module Rosters
       group.place? && !group.is_a?(Exam)
     end
 
-    # The Unicode white space characters, listed out so that
-    # leave_confirmation.controller.js can match exactly the same ones.
-    SPACES = /[\t\n\v\f\r \u0085\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF]+/
-
-    # Upcases rather than downcases: both Ruby and JavaScript upcase without
-    # regard to the neighbouring letters, which lowercasing a final sigma does.
-    def self.normalize(text)
-      text.to_s.gsub(SPACES, "").upcase
-    end
-
     def initialize(lecture, user)
       @lecture = lecture
       @user = user
@@ -56,16 +46,6 @@ module Rosters
 
     def allowed?
       participating? && blockers.empty?
-    end
-
-    # What the student types to confirm: the course's short title, as the
-    # name of what is left, without spaces, which are easy to miss.
-    def confirmation_code
-      @lecture.course.short_title.gsub(SPACES, "")
-    end
-
-    def confirmed?(input)
-      self.class.normalize(input) == self.class.normalize(confirmation_code)
     end
 
     # Of the given members of a group, those for whom it is the last place in
@@ -115,7 +95,7 @@ module Rosters
     # the lecture's staff could lift them, but leaving would stay refused.
     def blockers
       @blockers ||= graded_blockers.presence ||
-                    (fixed_group_blockers + closed_exam_blockers + prerequisite_blockers)
+                    (held_group_blockers + closed_exam_blockers + prerequisite_blockers)
     end
 
     # The campaigns the dialog names. A rejected registration is withdrawn
@@ -180,23 +160,18 @@ module Rosters
 
       # A cohort without enrollment is a list, not a way into the lecture,
       # and is left along with it whatever its setting.
-      def fixed_group_blockers
+      def held_group_blockers
         groups.select { |group| self.class.held_by_mode?(group) }
-              .select { |group| fixed?(group) && !group.in?(graded_talks) }
-              .map { |group| Blocker.new(:group_fixed, self.class.label(group), true) }
+              .select { |group| held?(group) && !group.in?(graded_talks) }
+              .map { |group| Blocker.new(:group_held, self.class.label(group), true) }
       end
 
       # Leaving the lecture gives up every group at once, so a group the
       # student may not leave on its own holds them, whatever its kind: its
       # self-service mode is the staff's say on leaving it, and a running
       # campaign holds it until the allocation.
-      def fixed?(group)
-        return true unless group.allow_self_remove?(@user)
-
-        group.registration_items
-             .joins(:registration_campaign)
-             .merge(Registration::Campaign.where(status: UserPlaces::RUNNING_CAMPAIGN_STATUSES))
-             .exists?
+      def held?(group)
+        !group.allow_self_remove?(@user) || group.in_running_campaign?
       end
 
       # An exam list or an exam registration past its deadline: withdrawing
@@ -213,8 +188,8 @@ module Rosters
       # leaving withdraws; withdrawing that one alone is refused as well, see
       # UserRegistrations::Handler#check_not_referenced_as_prerequisite.
       def prerequisite_blockers
-        withdrawn = Registration::Campaign.where(
-          campaignable: @lecture, status: UserPlaces::RUNNING_CAMPAIGN_STATUSES,
+        withdrawn = Registration::Campaign.running.where(
+          campaignable: @lecture,
           id: Registration::UserRegistration.where(user: @user).select(:registration_campaign_id)
         )
         requiring = withdrawn.pluck(:id).flat_map do |campaign_id|
@@ -236,8 +211,8 @@ module Rosters
       # back into pending ones; the dialog does not name them.
       def registration_past_withdrawal?
         registered = Registration::UserRegistration.where(user: @user)
-        Registration::Campaign.where(campaignable: @lecture,
-                                     status: UserPlaces::RUNNING_CAMPAIGN_STATUSES,
+        Registration::Campaign.running
+                              .where(campaignable: @lecture,
                                      id: registered.select(:registration_campaign_id))
                               .any? { |campaign| !campaign.open_for_withdrawals? }
       end
@@ -268,8 +243,8 @@ module Rosters
       def running_campaigns
         registered = Registration::UserRegistration.where(user: @user)
                                                    .where.not(status: :rejected)
-        Registration::Campaign.where(campaignable: @lecture,
-                                     status: UserPlaces::RUNNING_CAMPAIGN_STATUSES,
+        Registration::Campaign.running
+                              .where(campaignable: @lecture,
                                      id: registered.select(:registration_campaign_id))
                               .order(:registration_deadline)
       end

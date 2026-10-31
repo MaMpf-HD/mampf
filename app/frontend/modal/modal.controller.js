@@ -11,15 +11,6 @@ export default class extends Controller {
 
   connect() {
     this.modal = Modal.getOrCreateInstance(this.element);
-    this.inContainer = Boolean(this.element.closest("#modal-container"));
-    this.markOpen = () => {
-      this.isOpen = true;
-    };
-    this.markClosed = () => {
-      this.isOpen = false;
-    };
-    this.element.addEventListener("show.bs.modal", this.markOpen);
-    this.element.addEventListener("hidden.bs.modal", this.markClosed);
     this.boundHideModalOnSuccess = this.hideModalOnSuccess.bind(this);
     if (!this.keepOpenOnSubmitValue) {
       this.element.addEventListener(
@@ -40,18 +31,9 @@ export default class extends Controller {
     this.element.removeEventListener(
       "turbo:submit-end", this.boundHideModalOnSuccess,
     );
-    this.element.removeEventListener("show.bs.modal", this.markOpen);
-    this.element.removeEventListener("hidden.bs.modal", this.markClosed);
-    if (this.element.dataset.modalClosingRemoved) return;
-
-    if (this.isOpen && !this.inContainer) {
-      this.closeRemoved();
-      return;
-    }
 
     if (this.modal) {
       try {
-        if (this.isOpen) this.releasePage();
         const backdrop = document.querySelector(".modal-backdrop");
         if (backdrop) {
           backdrop.remove();
@@ -62,30 +44,6 @@ export default class extends Controller {
         // Modal already disposed or element removed
       }
     }
-  }
-
-  /**
-   * A modal in the page that a stream removes is closed the regular way,
-   * which ends its focus trap and scroll lock; one still opening is closed
-   * once shown. Not disposed, as that would also drop the window handlers of
-   * the modal that replaced it.
-   */
-  closeRemoved() {
-    const { element, modal } = this;
-    element.dataset.modalClosingRemoved = "true";
-    element.addEventListener("hidden.bs.modal", () => element.remove(), { once: true });
-    element.addEventListener("shown.bs.modal", () => modal.hide(), { once: true });
-    modal.hide();
-  }
-
-  /**
-   * Removes modal-open, the overflow and the padding from the body at once:
-   * the next dialog in #modal-container opens before a fade would end.
-   */
-  releasePage() {
-    document.body.classList.remove("modal-open");
-    document.body.style.removeProperty("overflow");
-    document.body.style.removeProperty("padding-right");
   }
 
   hideModalOnSuccess(event) {
@@ -106,7 +64,6 @@ export default class extends Controller {
 
       // Dispose modal immediately to prevent Bootstrap trying to access
       // removed DOM elements during hide animation
-      this.isOpen = false;
       this.modal.dispose();
 
       // Clear modal container

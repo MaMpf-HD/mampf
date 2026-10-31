@@ -104,9 +104,7 @@ class Cohort < ApplicationRecord
     def lock_running_campaigns!
       return unless place? && lecture
 
-      Registration::Campaign.where(campaignable: lecture,
-                                   status: Rosters::UserPlaces::RUNNING_CAMPAIGN_STATUSES)
-                            .order(:id).lock.load
+      Registration::Campaign.running.where(campaignable: lecture).order(:id).lock.load
     end
 
     def leave_lecture!(former_members, by)

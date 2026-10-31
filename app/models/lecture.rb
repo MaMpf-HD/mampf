@@ -1025,8 +1025,6 @@ class Lecture < ApplicationRecord
     sync_student_performance_for_members!(new_user_ids + readmitted_user_ids)
   end
 
-  # Clears the exclusion of those who had left the roster; their rows keep
-  # the date they first joined.
   def readmit_to_roster!(user_ids)
     excluded = excluded_lecture_memberships.where(user_id: user_ids)
     ids = excluded.pluck(:user_id)
@@ -1078,9 +1076,8 @@ class Lecture < ApplicationRecord
     end
   end
 
-  # All students that lecture staff can reach by registration mail: the
-  # roster, the cohorts, and the registrations of campaigns not completed;
-  # after completion the roster, not the old registration, says who is in.
+  # Students the staff can write to about registration: the roster, the
+  # cohorts, and everyone registered in a campaign that isn't completed yet.
   def registration_mail_recipients
     registered_ids = Registration::UserRegistration
                      .where(registration_campaign: registration_campaigns
@@ -1187,13 +1184,15 @@ class Lecture < ApplicationRecord
     blocking_campaign_titles(policies)
   end
 
-  # Drops the computed certifications and returns how many decisions went, or
-  # returns nil and drops nothing while eligibility_in_use_by names a
-  # registration that still reads them.
+  # Deletes the computed certifications, including those of people who have
+  # left. Returns how many of them the eligibility page showed, or nil while a
+  # registration still uses them.
   def reset_computed_certifications!
     return if eligibility_in_use_by
 
+    shown = current_certifications.computed.decided.count
     student_performance_certifications.reset_computed!
+    shown
   end
 
   # One query per kind of place (see Rosters::Rosterable#place?), each
@@ -1209,12 +1208,27 @@ class Lecture < ApplicationRecord
       end
   end
 
-  # The certifications of everybody but those who have left. Theirs stay
-  # stored for a return, but have no record behind them while they are away,
-  # so the eligibility pages neither count nor flag them.
+  # Certifications without those of people who have left the lecture. Theirs
+  # are kept in case they come back.
   def current_certifications
     student_performance_certifications
       .where.not(user_id: excluded_lecture_memberships.select(:user_id))
+  end
+
+  def left_user_ids
+    @left_user_ids ||= excluded_lecture_memberships.pluck(:user_id).to_set
+  end
+
+  def graded_talk_and_exam_titles_by_user(user_ids)
+    assessments = Assessment::Assessment.where(assessable: talks)
+                                        .or(Assessment::Assessment.where(assessable: exams))
+    Assessment::Participation.with_grading_data
+                             .where(assessment: assessments, user_id: user_ids)
+                             .includes(assessment: :assessable)
+                             .group_by(&:user_id)
+                             .transform_values do |rows|
+                               rows.map { |row| row.assessment.assessable.title }.uniq
+                             end
   end
 
   private
