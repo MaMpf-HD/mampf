@@ -1,9 +1,9 @@
 # Sends a message from the support button to the address people write to, see
-# `FormMail`. Only for signed-in users: for anybody else there is no address we
+# `SupportMail`. Only for signed-in users: for anybody else there is no address we
 # know to be theirs to answer to, so the button shows them where to write
 # instead.
 class SupportRequestsController < ApplicationController
-  include FormMail
+  include SupportMail
 
   THROTTLE_WINDOW = 1.hour
   LIMIT = 5
@@ -18,14 +18,14 @@ class SupportRequestsController < ApplicationController
 
     return render_form(support_request, :unprocessable_content) unless support_request.valid?
 
-    if form_mail_limit_reached?(THROTTLE_KEY, limit: LIMIT, window: THROTTLE_WINDOW)
+    if support_mail_limit_reached?(THROTTLE_KEY, limit: LIMIT, window: THROTTLE_WINDOW)
       return render_form(support_request, :too_many_requests,
                          throttled: throttled_message(THROTTLE_WINDOW))
     end
 
-    mail = form_mail("Support", to: DefaultSetting::PROJECT_EMAIL,
-                                text: support_request.message)
-    unless deliver_form_mail(mail, THROTTLE_KEY)
+    mail = support_mail("Support", to: DefaultSetting::PROJECT_EMAIL,
+                                   text: support_request.message)
+    unless deliver_support_mail(mail, THROTTLE_KEY)
       return render_form(support_request, :service_unavailable, send_failed: true)
     end
 

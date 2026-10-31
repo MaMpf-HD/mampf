@@ -1,5 +1,5 @@
 # Mails what somebody wrote into a form of the support button or the feedback
-# muffin (see `FormMail`) to the team. The answer goes to whoever wrote it.
+# muffin (see `SupportMail`) to the team. The answer goes to whoever wrote it.
 class SupportMailer < ApplicationMailer
   layout false
 

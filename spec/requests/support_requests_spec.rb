@@ -58,7 +58,7 @@ RSpec.describe("SupportRequests", type: :request) do
 
         expect(response).to have_http_status(:service_unavailable)
         expect(response.body).not_to include(I18n.t("support_request.sent"))
-        expect(response.body).to include(I18n.t("form_mail.send_failed").squish)
+        expect(response.body).to include(I18n.t("support_mail.send_failed").squish)
 
         page = Nokogiri::HTML(response.body)
         expect(page.at_css("[data-clipboard-text-value]")["data-clipboard-text-value"])

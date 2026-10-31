@@ -1,7 +1,7 @@
 # Mails a `Feedback` from the muffin next to the support button, see
-# `FormMail`.
+# `SupportMail`.
 class FeedbacksController < ApplicationController
-  include FormMail
+  include SupportMail
 
   THROTTLE_WINDOW = 1.hour
   LIMIT = 6
@@ -15,13 +15,13 @@ class FeedbacksController < ApplicationController
 
     return render_form(feedback, :unprocessable_content) unless feedback.valid?
 
-    if form_mail_limit_reached?(THROTTLE_KEY, limit: LIMIT, window: THROTTLE_WINDOW)
+    if support_mail_limit_reached?(THROTTLE_KEY, limit: LIMIT, window: THROTTLE_WINDOW)
       return render_form(feedback, :too_many_requests,
                          throttled: throttled_message(THROTTLE_WINDOW))
     end
 
-    mail = form_mail("Feedback", to: ENV.fetch("FEEDBACK_EMAIL"), text: feedback.body)
-    unless deliver_form_mail(mail, THROTTLE_KEY)
+    mail = support_mail("Feedback", to: ENV.fetch("FEEDBACK_EMAIL"), text: feedback.body)
+    unless deliver_support_mail(mail, THROTTLE_KEY)
       return render_form(feedback, :service_unavailable, send_failed: true)
     end
 

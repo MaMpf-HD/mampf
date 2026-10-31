@@ -1,12 +1,12 @@
 <%# locals: (text:) %>
 <div class="alert alert-danger py-2 small" role="alert">
-  <p class="mb-2"><%= t("form_mail.send_failed") %></p>
+  <p class="mb-2"><%= t("support_mail.send_failed") %></p>
 
   <div
     data-controller="clipboard"
     data-clipboard-text-value="<%= text %>"
-    data-clipboard-confirmation-value="<%= t("form_mail.copied") %>"
-    data-clipboard-failure-value="<%= t("form_mail.copy_failed") %>"
+    data-clipboard-confirmation-value="<%= t("support_mail.copied") %>"
+    data-clipboard-failure-value="<%= t("support_mail.copy_failed") %>"
     data-clipboard-resting-icon-value="bi-clipboard"
   >
     <button
@@ -20,7 +20,7 @@
         data-clipboard-target="icon"
       ></i>
 
-      <%= t("form_mail.copy") %>
+      <%= t("support_mail.copy") %>
     </button>
 
     <span class="visually-hidden" role="status" data-clipboard-target="status"></span>

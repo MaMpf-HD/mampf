@@ -16,7 +16,7 @@
   <% end %>
 
   <% if send_failed %>
-    <%= render "form_mails/send_failed", text: support_request.message %>
+    <%= render "support_mails/send_failed", text: support_request.message %>
   <% end %>
 
   <div class="mb-2">
