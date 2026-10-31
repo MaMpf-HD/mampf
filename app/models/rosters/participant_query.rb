@@ -75,8 +75,8 @@ module Rosters
       end
 
       def build_unassigned_scope(base_scope)
-        @lecture.place_user_id_queries.reduce(base_scope) do |scope, query|
-          scope.where.not(user_id: query)
+        @lecture.enrolling_memberships.reduce(base_scope) do |scope, memberships|
+          scope.where.not(user_id: memberships)
         end
       end
   end

@@ -47,9 +47,9 @@ module Rosters
       lecture = group.lecture
       return [] if lecture.nil? || user_ids.empty?
 
-      places = lecture.place_user_id_queries(user_ids)
-                      .flat_map { |query| query.pluck(query.select_values.first) }
-      single = places.tally.select { |_, count| count == 1 }.keys
+      member_ids = lecture.enrolling_memberships(user_ids)
+                          .flat_map { |query| query.pluck(query.select_values.first) }
+      single = member_ids.tally.filter_map { |id, count| id if count == 1 }
       return [] if single.empty?
 
       members = group.roster_entries.where(group.roster_user_id_column => single)
