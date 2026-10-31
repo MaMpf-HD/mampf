@@ -12,7 +12,13 @@ services:
     # one is left for Postgres, Redis & co. (see run.sh)
     environment:
       - E2E_WORKERS=3
-    command: "CI=true RUBY_DEBUG_ENABLE=0 DISABLE_VITE_IN_CI=true /workspaces/mampf/docker/development/init-and-run.sh"
+      # Set here and not in `command`: the image's ENTRYPOINT runs
+      # init-and-run.sh, which ignores its arguments. CI turns on Playwright's
+      # retries and Rails' eager loading; without the Vite dev server, the app
+      # serves the assets precompiled into the image.
+      - CI=true
+      - DISABLE_VITE_IN_CI=true
+      - RUBY_DEBUG_ENABLE=0
     # REPLACE (not merge) the dev app-base volumes for CI. The dev `bundle_cache` mount
     # uses `nocopy: true` so Docker skips copy-up; on a fresh CI volume that leaves
     # /usr/local/bundle empty and hides the gems baked into mampftest:image (rspec etc.),
