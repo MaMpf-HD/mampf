@@ -154,6 +154,15 @@
   </div>
 
   <% if catalog %>
+    <% staff = User.where(id: lecture.editors_and_teacher.map(&:id))
+                   .where.not(id: current_user.id).by_last_name.map(&:tutorial_name) %>
+    <p class="form-text mb-2" id="student-message-staff-copy">
+      <% if staff.any? %>
+        <%= t("student_message.staff_copy", names: staff.to_sentence) %>
+      <% else %>
+        <%= t("student_message.own_copy") %>
+      <% end %>
+    </p>
     <div class="form-check mb-3">
       <%= check_box_tag "student_message[copy_tutors]", "1", true,
                         id: "student-message-copy-tutors", class: "form-check-input" %>

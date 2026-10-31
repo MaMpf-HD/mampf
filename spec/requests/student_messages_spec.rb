@@ -401,6 +401,17 @@ RSpec.describe("StudentMessages", type: :request) do
       expect(box["checked"]).to be_present
     end
 
+    it "names the staff who always get a copy, the sender aside" do
+      teacher.update!(name_in_tutorials: "Ada Lovelace")
+      lecture.editors << create(:confirmed_user, name_in_tutorials: "Grace Hopper")
+      sign_in teacher
+
+      get edit_lecture_path(lecture, tab: "communication")
+
+      line = Nokogiri::HTML(response.body).at_css("#student-message-staff-copy").text.squish
+      expect(line).to eq(I18n.t("student_message.staff_copy", names: "Grace Hopper"))
+    end
+
     # The hint after a group joined a running process links here.
     it "opens the staff's form on a group and a subject handed in" do
       sign_in teacher

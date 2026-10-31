@@ -22,6 +22,8 @@ en:
     addresses_copy_failed: "The addresses could not be copied."
     copy_addresses: "Copy email addresses"
     copy_tutors: "Copy to the tutors of these students"
+    own_copy: "A copy always goes to you."
+    staff_copy: "A copy always goes to you, and in cc to %{names}."
     addresses_copied: "Addresses copied to clipboard"
     subject: "Subject"
     body: "Message"
