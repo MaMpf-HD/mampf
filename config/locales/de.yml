@@ -2450,6 +2450,7 @@ de:
     no_video: 'Es gibt kein Video.'
     play: 'THymE-Player'
     download: 'Video herunterladen'
+    transcribe: 'Transkribieren'
     length: 'Länge'
     resolution: 'Auflösung'
     size: 'Größe'
@@ -2875,9 +2876,13 @@ de:
       student_registration: '%-d. %B %Y, %H:%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
+  search:
+    mampfsearch_unavailable: 'MampfSearch ist derzeit nicht verfügbar.'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
+    toggle_subtitles: 'Untertitel ein-/ausblenden'
+    transcript: 'Transkript'
   thyme_editor:
     add_item: 'Eintrag zum Inhaltsverzeichnis hinzufügen'
     add_referral: 'Referenz hinzufügen'
@@ -3011,6 +3016,10 @@ de:
   submission:
     hub:
       page_title: "Abgaben - %{lecture}"
+      tutorial_line_html:
+        zero: "Du bist im Tutorium %{tutorial}."
+        one: "Du bist im Tutorium %{tutorial} bei %{tutor}, per E-Mail erreichbar unter %{email}."
+        other: "Du bist im Tutorium %{tutorial} bei %{tutors}."
       heading: Frühere Blätter
       heading_with_tests: Frühere Blätter und Tests
       standing:
@@ -3299,6 +3308,9 @@ de:
       Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    invalid_transcript: Die hochgeladene Datei ist kein gültiges WebVTT-Transkript.
+    transcript_too_many_cues: >
+      Das Transkript enthält zu viele Cues (maximal %{max_cues}).
     already_corrected: >
       Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
       kannst Du nicht mehr beitreten.
@@ -4213,6 +4225,9 @@ de:
       created: 'Gruppe erfolgreich erstellt.'
       updated: 'Gruppe erfolgreich aktualisiert.'
       destroyed: 'Gruppe erfolgreich gelöscht.'
+      destroyed_and_notified:
+        one: 'Gruppe gelöscht; 1 Mitglied wird per Mail benachrichtigt.'
+        other: 'Gruppe gelöscht; %{count} Mitglieder werden per Mail benachrichtigt.'
       destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
     talks:
       created: 'Vortrag erfolgreich erstellt.'
@@ -4224,6 +4239,9 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    media:
+      transcription_started: 'Transkription gestartet.'
+      cannot_transcribe: 'Medium kann nicht transkribiert werden.'
     no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.

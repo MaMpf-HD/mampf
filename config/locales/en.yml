@@ -2263,6 +2263,7 @@ en:
     no_video: 'There is no video.'
     play: 'THymE Player'
     download: 'download video'
+    transcribe: 'Transcribe'
     length: 'Length'
     resolution: 'Resolution'
     size: 'Size'
@@ -2669,9 +2670,13 @@ en:
       student_registration: '%B %-d, %Y, %H:%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
+  search:
+    mampfsearch_unavailable: 'MampfSearch is currently unavailable.'
   thyme:
     back: 'back'
     back_to: 'back to '
+    toggle_subtitles: 'Toggle subtitles'
+    transcript: 'Transcript'
   thyme_editor:
     add_item: 'Add Item to Table of Contents'
     add_referral: 'Add Reference'
@@ -2798,6 +2803,10 @@ en:
   submission:
     hub:
       page_title: "Submissions - %{lecture}"
+      tutorial_line_html:
+        zero: "You are in the tutorial %{tutorial}."
+        one: "You are in the tutorial %{tutorial} with %{tutor}, reachable by email at %{email}."
+        other: "You are in the tutorial %{tutorial} with %{tutors}."
       heading: Earlier sheets
       heading_with_tests: Earlier sheets and tests
       standing:
@@ -3086,6 +3095,9 @@ en:
       %{accepted_mime_types}.
     correction_size_too_big: >
       The uploaded file is too big. Maximum file size is 15 MB.
+    invalid_transcript: The uploaded file is not a valid WebVTT transcript.
+    transcript_too_many_cues: >
+      The transcript contains too many cues (maximum is %{max_cues}).
     already_corrected: >
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
@@ -3987,6 +3999,9 @@ en:
       created: 'Group successfully created.'
       updated: 'Group successfully updated.'
       destroyed: 'Group successfully deleted.'
+      destroyed_and_notified:
+        one: 'Group deleted; 1 member is notified by email.'
+        other: 'Group deleted; %{count} members are notified by email.'
       destruction_failed: 'Group could not be deleted.'
     talks:
       created: 'Talk successfully created.'
@@ -3997,6 +4012,9 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+    media:
+      transcription_started: 'Transcription started.'
+      cannot_transcribe: 'Medium cannot be transcribed.'
     no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.

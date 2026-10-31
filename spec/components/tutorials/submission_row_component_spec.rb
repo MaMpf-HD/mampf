@@ -417,6 +417,33 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
   end
 
+  describe "the menu for putting somebody on the team" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+    end
+
+    def render_with(count)
+      render_inline(described_class.new(submission: submission, assignment: assignment,
+                                        grading_scope: tutorial,
+                                        addable_members: create_list(:confirmed_user, count)))
+    end
+
+    it "offers no search over five names" do
+      html = render_with(5)
+
+      expect(html.css("button.dropdown-item").size).to eq(5)
+      expect(html.css("input[type=search]")).to be_empty
+    end
+
+    it "offers a search over six names" do
+      search = render_with(6).css("input[type=search]")
+
+      expect(search.size).to eq(1)
+      expect(search.first["aria-label"])
+        .to eq(I18n.t("assessment.task_points.add_member_search"))
+    end
+  end
+
   describe "rendering" do
     before do
       submission
