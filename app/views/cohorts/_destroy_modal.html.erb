@@ -32,7 +32,7 @@
           <p>
             <%= t("roster.cohorts.destroy.members", count: members_count) %>
 
-            <% if cohort.place? %>
+            <% if cohort.enrolls_in_lecture? %>
               <% if leaving_count.positive? %>
                 <%= t("roster.cohorts.destroy.leaves_lecture", count: leaving_count) %>
               <% end %>

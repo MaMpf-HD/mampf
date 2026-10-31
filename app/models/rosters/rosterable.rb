@@ -141,10 +141,7 @@ module Rosters
       nil
     end
 
-    # Whether being a member here also enrolls the user in the lecture. Cohorts
-    # without enrollment don't. Lecture#place_user_id_queries asks the same in
-    # the database.
-    def place?
+    def enrolls_in_lecture?
       is_a?(Tutorial) || is_a?(Talk) || is_a?(Exam) || (is_a?(Cohort) && propagate_to_lecture?)
     end
 
@@ -286,12 +283,13 @@ module Rosters
     # Updates the roster based on the target list of users and the source campaign.
     # - Synchronizes the local roster (bulk adds/removes users for this campaign).
     # - Propagates new members to the parent lecture roster (if applicable).
-    # - Locks the lecture first when this group is a place in it, after the
-    #   campaign finalization holds: removals and enrollment:reconcile decide
-    #   under that lock whether someone still has a place.
+    # - Locks the lecture first when this group enrolls in it (finalization has
+    #   already locked the campaign). Removals and
+    #   Rosters::EnrollmentReconciliation decide under the same lock whether
+    #   someone still has a place.
     def materialize_allocation!(user_ids:, campaign:)
       transaction do
-        lecture.lock! if place? && lecture.is_a?(Lecture)
+        lecture.lock! if enrolls_in_lecture? && lecture.is_a?(Lecture)
         current_ids = roster_entries.pluck(roster_user_id_column)
         target_ids = user_ids.uniq
 
@@ -305,7 +303,7 @@ module Rosters
 
     # Enrolls the users in the lecture when this group is a place there.
     def propagate_to_lecture!(user_ids)
-      return if user_ids.empty? || !place?
+      return if user_ids.empty? || !enrolls_in_lecture?
 
       parent = lecture
       return unless parent.is_a?(Lecture)

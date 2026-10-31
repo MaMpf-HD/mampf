@@ -1161,7 +1161,7 @@ class Lecture < ApplicationRecord
   # and the cohorts with enrollment. Students enter the lecture through one
   # of them.
   def enrolling_groups
-    tutorials.to_a + talks.to_a + cohorts.select(&:place?).sort_by(&:title)
+    tutorials.to_a + talks.to_a + cohorts.select(&:enrolls_in_lecture?).sort_by(&:title)
   end
 
   def roster_entries
@@ -1195,7 +1195,7 @@ class Lecture < ApplicationRecord
     shown
   end
 
-  # One query per kind of place (see Rosters::Rosterable#place?), each
+  # One query per kind of place (see Rosters::Rosterable#enrolls_in_lecture?), each
   # selecting the ids of the users holding one, a user once per place held;
   # user_ids narrows them.
   def place_user_id_queries(user_ids = nil)

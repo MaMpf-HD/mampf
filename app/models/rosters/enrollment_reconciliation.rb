@@ -1,7 +1,8 @@
 module Rosters
   # Brings the lecture rosters in line with the places (see
-  # Rosters::Rosterable#place?), for data from before enrollment followed
-  # them. The report also names campaigns that would go wrong on their own.
+  # Rosters::Rosterable#enrolls_in_lecture?), for data from before enrollment
+  # followed them. The report also names campaigns that would go wrong on their
+  # own.
   class EnrollmentReconciliation
     Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :admitted,
                      :staff, keyword_init: true)

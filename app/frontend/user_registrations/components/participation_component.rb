@@ -69,7 +69,7 @@ class ParticipationComponent < ViewComponent::Base
         result = released_result(rosterable)
         Row.new(label: helpers.roster_type_text(rosterable),
                 title: rosterable.title,
-                lines: meta_lines(rosterable) + result_lines(result) +
+                lines: member_lines(rosterable) + result_lines(result) +
                        [only_group_line(rosterable)].compact,
                 badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
@@ -229,6 +229,21 @@ class ParticipationComponent < ViewComponent::Base
       else
         []
       end
+    end
+
+    # Gives a tutorial's members the address of each tutor, so they can write
+    # to them; a student merely registered for the tutorial sees names only.
+    def member_lines(rosterable)
+      return meta_lines(rosterable) unless rosterable.is_a?(Tutorial) && rosterable.tutors.any?
+
+      [tutor_contacts(rosterable), rosterable.location.presence].compact
+    end
+
+    def tutor_contacts(tutorial)
+      contacts = tutorial.tutors.map do |tutor|
+        safe_join([tutor.tutorial_name, " (", mail_to(tutor.email), ")"])
+      end
+      safe_join(contacts, ", ")
     end
 
     def roster_badge(rosterable)

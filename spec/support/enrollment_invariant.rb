@@ -1,5 +1,5 @@
 # Fails a request that leaves the rosters against the rules of enrollment
-# (see Rosters::Rosterable#place?). Only what the request changes counts, so a
+# (see Rosters::Rosterable#enrolls_in_lecture?). Only what the request changes counts, so a
 # spec may build such a state first; skip_enrollment_invariant opts out.
 module EnrollmentInvariant
   class ViolationError < StandardError; end

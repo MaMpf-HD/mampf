@@ -13,7 +13,7 @@ module Rosters
 
     def add_user!(user, rosterable, force: false, source_campaign_id: nil)
       added = rosterable.with_lock do
-        lock_lecture_of!(rosterable)
+        rosterable.lecture&.lock! if rosterable.enrolls_in_lecture?
         add_user_without_lock!(user,
                                rosterable,
                                force: force,
@@ -37,19 +37,20 @@ module Rosters
     # after the group. A caller that locks the group itself locks them first
     # (see SelfMaterializationService#self_remove!).
     def remove_user!(user, rosterable, notify: true, by: nil)
-      lecture = rosterable.is_a?(Lecture) ? rosterable : (rosterable.lecture if rosterable.place?)
+      lecture = rosterable.lecture if rosterable.is_a?(Lecture) || rosterable.enrolls_in_lecture?
       places = UserPlaces.new(user)
       left = ActiveRecord::Base.transaction do
         places.lock_campaigns!([lecture]) if lecture
         rosterable.lock!
         lecture&.lock!
         leaving = lecture.present? && leaves_lecture?(user, rosterable, lecture)
+        also_leaves_lecture = leaving && lecture != rosterable
         ensure_no_grading_data!(user, rosterable)
-        ensure_no_grading_data!(user, lecture) if leaving && lecture != rosterable
+        ensure_no_grading_data!(user, lecture) if also_leaves_lecture
         next unless remove_user_without_lock!(user, rosterable, by: by)
         next rosterable unless leaving
 
-        remove_user_without_lock!(user, lecture, by: by) unless lecture == rosterable
+        remove_user_without_lock!(user, lecture, by: by) if also_leaves_lecture
         places.withdraw_registrations!([lecture])
         lecture
       end
@@ -68,7 +69,7 @@ module Rosters
       return false if from_rosterable == to_rosterable
 
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
-        lock_lecture_of!(from_rosterable, to_rosterable)
+        [from_rosterable, to_rosterable].find(&:enrolls_in_lecture?)&.lecture&.lock!
         raise(MoveWithoutEffectError) unless user_in_roster?(user, from_rosterable)
         raise(MoveLeavesLectureError) if leaves_last_place?(user, from_rosterable, to_rosterable)
 
@@ -94,16 +95,11 @@ module Rosters
         rosterable == lecture ? leave.enrolled? : leave.only_place?(rosterable)
       end
 
-      # Locks the lecture after the groups, as remove_user! does, wherever a
-      # place changes and with it the enrollment.
-      def lock_lecture_of!(*rosterables)
-        rosterables.find(&:place?)&.lecture&.lock!
-      end
-
       # A move onto a list would take the last place without anything that
       # enrolls in its stead.
       def leaves_last_place?(user, from_rosterable, to_rosterable)
-        return false unless from_rosterable.place? && !to_rosterable.place?
+        return false unless from_rosterable.enrolls_in_lecture?
+        return false if to_rosterable.enrolls_in_lecture?
 
         lecture = from_rosterable.lecture
         lecture.present? && LectureLeave.new(lecture, user).only_place?(from_rosterable)

@@ -28,7 +28,9 @@ module Rosters
     def self_remove!
       ActiveRecord::Base.transaction do
         lecture = @rosterable.lecture
-        Rosters::UserPlaces.new(@user).lock_campaigns!([lecture]) if lecture && @rosterable.place?
+        if lecture && @rosterable.enrolls_in_lecture?
+          Rosters::UserPlaces.new(@user).lock_campaigns!([lecture])
+        end
         @rosterable.lock!
         lecture&.lock!
         ensure_rosterable_unlocked!

@@ -63,7 +63,7 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
     it "locks the student's campaigns before the group, as the removal takes them" do
       lecture = create(:lecture)
       order = []
-      allow(rosterable).to receive_messages(lecture: lecture, place?: true)
+      allow(rosterable).to receive_messages(lecture: lecture, enrolls_in_lecture?: true)
       allow(rosterable).to receive(:lock!) { order << :group }
       allow(lecture).to receive(:lock!) { order << :lecture }
       allow_any_instance_of(Rosters::UserPlaces).to receive(:lock_campaigns!) { order << :campaigns }

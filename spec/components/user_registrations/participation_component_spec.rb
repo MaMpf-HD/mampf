@@ -305,6 +305,32 @@ RSpec.describe(ParticipationComponent, type: :component) do
       expect(rendered.text).to include("Assigned")
     end
 
+    it "gives a member of a tutorial the address of each tutor" do
+      tutor = create(:confirmed_user, name: "Tara Tutor", email: "tara@play")
+      tutorial = create(:tutorial, lecture: lecture, title: "Tutorial 4", tutors: [tutor])
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+
+      rendered = render_inline(described_class.new(lecture: lecture, user: user))
+
+      expect(rendered.text).to include("Tara Tutor (tara@play)")
+      expect(rendered.css("a[href='mailto:tara@play']").map(&:text)).to eq(["tara@play"])
+    end
+
+    it "names the tutors to a student only registered, without their address" do
+      campaign = create(:registration_campaign, :first_come_first_served, :closed,
+                        campaignable: lecture, items_count: 1)
+      item = campaign.registration_items.first
+      tutor = create(:confirmed_user, name: "Tara Tutor", email: "tara@play")
+      item.registerable.update!(tutors: [tutor])
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, registration_item: item, user: user)
+
+      rendered = render_inline(described_class.new(lecture: lecture, user: user))
+
+      expect(rendered.text).to include("Tara Tutor")
+      expect(rendered.text).not_to include("tara@play")
+    end
+
     it "says when a student was taken off an exam list" do
       exam = create(:exam, lecture: lecture)
       create(:exam_roster_entry, exam: exam, user: user, excluded_at: Time.current)
