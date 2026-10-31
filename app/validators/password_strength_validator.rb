@@ -14,11 +14,18 @@ class PasswordStrengthValidator < ActiveModel::EachValidator
                        "student", "studentin", "studium", "universitaet",
                        "universität"].freeze
 
+  # `Zxcvbn.test` reads and ranks its dictionaries anew on every call, which
+  # takes longer than the rest of a sign-up. A tester keeps them in memory and
+  # only reads them, so the threads of a process can share one.
+  def self.tester
+    @tester ||= Zxcvbn::Tester.new
+  end
+
   def validate_each(record, attribute, value)
     return if value.blank?
 
     user_inputs = [record.email, record.name, *LOCAL_IDENTIFIERS].compact
-    score = Zxcvbn.test(value, user_inputs).score
+    score = self.class.tester.test(value, user_inputs).score
 
     return unless score < 3
 
