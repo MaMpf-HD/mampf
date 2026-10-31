@@ -2128,7 +2128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"katex@npm:^0.18.10":
+"katex@npm:0.18.10":
   version: 0.18.10
   resolution: "katex@npm:0.18.10"
   dependencies:
@@ -2222,7 +2222,7 @@ __metadata:
     eslint-plugin-erb: "npm:^2.0.0"
     globals: "npm:^17.4.0"
     jquery: "npm:^3.7.1"
-    katex: "npm:^0.18.10"
+    katex: "npm:0.18.10"
     masonry-layout: "npm:^4.2.2"
     p5: "npm:^2.0.3"
     sass-embedded: "npm:^1.93.3"

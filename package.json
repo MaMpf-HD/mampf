@@ -18,7 +18,7 @@
     "@zxcvbn-ts/language-en": "^3.0.2",
     "altcha": "^3.1.0",
     "jquery": "^3.7.1",
-    "katex": "^0.18.10",
+    "katex": "0.18.10",
     "sortablejs": "^1.15.6",
     "tom-select": "^2.4.3",
     "trix": "^2.1.8"
