@@ -37,19 +37,20 @@ module Rosters
     # after the group. A caller that locks the group itself locks them first
     # (see SelfMaterializationService#self_remove!).
     def remove_user!(user, rosterable, notify: true, by: nil)
-      lecture = rosterable.is_a?(Lecture) ? rosterable : (rosterable.lecture if rosterable.enrolls_in_lecture?)
+      lecture = rosterable.lecture if rosterable.is_a?(Lecture) || rosterable.enrolls_in_lecture?
       places = UserPlaces.new(user)
       left = ActiveRecord::Base.transaction do
         places.lock_campaigns!([lecture]) if lecture
         rosterable.lock!
         lecture&.lock!
         leaving = lecture.present? && leaves_lecture?(user, rosterable, lecture)
+        also_leaves_lecture = leaving && lecture != rosterable
         ensure_no_grading_data!(user, rosterable)
-        ensure_no_grading_data!(user, lecture) if leaving && lecture != rosterable
+        ensure_no_grading_data!(user, lecture) if also_leaves_lecture
         next unless remove_user_without_lock!(user, rosterable, by: by)
         next rosterable unless leaving
 
-        remove_user_without_lock!(user, lecture, by: by) unless lecture == rosterable
+        remove_user_without_lock!(user, lecture, by: by) if also_leaves_lecture
         places.withdraw_registrations!([lecture])
         lecture
       end
