@@ -250,7 +250,8 @@ class RosterParticipantsComponent < ViewComponent::Base
   private
 
     def exam_titles_by_user
-      @exam_titles_by_user ||= @lecture.exam_titles_by_user(participants.map(&:user_id))
+      @exam_titles_by_user ||=
+        ExamRosterEntry.exam_titles_by_user(@lecture, participants.map(&:user_id))
     end
 
     def result_titles_by_user

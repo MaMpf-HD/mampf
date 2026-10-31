@@ -1199,13 +1199,6 @@ class Lecture < ApplicationRecord
     @left_user_ids ||= excluded_lecture_memberships.pluck(:user_id).to_set
   end
 
-  def exam_titles_by_user(user_ids)
-    ExamRosterEntry.active.joins(:exam)
-                   .where(exams: { lecture_id: id }, user_id: user_ids)
-                   .pluck(:user_id, "exams.title")
-                   .group_by(&:first).transform_values { |rows| rows.map(&:last) }
-  end
-
   def graded_talk_and_exam_titles_by_user(user_ids)
     assessments = Assessment::Assessment.where(assessable: talks)
                                         .or(Assessment::Assessment.where(assessable: exams))
