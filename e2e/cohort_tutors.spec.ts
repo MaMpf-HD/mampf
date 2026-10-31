@@ -23,7 +23,8 @@ test("a flexible group's tutor sees who is in it", async ({ factory, teacher, tu
   await dialog.getByRole("combobox", { name: "Tutors" }).fill(tutor.user.email);
   await dialog.locator(".ts-dropdown")
     .getByRole("option", { name: new RegExp(tutor.user.email) }).click();
-  await page.keyboard.press("Escape");
+  // closes TomSelect's list; Escape would close the dialog once the list has closed itself
+  await dialog.getByRole("heading", { name: "Edit Flexible Group" }).click();
   await dialog.getByRole("button", { name: "Save" }).click();
   await expect(dialog).toBeHidden();
 
