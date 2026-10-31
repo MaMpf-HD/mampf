@@ -364,6 +364,10 @@ Rails.application.routes.draw do
        to: "lectures/unlocks#create",
        as: "lecture_unlock"
 
+  delete "lectures/:lecture_id/membership",
+         to: "lectures/memberships#destroy",
+         as: "lecture_membership"
+
   get "lectures/:id/home/campaigns/:campaign_id",
       to: "lectures/home#campaign",
       as: "lecture_home_campaign"
@@ -724,11 +728,11 @@ Rails.application.routes.draw do
   get "profile/show_accordion",
       as: "show_accordion"
 
-  patch "profile/star_lecture",
-        as: "star_lecture"
+  patch "profile/pin_lecture",
+        as: "pin_lecture"
 
-  patch "profile/unstar_lecture",
-        as: "unstar_lecture"
+  patch "profile/unpin_lecture",
+        as: "unpin_lecture"
 
   namespace :dashboard do
     resources :lectures, only: [] do

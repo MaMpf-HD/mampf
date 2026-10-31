@@ -36,8 +36,7 @@ module StudentPerformance
         query = params[:q].presence
         return scope unless query
 
-        scope.joins(:user)
-             .where("#{User::SHOWN_NAME_SQL} ILIKE :q", q: "%#{query}%")
+        scope.joins(:user).merge(User.shown_name_like(query))
       end
 
       def evaluator_for(rule)

@@ -7,6 +7,7 @@ module StudentPerformance
     # A lecture member without a tutorial cannot hand anything in, so they read
     # as 0 % — the filter is how staff find them, not a tutorial id.
     NO_TUTORIAL = "none".freeze
+    LEFT = "left".freeze
 
     before_action :set_record, only: [:show, :exempt, :unexempt]
     before_action :set_sheet, only: [:exempt, :unexempt]
@@ -21,11 +22,16 @@ module StudentPerformance
 
     def index
       @due_points = due_points
-      scope = filter_by_tutorial(filter_by_name(records_scope))
+      @left = params[:tutorial_id] == LEFT
+      scope = if @left
+        filter_by_name(left_memberships)
+      else
+        filter_by_tutorial(filter_by_name(records_scope))
+      end
 
       sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
       load_test_share(scope, tests) if tests.any?
-      @pagy, @records = pagy(sorted(scope))
+      @pagy, @records = pagy(sorted(@left ? left_records(scope) : scope))
       # Test results become visible during the week, as each tutorial is graded.
       @sheets = sheets.select { |a| due_points.due?(a.id) }
       @tests = tests.select(&:grading_open?)
@@ -85,6 +91,18 @@ module StudentPerformance
                 .includes(:user)
                 .joins(:user)
                 .merge(User.by_last_name)
+      end
+
+      def left_memberships
+        @lecture.excluded_lecture_memberships
+                .includes(:user)
+                .joins(:user)
+                .merge(User.by_last_name)
+      end
+
+      def left_records(memberships)
+        StudentPerformance::ComputationService.new(lecture: @lecture)
+                                              .unsaved_records_for(memberships.map(&:user))
       end
 
       def filter_by_tutorial(scope)

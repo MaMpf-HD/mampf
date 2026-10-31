@@ -323,6 +323,31 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       end
     end
 
+    context "when the talk holds a grade for the user" do
+      let(:seminar) { create(:lecture, :is_seminar, :released_for_all) }
+      let(:talk) do
+        create(:talk, lecture: seminar, title: "Groups", skip_campaigns: true,
+                      self_materialization_mode: :add_and_remove)
+      end
+
+      before do
+        create(:lecture_bookmark, user: user, lecture: seminar)
+        talk.add_user_to_roster!(user)
+        talk.ensure_assessment!(requires_points: false)
+        Assessment::Participation.create!(assessment: talk.assessment, user: user)
+                                 .update!(grade_numeric: 2.0, grader: create(:confirmed_user),
+                                          graded_at: Time.current, status: :reviewed)
+      end
+
+      it "says the result keeps the user, not that a switch failed" do
+        delete self_remove_talk_path(talk), as: :turbo_stream
+
+        expect(CGI.unescapeHTML(response.body))
+          .to include(I18n.t("roster.errors.self_remove_graded", group: "Groups"))
+        expect(talk.reload.speakers).to include(user)
+      end
+    end
+
     context "when self-remove succeeds and should send email" do
       it "sends an email" do
         perform_enqueued_jobs do

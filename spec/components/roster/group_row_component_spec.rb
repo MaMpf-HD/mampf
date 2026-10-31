@@ -282,6 +282,64 @@ RSpec.describe(GroupRowComponent, type: :component) do
     end
   end
 
+  describe "the warning on modes without leaving" do
+    let(:lecture) { create(:lecture) }
+
+    def dropdown(group)
+      render_inline(described_class.new(registerable: group))
+        .css(".group-row__self-enrollment").first
+    end
+
+    def confirms(group)
+      dropdown(group).css("a.dropdown-item").to_h do |link|
+        [link.text.squish, link["data-turbo-confirm"]]
+      end
+    end
+
+    def label(mode)
+      I18n.t("roster.self_materialization.modes.#{mode}")
+    end
+
+    it "asks before a mode that keeps the members in the lecture" do
+      group = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                self_materialization_mode: :add_and_remove)
+      group.add_user_to_roster!(create(:confirmed_user))
+      confirm = I18n.t("roster.self_materialization.confirm_no_leaving", count: 1)
+
+      expect(confirms(group)).to include(label(:disabled) => confirm,
+                                         label(:add_only) => confirm,
+                                         label(:remove_only) => nil,
+                                         label(:add_and_remove) => nil)
+      expect(dropdown(group).at_css("button")["title"]).to be_nil
+    end
+
+    it "warns on applying such a mode to all groups and names it on the toggle" do
+      group = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                self_materialization_mode: :add_only)
+      bulk = confirms(group)[I18n.t("roster.self_materialization.apply_to_all_free_groups")]
+
+      expect(bulk).to start_with(I18n.t("roster.self_materialization.bulk_no_leaving"))
+      expect(dropdown(group).at_css("button")["title"])
+        .to eq(I18n.t("roster.self_materialization.no_leaving_hint"))
+    end
+
+    it "does not ask for an empty group" do
+      group = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                self_materialization_mode: :add_and_remove)
+
+      expect(confirms(group)[label(:disabled)]).to be_nil
+    end
+
+    it "does not warn for a cohort without enrollment" do
+      group = create(:cohort, context: lecture, skip_campaigns: true,
+                              self_materialization_mode: :disabled)
+      group.add_user_to_roster!(create(:confirmed_user))
+
+      expect(confirms(group)[label(:add_only)]).to be_nil
+      expect(dropdown(group).at_css("button")["title"]).to be_nil
+    end
+  end
+
   describe "the rendered row" do
     let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture, title: "Mo 10", capacity: 8) }
