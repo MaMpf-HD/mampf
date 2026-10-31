@@ -12,7 +12,7 @@ module Rosters
     end
 
     def self.held_by_mode?(group)
-      group.place? && !group.is_a?(Exam)
+      group.enrolls_in_lecture? && !group.is_a?(Exam)
     end
 
     def initialize(lecture, user)

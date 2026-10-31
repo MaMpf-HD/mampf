@@ -141,9 +141,7 @@ module Rosters
       nil
     end
 
-    # Whether being a member here also enrolls the user in the lecture. Cohorts
-    # without enrollment don't.
-    def place?
+    def enrolls_in_lecture?
       is_a?(Tutorial) || is_a?(Talk) || is_a?(Exam) || (is_a?(Cohort) && propagate_to_lecture?)
     end
 
@@ -299,7 +297,7 @@ module Rosters
     end
 
     def propagate_to_lecture!(user_ids)
-      return if user_ids.empty? || !place?
+      return if user_ids.empty? || !enrolls_in_lecture?
 
       parent = lecture
       return unless parent.is_a?(Lecture)

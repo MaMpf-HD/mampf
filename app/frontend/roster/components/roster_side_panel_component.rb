@@ -117,7 +117,7 @@ class RosterSidePanelComponent < ViewComponent::Base
   # Such a group's members are not enrolled in the lecture, so they are
   # missing from its Participants tab.
   def without_enrollment?
-    !registerable.place?
+    !registerable.enrolls_in_lecture?
   end
 
   def preference_based_campaign?
