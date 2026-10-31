@@ -21,7 +21,8 @@ test("a flexible group's tutor sees who is in it", async ({ factory, teacher, tu
   await row.getByRole("link", { name: "Edit Settings" }).click();
   const dialog = page.getByRole("dialog", { name: "Edit Flexible Group" });
   await dialog.getByRole("combobox", { name: "Tutors" }).fill(tutor.user.email);
-  await dialog.getByRole("option", { name: new RegExp(tutor.user.email) }).last().click();
+  await dialog.locator(".ts-dropdown")
+    .getByRole("option", { name: new RegExp(tutor.user.email) }).click();
   await page.keyboard.press("Escape");
   await dialog.getByRole("button", { name: "Save" }).click();
   await expect(dialog).toBeHidden();
