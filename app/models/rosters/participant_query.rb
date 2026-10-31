@@ -2,15 +2,12 @@ module Rosters
   # Service object to query participants of a Lecture with filtering options.
   # The "registered" view lists users instead of lecture memberships, since
   # people with a running registration need not be on the roster yet; it shows
-  # one campaign at a time. The "left" view lists the excluded memberships of
-  # those who have left the roster or been removed from it.
+  # one campaign at a time.
   class ParticipantQuery
     VIEWS = ["enrolled", "registered", "left"].freeze
 
     Result = Struct.new(:scope, :total_count, :registered_count, :left_count, :view,
                         :campaign, keyword_init: true)
-
-    SEARCH_SQL = "#{User::SHOWN_NAME_SQL} ILIKE :q OR users.matriculation_number ILIKE :q".freeze
 
     def initialize(lecture, params)
       @lecture = lecture
@@ -27,7 +24,7 @@ module Rosters
                 .includes(user: User::PROGRAM_PRELOAD)
                 .merge(User.by_last_name)
 
-      base_scope = base_scope.where(SEARCH_SQL, q: "%#{search}%") if search
+      base_scope = base_scope.merge(search_scope(search)) if search
 
       total_count = base_scope.count
 
@@ -59,7 +56,11 @@ module Rosters
                         .joins(:user)
                         .includes(:excluded_by, user: User::PROGRAM_PRELOAD)
                         .merge(User.by_last_name)
-        search ? scope.where(SEARCH_SQL, q: "%#{search}%") : scope
+        search ? scope.merge(search_scope(search)) : scope
+      end
+
+      def search_scope(search)
+        User.shown_name_or_matriculation_number_like(search)
       end
   end
 end

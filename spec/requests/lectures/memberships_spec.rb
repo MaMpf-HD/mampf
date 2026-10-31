@@ -36,7 +36,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(body).to include(%(action="#{lecture_membership_path(lecture)}"))
       expect(CGI.unescapeHTML(body)).to include(
         I18n.t("lecture_home.leave.confirmation_label",
-               code: lecture.course.short_title.delete(" "))
+               word: I18n.t("lecture_home.leave.confirmation_word"))
       )
     end
 
@@ -46,7 +46,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       get lecture_home_path(lecture)
 
       body = CGI.unescapeHTML(response.body.squish)
-      expect(body).to include(I18n.t("lecture_home.leave.blockers.group_fixed", title: "Mo 10"))
+      expect(body).to include(I18n.t("lecture_home.leave.blockers.group_held", title: "Mo 10"))
       expect(body).to include(I18n.t("lecture_home.leave.contact"))
       expect(body).not_to include(%(action="#{lecture_membership_path(lecture)}"))
     end
@@ -76,7 +76,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
   describe "DELETE /lectures/:lecture_id/membership" do
     it "ends the participation and says so" do
       delete lecture_membership_path(lecture),
-             params: { confirmation: " #{lecture.course.short_title.downcase} " }
+             params: { confirmation: " #{I18n.t("lecture_home.leave.confirmation_word")} " }
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:notice])
@@ -89,7 +89,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       Rosters::MaintenanceService.new.remove_user!(user, lecture, notify: false)
 
       delete lecture_membership_path(lecture),
-             params: { confirmation: lecture.course.short_title }
+             params: { confirmation: I18n.t("lecture_home.leave.confirmation_word") }
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:notice])
@@ -98,19 +98,22 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       expect(user.reload.lectures).not_to include(lecture)
     end
 
-    it "keeps the places without the short title typed" do
-      delete lecture_membership_path(lecture), params: { confirmation: "nope" }
+    it "keeps the places unless the confirmation word is typed as it is shown" do
+      word = I18n.t("lecture_home.leave.confirmation_word")
+      ["nope", word.downcase].each do |typed|
+        delete lecture_membership_path(lecture), params: { confirmation: typed }
 
-      expect(response).to redirect_to(lecture_home_path(lecture))
-      expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_confirmed"))
-      expect(lecture.members).to include(user)
+        expect(response).to redirect_to(lecture_home_path(lecture))
+        expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_confirmed"))
+        expect(lecture.members).to include(user)
+      end
     end
 
     it "asks to try again when leaving ran into a deadlock twice" do
       allow(Rosters::UserPlaces).to receive(:new).and_raise(ActiveRecord::Deadlocked)
 
       delete lecture_membership_path(lecture),
-             params: { confirmation: lecture.course.short_title }
+             params: { confirmation: I18n.t("lecture_home.leave.confirmation_word") }
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.failed"))
@@ -121,7 +124,7 @@ RSpec.describe("Lectures::Memberships", type: :request) do
       hold_in_campaign(tutorial)
 
       delete lecture_membership_path(lecture),
-             params: { confirmation: lecture.course.short_title }
+             params: { confirmation: I18n.t("lecture_home.leave.confirmation_word") }
 
       expect(response).to redirect_to(lecture_home_path(lecture))
       expect(flash[:alert]).to eq(I18n.t("lecture_home.leave.not_allowed"))

@@ -6,7 +6,7 @@ module Lectures
 
     def destroy
       leave = Rosters::LectureLeave.new(@lecture, current_user)
-      unless leave.confirmed?(params[:confirmation])
+      unless confirmed?
         return redirect_to(lecture_home_path(@lecture),
                            alert: t("lecture_home.leave.not_confirmed"),
                            status: :see_other)
@@ -33,6 +33,10 @@ module Lectures
     end
 
     private
+
+      def confirmed?
+        params[:confirmation].to_s.strip == t("lecture_home.leave.confirmation_word")
+      end
 
       def set_lecture
         @lecture = Lecture.find_by(id: params[:lecture_id])

@@ -106,7 +106,7 @@ RSpec.describe(Rosters::LectureLeave) do
         .add_user_to_roster!(student)
 
       expect(leave.blockers.map(&:to_a))
-        .to eq([[:group_fixed, "Mo 10", true], [:group_fixed, "Repeaters", true]])
+        .to eq([[:group_held, "Mo 10", true], [:group_held, "Repeaters", true]])
       expect(leave.allowed?).to be(false)
     end
 
@@ -122,7 +122,7 @@ RSpec.describe(Rosters::LectureLeave) do
       fixed.add_user_to_roster!(student)
       hold_in_campaign(fixed)
 
-      expect(leave.blockers.map(&:to_a)).to eq([[:group_fixed, "Mo 10", true]])
+      expect(leave.blockers.map(&:to_a)).to eq([[:group_held, "Mo 10", true]])
       expect(leave.allowed?).to be(false)
     end
 
@@ -143,7 +143,7 @@ RSpec.describe(Rosters::LectureLeave) do
       talk.add_user_to_roster!(student)
 
       expect(described_class.new(seminar, student).blockers.map(&:to_a))
-        .to eq([[:group_fixed, talk.to_label, true]])
+        .to eq([[:group_held, talk.to_label, true]])
     end
 
     it "names a graded exam without offering the staff" do
@@ -285,28 +285,6 @@ RSpec.describe(Rosters::LectureLeave) do
       create(:student_performance_certification, :failed, lecture: lecture, user: student)
 
       expect(leave.admitted?).to be(false)
-    end
-  end
-
-  describe "#confirmed?" do
-    it "takes the course's short title, whatever the case and spaces" do
-      lecture.course.update!(short_title: "LA 2")
-
-      expect(leave.confirmation_code).to eq("LA2")
-      expect(leave.confirmed?(" la2 ")).to be(true)
-      expect(leave.confirmed?("La 2")).to be(true)
-      expect(leave.confirmed?("LA")).to be(false)
-      expect(leave.confirmed?(nil)).to be(false)
-      expect(leave.confirmed?("LA\u00A02")).to be(true)
-    end
-
-    it "compares upcased, as the browser does, so a final sigma or ß cannot differ" do
-      lecture.course.update!(short_title: "ΟΣ")
-      expect(leave.confirmed?("ος")).to be(true)
-
-      lecture.course.update!(short_title: "Maß")
-      expect(described_class.new(lecture, student).confirmed?("mass")).to be(true)
-      expect(described_class.new(lecture, student).confirmed?("MASS\uFEFF")).to be(true)
     end
   end
 

@@ -11,7 +11,11 @@ class LeaveLectureComponent < ViewComponent::Base
     @leave.participating?
   end
 
-  delegate :blockers, :confirmation_code, to: :@leave
+  delegate :blockers, to: :@leave
+
+  def confirmation_word
+    t("lecture_home.leave.confirmation_word")
+  end
 
   def contact?
     blockers.any?(&:contact)

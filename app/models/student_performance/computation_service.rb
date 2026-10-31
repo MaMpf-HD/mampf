@@ -24,8 +24,8 @@ module StudentPerformance
       upsert_records([build_row(user.id, stats, met_ids, ungraded_ids)])
     end
 
-    # The records the users would have, unsaved: someone who has left keeps
-    # no record, but their points stay and can be summed up for a look.
+    # Computes records for the users without saving them, for those who have
+    # left the lecture and so have no stored record.
     def unsaved_records_for(users)
       participations_by_user = prefetch_participations(users.map(&:id))
 

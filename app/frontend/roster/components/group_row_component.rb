@@ -305,7 +305,7 @@ class GroupRowComponent < ViewComponent::Base
   end
 
   def cohort_without_enrollment?
-    registerable.is_a?(Cohort) && !registerable.propagate_to_lecture?
+    !registerable.place?
   end
 
   def show_self_enrollment_dropdown?

@@ -328,8 +328,8 @@ module Assessment
         authorize_assessment!
       end
 
-      # Keeps the hand-in and the absence of someone who has left the lecture
-      # as they were: only through them does the row stay in the marking table.
+      # Refuses to change the hand-in or absence of someone who has left the
+      # lecture. Without them, the row would disappear from the marking table.
       def refuse_after_leaving
         return unless @assessable.is_a?(Assignment)
         return unless @lecture.excluded_lecture_memberships.exists?(user_id: @participation.user_id)

@@ -548,6 +548,29 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(offered).not_to include("Lina Berg")
       end
 
+      it "asks once who has left, however many rows the table has" do
+        members = create_list(:confirmed_user, 3)
+        members.each do |member|
+          create(:tutorial_membership, tutorial: tutorial, user: member)
+          create(:assessment_participation, assessment: assessment, user: member,
+                                            tutorial: tutorial, submitted_at: 3.days.ago)
+        end
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+        lookups = 0
+        callback = lambda { |*, payload|
+          lookups += 1 if payload[:sql].start_with?('SELECT "lecture_memberships"."user_id"') &&
+                          payload[:sql].include?('"excluded_at" IS NOT NULL')
+        }
+
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          render_inline(described_class.new(assignment: assignment.reload,
+                                            grading_scope: tutorial))
+        end
+
+        expect(lookups).to eq(1)
+      end
+
       it "says so in the old tutorial's table too" do
         create(:assessment_participation, assessment: assessment, user: former,
                                           tutorial: tutorial, submitted_at: 3.days.ago)

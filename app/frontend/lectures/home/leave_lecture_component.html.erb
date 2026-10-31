@@ -6,7 +6,6 @@
   tabindex="-1"
   aria-labelledby="<%= title_id %>"
   aria-hidden="true"
-  data-controller="modal"
   data-testid="leave-lecture-dialog"
 >
   <div class="modal-dialog modal-dialog-centered">
@@ -49,8 +48,9 @@
       <% else %>
         <%= form_with url: lecture_membership_path(@lecture), method: :delete, local: true,
                       data: {
+                        turbo: false,
                         controller: "leave-confirmation",
-                        leave_confirmation_code_value: confirmation_code
+                        leave_confirmation_word_value: confirmation_word
                       } do |form| %>
           <div class="modal-body">
             <p class="mb-1"><%= t("lecture_home.leave.intro") %></p>
@@ -62,7 +62,7 @@
             </ul>
 
             <%= form.label :confirmation,
-                           t("lecture_home.leave.confirmation_label", code: confirmation_code),
+                           t("lecture_home.leave.confirmation_label", word: confirmation_word),
                            class: "form-label" %>
             <%= form.text_field :confirmation,
                                 class: "form-control",

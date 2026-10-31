@@ -35,8 +35,6 @@ class SubmissionRowComponent < ViewComponent::Base
 
   # Whom the tutor may put on this team: the group's members on no team
   # for this sheet. A rejected hand-in takes nobody; it counts as none.
-  # Someone who has left keeps their row but joins no team: adding takes
-  # only members of the tutorial.
   def addable_members
     return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
 
@@ -223,6 +221,6 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def left_lecture?(user)
-    helpers.left_lecture_user_ids(@lecture).include?(user.id)
+    @lecture.left_user_ids.include?(user.id)
   end
 end

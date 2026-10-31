@@ -137,8 +137,8 @@ module Assessment
           participation.update!(submitted_at: Time.current)
         end
 
-        # Someone who has left keeps the stamp: without it and without points
-        # their row would leave the marking table.
+        # Doesn't remove the hand-in stamp of someone who has left the lecture.
+        # Without it, a row with no points would disappear from the marking table.
         def stamp_test!(participation)
           participation.task_points.reset
           started = participation.results_visible?

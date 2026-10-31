@@ -232,6 +232,13 @@ module Rosters
                         .exists?
     end
 
+    # Unlike in_active_campaign?, a draft does not count.
+    def in_running_campaign?
+      return false unless respond_to?(:registration_items)
+
+      registration_items.running.exists?
+    end
+
     # Checks if the item is associated with a completed campaign.
     def in_completed_campaign?
       return false unless respond_to?(:registration_items)

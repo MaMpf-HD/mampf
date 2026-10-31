@@ -37,10 +37,10 @@ test.describe("leaving a course", () => {
 
     const leaveButton = dialog.getByRole("button", { name: "Leave course" });
     await expect(leaveButton).toBeDisabled();
-    const code = dialog.getByLabel("Type “LA1” to confirm:");
-    await code.fill("LA2");
+    const word = dialog.getByLabel("Type “Leave” to confirm:");
+    await word.fill("leave");
     await expect(leaveButton).toBeDisabled();
-    await code.fill("la1");
+    await word.fill(" Leave ");
     await expect(leaveButton).toBeEnabled();
     await leaveButton.click();
 
@@ -60,34 +60,6 @@ test.describe("leaving a course", () => {
     await page.getByRole("button", { name: "Leave course" }).click();
     await expect(page.getByRole("dialog", { name: "Leave this course" })
       .getByText("You leave Mo 10.")).toBeVisible();
-  });
-
-  test("releases the page when a stream replaces the open dialog", async ({
-    factory, student,
-  }) => {
-    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
-    const { page } = student;
-
-    await page.goto(`/lectures/${lecture.id}`);
-    await page.getByRole("button", { name: "Leave course" }).click();
-    const dialog = page.getByRole("dialog", { name: "Leave this course" });
-    await expect(dialog).toBeVisible();
-
-    // what leaving a group or saving preferences sends back
-    await page.evaluate(() => {
-      const turbo = (window as unknown as {
-        Turbo: { renderStreamMessage: (_html: string) => void };
-      }).Turbo;
-      turbo.renderStreamMessage(
-        "<turbo-stream action=\"update\" target=\"student_registration_participation\">"
-        + "<template><p>Replaced</p></template></turbo-stream>",
-      );
-    });
-
-    await expect(page.getByText("Replaced")).toBeVisible();
-    await expect(dialog).toHaveCount(0);
-    await expect(page.locator(".modal-backdrop")).toHaveCount(0);
-    await expect(page.locator("body")).not.toHaveClass(/modal-open/);
   });
 
   test("says why a student cannot leave alone", async ({ factory, student }) => {

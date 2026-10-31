@@ -341,9 +341,14 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
           Nokogiri::HTML(response.body).css("form[data-turbo-confirm]").first
         end
 
-        it "asks for the removal with the number of computed decisions" do
+        it "asks for the removal with the number of decisions of those still in" do
           FactoryBot.create(:student_performance_certification, :passed,
                             lecture: lecture, rule: rule, source: :computed)
+          former = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: former)
+                    .exclude!(by: former)
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, rule: rule, source: :computed, user: former)
 
           patch lecture_student_performance_rules_path(lecture),
                 params: { rule: { threshold_mode: "percentage", min_percentage: "" } }
