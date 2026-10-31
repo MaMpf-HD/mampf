@@ -106,6 +106,16 @@ RSpec.describe(Cohort, type: :model) do
     end
   end
 
+  describe "#enrolls_in_lecture?" do
+    it "is true for a cohort with enrollment in a lecture" do
+      expect(build(:cohort, :enrollment, context: create(:lecture)).enrolls_in_lecture?).to be(true)
+    end
+
+    it "is false for a cohort with enrollment whose context is no lecture" do
+      expect(build(:cohort, :enrollment, context: create(:course)).enrolls_in_lecture?).to be(false)
+    end
+  end
+
   describe "#materialize_allocation!" do
     let(:lecture) { create(:lecture) }
     let(:campaign) { create(:registration_campaign) }

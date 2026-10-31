@@ -55,6 +55,10 @@ module Rosters
       source == "rejected" && source_id.present?
     end
 
+    def rejection_campaign_id
+      source_id if rejected?
+    end
+
     def participants?
       source == "participants"
     end

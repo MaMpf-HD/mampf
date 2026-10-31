@@ -16,7 +16,7 @@ module Rosters
       ensure_rosterable_unlocked!
       ensure_rosterable_not_full!
       ensure_rosterable_allow_self_add!
-      Rosters::MaintenanceService.new.add_user!(@user, @rosterable, force: false)
+      Rosters::MaintenanceService.new.add_user!(@user, @rosterable, ignore_capacity: false)
     end
 
     # Refuses to let an enrolled student leave their last group; they can only
@@ -52,7 +52,7 @@ module Rosters
         raise(RosterLockedError) if from.locked?
         raise(SelfRemoveNotAllowedError) unless from.allow_self_remove?(@user)
 
-        Rosters::MaintenanceService.new.move_user!(@user, from, @rosterable, force: false)
+        Rosters::MaintenanceService.new.move_user!(@user, from, @rosterable, ignore_capacity: false)
       end
     end
 

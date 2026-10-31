@@ -4,7 +4,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
   subject { described_class.new }
   let(:user) { create(:user) }
   let(:tutorial) { create(:tutorial, capacity: 1) }
-  let(:other_tutorial) { create(:tutorial, capacity: 5) }
+  let(:other_tutorial) { create(:tutorial, capacity: 5, lecture: tutorial.lecture) }
 
   describe "#add_user!" do
     context "when roster has capacity" do
@@ -24,9 +24,9 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         end.to raise_error(Rosters::MaintenanceService::CapacityExceededError)
       end
 
-      it "adds the user if force is true" do
+      it "adds the user over the capacity with ignore_capacity" do
         expect do
-          subject.add_user!(user, tutorial, force: true)
+          subject.add_user!(user, tutorial, ignore_capacity: true)
         end.to change { tutorial.members.count }.by(1)
       end
     end
@@ -98,13 +98,13 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
 
       it "creates a roster entry" do
         expect do
-          subject.add_user!(user, lecture, force: true)
+          subject.add_user!(user, lecture, ignore_capacity: true)
         end.to change { lecture.roster_entries.count }.by(1)
       end
 
       it "grants no access to the lecture" do
         expect do
-          subject.add_user!(user, lecture, force: true)
+          subject.add_user!(user, lecture, ignore_capacity: true)
         end.not_to(change { lecture.users.reload.count })
       end
     end
@@ -227,10 +227,10 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
     let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
     let(:staff) { create(:confirmed_user) }
 
-    before { subject.add_user!(user, mo, force: true) }
+    before { subject.add_user!(user, mo, ignore_capacity: true) }
 
     it "takes the user off the lecture with their last place, lists too" do
-      subject.add_user!(user, list, force: true)
+      subject.add_user!(user, list, ignore_capacity: true)
 
       expect(subject.remove_user!(user, mo, by: staff)).to eq(lecture)
 
@@ -258,7 +258,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
     end
 
     it "keeps the registrations while another place remains" do
-      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), force: true)
+      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), ignore_capacity: true)
       campaign = create(:registration_campaign, :open, campaignable: lecture)
       registration = create(:registration_user_registration, :pending,
                             user: user, registration_campaign: campaign)
@@ -294,21 +294,21 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
       end
       ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
-        subject.add_user!(user, cohort, force: true)
+        subject.add_user!(user, cohort, ignore_capacity: true)
       end
 
       expect(tables.index("cohorts")).to be < tables.index("lectures")
     end
 
     it "keeps the lecture while another place remains" do
-      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), force: true)
+      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), ignore_capacity: true)
 
       expect(subject.remove_user!(user, mo)).to eq(mo)
       expect(lecture.reload.members).to include(user)
     end
 
     it "does not count a list as a place" do
-      subject.add_user!(user, list, force: true)
+      subject.add_user!(user, list, ignore_capacity: true)
 
       subject.remove_user!(user, mo)
 
@@ -316,7 +316,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
     end
 
     it "lets the user leave a list without touching the lecture" do
-      subject.add_user!(user, list, force: true)
+      subject.add_user!(user, list, ignore_capacity: true)
 
       subject.remove_user!(user, list)
 
@@ -375,8 +375,15 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
                                               .and(change { other_tutorial.members.count }.by(1))
     end
 
+    it "refuses a move into another lecture" do
+      elsewhere = create(:tutorial)
+
+      expect { subject.move_user!(user, tutorial, elsewhere) }.to raise_error(ArgumentError)
+      expect(tutorial.members).to include(user)
+    end
+
     context "when target roster is full" do
-      let(:full_tutorial) { create(:tutorial, capacity: 0) }
+      let(:full_tutorial) { create(:tutorial, capacity: 0, lecture: tutorial.lecture) }
 
       it "raises CapacityExceededError and does not remove user from source" do
         expect do
@@ -417,7 +424,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       shared_examples "a move without effect" do
         it "leaves both rosters untouched" do
           expect do
-            subject.move_user!(user, source, target, force: true)
+            subject.move_user!(user, source, target, ignore_capacity: true)
           end.not_to(change do
             [source.roster_entries.reload.count, target.roster_entries.reload.count]
           end)
@@ -425,7 +432,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
 
         it "sends no notification and reports failure" do
           expect do
-            expect(subject.move_user!(user, source, target, force: true)).to be(false)
+            expect(subject.move_user!(user, source, target, ignore_capacity: true)).to be(false)
           end.not_to have_enqueued_mail(RosterNotificationMailer, :moved_between_groups_email)
         end
       end
@@ -435,8 +442,8 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:target) { cohort_b }
 
         before do
-          subject.add_user!(user, cohort_a, force: true)
-          subject.add_user!(user, cohort_b, force: true)
+          subject.add_user!(user, cohort_a, ignore_capacity: true)
+          subject.add_user!(user, cohort_b, ignore_capacity: true)
         end
 
         it_behaves_like "a move without effect"
@@ -446,7 +453,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:source) { cohort_a }
         let(:target) { cohort_b }
 
-        before { subject.add_user!(user, cohort_b, force: true) }
+        before { subject.add_user!(user, cohort_b, ignore_capacity: true) }
 
         it_behaves_like "a move without effect"
       end
@@ -455,7 +462,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:source) { cohort_a }
         let(:target) { cohort_a }
 
-        before { subject.add_user!(user, cohort_a, force: true) }
+        before { subject.add_user!(user, cohort_a, ignore_capacity: true) }
 
         it_behaves_like "a move without effect"
       end
@@ -466,15 +473,15 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:tutorial_of_lecture) { create(:tutorial, lecture: lecture) }
 
         before do
-          subject.add_user!(user, tutorial_of_lecture, force: true)
-          subject.add_user!(user, cohort_b, force: true)
+          subject.add_user!(user, tutorial_of_lecture, ignore_capacity: true)
+          subject.add_user!(user, cohort_b, ignore_capacity: true)
         end
 
         it_behaves_like "a move without effect"
 
         it "keeps the user in the subgroups of the lecture" do
           expect do
-            subject.move_user!(user, lecture, cohort_b, force: true)
+            subject.move_user!(user, lecture, cohort_b, ignore_capacity: true)
           end.not_to(change { tutorial_of_lecture.roster_entries.reload.count })
         end
       end
@@ -486,13 +493,14 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
 
         before do
-          subject.add_user!(user, tutorial_of_lecture, force: true)
-          subject.add_user!(user, list, force: true)
+          subject.add_user!(user, tutorial_of_lecture, ignore_capacity: true)
+          subject.add_user!(user, list, ignore_capacity: true)
         end
 
         it "moves out of that group and keeps the enrollment and the lists" do
-          expect(subject.move_user!(user, lecture, other_tutorial_of_lecture, force: true))
-            .to be(true)
+          moved = subject.move_user!(user, lecture, other_tutorial_of_lecture,
+                                     ignore_capacity: true)
+          expect(moved).to be(true)
 
           expect(other_tutorial_of_lecture.members).to include(user)
           expect(tutorial_of_lecture.members).not_to include(user)

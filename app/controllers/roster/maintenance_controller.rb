@@ -104,8 +104,8 @@ module Roster
       added = Rosters::MaintenanceService.new.add_user!(
         user,
         rosterable,
-        force: true,
-        source_campaign_id: (@mparams.source_id if @mparams.rejected?)
+        ignore_capacity: true,
+        override_rejection_in: @mparams.rejection_campaign_id
       )
 
       flash.now[:notice] = if added
@@ -130,13 +130,13 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
-      lists = other_cohorts(user)
+      other_cohorts = other_cohorts_of(user)
       left = Rosters::MaintenanceService.new.remove_user!(user, @rosterable, by: current_user)
 
       flash.now[:notice] = removal_notice(user, left)
 
       streams = stream_builder.streams
-      streams += stream_builder.row_streams(lists) if left.is_a?(Lecture) && left != @rosterable
+      streams += stream_builder.row_streams(other_cohorts) if also_left_lecture?(left)
       render_membership_streams(streams)
     end
 
@@ -163,7 +163,8 @@ module Roster
         return
       end
 
-      if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
+      if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target,
+                                                    ignore_capacity: true)
         flash.now[:notice] = move_notice(user, target)
         flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
       else
@@ -338,13 +339,17 @@ module Roster
       # The user's cohorts in this lecture other than the one being edited.
       # Their rows need redrawing when the removal takes the user out of the
       # lecture.
-      def other_cohorts(user)
+      def other_cohorts_of(user)
         @lecture.cohorts.where(id: CohortMembership.where(user: user).select(:cohort_id))
                 .reject { |cohort| cohort == @rosterable }
       end
 
+      def also_left_lecture?(left)
+        left.is_a?(Lecture) && left != @rosterable
+      end
+
       def removal_notice(user, left)
-        if left.is_a?(Lecture) && !@rosterable.is_a?(Lecture)
+        if also_left_lecture?(left)
           return t("roster.messages.user_removed_with_only_group",
                    user: user.info, group: @rosterable.title)
         end

@@ -16,7 +16,7 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
   describe "#rows" do
     it "counts who is enrolled without a place, and of them who is where else" do
       seated, on_exam = create_list(:confirmed_user, 2)
-      service.add_user!(seated, tutorial, force: true)
+      service.add_user!(seated, tutorial, ignore_capacity: true)
       service.add_user!(on_exam, create(:exam, :without_campaign, lecture: lecture))
       on_list, waiting = create_list(:confirmed_user, 2)
       [on_list, waiting].each { |user| enroll_without_place(user) }
@@ -124,7 +124,7 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
 
     it "leaves members with a place alone" do
       seated = create(:confirmed_user)
-      service.add_user!(seated, tutorial, force: true)
+      service.add_user!(seated, tutorial, ignore_capacity: true)
 
       reconciliation.apply!
 
@@ -136,9 +136,9 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
     users = create_list(:confirmed_user, 3)
     other = create(:tutorial, lecture: lecture, skip_campaigns: true)
     cohort = create(:cohort, :enrollment, context: lecture)
-    users.each { |user| service.add_user!(user, tutorial, force: true) }
-    service.move_user!(users[0], tutorial, other, force: true)
-    service.add_user!(users[1], cohort, force: true)
+    users.each { |user| service.add_user!(user, tutorial, ignore_capacity: true) }
+    service.move_user!(users[0], tutorial, other, ignore_capacity: true)
+    service.add_user!(users[1], cohort, ignore_capacity: true)
     service.remove_user!(users[1], tutorial)
     service.remove_user!(users[2], tutorial)
 
@@ -149,7 +149,7 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
   describe "#report" do
     it "names a running campaign whose allocation would seat people twice" do
       student = create(:confirmed_user)
-      service.add_user!(student, tutorial, force: true)
+      service.add_user!(student, tutorial, ignore_capacity: true)
       campaign = create(:registration_campaign, :open, campaignable: lecture,
                                                        description: "Sign-up")
       create(:registration_user_registration, :confirmed,
