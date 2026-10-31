@@ -285,7 +285,7 @@ module Rosters
     # - Propagates new members to the parent lecture roster (if applicable).
     # - Locks the lecture first when this group enrolls in it (finalization has
     #   already locked the campaign). Removals decide under the same lock
-    #   whether someone still has a place.
+    #   whether someone keeps a group that enrolls them.
     def materialize_allocation!(user_ids:, campaign:)
       transaction do
         lecture.lock! if enrolls_in_lecture? && lecture.is_a?(Lecture)
@@ -300,7 +300,6 @@ module Rosters
       end
     end
 
-    # Enrolls the users in the lecture when this group is a place there.
     def propagate_to_lecture!(user_ids)
       return if user_ids.empty? || !enrolls_in_lecture?
 

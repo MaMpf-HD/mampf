@@ -675,8 +675,6 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
-  # Removing someone from their last place takes them off the lecture, which
-  # the confirmation has to say before it happens.
   describe "#remove_confirmation" do
     let(:lecture) { create(:lecture) }
     let(:mo) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
@@ -693,7 +691,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         .to eq(I18n.t("roster.warnings.confirm_kick_from_only_group"))
     end
 
-    # Whoever sits the exam stays a member through its list.
+    # The exam list keeps them in the lecture.
     it "asks as before while the person is on an exam list" do
       create(:exam, :without_campaign, lecture: lecture, title: "Final")
         .add_user_to_roster!(student)

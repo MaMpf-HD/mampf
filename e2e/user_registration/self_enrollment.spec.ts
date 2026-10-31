@@ -35,8 +35,6 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    // Joining enrolled the student through this tutorial, which they now
-    // leave only by leaving the course.
     await expect(home.participation("Self-managed Tutorial"))
       .toContainText("you leave it only together with the course.");
     await expect(home.participation("Self-managed Tutorial")

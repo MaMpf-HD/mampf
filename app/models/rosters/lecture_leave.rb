@@ -38,9 +38,9 @@ module Rosters
       participating? && blockers.empty?
     end
 
-    # Of the given members of a group, those for whom it is the last place in
-    # the lecture they are enrolled in (see #only_place?), for a whole roster
-    # at once.
+    # Of the given members of the group, those for whom it is the last group
+    # that keeps them in the lecture. Answers #only_place? for a whole roster at
+    # once.
     def self.only_place_user_ids(group, user_ids)
       return [] unless group.enrolls_in_lecture?
 
@@ -61,9 +61,9 @@ module Rosters
       @places ||= groups.select(&:enrolls_in_lecture?) + exam_entries.map(&:exam)
     end
 
-    # Whether the group is the last place of an enrolled student, which is
-    # left only by leaving the lecture, so that nobody stays enrolled without
-    # a place.
+    # Whether the group is the student's last group that keeps them in the
+    # lecture. It can then only be left by leaving the lecture, so that nobody
+    # is enrolled without a group.
     def only_place?(group)
       enrolled? && places == [group]
     end

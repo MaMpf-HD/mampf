@@ -63,9 +63,8 @@ module Rosters
       end
     end
 
-    # The place a RosterHelper#roster_group_key names among the lecture's
-    # groups (see Rosterable#enrolls_in_lecture?), or nil for one of another lecture, a
-    # list or anything else.
+    # Finds the group a RosterHelper#roster_group_key names, if it belongs to
+    # the lecture and enrolls in it. Returns nil for anything else.
     def self.find_place(key, lecture:)
       type, id = key.to_s.split("-", 2)
       return if type.blank? || type == "Lecture"

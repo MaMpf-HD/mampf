@@ -113,8 +113,6 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
   describe "#remove_user!" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
-    # Whether another place remains is certain only under the group's lock,
-    # and an allocation locks its campaign before the group.
     it "locks the user's campaigns before the group when another place remains" do
       lecture = tutorial.lecture
       create(:cohort_membership, cohort: create(:cohort, :enrollment, context: lecture), user: user)
@@ -241,7 +239,6 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(list.reload.members).not_to include(user)
     end
 
-    # Whoever sits the exam stays a member through its list.
     it "keeps the lecture while the user is on an exam list" do
       create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(user)
 
@@ -249,7 +246,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(lecture.reload.members).to include(user)
     end
 
-    # A finalization would otherwise place them again.
+    # Otherwise a finalization would put them back into a group.
     it "withdraws the registrations in the lecture with the last place" do
       campaign = create(:registration_campaign, :open, campaignable: lecture)
       registration = create(:registration_user_registration, :pending,
@@ -287,8 +284,9 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(tables.index("tutorials")).to be < tables.index("lectures")
     end
 
-    # A removal of the last place decides under the lecture's lock; a place
-    # joined meanwhile has to wait for it, or it would be missed.
+    # Removing someone's last group decides under the lecture's lock. A group
+    # joined at the same time must wait for that lock, or the removal would miss
+    # it.
     it "locks the lecture after a group with enrollment that it adds to" do
       cohort = create(:cohort, :enrollment, context: lecture)
       tables = []
@@ -309,7 +307,6 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(lecture.reload.members).to include(user)
     end
 
-    # A list without enrollment is no place to stay enrolled through.
     it "does not count a list as a place" do
       subject.add_user!(user, list, force: true)
 
@@ -341,7 +338,6 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         expect(subject.add_user!(user, exam)).to be_present
       end
 
-      # An exam list is a place: whoever sits only the exam is a member.
       it "enroll someone not yet in the lecture" do
         subject.add_user!(stranger, exam)
 

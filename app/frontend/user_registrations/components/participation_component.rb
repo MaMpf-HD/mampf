@@ -265,8 +265,6 @@ class ParticipationComponent < ViewComponent::Base
                         form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
     end
 
-    # An enrolled student leaves their last place only by leaving the
-    # lecture, so the row says so instead of offering the button.
     def only_group?(rosterable)
       @leave.only_place?(rosterable)
     end
@@ -283,8 +281,7 @@ class ParticipationComponent < ViewComponent::Base
     end
 
     # Says whether the way back is open: a group that only lets students leave
-    # takes them back through its staff alone. Leaving a group keeps the
-    # lecture, which students do not expect, so it says that too.
+    # takes them back through its staff alone.
     def leave_confirmation(rosterable)
       notes = []
       notes << "leave_no_sheets" if rosterable.is_a?(Tutorial)

@@ -47,8 +47,6 @@ class Cohort < ApplicationRecord
     false
   end
 
-  # The members a deleted cohort had, and of those the ones who left the
-  # lecture with it.
   Deletion = Struct.new(:former_members, :left_lecture_ids)
 
   # Members do not block deleting a cohort, only a campaign that is not
@@ -57,11 +55,11 @@ class Cohort < ApplicationRecord
     destruction_blockers - [:roster_not_empty]
   end
 
-  # Deletes the cohort together with its memberships. Whoever loses their
-  # last place with it leaves the lecture, as on removal by hand (see
-  # Rosters::MaintenanceService#remove_user!), whose lock order this
-  # follows: campaigns, cohort, lecture. Returns a Deletion, or nil when a
-  # campaign still holds the cohort.
+  # Deletes the cohort with its memberships. Members for whom it was the last
+  # group that enrolled them leave the lecture, as when the staff remove them.
+  # Locks like MaintenanceService#remove_user!: campaigns, cohort, lecture.
+  # Returns a Deletion, or nil while a campaign that is not completed still
+  # contains the cohort.
   def destroy_with_members(by: nil)
     transaction do
       lock_running_campaigns!
@@ -76,8 +74,6 @@ class Cohort < ApplicationRecord
     end
   end
 
-  # Members for whom the cohort is the last place in the lecture, who leave
-  # the lecture when it is deleted.
   def member_ids_leaving_the_lecture
     Rosters::LectureLeave.only_place_user_ids(self, cohort_memberships.pluck(:user_id))
   end
@@ -98,9 +94,9 @@ class Cohort < ApplicationRecord
 
   private
 
-    # Leaving the lecture withdraws the registrations there, so their
-    # campaigns come first; only a cohort with lecture enrollment takes
-    # anyone out.
+    # Locks the lecture's running campaigns before the cohort, because members
+    # who leave the lecture with it have their registrations withdrawn. Only a
+    # cohort with enrollment takes anyone out of the lecture.
     def lock_running_campaigns!
       return unless enrolls_in_lecture? && lecture
 

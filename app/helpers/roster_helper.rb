@@ -98,14 +98,13 @@ module RosterHelper
     end
   end
 
-  # Names a group of whatever kind in a parameter, e.g. "Tutorial-12".
   def roster_group_key(group)
     "#{group.class.name}-#{group.id}"
   end
 
-  # The lecture's groups that enroll and take people by hand, as select
-  # options grouped by kind: the way in for someone readmitted or put on an
-  # exam list.
+  # Select options, grouped by kind, for the groups through which the staff take
+  # someone back into the lecture. Leaves out groups whose roster a registration
+  # still controls (see Rosterable#locked?).
   def roster_enrolling_group_options(lecture)
     lecture.enrolling_groups.reject(&:locked?)
            .group_by { |group| group.class.model_name.human(count: 2) }

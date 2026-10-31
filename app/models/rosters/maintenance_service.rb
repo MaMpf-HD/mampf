@@ -27,15 +27,16 @@ module Rosters
     # notify: false, since the mail job is enqueued even if that transaction
     # rolls back.
     #
-    # Whoever loses their last place leaves the lecture with it, and their
-    # registrations there are withdrawn. Locks the campaigns, the group and
-    # then the lecture, as finalization and leaving do. Returns the roster
-    # the user was taken off, the lecture in that case, or nil.
+    # Someone who loses their last group that enrolls them also leaves the
+    # lecture, and their registrations there are withdrawn. Returns the roster
+    # they were taken off (the lecture in that case), or nil.
     #
-    # The campaigns are locked even when another place seems to remain: only
-    # under the group's lock is it certain, and locking them then would come
-    # after the group. A caller that locks the group itself locks them first
-    # (see SelfMaterializationService#self_remove!).
+    # Locks the campaigns, then the group, then the lecture, as finalization and
+    # leaving do. The campaigns are locked even if the user seems to keep
+    # another group: that is only certain under the group's lock, and locking
+    # the campaigns only after the group would break that order. A caller that
+    # locks the group itself must lock the campaigns first (see
+    # SelfMaterializationService#self_remove!).
     def remove_user!(user, rosterable, notify: true, by: nil)
       lecture = rosterable.lecture if rosterable.is_a?(Lecture) || rosterable.enrolls_in_lecture?
       places = UserPlaces.new(user)
@@ -88,15 +89,11 @@ module Rosters
 
     private
 
-      # Whether taking the user off the rosterable takes them out of the
-      # lecture: the lecture itself, or their last place in it.
       def leaves_lecture?(user, rosterable, lecture)
         leave = LectureLeave.new(lecture, user)
         rosterable == lecture ? leave.enrolled? : leave.only_place?(rosterable)
       end
 
-      # A move onto a list would take the last place without anything that
-      # enrolls in its stead.
       def leaves_last_place?(user, from_rosterable, to_rosterable)
         return false unless from_rosterable.enrolls_in_lecture?
         return false if to_rosterable.enrolls_in_lecture?

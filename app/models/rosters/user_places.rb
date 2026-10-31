@@ -65,8 +65,8 @@ module Rosters
       dismiss_rejections!(lectures)
     end
 
-    # Locks the campaigns #withdraw_registrations! would withdraw from, for a
-    # caller that decides only under later locks whether to.
+    # Locks the campaigns #withdraw_registrations! would touch, for callers that
+    # decide only later, under further locks, whether to withdraw at all.
     def lock_campaigns!(lectures)
       withdrawable_campaigns.where(campaignable: lectures).order(:id).lock.load
     end
@@ -96,9 +96,9 @@ module Rosters
                                       .find_each(&:dismiss!)
       end
 
-      # Locks every roster before the first is left, the lectures last, as
-      # LectureLeave does: taken one at a time, a group's removal would lock
-      # its lecture before the next group.
+      # Locks all groups first and the lectures last, like LectureLeave.
+      # Removing the groups one at a time would not do: each removal locks the
+      # lecture, so the lecture would be locked before the next group.
       def leave_rosters!(lectures)
         service = MaintenanceService.new
         named = rosterables.select { |rosterable| rosterable.lecture.in?(lectures) }

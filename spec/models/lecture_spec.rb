@@ -517,7 +517,6 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
-  # Someone who has left is readmitted through one of these.
   describe "#enrolling_groups" do
     it "holds the tutorials and the cohorts with enrollment" do
       lecture = create(:lecture)

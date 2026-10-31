@@ -92,9 +92,9 @@ class Exam < ApplicationRecord
     end
   end
 
-  # An admission check needs a decision of the lecture, so with one only
-  # members and whoever holds a decision may register, e.g. someone admitted
-  # who has left; without one, anybody may, and the exam list enrolls them.
+  # With an admission check, only members of the lecture and people with an
+  # admission decision may register, e.g. someone admitted who has left. Without
+  # one, anybody may; the exam list then enrolls them in the lecture.
   def registrable_by?(user)
     return true unless checks_admission?
 

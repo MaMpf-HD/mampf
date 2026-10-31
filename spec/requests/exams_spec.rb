@@ -595,7 +595,6 @@ RSpec.describe("Exams", type: :request) do
         end.to change { exam.roster_entries.count }.by(1)
       end
 
-      # An exam list is a place: whoever sits only the exam is a member.
       it "enrolls someone not yet in the lecture, and reloads the roster tabs" do
         stranger = create(:confirmed_user, locale: "en")
 

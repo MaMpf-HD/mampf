@@ -83,7 +83,6 @@ module Roster
 
     private
 
-      # The lecture stays when a group goes, which students do not expect.
       def self_removed_message
         if @lecture.lecture_memberships.exists?(user: current_user)
           t("roster.messages.self_removed_still_enrolled",

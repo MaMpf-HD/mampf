@@ -96,7 +96,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(CGI.unescapeHTML(response.body)).to include(I18n.t("roster.views.left"))
         end
 
-        # Readmission goes through a place, and this lecture offers none.
         it "does not take them back into a lecture without a group that enrolls" do
           post add_member_lecture_path(lecture),
                params: { user_id: former.id, source: :participants, view: "left" },
@@ -583,7 +582,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.not_to(change { lecture.members.count })
       end
 
-      # Otherwise the user would stay enrolled without a place.
       it "takes the user off the lecture along with their last place, as removed by staff" do
         create(:lecture_membership, lecture: lecture, user: member)
 
@@ -598,8 +596,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         )
       end
 
-      # The removal takes the user off the lists too, whose rows would show
-      # them until a reload.
       it "redraws the rows of the lists the user loses along with the lecture" do
         create(:lecture_membership, lecture: lecture, user: member)
         list = create(:cohort, context: lecture, skip_campaigns: true)
@@ -882,7 +878,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(tutorial.reload.members).to include(new_student)
       end
 
-      # Nobody is enrolled without a place.
       it "does not add the user to the lecture alone" do
         expect do
           post(add_member_lecture_path(lecture), params: { email: new_student.email })
