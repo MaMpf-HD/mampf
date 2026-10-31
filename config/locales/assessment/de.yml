@@ -295,8 +295,8 @@ de:
       add_member_no_match: 'Niemand mit diesem Namen ist ohne Team.'
       hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
       hand_over_hint: >-
-        Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib
-        es an eines davon; Punkte und Korrektur werden dann dort eingetragen.
+        Übergib das Team an das Tutorium eines seiner Mitglieder; Punkte und
+        Korrektur werden dann dort eingetragen.
       marked_elsewhere: 'Korrektur in %{tutorial}'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'

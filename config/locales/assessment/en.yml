@@ -295,8 +295,8 @@ en:
       add_member_no_match: 'Nobody by that name is without a team.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
-        The members of this team sit in different tutorials. Hand it over to
-        one of them; points and correction are then entered there.
+        Hand the team over to the tutorial of one of its members; points and
+        correction are then entered there.
       marked_elsewhere: 'Marked in %{tutorial}'
     errors:
       feature_not_available: 'Assessment feature is not available.'
