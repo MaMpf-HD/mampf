@@ -30,6 +30,7 @@ window.Stimulus.register("flash-messages", FlashMessagesController);
 
 import SupportWidgetController from "~/support_requests/widget.controller.js";
 window.Stimulus.register("support-widget", SupportWidgetController);
+window.Stimulus.register("feedback-widget", SupportWidgetController);
 
 import DeansOfficeController from "~/deans_office/deans_office.controller.js";
 window.Stimulus.register("deans-office", DeansOfficeController);
