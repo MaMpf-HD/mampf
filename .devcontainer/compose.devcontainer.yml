@@ -14,7 +14,10 @@ services:
       - claude-code:/workspaces/claude
 
   app-test:
-    command: "RUBY_DEBUG_ENABLE=0 /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"
+    # Set here and not in `command`: the image's ENTRYPOINT runs
+    # init-and-run.sh, which ignores its arguments.
+    environment:
+      - RUBY_DEBUG_ENABLE=0
 
 volumes:
   mampf-command-history:
