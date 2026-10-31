@@ -12,7 +12,7 @@ module Rosters
     end
 
     def self.held_by_mode?(group)
-      group.place? && !group.is_a?(Exam)
+      group.enrolls_in_lecture? && !group.is_a?(Exam)
     end
 
     def initialize(lecture, user)
@@ -42,7 +42,7 @@ module Rosters
     # the lecture they are enrolled in (see #only_place?), for a whole roster
     # at once.
     def self.only_place_user_ids(group, user_ids)
-      return [] unless group.place?
+      return [] unless group.enrolls_in_lecture?
 
       lecture = group.lecture
       return [] if lecture.nil? || user_ids.empty?
@@ -58,7 +58,7 @@ module Rosters
     end
 
     def places
-      @places ||= groups.select(&:place?) + exam_entries.map(&:exam)
+      @places ||= groups.select(&:enrolls_in_lecture?) + exam_entries.map(&:exam)
     end
 
     # Whether the group is the last place of an enrolled student, which is

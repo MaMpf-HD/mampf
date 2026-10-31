@@ -102,7 +102,7 @@ class Cohort < ApplicationRecord
     # campaigns come first; only a cohort with lecture enrollment takes
     # anyone out.
     def lock_running_campaigns!
-      return unless place? && lecture
+      return unless enrolls_in_lecture? && lecture
 
       Registration::Campaign.running.where(campaignable: lecture).order(:id).lock.load
     end

@@ -74,7 +74,7 @@ module Rosters
         User.shown_name_or_matriculation_number_like(search)
       end
 
-      # Those without a place (see Rosters::Rosterable#place?), which only
+      # Those without a place (see Rosters::Rosterable#enrolls_in_lecture?), which only
       # data from before enrollment followed the places can leave behind.
       def build_unassigned_scope(base_scope)
         @lecture.place_user_id_queries.reduce(base_scope) do |scope, query|

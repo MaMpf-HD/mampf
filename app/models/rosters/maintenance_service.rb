@@ -37,7 +37,7 @@ module Rosters
     # after the group. A caller that locks the group itself locks them first
     # (see SelfMaterializationService#self_remove!).
     def remove_user!(user, rosterable, notify: true, by: nil)
-      lecture = rosterable.is_a?(Lecture) ? rosterable : (rosterable.lecture if rosterable.place?)
+      lecture = rosterable.is_a?(Lecture) ? rosterable : (rosterable.lecture if rosterable.enrolls_in_lecture?)
       places = UserPlaces.new(user)
       left = ActiveRecord::Base.transaction do
         places.lock_campaigns!([lecture]) if lecture
@@ -97,13 +97,14 @@ module Rosters
       # Locks the lecture after the groups, as remove_user! does, wherever a
       # place changes and with it the enrollment.
       def lock_lecture_of!(*rosterables)
-        rosterables.find(&:place?)&.lecture&.lock!
+        rosterables.find(&:enrolls_in_lecture?)&.lecture&.lock!
       end
 
       # A move onto a list would take the last place without anything that
       # enrolls in its stead.
       def leaves_last_place?(user, from_rosterable, to_rosterable)
-        return false unless from_rosterable.place? && !to_rosterable.place?
+        return false unless from_rosterable.enrolls_in_lecture?
+        return false if to_rosterable.enrolls_in_lecture?
 
         lecture = from_rosterable.lecture
         lecture.present? && LectureLeave.new(lecture, user).only_place?(from_rosterable)
