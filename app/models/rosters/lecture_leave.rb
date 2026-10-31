@@ -1,27 +1,16 @@
 module Rosters
-  # Ends a student's participation in a whole lecture, all or nothing;
-  # recorded points stay for a later return.
   class LectureLeave
-    # `reason` names the locale key, `title` the group, exam or campaign
-    # concerned, and `contact` whether the lecture's staff can still help.
-    Blocker = Struct.new(:reason, :title, :contact)
+    Blocker = Struct.new(:reason, :title, :staff_can_help)
 
-    # Tutorials, then cohorts, then talks, each by id: the order the bulk
-    # self-service setting and UserPlaces take them in.
     GROUP_LOCK_ORDER = ["Tutorial", "Cohort", "Talk"].freeze
 
     class NotAllowedError < StandardError; end
     class NotParticipatingError < StandardError; end
 
-    # Talks go by their label, which carries the number, as elsewhere in the
-    # participation list.
     def self.label(group)
       group.is_a?(Talk) ? group.to_label : group.title
     end
 
-    # Whether the group's self-service mode decides whether its members may
-    # leave the lecture: any place but an exam list, which follows its
-    # registration deadline instead.
     def self.held_by_mode?(group)
       group.place? && !group.is_a?(Exam)
     end
@@ -31,9 +20,10 @@ module Rosters
       @user = user
     end
 
-    # Whether "Leave course" is offered: also for a registration its campaign
-    # no longer lets the student withdraw, since nothing else would withdraw
-    # it and the lecture stays on the dashboard until the allocation.
+    # Whether the "Leave course" button is shown. Also shown when the student's
+    # only tie to the lecture is a registration past its withdrawal deadline:
+    # the registration card no longer offers to withdraw it, so leaving is the
+    # only way out before the allocation.
     def participating?
       enrolled? || groups.any? || exam_entries.any? || registration_past_withdrawal?
     end
@@ -91,30 +81,25 @@ module Rosters
               .order(:title).to_a
     end
 
-    # While a graded exam or talk blocks, the other blockers are not named:
-    # the lecture's staff could lift them, but leaving would stay refused.
+    # When an exam or talk is already graded, only that is listed as a blocker.
+    # The staff could lift the other blockers, but not this one.
     def blockers
       @blockers ||= graded_blockers.presence ||
                     (held_group_blockers + closed_exam_blockers + prerequisite_blockers)
     end
 
-    # The campaigns the dialog names. A rejected registration is withdrawn
-    # too (see UserPlaces#leave!), but not named: to the student it is no
-    # registration they give up.
     def campaigns_to_withdraw
       @campaigns_to_withdraw ||= running_campaigns.to_a - closed_exam_campaigns
     end
 
-    # Whether the exam admission is granted. Leaving keeps it for a return,
-    # but only the lecture's members register for its exams.
     def admitted?
       StudentPerformance::Certification.passed.exists?(lecture: @lecture, user: @user)
     end
 
-    # Decides again under the locks on a fresh instance, since this one
-    # memoizes its blockers. Grading data found during the removal raises
-    # NotAllowedError too; an ActiveRecord::Deadlocked that aborted this
-    # transaction is retried once.
+    # The dialog checked without locks; this checks again under the locks, on
+    # a new instance because this one has cached the earlier answer. If a
+    # result was entered in between, the removal fails, which also raises
+    # NotAllowedError. A deadlock is retried once.
     def leave!
       attempts = 0
       begin
@@ -140,9 +125,10 @@ module Rosters
 
     private
 
-      # Locks the campaigns first, drafts too so none opens meanwhile, as
-      # allocation does; then the groups and then the lecture, as a group's
-      # update touching the lecture and the staff's removal do.
+      # Locks the lecture's unfinished campaigns first, drafts included: a draft
+      # opened meanwhile could take a new registration from the student that
+      # leaving would miss. Then the groups, then the lecture, in the order
+      # allocation and the staff's removal use.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)
@@ -158,24 +144,16 @@ module Rosters
                       .map { |entry| Blocker.new(:graded, entry.exam.title, false) }
       end
 
-      # A cohort without enrollment is a list, not a way into the lecture,
-      # and is left along with it whatever its setting.
       def held_group_blockers
         groups.select { |group| self.class.held_by_mode?(group) }
               .select { |group| held?(group) && !group.in?(graded_talks) }
               .map { |group| Blocker.new(:group_held, self.class.label(group), true) }
       end
 
-      # Leaving the lecture gives up every group at once, so a group the
-      # student may not leave on its own holds them, whatever its kind: its
-      # self-service mode is the staff's say on leaving it, and a running
-      # campaign holds it until the allocation.
       def held?(group)
         !group.allow_self_remove?(@user) || group.in_running_campaign?
       end
 
-      # An exam list or an exam registration past its deadline: withdrawing
-      # from an exam is up to the lecture's staff then.
       def closed_exam_blockers
         exam_entries.reject { |entry| entry.exam_id.in?(graded_exam_ids) }
                     .map { |entry| Blocker.new(:exam_closed, entry.exam.title, true) } +
@@ -184,9 +162,9 @@ module Rosters
           end
       end
 
-      # A confirmed registration in another lecture may require one that
-      # leaving withdraws; withdrawing that one alone is refused as well, see
-      # UserRegistrations::Handler#check_not_referenced_as_prerequisite.
+      # Blocks when the student is confirmed in another lecture's campaign that
+      # requires their registration here, e.g. a seminar that requires this
+      # lecture. Withdrawing that registration on its own is refused as well.
       def prerequisite_blockers
         withdrawn = Registration::Campaign.running.where(
           campaignable: @lecture,
@@ -207,8 +185,9 @@ module Rosters
         end
       end
 
-      # Rejected registrations count too, since a new allocation can turn them
-      # back into pending ones; the dialog does not name them.
+      # Whether the student has a registration here whose withdrawal deadline
+      # has passed. Rejected ones count too: a new allocation can still give
+      # them a place.
       def registration_past_withdrawal?
         registered = Registration::UserRegistration.where(user: @user)
         Registration::Campaign.running
@@ -223,8 +202,9 @@ module Rosters
                                          .includes(:exam).to_a
       end
 
-      # Every graded talk of the lecture, not only those the user speaks in:
-      # leaving the lecture roster refuses on any of them.
+      # The lecture's talks with a result for the student, whether or not they
+      # are still a speaker there. Any such result keeps them from being
+      # removed from the lecture.
       def graded_talks
         @graded_talks ||= @lecture.talks.where(id: graded_assessable_ids(@lecture.talks)).to_a
       end
@@ -249,8 +229,9 @@ module Rosters
                               .order(:registration_deadline)
       end
 
-      # By the deadline, not the status alone: CampaignStatusWorker closes a
-      # campaign only on its next run.
+      # The exam campaigns the student is registered in whose withdrawal
+      # deadline has passed. Checks the deadline rather than the status,
+      # because CampaignStatusWorker closes a campaign only on its next run.
       def closed_exam_campaigns
         @closed_exam_campaigns ||= running_campaigns.exam.reject(&:open_for_withdrawals?)
       end
