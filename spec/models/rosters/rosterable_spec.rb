@@ -282,8 +282,8 @@ RSpec.describe(Rosters::Rosterable) do
       expect(rosterable.allocated_user_ids).to include(user3.id)
     end
 
-    # A removal or enrollment:reconcile decides under the lecture's lock
-    # whether someone still has a place.
+    # A removal decides under the lecture's lock whether someone still has a
+    # place.
     it "locks the lecture before it changes the roster of a place" do
       roster_at_lock = nil
       allow(rosterable.lecture).to receive(:lock!).and_wrap_original do |original, *args|
