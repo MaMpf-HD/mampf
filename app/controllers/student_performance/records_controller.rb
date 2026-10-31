@@ -26,7 +26,7 @@ module StudentPerformance
       sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
       load_test_share(scope, tests) if tests.any?
       @pagy, @records = pagy(sorted(scope))
-      # Test results become visible during the week, as each tutorial is graded.
+      # Test results become visible while the test runs, as each tutorial is graded.
       @sheets = sheets.select { |a| due_points.due?(a.id) }
       @tests = tests.select(&:grading_open?)
       @sheets_not_due = sheets.size - @sheets.size

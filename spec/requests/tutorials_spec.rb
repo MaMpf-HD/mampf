@@ -74,6 +74,38 @@ RSpec.describe("Tutorials", type: :request) do
       expect(selected.text.strip).to eq(sheet.title)
     end
 
+    # Friday of this week, with Sheet 5 due on Thursday.
+    def on_friday_with_sheet_due_thursday(&)
+      Timecop.travel(Time.zone.today.beginning_of_week + 4.days + 12.hours) do
+        create(:assignment, :expired, lecture: lecture, title: "Sheet 5", expired_since: 1.day)
+        yield
+      end
+    end
+
+    it "opens on a sheet due in a test's second week, not on the test" do
+      on_friday_with_sheet_due_thursday do
+        create(:assignment, lecture: lecture, title: "Test 2", kind: :test,
+                            test_week: Time.zone.today.prev_week.iso8601, test_week_count: 2)
+
+        get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+        selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+        expect(selected.text.strip).to eq("Sheet 5")
+      end
+    end
+
+    it "opens on a test of one week over a sheet that fell due in it" do
+      on_friday_with_sheet_due_thursday do
+        create(:assignment, lecture: lecture, title: "Test 1", kind: :test,
+                            test_week: Time.zone.today.beginning_of_week.iso8601)
+
+        get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+        selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+        expect(selected.text.strip).to eq("Test 1")
+      end
+    end
+
     it "shows the achievement asked for, and nothing of a sheet named beside it" do
       achievement = create(:achievement, :boolean, lecture: lecture, title: "Blackboard talk")
 
