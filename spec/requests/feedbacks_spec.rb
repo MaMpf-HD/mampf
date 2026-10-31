@@ -28,9 +28,11 @@ RSpec.describe("Feedbacks", type: :request) do
       expect(response.body).to include(I18n.t("feedback.sent"))
     end
 
-    it "mails the author along" do
+    it "mails the feedback to the feedback address, to be answered to its author" do
       send_feedback
 
+      expect(sent_mails.last.to).to eq(["feedback@example.com"])
+      expect(sent_mails.last.subject).to eq("Feedback: #{user.email}")
       expect(sent_mails.last.reply_to).to eq([user.email])
       expect(sent_mails.last.body.encoded).to include(user.email)
     end

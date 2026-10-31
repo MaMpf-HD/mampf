@@ -26,6 +26,11 @@ module FormMail
       false
     end
 
+    def form_mail(kind, to:, text:)
+      SupportMailer.with(kind: kind, to: to, text: text, sender: form_mail_sender)
+                   .new_message_email
+    end
+
     def form_mail_sender
       { "user_id" => current_user.id,
         "user_name" => current_user.tutorial_name,

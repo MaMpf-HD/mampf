@@ -25,6 +25,14 @@ RSpec.describe("SupportRequests", type: :request) do
       expect(response.body).to include(I18n.t("support_request.sent"))
     end
 
+    it "mails the message to the address people write to, to be answered to its author" do
+      send_request
+
+      expect(sent_mails.last.to).to eq([DefaultSetting::PROJECT_EMAIL])
+      expect(sent_mails.last.subject).to eq("Support: #{user.email}")
+      expect(sent_mails.last.reply_to).to eq([user.email])
+    end
+
     # The mail carries the message, the name and the address; the log at
     # production's level (info) must not.
     it "keeps the message and the sender out of the log" do

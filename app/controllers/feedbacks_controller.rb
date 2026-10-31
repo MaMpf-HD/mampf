@@ -1,5 +1,5 @@
 # Mails a `Feedback` from the muffin next to the support button, see
-# `FormMail`. The mail names its author.
+# `FormMail`.
 class FeedbacksController < ApplicationController
   include FormMail
 
@@ -20,7 +20,7 @@ class FeedbacksController < ApplicationController
                          throttled: throttled_message(THROTTLE_WINDOW))
     end
 
-    mail = FeedbackMailer.with(feedback: mail_details(feedback)).new_feedback_email
+    mail = form_mail("Feedback", to: ENV.fetch("FEEDBACK_EMAIL"), text: feedback.body)
     unless deliver_form_mail(mail, THROTTLE_KEY)
       return render_form(feedback, :service_unavailable, send_failed: true)
     end
@@ -36,10 +36,6 @@ class FeedbacksController < ApplicationController
 
     def feedback_params
       params.expect(feedback: [:body])
-    end
-
-    def mail_details(feedback)
-      { "body" => feedback.body }.merge(form_mail_sender)
     end
 
     def render_form(feedback, status, throttled: nil, send_failed: false)

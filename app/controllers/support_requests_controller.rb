@@ -23,8 +23,8 @@ class SupportRequestsController < ApplicationController
                          throttled: throttled_message(THROTTLE_WINDOW))
     end
 
-    details = support_request.attributes.merge(form_mail_sender)
-    mail = SupportRequestMailer.with(support_request: details).new_support_request_email
+    mail = form_mail("Support", to: DefaultSetting::PROJECT_EMAIL,
+                                text: support_request.message)
     unless deliver_form_mail(mail, THROTTLE_KEY)
       return render_form(support_request, :service_unavailable, send_failed: true)
     end
