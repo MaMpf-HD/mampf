@@ -182,12 +182,12 @@ GEM
       simplecov (>= 0.7)
       term-ansicolor
       thor
-    crass (1.0.7)
+    crass (1.0.8)
     cronex (0.15.0)
       tzinfo
       unicode (>= 0.4.4.5)
     csv (3.3.6)
-    dalli (5.1.0)
+    dalli (5.2.5)
       logger
     database_cleaner-active_record (2.2.2)
       activerecord (>= 5.a)
@@ -654,11 +654,11 @@ GEM
     terser (1.2.8)
       execjs (>= 0.3.0, < 3)
     thor (1.5.0)
-    thruster (0.1.25)
-    thruster (0.1.25-aarch64-linux)
-    thruster (0.1.25-arm64-darwin)
-    thruster (0.1.25-x86_64-darwin)
-    thruster (0.1.25-x86_64-linux)
+    thruster (0.1.27)
+    thruster (0.1.27-aarch64-linux)
+    thruster (0.1.27-arm64-darwin)
+    thruster (0.1.27-x86_64-darwin)
+    thruster (0.1.27-x86_64-linux)
     tilt (2.9.0)
     timeago_js (3.0.2.2)
     timecop (0.9.11)
