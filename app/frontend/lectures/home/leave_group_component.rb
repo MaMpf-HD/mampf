@@ -1,9 +1,7 @@
-# The dialog in which a student leaves one of their groups. It says whether
-# they stay enrolled, what stays when the group was their last one with
-# enrollment, and whether they can join it again on their own.
+# The dialog in which a student leaves one of their groups. It names only
+# what a student weighs before leaving: whether they still take part, whether
+# their points stay, and whether they can join again on their own.
 class LeaveGroupComponent < ViewComponent::Base
-  include UserRegistrationsHelper
-
   attr_reader :rosterable
 
   # The participation row needs the label before this dialog renders, and a
@@ -13,10 +11,9 @@ class LeaveGroupComponent < ViewComponent::Base
     "registration.user_registration.participation.leave_#{kind}"
   end
 
-  def initialize(rosterable:, user:, leave:)
+  def initialize(rosterable:, leave:)
     super()
     @rosterable = rosterable
-    @user = user
     @leave = leave
   end
 
@@ -24,13 +21,10 @@ class LeaveGroupComponent < ViewComponent::Base
     "leave-#{rosterable.class.name.underscore}-#{rosterable.id}"
   end
 
-  def label
-    Rosters::LectureLeave.label(rosterable)
-  end
-
   def title
     key = rosterable.is_a?(Talk) ? "leave_title_talk" : "leave_title"
-    t("registration.user_registration.participation.#{key}", group: label)
+    t("registration.user_registration.participation.#{key}",
+      group: Rosters::LectureLeave.label(rosterable))
   end
 
   def submit_label
@@ -41,58 +35,45 @@ class LeaveGroupComponent < ViewComponent::Base
     helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path", rosterable.id)
   end
 
-  def last_place?
-    @leave.only_place?(rosterable)
-  end
-
-  def stays_enrolled?
-    !last_place? && @leave.enrolled?
-  end
-
-  # What stays when the last group with enrollment goes: the flexible groups
-  # without enrollment and the running registrations.
-  def remaining
-    lists = Cohort.lists_by_user(lecture, [@user.id]).fetch(@user.id, []).map(&:title)
-    lists + campaigns.map do |campaign|
-      t("roster.left.registered_for", title: campaign.student_facing_title)
-    end
-  end
-
-  def bookmarked?
-    @user.lectures.include?(lecture)
-  end
-
-  # The dashboard offers to forget a bookmarked lecture only while no
-  # registration keeps it among the student's own lectures.
-  def bookmark_note
-    key = campaigns.empty? ? "leave_bookmark_stays" : "leave_bookmark_stays_short"
-    t("registration.user_registration.participation.#{key}")
-  end
-
-  def rejoin_note
-    t("registration.user_registration.participation.rejoin_#{rejoin_key}")
+  def notes
+    [participation_note, points_note, rejoin_note].compact
   end
 
   private
 
-    def lecture
-      rosterable.lecture
+    def last_place?
+      @leave.only_place?(rosterable)
     end
 
-    def campaigns
-      @campaigns ||= Registration::UserRegistration.running_campaigns_by_user(lecture, [@user.id])
-                                                   .fetch(@user.id, [])
+    # Leaving the last group with enrollment ends taking part; without a
+    # tutorial, no sheet can be handed in either.
+    def participation_note
+      suffix = rosterable.is_a?(Tutorial) ? "_tutorial" : ""
+      if last_place?
+        participation_t("leave_last_place#{suffix}")
+      elsif @leave.enrolled?
+        participation_t("leave_stays#{suffix}")
+      end
+    end
+
+    def points_note
+      participation_t("leave_points_stay") if last_place? && rosterable.lecture.assignments.exists?
     end
 
     # A group that only lets students leave takes them back through its staff
     # alone.
-    def rejoin_key
-      if !rosterable.config_allow_self_add?
+    def rejoin_note
+      key = if !rosterable.config_allow_self_add?
         "final"
       elsif rosterable.capacity
         "while_free"
       else
         "open"
       end
+      participation_t("rejoin_#{key}")
+    end
+
+    def participation_t(key)
+      t("registration.user_registration.participation.#{key}")
     end
 end

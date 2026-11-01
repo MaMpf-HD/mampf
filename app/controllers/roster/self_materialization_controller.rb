@@ -85,14 +85,24 @@ module Roster
 
       def self_removed_message(left)
         if left.is_a?(Lecture)
-          t("roster.messages.self_removed_left_lecture",
-            group: @rosterable.title, lecture: @lecture.title_term_info_no_type)
+          [t("roster.messages.self_removed_left_lecture",
+             group: @rosterable.title, lecture: @lecture.title_term_info_no_type),
+           (t("roster.messages.self_removed_bookmark_hint") if bookmark_removable?)]
+            .compact.join(" ")
         elsif @lecture.lecture_memberships.exists?(user: current_user)
           t("roster.messages.self_removed_still_enrolled",
             group: @rosterable.title, lecture: @lecture.title_term_info_no_type)
         else
           t("roster.messages.self_removed", group: @rosterable.title)
         end
+      end
+
+      # The dashboard card offers to drop a bookmark only while no running
+      # registration keeps the lecture among the student's own.
+      def bookmark_removable?
+        current_user.lectures.include?(@lecture) &&
+          Registration::UserRegistration.running_campaigns_by_user(@lecture, [current_user.id])
+                                        .empty?
       end
 
       def authorize_lecture

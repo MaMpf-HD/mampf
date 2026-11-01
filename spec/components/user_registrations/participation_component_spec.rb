@@ -469,6 +469,7 @@ RSpec.describe(ParticipationComponent, type: :component) do
 
     def dialog_text_for(mode, capacity: nil)
       tutorial.update!(self_materialization_mode: mode, capacity: capacity)
+      lecture.add_user_to_roster!(user)
       tutorial.add_user_to_roster!(user)
       dialog_text(render_participation)
     end
@@ -492,7 +493,8 @@ RSpec.describe(ParticipationComponent, type: :component) do
     end
 
     it "says that without a tutorial no sheet can be handed in" do
-      expect(dialog_text_for(:add_and_remove)).to include(participation(:leave_no_sheets))
+      expect(dialog_text_for(:add_and_remove))
+        .to include(participation(:leave_last_place_tutorial))
     end
 
     it "says where joining again is always possible" do
@@ -514,17 +516,14 @@ RSpec.describe(ParticipationComponent, type: :component) do
         tutorial.add_user_to_roster!(user)
       end
 
-      it "offers to leave the last group, saying what ends and what stays" do
-        create(:cohort, context: lecture, title: "Waitlist", skip_campaigns: true)
-          .add_user_to_roster!(user)
-        user.bookmark_lecture!(lecture)
+      it "offers to leave the last group, saying that taking part ends and the points stay" do
+        create(:assignment, lecture: lecture)
 
         rendered = render_participation
 
         expect(row(rendered).at_css("button")).to be_present
-        expect(dialog_text(rendered)).to include(participation(:leave_last_place, group: "Mo 10"),
-                                                 "Waitlist",
-                                                 participation(:leave_bookmark_stays))
+        expect(dialog_text(rendered)).to include(participation(:leave_last_place_tutorial),
+                                                 participation(:leave_points_stay))
       end
 
       it "says the course stays when another group remains" do
@@ -533,8 +532,8 @@ RSpec.describe(ParticipationComponent, type: :component) do
 
         text = dialog_text(render_participation)
 
-        expect(text).to include(participation(:leave_stays_enrolled))
-        expect(text).not_to include(participation(:leave_last_place, group: "Mo 10"))
+        expect(text).to include(participation(:leave_stays_tutorial))
+        expect(text).not_to include(participation(:leave_last_place_tutorial))
       end
 
       it "offers no button but says why while the student is held in the last group" do

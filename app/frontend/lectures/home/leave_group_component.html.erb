@@ -25,48 +25,11 @@
         </div>
 
         <div class="modal-body">
-          <% if last_place? %>
-            <p>
-              <%= t("registration.user_registration.participation.leave_last_place",
-                    group: label) %>
-            </p>
-          <% elsif stays_enrolled? %>
-            <p>
-              <%= t("registration.user_registration.participation.leave_stays_enrolled") %>
-            </p>
-          <% end %>
-
-          <% if rosterable.is_a?(Tutorial) %>
-            <p><%= t("registration.user_registration.participation.leave_no_sheets") %></p>
-          <% end %>
-
-          <% if last_place? %>
-            <% if remaining.any? %>
-              <p class="mb-1">
-                <%= t("registration.user_registration.participation.leave_remaining") %>
-              </p>
-
-              <div class="d-flex flex-wrap gap-1 mb-3">
-                <% remaining.each do |item| %>
-                  <span class="<%= lecture_home_badge_class(:info) %>"><%= item %></span>
-                <% end %>
-              </div>
+          <ul class="mb-0">
+            <% notes.each do |note| %>
+              <li><%= note %></li>
             <% end %>
-
-            <p class="small text-muted">
-              <%= t("registration.user_registration.participation.leave_results_stay") %>
-            </p>
-
-            <% if bookmarked? %>
-              <p class="small text-muted"><%= bookmark_note %></p>
-            <% end %>
-
-            <p class="small text-muted">
-              <%= t("registration.user_registration.participation.leave_whole_lecture") %>
-            </p>
-          <% end %>
-
-          <p class="mb-0"><%= rejoin_note %></p>
+          </ul>
         </div>
 
         <div class="modal-footer">

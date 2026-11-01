@@ -22,8 +22,7 @@ class LeaveLectureComponent < ViewComponent::Base
   end
 
   def consequences
-    [groups_consequence, campaigns_consequence, admission_consequence,
-     points_consequence, dashboard_consequence,
+    [groups_consequence, campaigns_consequence, results_consequence, dashboard_consequence,
      t("lecture_home.leave.consequences.rejoin")].compact
   end
 
@@ -44,14 +43,17 @@ class LeaveLectureComponent < ViewComponent::Base
         campaigns: @leave.campaigns_to_withdraw.map(&:student_facing_title).to_sentence)
     end
 
-    def admission_consequence
-      t("lecture_home.leave.consequences.admission") if @leave.admitted?
-    end
+    def results_consequence
+      points = @lecture.assignments.exists?
+      admitted = @leave.admitted?
+      return unless points || admitted
 
-    def points_consequence
-      return unless @lecture.assignments.exists?
-
-      t("lecture_home.leave.consequences.points")
+      key = if points && admitted
+        "points_and_admission"
+      else
+        points ? "points" : "admission"
+      end
+      t("lecture_home.leave.consequences.#{key}")
     end
 
     def dashboard_consequence

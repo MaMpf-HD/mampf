@@ -283,7 +283,7 @@ class ParticipationComponent < ViewComponent::Base
     def leave_group_dialog(rosterable)
       @leave_group_dialogs ||= {}
       @leave_group_dialogs[rosterable] ||=
-        LeaveGroupComponent.new(rosterable: rosterable, user: @user, leave: @leave)
+        LeaveGroupComponent.new(rosterable: rosterable, leave: @leave)
     end
 
     def held_line(rosterable)

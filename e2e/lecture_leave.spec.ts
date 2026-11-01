@@ -60,13 +60,14 @@ test.describe("leaving a course", () => {
     await page.goto(`/lectures/${lecture.id}`);
     await page.getByTestId("participation-row").filter({ hasText: "Mo 10" })
       .getByRole("button", { name: "Leave tutorial" }).click();
-    const dialog = page.getByRole("dialog", { name: "Leave “Mo 10”" });
-    await expect(dialog).toContainText("If you leave the group, you are no longer enrolled.");
-    await expect(dialog).toContainText("The course stays bookmarked");
+    const dialog = page.getByRole("dialog", { name: "Leave “Mo 10”?" });
+    await expect(dialog).toContainText(
+      "You then no longer take part in the course and cannot hand in sheets.",
+    );
     await dialog.getByRole("button", { name: "Leave tutorial" }).click();
 
-    await expect(page.getByText(/^You have left “Mo 10” and are no longer enrolled/))
-      .toBeVisible();
+    await expect(page.getByText(/^You have left “Mo 10” and no longer take part/))
+      .toContainText("The course stays on your dashboard");
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
     const dashboard = new DashboardLectureBrowsePage(page);
     await dashboard.goto();

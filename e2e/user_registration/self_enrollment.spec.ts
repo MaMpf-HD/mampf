@@ -71,8 +71,8 @@ test.describe("student self-enrollment", () => {
 
     await home.participation("Self-managed Tutorial")
       .getByRole("button", { name: "Leave tutorial" }).click();
-    const dialog = student.page.getByRole("dialog", { name: "Leave “Self-managed Tutorial”" });
-    await expect(dialog).toContainText("You stay enrolled in the course");
+    const dialog = student.page.getByRole("dialog", { name: "Leave “Self-managed Tutorial”?" });
+    await expect(dialog).toContainText("You stay in the course but cannot hand in sheets.");
     await dialog.getByRole("button", { name: "Leave tutorial" }).click();
 
     await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);

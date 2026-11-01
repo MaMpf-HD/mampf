@@ -484,7 +484,8 @@ de:
       user_removed: "%{user} erfolgreich entfernt."
       user_removed_with_only_group: "%{user} wurde aus %{group} entfernt und ist damit nicht mehr in der Veranstaltung eingeschrieben; es war die letzte Gruppe mit Einschreibung."
       self_removed: "Du hast „%{group}“ verlassen."
-      self_removed_left_lecture: "Du hast „%{group}“ verlassen und bist nicht mehr in „%{lecture}“ eingeschrieben."
+      self_removed_left_lecture: "Du hast „%{group}“ verlassen und nimmst nicht mehr an „%{lecture}“ teil."
+      self_removed_bookmark_hint: "Die Veranstaltung bleibt auf Deinem Dashboard; mit dem ✕ an ihrer Karte nimmst Du sie heraus."
       self_removed_still_enrolled: "Du hast „%{group}“ verlassen. In „%{lecture}“ bist Du weiterhin eingeschrieben."
     no_participants_yet: 'Noch niemand steht auf der Prüfungsliste.'
     registered: 'Registriert'
