@@ -13,6 +13,11 @@
         <%= helpers.turbo_frame_tag section_target(:campaign_switch), class: "d-block" do %>
           <%= render section_component(:campaign_switch) %>
         <% end %>
+      <% elsif left_view? %>
+        <p class="small text-muted">
+          <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+          <%= t("roster.left.hint") %>
+        </p>
       <% elsif outside_enrollment_count.positive? %>
         <p class="small text-muted">
           <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
@@ -47,11 +52,7 @@
                           },
                           class: "m-0"
                         } do |f| %>
-            <%= f.hidden_field :filter,
-                               value: @filter_mode,
-                               data: { auto_submit_form_target: "filterInput" } %>
-
-            <% if registered_view? %>
+            <% unless enrolled_view? %>
               <%= f.hidden_field :view, value: view %>
             <% end %>
 
@@ -97,10 +98,10 @@
             </div>
           <% end %>
 
-          <%= helpers.turbo_frame_tag section_target(:header_controls),
-                                      class: "d-flex flex-wrap align-items-center gap-3",
-                                      data: { filter_mode: @filter_mode } do %>
-            <%= render section_component(:header_controls) %>
+          <% if enrolled_view? %>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <%= helpers.helpdesk(t("roster.participants_hint"), true) %>
+            </div>
           <% end %>
         </div>
       </div>

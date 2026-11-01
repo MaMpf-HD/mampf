@@ -1,4 +1,5 @@
-import { expect, test } from "../_support/fixtures";
+import { expectDialogOpened } from "../_support/dialogs";
+import { expect, Page, Route, test } from "../_support/fixtures";
 import { ExamDashboardPage } from "../page-objects/exam_dashboard_page";
 import { addTask, createLecture } from "./helpers";
 
@@ -22,6 +23,18 @@ test.describe("exam grading", () => {
     return { lecture, exam };
   }
 
+  /** Holds back the answers to these requests; each call lets the next one through. */
+  async function holdAnswers(page: Page, url: string) {
+    const held: Route[] = [];
+    await page.route(url, (route) => {
+      held.push(route);
+    });
+    return async () => {
+      await expect.poll(() => held.length).toBeGreaterThan(0);
+      await held.shift()?.continue();
+    };
+  }
+
   test("enters points and a grade, records an absence and an exemption", async ({
     factory,
     teacher,
@@ -33,7 +46,7 @@ test.describe("exam grading", () => {
     await page.tab("Points").click();
     await expect(page.pane.getByText("2 pending grading")).toBeVisible();
     const ada = page.pane.getByRole("row", { name: /Ada Lovelace/ });
-    await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("7");
+    await ada.getByRole("spinbutton", { name: "Prove it for Ada Lovelace" }).fill("7");
     await ada.getByRole("button", { name: "Save this row's points" }).click();
     await expect(ada.getByText("Reviewed")).toBeVisible();
     await expect(page.pane.getByText("1 reviewed · 1 pending grading")).toBeVisible();
@@ -53,7 +66,7 @@ test.describe("exam grading", () => {
 
     // points corrected after grading leave the grade, but not unnoticed
     await page.tab("Points").click();
-    await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("9");
+    await ada.getByRole("spinbutton", { name: "Prove it for Ada Lovelace" }).fill("9");
     const corrected = teacher.page.waitForResponse(
       response => response.url().includes("/point_participation") && response.ok(),
     );
@@ -82,9 +95,11 @@ test.describe("exam grading", () => {
     await excuse.focus();
     await teacher.page.keyboard.press("Enter");
     const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the exam" });
+    await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Cancel" }).click();
     await expect(excuse).toBeFocused();
     await excuse.click();
+    await expectDialogOpened(dialog);
     await dialog.getByLabel("Reason (optional, teaching staff only)").fill("sick note");
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(grace.getByRole("img", { name: "Exempt: sick note" })).toBeVisible();
@@ -98,9 +113,61 @@ test.describe("exam grading", () => {
     await page.pane.getByLabel("Status").selectOption("pending_grading");
     await expect(adaGrade).toBeHidden();
     await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    await expectDialogOpened(dialog);
     await dialog.getByRole("button", { name: "Excuse" }).click();
     await expect(grace).toBeHidden();
     await expect(page.pane.getByLabel("Name")).toBeFocused();
+  });
+
+  test("hands the keyboard to the row when the answer comes after the dialog closed", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await examWithCandidates(factory, teacher.user.id);
+    const page = new ExamDashboardPage(teacher.page, lecture.id);
+    await page.open("Main Exam");
+    await page.tab("Grades").click();
+    const answerExemption = await holdAnswers(teacher.page, "**/mark_as_exempt*");
+
+    const grace = page.pane.getByRole("row", { name: /Grace Hopper/ });
+    await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    const dialog = teacher.page.getByRole("dialog", { name: "Excuse from the exam" });
+    await expectDialogOpened(dialog);
+    await dialog.getByRole("button", { name: "Excuse" }).click();
+    await expect(dialog).toBeHidden();
+    await answerExemption();
+
+    await expect(grace.getByRole("img", { name: /^Exempt/ })).toBeVisible();
+    await expect(grace.getByRole("link", { name: "Take the exemption back" })).toBeFocused();
+
+    // a late answer leaves the keyboard where the user has taken it since
+    const name = page.pane.getByLabel("Name");
+    await grace.getByRole("link", { name: "Take the exemption back" }).click();
+    await expect(grace.getByRole("combobox", { name: "Grade for Grace Hopper" })).toBeVisible();
+    await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    await expectDialogOpened(dialog);
+    await dialog.getByRole("button", { name: "Excuse" }).click();
+    await expect(grace.getByRole("button", { name: "Excuse with a certificate" })).toBeFocused();
+    await name.focus();
+    await answerExemption();
+    await expect(grace.getByRole("img", { name: /^Exempt/ })).toBeVisible();
+    // the row would take the keyboard a task after it arrived
+    await teacher.page.evaluate(() => new Promise(resolve => setTimeout(resolve)));
+    await expect(name).toBeFocused();
+
+    // the filter hides the row once it is exempt; with nobody else shown,
+    // the keyboard lands on the filter
+    await grace.getByRole("link", { name: "Take the exemption back" }).click();
+    await expect(grace.getByRole("combobox", { name: "Grade for Grace Hopper" })).toBeVisible();
+    await name.fill("Grace");
+    await page.pane.getByLabel("Status").selectOption("pending_grading");
+    await grace.getByRole("button", { name: "Excuse with a certificate" }).click();
+    await expectDialogOpened(dialog);
+    await dialog.getByRole("button", { name: "Excuse" }).click();
+    await expect(dialog).toBeHidden();
+    await answerExemption();
+    await expect(grace).toBeHidden();
+    await expect(name).toBeFocused();
   });
 
   test("saves every candidate's points at once", async ({ factory, teacher }) => {
@@ -111,8 +178,8 @@ test.describe("exam grading", () => {
 
     const saveAll = page.pane.getByRole("button", { name: /Save all changes/ });
     await expect(saveAll).toBeDisabled();
-    await page.pane.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("7");
-    await page.pane.getByRole("spinbutton", { name: "Task 1 for Grace Hopper" }).fill("4");
+    await page.pane.getByRole("spinbutton", { name: "Prove it for Ada Lovelace" }).fill("7");
+    await page.pane.getByRole("spinbutton", { name: "Prove it for Grace Hopper" }).fill("4");
     await expect(saveAll).toContainText("2");
     await saveAll.click();
 
@@ -137,7 +204,9 @@ test.describe("exam grading", () => {
       lecture_id: lecture.id,
       title: "Group A",
     });
-    for (let index = 1; index <= 26; index++) {
+    // concurrently, since creating 26 candidates one by one takes long
+    await Promise.all(Array.from({ length: 26 }, async (_, i) => {
+      const index = i + 1;
       const student = await factory.create("confirmed_user", [], {
         name_in_tutorials: `Candidate ${index}`,
       });
@@ -148,7 +217,7 @@ test.describe("exam grading", () => {
           user_id: student.id,
         });
       }
-    }
+    }));
     const page = new ExamDashboardPage(teacher.page, lecture.id);
     await page.open("Main Exam");
     await page.tab("Grades").click();
@@ -170,7 +239,7 @@ test.describe("exam grading", () => {
       .toHaveCount(26);
     await page.tab("Grades").click();
 
-    await page.pane.getByLabel("Tutorial").selectOption("Group A");
+    await page.pane.getByLabel("Tutorial").selectOption("Group A (tba)");
     await expect(candidates.filter({ visible: true })).toHaveCount(1);
     await expect(page.pane.getByRole("row", { name: /Candidate 26/ })).toBeVisible();
     await expect(page.pane.getByText("Rows 1–26 of 26")).toHaveCount(0);

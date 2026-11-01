@@ -43,7 +43,11 @@ class User < ApplicationRecord
   has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
   # Roster memberships
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :lecture_memberships_including_excluded,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :user
+  has_many :lecture_memberships, -> { active }, inverse_of: :user
   has_many :assignment_sightings, dependent: :destroy
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 
@@ -233,6 +237,8 @@ class User < ApplicationRecord
         -> { where(email_for_correction_upload: true) }
   scope :email_for_submission_decision,
         -> { where(email_for_submission_decision: true) }
+  scope :email_for_tutorial_change,
+        -> { where(email_for_tutorial_change: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
 
@@ -317,6 +323,16 @@ class User < ApplicationRecord
                                        .or(where.not(name_in_tutorials: [nil,
                                                                          ""])
                .name_in_tutorials_or_email_like(search_string))
+  end
+
+  def self.shown_name_like(search_string)
+    where(Arel.sql(SHOWN_NAME_SQL).matches("%#{sanitize_sql_like(search_string)}%"))
+  end
+
+  def self.shown_name_or_matriculation_number_like(search_string)
+    pattern = "%#{sanitize_sql_like(search_string)}%"
+    where(Arel.sql(SHOWN_NAME_SQL).matches(pattern)
+            .or(arel_table[:matriculation_number].matches(pattern)))
   end
 
   def self.values_for_select
@@ -776,7 +792,6 @@ class User < ApplicationRecord
     return false unless lecture.in?(lectures)
 
     lecture_bookmarks.where(lecture: lecture).destroy_all
-    favorite_lectures.delete(lecture)
 
     true
   end
@@ -792,11 +807,11 @@ class User < ApplicationRecord
 
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
-  # is normally already covered by `roster_lectures`; this catches it before
-  # rostering happens, or if the campaign never rosters the user at all.
+  # counts only until its campaign is completed. After that, the roster decides.
   def lectures_with_registration_application
+    unfinished = Registration::Campaign.where.not(status: :completed).select(:id)
     campaign_ids = user_registrations
-                   .where(status: [:pending, :confirmed])
+                   .where(status: [:pending, :confirmed], registration_campaign_id: unfinished)
                    .or(user_registrations.rejected.not_dismissed)
                    .select(:registration_campaign_id)
     Lecture.where(

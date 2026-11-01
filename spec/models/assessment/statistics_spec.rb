@@ -123,15 +123,16 @@ RSpec.describe(Assessment::Statistics) do
       expect(statistics.program_rows).to be_empty
     end
 
-    it "groups by tutorial only where somebody sits in one" do
+    it "groups by tutorial only where somebody sits in one, named with its tutors" do
       mark(4, 6)
       expect(statistics.tutorial_rows).to be_empty
 
       tutorial = create(:tutorial, lecture: assessment.lecture, title: "Tuesday")
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
       mark(2, 2, tutorial: tutorial)
 
       expect(described_class.new(assessment).tutorial_rows.map(&:label))
-        .to eq(["Tuesday", nil])
+        .to eq(["Tuesday (Ada Lovelace)", nil])
     end
   end
 

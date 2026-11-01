@@ -48,6 +48,28 @@ test.describe("email to students", () => {
       await expect(sent).toContainText("2 recipients");
     });
 
+  // The tutors should know what their students were told.
+  test("the staff copy the mail to the tutors of the students picked",
+    async ({ factory, teacher, tutor }) => {
+      const { lecture } = await lectureWithTwoGroups(factory, teacher.user.id, tutor.user.id);
+      const { page } = teacher;
+
+      await page.goto(`/lectures/${lecture.id}/edit?tab=communication`);
+      const copy = page.getByRole("checkbox", { name: /Copy to the tutors of these students/ });
+      await expect(copy).toBeChecked();
+      await expect(copy).toHaveAccessibleName(/\(1: /);
+
+      await page.getByRole("radio", { name: "Groups picked" }).check();
+      await page.getByRole("checkbox", { name: /Tu 14/ }).check();
+      await expect(page.getByRole("button", { name: "Send to 1 student" })).toBeEnabled();
+      await expect(copy).toHaveAccessibleName(/\(0\)/);
+
+      await page.getByRole("checkbox", { name: /Mo 10/ }).check();
+      await expect(page.getByRole("button", { name: "Send to 2 students" })).toBeEnabled();
+      await expect(copy).toHaveAccessibleName(/\(1: /);
+      await expect(copy).toBeChecked();
+    });
+
   test("keeps an attachment above the limit in the browser",
     async ({ factory, teacher, tutor }) => {
       const { lecture } = await lectureWithTwoGroups(factory, teacher.user.id, tutor.user.id);

@@ -28,17 +28,96 @@ class SubmissionRowComponent < ViewComponent::Base
     late_joins.key?(user.id)
   end
 
-  def joined_late_info(user)
-    t("assessment.task_points.joined_late",
-      time: l(late_joins.fetch(user.id).created_at, format: :file_time))
+  # Keeps the marks after a name with its last part, after the last space or
+  # hyphen: the team column is narrow, and a mark alone on a line belongs to
+  # nobody. The name still wraps between its other parts.
+  def name_with_marks(user, &)
+    name = user.tutorial_name.to_s
+    cut = name.rindex(/[\s-]/)&.succ || 0
+    safe_join([name[0...cut],
+               tag.span(class: "text-nowrap") { safe_join([name[cut..], capture(&)]) }])
+  end
+
+  # Puts everything to know about a member behind one info mark: a change of
+  # tutorial since the hand-in, and how they came onto the team later.
+  def member_info(user)
+    notes = [movement_info_for_user(user)]
+    notes << joined_info(user) if joined_late?(user) || tutor_added?(user)
+    notes.compact.join(" ").presence
+  end
+
+  def tutor_added?(user)
+    added_joins.key?(user.id)
+  end
+
+  # Says how somebody came onto the team later: after the deadline, or at any
+  # time by a tutor, who is then named. A join without added_by may be a
+  # tutor's from before that column, so it does not claim the code.
+  def joined_info(user)
+    join = added_joins[user.id] || late_joins.fetch(user.id)
+    time = l(join.created_at, format: :file_time)
+    return t("assessment.task_points.joined_late", time: time) unless join.added_by_id?
+
+    t("assessment.task_points.added_by_tutor", tutor: join.added_by.tutorial_name, time: time)
   end
 
   # Whom the tutor may put on this team: the group's members on no team
-  # for this sheet. A rejected hand-in takes nobody; it counts as none.
+  # for this sheet. A hand-in rejected as late takes nobody; it counts as none.
+  # Somebody marked on a row of their own is done with the sheet. Somebody who
+  # moved to another group keeps a row here, but is offered only where the add
+  # action takes them, see Submission#member_candidates.
   def addable_members
-    return [] unless can_enter_points? && grading_enabled? && @submission.accepted != false
+    return [] unless may_add_members? && !team_full?
 
-    @addable_members ||= @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
+    @addable_members ||=
+      @assignment.non_submitters_in_tutorial(@tutorial)
+                 .where(id: @submission.member_candidates.select(:id))
+                 .where.not(id: @assessment.assessment_participations.marked.select(:user_id))
+                 .by_last_name
+    @addable_members.reject { |member| left_lecture?(member) }
+  end
+
+  def may_add_members?
+    team_open? && @submission.takes_members?
+  end
+
+  # Where teams may span tutorials, members of the others can be put on the
+  # team too; the menu asks for them by name, see
+  # Assessment::TaskPointsController#add_member_candidates.
+  def search_elsewhere?
+    may_add_members? && !team_full? && @lecture.cross_tutorial_teams?
+  end
+
+  # A full team still opens the menu, which says so rather than offering
+  # names the server would refuse.
+  def add_member_menu?
+    addable_members.any? || search_elsewhere? || (may_add_members? && team_full?)
+  end
+
+  def team_full?
+    max = @lecture.submission_max_team_size
+    max.present? && @submission.users.size >= max
+  end
+
+  def add_member_candidates_url
+    return unless search_elsewhere?
+
+    add_member_candidates_submission_path(@submission, grading_scope_type: grading_scope_type)
+  end
+
+  # Lists those a tutor put on the team, for whoever marks it to take off
+  # again. Who joined with the code stays, and so does the last member.
+  def removable_members
+    return [] unless team_open? && @submission.users.many?
+    return [] if added_joins.empty?
+
+    @removable_members ||= @submission.users.where(id: added_joins.keys).by_last_name.to_a
+  end
+
+  # A few names are read at a glance; a longer list gets a search field, and
+  # so does a menu that searches the other tutorials.
+  def member_search?
+    addable_members.size > 5 || search_elsewhere?
   end
 
   # The earliest join founded the team; whether that was late is the
@@ -49,8 +128,19 @@ class SubmissionRowComponent < ViewComponent::Base
                                .index_by(&:user_id)
   end
 
+  def added_joins
+    @added_joins ||= @submission.user_submission_joins.select(&:added_by_id?)
+                                .index_by(&:user_id)
+  end
+
   def grading_enabled?
     @assessment.present?
+  end
+
+  # The menus follow the server: a tutor changes a team only while points
+  # can be entered.
+  def team_open?
+    can_enter_points? && grading_enabled? && @assignment.grading_open?
   end
 
   def layout
@@ -74,7 +164,7 @@ class SubmissionRowComponent < ViewComponent::Base
   def hand_over_targets
     return [] if elsewhere? || !@tutorial.correctable_by?(helpers.current_user)
     return @submission.hand_over_targets.to_a unless @member_tutorials
-    return [] unless @submission.users.many? && movable?
+    return [] unless movable? && @assignment.totally_expired?
 
     @submission.users.filter_map { |user| @member_tutorials[user.id] }
                .uniq.excluding(@tutorial).sort_by(&:title)
@@ -150,7 +240,7 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def points_input_label(task)
     t("assessment.grading_tutorial.points_input_label",
-      task: "#{t("assessment.grading_tutorial.task")} #{task.position}",
+      task: task.label,
       name: @submission.users.map(&:tutorial_name).join(", "))
   end
 
@@ -190,10 +280,13 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def late_submission_info(submission, tutorial)
-    text = t("submission.late")
-    return text unless submission.accepted.nil? && helpers.current_user.in?(tutorial.tutors)
+    uploaded_at = submission.last_modification_by_users_at || submission.created_at
+    text = t("assessment.task_points.late_submission",
+             time: l(uploaded_at, format: :file_time))
+    return text unless submission.accepted.nil? && helpers.current_user.in?(tutorial.tutors) &&
+                       @assignment.totally_expired?
 
-    "#{text} (#{t("tutorial.late_submission_decision")})"
+    "#{text} #{t("tutorial.late_submission_decision").strip}"
   end
 
   def can_enter_points?
@@ -212,5 +305,9 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def movement_info_for_user(user)
     helpers.movement_info_for_user_assignment(user, users_movement_map)
+  end
+
+  def left_lecture?(user)
+    @lecture.left_user_ids.include?(user.id)
   end
 end

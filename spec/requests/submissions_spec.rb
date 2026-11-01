@@ -542,6 +542,15 @@ RSpec.describe("Submissions", type: :request) do
 
       expect(response).to have_http_status(:success)
     end
+
+    it "tells the reader how to reach the tutor of their tutorial" do
+      tutorial.tutors << create(:confirmed_user, email: "tara@play")
+
+      get lecture_submissions_path(lecture)
+
+      expect(response.body).to include("submissions-tutorial-line")
+      expect(response.body).to include('href="mailto:tara@play"')
+    end
   end
 
   # Sighted readers get the lecture from the navbar; somebody moving by heading
@@ -1449,6 +1458,17 @@ RSpec.describe("Submissions", type: :request) do
           get lecture_submissions_path(lecture)
 
           expect(response.body).to include(I18n.t("submission.hub.fold.join_late").strip)
+        end
+
+        it "shows the team its code on the closed sheet's row" do
+          team.users << user
+          create(:assessment_participation, assessment: closed_assignment.assessment,
+                                            user: user, submitted_at: 2.days.ago)
+
+          get lecture_submissions_path(lecture)
+
+          expect(response.body).to include(I18n.t("submission.hub.fold.team_code").strip)
+          expect(response.body).to include(team.token)
         end
       end
     end

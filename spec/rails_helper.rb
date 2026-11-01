@@ -43,6 +43,11 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Turbo::TestAssertions, type: :request
 
+  # Devise defines current_user while the routes are drawn, and Rails draws
+  # them lazily. A component spec that renders before any request would ask
+  # for current_user before it exists, so the suite draws the routes first.
+  config.before(:suite) { Rails.application.reload_routes_unless_loaded }
+
   # Rating a password takes about a quarter of a second, too slow for every
   # user the suite creates. Examples that need the rule ask for it:
   # `it "...", :password_strength do`.

@@ -13,9 +13,10 @@
   <ul class="mt-2 mb-0">
     <% dashboard.conflicting_registrations.each do |conflict| %>
       <li class="mb-1">
-        <strong><%= conflict[:user].name %></strong>
+        <strong><%= conflict[:user].tutorial_name %></strong>
         (<%= conflict[:user].email %>) —
-        <%= t("registration.allocation.conflicts.currently_in", tutorial: conflict[:registerable].title) %>
+        <%= t("registration.allocation.conflicts.currently_in",
+              tutorial: conflict[:registerable].registration_title) %>
         <% if conflict[:registration] %>
           <%= button_to reject_for_user_registration_campaign_registrations_path(campaign,
                                                                                 user_id: conflict[:user].id,

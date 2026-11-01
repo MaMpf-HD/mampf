@@ -2,7 +2,7 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.4.10"
+ruby "3.4.12"
 
 gem "active_model_serializers", "~> 0.10"
 gem "activerecord-import", "~> 2.0"
@@ -30,6 +30,7 @@ gem "fastimage", "~> 2.3"
 gem "filesize", "~> 0.2"
 gem "flipper", "~> 1.4"
 gem "flipper-active_record", "~> 1.4"
+gem "http", "~> 6.0", ">= 6.0.1"
 gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"
@@ -45,7 +46,7 @@ gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 8.0"
 gem "rack", "~> 3.1"
-gem "rails", "~> 8.0.2"
+gem "rails", "~> 8.1.4"
 gem "rails-i18n", "~> 8.0"
 gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
@@ -64,7 +65,6 @@ gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
 gem "thruster", "~> 0.1"
-gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbo-rails", "~> 2.0"
 gem "view_component", "~> 4.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"

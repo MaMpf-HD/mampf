@@ -38,7 +38,7 @@
             click->tutorial-roster-panel#openFromTrigger
             focusin->tutorial-roster-panel#rememberFocus
           "
-          data-roster-key="<%= registerable.class.name %>-<%= registerable.id %>"
+          data-roster-key="<%= Rosters::RosterableResolver.group_key(registerable) %>"
           data-roster-panel-path="<%= roster_registration_campaign_item_path(campaign, item, source: :panel, format: :turbo_stream) %>"
           data-roster-type="<%= registerable.class.name.underscore %>"
           data-roster-id="<%= registerable.id %>"

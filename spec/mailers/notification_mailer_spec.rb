@@ -43,4 +43,23 @@ RSpec.describe(NotificationMailer, type: :mailer) do
         .to include(I18n.t("mailer.subscribe_lecture_text", locale: :en).strip)
     end
   end
+
+  describe "submission_removed_email" do
+    let(:removed) { create(:confirmed_user, name_in_tutorials: "Grace Hopper") }
+    let(:tutor) { create(:confirmed_user, name_in_tutorials: "Alan Turing") }
+    let(:team) do
+      create(:valid_submission,
+             users: [create(:confirmed_user, name_in_tutorials: "Ada Lovelace")])
+    end
+
+    it "names the tutor and the team the recipient is no longer on" do
+      mail = NotificationMailer.with(recipient: removed, locale: :en, submission: team,
+                                     user: tutor).submission_removed_email
+      body = mail.html_part.body.decoded
+
+      expect(mail.to).to eq([removed.email])
+      expect(body).to include("Alan Turing has taken you off the team of Ada Lovelace")
+      expect(body).not_to include("Grace Hopper")
+    end
+  end
 end

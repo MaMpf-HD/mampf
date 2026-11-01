@@ -838,6 +838,13 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       expect(team.reload.users).not_to include(newcomer)
     end
 
+    it "keeps a student out" do
+      add(newcomer, as: student)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).not_to include(newcomer)
+    end
+
     it "takes nobody from outside the group" do
       stranger = create(:confirmed_user)
       create(:lecture_membership, lecture: lecture, user: stranger)
@@ -845,6 +852,244 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
 
       expect(response).to have_http_status(:not_found)
       expect(team.reload.users).not_to include(stranger)
+    end
+
+    it "takes nobody from another tutorial where teams stay within one" do
+      add(student2, as: tutor)
+
+      expect(response).to have_http_status(:not_found)
+      expect(team.reload.users).not_to include(student2)
+    end
+
+    it "takes a member of another tutorial where teams may span tutorials" do
+      lecture.update!(cross_tutorial_teams: true)
+      add(student2, as: tutor)
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to include(student2)
+    end
+  end
+
+  describe "PATCH /submissions/:submission_id/remove_member" do
+    let(:team) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student])
+    end
+    let(:newcomer) { create(:confirmed_user) }
+
+    before do
+      create(:lecture_membership, lecture: lecture, user: newcomer)
+      create(:tutorial_membership, tutorial: tutorial, user: newcomer)
+      tutorial.tutors << tutor
+      Timecop.travel(3.hours.from_now)
+      Assessment::SubmissionGraderService.add_member!(team, newcomer, tutor)
+    end
+
+    after { Timecop.return }
+
+    def remove(user, as:, scope: "tutorial")
+      sign_in(as)
+      patch(remove_member_submission_path(team),
+            params: { user_id: user.id, grading_scope_type: scope }, as: :turbo_stream)
+    end
+
+    # The newcomer's own row is back, so the whole table comes along.
+    it "lets the group's tutor take somebody they put on the team off it" do
+      remove(newcomer, as: tutor)
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to contain_exactly(student)
+      assert_turbo_stream action: :replace, target: "marking-table"
+      row = assessment.assessment_participations.find_by(user: newcomer)
+      expect(response.body).to include("points-participation-row-#{row.id}")
+    end
+
+    # Points can only be entered after the grace period, and from then on only
+    # a hand-over moves a team.
+    it "keeps the team in the tutor's table when its other members sit elsewhere" do
+      lecture.update!(cross_tutorial_teams: true)
+      tutorial2.tutors << create(:confirmed_user)
+      moved = create(:submission, :with_manuscript, assignment: assignment,
+                                                    tutorial: tutorial2, users: [student2])
+      latecomer = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: latecomer)
+      create(:tutorial_membership, tutorial: tutorial, user: latecomer)
+      Assessment::SubmissionGraderService.add_member!(moved, latecomer, tutorial2.tutors.first)
+      moved.reload.hand_over!(tutorial)
+
+      sign_in(tutor)
+      patch(remove_member_submission_path(moved),
+            params: { user_id: latecomer.id, grading_scope_type: "tutorial" }, as: :turbo_stream)
+
+      expect(moved.reload.tutorial).to eq(tutorial)
+      expect(moved.hand_over_targets).to contain_exactly(tutorial2)
+      expect(response.body)
+        .to include(ERB::Util.html_escape(
+                      I18n.t("assessment.task_points.member_removed", name: latecomer.tutorial_name)
+                    ))
+    end
+
+    it "lets the lecturer do so from the lecture's table" do
+      remove(newcomer, as: teacher, scope: "lecture")
+
+      expect(response).to have_http_status(:success)
+      expect(team.reload.users).to contain_exactly(student)
+    end
+
+    it "keeps somebody who joined with the code on the team" do
+      remove(student, as: tutor)
+
+      expect(response.body)
+        .to include(ERB::Util.html_escape(I18n.t("assessment.task_points.not_removable",
+                                                 name: student.tutorial_name)))
+      expect(team.reload.users).to include(student)
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      create(:tutorial, lecture: lecture).tutors << other
+      remove(newcomer, as: other)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).to include(newcomer)
+    end
+
+    it "keeps a student out, also the one taken off" do
+      remove(newcomer, as: newcomer)
+
+      expect(response).to redirect_to(root_path)
+      expect(team.reload.users).to include(newcomer)
+    end
+
+    it "takes nobody off who is not on the team" do
+      remove(student2, as: tutor)
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "GET /submissions/:submission_id/add_member_candidates" do
+    let(:team) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student])
+    end
+
+    before do
+      lecture.update!(cross_tutorial_teams: true)
+      tutorial.tutors << tutor
+      tutorial2.update!(title: "Tuesday group")
+    end
+
+    def member(name, of:)
+      user = create(:confirmed_user, name_in_tutorials: name)
+      create(:lecture_membership, lecture: lecture, user: user)
+      create(:tutorial_membership, tutorial: of, user: user)
+      user
+    end
+
+    def search(query, as: tutor)
+      sign_in(as)
+      get(add_member_candidates_submission_path(team, q: query, grading_scope_type: "tutorial"),
+          as: :turbo_stream)
+    end
+
+    def found
+      Nokogiri::HTML(response.body).css("button.dropdown-item").map { |item| item.text.squish }
+    end
+
+    it "finds members of other tutorials by name, each with their tutorial" do
+      member("Clara Wieck", of: tutorial2)
+      search("wiec")
+
+      expect(response).to have_http_status(:success)
+      assert_turbo_stream action: :update, target: "add-member-elsewhere-#{team.id}"
+      expect(found).to eq(["Clara Wieck Tuesday group"])
+    end
+
+    # The group's own are on the page already; anyone on a team for the
+    # sheet cannot join another.
+    it "leaves out the group's own members and anyone on a team for the sheet" do
+      member("Clara Own", of: tutorial)
+      teamed = member("Clara Teamed", of: tutorial2)
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial2,
+                                            users: [teamed])
+      member("Clara Free", of: tutorial2)
+      search("clara")
+
+      expect(found).to eq(["Clara Free Tuesday group"])
+    end
+
+    # After the deadline the group's list holds whoever left their row with it.
+    it "leaves out who moved away and is listed with the group already" do
+      moved = member("Clara Moved", of: tutorial2)
+      member("Clara Free", of: tutorial2)
+      Timecop.travel(3.hours.from_now) do
+        create(:assessment_participation, assessment: assessment, user: moved,
+                                          tutorial: tutorial)
+        search("clara")
+      end
+
+      expect(found).to eq(["Clara Free Tuesday group"])
+    end
+
+    it "leaves out anyone marked on a row of their own" do
+      marked = member("Clara Marked", of: tutorial2)
+      member("Clara Free", of: tutorial2)
+      Timecop.travel(3.hours.from_now) do
+        row = create(:assessment_participation, :submitted, assessment: assessment,
+                                                            user: marked, tutorial: tutorial2)
+        create(:assessment_task_point, task: task, assessment_participation: row, points: 2)
+        search("clara")
+      end
+
+      expect(found).to eq(["Clara Free Tuesday group"])
+    end
+
+    it "keeps a student out" do
+      member("Clara Wieck", of: tutorial2)
+      search("clara", as: student)
+
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "takes a percent sign for itself, not for any name" do
+      member("Clara Wieck", of: tutorial2)
+      search("%%")
+
+      expect(found).to be_empty
+    end
+
+    it "asks about nobody for a single letter" do
+      member("Clara Wieck", of: tutorial2)
+      search("c")
+
+      expect(found).to be_empty
+    end
+
+    it "finds nobody where teams stay within one tutorial" do
+      lecture.update!(cross_tutorial_teams: false)
+      member("Clara Wieck", of: tutorial2)
+      search("clara")
+
+      expect(found).to be_empty
+    end
+
+    it "says when there are more than it shows" do
+      11.times { |i| member("Clara #{i}", of: tutorial2) }
+      search("clara")
+
+      expect(found.size).to eq(10)
+      expect(response.body)
+        .to include(I18n.t("assessment.task_points.add_member_elsewhere_more"))
+    end
+
+    it "keeps another group's tutor out" do
+      other = create(:confirmed_user)
+      tutorial2.tutors << other
+      member("Clara Wieck", of: tutorial2)
+      search("clara", as: other)
+
+      expect(response).to redirect_to(root_path)
     end
   end
 
@@ -1231,6 +1476,18 @@ RSpec.describe("Assessment::TaskPoints", type: :request) do
       patch remove_participation_path(participation),
             params: { grading_scope_type: "tutorial" },
             as: :turbo_stream
+    end
+
+    it "keeps the hand-in of someone who has left the course" do
+      participation.update!(submitted_at: 1.day.ago)
+      lecture_membership.exclude!(by: student)
+
+      patch remove_participation_path(participation),
+            params: { grading_scope_type: "tutorial" },
+            as: :turbo_stream
+
+      expect(response.body).to include(I18n.t("assessment.grading_tutorial.left_lecture_frozen"))
+      expect(participation.reload.submitted_at).to be_present
     end
 
     it "answers with the row alone" do

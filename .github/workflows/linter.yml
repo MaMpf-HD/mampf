@@ -6,6 +6,10 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
 
+# The jobs only check out and lint the code.
+permissions:
+  contents: read
+
 jobs:
 
   rubocop:
@@ -27,7 +31,7 @@ jobs:
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4.10
+          ruby-version: 3.4.12
           bundler-cache: true
 
       - name: Run RuboCop

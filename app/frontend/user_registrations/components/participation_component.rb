@@ -15,6 +15,21 @@ class ParticipationComponent < ViewComponent::Base
     @lecture = lecture
     @user = user
     @overview = overview || UserRegistrations::LectureOverview.new(lecture, user)
+    @leave = Rosters::LectureLeave.new(lecture, user)
+  end
+
+  # Also opened from the row of the student's last group when leaving that
+  # group is leaving the lecture; it then says so and offers to switch.
+  def leave_dialog
+    last_group = rosterables.find { |rosterable| opens_lecture_dialog?(rosterable) }
+    LeaveLectureComponent.new(lecture: @lecture, leave: @leave,
+                              only_group: (last_group if keeps_nothing?),
+                              switch_targets: last_group ? switch_targets_for(last_group) : [])
+  end
+
+  def leave_group_dialogs
+    rosterables.select { |rosterable| leavable?(rosterable) && !opens_lecture_dialog?(rosterable) }
+               .map { |rosterable| leave_group_dialog(rosterable) }
   end
 
   def render?
@@ -22,7 +37,8 @@ class ParticipationComponent < ViewComponent::Base
   end
 
   def rows
-    @rows ||= roster_rows + standing_rows + rejection_rows + excluded_exam_rows
+    @rows ||= lecture_rows + roster_rows + standing_rows + rejection_rows +
+              excluded_exam_rows
   end
 
   private
@@ -34,12 +50,37 @@ class ParticipationComponent < ViewComponent::Base
       )
     end
 
+    def lecture_rows
+      return [] unless @leave.participating?
+
+      [Row.new(label: @lecture.sort_localized,
+               title: @lecture.course.title,
+               lines: [],
+               badge: lecture_badge,
+               actions: leave_lecture_action)]
+    end
+
+    def lecture_badge
+      return unless @leave.enrolled?
+
+      [:info, t("registration.user_registration.participation.enrolled")]
+    end
+
+    def leave_lecture_action
+      helpers.button_tag(t("lecture_home.leave.button"),
+                         type: "button",
+                         class: "btn btn-sm border-0 bg-danger-subtle text-danger-emphasis",
+                         data: { bs_toggle: "modal",
+                                 bs_target: "##{LeaveLectureComponent::ID}" })
+    end
+
     def roster_rows
       rosterables.map do |rosterable|
         result = released_result(rosterable)
         Row.new(label: helpers.roster_type_text(rosterable),
                 title: rosterable.title,
-                lines: meta_lines(rosterable) + result_lines(result),
+                lines: member_lines(rosterable) + result_lines(result) +
+                       [switch_line(rosterable)].compact,
                 badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
                 actions: leave_action(rosterable),
@@ -200,6 +241,21 @@ class ParticipationComponent < ViewComponent::Base
       end
     end
 
+    # Gives a tutorial's members the address of each tutor, so they can write
+    # to them; a student merely registered for the tutorial sees names only.
+    def member_lines(rosterable)
+      return meta_lines(rosterable) unless rosterable.is_a?(Tutorial) && rosterable.tutors.any?
+
+      [tutor_contacts(rosterable), rosterable.location.presence].compact
+    end
+
+    def tutor_contacts(tutorial)
+      contacts = tutorial.tutors.map do |tutor|
+        safe_join([tutor.tutorial_name, " (", mail_to(tutor.email), ")"])
+      end
+      safe_join(contacts, ", ")
+    end
+
     def roster_badge(rosterable)
       case rosterable
       when Exam then [:ok, t("registration.user_registration.participation.on_exam_list")]
@@ -209,26 +265,77 @@ class ParticipationComponent < ViewComponent::Base
     end
 
     def leave_action(rosterable)
-      return unless rosterable.allow_self_remove?(@user)
+      return locked_leave_action(rosterable) unless leavable?(rosterable)
 
-      helpers.button_to(t("registration.user_registration.participation.leave"),
-                        helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path",
-                                            rosterable.id),
-                        method: :delete, class: "btn btn-sm btn-outline-secondary",
-                        form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
+      dialog_id = if opens_lecture_dialog?(rosterable)
+        LeaveLectureComponent::ID
+      else
+        leave_group_dialog(rosterable).id
+      end
+      helpers.button_tag(t(LeaveGroupComponent.submit_key(rosterable)),
+                         type: "button", class: "btn btn-sm btn-outline-secondary",
+                         data: { bs_toggle: "modal", bs_target: "##{dialog_id}" })
     end
 
-    # Says whether the way back is open: a group that only lets students leave
-    # takes them back through its staff alone.
-    def leave_confirmation(rosterable)
-      key = if !rosterable.config_allow_self_add?
-        "leave_confirm_final"
-      elsif rosterable.capacity
-        "leave_confirm_while_free"
-      else
-        "leave_confirm_rejoin"
+    # A group the student cannot leave on their own shows its button disabled,
+    # with a note on whom to ask; an exam list is kept by the staff anyway.
+    def locked_leave_action(rosterable)
+      return if rosterable.is_a?(Exam)
+
+      reason = t("registration.user_registration.participation.leave_locked")
+      button = helpers.button_tag(type: "button", disabled: true,
+                                  class: "btn btn-sm btn-outline-secondary pe-none") do
+        safe_join([tag.i(class: "bi bi-lock-fill me-1", aria: { hidden: true }),
+                   t(LeaveGroupComponent.submit_key(rosterable))])
       end
-      t("registration.user_registration.participation.#{key}", group: rosterable.title)
+      tag.span(class: "d-inline-block", tabindex: 0, title: reason) do
+        safe_join([button, tag.span(reason, class: "visually-hidden")])
+      end
+    end
+
+    def leavable?(rosterable)
+      rosterable.allow_self_remove?(@user)
+    end
+
+    # Leaving the last group with enrollment is leaving the lecture when the
+    # student keeps no list and no registration there.
+    def opens_lecture_dialog?(rosterable)
+      @leave.only_place?(rosterable) && keeps_nothing?
+    end
+
+    def keeps_nothing?
+      @leave.lists.empty? && @leave.running_campaigns.empty?
+    end
+
+    def leave_group_dialog(rosterable)
+      @leave_group_dialogs ||= {}
+      @leave_group_dialogs[rosterable] ||=
+        LeaveGroupComponent.new(rosterable: rosterable, leave: @leave,
+                                switch_targets: switch_targets_for(rosterable))
+    end
+
+    def switch_line(rosterable)
+      return unless switchable?(rosterable)
+
+      t("registration.user_registration.participation.switch_hint")
+    end
+
+    def switchable?(rosterable)
+      switch_targets_for(rosterable).any?
+    end
+
+    def switch_targets_for(rosterable)
+      switch_targets_by_source.fetch(rosterable, [])
+    end
+
+    # The groups the self-enrollment list on the page offers to switch to, by
+    # the group the student would switch from.
+    def switch_targets_by_source
+      @switch_targets_by_source ||= begin
+        targets = Array(Rosters::SelfRosterOptionsQuery.new(@lecture, @user).call)
+        offer = SelfEnrollmentComponent.new(lecture: @lecture, user: @user, rosterables: targets)
+        targets.reject(&:full?).group_by { |target| offer.switch_from(target) }
+      end
     end
 
     def preference_note(rosterable)

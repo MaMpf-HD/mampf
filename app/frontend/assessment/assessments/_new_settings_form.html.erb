@@ -15,10 +15,21 @@
 
     <% if assignment.kind_test? %>
       <div class="col-md-6">
-        <%= f.label :test_week, t("assessment.test.week"), class: "form-label" %>
+        <div class="row g-2">
+          <div class="col-12 col-sm-7">
+            <%= f.label :test_week, t("assessment.test.week"), class: "form-label" %>
 
-        <%= f.select :test_week, test_week_options(assignment), {},
-                     { class: "form-select" } %>
+            <%= f.select :test_week, test_week_options(assignment), {},
+                         { class: "form-select" } %>
+          </div>
+
+          <div class="col-12 col-sm-5">
+            <%= f.label :test_week_count, t("assessment.test.week_count"), class: "form-label" %>
+
+            <%= f.select :test_week_count, test_week_count_options(assignment), {},
+                         { class: "form-select" } %>
+          </div>
+        </div>
 
         <div class="form-text text-muted">
           <%= t("assessment.test.week_hint") %>

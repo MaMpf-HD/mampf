@@ -294,6 +294,9 @@ module Registration
 
         return [] if allocated_map.empty?
 
+        tutorials = allocated_map.values.grep(Tutorial).uniq
+        ActiveRecord::Associations::Preloader.new(records: tutorials, associations: :tutors).call
+
         registrations_by_user = @campaign.user_registrations
                                          .where(user_id: allocated_map.keys)
                                          .includes(:user)

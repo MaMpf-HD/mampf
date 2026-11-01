@@ -4,7 +4,7 @@ class CohortsController < ApplicationController
   helper RosterHelper
 
   before_action :set_lecture, only: [:new, :create]
-  before_action :set_cohort, only: [:edit, :update, :destroy]
+  before_action :set_cohort, only: [:edit, :update, :confirm_destroy, :destroy]
   authorize_resource except: [:new, :create]
 
   def current_ability
@@ -95,11 +95,31 @@ class CohortsController < ApplicationController
     end
   end
 
+  # Deleting a cohort with members asks first, saying how many end up
+  # without a group, and whether to tell them.
+  def confirm_destroy
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.update(
+          "modal-container",
+          partial: "cohorts/destroy_modal",
+          locals: { cohort: @cohort }
+        )
+      end
+    end
+  end
+
   def destroy
-    if @cohort.destroy
-      flash.now[:notice] = t("controllers.cohorts.destroyed")
-    else
+    title = @cohort.title
+    former_membership = @cohort.destroy_with_members(by: current_user)
+    if former_membership.nil?
       flash.now[:alert] = t("controllers.cohorts.destruction_failed")
+    elsif params[:notify] == "1" && former_membership.users.any?
+      notify_former_members(former_membership, title)
+      flash.now[:notice] = t("controllers.cohorts.destroyed_and_notified",
+                             count: former_membership.users.size)
+    else
+      flash.now[:notice] = t("controllers.cohorts.destroyed")
     end
 
     respond_to do |format|
@@ -108,12 +128,21 @@ class CohortsController < ApplicationController
         streams = []
         streams << stream_flash if flash.present?
         streams << refresh_campaigns_index_stream(@cohort.lecture)
+        streams << turbo_stream.update("modal-container", "")
         render turbo_stream: streams
       end
     end
   end
 
   private
+
+    def notify_former_members(former_membership, title)
+      former_membership.users.each do |user|
+        left = former_membership.left_lecture_ids.include?(user.id)
+        RosterNotificationMailer.group_deleted(user, title: title, lecture: @lecture,
+                                                     left_lecture: left)
+      end
+    end
 
     def set_lecture
       lecture_id = params[:lecture_id] || params.dig(:cohort, :lecture_id)

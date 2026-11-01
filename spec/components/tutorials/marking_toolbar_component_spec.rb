@@ -31,13 +31,20 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
   end
 
   describe "the lecture's table" do
-    it "filters by group, including the people in none" do
+    it "filters by group, named with its tutors, including the people in none" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
       rendered = render_inline(toolbar(scope: lecture, tutorials: [tutorial]))
 
       options = rendered.css("select[data-status-filter-target=tutorial] option")
 
       expect(options.map { |option| option.text.strip })
-        .to eq(["All", "Tuesday group", "No tutorial"])
+        .to eq(["All", "Tuesday group (Ada Lovelace)", "No tutorial"])
+    end
+
+    it "offers no tutorial filter for a lecture without tutorials" do
+      rendered = render_inline(toolbar(scope: lecture, tutorials: []))
+
+      expect(rendered.css("select[data-status-filter-target=tutorial]")).to be_empty
     end
 
     it "has no menu of group actions" do
@@ -94,6 +101,25 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
       rendered = render_inline(toolbar(scope: tutorial, submissions: [submission]))
 
       expect(rendered.text).to include(I18n.t("submission.bulk_upload"))
+    end
+
+    # Files may still change and teams still move until then.
+    it "holds back the bundle and the upload until the grace period is over" do
+      submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                         tutorial: tutorial,
+                                                         users: [create(:confirmed_user)])
+      assignment.update_column(:deadline, 5.minutes.ago) # rubocop:disable Rails/SkipsModelValidations
+      rendered = render_inline(toolbar(scope: tutorial, submissions: [submission]))
+      from = I18n.l(assignment.friendly_deadline, format: :short)
+
+      download = rendered.css("button.dropdown-item").find do |item|
+        item.text.strip == I18n.t("submission.bulk_download_submissions")
+      end
+      expect(download["disabled"]).to be_present
+      expect(download["title"])
+        .to eq(I18n.t("assessment.grading_tutorial.download_closed", time: from))
+      expect(rendered.css("a[href*='bulk_download_submissions']")).to be_empty
+      expect(rendered.at_css("#show-bulk-upload-area")["disabled"]).to be_present
     end
   end
 

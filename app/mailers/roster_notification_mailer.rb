@@ -16,7 +16,9 @@ class RosterNotificationMailer < ApplicationMailer
       ).public_send(added_template(rosterable)).deliver_later
     end
 
-    def removed(user, rosterable)
+    # left_lecture says that the group was the user's last place, so that the
+    # mail can tell them they are no longer enrolled.
+    def removed(user, rosterable, left_lecture: false)
       return log_unsupported(rosterable) unless supported?(rosterable)
 
       template =
@@ -27,8 +29,16 @@ class RosterNotificationMailer < ApplicationMailer
         end
       with(
         rosterable: rosterable,
-        recipient: user
+        recipient: user,
+        left_lecture: left_lecture
       ).public_send(template).deliver_later
+    end
+
+    # A deleted group cannot be loaded by the mail job, so its title travels
+    # in its place.
+    def group_deleted(user, title:, lecture:, left_lecture: false)
+      with(group_title: title, lecture: lecture, recipient: user, left_lecture: left_lecture)
+        .group_deleted_email.deliver_later
     end
 
     def moved(user, old_rosterable, new_rosterable)
@@ -91,12 +101,13 @@ class RosterNotificationMailer < ApplicationMailer
 
       # Only a tutorial has someone responsible for it. The two sides hear different
       # news: work handed in before the move stays with the tutorial it was handed in to.
+      # Tutors who turned these mails off in their profile hear nothing.
       def notify_tutors(user, old_rosterable, new_rosterable)
         return unless old_rosterable.is_a?(Tutorial) && new_rosterable.is_a?(Tutorial)
 
         [[old_rosterable, :participant_left_group_email],
          [new_rosterable, :participant_joined_group_email]].each do |tutorial, template|
-          tutorial.tutors.each do |tutor|
+          tutorial.tutors.email_for_tutorial_change.each do |tutor|
             with(participant: user,
                  rosterable: tutorial,
                  old_rosterable: old_rosterable,
@@ -128,6 +139,10 @@ class RosterNotificationMailer < ApplicationMailer
 
   def removed_from_group_email
     email { t("roster.mailer.roster_removed_from_group_email_subject", **subject_vars) }
+  end
+
+  def group_deleted_email
+    email { t("roster.mailer.roster_group_deleted_email_subject", **subject_vars) }
   end
 
   def removed_from_exam_email
@@ -169,6 +184,8 @@ class RosterNotificationMailer < ApplicationMailer
 
     def prepare_data(params)
       @rosterable      = params[:rosterable]
+      @group_title     = params[:group_title] || @rosterable&.title
+      @left_lecture    = params[:left_lecture]
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
@@ -208,7 +225,7 @@ class RosterNotificationMailer < ApplicationMailer
 
     def subject_vars
       {
-        rosterable_title: @rosterable&.title || @new_rosterable&.title,
+        rosterable_title: @group_title || @new_rosterable&.title,
         lecture_title: @lecture&.title || "",
         participant_name: @participant&.tutorial_name
       }

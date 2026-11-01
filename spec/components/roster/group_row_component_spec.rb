@@ -282,6 +282,64 @@ RSpec.describe(GroupRowComponent, type: :component) do
     end
   end
 
+  describe "the warning on modes without leaving" do
+    let(:lecture) { create(:lecture) }
+
+    def dropdown(group)
+      render_inline(described_class.new(registerable: group))
+        .css(".group-row__self-enrollment").first
+    end
+
+    def confirms(group)
+      dropdown(group).css("a.dropdown-item").to_h do |link|
+        [link.text.squish, link["data-turbo-confirm"]]
+      end
+    end
+
+    def label(mode)
+      I18n.t("roster.self_materialization.modes.#{mode}")
+    end
+
+    it "asks before a mode that keeps the members in the lecture" do
+      group = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                self_materialization_mode: :add_and_remove)
+      group.add_user_to_roster!(create(:confirmed_user))
+      confirm = I18n.t("roster.self_materialization.confirm_no_leaving", count: 1)
+
+      expect(confirms(group)).to include(label(:disabled) => confirm,
+                                         label(:add_only) => confirm,
+                                         label(:remove_only) => nil,
+                                         label(:add_and_remove) => nil)
+      expect(dropdown(group).at_css("button")["title"]).to be_nil
+    end
+
+    it "warns on applying such a mode to all groups and names it on the toggle" do
+      group = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                self_materialization_mode: :add_only)
+      bulk = confirms(group)[I18n.t("roster.self_materialization.apply_to_all_free_groups")]
+
+      expect(bulk).to start_with(I18n.t("roster.self_materialization.bulk_no_leaving"))
+      expect(dropdown(group).at_css("button")["title"])
+        .to eq(I18n.t("roster.self_materialization.no_leaving_hint"))
+    end
+
+    it "does not ask for an empty group" do
+      group = create(:tutorial, lecture: lecture, skip_campaigns: true,
+                                self_materialization_mode: :add_and_remove)
+
+      expect(confirms(group)[label(:disabled)]).to be_nil
+    end
+
+    it "does not warn for a cohort without enrollment" do
+      group = create(:cohort, context: lecture, skip_campaigns: true,
+                              self_materialization_mode: :disabled)
+      group.add_user_to_roster!(create(:confirmed_user))
+
+      expect(confirms(group)[label(:add_only)]).to be_nil
+      expect(dropdown(group).at_css("button")["title"]).to be_nil
+    end
+  end
+
   describe "the rendered row" do
     let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture, title: "Mo 10", capacity: 8) }
@@ -295,6 +353,14 @@ RSpec.describe(GroupRowComponent, type: :component) do
       expect(opener["aria-controls"]).to eq("tutorial-roster-side-panel")
       expect(row["data-tutorial-roster-panel-target"]).to eq("trigger")
       expect(row["data-roster-count"]).to eq("0 / 8 members")
+    end
+
+    it "hands the move dialog the tutors along with the title" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+      row = render_inline(described_class.new(registerable: tutorial)).css("li.group-row").first
+
+      expect(row["data-roster-title"]).to eq("Mo 10")
+      expect(row["data-roster-people"]).to eq("Ada Lovelace")
     end
 
     it "names the group on every action button" do
@@ -421,6 +487,21 @@ RSpec.describe(GroupRowComponent, type: :component) do
           .and_return([:in_campaign, :submissions])
         expect(component.delete_disabled?).to be(true)
       end
+    end
+  end
+
+  describe "deleting a cohort with members" do
+    let(:cohort) { create(:cohort, context: create(:lecture), skip_campaigns: true) }
+
+    before { cohort.add_user_to_roster!(create(:confirmed_user)) }
+
+    it "opens the dialog rather than asking in the browser" do
+      link = render_inline(described_class.new(registerable: cohort))
+             .css("a[href='#{Rails.application.routes.url_helpers
+                                 .confirm_destroy_cohort_path(cohort)}']").first
+
+      expect(link["data-turbo-stream"]).to eq("true")
+      expect(link["data-turbo-confirm"]).to be_nil
     end
   end
 

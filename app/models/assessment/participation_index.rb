@@ -41,7 +41,7 @@ module Assessment
 
       def load_rows(assessment, user_ids)
         Participation.where(user_id: user_ids, assessment: assessment)
-                     .includes(:user, :task_points, :tutorial, :assessment)
+                     .includes(:user, :task_points, :assessment, tutorial: :tutors)
                      .index_by(&:user_id)
       end
 

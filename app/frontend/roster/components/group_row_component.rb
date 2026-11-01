@@ -34,7 +34,7 @@ class GroupRowComponent < ViewComponent::Base
   end
 
   def roster_key
-    "#{registerable.class.name}-#{registerable.id}"
+    Rosters::RosterableResolver.group_key(registerable)
   end
 
   def panel_path
@@ -57,9 +57,17 @@ class GroupRowComponent < ViewComponent::Base
       helpers.with_registerable_registration_campaign_item_path(
         item.registration_campaign, item
       )
+    elsif delete_dialog?
+      helpers.confirm_destroy_cohort_path(registerable)
     else
       helpers.roster_delete_group_path(registerable)
     end
+  end
+
+  # A cohort with members asks in a dialog, which says how many end up
+  # without a group and offers to tell them.
+  def delete_dialog?
+    !item && registerable.is_a?(Cohort) && count.positive?
   end
 
   def remove_path
@@ -99,6 +107,8 @@ class GroupRowComponent < ViewComponent::Base
   end
 
   def delete_data
+    return { turbo_stream: true, bs_toggle: "tooltip" } if delete_dialog?
+
     {
       turbo_method: :delete,
       turbo_confirm: delete_confirmation,
@@ -121,10 +131,7 @@ class GroupRowComponent < ViewComponent::Base
   # Registrations per status. A completed campaign leaves them on the group,
   # and deleting the group deletes them, so the confirmation counts them.
   def campaign_registrations
-    @campaign_registrations ||=
-      Registration::UserRegistration
-      .where(registration_item_id: registerable.registration_items.select(:id))
-      .group(:status).count
+    @campaign_registrations ||= registerable.registration_counts_by_status
   end
 
   def remove_data
@@ -179,8 +186,16 @@ class GroupRowComponent < ViewComponent::Base
             registerable.destruction_blockers_outside_campaign
           )
       else
-        registerable.destruction_blocker_messages
+        registerable.destruction_blocker_messages(row_destruction_blockers)
       end
+  end
+
+  # Members do not keep a cohort from being deleted, see
+  # Cohort#destruction_blockers_with_members.
+  def row_destruction_blockers
+    return registerable.destruction_blockers_with_members if registerable.is_a?(Cohort)
+
+    registerable.destruction_blockers
   end
 
   def count_kind
@@ -290,7 +305,7 @@ class GroupRowComponent < ViewComponent::Base
   end
 
   def cohort_without_enrollment?
-    registerable.is_a?(Cohort) && !registerable.propagate_to_lecture?
+    !registerable.enrolls_in_lecture?
   end
 
   def show_self_enrollment_dropdown?
@@ -344,7 +359,27 @@ class GroupRowComponent < ViewComponent::Base
     mode_label = t(sm_mode,
                    scope: "roster.self_materialization.modes",
                    default: sm_mode.titleize)
-    t("roster.self_materialization.confirm_bulk_update",
-      mode: mode_label)
+    confirm = t("roster.self_materialization.confirm_bulk_update",
+                mode: mode_label)
+    return confirm if leaving_allowed?(sm_mode)
+
+    "#{t("roster.self_materialization.bulk_no_leaving")} #{confirm}"
+  end
+
+  def sm_confirm(mode)
+    return if mode == sm_mode || leaving_allowed?(mode) || count.zero?
+
+    t("roster.self_materialization.confirm_no_leaving", count: count)
+  end
+
+  def sm_title
+    return if leaving_allowed?(sm_mode)
+
+    t("roster.self_materialization.no_leaving_hint")
+  end
+
+  def leaving_allowed?(mode)
+    !Rosters::LectureLeave.held_by_mode?(registerable) ||
+      mode.to_sym.in?(Rosters::Rosterable::SELF_REMOVE_MODES)
   end
 end

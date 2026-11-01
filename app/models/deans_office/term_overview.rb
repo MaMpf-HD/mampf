@@ -6,7 +6,6 @@ module DeansOffice
     # Exams stay out: they do not bear on the tutorials the dean's office pays
     # for.
     GROUP_ASSOCIATIONS = [:tutorials, :talks, :cohorts].freeze
-    RUNNING_STATUSES = ["open", "closed", "processing"].freeze
 
     # Prioritizes open main-group registrations when placing courses in phase
     # sections. This order is not a timeline: a registration can reopen.
@@ -27,7 +26,8 @@ module DeansOffice
       return [] unless @term
 
       @lectures ||= Lecture.where(term: @term)
-                           .includes(:course, :term, :teacher, :editors, *GROUP_ASSOCIATIONS)
+                           .includes(:course, :term, :teacher, :editors, *GROUP_ASSOCIATIONS,
+                                     tutorials: :tutors, cohorts: :tutors)
                            .sort_by { |lecture| lecture.course.title.downcase }
     end
 
@@ -173,7 +173,7 @@ module DeansOffice
     # before the worker closes it, so it counts as allocating already.
     def access(group)
       campaign = item(group)&.registration_campaign
-      if campaign && RUNNING_STATUSES.include?(campaign.status)
+      if campaign&.running?
         Access.new(campaign.open_for_registrations? ? :open : :allocating, campaign)
       elsif campaign&.draft?
         Access.new(:not_open, campaign)
@@ -189,7 +189,7 @@ module DeansOffice
     private
 
       def running?(item)
-        RUNNING_STATUSES.include?(item.registration_campaign.status)
+        item.registration_campaign.running?
       end
 
       def registered_people(course)
@@ -230,7 +230,8 @@ module DeansOffice
       end
 
       def lecture_member_ids
-        @lecture_member_ids ||= id_sets(LectureMembership.where(lecture: lectures), :lecture_id)
+        @lecture_member_ids ||= id_sets(LectureMembership.active.where(lecture: lectures),
+                                        :lecture_id)
       end
 
       def roster_ids
