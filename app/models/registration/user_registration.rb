@@ -108,6 +108,15 @@ module Registration
               },
               if: -> { registration_campaign.first_come_first_served? }
 
+    def self.running_campaigns_by_user(lecture, user_ids)
+      where(user_id: user_ids, status: [:pending, :confirmed])
+        .joins(:registration_campaign)
+        .merge(Registration::Campaign.running.where(campaignable: lecture))
+        .preload(registration_campaign: { registration_items: :registerable })
+        .group_by(&:user_id)
+        .transform_values { |registrations| registrations.map(&:registration_campaign).uniq }
+    end
+
     def self.resolve_rejection_reason_label(reason_code:, fallback_label: nil)
       code = reason_code.to_s.presence
       return fallback_label if code.blank?
