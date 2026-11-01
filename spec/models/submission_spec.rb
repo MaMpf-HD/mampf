@@ -179,6 +179,7 @@ RSpec.describe(Submission, type: :model) do
       other = create(:tutorial, lecture: lecture, title: "Tuesday group")
       handed_over = create(:submission, :with_manuscript, assignment: assignment,
                                                           tutorial: other,
+                                                          handed_over_to_id: other.id,
                                                           users: [create(:confirmed_user)])
       file = "correction-ID-#{handed_over.id}.pdf"
 
@@ -188,6 +189,35 @@ RSpec.describe(Submission, type: :model) do
       expect(report[:elsewhere]).to eq([[handed_over.team, other.title_with_tutors]])
       expect(report[:invalid_id]).to be_empty
       expect(handed_over.reload.correction).to be_blank
+    end
+
+    it "names the tutorial a team with somebody in this tutorial went to" do
+      lecture.update!(cross_tutorial_teams: true)
+      member = create(:confirmed_user)
+      create(:tutorial_membership, tutorial: tutorial, user: member)
+      other = create(:tutorial, lecture: lecture)
+      elsewhere = create(:submission, :with_manuscript, assignment: assignment,
+                                                        tutorial: other, users: [member])
+      file = "correction-ID-#{elsewhere.id}.pdf"
+
+      report = Submission.bulk_corrections!(tutorial, assignment,
+                                            [{ "metadata" => { "filename" => file } }])
+
+      expect(report[:elsewhere]).to eq([[elsewhere.team, other.title_with_tutors]])
+    end
+
+    it "does not name a team this tutorial never had" do
+      other = create(:tutorial, lecture: lecture)
+      unrelated = create(:submission, :with_manuscript, assignment: assignment,
+                                                        tutorial: other,
+                                                        users: [create(:confirmed_user)])
+      file = "correction-ID-#{unrelated.id}.pdf"
+
+      report = Submission.bulk_corrections!(tutorial, assignment,
+                                            [{ "metadata" => { "filename" => file } }])
+
+      expect(report[:elsewhere]).to be_empty
+      expect(report[:invalid_id]).to eq([file])
     end
   end
 

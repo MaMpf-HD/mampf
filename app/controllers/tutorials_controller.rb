@@ -252,8 +252,10 @@ class TutorialsController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_tutorial")
     end
 
+    # Only a sheet of the tutorial's lecture: the ability checks the tutorial,
+    # not the sheet.
     def set_assignment
-      @assignment = Assignment.find_by(id: params[:ass_id])
+      @assignment = @lecture.assignments.find_by(id: params[:ass_id])
       return if @assignment
 
       redirect_to :root, alert: I18n.t("controllers.no_assignment")

@@ -310,7 +310,8 @@ RSpec.describe("Tutorials", type: :request) do
     it "names the tutorial a handed-over team went to in the report" do
       other = create(:tutorial, lecture: lecture, title: "Tuesday group")
       handed_over = create(:submission, :with_manuscript, assignment: assignment,
-                                                          tutorial: other)
+                                                          tutorial: other,
+                                                          handed_over_to_id: other.id)
       handed_over.users << create(:confirmed_user, name_in_tutorials: "Anna Keller")
       travel_to(assignment.friendly_deadline + 1.minute)
       files = [{ metadata: { filename: "correction-ID-#{handed_over.id}.pdf" } }]
@@ -321,6 +322,17 @@ RSpec.describe("Tutorials", type: :request) do
       expect(response.body).to include(I18n.t("tutorial.bulk_upload.elsewhere"))
       expect(response.body).to include("Anna Keller")
       expect(response.body).to include(ERB::Util.html_escape(other.title_with_tutors))
+    end
+
+    it "takes no sheet of another lecture" do
+      foreign = create(:assignment, lecture: create(:lecture))
+      travel_to(foreign.friendly_deadline + 1.minute)
+
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: foreign.id),
+            params: { cached_files: "[]" }
+
+      expect(response).to redirect_to(:root)
+      expect(flash[:alert]).to eq(I18n.t("controllers.no_assignment"))
     end
 
     it "sends the bundle once the grace period is over" do
