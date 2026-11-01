@@ -1,7 +1,5 @@
-# The dialog in which the staff confirm taking someone off a roster. It names
-# what the person loses and what stays, lets the staff keep the flexible groups
-# without enrollment when the person leaves the whole lecture, and asks
-# whether to tell them.
+# The staff's dialog for taking someone off a roster: it names what goes and
+# what stays, and asks whether to tell the person.
 class RosterRemovalModalComponent < ViewComponent::Base
   attr_reader :rosterable, :url
 
@@ -31,19 +29,34 @@ class RosterRemovalModalComponent < ViewComponent::Base
     end
   end
 
-  # The groups with enrollment and the exam lists the person leaves with the
-  # lecture.
   def places
     leave.places.map { |group| Rosters::LectureLeave.label(group) }
   end
 
-  def lists
-    @lists ||= Cohort.lists_by_user(lecture, [@user.id]).fetch(@user.id, [])
+  delegate :lists, to: :leave
+
+  # Removal from the lecture withdraws rejected registrations too, since an
+  # allocation can still give them a place; removal from the last group keeps
+  # every registration.
+  def campaigns
+    @campaigns ||= if from_lecture?
+      Rosters::UserPlaces.new(@user).campaigns_to_withdraw([lecture]).to_a
+    else
+      leave.running_campaigns.to_a
+    end
   end
 
-  def campaigns
-    @campaigns ||= Registration::UserRegistration.running_campaigns_by_user(lecture, [@user.id])
-                                                 .fetch(@user.id, [])
+  # A result keeps the person on the roster; the dialog then says so instead
+  # of offering a removal that would be refused.
+  def graded?
+    return @graded if defined?(@graded)
+
+    @graded = Rosters::MaintenanceService.new.grading_data?(@user, rosterable)
+  end
+
+  def graded_note
+    key = from_lecture? ? "lecture_grading_data_present" : "grading_data_present"
+    t("roster.errors.#{key}")
   end
 
   def last_place?

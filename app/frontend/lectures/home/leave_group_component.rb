@@ -1,8 +1,6 @@
-# The dialog in which a student leaves one of their groups. It names only
-# what a student weighs before leaving: whether they still take part, what
-# stays, and whether they can join again on their own. Leaving a last group
-# that keeps nothing else is leaving the lecture and goes through
-# LeaveLectureComponent instead.
+# The dialog in which a student leaves one of their groups, naming only what
+# they weigh before leaving. A last group that keeps nothing else is left
+# through LeaveLectureComponent.
 class LeaveGroupComponent < ViewComponent::Base
   attr_reader :rosterable, :switch_targets
 
@@ -13,7 +11,6 @@ class LeaveGroupComponent < ViewComponent::Base
     "registration.user_registration.participation.leave_#{kind}"
   end
 
-  # switch_targets are the groups the student could switch to instead.
   def initialize(rosterable:, leave:, switch_targets: [])
     super()
     @rosterable = rosterable
@@ -40,7 +37,23 @@ class LeaveGroupComponent < ViewComponent::Base
   end
 
   def notes
-    [participation_note, *kept_notes, points_note, rejoin_note].compact
+    @notes ||= [participation_note, *kept_notes, points_note, rejoin_note].compact
+  end
+
+  # A result or an exam registration past its deadline keeps the student in
+  # their last group; the dialog then says why instead of offering to leave.
+  def held?
+    last_place? && blockers.any?
+  end
+
+  def blocker_notes
+    blockers.map do |blocker|
+      t("lecture_home.leave.blockers.#{blocker.reason}", title: blocker.title)
+    end
+  end
+
+  def contact?
+    blockers.any?(&:staff_can_help)
   end
 
   private
@@ -64,7 +77,8 @@ class LeaveGroupComponent < ViewComponent::Base
     end
 
     # What leaving the lecture would take as well, and leaving this group does
-    # not. The first one also says that the lecture stays on the dashboard.
+    # not. The first of these also says that the lecture stays on the
+    # dashboard.
     def kept_notes
       return [] unless last_place?
 
@@ -86,9 +100,12 @@ class LeaveGroupComponent < ViewComponent::Base
       participation_t("leave_points_stay") if last_place? && rosterable.lecture.assignments.exists?
     end
 
-    # Only a group that lets students leave but not join takes nobody back.
     def rejoin_note
       participation_t("rejoin_final") unless rosterable.config_allow_self_add?
+    end
+
+    def blockers
+      @leave.last_place_blockers
     end
 
     def participation_t(key, **)

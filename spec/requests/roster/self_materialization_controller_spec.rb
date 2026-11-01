@@ -266,9 +266,13 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           .to include(I18n.t("roster.messages.self_removed", group: tutorial.title))
       end
 
-      it "keeps the student while a result or a closed exam registration holds them" do
-        allow_any_instance_of(Rosters::LectureLeave)
-          .to receive(:last_place_blockers).and_return([:held])
+      it "keeps the student while an exam registration past its deadline holds them" do
+        campaign = create(:exam, lecture: lecture).registration_campaign
+        campaign.update_columns(status: Registration::Campaign.statuses[:closed], # rubocop:disable Rails/SkipsModelValidations
+                                registration_deadline: 1.day.ago)
+        create(:registration_user_registration, :confirmed,
+               user: user, registration_campaign: campaign,
+               registration_item: campaign.registration_items.first)
 
         delete self_remove_tutorial_path(tutorial), as: :turbo_stream
 

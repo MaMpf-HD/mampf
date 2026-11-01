@@ -100,8 +100,13 @@ class RosterParticipantsComponent < ViewComponent::Base
     campaigns_by_user.fetch(user.id, [])
   end
 
-  # The registered view of the participants tab, opened at the campaign.
-  def registered_view_path(campaign)
+  # An exam's registrations are shown on the exams tab, not in the registered
+  # view, which leaves exam campaigns out.
+  def remaining_campaign_path(campaign)
+    if campaign.registration_items.any? { |item| item.registerable_type == "Exam" }
+      return helpers.edit_lecture_path(lecture, tab: "exams")
+    end
+
     helpers.edit_lecture_path(lecture, tab: "participants", view: "registered",
                                        campaign: campaign.id)
   end
@@ -206,8 +211,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     is_assigned ? :assigned : :unassigned
   end
 
-  # Returns the groups the user is currently a member of, cohorts and exam lists
-  # included.
   def participant_groups(user)
     ids = user_memberships[user.id]
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)

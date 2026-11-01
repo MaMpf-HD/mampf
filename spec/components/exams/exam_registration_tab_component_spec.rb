@@ -334,7 +334,6 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     )
   end
 
-  # The dialog says whether the removal ends the enrollment.
   it "asks in a dialog before removing someone from the list" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)

@@ -24,7 +24,21 @@
       </div>
 
       <div class="modal-body">
-        <% if notes.any? %>
+        <% if held? %>
+          <p class="mb-1">
+            <%= t("registration.user_registration.participation.leave_held") %>
+          </p>
+
+          <ul class="mb-0">
+            <% blocker_notes.each do |note| %>
+              <li><%= note %></li>
+            <% end %>
+          </ul>
+
+          <% if contact? %>
+            <p class="mt-2 mb-0"><%= t("lecture_home.leave.contact") %></p>
+          <% end %>
+        <% elsif notes.any? %>
           <ul class="mb-0">
             <% notes.each do |note| %>
               <li><%= note %></li>
@@ -41,13 +55,15 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <%= t("buttons.cancel") %>
+          <%= t(held? ? "buttons.close" : "buttons.cancel") %>
         </button>
 
-        <%= button_to submit_label, url,
-                      method: :delete,
-                      class: "btn border-0 bg-danger-subtle text-danger-emphasis",
-                      form: { class: "d-inline" } %>
+        <% unless held? %>
+          <%= button_to submit_label, url,
+                        method: :delete,
+                        class: "btn border-0 bg-danger-subtle text-danger-emphasis",
+                        form: { class: "d-inline" } %>
+        <% end %>
       </div>
     </div>
   </div>

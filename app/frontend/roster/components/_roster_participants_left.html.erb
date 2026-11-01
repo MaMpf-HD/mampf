@@ -56,7 +56,7 @@
                   <% campaigns.each do |campaign| %>
                     <%= link_to t("roster.left.registered_for",
                                   title: campaign.student_facing_title),
-                                component.registered_view_path(campaign),
+                                component.remaining_campaign_path(campaign),
                                 class: "badge roster-group-badge",
                                 data: { turbo: false } %>
                   <% end %>

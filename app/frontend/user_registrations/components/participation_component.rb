@@ -27,8 +27,6 @@ class ParticipationComponent < ViewComponent::Base
                               switch_targets: last_group ? switch_targets_for(last_group) : [])
   end
 
-  # One dialog for each other group the student may leave; the rows' buttons
-  # open them.
   def leave_group_dialogs
     rosterables.select { |rosterable| leavable?(rosterable) && !opens_lecture_dialog?(rosterable) }
                .map { |rosterable| leave_group_dialog(rosterable) }
@@ -300,10 +298,9 @@ class ParticipationComponent < ViewComponent::Base
     end
 
     # Leaving the last group with enrollment is leaving the lecture when the
-    # student keeps no list and no registration there. When a result or a
-    # closed exam registration holds them, the lecture's dialog says why.
+    # student keeps no list and no registration there.
     def opens_lecture_dialog?(rosterable)
-      @leave.only_place?(rosterable) && (keeps_nothing? || @leave.last_place_blockers.any?)
+      @leave.only_place?(rosterable) && keeps_nothing?
     end
 
     def keeps_nothing?
@@ -327,18 +324,18 @@ class ParticipationComponent < ViewComponent::Base
       switch_targets_for(rosterable).any?
     end
 
-    # The groups the self-enrollment list on the page offers to switch to from
-    # this one.
     def switch_targets_for(rosterable)
-      @switch_offer ||= SelfEnrollmentComponent.new(lecture: @lecture, user: @user,
-                                                    rosterables: switch_targets)
-      switch_targets.select do |target|
-        !target.full? && @switch_offer.switch_from(target) == rosterable
-      end
+      switch_targets_by_source.fetch(rosterable, [])
     end
 
-    def switch_targets
-      @switch_targets ||= Array(Rosters::SelfRosterOptionsQuery.new(@lecture, @user).call)
+    # The groups the self-enrollment list on the page offers to switch to, by
+    # the group the student would switch from.
+    def switch_targets_by_source
+      @switch_targets_by_source ||= begin
+        targets = Array(Rosters::SelfRosterOptionsQuery.new(@lecture, @user).call)
+        offer = SelfEnrollmentComponent.new(lecture: @lecture, user: @user, rosterables: targets)
+        targets.reject(&:full?).group_by { |target| offer.switch_from(target) }
+      end
     end
 
     def preference_note(rosterable)

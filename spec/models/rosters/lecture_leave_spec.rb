@@ -220,6 +220,39 @@ RSpec.describe(Rosters::LectureLeave) do
     end
   end
 
+  describe "#last_place_blockers" do
+    it "names an exam registration past its deadline" do
+      leavable_tutorial.add_user_to_roster!(student)
+      campaign = exam_campaign(:closed)
+      create(:registration_user_registration, :confirmed,
+             user: student, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(leave.last_place_blockers.map(&:to_a)).to eq([[:exam_closed, "Final exam", true]])
+    end
+
+    it "names the result on a talk the student no longer gives" do
+      seminar = create(:lecture, :is_seminar, :released_for_all)
+      create(:talk, lecture: seminar, skip_campaigns: true,
+                    self_materialization_mode: :add_and_remove).add_user_to_roster!(student)
+      graded = create(:talk, lecture: seminar, title: "Groups")
+      grade!(graded)
+
+      expect(described_class.new(seminar, student).last_place_blockers.map(&:reason))
+        .to eq([:graded])
+    end
+
+    it "leaves out a group held by a campaign, which only leaving the lecture would take" do
+      leavable_tutorial.add_user_to_roster!(student)
+      hold_in_campaign(create(:cohort, :enrollment, context: lecture).tap do |cohort|
+        cohort.add_user_to_roster!(student)
+      end)
+
+      expect(leave.blockers).not_to be_empty
+      expect(leave.last_place_blockers).to be_empty
+    end
+  end
+
   describe "#campaigns_to_withdraw" do
     it "lists running registrations, an open exam registration among them" do
       lecture.add_user_to_roster!(student)

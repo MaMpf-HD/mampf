@@ -118,8 +118,6 @@ module RosterHelper
            end
   end
 
-  # Links a participant's group to its roster on the lecture's groups tab,
-  # and an exam list to the exams tab.
   def roster_group_link(group)
     lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
     path = if group.is_a?(Exam)

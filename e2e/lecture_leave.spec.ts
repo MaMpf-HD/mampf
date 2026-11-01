@@ -78,6 +78,8 @@ test.describe("leaving a course", () => {
       registration_item_id: item.id,
     });
     const { page } = student;
+    const errors: string[] = [];
+    page.on("pageerror", error => errors.push(error.message));
 
     await page.goto(`/lectures/${lecture.id}`);
     await page.getByTestId("participation-row").filter({ hasText: "Mo 10" })
@@ -92,6 +94,11 @@ test.describe("leaving a course", () => {
       .toHaveCount(0);
     await expect(new CampaignRegistrationPage(page, lecture.id).campaign("Repeaters registration"))
       .toContainText("Registered");
+
+    await expect(page.locator(".modal-backdrop")).toHaveCount(0);
+    await expect(page.locator("body")).not.toHaveClass(/modal-open/);
+    await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe("");
+    expect(errors).toEqual([]);
   });
 
   test("says why a student cannot leave alone", async ({ factory, student }) => {

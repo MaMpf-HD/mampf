@@ -65,8 +65,6 @@ module Rosters
       source == "participants"
     end
 
-    # Unticking the mail in the removal dialog sends "0"; any other request
-    # tells the person.
     def notify?
       @notify != "0"
     end
