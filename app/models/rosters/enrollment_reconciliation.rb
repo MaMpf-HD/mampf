@@ -9,7 +9,7 @@ module Rosters
   # TODO: Remove together with lib/tasks/enrollment.rake once it has run on
   # production (#1408, https://github.com/MaMpf-HD/mampf/pull/1408).
   class EnrollmentReconciliation
-    Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :with_work,
+    Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :with_results,
                      :staff, :missing, keyword_init: true)
 
     FAR_DEADLINE = 8.weeks
@@ -68,7 +68,7 @@ module Rosters
                 lists_only: CohortMembership.where(cohort: lists(lecture), user_id: ids)
                                             .distinct.count(:user_id),
                 awaiting: awaiting_ids(lecture, ids).size,
-                with_work: with_work_ids(lecture, ids).size,
+                with_results: with_results_ids(lecture, ids).size,
                 staff: (ids & staff_ids(lecture)).size,
                 missing: missing.size)
       end
@@ -76,7 +76,7 @@ module Rosters
       def row_line(row)
         line = "#{row.lecture.id} #{row.lecture.title_term_info_no_type}: #{row.without_place} " \
                "of #{row.enrolled} without a place (#{row.lists_only} on a list only, " \
-               "#{row.with_work} with work or an admission; " \
+               "#{row.with_results} with a hand-in, points, a result or an admission; " \
                "kept: #{row.awaiting} awaiting a place, #{row.staff} staff), " \
                "#{row.missing} with a place but not enrolled"
         nobody_placed?(row) ? "#{line} -- nobody has a place, left alone" : line
@@ -113,9 +113,9 @@ module Rosters
 
       # Keeps the lecture's staff, who are not its students, and whoever waits
       # in a running campaign, so that an allocation without a place for them
-      # shows them as unassigned rather than as left. Whoever has work or an
-      # admission goes too and keeps both, as when the staff take someone out
-      # of their last group.
+      # shows them as unassigned rather than as left. Whoever has a hand-in,
+      # points, a result or an admission goes too and keeps them, as when the
+      # staff take someone out of their last group.
       def removable(lecture)
         without = without_place(lecture)
         kept = staff_ids(lecture) + awaiting_ids(lecture, without.pluck(:user_id))
@@ -139,14 +139,14 @@ module Rosters
           CohortTutorJoin.where(cohort: lecture.cohorts).pluck(:tutor_id)).compact.uniq
       end
 
-      def with_work_ids(lecture, user_ids)
-        worked = Assessment::Participation.with_recorded_work.joins(:assessment)
+      def with_results_ids(lecture, user_ids)
+        graded = Assessment::Participation.with_recorded_work.joins(:assessment)
                                           .where(assessment_assessments: { lecture_id: lecture.id },
                                                  user_id: user_ids)
                                           .distinct.pluck(:user_id)
         certified = StudentPerformance::Certification.where(lecture: lecture, user_id: user_ids)
                                                      .pluck(:user_id)
-        (worked + certified).uniq
+        (graded + certified).uniq
       end
 
       def lists(lecture)
