@@ -66,7 +66,9 @@ module Rosters
 
       regs = registrations.where(user_id: user_ids)
                           .includes(registration_item: :registerable).to_a
-      preload_titles(regs.map { |r| r.registration_item.registerable })
+      registerables = regs.map { |r| r.registration_item.registerable }
+      preload_titles(registerables)
+      preload_lectures(registerables)
       regs.group_by(&:user_id).transform_values do |user_regs|
         Entry.new(campaign: @campaign, registrations: user_regs)
       end
@@ -87,6 +89,13 @@ module Rosters
           ActiveRecord::Associations::Preloader.new(records: records,
                                                     associations: association).call
         end
+      end
+
+      # A chosen group links to its roster in its lecture.
+      def preload_lectures(registerables)
+        cohorts, groups = registerables.uniq.partition { |group| group.is_a?(Cohort) }
+        ActiveRecord::Associations::Preloader.new(records: groups, associations: :lecture).call
+        ActiveRecord::Associations::Preloader.new(records: cohorts, associations: :context).call
       end
   end
 end

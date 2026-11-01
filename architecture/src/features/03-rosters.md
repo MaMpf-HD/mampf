@@ -15,16 +15,18 @@ The **Lecture Roster** (`lecture_memberships`) is the central registry for all s
 **The Golden Rule:**
 $$ \text{Current Group Members} \subseteq \text{Lecture Roster} $$
 
-More precisely, the Lecture Roster contains **all current and former group members** due to sticky membership:
-$$ \text{Lecture Roster} = \bigcup_{t \in \text{History}} \text{Members}_t(\text{Groups}) $$
+More precisely, **enrollment follows places.** A *place* is a membership that enrolls in the lecture: a **Tutorial**, a **Talk**, an **exam list**, or a **Cohort with `propagate_to_lecture: true`** (`Rosters::Rosterable#enrolls_in_lecture?`). A cohort without enrollment is a *list*, not a place. A student is enrolled exactly while they hold at least one place:
+$$ \text{Lecture Roster} = \text{Members}(\text{Places}) $$
 
 **Behavioral Invariants:**
 1.  **Upstream Propagation (Addition):**
-    When a student is added to a group that propagates (**Tutorial**, **Talk**, or **Cohort with `propagate_to_lecture: true`**), they are **automatically** added to the Lecture Roster.
-2.  **Sticky Membership (Removal from Group):**
-    When a student is removed from a sub-group, they remain on the Lecture Roster. They transition to an "Unassigned" state within the lecture context. This preserves their history and access rights during group switches.
-3.  **Cascading Deletion (Removal from Lecture):**
-  When a student is removed from the Lecture Roster through roster maintenance, they are **automatically** removed from Tutorials, Talks, and propagating Cohorts of that lecture.
+    When a student gets a place, they are **automatically** added to the Lecture Roster, and an earlier exclusion is cleared (`Lecture#ensure_roster_membership!`).
+2.  **Last Place (Removal from Group):**
+    Removing a student from a group that is not their last place takes only that group. Removing them from their last place also ends the enrollment: the lecture membership stays as an exclusion (`excluded_at`, `excluded_by`), and the student is listed under "Left". Lists and running registrations stay; the bookmark stays only while the student is still in a cohort without enrollment.
+3.  **Removal from the Lecture:**
+    When a student is removed from the lecture through roster maintenance, they lose everything there: tutorials, talks, cohorts with and without enrollment, and exam lists; their running registrations are withdrawn and the bookmark goes. The staff may keep cohorts without enrollment in the removal dialog (`keep_list_ids`), and the bookmark then stays. Points and an exam admission stay with the person and count again when they come back.
+4.  **Leaving:**
+    Students leave a lecture themselves through "Leave course" (`Rosters::LectureLeave`), which takes everything, like a removal from the lecture. Leaving their last group alone ends only the enrollment, as a removal by the staff does; lists, running registrations and also the bookmark stay, and the student is listed under "Left" as having left on their own. A result or an exam registration past its withdrawal deadline holds them in that group (`LectureLeave#last_place_blockers`). When nothing but that group ties them to the lecture, its leave button opens "Leave course" instead: leaving that group would end their part in the lecture all the same, and only the bookmark would stay. That dialog then says so and offers to switch to another group.
 
 ### Cohort Propagation
 **Cohorts** are flexible groups with configurable propagation via the `propagate_to_lecture` flag:
@@ -37,7 +39,7 @@ $$ \text{Lecture Roster} = \bigcup_{t \in \text{History}} \text{Members}_t(\text
 Propagation is implemented in roster service/concern code:
 1. **Campaign materialization:** `Rosters::Rosterable#materialize_allocation!` adds missing group members and then calls `propagate_to_lecture!(...)` for propagating groups.
 2. **Manual maintenance:** `Rosters::MaintenanceService#add_user!` and `#move_user!` call `propagate_to_lecture!(...)` after modifying a group.
-3. **Group removal:** Removing a user from a sub-group does not remove them from the lecture roster, preserving sticky membership.
+3. **Group removal:** `Rosters::MaintenanceService#remove_user!` ends the enrollment when the group was the user's last place (`Rosters::LectureLeave#only_place?`); otherwise the lecture roster stays as it is.
 
 This ensures Cohorts seamlessly integrate with the Superset Model without requiring manual service calls.
 
@@ -233,17 +235,17 @@ An admin “move/add/remove” service with capacity checks and propagation hand
 
 | Method | Description |
 |---|---|
-| `add_user!(user, rosterable, force: false)` | Adds a user to a rosterable, optionally bypassing capacity checks. |
-| `remove_user!(user, rosterable)` | Removes a user from a rosterable. |
-| `move_user!(user, from_rosterable, to_rosterable, force: false)` | Atomically moves a user between two rosterables. |
+| `add_user!(user, rosterable, ignore_capacity: false, override_rejection_in: nil)` | Adds a user to a rosterable, optionally bypassing capacity checks. |
+| `remove_user!(user, rosterable, notify: true, by: nil, keep_list_ids: [])` | Removes a user from a rosterable; from the lecture, everything there but the lists in `keep_list_ids`. |
+| `move_user!(user, from_rosterable, to_rosterable, ignore_capacity: false)` | Atomically moves a user between two rosterables. |
 
 ### Behavior Highlights
 - **Transactional:** All operations, especially `move_user!`, are performed within a database transaction to ensure atomicity.
 - **Locking:** Locks one or two rosterables in a stable order to avoid race conditions during manual changes.
-- **Capacity Enforcement:** Enforces the `capacity` of the target rosterable unless a `force: true` flag is passed.
+- **Capacity Enforcement:** Enforces the `capacity` of the target rosterable unless `ignore_capacity: true` is passed.
 - **Tutorial Uniqueness:** Prevents a user from being in multiple tutorials of the same lecture.
 - **Propagation:** Adding or moving into a propagating group also ensures lecture-roster membership.
-- **Lecture Removal Cascade:** Removing a user from the lecture roster removes them from tutorials, talks, and propagating cohorts of that lecture.
+- **Lecture Removal Cascade:** Removing a user from the lecture roster removes them from its tutorials, talks, cohorts with and without enrollment and exam lists, except the cohorts without enrollment passed as `keep_list_ids`, and withdraws their running registrations.
 - **Materialization Tracking:** Manual additions update `materialized_at` for matching registration records on items associated with the target rosterable.
 
 ### Example Implementation
@@ -253,16 +255,16 @@ module Rosters
   class MaintenanceService
     class CapacityExceededError < StandardError; end
 
-    def add_user!(user, rosterable, force: false)
+    def add_user!(user, rosterable, ignore_capacity: false)
       rosterable.with_lock do
-        add_user_without_lock!(user, rosterable, force: force)
+        add_user_without_lock!(user, rosterable, ignore_capacity: ignore_capacity)
       end
     end
 
-    def move_user!(user, from_rosterable, to_rosterable, force: false)
+    def move_user!(user, from_rosterable, to_rosterable, ignore_capacity: false)
       lock_rosterables_in_order(from_rosterable, to_rosterable) do
         remove_user_without_lock!(user, from_rosterable)
-        add_user_without_lock!(user, to_rosterable, force: force)
+        add_user_without_lock!(user, to_rosterable, ignore_capacity: ignore_capacity)
       end
     end
   end
@@ -276,7 +278,7 @@ end
   tutorial_from = Tutorial.find(1)
   tutorial_to = Tutorial.find(2)
   student = User.find(123)
-  service.move_user!(student, tutorial_from, tutorial_to, force: true)
+  service.move_user!(student, tutorial_from, tutorial_to, ignore_capacity: true)
   ```
 
 - **Adding a late-comer:** A student who missed the deadline is manually added to a tutorial.
@@ -284,7 +286,7 @@ end
   service = Rosters::MaintenanceService.new
   tutorial = Tutorial.find(5)
   student = User.find(456)
-  service.add_user!(student, tutorial, force: true)
+  service.add_user!(student, tutorial, ignore_capacity: true)
   ```
 
 - **Removing a dropout:** A student officially drops the course.
@@ -467,8 +469,8 @@ The `Lecture` model includes the `Rosters::Rosterable` concern to manage the cen
 
 #### Behavioral Notes
 - **Never Materialized Directly:** Lectures do NOT include `Registration::Registerable`. They only receive students via **Upstream Propagation** from sub-groups.
-- **Sticky Membership:** Students remain in the lecture roster even after leaving all sub-groups. Manual removal via `Rosters::MaintenanceService` is required.
-- **Cascading Deletion:** When a student is removed from the lecture roster through maintenance, they are automatically removed from tutorials, talks, and propagating cohorts of that lecture.
+- **Enrollment Follows Places:** Students stay on the lecture roster while they hold a place. Losing the last place excludes the membership (`excluded_at`) instead of deleting it, so staff can see who left and take them back through a group.
+- **Removal from the Lecture:** When a student is removed from the lecture roster through maintenance, they are removed from all its tutorials, talks, cohorts and exam lists, their running registrations are withdrawn, and the bookmark goes. The staff may keep cohorts without enrollment in the removal dialog; the bookmark then stays.
 
 #### Example Implementation
 ```ruby
@@ -542,8 +544,9 @@ erDiagram
 
 **Propagation Rules:**
 - **Tutorials & Talks:** Always propagate to Lecture roster (automatic)
+- **Exam lists:** Always propagate; an exam list is a place
 - **Cohorts:** Propagate only if `propagate_to_lecture: true` (configurable)
-- **Sticky Membership:** Removal from sub-group does NOT remove from Lecture roster
+- **Last place:** Removal from the last place ends the lecture enrollment (as an exclusion); removal from any other group leaves it
 
 ---
 
@@ -584,12 +587,12 @@ sequenceDiagram
 
     rect rgb(255, 245, 235)
     note over Admin,Lecture: Phase 2: Manual Roster Maintenance
-    Admin->>RosterService: new.move_user!(user, from, to, force: true)
+    Admin->>RosterService: new.move_user!(user, from, to, ignore_capacity: true)
     RosterService->>SubGroup: lock source and target rosterables
     RosterService->>SubGroup: remove_user_from_roster!(user)
     RosterService->>SubGroup: add_user_to_roster!(user)
     SubGroup->>Lecture: ensure_roster_membership!([user.id]) if propagates
-    note right of Lecture: Sticky membership preserved
+    note right of Lecture: Enrollment kept: the user still holds a place
     end
 ```
 

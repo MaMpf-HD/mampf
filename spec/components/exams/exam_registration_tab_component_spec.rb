@@ -333,4 +333,21 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
       I18n.t("registration.campaign.actions.reopen")
     )
   end
+
+  it "asks in a dialog before removing someone from the list" do
+    exam = create(:exam, :with_date, lecture: lecture)
+    exam.registration_campaign.update!(status: :completed)
+    student = create(:confirmed_user)
+    Rosters::MaintenanceService.new.add_user!(student, exam, ignore_capacity: true)
+
+    render_inline(described_class.new(exam: exam))
+
+    document = Nokogiri::HTML.fragment(rendered_content)
+    confirm_path = Rails.application.routes.url_helpers.confirm_remove_participant_exam_path(
+      exam, user_id: student.id
+    )
+    form = document.at_css("form[action='#{confirm_path}']")
+    expect(form["method"]).to eq("get")
+    expect(form["data-turbo-stream"]).to eq("true")
+  end
 end

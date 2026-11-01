@@ -175,7 +175,7 @@ if student_to_move_id
   # Assuming a Roster Maintenance service exists
   puts "\nRoster Maintenance:"
   puts "  Moved student #{student_to_move_id} from #{from_tut.title} to #{to_tut.title}"
-  puts "  (Student remains in lecture roster - sticky membership)"
+  puts "  (Student remains in lecture roster - the new tutorial is a place)"
 end
 
 # --- Phase 5: Coursework Assessments ---

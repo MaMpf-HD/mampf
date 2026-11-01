@@ -169,12 +169,10 @@ class RosterSidePanelComponent < ViewComponent::Base
     helpers.roster_move_member_path_template(registerable)
   end
 
-  def remove_member_path(student)
+  def confirm_remove_member_path(student)
     return unless registerable
 
-    helpers.roster_remove_member_path(
-      registerable, student, source: :panel
-    )
+    helpers.roster_confirm_remove_member_path(registerable, student)
   end
 
   def drag_controller?
