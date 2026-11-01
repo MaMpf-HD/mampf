@@ -21,6 +21,23 @@ RSpec.describe("Forum topics", type: :request) do
         .to have_attributes(topics_count: 1, posts_count: 1)
     end
 
+    # Thredded's activity job creates the same user detail when a forum page
+    # is opened; here it gets in between the form's lookup and its insert.
+    it "creates the first topic when the activity job creates the user detail meanwhile" do
+      allow(Thredded::UserDetail).to receive(:find_or_create_by!)
+        .and_wrap_original do |_original, **attributes|
+          Thredded::UserDetail.create!(attributes)
+          Thredded::UserDetail.create!(attributes)
+        end
+
+      expect do
+        post(thredded.messageboard_topics_path(forum),
+             params: { topic: { title: "Exercise 3", content: "Any hints?" } })
+      end.to change(Thredded::Topic, :count).by(1)
+
+      expect(Thredded::UserDetail.where(user: student).count).to eq(1)
+    end
+
     it "shows the form again with an error for a blank title" do
       expect do
         post(thredded.messageboard_topics_path(forum),
