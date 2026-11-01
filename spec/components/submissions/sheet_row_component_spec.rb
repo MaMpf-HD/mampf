@@ -31,7 +31,7 @@ RSpec.describe(SheetRowComponent, type: :component) do
                     # its own, so here it only has to stay out of the way.
                     submission: nil, tasks: [], partners: [],
                     points_for: nil, marked_at: nil, marked_by: nil,
-                    joinable_late?: false)
+                    joinable_late?: false, late_join_code: nil)
   end
 
   def render_state(state, **)
