@@ -193,6 +193,8 @@ Rails.application.routes.draw do
                            :destroy] do
     member do
       post "participants", action: :add_participant
+      get "participants/:user_id/confirm_remove", action: :confirm_remove_participant,
+                                                  as: :confirm_remove_participant
       delete "participants/:user_id", action: :remove_participant,
                                       as: :remove_participant
     end
@@ -395,6 +397,8 @@ Rails.application.routes.draw do
         patch "bulk_self_materialization", action: :bulk_update_self_materialization,
                                            as: :roster_bulk_update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end
@@ -1096,6 +1100,8 @@ Rails.application.routes.draw do
         patch "self_materialization", action: :update_self_materialization,
                                       as: :update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end
@@ -1147,6 +1153,8 @@ Rails.application.routes.draw do
         patch "self_materialization", action: :update_self_materialization,
                                       as: :update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end
@@ -1170,6 +1178,8 @@ Rails.application.routes.draw do
         patch "self_materialization", action: :update_self_materialization,
                                       as: :update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end

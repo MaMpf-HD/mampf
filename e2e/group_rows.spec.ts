@@ -107,7 +107,7 @@ test.describe("the group rows", () => {
       await expect(title).toHaveAttribute("aria-expanded", "true");
     });
 
-  test("show a student removed from a group as unplaced and without group",
+  test("end a student's enrollment with their last group, without counting them as unplaced",
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });
       const campaign = await factory.create("registration_campaign",
@@ -143,14 +143,21 @@ test.describe("the group rows", () => {
       await page.getByRole("tab", { name: "Groups" }).click();
       await expect(page.getByRole("button", { name: /unplaced/ })).toHaveCount(0);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
-      page.once("dialog", dialog => dialog.accept());
-      await page.getByRole("complementary", { name: "Members" })
-        .getByRole("button", { name: /from this group/ }).click();
+      const members = page.getByRole("complementary", { name: "Members" });
+      await members.getByRole("button", { name: /from this group/ }).click();
+      const dialog = page.getByRole("dialog", { name: /^Remove .* from “Mo 10”$/ });
+      await expect(dialog).toContainText("Afterwards they are no longer enrolled");
+      await dialog.getByRole("button", { name: "Remove", exact: true }).click();
 
-      await expect(page.getByRole("button", { name: /1 unplaced/ })).toBeVisible();
+      await expect(members.getByRole("button", {
+        name: `Copy email address: ${student.user.email}`,
+      })).toHaveCount(0);
+      await expect(page.getByRole("button", { name: /unplaced/ })).toHaveCount(0);
 
       await page.getByRole("tab", { name: "Participants" }).click();
-      await expect(participant).toContainText("Without group");
+      await expect(participant).toHaveCount(0);
+      await page.getByRole("link", { name: /^Left/ }).click();
+      await expect(participant).toContainText("Removed on");
     });
 
   test("move a student to another tutorial without dragging",
@@ -250,8 +257,9 @@ test.describe("the group rows", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       const panel = page.getByRole("complementary", { name: "Members" });
-      page.once("dialog", dialog => dialog.accept());
       await panel.getByRole("button", { name: /^Remove .* from this group$/ }).click();
+      await page.getByRole("dialog", { name: /^Remove .* from “Mo 10”$/ })
+        .getByRole("button", { name: "Remove", exact: true }).click();
 
       await expect(page.getByRole("listitem")
         .filter({ has: page.getByRole("heading", { name: "Mo 10", exact: true }) }))

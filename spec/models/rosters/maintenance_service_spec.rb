@@ -4,7 +4,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
   subject { described_class.new }
   let(:user) { create(:user) }
   let(:tutorial) { create(:tutorial, capacity: 1) }
-  let(:other_tutorial) { create(:tutorial, capacity: 5) }
+  let(:other_tutorial) { create(:tutorial, capacity: 5, lecture: tutorial.lecture) }
 
   describe "#add_user!" do
     context "when roster has capacity" do
@@ -24,9 +24,9 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         end.to raise_error(Rosters::MaintenanceService::CapacityExceededError)
       end
 
-      it "adds the user if force is true" do
+      it "adds the user beyond the capacity with ignore_capacity" do
         expect do
-          subject.add_user!(user, tutorial, force: true)
+          subject.add_user!(user, tutorial, ignore_capacity: true)
         end.to change { tutorial.members.count }.by(1)
       end
     end
@@ -98,13 +98,13 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
 
       it "creates a roster entry" do
         expect do
-          subject.add_user!(user, lecture, force: true)
+          subject.add_user!(user, lecture, ignore_capacity: true)
         end.to change { lecture.roster_entries.count }.by(1)
       end
 
       it "grants no access to the lecture" do
         expect do
-          subject.add_user!(user, lecture, force: true)
+          subject.add_user!(user, lecture, ignore_capacity: true)
         end.not_to(change { lecture.users.reload.count })
       end
     end
@@ -112,6 +112,20 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
 
   describe "#remove_user!" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
+
+    it "locks the group, then the lecture, and no campaign" do
+      expect(locked_models { subject.remove_user!(user, tutorial) }).to eq([Tutorial, Lecture])
+    end
+
+    it "locks the campaigns before the lecture when removing the user from the lecture" do
+      lecture = tutorial.lecture
+      lecture.add_user_to_roster!(user)
+      create(:registration_campaign, :open, campaignable: lecture)
+
+      models = locked_models { subject.remove_user!(user, lecture) }
+
+      expect(models.uniq.first(2)).to eq([Registration::Campaign, Lecture])
+    end
 
     it "removes the user from the roster" do
       expect do
@@ -153,6 +167,21 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         subject.remove_user!(user, lecture)
 
         expect(user.reload.lectures).not_to include(lecture)
+      end
+
+      it "keeps the lists the staff keep, and the bookmark with them" do
+        subject.remove_user!(user, lecture, keep_list_ids: [isolated_cohort.id])
+
+        expect(isolated_cohort.members).to include(user)
+        expect(user.reload.lectures).to include(lecture)
+        expect(lecture.members).not_to include(user)
+      end
+
+      # A cohort with enrollment is a place: keeping it would keep them enrolled.
+      it "does not keep a cohort with enrollment" do
+        subject.remove_user!(user, lecture, keep_list_ids: [propagating_cohort.id])
+
+        expect(propagating_cohort.members).not_to include(user)
       end
 
       # A finalization would otherwise put them back into a group or onto an
@@ -201,6 +230,151 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
     end
   end
 
+  describe "enrollment through groups" do
+    let(:lecture) { create(:lecture) }
+    let(:mo) { create(:tutorial, lecture: lecture) }
+    let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+    let(:staff) { create(:confirmed_user) }
+
+    before { subject.add_user!(user, mo, ignore_capacity: true) }
+
+    it "tells the user by mail about the group and the ended enrollment" do
+      expect { subject.remove_user!(user, mo) }
+        .to have_enqueued_mail(RosterNotificationMailer, :removed_from_group_email)
+        .with(a_hash_including(params: a_hash_including(recipient: user, left_lecture: true)))
+    end
+
+    it "ends the enrollment with the last group and keeps the lists" do
+      subject.add_user!(user, list, ignore_capacity: true)
+
+      expect(subject.remove_user!(user, mo, by: staff)).to eq(lecture)
+
+      expect(lecture.reload.members).not_to include(user)
+      expect(lecture.excluded_lecture_memberships.find_by(user: user).excluded_by).to eq(staff)
+      expect(list.reload.members).to include(user)
+    end
+
+    it "keeps the enrollment while the user is on an exam list" do
+      create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(user)
+
+      expect(subject.remove_user!(user, mo)).to eq(mo)
+      expect(lecture.reload.members).to include(user)
+    end
+
+    it "keeps the registrations and drops the bookmark when the last group goes" do
+      user.bookmark_lecture!(lecture)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      registration = create(:registration_user_registration, :pending,
+                            user: user, registration_campaign: campaign)
+
+      subject.remove_user!(user, mo)
+
+      expect(registration.reload).to be_persisted
+      expect(user.reload.lectures).not_to include(lecture)
+    end
+
+    it "keeps the bookmark when the last group goes while the user is on a list" do
+      user.bookmark_lecture!(lecture)
+      subject.add_user!(user, list, ignore_capacity: true)
+
+      subject.remove_user!(user, mo)
+
+      expect(user.reload.lectures).to include(lecture)
+    end
+
+    it "keeps the bookmark of a user who leaves their last group on their own" do
+      user.bookmark_lecture!(lecture)
+
+      subject.remove_user!(user, mo, by: user)
+
+      expect(user.reload.lectures).to include(lecture)
+      expect(lecture.excluded_lecture_memberships.find_by(user: user)).to be_left_by_self
+    end
+
+    it "keeps the registrations while another group remains" do
+      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), ignore_capacity: true)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      registration = create(:registration_user_registration, :pending,
+                            user: user, registration_campaign: campaign)
+
+      subject.remove_user!(user, mo)
+
+      expect(registration.reload).to be_persisted
+    end
+
+    it "locks the group, then the lecture, when the last group goes" do
+      expect(locked_models { subject.remove_user!(user, mo) }).to eq([Tutorial, Lecture])
+    end
+
+    # Removing someone's last group decides under the lecture's lock. A group
+    # joined at the same time must wait for that lock, or the removal would miss
+    # it.
+    it "locks the lecture after a group with enrollment that it adds to" do
+      cohort = create(:cohort, :enrollment, context: lecture)
+      models = locked_models { subject.add_user!(user, cohort, ignore_capacity: true) }
+
+      expect(models.index(Cohort)).to be < models.index(Lecture)
+    end
+
+    it "keeps the enrollment while another group with enrollment remains" do
+      subject.add_user!(user, create(:cohort, :enrollment, context: lecture), ignore_capacity: true)
+
+      expect(subject.remove_user!(user, mo)).to eq(mo)
+      expect(lecture.reload.members).to include(user)
+    end
+
+    it "does not count a list as a group with enrollment" do
+      subject.add_user!(user, list, ignore_capacity: true)
+
+      subject.remove_user!(user, mo)
+
+      expect(lecture.reload.members).not_to include(user)
+    end
+
+    it "removes the user from a list without touching the enrollment" do
+      subject.add_user!(user, list, ignore_capacity: true)
+
+      subject.remove_user!(user, list)
+
+      expect(lecture.reload.members).to include(user)
+    end
+
+    it "refuses to move the user from their last group onto a list" do
+      expect { subject.move_user!(user, mo, list) }
+        .to raise_error(described_class::MoveLeavesLectureError)
+      expect(mo.reload.members).to include(user)
+      expect(list.reload.members).not_to include(user)
+    end
+
+    describe "exam lists" do
+      let(:exam) { create(:exam, :without_campaign, lecture: lecture) }
+      let(:stranger) { create(:confirmed_user) }
+
+      it "take the lecture's members" do
+        expect(subject.add_user!(user, exam)).to be_present
+      end
+
+      it "enroll someone not yet in the lecture" do
+        subject.add_user!(stranger, exam)
+
+        expect(lecture.reload.members).to include(stranger)
+      end
+
+      it "end the enrollment when they were someone's last group" do
+        subject.add_user!(stranger, exam)
+
+        expect(subject.remove_user!(stranger, exam)).to eq(lecture)
+        expect(lecture.reload.members).not_to include(stranger)
+      end
+
+      it "locks the lecture after the exam" do
+        models = locked_models { subject.add_user!(user, exam) }
+
+        expect(models.index(Exam)).to be < models.index(Lecture)
+      end
+    end
+  end
+
   describe "#move_user!" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
@@ -211,8 +385,15 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
                                               .and(change { other_tutorial.members.count }.by(1))
     end
 
+    it "refuses a move into another lecture" do
+      elsewhere = create(:tutorial)
+
+      expect { subject.move_user!(user, tutorial, elsewhere) }.to raise_error(ArgumentError)
+      expect(tutorial.members).to include(user)
+    end
+
     context "when target roster is full" do
-      let(:full_tutorial) { create(:tutorial, capacity: 0) }
+      let(:full_tutorial) { create(:tutorial, capacity: 0, lecture: tutorial.lecture) }
 
       it "raises CapacityExceededError and does not remove user from source" do
         expect do
@@ -253,7 +434,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       shared_examples "a move without effect" do
         it "leaves both rosters untouched" do
           expect do
-            subject.move_user!(user, source, target, force: true)
+            subject.move_user!(user, source, target, ignore_capacity: true)
           end.not_to(change do
             [source.roster_entries.reload.count, target.roster_entries.reload.count]
           end)
@@ -261,7 +442,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
 
         it "sends no notification and reports failure" do
           expect do
-            expect(subject.move_user!(user, source, target, force: true)).to be(false)
+            expect(subject.move_user!(user, source, target, ignore_capacity: true)).to be(false)
           end.not_to have_enqueued_mail(RosterNotificationMailer, :moved_between_groups_email)
         end
       end
@@ -271,8 +452,8 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:target) { cohort_b }
 
         before do
-          subject.add_user!(user, cohort_a, force: true)
-          subject.add_user!(user, cohort_b, force: true)
+          subject.add_user!(user, cohort_a, ignore_capacity: true)
+          subject.add_user!(user, cohort_b, ignore_capacity: true)
         end
 
         it_behaves_like "a move without effect"
@@ -282,7 +463,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:source) { cohort_a }
         let(:target) { cohort_b }
 
-        before { subject.add_user!(user, cohort_b, force: true) }
+        before { subject.add_user!(user, cohort_b, ignore_capacity: true) }
 
         it_behaves_like "a move without effect"
       end
@@ -291,7 +472,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:source) { cohort_a }
         let(:target) { cohort_a }
 
-        before { subject.add_user!(user, cohort_a, force: true) }
+        before { subject.add_user!(user, cohort_a, ignore_capacity: true) }
 
         it_behaves_like "a move without effect"
       end
@@ -302,15 +483,15 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:tutorial_of_lecture) { create(:tutorial, lecture: lecture) }
 
         before do
-          subject.add_user!(user, tutorial_of_lecture, force: true)
-          subject.add_user!(user, cohort_b, force: true)
+          subject.add_user!(user, tutorial_of_lecture, ignore_capacity: true)
+          subject.add_user!(user, cohort_b, ignore_capacity: true)
         end
 
         it_behaves_like "a move without effect"
 
         it "keeps the user in the subgroups of the lecture" do
           expect do
-            subject.move_user!(user, lecture, cohort_b, force: true)
+            subject.move_user!(user, lecture, cohort_b, ignore_capacity: true)
           end.not_to(change { tutorial_of_lecture.roster_entries.reload.count })
         end
       end
@@ -322,13 +503,14 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
 
         before do
-          subject.add_user!(user, tutorial_of_lecture, force: true)
-          subject.add_user!(user, list, force: true)
+          subject.add_user!(user, tutorial_of_lecture, ignore_capacity: true)
+          subject.add_user!(user, list, ignore_capacity: true)
         end
 
         it "moves out of that group and keeps the enrollment and the lists" do
-          expect(subject.move_user!(user, lecture, other_tutorial_of_lecture, force: true))
-            .to be(true)
+          moved = subject.move_user!(user, lecture, other_tutorial_of_lecture,
+                                     ignore_capacity: true)
+          expect(moved).to be(true)
 
           expect(other_tutorial_of_lecture.members).to include(user)
           expect(tutorial_of_lecture.members).not_to include(user)

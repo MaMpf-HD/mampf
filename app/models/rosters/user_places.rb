@@ -56,13 +56,25 @@ module Rosters
     # new allocation can still give them a place. Locks each campaign first,
     # like allocation and finalization do.
     def withdraw_registrations!(lectures)
-      withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
+      campaigns_to_withdraw(lectures).order(:id).each do |campaign|
         campaign.lock!
         next unless campaign.running?
 
         campaign.user_registrations.where(user: @user).find_each(&:destroy!)
       end
       dismiss_rejections!(lectures)
+    end
+
+    # Locks the campaigns #withdraw_registrations! would touch, for callers that
+    # decide only later, under further locks, whether to withdraw at all.
+    def lock_campaigns!(lectures)
+      campaigns_to_withdraw(lectures).order(:id).lock.load
+    end
+
+    # The running campaigns of the given lectures #withdraw_registrations!
+    # takes the user out of, for a dialog to name them beforehand.
+    def campaigns_to_withdraw(lectures)
+      withdrawable_campaigns.where(campaignable: lectures)
     end
 
     private
@@ -90,9 +102,13 @@ module Rosters
                                       .find_each(&:dismiss!)
       end
 
+      # Locks all groups first and the lectures last, like LectureLeave.
+      # Removing the groups one at a time would not do: each removal locks the
+      # lecture, so the lecture would be locked before the next group.
       def leave_rosters!(lectures)
         service = MaintenanceService.new
         named = rosterables.select { |rosterable| rosterable.lecture.in?(lectures) }
+        named.each(&:lock!)
         groups, lecture_rosters = named.partition { |rosterable| !rosterable.is_a?(Lecture) }
         (groups + lecture_rosters).each do |rosterable|
           service.remove_user!(@user, rosterable, notify: false, by: @user)
@@ -115,8 +131,10 @@ module Rosters
                 .order(:id).to_a +
           Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).order(:id).to_a +
           Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).order(:id).to_a +
-          Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id)).to_a +
-          Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id)).to_a
+          Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id))
+              .order(:id).to_a +
+          Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id))
+                 .order(:id).to_a
       end
 
       # A cohort outside a lecture names no lecture to give up, so it is not a

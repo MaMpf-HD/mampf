@@ -220,6 +220,39 @@ RSpec.describe(Rosters::LectureLeave) do
     end
   end
 
+  describe "#last_place_blockers" do
+    it "names an exam registration past its deadline" do
+      leavable_tutorial.add_user_to_roster!(student)
+      campaign = exam_campaign(:closed)
+      create(:registration_user_registration, :confirmed,
+             user: student, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(leave.last_place_blockers.map(&:to_a)).to eq([[:exam_closed, "Final exam", true]])
+    end
+
+    it "names the result on a talk the student no longer gives" do
+      seminar = create(:lecture, :is_seminar, :released_for_all)
+      create(:talk, lecture: seminar, skip_campaigns: true,
+                    self_materialization_mode: :add_and_remove).add_user_to_roster!(student)
+      graded = create(:talk, lecture: seminar, title: "Groups")
+      grade!(graded)
+
+      expect(described_class.new(seminar, student).last_place_blockers.map(&:reason))
+        .to eq([:graded])
+    end
+
+    it "leaves out a group held by a campaign, which only leaving the lecture would take" do
+      leavable_tutorial.add_user_to_roster!(student)
+      hold_in_campaign(create(:cohort, :enrollment, context: lecture).tap do |cohort|
+        cohort.add_user_to_roster!(student)
+      end)
+
+      expect(leave.blockers).not_to be_empty
+      expect(leave.last_place_blockers).to be_empty
+    end
+  end
+
   describe "#campaigns_to_withdraw" do
     it "lists running registrations, an open exam registration among them" do
       lecture.add_user_to_roster!(student)
@@ -233,6 +266,40 @@ RSpec.describe(Rosters::LectureLeave) do
 
       expect(leave.campaigns_to_withdraw).to contain_exactly(tutorials, exam)
       expect(leave.blockers).to be_empty
+    end
+  end
+
+  describe "#only_place?" do
+    let(:mo) { leavable_tutorial }
+    let(:list) { create(:cohort, context: lecture, propagate_to_lecture: false) }
+
+    before do
+      lecture.add_user_to_roster!(student)
+      mo.add_user_to_roster!(student)
+    end
+
+    it "is true for the last group with enrollment, even beside a list" do
+      list.add_user_to_roster!(student)
+
+      expect(described_class.new(lecture, student).only_place?(mo)).to be(true)
+      expect(described_class.new(lecture, student).only_place?(list)).to be(false)
+    end
+
+    it "is false while another group with enrollment remains" do
+      create(:cohort, :enrollment, context: lecture).add_user_to_roster!(student)
+
+      expect(described_class.new(lecture, student).only_place?(mo)).to be(false)
+    end
+
+    it "agrees with only_place_user_ids for a whole roster" do
+      other = create(:confirmed_user)
+      lecture.add_user_to_roster!(other)
+      mo.add_user_to_roster!(other)
+      create(:cohort, :enrollment, context: lecture).add_user_to_roster!(other)
+
+      expect(described_class.only_place_user_ids(mo, [student.id, other.id]))
+        .to contain_exactly(student.id)
+      expect(described_class.only_place_user_ids(list, [student.id])).to be_empty
     end
   end
 
@@ -327,28 +394,36 @@ RSpec.describe(Rosters::LectureLeave) do
     end
 
     it "locks the groups before the lecture, and the lecture before any membership goes" do
-      statements = []
-      record = lambda do |*, payload|
-        sql = payload[:sql]
-        statements << "lock #{sql[/FROM "(\w+)"/, 1]}" if sql.include?("FOR UPDATE")
-        statements << "delete #{sql[/DELETE FROM "(\w+)"/, 1]}" if sql.start_with?("DELETE")
+      membership_at_lock = nil
+      allow(lecture).to receive(:lock!).and_wrap_original do |original, *args|
+        membership_at_lock = TutorialMembership.exists?(user: student)
+        original.call(*args)
       end
-      ActiveSupport::Notifications.subscribed(record, "sql.active_record") { leave.leave! }
 
-      expect(statements.index("lock tutorials")).to be < statements.index("lock lectures")
-      expect(statements.index("lock lectures"))
-        .to be < statements.index("delete tutorial_memberships")
+      models = locked_models { leave.leave! }
+
+      expect(models.index(Tutorial)).to be < models.index(Lecture)
+      expect(membership_at_lock).to be(true)
     end
 
     it "locks a tutorial before a cohort, as the bulk self-service setting does" do
       create(:cohort, context: lecture, skip_campaigns: true).add_user_to_roster!(student)
-      tables = []
-      record = lambda do |*, payload|
-        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
-      end
-      ActiveSupport::Notifications.subscribed(record, "sql.active_record") { leave.leave! }
 
-      expect(tables.index("tutorials")).to be < tables.index("cohorts")
+      models = locked_models { leave.leave! }
+
+      expect(models.index(Tutorial)).to be < models.index(Cohort)
+    end
+
+    it "locks an exam the student is listed for before the lecture" do
+      create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(student)
+
+      models = locked_models do
+        leave.leave!
+      rescue described_class::NotAllowedError
+        nil
+      end
+
+      expect(models.index(Exam)).to be < models.index(Lecture)
     end
 
     it "refuses rather than fails when a grade arrives while leaving" do
