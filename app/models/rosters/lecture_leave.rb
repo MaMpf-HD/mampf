@@ -2,7 +2,7 @@ module Rosters
   class LectureLeave
     Blocker = Struct.new(:reason, :title, :staff_can_help)
 
-    GROUP_LOCK_ORDER = ["Tutorial", "Cohort", "Talk"].freeze
+    GROUP_LOCK_ORDER = ["Tutorial", "Cohort", "Talk", "Exam"].freeze
 
     class NotAllowedError < StandardError; end
     class NotParticipatingError < StandardError; end
@@ -127,14 +127,15 @@ module Rosters
 
       # Locks the lecture's unfinished campaigns first, drafts included: a draft
       # opened meanwhile could take a new registration from the student that
-      # leaving would miss. Then the groups, then the lecture, in the order
-      # allocation and the staff's removal use.
+      # leaving would miss. Then the groups and exams, then the lecture, in the
+      # order allocation and the staff's removal use.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)
                               .order(:id).lock.load
-        groups.sort_by { |group| [GROUP_LOCK_ORDER.index(group.class.name), group.id] }
-              .each(&:lock!)
+        (groups + exam_entries.map(&:exam))
+          .sort_by { |group| [GROUP_LOCK_ORDER.index(group.class.name), group.id] }
+          .each(&:lock!)
         @lecture.lock!
       end
 

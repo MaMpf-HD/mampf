@@ -125,7 +125,8 @@ module Rosters
                 .order(:id).to_a +
           Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).order(:id).to_a +
           Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).order(:id).to_a +
-          Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id)).to_a +
+          Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id))
+              .order(:id).to_a +
           Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id))
                  .order(:id).to_a
       end

@@ -27,32 +27,32 @@ module Rosters
     # notify: false, since the mail job is enqueued even if that transaction
     # rolls back.
     #
-    # Someone who loses their last group that enrolls them also leaves the
-    # lecture, and their registrations there are withdrawn. Returns the roster
-    # they were taken off (the lecture in that case), or nil.
+    # Removal from the lecture takes everything there: groups, lists, running
+    # registrations and the bookmark. Removal from the last group that enrolls
+    # the user takes only the enrollment along; lists, registrations and the
+    # bookmark stay. Returns the roster the user was taken off (the lecture,
+    # when the enrollment ended), or nil.
     #
-    # Locks the campaigns, then the group, then the lecture, as finalization and
-    # leaving do. The campaigns are locked even if the user seems to keep
-    # another group: that is only certain under the group's lock, and locking
-    # the campaigns only after the group would break that order. A caller that
-    # locks the group itself must lock the campaigns first (see
-    # SelfMaterializationService#self_remove!).
+    # Locks the group, then the lecture; removal from the lecture locks the
+    # campaigns first, as finalization does, since it withdraws registrations.
     def remove_user!(user, rosterable, notify: true, by: nil)
       lecture = rosterable.lecture if rosterable.is_a?(Lecture) || rosterable.enrolls_in_lecture?
       places = UserPlaces.new(user)
       left = ActiveRecord::Base.transaction do
-        places.lock_campaigns!([lecture]) if lecture
+        places.lock_campaigns!([lecture]) if rosterable.is_a?(Lecture)
         rosterable.lock!
         lecture&.lock!
         leaving = lecture.present? && leaves_lecture?(user, rosterable, lecture)
         also_leaves_lecture = leaving && lecture != rosterable
         ensure_no_grading_data!(user, rosterable)
-        ensure_no_grading_data!(user, lecture) if also_leaves_lecture
         next unless remove_user_without_lock!(user, rosterable, by: by)
         next rosterable unless leaving
 
-        remove_user_without_lock!(user, lecture, by: by) if also_leaves_lecture
-        places.withdraw_registrations!([lecture])
+        if also_leaves_lecture
+          lecture.remove_user_from_roster!(user, by: by)
+        else
+          places.withdraw_registrations!([lecture])
+        end
         lecture
       end
       RosterNotificationMailer.removed(user, left) if left && notify

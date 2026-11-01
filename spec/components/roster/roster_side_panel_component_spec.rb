@@ -686,13 +686,13 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
       mo.add_user_to_roster!(student)
     end
 
-    it "says that the last place takes the lecture along" do
+    it "says that removal from the last group ends the enrollment" do
       expect(panel.remove_confirmation(student))
         .to eq(I18n.t("roster.warnings.confirm_kick_from_only_group"))
     end
 
     # The exam list keeps them in the lecture.
-    it "asks as before while the person is on an exam list" do
+    it "asks the usual question while the person is on an exam list" do
       create(:exam, :without_campaign, lecture: lecture, title: "Final")
         .add_user_to_roster!(student)
 
@@ -700,7 +700,7 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
         .to eq(I18n.t("roster.warnings.confirm_kick_from_group"))
     end
 
-    it "asks as before while another place remains" do
+    it "asks the usual question while another group with enrollment remains" do
       create(:cohort, :enrollment, context: lecture).add_user_to_roster!(student)
 
       expect(panel.remove_confirmation(student))

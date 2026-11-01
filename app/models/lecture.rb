@@ -1159,7 +1159,7 @@ class Lecture < ApplicationRecord
 
   # Tutorials, talks and cohorts with enrollment: the groups through which the
   # staff can take someone back into the lecture.
-  def enrolling_groups
+  def readmission_groups
     tutorials.to_a + talks.to_a + cohorts.select(&:enrolls_in_lecture?).sort_by(&:title)
   end
 
@@ -1194,15 +1194,21 @@ class Lecture < ApplicationRecord
     shown
   end
 
-  # One query per kind of membership that enrolls in the lecture (see
-  # Rosters::Rosterable#enrolls_in_lecture?), each selecting the members' user
-  # ids. A user appears once per such group, so counting tells how many they
-  # have. user_ids limits the queries to these users.
+  # Like group_memberships, but only the cohorts with enrollment count (see
+  # Rosters::Rosterable#enrolls_in_lecture?).
   def enrolling_memberships(user_ids = nil)
+    group_memberships(cohorts: cohorts.where(propagate_to_lecture: true), user_ids: user_ids)
+  end
+
+  # One query per kind of group membership: tutorials, talks, exam lists and
+  # the given cohorts, each selecting the members' user ids. A user appears once
+  # per group, so counting tells how many groups they have. user_ids limits the
+  # queries to these users.
+  def group_memberships(cohorts: self.cohorts, user_ids: nil)
     { TutorialMembership.where(tutorial: tutorials) => :user_id,
       SpeakerTalkJoin.where(talk: talks) => :speaker_id,
       ExamRosterEntry.active.where(exam: exams) => :user_id,
-      CohortMembership.where(cohort: cohorts.where(propagate_to_lecture: true)) => :user_id }
+      CohortMembership.where(cohort: cohorts) => :user_id }
       .map do |scope, column|
         (user_ids ? scope.where(column => user_ids) : scope).select(column)
       end

@@ -227,8 +227,8 @@ de:
           one: "1 davon ist danach in keiner Gruppe dieser Veranstaltung."
           other: "%{count} davon sind danach in keiner Gruppe dieser Veranstaltung."
         leaves_lecture:
-          one: "Für 1 davon ist es die einzige Gruppe mit Einschreibung: Diese Person wird damit aus der Veranstaltung entfernt, auch aus Gruppen ohne Einschreibung, und ihre Anmeldungen werden zurückgezogen. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert."
-          other: "Für %{count} davon ist es die einzige Gruppe mit Einschreibung: Sie werden damit aus der Veranstaltung entfernt, auch aus Gruppen ohne Einschreibung, und ihre Anmeldungen werden zurückgezogen. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert."
+          one: "Für 1 davon ist es die einzige Gruppe mit Einschreibung: Diese Person ist danach nicht mehr eingeschrieben. Gruppen ohne Einschreibung, Anmeldungen, Punkte und eine erteilte Prüfungszulassung bleiben."
+          other: "Für %{count} davon ist es die einzige Gruppe mit Einschreibung: Sie sind danach nicht mehr eingeschrieben. Gruppen ohne Einschreibung, Anmeldungen, Punkte und eine erteilte Prüfungszulassung bleiben."
         registrations: "Mitgelöscht wird, was ihr abgeschlossenes Anmeldeverfahren hinterlassen hat: %{total}, davon %{confirmed}."
         notify: "Mitglieder per Mail benachrichtigen"
         submit: "Gruppe löschen"
@@ -447,7 +447,7 @@ de:
       confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_lecture_exams: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
-      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Sie wird damit aus der Veranstaltung entfernt, auch aus Sondergruppen ohne Einschreibung; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Für einen Wechsel der Gruppe nutze „Verschieben“. Fortfahren?'
+      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Danach ist sie nicht mehr eingeschrieben; Gruppen ohne Einschreibung, laufende Anmeldungen und das Merken bleiben, ebenso Punkte und eine erteilte Prüfungszulassung. Für einen Wechsel der Gruppe nutze „Verschieben“; um die Person ganz zu entfernen, entferne sie im Reiter „Teilnehmende“ aus der Veranstaltung. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'
@@ -466,7 +466,7 @@ de:
       user_added_to: "%{user} wurde zu %{group} hinzugefügt."
       user_already_member: "%{user} ist bereits %{group} zugewiesen."
       user_removed: "%{user} erfolgreich entfernt."
-      user_removed_with_only_group: "%{user} wurde mit %{group}, der letzten Gruppe mit Einschreibung, aus der Veranstaltung entfernt."
+      user_removed_with_only_group: "%{user} wurde aus %{group} entfernt und ist damit nicht mehr in der Veranstaltung eingeschrieben; es war die letzte Gruppe mit Einschreibung."
       self_removed: "Du hast „%{group}“ verlassen."
       self_removed_still_enrolled: "Du hast „%{group}“ verlassen. In „%{lecture}“ bist Du weiterhin eingeschrieben."
     no_participants_yet: 'Noch niemand steht auf der Prüfungsliste.'

@@ -61,20 +61,19 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
       service.self_remove!
     end
 
-    it "locks the student's campaigns before the group, as the removal takes them" do
+    it "locks the group before the lecture, as the removal does" do
       lecture = create(:lecture)
       order = []
       allow(rosterable).to receive_messages(lecture: lecture, enrolls_in_lecture?: true)
       allow(rosterable).to receive(:lock!) { order << :group }
       allow(lecture).to receive(:lock!) { order << :lecture }
-      allow_any_instance_of(Rosters::UserPlaces).to receive(:lock_campaigns!) { order << :campaigns }
       allow(Rosters::LectureLeave).to receive(:new)
         .and_return(instance_double(Rosters::LectureLeave, only_place?: false))
       allow(maintenance_service).to receive(:remove_user!)
 
       service.self_remove!
 
-      expect(order).to eq([:campaigns, :group, :lecture])
+      expect(order).to eq([:group, :lecture])
     end
 
     context "when rosterable is locked" do
@@ -93,7 +92,7 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
       end
     end
 
-    context "with an enrolled student in the lecture" do
+    context "with a student enrolled in the lecture" do
       let(:lecture) { create(:lecture) }
       let(:rosterable) do
         create(:tutorial, lecture: lecture, skip_campaigns: true,
@@ -111,7 +110,7 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
         expect { service.self_remove! }.to raise_error(described_class::LastGroupError)
       end
 
-      it "lets them leave it while another place remains" do
+      it "lets them leave a group while another group with enrollment remains" do
         create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
           .add_user_to_roster!(user)
 

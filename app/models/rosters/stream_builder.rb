@@ -38,12 +38,6 @@ module Rosters
       end
     end
 
-    def row_streams(rosterables)
-      rosterables.each_with_object([]) do |rosterable, streams|
-        row_replacements_for(rosterable.reload, streams)
-      end
-    end
-
     private
 
       def participants_streams

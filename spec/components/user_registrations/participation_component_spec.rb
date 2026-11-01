@@ -482,7 +482,7 @@ RSpec.describe(ParticipationComponent, type: :component) do
         tutorial.add_user_to_roster!(user)
       end
 
-      it "offers no leave button on the last place, saying it goes with the course" do
+      it "offers no leave button for the last group and says it goes only with the course" do
         rendered = render_inline(described_class.new(lecture: lecture, user: user))
         row = rendered.css("[data-testid='participation-row']")
                       .find { |r| r.text.include?("Mo 10") }
@@ -492,7 +492,7 @@ RSpec.describe(ParticipationComponent, type: :component) do
         expect(row.css("form, button")).to be_empty
       end
 
-      it "asks as before, saying the course stays, when another place remains" do
+      it "asks for confirmation and says the course stays when another group remains" do
         create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
           .add_user_to_roster!(user)
 

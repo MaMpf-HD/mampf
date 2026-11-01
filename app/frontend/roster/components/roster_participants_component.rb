@@ -91,7 +91,7 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   def readmission_options
-    @readmission_options ||= helpers.roster_enrolling_group_options(lecture)
+    @readmission_options ||= helpers.roster_readmission_group_options(lecture)
   end
 
   def registration_entry(user)

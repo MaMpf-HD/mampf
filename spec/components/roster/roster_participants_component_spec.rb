@@ -393,7 +393,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
     before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
 
-    it "offers the groups that enroll and that the staff can add to" do
+    it "offers the groups with enrollment that the staff can add people to" do
       create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
       create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: false)
       create(:cohort, context: lecture, title: "Repeaters", propagate_to_lecture: true,
@@ -414,7 +414,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       expect(rendered.css("select")).to be_empty
     end
 
-    it "readmits nobody into a lecture without groups that enroll" do
+    it "offers no readmission in a lecture without groups with enrollment" do
       create(:cohort, context: lecture, propagate_to_lecture: false)
 
       rendered = render_inline(component)

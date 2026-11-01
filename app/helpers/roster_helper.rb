@@ -105,8 +105,8 @@ module RosterHelper
   # Select options, grouped by kind, for the groups through which the staff take
   # someone back into the lecture. Leaves out groups whose roster a registration
   # still controls (see Rosterable#locked?).
-  def roster_enrolling_group_options(lecture)
-    lecture.enrolling_groups.reject(&:locked?)
+  def roster_readmission_group_options(lecture)
+    lecture.readmission_groups.reject(&:locked?)
            .group_by { |group| group.class.model_name.human(count: 2) }
            .transform_values do |groups|
              groups.map { |group| [Rosters::LectureLeave.label(group), roster_group_key(group)] }

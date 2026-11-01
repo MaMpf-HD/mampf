@@ -276,7 +276,7 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       )
     end
 
-    it "says the lecture stays while another place remains" do
+    it "says the enrollment stays while another group remains" do
       lecture.add_user_to_roster!(user)
       create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
         .add_user_to_roster!(user)
