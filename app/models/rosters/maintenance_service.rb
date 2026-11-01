@@ -31,9 +31,10 @@ module Rosters
     # registrations and the bookmark. The staff may keep some of the lists,
     # given as keep_list_ids; the bookmark then stays too. Removal from the
     # last group that enrolls the user takes the enrollment along, and the
-    # bookmark unless the user is still in a cohort without enrollment there;
-    # lists and registrations stay. Returns the roster the user was taken off
-    # (the lecture, when the enrollment ended), or nil.
+    # bookmark unless the user is still in a cohort without enrollment there
+    # or leaves on their own (by is the user); lists and registrations stay.
+    # Returns the roster the user was taken off (the lecture, when the
+    # enrollment ended), or nil.
     #
     # Locks the group, then the lecture; removal from the lecture locks the
     # campaigns first, as finalization does, since it withdraws registrations.
@@ -53,14 +54,15 @@ module Rosters
 
         if also_leaves_lecture
           lecture.remove_user_from_roster!(user, by: by)
-          user.unbookmark_lecture!(lecture) unless on_a_list?(user, lecture)
+          user.unbookmark_lecture!(lecture) unless by == user || on_a_list?(user, lecture)
         else
           places.withdraw_registrations!([lecture])
         end
         lecture
       end
       if left && notify
-        RosterNotificationMailer.removed(user, rosterable, left_lecture: left != rosterable)
+        RosterNotificationMailer.removed(user, rosterable, left_lecture: left != rosterable,
+                                                           by_self: by == user)
       end
       left
     end

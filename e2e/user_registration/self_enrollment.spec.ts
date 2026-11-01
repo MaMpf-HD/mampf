@@ -10,7 +10,7 @@ async function openSelfEnrollment(page: Page): Promise<void> {
 }
 
 test.describe("student self-enrollment", () => {
-  test("adds the student to a self-managed tutorial they leave only with the course", async ({
+  test("adds the student to a self-managed tutorial they can leave again", async ({
     factory,
     student,
   }) => {
@@ -35,10 +35,8 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    await expect(home.participation("Self-managed Tutorial"))
-      .toContainText("you leave it only together with the course.");
     await expect(home.participation("Self-managed Tutorial")
-      .getByRole("button", { name: "Leave tutorial" })).toHaveCount(0);
+      .getByRole("button", { name: "Leave tutorial" })).toBeVisible();
   });
 
   test("lets the student leave a self-managed tutorial while another group remains", async ({
@@ -71,13 +69,11 @@ test.describe("student self-enrollment", () => {
       .click();
     await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
 
-    const asked = student.page.waitForEvent("dialog");
-    const click = home.participation("Self-managed Tutorial")
+    await home.participation("Self-managed Tutorial")
       .getByRole("button", { name: "Leave tutorial" }).click();
-    const question = await asked;
-    expect(question.message()).toContain("You stay enrolled in the course");
-    await question.accept();
-    await click;
+    const dialog = student.page.getByRole("dialog", { name: "Leave “Self-managed Tutorial”" });
+    await expect(dialog).toContainText("You stay enrolled in the course");
+    await dialog.getByRole("button", { name: "Leave tutorial" }).click();
 
     await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
     await expect(student.page.getByText("You are still enrolled in")).toBeVisible();

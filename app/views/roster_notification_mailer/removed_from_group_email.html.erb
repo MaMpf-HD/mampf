@@ -2,7 +2,9 @@
       name: @username,
       lecture_title: @lecture&.title || '',
       rosterable_title: @rosterable.title) %>
-<% if @left_lecture %>
+<% if @left_lecture && @by_self %>
+  <%= t('roster.mailer.roster_left_last_place_html', rosterable_title: @rosterable.title) %>
+<% elsif @left_lecture %>
   <%= t('roster.mailer.roster_removed_last_place_html', rosterable_title: @rosterable.title) %>
 <% else %>
   <%= t('roster.mailer.roster_removed_from_group_email_unchanged_html',

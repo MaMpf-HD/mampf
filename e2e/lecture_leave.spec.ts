@@ -1,13 +1,16 @@
 import { expect, test } from "./_support/fixtures";
 import { FactoryBot } from "./_support/factorybot";
 import { subscribeToLecture } from "./user_registration/helpers";
+import { DashboardLectureBrowsePage } from "./page-objects/dashboard_lecture_browse_page";
 
-async function enrollInTutorial(factory: FactoryBot, userId: number, mode: string) {
+async function enrollInTutorial(
+  factory: FactoryBot, userId: number, mode: string, lectureAttributes: object = {},
+) {
   const course = await factory.create("course", [], {
     title: "Linear Algebra", short_title: "LA 1",
   });
   const lecture = await factory.create("lecture", ["released_for_all"], {
-    course_id: course.id,
+    course_id: course.id, ...lectureAttributes,
   });
   await subscribeToLecture(factory, lecture, userId);
   const tutorial = await factory.create("tutorial", [], {
@@ -47,18 +50,28 @@ test.describe("leaving a course", () => {
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
-  test("offers to leave the only tutorial only with the course", async ({ factory, student }) => {
-    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
+  test("leaves the only tutorial and keeps the course bookmarked", async ({ factory, student }) => {
+    const term = await factory.create("term", ["summer", "active"], { year: 2025 });
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove", {
+      term_id: term.id,
+    });
     const { page } = student;
 
     await page.goto(`/lectures/${lecture.id}`);
-    const tutorialRow = page.getByTestId("participation-row").filter({ hasText: "Mo 10" });
-    await expect(tutorialRow).toContainText("you leave it only together with the course.");
-    await expect(tutorialRow.getByRole("button")).toHaveCount(0);
+    await page.getByTestId("participation-row").filter({ hasText: "Mo 10" })
+      .getByRole("button", { name: "Leave tutorial" }).click();
+    const dialog = page.getByRole("dialog", { name: "Leave “Mo 10”" });
+    await expect(dialog).toContainText("If you leave the group, you are no longer enrolled.");
+    await expect(dialog).toContainText("The course stays bookmarked");
+    await dialog.getByRole("button", { name: "Leave tutorial" }).click();
 
-    await page.getByRole("button", { name: "Leave course" }).click();
-    await expect(page.getByRole("dialog", { name: "Leave this course" })
-      .getByText("You leave Mo 10.")).toBeVisible();
+    await expect(page.getByText(/^You have left “Mo 10” and are no longer enrolled/))
+      .toBeVisible();
+    await expect(page.getByTestId("participation-row")).toHaveCount(0);
+    const dashboard = new DashboardLectureBrowsePage(page);
+    await dashboard.goto();
+    await expect(dashboard.dashboardCard(lecture.id)
+      .getByRole("button", { name: "Remove bookmark" })).toBeVisible();
   });
 
   test("says why a student cannot leave alone", async ({ factory, student }) => {

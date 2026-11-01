@@ -22,6 +22,13 @@ class ParticipationComponent < ViewComponent::Base
     LeaveLectureComponent.new(lecture: @lecture, leave: @leave)
   end
 
+  # One dialog for each group the student may leave; the rows' buttons open
+  # them.
+  def leave_group_dialogs
+    rosterables.select { |rosterable| leavable?(rosterable) }
+               .map { |rosterable| leave_group_dialog(rosterable) }
+  end
+
   def render?
     rows.any?
   end
@@ -70,7 +77,7 @@ class ParticipationComponent < ViewComponent::Base
         Row.new(label: helpers.roster_type_text(rosterable),
                 title: rosterable.title,
                 lines: member_lines(rosterable) + result_lines(result) +
-                       [only_group_line(rosterable)].compact,
+                       [held_line(rosterable), switch_line(rosterable)].compact,
                 badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
                 actions: leave_action(rosterable),
@@ -255,55 +262,54 @@ class ParticipationComponent < ViewComponent::Base
     end
 
     def leave_action(rosterable)
-      return unless rosterable.allow_self_remove?(@user)
-      return if only_group?(rosterable)
+      return unless leavable?(rosterable)
 
-      helpers.button_to(leave_label(rosterable),
-                        helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path",
-                                            rosterable.id),
-                        method: :delete, class: "btn btn-sm btn-outline-secondary",
-                        form: { data: { turbo_confirm: leave_confirmation(rosterable) } })
+      helpers.button_tag(t(LeaveGroupComponent.submit_key(rosterable)),
+                         type: "button", class: "btn btn-sm btn-outline-secondary",
+                         data: { bs_toggle: "modal",
+                                 bs_target: "##{leave_group_dialog(rosterable).id}" })
     end
 
-    def only_group?(rosterable)
-      @leave.only_place?(rosterable)
+    def leavable?(rosterable)
+      rosterable.allow_self_remove?(@user) && !held_in_last_group?(rosterable)
     end
 
-    def only_group_line(rosterable)
-      return unless rosterable.allow_self_remove?(@user) && only_group?(rosterable)
-
-      t("registration.user_registration.participation.only_group")
+    # A result or an exam registration past its deadline keeps the student in
+    # their last group with enrollment.
+    def held_in_last_group?(rosterable)
+      @leave.only_place?(rosterable) && @leave.last_place_blockers.any?
     end
 
-    def leave_label(rosterable)
-      kind = { Tutorial => "tutorial", Talk => "talk" }.fetch(rosterable.class, "group")
-      t("registration.user_registration.participation.leave_#{kind}")
+    def leave_group_dialog(rosterable)
+      @leave_group_dialogs ||= {}
+      @leave_group_dialogs[rosterable] ||=
+        LeaveGroupComponent.new(rosterable: rosterable, user: @user, leave: @leave)
     end
 
-    # Says whether the way back is open: a group that only lets students leave
-    # takes them back through its staff alone.
-    def leave_confirmation(rosterable)
-      notes = []
-      notes << "leave_no_sheets" if rosterable.is_a?(Tutorial)
-      notes << "leave_stays_enrolled" if @leave.enrolled?
-      [leave_confirmation_base(rosterable),
-       *notes.map { |note| t("registration.user_registration.participation.#{note}") }]
-        .join(" ")
+    def held_line(rosterable)
+      return unless rosterable.allow_self_remove?(@user) && held_in_last_group?(rosterable)
+
+      t("registration.user_registration.participation.leave_held")
     end
 
-    def leave_confirmation_base(rosterable)
-      t("registration.user_registration.participation.leave_confirm_#{rejoin_key(rosterable)}",
-        group: rosterable.title)
+    def switch_line(rosterable)
+      return unless switchable?(rosterable)
+
+      t("registration.user_registration.participation.switch_hint")
     end
 
-    def rejoin_key(rosterable)
-      if !rosterable.config_allow_self_add?
-        "final"
-      elsif rosterable.capacity
-        "while_free"
-      else
-        "rejoin"
+    # Whether the self-enrollment list on the page offers to switch from this
+    # group to another one.
+    def switchable?(rosterable)
+      @switch_offer ||= SelfEnrollmentComponent.new(lecture: @lecture, user: @user,
+                                                    rosterables: switch_targets)
+      switch_targets.any? do |target|
+        !target.full? && @switch_offer.switch_from(target) == rosterable
       end
+    end
+
+    def switch_targets
+      @switch_targets ||= Array(Rosters::SelfRosterOptionsQuery.new(@lecture, @user).call)
     end
 
     def preference_note(rosterable)

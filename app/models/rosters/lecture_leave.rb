@@ -88,6 +88,13 @@ module Rosters
                     (held_group_blockers + closed_exam_blockers + prerequisite_blockers)
     end
 
+    # What keeps the student in their last group: a result, or an exam
+    # registration past its withdrawal deadline. Leaving only that group keeps
+    # lists and registrations, so nothing else of #blockers applies.
+    def last_place_blockers
+      @last_place_blockers ||= graded_blockers.presence || closed_exam_blockers
+    end
+
     def campaigns_to_withdraw
       @campaigns_to_withdraw ||= running_campaigns.to_a - closed_exam_campaigns
     end

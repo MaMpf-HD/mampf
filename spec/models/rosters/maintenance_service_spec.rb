@@ -282,6 +282,15 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(user.reload.lectures).to include(lecture)
     end
 
+    it "keeps the bookmark of a user who leaves their last group on their own" do
+      user.bookmark_lecture!(lecture)
+
+      subject.remove_user!(user, mo, by: user)
+
+      expect(user.reload.lectures).to include(lecture)
+      expect(lecture.excluded_lecture_memberships.find_by(user: user)).to be_left_by_self
+    end
+
     it "keeps the registrations while another group remains" do
       subject.add_user!(user, create(:cohort, :enrollment, context: lecture), ignore_capacity: true)
       campaign = create(:registration_campaign, :open, campaignable: lecture)

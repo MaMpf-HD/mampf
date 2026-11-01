@@ -87,18 +87,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       expect(response).to redirect_to(edit_personal_data_path)
     end
 
-    it "keeps an enrolled student in their only group" do
-      lecture.add_user_to_roster!(user)
-      tutorial.add_user_to_roster!(user)
-
-      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
-
-      expect(CGI.unescapeHTML(response.body)).to include(
-        I18n.t("roster.errors.self_remove_last_group", group: tutorial.title)
-      )
-      expect(tutorial.reload.members).to include(user)
-    end
-
     it "updates the participation section" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
@@ -264,6 +252,46 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
 
   describe "DELETE /tutorials/:id/roster/self_remove" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
+
+    context "when the group is the student's only one with enrollment" do
+      before { lecture.add_user_to_roster!(user) }
+
+      it "ends the enrollment as left on their own and keeps the bookmark" do
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(lecture.reload.members).not_to include(user)
+        expect(lecture.excluded_lecture_memberships.find_by(user: user)).to be_left_by_self
+        expect(user.reload.lectures).to include(lecture)
+        expect(CGI.unescapeHTML(response.body)).to include(
+          I18n.t("roster.messages.self_removed_left_lecture",
+                 group: tutorial.title, lecture: lecture.title_term_info_no_type)
+        )
+      end
+
+      it "mails that the bookmark stays" do
+        perform_enqueued_jobs do
+          delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+        end
+
+        expected = I18n.with_locale(user.locale) do
+          I18n.t("roster.mailer.roster_left_last_place", rosterable_title: tutorial.title)
+        end
+        expect(ActionMailer::Base.deliveries.last.text_part.body.decoded.squish)
+          .to include(expected.squish)
+      end
+
+      it "keeps the student while a result or a closed exam registration holds them" do
+        allow_any_instance_of(Rosters::LectureLeave)
+          .to receive(:last_place_blockers).and_return([:held])
+
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(CGI.unescapeHTML(response.body)).to include(
+          I18n.t("roster.errors.self_remove_held", group: tutorial.title)
+        )
+        expect(tutorial.reload.members).to include(user)
+      end
+    end
 
     it "removes the user from the tutorial" do
       expect do

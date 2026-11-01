@@ -444,7 +444,7 @@ en:
       item_locked: "This group is managed by an active registration process and cannot be modified manually."
       switch_failed: "The switch did not work; you stay in your current group."
       self_remove_graded: "You already have a result in “%{group}”, so you cannot leave it."
-      self_remove_last_group: "“%{group}” is what keeps you in the course; you leave it only together with the course."
+      self_remove_held: "You cannot leave “%{group}” on your own right now: you already have a result here or are registered for an exam past its deadline. Please contact the lecture's staff."
       self_add_not_allowed: "Self-enrollment in this %{type} is not permitted for students."
       self_remove_not_allowed: "Self-leaving from this %{type} is not permitted for students."
       campaign_associated: "Self-enrollment is not available because this group is part of a registration process."
@@ -475,6 +475,7 @@ en:
       user_removed: "%{user} removed successfully."
       user_removed_with_only_group: "%{user} was removed from %{group} and is no longer enrolled in the lecture, as it was their last group with enrollment."
       self_removed: "You have left “%{group}”."
+      self_removed_left_lecture: "You have left “%{group}” and are no longer enrolled in “%{lecture}”."
       self_removed_still_enrolled: "You have left “%{group}”. You are still enrolled in “%{lecture}”."
     no_participants_yet: 'Nobody is on the exam roster yet.'
     registered: 'Registered'
@@ -557,6 +558,18 @@ en:
         and running registrations stay; your bookmark stays only while you are
         still in such a group. Points and any exam admission stay stored and
         count again if you come back.
+      roster_left_last_place_html: |
+        <p>
+          “%{rosterable_title}” was the last thing that enrolled you in the lecture;
+          you are therefore no longer enrolled. Flexible groups without enrollment,
+          running registrations and your bookmark stay. Points and any exam admission
+          stay stored and count again if you come back.
+        </p>
+      roster_left_last_place: |
+        “%{rosterable_title}” was the last thing that enrolled you in the lecture;
+        you are therefore no longer enrolled. Flexible groups without enrollment,
+        running registrations and your bookmark stay. Points and any exam admission
+        stay stored and count again if you come back.
       roster_removed_from_group_email_body: |
         Hello %{name},
 

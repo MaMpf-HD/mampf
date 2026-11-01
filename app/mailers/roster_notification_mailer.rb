@@ -17,8 +17,9 @@ class RosterNotificationMailer < ApplicationMailer
     end
 
     # left_lecture says that the group was the user's last place, so that the
-    # mail can tell them they are no longer enrolled.
-    def removed(user, rosterable, left_lecture: false)
+    # mail can tell them they are no longer enrolled. by_self says they left it
+    # on their own, which keeps the bookmark.
+    def removed(user, rosterable, left_lecture: false, by_self: false)
       return log_unsupported(rosterable) unless supported?(rosterable)
 
       template =
@@ -30,7 +31,8 @@ class RosterNotificationMailer < ApplicationMailer
       with(
         rosterable: rosterable,
         recipient: user,
-        left_lecture: left_lecture
+        left_lecture: left_lecture,
+        by_self: by_self
       ).public_send(template).deliver_later
     end
 
@@ -186,6 +188,7 @@ class RosterNotificationMailer < ApplicationMailer
       @rosterable      = params[:rosterable]
       @group_title     = params[:group_title] || @rosterable&.title
       @left_lecture    = params[:left_lecture]
+      @by_self         = params[:by_self]
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]
