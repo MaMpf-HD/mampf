@@ -294,9 +294,6 @@ en:
         that first.
       member_added: '%{name} is on the team now.'
       member_removed: '%{name} is no longer on the team.'
-      member_removed_team_moved: >-
-        %{name} is no longer on the team. The team is marked in %{tutorial}
-        now.
       remove_member: 'Take somebody off this team again'
       remove_member_hint: >-
         For somebody put on the team by mistake. They lose the team's points

@@ -189,7 +189,7 @@ module Assessment
 
       SubmissionGraderService.remove_member!(@submission, user, current_user)
 
-      flash.now[:notice] = member_removed_notice(user)
+      flash.now[:notice] = t("assessment.task_points.member_removed", name: user.tutorial_name)
       table = TutorialMarkingTableComponent.new(assignment: @assessable, grading_scope: table_scope)
       render turbo_stream: [turbo_stream.replace("marking-table", html: render_to_string(table)),
                             stream_flash]
@@ -305,19 +305,6 @@ module Assessment
         TutorialMembership.where(lecture_id: @lecture.id, user_id: users.map(&:id))
                           .includes(:tutorial)
                           .to_h { |membership| [membership.user_id, membership.tutorial] }
-      end
-
-      # Names the tutorial an unmarked team went to with its remaining
-      # members; without a word it would just vanish from the table.
-      # @tutorial is the one it was in before.
-      def member_removed_notice(user)
-        name = user.tutorial_name
-        if @submission.tutorial_id == @tutorial.id
-          return t("assessment.task_points.member_removed", name: name)
-        end
-
-        t("assessment.task_points.member_removed_team_moved",
-          name: name, tutorial: @submission.tutorial.title_with_tutors)
       end
 
       # The ids a page may have drawn somebody's own row under: the row's, or

@@ -111,8 +111,10 @@ module Assessment
 
       # Takes somebody a tutor put on the team off it again: the join goes, and
       # the row is left as before the addition, held by the person's own group.
-      # Who joined with the code stays. The person hears of it; the team hears
-      # of a leave as it always does.
+      # Who joined with the code stays, and the team stays in its tutorial,
+      # since points can only be entered after the grace period (see
+      # Submission#place_team!). The person hears of it; the team hears of a
+      # leave as it always does.
       def remove_member!(submission, user, scorer)
         Participation.transaction do
           submission.lock!
@@ -121,10 +123,8 @@ module Assessment
           join = submission.user_submission_joins.find_by(user: user)
           raise_if_errors!(validate_added_by_tutor(join, user))
           raise_if_errors!(validate_not_last_member(submission))
-          tutorials_before = submission.member_tutorial_ids
           join.destroy!
           clear_team_row!(submission.assignment.assessment, user, join.created_at)
-          submission.reload.place_team!(tutorials_before)
         end
         tell_of_removal(submission, user, scorer)
       rescue ActiveRecord::RecordInvalid => e

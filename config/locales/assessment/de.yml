@@ -294,9 +294,6 @@ de:
         Lösche das zuerst.
       member_added: '%{name} ist jetzt im Team.'
       member_removed: '%{name} ist nicht mehr im Team.'
-      member_removed_team_moved: >-
-        %{name} ist nicht mehr im Team. Das Team wird jetzt in %{tutorial}
-        korrigiert.
       remove_member: 'Jemanden wieder aus diesem Team nehmen'
       remove_member_hint: >-
         Für jemanden, der versehentlich aufgenommen wurde. Die Person verliert
