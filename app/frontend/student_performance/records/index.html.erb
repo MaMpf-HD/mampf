@@ -61,14 +61,14 @@
             <%= t("student_performance.records.index.all_participants") %>
           </option>
 
-          <% @lecture.tutorials.each do |tutorial| %>
+          <% @tutorials.each do |tutorial| %>
             <option
               value="<%= tutorial.id %>"
               <% if params[:tutorial_id] == tutorial.id.to_s %>
                 selected
               <% end %>
             >
-              <%= tutorial.title %>
+              <%= tutorial.title_with_tutors %>
             </option>
           <% end %>
 

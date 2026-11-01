@@ -8,10 +8,7 @@ module Dashboard
     attr_reader :user, :term
 
     def staff_lectures
-      @staff_lectures ||= lectures_of_term(
-        Lecture.where(id: user.given_lectures.select(:id))
-               .or(Lecture.where(id: user.edited_lectures.select(:id)))
-      )
+      @staff_lectures ||= lectures_of_term(staff_scope)
     end
 
     # A tutor is one before having a group: by a redeemed voucher or by
@@ -19,16 +16,7 @@ module Dashboard
     # place in the lecture too: then its card stays with the enrolled ones,
     # which carry what a student needs.
     def tutored_lectures
-      @tutored_lectures ||= lectures_of_term(
-        Lecture.where(id: user.given_tutorials.select(:lecture_id))
-               .or(Lecture.where(id: user.given_cohorts.where(context_type: "Lecture")
-                                                   .select(:context_id))
-                          .where.not(id: seated_lectures.select(:id)))
-               .or(Lecture.where(id: user.tutor_appointments.select(:lecture_id)))
-               .or(Lecture.where(id: Voucher.for_tutors
-                                            .where(id: user.redemptions.select(:voucher_id))
-                                            .select(:lecture_id)))
-      ) - staff_lectures
+      @tutored_lectures ||= lectures_of_term(tutored_scope) - staff_lectures
     end
 
     # The lectures this user holds a place in, or has an open application for
@@ -80,11 +68,35 @@ module Dashboard
       staff_lectures + tutored_lectures + enrolled_lectures + bookmarked_lectures
     end
 
+    # Any lecture that the user sees on their dashboard.
+    def lectures_of_any_term
+      staff_scope.or(tutored_scope)
+                 .or(Lecture.where(id: seated_lectures.select(:id)))
+                 .or(Lecture.where(id: user.talks.select(:lecture_id)))
+                 .or(Lecture.where(id: user.lectures.select(:id)))
+    end
+
     def lecture_activity
       @lecture_activity ||= Dashboard::LectureActivity.new(user: user, lectures: lectures)
     end
 
     private
+
+      def staff_scope
+        Lecture.where(id: user.given_lectures.select(:id))
+               .or(Lecture.where(id: user.edited_lectures.select(:id)))
+      end
+
+      def tutored_scope
+        Lecture.where(id: user.given_tutorials.select(:lecture_id))
+               .or(Lecture.where(id: user.given_cohorts.where(context_type: "Lecture")
+                                                   .select(:context_id))
+                          .where.not(id: seated_lectures.select(:id)))
+               .or(Lecture.where(id: user.tutor_appointments.select(:lecture_id)))
+               .or(Lecture.where(id: Voucher.for_tutors
+                                            .where(id: user.redemptions.select(:voucher_id))
+                                            .select(:lecture_id)))
+      end
 
       # The lectures the user holds a place in or has applied to as a student.
       def seated_lectures

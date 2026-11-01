@@ -34,6 +34,15 @@ module Assessment
         state == :missed && assessment&.requires_submission
       end
 
+      # The team's side of a late join: its code, while the reader's own row is
+      # still unmarked. Whether a partner's row is, is asked when the code arrives.
+      def late_join_code
+        return unless state == :awaiting_marks && !participation.reviewed?
+        return unless assessment.requires_submission
+
+        submission&.token
+      end
+
       # Whatever the participation carries is shown. The 0 the other states read
       # is not carried by anything - it is the statement "this sheet counts and
       # counts as nothing", and that takes something having been at stake.

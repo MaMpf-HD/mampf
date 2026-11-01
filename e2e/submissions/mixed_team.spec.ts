@@ -101,7 +101,9 @@ test.describe("a team across tutorials", () => {
       .click();
     await teamAtTuesday.getByRole("button", { name: /Monday group/ }).click();
 
-    await expect(tutor2.page.getByText("Handed over to Monday group.")).toBeVisible();
+    await expect(tutor2.page.getByText(
+      `Handed over to Monday group (${tutor.user.name_in_tutorials}).`,
+    )).toBeVisible();
     const readOnly = tuesdayTable.getByRole("row", { name: student.user.name_in_tutorials });
     await expect(readOnly.getByText(/Marked in Monday group/)).toBeVisible();
     await expect(readOnly.getByRole("spinbutton")).toBeDisabled();
@@ -189,7 +191,9 @@ test.describe("a team across tutorials", () => {
       .getByRole("row", { name: student.user.name_in_tutorials });
     await team.getByRole("button", { name: "Hand this team over to another tutorial" }).click();
     await team.getByRole("button", { name: /Tuesday group/ }).click();
-    await expect(tutor.page.getByText("Handed over to Tuesday group.")).toBeVisible();
+    await expect(tutor.page.getByText(
+      `Handed over to Tuesday group (${tutor2.user.name_in_tutorials}).`,
+    )).toBeVisible();
 
     await student2.page.reload();
     await expect(card.getByText(/Tuesday group/)).toBeVisible();
