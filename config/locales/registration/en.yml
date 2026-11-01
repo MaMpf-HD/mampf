@@ -541,6 +541,8 @@ en:
         rejoin_while_free: "You can join again while a place is free."
         rejoin_open: "You can join again."
         switch_hint: "You can switch below under “Join a group yourself”."
+        switch_prompt: "Rather switch?"
+        switch_to: "Switch to"
         preference_fulfilled: "Your %{rank} choice."
         outside_preferences: "Assigned outside your preferences."
       summary:

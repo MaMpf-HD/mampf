@@ -543,6 +543,8 @@ de:
         rejoin_while_free: "Wieder eintragen kannst Du Dich, solange ein Platz frei ist."
         rejoin_open: "Du kannst Dich wieder eintragen."
         switch_hint: "Wechseln kannst Du unten unter „Selbst eintragen“."
+        switch_prompt: "Lieber wechseln?"
+        switch_to: "Wechseln zu"
         preference_fulfilled: "Dein %{rank} Wunsch."
         outside_preferences: "Außerhalb Deiner Wünsche zugeteilt."
       summary:

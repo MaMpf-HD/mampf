@@ -501,13 +501,19 @@ RSpec.describe(ParticipationComponent, type: :component) do
       expect(dialog_text_for(:add_and_remove)).to include(participation(:rejoin_open))
     end
 
-    it "points to switching where the self-enrollment list offers it" do
+    it "points to switching where the self-enrollment list offers it, and offers it on leaving" do
       lecture.update!(released: "all")
-      create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: true,
-                        self_materialization_mode: :add_and_remove)
+      tuesday = create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: true,
+                                  self_materialization_mode: :add_and_remove)
       tutorial.add_user_to_roster!(user)
 
-      expect(row(render_participation).text.squish).to include(participation(:switch_hint))
+      rendered = render_participation
+
+      expect(row(rendered).text.squish).to include(participation(:switch_hint))
+      switch = rendered.at_css("#leave-tutorial-#{tutorial.id} .dropdown-menu form")
+      expect(switch["action"])
+        .to eq(Rails.application.routes.url_helpers.self_switch_tutorial_path(tuesday))
+      expect(switch.text.squish).to eq("Di 12")
     end
 
     context "when the student is enrolled" do

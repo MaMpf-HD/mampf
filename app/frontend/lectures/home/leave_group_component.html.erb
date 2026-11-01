@@ -10,37 +10,63 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <%= form_with url: url, method: :delete, local: true do |form| %>
-        <div class="modal-header">
-          <h5 class="modal-title" id="<%= title_id %>">
-            <%= title %>
-          </h5>
+      <div class="modal-header">
+        <h5 class="modal-title" id="<%= title_id %>">
+          <%= title %>
+        </h5>
 
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="<%= t("buttons.close") %>"
-          ></button>
-        </div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="<%= t("buttons.close") %>"
+        ></button>
+      </div>
 
-        <div class="modal-body">
-          <ul class="mb-0">
-            <% notes.each do |note| %>
-              <li><%= note %></li>
-            <% end %>
-          </ul>
-        </div>
+      <div class="modal-body">
+        <ul class="mb-0">
+          <% notes.each do |note| %>
+            <li><%= note %></li>
+          <% end %>
+        </ul>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <%= t("buttons.cancel") %>
-          </button>
+        <% if switch_targets.any? %>
+          <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+            <span><%= t("registration.user_registration.participation.switch_prompt") %></span>
 
-          <%= form.submit submit_label,
-                          class: "btn border-0 bg-danger-subtle text-danger-emphasis" %>
-        </div>
-      <% end %>
+            <div class="dropdown">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-primary dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <%= t("registration.user_registration.participation.switch_to") %>
+              </button>
+
+              <ul class="dropdown-menu">
+                <% switch_targets.each do |target| %>
+                  <li>
+                    <%= button_to target_label(target), switch_path(target),
+                                  method: :patch, class: "dropdown-item" %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <%= t("buttons.cancel") %>
+        </button>
+
+        <%= button_to submit_label, url,
+                      method: :delete,
+                      class: "btn border-0 bg-danger-subtle text-danger-emphasis",
+                      form: { class: "d-inline" } %>
+      </div>
     </div>
   </div>
 </div>

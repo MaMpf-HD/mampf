@@ -2,7 +2,7 @@
 # what a student weighs before leaving: whether they still take part, whether
 # their points stay, and whether they can join again on their own.
 class LeaveGroupComponent < ViewComponent::Base
-  attr_reader :rosterable
+  attr_reader :rosterable, :switch_targets
 
   # The participation row needs the label before this dialog renders, and a
   # component can translate only while it renders.
@@ -11,10 +11,13 @@ class LeaveGroupComponent < ViewComponent::Base
     "registration.user_registration.participation.leave_#{kind}"
   end
 
-  def initialize(rosterable:, leave:)
+  # switch_targets are the groups the student could switch to instead, which
+  # keeps them in the lecture without a gap.
+  def initialize(rosterable:, leave:, switch_targets: [])
     super()
     @rosterable = rosterable
     @leave = leave
+    @switch_targets = switch_targets
   end
 
   def id
@@ -33,6 +36,14 @@ class LeaveGroupComponent < ViewComponent::Base
 
   def url
     helpers.public_send("self_remove_#{rosterable.class.name.underscore}_path", rosterable.id)
+  end
+
+  def switch_path(target)
+    helpers.public_send("self_switch_#{target.class.name.underscore}_path", target.id)
+  end
+
+  def target_label(target)
+    Rosters::LectureLeave.label(target)
   end
 
   def notes

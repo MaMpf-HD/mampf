@@ -283,7 +283,8 @@ class ParticipationComponent < ViewComponent::Base
     def leave_group_dialog(rosterable)
       @leave_group_dialogs ||= {}
       @leave_group_dialogs[rosterable] ||=
-        LeaveGroupComponent.new(rosterable: rosterable, leave: @leave)
+        LeaveGroupComponent.new(rosterable: rosterable, leave: @leave,
+                                switch_targets: switch_targets_for(rosterable))
     end
 
     def held_line(rosterable)
@@ -298,12 +299,16 @@ class ParticipationComponent < ViewComponent::Base
       t("registration.user_registration.participation.switch_hint")
     end
 
-    # Whether the self-enrollment list on the page offers to switch from this
-    # group to another one.
     def switchable?(rosterable)
+      switch_targets_for(rosterable).any?
+    end
+
+    # The groups the self-enrollment list on the page offers to switch to from
+    # this one.
+    def switch_targets_for(rosterable)
       @switch_offer ||= SelfEnrollmentComponent.new(lecture: @lecture, user: @user,
                                                     rosterables: switch_targets)
-      switch_targets.any? do |target|
+      switch_targets.select do |target|
         !target.full? && @switch_offer.switch_from(target) == rosterable
       end
     end

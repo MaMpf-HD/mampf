@@ -191,6 +191,42 @@ test.describe("student self-enrollment", () => {
     await expect(home.participation("Monday Tutorial")).toHaveCount(0);
   });
 
+  test("switches from the dialog for leaving the tutorial", async ({ factory, student }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const current = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Monday Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: current.id,
+      user_id: student.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Friday Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    await home.participation("Monday Tutorial")
+      .getByRole("button", { name: "Leave tutorial" }).click();
+    const dialog = student.page.getByRole("dialog", { name: "Leave “Monday Tutorial”?" });
+    await dialog.getByRole("button", { name: "Switch to" }).click();
+    await dialog.getByRole("button", { name: "Friday Tutorial" }).click();
+
+    await expect(home.participation("Friday Tutorial")).toContainText("Assigned");
+    await expect(home.participation("Monday Tutorial")).toHaveCount(0);
+    await expect(dialog).toBeHidden();
+  });
+
   test("blocks joining an exclusive tutorial while stuck in an unremovable "
     + "one, but keeps a coexisting cohort joinable", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
