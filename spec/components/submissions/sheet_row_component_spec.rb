@@ -224,16 +224,15 @@ RSpec.describe(SheetRowComponent, type: :component) do
       fresh = sheet(:marked, points: 6.5)
       allow(fresh).to receive(:news?).and_return(true)
 
-      render_inline(described_class.new(sheet: fresh))
+      page = render_inline(described_class.new(sheet: fresh))
       content = rendered_content
 
       expect(content).to include("new-dot")
       expect(content).to include(I18n.t("submission.hub.news.marker"))
       expect(content).to include("id=\"news_assignment_8\"")
       expect(content).to include("action=\"/submissions/seen\"")
-      expect(content).to include(
-        "<input value=\"8\" autocomplete=\"off\" type=\"hidden\" name=\"assignment_id\" />"
-      )
+      expect(page.css("input[type='hidden'][name='assignment_id'][value='8']"))
+        .to be_present
     end
 
     it "leaves a row without news alone" do
