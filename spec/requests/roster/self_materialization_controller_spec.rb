@@ -262,24 +262,8 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
         expect(lecture.reload.members).not_to include(user)
         expect(lecture.excluded_lecture_memberships.find_by(user: user)).to be_left_by_self
         expect(user.reload.lectures).to include(lecture)
-        expect(CGI.unescapeHTML(response.body)).to include(
-          I18n.t("roster.messages.self_removed_left_lecture",
-                 group: tutorial.title, lecture: lecture.title_term_info_no_type),
-          I18n.t("roster.messages.self_removed_bookmark_hint")
-        )
-      end
-
-      # A registration keeps the card among the student's own lectures, where
-      # it has no ✕.
-      it "leaves out the dashboard hint while a registration remains" do
-        campaign = create(:registration_campaign, :open, campaignable: lecture)
-        create(:registration_user_registration, :confirmed, user: user,
-                                                            registration_campaign: campaign)
-
-        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
-
         expect(CGI.unescapeHTML(response.body))
-          .not_to include(I18n.t("roster.messages.self_removed_bookmark_hint"))
+          .to include(I18n.t("roster.messages.self_removed", group: tutorial.title))
       end
 
       it "keeps the student while a result or a closed exam registration holds them" do

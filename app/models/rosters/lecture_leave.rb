@@ -115,6 +115,10 @@ module Rosters
       end
     end
 
+    def bookmarked?
+      LectureBookmark.exists?(lecture: @lecture, user: @user)
+    end
+
     def campaigns_to_withdraw
       @campaigns_to_withdraw ||= running_campaigns.to_a - closed_exam_campaigns
     end

@@ -34,13 +34,14 @@ en:
       only_group: "“%{group}” is your only group: leaving it means leaving the course."
       consequences:
         groups: "You leave %{groups}."
-        campaigns: "Your registrations for %{campaigns} are withdrawn."
+        campaigns:
+          one: "Your registration for %{campaigns} is withdrawn."
+          other: "Your registrations for %{campaigns} are withdrawn."
         points: "Your points stay stored."
         admission: "Your exam admission stays stored."
         points_and_admission: "Your points and your exam admission stay stored."
         dashboard: "The course disappears from your dashboard, and you get no more mails from it."
         dashboard_restricted: "The course disappears from your dashboard, you get no more mails from it, and you need the pass phrase again for its materials."
-        rejoin: "You can come back through a registration, a group you can join yourself, or the lecturer."
       button: "Leave course"
       confirmation_label: "Type “%{word}” to confirm:"
       confirmation_word: "Leave"

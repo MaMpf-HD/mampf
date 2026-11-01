@@ -83,10 +83,11 @@ test.describe("leaving a course", () => {
     await page.getByTestId("participation-row").filter({ hasText: "Mo 10" })
       .getByRole("button", { name: "Leave tutorial" }).click();
     const dialog = page.getByRole("dialog", { name: "Leave “Mo 10”?" });
-    await expect(dialog).toContainText(/Your registration for “.*” stays\./);
+    await expect(dialog)
+      .toContainText(/Your registration for “.*” stays, and the course stays on your dashboard\./);
     await dialog.getByRole("button", { name: "Leave tutorial" }).click();
 
-    await expect(page.getByText(/^You have left “Mo 10” and no longer take part/)).toBeVisible();
+    await expect(page.getByText("You have left “Mo 10”.")).toBeVisible();
     await expect(page.getByTestId("participation-row").filter({ hasText: "Mo 10" }))
       .toHaveCount(0);
     await expect(new CampaignRegistrationPage(page, lecture.id).campaign("Repeaters registration"))

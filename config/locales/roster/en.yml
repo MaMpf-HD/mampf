@@ -475,8 +475,6 @@ en:
       user_removed: "%{user} removed successfully."
       user_removed_with_only_group: "%{user} was removed from %{group} and is no longer enrolled in the lecture, as it was their last group with enrollment."
       self_removed: "You have left “%{group}”."
-      self_removed_left_lecture: "You have left “%{group}” and no longer take part in “%{lecture}”."
-      self_removed_bookmark_hint: "The course stays on your dashboard; the ✕ on its card takes it off."
       self_removed_still_enrolled: "You have left “%{group}”. You are still enrolled in “%{lecture}”."
     no_participants_yet: 'Nobody is on the exam roster yet.'
     registered: 'Registered'

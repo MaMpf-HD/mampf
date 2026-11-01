@@ -35,13 +35,14 @@ de:
       only_group: "„%{group}“ ist Deine einzige Gruppe: Sie zu verlassen heißt, die Veranstaltung zu verlassen."
       consequences:
         groups: "Du verlässt %{groups}."
-        campaigns: "Deine Anmeldungen zu %{campaigns} werden zurückgezogen."
+        campaigns:
+          one: "Deine Anmeldung zu %{campaigns} wird zurückgezogen."
+          other: "Deine Anmeldungen zu %{campaigns} werden zurückgezogen."
         points: "Deine Punkte bleiben gespeichert."
         admission: "Deine Klausurzulassung bleibt gespeichert."
         points_and_admission: "Deine Punkte und Deine Klausurzulassung bleiben gespeichert."
         dashboard: "Die Veranstaltung verschwindet von Deinem Dashboard, und Mails von ihr bekommst Du nicht mehr."
         dashboard_restricted: "Die Veranstaltung verschwindet von Deinem Dashboard, Mails von ihr bekommst Du nicht mehr, und für ihre Materialien brauchst Du wieder den Zugangsschlüssel."
-        rejoin: "Zurück kommst Du über eine Anmeldung, eine Gruppe zum Selbsteintragen oder die Lehrenden."
       button: "Veranstaltung verlassen"
       confirmation_label: "Gib zum Bestätigen „%{word}“ ein:"
       confirmation_word: "Austreten"

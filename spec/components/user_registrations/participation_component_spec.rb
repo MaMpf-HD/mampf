@@ -498,13 +498,9 @@ RSpec.describe(ParticipationComponent, type: :component) do
         expect(dialog_text_for(:remove_only)).to include(participation(:rejoin_final))
       end
 
-      it "says the way back needs a free place where the group has a limit" do
+      it "says nothing about the way back where joining again is possible" do
         expect(dialog_text_for(:add_and_remove, capacity: 20))
-          .to include(participation(:rejoin_while_free))
-      end
-
-      it "says where joining again is always possible" do
-        expect(dialog_text_for(:add_and_remove)).to include(participation(:rejoin_open))
+          .not_to include(participation(:rejoin_final))
       end
     end
 
@@ -555,8 +551,9 @@ RSpec.describe(ParticipationComponent, type: :component) do
         expect(row(rendered).at_css("button")["data-bs-target"])
           .to eq("#leave-tutorial-#{tutorial.id}")
         expect(dialog_text(rendered)).to include(
-          participation(:leave_last_place_tutorial),
-          participation(:leave_keeps_registration, title: campaign.student_facing_title),
+          participation(:leave_no_sheets),
+          participation(:leave_keeps_registration_dashboard,
+                        title: campaign.student_facing_title),
           participation(:leave_points_stay)
         )
         expect(rendered.at_css("##{LeaveLectureComponent::ID}").text.squish)

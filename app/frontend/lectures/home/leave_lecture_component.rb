@@ -36,8 +36,8 @@ class LeaveLectureComponent < ViewComponent::Base
   end
 
   def consequences
-    [groups_consequence, campaigns_consequence, results_consequence, dashboard_consequence,
-     t("lecture_home.leave.consequences.rejoin")].compact
+    [groups_consequence, campaigns_consequence, results_consequence,
+     dashboard_consequence].compact
   end
 
   private
@@ -53,8 +53,9 @@ class LeaveLectureComponent < ViewComponent::Base
     def campaigns_consequence
       return if @leave.campaigns_to_withdraw.empty?
 
+      campaigns = @leave.campaigns_to_withdraw
       t("lecture_home.leave.consequences.campaigns",
-        campaigns: @leave.campaigns_to_withdraw.map(&:student_facing_title).to_sentence)
+        count: campaigns.size, campaigns: campaigns.map(&:student_facing_title).to_sentence)
     end
 
     def results_consequence

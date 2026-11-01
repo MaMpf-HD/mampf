@@ -49,44 +49,46 @@ class LeaveGroupComponent < ViewComponent::Base
       @leave.only_place?(rosterable)
     end
 
-    # Leaving the last group with enrollment ends taking part; without a
-    # tutorial, no sheet can be handed in either.
+    def tutorial?
+      rosterable.is_a?(Tutorial)
+    end
+
+    # Without a tutorial, no sheet can be handed in; leaving another group
+    # keeps an enrolled student in the lecture.
     def participation_note
-      suffix = rosterable.is_a?(Tutorial) ? "_tutorial" : ""
       if last_place?
-        participation_t("leave_last_place#{suffix}")
+        participation_t("leave_no_sheets") if tutorial?
       elsif @leave.enrolled?
-        participation_t("leave_stays#{suffix}")
+        participation_t(tutorial? ? "leave_stays_tutorial" : "leave_stays")
       end
     end
 
     # What leaving the lecture would take as well, and leaving this group does
-    # not.
+    # not. The first one also says that the lecture stays on the dashboard.
     def kept_notes
       return [] unless last_place?
 
-      @leave.running_campaigns.map do |campaign|
-        participation_t("leave_keeps_registration", title: campaign.student_facing_title)
-      end + @leave.lists.map do |list|
-        participation_t("leave_keeps_list", title: list.title)
+      kept = @leave.running_campaigns.map { |c| ["registration", c.student_facing_title] } +
+             @leave.lists.map { |list| ["list", list.title] }
+      kept.each_with_index.map do |(kind, title), index|
+        suffix = index.zero? && on_dashboard? ? "_dashboard" : ""
+        participation_t("leave_keeps_#{kind}#{suffix}", title: title)
       end
+    end
+
+    # A running registration keeps the lecture among the student's own on the
+    # dashboard, a bookmark among the bookmarked ones.
+    def on_dashboard?
+      @leave.running_campaigns.any? || @leave.bookmarked?
     end
 
     def points_note
       participation_t("leave_points_stay") if last_place? && rosterable.lecture.assignments.exists?
     end
 
-    # A group that only lets students leave takes them back through its staff
-    # alone.
+    # Only a group that lets students leave but not join takes nobody back.
     def rejoin_note
-      key = if !rosterable.config_allow_self_add?
-        "final"
-      elsif rosterable.capacity
-        "while_free"
-      else
-        "open"
-      end
-      participation_t("rejoin_#{key}")
+      participation_t("rejoin_final") unless rosterable.config_allow_self_add?
     end
 
     def participation_t(key, **)

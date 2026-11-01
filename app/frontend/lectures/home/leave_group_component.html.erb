@@ -24,11 +24,13 @@
       </div>
 
       <div class="modal-body">
-        <ul class="mb-0">
-          <% notes.each do |note| %>
-            <li><%= note %></li>
-          <% end %>
-        </ul>
+        <% if notes.any? %>
+          <ul class="mb-0">
+            <% notes.each do |note| %>
+              <li><%= note %></li>
+            <% end %>
+          </ul>
+        <% end %>
 
         <% if switch_targets.any? %>
           <div class="mt-3">
