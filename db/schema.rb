@@ -210,9 +210,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
     t.text "accepted_file_type", default: ".pdf"
     t.date "deletion_date", default: "2200-01-01", null: false
     t.integer "kind", default: 0, null: false
+    t.integer "test_week_count", default: 1, null: false
     t.index ["deadline", "deletion_date"], name: "index_assignments_on_deadline_and_deletion_date"
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
+    t.check_constraint "kind = 1 OR test_week_count = 1", name: "test_week_count_only_for_tests"
+    t.check_constraint "test_week_count >= 1", name: "test_week_count_positive"
   end
 
   create_table "chapters", force: :cascade do |t|

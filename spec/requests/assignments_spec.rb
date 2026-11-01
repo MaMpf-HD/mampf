@@ -115,7 +115,9 @@ RSpec.describe("Assignments", type: :request) do
       # no hand-in - is the model's, and the response leads to the problems.
       context "with a test" do
         # The lecture's term may lie ahead; the weeks on offer are its.
-        let(:first_week) { [lecture.begin_date, Time.zone.today].max.beginning_of_week }
+        let(:first_week) do
+          [lecture.begin_date, Time.zone.today.prev_week].max.beginning_of_week
+        end
         let(:monday) { first_week + 14 }
         let(:test_attributes) do
           valid_attributes.except(:deadline)
@@ -129,7 +131,73 @@ RSpec.describe("Assignments", type: :request) do
           weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
           expect(weeks.pluck("value")).to include(monday.iso8601)
           expect(weeks.first["value"]).to eq(first_week.iso8601)
+          counts = Nokogiri::HTML(response.body)
+                           .css("select[name='assignment[test_week_count]'] option")
+          expect(counts.map(&:text)).to eq(["1 week", "2 weeks", "3 weeks", "4 weeks",
+                                            "5 weeks", "6 weeks"])
+          expect(counts.select { |count| count["selected"] }.map(&:text)).to eq(["1 week"])
           expect(response.body).not_to include("Digital submission via MaMpf")
+        end
+
+        it "creates one lasting several weeks, due with the end of the last" do
+          post(assignments_path,
+               params: { assignment: test_attributes.merge(test_week_count: "2") },
+               as: :turbo_stream)
+
+          test = Assignment.order(:created_at).last
+          expect(test.test_week).to eq(monday)
+          expect(test.deadline).to be_within(1.second).of((monday + 13).end_of_day)
+        end
+
+        # Without a term, last week opens the list, and the form must not take
+        # it for the default.
+        it "picks this week for a new one" do
+          loose = create(:lecture, :term_independent, teacher: teacher)
+          get new_assignment_path(lecture_id: loose.id, kind: "test"), as: :turbo_stream
+
+          weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
+          expect(weeks.first["value"]).to eq(Time.zone.today.prev_week.iso8601)
+          expect(weeks.select { |week| week["selected"] }.pluck("value"))
+            .to eq([Time.zone.today.beginning_of_week.iso8601])
+        end
+
+        it "picks the term's first week for a new one while the term lies ahead" do
+          ahead = Term.find_by(year: Time.zone.today.year + 1, season: "SS") ||
+                  create(:term, year: Time.zone.today.year + 1, season: "SS")
+          later = create(:lecture, term: ahead, teacher: teacher)
+          get new_assignment_path(lecture_id: later.id, kind: "test"), as: :turbo_stream
+
+          weeks = Nokogiri::HTML(response.body).css("select[name='assignment[test_week]'] option")
+          expect(weeks.select { |week| week["selected"] }.pluck("value"))
+            .to eq([ahead.begin_date.beginning_of_week.iso8601])
+        end
+
+        it "creates one for last week, written before it was set up" do
+          last_monday = Time.zone.today.prev_week
+
+          expect do
+            post(assignments_path,
+                 params: { assignment: test_attributes.merge(test_week: last_monday.iso8601) },
+                 as: :turbo_stream)
+          end.to change(Assignment, :count).by(1)
+
+          test = Assignment.order(:created_at).last
+          expect(test.deadline).to be_within(1.second).of(last_monday.end_of_week.end_of_day)
+        end
+
+        it "refuses one for the week before last" do
+          monday = Time.zone.today.prev_week - 7
+
+          expect do
+            post(assignments_path,
+                 params: { assignment: test_attributes.merge(test_week: monday.iso8601) },
+                 as: :turbo_stream)
+          end.not_to change(Assignment, :count)
+          expect(response).to have_http_status(:unprocessable_content)
+          week = Nokogiri::HTML(response.body).at_css("select[name='assignment[test_week]']")
+          expect(week["class"]).to include("is-invalid")
+          expect(week.next_element.text)
+            .to eq("The test week can't be earlier than last week.")
         end
 
         it "creates it due with its week, taking no hand-in" do
