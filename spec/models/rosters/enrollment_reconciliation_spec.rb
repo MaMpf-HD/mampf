@@ -73,13 +73,14 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(lecture.lecture_memberships.exists?(user: limbo)).to be(false)
     end
 
-    it "keeps their list, so that they stay in its audience" do
+    it "keeps their list and the bookmark of someone still on a list" do
       list = create(:cohort, context: lecture)
       list.add_user_to_roster!(limbo)
 
       reconciliation.apply!
 
       expect(list.reload.members).to include(limbo)
+      expect(limbo.reload.lectures).to include(lecture)
     end
 
     it "leaves whoever is on an exam list alone" do

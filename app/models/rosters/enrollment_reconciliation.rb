@@ -24,15 +24,20 @@ module Rosters
     end
 
     # Excludes everyone enrolled without a group that enrolls them, with
-    # excluded_by left empty, and removes their bookmark. Their lists,
+    # excluded_by left empty. Their bookmark goes unless they are still in a
+    # flexible group without enrollment of the lecture. Their lists,
     # registrations, points and admission stay. Decides under each lecture's
     # lock, which every change to such a group takes too, so none is missed.
     # Returns how many it excluded.
     def apply!
       rows.sum do |row|
         row.lecture.with_lock do
-          removable(row.lecture).each do |membership|
+          memberships = removable(row.lecture)
+          listed = Cohort.list_titles_by_user(row.lecture, memberships.map(&:user_id))
+          memberships.each do |membership|
             membership.exclude!
+            next if listed.key?(membership.user_id)
+
             membership.user.unbookmark_lecture!(row.lecture)
           end.size
         end
