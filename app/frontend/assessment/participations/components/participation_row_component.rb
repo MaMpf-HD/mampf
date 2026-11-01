@@ -91,7 +91,8 @@ class ParticipationRowComponent < ViewComponent::Base
   # A greyed-out field needs its reason in sight, not in a tooltip.
   def locked_reason
     if elsewhere?
-      t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
+      t("assessment.grading_tutorial.held_by",
+        tutorial: @participation.tutorial.title_with_tutors)
     elsif status == :awaiting_record && can_enter_points? && !test?
       t("assessment.grading_tutorial.record_first")
     end
