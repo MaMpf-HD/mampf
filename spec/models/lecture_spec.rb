@@ -517,6 +517,24 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#readmission_groups" do
+    it "returns the tutorials and the cohorts with enrollment" do
+      lecture = create(:lecture)
+      tutorial = create(:tutorial, lecture: lecture)
+      repeaters = create(:cohort, context: lecture, propagate_to_lecture: true)
+      create(:cohort, context: lecture, propagate_to_lecture: false)
+
+      expect(lecture.readmission_groups).to eq([tutorial, repeaters])
+    end
+
+    it "returns a seminar's talks" do
+      seminar = create(:lecture, :is_seminar)
+      talk = create(:talk, lecture: seminar)
+
+      expect(seminar.readmission_groups).to eq([talk])
+    end
+  end
+
   describe "#registration_mail_recipients" do
     let(:lecture) { create(:lecture, :released_for_all) }
     let(:users) { create_list(:confirmed_user, 3) }

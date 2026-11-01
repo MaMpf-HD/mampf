@@ -16,7 +16,9 @@ class RosterNotificationMailer < ApplicationMailer
       ).public_send(added_template(rosterable)).deliver_later
     end
 
-    def removed(user, rosterable)
+    # left_lecture says that the group was the user's last place, so that the
+    # mail can tell them they are no longer enrolled.
+    def removed(user, rosterable, left_lecture: false)
       return log_unsupported(rosterable) unless supported?(rosterable)
 
       template =
@@ -27,14 +29,15 @@ class RosterNotificationMailer < ApplicationMailer
         end
       with(
         rosterable: rosterable,
-        recipient: user
+        recipient: user,
+        left_lecture: left_lecture
       ).public_send(template).deliver_later
     end
 
     # A deleted group cannot be loaded by the mail job, so its title travels
     # in its place.
-    def group_deleted(user, title:, lecture:)
-      with(group_title: title, lecture: lecture, recipient: user)
+    def group_deleted(user, title:, lecture:, left_lecture: false)
+      with(group_title: title, lecture: lecture, recipient: user, left_lecture: left_lecture)
         .group_deleted_email.deliver_later
     end
 
@@ -182,6 +185,7 @@ class RosterNotificationMailer < ApplicationMailer
     def prepare_data(params)
       @rosterable      = params[:rosterable]
       @group_title     = params[:group_title] || @rosterable&.title
+      @left_lecture    = params[:left_lecture]
       @old_rosterable  = params[:old_rosterable]
       @new_rosterable  = params[:new_rosterable]
       @recipient       = params[:recipient]

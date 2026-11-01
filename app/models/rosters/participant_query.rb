@@ -75,29 +75,9 @@ module Rosters
       end
 
       def build_unassigned_scope(base_scope)
-        tutorial_user_ids = TutorialMembership
-                            .joins(:tutorial)
-                            .where(tutorials: { lecture_id: @lecture.id })
-                            .select(:user_id)
-
-        talk_user_ids = SpeakerTalkJoin
-                        .joins(:talk)
-                        .where(talks: { lecture_id: @lecture.id })
-                        .select(:speaker_id)
-
-        cohort_user_ids = CohortMembership
-                          .joins(:cohort)
-                          .where(cohorts: {
-                                   context_id: @lecture.id,
-                                   context_type: "Lecture",
-                                   propagate_to_lecture: true
-                                 })
-                          .select(:user_id)
-
-        base_scope
-          .where.not(user_id: tutorial_user_ids)
-          .where.not(user_id: talk_user_ids)
-          .where.not(user_id: cohort_user_ids)
+        @lecture.enrolling_memberships.reduce(base_scope) do |scope, memberships|
+          scope.where.not(user_id: memberships)
+        end
       end
   end
 end

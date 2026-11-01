@@ -120,6 +120,14 @@ RSpec.describe(Rosters::UserPlaces) do
       expect(described_class.new(student).any?).to be(false)
     end
 
+    it "locks every group before the first lecture" do
+      [create(:tutorial, lecture: lecture), create(:cohort, :enrollment, context: lecture),
+       lecture].each { |rosterable| rosterable.add_user_to_roster!(student) }
+      models = locked_models { places.give_up!([lecture]) }
+
+      expect(models.index(Cohort)).to be < models.index(Lecture)
+    end
+
     it "counts a withdrawn confirmed registration off its item" do
       campaign = create(:registration_campaign, :closed, campaignable: lecture)
       registration = create(:registration_user_registration, :confirmed,

@@ -90,6 +90,31 @@ class RosterParticipantsComponent < ViewComponent::Base
     end
   end
 
+  # What someone who has left still has in the lecture: flexible groups
+  # without enrollment and running registrations.
+  def remaining_lists(user)
+    lists_by_user.fetch(user.id, [])
+  end
+
+  def remaining_campaigns(user)
+    campaigns_by_user.fetch(user.id, [])
+  end
+
+  # An exam's registrations are shown on the exams tab, not in the registered
+  # view, which leaves exam campaigns out.
+  def remaining_campaign_path(campaign)
+    if campaign.registration_items.any? { |item| item.registerable_type == "Exam" }
+      return helpers.edit_lecture_path(lecture, tab: "exams")
+    end
+
+    helpers.edit_lecture_path(lecture, tab: "participants", view: "registered",
+                                       campaign: campaign.id)
+  end
+
+  def readmission_options
+    @readmission_options ||= helpers.roster_readmission_group_options(lecture)
+  end
+
   def registration_entry(user)
     @registration_entry_by_user ||=
       Rosters::RunningRegistrations.new(lecture, campaign: campaign)
@@ -186,17 +211,9 @@ class RosterParticipantsComponent < ViewComponent::Base
     is_assigned ? :assigned : :unassigned
   end
 
-  # Returns the groups the user is currently a member of (including Cohorts)
   def participant_groups(user)
     ids = user_memberships[user.id]
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
-  end
-
-  def kick_confirmation(user)
-    exams = exam_titles_by_user[user.id]
-    return t("roster.warnings.confirm_kick_from_lecture") if exams.blank?
-
-    t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
   end
 
   def kick_blocked_by(user)
@@ -249,9 +266,14 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   private
 
-    def exam_titles_by_user
-      @exam_titles_by_user ||=
-        ExamRosterEntry.exam_titles_by_user(@lecture, participants.map(&:user_id))
+    def lists_by_user
+      @lists_by_user ||= Cohort.lists_by_user(@lecture, participants.map(&:user_id))
+    end
+
+    def campaigns_by_user
+      @campaigns_by_user ||=
+        Registration::UserRegistration.running_campaigns_by_user(@lecture,
+                                                                 participants.map(&:user_id))
     end
 
     def result_titles_by_user
@@ -273,6 +295,7 @@ class RosterParticipantsComponent < ViewComponent::Base
                                           registration_items: :registration_campaign).to_a)
           .concat(@lecture.cohorts.includes(:cohort_memberships,
                                             registration_items: :registration_campaign).to_a)
+          .concat(@lecture.exams.to_a)
           .sort_by(&:title)
     end
 
@@ -318,6 +341,10 @@ class RosterParticipantsComponent < ViewComponent::Base
                             .pluck(:user_id, :cohort_id)
                             .each { |uid, cid| map[uid].add("Cohort-#{cid}") }
           end
+
+          ExamRosterEntry.active.where(exam: @lecture.exams, user_id: user_ids)
+                         .pluck(:user_id, :exam_id)
+                         .each { |uid, eid| map[uid].add("Exam-#{eid}") }
         end
 
         map

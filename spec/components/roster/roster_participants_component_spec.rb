@@ -296,6 +296,17 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
       expect(groups).to match_array([tutorial, cohort])
     end
+
+    it "includes the exam lists the user is on" do
+      user = create(:confirmed_user)
+      exam = create(:exam, :without_campaign, lecture: lecture, title: "Final")
+      exam.add_user_to_roster!(user)
+
+      c = described_class.new(lecture: lecture, group_type: "tutorial",
+                              participants: [double(user_id: user.id, user: user)])
+
+      expect(c.participant_groups(user)).to eq([exam])
+    end
   end
 
   describe "the study program column" do
@@ -364,6 +375,102 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       rendered = render_inline(component)
 
       expect(rendered.text).to include(I18n.t("roster.outside_enrollment", count: 1))
+    end
+  end
+
+  describe "what remains for someone who has left" do
+    let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+    let(:component) do
+      described_class.new(lecture: lecture, group_type: group_type,
+                          participants: lecture.excluded_lecture_memberships, view: "left")
+    end
+    let(:remaining_cell) do
+      row = render_inline(component).css("tr").find { |tr| tr.text.include?("Lina Berg") }
+      row.css("td")[3]
+    end
+    let(:routes) { Rails.application.routes.url_helpers }
+
+    before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
+
+    it "links the flexible groups without enrollment and the running registrations" do
+      waitlist = create(:cohort, context: lecture, title: "Warteliste Di")
+      waitlist.add_user_to_roster!(former)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending, user: former,
+                                                        registration_campaign: campaign)
+
+      badges = remaining_cell.css("a.badge").map { |link| [link.text.strip, link["href"]] }
+
+      expect(badges).to eq(
+        [["Warteliste Di",
+          routes.edit_lecture_path(lecture, tab: "groups", open_roster: "Cohort-#{waitlist.id}")],
+         [I18n.t("roster.left.registered_for", title: campaign.student_facing_title),
+          routes.edit_lecture_path(lecture, tab: "participants", view: "registered",
+                                            campaign: campaign.id)]]
+      )
+    end
+
+    # The registered view leaves exam campaigns out.
+    it "links an exam registration to the exams tab" do
+      exam_campaign = create(:exam, lecture: lecture).registration_campaign
+      exam_campaign.update_columns(status: Registration::Campaign.statuses[:open], # rubocop:disable Rails/SkipsModelValidations
+                                   registration_deadline: 1.week.from_now)
+      create(:registration_user_registration, :pending,
+             user: former, registration_campaign: exam_campaign,
+             registration_item: exam_campaign.registration_items.first)
+
+      expect(remaining_cell.at_css("a.badge")["href"])
+        .to eq(routes.edit_lecture_path(lecture, tab: "exams"))
+    end
+
+    it "shows a dash when nothing remains" do
+      expect(remaining_cell.text.strip).to eq("–")
+    end
+  end
+
+  describe "readmitting someone who has left" do
+    let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+    let(:participants) { lecture.excluded_lecture_memberships }
+    let(:component) do
+      lecture.reload
+      described_class.new(lecture: lecture, group_type: group_type,
+                          participants: participants, view: "left")
+    end
+    let(:group_select) do
+      label = I18n.t("roster.left.group_for", user: "Lina Berg")
+      render_inline(component).at_css("select[aria-label='#{label}']")
+    end
+
+    before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
+
+    it "offers the groups with enrollment that the staff can add people to" do
+      create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
+      create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: false)
+      create(:cohort, context: lecture, title: "Repeaters", propagate_to_lecture: true,
+                      skip_campaigns: true)
+      create(:cohort, context: lecture, title: "Waitlist", propagate_to_lecture: false)
+
+      expect(group_select.css("option").map(&:text))
+        .to eq([I18n.t("roster.left.choose_group"), "Mo 10", "Repeaters"])
+      expect(group_select["required"]).to be_present
+    end
+
+    it "says why nobody can be readmitted while a registration process manages every group" do
+      create(:tutorial, lecture: lecture, skip_campaigns: false)
+
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.left.no_open_group"))
+      expect(rendered.css("select")).to be_empty
+    end
+
+    it "offers no readmission in a lecture without groups with enrollment" do
+      create(:cohort, context: lecture, propagate_to_lecture: false)
+
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.left.no_open_group"))
+      expect(rendered.css("form[action$='/roster/members']")).to be_empty
     end
   end
 

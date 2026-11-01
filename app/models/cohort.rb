@@ -15,6 +15,15 @@ class Cohort < ApplicationRecord
     where(context_type: "Lecture", context_id: lectures)
   }
 
+  def self.lists_by_user(lecture, user_ids)
+    CohortMembership.joins(:cohort).preload(cohort: :context)
+                    .merge(where(context: lecture, propagate_to_lecture: false))
+                    .where(user_id: user_ids)
+                    .order(arel_table[:title])
+                    .group_by(&:user_id)
+                    .transform_values { |memberships| memberships.map(&:cohort) }
+  end
+
   attr_readonly :propagate_to_lecture
 
   validates :title, presence: true,
@@ -47,34 +56,48 @@ class Cohort < ApplicationRecord
     false
   end
 
-  # Members do not block deleting a cohort, only a campaign that is not
-  # completed does; the lecture keeps whom the cohort enrolled.
+  FormerMembership = Struct.new(:users, :left_lecture_ids)
+
   def destruction_blockers_with_members
     destruction_blockers - [:roster_not_empty]
   end
 
-  # Deletes the cohort together with its memberships. Returns the former
-  # members, or nil when a campaign still holds the cohort.
-  def destroy_with_members
-    with_lock do
-      former_members = members.to_a
+  # Deletes the cohort with its memberships; members for whom it was the last
+  # group with enrollment are no longer enrolled. Returns a FormerMembership,
+  # or nil while a campaign that is not completed still contains the cohort.
+  def destroy_with_members(by: nil)
+    transaction do
+      lock!
+      lecture&.lock!
+      users = members.to_a
+      left_ids = leave_lecture!(users, by)
       cohort_memberships.destroy_all
       raise(ActiveRecord::Rollback) unless destroy
 
-      former_members
+      FormerMembership.new(users, left_ids)
     end
   end
 
-  # Members in no tutorial, talk or other cohort of the lecture, whom
-  # deleting the cohort leaves without a group.
+  # Members for whom this cohort is the last group with enrollment, so that
+  # deleting it ends their enrollment.
+  def member_ids_leaving_the_lecture
+    Rosters::LectureLeave.only_place_user_ids(self, cohort_memberships.pluck(:user_id))
+  end
+
   def members_without_other_group
     return members unless lecture
 
-    members.where.not(id: TutorialMembership.where(tutorial: Tutorial.where(lecture: lecture))
-                                            .select(:user_id))
-           .where.not(id: SpeakerTalkJoin.where(talk: Talk.where(lecture: lecture))
-                                         .select(:speaker_id))
-           .where.not(id: CohortMembership.where(cohort: lecture.cohorts.where.not(id: id))
-                                          .select(:user_id))
+    lecture.group_memberships(cohorts: lecture.cohorts.where.not(id: id))
+           .reduce(members) { |scope, memberships| scope.where.not(id: memberships) }
   end
+
+  private
+
+    def leave_lecture!(users, by)
+      left_ids = member_ids_leaving_the_lecture
+      service = Rosters::MaintenanceService.new
+      users.select { |user| user.id.in?(left_ids) }
+           .each { |user| service.remove_user!(user, self, notify: false, by: by) }
+      left_ids
+    end
 end
