@@ -87,18 +87,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       expect(response).to redirect_to(edit_personal_data_path)
     end
 
-    it "keeps an enrolled student in their only group" do
-      lecture.add_user_to_roster!(user)
-      tutorial.add_user_to_roster!(user)
-
-      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
-
-      expect(CGI.unescapeHTML(response.body)).to include(
-        I18n.t("roster.errors.self_remove_last_group", group: tutorial.title)
-      )
-      expect(tutorial.reload.members).to include(user)
-    end
-
     it "updates the participation section" do
       post self_add_tutorial_path(tutorial), as: :turbo_stream
 
@@ -265,6 +253,32 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
   describe "DELETE /tutorials/:id/roster/self_remove" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
+    context "when the group is the student's only one with enrollment" do
+      before { lecture.add_user_to_roster!(user) }
+
+      it "ends the enrollment as left on their own and keeps the bookmark" do
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(lecture.reload.members).not_to include(user)
+        expect(lecture.excluded_lecture_memberships.find_by(user: user)).to be_left_by_self
+        expect(user.reload.lectures).to include(lecture)
+        expect(CGI.unescapeHTML(response.body))
+          .to include(I18n.t("roster.messages.self_removed", group: tutorial.title))
+      end
+
+      it "keeps the student while a result or a closed exam registration holds them" do
+        allow_any_instance_of(Rosters::LectureLeave)
+          .to receive(:last_place_blockers).and_return([:held])
+
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(CGI.unescapeHTML(response.body)).to include(
+          I18n.t("roster.errors.self_remove_held", group: tutorial.title)
+        )
+        expect(tutorial.reload.members).to include(user)
+      end
+    end
+
     it "removes the user from the tutorial" do
       expect do
         delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
@@ -374,21 +388,14 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       end
     end
 
-    context "when self-remove succeeds and should send email" do
-      it "sends an email" do
-        perform_enqueued_jobs do
-          expect do
-            delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
-          end.to change { ActionMailer::Base.deliveries.count }.by(1)
-        end
-        email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(user.locale) do
-          I18n.t("roster.mailer.roster_removed_from_group_email_subject",
-                 rosterable_title: tutorial.title,
-                 lecture_title: lecture.title)
-        end
-        expect(email.subject).to eq(expected_subject)
+    # The student did it themselves and sees it on the page.
+    it "sends no email" do
+      perform_enqueued_jobs do
+        expect do
+          delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
+      expect(tutorial.reload.members).not_to include(user)
     end
   end
 end

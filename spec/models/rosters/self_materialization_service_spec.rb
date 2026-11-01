@@ -56,8 +56,9 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
       allow(rosterable).to receive(:lecture).and_return(nil)
     end
 
-    it "delegates to MaintenanceService#remove_user!" do
-      expect(maintenance_service).to receive(:remove_user!).with(user, rosterable)
+    it "delegates to MaintenanceService#remove_user!, as removed by the user" do
+      expect(maintenance_service).to receive(:remove_user!)
+        .with(user, rosterable, by: user, notify: false)
       service.self_remove!
     end
 
@@ -105,16 +106,27 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
         rosterable.add_user_to_roster!(user)
       end
 
-      it "raises LastGroupError for their only group" do
+      it "lets them leave their only group" do
+        expect(maintenance_service).to receive(:remove_user!)
+          .with(user, rosterable, by: user, notify: false)
+        service.self_remove!
+      end
+
+      it "raises LastGroupHeldError while a result or a closed exam registration holds them" do
+        allow(Rosters::LectureLeave).to receive(:new).and_return(
+          instance_double(Rosters::LectureLeave, only_place?: true, last_place_blockers: [:held])
+        )
+
         expect(maintenance_service).not_to receive(:remove_user!)
-        expect { service.self_remove! }.to raise_error(described_class::LastGroupError)
+        expect { service.self_remove! }.to raise_error(described_class::LastGroupHeldError)
       end
 
       it "lets them leave a group while another group with enrollment remains" do
         create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
           .add_user_to_roster!(user)
 
-        expect(maintenance_service).to receive(:remove_user!).with(user, rosterable)
+        expect(maintenance_service).to receive(:remove_user!)
+          .with(user, rosterable, by: user, notify: false)
         service.self_remove!
       end
     end

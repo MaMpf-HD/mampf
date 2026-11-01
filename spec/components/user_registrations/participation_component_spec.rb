@@ -446,69 +446,127 @@ RSpec.describe(ParticipationComponent, type: :component) do
   # A student clicked "Leave" by mistake in a group they could not join again
   # themselves; the button now asks first and says what follows.
   describe "leaving a group" do
-    def confirmation(mode, capacity: nil)
-      tutorial = create(:tutorial, lecture: lecture, title: "Mo 10", capacity: capacity,
-                                   skip_campaigns: true, self_materialization_mode: mode)
-      tutorial.add_user_to_roster!(user)
-      rendered = render_inline(described_class.new(lecture: lecture, user: user))
-      rendered.css("form").find { |form| form.text.include?("Leave") }["data-turbo-confirm"]
+    let(:tutorial) do
+      create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true,
+                        self_materialization_mode: :add_and_remove)
     end
 
-    it "warns that a group which only lets students leave takes nobody back" do
-      expect(confirmation(:remove_only))
-        .to start_with(I18n.t("registration.user_registration.participation.leave_confirm_final",
-                              group: "Mo 10"))
+    def participation(key, **)
+      I18n.t("registration.user_registration.participation.#{key}", **)
     end
 
-    it "says the way back needs a free place where the group has a limit" do
-      expected = I18n.t("registration.user_registration.participation.leave_confirm_while_free",
-                        group: "Mo 10")
-      expect(confirmation(:add_and_remove, capacity: 20)).to start_with(expected)
+    def render_participation
+      render_inline(described_class.new(lecture: lecture, user: user))
     end
 
-    it "says that without a tutorial no sheet can be handed in" do
-      expect(confirmation(:add_and_remove))
-        .to include(I18n.t("registration.user_registration.participation.leave_no_sheets"))
+    def row(rendered)
+      rendered.css("[data-testid='participation-row']").find { |r| r.text.include?("Mo 10") }
     end
 
-    context "when the student is enrolled" do
-      let(:tutorial) do
-        create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true,
-                          self_materialization_mode: :add_and_remove)
+    def dialog_text(rendered)
+      rendered.at_css("#leave-tutorial-#{tutorial.id} .modal-body").text.squish
+    end
+
+    before { lecture.add_user_to_roster!(user) }
+
+    context "when another group with enrollment remains" do
+      def dialog_text_for(mode, capacity: nil)
+        tutorial.update!(self_materialization_mode: mode, capacity: capacity)
+        tutorial.add_user_to_roster!(user)
+        dialog_text(render_participation)
       end
 
       before do
-        lecture.add_user_to_roster!(user)
-        tutorial.add_user_to_roster!(user)
-      end
-
-      it "offers no leave button for the last group and says it goes only with the course" do
-        rendered = render_inline(described_class.new(lecture: lecture, user: user))
-        row = rendered.css("[data-testid='participation-row']")
-                      .find { |r| r.text.include?("Mo 10") }
-
-        expect(row.text)
-          .to include(I18n.t("registration.user_registration.participation.only_group"))
-        expect(row.css("form, button")).to be_empty
-      end
-
-      it "asks for confirmation and says the course stays when another group remains" do
         create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
           .add_user_to_roster!(user)
+      end
 
-        rendered = render_inline(described_class.new(lecture: lecture, user: user))
-        form = rendered.css("form").find { |f| f.text.include?("Leave tutorial") }
+      it "opens the group's own dialog from the row's button" do
+        tutorial.add_user_to_roster!(user)
 
-        expect(form["data-turbo-confirm"]).to include(
-          I18n.t("registration.user_registration.participation.leave_stays_enrolled")
-        )
+        button = row(render_participation).at_css("button")
+
+        expect(button.text.squish).to eq(participation(:leave_tutorial))
+        expect(button["data-bs-target"]).to eq("#leave-tutorial-#{tutorial.id}")
+      end
+
+      it "says the course stays, but without a tutorial no sheet can be handed in" do
+        expect(dialog_text_for(:add_and_remove)).to include(participation(:leave_stays_tutorial))
+      end
+
+      it "warns that a group which only lets students leave takes nobody back" do
+        expect(dialog_text_for(:remove_only)).to include(participation(:rejoin_final))
+      end
+
+      it "says nothing about the way back where joining again is possible" do
+        expect(dialog_text_for(:add_and_remove, capacity: 20))
+          .not_to include(participation(:rejoin_final))
       end
     end
 
-    it "still asks where joining again is always possible" do
-      expect(confirmation(:add_and_remove))
-        .to start_with(I18n.t("registration.user_registration.participation.leave_confirm_rejoin",
-                              group: "Mo 10"))
+    context "when the group is the student's last one and nothing else remains" do
+      before { tutorial.add_user_to_roster!(user) }
+
+      it "opens the dialog for leaving the course, which says why" do
+        rendered = render_participation
+
+        expect(row(rendered).at_css("button")["data-bs-target"])
+          .to eq("##{LeaveLectureComponent::ID}")
+        expect(rendered.at_css("#leave-tutorial-#{tutorial.id}")).to be_nil
+        expect(rendered.at_css("##{LeaveLectureComponent::ID}").text.squish)
+          .to include(I18n.t("lecture_home.leave.only_group", group: "Mo 10"))
+      end
+
+      it "points to switching, and offers it in the dialog for leaving the course" do
+        lecture.update!(released: "all")
+        tuesday = create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: true,
+                                    self_materialization_mode: :add_and_remove)
+
+        rendered = render_participation
+
+        expect(row(rendered).text.squish).to include(participation(:switch_hint))
+        switch = rendered.at_css("##{LeaveLectureComponent::ID} .dropdown-menu form")
+        expect(switch["action"])
+          .to eq(Rails.application.routes.url_helpers.self_switch_tutorial_path(tuesday))
+        expect(switch.text.squish).to eq("Di 12")
+      end
+    end
+
+    # A repeater may give up the tutorial and keep the registration that
+    # leaving the course would withdraw.
+    context "when the group is the student's last one and a registration remains" do
+      let(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
+      before do
+        tutorial.add_user_to_roster!(user)
+        create(:registration_user_registration, :confirmed, user: user,
+                                                            registration_campaign: campaign)
+      end
+
+      it "opens its own dialog, saying that taking part ends and the registration stays" do
+        create(:assignment, lecture: lecture)
+
+        rendered = render_participation
+
+        expect(row(rendered).at_css("button")["data-bs-target"])
+          .to eq("#leave-tutorial-#{tutorial.id}")
+        expect(dialog_text(rendered)).to include(
+          participation(:leave_no_sheets),
+          participation(:leave_keeps_registration_dashboard,
+                        title: campaign.student_facing_title),
+          participation(:leave_points_stay)
+        )
+        expect(rendered.at_css("##{LeaveLectureComponent::ID}").text.squish)
+          .not_to include(I18n.t("lecture_home.leave.only_group", group: "Mo 10"))
+      end
+
+      it "opens the dialog for leaving the course while a result holds the student" do
+        allow_any_instance_of(Rosters::LectureLeave)
+          .to receive(:last_place_blockers).and_return([:held])
+
+        expect(row(render_participation).at_css("button")["data-bs-target"])
+          .to eq("##{LeaveLectureComponent::ID}")
+      end
     end
   end
 end

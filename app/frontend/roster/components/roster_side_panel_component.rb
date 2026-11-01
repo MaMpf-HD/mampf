@@ -169,18 +169,10 @@ class RosterSidePanelComponent < ViewComponent::Base
     helpers.roster_move_member_path_template(registerable)
   end
 
-  def remove_member_path(student)
+  def confirm_remove_member_path(student)
     return unless registerable
 
-    helpers.roster_remove_member_path(
-      registerable, student, source: :panel
-    )
-  end
-
-  def remove_confirmation(student)
-    return t("roster.warnings.confirm_kick_from_group") unless only_place_ids.include?(student.id)
-
-    t("roster.warnings.confirm_kick_from_only_group")
+    helpers.roster_confirm_remove_member_path(registerable, student)
   end
 
   def drag_controller?
@@ -285,11 +277,6 @@ class RosterSidePanelComponent < ViewComponent::Base
   end
 
   private
-
-    def only_place_ids
-      @only_place_ids ||=
-        Rosters::LectureLeave.only_place_user_ids(registerable, students.map(&:id)).to_set
-    end
 
     def relevant_registrations(student)
       student.user_registrations.select do |r|

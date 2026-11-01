@@ -1,10 +1,24 @@
 class LeaveLectureComponent < ViewComponent::Base
   ID = "leave-lecture-dialog".freeze
 
-  def initialize(lecture:, leave:)
+  # only_group is the student's only group when leaving it would leave the
+  # lecture; its own leave button opens this dialog, which then says so.
+  # switch_targets are the groups the student could switch to from it, which
+  # keeps them in the lecture.
+  def initialize(lecture:, leave:, only_group: nil, switch_targets: [])
     super()
     @lecture = lecture
     @leave = leave
+    @only_group = only_group
+    @switch_targets = switch_targets
+  end
+
+  attr_reader :switch_targets
+
+  def only_group_note
+    return unless @only_group
+
+    t("lecture_home.leave.only_group", group: Rosters::LectureLeave.label(@only_group))
   end
 
   def render?
@@ -22,9 +36,8 @@ class LeaveLectureComponent < ViewComponent::Base
   end
 
   def consequences
-    [groups_consequence, campaigns_consequence, admission_consequence,
-     points_consequence, dashboard_consequence,
-     t("lecture_home.leave.consequences.rejoin")].compact
+    [groups_consequence, campaigns_consequence, results_consequence,
+     dashboard_consequence].compact
   end
 
   private
@@ -40,18 +53,22 @@ class LeaveLectureComponent < ViewComponent::Base
     def campaigns_consequence
       return if @leave.campaigns_to_withdraw.empty?
 
+      campaigns = @leave.campaigns_to_withdraw
       t("lecture_home.leave.consequences.campaigns",
-        campaigns: @leave.campaigns_to_withdraw.map(&:student_facing_title).to_sentence)
+        count: campaigns.size, campaigns: campaigns.map(&:student_facing_title).to_sentence)
     end
 
-    def admission_consequence
-      t("lecture_home.leave.consequences.admission") if @leave.admitted?
-    end
+    def results_consequence
+      points = @lecture.assignments.exists?
+      admitted = @leave.admitted?
+      return unless points || admitted
 
-    def points_consequence
-      return unless @lecture.assignments.exists?
-
-      t("lecture_home.leave.consequences.points")
+      key = if points && admitted
+        "points_and_admission"
+      else
+        points ? "points" : "admission"
+      end
+      t("lecture_home.leave.consequences.#{key}")
     end
 
     def dashboard_consequence

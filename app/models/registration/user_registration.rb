@@ -108,17 +108,15 @@ module Registration
               },
               if: -> { registration_campaign.first_come_first_served? }
 
-    # Titles of the lecture's running campaigns each user has a pending or
-    # confirmed registration in, by user id.
-    def self.running_campaign_titles_by_user(lecture, user_ids)
+    # The lecture's running campaigns each user has a pending or confirmed
+    # registration in, by user id.
+    def self.running_campaigns_by_user(lecture, user_ids)
       where(user_id: user_ids, status: [:pending, :confirmed])
         .joins(:registration_campaign)
         .merge(Registration::Campaign.running.where(campaignable: lecture))
         .includes(:registration_campaign)
         .group_by(&:user_id)
-        .transform_values do |registrations|
-          registrations.map(&:registration_campaign).uniq.map(&:student_facing_title)
-        end
+        .transform_values { |registrations| registrations.map(&:registration_campaign).uniq }
     end
 
     def self.resolve_rejection_reason_label(reason_code:, fallback_label: nil)

@@ -33,7 +33,7 @@ module Rosters
       rows.sum do |row|
         row.lecture.with_lock do
           memberships = removable(row.lecture)
-          listed = Cohort.list_titles_by_user(row.lecture, memberships.map(&:user_id))
+          listed = Cohort.lists_by_user(row.lecture, memberships.map(&:user_id))
           memberships.each do |membership|
             membership.exclude!
             next if listed.key?(membership.user_id)

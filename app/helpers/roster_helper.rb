@@ -33,6 +33,11 @@ module RosterHelper
                 registerable, user, **)
   end
 
+  def roster_confirm_remove_member_path(registerable, user, **)
+    public_send("confirm_remove_member_#{registerable.model_name.singular}_path",
+                registerable, user, **)
+  end
+
   def roster_update_self_materialization_path(registerable, mode:)
     public_send(
       "update_self_materialization_#{registerable.model_name.singular}_path",

@@ -24,9 +24,9 @@ $$ \text{Lecture Roster} = \text{Members}(\text{Places}) $$
 2.  **Last Place (Removal from Group):**
     Removing a student from a group that is not their last place takes only that group. Removing them from their last place also ends the enrollment: the lecture membership stays as an exclusion (`excluded_at`, `excluded_by`), and the student is listed under "Left". Lists and running registrations stay; the bookmark stays only while the student is still in a cohort without enrollment.
 3.  **Removal from the Lecture:**
-    When a student is removed from the lecture through roster maintenance, they lose everything there: tutorials, talks, cohorts with and without enrollment, and exam lists; their running registrations are withdrawn and the bookmark goes. Points and an exam admission stay with the person and count again when they come back.
+    When a student is removed from the lecture through roster maintenance, they lose everything there: tutorials, talks, cohorts with and without enrollment, and exam lists; their running registrations are withdrawn and the bookmark goes. The staff may keep cohorts without enrollment in the removal dialog (`keep_list_ids`), and the bookmark then stays. Points and an exam admission stay with the person and count again when they come back.
 4.  **Leaving:**
-    Students leave a lecture themselves through "Leave course" (`Rosters::LectureLeave`), which takes everything, like a removal from the lecture. An enrolled student cannot leave their last place alone; it goes only with the lecture.
+    Students leave a lecture themselves through "Leave course" (`Rosters::LectureLeave`), which takes everything, like a removal from the lecture. Leaving their last group alone ends only the enrollment, as a removal by the staff does; lists, running registrations and also the bookmark stay, and the student is listed under "Left" as having left on their own. A result or an exam registration past its withdrawal deadline holds them in that group (`LectureLeave#last_place_blockers`). When nothing but that group ties them to the lecture, its leave button opens "Leave course" instead, since both would do the same; that dialog then says so and offers to switch to another group.
 
 ### Cohort Propagation
 **Cohorts** are flexible groups with configurable propagation via the `propagate_to_lecture` flag:
