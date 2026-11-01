@@ -3,17 +3,21 @@ module StudentMessages
   # "campaign:2:rejected" and listed under a heading of the picker. Knows
   # who is in it; the catalog decides who may pick it, and hands over the
   # count it read for a whole section at once, so the picker does not ask
-  # one query per group.
+  # one query per group. The detail tells the groups apart in the picker;
+  # the message stores only the label.
   class Audience
-    attr_reader :key, :label, :heading, :users
+    attr_reader :key, :label, :heading, :users, :detail
 
-    def initialize(key:, label:, heading:, users:, count: nil)
+    # rubocop:disable Metrics/ParameterLists
+    def initialize(key:, label:, heading:, users:, count: nil, detail: nil)
       @key = key
       @label = label
       @heading = heading
       @users = users
       @count = count
+      @detail = detail
     end
+    # rubocop:enable Metrics/ParameterLists
 
     # Everybody in any of the audiences, once: one query with a subselect
     # per audience, however many were picked.

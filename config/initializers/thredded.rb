@@ -131,6 +131,11 @@ Thredded::ContentFormatter.after_sanitization_filters =
   Thredded::ContentFormatter.after_sanitization_filters -
   [Thredded::HtmlPipeline::OneboxFilter]
 
+# ==> Patches
+Rails.application.config.to_prepare do
+  Thredded::TopicForm.prepend(Extensions::Thredded::TopicFormPatch)
+end
+
 # ==> User autocompletion (Private messages and @-mentions)
 # Thredded.autocomplete_min_length = 2 lower to 1 if have 1-letter names -- increase if you want
 

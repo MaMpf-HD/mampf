@@ -355,6 +355,14 @@ RSpec.describe(GroupRowComponent, type: :component) do
       expect(row["data-roster-count"]).to eq("0 / 8 members")
     end
 
+    it "hands the move dialog the tutors along with the title" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+      row = render_inline(described_class.new(registerable: tutorial)).css("li.group-row").first
+
+      expect(row["data-roster-title"]).to eq("Mo 10")
+      expect(row["data-roster-people"]).to eq("Ada Lovelace")
+    end
+
     it "names the group on every action button" do
       rendered = render_inline(described_class.new(registerable: tutorial))
       labels = rendered.css(".group-row__actions [aria-label]").pluck("aria-label")

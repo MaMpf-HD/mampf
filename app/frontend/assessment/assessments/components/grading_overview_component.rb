@@ -4,7 +4,7 @@
 class GradingOverviewComponent < ViewComponent::Base
   TutorialStat = Struct.new(:tutorial, :total, :submitted, keyword_init: true) do
     def name
-      tutorial.title
+      tutorial.title_with_tutors
     end
 
     def missing

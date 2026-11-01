@@ -1459,6 +1459,17 @@ RSpec.describe("Submissions", type: :request) do
 
           expect(response.body).to include(I18n.t("submission.hub.fold.join_late").strip)
         end
+
+        it "shows the team its code on the closed sheet's row" do
+          team.users << user
+          create(:assessment_participation, assessment: closed_assignment.assessment,
+                                            user: user, submitted_at: 2.days.ago)
+
+          get lecture_submissions_path(lecture)
+
+          expect(response.body).to include(I18n.t("submission.hub.fold.team_code").strip)
+          expect(response.body).to include(team.token)
+        end
       end
     end
 
