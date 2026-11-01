@@ -77,7 +77,7 @@
         <% end %>
 
         <% component.with_tab(name: "participants", label: t("basics.participants")) do %>
-          <div class="container small-width lecture-pane">
+          <div class="container-fluid medium-width lecture-pane">
             <%= render partial: 'lectures/edit/participants',
                        locals: { lecture: @lecture } %>
           </div>
