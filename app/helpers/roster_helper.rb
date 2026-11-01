@@ -118,7 +118,8 @@ module RosterHelper
            end
   end
 
-  def roster_group_link(group)
+  # label replaces the group's title, e.g. by one that names its tutors.
+  def roster_group_link(group, label: group.title)
     lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
     path = if group.is_a?(Exam)
       edit_lecture_path(lecture, tab: "exams")
@@ -126,7 +127,7 @@ module RosterHelper
       edit_lecture_path(lecture, tab: "groups", open_roster: roster_group_key(group))
     end
 
-    link_to(group.title, path, class: "badge roster-group-badge", data: { turbo: false })
+    link_to(label, path, class: "badge roster-group-badge", data: { turbo: false })
   end
 
   def rosterable_display_type(rosterable)

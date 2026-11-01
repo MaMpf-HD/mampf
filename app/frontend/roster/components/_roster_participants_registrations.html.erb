@@ -76,7 +76,7 @@
                       <span class="text-muted me-1">1.</span>
                     <% end %>
 
-                    <%= component.helpers.roster_group_link(first.registerable) if first %>
+                    <%= component.helpers.roster_group_link(first.registerable, label: first.title) if first %>
                   </div>
 
                   <% if more.any? %>
@@ -87,7 +87,7 @@
                             <span class="text-muted me-1"><%= rank %>.</span>
                           <% end %>
 
-                          <%= component.helpers.roster_group_link(item.registerable) %>
+                          <%= component.helpers.roster_group_link(item.registerable, label: item.title) %>
                         </div>
                       <% end %>
                     </div>
