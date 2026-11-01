@@ -130,6 +130,37 @@ RSpec.describe(Tutorial, type: :model) do
     end
   end
 
+  describe "#title_with_tutors" do
+    let(:tutorial) { create(:tutorial, title: "Tuesday") }
+
+    it "names the tutors by last name" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Alan", last_name: "Turing"))
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Grace", last_name: "Hopper"))
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+
+      expect(tutorial.reload.title_with_tutors)
+        .to eq("Tuesday (Grace Hopper, Ada Lovelace, Alan Turing)")
+    end
+
+    it "says the group has no tutor yet" do
+      expect(tutorial.title_with_tutors).to eq("Tuesday (#{I18n.t("basics.tba")})")
+    end
+  end
+
+  describe "#registration_title" do
+    let(:tutorial) { create(:tutorial, title: "Tuesday") }
+
+    it "names the tutors" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+
+      expect(tutorial.registration_title).to eq("Tuesday (Ada Lovelace)")
+    end
+
+    it "says the group has no tutor yet" do
+      expect(tutorial.registration_title).to eq("Tuesday (#{I18n.t("basics.tba")})")
+    end
+  end
+
   describe ".roster_eligible" do
     let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture) }

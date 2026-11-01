@@ -417,6 +417,17 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           expect(response.body).not_to include(CGI.escapeHTML(non_member.tutorial_name))
         end
 
+        it "names each tutorial's tutors in the filter" do
+          tutorial.update!(title: "Tuesday")
+          tutorial.add_tutor(FactoryBot.create(:confirmed_user, first_name: "Ada",
+                                                                last_name: "Lovelace"))
+
+          get lecture_student_performance_records_path(lecture)
+
+          options = Nokogiri::HTML(response.body).css("select[name=tutorial_id] option")
+          expect(options.map { |option| option.text.strip }).to include("Tuesday (Ada Lovelace)")
+        end
+
         it "ignores tutorial_ids from other lectures" do
           other_lecture = FactoryBot.create(:lecture)
           other_tutorial = FactoryBot.create(:tutorial, lecture: other_lecture)

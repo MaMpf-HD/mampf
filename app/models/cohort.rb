@@ -9,7 +9,7 @@ class Cohort < ApplicationRecord
   has_many :members, through: :cohort_memberships, source: :user
 
   has_many :cohort_tutor_joins, dependent: :destroy
-  has_many :tutors, through: :cohort_tutor_joins
+  has_many :tutors, -> { by_last_name }, through: :cohort_tutor_joins
 
   scope :for_lectures, lambda { |lectures|
     where(context_type: "Lecture", context_id: lectures)

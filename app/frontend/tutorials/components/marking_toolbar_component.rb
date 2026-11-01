@@ -22,11 +22,6 @@ class MarkingToolbarComponent < ViewComponent::Base
     options << ["exempt", column_label("exempt")]
   end
 
-  def tutorial_options
-    @tutorials.map { |tutorial| [tutorial.id.to_s, tutorial.title] } +
-      [["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")]]
-  end
-
   def lecture_form?
     @tutorial.nil?
   end
