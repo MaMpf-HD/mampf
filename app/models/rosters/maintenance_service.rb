@@ -29,9 +29,10 @@ module Rosters
     #
     # Removal from the lecture takes everything there: groups, lists, running
     # registrations and the bookmark. Removal from the last group that enrolls
-    # the user takes only the enrollment along; lists, registrations and the
-    # bookmark stay. Returns the roster the user was taken off (the lecture,
-    # when the enrollment ended), or nil.
+    # the user takes the enrollment along, and the bookmark unless the user is
+    # still in a cohort without enrollment there; lists and registrations stay.
+    # Returns the roster the user was taken off (the lecture, when the
+    # enrollment ended), or nil.
     #
     # Locks the group, then the lecture; removal from the lecture locks the
     # campaigns first, as finalization does, since it withdraws registrations.
@@ -50,6 +51,7 @@ module Rosters
 
         if also_leaves_lecture
           lecture.remove_user_from_roster!(user, by: by)
+          user.unbookmark_lecture!(lecture) unless on_a_list?(user, lecture)
         else
           places.withdraw_registrations!([lecture])
         end
@@ -109,6 +111,10 @@ module Rosters
 
         lecture = from_rosterable.lecture
         lecture.present? && LectureLeave.new(lecture, user).only_place?(from_rosterable)
+      end
+
+      def on_a_list?(user, lecture)
+        Cohort.list_titles_by_user(lecture, [user.id]).key?(user.id)
       end
 
       # Only rosterables that *are* the assessable can lose a result this way —

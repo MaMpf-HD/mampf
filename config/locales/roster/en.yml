@@ -441,7 +441,7 @@ en:
       confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment, and taken off the exam list of %{exams}; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
-      confirm_kick_from_only_group: 'This group is what enrolls the person in the lecture; they have no other. Afterwards they are no longer enrolled; flexible groups without enrollment, running registrations and the bookmark stay, and so do points and any exam admission. To switch groups, use “Move”; to remove the person entirely, remove them from the lecture on the “Participants” tab. Continue?'
+      confirm_kick_from_only_group: 'This group is what enrolls the person in the lecture; they have no other. Afterwards they are no longer enrolled; flexible groups without enrollment and running registrations stay, and so do points and any exam admission. The bookmark stays only if the person is still in a flexible group without enrollment. To switch groups, use “Move”; to remove the person entirely, remove them from the lecture on the “Participants” tab. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
@@ -533,15 +533,17 @@ en:
       roster_removed_last_place_html: |
         <p>
           “%{rosterable_title}” was the last thing that enrolled you in the lecture;
-          you are therefore no longer enrolled. Flexible groups without enrollment,
-          running registrations and your bookmark stay. Points and any exam
-          admission stay stored and count again if you come back.
+          you are therefore no longer enrolled. Flexible groups without enrollment
+          and running registrations stay; your bookmark stays only while you are
+          still in such a group. Points and any exam admission stay stored and
+          count again if you come back.
         </p>
       roster_removed_last_place: |
         “%{rosterable_title}” was the last thing that enrolled you in the lecture;
-        you are therefore no longer enrolled. Flexible groups without enrollment,
-        running registrations and your bookmark stay. Points and any exam
-        admission stay stored and count again if you come back.
+        you are therefore no longer enrolled. Flexible groups without enrollment
+        and running registrations stay; your bookmark stays only while you are
+        still in such a group. Points and any exam admission stay stored and
+        count again if you come back.
       roster_removed_from_group_email_body: |
         Hello %{name},
 

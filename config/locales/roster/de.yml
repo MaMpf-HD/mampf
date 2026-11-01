@@ -450,7 +450,7 @@ de:
       confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_lecture_exams: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
-      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Danach ist sie nicht mehr eingeschrieben; flexible Gruppen ohne Einschreibung, laufende Anmeldungen und das Merken bleiben, ebenso Punkte und eine erteilte Prüfungszulassung. Für einen Wechsel der Gruppe nutze „Verschieben“; um die Person ganz zu entfernen, entferne sie im Reiter „Teilnehmende“ aus der Veranstaltung. Fortfahren?'
+      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Danach ist sie nicht mehr eingeschrieben; flexible Gruppen ohne Einschreibung und laufende Anmeldungen bleiben, ebenso Punkte und eine erteilte Prüfungszulassung. Gemerkt bleibt die Veranstaltung nur, wenn die Person noch in einer flexiblen Gruppe ohne Einschreibung ist. Für einen Wechsel der Gruppe nutze „Verschieben“; um die Person ganz zu entfernen, entferne sie im Reiter „Teilnehmende“ aus der Veranstaltung. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'
@@ -544,14 +544,16 @@ de:
         <p>
           Über „%{rosterable_title}“ warst Du zuletzt noch in der Veranstaltung
           eingeschrieben; Du bist damit nicht mehr eingeschrieben. Flexible Gruppen
-          ohne Einschreibung, laufende Anmeldungen und das Merken bleiben. Punkte und
+          ohne Einschreibung und laufende Anmeldungen bleiben; gemerkt bleibt die
+          Veranstaltung nur, solange Du noch in einer solchen Gruppe bist. Punkte und
           eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn
           Du zurückkommst.
         </p>
       roster_removed_last_place: |
         Über „%{rosterable_title}“ warst Du zuletzt noch in der Veranstaltung
         eingeschrieben; Du bist damit nicht mehr eingeschrieben. Flexible Gruppen
-        ohne Einschreibung, laufende Anmeldungen und das Merken bleiben. Punkte und
+        ohne Einschreibung und laufende Anmeldungen bleiben; gemerkt bleibt die
+        Veranstaltung nur, solange Du noch in einer solchen Gruppe bist. Punkte und
         eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn
         Du zurückkommst.
       roster_removed_from_group_email_body: |
