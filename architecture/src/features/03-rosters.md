@@ -15,16 +15,18 @@ The **Lecture Roster** (`lecture_memberships`) is the central registry for all s
 **The Golden Rule:**
 $$ \text{Current Group Members} \subseteq \text{Lecture Roster} $$
 
-More precisely, the Lecture Roster contains **all current and former group members** due to sticky membership:
-$$ \text{Lecture Roster} = \bigcup_{t \in \text{History}} \text{Members}_t(\text{Groups}) $$
+More precisely, **enrollment follows places.** A *place* is a membership that enrolls in the lecture: a **Tutorial**, a **Talk**, an **exam list**, or a **Cohort with `propagate_to_lecture: true`** (`Rosters::Rosterable#enrolls_in_lecture?`). A cohort without enrollment is a *list*, not a place. A student is enrolled exactly while they hold at least one place:
+$$ \text{Lecture Roster} = \text{Members}(\text{Places}) $$
 
 **Behavioral Invariants:**
 1.  **Upstream Propagation (Addition):**
-    When a student is added to a group that propagates (**Tutorial**, **Talk**, or **Cohort with `propagate_to_lecture: true`**), they are **automatically** added to the Lecture Roster.
-2.  **Sticky Membership (Removal from Group):**
-    When a student is removed from a sub-group, they remain on the Lecture Roster. They transition to an "Unassigned" state within the lecture context. This preserves their history and access rights during group switches.
-3.  **Cascading Deletion (Removal from Lecture):**
-  When a student is removed from the Lecture Roster through roster maintenance, they are **automatically** removed from Tutorials, Talks, and propagating Cohorts of that lecture.
+    When a student gets a place, they are **automatically** added to the Lecture Roster, and an earlier exclusion is cleared (`Lecture#ensure_roster_membership!`).
+2.  **Last Place (Removal from Group):**
+    Removing a student from a group that is not their last place takes only that group. Removing them from their last place also ends the enrollment: the lecture membership stays as an exclusion (`excluded_at`, `excluded_by`), and the student is listed under "Left". Lists, running registrations and the bookmark stay.
+3.  **Removal from the Lecture:**
+    When a student is removed from the lecture through roster maintenance, they lose everything there: tutorials, talks, cohorts with and without enrollment, and exam lists; their running registrations are withdrawn and the bookmark goes. Points and an exam admission stay with the person and count again when they come back.
+4.  **Leaving:**
+    Students leave a lecture themselves through "Leave course" (`Rosters::LectureLeave`), which takes everything, like a removal from the lecture. An enrolled student cannot leave their last place alone; it goes only with the lecture.
 
 ### Cohort Propagation
 **Cohorts** are flexible groups with configurable propagation via the `propagate_to_lecture` flag:
@@ -37,7 +39,7 @@ $$ \text{Lecture Roster} = \bigcup_{t \in \text{History}} \text{Members}_t(\text
 Propagation is implemented in roster service/concern code:
 1. **Campaign materialization:** `Rosters::Rosterable#materialize_allocation!` adds missing group members and then calls `propagate_to_lecture!(...)` for propagating groups.
 2. **Manual maintenance:** `Rosters::MaintenanceService#add_user!` and `#move_user!` call `propagate_to_lecture!(...)` after modifying a group.
-3. **Group removal:** Removing a user from a sub-group does not remove them from the lecture roster, preserving sticky membership.
+3. **Group removal:** `Rosters::MaintenanceService#remove_user!` ends the enrollment when the group was the user's last place (`Rosters::LectureLeave#only_place?`); otherwise the lecture roster stays as it is.
 
 This ensures Cohorts seamlessly integrate with the Superset Model without requiring manual service calls.
 
@@ -467,8 +469,8 @@ The `Lecture` model includes the `Rosters::Rosterable` concern to manage the cen
 
 #### Behavioral Notes
 - **Never Materialized Directly:** Lectures do NOT include `Registration::Registerable`. They only receive students via **Upstream Propagation** from sub-groups.
-- **Sticky Membership:** Students remain in the lecture roster even after leaving all sub-groups. Manual removal via `Rosters::MaintenanceService` is required.
-- **Cascading Deletion:** When a student is removed from the lecture roster through maintenance, they are automatically removed from tutorials, talks, and propagating cohorts of that lecture.
+- **Enrollment Follows Places:** Students stay on the lecture roster while they hold a place. Losing the last place excludes the membership (`excluded_at`) instead of deleting it, so staff can see who left and take them back through a group.
+- **Removal from the Lecture:** When a student is removed from the lecture roster through maintenance, they are removed from all its tutorials, talks, cohorts and exam lists, their running registrations are withdrawn, and the bookmark goes.
 
 #### Example Implementation
 ```ruby
@@ -542,8 +544,9 @@ erDiagram
 
 **Propagation Rules:**
 - **Tutorials & Talks:** Always propagate to Lecture roster (automatic)
+- **Exam lists:** Always propagate; an exam list is a place
 - **Cohorts:** Propagate only if `propagate_to_lecture: true` (configurable)
-- **Sticky Membership:** Removal from sub-group does NOT remove from Lecture roster
+- **Last place:** Removal from the last place ends the lecture enrollment (as an exclusion); removal from any other group leaves it
 
 ---
 
@@ -584,12 +587,12 @@ sequenceDiagram
 
     rect rgb(255, 245, 235)
     note over Admin,Lecture: Phase 2: Manual Roster Maintenance
-    Admin->>RosterService: new.move_user!(user, from, to, force: true)
+    Admin->>RosterService: new.move_user!(user, from, to, ignore_capacity: true)
     RosterService->>SubGroup: lock source and target rosterables
     RosterService->>SubGroup: remove_user_from_roster!(user)
     RosterService->>SubGroup: add_user_to_roster!(user)
     SubGroup->>Lecture: ensure_roster_membership!([user.id]) if propagates
-    note right of Lecture: Sticky membership preserved
+    note right of Lecture: Enrollment kept: the user still holds a place
     end
 ```
 
