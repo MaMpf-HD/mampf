@@ -15,14 +15,14 @@ class Cohort < ApplicationRecord
     where(context_type: "Lecture", context_id: lectures)
   }
 
-  # Titles of the lecture's cohorts without enrollment each user is in, by
-  # user id.
-  def self.list_titles_by_user(lecture, user_ids)
-    CohortMembership.joins(:cohort)
+  # The lecture's cohorts without enrollment each user is in, by user id.
+  def self.lists_by_user(lecture, user_ids)
+    CohortMembership.joins(:cohort).includes(:cohort)
                     .merge(where(context: lecture, propagate_to_lecture: false))
                     .where(user_id: user_ids)
-                    .pluck(:user_id, arel_table[:title])
-                    .group_by(&:first).transform_values { |rows| rows.map(&:last) }
+                    .order(arel_table[:title])
+                    .group_by(&:user_id)
+                    .transform_values { |memberships| memberships.map(&:cohort) }
   end
 
   attr_readonly :propagate_to_lecture

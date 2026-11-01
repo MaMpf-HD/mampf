@@ -42,7 +42,29 @@
             <td><%= user.tutorial_name %></td>
             <td><%= user.matriculation_number %></td>
             <td><%= component.left_description(membership) %></td>
-            <td><%= component.remaining_for(user) %></td>
+
+            <td>
+              <% lists = component.remaining_lists(user) %>
+              <% campaigns = component.remaining_campaigns(user) %>
+
+              <% if lists.any? || campaigns.any? %>
+                <div class="d-flex flex-wrap gap-1">
+                  <% lists.each do |cohort| %>
+                    <%= component.helpers.roster_group_link(cohort) %>
+                  <% end %>
+
+                  <% campaigns.each do |campaign| %>
+                    <%= link_to t("roster.left.registered_for",
+                                  title: campaign.student_facing_title),
+                                component.registered_view_path(campaign),
+                                class: "badge roster-group-badge",
+                                data: { turbo: false } %>
+                  <% end %>
+                </div>
+              <% else %>
+                –
+              <% end %>
+            </td>
 
             <td class="text-end">
               <div class="d-flex justify-content-end gap-1">

@@ -83,8 +83,7 @@ en:
         enrolls the person again through a group.
       column: 'Left'
       remaining_column: 'Remaining'
-      in_lists: 'in %{titles} (without enrollment)'
-      registered_for: 'registered for %{titles}'
+      registered_for: 'Registration: %{title}'
       by_self: 'Left on %{date}'
       by_staff: 'Removed on %{date} by %{name}'
       removed: 'Taken off on %{date}'

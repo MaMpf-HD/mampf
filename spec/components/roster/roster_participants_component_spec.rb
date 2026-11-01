@@ -386,25 +386,32 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
     let(:remaining_cell) do
       row = render_inline(component).css("tr").find { |tr| tr.text.include?("Lina Berg") }
-      row.css("td")[3].text.strip
+      row.css("td")[3]
     end
+    let(:routes) { Rails.application.routes.url_helpers }
 
     before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
 
-    it "names the flexible groups without enrollment and the running registrations" do
-      create(:cohort, context: lecture, title: "Warteliste Di").add_user_to_roster!(former)
+    it "links the flexible groups without enrollment and the running registrations" do
+      waitlist = create(:cohort, context: lecture, title: "Warteliste Di")
+      waitlist.add_user_to_roster!(former)
       campaign = create(:registration_campaign, :open, campaignable: lecture)
       create(:registration_user_registration, :pending, user: former,
                                                         registration_campaign: campaign)
 
-      expect(remaining_cell).to eq(
-        "#{I18n.t("roster.left.in_lists", titles: "Warteliste Di")} · " \
-        "#{I18n.t("roster.left.registered_for", titles: campaign.student_facing_title)}"
+      badges = remaining_cell.css("a.badge").map { |link| [link.text.strip, link["href"]] }
+
+      expect(badges).to eq(
+        [["Warteliste Di",
+          routes.edit_lecture_path(lecture, tab: "groups", open_roster: "Cohort-#{waitlist.id}")],
+         [I18n.t("roster.left.registered_for", title: campaign.student_facing_title),
+          routes.edit_lecture_path(lecture, tab: "participants", view: "registered",
+                                            campaign: campaign.id)]]
       )
     end
 
     it "shows a dash when nothing remains" do
-      expect(remaining_cell).to eq("–")
+      expect(remaining_cell.text.strip).to eq("–")
     end
   end
 

@@ -114,7 +114,7 @@ module Rosters
       end
 
       def on_a_list?(user, lecture)
-        Cohort.list_titles_by_user(lecture, [user.id]).key?(user.id)
+        Cohort.lists_by_user(lecture, [user.id]).key?(user.id)
       end
 
       # Only rosterables that *are* the assessable can lose a result this way —

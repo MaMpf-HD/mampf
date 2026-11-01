@@ -92,15 +92,18 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   # What someone who has left still has in the lecture: flexible groups
   # without enrollment and running registrations.
-  def remaining_for(user)
-    lists = list_titles_by_user[user.id]
-    registrations = registration_titles_by_user[user.id]
-    parts = []
-    parts << t("roster.left.in_lists", titles: lists.to_sentence) if lists.present?
-    if registrations.present?
-      parts << t("roster.left.registered_for", titles: registrations.to_sentence)
-    end
-    parts.any? ? parts.join(" · ") : "–"
+  def remaining_lists(user)
+    lists_by_user.fetch(user.id, [])
+  end
+
+  def remaining_campaigns(user)
+    campaigns_by_user.fetch(user.id, [])
+  end
+
+  # The registered view of the participants tab, opened at the campaign.
+  def registered_view_path(campaign)
+    helpers.edit_lecture_path(lecture, tab: "participants", view: "registered",
+                                       campaign: campaign.id)
   end
 
   def readmission_options
@@ -267,14 +270,14 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   private
 
-    def list_titles_by_user
-      @list_titles_by_user ||= Cohort.list_titles_by_user(@lecture, participants.map(&:user_id))
+    def lists_by_user
+      @lists_by_user ||= Cohort.lists_by_user(@lecture, participants.map(&:user_id))
     end
 
-    def registration_titles_by_user
-      @registration_titles_by_user ||=
-        Registration::UserRegistration.running_campaign_titles_by_user(@lecture,
-                                                                       participants.map(&:user_id))
+    def campaigns_by_user
+      @campaigns_by_user ||=
+        Registration::UserRegistration.running_campaigns_by_user(@lecture,
+                                                                 participants.map(&:user_id))
     end
 
     def exam_titles_by_user

@@ -87,8 +87,7 @@ de:
         die Person über eine Gruppe wieder ein.
       column: 'Ausgetreten'
       remaining_column: 'Besteht weiter'
-      in_lists: 'in %{titles} (ohne Einschreibung)'
-      registered_for: 'Anmeldung: %{titles}'
+      registered_for: 'Anmeldung: %{title}'
       by_self: 'Selbst ausgetreten am %{date}'
       by_staff: 'Entfernt am %{date} von %{name}'
       removed: 'Ausgetragen am %{date}'
