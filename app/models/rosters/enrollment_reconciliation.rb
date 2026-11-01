@@ -1,45 +1,40 @@
 module Rosters
-  # Takes out of their lectures the students enrolled without a group that
-  # enrolls them (see Rosters::Rosterable#enrolls_in_lecture?); only data from
-  # before enrollment was tied to groups looks like that. The report also lists
-  # running campaigns with problems of their own, e.g. never finalized, or an
+  # Brings the rosters of the active and the next term's lectures in line with
+  # the places: takes out the students enrolled without a group that enrolls
+  # them (see Rosters::Rosterable#enrolls_in_lecture?), and enrolls those who
+  # hold a place without being enrolled. The report also lists running
+  # campaigns with problems of their own, e.g. never finalized, or an
   # allocation that would move students out of their tutorial.
+  #
+  # TODO: Remove together with lib/tasks/enrollment.rake once it has run on
+  # production (#1408, https://github.com/MaMpf-HD/mampf/pull/1408).
   class EnrollmentReconciliation
-    Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :admitted,
-                     :staff, keyword_init: true)
+    Row = Struct.new(:lecture, :enrolled, :without_place, :lists_only, :awaiting, :with_work,
+                     :staff, :missing, keyword_init: true)
 
     FAR_DEADLINE = 8.weeks
     MANY_REGISTRATIONS = 20
 
     # lecture_ids limits the run to these lectures, e.g. to try it on a few
-    # first; nil means all.
+    # first; nil means all of the active and the next term.
     def initialize(lecture_ids: nil)
       @lecture_ids = lecture_ids
     end
 
-    # One row per lecture that has someone enrolled without a group that enrolls
-    # them.
     def rows
       @rows ||= lectures.includes(:term, :course).order(:id).filter_map { |lecture| row(lecture) }
     end
 
-    # Excludes everyone enrolled without a group that enrolls them, with
-    # excluded_by left empty. Their bookmark goes unless they are still in a
-    # flexible group without enrollment of the lecture. Their lists,
-    # registrations, points and admission stay. Decides under each lecture's
-    # lock, which every change to such a group takes too, so none is missed.
-    # Returns how many it excluded.
+    # Excludes who is enrolled without a place, with excluded_by left empty,
+    # and enrolls who has a place without a membership. Their bookmark goes
+    # unless they are still in a flexible group without enrollment of the
+    # lecture. Decides under each lecture's lock, which every change to such a
+    # group takes too, so none is missed. Leaves a lecture where nobody has a
+    # place alone. Returns how many it excluded and how many it enrolled.
     def apply!
-      rows.sum do |row|
+      rows.reject { |row| nobody_placed?(row) }.reduce([0, 0]) do |(excluded, enrolled), row|
         row.lecture.with_lock do
-          memberships = removable(row.lecture)
-          listed = Cohort.lists_by_user(row.lecture, memberships.map(&:user_id))
-          memberships.each do |membership|
-            membership.exclude!
-            next if listed.key?(membership.user_id)
-
-            membership.user.unbookmark_lecture!(row.lecture)
-          end.size
+          [excluded + exclude!(row.lecture), enrolled + enroll!(row.lecture)]
         end
       end
     end
@@ -56,30 +51,57 @@ module Rosters
     private
 
       def lectures
-        scope = Lecture.where(id: LectureMembership.active.select(:lecture_id))
+        active = Term.active
+        scope = Lecture.where(term: [active, active&.next].compact)
         @lecture_ids ? scope.where(id: @lecture_ids) : scope
       end
 
       def row(lecture)
         without = without_place(lecture)
         count = without.count
-        return if count.zero?
+        missing = missing_ids(lecture)
+        return if count.zero? && missing.empty?
 
-        ids = without.select(:user_id)
+        ids = without.pluck(:user_id)
         Row.new(lecture: lecture, enrolled: lecture.lecture_memberships.count,
                 without_place: count,
                 lists_only: CohortMembership.where(cohort: lists(lecture), user_id: ids)
                                             .distinct.count(:user_id),
-                awaiting: awaiting(lecture, ids).distinct.count(:user_id),
-                admitted: admitted(lecture, removable(lecture).map(&:user_id)).count,
-                staff: without.where(user_id: staff_ids(lecture)).count)
+                awaiting: awaiting_ids(lecture, ids).size,
+                with_work: with_work_ids(lecture, ids).size,
+                staff: (ids & staff_ids(lecture)).size,
+                missing: missing.size)
       end
 
       def row_line(row)
-        "#{row.lecture.id} #{row.lecture.title_term_info_no_type}: #{row.without_place} of " \
-          "#{row.enrolled} without a place (#{row.lists_only} on a list only, " \
-          "#{row.awaiting} awaiting a place, #{row.admitted} admitted; kept: " \
-          "#{row.staff} staff)"
+        line = "#{row.lecture.id} #{row.lecture.title_term_info_no_type}: #{row.without_place} " \
+               "of #{row.enrolled} without a place (#{row.lists_only} on a list only; kept: " \
+               "#{row.awaiting} awaiting a place, #{row.with_work} with work or an admission, " \
+               "#{row.staff} staff), #{row.missing} with a place but not enrolled"
+        nobody_placed?(row) ? "#{line} -- nobody has a place, left alone" : line
+      end
+
+      # A lecture whose students all lack a place has no groups in use; taking
+      # them all out is not what it needs, a cohort with enrollment is.
+      def nobody_placed?(row)
+        row.without_place.positive? && row.without_place == row.enrolled
+      end
+
+      def exclude!(lecture)
+        memberships = removable(lecture)
+        listed = Cohort.lists_by_user(lecture, memberships.map(&:user_id))
+        memberships.each do |membership|
+          membership.exclude!
+          next if listed.key?(membership.user_id)
+
+          membership.user.unbookmark_lecture!(lecture)
+        end.size
+      end
+
+      def enroll!(lecture)
+        ids = missing_ids(lecture)
+        lecture.ensure_roster_membership!(ids) if ids.any?
+        ids.size
       end
 
       def without_place(lecture)
@@ -88,9 +110,21 @@ module Rosters
         end
       end
 
-      # Leaves out the lecture's staff, who are not its students.
+      # Keeps the lecture's staff, who are not its students; whoever waits in a
+      # running campaign, so that an allocation without a place for them shows
+      # them as unassigned rather than as left; and whoever has work or an
+      # admission there, which the staff would no longer see.
       def removable(lecture)
-        without_place(lecture).where.not(user_id: staff_ids(lecture)).includes(:user).to_a
+        without = without_place(lecture)
+        ids = without.pluck(:user_id)
+        kept = staff_ids(lecture) + awaiting_ids(lecture, ids) + with_work_ids(lecture, ids)
+        without.where.not(user_id: kept).includes(:user).to_a
+      end
+
+      def missing_ids(lecture)
+        placed = lecture.enrolling_memberships
+                        .flat_map { |query| query.pluck(query.select_values.first) }.uniq
+        placed - lecture.lecture_memberships.where(user_id: placed).pluck(:user_id)
       end
 
       # Teacher, editors and tutors of the lecture. Counts tutors as
@@ -104,18 +138,25 @@ module Rosters
           CohortTutorJoin.where(cohort: lecture.cohorts).pluck(:tutor_id)).compact.uniq
       end
 
-      def admitted(lecture, user_ids)
-        StudentPerformance::Certification.passed.where(lecture: lecture, user_id: user_ids)
+      def with_work_ids(lecture, user_ids)
+        worked = Assessment::Participation.with_recorded_work.joins(:assessment)
+                                          .where(assessment_assessments: { lecture_id: lecture.id },
+                                                 user_id: user_ids)
+                                          .distinct.pluck(:user_id)
+        certified = StudentPerformance::Certification.where(lecture: lecture, user_id: user_ids)
+                                                     .pluck(:user_id)
+        (worked + certified).uniq
       end
 
       def lists(lecture)
         Cohort.where(context: lecture, propagate_to_lecture: false)
       end
 
-      def awaiting(lecture, user_ids)
+      def awaiting_ids(lecture, user_ids)
         campaigns = Registration::Campaign.running.where(campaignable: lecture)
         Registration::UserRegistration.where(registration_campaign: campaigns,
                                              status: [:pending, :confirmed], user_id: user_ids)
+                                      .distinct.pluck(:user_id)
       end
 
       def campaign_lines

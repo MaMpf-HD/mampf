@@ -1,7 +1,8 @@
 require "rails_helper"
 
 RSpec.describe(Rosters::EnrollmentReconciliation) do
-  let(:lecture) { create(:lecture) }
+  let(:term) { create(:term, :active) }
+  let(:lecture) { create(:lecture, term: term) }
   let(:tutorial) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
   let(:service) { Rosters::MaintenanceService.new }
   let(:reconciliation) { described_class.new }
@@ -29,28 +30,29 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       row = reconciliation.rows.sole
 
       expect(row.to_h.except(:lecture))
-        .to eq(enrolled: 4, without_place: 2, lists_only: 1, awaiting: 1, admitted: 0,
-               staff: 0)
+        .to eq(enrolled: 4, without_place: 2, lists_only: 1, awaiting: 1, with_work: 0,
+               staff: 0, missing: 0)
     end
 
-    # An admitted student who is taken off needs a group before they can
-    # register for a resit, so the lecturer has to know about them.
-    it "counts the admitted among those it would take off" do
-      admitted = create(:confirmed_user)
-      enroll_without_place(admitted)
-      create(:student_performance_certification, :passed, lecture: lecture, user: admitted)
+    it "leaves out the lectures of past terms" do
+      old = create(:lecture, term: create(:term))
+      old.add_user_to_roster!(create(:confirmed_user))
 
-      expect(reconciliation.rows.sole.admitted).to eq(1)
+      expect(reconciliation.rows).to be_empty
     end
   end
 
   describe "#apply!" do
     let(:limbo) { create(:confirmed_user) }
 
-    before { enroll_without_place(limbo) }
+    # Someone with a place, so that the lecture has its groups in use.
+    before do
+      service.add_user!(create(:confirmed_user), tutorial, ignore_capacity: true)
+      enroll_without_place(limbo)
+    end
 
     it "takes off who has no place, as left without anybody's doing, bookmark included" do
-      expect(reconciliation.apply!).to eq(1)
+      expect(reconciliation.apply!).to eq([1, 0])
 
       membership = lecture.excluded_lecture_memberships.find_by(user: limbo)
       expect(membership.excluded_by).to be_nil
@@ -86,14 +88,14 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
     it "leaves whoever is on an exam list alone" do
       create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(limbo)
 
-      expect(reconciliation.apply!).to eq(0)
+      expect(reconciliation.apply!).to eq([0, 0])
       expect(lecture.reload.members).to include(limbo)
     end
 
     it "keeps a tutor of the lecture, and reports them" do
       create(:tutor_tutorial_join, tutorial: tutorial, tutor: limbo)
 
-      expect(reconciliation.apply!).to eq(0)
+      expect(reconciliation.apply!).to eq([0, 0])
       expect(limbo.reload.lectures).to include(lecture)
       expect(reconciliation.report.join("\n")).to include("1 staff")
     end
@@ -101,24 +103,65 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
     it "keeps a tutor by a redeemed voucher who has no tutorial yet" do
       Redemption.create!(voucher: create(:voucher, :tutor, lecture: lecture), user: limbo)
 
-      expect(reconciliation.apply!).to eq(0)
+      expect(reconciliation.apply!).to eq([0, 0])
       expect(lecture.reload.members).to include(limbo)
     end
 
     it "keeps a tutor of a cohort" do
       CohortTutorJoin.create!(cohort: create(:cohort, context: lecture), tutor: limbo)
 
-      expect(reconciliation.apply!).to eq(0)
+      expect(reconciliation.apply!).to eq([0, 0])
       expect(lecture.reload.members).to include(limbo)
     end
 
     it "keeps to the lectures it is narrowed to" do
-      other = create(:lecture)
-      stray = create(:confirmed_user)
-      other.add_user_to_roster!(stray)
+      other = create(:lecture, term: term)
+      service.add_user!(create(:confirmed_user),
+                        create(:tutorial, lecture: other, skip_campaigns: true),
+                        ignore_capacity: true)
+      other.add_user_to_roster!(create(:confirmed_user))
 
-      expect(described_class.new(lecture_ids: [other.id]).apply!).to eq(1)
+      expect(described_class.new(lecture_ids: [other.id]).apply!).to eq([1, 0])
       expect(lecture.reload.members).to include(limbo)
+    end
+
+    # An allocation without a place for them would otherwise count them as
+    # having left after registering, not as unassigned.
+    it "keeps whoever waits in a running campaign, and reports them" do
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending,
+             user: limbo, registration_campaign: campaign,
+             registration_item: campaign.registration_items.first)
+
+      expect(reconciliation.apply!).to eq([0, 0])
+      expect(reconciliation.report.join("\n")).to include("1 awaiting a place")
+    end
+
+    # Taking them out would hide their work and admission from the staff and
+    # keep them from an exam that checks the admission.
+    it "keeps whoever has an admission in the lecture, and reports them" do
+      create(:student_performance_certification, :pending, lecture: lecture, user: limbo)
+
+      expect(reconciliation.apply!).to eq([0, 0])
+      expect(reconciliation.report.join("\n")).to include("1 with work or an admission")
+    end
+
+    it "enrolls a speaker who has a talk but no membership" do
+      seminar = create(:lecture, :is_seminar, term: term)
+      speaker = create(:confirmed_user)
+      SpeakerTalkJoin.create!(talk: create(:talk, lecture: seminar), speaker: speaker)
+
+      expect(reconciliation.apply!).to eq([1, 1])
+      expect(seminar.reload.members).to include(speaker)
+    end
+
+    it "leaves a lecture alone where nobody has a place" do
+      bare = create(:lecture, term: term)
+      bare.add_user_to_roster!(create(:confirmed_user))
+
+      expect(described_class.new(lecture_ids: [bare.id]).apply!).to eq([0, 0])
+      expect(described_class.new(lecture_ids: [bare.id]).report.join("\n"))
+        .to include("nobody has a place")
     end
 
     it "leaves members with a place alone" do

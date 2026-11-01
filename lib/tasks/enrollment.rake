@@ -1,6 +1,9 @@
+# TODO: Remove together with Rosters::EnrollmentReconciliation once it has run
+# on production (#1408, https://github.com/MaMpf-HD/mampf/pull/1408).
 namespace :enrollment do
-  desc "Report who is enrolled without a place and campaigns that go wrong on their own; " \
-       "APPLY=1 takes the former off their lectures, LECTURE_IDS=1,2 narrows it to some"
+  desc "Report who is enrolled without a place or holds a place without being enrolled, " \
+       "and campaigns that go wrong on their own; APPLY=1 sets the rosters right, " \
+       "LECTURE_IDS=1,2 narrows it to some"
   task reconcile: :environment do
     ids = ENV["LECTURE_IDS"]&.split(",")&.map { |id| Integer(id.strip) }
     if ids
@@ -15,6 +18,7 @@ namespace :enrollment do
     puts(reconciliation.report)
     next unless ENV["APPLY"] == "1"
 
-    puts("Taken off: #{reconciliation.apply!}")
+    excluded, enrolled = reconciliation.apply!
+    puts("Taken off: #{excluded}, enrolled: #{enrolled}")
   end
 end
