@@ -98,9 +98,10 @@
             </div>
           <% end %>
 
-          <%= helpers.turbo_frame_tag section_target(:header_controls),
-                                      class: "d-flex flex-wrap align-items-center gap-3" do %>
-            <%= render section_component(:header_controls) %>
+          <% if enrolled_view? %>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <%= helpers.helpdesk(t("roster.participants_hint"), true) %>
+            </div>
           <% end %>
         </div>
       </div>

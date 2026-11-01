@@ -240,7 +240,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       render_inline(component)
 
       expect(rendered_content).to include('id="roster_participants_top_nav"')
-      expect(rendered_content).to include('id="roster_participants_header_controls"')
       expect(rendered_content).to include('id="roster_participants_results"')
       expect(rendered_content).to include('data-turbo-stream="true"')
       expect(rendered_content).to include('id="roster-participants-search-field"')
@@ -254,7 +253,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         view_switch: "roster_participants_view_switch",
         campaign_switch: "roster_participants_campaign_switch",
         top_nav: "roster_participants_top_nav",
-        header_controls: "roster_participants_header_controls",
         results: "roster_participants_results"
       )
     end

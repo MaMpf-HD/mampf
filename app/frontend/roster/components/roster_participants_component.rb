@@ -6,7 +6,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     view_switch: "roster_participants_view_switch",
     campaign_switch: "roster_participants_campaign_switch",
     top_nav: "roster_participants_top_nav",
-    header_controls: "roster_participants_header_controls",
     results: "roster_participants_results"
   }.freeze
 
@@ -14,7 +13,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     view_switch: "roster/components/roster_participants_view_switch",
     campaign_switch: "roster/components/roster_participants_campaign_switch",
     top_nav: "roster/components/roster_participants_top_nav",
-    header_controls: "roster/components/roster_participants_header_controls",
     results: "roster/components/roster_participants_results"
   }.freeze
 

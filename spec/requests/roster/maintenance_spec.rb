@@ -192,7 +192,6 @@ RSpec.describe("Roster::Maintenance", type: :request) do
 
         expect(response).to have_http_status(:success)
         expect(response.body).to include('target="roster_participants_top_nav"')
-        expect(response.body).to include('target="roster_participants_header_controls"')
         expect(response.body).to include('target="roster_participants_results"')
       end
 
