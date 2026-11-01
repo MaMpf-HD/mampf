@@ -288,6 +288,34 @@ describe RosterNotificationMailer do
 
       expect(delivered.subject).to include("Übung 3")
       expect(delivered_body(delivered)).to include("entfernt")
+      expect(delivered_body(delivered)).to include("bleibt unverändert")
+    end
+
+    it "says the enrollment ended when the group was the last place" do
+      delivered = deliver(described_class.with(rosterable: rosterable, recipient: user,
+                                               left_lecture: true).removed_from_group_email)
+
+      expect(delivered_body(delivered)).to include("nicht mehr eingeschrieben")
+      expect(delivered_body(delivered)).not_to include("bleibt unverändert")
+    end
+  end
+
+  describe "#removed_from_exam_email" do
+    let(:rosterable) { create(:exam, title: "Klausur LA") }
+
+    it "says the enrollment ended when the exam list was the last place" do
+      delivered = deliver(described_class.with(rosterable: rosterable, recipient: user,
+                                               left_lecture: true).removed_from_exam_email)
+
+      expect(delivered.subject).to include("Klausur LA")
+      expect(delivered_body(delivered)).to include("nicht mehr eingeschrieben")
+    end
+
+    it "says nothing about the enrollment otherwise" do
+      delivered = deliver(described_class.with(rosterable: rosterable,
+                                               recipient: user).removed_from_exam_email)
+
+      expect(delivered_body(delivered)).not_to include("eingeschrieben")
     end
   end
 

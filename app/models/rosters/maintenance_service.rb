@@ -55,7 +55,9 @@ module Rosters
         end
         lecture
       end
-      RosterNotificationMailer.removed(user, left) if left && notify
+      if left && notify
+        RosterNotificationMailer.removed(user, rosterable, left_lecture: left != rosterable)
+      end
       left
     end
 

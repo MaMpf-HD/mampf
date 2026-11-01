@@ -78,11 +78,17 @@ de:
       left: 'Ausgetreten'
     left:
       hint: >-
-        Studierende, die die Teilnahme beendet haben oder aus der Veranstaltung
-        entfernt wurden. Bewertungen, Abgaben und Zulassung bleiben gespeichert;
-        „Wieder aufnehmen“ trägt die Person über eine Gruppe wieder in die
-        Veranstaltung ein.
+        Hier steht, wer nicht mehr in der Veranstaltung eingeschrieben ist: selbst
+        ausgetreten, aus der Veranstaltung entfernt oder ohne verbleibende Gruppe
+        mit Einschreibung. „Ausgetreten“ heißt nur, dass die Einschreibung fehlt.
+        Flexible Gruppen ohne Einschreibung und laufende Anmeldungen können
+        bestehen bleiben; die Spalte „Besteht weiter“ nennt sie. Bewertungen,
+        Abgaben und Zulassung bleiben gespeichert; „Wieder aufnehmen“ schreibt
+        die Person über eine Gruppe wieder ein.
       column: 'Ausgetreten'
+      remaining_column: 'Besteht weiter'
+      in_lists: 'in %{titles} (ohne Einschreibung)'
+      registered_for: 'Anmeldung: %{titles}'
       by_self: 'Selbst ausgetreten am %{date}'
       by_staff: 'Entfernt am %{date} von %{name}'
       removed: 'Ausgetragen am %{date}'
@@ -152,7 +158,7 @@ de:
           description: "Studierende treten der Veranstaltung immer über eine Gruppe bei. Tutorien und Vorträge übertragen Studierende automatisch in die Teilnahmeliste. Eine zusätzliche Gruppe, um für Studierende in Tutorien/Vorträgen für die Vorlesung einzuschreiben, ist nicht nötig."
         sticky_enrollment:
           title: "Einschreibung über Gruppen"
-          description: "Eingeschrieben ist, wer in einem Tutorium, einem Vortrag oder einer Gruppe mit Einschreibung ist oder auf einer Klausurliste steht. Wer den letzten dieser Plätze verlässt, verlässt auch die Veranstaltung und steht dann unter 'Ausgetreten'; Punkte und Zulassung bleiben gespeichert und gelten wieder, sobald die Person einer Gruppe mit Einschreibung beitritt."
+          description: "Eingeschrieben ist, wer in einem Tutorium, einem Vortrag oder einer flexiblen Gruppe mit Einschreibung ist oder auf einer Klausurliste steht. Wer den letzten dieser Plätze verliert, ist nicht mehr eingeschrieben und steht unter „Ausgetreten“; flexible Gruppen ohne Einschreibung und laufende Anmeldungen bleiben dabei bestehen. Punkte und Zulassung bleiben gespeichert und gelten wieder, sobald die Person wieder einen dieser Plätze hat."
       phase1:
         title: "1. Wähle Deine Einrichtungsmethode"
         campaigns:
@@ -227,8 +233,8 @@ de:
           one: "1 davon ist danach in keiner Gruppe dieser Veranstaltung."
           other: "%{count} davon sind danach in keiner Gruppe dieser Veranstaltung."
         leaves_lecture:
-          one: "Für 1 davon ist es die einzige Gruppe mit Einschreibung: Diese Person ist danach nicht mehr eingeschrieben. Gruppen ohne Einschreibung, Anmeldungen, Punkte und eine erteilte Prüfungszulassung bleiben."
-          other: "Für %{count} davon ist es die einzige Gruppe mit Einschreibung: Sie sind danach nicht mehr eingeschrieben. Gruppen ohne Einschreibung, Anmeldungen, Punkte und eine erteilte Prüfungszulassung bleiben."
+          one: "Für 1 davon ist es die einzige Gruppe mit Einschreibung: Diese Person ist danach nicht mehr eingeschrieben. Flexible Gruppen ohne Einschreibung, Anmeldungen, Punkte und eine erteilte Prüfungszulassung bleiben."
+          other: "Für %{count} davon ist es die einzige Gruppe mit Einschreibung: Sie sind danach nicht mehr eingeschrieben. Flexible Gruppen ohne Einschreibung, Anmeldungen, Punkte und eine erteilte Prüfungszulassung bleiben."
         registrations: "Mitgelöscht wird, was ihr abgeschlossenes Anmeldeverfahren hinterlassen hat: %{total}, davon %{confirmed}."
         notify: "Mitglieder per Mail benachrichtigen"
         submit: "Gruppe löschen"
@@ -447,7 +453,7 @@ de:
       confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_lecture_exams: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch Sondergruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; ihre Anmeldungen werden zurückgezogen, und das Merken der Veranstaltung entfällt. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
       confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
-      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Danach ist sie nicht mehr eingeschrieben; Gruppen ohne Einschreibung, laufende Anmeldungen und das Merken bleiben, ebenso Punkte und eine erteilte Prüfungszulassung. Für einen Wechsel der Gruppe nutze „Verschieben“; um die Person ganz zu entfernen, entferne sie im Reiter „Teilnehmende“ aus der Veranstaltung. Fortfahren?'
+      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Danach ist sie nicht mehr eingeschrieben; flexible Gruppen ohne Einschreibung, laufende Anmeldungen und das Merken bleiben, ebenso Punkte und eine erteilte Prüfungszulassung. Für einen Wechsel der Gruppe nutze „Verschieben“; um die Person ganz zu entfernen, entferne sie im Reiter „Teilnehmende“ aus der Veranstaltung. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'
@@ -531,9 +537,26 @@ de:
           Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
           wende Dich bitte an Deine Lehrperson oder das Support-Team.
         </p>
+      roster_removed_from_group_email_unchanged_html: |
         <p>
           Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
         </p>
+      roster_removed_from_group_email_unchanged: |
+        Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
+      roster_removed_last_place_html: |
+        <p>
+          Über „%{rosterable_title}“ warst Du zuletzt noch in der Veranstaltung
+          eingeschrieben; Du bist damit nicht mehr eingeschrieben. Flexible Gruppen
+          ohne Einschreibung, laufende Anmeldungen und das Merken bleiben. Punkte und
+          eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn
+          Du zurückkommst.
+        </p>
+      roster_removed_last_place: |
+        Über „%{rosterable_title}“ warst Du zuletzt noch in der Veranstaltung
+        eingeschrieben; Du bist damit nicht mehr eingeschrieben. Flexible Gruppen
+        ohne Einschreibung, laufende Anmeldungen und das Merken bleiben. Punkte und
+        eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn
+        Du zurückkommst.
       roster_removed_from_group_email_body: |
         Hallo %{name},
 
@@ -542,8 +565,6 @@ de:
 
         Falls Du glaubst, dass dies ein Fehler war oder wenn Du Fragen hast,
         wende Dich bitte an Deine Lehrperson oder das Support-Team.
-
-        Deine Einschreibung in die entsprechende Veranstaltung %{lecture_title} bleibt unverändert.
       roster_removed_from_group_email_subject: 'Aus der Gruppe %{rosterable_title} in %{lecture_title} entfernt'
       roster_group_deleted_email_body_html: |
         <p>Hallo %{name},</p>
@@ -570,13 +591,15 @@ de:
         <p>
           Über diese Gruppe warst Du in der Veranstaltung eingeschrieben, eine andere
           hattest Du dort nicht. Du bist deshalb nicht mehr in der Veranstaltung
-          eingeschrieben. Deine Punkte und eine erteilte Prüfungszulassung bleiben
+          eingeschrieben. Flexible Gruppen ohne Einschreibung und laufende Anmeldungen
+          bleiben. Deine Punkte und eine erteilte Prüfungszulassung bleiben
           gespeichert und gelten wieder, wenn Du zurückkommst.
         </p>
       roster_group_deleted_email_left_lecture: |
         Über diese Gruppe warst Du in der Veranstaltung eingeschrieben, eine andere
         hattest Du dort nicht. Du bist deshalb nicht mehr in der Veranstaltung
-        eingeschrieben. Deine Punkte und eine erteilte Prüfungszulassung bleiben
+        eingeschrieben. Flexible Gruppen ohne Einschreibung und laufende Anmeldungen
+        bleiben. Deine Punkte und eine erteilte Prüfungszulassung bleiben
         gespeichert und gelten wieder, wenn Du zurückkommst.
       roster_group_deleted_email_questions_html: |
         <p>

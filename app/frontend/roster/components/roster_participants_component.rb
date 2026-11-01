@@ -90,6 +90,19 @@ class RosterParticipantsComponent < ViewComponent::Base
     end
   end
 
+  # What someone who has left still has in the lecture: flexible groups
+  # without enrollment and running registrations.
+  def remaining_for(user)
+    lists = list_titles_by_user[user.id]
+    registrations = registration_titles_by_user[user.id]
+    parts = []
+    parts << t("roster.left.in_lists", titles: lists.to_sentence) if lists.present?
+    if registrations.present?
+      parts << t("roster.left.registered_for", titles: registrations.to_sentence)
+    end
+    parts.any? ? parts.join(" · ") : "–"
+  end
+
   def readmission_options
     @readmission_options ||= helpers.roster_readmission_group_options(lecture)
   end
@@ -253,6 +266,16 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   private
+
+    def list_titles_by_user
+      @list_titles_by_user ||= Cohort.list_titles_by_user(@lecture, participants.map(&:user_id))
+    end
+
+    def registration_titles_by_user
+      @registration_titles_by_user ||=
+        Registration::UserRegistration.running_campaign_titles_by_user(@lecture,
+                                                                       participants.map(&:user_id))
+    end
 
     def exam_titles_by_user
       @exam_titles_by_user ||=

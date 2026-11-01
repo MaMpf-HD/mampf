@@ -223,6 +223,12 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
 
     before { subject.add_user!(user, mo, ignore_capacity: true) }
 
+    it "tells the user by mail about the group and the ended enrollment" do
+      expect { subject.remove_user!(user, mo) }
+        .to have_enqueued_mail(RosterNotificationMailer, :removed_from_group_email)
+        .with(a_hash_including(params: a_hash_including(recipient: user, left_lecture: true)))
+    end
+
     it "ends the enrollment with the last group and keeps the lists" do
       subject.add_user!(user, list, ignore_capacity: true)
 
