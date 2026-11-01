@@ -34,9 +34,16 @@
 
           <% section.groups.each do |group| %>
             <% count = group_count(group) %>
+            <% tutors = tutors_text(group) %>
 
             <tr>
-              <th scope="row" class="fw-normal"><%= group.title %></th>
+              <th scope="row" class="fw-normal">
+                <%= group.title %>
+
+                <% if tutors %>
+                  <div class="text-muted"><%= tutors %></div>
+                <% end %>
+              </th>
 
               <td>
                 <div class="d-flex align-items-center gap-2">

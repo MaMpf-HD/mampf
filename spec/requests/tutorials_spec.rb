@@ -96,7 +96,7 @@ RSpec.describe("Tutorials", type: :request) do
 
       expect(response).to have_http_status(:success)
       expect(Nokogiri::HTML(response.body).at_css("#tutorial-select")["value"])
-        .to eq(tutorial.title)
+        .to eq(tutorial.title_with_tutors)
     end
 
     it "says so when the lecture has no group at all" do

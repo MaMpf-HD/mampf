@@ -122,7 +122,7 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
 
         options = page.css("select[data-status-filter-target=tutorial] option")
         expect(options.map { |o| [o["value"], o.text.strip] })
-          .to include([tutorial.id.to_s, "Group A"],
+          .to include([tutorial.id.to_s, tutorial.title_with_tutors],
                       ["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")])
         rows = page.css("tr[data-status-filter-target=row]")
         expect(rows.pluck("data-status-filter-tutorial")).to eq([tutorial.id.to_s, ""])

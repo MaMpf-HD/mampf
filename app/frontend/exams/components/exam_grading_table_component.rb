@@ -56,7 +56,7 @@ class ExamGradingTableComponent < ViewComponent::Base
   end
 
   def tutorial_options
-    ExamRows.tutorial_options(@exam)
+    MarkingFilterComponent.tutorial_options(@lecture.tutorials)
   end
 
   private

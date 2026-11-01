@@ -9,7 +9,7 @@ class Tutorial < ApplicationRecord
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
-  has_many :tutors, through: :tutor_tutorial_joins
+  has_many :tutors, -> { order(User::LAST_NAME_ORDER) }, through: :tutor_tutorial_joins
 
   # Roster associations
   has_many :tutorial_memberships, dependent: :destroy
@@ -37,15 +37,13 @@ class Tutorial < ApplicationRecord
   }
 
   def title_with_tutors
-    return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
-
-    "#{title}, #{tutor_names}"
+    "#{title} (#{tutor_names || I18n.t("basics.tba")})"
   end
 
   def registration_title
     return title unless tutors.any?
 
-    "#{title} (#{tutor_names})"
+    title_with_tutors
   end
 
   def tutor_names

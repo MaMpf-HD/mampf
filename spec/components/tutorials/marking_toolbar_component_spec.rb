@@ -31,13 +31,14 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
   end
 
   describe "the lecture's table" do
-    it "filters by group, including the people in none" do
+    it "filters by group, named with its tutors, including the people in none" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
       rendered = render_inline(toolbar(scope: lecture, tutorials: [tutorial]))
 
       options = rendered.css("select[data-status-filter-target=tutorial] option")
 
       expect(options.map { |option| option.text.strip })
-        .to eq(["All", "Tuesday group", "No tutorial"])
+        .to eq(["All", "Tuesday group (Ada Lovelace)", "No tutorial"])
     end
 
     it "has no menu of group actions" do

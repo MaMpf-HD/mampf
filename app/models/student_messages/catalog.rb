@@ -76,8 +76,8 @@ module StudentMessages
 
     private
 
-      def audience(key, label, heading, users, count: nil)
-        Audience.new(key: key, label: label, heading: heading, users: users, count: count)
+      def audience(key, label, heading, users, **)
+        Audience.new(key: key, label: label, heading: heading, users: users, **)
       end
 
       # Outside the staff, only a tutorial's own tutors may write on it - the
@@ -85,7 +85,7 @@ module StudentMessages
       # read directly rather than asking every tutorial of the lecture.
       def tutorials
         groups = if staff?
-          @lecture.tutorials.to_a
+          @lecture.tutorials.includes(:tutors).to_a
         else
           @sender.given_tutorials.where(lecture: @lecture).to_a
         end
@@ -93,7 +93,8 @@ module StudentMessages
                                    .group(:tutorial_id).distinct.count(:user_id)
         groups.map do |tutorial|
           audience("tutorial:#{tutorial.id}", tutorial.title, :tutorials, tutorial.members,
-                   count: counts.fetch(tutorial.id, 0))
+                   count: counts.fetch(tutorial.id, 0),
+                   detail: (tutorial.tutor_names || I18n.t("basics.tba") if staff?))
         end
       end
 

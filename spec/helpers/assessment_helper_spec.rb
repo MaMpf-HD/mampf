@@ -35,8 +35,8 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         expect(result[student.id]).to include(
           participated_tutorial_id: tutorial1.id,
           new_tutorial_id: tutorial2.id,
-          participated_tutorial_title: "Tutorial 1",
-          new_tutorial_title: "Tutorial 2"
+          participated_tutorial_title: tutorial1.title_with_tutors,
+          new_tutorial_title: tutorial2.title_with_tutors
         )
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
           participated_tutorial_id: nil,
           new_tutorial_id: tutorial2.id,
           participated_tutorial_title: nil,
-          new_tutorial_title: "Tutorial 2"
+          new_tutorial_title: tutorial2.title_with_tutors
         )
       end
     end
@@ -83,7 +83,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         expect(result[student.id]).to include(
           participated_tutorial_id: tutorial1.id,
           new_tutorial_id: nil,
-          participated_tutorial_title: "Tutorial 1",
+          participated_tutorial_title: tutorial1.title_with_tutors,
           new_tutorial_title: nil
         )
       end

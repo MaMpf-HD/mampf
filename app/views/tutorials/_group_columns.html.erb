@@ -7,7 +7,7 @@
   <% if tutorials.size > 1 %>
     <%= render partial: 'tutorials/tutorial_dropdown' %>
   <% else %>
-    <input id="tutorial-select" class="form-control form-control-sm" disabled value="<%= tutorial.title %>">
+    <input id="tutorial-select" class="form-control form-control-sm" disabled value="<%= tutorial_option_label(tutorial, current_user) %>">
   <% end %>
 </div>
 

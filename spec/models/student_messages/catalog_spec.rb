@@ -32,6 +32,17 @@ RSpec.describe(StudentMessages::Catalog) do
 
     # Everybody next to a group is everybody; the record must not name a
     # group the mail did not single out.
+    # The message stores the label; the tutors only help to pick.
+    it "names a group's tutors beside its title" do
+      tutor.update!(first_name: "Ada", last_name: "Lovelace")
+      audience = catalog.pick(["tutorial:#{tutorial.id}"]).first
+
+      expect(audience.label).to eq(tutorial.title)
+      expect(audience.detail).to eq("Ada Lovelace")
+      expect(catalog.pick(["tutorial:#{other_tutorial.id}"]).first.detail)
+        .to eq(I18n.t("basics.tba"))
+    end
+
     it "reads everybody beside a group as everybody alone" do
       picked = catalog.pick(["lecture:all", "tutorial:#{tutorial.id}"])
 
@@ -219,6 +230,10 @@ RSpec.describe(StudentMessages::Catalog) do
 
   describe "for a tutor" do
     subject(:catalog) { described_class.new(lecture, tutor) }
+
+    it "leaves their own group by its title alone" do
+      expect(catalog.pick(["tutorial:#{tutorial.id}"]).first.detail).to be_nil
+    end
 
     it "offers their own group and nothing else, without asking every group" do
       selects = 0
