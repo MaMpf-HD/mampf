@@ -311,6 +311,19 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       )
     end
 
+    # The registered view leaves exam campaigns out.
+    it "links an exam registration to the exams tab" do
+      exam_campaign = create(:exam, lecture: lecture).registration_campaign
+      exam_campaign.update_columns(status: Registration::Campaign.statuses[:open], # rubocop:disable Rails/SkipsModelValidations
+                                   registration_deadline: 1.week.from_now)
+      create(:registration_user_registration, :pending,
+             user: former, registration_campaign: exam_campaign,
+             registration_item: exam_campaign.registration_items.first)
+
+      expect(remaining_cell.at_css("a.badge")["href"])
+        .to eq(routes.edit_lecture_path(lecture, tab: "exams"))
+    end
+
     it "shows a dash when nothing remains" do
       expect(remaining_cell.text.strip).to eq("–")
     end

@@ -404,7 +404,6 @@ de:
     tooltips:
       kick_from_lecture: "Aus der Veranstaltung entfernen"
       kick_blocked_by_result: 'Hat ein Ergebnis in %{titles}. Lösche es zuerst, um die Person aus der Veranstaltung zu entfernen.'
-      kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
       locked_manage: "Liste ist während aktiver Anmeldeverfahren gesperrt"
       locked_manage_no_campaign: "Liste ist gesperrt (aktiviere Anmeldeverfahren überspringen für direkte Verwaltung)"

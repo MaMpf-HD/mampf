@@ -15,9 +15,8 @@ class Cohort < ApplicationRecord
     where(context_type: "Lecture", context_id: lectures)
   }
 
-  # The lecture's cohorts without enrollment each user is in, by user id.
   def self.lists_by_user(lecture, user_ids)
-    CohortMembership.joins(:cohort).includes(:cohort)
+    CohortMembership.joins(:cohort).preload(cohort: :context)
                     .merge(where(context: lecture, propagate_to_lecture: false))
                     .where(user_id: user_ids)
                     .order(arel_table[:title])
@@ -59,17 +58,13 @@ class Cohort < ApplicationRecord
 
   FormerMembership = Struct.new(:users, :left_lecture_ids)
 
-  # Members do not block deleting a cohort, only a campaign that is not
-  # completed does.
   def destruction_blockers_with_members
     destruction_blockers - [:roster_not_empty]
   end
 
-  # Deletes the cohort with its memberships. Members for whom it was the last
-  # group that enrolled them are no longer enrolled, as when the staff remove
-  # them from it. Locks the cohort, then the lecture, like
-  # MaintenanceService#remove_user!. Returns a FormerMembership, or nil while a
-  # campaign that is not completed still contains the cohort.
+  # Deletes the cohort with its memberships; members for whom it was the last
+  # group with enrollment are no longer enrolled. Returns a FormerMembership,
+  # or nil while a campaign that is not completed still contains the cohort.
   def destroy_with_members(by: nil)
     transaction do
       lock!
@@ -83,8 +78,8 @@ class Cohort < ApplicationRecord
     end
   end
 
-  # Members in no tutorial, talk, exam list or other cohort of the lecture,
-  # whom deleting the cohort leaves without a group.
+  # Members for whom this cohort is the last group with enrollment, so that
+  # deleting it ends their enrollment.
   def member_ids_leaving_the_lecture
     Rosters::LectureLeave.only_place_user_ids(self, cohort_memberships.pluck(:user_id))
   end

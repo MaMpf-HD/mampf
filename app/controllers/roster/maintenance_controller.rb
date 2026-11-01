@@ -128,7 +128,7 @@ module Roster
     end
 
     # Sends the removal with the button's source and page, which decide what
-    # the answer redraws.
+    # the response redraws.
     def confirm_remove_member
       ensure_rosterable_unlocked!
 
@@ -245,6 +245,8 @@ module Roster
         @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
+        # Removing the only person on the last page would leave it empty.
+        @pagy, @participants = pagy(query.scope, page: @pagy.last) if @pagy.page > @pagy.last
         @participants_component_args = participants_component_args
       end
 

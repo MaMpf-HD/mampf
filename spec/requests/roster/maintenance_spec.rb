@@ -981,6 +981,21 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.to change { lecture.members.count }.by(-1)
       end
 
+      it "shows the last page that remains when the removal empties a page" do
+        create_list(:confirmed_user, 20).each { |other| lecture.add_user_to_roster!(other) }
+        scope = Rosters::ParticipantQuery.new(lecture, ActionController::Parameters.new({}))
+                                         .call.scope
+        on_page_one = scope.first.user
+        on_page_two = scope.offset(20).first.user
+
+        delete remove_member_lecture_path(lecture, on_page_two),
+               params: { source: "participants", page: 2 }, as: :turbo_stream
+
+        body = CGI.unescapeHTML(response.body)
+        expect(body).not_to include(I18n.t("roster.details.empty"))
+        expect(body).to include(on_page_one.tutorial_name)
+      end
+
       it "keeps the removal with who did it, for the left view" do
         delete(remove_member_lecture_path(lecture, user_id: member.id))
 

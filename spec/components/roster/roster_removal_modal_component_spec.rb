@@ -57,6 +57,29 @@ RSpec.describe(RosterRemovalModalComponent, type: :component) do
     end
   end
 
+  # An allocation can still give it a place, so the removal withdraws it.
+  it "names a rejected registration the removal from the lecture withdraws" do
+    create(:registration_user_registration, :rejected, user: student,
+                                                       registration_campaign: campaign)
+
+    expect(badges(render_for(lecture))).to include(campaign.student_facing_title)
+  end
+
+  it "says why a person with a result cannot be removed, and offers no removal" do
+    seminar = create(:lecture, :is_seminar)
+    talk = create(:talk, lecture: seminar, skip_campaigns: true)
+    talk.add_user_to_roster!(student)
+    talk.ensure_assessment!(requires_points: false)
+    Assessment::Participation.create!(assessment: talk.assessment, user: student)
+                             .update!(grade_numeric: 2.0, grader: create(:confirmed_user),
+                                      graded_at: Time.current, status: :reviewed)
+
+    rendered = render_for(talk)
+
+    expect(body_text(rendered)).to eq(I18n.t("roster.errors.grading_data_present"))
+    expect(rendered.css("form")).to be_empty
+  end
+
   describe "removal from a group" do
     it "says that removal from the last group ends the enrollment and names what stays" do
       waitlist.add_user_to_roster!(student)
@@ -73,7 +96,6 @@ RSpec.describe(RosterRemovalModalComponent, type: :component) do
       )
     end
 
-    # The exam list keeps them in the lecture.
     it "says the person stays enrolled while they are on an exam list" do
       create(:exam, :without_campaign, lecture: lecture).add_user_to_roster!(student)
 

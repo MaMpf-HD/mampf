@@ -177,7 +177,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         expect(lecture.members).not_to include(user)
       end
 
-      # It would enroll them again.
+      # A cohort with enrollment is a place: keeping it would keep them enrolled.
       it "does not keep a cohort with enrollment" do
         subject.remove_user!(user, lecture, keep_list_ids: [propagating_cohort.id])
 

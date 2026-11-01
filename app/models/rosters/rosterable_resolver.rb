@@ -63,8 +63,6 @@ module Rosters
       end
     end
 
-    # Names a group in a parameter or a data attribute, e.g. "Tutorial-12";
-    # find_place reads it back.
     def self.group_key(group)
       "#{group.class.name}-#{group.id}"
     end

@@ -395,7 +395,6 @@ en:
     tooltips:
       kick_from_lecture: "Remove from the lecture"
       kick_blocked_by_result: 'Has a result in %{titles}. Delete it first to remove this person from the lecture.'
-      kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
       locked_manage: "Roster is locked during active registration process"
       locked_manage_no_campaign: "Roster is locked (enable skip registration processes to manage directly)"

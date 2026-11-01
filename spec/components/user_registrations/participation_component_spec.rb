@@ -469,6 +469,17 @@ RSpec.describe(ParticipationComponent, type: :component) do
 
     before { lecture.add_user_to_roster!(user) }
 
+    it "shows the button disabled, saying whom to ask, where the group does not let students go" do
+      tutorial.update!(self_materialization_mode: :disabled)
+      tutorial.add_user_to_roster!(user)
+
+      wrapper = row(render_participation).at_css("span[title]")
+
+      expect(wrapper["title"]).to eq(participation(:leave_locked))
+      expect(wrapper.at_css("button")["disabled"]).to be_present
+      expect(wrapper.at_css("button").text.squish).to eq(participation(:leave_tutorial))
+    end
+
     context "when another group with enrollment remains" do
       def dialog_text_for(mode, capacity: nil)
         tutorial.update!(self_materialization_mode: mode, capacity: capacity)
@@ -543,7 +554,7 @@ RSpec.describe(ParticipationComponent, type: :component) do
                                                             registration_campaign: campaign)
       end
 
-      it "opens its own dialog, saying that taking part ends and the registration stays" do
+      it "opens its own dialog, saying that no sheet can be handed in and what stays" do
         create(:assignment, lecture: lecture)
 
         rendered = render_participation
@@ -560,12 +571,23 @@ RSpec.describe(ParticipationComponent, type: :component) do
           .not_to include(I18n.t("lecture_home.leave.only_group", group: "Mo 10"))
       end
 
-      it "opens the dialog for leaving the course while a result holds the student" do
-        allow_any_instance_of(Rosters::LectureLeave)
-          .to receive(:last_place_blockers).and_return([:held])
+      it "says in its own dialog why an exam registration past its deadline holds the student" do
+        exam_campaign = create(:exam, lecture: lecture, title: "Final").registration_campaign
+        exam_campaign.update_columns(status: Registration::Campaign.statuses[:closed], # rubocop:disable Rails/SkipsModelValidations
+                                     registration_deadline: 1.day.ago)
+        create(:registration_user_registration, :confirmed,
+               user: user, registration_campaign: exam_campaign,
+               registration_item: exam_campaign.registration_items.first)
 
-        expect(row(render_participation).at_css("button")["data-bs-target"])
-          .to eq("##{LeaveLectureComponent::ID}")
+        rendered = render_participation
+
+        expect(row(rendered).at_css("button")["data-bs-target"])
+          .to eq("#leave-tutorial-#{tutorial.id}")
+        expect(dialog_text(rendered)).to include(
+          participation(:leave_held),
+          I18n.t("lecture_home.leave.blockers.exam_closed", title: "Final")
+        )
+        expect(rendered.at_css("#leave-tutorial-#{tutorial.id} form")).to be_nil
       end
     end
   end

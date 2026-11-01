@@ -56,7 +56,7 @@ module Rosters
     # new allocation can still give them a place. Locks each campaign first,
     # like allocation and finalization do.
     def withdraw_registrations!(lectures)
-      withdrawable_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
+      campaigns_to_withdraw(lectures).order(:id).each do |campaign|
         campaign.lock!
         next unless campaign.running?
 
@@ -68,7 +68,13 @@ module Rosters
     # Locks the campaigns #withdraw_registrations! would touch, for callers that
     # decide only later, under further locks, whether to withdraw at all.
     def lock_campaigns!(lectures)
-      withdrawable_campaigns.where(campaignable: lectures).order(:id).lock.load
+      campaigns_to_withdraw(lectures).order(:id).lock.load
+    end
+
+    # The running campaigns of the given lectures #withdraw_registrations!
+    # takes the user out of, for a dialog to name them beforehand.
+    def campaigns_to_withdraw(lectures)
+      withdrawable_campaigns.where(campaignable: lectures)
     end
 
     private

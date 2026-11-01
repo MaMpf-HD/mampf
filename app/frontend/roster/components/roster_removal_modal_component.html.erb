@@ -9,108 +9,123 @@
 >
   <div class="modal-dialog">
     <div class="modal-content">
-      <%= form_with url: url, method: :delete, local: true do |form| %>
-        <div class="modal-header">
-          <h5 class="modal-title" id="rosterRemovalModalLabel">
-            <%= title %>
-          </h5>
+      <div class="modal-header">
+        <h5 class="modal-title" id="rosterRemovalModalLabel">
+          <%= title %>
+        </h5>
 
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="<%= t("buttons.close") %>"
-          ></button>
-        </div>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="<%= t("buttons.close") %>"
+        ></button>
+      </div>
 
+      <% if graded? %>
         <div class="modal-body">
-          <% if from_lecture? %>
-            <% if places.any? %>
-              <p class="mb-1"><%= t("roster.removal_modal.places") %></p>
-              <div class="d-flex flex-wrap gap-1 mb-3">
-                <% places.each do |place| %>
-                  <span class="badge roster-group-badge"><%= place %></span>
-                <% end %>
-              </div>
-            <% end %>
-            <% if campaigns.any? %>
-              <p class="mb-1"><%= t("roster.removal_modal.withdrawn") %></p>
-              <div class="d-flex flex-wrap gap-1 mb-3">
-                <% campaigns.each do |campaign| %>
-                  <span class="badge roster-group-badge">
-                    <%= campaign.student_facing_title %>
-                  </span>
-                <% end %>
-              </div>
-            <% end %>
-            <% if lists.any? %>
-              <p class="mb-1"><%= t("roster.removal_modal.keep_lists") %></p>
-              <div class="mb-3">
-                <% lists.each do |cohort| %>
-                  <div class="form-check">
-                    <%= check_box_tag "keep_list_ids[]", cohort.id, false,
-                                      id: "keep-list-#{cohort.id}",
-                                      class: "form-check-input" %>
-
-                    <%= label_tag "keep-list-#{cohort.id}", cohort.title,
-                                  class: "form-check-label" %>
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
-            <p class="small text-muted">
-              <%= t("roster.removal_modal.results_stay") %>
-            </p>
-          <% elsif last_place? %>
-            <p>
-              <%= t(exam? ? "roster.removal_modal.last_place_exam" : "roster.removal_modal.last_place_group") %>
-            </p>
-            <% if lists.any? || campaigns.any? %>
-              <p class="mb-1"><%= t("roster.removal_modal.remaining") %></p>
-              <div class="d-flex flex-wrap gap-1 mb-3">
-                <% lists.each do |cohort| %>
-                  <span class="badge roster-group-badge">
-                    <%= cohort.title %>
-                  </span>
-                <% end %>
-
-                <% campaigns.each do |campaign| %>
-                  <span class="badge roster-group-badge">
-                    <%= t("roster.left.registered_for", title: campaign.student_facing_title) %>
-                  </span>
-                <% end %>
-              </div>
-            <% end %>
-            <p class="small text-muted">
-              <%= t("roster.removal_modal.results_stay") %>
-            </p>
-            <% unless exam? %>
-              <p class="small text-muted">
-                <%= t("roster.removal_modal.move_hint") %>
-              </p>
-            <% end %>
-          <% elsif stays_enrolled? %>
-            <p><%= t("roster.removal_modal.stays_enrolled") %></p>
-          <% end %>
-
-          <div class="form-check">
-            <%= form.check_box :notify, { class: "form-check-input", checked: true }, "1", "0" %>
-            <%= form.label :notify, t("roster.removal_modal.notify"), class: "form-check-label" %>
-          </div>
+          <p class="mb-0"><%= graded_note %></p>
         </div>
-
         <div class="modal-footer">
           <button
             type="button"
             class="btn btn-secondary"
             data-bs-dismiss="modal"
           >
-            <%= t("buttons.cancel") %>
+            <%= t("buttons.close") %>
           </button>
-
-          <%= form.submit t("roster.removal_modal.submit"),
-                          class: "btn border-0 bg-danger-subtle text-danger-emphasis" %>
         </div>
+      <% else %>
+        <%= form_with url: url, method: :delete, local: true do |form| %>
+          <div class="modal-body">
+            <% if from_lecture? %>
+              <% if places.any? %>
+                <p class="mb-1"><%= t("roster.removal_modal.places") %></p>
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                  <% places.each do |place| %>
+                    <span class="badge roster-group-badge"><%= place %></span>
+                  <% end %>
+                </div>
+              <% end %>
+              <% if campaigns.any? %>
+                <p class="mb-1"><%= t("roster.removal_modal.withdrawn") %></p>
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                  <% campaigns.each do |campaign| %>
+                    <span class="badge roster-group-badge">
+                      <%= campaign.student_facing_title %>
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+              <% if lists.any? %>
+                <p class="mb-1"><%= t("roster.removal_modal.keep_lists") %></p>
+                <div class="mb-3">
+                  <% lists.each do |cohort| %>
+                    <div class="form-check">
+                      <%= check_box_tag "keep_list_ids[]", cohort.id, false,
+                                      id: "keep-list-#{cohort.id}",
+                                      class: "form-check-input" %>
+
+                      <%= label_tag "keep-list-#{cohort.id}", cohort.title,
+                                  class: "form-check-label" %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+              <p class="small text-muted">
+                <%= t("roster.removal_modal.results_stay") %>
+              </p>
+            <% elsif last_place? %>
+              <p>
+                <%= t(exam? ? "roster.removal_modal.last_place_exam" : "roster.removal_modal.last_place_group") %>
+              </p>
+              <% if lists.any? || campaigns.any? %>
+                <p class="mb-1"><%= t("roster.removal_modal.remaining") %></p>
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                  <% lists.each do |cohort| %>
+                    <span class="badge roster-group-badge">
+                      <%= cohort.title %>
+                    </span>
+                  <% end %>
+
+                  <% campaigns.each do |campaign| %>
+                    <span class="badge roster-group-badge">
+                      <%= t("roster.left.registered_for", title: campaign.student_facing_title) %>
+                    </span>
+                  <% end %>
+                </div>
+              <% end %>
+              <p class="small text-muted">
+                <%= t("roster.removal_modal.results_stay") %>
+              </p>
+              <% unless exam? %>
+                <p class="small text-muted">
+                  <%= t("roster.removal_modal.move_hint") %>
+                </p>
+              <% end %>
+            <% elsif stays_enrolled? %>
+              <p><%= t("roster.removal_modal.stays_enrolled") %></p>
+            <% end %>
+
+            <div class="form-check">
+              <%= form.check_box :notify, { class: "form-check-input", checked: true }, "1", "0" %>
+              <%= form.label :notify, t("roster.removal_modal.notify"), class: "form-check-label" %>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <%= t("buttons.cancel") %>
+            </button>
+
+            <%= form.submit t("roster.removal_modal.submit"),
+                          class: "btn border-0 bg-danger-subtle text-danger-emphasis" %>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>

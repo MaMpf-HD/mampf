@@ -1,10 +1,8 @@
 class LeaveLectureComponent < ViewComponent::Base
   ID = "leave-lecture-dialog".freeze
 
-  # only_group is the student's only group when leaving it would leave the
-  # lecture; its own leave button opens this dialog, which then says so.
-  # switch_targets are the groups the student could switch to from it, which
-  # keeps them in the lecture.
+  # only_group is set when this dialog stands in for leaving the student's
+  # only group; switch_targets are offered instead of leaving.
   def initialize(lecture:, leave:, only_group: nil, switch_targets: [])
     super()
     @lecture = lecture

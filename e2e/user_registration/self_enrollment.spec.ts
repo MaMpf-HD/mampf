@@ -214,6 +214,9 @@ test.describe("student self-enrollment", () => {
       self_materialization_mode: "add_and_remove",
     });
 
+    const page = student.page;
+    const errors: string[] = [];
+    page.on("pageerror", error => errors.push(error.message));
     const home = new CampaignRegistrationPage(student.page, lecture.id);
     await home.goto();
     await home.participation("Monday Tutorial")
@@ -225,6 +228,11 @@ test.describe("student self-enrollment", () => {
     await expect(home.participation("Friday Tutorial")).toContainText("Assigned");
     await expect(home.participation("Monday Tutorial")).toHaveCount(0);
     await expect(dialog).toBeHidden();
+
+    await expect(page.locator(".modal-backdrop")).toHaveCount(0);
+    await expect(page.locator("body")).not.toHaveClass(/modal-open/);
+    await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe("");
+    expect(errors).toEqual([]);
   });
 
   test("blocks joining an exclusive tutorial while stuck in an unremovable "

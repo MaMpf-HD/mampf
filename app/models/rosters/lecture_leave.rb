@@ -62,8 +62,7 @@ module Rosters
     end
 
     # Whether the group is the student's last group that keeps them in the
-    # lecture. It can then only be left by leaving the lecture, so that nobody
-    # is enrolled without a group.
+    # lecture; leaving it ends the enrollment.
     def only_place?(group)
       enrolled? && places == [group]
     end
@@ -158,8 +157,7 @@ module Rosters
 
       # Locks the lecture's unfinished campaigns first, drafts included: a draft
       # opened meanwhile could take a new registration from the student that
-      # leaving would miss. Then the groups and exams, then the lecture, in the
-      # order allocation and the staff's removal use.
+      # leaving would miss. Then the groups and exams, then the lecture.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)

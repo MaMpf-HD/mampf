@@ -23,20 +23,12 @@ module Rosters
       added
     end
 
-    # A caller that removes the user within a larger transaction passes
-    # notify: false, since the mail job is enqueued even if that transaction
-    # rolls back.
-    #
-    # Removal from the lecture takes everything there: groups, lists, running
-    # registrations and the bookmark. The staff may keep some of the lists,
-    # given as keep_list_ids; the bookmark then stays too. Removal from the
-    # last group that enrolls the user takes the enrollment along, and the
-    # bookmark unless the user is still in a cohort without enrollment there
-    # or leaves on their own (by is the user); lists and registrations stay.
-    # Returns the roster the user was taken off (the lecture, when the
-    # enrollment ended), or nil.
-    #
-    # Locks the group, then the lecture; removal from the lecture locks the
+    # Removal from the lecture takes everything there but the lists in
+    # keep_list_ids. Removal from the last group that enrolls the user ends
+    # the enrollment, and the bookmark unless a list remains or the user leaves
+    # on their own. Returns the roster left (the lecture when the enrollment
+    # ended), or nil. Inside a larger transaction, pass notify: false: the mail
+    # job is enqueued even if it rolls back. Removal from the lecture locks its
     # campaigns first, as finalization does, since it withdraws registrations.
     def remove_user!(user, rosterable, notify: true, by: nil, keep_list_ids: [])
       lecture = rosterable.lecture if rosterable.is_a?(Lecture) || rosterable.enrolls_in_lecture?
@@ -101,6 +93,14 @@ module Rosters
       false
     end
 
+    # Whether a result keeps the user on this roster: one on the group itself,
+    # or for the lecture, one on any of its talks or exams.
+    def grading_data?(user, rosterable)
+      return true if rosterable.try(:assessment)&.grading_data_for_user?(user)
+
+      rosterable.is_a?(Lecture) && rosterable.graded_talk_and_exam_titles_by_user([user.id]).any?
+    end
+
     private
 
       def leaves_lecture?(user, rosterable, lecture)
@@ -128,11 +128,7 @@ module Rosters
       # exams, which fails if they have a result there. Checking here first
       # gives a clear error instead of a failure further down.
       def ensure_no_grading_data!(user, rosterable)
-        assessment = rosterable.try(:assessment)
-        held = assessment&.grading_data_for_user?(user)
-        held ||= rosterable.is_a?(Lecture) &&
-                 rosterable.graded_talk_and_exam_titles_by_user([user.id]).any?
-        return unless held
+        return unless grading_data?(user, rosterable)
 
         error = rosterable.is_a?(Lecture) ? LectureGradingDataPresentError : GradingDataPresentError
         raise(error,
