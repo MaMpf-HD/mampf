@@ -75,9 +75,10 @@ module Rosters
 
       def row_line(row)
         line = "#{row.lecture.id} #{row.lecture.title_term_info_no_type}: #{row.without_place} " \
-               "of #{row.enrolled} without a place (#{row.lists_only} on a list only; kept: " \
-               "#{row.awaiting} awaiting a place, #{row.with_work} with work or an admission, " \
-               "#{row.staff} staff), #{row.missing} with a place but not enrolled"
+               "of #{row.enrolled} without a place (#{row.lists_only} on a list only, " \
+               "#{row.with_work} with work or an admission; " \
+               "kept: #{row.awaiting} awaiting a place, #{row.staff} staff), " \
+               "#{row.missing} with a place but not enrolled"
         nobody_placed?(row) ? "#{line} -- nobody has a place, left alone" : line
       end
 
@@ -110,14 +111,14 @@ module Rosters
         end
       end
 
-      # Keeps the lecture's staff, who are not its students; whoever waits in a
-      # running campaign, so that an allocation without a place for them shows
-      # them as unassigned rather than as left; and whoever has work or an
-      # admission there, which the staff would no longer see.
+      # Keeps the lecture's staff, who are not its students, and whoever waits
+      # in a running campaign, so that an allocation without a place for them
+      # shows them as unassigned rather than as left. Whoever has work or an
+      # admission goes too and keeps both, as when the staff take someone out
+      # of their last group.
       def removable(lecture)
         without = without_place(lecture)
-        ids = without.pluck(:user_id)
-        kept = staff_ids(lecture) + awaiting_ids(lecture, ids) + with_work_ids(lecture, ids)
+        kept = staff_ids(lecture) + awaiting_ids(lecture, without.pluck(:user_id))
         without.where.not(user_id: kept).includes(:user).to_a
       end
 
