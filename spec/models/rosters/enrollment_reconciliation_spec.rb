@@ -30,7 +30,7 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       row = reconciliation.rows.sole
 
       expect(row.to_h.except(:lecture))
-        .to eq(enrolled: 4, without_place: 2, lists_only: 1, awaiting: 1, with_work: 0,
+        .to eq(enrolled: 4, without_place: 2, lists_only: 1, awaiting: 1, with_results: 0,
                staff: 0, missing: 0)
     end
 
@@ -137,13 +137,14 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
       expect(reconciliation.report.join("\n")).to include("1 awaiting a place")
     end
 
-    # Taking them out would hide their work and admission from the staff and
-    # keep them from an exam that checks the admission.
-    it "keeps whoever has an admission in the lecture, and reports them" do
+    # As when the staff take someone out of their last group.
+    it "takes off whoever has an admission too, keeping it, and reports them" do
       create(:student_performance_certification, :pending, lecture: lecture, user: limbo)
 
-      expect(reconciliation.apply!).to eq([0, 0])
-      expect(reconciliation.report.join("\n")).to include("1 with work or an admission")
+      expect(reconciliation.report.join("\n"))
+        .to include("1 with a hand-in, points, a result or an admission")
+      expect(reconciliation.apply!).to eq([1, 0])
+      expect(lecture.student_performance_certifications.where(user: limbo)).to exist
     end
 
     it "enrolls a speaker who has a talk but no membership" do
