@@ -86,7 +86,7 @@ RSpec.describe(StudentMessages::Catalog) do
 
         expect(by_key["campaign:#{campaign.id}:all"].user_ids).to eq([registrant.id])
         expect(by_key["item:#{item.id}"].user_ids).to eq([registrant.id])
-        expect(by_key["item:#{item.id}"].label).to end_with(item.title)
+        expect(by_key["item:#{item.id}"].label).to end_with(item.registerable.title)
         expect(by_key["campaign:#{campaign.id}:rejected"].user_ids).to eq([rejected.id])
         expect(by_key["campaign:#{campaign.id}:rejected"].count).to eq(1)
       end

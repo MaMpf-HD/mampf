@@ -156,8 +156,8 @@ RSpec.describe(Tutorial, type: :model) do
       expect(tutorial.registration_title).to eq("Tuesday (Ada Lovelace)")
     end
 
-    it "is the title alone without a tutor" do
-      expect(tutorial.registration_title).to eq("Tuesday")
+    it "says the group has no tutor yet" do
+      expect(tutorial.registration_title).to eq("Tuesday (#{I18n.t("basics.tba")})")
     end
   end
 

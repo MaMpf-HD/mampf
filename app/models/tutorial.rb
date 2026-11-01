@@ -43,8 +43,6 @@ class Tutorial < ApplicationRecord
   end
 
   def registration_title
-    return title unless tutors.any?
-
     title_with_tutors
   end
 

@@ -106,12 +106,13 @@
                     for="audience-<%= audience.key.tr(":", "-") %>"
                   >
                     <%= audience.label %>
+                    <span class="text-muted">(<%= audience.count %>)</span>
 
                     <% if audience.detail %>
-                      <span class="text-muted">· <%= audience.detail %></span>
+                      <span class="d-block small text-muted">
+                        <%= audience.detail %>
+                      </span>
                     <% end %>
-
-                    <span class="text-muted">(<%= audience.count %>)</span>
                   </label>
                 </div>
               <% end %>

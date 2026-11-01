@@ -99,7 +99,7 @@ test.describe("the group rows", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      const title = page.getByRole("button", { name: "Mo 10", exact: true });
+      const title = page.getByRole("button", { name: "Mo 10 (tba)", exact: true });
       await title.focus();
       await page.keyboard.press("Enter");
 
