@@ -246,7 +246,7 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       expect(lecture.reload.members).to include(user)
     end
 
-    it "keeps the registrations and the bookmark when the last group goes" do
+    it "keeps the registrations and drops the bookmark when the last group goes" do
       user.bookmark_lecture!(lecture)
       campaign = create(:registration_campaign, :open, campaignable: lecture)
       registration = create(:registration_user_registration, :pending,
@@ -255,6 +255,15 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
       subject.remove_user!(user, mo)
 
       expect(registration.reload).to be_persisted
+      expect(user.reload.lectures).not_to include(lecture)
+    end
+
+    it "keeps the bookmark when the last group goes while the user is on a list" do
+      user.bookmark_lecture!(lecture)
+      subject.add_user!(user, list, ignore_capacity: true)
+
+      subject.remove_user!(user, mo)
+
       expect(user.reload.lectures).to include(lecture)
     end
 

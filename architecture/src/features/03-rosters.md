@@ -22,7 +22,7 @@ $$ \text{Lecture Roster} = \text{Members}(\text{Places}) $$
 1.  **Upstream Propagation (Addition):**
     When a student gets a place, they are **automatically** added to the Lecture Roster, and an earlier exclusion is cleared (`Lecture#ensure_roster_membership!`).
 2.  **Last Place (Removal from Group):**
-    Removing a student from a group that is not their last place takes only that group. Removing them from their last place also ends the enrollment: the lecture membership stays as an exclusion (`excluded_at`, `excluded_by`), and the student is listed under "Left". Lists, running registrations and the bookmark stay.
+    Removing a student from a group that is not their last place takes only that group. Removing them from their last place also ends the enrollment: the lecture membership stays as an exclusion (`excluded_at`, `excluded_by`), and the student is listed under "Left". Lists and running registrations stay; the bookmark stays only while the student is still in a cohort without enrollment.
 3.  **Removal from the Lecture:**
     When a student is removed from the lecture through roster maintenance, they lose everything there: tutorials, talks, cohorts with and without enrollment, and exam lists; their running registrations are withdrawn and the bookmark goes. Points and an exam admission stay with the person and count again when they come back.
 4.  **Leaving:**
