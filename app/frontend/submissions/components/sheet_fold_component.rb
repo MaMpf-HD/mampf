@@ -23,7 +23,7 @@ class SheetFoldComponent < ViewComponent::Base
 
   attr_reader :sheet
 
-  delegate :submission, :tasks, to: :sheet
+  delegate :submission, :tasks, :late_join_code, to: :sheet
 
   def initialize(sheet:)
     super()

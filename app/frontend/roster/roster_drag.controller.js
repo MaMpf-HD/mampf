@@ -209,13 +209,10 @@ export default class extends Controller {
       title.textContent = row.dataset.rosterTitle;
       const note = document.createElement("span");
       note.className = "d-block small text-muted";
-      if (this.isLocked(row)) {
-        button.disabled = true;
-        note.textContent = dialog.dataset.lockedNote;
-      }
-      else {
-        note.textContent = row.dataset.rosterCount || "";
-      }
+      const locked = this.isLocked(row);
+      button.disabled = locked;
+      const state = locked ? dialog.dataset.lockedNote : row.dataset.rosterCount;
+      note.textContent = [row.dataset.rosterPeople, state].filter(Boolean).join(" · ");
       button.append(title, note);
       const key = row.dataset.rosterKey;
       button.addEventListener("click", () => this.choosePickedTarget(key));

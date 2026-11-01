@@ -85,7 +85,7 @@ module Assessment
     def tutorial_rows
       return [] if participations.none?(&:tutorial)
 
-      group_rows(participations.group_by(&:tutorial)) { |tutorial| tutorial&.title }
+      group_rows(participations.group_by(&:tutorial)) { |tutorial| tutorial&.title_with_tutors }
     end
 
     private
@@ -94,8 +94,8 @@ module Assessment
 
       def participations
         @participations ||= assessment.assessment_participations
-                                      .includes(:tutorial, :task_points,
-                                                user: User::PROGRAM_PRELOAD).to_a
+                                      .includes(:task_points, tutorial: :tutors,
+                                                              user: User::PROGRAM_PRELOAD).to_a
       end
 
       def marked

@@ -2937,6 +2937,9 @@ en:
         join_late: >
           Handed in with a team after all? Its code still gets you on it, until
           the team has been marked; after that your tutor can still add you.
+        team_code: >
+          Somebody missing from your team? With this code they still get on it,
+          until the team has been marked:
         no_points:
           nothing_yet: Nothing has been entered yet.
           on_the_correction: >

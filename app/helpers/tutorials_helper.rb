@@ -20,21 +20,29 @@ module TutorialsHelper
   end
 
   def tutorials_for_dropdown(user, lecture, current_tutorial)
+    all = lecture.tutorials.includes(:tutors)
+    own = user.tutorials(lecture).includes(:tutors)
     if !user.in?(lecture.tutors)
       {
-        "All tutorials" => lecture.tutorials - [current_tutorial]
+        "All tutorials" => all - [current_tutorial]
       }
 
     elsif user.editor_or_teacher_in?(lecture)
       {
-        "Own tutorials" => user.tutorials(lecture) - [current_tutorial],
-        "Other tutorials" => lecture.tutorials - user.tutorials(lecture) - [current_tutorial]
+        "Own tutorials" => own - [current_tutorial],
+        "Other tutorials" => all - own - [current_tutorial]
       }.delete_if { |_, list| list.empty? }
 
     else # user is a tutor
       {
-        "Your tutorials" => user.tutorials(lecture) - [current_tutorial]
+        "Your tutorials" => own - [current_tutorial]
       }
     end
+  end
+
+  # Names a tutorial with its tutors unless the viewer tutors it: a lecturer
+  # knows the tutors better than the titles, a tutor knows their own tutorial.
+  def tutorial_option_label(tutorial, user)
+    user.in?(tutorial.tutors) ? tutorial.title : tutorial.title_with_tutors
   end
 end
