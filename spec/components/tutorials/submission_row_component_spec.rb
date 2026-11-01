@@ -561,6 +561,18 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       end
     end
 
+    it "offers nobody who moved to another group when it reads the names itself" do
+      stayed, moved = create_list(:confirmed_user, 2)
+      create(:tutorial_membership, tutorial: tutorial, user: stayed)
+      create(:tutorial_membership, tutorial: create(:tutorial, lecture: lecture), user: moved)
+      create(:assessment_participation, assessment: assessment, user: moved, tutorial: tutorial)
+      html = render_inline(described_class.new(submission: submission, assignment: assignment,
+                                               grading_scope: tutorial))
+
+      expect(html.css("[data-controller=add-member-menu] button.dropdown-item")
+                 .map { |item| item.text.squish }).to eq([stayed.tutorial_name])
+    end
+
     it "offers the menu on a rejected hand-in that a moved deadline made in time" do
       submission.update!(accepted: false,
                          last_modification_by_users_at: assignment.deadline - 1.hour)

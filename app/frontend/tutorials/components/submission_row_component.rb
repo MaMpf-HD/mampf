@@ -63,12 +63,15 @@ class SubmissionRowComponent < ViewComponent::Base
 
   # Whom the tutor may put on this team: the group's members on no team
   # for this sheet. A hand-in rejected as late takes nobody; it counts as none.
-  # Somebody marked on a row of their own is done with the sheet.
+  # Somebody marked on a row of their own is done with the sheet. Somebody who
+  # moved to another group keeps a row here, but is offered only where the add
+  # action takes them, see Submission#member_candidates.
   def addable_members
     return [] unless may_add_members? && !team_full?
 
     @addable_members ||=
       @assignment.non_submitters_in_tutorial(@tutorial)
+                 .where(id: @submission.member_candidates.select(:id))
                  .where.not(id: @assessment.assessment_participations.marked.select(:user_id))
                  .by_last_name
     @addable_members.reject { |member| left_lecture?(member) }

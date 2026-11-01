@@ -93,6 +93,31 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
 
         expect(offered(lecture)).to eq(["Mia Bauer"])
       end
+
+      # Ben handed in on paper and then moved to another group; his row stays
+      # here, but the add action takes him only where teams may span groups.
+      context "with somebody who moved to another group" do
+        let(:moved) { create(:confirmed_user, name_in_tutorials: "Ben Weber") }
+
+        before do
+          create(:tutorial_membership, tutorial: create(:tutorial, lecture: lecture), user: moved)
+          create(:assessment_participation, assessment: assessment, user: moved,
+                                            tutorial: tutorial, submitted_at: 4.hours.ago)
+          allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        end
+
+        it "does not offer them where teams stay within one group" do
+          expect(offered(tutorial)).to eq(["Mia Bauer"])
+          expect(offered(lecture)).to eq(["Mia Bauer"])
+        end
+
+        it "offers them where teams may span groups" do
+          lecture.update!(cross_tutorial_teams: true)
+
+          expect(offered(tutorial)).to contain_exactly("Mia Bauer", "Ben Weber")
+          expect(offered(lecture)).to contain_exactly("Mia Bauer", "Ben Weber")
+        end
+      end
     end
 
     describe "#rows?" do

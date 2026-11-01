@@ -24,7 +24,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @elsewhere = elsewhere_teams
     @participations_by_user_id =
       preload_participations(@non_submitters, @stack + @elsewhere, groups_of(@non_submitters))
-    @addable_members = unmarked(@non_submitters)
+    @addable_members = unmarked(addable(@non_submitters, @tutorial))
   end
 
   # A tutor reads the teams of their students that another tutorial marks;
@@ -62,7 +62,9 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @non_submitters_by_tutorial = @non_submitters.group_by do |user|
       @participations_by_user_id[user.id]&.tutorial || membership_tutorials[user.id]
     end
-    @addable_by_tutorial = @non_submitters_by_tutorial.transform_values { |users| unmarked(users) }
+    @addable_by_tutorial = @non_submitters_by_tutorial.to_h do |tutorial, users|
+      [tutorial, unmarked(addable(users, tutorial))]
+    end
   end
 
   # Batch creation avoids per-student inserts and validation queries.
@@ -94,6 +96,16 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     return users unless assessment
 
     users.reject { |user| assessment.marked?(@participations_by_user_id[user.id]) }
+  end
+
+  # Whom the add action takes, as Submission#member_candidates: somebody who
+  # moved to another group keeps a row here, but joins a team of this group
+  # only where teams may span groups.
+  def addable(users, tutorial)
+    users.select do |user|
+      current = membership_tutorials[user.id]
+      current && (@lecture.cross_tutorial_teams? || current == tutorial)
+    end
   end
 
   def team_participations(submission)
