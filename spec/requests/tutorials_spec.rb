@@ -334,6 +334,78 @@ RSpec.describe("Tutorials", type: :request) do
     end
   end
 
+  # Until the grace period is over the files may still change and the
+  # teams still move.
+  describe "the bundle and the bulk upload during the grace period" do
+    include ActiveSupport::Testing::TimeHelpers
+
+    let(:assignment) { create(:assignment, lecture: lecture) }
+    let(:until_final) do
+      I18n.t("tutorial.hand_ins_not_final",
+             time: I18n.l(assignment.friendly_deadline, format: :short))
+    end
+
+    before do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            last_modification_by_users_at: Time.current)
+        .users << create(:confirmed_user)
+      travel_to(assignment.deadline + 1.minute)
+      sign_in tutor
+    end
+
+    after { travel_back }
+
+    it "sends no bundle, and says until when" do
+      get bulk_download_submissions_path(id: tutorial.id, ass_id: assignment.id)
+
+      marking = { assignment: assignment.id, tutorial: tutorial.id }
+      expect(response).to redirect_to(lecture_tutorials_path(lecture, params: marking))
+      expect(flash[:alert]).to eq(until_final)
+    end
+
+    it "takes no corrections, and says until when" do
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: assignment.id),
+            params: { cached_files: "[]" }, xhr: true
+
+      expect(flash[:alert]).to eq(until_final)
+    end
+
+    it "names the tutorial a handed-over team went to in the report" do
+      other = create(:tutorial, lecture: lecture, title: "Tuesday group")
+      handed_over = create(:submission, :with_manuscript, assignment: assignment,
+                                                          tutorial: other,
+                                                          handed_over_to_id: other.id)
+      handed_over.users << create(:confirmed_user, name_in_tutorials: "Anna Keller")
+      travel_to(assignment.friendly_deadline + 1.minute)
+      files = [{ metadata: { filename: "correction-ID-#{handed_over.id}.pdf" } }]
+
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: assignment.id),
+            params: { cached_files: files.to_json }, xhr: true
+
+      expect(response.body).to include(I18n.t("tutorial.bulk_upload.elsewhere"))
+      expect(response.body).to include("Anna Keller")
+      expect(response.body).to include(ERB::Util.html_escape(other.title_with_tutors))
+    end
+
+    it "takes no sheet of another lecture" do
+      foreign = create(:assignment, lecture: create(:lecture))
+      travel_to(foreign.friendly_deadline + 1.minute)
+
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: foreign.id),
+            params: { cached_files: "[]" }
+
+      expect(response).to redirect_to(:root)
+      expect(flash[:alert]).to eq(I18n.t("controllers.no_assignment"))
+    end
+
+    it "sends the bundle once the grace period is over" do
+      travel_to(assignment.friendly_deadline + 1.minute)
+      get bulk_download_submissions_path(id: tutorial.id, ass_id: assignment.id)
+
+      expect(response.media_type).to eq("application/zip")
+    end
+  end
+
   describe "GET /tutorials/new" do
     context "as an editor" do
       before { sign_in editor }

@@ -402,7 +402,7 @@ RSpec.describe("UploadRoutes", type: :request) do
       let(:user) { create(:confirmed_user, locale: "en") }
       let(:submission) do
         create(:submission, tutorial: tutorial,
-                            assignment: create(:assignment, lecture: tutorial.lecture))
+                            assignment: create(:assignment, :expired, lecture: tutorial.lecture))
       end
 
       it "allows /corrections/upload for a submission of their tutorial" do

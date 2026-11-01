@@ -295,8 +295,8 @@ de:
       add_member_no_match: 'Niemand mit diesem Namen ist ohne Team.'
       hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
       hand_over_hint: >-
-        Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib
-        es an eines davon; Punkte und Korrektur werden dann dort eingetragen.
+        Übergib das Team an das Tutorium eines seiner Mitglieder; Punkte und
+        Korrektur werden dann dort eingetragen.
       marked_elsewhere: 'Korrektur in %{tutorial}'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
@@ -339,7 +339,8 @@ de:
       download_correction: 'Korrektur herunterladen'
       show_correction: 'Korrektur anzeigen'
       upload_correction: 'Korrektur hochladen'
-      upload_correction_closed: 'Korrekturen können erst nach der Frist hochgeladen werden'
+      upload_correction_closed: 'Korrekturen erst nach der Kulanzfrist, ab %{time}'
+      download_closed: 'Paketdownload erst nach der Kulanzfrist, ab %{time}'
       delete_correction: 'Korrektur löschen'
       confirm_delete_correction: 'Korrektur löschen? Die Datei ist dann weg, die Punkte bleiben.'
       accept_late: 'Verspätete Abgabe annehmen'

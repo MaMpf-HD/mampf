@@ -5,6 +5,8 @@ RSpec.describe("SubmissionUploads", type: :request) do
   let(:scanner) { instance_double(ClamavScanner) }
   let(:assignment) { create(:assignment, :with_lecture) }
   let(:submission) { Submission.new(assignment: assignment) }
+  # Corrections wait for the grace period to be over.
+  let(:expired_sheet) { create(:assignment, :expired, lecture: assignment.lecture) }
   let(:upload) do
     Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
                                  "application/pdf")
@@ -61,7 +63,7 @@ RSpec.describe("SubmissionUploads", type: :request) do
     tutorial = create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
                                                     lecture: assignment.lecture)
     tutor = user.reload
-    corrected = create(:submission, assignment: assignment, tutorial: tutorial)
+    corrected = create(:submission, assignment: expired_sheet, tutorial: tutorial)
     sign_in tutor
 
     post "/corrections/upload",
@@ -81,7 +83,7 @@ RSpec.describe("SubmissionUploads", type: :request) do
   it "hands the tutor a correction form that uploads through the endpoint" do
     tutorial = create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
                                                     lecture: assignment.lecture)
-    corrected = create(:submission, assignment: assignment, tutorial: tutorial)
+    corrected = create(:submission, assignment: expired_sheet, tutorial: tutorial)
     sign_in user.reload
 
     get edit_correction_path(corrected), as: :turbo_stream
@@ -98,7 +100,7 @@ RSpec.describe("SubmissionUploads", type: :request) do
       create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
                                            lecture: assignment.lecture)
     end
-    let(:corrected) { create(:submission, assignment: assignment, tutorial: tutorial) }
+    let(:corrected) { create(:submission, assignment: expired_sheet, tutorial: tutorial) }
     let(:cached_upload) do
       CorrectionUploader.upload(File.open(File.join(SPEC_FILES, "manuscript.pdf"), "rb"),
                                 :submission_cache)
@@ -147,7 +149,7 @@ RSpec.describe("SubmissionUploads", type: :request) do
 
     it "keeps the correction the row had when saved without a new file" do
       allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
-      corrected = create(:submission, :with_correction, assignment: assignment,
+      corrected = create(:submission, :with_correction, assignment: expired_sheet,
                                                         tutorial: tutorial)
       kept = corrected.correction.id
 
@@ -159,7 +161,7 @@ RSpec.describe("SubmissionUploads", type: :request) do
 
     it "keeps the correction the row had when the new one is refused" do
       allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
-      corrected = create(:submission, :with_correction, assignment: assignment,
+      corrected = create(:submission, :with_correction, assignment: expired_sheet,
                                                         tutorial: tutorial)
       kept = corrected.correction.id
       data = cached_upload.data
