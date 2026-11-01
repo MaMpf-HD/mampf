@@ -32,6 +32,7 @@ de:
     leave:
       title: "Veranstaltung verlassen"
       intro: "Das passiert, wenn Du die Veranstaltung verlässt:"
+      only_group: "„%{group}“ ist Deine einzige Gruppe: Sie zu verlassen heißt, die Veranstaltung zu verlassen."
       consequences:
         groups: "Du verlässt %{groups}."
         campaigns: "Deine Anmeldungen zu %{campaigns} werden zurückgezogen."

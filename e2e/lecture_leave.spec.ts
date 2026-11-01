@@ -1,16 +1,14 @@
 import { expect, test } from "./_support/fixtures";
 import { FactoryBot } from "./_support/factorybot";
 import { subscribeToLecture } from "./user_registration/helpers";
-import { DashboardLectureBrowsePage } from "./page-objects/dashboard_lecture_browse_page";
+import { CampaignRegistrationPage } from "./page-objects/campaign_registrations_page";
 
-async function enrollInTutorial(
-  factory: FactoryBot, userId: number, mode: string, lectureAttributes: object = {},
-) {
+async function enrollInTutorial(factory: FactoryBot, userId: number, mode: string) {
   const course = await factory.create("course", [], {
     title: "Linear Algebra", short_title: "LA 1",
   });
   const lecture = await factory.create("lecture", ["released_for_all"], {
-    course_id: course.id, ...lectureAttributes,
+    course_id: course.id,
   });
   await subscribeToLecture(factory, lecture, userId);
   const tutorial = await factory.create("tutorial", [], {
@@ -50,10 +48,34 @@ test.describe("leaving a course", () => {
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
-  test("leaves the only tutorial and keeps the course bookmarked", async ({ factory, student }) => {
-    const term = await factory.create("term", ["summer", "active"], { year: 2025 });
-    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove", {
-      term_id: term.id,
+  test("offers to leave the course from the only tutorial", async ({ factory, student }) => {
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
+    const { page } = student;
+
+    await page.goto(`/lectures/${lecture.id}`);
+    await page.getByTestId("participation-row").filter({ hasText: "Mo 10" })
+      .getByRole("button", { name: "Leave tutorial" }).click();
+    const dialog = page.getByRole("dialog", { name: "Leave this course" });
+    await expect(dialog).toContainText("“Mo 10” is your only group: leaving it means leaving the course.");
+    await expect(dialog.getByText("You leave Mo 10.")).toBeVisible();
+  });
+
+  test("leaves only the tutorial and keeps a registration", async ({ factory, student }) => {
+    const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
+    const campaign = await factory.create("registration_campaign", ["open"], {
+      campaignable_type: "Lecture", campaignable_id: lecture.id,
+      description: "Repeaters registration",
+    });
+    const repeaters = await factory.create("cohort", [], {
+      context_type: "Lecture", context_id: lecture.id, title: "Repeaters",
+    });
+    const item = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id, registerable_type: "Cohort",
+      registerable_id: repeaters.id,
+    });
+    await factory.create("registration_user_registration", ["confirmed"], {
+      user_id: student.user.id, registration_campaign_id: campaign.id,
+      registration_item_id: item.id,
     });
     const { page } = student;
 
@@ -61,18 +83,14 @@ test.describe("leaving a course", () => {
     await page.getByTestId("participation-row").filter({ hasText: "Mo 10" })
       .getByRole("button", { name: "Leave tutorial" }).click();
     const dialog = page.getByRole("dialog", { name: "Leave “Mo 10”?" });
-    await expect(dialog).toContainText(
-      "You then no longer take part in the course and cannot hand in sheets.",
-    );
+    await expect(dialog).toContainText(/Your registration for “.*” stays\./);
     await dialog.getByRole("button", { name: "Leave tutorial" }).click();
 
-    await expect(page.getByText(/^You have left “Mo 10” and no longer take part/))
-      .toContainText("The course stays on your dashboard");
-    await expect(page.getByTestId("participation-row")).toHaveCount(0);
-    const dashboard = new DashboardLectureBrowsePage(page);
-    await dashboard.goto();
-    await expect(dashboard.dashboardCard(lecture.id)
-      .getByRole("button", { name: "Remove bookmark" })).toBeVisible();
+    await expect(page.getByText(/^You have left “Mo 10” and no longer take part/)).toBeVisible();
+    await expect(page.getByTestId("participation-row").filter({ hasText: "Mo 10" }))
+      .toHaveCount(0);
+    await expect(new CampaignRegistrationPage(page, lecture.id).campaign("Repeaters registration"))
+      .toContainText("Registered");
   });
 
   test("says why a student cannot leave alone", async ({ factory, student }) => {

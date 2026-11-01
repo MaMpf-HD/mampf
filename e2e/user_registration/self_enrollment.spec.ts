@@ -191,7 +191,7 @@ test.describe("student self-enrollment", () => {
     await expect(home.participation("Monday Tutorial")).toHaveCount(0);
   });
 
-  test("switches from the dialog for leaving the tutorial", async ({ factory, student }) => {
+  test("switches from the dialog for leaving the only tutorial", async ({ factory, student }) => {
     const lecture = await createReleasedLecture(factory);
     await subscribeToLecture(factory, lecture, student.user.id);
     const current = await factory.create("tutorial", [], {
@@ -218,7 +218,7 @@ test.describe("student self-enrollment", () => {
     await home.goto();
     await home.participation("Monday Tutorial")
       .getByRole("button", { name: "Leave tutorial" }).click();
-    const dialog = student.page.getByRole("dialog", { name: "Leave “Monday Tutorial”?" });
+    const dialog = student.page.getByRole("dialog", { name: "Leave this course" });
     await dialog.getByRole("button", { name: "Switch to" }).click();
     await dialog.getByRole("button", { name: "Friday Tutorial" }).click();
 

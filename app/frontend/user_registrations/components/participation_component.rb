@@ -18,14 +18,19 @@ class ParticipationComponent < ViewComponent::Base
     @leave = Rosters::LectureLeave.new(lecture, user)
   end
 
+  # Also opened from the row of the student's last group when leaving that
+  # group is leaving the lecture; it then says so and offers to switch.
   def leave_dialog
-    LeaveLectureComponent.new(lecture: @lecture, leave: @leave)
+    last_group = rosterables.find { |rosterable| opens_lecture_dialog?(rosterable) }
+    LeaveLectureComponent.new(lecture: @lecture, leave: @leave,
+                              only_group: (last_group if keeps_nothing?),
+                              switch_targets: last_group ? switch_targets_for(last_group) : [])
   end
 
-  # One dialog for each group the student may leave; the rows' buttons open
-  # them.
+  # One dialog for each other group the student may leave; the rows' buttons
+  # open them.
   def leave_group_dialogs
-    rosterables.select { |rosterable| leavable?(rosterable) }
+    rosterables.select { |rosterable| leavable?(rosterable) && !opens_lecture_dialog?(rosterable) }
                .map { |rosterable| leave_group_dialog(rosterable) }
   end
 
@@ -77,7 +82,7 @@ class ParticipationComponent < ViewComponent::Base
         Row.new(label: helpers.roster_type_text(rosterable),
                 title: rosterable.title,
                 lines: member_lines(rosterable) + result_lines(result) +
-                       [held_line(rosterable), switch_line(rosterable)].compact,
+                       [switch_line(rosterable)].compact,
                 badge: result ? result_badge(result) : roster_badge(rosterable),
                 note: preference_note(rosterable),
                 actions: leave_action(rosterable),
@@ -264,20 +269,29 @@ class ParticipationComponent < ViewComponent::Base
     def leave_action(rosterable)
       return unless leavable?(rosterable)
 
+      dialog_id = if opens_lecture_dialog?(rosterable)
+        LeaveLectureComponent::ID
+      else
+        leave_group_dialog(rosterable).id
+      end
       helpers.button_tag(t(LeaveGroupComponent.submit_key(rosterable)),
                          type: "button", class: "btn btn-sm btn-outline-secondary",
-                         data: { bs_toggle: "modal",
-                                 bs_target: "##{leave_group_dialog(rosterable).id}" })
+                         data: { bs_toggle: "modal", bs_target: "##{dialog_id}" })
     end
 
     def leavable?(rosterable)
-      rosterable.allow_self_remove?(@user) && !held_in_last_group?(rosterable)
+      rosterable.allow_self_remove?(@user)
     end
 
-    # A result or an exam registration past its deadline keeps the student in
-    # their last group with enrollment.
-    def held_in_last_group?(rosterable)
-      @leave.only_place?(rosterable) && @leave.last_place_blockers.any?
+    # Leaving the last group with enrollment is leaving the lecture when the
+    # student keeps no list and no registration there. When a result or a
+    # closed exam registration holds them, the lecture's dialog says why.
+    def opens_lecture_dialog?(rosterable)
+      @leave.only_place?(rosterable) && (keeps_nothing? || @leave.last_place_blockers.any?)
+    end
+
+    def keeps_nothing?
+      @leave.lists.empty? && @leave.running_campaigns.empty?
     end
 
     def leave_group_dialog(rosterable)
@@ -285,12 +299,6 @@ class ParticipationComponent < ViewComponent::Base
       @leave_group_dialogs[rosterable] ||=
         LeaveGroupComponent.new(rosterable: rosterable, leave: @leave,
                                 switch_targets: switch_targets_for(rosterable))
-    end
-
-    def held_line(rosterable)
-      return unless rosterable.allow_self_remove?(@user) && held_in_last_group?(rosterable)
-
-      t("registration.user_registration.participation.leave_held")
     end
 
     def switch_line(rosterable)
