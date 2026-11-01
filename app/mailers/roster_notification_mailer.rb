@@ -16,7 +16,9 @@ class RosterNotificationMailer < ApplicationMailer
       ).public_send(added_template(rosterable)).deliver_later
     end
 
-    def removed(user, rosterable)
+    # left_lecture says that the group was the user's last place, so that the
+    # mail can tell them they are no longer enrolled.
+    def removed(user, rosterable, left_lecture: false)
       return log_unsupported(rosterable) unless supported?(rosterable)
 
       template =
@@ -27,7 +29,8 @@ class RosterNotificationMailer < ApplicationMailer
         end
       with(
         rosterable: rosterable,
-        recipient: user
+        recipient: user,
+        left_lecture: left_lecture
       ).public_send(template).deliver_later
     end
 

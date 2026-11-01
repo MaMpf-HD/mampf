@@ -279,6 +279,36 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
+  describe "what remains for someone who has left" do
+    let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+    let(:component) do
+      described_class.new(lecture: lecture, group_type: group_type,
+                          participants: lecture.excluded_lecture_memberships, view: "left")
+    end
+    let(:remaining_cell) do
+      row = render_inline(component).css("tr").find { |tr| tr.text.include?("Lina Berg") }
+      row.css("td")[3].text.strip
+    end
+
+    before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
+
+    it "names the flexible groups without enrollment and the running registrations" do
+      create(:cohort, context: lecture, title: "Warteliste Di").add_user_to_roster!(former)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending, user: former,
+                                                        registration_campaign: campaign)
+
+      expect(remaining_cell).to eq(
+        "#{I18n.t("roster.left.in_lists", titles: "Warteliste Di")} · " \
+        "#{I18n.t("roster.left.registered_for", titles: campaign.student_facing_title)}"
+      )
+    end
+
+    it "shows a dash when nothing remains" do
+      expect(remaining_cell).to eq("–")
+    end
+  end
+
   describe "readmitting someone who has left" do
     let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
     let(:participants) { lecture.excluded_lecture_memberships }

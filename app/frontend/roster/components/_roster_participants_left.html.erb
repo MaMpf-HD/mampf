@@ -14,6 +14,10 @@
           <%= t("roster.left.column") %>
         </th>
 
+        <th scope="col" class="border-top-0">
+          <%= t("roster.left.remaining_column") %>
+        </th>
+
         <th scope="col" class="border-top-0 text-end">
           <%= t("basics.actions") %>
         </th>
@@ -23,7 +27,7 @@
     <tbody>
       <% if component.participants.empty? %>
         <tr>
-          <td colspan="4" class="text-center py-4 text-muted border-bottom-0">
+          <td colspan="5" class="text-center py-4 text-muted border-bottom-0">
             <%= t(component.search_string.present? ? "roster.details.empty_filtered" : "roster.left.empty") %>
 
             <%= render "roster/components/roster_participants_search_hits",
@@ -38,6 +42,7 @@
             <td><%= user.tutorial_name %></td>
             <td><%= user.matriculation_number %></td>
             <td><%= component.left_description(membership) %></td>
+            <td><%= component.remaining_for(user) %></td>
 
             <td class="text-end">
               <div class="d-flex justify-content-end gap-1">
