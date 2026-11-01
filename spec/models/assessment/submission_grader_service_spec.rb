@@ -183,6 +183,17 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(row.task_points).to be_empty
     end
 
+    # Until the grace period is over the team is still the students'.
+    it "leaves the team alone while points cannot be entered yet" do
+      Timecop.travel(assignment.deadline + 10.minutes)
+
+      expect do
+        described_class.add_member!(team, newcomer, scorer)
+      end.to raise_error(described_class::SubmissionGraderError,
+                         I18n.t("assessment.task_points.team_closed"))
+      expect(team.reload.users).to contain_exactly(partner)
+    end
+
     it "records the tutor who put the newcomer on the team" do
       described_class.add_member!(team, newcomer, scorer)
 
@@ -293,6 +304,7 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       bare_team = FactoryBot.create(:submission, :with_manuscript, assignment: bare.reload,
                                                                    tutorial: tutorial)
       bare_team.users << partner
+      Timecop.travel(3.hours.from_now)
 
       expect { described_class.add_member!(bare_team, newcomer, scorer) }
         .to raise_error(described_class::SubmissionGraderError,
@@ -378,6 +390,22 @@ RSpec.describe(Assessment::SubmissionGraderService, type: :model) do
       expect(Assessment::Participation.with_grading_data).not_to include(row)
       expect(assessment.assessment_participations.find_by(user: partner)
                        .task_points.sole.points).to eq(7)
+    end
+
+    # A moved deadline hands the sheet back to the students: points on it
+    # stay as they are until marking opens again.
+    it "keeps the newcomer and their points once a moved deadline closes marking" do
+      FactoryBot.create(:assessment_task, assessment: assessment)
+      described_class.score_tasks_by_submission!(team, { task.id => "7" }, scorer)
+      row = described_class.add_member!(team, newcomer, scorer)
+      assignment.update!(deadline: 2.days.from_now)
+
+      expect do
+        described_class.remove_member!(team, newcomer, scorer)
+      end.to raise_error(described_class::SubmissionGraderError,
+                         I18n.t("assessment.task_points.team_closed"))
+      expect(team.reload.users).to include(newcomer)
+      expect(row.reload.task_points.sole.points).to eq(7)
     end
 
     it "gives the row back to the newcomer's own group" do

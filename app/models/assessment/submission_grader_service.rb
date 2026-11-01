@@ -87,6 +87,7 @@ module Assessment
         participation = Participation.transaction do
           submission.lock!
           raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
+          raise_if_errors!(validate_team_open(assignment))
           raise_if_errors!(validate_member_of_group(submission, user))
           raise_if_errors!(validate_team_takes_members(submission))
           # The newcomer's own row is held from the check to the write:
@@ -116,6 +117,7 @@ module Assessment
         Participation.transaction do
           submission.lock!
           raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
+          raise_if_errors!(validate_team_open(submission.assignment))
           join = submission.user_submission_joins.find_by(user: user)
           raise_if_errors!(validate_added_by_tutor(join, user))
           raise_if_errors!(validate_not_last_member(submission))
@@ -260,6 +262,14 @@ module Assessment
           return if join.added_by_id?
 
           I18n.t("assessment.task_points.not_removable", name: user.tutorial_name)
+        end
+
+        # Until points can be entered the team is the students', and a moved
+        # deadline hands it back to them; a tutor changes it only in between.
+        def validate_team_open(assignment)
+          return if assignment.grading_open?
+
+          I18n.t("assessment.task_points.team_closed")
         end
 
         # A team without members would be a deleted hand-in, which is not the

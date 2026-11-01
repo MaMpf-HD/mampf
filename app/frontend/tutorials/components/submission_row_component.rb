@@ -75,7 +75,7 @@ class SubmissionRowComponent < ViewComponent::Base
   end
 
   def may_add_members?
-    can_enter_points? && grading_enabled? && @submission.takes_members?
+    team_open? && @submission.takes_members?
   end
 
   # Where teams may span tutorials, members of the others can be put on the
@@ -105,7 +105,7 @@ class SubmissionRowComponent < ViewComponent::Base
   # Lists those a tutor put on the team, for whoever marks it to take off
   # again. Who joined with the code stays, and so does the last member.
   def removable_members
-    return [] unless can_enter_points? && grading_enabled? && @submission.users.many?
+    return [] unless team_open? && @submission.users.many?
     return [] if added_joins.empty?
 
     @removable_members ||= @submission.users.where(id: added_joins.keys).by_last_name.to_a
@@ -132,6 +132,12 @@ class SubmissionRowComponent < ViewComponent::Base
 
   def grading_enabled?
     @assessment.present?
+  end
+
+  # The menus follow the server: a tutor changes a team only while points
+  # can be entered.
+  def team_open?
+    can_enter_points? && grading_enabled? && @assignment.grading_open?
   end
 
   def layout

@@ -303,6 +303,7 @@ en:
         and get an email.
       not_removable: '%{name} cannot be taken off this team.'
       last_member: 'The last person on a team cannot be taken off it.'
+      team_closed: 'The team can only be changed once points can be entered.'
       add_member: 'Put somebody on this team'
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
       add_member_search: 'Search by name'

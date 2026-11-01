@@ -342,6 +342,9 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   describe "somebody a tutor put on the team" do
     let(:added) { create(:confirmed_user) }
     let!(:join) { submission.user_submission_joins.create!(user: added, added_by: tutor) }
+
+    before { Timecop.travel(3.hours.from_now) }
+    after { Timecop.return }
     let(:added_info) do
       I18n.t("assessment.task_points.added_by_tutor",
              tutor: tutor.tutorial_name, time: I18n.l(join.created_at, format: :file_time))
@@ -371,6 +374,12 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
       expect(marks(html)).to eq([added_info])
       expect(remove_items(html)).to eq([added.tutorial_name])
+    end
+
+    it "is not offered to take off while points cannot be entered" do
+      assignment.update!(deadline: 1.day.from_now)
+
+      expect(remove_items(render_as(tutor))).to be_empty
     end
 
     # A double name can still wrap at its hyphen.
@@ -503,7 +512,10 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   describe "the menu for putting somebody on the team" do
     before do
       allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      Timecop.travel(3.hours.from_now)
     end
+
+    after { Timecop.return }
 
     def render_with(count)
       render_inline(described_class.new(submission: submission, assignment: assignment,
@@ -516,6 +528,12 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
       expect(html.css("button.dropdown-item").size).to eq(5)
       expect(html.css("input[type=search]")).to be_empty
+    end
+
+    it "is not offered while points cannot be entered" do
+      assignment.update!(deadline: 1.day.from_now)
+
+      expect(render_with(1).css("[data-controller=add-member-menu]")).to be_empty
     end
 
     it "offers a search over six names" do

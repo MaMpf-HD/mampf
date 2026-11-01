@@ -303,6 +303,7 @@ de:
         die Punkte des Teams und bekommt eine E-Mail.
       not_removable: '%{name} kann nicht aus diesem Team genommen werden.'
       last_member: 'Die letzte Person in einem Team kann nicht herausgenommen werden.'
+      team_closed: 'Das Team lässt sich erst ändern, wenn Punkte eingetragen werden können.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
       add_member_search: 'Nach Namen suchen'
