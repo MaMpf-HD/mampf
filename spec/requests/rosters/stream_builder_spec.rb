@@ -86,7 +86,7 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
       assert_turbo_stream action: :replace, target: "roster_participants_panel"
     end
 
-    it "leaves a student who leaves the lecture out of the campaign's unplaced ones" do
+    it "does not count a student who leaves the lecture among the campaign's unplaced" do
       delete remove_member_tutorial_path(campaign_tutorial, user_id: student.id),
              params: { source: "panel" },
              as: :turbo_stream

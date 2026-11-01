@@ -20,16 +20,13 @@ module Rosters
     end
 
     # Refuses to let an enrolled student leave their last group; they can only
-    # leave the lecture as a whole. Locks the campaigns, then the group, then
-    # the lecture, like MaintenanceService#remove_user!. Without the lecture's
-    # lock, two browser tabs could each leave a different group, each assuming
-    # the other one remains, and the student would end up with none.
+    # leave the lecture as a whole. Locks the group, then the lecture, like
+    # MaintenanceService#remove_user!. Without the lecture's lock, two browser
+    # tabs could each leave a different group, each assuming the other one
+    # remains, and the student would end up with none.
     def self_remove!
       ActiveRecord::Base.transaction do
         lecture = @rosterable.lecture
-        if lecture && @rosterable.enrolls_in_lecture?
-          Rosters::UserPlaces.new(@user).lock_campaigns!([lecture])
-        end
         @rosterable.lock!
         lecture&.lock!
         ensure_rosterable_unlocked!

@@ -219,8 +219,8 @@ en:
           one: "1 of them is then in no group of this course."
           other: "%{count} of them are then in no group of this course."
         leaves_lecture:
-          one: "For 1 of them it is the only group that enrolls them in the course: they are removed from the course with it, also from groups without enrollment, and their registrations are withdrawn. Points and any exam admission stay stored."
-          other: "For %{count} of them it is the only group that enrolls them in the course: they are removed from the course with it, also from groups without enrollment, and their registrations are withdrawn. Points and any exam admission stay stored."
+          one: "For 1 of them it is the only group that enrolls them in the course: they are no longer enrolled afterwards. Groups without enrollment, registrations, points and any exam admission stay."
+          other: "For %{count} of them it is the only group that enrolls them in the course: they are no longer enrolled afterwards. Groups without enrollment, registrations, points and any exam admission stay."
         registrations: "This also deletes what its finished registration process left on it: %{total}, %{confirmed}."
         notify: "Notify the members by email"
         submit: "Delete group"
@@ -435,7 +435,7 @@ en:
       confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including every group, also groups without lecture enrollment, and taken off the exam list of %{exams}; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. Continue?'
       confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
-      confirm_kick_from_only_group: 'This group is what enrolls the person in the lecture; they have no other. They are therefore removed from the lecture, also from groups without lecture enrollment; their registrations are withdrawn and the bookmark of the lecture goes too. Points and any exam admission stay stored and count again if the person comes back. To switch groups, use “Move”. Continue?'
+      confirm_kick_from_only_group: 'This group is what enrolls the person in the lecture; they have no other. Afterwards they are no longer enrolled; groups without lecture enrollment, running registrations and the bookmark stay, and so do points and any exam admission. To switch groups, use “Move”; to remove the person entirely, remove them from the lecture on the “Participants” tab. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'
@@ -454,7 +454,7 @@ en:
       user_added_to: "%{user} added to %{group}."
       user_already_member: "%{user} is already in %{group}."
       user_removed: "%{user} removed successfully."
-      user_removed_with_only_group: "%{user} was removed from the lecture along with %{group}, their last group with enrollment."
+      user_removed_with_only_group: "%{user} was removed from %{group} and is no longer enrolled in the lecture, as it was their last group with enrollment."
       self_removed: "You have left “%{group}”."
       self_removed_still_enrolled: "You have left “%{group}”. You are still enrolled in “%{lecture}”."
     no_participants_yet: 'Nobody is on the exam roster yet.'

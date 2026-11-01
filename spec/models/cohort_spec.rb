@@ -111,7 +111,7 @@ RSpec.describe(Cohort, type: :model) do
       expect(build(:cohort, :enrollment, context: create(:lecture)).enrolls_in_lecture?).to be(true)
     end
 
-    it "is false for a cohort with enrollment whose context is no lecture" do
+    it "is false for a cohort with enrollment that belongs to no lecture" do
       expect(build(:cohort, :enrollment, context: create(:course)).enrolls_in_lecture?).to be(false)
     end
   end
@@ -165,35 +165,45 @@ RSpec.describe(Cohort, type: :model) do
 
     before { service.add_user!(member, cohort) }
 
-    it "takes whom the cohort was the last place for out of the lecture" do
-      deletion = cohort.destroy_with_members(by: lecture.teacher)
+    it "ends the enrollment of members for whom it was the last group with enrollment" do
+      former_membership = cohort.destroy_with_members(by: lecture.teacher)
 
       expect(cohort).to be_destroyed
-      expect(deletion.former_members).to eq([member])
-      expect(deletion.left_lecture_ids).to eq([member.id])
+      expect(former_membership.users).to eq([member])
+      expect(former_membership.left_lecture_ids).to eq([member.id])
       expect(CohortMembership.where(user: member)).to be_empty
       expect(lecture.members).not_to include(member)
       expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
         .to eq(lecture.teacher)
     end
 
-    it "keeps the enrollment of a member with another place in the lecture" do
-      service.add_user!(member, create(:tutorial, lecture: lecture))
-
-      deletion = cohort.destroy_with_members
-
-      expect(deletion.left_lecture_ids).to be_empty
-      expect(lecture.members).to include(member)
-    end
-
-    it "takes nobody out of the lecture with a cohort without enrollment" do
+    it "keeps the lists of a member whose enrollment ends with it" do
       list = create(:cohort, context: lecture)
       list.add_user_to_roster!(member)
 
-      deletion = list.destroy_with_members
+      cohort.destroy_with_members
 
-      expect(deletion.former_members).to eq([member])
-      expect(deletion.left_lecture_ids).to be_empty
+      expect(lecture.members).not_to include(member)
+      expect(list.reload.members).to include(member)
+    end
+
+    it "keeps the enrollment of a member who has another group with enrollment" do
+      service.add_user!(member, create(:tutorial, lecture: lecture))
+
+      former_membership = cohort.destroy_with_members
+
+      expect(former_membership.left_lecture_ids).to be_empty
+      expect(lecture.members).to include(member)
+    end
+
+    it "ends nobody's enrollment when the cohort has no enrollment" do
+      list = create(:cohort, context: lecture)
+      list.add_user_to_roster!(member)
+
+      former_membership = list.destroy_with_members
+
+      expect(former_membership.users).to eq([member])
+      expect(former_membership.left_lecture_ids).to be_empty
       expect(lecture.members).to include(member)
     end
 
@@ -212,7 +222,7 @@ RSpec.describe(Cohort, type: :model) do
     let(:lecture) { create(:lecture) }
     let(:service) { Rosters::MaintenanceService.new }
 
-    it "names the members for whom an enrolling cohort is the last place" do
+    it "names the members for whom the cohort is the last group with enrollment" do
       cohort = create(:cohort, :enrollment, context: lecture)
       alone, tutored = create_list(:confirmed_user, 2)
       [alone, tutored].each { |user| service.add_user!(user, cohort) }

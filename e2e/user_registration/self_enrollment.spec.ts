@@ -10,7 +10,7 @@ async function openSelfEnrollment(page: Page): Promise<void> {
 }
 
 test.describe("student self-enrollment", () => {
-  test("adds the student to a self-managed tutorial, kept until they leave the course", async ({
+  test("adds the student to a self-managed tutorial they leave only with the course", async ({
     factory,
     student,
   }) => {
@@ -41,7 +41,7 @@ test.describe("student self-enrollment", () => {
       .getByRole("button", { name: "Leave tutorial" })).toHaveCount(0);
   });
 
-  test("leaves a self-managed tutorial while a group with enrollment remains", async ({
+  test("lets the student leave a self-managed tutorial while another group remains", async ({
     factory,
     student,
   }) => {

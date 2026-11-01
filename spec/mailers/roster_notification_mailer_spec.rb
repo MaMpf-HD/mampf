@@ -307,7 +307,7 @@ describe RosterNotificationMailer do
       expect(delivered_body(delivered)).to include("Deine Einschreibung in die Veranstaltung")
     end
 
-    it "says so when the member left the lecture with the group" do
+    it "says so when the member's enrollment ended with the group" do
       delivered = deliver(described_class.with(group_title: "Sammelgruppe",
                                                lecture: create(:lecture), recipient: user,
                                                left_lecture: true).group_deleted_email)

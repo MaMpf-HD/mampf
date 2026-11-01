@@ -180,7 +180,7 @@ RSpec.describe("Cohorts", type: :request) do
       expect(body).to include(I18n.t("roster.cohorts.destroy.notify"))
     end
 
-    it "says how many leave the lecture with a cohort with enrollment" do
+    it "says how many are no longer enrolled after deleting a cohort with enrollment" do
       sign_in editor
       enrolling = create(:cohort, :enrollment, context: lecture)
       alone, tutored = create_list(:confirmed_user, 2)
@@ -240,7 +240,7 @@ RSpec.describe("Cohorts", type: :request) do
 
         before { Rosters::MaintenanceService.new.add_user!(member, enrolling) }
 
-        it "takes whom it was the last place for out of the lecture" do
+        it "ends the enrollment of members for whom it was the last group with enrollment" do
           delete(cohort_path(enrolling), as: :turbo_stream)
 
           expect(Cohort.exists?(enrolling.id)).to be(false)
@@ -249,7 +249,7 @@ RSpec.describe("Cohorts", type: :request) do
             .to eq(editor)
         end
 
-        it "tells them by mail that they left the lecture with it" do
+        it "tells them by mail that their enrollment ended with it" do
           expect do
             delete(cohort_path(enrolling), params: { notify: "1" }, as: :turbo_stream)
           end.to have_enqueued_mail(RosterNotificationMailer, :group_deleted_email)
@@ -257,19 +257,17 @@ RSpec.describe("Cohorts", type: :request) do
                                                             left_lecture: true)))
         end
 
-        # Taking the member out of the lecture would leave their exam result
-        # without its exam list entry.
-        it "keeps the cohort when a member it would take out has an exam result" do
+        it "keeps the exam result of a member whose enrollment ends" do
           exam = create(:exam, lecture: lecture)
-          exam.assessment.assessment_participations.create!(user: member, status: :reviewed,
-                                                            grade_numeric: 2.0)
+          result = exam.assessment.assessment_participations.create!(user: member,
+                                                                     status: :reviewed,
+                                                                     grade_numeric: 2.0)
 
           delete(cohort_path(enrolling), as: :turbo_stream)
 
-          expect(CGI.unescapeHTML(response.body))
-            .to include(I18n.t("roster.errors.lecture_grading_data_present"))
-          expect(Cohort.exists?(enrolling.id)).to be(true)
-          expect(lecture.members).to include(member)
+          expect(Cohort.exists?(enrolling.id)).to be(false)
+          expect(lecture.members).not_to include(member)
+          expect(result.reload.grade_numeric).to eq(2.0)
         end
       end
 

@@ -396,7 +396,7 @@ RSpec.describe(Exam, type: :model) do
     let(:user1) { create(:confirmed_user) }
     let(:user2) { create(:confirmed_user) }
 
-    it "enrolls the allocated in the lecture" do
+    it "enrolls the allocated students in the lecture" do
       exam.materialize_allocation!(user_ids: [user1.id, user2.id], campaign: campaign)
 
       expect(lecture.members).to include(user1, user2)

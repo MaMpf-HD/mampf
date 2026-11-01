@@ -284,7 +284,7 @@ RSpec.describe(Rosters::Rosterable) do
 
     # A removal or Rosters::EnrollmentReconciliation decides under the lecture's
     # lock whether someone keeps a group that enrolls them.
-    it "locks the lecture before it changes the roster of a place" do
+    it "locks the lecture before it changes the roster of a group with enrollment" do
       roster_at_lock = nil
       allow(rosterable.lecture).to receive(:lock!).and_wrap_original do |original, *args|
         roster_at_lock = rosterable.roster_entries.pluck(:user_id)

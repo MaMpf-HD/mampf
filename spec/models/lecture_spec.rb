@@ -517,21 +517,21 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
-  describe "#enrolling_groups" do
-    it "holds the tutorials and the cohorts with enrollment" do
+  describe "#readmission_groups" do
+    it "returns the tutorials and the cohorts with enrollment" do
       lecture = create(:lecture)
       tutorial = create(:tutorial, lecture: lecture)
       repeaters = create(:cohort, context: lecture, propagate_to_lecture: true)
       create(:cohort, context: lecture, propagate_to_lecture: false)
 
-      expect(lecture.enrolling_groups).to eq([tutorial, repeaters])
+      expect(lecture.readmission_groups).to eq([tutorial, repeaters])
     end
 
-    it "holds a seminar's talks" do
+    it "returns a seminar's talks" do
       seminar = create(:lecture, :is_seminar)
       talk = create(:talk, lecture: seminar)
 
-      expect(seminar.enrolling_groups).to eq([talk])
+      expect(seminar.readmission_groups).to eq([talk])
     end
   end
 

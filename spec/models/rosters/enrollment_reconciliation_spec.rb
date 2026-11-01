@@ -61,18 +61,16 @@ RSpec.describe(Rosters::EnrollmentReconciliation) do
     # Rosters::MaintenanceService#add_user!), so a group joined meanwhile is not
     # missed.
     it "decides under the lecture's lock" do
-      statements = []
-      record = lambda do |*, payload|
-        sql = payload[:sql]
-        statements << "lock #{sql[/FROM "(\w+)"/, 1]}" if sql.include?("FOR UPDATE")
-        statements << "update #{sql[/UPDATE "(\w+)"/, 1]}" if sql.start_with?("UPDATE")
-      end
-      ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
-        reconciliation.apply!
+      enrolled_at_lock = nil
+      allow_any_instance_of(Lecture).to receive(:with_lock).and_wrap_original do |original, &block|
+        enrolled_at_lock = lecture.lecture_memberships.exists?(user: limbo)
+        original.call(&block)
       end
 
-      expect(statements.index("lock lectures"))
-        .to be < statements.index("update lecture_memberships")
+      reconciliation.apply!
+
+      expect(enrolled_at_lock).to be(true)
+      expect(lecture.lecture_memberships.exists?(user: limbo)).to be(false)
     end
 
     it "keeps their list, so that they stay in its audience" do

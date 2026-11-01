@@ -47,7 +47,7 @@ test.describe("leaving a course", () => {
     await expect(page.getByTestId("participation-row")).toHaveCount(0);
   });
 
-  test("leaves the only tutorial with the course alone", async ({ factory, student }) => {
+  test("offers to leave the only tutorial only with the course", async ({ factory, student }) => {
     const lecture = await enrollInTutorial(factory, student.user.id, "add_and_remove");
     const { page } = student;
 
@@ -85,7 +85,7 @@ test.describe("leaving a course", () => {
 });
 
 test.describe("people who left a course", () => {
-  test("are listed for the lecturer, in the overview and the left view", async ({
+  test("are listed on the performance page and in the Left view", async ({
     factory, teacher,
   }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {

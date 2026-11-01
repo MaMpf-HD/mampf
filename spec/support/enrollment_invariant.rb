@@ -9,7 +9,7 @@ module EnrollmentInvariant
   # Record's instrumentation, so specs that count a request's queries don't
   # count these.
   def self.violations
-    ids("SELECT id FROM lectures").flat_map do |id|
+    ids(Lecture.select(:id)).flat_map do |id|
       violations_in(Lecture.instantiate("id" => id))
     end
   end
@@ -28,8 +28,7 @@ module EnrollmentInvariant
   end
 
   def self.ids(query)
-    sql = query.is_a?(String) ? query : query.to_sql
-    ActiveRecord::Base.connection.raw_connection.exec(sql).column_values(0).map(&:to_i)
+    ActiveRecord::Base.connection.raw_connection.exec(query.to_sql).column_values(0).map(&:to_i)
   end
 
   module SessionCheck

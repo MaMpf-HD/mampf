@@ -678,7 +678,7 @@ RSpec.describe("Exams", type: :request) do
         end.to change { exam.roster_entries.count }.by(-1)
       end
 
-      it "takes someone whose last place the list was out of the lecture, and says so" do
+      it "ends the enrollment of someone for whom the list was the last group, and says so" do
         create(:lecture_membership, lecture: lecture, user: member)
 
         delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)

@@ -334,7 +334,7 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     )
   end
 
-  it "warns that removing someone whose only place the list is takes the lecture" do
+  it "warns that removing someone enrolled only through the list ends their enrollment" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)
     student = create(:confirmed_user)

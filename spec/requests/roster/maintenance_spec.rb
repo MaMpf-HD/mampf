@@ -96,7 +96,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           expect(CGI.unescapeHTML(response.body)).to include(I18n.t("roster.views.left"))
         end
 
-        it "does not take them back into a lecture without a group that enrolls" do
+        it "does not readmit them into a lecture without a group with enrollment" do
           post add_member_lecture_path(lecture),
                params: { user_id: former.id, source: :participants, view: "left" },
                as: :turbo_stream
@@ -117,7 +117,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
                  as: :turbo_stream)
           end
 
-          it "takes them back into the lecture through the chosen group" do
+          it "readmits them through the chosen group" do
             readmit("Tutorial-#{tutorial.id}")
 
             expect(tutorial.reload.members).to include(former)
@@ -128,14 +128,14 @@ RSpec.describe("Roster::Maintenance", type: :request) do
             )
           end
 
-          it "does not take them back without a group" do
+          it "does not readmit them without a group" do
             readmit(nil)
 
             expect(response.body).to include(I18n.t("roster.errors.readmission_group_required"))
             expect(lecture.reload.members).not_to include(former)
           end
 
-          it "does not take them back through a group without enrollment" do
+          it "does not readmit them through a group without enrollment" do
             waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
 
             readmit("Cohort-#{waitlist.id}")
@@ -144,7 +144,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
             expect(waitlist.reload.members).not_to include(former)
           end
 
-          it "does not take them back through a group a registration process manages" do
+          it "does not readmit them through a group a registration process manages" do
             managed = create(:tutorial, lecture: lecture, skip_campaigns: false)
 
             readmit("Tutorial-#{managed.id}")
@@ -552,7 +552,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(email.subject).to eq(expected_subject)
       end
 
-      it "keeps the user on the lecture roster while another place remains" do
+      it "keeps the user on the lecture roster while another group with enrollment remains" do
         create(:lecture_membership, lecture: lecture, user: member)
         create(:cohort, :enrollment, context: lecture).add_user_to_roster!(member)
 
@@ -561,7 +561,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end.not_to(change { lecture.members.count })
       end
 
-      it "takes the user off the lecture along with their last place, as removed by staff" do
+      it "ends the enrollment with the last group, as removed by staff" do
         create(:lecture_membership, lecture: lecture, user: member)
 
         delete remove_member_tutorial_path(tutorial, user_id: member.id)
@@ -575,14 +575,15 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         )
       end
 
-      it "redraws the rows of the lists the user loses along with the lecture" do
+      it "keeps the user on the lists of the lecture when the last group goes" do
         create(:lecture_membership, lecture: lecture, user: member)
         list = create(:cohort, context: lecture, skip_campaigns: true)
         list.add_user_to_roster!(member)
 
         delete remove_member_tutorial_path(tutorial, user_id: member.id), as: :turbo_stream
 
-        expect(response.body).to include(%(target="#{ActionView::RecordIdentifier.dom_id(list)}"))
+        expect(lecture.reload.members).not_to include(member)
+        expect(list.reload.members).to include(member)
       end
 
       it "includes user name in the flash" do
@@ -818,7 +819,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
       end
     end
 
-    context "when the source is the user's last place and the target a list" do
+    context "when the user would move from their last group onto a list" do
       let(:source) do
         create(:cohort, context: lecture, skip_campaigns: true, propagate_to_lecture: true)
       end
@@ -828,7 +829,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         lecture.ensure_roster_membership!([member.id])
       end
 
-      it "keeps the user and names the reason" do
+      it "keeps the user in the group and names the reason" do
         patch move_member_cohort_path(source, user_id: member.id),
               params: { target_id: target.id, target_type: "Cohort" }
 
@@ -857,7 +858,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(tutorial.reload.members).to include(new_student)
       end
 
-      it "does not add the user to the lecture alone" do
+      it "does not add the user to the lecture without a group" do
         expect do
           post(add_member_lecture_path(lecture), params: { email: new_student.email })
         end.not_to(change { lecture.members.count })

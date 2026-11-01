@@ -111,13 +111,13 @@ class CohortsController < ApplicationController
 
   def destroy
     title = @cohort.title
-    deletion = destroy_cohort
-    if deletion.nil?
-      flash.now[:alert] ||= t("controllers.cohorts.destruction_failed")
-    elsif params[:notify] == "1" && deletion.former_members.any?
-      notify_former_members(deletion, title)
+    former_membership = @cohort.destroy_with_members(by: current_user)
+    if former_membership.nil?
+      flash.now[:alert] = t("controllers.cohorts.destruction_failed")
+    elsif params[:notify] == "1" && former_membership.users.any?
+      notify_former_members(former_membership, title)
       flash.now[:notice] = t("controllers.cohorts.destroyed_and_notified",
-                             count: deletion.former_members.size)
+                             count: former_membership.users.size)
     else
       flash.now[:notice] = t("controllers.cohorts.destroyed")
     end
@@ -136,16 +136,9 @@ class CohortsController < ApplicationController
 
   private
 
-    def destroy_cohort
-      @cohort.destroy_with_members(by: current_user)
-    rescue Rosters::MaintenanceService::LectureGradingDataPresentError
-      flash.now[:alert] = t("roster.errors.lecture_grading_data_present")
-      nil
-    end
-
-    def notify_former_members(deletion, title)
-      deletion.former_members.each do |user|
-        left = deletion.left_lecture_ids.include?(user.id)
+    def notify_former_members(former_membership, title)
+      former_membership.users.each do |user|
+        left = former_membership.left_lecture_ids.include?(user.id)
         RosterNotificationMailer.group_deleted(user, title: title, lecture: @lecture,
                                                      left_lecture: left)
       end

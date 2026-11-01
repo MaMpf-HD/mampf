@@ -107,7 +107,7 @@ test.describe("the group rows", () => {
       await expect(title).toHaveAttribute("aria-expanded", "true");
     });
 
-  test("take a student removed from their last group off the lecture and the unplaced",
+  test("end a student's enrollment with their last group, without counting them as unplaced",
     async ({ factory, student, teacher: { page, user } }) => {
       const lecture = await factory.create("lecture", [], { teacher_id: user.id });
       const campaign = await factory.create("registration_campaign",
@@ -144,7 +144,7 @@ test.describe("the group rows", () => {
       await expect(page.getByRole("button", { name: /unplaced/ })).toHaveCount(0);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       page.once("dialog", (dialog) => {
-        expect(dialog.message()).toContain("They are therefore removed from the lecture");
+        expect(dialog.message()).toContain("Afterwards they are no longer enrolled");
         void dialog.accept();
       });
       const members = page.getByRole("complementary", { name: "Members" });

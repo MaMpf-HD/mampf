@@ -123,15 +123,9 @@ RSpec.describe(Rosters::UserPlaces) do
     it "locks every group before the first lecture" do
       [create(:tutorial, lecture: lecture), create(:cohort, :enrollment, context: lecture),
        lecture].each { |rosterable| rosterable.add_user_to_roster!(student) }
-      tables = []
-      record = lambda do |*, payload|
-        tables << payload[:sql][/FROM "(\w+)"/, 1] if payload[:sql].include?("FOR UPDATE")
-      end
-      ActiveSupport::Notifications.subscribed(record, "sql.active_record") do
-        places.give_up!([lecture])
-      end
+      models = locked_models { places.give_up!([lecture]) }
 
-      expect(tables.index("cohorts")).to be < tables.index("lectures")
+      expect(models.index(Cohort)).to be < models.index(Lecture)
     end
 
     it "counts a withdrawn confirmed registration off its item" do
