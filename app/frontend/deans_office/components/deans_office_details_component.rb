@@ -75,6 +75,12 @@ class DeansOfficeDetailsComponent < ViewComponent::Base
     @located = groups.any? { |group| group.try(:location).present? }
   end
 
+  # Marks a tutorial without a tutor as still waiting for one; a cohort often
+  # has none by design.
+  def tutors_text(group)
+    group.tutor_names || (t("basics.tba") if group.is_a?(Tutorial))
+  end
+
   private
 
     def preference?(campaign)

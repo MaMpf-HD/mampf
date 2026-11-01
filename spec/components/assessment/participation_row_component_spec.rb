@@ -582,8 +582,9 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
 
     # Points go where the sheet is: somebody who moved into this group after
     # handing in elsewhere is marked there, not here.
-    it "locks a row whose sheet another group holds" do
-      elsewhere = create(:tutorial, lecture: lecture)
+    it "locks a row whose sheet another group holds, naming that group's tutors" do
+      elsewhere = create(:tutorial, lecture: lecture, title: "Friday")
+      elsewhere.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
       participation.update!(tutorial: elsewhere)
       component = described_class.new(participation: participation, assessment: assessment,
                                       grading_scope: tutorial)
@@ -593,7 +594,7 @@ RSpec.describe(ParticipationRowComponent, type: :component) do
       expect(component.points_enterable?).to be(false)
       expect(rendered_content).not_to include(I18n.t("assessment.grading_tutorial.paper_hand_in"))
       expect(rendered_content).to include(
-        I18n.t("assessment.grading_tutorial.held_by", tutorial: elsewhere.title)
+        I18n.t("assessment.grading_tutorial.held_by", tutorial: "Friday (Ada Lovelace)")
       )
     end
 

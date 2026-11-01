@@ -166,9 +166,13 @@ test.describe("performance records", () => {
     teacher,
   }) => {
     const lecture = await createLecture(factory, teacher.user.id);
+    const tutor = await factory.create("confirmed_user", [], {
+      first_name: "Emmy", last_name: "Noether",
+    });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id,
       title: "Tuesday group",
+      tutor_ids: [tutor.id],
     });
     const { user: inGroup } = await recordFor(
       factory, lecture.id, "Ada Lovelace",
@@ -183,7 +187,7 @@ test.describe("performance records", () => {
     await openPerformance(page);
     await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
 
-    await teacher.page.getByRole("combobox").selectOption("Tuesday group");
+    await teacher.page.getByRole("combobox").selectOption("Tuesday group (Emmy Noether)");
 
     await expect(teacher.page.getByText("Ada Lovelace")).toBeVisible();
     await expect(teacher.page.getByText("Grace Hopper")).toHaveCount(0);

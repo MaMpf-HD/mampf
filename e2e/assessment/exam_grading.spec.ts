@@ -239,7 +239,7 @@ test.describe("exam grading", () => {
       .toHaveCount(26);
     await page.tab("Grades").click();
 
-    await page.pane.getByLabel("Tutorial").selectOption("Group A");
+    await page.pane.getByLabel("Tutorial").selectOption("Group A (tba)");
     await expect(candidates.filter({ visible: true })).toHaveCount(1);
     await expect(page.pane.getByRole("row", { name: /Candidate 26/ })).toBeVisible();
     await expect(page.pane.getByText("Rows 1–26 of 26")).toHaveCount(0);

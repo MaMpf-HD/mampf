@@ -1215,7 +1215,7 @@ test.describe("campaign registration", () => {
 
     await expect(home.participation("No place")).toHaveCount(2);
     await expect(home.participation("Overbooked tutorial registration")).toContainText(
-      "Your preferences: 1st Popular Tutorial, 2nd Early Morning Tutorial",
+      "Your preferences: 1st Popular Tutorial (tba), 2nd Early Morning Tutorial (tba)",
     );
     await expect(home.participation("Backup tutorial registration"))
       .toContainText("Your preferences: 1st Quiet Tutorial");

@@ -99,7 +99,7 @@ test.describe("the group rows", () => {
       });
 
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
-      const title = page.getByRole("button", { name: "Mo 10", exact: true });
+      const title = page.getByRole("button", { name: "Mo 10 (tba)", exact: true });
       await title.focus();
       await page.keyboard.press("Enter");
 
@@ -159,8 +159,12 @@ test.describe("the group rows", () => {
       const monday = await factory.create("tutorial", [], {
         lecture_id: lecture.id, title: "Mo 10", capacity: 8, skip_campaigns: true,
       });
+      const tutor = await factory.create("confirmed_user", [], {
+        first_name: "Ada", last_name: "Lovelace",
+      });
       await factory.create("tutorial", [], {
         lecture_id: lecture.id, title: "Di 12", capacity: 8, skip_campaigns: true,
+        tutor_ids: [tutor.id],
       });
       await monday.__call("add_user_to_roster!", student.user);
 
@@ -172,7 +176,9 @@ test.describe("the group rows", () => {
 
       const dialog = page.getByRole("dialog", { name: /^Move or add .* to …$/ });
       await expect(dialog.getByRole("button", { name: /Mo 10/ })).toHaveCount(0);
-      await dialog.getByRole("button", { name: /Di 12/ }).click();
+      const target = dialog.getByRole("button", { name: /Di 12/ });
+      await expect(target).toContainText("Ada Lovelace · 0 / 8 members");
+      await target.click();
 
       const row = (title: string) => page.getByRole("listitem")
         .filter({ has: page.getByRole("heading", { name: title, exact: true }) });

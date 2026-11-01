@@ -17,12 +17,4 @@ module ExamRows
   def self.tutorial_ids_by_user(exam)
     TutorialMembership.where(lecture_id: exam.lecture_id).pluck(:user_id, :tutorial_id).to_h
   end
-
-  def self.tutorial_options(exam)
-    tutorials = exam.lecture.tutorials.order(:title)
-    return [] if tutorials.empty?
-
-    tutorials.map { |tutorial| [tutorial.id.to_s, tutorial.title] } +
-      [["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")]]
-  end
 end

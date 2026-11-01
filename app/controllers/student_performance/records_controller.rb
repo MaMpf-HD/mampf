@@ -42,6 +42,7 @@ module StudentPerformance
       @awaiting_marking = awaiting_marking_counts(scope, sheets + tests)
       @achievements = @lecture.achievements.order(:title)
       @achievement_headings = Achievement.short_titles(@achievements)
+      @tutorials = @lecture.tutorials.includes(:tutors)
     end
 
     def show
