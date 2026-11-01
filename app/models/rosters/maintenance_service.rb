@@ -28,15 +28,16 @@ module Rosters
     # rolls back.
     #
     # Removal from the lecture takes everything there: groups, lists, running
-    # registrations and the bookmark. Removal from the last group that enrolls
-    # the user takes the enrollment along, and the bookmark unless the user is
-    # still in a cohort without enrollment there; lists and registrations stay.
-    # Returns the roster the user was taken off (the lecture, when the
-    # enrollment ended), or nil.
+    # registrations and the bookmark. The staff may keep some of the lists,
+    # given as keep_list_ids; the bookmark then stays too. Removal from the
+    # last group that enrolls the user takes the enrollment along, and the
+    # bookmark unless the user is still in a cohort without enrollment there;
+    # lists and registrations stay. Returns the roster the user was taken off
+    # (the lecture, when the enrollment ended), or nil.
     #
     # Locks the group, then the lecture; removal from the lecture locks the
     # campaigns first, as finalization does, since it withdraws registrations.
-    def remove_user!(user, rosterable, notify: true, by: nil)
+    def remove_user!(user, rosterable, notify: true, by: nil, keep_list_ids: [])
       lecture = rosterable.lecture if rosterable.is_a?(Lecture) || rosterable.enrolls_in_lecture?
       places = UserPlaces.new(user)
       left = ActiveRecord::Base.transaction do
@@ -46,7 +47,8 @@ module Rosters
         leaving = lecture.present? && leaves_lecture?(user, rosterable, lecture)
         also_leaves_lecture = leaving && lecture != rosterable
         ensure_no_grading_data!(user, rosterable)
-        next unless remove_user_without_lock!(user, rosterable, by: by)
+        next unless remove_user_without_lock!(user, rosterable, by: by,
+                                                                keep_list_ids: keep_list_ids)
         next rosterable unless leaving
 
         if also_leaves_lecture
@@ -160,14 +162,16 @@ module Rosters
         membership
       end
 
-      def remove_user_without_lock!(user, rosterable, by: nil)
+      def remove_user_without_lock!(user, rosterable, by: nil, keep_list_ids: [])
         removed = if rosterable.is_a?(Lecture)
           rosterable.remove_user_from_roster!(user, by: by)
         else
           rosterable.remove_user_from_roster!(user)
         end
-        cascade_removal_from_subgroups!(user, rosterable)
-        user.unbookmark_lecture!(rosterable) if removed && rosterable.is_a?(Lecture)
+        cascade_removal_from_subgroups!(user, rosterable, keep_list_ids)
+        if removed && rosterable.is_a?(Lecture) && !on_a_list?(user, rosterable)
+          user.unbookmark_lecture!(rosterable)
+        end
         removed
       end
 
@@ -224,7 +228,7 @@ module Rosters
         raise(UserAlreadyInBundleError, conflicting)
       end
 
-      def cascade_removal_from_subgroups!(user, rosterable)
+      def cascade_removal_from_subgroups!(user, rosterable, keep_list_ids)
         return unless rosterable.is_a?(Lecture)
 
         rosterable.tutorials.find_each do |tutorial|
@@ -235,7 +239,8 @@ module Rosters
           talk.remove_user_from_roster!(user)
         end
 
-        rosterable.cohorts.find_each do |cohort|
+        kept = rosterable.cohorts.where(id: keep_list_ids, propagate_to_lecture: false)
+        rosterable.cohorts.where.not(id: kept.select(:id)).find_each do |cohort|
           cohort.remove_user_from_roster!(user)
         end
 

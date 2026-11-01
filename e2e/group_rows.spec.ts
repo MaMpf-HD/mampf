@@ -143,12 +143,11 @@ test.describe("the group rows", () => {
       await page.getByRole("tab", { name: "Groups" }).click();
       await expect(page.getByRole("button", { name: /unplaced/ })).toHaveCount(0);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
-      page.once("dialog", (dialog) => {
-        expect(dialog.message()).toContain("Afterwards they are no longer enrolled");
-        void dialog.accept();
-      });
       const members = page.getByRole("complementary", { name: "Members" });
       await members.getByRole("button", { name: /from this group/ }).click();
+      const dialog = page.getByRole("dialog", { name: /^Remove .* from “Mo 10”$/ });
+      await expect(dialog).toContainText("Afterwards they are no longer enrolled");
+      await dialog.getByRole("button", { name: "Remove", exact: true }).click();
 
       await expect(members.getByRole("button", {
         name: `Copy email address: ${student.user.email}`,
@@ -252,8 +251,9 @@ test.describe("the group rows", () => {
       await page.goto(`/lectures/${lecture.id}/edit?tab=groups`);
       await page.getByRole("heading", { name: "Mo 10", exact: true }).click();
       const panel = page.getByRole("complementary", { name: "Members" });
-      page.once("dialog", dialog => dialog.accept());
       await panel.getByRole("button", { name: /^Remove .* from this group$/ }).click();
+      await page.getByRole("dialog", { name: /^Remove .* from “Mo 10”$/ })
+        .getByRole("button", { name: "Remove", exact: true }).click();
 
       await expect(page.getByRole("listitem")
         .filter({ has: page.getByRole("heading", { name: "Mo 10", exact: true }) }))

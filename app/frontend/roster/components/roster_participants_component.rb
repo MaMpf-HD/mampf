@@ -213,13 +213,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
   end
 
-  def kick_confirmation(user)
-    exams = exam_titles_by_user[user.id]
-    return t("roster.warnings.confirm_kick_from_lecture") if exams.blank?
-
-    t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
-  end
-
   def kick_blocked_by(user)
     titles = result_titles_by_user[user.id]
     return if titles.blank?
@@ -278,11 +271,6 @@ class RosterParticipantsComponent < ViewComponent::Base
       @campaigns_by_user ||=
         Registration::UserRegistration.running_campaigns_by_user(@lecture,
                                                                  participants.map(&:user_id))
-    end
-
-    def exam_titles_by_user
-      @exam_titles_by_user ||=
-        ExamRosterEntry.exam_titles_by_user(@lecture, participants.map(&:user_id))
     end
 
     def result_titles_by_user

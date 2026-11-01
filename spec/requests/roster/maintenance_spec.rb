@@ -155,17 +155,17 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         end
       end
 
-      it "names the exam lists in the confirmation for removing a member" do
+      it "names the exam lists in the dialog for removing a member" do
         member = create(:confirmed_user)
         create(:lecture_membership, lecture: lecture, user: member)
         create(:exam, :without_campaign, lecture: lecture, title: "Final exam")
           .add_user_to_roster!(member)
 
-        get lecture_roster_participants_path(lecture), as: :turbo_stream
+        get confirm_remove_member_lecture_path(lecture, member), as: :turbo_stream
 
-        expect(CGI.unescapeHTML(response.body)).to include(
-          I18n.t("roster.warnings.confirm_kick_from_lecture_exams", exams: "Final exam")
-        )
+        body = CGI.unescapeHTML(response.body)
+        expect(body).to include(I18n.t("roster.removal_modal.places"))
+        expect(body).to include("Final exam")
       end
 
       # Removing them would be refused; the button says why instead of asking.
@@ -184,9 +184,7 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(body).to include(
           I18n.t("roster.tooltips.kick_blocked_by_result", titles: "Final exam")
         )
-        expect(body).not_to include(
-          I18n.t("roster.warnings.confirm_kick_from_lecture_exams", exams: "Final exam")
-        )
+        expect(body).not_to include(confirm_remove_member_lecture_path(lecture, member))
       end
 
       it "returns turbo stream updates for participants sections" do
@@ -573,6 +571,16 @@ RSpec.describe("Roster::Maintenance", type: :request) do
         expect(email.subject).to eq(expected_subject)
       end
 
+      it "sends no email when the staff untick it" do
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_member_tutorial_path(tutorial, user_id: member.id),
+                   params: { notify: "0" })
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+        expect(tutorial.members).not_to include(member)
+      end
+
       it "keeps the user on the lecture roster while another group with enrollment remains" do
         create(:lecture_membership, lecture: lecture, user: member)
         create(:cohort, :enrollment, context: lecture).add_user_to_roster!(member)
@@ -659,6 +667,71 @@ RSpec.describe("Roster::Maintenance", type: :request) do
           end.not_to(change { ActionMailer::Base.deliveries.count })
         end
       end
+    end
+  end
+
+  describe "GET /tutorials/:id/roster/members/:user_id/confirm_remove" do
+    let(:tutorial) { create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true) }
+    let(:member) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+    before { tutorial.add_user_to_roster!(member) }
+
+    context "as an editor" do
+      before { sign_in editor }
+
+      it "opens the removal dialog, which removes from where the button was" do
+        get confirm_remove_member_tutorial_path(tutorial, user_id: member.id, source: "panel"),
+            as: :turbo_stream
+
+        body = CGI.unescapeHTML(response.body)
+        expect(body).to include('target="modal-container"')
+        expect(body).to include(
+          I18n.t("roster.removal_modal.title_group", user: "Lina Berg", group: "Mo 10")
+        )
+        expect(body).to include(
+          "action=\"#{remove_member_tutorial_path(tutorial, user_id: member.id,
+                                                            source: "panel")}\""
+        )
+      end
+    end
+
+    context "as a student" do
+      before { sign_in student }
+
+      it "redirects to root (unauthorized)" do
+        get confirm_remove_member_tutorial_path(tutorial, user_id: member.id), as: :turbo_stream
+        expect(response).to redirect_to(root_path)
+      end
+    end
+  end
+
+  describe "DELETE /lectures/:id/roster/members/:user_id" do
+    let(:member) { create(:confirmed_user) }
+    let(:list) { create(:cohort, context: lecture, skip_campaigns: true) }
+
+    before do
+      sign_in editor
+      lecture.add_user_to_roster!(member)
+      create(:tutorial, lecture: lecture, skip_campaigns: true).add_user_to_roster!(member)
+      list.add_user_to_roster!(member)
+      create(:lecture_bookmark, lecture: lecture, user: member)
+    end
+
+    it "keeps the flexible groups without enrollment the staff tick, and the bookmark" do
+      delete remove_member_lecture_path(lecture, member),
+             params: { source: "participants", keep_list_ids: [list.id] }, as: :turbo_stream
+
+      expect(lecture.reload.members).not_to include(member)
+      expect(list.reload.members).to include(member)
+      expect(member.reload.lectures).to include(lecture)
+    end
+
+    it "takes the flexible groups without enrollment along when none is ticked" do
+      delete remove_member_lecture_path(lecture, member),
+             params: { source: "participants" }, as: :turbo_stream
+
+      expect(list.reload.members).not_to include(member)
+      expect(member.reload.lectures).not_to include(lecture)
     end
   end
 

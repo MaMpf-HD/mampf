@@ -244,8 +244,6 @@ en:
       reject_confirm: 'This registration will be rejected and removed from the active registrations list. Continue?'
       remove_tooltip: 'Remove person from the participants list'
       remove_disabled_tooltip: 'Cannot remove because grading data already exists'
-      remove_confirm: 'This person will be removed from the participants list. Continue?'
-      remove_confirm_last_place: 'This person is enrolled in the lecture through this list only. Removing them ends the enrollment; flexible groups without enrollment, registrations, points and any exam admission stay. Continue?'
       participant_added: '%{name} has been added.'
       participant_removed: '%{name} has been removed.'
       participant_removed_with_lecture: '%{name} has been removed from the participants list and is no longer enrolled in the lecture, as it was their last place.'

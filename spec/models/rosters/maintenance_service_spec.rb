@@ -169,6 +169,21 @@ RSpec.describe(Rosters::MaintenanceService, type: :model) do
         expect(user.reload.lectures).not_to include(lecture)
       end
 
+      it "keeps the lists the staff keep, and the bookmark with them" do
+        subject.remove_user!(user, lecture, keep_list_ids: [isolated_cohort.id])
+
+        expect(isolated_cohort.members).to include(user)
+        expect(user.reload.lectures).to include(lecture)
+        expect(lecture.members).not_to include(user)
+      end
+
+      # It would enroll them again.
+      it "does not keep a cohort with enrollment" do
+        subject.remove_user!(user, lecture, keep_list_ids: [propagating_cohort.id])
+
+        expect(propagating_cohort.members).not_to include(user)
+      end
+
       # A finalization would otherwise put them back into a group or onto an
       # exam list.
       it "withdraws the user's registrations in the lecture's running campaigns" do

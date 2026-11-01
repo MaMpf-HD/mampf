@@ -3,8 +3,8 @@ class ExamsController < ApplicationController
   include Registration::RosterStreamRefreshable
 
   before_action :set_lecture, only: [:index, :new]
-  before_action :set_exam, only: [:show, :edit, :update, :destroy,
-                                  :add_participant, :remove_participant]
+  before_action :set_exam, only: [:show, :edit, :update, :destroy, :add_participant,
+                                  :confirm_remove_participant, :remove_participant]
 
   def current_ability
     @current_ability ||= ExamAbility.new(current_user)
@@ -221,6 +221,19 @@ class ExamsController < ApplicationController
     end
   end
 
+  def confirm_remove_participant
+    authorize! :remove_participant, @exam
+    return refuse_locked_roster if @exam.locked?
+
+    user = User.find(params[:user_id])
+    url = remove_participant_exam_path(@exam, user_id: user.id)
+    render turbo_stream: turbo_stream.update(
+      "modal-container",
+      RosterRemovalModalComponent.new(user: user, rosterable: @exam, url: url)
+                                 .render_in(view_context)
+    )
+  end
+
   def remove_participant
     authorize! :remove_participant, @exam
     return refuse_locked_roster if @exam.locked?
@@ -230,7 +243,9 @@ class ExamsController < ApplicationController
 
     left = nil
     if @exam.participant_removable?(user)
-      left = Rosters::MaintenanceService.new.remove_user!(user, @exam, by: current_user)
+      left = Rosters::MaintenanceService.new.remove_user!(
+        user, @exam, by: current_user, notify: params[:notify] != "0"
+      )
       key = left.is_a?(Lecture) ? "participant_removed_with_lecture" : "participant_removed"
       flash.now[:success] = t("assessment.registration_tab.#{key}",
                               name: user.tutorial_name.presence || user.email)

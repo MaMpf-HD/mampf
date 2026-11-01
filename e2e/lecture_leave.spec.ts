@@ -112,6 +112,39 @@ test.describe("people who left a course", () => {
     await expect(row).toContainText("Left on");
   });
 
+  test("keep the flexible groups without enrollment the lecturer ticks on removal", async ({
+    factory, teacher,
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+    });
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Mo 10", skip_campaigns: true,
+    });
+    const waitlist = await factory.create("cohort", [], {
+      context_type: "Lecture", context_id: lecture.id, title: "Waitlist",
+    });
+    const member = await factory.create("confirmed_user", [], { name_in_tutorials: "Lina Berg" });
+    await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: member.id });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: member.id,
+    });
+    await factory.create("cohort_membership", [], { cohort_id: waitlist.id, user_id: member.id });
+    const { page } = teacher;
+
+    await page.goto(`/lectures/${lecture.id}/edit?tab=participants`);
+    await page.getByRole("row").filter({ hasText: "Lina Berg" })
+      .getByRole("button", { name: "Remove from the lecture" }).click();
+    const dialog = page.getByRole("dialog", { name: "Remove Lina Berg from the lecture" });
+    await expect(dialog).toContainText("Mo 10");
+    await dialog.getByRole("checkbox", { name: "Waitlist" }).check();
+    await dialog.getByRole("button", { name: "Remove", exact: true }).click();
+
+    await page.getByRole("link", { name: /^Left/ }).click();
+    await expect(page.getByRole("row").filter({ hasText: "Lina Berg" })
+      .getByRole("link", { name: "Waitlist" })).toBeVisible();
+  });
+
   test("are readmitted into the group the lecturer chooses", async ({ factory, teacher }) => {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacher.user.id,

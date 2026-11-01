@@ -10,8 +10,9 @@ module Roster
 
     before_action :set_lecture, only: [:index, :participants]
     before_action :set_rosterable,
-                  only: [:show, :add_member, :remove_member, :move_member,
-                         :update_self_materialization, :bulk_update_self_materialization]
+                  only: [:show, :add_member, :confirm_remove_member, :remove_member,
+                         :move_member, :update_self_materialization,
+                         :bulk_update_self_materialization]
     before_action :build_maintenance_params
     before_action :authorize_lecture
 
@@ -126,11 +127,31 @@ module Roster
       end
     end
 
+    # Sends the removal with the button's source and page, which decide what
+    # the answer redraws.
+    def confirm_remove_member
+      ensure_rosterable_unlocked!
+
+      user = find_user
+      url = helpers.roster_remove_member_path(
+        @rosterable, user,
+        **params.permit(:source, :page, :group_type, group_type: []).to_h.symbolize_keys
+      )
+      render turbo_stream: turbo_stream.update(
+        "modal-container",
+        RosterRemovalModalComponent.new(user: user, rosterable: @rosterable, url: url)
+                                   .render_in(view_context)
+      )
+    end
+
     def remove_member
       ensure_rosterable_unlocked!
 
       user = find_user
-      left = Rosters::MaintenanceService.new.remove_user!(user, @rosterable, by: current_user)
+      left = Rosters::MaintenanceService.new.remove_user!(
+        user, @rosterable,
+        by: current_user, notify: @mparams.notify?, keep_list_ids: @mparams.keep_list_ids
+      )
 
       flash.now[:notice] = removal_notice(user, left)
 

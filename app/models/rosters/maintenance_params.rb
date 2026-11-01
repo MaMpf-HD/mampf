@@ -7,15 +7,15 @@ module Rosters
 
     attr_reader :group_type, :source, :source_id, :source_type, :target_id,
                 :target_type, :user_id, :email, :mode, :search,
-                :roster_tab, :group
+                :roster_tab, :group, :keep_list_ids
 
     def initialize(params, lecture: nil)
       @group_type_given = params.key?(:group_type)
       permitted = params.permit(
         :group_type, :source, :source_id, :source_type, :target_id,
         :target_type, :user_id, :email, :type, :mode,
-        :search, :tab, :id, :group,
-        group_type: []
+        :search, :tab, :id, :group, :notify,
+        group_type: [], keep_list_ids: []
       )
 
       @group_type = normalize_group_type(permitted)
@@ -30,6 +30,8 @@ module Rosters
       @search = permitted[:search]
       @roster_tab = permitted[:tab]&.to_sym
       @group = permitted[:group]
+      @notify = permitted[:notify]
+      @keep_list_ids = Array(permitted[:keep_list_ids]).compact_blank
     end
 
     def group_type_given?
@@ -61,6 +63,12 @@ module Rosters
 
     def participants?
       source == "participants"
+    end
+
+    # Unticking the mail in the removal dialog sends "0"; any other request
+    # tells the person.
+    def notify?
+      @notify != "0"
     end
 
     private

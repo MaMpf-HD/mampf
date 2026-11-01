@@ -97,6 +97,21 @@ de:
       choose_group: 'Gruppe wählen'
       group_for: 'Gruppe für %{user}'
       no_open_group: 'Wieder aufnehmen geht nur über eine Gruppe, und gerade nimmt keine Gruppe mit Einschreibung jemanden von Hand auf.'
+    removal_modal:
+      title_lecture: '%{user} aus der Veranstaltung entfernen'
+      title_group: '%{user} aus „%{group}“ entfernen'
+      title_exam: '%{user} von der Teilnahmeliste von „%{group}“ entfernen'
+      places: 'Die Person verlässt diese Gruppen und Klausurlisten:'
+      withdrawn: 'Diese Anmeldungen werden zurückgezogen:'
+      keep_lists: 'In diesen flexiblen Gruppen ohne Einschreibung behalten:'
+      results_stay: 'Punkte, Abgaben und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt.'
+      last_place_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Danach ist sie nicht mehr eingeschrieben.'
+      last_place_exam: 'Über diese Liste ist die Person in der Veranstaltung eingeschrieben, eine Gruppe hat sie nicht. Danach ist sie nicht mehr eingeschrieben.'
+      remaining: 'Bestehen bleiben:'
+      move_hint: 'Für einen Wechsel der Gruppe nutze „Verschieben“; um die Person ganz zu entfernen, entferne sie im Reiter „Teilnehmende“ aus der Veranstaltung.'
+      stays_enrolled: 'Die Person bleibt in der Veranstaltung eingeschrieben.'
+      notify: 'Per Mail benachrichtigen'
+      submit: 'Entfernen'
     registrations:
       hint: >-
         Diese Personen sind angemeldet, aber noch nicht in ihre Gruppen eingetragen. Das geschieht
@@ -390,7 +405,7 @@ de:
       einschreiben können. Manuelle Änderungen der Einteilungen sind erst nach
       Abschluss der Verfahren möglich.'
     tooltips:
-      kick_from_lecture: "Entfernt die Veranstaltungseinschreibung und alle Mitgliedschaften in Tutorien und Sondergruppen"
+      kick_from_lecture: "Aus der Veranstaltung entfernen"
       kick_blocked_by_result: 'Hat ein Ergebnis in %{titles}. Lösche es zuerst, um die Person aus der Veranstaltung zu entfernen.'
       kick_from_group: "Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen."
       manage_participants: "Teilnehmende verwalten"
@@ -449,10 +464,6 @@ de:
       lecture_cannot_self_materialize: "Vorlesungen können keine Selbst-Materialisierung verwenden. Die Vorlesungsliste ist immer eine Obermenge aller Gruppen."
       cannot_enable_both_campaign_and_self_materialization: "Selbsteinschreibung kann nicht aktiviert werden, während auf Anmeldeverfahren-Modus umgestellt wird. Bitte deaktiviere zuerst die Selbsteinschreibung oder behalte 'Anmeldeverfahren überspringen' aktiviert."
     warnings:
-      confirm_kick_from_lecture: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch flexibler Gruppen ohne Einschreibung; ihre Anmeldungen werden zurückgezogen. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
-      confirm_kick_from_lecture_exams: 'Diese Person wird aus der Veranstaltung entfernt, einschließlich aller Gruppen, auch flexibler Gruppen ohne Einschreibung, und von der Klausurliste von %{exams} genommen; ihre Anmeldungen werden zurückgezogen. Punkte und eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn die Person zurückkommt. Fortfahren?'
-      confirm_kick_from_group: 'Entfernt die Person aus dieser Gruppe. Die Veranstaltungseinschreibung bleibt bestehen. Fortfahren?'
-      confirm_kick_from_only_group: 'Über diese Gruppe ist die Person in der Veranstaltung eingeschrieben, eine andere hat sie nicht. Danach ist sie nicht mehr eingeschrieben; flexible Gruppen ohne Einschreibung und laufende Anmeldungen bleiben, ebenso Punkte und eine erteilte Prüfungszulassung. Für einen Wechsel der Gruppe nutze „Verschieben“; um die Person ganz zu entfernen, entferne sie im Reiter „Teilnehmende“ aus der Veranstaltung. Fortfahren?'
       capacity_exceeded: 'Die Kapazität dieser Gruppe ist erschöpft.'
       confirm_overbooking: 'Die Kapazität dieser Gruppe ist erschöpft. Möchtest Du trotzdem fortfahren?'
       capacity_reduction: 'Die neue Kapazität ist geringer als die aktuelle Teilnehmerzahl. Bist Du sicher?'

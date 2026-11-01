@@ -334,7 +334,8 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
     )
   end
 
-  it "warns that removing someone enrolled only through the list ends their enrollment" do
+  # The dialog says whether the removal ends the enrollment.
+  it "asks in a dialog before removing someone from the list" do
     exam = create(:exam, :with_date, lecture: lecture)
     exam.registration_campaign.update!(status: :completed)
     student = create(:confirmed_user)
@@ -342,8 +343,12 @@ RSpec.describe(ExamRegistrationTabComponent, type: :component) do
 
     render_inline(described_class.new(exam: exam))
 
-    expect(rendered_content).to include(
-      CGI.escapeHTML(I18n.t("assessment.registration_tab.remove_confirm_last_place"))
+    document = Nokogiri::HTML.fragment(rendered_content)
+    confirm_path = Rails.application.routes.url_helpers.confirm_remove_participant_exam_path(
+      exam, user_id: student.id
     )
+    form = document.at_css("form[action='#{confirm_path}']")
+    expect(form["method"]).to eq("get")
+    expect(form["data-turbo-stream"]).to eq("true")
   end
 end

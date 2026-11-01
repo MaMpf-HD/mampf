@@ -93,6 +93,21 @@ en:
       choose_group: 'Choose a group'
       group_for: 'Group for %{user}'
       no_open_group: 'Readmission goes through a group, and no group with enrollment takes anybody by hand right now.'
+    removal_modal:
+      title_lecture: 'Remove %{user} from the lecture'
+      title_group: 'Remove %{user} from “%{group}”'
+      title_exam: 'Remove %{user} from the participants list of “%{group}”'
+      places: 'The person leaves these groups and exam lists:'
+      withdrawn: 'These registrations are withdrawn:'
+      keep_lists: 'Keep in these flexible groups without enrollment:'
+      results_stay: 'Points, hand-ins and any exam admission stay stored and count again if the person comes back.'
+      last_place_group: 'This group is what enrolls the person in the lecture; they have no other. Afterwards they are no longer enrolled.'
+      last_place_exam: 'This list is what enrolls the person in the lecture; they are in no group. Afterwards they are no longer enrolled.'
+      remaining: 'These remain:'
+      move_hint: 'To switch groups, use “Move”; to remove the person entirely, remove them from the lecture on the “Participants” tab.'
+      stays_enrolled: 'The person stays enrolled in the lecture.'
+      notify: 'Notify by email'
+      submit: 'Remove'
     registrations:
       hint: >-
         These people are registered but not yet placed in their groups. That happens only once the
@@ -381,7 +396,7 @@ en:
     overbooked: 'Overbooked'
     empty_hint: 'Use registration processes to enroll participants. While a registration process is active, manual assignment to groups is locked.'
     tooltips:
-      kick_from_lecture: "Removes lecture enrollment and all memberships in tutorials and groups"
+      kick_from_lecture: "Remove from the lecture"
       kick_blocked_by_result: 'Has a result in %{titles}. Delete it first to remove this person from the lecture.'
       kick_from_group: "Removes the student from this group. The lecture enrollment remains."
       manage_participants: "Manage Participants"
@@ -440,10 +455,6 @@ en:
       lecture_cannot_self_materialize: "Lectures cannot use self-materialization. The lecture roster is always a superset of all groups."
       cannot_enable_both_campaign_and_self_materialization: "Cannot enable self-enrollment while switching to registration process mode. Please disable self-enrollment first or keep skip registration processes enabled."
     warnings:
-      confirm_kick_from_lecture: 'This person will be completely removed from the lecture, including every group, also flexible groups without enrollment; their registrations are withdrawn. Points and any exam admission stay stored and count again if the person comes back. Continue?'
-      confirm_kick_from_lecture_exams: 'This person will be completely removed from the lecture, including every group, also flexible groups without enrollment, and taken off the exam list of %{exams}; their registrations are withdrawn. Points and any exam admission stay stored and count again if the person comes back. Continue?'
-      confirm_kick_from_group: 'Removes the student from this group. The lecture enrollment remains. Continue?'
-      confirm_kick_from_only_group: 'This group is what enrolls the person in the lecture; they have no other. Afterwards they are no longer enrolled; flexible groups without enrollment and running registrations stay, and so do points and any exam admission. To switch groups, use “Move”; to remove the person entirely, remove them from the lecture on the “Participants” tab. Continue?'
       capacity_exceeded: 'The capacity of this group has been reached.'
       confirm_overbooking: 'The capacity of this group has been reached. Do you want to proceed anyway?'
       capacity_reduction: 'The new capacity is lower than the current number of participants. Are you sure?'

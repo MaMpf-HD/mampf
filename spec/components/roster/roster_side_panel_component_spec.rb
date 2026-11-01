@@ -551,15 +551,16 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
-  describe "#remove_member_path" do
+  describe "#confirm_remove_member_path" do
     it "returns nil without registerable" do
-      expect(described_class.new.remove_member_path(double)).to be_nil
+      expect(described_class.new.confirm_remove_member_path(double)).to be_nil
     end
 
     it "delegates to helpers with registerable" do
       c = described_class.new(registerable: tutorial)
-      allow(c).to receive(:helpers).and_return(double(roster_remove_member_path: "/remove"))
-      expect(c.remove_member_path(double("student"))).to eq("/remove")
+      allow(c).to receive(:helpers)
+        .and_return(double(roster_confirm_remove_member_path: "/remove"))
+      expect(c.confirm_remove_member_path(double("student"))).to eq("/remove")
     end
   end
 
@@ -672,39 +673,6 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     it "preference_based_campaign? handles item with no registration_campaign" do
       c = described_class.new(item: double("Item", registration_campaign: nil))
       expect(c.preference_based_campaign?).to be_nil
-    end
-  end
-
-  describe "#remove_confirmation" do
-    let(:lecture) { create(:lecture) }
-    let(:mo) { create(:tutorial, lecture: lecture, skip_campaigns: true) }
-    let(:student) { create(:confirmed_user) }
-    let(:panel) { described_class.new(registerable: mo, students: [student]) }
-
-    before do
-      lecture.add_user_to_roster!(student)
-      mo.add_user_to_roster!(student)
-    end
-
-    it "says that removal from the last group ends the enrollment" do
-      expect(panel.remove_confirmation(student))
-        .to eq(I18n.t("roster.warnings.confirm_kick_from_only_group"))
-    end
-
-    # The exam list keeps them in the lecture.
-    it "asks the usual question while the person is on an exam list" do
-      create(:exam, :without_campaign, lecture: lecture, title: "Final")
-        .add_user_to_roster!(student)
-
-      expect(panel.remove_confirmation(student))
-        .to eq(I18n.t("roster.warnings.confirm_kick_from_group"))
-    end
-
-    it "asks the usual question while another group with enrollment remains" do
-      create(:cohort, :enrollment, context: lecture).add_user_to_roster!(student)
-
-      expect(panel.remove_confirmation(student))
-        .to eq(I18n.t("roster.warnings.confirm_kick_from_group"))
     end
   end
 end
