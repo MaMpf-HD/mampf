@@ -272,12 +272,23 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       before do
         allow(submission).to receive(:accepted).and_return(nil)
         allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+        Timecop.travel(assignment.friendly_deadline + 1.minute)
         render_inline(component_tutorial)
       end
+
+      after { Timecop.return }
 
       it "includes the late-submission-decision hint" do
         result = component_tutorial.late_submission_info(submission, tutorial)
         expect(result).to include(component_tutorial.send(:t, "tutorial.late_submission_decision"))
+      end
+
+      # Until then the team may still upload again, which undoes a decision.
+      it "leaves the hint out during the grace period" do
+        Timecop.travel(assignment.friendly_deadline - 1.minute)
+
+        expect(component_tutorial.late_submission_info(submission, tutorial))
+          .to eq(component_tutorial.send(:t, "submission.late"))
       end
     end
 
@@ -333,6 +344,49 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
       expect(html.css(".bi-box-arrow-in-right")).to be_empty
       expect(html.css(".bi-exclamation-triangle-fill").size).to eq(1)
+    end
+  end
+
+  # The team may still upload again until then, which would undo both.
+  describe "the tutor's actions during the grace period" do
+    let(:late) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student2],
+                                            last_modification_by_users_at:
+                                              assignment.deadline + 10.minutes)
+    end
+
+    def labels(submission)
+      render_inline(described_class.new(submission: submission, assignment: assignment,
+                                        grading_scope: tutorial))
+        .css("[aria-label]").pluck("aria-label")
+    end
+
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      submission
+      late
+      Timecop.travel(assignment.deadline + 20.minutes)
+    end
+
+    after { Timecop.return }
+
+    it "holds back the correction until the grace period is over" do
+      closed = I18n.t("assessment.grading_tutorial.upload_correction_closed",
+                      time: I18n.l(assignment.friendly_deadline, format: :short))
+
+      expect(labels(submission)).to include(closed)
+      Timecop.travel(assignment.friendly_deadline + 1.minute)
+      expect(labels(submission))
+        .to include(I18n.t("assessment.grading_tutorial.upload_correction"))
+    end
+
+    it "holds back accepting or rejecting a late hand-in until then" do
+      accept = I18n.t("assessment.grading_tutorial.accept_late")
+
+      expect(labels(late)).not_to include(accept)
+      Timecop.travel(assignment.friendly_deadline + 1.minute)
+      expect(labels(late)).to include(accept)
     end
   end
 
@@ -472,7 +526,10 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       lecture.update!(cross_tutorial_teams: true)
       create(:tutorial_membership, tutorial: tutorial, user: student)
       create(:tutorial_membership, tutorial: other_tutorial, user: student2)
+      Timecop.travel(assignment.friendly_deadline + 1.minute)
     end
+
+    after { Timecop.return }
 
     def render_for(user, scope)
       allow(vc_test_controller).to receive(:current_user).and_return(user)
@@ -530,10 +587,32 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         .to eq(["Tuesday (Grace Hopper)"])
     end
 
+    it "offers no hand-over during the grace period" do
+      Timecop.travel(assignment.friendly_deadline - 1.minute)
+
+      expect(labelled(render_for(tutor, tutorial), hand_over)).to be_empty
+    end
+
     it "offers no hand-over once the team has a correction" do
       team.update!(correction: File.open("#{SPEC_FILES}/manuscript.pdf", "rb"))
 
       expect(labelled(render_for(tutor, tutorial), hand_over)).to be_empty
+    end
+
+    # Left behind after the deadline by a partner who left.
+    it "offers a team of one in another member's tutorial the hand-over" do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      alone = create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                                    users: [create(:confirmed_user)])
+
+      html = render_inline(described_class.new(
+                             submission: alone, assignment: assignment, grading_scope: tutorial,
+                             participations: [], addable_members: [],
+                             member_tutorials: { alone.users.first.id => other_tutorial }
+                           ))
+
+      expect(html.css("button.dropdown-item").map { |item| item.text.strip })
+        .to eq([other_tutorial.title_with_tutors])
     end
   end
 end

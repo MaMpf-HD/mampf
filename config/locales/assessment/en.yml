@@ -302,8 +302,8 @@ en:
       add_member_no_match: 'Nobody by that name is without a team.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
-        The members of this team sit in different tutorials. Hand it over to
-        one of them; points and correction are then entered there.
+        Hand the team over to the tutorial of one of its members; points and
+        correction are then entered there.
       marked_elsewhere: 'Marked in %{tutorial}'
     errors:
       feature_not_available: 'Assessment feature is not available.'
@@ -346,7 +346,8 @@ en:
       download_correction: 'Download correction'
       show_correction: 'View correction'
       upload_correction: 'Upload correction'
-      upload_correction_closed: 'Corrections can be uploaded once the deadline has passed'
+      upload_correction_closed: 'Corrections only after the grace period, from %{time}'
+      download_closed: 'Bulk download only after the grace period, from %{time}'
       delete_correction: 'Delete correction'
       confirm_delete_correction: 'Delete the correction? The file is gone then, the points stay.'
       accept_late: 'Accept the late hand-in'

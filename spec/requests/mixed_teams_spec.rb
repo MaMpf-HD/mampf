@@ -85,6 +85,19 @@ RSpec.describe("Teams across tutorials", type: :request) do
 
       expect(submission.reload.tutorial).to eq(tutorial_x)
     end
+
+    # Its tutor may be marking it from a bulk download already.
+    it "leaves the team where it is when somebody joins after the grace period" do
+      hand_in(tutorial_x, student_in(tutorial_x))
+      submission = hand_in(tutorial_x, anna)
+      travel_to(assignment.friendly_deadline + 1.minute)
+
+      join(submission, ben)
+
+      expect(submission.reload.users).to include(ben)
+      expect(submission.tutorial).to eq(tutorial_x)
+      expect(row_tutorials(submission)).to eq([tutorial_x.id])
+    end
   end
 
   describe "leaving" do
@@ -101,7 +114,7 @@ RSpec.describe("Teams across tutorials", type: :request) do
     it "keeps a tutor's hand-over when a member leaves and joins again" do
       hand_in(tutorial_y, student_in(tutorial_y))
       submission = hand_in(tutorial_x, anna, ben)
-      submission.hand_over!(tutorial_y)
+      submission.update!(handed_over_to_id: tutorial_y.id, tutorial: tutorial_y)
 
       sign_in ben
       delete leave_submission_path(submission)
@@ -109,6 +122,31 @@ RSpec.describe("Teams across tutorials", type: :request) do
 
       join(submission, ben)
       expect(submission.reload.tutorial).to eq(tutorial_y)
+    end
+
+    # Until the grace period is over the team is the students' to change.
+    it "still places the team when somebody leaves in the grace period" do
+      submission = hand_in(tutorial_y, anna, ben)
+      travel_to(assignment.deadline + 5.minutes)
+
+      sign_in ben
+      delete leave_submission_path(submission)
+
+      expect(submission.reload.users).to contain_exactly(anna)
+      expect(submission.tutorial).to eq(tutorial_x)
+    end
+
+    # Anna moved to X after handing in, and her team of one stayed in Y.
+    it "lets a team of one left behind be handed over" do
+      submission = hand_in(tutorial_y, anna)
+      travel_to(assignment.friendly_deadline + 1.minute)
+
+      sign_in tutor_y
+      patch(hand_over_submission_path(submission),
+            params: { tutorial_id: tutorial_x.id, grading_scope_type: "tutorial" },
+            as: :turbo_stream)
+
+      expect(submission.reload.tutorial).to eq(tutorial_x)
     end
 
     it "leaves a corrected team with the tutor who corrected it" do
@@ -124,6 +162,8 @@ RSpec.describe("Teams across tutorials", type: :request) do
 
   describe "PATCH /submissions/:id/hand_over" do
     let(:submission) { hand_in(tutorial_x, anna, ben) }
+
+    before { travel_to(assignment.friendly_deadline + 1.minute) }
 
     def hand_over(to:, by:)
       sign_in(by)
@@ -215,6 +255,7 @@ RSpec.describe("Teams across tutorials", type: :request) do
     let(:submission) { hand_in(tutorial_x, anna, ben) }
 
     before do
+      travel_to(assignment.friendly_deadline + 1.minute)
       submission.hand_over!(tutorial_y)
       sign_in tutor_x
     end
