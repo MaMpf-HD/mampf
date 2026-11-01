@@ -1,0 +1,25 @@
+<div class="d-flex flex-wrap align-items-center gap-2">
+  <span><%= t("registration.user_registration.participation.switch_prompt") %></span>
+
+  <div class="dropdown">
+    <button
+      type="button"
+      class="btn btn-sm btn-outline-primary dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      <%= t("registration.user_registration.participation.switch_to") %>
+    </button>
+
+    <ul class="dropdown-menu">
+      <% targets.each do |target| %>
+        <li>
+          <%= button_to Rosters::LectureLeave.label(target),
+                        public_send("self_switch_#{target.class.name.underscore}_path",
+                                    target.id),
+                        method: :patch, class: "dropdown-item" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

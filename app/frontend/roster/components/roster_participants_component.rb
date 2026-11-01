@@ -6,7 +6,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     view_switch: "roster_participants_view_switch",
     campaign_switch: "roster_participants_campaign_switch",
     top_nav: "roster_participants_top_nav",
-    header_controls: "roster_participants_header_controls",
     results: "roster_participants_results"
   }.freeze
 
@@ -14,7 +13,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     view_switch: "roster/components/roster_participants_view_switch",
     campaign_switch: "roster/components/roster_participants_campaign_switch",
     top_nav: "roster/components/roster_participants_top_nav",
-    header_controls: "roster/components/roster_participants_header_controls",
     results: "roster/components/roster_participants_results"
   }.freeze
 
@@ -31,15 +29,13 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   # rubocop:disable Metrics/ParameterLists
-  def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",
-                 view: "enrolled", campaign: nil, search_string: nil, counts: {},
-                 section: :full)
+  def initialize(lecture:, group_type:, participants: nil, pagy: nil, view: "enrolled",
+                 campaign: nil, search_string: nil, counts: {}, section: :full)
     super()
     @lecture = lecture
     @group_type = group_type
     @participants = participants
     @pagy = pagy
-    @filter_mode = filter_mode
     @view = view || "enrolled"
     @campaign = campaign
     @search_string = search_string
@@ -48,8 +44,8 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
   # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :group_type, :pagy, :filter_mode, :view, :campaign, :search_string,
-              :counts, :section
+  attr_reader :lecture, :group_type, :pagy, :view, :campaign, :search_string, :counts,
+              :section
 
   # Returns the officially enrolled participants (Lecture Superset), or in the
   # registered view the users with a running registration.
@@ -58,7 +54,7 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   def filtered?
-    search_string.present? || filter_mode != "all"
+    search_string.present?
   end
 
   # In this view, the participants are users with a running registration
@@ -88,6 +84,31 @@ class RosterParticipantsComponent < ViewComponent::Base
     else
       t("roster.left.removed", date: date)
     end
+  end
+
+  # What someone who has left still has in the lecture: flexible groups
+  # without enrollment and running registrations.
+  def remaining_lists(user)
+    lists_by_user.fetch(user.id, [])
+  end
+
+  def remaining_campaigns(user)
+    campaigns_by_user.fetch(user.id, [])
+  end
+
+  # An exam's registrations are shown on the exams tab, not in the registered
+  # view, which leaves exam campaigns out.
+  def remaining_campaign_path(campaign)
+    if campaign.registration_items.any? { |item| item.registerable_type == "Exam" }
+      return helpers.edit_lecture_path(lecture, tab: "exams")
+    end
+
+    helpers.edit_lecture_path(lecture, tab: "participants", view: "registered",
+                                       campaign: campaign.id)
+  end
+
+  def readmission_options
+    @readmission_options ||= helpers.roster_readmission_group_options(lecture)
   end
 
   def registration_entry(user)
@@ -160,43 +181,9 @@ class RosterParticipantsComponent < ViewComponent::Base
     { t("roster.programs.enrolled") => ProgramDistribution.new(enrolled) }
   end
 
-  # Returns participants who are assigned to at least one functional group
-  def assigned_participants
-    # Only applicable to current page
-    @assigned_participants ||= participants.select { |m| participant_status(m.user) == :assigned }
-  end
-
-  # Returns participants who are not assigned to any functional group
-  def unassigned_participants
-    # Only applicable to current page
-    @unassigned_participants ||= participants.select do |m|
-      participant_status(m.user) == :unassigned
-    end
-  end
-
-  # Checks if a participant is assigned to any functional sub-group (Tutorial or Talk).
-  # Returns :assigned or :unassigned.
-  def participant_status(user)
-    # Check if user is in any group that is NOT a Cohort
-    is_assigned = user_memberships[user.id].any? do |group_id|
-      group = all_groups_map[group_id]
-      group && !group.is_a?(Cohort)
-    end
-
-    is_assigned ? :assigned : :unassigned
-  end
-
-  # Returns the groups the user is currently a member of (including Cohorts)
   def participant_groups(user)
     ids = user_memberships[user.id]
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
-  end
-
-  def kick_confirmation(user)
-    exams = exam_titles_by_user[user.id]
-    return t("roster.warnings.confirm_kick_from_lecture") if exams.blank?
-
-    t("roster.warnings.confirm_kick_from_lecture_exams", exams: exams.to_sentence)
   end
 
   def kick_blocked_by(user)
@@ -215,7 +202,6 @@ class RosterParticipantsComponent < ViewComponent::Base
                             path: helpers.lecture_roster_participants_path(@lecture),
                             anchor_string: 'data-turbo-stream="true"',
                             querify: lambda { |p|
-                              p["filter"] = @filter_mode
                               p["view"] = @view unless enrolled_view?
                               p["campaign"] = @campaign.id if @campaign
                               p["search"] = @search_string if @search_string.present?
@@ -249,9 +235,14 @@ class RosterParticipantsComponent < ViewComponent::Base
 
   private
 
-    def exam_titles_by_user
-      @exam_titles_by_user ||=
-        ExamRosterEntry.exam_titles_by_user(@lecture, participants.map(&:user_id))
+    def lists_by_user
+      @lists_by_user ||= Cohort.lists_by_user(@lecture, participants.map(&:user_id))
+    end
+
+    def campaigns_by_user
+      @campaigns_by_user ||=
+        Registration::UserRegistration.running_campaigns_by_user(@lecture,
+                                                                 participants.map(&:user_id))
     end
 
     def result_titles_by_user
@@ -261,7 +252,7 @@ class RosterParticipantsComponent < ViewComponent::Base
 
     def section_kwargs
       { lecture: lecture, group_type: group_type, participants: participants,
-        pagy: pagy, filter_mode: filter_mode, view: view, campaign: campaign,
+        pagy: pagy, view: view, campaign: campaign,
         search_string: search_string, counts: counts }
     end
 
@@ -273,6 +264,7 @@ class RosterParticipantsComponent < ViewComponent::Base
                                           registration_items: :registration_campaign).to_a)
           .concat(@lecture.cohorts.includes(:cohort_memberships,
                                             registration_items: :registration_campaign).to_a)
+          .concat(@lecture.exams.to_a)
           .sort_by(&:title)
     end
 
@@ -318,6 +310,10 @@ class RosterParticipantsComponent < ViewComponent::Base
                             .pluck(:user_id, :cohort_id)
                             .each { |uid, cid| map[uid].add("Cohort-#{cid}") }
           end
+
+          ExamRosterEntry.active.where(exam: @lecture.exams, user_id: user_ids)
+                         .pluck(:user_id, :exam_id)
+                         .each { |uid, eid| map[uid].add("Exam-#{eid}") }
         end
 
         map

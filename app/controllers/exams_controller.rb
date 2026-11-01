@@ -1,9 +1,10 @@
 class ExamsController < ApplicationController
   include Flash
+  include Registration::RosterStreamRefreshable
 
   before_action :set_lecture, only: [:index, :new]
-  before_action :set_exam, only: [:show, :edit, :update, :destroy,
-                                  :add_participant, :remove_participant]
+  before_action :set_exam, only: [:show, :edit, :update, :destroy, :add_participant,
+                                  :confirm_remove_participant, :remove_participant]
 
   def current_ability
     @current_ability ||= ExamAbility.new(current_user)
@@ -197,12 +198,13 @@ class ExamsController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream do
+        added = false
         if user.nil?
           flash.now[:error] = t("assessment.registration_tab.user_not_found")
         else
           service = Rosters::MaintenanceService.new
           begin
-            service.add_user!(user, @exam, force: true)
+            added = service.add_user!(user, @exam, ignore_capacity: true)
             flash.now[:success] = t("assessment.registration_tab.participant_added",
                                     name: user.tutorial_name.presence || user.email)
           rescue ActiveRecord::RecordInvalid
@@ -212,10 +214,24 @@ class ExamsController < ApplicationController
         @active_tab = "registration"
         render turbo_stream: [
           turbo_stream.update("exams_container", build_dashboard_component),
-          stream_flash
+          stream_flash,
+          *(refresh_roster_streams(@lecture) if added)
         ]
       end
     end
+  end
+
+  def confirm_remove_participant
+    authorize! :remove_participant, @exam
+    return refuse_locked_roster if @exam.locked?
+
+    user = User.find(params[:user_id])
+    url = remove_participant_exam_path(@exam, user_id: user.id)
+    render turbo_stream: turbo_stream.update(
+      "modal-container",
+      RosterRemovalModalComponent.new(user: user, rosterable: @exam, url: url)
+                                 .render_in(view_context)
+    )
   end
 
   def remove_participant
@@ -225,9 +241,13 @@ class ExamsController < ApplicationController
     user = User.find(params[:user_id])
     status = :ok
 
+    left = nil
     if @exam.participant_removable?(user)
-      Rosters::MaintenanceService.new.remove_user!(user, @exam)
-      flash.now[:success] = t("assessment.registration_tab.participant_removed",
+      left = Rosters::MaintenanceService.new.remove_user!(
+        user, @exam, by: current_user, notify: params[:notify] != "0"
+      )
+      key = left.is_a?(Lecture) ? "participant_removed_with_lecture" : "participant_removed"
+      flash.now[:success] = t("assessment.registration_tab.#{key}",
                               name: user.tutorial_name.presence || user.email)
     else
       flash.now[:error] = t("assessment.registration_tab.remove_blocked")
@@ -239,7 +259,8 @@ class ExamsController < ApplicationController
         @active_tab = "registration"
         render turbo_stream: [
           turbo_stream.update("exams_container", build_dashboard_component),
-          stream_flash
+          stream_flash,
+          *(refresh_roster_streams(@lecture) if left)
         ], status: status
       end
     end

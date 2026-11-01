@@ -34,7 +34,7 @@ class GroupRowComponent < ViewComponent::Base
   end
 
   def roster_key
-    "#{registerable.class.name}-#{registerable.id}"
+    Rosters::RosterableResolver.group_key(registerable)
   end
 
   def panel_path
