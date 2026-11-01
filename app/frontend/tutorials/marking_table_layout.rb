@@ -29,7 +29,9 @@ class MarkingTableLayout
       columns << :tutorial if grading_scope.is_a?(Lecture)
       columns += [:status, :tasks, :total, :save] if assessable.assessable?
       columns += [:hand_in, :correction] unless assessable.kind_test?
-      new(columns: columns, body: :tasks)
+      # Up to four buttons stand beside a team's names here: hand over, put
+      # on, take off and email.
+      new(columns: columns, body: :tasks, widths: { team: 240 })
     when Talk
       new(columns: [:talk, :team, :status, :grade, :note, :graded, :save],
           body: :single_grade, left: [:talk, :team])

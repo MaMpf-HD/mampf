@@ -1,0 +1,35 @@
+<%#
+  The members of other tutorials found for a query. It carries the query, so
+  that the menu can drop an answer to a query the tutor has typed past since.
+%>
+
+<div
+  data-add-member-menu-target="results"
+  data-query="<%= query %>"
+  data-count="<%= found.size %>"
+>
+  <% if found.any? %>
+    <h6 class="dropdown-header">
+      <%= t("assessment.task_points.add_member_elsewhere") %>
+    </h6>
+    <% found.each do |member| %>
+      <%= button_to add_member_submission_path(submission),
+                    method: :patch,
+                    params: { user_id: member.id,
+                              grading_scope_type: grading_scope_type },
+                    class: "dropdown-item",
+                    form: { data: { turbo: true } } do %>
+        <%= member.tutorial_name %>
+
+        <span class="small text-secondary">
+          <%= tutorials[member.id]&.title %>
+        </span>
+      <% end %>
+    <% end %>
+    <% if more %>
+      <p class="dropdown-item-text small text-secondary mb-0">
+        <%= t("assessment.task_points.add_member_elsewhere_more") %>
+      </p>
+    <% end %>
+  <% end %>
+</div>

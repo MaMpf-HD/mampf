@@ -3319,7 +3319,6 @@ de:
       kannst Du nicht mehr beitreten.
     already_rejected: >
       Diese Abgabe wurde abgelehnt, Du kannst ihr nicht mehr beitreten.
-    late: verspätete Abgabe
     rejected: abgelehnt
     bulk_download_submissions: Paketdownload der Abgaben
     bulk_download_corrections: Paketdownload der Korrekturen
@@ -3596,6 +3595,12 @@ de:
       %{tutor} hat Dich in das Team von %{team} für %{assignment} in
       %{lecture} aufgenommen. Die Abgabe des Teams zählt jetzt auch für Dich,
       und ebenso die Punkte, die sie bekommt.
+    submission_removed_subject: >
+      Du bist nicht mehr im Team für %{assignment} in %{lecture}
+    submission_removed: >
+      %{tutor} hat Dich aus dem Team von %{team} für %{assignment} in
+      %{lecture} genommen. Die Abgabe des Teams zählt nicht mehr für Dich,
+      und ebenso wenig die Punkte, die sie bekommt.
     submission_leave_subject: >
       %{user} hat Abgabe zu %{assignment} in %{lecture} verlassen
     submission_leave: >

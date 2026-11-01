@@ -3106,7 +3106,6 @@ en:
       cannot join anymore.
     already_rejected: >
       This submission was rejected, so it can no longer be joined.
-    late: late submission
     rejected: rejected
     bulk_download_submissions: Bulk download of submissions
     bulk_download_corrections: Bulk download of corrections
@@ -3369,6 +3368,12 @@ en:
       %{tutor} has put you on the team of %{team} for %{assignment} in
       %{lecture}. Their hand-in counts for you now, and so do the points it
       gets.
+    submission_removed_subject: >
+      You are no longer on the team for %{assignment} in %{lecture}
+    submission_removed: >
+      %{tutor} has taken you off the team of %{team} for %{assignment} in
+      %{lecture}. Their hand-in no longer counts for you, and neither do the
+      points it gets.
     submission_leave_subject: >
       %{user} has left the submission for %{assignment} in %{lecture}
     submission_leave: >

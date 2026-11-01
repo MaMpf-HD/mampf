@@ -55,6 +55,71 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       end
     end
 
+    # Somebody marked on a row of their own is done with the sheet; the
+    # server would refuse them anyway.
+    describe "the menu for putting somebody on a team" do
+      let(:marked) { create(:confirmed_user, name_in_tutorials: "Leon Fischer") }
+      let(:free) { create(:confirmed_user, name_in_tutorials: "Mia Bauer") }
+
+      before do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+        [marked, free].each { |user| create(:tutorial_membership, tutorial: tutorial, user: user) }
+        Timecop.travel(3.hours.from_now)
+        row = create(:assessment_participation, :submitted, assessment: assessment,
+                                                            user: marked, tutorial: tutorial)
+        create(:assessment_task_point, task: create(:assessment_task, assessment: assessment),
+                                       assessment_participation: row, points: 2)
+      end
+
+      after { Timecop.return }
+
+      def offered(scope)
+        render_inline(described_class.new(assignment: assignment.reload, grading_scope: scope))
+          .css("[data-controller=add-member-menu] button.dropdown-item")
+          .map { |item| item.text.squish }
+      end
+
+      it "offers nobody marked on a row of their own" do
+        tutor = create(:confirmed_user)
+        tutorial.tutors << tutor
+        allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+
+        expect(offered(tutorial)).to eq(["Mia Bauer"])
+      end
+
+      it "offers nobody marked on a row of their own on the lecture's table" do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+
+        expect(offered(lecture)).to eq(["Mia Bauer"])
+      end
+
+      # Ben handed in on paper and then moved to another group; his row stays
+      # here, but the add action takes him only where teams may span groups.
+      context "with somebody who moved to another group" do
+        let(:moved) { create(:confirmed_user, name_in_tutorials: "Ben Weber") }
+
+        before do
+          create(:tutorial_membership, tutorial: create(:tutorial, lecture: lecture), user: moved)
+          create(:assessment_participation, assessment: assessment, user: moved,
+                                            tutorial: tutorial, submitted_at: 4.hours.ago)
+          allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        end
+
+        it "does not offer them where teams stay within one group" do
+          expect(offered(tutorial)).to eq(["Mia Bauer"])
+          expect(offered(lecture)).to eq(["Mia Bauer"])
+        end
+
+        it "offers them where teams may span groups" do
+          lecture.update!(cross_tutorial_teams: true)
+
+          expect(offered(tutorial)).to contain_exactly("Mia Bauer", "Ben Weber")
+          expect(offered(lecture)).to contain_exactly("Mia Bauer", "Ben Weber")
+        end
+      end
+    end
+
     describe "#rows?" do
       context "when there are submissions" do
         let!(:submission) do

@@ -290,16 +290,32 @@ en:
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
       participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
       not_in_group: 'Only a member of the group can be put on one of its teams.'
+      not_in_any_group: 'Only a member of one of the lecture''s tutorials can be put on a team.'
       team_rejected: 'A rejected hand-in takes nobody.'
+      team_full: 'The team is full: at most %{max} per team.'
       joined_late: 'Joined the team after the deadline, on %{time}.'
+      added_by_tutor: 'Put on the team by %{tutor}, on %{time}.'
+      late_submission: 'Late submission, uploaded on %{time}.'
       marked_on_own: >-
         %{name} is already marked for this sheet on a row of their own. Clear
         that first.
       member_added: '%{name} is on the team now.'
+      member_removed: '%{name} is no longer on the team.'
+      remove_member: 'Take somebody off this team again'
+      remove_member_hint: >-
+        For somebody put on the team by mistake. They lose the team's points
+        and get an email.
+      not_removable: '%{name} cannot be taken off this team.'
+      last_member: 'The last person on a team cannot be taken off it.'
+      team_closed: 'The team can only be changed once points can be entered.'
       add_member: 'Put somebody on this team'
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
       add_member_search: 'Search by name'
       add_member_no_match: 'Nobody by that name is without a team.'
+      add_member_search_elsewhere: 'From %{min} letters on, people from other tutorials show up too.'
+      add_member_elsewhere: 'Other tutorials'
+      add_member_elsewhere_more: 'There are more matches. Type more of the name.'
+      add_member_search_failed: 'The other tutorials could not be searched. Try again.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
         Hand the team over to the tutorial of one of its members; points and

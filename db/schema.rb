@@ -1301,6 +1301,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "submission_id"
+    t.bigint "added_by_id"
+    t.index ["added_by_id"], name: "index_user_submission_joins_on_added_by_id"
     t.index ["submission_id"], name: "index_user_submission_joins_on_submission_id"
     t.index ["user_id"], name: "index_user_submission_joins_on_user_id"
   end
@@ -1630,6 +1632,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "user_submission_joins", "users", column: "added_by_id", on_delete: :nullify
   add_foreign_key "users", "programs", on_delete: :nullify
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"

@@ -1002,6 +1002,14 @@ Rails.application.routes.draw do
         to: "assessment/task_points#add_member",
         as: "add_member_submission"
 
+  get "submissions/:submission_id/add_member_candidates",
+      to: "assessment/task_points#add_member_candidates",
+      as: "add_member_candidates_submission"
+
+  patch "submissions/:submission_id/remove_member",
+        to: "assessment/task_points#remove_member",
+        as: "remove_member_submission"
+
   patch "participations/:participation_id/refresh_point_participation",
         to: "assessment/task_points#refresh_participation",
         as: "refresh_point_participation"
