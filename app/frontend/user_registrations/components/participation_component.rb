@@ -267,7 +267,7 @@ class ParticipationComponent < ViewComponent::Base
     end
 
     def leave_action(rosterable)
-      return unless leavable?(rosterable)
+      return locked_leave_action(rosterable) unless leavable?(rosterable)
 
       dialog_id = if opens_lecture_dialog?(rosterable)
         LeaveLectureComponent::ID
@@ -277,6 +277,22 @@ class ParticipationComponent < ViewComponent::Base
       helpers.button_tag(t(LeaveGroupComponent.submit_key(rosterable)),
                          type: "button", class: "btn btn-sm btn-outline-secondary",
                          data: { bs_toggle: "modal", bs_target: "##{dialog_id}" })
+    end
+
+    # A group the student cannot leave on their own shows its button disabled,
+    # with a note on whom to ask; an exam list is kept by the staff anyway.
+    def locked_leave_action(rosterable)
+      return if rosterable.is_a?(Exam)
+
+      reason = t("registration.user_registration.participation.leave_locked")
+      button = helpers.button_tag(type: "button", disabled: true,
+                                  class: "btn btn-sm btn-outline-secondary pe-none") do
+        safe_join([tag.i(class: "bi bi-lock-fill me-1", aria: { hidden: true }),
+                   t(LeaveGroupComponent.submit_key(rosterable))])
+      end
+      tag.span(class: "d-inline-block", tabindex: 0, title: reason) do
+        safe_join([button, tag.span(reason, class: "visually-hidden")])
+      end
     end
 
     def leavable?(rosterable)

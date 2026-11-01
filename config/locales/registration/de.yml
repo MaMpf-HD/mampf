@@ -531,6 +531,7 @@ de:
         leave_tutorial: "Tutorium verlassen"
         leave_group: "Gruppe verlassen"
         leave_talk: "Vortrag abgeben"
+        leave_locked: "Austragen ist hier gesperrt. Wende Dich bitte an das Team der Veranstaltung."
         leave_title: "„%{group}“ verlassen?"
         leave_title_talk: "Vortrag „%{group}“ abgeben?"
         leave_stays: "Du bleibst in der Veranstaltung."

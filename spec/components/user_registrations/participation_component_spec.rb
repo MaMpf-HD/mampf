@@ -469,6 +469,17 @@ RSpec.describe(ParticipationComponent, type: :component) do
 
     before { lecture.add_user_to_roster!(user) }
 
+    it "shows the button disabled, saying whom to ask, where the group does not let students go" do
+      tutorial.update!(self_materialization_mode: :disabled)
+      tutorial.add_user_to_roster!(user)
+
+      wrapper = row(render_participation).at_css("span[title]")
+
+      expect(wrapper["title"]).to eq(participation(:leave_locked))
+      expect(wrapper.at_css("button")["disabled"]).to be_present
+      expect(wrapper.at_css("button").text.squish).to eq(participation(:leave_tutorial))
+    end
+
     context "when another group with enrollment remains" do
       def dialog_text_for(mode, capacity: nil)
         tutorial.update!(self_materialization_mode: mode, capacity: capacity)

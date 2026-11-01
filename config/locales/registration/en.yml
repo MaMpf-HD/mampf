@@ -529,6 +529,7 @@ en:
         leave_tutorial: "Leave tutorial"
         leave_group: "Leave group"
         leave_talk: "Give up talk"
+        leave_locked: "Leaving is locked here. Please contact the lecture's staff."
         leave_title: "Leave “%{group}”?"
         leave_title_talk: "Give up the talk “%{group}”?"
         leave_stays: "You stay in the course."
