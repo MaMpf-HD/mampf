@@ -25,17 +25,29 @@
                            type: "button",
                            class: "dropdown-item",
                            id: "show-bulk-upload-area",
-                           disabled: !upload_open?,
-                           title: (t("assessment.grading_tutorial.upload_correction_closed") unless upload_open?) %>
+                           disabled: !hand_ins_final?,
+                           title: (unless hand_ins_final?
+                                     t("assessment.grading_tutorial.upload_correction_closed",
+                                       time: final_from)
+                                   end) %>
           </li>
         <% end %>
 
         <% if hand_in_files? %>
           <li>
-            <%= link_to t("submission.bulk_download_submissions"),
-                        bulk_download_submissions_path(id: @tutorial.id, ass_id: @assignment.id),
-                        class: "dropdown-item",
-                        data: { turbo: false } %>
+            <% if hand_ins_final? %>
+              <%= link_to t("submission.bulk_download_submissions"),
+                          bulk_download_submissions_path(id: @tutorial.id, ass_id: @assignment.id),
+                          class: "dropdown-item",
+                          data: { turbo: false } %>
+            <% else %>
+              <%= button_tag t("submission.bulk_download_submissions"),
+                             type: "button",
+                             class: "dropdown-item",
+                             disabled: true,
+                             title: t("assessment.grading_tutorial.download_closed",
+                                      time: final_from) %>
+            <% end %>
           </li>
         <% end %>
 

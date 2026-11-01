@@ -102,6 +102,25 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
 
       expect(rendered.text).to include(I18n.t("submission.bulk_upload"))
     end
+
+    # Files may still change and teams still move until then.
+    it "holds back the bundle and the upload until the grace period is over" do
+      submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                         tutorial: tutorial,
+                                                         users: [create(:confirmed_user)])
+      assignment.update_column(:deadline, 5.minutes.ago) # rubocop:disable Rails/SkipsModelValidations
+      rendered = render_inline(toolbar(scope: tutorial, submissions: [submission]))
+      from = I18n.l(assignment.friendly_deadline, format: :short)
+
+      download = rendered.css("button.dropdown-item").find do |item|
+        item.text.strip == I18n.t("submission.bulk_download_submissions")
+      end
+      expect(download["disabled"]).to be_present
+      expect(download["title"])
+        .to eq(I18n.t("assessment.grading_tutorial.download_closed", time: from))
+      expect(rendered.css("a[href*='bulk_download_submissions']")).to be_empty
+      expect(rendered.at_css("#show-bulk-upload-area")["disabled"]).to be_present
+    end
   end
 
   it "shows no saving to somebody who may not enter points" do

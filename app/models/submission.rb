@@ -106,8 +106,11 @@ class Submission < ApplicationRecord
     correction.blank? && !marked?
   end
 
+  # A team of one sits in another tutorial when its member moved after
+  # handing in; its tutor hands it over like any other. Until the grace
+  # period is over, a join or a leave still places the team, not a tutor.
   def hand_over_targets
-    return Tutorial.none unless users.many? && movable?
+    return Tutorial.none unless movable? && assignment.totally_expired?
 
     Tutorial.where(id: member_tutorial_ids - [tutorial_id]).order(:title)
   end
@@ -115,7 +118,12 @@ class Submission < ApplicationRecord
   # A mixed team goes to the member tutorial with the fewest hand-ins, so the
   # uploader does not choose the tutor. A tutor's hand-over holds while a
   # member sits in that tutorial, even across a leave and a rejoin.
+  # Once the grace period is over a team stays where it is: its tutor may be
+  # marking it from a bulk download already, which leaves no trace here.
+  # Only a hand-over moves it then.
   def place_team!(tutorials_before)
+    return if assignment.totally_expired?
+
     with_team_locked do
       next unless movable?
 
@@ -348,7 +356,7 @@ class Submission < ApplicationRecord
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
     report = { successful_saves: [], submissions: submissions.size,
-               invalid_filenames: [], invalid_id: [], in_subfolder: [],
+               invalid_filenames: [], invalid_id: [], elsewhere: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
     begin
       files.each do |file_shrine|
@@ -363,7 +371,8 @@ class Submission < ApplicationRecord
         # uploaded filename cannot target a submission in another tutorial.
         submission = submissions.find_by(id: submission_id)
         unless submission
-          report[:invalid_id].push(filename)
+          elsewhere = known_elsewhere(tutorial, assignment, submission_id)
+          elsewhere ? report_elsewhere(report, elsewhere) : report[:invalid_id].push(filename)
           next
         end
         if submission.too_late? && submission.accepted.nil?
@@ -381,7 +390,7 @@ class Submission < ApplicationRecord
           false
         end
         if moved
-          report[:invalid_id].push(filename)
+          report_elsewhere(report, submission)
           next
         end
         unless submission.valid?
@@ -395,6 +404,26 @@ class Submission < ApplicationRecord
     end
     report
   end
+
+  # A hand-in of the same sheet that another tutorial has now and that may
+  # have been in this tutorial's bundle: one handed over, or one of a team
+  # with somebody in this tutorial. Any other id stays invalid, so the report
+  # does not name a team the tutor has nothing to do with.
+  def self.known_elsewhere(tutorial, assignment, submission_id)
+    elsewhere = where(assignment: assignment).includes(:users, tutorial: :tutors)
+                                             .find_by(id: submission_id)
+    return unless elsewhere
+    return elsewhere if elsewhere.handed_over_to_id?
+
+    elsewhere if elsewhere.member_tutorial_ids.include?(tutorial.id)
+  end
+
+  # Names the team and the tutorial that has its hand-in now, so the
+  # correction can go there. Nothing is written on it.
+  def self.report_elsewhere(report, submission)
+    report[:elsewhere].push([submission.team, submission.tutorial.title_with_tutors])
+  end
+  private_class_method :known_elsewhere, :report_elsewhere
 
   private
 

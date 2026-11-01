@@ -9,6 +9,8 @@ module StudentPerformance
     NO_TUTORIAL = "none".freeze
     LEFT = "left".freeze
 
+    skip_before_action :authorize_lecture, only: :index
+    before_action :authorize_index, only: :index
     before_action :set_record, only: [:show, :exempt, :unexempt]
     before_action :set_sheet, only: [:exempt, :unexempt]
 
@@ -22,7 +24,7 @@ module StudentPerformance
 
     def index
       @due_points = due_points
-      @left = params[:tutorial_id] == LEFT
+      @left = @own_tutorial.nil? && params[:tutorial_id] == LEFT
       scope = if @left
         filter_by_name(left_memberships)
       else
@@ -94,6 +96,18 @@ module StudentPerformance
                 .merge(User.by_last_name)
       end
 
+      # Editors read every member of the lecture. A tutor reads the members
+      # of a tutorial they tutor - the one asked for, or else their first -
+      # and nothing else in this namespace.
+      def authorize_index
+        return if can?(:edit, @lecture)
+
+        own = current_user.given_tutorials.where(lecture: @lecture).order(:title)
+        raise(CanCan::AccessDenied) if own.empty?
+
+        @own_tutorial = own.find_by(id: params[:tutorial_id]) || own.first
+      end
+
       def left_memberships
         @lecture.excluded_lecture_memberships
                 .includes(:user)
@@ -107,6 +121,10 @@ module StudentPerformance
       end
 
       def filter_by_tutorial(scope)
+        if @own_tutorial
+          return scope.where(user_id: TutorialMembership.where(tutorial: @own_tutorial)
+                                                        .select(:user_id))
+        end
         return scope if params[:tutorial_id].blank?
         return scope.where.not(user_id: tutorial_member_ids) if no_tutorial?
 

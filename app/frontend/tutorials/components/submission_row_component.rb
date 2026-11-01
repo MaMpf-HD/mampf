@@ -164,7 +164,7 @@ class SubmissionRowComponent < ViewComponent::Base
   def hand_over_targets
     return [] if elsewhere? || !@tutorial.correctable_by?(helpers.current_user)
     return @submission.hand_over_targets.to_a unless @member_tutorials
-    return [] unless @submission.users.many? && movable?
+    return [] unless movable? && @assignment.totally_expired?
 
     @submission.users.filter_map { |user| @member_tutorials[user.id] }
                .uniq.excluding(@tutorial).sort_by(&:title)
@@ -283,7 +283,8 @@ class SubmissionRowComponent < ViewComponent::Base
     uploaded_at = submission.last_modification_by_users_at || submission.created_at
     text = t("assessment.task_points.late_submission",
              time: l(uploaded_at, format: :file_time))
-    return text unless submission.accepted.nil? && helpers.current_user.in?(tutorial.tutors)
+    return text unless submission.accepted.nil? && helpers.current_user.in?(tutorial.tutors) &&
+                       @assignment.totally_expired?
 
     "#{text} #{t("tutorial.late_submission_decision").strip}"
   end

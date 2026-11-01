@@ -3363,9 +3363,11 @@ de:
       Du bist TutorIn in dieser Veranstaltung, aber noch keinem Tutorium
       zugeordnet. Sobald Du eines übernimmst, erscheint es hier.
     tutors_missing_html: "Fehlt jemand? Im Reiter %{link} machst Du Leute zu TutorInnen: mit einem Gutschein oder über die E-Mail-Adresse ihres MaMpf-Kontos."
+    tabs:
+      label: "Ansichten der Gruppe"
+      marking: "Bewerten"
     participants:
       button: "Teilnehmende"
-      pick: "Auswählen …"
       title: "Teilnehmende"
       none: "In dieser Gruppe ist noch niemand."
       registered_title: "Angemeldet, noch nicht endgültig"
@@ -3399,12 +3401,18 @@ de:
       Eigene Tutorien
     other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
-      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Frist kann der Bewertungsprozess erfolgen und die Korrekturen können von den Tutoren hochgeladen werden.
+      Bis %{deadline} läuft noch die Abgabefrist. Paketdownload, Korrekturen
+      und Punkte gibt es erst, wenn die Abgaben feststehen, ab
+      %{friendly_deadline}.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
       sind (was jedoch zur Einstufung der entsprechenden Abgaben als
-      verspätet führt).
+      verspätet führt). Paketdownload, Korrekturen und Punkte gibt es erst
+      danach.
+    hand_ins_not_final: >
+      Bis %{time} läuft noch die Kulanzfrist. Erst danach stehen die Abgaben
+      fest.
     certificate_check: Quiz-Zertifikat validieren
     certificate_check_info: >
       Hier kannst Du Zertifikats-Codes überprüfen, die NutzerInnen nach dem
@@ -3431,6 +3439,7 @@ de:
       invalid_filenames: ungültige Dateinamen
       invalid_files: ungültige Dateien
       invalid_submission_id: ungültige Abgabe-ID
+      elsewhere: liegt bei einem anderen Tutorium
       no_decision: noch keine Entscheidung über Akzeptanz getroffen
       rejected: Korrektur bereits abgelehnt
       files_in_cache: Datei(en) erfolgreich in den Zwischenspeicher hochgeladen.
@@ -3452,6 +3461,11 @@ de:
           Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
           die zwar in das von MaMpf vorgegebene Namensschema passen, deren dort
           enthaltene Abgaben-ID aber zu keiner Abgabe passt.
+        elsewhere: >
+          Hier sind die Abgabeteams aufgelistet, deren Abgabe inzwischen ein
+          anderes Tutorium korrigiert, etwa nach einer Übergabe. Ihre
+          Korrekturen wurden nicht gespeichert. Schick sie an das genannte
+          Tutorium.
         no_decision: >
           Hier sind diejenigen Abgabeteams aufgelistet, für die eine
           Korrektur hochgeladen wurde, aber noch keine Entscheidung darüber

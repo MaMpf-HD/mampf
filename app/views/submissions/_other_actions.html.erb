@@ -1,4 +1,4 @@
-<% if submission.too_late? && submission.accepted.nil? %>
+<% if submission.too_late? && submission.accepted.nil? && submission.assignment.totally_expired? %>
   <%= link_to accept_submission_path(submission, grading_scope_type: grading_scope.class.name.downcase),
               class: "btn btn-sm btn-link row-action text-success d-inline-flex align-items-center justify-content-center px-2 py-1 lh-1 fs-5",
               data: {

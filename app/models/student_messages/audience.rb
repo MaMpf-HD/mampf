@@ -27,6 +27,14 @@ module StudentMessages
       audiences.map { |audience| User.where(id: audience.users.select(:id)) }.reduce(:or)
     end
 
+    # The tutors of the tutorials the recipients sit in, who get a copy of a
+    # staff message: they should know what their students were told.
+    def self.tutors_of(recipients, lecture)
+      tutorials = TutorialMembership.where(user_id: recipients.select(:id), lecture: lecture)
+      User.where(id: TutorTutorialJoin.where(tutorial_id: tutorials.select(:tutorial_id))
+                                      .select(:tutor_id))
+    end
+
     def user_ids
       @user_ids ||= @users.distinct.pluck(:id)
     end
