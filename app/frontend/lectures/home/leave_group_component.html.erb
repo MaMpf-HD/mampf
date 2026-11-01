@@ -1,0 +1,70 @@
+<% title_id = "#{id}-title" %>
+
+<div
+  class="modal fade"
+  id="<%= id %>"
+  tabindex="-1"
+  aria-labelledby="<%= title_id %>"
+  aria-hidden="true"
+  data-controller="modal"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="<%= title_id %>">
+          <%= title %>
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="<%= t("buttons.close") %>"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <% if held? %>
+          <p class="mb-1">
+            <%= t("registration.user_registration.participation.leave_held") %>
+          </p>
+
+          <ul class="mb-0">
+            <% blocker_notes.each do |note| %>
+              <li><%= note %></li>
+            <% end %>
+          </ul>
+
+          <% if contact? %>
+            <p class="mt-2 mb-0"><%= t("lecture_home.leave.contact") %></p>
+          <% end %>
+        <% elsif notes.any? %>
+          <ul class="mb-0">
+            <% notes.each do |note| %>
+              <li><%= note %></li>
+            <% end %>
+          </ul>
+        <% end %>
+
+        <% if switch_targets.any? %>
+          <div class="mt-3">
+            <%= render "lectures/home/switch_offer", targets: switch_targets %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <%= t(held? ? "buttons.close" : "buttons.cancel") %>
+        </button>
+
+        <% unless held? %>
+          <%= button_to submit_label, url,
+                        method: :delete,
+                        class: "btn border-0 bg-danger-subtle text-danger-emphasis",
+                        form: { class: "d-inline" } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

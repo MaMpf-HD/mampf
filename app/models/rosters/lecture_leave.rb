@@ -2,7 +2,7 @@ module Rosters
   class LectureLeave
     Blocker = Struct.new(:reason, :title, :staff_can_help)
 
-    GROUP_LOCK_ORDER = ["Tutorial", "Cohort", "Talk"].freeze
+    GROUP_LOCK_ORDER = ["Tutorial", "Cohort", "Talk", "Exam"].freeze
 
     class NotAllowedError < StandardError; end
     class NotParticipatingError < StandardError; end
@@ -38,6 +38,35 @@ module Rosters
       participating? && blockers.empty?
     end
 
+    # Of the given members of the group, those for whom it is the last group
+    # that keeps them in the lecture. Answers #only_place? for a whole roster at
+    # once.
+    def self.only_place_user_ids(group, user_ids)
+      return [] unless group.enrolls_in_lecture?
+
+      lecture = group.lecture
+      return [] if lecture.nil? || user_ids.empty?
+
+      member_ids = lecture.enrolling_memberships(user_ids)
+                          .flat_map { |query| query.pluck(query.select_values.first) }
+      single = member_ids.tally.filter_map { |id, count| id if count == 1 }
+      return [] if single.empty?
+
+      members = group.roster_entries.where(group.roster_user_id_column => single)
+                     .select(group.roster_user_id_column)
+      lecture.lecture_memberships.where(user_id: members).pluck(:user_id)
+    end
+
+    def places
+      @places ||= groups.select(&:enrolls_in_lecture?) + exam_entries.map(&:exam)
+    end
+
+    # Whether the group is the student's last group that keeps them in the
+    # lecture; leaving it ends the enrollment.
+    def only_place?(group)
+      enrolled? && places == [group]
+    end
+
     def groups
       @groups ||=
         Tutorial.where(lecture: @lecture,
@@ -56,6 +85,37 @@ module Rosters
     def blockers
       @blockers ||= graded_blockers.presence ||
                     (held_group_blockers + closed_exam_blockers + prerequisite_blockers)
+    end
+
+    # What keeps the student in their last group: a result, or an exam
+    # registration past its withdrawal deadline. Leaving only that group keeps
+    # lists and registrations, so nothing else of #blockers applies.
+    def last_place_blockers
+      @last_place_blockers ||= graded_blockers.presence || closed_exam_blockers
+    end
+
+    # The flexible groups without enrollment the student is in. They stay when
+    # the last group with enrollment goes.
+    def lists
+      groups.reject(&:enrolls_in_lecture?)
+    end
+
+    # The lecture's running campaigns the student is registered in. They stay
+    # when the last group with enrollment goes, and leaving the lecture
+    # withdraws them.
+    def running_campaigns
+      @running_campaigns ||= begin
+        registered = Registration::UserRegistration.where(user: @user)
+                                                   .where.not(status: :rejected)
+        Registration::Campaign.running
+                              .where(campaignable: @lecture,
+                                     id: registered.select(:registration_campaign_id))
+                              .order(:registration_deadline)
+      end
+    end
+
+    def bookmarked?
+      LectureBookmark.exists?(lecture: @lecture, user: @user)
     end
 
     def campaigns_to_withdraw
@@ -97,14 +157,14 @@ module Rosters
 
       # Locks the lecture's unfinished campaigns first, drafts included: a draft
       # opened meanwhile could take a new registration from the student that
-      # leaving would miss. Then the groups, then the lecture, in the order
-      # allocation and the staff's removal use.
+      # leaving would miss. Then the groups and exams, then the lecture.
       def lock_places!
         Registration::Campaign.where(campaignable: @lecture)
                               .where.not(status: :completed)
                               .order(:id).lock.load
-        groups.sort_by { |group| [GROUP_LOCK_ORDER.index(group.class.name), group.id] }
-              .each(&:lock!)
+        (groups + exam_entries.map(&:exam))
+          .sort_by { |group| [GROUP_LOCK_ORDER.index(group.class.name), group.id] }
+          .each(&:lock!)
         @lecture.lock!
       end
 
@@ -188,15 +248,6 @@ module Rosters
         Assessment::Assessment.where(assessable: assessables,
                                      id: graded.select(:assessment_id))
                               .pluck(:assessable_id)
-      end
-
-      def running_campaigns
-        registered = Registration::UserRegistration.where(user: @user)
-                                                   .where.not(status: :rejected)
-        Registration::Campaign.running
-                              .where(campaignable: @lecture,
-                                     id: registered.select(:registration_campaign_id))
-                              .order(:registration_deadline)
       end
 
       # The exam campaigns the student is registered in whose withdrawal

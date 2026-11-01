@@ -117,6 +117,16 @@ RSpec.describe(Cohort, type: :model) do
     end
   end
 
+  describe "#enrolls_in_lecture?" do
+    it "is true for a cohort with enrollment in a lecture" do
+      expect(build(:cohort, :enrollment, context: create(:lecture)).enrolls_in_lecture?).to be(true)
+    end
+
+    it "is false for a cohort with enrollment that belongs to no lecture" do
+      expect(build(:cohort, :enrollment, context: create(:course)).enrolls_in_lecture?).to be(false)
+    end
+  end
+
   describe "#materialize_allocation!" do
     let(:lecture) { create(:lecture) }
     let(:campaign) { create(:registration_campaign) }
@@ -160,16 +170,51 @@ RSpec.describe(Cohort, type: :model) do
 
   describe "#destroy_with_members" do
     let(:lecture) { create(:lecture) }
-    let(:cohort) { create(:cohort, context: lecture, propagate_to_lecture: true) }
+    let(:cohort) { create(:cohort, :enrollment, context: lecture) }
+    let(:service) { Rosters::MaintenanceService.new }
     let(:member) { create(:confirmed_user) }
 
-    before { Rosters::MaintenanceService.new.add_user!(member, cohort) }
+    before { service.add_user!(member, cohort) }
 
-    it "deletes the cohort with its memberships, keeping the lecture enrollment" do
-      expect(cohort.destroy_with_members).to eq([member])
+    it "ends the enrollment of members for whom it was the last group with enrollment" do
+      former_membership = cohort.destroy_with_members(by: lecture.teacher)
 
       expect(cohort).to be_destroyed
+      expect(former_membership.users).to eq([member])
+      expect(former_membership.left_lecture_ids).to eq([member.id])
       expect(CohortMembership.where(user: member)).to be_empty
+      expect(lecture.members).not_to include(member)
+      expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
+        .to eq(lecture.teacher)
+    end
+
+    it "keeps the lists of a member whose enrollment ends with it" do
+      list = create(:cohort, context: lecture)
+      list.add_user_to_roster!(member)
+
+      cohort.destroy_with_members
+
+      expect(lecture.members).not_to include(member)
+      expect(list.reload.members).to include(member)
+    end
+
+    it "keeps the enrollment of a member who has another group with enrollment" do
+      service.add_user!(member, create(:tutorial, lecture: lecture))
+
+      former_membership = cohort.destroy_with_members
+
+      expect(former_membership.left_lecture_ids).to be_empty
+      expect(lecture.members).to include(member)
+    end
+
+    it "ends nobody's enrollment when the cohort has no enrollment" do
+      list = create(:cohort, context: lecture)
+      list.add_user_to_roster!(member)
+
+      former_membership = list.destroy_with_members
+
+      expect(former_membership.users).to eq([member])
+      expect(former_membership.left_lecture_ids).to be_empty
       expect(lecture.members).to include(member)
     end
 
@@ -180,6 +225,28 @@ RSpec.describe(Cohort, type: :model) do
 
       expect(cohort.destroy_with_members).to be_nil
       expect(cohort.reload.members).to contain_exactly(member)
+      expect(lecture.members).to include(member)
+    end
+  end
+
+  describe "#member_ids_leaving_the_lecture" do
+    let(:lecture) { create(:lecture) }
+    let(:service) { Rosters::MaintenanceService.new }
+
+    it "names the members for whom the cohort is the last group with enrollment" do
+      cohort = create(:cohort, :enrollment, context: lecture)
+      alone, tutored = create_list(:confirmed_user, 2)
+      [alone, tutored].each { |user| service.add_user!(user, cohort) }
+      service.add_user!(tutored, create(:tutorial, lecture: lecture))
+
+      expect(cohort.member_ids_leaving_the_lecture).to contain_exactly(alone.id)
+    end
+
+    it "names nobody for a cohort without enrollment" do
+      cohort = create(:cohort, context: lecture)
+      cohort.add_user_to_roster!(create(:confirmed_user))
+
+      expect(cohort.member_ids_leaving_the_lecture).to be_empty
     end
   end
 
@@ -187,11 +254,12 @@ RSpec.describe(Cohort, type: :model) do
     let(:lecture) { create(:lecture) }
     let(:cohort) { create(:cohort, context: lecture) }
 
-    it "counts only the members in no tutorial, talk or other cohort of the lecture" do
-      alone, tutored, elsewhere = create_list(:confirmed_user, 3)
-      [alone, tutored, elsewhere].each { |user| cohort.add_user_to_roster!(user) }
+    it "counts only the members in no tutorial, talk, exam list or other cohort" do
+      alone, tutored, elsewhere, examinee = create_list(:confirmed_user, 4)
+      [alone, tutored, elsewhere, examinee].each { |user| cohort.add_user_to_roster!(user) }
       create(:tutorial, lecture: lecture).add_user_to_roster!(tutored)
       create(:cohort, context: lecture).add_user_to_roster!(elsewhere)
+      create(:exam, lecture: lecture).add_user_to_roster!(examinee)
 
       expect(cohort.members_without_other_group).to contain_exactly(alone)
     end
