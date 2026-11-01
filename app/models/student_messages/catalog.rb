@@ -93,9 +93,16 @@ module StudentMessages
                                    .group(:tutorial_id).distinct.count(:user_id)
         groups.map do |tutorial|
           audience("tutorial:#{tutorial.id}", tutorial.title, :tutorials, tutorial.members,
-                   count: counts.fetch(tutorial.id, 0),
-                   detail: (tutorial.tutor_names || I18n.t("basics.tba") if staff?))
+                   count: counts.fetch(tutorial.id, 0), detail: tutors_detail(tutorial))
         end
+      end
+
+      # Names the tutors for staff, who pick among all of the lecture's groups;
+      # a tutor knows who holds their own.
+      def tutors_detail(tutorial)
+        return unless staff?
+
+        tutorial.tutor_names || I18n.t("basics.tba")
       end
 
       def talks

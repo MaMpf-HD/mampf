@@ -138,7 +138,7 @@ RSpec.describe("Teams across tutorials", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(submission.reload.tutorial).to eq(tutorial_y)
       expect(row_tutorials(submission)).to eq([tutorial_y.id])
-      notice = I18n.t("submission.handed_over", tutorial: tutorial_y.title_with_tutors)
+      notice = I18n.t("submission.handed_over", tutorial: "Tuesday (#{tutor_y.tutorial_name})")
       expect(response.body).to include(ERB::Util.html_escape(notice))
     end
 

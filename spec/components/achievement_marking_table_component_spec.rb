@@ -96,7 +96,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
 
       expect(page.css("tbody tr").pluck("data-status-filter-name")).to eq(["Nina", "Ada", "Ola"])
       expect(page.css("select[data-status-filter-target=tutorial] option").map { |o| o.text.strip })
-        .to include(group.title_with_tutors, "Friday group (Grace Hopper)")
+        .to include("Monday group (#{I18n.t("basics.tba")})", "Friday group (Grace Hopper)")
     end
   end
 
