@@ -5,7 +5,11 @@
 
   <!-- Current tutorial -->
   <option selected>
-    <%= @tutorial ? tutorial_option_label(@tutorial, current_user) : t("profile.select_tutorials") %>
+    <% if @tutorial %>
+      <%= tutorial_option_label(@tutorial, current_user) %>
+    <% else %>
+      <%= t("profile.select_tutorials") %>
+    <% end %>
   </option>
 
   <% tutorials_for_dropdown(current_user, @lecture, @tutorial).each do |_, list| %>

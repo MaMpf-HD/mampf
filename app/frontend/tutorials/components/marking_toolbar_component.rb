@@ -22,10 +22,6 @@ class MarkingToolbarComponent < ViewComponent::Base
     options << ["exempt", column_label("exempt")]
   end
 
-  def tutorial_options
-    MarkingFilterComponent.tutorial_options(@tutorials)
-  end
-
   def lecture_form?
     @tutorial.nil?
   end

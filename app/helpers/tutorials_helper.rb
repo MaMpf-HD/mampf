@@ -40,8 +40,8 @@ module TutorialsHelper
     end
   end
 
-  # Names a group with its tutors unless the viewer holds it: a lecturer with
-  # many groups knows the people, not which group is whose.
+  # Names a tutorial with its tutors unless the viewer tutors it: a lecturer
+  # knows the tutors better than the titles, a tutor knows their own tutorial.
   def tutorial_option_label(tutorial, user)
     user.in?(tutorial.tutors) ? tutorial.title : tutorial.title_with_tutors
   end

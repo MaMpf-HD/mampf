@@ -147,6 +147,20 @@ RSpec.describe(Tutorial, type: :model) do
     end
   end
 
+  describe "#registration_title" do
+    let(:tutorial) { create(:tutorial, title: "Tuesday") }
+
+    it "names the tutors" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+
+      expect(tutorial.registration_title).to eq("Tuesday (Ada Lovelace)")
+    end
+
+    it "is the title alone without a tutor" do
+      expect(tutorial.registration_title).to eq("Tuesday")
+    end
+  end
+
   describe ".roster_eligible" do
     let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture) }

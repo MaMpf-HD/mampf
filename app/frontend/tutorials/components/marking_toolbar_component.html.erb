@@ -5,7 +5,7 @@
 <%= render MarkingFilterComponent.new(
   id: @assignment.id,
   status_options: (status_options if grading_enabled?),
-  tutorial_options: (tutorial_options if lecture_form?)
+  tutorials: (@tutorials if lecture_form?)
 ) do %>
   <% if menu? %>
     <div class="dropdown">

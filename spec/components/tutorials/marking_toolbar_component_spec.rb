@@ -41,6 +41,12 @@ RSpec.describe(MarkingToolbarComponent, type: :component) do
         .to eq(["All", "Tuesday group (Ada Lovelace)", "No tutorial"])
     end
 
+    it "offers no tutorial filter for a lecture without tutorials" do
+      rendered = render_inline(toolbar(scope: lecture, tutorials: []))
+
+      expect(rendered.css("select[data-status-filter-target=tutorial]")).to be_empty
+    end
+
     it "has no menu of group actions" do
       rendered = render_inline(toolbar(scope: lecture, tutorials: [tutorial]))
 

@@ -12,10 +12,6 @@ class ExamPointsTableComponent < ViewComponent::Base
 
   delegate :status_options, to: :ExamRows
 
-  def tutorial_options
-    MarkingFilterComponent.tutorial_options(@lecture.tutorials)
-  end
-
   def layout
     @layout ||= MarkingTableLayout.for(assessable: @exam, table_option: :points)
   end

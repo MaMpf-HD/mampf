@@ -9,7 +9,7 @@ class Tutorial < ApplicationRecord
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
-  has_many :tutors, -> { order(User::LAST_NAME_ORDER) }, through: :tutor_tutorial_joins
+  has_many :tutors, -> { by_last_name }, through: :tutor_tutorial_joins
 
   # Roster associations
   has_many :tutorial_memberships, dependent: :destroy
@@ -36,6 +36,8 @@ class Tutorial < ApplicationRecord
       .or(where.not(self_materialization_mode: "disabled"))
   }
 
+  # Tells the tutorials apart the way staff do, by their tutors; tba marks
+  # one without a tutor yet.
   def title_with_tutors
     "#{title} (#{tutor_names || I18n.t("basics.tba")})"
   end

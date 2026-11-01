@@ -35,10 +35,8 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   # The lecturer's table filters by group; a tutor's is one group already.
-  def tutorial_options
-    return [] if @tutorial
-
-    MarkingFilterComponent.tutorial_options(@lecture.tutorials)
+  def filter_tutorials
+    @lecture.tutorials unless @tutorial
   end
 
   def summary
