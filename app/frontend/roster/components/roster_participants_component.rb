@@ -6,7 +6,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     view_switch: "roster_participants_view_switch",
     campaign_switch: "roster_participants_campaign_switch",
     top_nav: "roster_participants_top_nav",
-    header_controls: "roster_participants_header_controls",
     results: "roster_participants_results"
   }.freeze
 
@@ -14,7 +13,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     view_switch: "roster/components/roster_participants_view_switch",
     campaign_switch: "roster/components/roster_participants_campaign_switch",
     top_nav: "roster/components/roster_participants_top_nav",
-    header_controls: "roster/components/roster_participants_header_controls",
     results: "roster/components/roster_participants_results"
   }.freeze
 
@@ -31,15 +29,13 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   # rubocop:disable Metrics/ParameterLists
-  def initialize(lecture:, group_type:, participants: nil, pagy: nil, filter_mode: "all",
-                 view: "enrolled", campaign: nil, search_string: nil, counts: {},
-                 section: :full)
+  def initialize(lecture:, group_type:, participants: nil, pagy: nil, view: "enrolled",
+                 campaign: nil, search_string: nil, counts: {}, section: :full)
     super()
     @lecture = lecture
     @group_type = group_type
     @participants = participants
     @pagy = pagy
-    @filter_mode = filter_mode
     @view = view || "enrolled"
     @campaign = campaign
     @search_string = search_string
@@ -48,8 +44,8 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
   # rubocop:enable Metrics/ParameterLists
 
-  attr_reader :lecture, :group_type, :pagy, :filter_mode, :view, :campaign, :search_string,
-              :counts, :section
+  attr_reader :lecture, :group_type, :pagy, :view, :campaign, :search_string, :counts,
+              :section
 
   # Returns the officially enrolled participants (Lecture Superset), or in the
   # registered view the users with a running registration.
@@ -58,7 +54,7 @@ class RosterParticipantsComponent < ViewComponent::Base
   end
 
   def filtered?
-    search_string.present? || filter_mode != "all"
+    search_string.present?
   end
 
   # In this view, the participants are users with a running registration
@@ -185,32 +181,6 @@ class RosterParticipantsComponent < ViewComponent::Base
     { t("roster.programs.enrolled") => ProgramDistribution.new(enrolled) }
   end
 
-  # Returns participants who are assigned to at least one functional group
-  def assigned_participants
-    # Only applicable to current page
-    @assigned_participants ||= participants.select { |m| participant_status(m.user) == :assigned }
-  end
-
-  # Returns participants who are not assigned to any functional group
-  def unassigned_participants
-    # Only applicable to current page
-    @unassigned_participants ||= participants.select do |m|
-      participant_status(m.user) == :unassigned
-    end
-  end
-
-  # Checks if a participant is assigned to any functional sub-group (Tutorial or Talk).
-  # Returns :assigned or :unassigned.
-  def participant_status(user)
-    # Check if user is in any group that is NOT a Cohort
-    is_assigned = user_memberships[user.id].any? do |group_id|
-      group = all_groups_map[group_id]
-      group && !group.is_a?(Cohort)
-    end
-
-    is_assigned ? :assigned : :unassigned
-  end
-
   def participant_groups(user)
     ids = user_memberships[user.id]
     ids.filter_map { |id| all_groups_map[id] }.sort_by(&:title)
@@ -232,7 +202,6 @@ class RosterParticipantsComponent < ViewComponent::Base
                             path: helpers.lecture_roster_participants_path(@lecture),
                             anchor_string: 'data-turbo-stream="true"',
                             querify: lambda { |p|
-                              p["filter"] = @filter_mode
                               p["view"] = @view unless enrolled_view?
                               p["campaign"] = @campaign.id if @campaign
                               p["search"] = @search_string if @search_string.present?
@@ -283,7 +252,7 @@ class RosterParticipantsComponent < ViewComponent::Base
 
     def section_kwargs
       { lecture: lecture, group_type: group_type, participants: participants,
-        pagy: pagy, filter_mode: filter_mode, view: view, campaign: campaign,
+        pagy: pagy, view: view, campaign: campaign,
         search_string: search_string, counts: counts }
     end
 

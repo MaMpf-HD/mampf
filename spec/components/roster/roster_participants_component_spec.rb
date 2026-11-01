@@ -5,11 +5,10 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
   let(:group_type) { :all }
   let(:participants) { lecture.lecture_memberships }
   let(:pagy) { nil }
-  let(:filter_mode) { "all" }
   let(:component) do
     lecture.reload
     described_class.new(lecture: lecture, group_type: group_type,
-                        participants: participants, pagy: pagy, filter_mode: filter_mode)
+                        participants: participants, pagy: pagy)
   end
 
   describe "#participants" do
@@ -24,42 +23,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
-  describe "filtering behavior" do
-    let(:user_assigned) { create(:user) }
-    let(:user_unassigned) { create(:user) }
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-
-    before do
-      create(:lecture_membership, lecture: lecture, user: user_assigned)
-      create(:lecture_membership, lecture: lecture, user: user_unassigned)
-      create(:tutorial_membership, tutorial: tutorial, user: user_assigned)
-    end
-
-    context "when filter_mode is 'all'" do
-      let(:filter_mode) { "all" }
-
-      it "shows all participants" do
-        expect(component.filter_mode).to eq("all")
-        expect(component.participants.map(&:user)).to include(user_assigned, user_unassigned)
-      end
-    end
-
-    context "when filter_mode is 'unassigned'" do
-      let(:filter_mode) { "unassigned" }
-      let(:participants) do
-        lecture.lecture_memberships.joins(:user)
-               .where.not(user_id: TutorialMembership.joins(:tutorial)
-                                                     .where(tutorials: { lecture_id: lecture.id })
-                                                     .select(:user_id))
-      end
-
-      it "shows only unassigned participants" do
-        expect(component.filter_mode).to eq("unassigned")
-        expect(component.participants.map(&:user)).to include(user_unassigned)
-        expect(component.participants.map(&:user)).not_to include(user_assigned)
-      end
-    end
-
+  describe "pagination" do
     context "when pagy is provided" do
       let(:pagy) do
         double("Pagy",
@@ -74,69 +38,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       it "enables pagination" do
         expect(component.pagy).to eq(pagy)
       end
-    end
-  end
-
-  describe "#participant_status" do
-    let(:user) { create(:user) }
-    let!(:membership) { create(:lecture_membership, lecture: lecture, user: user) }
-
-    context "when user is not in any group" do
-      it "returns :unassigned" do
-        expect(component.participant_status(user)).to eq(:unassigned)
-      end
-    end
-
-    context "when user is in a tutorial" do
-      let(:tutorial) { create(:tutorial, lecture: lecture) }
-      let!(:tutorial_membership) { create(:tutorial_membership, tutorial: tutorial, user: user) }
-
-      it "returns :assigned" do
-        expect(component.participant_status(user)).to eq(:assigned)
-      end
-    end
-
-    context "when user is in a cohort only" do
-      let(:cohort) { create(:cohort, context: lecture) }
-      let!(:cohort_membership) { create(:cohort_membership, cohort: cohort, user: user) }
-
-      it "returns :unassigned" do
-        expect(component.participant_status(user)).to eq(:unassigned)
-      end
-    end
-  end
-
-  describe "#assigned_participants" do
-    let(:user_assigned) { create(:user) }
-    let(:user_unassigned) { create(:user) }
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-
-    before do
-      create(:lecture_membership, lecture: lecture, user: user_assigned)
-      create(:lecture_membership, lecture: lecture, user: user_unassigned)
-      create(:tutorial_membership, tutorial: tutorial, user: user_assigned)
-    end
-
-    it "returns only assigned participants" do
-      expect(component.assigned_participants.map(&:user)).to include(user_assigned)
-      expect(component.assigned_participants.map(&:user)).not_to include(user_unassigned)
-    end
-  end
-
-  describe "#unassigned_participants" do
-    let(:user_assigned) { create(:user) }
-    let(:user_unassigned) { create(:user) }
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-
-    before do
-      create(:lecture_membership, lecture: lecture, user: user_assigned)
-      create(:lecture_membership, lecture: lecture, user: user_unassigned)
-      create(:tutorial_membership, tutorial: tutorial, user: user_assigned)
-    end
-
-    it "returns only unassigned participants" do
-      expect(component.unassigned_participants.map(&:user)).to include(user_unassigned)
-      expect(component.unassigned_participants.map(&:user)).not_to include(user_assigned)
     end
   end
 
@@ -202,7 +103,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     it "calls helpers.pagy_series_nav and constructs querify correctly" do
       pagy = double("Pagy", pages: 2)
       c = described_class.new(lecture: lecture, group_type: ["t1", "t2"],
-                              filter_mode: "unassigned", search_string: "foo", pagy: pagy)
+                              search_string: "foo", pagy: pagy)
 
       helpers_mock = double("helpers")
       allow(c).to receive(:helpers).and_return(helpers_mock)
@@ -219,7 +120,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         mock_params = {}
         querify.call(mock_params)
 
-        expect(mock_params["filter"]).to eq("unassigned")
+        expect(mock_params).not_to have_key("filter")
         expect(mock_params["search"]).to eq("foo")
         expect(mock_params["group_type"]).to eq(["t1", "t2"])
 
@@ -339,7 +240,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       render_inline(component)
 
       expect(rendered_content).to include('id="roster_participants_top_nav"')
-      expect(rendered_content).to include('id="roster_participants_header_controls"')
       expect(rendered_content).to include('id="roster_participants_results"')
       expect(rendered_content).to include('data-turbo-stream="true"')
       expect(rendered_content).to include('id="roster-participants-search-field"')
@@ -353,7 +253,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         view_switch: "roster_participants_view_switch",
         campaign_switch: "roster_participants_campaign_switch",
         top_nav: "roster_participants_top_nav",
-        header_controls: "roster_participants_header_controls",
         results: "roster_participants_results"
       )
     end

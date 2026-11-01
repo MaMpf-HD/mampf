@@ -285,8 +285,9 @@ module Rosters
     # - Synchronizes the local roster (bulk adds/removes users for this campaign).
     # - Propagates new members to the parent lecture roster (if applicable).
     # - Locks the lecture first when this group enrolls in it (finalization has
-    #   already locked the campaign). Removals decide under the same lock
-    #   whether someone keeps a group that enrolls them.
+    #   already locked the campaign). Removals and
+    #   Rosters::EnrollmentReconciliation decide under the same lock whether
+    #   someone keeps a group that enrolls them.
     def materialize_allocation!(user_ids:, campaign:)
       transaction do
         lecture&.lock! if enrolls_in_lecture?

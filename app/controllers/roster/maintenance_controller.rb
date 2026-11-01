@@ -70,7 +70,7 @@ module Roster
     def index
       if params[:tab] == "participants"
         return redirect_to lecture_roster_participants_path(
-          @lecture, params.permit(:filter, :search, :group_type)
+          @lecture, params.permit(:search, :group_type)
         )
       end
 
@@ -237,11 +237,9 @@ module Roster
       def setup_participants
         query = Rosters::ParticipantQuery.new(@lecture, params).call
 
-        @participants_filter = query.filter_mode
         @participants_view = query.view
         @participants_campaign = query.campaign
         @total_participants_count = query.total_count
-        @unassigned_participants_count = query.unassigned_count
         @registered_participants_count = query.registered_count
         @left_participants_count = query.left_count
         @search_string = @mparams.search
@@ -263,7 +261,6 @@ module Roster
           group_type: @group_type,
           participants: @participants,
           pagy: @pagy,
-          filter_mode: @participants_filter,
           view: @participants_view,
           campaign: @participants_campaign,
           search_string: @search_string,
@@ -274,7 +271,6 @@ module Roster
       def participants_counts
         {
           total: @total_participants_count,
-          unassigned: @unassigned_participants_count,
           registered: @registered_participants_count,
           left: @left_participants_count
         }
@@ -328,12 +324,10 @@ module Roster
           participants_state: {
             participants: @participants,
             pagy: @pagy,
-            filter_mode: @participants_filter,
             view: @participants_view,
             campaign: @participants_campaign,
             search_string: @search_string,
             total_count: @total_participants_count,
-            unassigned_count: @unassigned_participants_count,
             registered_count: @registered_participants_count,
             left_count: @left_participants_count
           },

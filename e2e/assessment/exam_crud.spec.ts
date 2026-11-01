@@ -163,8 +163,12 @@ test.describe("exams", () => {
     await expect(page.pane.getByRole("cell", { name: "Ada Lovelace" }))
       .toBeVisible();
 
-    teacher.page.on("dialog", dialog => dialog.accept());
-    await page.pane.getByRole("button", { name: "Remove" }).first().click();
+    await page.pane.getByRole("button", { name: "Remove person from the participants list" })
+      .click();
+    const dialog = teacher.page.getByRole("dialog", {
+      name: "Remove Ada Lovelace from the participants list of “Main Exam”",
+    });
+    await dialog.getByRole("button", { name: "Remove", exact: true }).click();
 
     await expect(teacher.page.getByText("Ada Lovelace has been removed."))
       .toBeVisible();
