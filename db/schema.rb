@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_23_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -868,6 +868,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_23_000000) do
     t.datetime "updated_at", null: false
     t.jsonb "audiences", default: [], null: false
     t.integer "sender_role", default: 0, null: false
+    t.string "tutor_emails", default: [], null: false, array: true
     t.index ["lecture_id"], name: "index_student_messages_on_lecture_id"
     t.index ["sender_id"], name: "index_student_messages_on_sender_id"
   end

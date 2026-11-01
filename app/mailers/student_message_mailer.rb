@@ -41,6 +41,13 @@ class StudentMessageMailer < ApplicationMailer
     # via cc; the sender is already in "to" and is not cc'd twice. A
     # tutor's mail to their group is theirs alone.
     staff_cc = copies ? @message.copy_emails - [@message.sender.email] : []
+    # The tutors of the recipients get their copy in bcc: the students see
+    # the cc line, and the tutors' addresses are not theirs to collect.
+    tutor_bcc = if copies
+      @message.tutor_emails - @message.copy_emails - @message.recipient_emails
+    else
+      []
+    end
 
     I18n.with_locale(locale) do
       # The sender goes into "to" so that they get a copy of their own
@@ -52,7 +59,7 @@ class StudentMessageMailer < ApplicationMailer
            to: (@message.sender.email if copies),
            cc: staff_cc,
            reply_to: @message.sender.email,
-           bcc: recipients,
+           bcc: recipients + tutor_bcc,
            subject: "[#{subject_prefix}] #{@message.subject}")
     end
   end
