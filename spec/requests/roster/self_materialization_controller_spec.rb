@@ -282,18 +282,6 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
           .not_to include(I18n.t("roster.messages.self_removed_bookmark_hint"))
       end
 
-      it "mails that the bookmark stays" do
-        perform_enqueued_jobs do
-          delete self_remove_tutorial_path(tutorial), as: :turbo_stream
-        end
-
-        expected = I18n.with_locale(user.locale) do
-          I18n.t("roster.mailer.roster_left_last_place", rosterable_title: tutorial.title)
-        end
-        expect(ActionMailer::Base.deliveries.last.text_part.body.decoded.squish)
-          .to include(expected.squish)
-      end
-
       it "keeps the student while a result or a closed exam registration holds them" do
         allow_any_instance_of(Rosters::LectureLeave)
           .to receive(:last_place_blockers).and_return([:held])
@@ -416,21 +404,14 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       end
     end
 
-    context "when self-remove succeeds and should send email" do
-      it "sends an email" do
-        perform_enqueued_jobs do
-          expect do
-            delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
-          end.to change { ActionMailer::Base.deliveries.count }.by(1)
-        end
-        email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(user.locale) do
-          I18n.t("roster.mailer.roster_removed_from_group_email_subject",
-                 rosterable_title: tutorial.title,
-                 lecture_title: lecture.title)
-        end
-        expect(email.subject).to eq(expected_subject)
+    # The student did it themselves and sees it on the page.
+    it "sends no email" do
+      perform_enqueued_jobs do
+        expect do
+          delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
       end
+      expect(tutorial.reload.members).not_to include(user)
     end
   end
 end

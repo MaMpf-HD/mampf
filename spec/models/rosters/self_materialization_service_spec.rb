@@ -57,7 +57,8 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
     end
 
     it "delegates to MaintenanceService#remove_user!, as removed by the user" do
-      expect(maintenance_service).to receive(:remove_user!).with(user, rosterable, by: user)
+      expect(maintenance_service).to receive(:remove_user!)
+        .with(user, rosterable, by: user, notify: false)
       service.self_remove!
     end
 
@@ -106,7 +107,8 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
       end
 
       it "lets them leave their only group" do
-        expect(maintenance_service).to receive(:remove_user!).with(user, rosterable, by: user)
+        expect(maintenance_service).to receive(:remove_user!)
+          .with(user, rosterable, by: user, notify: false)
         service.self_remove!
       end
 
@@ -123,7 +125,8 @@ RSpec.describe(Rosters::SelfMaterializationService, type: :model) do
         create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
           .add_user_to_roster!(user)
 
-        expect(maintenance_service).to receive(:remove_user!).with(user, rosterable, by: user)
+        expect(maintenance_service).to receive(:remove_user!)
+          .with(user, rosterable, by: user, notify: false)
         service.self_remove!
       end
     end

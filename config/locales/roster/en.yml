@@ -559,18 +559,6 @@ en:
         and running registrations stay; your bookmark stays only while you are
         still in such a group. Points and any exam admission stay stored and
         count again if you come back.
-      roster_left_last_place_html: |
-        <p>
-          “%{rosterable_title}” was the last thing that enrolled you in the lecture;
-          you are therefore no longer enrolled. Flexible groups without enrollment,
-          running registrations and your bookmark stay. Points and any exam admission
-          stay stored and count again if you come back.
-        </p>
-      roster_left_last_place: |
-        “%{rosterable_title}” was the last thing that enrolled you in the lecture;
-        you are therefore no longer enrolled. Flexible groups without enrollment,
-        running registrations and your bookmark stay. Points and any exam admission
-        stay stored and count again if you come back.
       roster_removed_from_group_email_body: |
         Hello %{name},
 

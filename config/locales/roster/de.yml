@@ -571,20 +571,6 @@ de:
         Veranstaltung nur, solange Du noch in einer solchen Gruppe bist. Punkte und
         eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn
         Du zurückkommst.
-      roster_left_last_place_html: |
-        <p>
-          Über „%{rosterable_title}“ warst Du zuletzt noch in der Veranstaltung
-          eingeschrieben; Du bist damit nicht mehr eingeschrieben. Flexible Gruppen
-          ohne Einschreibung, laufende Anmeldungen und das Merken bleiben. Punkte und
-          eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn
-          Du zurückkommst.
-        </p>
-      roster_left_last_place: |
-        Über „%{rosterable_title}“ warst Du zuletzt noch in der Veranstaltung
-        eingeschrieben; Du bist damit nicht mehr eingeschrieben. Flexible Gruppen
-        ohne Einschreibung, laufende Anmeldungen und das Merken bleiben. Punkte und
-        eine erteilte Prüfungszulassung bleiben gespeichert und gelten wieder, wenn
-        Du zurückkommst.
       roster_removed_from_group_email_body: |
         Hallo %{name},
 

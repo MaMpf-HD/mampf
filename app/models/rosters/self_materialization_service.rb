@@ -20,12 +20,13 @@ module Rosters
     end
 
     # Leaving their last group with enrollment ends a student's enrollment;
-    # lists, registrations and the bookmark stay. A result or an exam
-    # registration past its deadline keeps them in that group, as it keeps
-    # them in the lecture. Locks the group, then the lecture, like
-    # MaintenanceService#remove_user!. Without the lecture's lock, two browser
-    # tabs could each leave a different group, each assuming the other one
-    # remains, and the enrollment would outlast both.
+    # lists, registrations and the bookmark stay. No mail goes out, since the
+    # student did it themselves. A result or an exam registration past its
+    # deadline keeps them in that group, as it keeps them in the lecture.
+    # Locks the group, then the lecture, like MaintenanceService#remove_user!.
+    # Without the lecture's lock, two browser tabs could each leave a
+    # different group, each assuming the other one remains, and the
+    # enrollment would outlast both.
     def self_remove!
       ActiveRecord::Base.transaction do
         lecture = @rosterable.lecture
@@ -34,7 +35,7 @@ module Rosters
         ensure_rosterable_unlocked!
         ensure_rosterable_allow_self_remove!
         ensure_not_held_in_last_group!
-        Rosters::MaintenanceService.new.remove_user!(@user, @rosterable, by: @user)
+        Rosters::MaintenanceService.new.remove_user!(@user, @rosterable, by: @user, notify: false)
       end
     end
 
