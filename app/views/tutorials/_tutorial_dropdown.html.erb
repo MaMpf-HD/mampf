@@ -17,7 +17,8 @@
       <option value="<%= lecture_tutorials_path(
                         @lecture,
                         params: { assignment: @assignment&.id, achievement: @achievement&.id,
-                                  view: ('participants' if @participants),
+                                  view: ('participants' if @participants) ||
+                                        ('performance' if @performance),
                                   tutorial: tutorial.id }.compact
                       ) %>">
         <%= tutorial_option_label(tutorial, current_user) %>
