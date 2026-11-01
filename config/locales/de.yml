@@ -4321,6 +4321,12 @@ de:
                 Es muss ein Abgabetermin angegeben werden.
               in_past: >
                 Der Abgabetermin darf nicht in der Vergangenheit liegen.
+            test_week:
+              before_last_week: >
+                Die Testwoche darf höchstens eine Woche zurückliegen.
+            test_week_count:
+              ends_before_last_week: >
+                Der Test darf nicht vor letzter Woche enden.
             deletion_date:
               blank: >
                 Es muss ein Löschdatum angegeben werden.
