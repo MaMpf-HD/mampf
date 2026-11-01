@@ -21,7 +21,7 @@
 
         <%= render MarkingFilterComponent.new(id: "exam-points-#{@exam.id}",
                                                status_options: status_options,
-                                               tutorial_options: tutorial_options) do %>
+                                               tutorials: @lecture.tutorials) do %>
           <% if can_enter_points? %>
             <%= render partial: "assessment/participations/bulk_save",
                        locals: { url: point_multi_participations_exam_path(@exam),

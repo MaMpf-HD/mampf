@@ -57,6 +57,17 @@ RSpec.describe(Cohort, type: :model) do
     end
   end
 
+  describe "#tutor_names" do
+    it "names the tutors by last name" do
+      cohort = create(:cohort)
+      [["Alan", "Turing"], ["Grace", "Hopper"]].each do |first_name, last_name|
+        cohort.tutors << create(:confirmed_user, first_name: first_name, last_name: last_name)
+      end
+
+      expect(cohort.reload.tutor_names).to eq("Grace Hopper, Alan Turing")
+    end
+  end
+
   describe "Registerable interface" do
     it_behaves_like "a registerable model"
   end

@@ -26,7 +26,8 @@ module DeansOffice
       return [] unless @term
 
       @lectures ||= Lecture.where(term: @term)
-                           .includes(:course, :term, :teacher, :editors, *GROUP_ASSOCIATIONS)
+                           .includes(:course, :term, :teacher, :editors, *GROUP_ASSOCIATIONS,
+                                     tutorials: :tutors, cohorts: :tutors)
                            .sort_by { |lecture| lecture.course.title.downcase }
     end
 

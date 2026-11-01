@@ -3152,6 +3152,9 @@ de:
           Doch mit einem Team abgegeben? Mit dessen Code kommst Du noch dazu,
           solange das Team nicht bewertet ist; danach kann Dich Dein Tutor
           noch aufnehmen.
+        team_code: >
+          Fehlt jemand in Deinem Team? Mit diesem Code kommt die Person noch
+          dazu, solange das Team nicht bewertet ist:
         no_points:
           nothing_yet: Es ist noch nichts eingetragen.
           on_the_correction: >

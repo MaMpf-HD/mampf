@@ -458,7 +458,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   describe "a team across tutorials" do
-    let(:other_tutor) { create(:confirmed_user) }
+    let(:other_tutor) { create(:confirmed_user, first_name: "Grace", last_name: "Hopper") }
     let(:other_tutorial) do
       create(:tutorial, :with_tutor_by_id, tutor_id: other_tutor.id, lecture: lecture,
                                            title: "Tuesday")
@@ -491,7 +491,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
       expect(labelled(html, hand_over)).to be_present
       expect(html.css("button.dropdown-item").map { |item| item.text.strip })
-        .to include(other_tutorial.title_with_tutors)
+        .to include("Tuesday (Grace Hopper)")
     end
 
     it "shows the other tutor the team read-only, saying who marks it" do
@@ -499,7 +499,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       html = render_for(other_tutor, other_tutorial)
 
       expect(html.text).to include(I18n.t("assessment.task_points.marked_elsewhere",
-                                          tutorial: tutorial.title_with_tutors))
+                                          tutorial: "#{tutorial.title} (#{tutor.tutorial_name})"))
       inputs = html.css("input[type=number]")
       expect(inputs).to be_present
       expect(inputs.pluck("disabled")).to all(be_present)
@@ -527,7 +527,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                            ))
 
       expect(html.css("button.dropdown-item").map { |item| item.text.strip })
-        .to eq([other_tutorial.title_with_tutors])
+        .to eq(["Tuesday (Grace Hopper)"])
     end
 
     it "offers no hand-over once the team has a correction" do

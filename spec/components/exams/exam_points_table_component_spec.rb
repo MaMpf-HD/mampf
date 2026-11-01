@@ -112,6 +112,7 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
       let(:loner) { create(:confirmed_user, name: "Bob") }
 
       before do
+        tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
         create(:tutorial_membership, tutorial: tutorial, user: member)
         create(:exam_roster_entry, exam: exam, user: member)
         create(:exam_roster_entry, exam: exam, user: loner)
@@ -122,7 +123,7 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
 
         options = page.css("select[data-status-filter-target=tutorial] option")
         expect(options.map { |o| [o["value"], o.text.strip] })
-          .to include([tutorial.id.to_s, "Group A"],
+          .to include([tutorial.id.to_s, "Group A (Ada Lovelace)"],
                       ["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")])
         rows = page.css("tr[data-status-filter-target=row]")
         expect(rows.pluck("data-status-filter-tutorial")).to eq([tutorial.id.to_s, ""])

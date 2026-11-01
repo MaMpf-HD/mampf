@@ -107,6 +107,12 @@
                   >
                     <%= audience.label %>
                     <span class="text-muted">(<%= audience.count %>)</span>
+
+                    <% if audience.detail %>
+                      <span class="d-block small text-muted">
+                        <%= audience.detail %>
+                      </span>
+                    <% end %>
                   </label>
                 </div>
               <% end %>

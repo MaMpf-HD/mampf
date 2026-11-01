@@ -342,7 +342,7 @@ class SubmissionsController < ApplicationController
     end
 
     grading_scope = grading_table(@tutorial, @lecture)
-    flash.now[:notice] = t("submission.handed_over", tutorial: target.title)
+    flash.now[:notice] = t("submission.handed_over", tutorial: target.title_with_tutors)
     table = TutorialMarkingTableComponent.new(assignment: @assignment,
                                               grading_scope: grading_scope)
     render turbo_stream: [turbo_stream.replace("marking-table", html: render_to_string(table)),

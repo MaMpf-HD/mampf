@@ -4,18 +4,24 @@
         data-action="change->select-navigation#visit">
 
   <!-- Current tutorial -->
-  <option selected><%= @tutorial&.title || t("profile.select_tutorials") %></option>
+  <option selected>
+    <% if @tutorial %>
+      <%= tutorial_option_label(@tutorial, current_user) %>
+    <% else %>
+      <%= t("profile.select_tutorials") %>
+    <% end %>
+  </option>
 
   <% tutorials_for_dropdown(current_user, @lecture, @tutorial).each do |_, list| %>
-    <% list.each do |t| %>
+    <% list.each do |tutorial| %>
       <option value="<%= lecture_tutorials_path(
                         @lecture,
                         params: { assignment: @assignment&.id, achievement: @achievement&.id,
                                   view: ('participants' if @participants) ||
                                         ('performance' if @performance),
-                                  tutorial: t.id }.compact
+                                  tutorial: tutorial.id }.compact
                       ) %>">
-        <%= t.title %>
+        <%= tutorial_option_label(tutorial, current_user) %>
       </option>
     <% end %>
   <% end %>
