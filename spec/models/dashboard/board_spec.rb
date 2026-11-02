@@ -128,6 +128,19 @@ RSpec.describe(Dashboard::Board) do
       expect(board.enrolled_lectures).to be_empty
     end
 
+    it "leaves out a lecture whose later campaign placed the user, who has left since" do
+      lecture = create(:lecture, term: term)
+      { rejected: create(:registration_campaign, :completed, campaignable: lecture),
+        confirmed: create(:registration_campaign, :completed, campaignable: lecture) }
+        .each do |status, campaign|
+          create(:registration_user_registration, status,
+                 user: user, registration_campaign: campaign,
+                 registration_item: campaign.registration_items.first)
+        end
+
+      expect(board.enrolled_lectures).to be_empty
+    end
+
     it "includes a lecture with a rejected, not-yet-dismissed registration" do
       lecture = create(:lecture, term: term)
       campaign = create(:registration_campaign, :open, campaignable: lecture)

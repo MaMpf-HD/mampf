@@ -808,22 +808,20 @@ class User < ApplicationRecord
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
   # counts only until its campaign is completed. After that, the roster decides.
-  # A rejection beside a confirmed application in the same campaign is one of
-  # the other choices of someone who got a place, not a rejection of the user.
+  # A rejection counts only in a lecture where the user has no confirmed
+  # application at all: otherwise it is one of the other choices of someone who
+  # got a place, or a round before the one that gave them a place. Its card
+  # would then show the confirmed one and offer no way to dismiss the rejection
+  # (see Registration::StatusQuery).
   def lectures_with_registration_application
     unfinished = Registration::Campaign.where.not(status: :completed).select(:id)
-    placed = user_registrations.confirmed.select(:registration_campaign_id)
-    campaign_ids = user_registrations
-                   .where(status: [:pending, :confirmed], registration_campaign_id: unfinished)
-                   .or(user_registrations.rejected.not_dismissed
-                                         .where.not(registration_campaign_id: placed))
-                   .select(:registration_campaign_id)
-    Lecture.where(
-      id: Registration::Campaign.where(id: campaign_ids,
-                                       campaignable_type: "Lecture")
-                                .non_exam
-                                .select(:campaignable_id)
-    )
+    applied = user_registrations.where(status: [:pending, :confirmed],
+                                       registration_campaign_id: unfinished)
+    placed = lecture_campaigns(user_registrations.confirmed).select(:campaignable_id)
+    rejected = lecture_campaigns(user_registrations.rejected.not_dismissed)
+               .where.not(campaignable_id: placed)
+    Lecture.where(id: lecture_campaigns(applied).select(:campaignable_id))
+           .or(Lecture.where(id: rejected.select(:campaignable_id)))
   end
 
   def submission_partners(lecture)
@@ -1057,6 +1055,14 @@ class User < ApplicationRecord
   end
 
   private
+
+    # The lecture campaigns of the given registrations, without exam ones:
+    # registering for an exam is not registering for the lecture.
+    def lecture_campaigns(registrations)
+      Registration::Campaign.where(id: registrations.select(:registration_campaign_id),
+                                   campaignable_type: "Lecture")
+                            .non_exam
+    end
 
     def program_offered_to_students
       return if program.nil? || program.degree.present?
