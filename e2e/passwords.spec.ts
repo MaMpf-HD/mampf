@@ -87,7 +87,7 @@ test("keeps helpdesk popovers working after a rejected account password change",
   // the fixture user has never signed in, so this is their first sign-in
   await expect(page).toHaveURL(/\/profile\/edit/);
 
-  await page.goto("/users/edit?locale=en");
+  await page.goto("/users/edit?locale=en&section=password");
 
   const currentPasswordHelpdesk = page.locator('[data-bs-toggle="popover"]').first();
   await currentPasswordHelpdesk.click();
@@ -117,7 +117,7 @@ test("clears stale current password errors after correcting an account password 
   // the fixture user has never signed in, so this is their first sign-in
   await expect(page).toHaveURL(/\/profile\/edit/);
 
-  await page.goto("/users/edit?locale=en");
+  await page.goto("/users/edit?locale=en&section=password");
   await page.getByLabel("Current password").fill("wrong-password");
   await page.getByLabel("New password", { exact: true }).fill(newPassword);
   await page.getByLabel("Confirm new password", { exact: true }).fill(newPassword);

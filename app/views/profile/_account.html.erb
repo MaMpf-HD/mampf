@@ -1,10 +1,16 @@
-<%= link_to t('profile.change_data'),
-              edit_user_registration_path,
-              class: "btn btn-outline-secondary" %>
+<button type="button" class="btn btn-outline-secondary"
+        data-bs-toggle="modal" data-bs-target="#changeEmailModal">
+  <%= t('devise.edit.choose_email') %>
+</button>
+
+<button type="button" class="btn btn-outline-secondary"
+        data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+  <%= t('devise.edit.choose_password') %>
+</button>
 
 <button type="button" class="btn btn-outline-secondary" id="open-request-data"
         data-bs-toggle="modal" data-bs-target="#requestDataModal">
-    <%= t('profile.data_request') %>
+  <%= t('profile.data_request') %>
 </button>
 
 <%= link_to t('profile.delete_account'),
