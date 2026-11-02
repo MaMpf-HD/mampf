@@ -114,6 +114,20 @@ RSpec.describe(Dashboard::Board) do
       expect(board.enrolled_lectures).to be_empty
     end
 
+    # Finalizing rejects the other choices of whoever got a place.
+    it "leaves out a lecture whose completed campaign placed the user, who has left since" do
+      lecture = create(:lecture, term: term)
+      campaign = create(:registration_campaign, :completed, :preference_based,
+                        campaignable: lecture)
+      campaign.registration_items.first(2).each_with_index do |item, index|
+        create(:registration_user_registration, index.zero? ? :confirmed : :rejected,
+               user: user, registration_campaign: campaign, registration_item: item,
+               preference_rank: index + 1)
+      end
+
+      expect(board.enrolled_lectures).to be_empty
+    end
+
     it "includes a lecture with a rejected, not-yet-dismissed registration" do
       lecture = create(:lecture, term: term)
       campaign = create(:registration_campaign, :open, campaignable: lecture)

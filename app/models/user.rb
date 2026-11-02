@@ -808,11 +808,15 @@ class User < ApplicationRecord
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
   # counts only until its campaign is completed. After that, the roster decides.
+  # A rejection beside a confirmed application in the same campaign is one of
+  # the other choices of someone who got a place, not a rejection of the user.
   def lectures_with_registration_application
     unfinished = Registration::Campaign.where.not(status: :completed).select(:id)
+    placed = user_registrations.confirmed.select(:registration_campaign_id)
     campaign_ids = user_registrations
                    .where(status: [:pending, :confirmed], registration_campaign_id: unfinished)
-                   .or(user_registrations.rejected.not_dismissed)
+                   .or(user_registrations.rejected.not_dismissed
+                                         .where.not(registration_campaign_id: placed))
                    .select(:registration_campaign_id)
     Lecture.where(
       id: Registration::Campaign.where(id: campaign_ids,
