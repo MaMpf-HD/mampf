@@ -92,6 +92,39 @@
     <p class="hub-aside text-muted mb-0 mt-3"><%= team_line %></p>
   <% end %>
 
+  <% if late_join_code %>
+    <div
+      class="d-flex flex-wrap align-items-center gap-2 mt-3"
+      data-controller="clipboard"
+      data-clipboard-text-value="<%= late_join_code %>"
+      data-clipboard-resting-icon-value="bi-clipboard"
+      data-clipboard-confirmation-value="<%= t("submission.hub.card.code_copied") %>"
+      data-clipboard-failure-value="<%= t("submission.hub.card.code_copy_failed") %>"
+    >
+      <span class="hub-aside text-muted">
+        <%= t("submission.hub.fold.team_code") %>
+      </span>
+
+      <code class="join-code"><%= late_join_code %></code>
+
+      <button
+        type="button"
+        class="btn btn-link btn-sm p-0 border-0 text-secondary"
+        data-action="clipboard#copy"
+        title="<%= t("submission.hub.card.copy_code") %>"
+        aria-label="<%= t("submission.hub.card.copy_code") %>"
+      >
+        <i class="bi bi-clipboard" data-clipboard-target="icon"></i>
+      </button>
+
+      <span
+        class="visually-hidden"
+        role="status"
+        data-clipboard-target="status"
+      ></span>
+    </div>
+  <% end %>
+
   <% if joinable_late? %>
     <%= form_with url: join_submission_path, method: :post, scope: "join",
                   class: "d-flex flex-wrap align-items-center gap-2 mt-3" do |f| %>

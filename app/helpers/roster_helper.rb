@@ -33,6 +33,11 @@ module RosterHelper
                 registerable, user, **)
   end
 
+  def roster_confirm_remove_member_path(registerable, user, **)
+    public_send("confirm_remove_member_#{registerable.model_name.singular}_path",
+                registerable, user, **)
+  end
+
   def roster_update_self_materialization_path(registerable, mode:)
     public_send(
       "update_self_materialization_#{registerable.model_name.singular}_path",
@@ -90,23 +95,39 @@ module RosterHelper
     "roster_maintenance_#{suffix}"
   end
 
-  def hidden_group_type_field(group_type)
+  def hidden_group_type_field(group_type, **)
     if group_type.is_a?(Array)
-      safe_join(group_type.map { |t| hidden_field_tag("group_type[]", t) })
+      safe_join(group_type.map { |t| hidden_field_tag("group_type[]", t, **) })
     else
-      hidden_field_tag(:group_type, group_type)
+      hidden_field_tag(:group_type, group_type, **)
     end
   end
 
-  # Links a participant's group to its roster on the lecture's groups tab.
-  def roster_group_link(group)
-    lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
+  def roster_group_key(group)
+    Rosters::RosterableResolver.group_key(group)
+  end
 
-    link_to(group.title,
-            edit_lecture_path(lecture, tab: "groups",
-                                       open_roster: "#{group.class.name}-#{group.id}"),
-            class: "badge roster-group-badge",
-            data: { turbo: false })
+  # Select options, grouped by kind, for the groups through which the staff take
+  # someone back into the lecture. Leaves out groups whose roster a registration
+  # still controls (see Rosterable#locked?).
+  def roster_readmission_group_options(lecture)
+    lecture.readmission_groups.reject(&:locked?)
+           .group_by { |group| group.class.model_name.human(count: 2) }
+           .transform_values do |groups|
+             groups.map { |group| [Rosters::LectureLeave.label(group), roster_group_key(group)] }
+           end
+  end
+
+  # label replaces the group's title, e.g. by one that names its tutors.
+  def roster_group_link(group, label: group.title)
+    lecture = group.is_a?(Cohort) && group.context_type == "Lecture" ? group.context : group.lecture
+    path = if group.is_a?(Exam)
+      edit_lecture_path(lecture, tab: "exams")
+    else
+      edit_lecture_path(lecture, tab: "groups", open_roster: roster_group_key(group))
+    end
+
+    link_to(label, path, class: "badge roster-group-badge", data: { turbo: false })
   end
 
   def rosterable_display_type(rosterable)

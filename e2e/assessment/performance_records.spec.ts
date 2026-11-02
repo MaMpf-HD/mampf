@@ -166,9 +166,13 @@ test.describe("performance records", () => {
     teacher,
   }) => {
     const lecture = await createLecture(factory, teacher.user.id);
+    const tutor = await factory.create("confirmed_user", [], {
+      first_name: "Emmy", last_name: "Noether",
+    });
     const tutorial = await factory.create("tutorial", [], {
       lecture_id: lecture.id,
       title: "Tuesday group",
+      tutor_ids: [tutor.id],
     });
     const { user: inGroup } = await recordFor(
       factory, lecture.id, "Ada Lovelace",
@@ -183,7 +187,7 @@ test.describe("performance records", () => {
     await openPerformance(page);
     await expect(teacher.page.getByText("Grace Hopper")).toBeVisible();
 
-    await teacher.page.getByRole("combobox").selectOption("Tuesday group");
+    await teacher.page.getByRole("combobox").selectOption("Tuesday group (Emmy Noether)");
 
     await expect(teacher.page.getByText("Ada Lovelace")).toBeVisible();
     await expect(teacher.page.getByText("Grace Hopper")).toHaveCount(0);
@@ -349,5 +353,44 @@ test.describe("performance records", () => {
     await expect(
       student.page.getByText("Factual performance data computed from"),
     ).toHaveCount(0);
+  });
+
+  // A tutor reads the table of the lecturer's tab for their own group: the
+  // points over all sheets, without the record behind a name.
+  test("shows a tutor the points of their own group", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const lecture = await createLecture(factory, teacher.user.id);
+    const assignment = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id,
+      title: "Problem Set 1",
+    });
+    const assessment = await assignment.__call("assessment");
+    await addTask(factory, assessment.id, "Prove it", 90);
+    const own = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Tuesday group",
+    });
+    const other = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Friday group",
+    });
+    const members = [[own, "Ada Lovelace", 72], [other, "Grace Hopper", 18]] as const;
+    for (const [tutorial, name, points] of members) {
+      const { user } = await recordFor(factory, lecture.id, name, {
+        points_total_materialized: points,
+      });
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: user.id,
+      });
+    }
+
+    await tutor.page.goto(`/lectures/${lecture.id}/tutorials?tutorial=${own.id}`);
+    await tutor.page.getByRole("link", { name: "Performance" }).click();
+
+    const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
+    await expect(row).toContainText("72");
+    await expect(tutor.page.getByRole("row", { name: /Grace Hopper/ })).toHaveCount(0);
+    await expect(row.getByRole("link")).toHaveCount(0);
   });
 });

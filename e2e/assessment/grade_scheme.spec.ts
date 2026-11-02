@@ -136,7 +136,7 @@ test.describe("grade schemes", () => {
     await page.tab("Points").click();
     for (const name of ["Ada Lovelace", "Grace Hopper"]) {
       const row = page.pane.getByRole("row", { name: new RegExp(name) });
-      await row.getByRole("spinbutton", { name: `Task 1 for ${name}` }).fill("30");
+      await row.getByRole("spinbutton", { name: `Prove it for ${name}` }).fill("30");
       const saved = teacher.page.waitForResponse(
         response => response.url().includes("/point_participation") && response.ok(),
       );

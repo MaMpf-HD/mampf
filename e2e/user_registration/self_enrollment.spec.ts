@@ -10,7 +10,7 @@ async function openSelfEnrollment(page: Page): Promise<void> {
 }
 
 test.describe("student self-enrollment", () => {
-  test("adds and removes the student from a self-managed tutorial", async ({
+  test("adds the student to a self-managed tutorial they can leave again", async ({
     factory,
     student,
   }) => {
@@ -35,26 +35,49 @@ test.describe("student self-enrollment", () => {
     await expect(student.page.getByTestId("self-enrollment")).toHaveAttribute("open", "");
     await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
 
-    const leaveButton = home.participation("Self-managed Tutorial")
-      .getByRole("button", { name: "Leave" });
+    await expect(home.participation("Self-managed Tutorial")
+      .getByRole("button", { name: "Leave tutorial" })).toBeVisible();
+  });
 
-    // Declined, the question leaves the student in the group.
-    const declined = student.page.waitForEvent("dialog");
-    const firstClick = leaveButton.click();
-    const question = await declined;
-    expect(question.message()).toBe(
-      "Leave “Self-managed Tutorial”? You can join again only while a place is free.");
-    await question.dismiss();
-    await firstClick;
+  test("lets the student leave a self-managed tutorial while another group remains", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const repeaters = await factory.create("cohort", ["enrollment"], {
+      context_type: "Lecture", context_id: lecture.id, title: "Repeaters", skip_campaigns: true,
+    });
+    await factory.create("cohort_membership", [], {
+      cohort_id: repeaters.id, user_id: student.user.id,
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Self-managed Tutorial",
+      capacity: 2,
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    await openSelfEnrollment(student.page);
+    await student.page.getByRole("button", { name: "Register for Self-managed Tutorial" })
+      .click();
     await expect(home.participation("Self-managed Tutorial")).toContainText("Assigned");
 
-    const accepted = student.page.waitForEvent("dialog");
-    const secondClick = leaveButton.click();
-    await (await accepted).accept();
-    await secondClick;
+    await home.participation("Self-managed Tutorial")
+      .getByRole("button", { name: "Leave tutorial" }).click();
+    const dialog = student.page.getByRole("dialog", { name: "Leave “Self-managed Tutorial”?" });
+    await expect(dialog).toContainText("You stay in the course but cannot hand in sheets.");
+    await dialog.getByRole("button", { name: "Leave tutorial" }).click();
 
     await expect(home.participation("Self-managed Tutorial")).toHaveCount(0);
-    await expect(student.page.getByTestId("self-enrollment").locator("summary")).toBeFocused();
+    await expect(student.page.getByText("You are still enrolled in")).toBeVisible();
+    await expect(student.page.getByRole("heading", { name: "Your participation" })).toBeFocused();
     await expect(student.page.getByRole("button", {
       name: "Register for Self-managed Tutorial",
     })).toBeVisible();
@@ -166,6 +189,50 @@ test.describe("student self-enrollment", () => {
 
     await expect(home.participation("Friday Tutorial")).toContainText("Assigned");
     await expect(home.participation("Monday Tutorial")).toHaveCount(0);
+  });
+
+  test("switches from the dialog for leaving the only tutorial", async ({ factory, student }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const current = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Monday Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: current.id,
+      user_id: student.user.id,
+    });
+    await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Friday Tutorial",
+      skip_campaigns: true,
+      self_materialization_mode: "add_and_remove",
+    });
+
+    const page = student.page;
+    const errors: string[] = [];
+    page.on("pageerror", error => errors.push(error.message));
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    await home.participation("Monday Tutorial")
+      .getByRole("button", { name: "Leave tutorial" }).click();
+    const dialog = student.page.getByRole("dialog", { name: "Leave this course" });
+    await dialog.getByRole("button", { name: "Switch to" }).click();
+    await dialog.getByRole("button", { name: "Friday Tutorial" }).click();
+
+    await expect(home.participation("Friday Tutorial")).toContainText("Assigned");
+    await expect(home.participation("Monday Tutorial")).toHaveCount(0);
+    await expect(dialog).toBeHidden();
+
+    await expect(page.locator(".modal-backdrop")).toHaveCount(0);
+    await expect(page.locator("body")).not.toHaveClass(/modal-open/);
+    await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe("");
+    expect(errors).toEqual([]);
   });
 
   test("blocks joining an exclusive tutorial while stuck in an unremovable "

@@ -54,6 +54,17 @@ RSpec.describe(StudentMessageMailer) do
       expect(mail.cc).to eq([teacher.email])
     end
 
+    # The students see the cc line; the tutors' addresses are not theirs.
+    it "puts the students' tutors in bcc, and nobody twice" do
+      tutor = create(:confirmed_user)
+      editor_tutor = create(:confirmed_user)
+      lecture.update!(editors: [editor_tutor])
+      message.update!(tutor_emails: [tutor.email, editor_tutor.email, teacher.email])
+
+      expect(mail.bcc).to contain_exactly(student.email, tutor.email)
+      expect(mail.cc).to eq([editor_tutor.email])
+    end
+
     # A tutor's mail to their group is theirs alone.
     it "puts nobody in cc when a tutor sends" do
       lecture.update!(editors: [create(:confirmed_user)])
@@ -228,6 +239,21 @@ RSpec.describe(StudentMessageMailer) do
       copy = mails.find { |mail| mail.to == [teacher.email] }
       expect(copy.cc).to eq([editor.email])
       expect(copy.bcc).to eq([german_student.email])
+    end
+
+    it "gives a tutor one copy, in the sender's mail, also one who registered" do
+      tutor = create(:confirmed_user, locale: "en")
+      registered_tutor = create(:confirmed_user, locale: "en")
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: campaign, user: registered_tutor)
+      message.update!(tutor_emails: [tutor.email, registered_tutor.email])
+
+      mails = deliveries
+
+      addressed = mails.flat_map(&:destinations)
+      expect(addressed.count(tutor.email)).to eq(1)
+      expect(addressed.count(registered_tutor.email)).to eq(1)
+      expect(mails.find { |mail| mail.to == [teacher.email] }.bcc).to include(tutor.email)
     end
 
     it "gives an editor who also registered one copy, in the cc" do

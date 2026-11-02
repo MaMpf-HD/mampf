@@ -38,6 +38,24 @@ RSpec.describe(SubmissionAbility) do
   describe "correcting a hand-in" do
     let(:submission) { create(:submission, assignment: assignment, tutorial: tutorial) }
 
+    before do
+      submission
+      Timecop.travel(assignment.friendly_deadline + 1.minute)
+    end
+
+    after { Timecop.return }
+
+    # Until then the file may still change and the team still move.
+    it "waits for the grace period to be over" do
+      tutorial.tutors << student
+      Timecop.travel(assignment.friendly_deadline - 1.minute)
+      ability = described_class.new(student)
+
+      expect(ability.can?(:add_correction, submission)).to be(false)
+      expect(ability.can?(:accept, submission)).to be(false)
+      expect(ability.can?(:hand_over, submission)).to be(false)
+    end
+
     it "lets the group's tutor correct and decide on a late hand-in" do
       tutorial.tutors << student
       ability = described_class.new(student)

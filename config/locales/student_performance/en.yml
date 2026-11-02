@@ -58,6 +58,7 @@ en:
         subtitle: "Factual performance data computed from assessments."
         all_participants: "All participants"
         without_tutorial: "Without tutorial group"
+        left: "Left the course"
         awaiting_marking:
           one: "1 not graded yet"
           other: "%{count} not graded yet"

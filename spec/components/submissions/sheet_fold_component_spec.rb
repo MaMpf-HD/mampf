@@ -20,7 +20,8 @@ RSpec.describe(SheetFoldComponent, type: :component) do
 
   def sheet_defaults
     { points_by_task: {}, submission: nil, points: nil, max_points: 16,
-      partners: [], marked_at: nil, marked_by: nil, test: false }
+      partners: [], marked_at: nil, marked_by: nil, test: false,
+      late_join_code: nil }
   end
 
   # A sheet has its problems set up as soon as there are any, and where the
@@ -42,6 +43,7 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                              marked_at: attrs[:marked_at],
                              marked_by: attrs[:marked_by],
                              joinable_late?: attrs.fetch(:joinable_late, false),
+                             late_join_code: attrs[:late_join_code],
                              assignment: instance_double(Assignment, id: 7,
                                                                      kind_test?: attrs[:test],
                                                                      lecture: lecture))
@@ -77,6 +79,22 @@ RSpec.describe(SheetFoldComponent, type: :component) do
     content = render_fold(:missed, max_points: 16, joinable_late: true)
 
     expect(content).not_to include(I18n.t("buttons.join"))
+  end
+
+  # The other end of the late join: a closed sheet has no card, so the row is
+  # where the team reads the code it passes on.
+  it "shows the team its code to pass on" do
+    content = render_fold(:awaiting_marks, late_join_code: "QX7K2P")
+
+    expect(content).to include("QX7K2P")
+    expect(content).to include(I18n.t("submission.hub.fold.team_code").strip)
+    expect(content).to include(I18n.t("submission.hub.card.copy_code"))
+  end
+
+  it "shows no code where nobody can join with one any more" do
+    content = render_fold(:marked, points_by_task: { task => 2 })
+
+    expect(content).not_to include(I18n.t("submission.hub.fold.team_code").strip)
   end
 
   describe "points per problem" do

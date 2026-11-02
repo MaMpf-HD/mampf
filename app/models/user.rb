@@ -43,7 +43,11 @@ class User < ApplicationRecord
   has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
   # Roster memberships
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :lecture_memberships_including_excluded,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :user
+  has_many :lecture_memberships, -> { active }, inverse_of: :user
   has_many :assignment_sightings, dependent: :destroy
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 
@@ -233,6 +237,8 @@ class User < ApplicationRecord
         -> { where(email_for_correction_upload: true) }
   scope :email_for_submission_decision,
         -> { where(email_for_submission_decision: true) }
+  scope :email_for_tutorial_change,
+        -> { where(email_for_tutorial_change: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
 
@@ -317,6 +323,16 @@ class User < ApplicationRecord
                                        .or(where.not(name_in_tutorials: [nil,
                                                                          ""])
                .name_in_tutorials_or_email_like(search_string))
+  end
+
+  def self.shown_name_like(search_string)
+    where(Arel.sql(SHOWN_NAME_SQL).matches("%#{sanitize_sql_like(search_string)}%"))
+  end
+
+  def self.shown_name_or_matriculation_number_like(search_string)
+    pattern = "%#{sanitize_sql_like(search_string)}%"
+    where(Arel.sql(SHOWN_NAME_SQL).matches(pattern)
+            .or(arel_table[:matriculation_number].matches(pattern)))
   end
 
   def self.values_for_select
@@ -776,7 +792,6 @@ class User < ApplicationRecord
     return false unless lecture.in?(lectures)
 
     lecture_bookmarks.where(lecture: lecture).destroy_all
-    favorite_lectures.delete(lecture)
 
     true
   end
@@ -792,19 +807,21 @@ class User < ApplicationRecord
 
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
-  # is normally already covered by `roster_lectures`; this catches it before
-  # rostering happens, or if the campaign never rosters the user at all.
+  # counts only until its campaign is completed. After that, the roster decides.
+  # A rejection counts only in a lecture where the user has no confirmed
+  # application at all: otherwise it is one of the other choices of someone who
+  # got a place, or a round before the one that gave them a place. Its card
+  # would then show the confirmed one and offer no way to dismiss the rejection
+  # (see Registration::StatusQuery).
   def lectures_with_registration_application
-    campaign_ids = user_registrations
-                   .where(status: [:pending, :confirmed])
-                   .or(user_registrations.rejected.not_dismissed)
-                   .select(:registration_campaign_id)
-    Lecture.where(
-      id: Registration::Campaign.where(id: campaign_ids,
-                                       campaignable_type: "Lecture")
-                                .non_exam
-                                .select(:campaignable_id)
-    )
+    unfinished = Registration::Campaign.where.not(status: :completed).select(:id)
+    applied = user_registrations.where(status: [:pending, :confirmed],
+                                       registration_campaign_id: unfinished)
+    placed = lecture_campaigns(user_registrations.confirmed).select(:campaignable_id)
+    rejected = lecture_campaigns(user_registrations.rejected.not_dismissed)
+               .where.not(campaignable_id: placed)
+    Lecture.where(id: lecture_campaigns(applied).select(:campaignable_id))
+           .or(Lecture.where(id: rejected.select(:campaignable_id)))
   end
 
   def submission_partners(lecture)
@@ -1038,6 +1055,14 @@ class User < ApplicationRecord
   end
 
   private
+
+    # The lecture campaigns of the given registrations, without exam ones:
+    # registering for an exam is not registering for the lecture.
+    def lecture_campaigns(registrations)
+      Registration::Campaign.where(id: registrations.select(:registration_campaign_id),
+                                   campaignable_type: "Lecture")
+                            .non_exam
+    end
 
     def program_offered_to_students
       return if program.nil? || program.degree.present?

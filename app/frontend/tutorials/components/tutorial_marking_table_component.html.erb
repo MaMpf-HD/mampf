@@ -5,6 +5,12 @@
         <%= render toolbar %>
       </div>
 
+      <% if tasks.any? %>
+        <p class="text-muted small mb-0">
+          <%= t("assessment.grading_tutorial.blank_points_hint") %>
+        </p>
+      <% end %>
+
       <div
         class="table-wrapper"
         style="<%= layout.css_vars %>"
@@ -27,7 +33,7 @@
                       assignment: @assignment,
                       grading_scope: @tutorial,
                       participations: team_participations(submission),
-                      addable_members: @non_submitters,
+                      addable_members: @addable_members,
                       member_tutorials: membership_tutorials)) %>
                 <% end %>
                 <% @elsewhere.each do |submission| %>
@@ -54,7 +60,7 @@
                         assignment: @assignment,
                         grading_scope: @lecture,
                         participations: team_participations(submission),
-                        addable_members: @non_submitters_by_tutorial[tutorial] || [],
+                        addable_members: @addable_by_tutorial[tutorial] || [],
                         member_tutorials: membership_tutorials)) %>
                   <% end %>
 

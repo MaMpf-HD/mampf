@@ -33,14 +33,16 @@ class SubmissionAbility
       end
     end
 
+    # Until the grace period is over the hand-in is the students': its file
+    # may still change and its team still move. Tutors take it over then.
     can [:add_correction, :delete_correction, :edit_correction,
          :cancel_edit_correction, :hand_over], Submission do |submission|
-      submission.tutorial.correctable_by?(user)
+      submission.assignment.totally_expired? && submission.tutorial.correctable_by?(user)
     end
 
     # Whether a late hand-in counts is the group's tutor's call.
     can [:accept, :reject], Submission do |submission|
-      user.in?(submission.tutorial.tutors)
+      submission.assignment.totally_expired? && user.in?(submission.tutorial.tutors)
     end
 
     # A tutor of the tutorial a team member sits in reads the team's files:

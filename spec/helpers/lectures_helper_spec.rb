@@ -20,4 +20,22 @@ RSpec.describe(LecturesHelper, type: :helper) do
         .to eq(I18n.t("notifications.subscribe_lecture"))
     end
   end
+
+  describe "#quick_access_lectures" do
+    let(:user) { create(:confirmed_user) }
+    let(:course) { create(:course) }
+
+    it "lists a course's lectures with the newest term first" do
+      summer = create(:term, :summer, year: 2025)
+      winter = create(:term, :winter, year: 2025)
+      older = create(:term, :winter, year: 2024)
+      lectures = [summer, older, winter].map do |term|
+        create(:lecture, course: course, term: term)
+      end
+      user.favorite_lectures << lectures
+
+      expect(helper.quick_access_lectures(user))
+        .to eq([lectures[2], lectures[0], lectures[1]])
+    end
+  end
 end

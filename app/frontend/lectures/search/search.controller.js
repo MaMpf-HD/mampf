@@ -16,7 +16,7 @@ import { addDataToForm } from "~/js/form_helper.js";
  * semester. The `allTerms` switch only lifts that scope for the search.
  */
 export default class extends Controller {
-  static targets = ["form", "scrollObserver", "allTerms"];
+  static targets = ["form", "scrollObserver", "allTerms", "term"];
 
   connect() {
     addDataToForm(this.formTarget, { infinite_scroll: true });
@@ -36,9 +36,8 @@ export default class extends Controller {
     this.handleScroll = this.handleScroll.bind(this);
     window.addEventListener("scroll", this.handleScroll);
 
-    this.reloadForTermChange = this.reloadForTermChange.bind(this);
-    document.addEventListener("dashboard-term-select:changed",
-      this.reloadForTermChange);
+    this.leaveAllTerms = this.leaveAllTerms.bind(this);
+    document.addEventListener("dashboard-term-select:changed", this.leaveAllTerms);
   }
 
   scrollObserverTargetConnected() {
@@ -58,6 +57,7 @@ export default class extends Controller {
   }
 
   disconnect() {
+    clearTimeout(this.timeout);
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -65,18 +65,24 @@ export default class extends Controller {
       this.scrollObserver.disconnect();
     }
     window.removeEventListener("scroll", this.handleScroll);
-    document.removeEventListener("dashboard-term-select:changed",
-      this.reloadForTermChange);
+    document.removeEventListener("dashboard-term-select:changed", this.leaveAllTerms);
   }
 
   /**
-   * The semester picker changed the term (and our hidden `search[term]` field
-   * with it). Re-run the search from the first page if results are already on
-   * screen; otherwise the new term is picked up when the user scrolls down to
-   * the search. Picking a semester also ends a search across all of them.
+   * Picking a semester also ends a search across all of them.
    */
-  reloadForTermChange() {
+  leaveAllTerms() {
     if (this.hasAllTermsTarget) this.allTermsTarget.checked = false;
+  }
+
+  /**
+   * The semester picker changed the term and sent our hidden `search[term]`
+   * field with it. Re-run the search from the first page if results are
+   * already on screen; otherwise the new term is picked up when the user
+   * scrolls down to the search. The picker's `changed` event is too early for
+   * this: it comes with `turbo:submit-end`, before Turbo renders the field.
+   */
+  termTargetConnected() {
     if (!this.initiallyLoaded) return;
 
     this.search();
@@ -99,11 +105,16 @@ export default class extends Controller {
    *
    * We use a small delay to avoid too many requests.
    * This method is called whenever the user types in the search field.
+   * While a page is still loading, the search waits for it instead of getting
+   * lost.
    */
   search() {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
-      if (this.isSubmitting) return;
+      if (this.isSubmitting) {
+        this.search();
+        return;
+      }
 
       // Indicate to controller that we want the initial page for a new search.
       // This is especially important when the user has already scrolled down
@@ -149,7 +160,7 @@ export default class extends Controller {
   submitForm() {
     this.isSubmitting = true;
     const unlockHandler = () => this.isSubmitting = false;
-    document.addEventListener("turbo:submit-end", unlockHandler, { once: true });
+    this.formTarget.addEventListener("turbo:submit-end", unlockHandler, { once: true });
     this.formTarget.requestSubmit();
   }
 }

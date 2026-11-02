@@ -551,15 +551,16 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
-  describe "#remove_member_path" do
+  describe "#confirm_remove_member_path" do
     it "returns nil without registerable" do
-      expect(described_class.new.remove_member_path(double)).to be_nil
+      expect(described_class.new.confirm_remove_member_path(double)).to be_nil
     end
 
     it "delegates to helpers with registerable" do
       c = described_class.new(registerable: tutorial)
-      allow(c).to receive(:helpers).and_return(double(roster_remove_member_path: "/remove"))
-      expect(c.remove_member_path(double("student"))).to eq("/remove")
+      allow(c).to receive(:helpers)
+        .and_return(double(roster_confirm_remove_member_path: "/remove"))
+      expect(c.confirm_remove_member_path(double("student"))).to eq("/remove")
     end
   end
 

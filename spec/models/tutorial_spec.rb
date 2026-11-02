@@ -130,6 +130,37 @@ RSpec.describe(Tutorial, type: :model) do
     end
   end
 
+  describe "#title_with_tutors" do
+    let(:tutorial) { create(:tutorial, title: "Tuesday") }
+
+    it "names the tutors by last name" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Alan", last_name: "Turing"))
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Grace", last_name: "Hopper"))
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+
+      expect(tutorial.reload.title_with_tutors)
+        .to eq("Tuesday (Grace Hopper, Ada Lovelace, Alan Turing)")
+    end
+
+    it "says the group has no tutor yet" do
+      expect(tutorial.title_with_tutors).to eq("Tuesday (#{I18n.t("basics.tba")})")
+    end
+  end
+
+  describe "#registration_title" do
+    let(:tutorial) { create(:tutorial, title: "Tuesday") }
+
+    it "names the tutors" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+
+      expect(tutorial.registration_title).to eq("Tuesday (Ada Lovelace)")
+    end
+
+    it "says the group has no tutor yet" do
+      expect(tutorial.registration_title).to eq("Tuesday (#{I18n.t("basics.tba")})")
+    end
+  end
+
   describe ".roster_eligible" do
     let(:lecture) { create(:lecture) }
     let(:tutorial) { create(:tutorial, lecture: lecture) }
@@ -256,6 +287,38 @@ RSpec.describe(Tutorial, type: :model) do
 
       expect(tutorial.destruction_blockers).to eq([:in_campaign])
       expect(tutorial.destruction_blockers_outside_campaign).to be_empty
+    end
+  end
+
+  describe "#destroy" do
+    let(:tutorial) { create(:tutorial) }
+    let(:other_tutorial) { create(:tutorial, lecture: tutorial.lecture) }
+
+    it "hands a graded row to the group the person is in now" do
+      graded = create(:assessment_participation, :reviewed, tutorial: tutorial)
+      create(:tutorial_membership, user: graded.user, tutorial: other_tutorial)
+
+      expect(tutorial.destroy).to be_truthy
+      expect(graded.reload.tutorial_id).to eq(other_tutorial.id)
+      expect(graded.points_total).to be_present
+    end
+
+    it "keeps the rows of people in no group, without a group" do
+      blank = create(:assessment_participation, tutorial: tutorial)
+      graded = create(:assessment_participation, :reviewed, tutorial: tutorial)
+
+      expect(tutorial.destroy).to be_truthy
+      expect(blank.reload.tutorial_id).to be_nil
+      expect(graded.reload.tutorial_id).to be_nil
+      expect(graded.points_total).to be_present
+    end
+
+    it "ignores the person's group in another lecture" do
+      graded = create(:assessment_participation, :reviewed, tutorial: tutorial)
+      create(:tutorial_membership, user: graded.user, tutorial: create(:tutorial))
+
+      expect(tutorial.destroy).to be_truthy
+      expect(graded.reload.tutorial_id).to be_nil
     end
   end
 end

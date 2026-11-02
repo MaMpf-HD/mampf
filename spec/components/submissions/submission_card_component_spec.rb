@@ -134,6 +134,12 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
       expect(content).not_to include("PDF")
     end
+
+    it "names its weeks when it lasts several" do
+      assignment.update!(test_week_count: 2)
+
+      expect(render_card).to include(I18n.t("assessment.test.period", count: 2))
+    end
   end
 
   describe "a sheet nothing has been handed in for" do

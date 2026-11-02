@@ -30,7 +30,7 @@
     <span class="<%= slot %> invisible" aria-hidden="true"><i class="bi bi-download"></i></span>
   <% end %>
 
-  <% if !@assignment&.active? %>
+  <% if submission.assignment.totally_expired? %>
     <%= link_to edit_correction_path(submission),
                 class: "btn btn-sm btn-link row-action text-secondary #{slot}",
                 data: { turbo_stream: true },
@@ -39,10 +39,12 @@
       <i class="bi bi-file-earmark-plus-fill"></i>
     <% end %>
   <% else %>
+    <% closed = t('assessment.grading_tutorial.upload_correction_closed',
+                  time: l(submission.assignment.friendly_deadline, format: :short)) %>
     <button class="btn btn-sm btn-link row-action text-secondary <%= slot %>"
             disabled
-            title="<%= t('assessment.grading_tutorial.upload_correction_closed') %>"
-            aria-label="<%= t('assessment.grading_tutorial.upload_correction_closed') %>">
+            title="<%= closed %>"
+            aria-label="<%= closed %>">
       <i class="bi bi-file-earmark-plus-fill"></i>
     </button>
   <% end %>

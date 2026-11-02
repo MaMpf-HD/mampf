@@ -174,8 +174,11 @@ de:
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
-      Du hast dem Schnellzugriff noch keine Veranstaltung hinzugefügt.
+      Du hast noch keine Veranstaltung angeheftet.
+      Öffne eine Veranstaltung, um sie hier anzuheften.
     quick_access: 'Schnellzugriff'
+    pin_lecture: '%{title} anheften'
+    unpin_lecture: '%{title} nicht mehr anheften'
   info: 'Info'
   admin:
     navbar:
@@ -2126,6 +2129,8 @@ de:
       neue angelegte Veranstaltungen oder Module
     email_for_news:
       Neuigkeiten über MaMpf
+    email_for_tutorial_change:
+      Wechsel von Teilnehmenden in meine Tutorien oder aus ihnen heraus
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
     please_update: >
@@ -2195,9 +2200,10 @@ de:
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
+    tutorials: Tutorien
     miscellaneous: Sonstiges
-    star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
-    unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
+    pin_lecture: Im Schnellzugriff anheften
+    unpin_lecture: Aus dem Schnellzugriff lösen
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
@@ -2444,6 +2450,7 @@ de:
     no_video: 'Es gibt kein Video.'
     play: 'THymE-Player'
     download: 'Video herunterladen'
+    transcribe: 'Transkribieren'
     length: 'Länge'
     resolution: 'Auflösung'
     size: 'Größe'
@@ -2869,9 +2876,13 @@ de:
       student_registration: '%-d. %B %Y, %H:%M'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
     last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
+  search:
+    mampfsearch_unavailable: 'MampfSearch ist derzeit nicht verfügbar.'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
+    toggle_subtitles: 'Untertitel ein-/ausblenden'
+    transcript: 'Transkript'
   thyme_editor:
     add_item: 'Eintrag zum Inhaltsverzeichnis hinzufügen'
     add_referral: 'Referenz hinzufügen'
@@ -3005,6 +3016,10 @@ de:
   submission:
     hub:
       page_title: "Abgaben - %{lecture}"
+      tutorial_line_html:
+        zero: "Du bist im Tutorium %{tutorial}."
+        one: "Du bist im Tutorium %{tutorial} bei %{tutor}, per E-Mail erreichbar unter %{email}."
+        other: "Du bist im Tutorium %{tutorial} bei %{tutors}."
       heading: Frühere Blätter
       heading_with_tests: Frühere Blätter und Tests
       standing:
@@ -3137,6 +3152,9 @@ de:
           Doch mit einem Team abgegeben? Mit dessen Code kommst Du noch dazu,
           solange das Team nicht bewertet ist; danach kann Dich Dein Tutor
           noch aufnehmen.
+        team_code: >
+          Fehlt jemand in Deinem Team? Mit diesem Code kommt die Person noch
+          dazu, solange das Team nicht bewertet ist:
         no_points:
           nothing_yet: Es ist noch nichts eingetragen.
           on_the_correction: >
@@ -3224,6 +3242,7 @@ de:
     optimization_failed: >
       Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
     upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    no_correction_file: Bitte wähle zuerst eine Datei aus.
     upload_failure_empty_file: >
       Die hochgeladene Datei ist leer.
       Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
@@ -3292,12 +3311,14 @@ de:
       Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    invalid_transcript: Die hochgeladene Datei ist kein gültiges WebVTT-Transkript.
+    transcript_too_many_cues: >
+      Das Transkript enthält zu viele Cues (maximal %{max_cues}).
     already_corrected: >
       Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
       kannst Du nicht mehr beitreten.
     already_rejected: >
       Diese Abgabe wurde abgelehnt, Du kannst ihr nicht mehr beitreten.
-    late: verspätete Abgabe
     rejected: abgelehnt
     bulk_download_submissions: Paketdownload der Abgaben
     bulk_download_corrections: Paketdownload der Korrekturen
@@ -3342,9 +3363,11 @@ de:
       Du bist TutorIn in dieser Veranstaltung, aber noch keinem Tutorium
       zugeordnet. Sobald Du eines übernimmst, erscheint es hier.
     tutors_missing_html: "Fehlt jemand? Im Reiter %{link} machst Du Leute zu TutorInnen: mit einem Gutschein oder über die E-Mail-Adresse ihres MaMpf-Kontos."
+    tabs:
+      label: "Ansichten der Gruppe"
+      marking: "Bewerten"
     participants:
       button: "Teilnehmende"
-      pick: "Auswählen …"
       title: "Teilnehmende"
       none: "In dieser Gruppe ist noch niemand."
       registered_title: "Angemeldet, noch nicht endgültig"
@@ -3378,12 +3401,18 @@ de:
       Eigene Tutorien
     other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
-      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Frist kann der Bewertungsprozess erfolgen und die Korrekturen können von den Tutoren hochgeladen werden.
+      Bis %{deadline} läuft noch die Abgabefrist. Paketdownload, Korrekturen
+      und Punkte gibt es erst, wenn die Abgaben feststehen, ab
+      %{friendly_deadline}.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
       sind (was jedoch zur Einstufung der entsprechenden Abgaben als
-      verspätet führt).
+      verspätet führt). Paketdownload, Korrekturen und Punkte gibt es erst
+      danach.
+    hand_ins_not_final: >
+      Bis %{time} läuft noch die Kulanzfrist. Erst danach stehen die Abgaben
+      fest.
     certificate_check: Quiz-Zertifikat validieren
     certificate_check_info: >
       Hier kannst Du Zertifikats-Codes überprüfen, die NutzerInnen nach dem
@@ -3410,6 +3439,7 @@ de:
       invalid_filenames: ungültige Dateinamen
       invalid_files: ungültige Dateien
       invalid_submission_id: ungültige Abgabe-ID
+      elsewhere: liegt bei einem anderen Tutorium
       no_decision: noch keine Entscheidung über Akzeptanz getroffen
       rejected: Korrektur bereits abgelehnt
       files_in_cache: Datei(en) erfolgreich in den Zwischenspeicher hochgeladen.
@@ -3431,6 +3461,11 @@ de:
           Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
           die zwar in das von MaMpf vorgegebene Namensschema passen, deren dort
           enthaltene Abgaben-ID aber zu keiner Abgabe passt.
+        elsewhere: >
+          Hier sind die Abgabeteams aufgelistet, deren Abgabe inzwischen ein
+          anderes Tutorium korrigiert, etwa nach einer Übergabe. Ihre
+          Korrekturen wurden nicht gespeichert. Schick sie an das genannte
+          Tutorium.
         no_decision: >
           Hier sind diejenigen Abgabeteams aufgelistet, für die eine
           Korrektur hochgeladen wurde, aber noch keine Entscheidung darüber
@@ -3560,6 +3595,12 @@ de:
       %{tutor} hat Dich in das Team von %{team} für %{assignment} in
       %{lecture} aufgenommen. Die Abgabe des Teams zählt jetzt auch für Dich,
       und ebenso die Punkte, die sie bekommt.
+    submission_removed_subject: >
+      Du bist nicht mehr im Team für %{assignment} in %{lecture}
+    submission_removed: >
+      %{tutor} hat Dich aus dem Team von %{team} für %{assignment} in
+      %{lecture} genommen. Die Abgabe des Teams zählt nicht mehr für Dich,
+      und ebenso wenig die Punkte, die sie bekommt.
     submission_leave_subject: >
       %{user} hat Abgabe zu %{assignment} in %{lecture} verlassen
     submission_leave: >
@@ -3641,6 +3682,7 @@ de:
       Emails für Abgaben-Verlassen: %{email_for_submission_leave}<br>
       Emails für Korrektur-Upload: %{email_for_correction_upload}<br>
       Emails für Abgabe-Entscheidung: %{email_for_submission_decision}<br>
+      Emails für Tutoriumswechsel: %{email_for_tutorial_change}<br>
       Name in Tutorials: %{name_in_tutorials}<br>
       Archiviert: %{archived}<br>
       Bild-Daten: %{image_data}<br>
@@ -4205,6 +4247,9 @@ de:
       created: 'Gruppe erfolgreich erstellt.'
       updated: 'Gruppe erfolgreich aktualisiert.'
       destroyed: 'Gruppe erfolgreich gelöscht.'
+      destroyed_and_notified:
+        one: 'Gruppe gelöscht; 1 Mitglied wird per Mail benachrichtigt.'
+        other: 'Gruppe gelöscht; %{count} Mitglieder werden per Mail benachrichtigt.'
       destruction_failed: 'Gruppe konnte nicht gelöscht werden.'
     talks:
       created: 'Vortrag erfolgreich erstellt.'
@@ -4216,6 +4261,9 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    media:
+      transcription_started: 'Transkription gestartet.'
+      cannot_transcribe: 'Medium kann nicht transkribiert werden.'
     no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
@@ -4273,6 +4321,12 @@ de:
                 Es muss ein Abgabetermin angegeben werden.
               in_past: >
                 Der Abgabetermin darf nicht in der Vergangenheit liegen.
+            test_week:
+              before_last_week: >
+                Die Testwoche darf höchstens eine Woche zurückliegen.
+            test_week_count:
+              ends_before_last_week: >
+                Der Test darf nicht vor letzter Woche enden.
             deletion_date:
               blank: >
                 Es muss ein Löschdatum angegeben werden.

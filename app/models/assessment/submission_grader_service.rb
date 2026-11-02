@@ -87,6 +87,7 @@ module Assessment
         participation = Participation.transaction do
           submission.lock!
           raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
+          raise_if_errors!(validate_team_open(assignment))
           raise_if_errors!(validate_member_of_group(submission, user))
           raise_if_errors!(validate_team_takes_members(submission))
           # The newcomer's own row is held from the check to the write:
@@ -94,7 +95,7 @@ module Assessment
           # check is there to keep.
           own_row = lock_own_row(assignment.assessment, user)
           raise_if_errors!(validate_unmarked_on_own(assignment.assessment, own_row))
-          UserSubmissionJoin.create!(user: user, submission: submission)
+          UserSubmissionJoin.create!(user: user, submission: submission, added_by: scorer)
           row = init_participation(assignment.assessment, user, submission.tutorial)
           # The row is the upload's now, wherever it was seeded.
           row.update!(tutorial: submission.tutorial) if row.tutorial_id != submission.tutorial_id
@@ -104,6 +105,28 @@ module Assessment
         end
         tell_of_addition(submission, user, scorer)
         participation
+      rescue ActiveRecord::RecordInvalid => e
+        raise(SubmissionGraderError, e.record.errors.full_messages.to_sentence)
+      end
+
+      # Takes somebody a tutor put on the team off it again: the join goes, and
+      # the row is left as before the addition, held by the person's own group.
+      # Who joined with the code stays, and the team stays in its tutorial,
+      # since points can only be entered after the grace period (see
+      # Submission#place_team!). The person hears of it; the team hears of a
+      # leave as it always does.
+      def remove_member!(submission, user, scorer)
+        Participation.transaction do
+          submission.lock!
+          raise_if_errors!(validate_scorer_may_enter_points(submission.tutorial, scorer))
+          raise_if_errors!(validate_team_open(submission.assignment))
+          join = submission.user_submission_joins.find_by(user: user)
+          raise_if_errors!(validate_added_by_tutor(join, user))
+          raise_if_errors!(validate_not_last_member(submission))
+          join.destroy!
+          clear_team_row!(submission.assignment.assessment, user, join.created_at)
+        end
+        tell_of_removal(submission, user, scorer)
       rescue ActiveRecord::RecordInvalid => e
         raise(SubmissionGraderError, e.record.errors.full_messages.to_sentence)
       end
@@ -137,12 +160,20 @@ module Assessment
           participation.update!(submitted_at: Time.current)
         end
 
+        # Doesn't remove the hand-in stamp of someone who has left the lecture.
+        # Without it, a row with no points would disappear from the marking table.
         def stamp_test!(participation)
           participation.task_points.reset
           started = participation.results_visible?
           return if participation.submitted_at.present? == started
+          return if !started && left_lecture?(participation)
 
           participation.update!(submitted_at: started ? Time.current : nil)
+        end
+
+        def left_lecture?(participation)
+          participation.assessment.lecture.excluded_lecture_memberships
+                       .exists?(user_id: participation.user_id)
         end
 
         def score_submission_entry!(entry, scorer, validated_scopes)
@@ -201,15 +232,67 @@ module Assessment
           end
         end
 
+        def tell_of_removal(submission, removed, tutor)
+          NotificationMailer.with(recipient: removed, locale: removed.locale,
+                                  submission: submission, user: tutor)
+                            .submission_removed_email.deliver_later
+          submission.users.email_for_submission_leave.each do |member|
+            NotificationMailer.with(recipient: member, locale: member.locale,
+                                    submission: submission, user: removed)
+                              .submission_leave_email.deliver_later
+          end
+        end
+
+        # The team's points go, and so does the hand-in stamp the addition set.
+        # A stamp from before it, a paper hand-in, was the person's own and
+        # stays; a stamped row does not follow the membership by itself, so the
+        # group the person sits in is set here.
+        def clear_team_row!(assessment, user, added_at)
+          row = lock_own_row(assessment, user)
+          return unless row
+
+          own_stamp = row.submitted_at if row.submitted_at&.before?(added_at)
+          row.task_points.destroy_all
+          row.update!(submitted_at: own_stamp, status: :pending, graded_at: nil, grader: nil,
+                      tutorial_id: Participation.tutorial_for(user, assessment.lecture))
+        end
+
+        def validate_added_by_tutor(join, user)
+          return I18n.t("assessment.errors.user_not_found") unless join
+          return if join.added_by_id?
+
+          I18n.t("assessment.task_points.not_removable", name: user.tutorial_name)
+        end
+
+        # Until points can be entered the team is the students', and a moved
+        # deadline hands it back to them; a tutor changes it only in between.
+        def validate_team_open(assignment)
+          return if assignment.grading_open?
+
+          I18n.t("assessment.task_points.team_closed")
+        end
+
+        # A team without members would be a deleted hand-in, which is not the
+        # tutor's to do.
+        def validate_not_last_member(submission)
+          return if submission.users.many?
+
+          I18n.t("assessment.task_points.last_member")
+        end
+
         def validate_member_of_group(submission, user)
-          return if submission.tutorial.members.exists?(id: user.id)
+          return if submission.member_candidates.exists?(id: user.id)
+
+          if submission.assignment.lecture.cross_tutorial_teams?
+            return I18n.t("assessment.task_points.not_in_any_group")
+          end
 
           I18n.t("assessment.task_points.not_in_group")
         end
 
-        # A rejected hand-in counts as none; nobody is put on it.
+        # A hand-in rejected as late counts as none; nobody is put on it.
         def validate_team_takes_members(submission)
-          return unless submission.accepted == false
+          return if submission.takes_members?
 
           I18n.t("assessment.task_points.team_rejected")
         end

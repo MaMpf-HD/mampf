@@ -35,11 +35,8 @@ class AchievementMarkingTableComponent < ViewComponent::Base
   end
 
   # The lecturer's table filters by group; a tutor's is one group already.
-  def tutorial_options
-    return [] if @tutorial || @lecture.tutorials.empty?
-
-    @lecture.tutorials.order(:title).map { |tutorial| [tutorial.id.to_s, tutorial.title] } +
-      [["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")]]
+  def filter_tutorials
+    @lecture.tutorials unless @tutorial
   end
 
   def summary

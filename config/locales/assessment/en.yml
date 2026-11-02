@@ -17,9 +17,16 @@ en:
       heading: 'Tests'
       homework_heading: 'Homework'
       week: 'Test week'
+      week_count: 'Duration'
+      week_count_option:
+        one: '%{count} week'
+        other: '%{count} weeks'
+      period:
+        one: 'Test week'
+        other: 'Test weeks'
       sheet_or_test: 'Sheet or test'
       title_placeholder: 'e.g. Test 1'
-      week_hint: 'Students take the test in their tutorial that week; tutors can enter points from the Monday on.'
+      week_hint: 'Students take the test in their tutorial that week; with a longer duration, the tutorials spread it over the weeks after. Tutors can enter points from the Monday of the first week. You can add an unannounced test until the end of the following week.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
     scheduled_sheet:
@@ -114,8 +121,8 @@ en:
       points_abbrev: 'pts'
       description: 'Task name'
       description_placeholder: 'e.g., Problem 1'
-      default_name: 'T%{number}'
-      description_hint: 'Columns in the points table default to T1, T2, ... – changeable via the task name when editing.'
+      default_name: 'Task %{number}'
+      description_hint: 'Without a task name, the columns in the points table are called Task 1, Task 2, … – you set the name when editing.'
       total_points: 'Total points'
       count:
         one: '1 task'
@@ -233,7 +240,7 @@ en:
       participants_filter_placeholder: 'Filter by name or matriculation number'
       no_filter_results: 'No matching students'
       add_form_label: 'Add person by email'
-      add_form_hint: 'Adds a person directly to the participants list and is not used for filtering.'
+      add_form_hint: 'Adds a person directly to the participants list and is not used for filtering. Whoever is not enrolled yet is enrolled in the lecture with it.'
       add_placeholder: 'Email address'
       add_button: 'Add'
       add_to_participants_button: 'Add to participants list'
@@ -244,9 +251,9 @@ en:
       reject_confirm: 'This registration will be rejected and removed from the active registrations list. Continue?'
       remove_tooltip: 'Remove person from the participants list'
       remove_disabled_tooltip: 'Cannot remove because grading data already exists'
-      remove_confirm: 'This person will be removed from the participants list. Continue?'
       participant_added: '%{name} has been added.'
       participant_removed: '%{name} has been removed.'
+      participant_removed_with_lecture: '%{name} has been removed from the participants list and is no longer enrolled in the lecture, as it was their last place.'
       remove_blocked: 'This person cannot be removed from the participants list because grading data already exists.'
       user_not_found: 'No user found with this email address.'
       already_registered: 'This user is already registered.'
@@ -283,18 +290,36 @@ en:
       participation_id_has_no_assignment: 'Participation %{participation_id} has no associated assignment.'
       participation_has_task_points: 'Participation already has task points entered, hence cannot be deleted.'
       not_in_group: 'Only a member of the group can be put on one of its teams.'
+      not_in_any_group: 'Only a member of one of the lecture''s tutorials can be put on a team.'
       team_rejected: 'A rejected hand-in takes nobody.'
+      team_full: 'The team is full: at most %{max} per team.'
       joined_late: 'Joined the team after the deadline, on %{time}.'
+      added_by_tutor: 'Put on the team by %{tutor}, on %{time}.'
+      late_submission: 'Late submission, uploaded on %{time}.'
       marked_on_own: >-
         %{name} is already marked for this sheet on a row of their own. Clear
         that first.
       member_added: '%{name} is on the team now.'
+      member_removed: '%{name} is no longer on the team.'
+      remove_member: 'Take somebody off this team again'
+      remove_member_hint: >-
+        For somebody put on the team by mistake. They lose the team's points
+        and get an email.
+      not_removable: '%{name} cannot be taken off this team.'
+      last_member: 'The last person on a team cannot be taken off it.'
+      team_closed: 'The team can only be changed once points can be entered.'
       add_member: 'Put somebody on this team'
       add_member_hint: 'For somebody who forgot to join. They get the points the team already has.'
+      add_member_search: 'Search by name'
+      add_member_no_match: 'Nobody by that name is without a team.'
+      add_member_search_elsewhere: 'From %{min} letters on, people from other tutorials show up too.'
+      add_member_elsewhere: 'Other tutorials'
+      add_member_elsewhere_more: 'There are more matches. Type more of the name.'
+      add_member_search_failed: 'The other tutorials could not be searched. Try again.'
       hand_over: 'Hand this team over to another tutorial'
       hand_over_hint: >-
-        The members of this team sit in different tutorials. Hand it over to
-        one of them; points and correction are then entered there.
+        Hand the team over to the tutorial of one of its members; points and
+        correction are then entered there.
       marked_elsewhere: 'Marked in %{tutorial}'
     errors:
       feature_not_available: 'Assessment feature is not available.'
@@ -324,6 +349,8 @@ en:
       max_points: 'pts'
       no_submissions: 'No submissions for this assignment.'
       no_tutorial_badge: 'No tutorial'
+      left_lecture: "Left the course"
+      left_lecture_frozen: "For someone who has left the course, hand-in and attendance stay as they were."
       paper_hand_in: 'Record a hand-in on paper or by other means'
       paper_hand_in_remove: 'Take the hand-in record back'
       paper_hand_in_kept: 'Handed in on paper or by other means; with points entered the record stays'
@@ -335,7 +362,8 @@ en:
       download_correction: 'Download correction'
       show_correction: 'View correction'
       upload_correction: 'Upload correction'
-      upload_correction_closed: 'Corrections can be uploaded once the deadline has passed'
+      upload_correction_closed: 'Corrections only after the grace period, from %{time}'
+      download_closed: 'Bulk download only after the grace period, from %{time}'
       delete_correction: 'Delete correction'
       confirm_delete_correction: 'Delete the correction? The file is gone then, the points stay.'
       accept_late: 'Accept the late hand-in'
@@ -358,6 +386,7 @@ en:
       page_size_label: 'Per page'
       pager_label: 'Pages'
       more_actions: 'More actions'
+      blank_points_hint: 'A blank field means not marked yet: the row then stays "Pending Grading" and does not count yet. For a task left unattempted, enter 0.'
       summary:
         handed_in:
           one: '1 handed in'

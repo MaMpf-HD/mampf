@@ -107,7 +107,7 @@ RSpec.describe("Dean's office", type: :request) do
       button = row(lecture.course.title).at_css("button[data-action='deans-office#toggle']")
       details = page.at_css("##{button["aria-controls"]}")
       expect(details.at_css("tbody tr:not(.deans-office-group-phase)").text.squish)
-        .to eq("Tuesday group 2")
+        .to eq("Tuesday group #{I18n.t("basics.tba")} 2")
       expect(details.at_css("[title^='Registrations']")["title"])
         .to start_with("Registrations, not in the group list yet")
     end
@@ -241,8 +241,10 @@ RSpec.describe("Dean's office", type: :request) do
         .to eq([lecture.teacher.email, assistant.email])
     end
 
-    it "shows how many each group has, and its location if given, behind a button" do
-      create(:tutorial, lecture: lecture, title: "Tuesday group", capacity: 12, location: "INF 205")
+    it "shows how many each group has, its tutors and its location if given, behind a button" do
+      tuesday = create(:tutorial, lecture: lecture, title: "Tuesday group", capacity: 12,
+                                  location: "INF 205")
+      tuesday.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
       create(:tutorial, lecture: lecture, title: "Friday group", capacity: nil, location: nil)
 
       get deans_office_path(term: term.dashboard_param)
@@ -252,7 +254,8 @@ RSpec.describe("Dean's office", type: :request) do
       expect(button["aria-expanded"]).to eq("false")
       expect(details["hidden"]).not_to be_nil
       rows = details.css("tbody tr:not(.deans-office-group-phase)").map { |tr| tr.text.squish }
-      expect(rows).to eq(["Friday group 0", "Tuesday group 0 INF 205"])
+      expect(rows).to eq(["Friday group #{I18n.t("basics.tba")} 0",
+                          "Tuesday group Ada Lovelace 0 INF 205"])
       expect(details.at_css("[role='progressbar']").ancestors("[aria-hidden='true']"))
         .to be_present
     end
@@ -382,7 +385,7 @@ RSpec.describe("Dean's office", type: :request) do
       expect(details.at_css("tr.deans-office-group-phase").text.squish)
         .to include("By preference, first choices")
       expect(details.at_css("tbody tr:not(.deans-office-group-phase)").text.squish)
-        .to eq("Tuesday group #{item.first_choice_count}")
+        .to eq("Tuesday group #{I18n.t("basics.tba")} #{item.first_choice_count}")
       expect(item.first_choice_count).to eq(2)
       expect(details.at_css("[title^='First choices']")).to be_present
       expect(cells(lecture.course.title).first).to eq("2")

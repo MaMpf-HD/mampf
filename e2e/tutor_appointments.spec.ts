@@ -25,8 +25,8 @@ test("adds a tutor by the address of their account, before any group exists",
     const dialog = page.getByRole("dialog", { name: "Edit Tutorial" });
     await expect(dialog.getByText("Somebody missing?")).toBeVisible();
     await dialog.getByRole("combobox", { name: "Tutors" }).fill(person.email);
-    await expect(dialog.getByRole("option", { name: new RegExp(person.email) }).last())
-      .toBeVisible();
+    await expect(dialog.locator(".ts-dropdown")
+      .getByRole("option", { name: new RegExp(person.email) })).toBeVisible();
 
     await page.goto(`/lectures/${lecture.id}/edit?tab=people`);
     page.once("dialog", confirmation => confirmation.accept());

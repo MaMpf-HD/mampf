@@ -29,6 +29,15 @@
     next deadline keeps the eye.
   %>
 
+  <% tutorial_line = tutorial_contact_line(@lecture) %>
+
+  <% if tutorial_line %>
+    <p class="tutorial-line" data-testid="submissions-tutorial-line">
+      <i class="bi bi-person-fill" aria-hidden="true"></i>
+      <span><%= tutorial_line %></span>
+    </p>
+  <% end %>
+
   <div class="mb-4">
     <% head, *later = @hub.open_sheets %>
 

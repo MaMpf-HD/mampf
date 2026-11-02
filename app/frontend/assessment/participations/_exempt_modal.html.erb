@@ -9,7 +9,7 @@
   data-controller="exempt-modal"
   data-action="participation-row:exempt-open@window->exempt-modal#open"
 >
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <%= form_with url: "#", method: :patch,
                     data: { exempt_modal_target: "form", action: "submit->exempt-modal#submit" } do |f| %>

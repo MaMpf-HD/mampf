@@ -258,6 +258,23 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
         expect(test.reload.deadline).to be_within(1.second).of(monday.end_of_week.end_of_day)
       end
+
+      it "makes a test longer without moving its first week" do
+        test = create(:valid_assignment, lecture: lecture, kind: :test,
+                                         deadline: 1.week.from_now)
+        monday = test.test_week
+
+        patch assessment_assessment_path(test.assessment.id),
+              params: {
+                assessment_assessment: {
+                  assessable_attributes: { id: test.id, test_week: monday.iso8601,
+                                           test_week_count: "3" }
+                }
+              },
+              as: :turbo_stream
+
+        expect(test.reload.test_period).to eq(monday..(monday + 20))
+      end
     end
 
     context "with invalid parameters" do
@@ -377,7 +394,10 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
         before { lecture.update!(assignments_complete: true) }
 
-        it "asks before reopening the list" do
+        it "asks before reopening the list, counting nobody who has left" do
+          former = create(:confirmed_user)
+          create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+          create(:student_performance_certification, :passed, lecture: lecture, user: former)
           # Creating an assignment clears `assignments_complete`, so it is
           # set again here.
           create(:valid_assignment, lecture: lecture)

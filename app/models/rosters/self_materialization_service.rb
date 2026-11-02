@@ -5,6 +5,7 @@ module Rosters
     class SelfAddNotAllowedError < StandardError; end
     class SelfRemoveNotAllowedError < StandardError; end
     class LectureHasOtherRosterEntryError < StandardError; end
+    class LastGroupHeldError < StandardError; end
 
     def initialize(rosterable, user)
       @rosterable = rosterable
@@ -15,13 +16,23 @@ module Rosters
       ensure_rosterable_unlocked!
       ensure_rosterable_not_full!
       ensure_rosterable_allow_self_add!
-      Rosters::MaintenanceService.new.add_user!(@user, @rosterable, force: false)
+      Rosters::MaintenanceService.new.add_user!(@user, @rosterable, ignore_capacity: false)
     end
 
+    # Leaving their last group with enrollment ends a student's enrollment;
+    # lists, registrations and the bookmark stay, and no mail goes out. Locks
+    # the group, then the lecture, before asking whether a result or an exam
+    # registration past its deadline keeps the student in that group.
     def self_remove!
-      ensure_rosterable_unlocked!
-      ensure_rosterable_allow_self_remove!
-      Rosters::MaintenanceService.new.remove_user!(@user, @rosterable)
+      ActiveRecord::Base.transaction do
+        lecture = @rosterable.lecture
+        @rosterable.lock!
+        lecture&.lock!
+        ensure_rosterable_unlocked!
+        ensure_rosterable_allow_self_remove!
+        ensure_not_held_in_last_group!
+        Rosters::MaintenanceService.new.remove_user!(@user, @rosterable, by: @user, notify: false)
+      end
     end
 
     # Leaves `from` for this rosterable in one step, so the old place is kept
@@ -37,11 +48,21 @@ module Rosters
         raise(RosterLockedError) if from.locked?
         raise(SelfRemoveNotAllowedError) unless from.allow_self_remove?(@user)
 
-        Rosters::MaintenanceService.new.move_user!(@user, from, @rosterable, force: false)
+        Rosters::MaintenanceService.new.move_user!(@user, from, @rosterable, ignore_capacity: false)
       end
     end
 
     private
+
+      def ensure_not_held_in_last_group!
+        lecture = @rosterable.lecture
+        return unless lecture
+
+        leave = Rosters::LectureLeave.new(lecture, @user)
+        return unless leave.only_place?(@rosterable)
+
+        raise(LastGroupHeldError) if leave.last_place_blockers.any?
+      end
 
       def ensure_rosterable_unlocked!
         raise(RosterLockedError) if @rosterable.locked?

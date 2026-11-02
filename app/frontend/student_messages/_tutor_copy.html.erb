@@ -1,0 +1,19 @@
+<%#
+  The tutors a staff message is copied to, redrawn with the count of the
+  recipients. A few are named; more are counted, with the names on hover.
+%>
+<%# locals: (tutors:) %>
+<% names = tutors.map(&:tutorial_name) %>
+
+<label
+  class="form-check-label"
+  for="student-message-copy-tutors"
+  id="student-message-tutor-copy"
+  title="<%= names.join(", ") if names.size > 3 %>"
+>
+  <%= t("student_message.copy_tutors") %>
+
+  <span class="text-muted">
+    (<%= names.size.between?(1, 3) ? "#{names.size}: #{names.to_sentence}" : names.size %>)
+  </span>
+</label>

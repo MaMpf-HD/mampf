@@ -22,23 +22,14 @@ RSpec.describe(TutorialsHelper, type: :helper) do
   end
 
   describe "#tutorials_for_dropdown" do
-    let(:lecture) { instance_double("Lecture") }
-    let(:user) { instance_double("User") }
-    let(:tutorial1) { instance_double("Tutorial") }
-    let(:tutorial2) { instance_double("Tutorial") }
-    let(:tutorial3) { instance_double("Tutorial") }
+    let(:lecture) { create(:lecture) }
+    let(:user) { create(:confirmed_user) }
+    let!(:tutorial1) { create(:tutorial, lecture: lecture, title: "Group 1") }
+    let!(:tutorial2) { create(:tutorial, lecture: lecture, title: "Group 2") }
+    let!(:tutorial3) { create(:tutorial, lecture: lecture, title: "Group 3") }
     let(:current_tutorial) { tutorial1 }
 
-    before do
-      allow(lecture).to receive(:tutorials).and_return([tutorial1, tutorial2, tutorial3])
-      allow(lecture).to receive(:tutors).and_return([])
-    end
-
     context "when user is not a tutor of the lecture" do
-      before do
-        allow(user).to receive(:in?).with(lecture.tutors).and_return(false)
-      end
-
       it "returns all tutorials except current" do
         result = helper.tutorials_for_dropdown(user, lecture, current_tutorial)
         expect(result).to eq({ "All tutorials" => [tutorial2, tutorial3] })
@@ -47,9 +38,8 @@ RSpec.describe(TutorialsHelper, type: :helper) do
 
     context "when user is editor or teacher" do
       before do
-        allow(user).to receive(:in?).with(lecture.tutors).and_return(true)
-        allow(user).to receive(:editor_or_teacher_in?).with(lecture).and_return(true)
-        allow(user).to receive(:tutorials).with(lecture).and_return([tutorial1, tutorial2])
+        create(:editable_user_join, user: user, editable: lecture)
+        [tutorial1, tutorial2].each { |tutorial| tutorial.add_tutor(user) }
       end
 
       it "returns own and other tutorials excluding current" do
@@ -61,7 +51,7 @@ RSpec.describe(TutorialsHelper, type: :helper) do
       end
 
       it "drops empty groups" do
-        allow(lecture).to receive(:tutorials).and_return([tutorial1, tutorial2])
+        tutorial3.add_tutor(user)
         result = helper.tutorials_for_dropdown(user, lecture, current_tutorial)
         expect(result.key?("Other tutorials")).to be(false)
       end
@@ -69,15 +59,29 @@ RSpec.describe(TutorialsHelper, type: :helper) do
 
     context "when user is a plain tutor" do
       before do
-        allow(user).to receive(:in?).with(lecture.tutors).and_return(true)
-        allow(user).to receive(:editor_or_teacher_in?).with(lecture).and_return(false)
-        allow(user).to receive(:tutorials).with(lecture).and_return([tutorial1, tutorial2])
+        [tutorial1, tutorial2].each { |tutorial| tutorial.add_tutor(user) }
       end
 
       it "returns only own tutorials excluding current" do
         result = helper.tutorials_for_dropdown(user, lecture, current_tutorial)
         expect(result).to eq({ "Your tutorials" => [tutorial2] })
       end
+    end
+  end
+
+  describe "#tutorial_option_label" do
+    let(:user) { create(:confirmed_user) }
+    let(:tutor) { create(:confirmed_user, first_name: "Ada", last_name: "Lovelace") }
+    let(:tutorial) { create(:tutorial, title: "Group 1") }
+
+    it "names another group's tutors" do
+      tutorial.add_tutor(tutor)
+      expect(helper.tutorial_option_label(tutorial, user)).to eq("Group 1 (Ada Lovelace)")
+    end
+
+    it "leaves the viewer's own group by its title" do
+      tutorial.add_tutor(user)
+      expect(helper.tutorial_option_label(tutorial, user)).to eq("Group 1")
     end
   end
 end

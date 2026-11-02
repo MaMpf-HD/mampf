@@ -285,7 +285,13 @@ class SubmissionsController < ApplicationController
 
   # With the refused file still assigned, the row would show it as saved;
   # the reload drops it.
+  # Saved without a file, the form posts an empty string that the attacher
+  # ignores: the row would keep what it had and the team be told again.
   def add_correction
+    if correction_params[:correction].blank?
+      return render_correction_edit([t("submission.no_correction_file")])
+    end
+
     @submission.assign_attributes(correction_params)
     errors = @submission.check_file_properties_any(@submission.correction&.metadata,
                                                    :correction)[:correction]
@@ -296,9 +302,7 @@ class SubmissionsController < ApplicationController
 
     errors = @submission.errors.map(&:message) if errors.blank?
     @submission.reload
-    render partial: "submissions/correction_edit_wrap",
-           locals: { submission: @submission, errors: errors },
-           status: :unprocessable_content
+    render_correction_edit(errors)
   end
 
   def delete_correction
@@ -338,7 +342,7 @@ class SubmissionsController < ApplicationController
     end
 
     grading_scope = grading_table(@tutorial, @lecture)
-    flash.now[:notice] = t("submission.handed_over", tutorial: target.title)
+    flash.now[:notice] = t("submission.handed_over", tutorial: target.title_with_tutors)
     table = TutorialMarkingTableComponent.new(assignment: @assignment,
                                               grading_scope: grading_scope)
     render turbo_stream: [turbo_stream.replace("marking-table", html: render_to_string(table)),
@@ -346,6 +350,12 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+    def render_correction_edit(errors)
+      render partial: "submissions/correction_edit_wrap",
+             locals: { submission: @submission, errors: errors },
+             status: :unprocessable_content
+    end
 
     # A write on a submission waits for a hand-over of it and is then asked
     # again against the tutorial it has now.

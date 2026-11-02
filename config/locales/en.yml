@@ -129,8 +129,11 @@ en:
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
-      You have not yet added any lectures as favorites.
+      You haven't pinned any lectures yet.
+      Open a lecture to pin it here.
     quick_access: 'Quick Access'
+    pin_lecture: 'Pin %{title}'
+    unpin_lecture: 'Unpin %{title}'
   info: 'Info'
   admin:
     navbar:
@@ -1946,6 +1949,8 @@ en:
       new event series or courses
     email_for_news:
       news about MaMpf
+    email_for_tutorial_change:
+      participants switching into or out of my tutorials
     update: 'Update profile'
     success: 'Profil was updated successfully.'
     please_update: >
@@ -2013,9 +2018,10 @@ en:
     email_notifications_header: E-Mail Notifications
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments
+    tutorials: Tutorials
     miscellaneous: Miscellaneous
-    star_lecture: Add Lecture to Fast Access
-    unstar_lecture: Remove Lecture from Fast Access
+    pin_lecture: Pin to Quick Access
+    unpin_lecture: Unpin from Quick Access
     media_search: Media Search
     my_data: What data is stored about me?
     data_explanation: >
@@ -2257,6 +2263,7 @@ en:
     no_video: 'There is no video.'
     play: 'THymE Player'
     download: 'download video'
+    transcribe: 'Transcribe'
     length: 'Length'
     resolution: 'Resolution'
     size: 'Size'
@@ -2663,9 +2670,13 @@ en:
       student_registration: '%B %-d, %Y, %H:%M'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
     last_updated: 'Last updated %{time_ago} ago'
+  search:
+    mampfsearch_unavailable: 'MampfSearch is currently unavailable.'
   thyme:
     back: 'back'
     back_to: 'back to '
+    toggle_subtitles: 'Toggle subtitles'
+    transcript: 'Transcript'
   thyme_editor:
     add_item: 'Add Item to Table of Contents'
     add_referral: 'Add Reference'
@@ -2792,6 +2803,10 @@ en:
   submission:
     hub:
       page_title: "Submissions - %{lecture}"
+      tutorial_line_html:
+        zero: "You are in the tutorial %{tutorial}."
+        one: "You are in the tutorial %{tutorial} with %{tutor}, reachable by email at %{email}."
+        other: "You are in the tutorial %{tutorial} with %{tutors}."
       heading: Earlier sheets
       heading_with_tests: Earlier sheets and tests
       standing:
@@ -2922,6 +2937,9 @@ en:
         join_late: >
           Handed in with a team after all? Its code still gets you on it, until
           the team has been marked; after that your tutor can still add you.
+        team_code: >
+          Somebody missing from your team? With this code they still get on it,
+          until the team has been marked:
         no_points:
           nothing_yet: Nothing has been entered yet.
           on_the_correction: >
@@ -3011,6 +3029,7 @@ en:
     optimization_failed: >
       Optimization failed: File is still to big.
     upload_failure: "Error while uploading! Please try again."
+    no_correction_file: Please choose a file first.
     upload_failure_empty_file: >
       The uploaded file is empty.
       Please make sure that the file is not corrupted.
@@ -3079,12 +3098,14 @@ en:
       %{accepted_mime_types}.
     correction_size_too_big: >
       The uploaded file is too big. Maximum file size is 15 MB.
+    invalid_transcript: The uploaded file is not a valid WebVTT transcript.
+    transcript_too_many_cues: >
+      The transcript contains too many cues (maximum is %{max_cues}).
     already_corrected: >
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
     already_rejected: >
       This submission was rejected, so it can no longer be joined.
-    late: late submission
     rejected: rejected
     bulk_download_submissions: Bulk download of submissions
     bulk_download_corrections: Bulk download of corrections
@@ -3129,9 +3150,11 @@ en:
       You are a tutor in this lecture, but not on a tutorial yet. Once you are
       given one, it shows here.
     tutors_missing_html: "Somebody missing? On the %{link} tab you make people tutors: with a voucher, or by the email address of their MaMpf account."
+    tabs:
+      label: "Views of the group"
+      marking: "Marking"
     participants:
       button: "Participants"
-      pick: "Choose …"
       title: "Participants"
       none: "Nobody is in this group yet."
       registered_title: "Registered, not final yet"
@@ -3165,11 +3188,16 @@ en:
       Own Tutorials
     other_tutorials: 'Other Tutorials'
     deadline_warning: >
-      The deadline for submission is still %{deadline}. Only after the deadline, the grading process can take place and the corrections can be uploaded by the tutors.
+      The deadline for submission is still %{deadline}. Bulk download,
+      corrections and points open once the hand-ins are final, from
+      %{friendly_deadline}.
     grace_period_warning: >
       The grace period lasts until %{friendly_deadline}. Within the grace
-      period, submisions and retrospective changes by the students are possible
-      (the corresponding submissions will be marked as late.)
+      period, submissions and retrospective changes by the students are possible
+      (the corresponding submissions will be marked as late.) Bulk download,
+      corrections and points open after it.
+    hand_ins_not_final: >
+      The grace period runs until %{time}. Only then are the hand-ins final.
     certificate_check: >
       Validate Quiz Certificate
     certificate_check_info: >
@@ -3195,7 +3223,8 @@ en:
       successfully_saved: Number of successfully saved corrections
       invalid_filenames: invalid filenames
       invalid_files: invalid files
-      invalid_submission_id: invalid submision id
+      invalid_submission_id: invalid submission id
+      elsewhere: with another tutorial
       no_decision: no decision abou acceptance yet
       rejected: correction already rejected
       files_in_cache: file(s) successfully uploaded to temporary storage
@@ -3216,6 +3245,10 @@ en:
           This is the list of all uploaded files that fit into
           the naming schem provided by MaMpf, but whose submission ids do not
           match any submissions.
+        elsewhere: >
+          These are the teams whose hand-in another tutorial corrects now, for
+          example after a hand-over. Their corrections were not saved. Send
+          them to the tutorial named.
         no_decision: >
           This is the list of submission teams for which you uploaded a
           correction but have not yet made a decision on whether to accept the
@@ -3335,6 +3368,12 @@ en:
       %{tutor} has put you on the team of %{team} for %{assignment} in
       %{lecture}. Their hand-in counts for you now, and so do the points it
       gets.
+    submission_removed_subject: >
+      You are no longer on the team for %{assignment} in %{lecture}
+    submission_removed: >
+      %{tutor} has taken you off the team of %{team} for %{assignment} in
+      %{lecture}. Their hand-in no longer counts for you, and neither do the
+      points it gets.
     submission_leave_subject: >
       %{user} has left the submission for %{assignment} in %{lecture}
     submission_leave: >
@@ -3417,6 +3456,7 @@ en:
       Emails for submission leave: %{email_for_submission_leave}<br>
       Emails for correction upload: %{email_for_correction_upload}<br>
       Emails for submission decision: %{email_for_submission_decision}<br>
+      Emails for tutorial change: %{email_for_tutorial_change}<br>
       Name in tutorials: %{name_in_tutorials}<br>
       Archived: %{archived}<br>
       Image data: %{image_data}<br>
@@ -3979,6 +4019,9 @@ en:
       created: 'Group successfully created.'
       updated: 'Group successfully updated.'
       destroyed: 'Group successfully deleted.'
+      destroyed_and_notified:
+        one: 'Group deleted; 1 member is notified by email.'
+        other: 'Group deleted; %{count} members are notified by email.'
       destruction_failed: 'Group could not be deleted.'
     talks:
       created: 'Talk successfully created.'
@@ -3989,6 +4032,9 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+    media:
+      transcription_started: 'Transcription started.'
+      cannot_transcribe: 'Medium cannot be transcribed.'
     no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
@@ -4041,6 +4087,10 @@ en:
             deadline:
               blank: You need to give a due date.
               in_past: Due date can't be in the past.
+            test_week:
+              before_last_week: The test week can't be earlier than last week.
+            test_week_count:
+              ends_before_last_week: The test can't end before last week.
             deletion_date:
               blank: You need to give a deletion date.
               in_past: Deletion date can't lie in the past.

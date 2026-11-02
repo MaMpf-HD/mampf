@@ -206,6 +206,7 @@ RSpec.describe("Exams registration", type: :request) do
     end
 
     it "adds a rejected registration to the participants list by user id" do
+      exam.lecture.add_user_to_roster!(student)
       registration = create(
         :registration_user_registration,
         :rejected,
@@ -231,6 +232,7 @@ RSpec.describe("Exams registration", type: :request) do
     end
 
     it "reinstates an excluded participant by user id" do
+      exam.lecture.add_user_to_roster!(student)
       roster_entry = create(:exam_roster_entry,
                             exam: exam,
                             user: student,

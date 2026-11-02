@@ -1132,6 +1132,27 @@ RSpec.describe(Registration::Campaign, type: :model) do
         expect(campaign.unassigned_users).not_to include(other_user)
       end
 
+      context "when a registered user left a lecture" do
+        let(:membership) do
+          create(:lecture_membership, lecture: lecture, user: unassigned_user)
+        end
+
+        it "leaves out whoever left this lecture after registering" do
+          membership.exclude!
+          expect(campaign.unassigned_users).not_to include(unassigned_user)
+        end
+
+        it "lists whoever registered again after leaving" do
+          membership.update!(excluded_at: 1.day.ago)
+          expect(campaign.unassigned_users).to include(unassigned_user)
+        end
+
+        it "lists whoever left another lecture" do
+          create(:lecture_membership, user: unassigned_user).exclude!
+          expect(campaign.unassigned_users).to include(unassigned_user)
+        end
+      end
+
       context "with multiple tutorials in the lecture" do
         let(:other_tutorial) { create(:tutorial, lecture: lecture) }
         let(:user_assigned_elsewhere) { create(:user) }

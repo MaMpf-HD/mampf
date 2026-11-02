@@ -2,6 +2,7 @@ import { test as base, Page } from "@playwright/test";
 import { User, userPage } from "./auth";
 import { callBackend } from "./backend";
 import { FactoryBot } from "./factorybot";
+import { appOrigin } from "./servers";
 import { TimeCop } from "./timecop";
 
 class UserFixture {
@@ -28,6 +29,13 @@ type MaMpfFixtures = {
 
 export * from "@playwright/test";
 export const test = base.extend<MaMpfFixtures>({
+  // Each worker talks to its own app server (and thus its own database).
+  // `parallelIndex` stays the same when a worker restarts after a failure.
+  // eslint-disable-next-line no-empty-pattern
+  baseURL: async ({}, use, testInfo) => {
+    await use(appOrigin(testInfo.parallelIndex));
+  },
+
   // https://playwright.dev/docs/test-fixtures#adding-global-beforeeachaftereach-hooks
   _forEachTest: [
     async ({ request }, use) => {

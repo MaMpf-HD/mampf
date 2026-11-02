@@ -2,7 +2,11 @@ require "rails_helper"
 
 RSpec.describe(AssessmentHelper, type: :helper) do
   let(:lecture) { create(:lecture) }
-  let(:tutorial1) { create(:tutorial, lecture: lecture, title: "Tutorial 1") }
+  let(:tutorial1) do
+    create(:tutorial, lecture: lecture, title: "Tutorial 1").tap do |tutorial|
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+    end
+  end
   let(:tutorial2) { create(:tutorial, lecture: lecture, title: "Tutorial 2") }
 
   let(:student) { create(:confirmed_user) }
@@ -35,8 +39,8 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         expect(result[student.id]).to include(
           participated_tutorial_id: tutorial1.id,
           new_tutorial_id: tutorial2.id,
-          participated_tutorial_title: "Tutorial 1",
-          new_tutorial_title: "Tutorial 2"
+          participated_tutorial_title: "Tutorial 1 (Ada Lovelace)",
+          new_tutorial_title: "Tutorial 2 (#{I18n.t("basics.tba")})"
         )
       end
     end
@@ -64,7 +68,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
           participated_tutorial_id: nil,
           new_tutorial_id: tutorial2.id,
           participated_tutorial_title: nil,
-          new_tutorial_title: "Tutorial 2"
+          new_tutorial_title: "Tutorial 2 (#{I18n.t("basics.tba")})"
         )
       end
     end
@@ -83,7 +87,7 @@ RSpec.describe(AssessmentHelper, type: :helper) do
         expect(result[student.id]).to include(
           participated_tutorial_id: tutorial1.id,
           new_tutorial_id: nil,
-          participated_tutorial_title: "Tutorial 1",
+          participated_tutorial_title: "Tutorial 1 (Ada Lovelace)",
           new_tutorial_title: nil
         )
       end

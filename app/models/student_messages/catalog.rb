@@ -76,8 +76,8 @@ module StudentMessages
 
     private
 
-      def audience(key, label, heading, users, count: nil)
-        Audience.new(key: key, label: label, heading: heading, users: users, count: count)
+      def audience(key, label, heading, users, **)
+        Audience.new(key: key, label: label, heading: heading, users: users, **)
       end
 
       # Outside the staff, only a tutorial's own tutors may write on it - the
@@ -85,7 +85,7 @@ module StudentMessages
       # read directly rather than asking every tutorial of the lecture.
       def tutorials
         groups = if staff?
-          @lecture.tutorials.to_a
+          @lecture.tutorials.includes(:tutors).to_a
         else
           @sender.given_tutorials.where(lecture: @lecture).to_a
         end
@@ -93,8 +93,22 @@ module StudentMessages
                                    .group(:tutorial_id).distinct.count(:user_id)
         groups.map do |tutorial|
           audience("tutorial:#{tutorial.id}", tutorial.title, :tutorials, tutorial.members,
-                   count: counts.fetch(tutorial.id, 0))
+                   count: counts.fetch(tutorial.id, 0), detail: tutors_detail(tutorial))
         end
+      end
+
+      def preload_tutors(registerables)
+        ActiveRecord::Associations::Preloader.new(records: registerables.grep(Tutorial),
+                                                  associations: :tutors).call
+      end
+
+      # Names a tutorial's tutors for staff, who choose among all of the
+      # lecture's tutorials; one the sender tutors stays by its title.
+      def tutors_detail(group)
+        return unless staff? && group.is_a?(Tutorial)
+        return if @sender.in?(group.tutors)
+
+        group.tutor_names || I18n.t("basics.tba")
       end
 
       def talks
@@ -182,10 +196,12 @@ module StudentMessages
                            :registrations, registrants(campaign.user_registrations),
                            count: registered_counts.fetch(campaign.id, 0))
           if items.many?
+            preload_tutors(items.map(&:registerable))
             items.each do |item|
               list << audience("item:#{item.id}", "#{name}: #{group_title(item.registerable)}",
                                :registrations, registrants(item.user_registrations),
-                               count: item_counts.fetch(item.id, 0))
+                               count: item_counts.fetch(item.id, 0),
+                               detail: tutors_detail(item.registerable))
             end
           end
         end

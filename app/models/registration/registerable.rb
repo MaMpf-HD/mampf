@@ -24,6 +24,13 @@ module Registration
       end
     end
 
+    # Registrations per status. A completed campaign leaves them on the
+    # group, and deleting the group deletes them.
+    def registration_counts_by_status
+      Registration::UserRegistration.where(registration_item_id: registration_items.select(:id))
+                                    .group(:status).count
+    end
+
     # Models including this concern must:
     # - Have a `capacity` integer column (nullable: nil = infinite capacity)
     # - Have a `skip_campaigns` boolean column (default: false, allows manual-only management)

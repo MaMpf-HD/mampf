@@ -64,6 +64,35 @@ RSpec.describe(Assessment::Task, type: :model) do
     end
   end
 
+  describe "#label" do
+    let(:assessment) { FactoryBot.create(:assessment, requires_points: true) }
+
+    # Two of four problems are marked, entered as the sheet numbers them.
+    it "is the name the lecturer gave, not the position" do
+      FactoryBot.create(:assessment_task, assessment: assessment, description: "Aufgabe 2")
+      third = FactoryBot.create(:assessment_task, assessment: assessment,
+                                                  description: "Aufgabe 3")
+
+      expect(third.position).to eq(2)
+      expect(third.label).to eq("Aufgabe 3")
+    end
+
+    it "keeps a name entered on two lines on one" do
+      task = FactoryBot.create(:assessment_task, assessment: assessment,
+                                                 description: "Induction\n  over n ")
+
+      expect(task.label).to eq("Induction over n")
+    end
+
+    it "is the task's number when it has no name" do
+      FactoryBot.create(:assessment_task, assessment: assessment)
+      task = FactoryBot.create(:assessment_task, assessment: assessment, description: " ")
+
+      expect(I18n.with_locale(:en) { task.label }).to eq("Task 2")
+      expect(I18n.with_locale(:de) { task.label }).to eq("Aufgabe 2")
+    end
+  end
+
   describe "#points_entered?" do
     let(:assessment) { FactoryBot.create(:assessment, :gradable, requires_points: true) }
     let(:task) { FactoryBot.create(:assessment_task, assessment: assessment) }

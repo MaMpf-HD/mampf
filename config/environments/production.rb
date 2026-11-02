@@ -120,6 +120,4 @@ Rails.application.configure do
   config.hosts = [ENV.fetch("URL_HOST")]
   # Skip host authorization for the health/readiness probes (reached with a non-domain Host).
   config.host_authorization = { exclude: ->(request) { ["/up", "/ready"].include?(request.path) } }
-
-  Rails.application.config.active_support.to_time_preserves_timezone = :offset
 end

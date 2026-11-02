@@ -76,18 +76,18 @@
                       <span class="text-muted me-1">1.</span>
                     <% end %>
 
-                    <%= first&.title %>
+                    <%= component.helpers.roster_group_link(first.registerable, label: first.title) if first %>
                   </div>
 
                   <% if more.any? %>
                     <div id="<%= more_id %>" class="collapse">
                       <% more.each.with_index(2) do |item, rank| %>
-                        <div>
+                        <div class="mt-1">
                           <% if ranked %>
                             <span class="text-muted me-1"><%= rank %>.</span>
                           <% end %>
 
-                          <%= item.title %>
+                          <%= component.helpers.roster_group_link(item.registerable, label: item.title) %>
                         </div>
                       <% end %>
                     </div>

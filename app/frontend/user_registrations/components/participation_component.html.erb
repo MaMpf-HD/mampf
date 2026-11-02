@@ -41,4 +41,10 @@
       </div>
     <% end %>
   </div>
+
+  <%= render leave_dialog %>
+
+  <% leave_group_dialogs.each do |dialog| %>
+    <%= render dialog %>
+  <% end %>
 </section>

@@ -6,7 +6,8 @@ module Registration
     helper ::UserRegistrationsHelper,
            ItemsHelper, CampaignsHelper
     before_action :set_campaign,
-                  only: [:create, :destroy, :switch, :reject_for_user, :save_preferences]
+                  only: [:create, :destroy, :switch, :reject_for_user, :save_preferences,
+                         :withdraw_preferences]
     before_action :set_item, only: [:create, :destroy, :switch]
     before_action :require_personal_data, only: [:create, :switch, :save_preferences]
 
@@ -78,6 +79,17 @@ module Registration
       respond_to_student_registration(
         result,
         I18n.t("registration.user_registration.messages.preferences_saved")
+      )
+    end
+
+    def withdraw_preferences
+      authorize! :destroy, @campaign.campaignable
+
+      result = ::UserRegistrations::LecturePreferenceEditService
+               .new(@campaign, current_user).withdraw!
+      respond_to_student_registration(
+        result,
+        I18n.t("registration.user_registration.messages.preferences_withdrawn")
       )
     end
 

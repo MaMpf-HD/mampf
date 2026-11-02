@@ -28,10 +28,10 @@ module AssessmentHelper
 
   def calculate_user_movement_map_assignment(assignment, lecture)
     participations = assignment.assessment&.assessment_participations
-                               &.includes(:tutorial)&.to_a
+                               &.includes(tutorial: :tutors)&.to_a
     return {} if participations.nil?
 
-    current_tutorials = lecture.tutorials.includes(:tutorial_memberships)
+    current_tutorials = lecture.tutorials.includes(:tutorial_memberships, :tutors)
                                .each_with_object({}) do |tutorial, map|
       tutorial.tutorial_memberships.each { |m| map[m.user_id] = tutorial }
     end
@@ -47,8 +47,8 @@ module AssessmentHelper
         participated_tutorial_id: participated_tutorial&.id,
         new_tutorial_id: current_tutorial&.id,
         submitted_at: participation&.submitted_at,
-        participated_tutorial_title: participated_tutorial&.title,
-        new_tutorial_title: current_tutorial&.title
+        participated_tutorial_title: participated_tutorial&.title_with_tutors,
+        new_tutorial_title: current_tutorial&.title_with_tutors
       }
     end
   end

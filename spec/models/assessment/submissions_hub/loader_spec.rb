@@ -404,6 +404,43 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  # A closed sheet has no card, so its row is where the team reads the code
+  # for whoever has not joined yet.
+  describe "the team's code on a closed sheet" do
+    it "is there while nothing came back" do
+      assignment = create_assignment(deadline: 1.week.ago)
+      participate(assignment, submitted_at: 8.days.ago)
+      submission = hand_in(assignment, handed_in_at: 8.days.ago)
+
+      expect(sheet_for(assignment).late_join_code).to eq(submission.token)
+    end
+
+    # The join counts a reviewed row as marked, points or not.
+    it "is gone once the reader's row is reviewed with nothing entered" do
+      assignment = create_assignment(deadline: 1.week.ago)
+      mark(assignment, [nil, nil])
+      hand_in(assignment, handed_in_at: 8.days.ago)
+
+      expect(sheet_for(assignment).late_join_code).to be_nil
+    end
+
+    it "is gone once a correction is there" do
+      assignment = create_assignment(deadline: 1.week.ago)
+      participate(assignment, submitted_at: 8.days.ago)
+      hand_in(assignment, correction: true, handed_in_at: 8.days.ago)
+
+      expect(sheet_for(assignment).late_join_code).to be_nil
+    end
+
+    it "is left to the card while the sheet is open" do
+      assignment = create_assignment
+      participate(assignment, submitted_at: 1.day.ago)
+      hand_in(assignment)
+
+      expect(sheet_for(assignment).late_join_code).to be_nil
+    end
+  end
+
   describe "who marked a sheet and when" do
     let(:assignment) { create_assignment(deadline: 1.week.ago) }
 

@@ -63,6 +63,14 @@ RSpec.describe(RosterHelper, type: :helper) do
       )
     end
 
+    it "points an exam list to the lecture's exams tab" do
+      exam = create(:exam, :without_campaign, lecture: lecture, title: "Final")
+      link = Nokogiri::HTML.fragment(helper.roster_group_link(exam)).at_css("a")
+
+      expect(link.text).to eq("Final")
+      expect(link["href"]).to eq(edit_lecture_path(lecture, tab: "exams"))
+    end
+
     it "opens a cohort's roster on the lecture it belongs to" do
       link = Nokogiri::HTML.fragment(helper.roster_group_link(cohort)).at_css("a")
 

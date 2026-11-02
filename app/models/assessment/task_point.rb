@@ -28,14 +28,13 @@ module Assessment
         errors.add(:base, :early_grading_not_allowed)
       end
 
+      # A row without any task point left has no total: a 0 there would count
+      # as grading data (Participation.with_grading_data) for nothing marked.
       def refresh_participation_points_total
         return unless assessment_participation_id
 
-        sum = self.class
-                  .where(
-                    assessment_participation_id: assessment_participation_id
-                  )
-                  .sum(:points)
+        points = self.class.where(assessment_participation_id: assessment_participation_id)
+        sum = points.exists? ? points.sum(:points) : nil
         # points_total mirrors committed task points and must stay in sync
         # rubocop:disable Rails/SkipsModelValidations
         ::Assessment::Participation

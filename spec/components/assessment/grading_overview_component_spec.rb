@@ -20,7 +20,7 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
     create(:tutorial_membership, tutorial: tutorial2, user: user3)
   end
   def stats_for(title)
-    component.tutorial_stats.find { |stat| stat.name == title }
+    component.tutorial_stats.find { |stat| stat.tutorial.title == title }
   end
 
   describe "#requires_submission?" do
@@ -170,12 +170,12 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
       stats = component.tutorial_stats
       expect(stats.size).to eq(2)
 
-      stat1 = stats.find { |s| s.name == "Tutorial A" }
+      stat1 = stats.find { |s| s.tutorial.title == "Tutorial A" }
       expect(stat1.total).to eq(2)
       expect(stat1.submitted).to eq(0)
       expect(stat1.missing).to eq(2)
 
-      stat2 = stats.find { |s| s.name == "Tutorial B" }
+      stat2 = stats.find { |s| s.tutorial.title == "Tutorial B" }
       expect(stat2.total).to eq(1)
       expect(stat2.submitted).to eq(0)
       expect(stat2.missing).to eq(1)
@@ -187,7 +187,7 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
                                         submitted_at: 1.day.ago)
 
       stats = component.tutorial_stats
-      stat1 = stats.find { |s| s.name == "Tutorial A" }
+      stat1 = stats.find { |s| s.tutorial.title == "Tutorial A" }
 
       expect(stat1.total).to eq(2)
       expect(stat1.submitted).to eq(1)
@@ -258,8 +258,9 @@ RSpec.describe(GradingOverviewComponent, type: :component) do
       expect(stat.progress_percentage).to eq(30)
     end
 
-    it "returns tutorial title as name" do
-      expect(stat.name).to eq("Tutorial A")
+    it "names the tutorial with its tutors" do
+      tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
+      expect(stat.name).to eq("Tutorial A (Ada Lovelace)")
     end
   end
 

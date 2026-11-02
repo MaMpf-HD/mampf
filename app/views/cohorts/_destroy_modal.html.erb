@@ -1,0 +1,71 @@
+<% members_count = cohort.members.count %>
+<% leaving_count = cohort.member_ids_leaving_the_lecture.size %>
+<% without_group_count = cohort.members_without_other_group.count %>
+<% registrations = cohort.registration_counts_by_status %>
+
+<div
+  class="modal fade"
+  id="cohortDestroyModal"
+  tabindex="-1"
+  aria-labelledby="cohortDestroyModalLabel"
+  aria-hidden="true"
+  data-controller="modal"
+  data-modal-show-on-connect-value="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <%= form_with url: roster_delete_group_path(cohort), method: :delete, local: true do |form| %>
+        <div class="modal-header">
+          <h5 class="modal-title" id="cohortDestroyModalLabel">
+            <%= t("roster.cohorts.destroy.title", title: cohort.title) %>
+          </h5>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="<%= t("buttons.close") %>"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <p>
+            <%= t("roster.cohorts.destroy.members", count: members_count) %>
+
+            <% if cohort.enrolls_in_lecture? %>
+              <% if leaving_count.positive? %>
+                <%= t("roster.cohorts.destroy.leaves_lecture", count: leaving_count) %>
+              <% end %>
+            <% elsif without_group_count.positive? %>
+              <%= t("roster.cohorts.destroy.without_group", count: without_group_count) %>
+            <% end %>
+          </p>
+
+          <% if registrations.values.sum.positive? %>
+            <p>
+              <%= t("roster.cohorts.destroy.registrations",
+                    total: t("roster.actions.confirm_delete_group_total_count",
+                             count: registrations.values.sum),
+                    confirmed: t("roster.actions.confirm_delete_group_confirmed_count",
+                                 count: registrations["confirmed"].to_i)) %>
+            </p>
+          <% end %>
+
+          <div class="form-check">
+            <%= form.check_box :notify, { class: "form-check-input" }, "1", "0" %>
+            <%= form.label :notify, t("roster.cohorts.destroy.notify"), class: "form-check-label" %>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <%= t("buttons.cancel") %>
+          </button>
+
+          <%= form.submit t("roster.cohorts.destroy.submit"),
+                          class: "btn border-0 bg-danger-subtle text-danger-emphasis" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

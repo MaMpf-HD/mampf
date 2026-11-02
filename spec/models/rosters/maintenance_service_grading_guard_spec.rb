@@ -32,7 +32,7 @@ RSpec.describe(Rosters::MaintenanceService) do
     it "refuses to move a speaker who has a grade" do
       graded_participation
 
-      expect { service.move_user!(student, talk, other_talk, force: true) }
+      expect { service.move_user!(student, talk, other_talk, ignore_capacity: true) }
         .to raise_error(described_class::GradingDataPresentError)
       expect(talk.reload.speakers).to include(student)
       expect(other_talk.reload.speakers).not_to include(student)
@@ -69,7 +69,7 @@ RSpec.describe(Rosters::MaintenanceService) do
       Assessment::TaskPoint.create!(assessment_participation: participation,
                                     task: task, points: 7, grader: grader)
 
-      expect { service.move_user!(student, tutorial, other_tutorial, force: true) }
+      expect { service.move_user!(student, tutorial, other_tutorial, ignore_capacity: true) }
         .not_to raise_error
       expect(other_tutorial.reload.roster_entries.count).to eq(1)
     end

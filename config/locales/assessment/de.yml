@@ -17,9 +17,16 @@ de:
       heading: 'Tests'
       homework_heading: 'Hausaufgaben'
       week: 'Testwoche'
+      week_count: 'Dauer'
+      week_count_option:
+        one: '%{count} Woche'
+        other: '%{count} Wochen'
+      period:
+        one: 'Testwoche'
+        other: 'Testwochen'
       sheet_or_test: 'Blatt oder Test'
       title_placeholder: 'z. B. Test 1'
-      week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen; Punkte lassen sich ab Montag eintragen.'
+      week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen, bei längerer Dauer verteilt auf die Wochen danach. Punkte lassen sich ab dem Montag der ersten Woche eintragen. Einen unangekündigten Test kannst Du bis zum Ende der Folgewoche nachtragen.'
       week_label: '%{from}–%{to}'
       badge: 'Test'
     scheduled_sheet:
@@ -114,8 +121,8 @@ de:
       points_abbrev: 'Pkt'
       description: 'Aufgabenname'
       description_placeholder: 'z.B. Aufgabe 1'
-      default_name: 'A%{number}'
-      description_hint: 'In der Punktetabelle heißen die Spalten A1, A2, ... – änderbar über den Aufgabennamen beim Bearbeiten.'
+      default_name: 'Aufgabe %{number}'
+      description_hint: 'Ohne Aufgabennamen heißen die Spalten der Punktetabelle Aufgabe 1, Aufgabe 2, … – den Namen vergibst Du beim Bearbeiten.'
       total_points: 'Gesamtpunkte'
       count:
         one: '1 Aufgabe'
@@ -233,7 +240,7 @@ de:
       participants_filter_placeholder: 'Nach Name oder Matrikelnummer filtern'
       no_filter_results: 'Keine passenden Studierenden'
       add_form_label: 'Person per E-Mail hinzufügen'
-      add_form_hint: 'Fügt eine Person direkt zur Teilnahmeliste hinzu und dient nicht zum Filtern.'
+      add_form_hint: 'Fügt eine Person direkt zur Teilnahmeliste hinzu und dient nicht zum Filtern. Wer noch nicht eingeschrieben ist, wird damit in die Veranstaltung eingeschrieben.'
       add_placeholder: 'E-Mail-Adresse'
       add_button: 'Hinzufügen'
       add_to_participants_button: 'Zur Teilnahmeliste hinzufügen'
@@ -244,9 +251,9 @@ de:
       reject_confirm: 'Diese Anmeldung wird abgelehnt und aus der aktiven Anmeldeliste entfernt. Fortfahren?'
       remove_tooltip: 'Person aus der Teilnahmeliste entfernen'
       remove_disabled_tooltip: 'Kann nicht entfernt werden, da bereits Bewertungsdaten vorliegen'
-      remove_confirm: 'Diese Person wird aus der Teilnahmeliste entfernt. Fortfahren?'
       participant_added: '%{name} wurde hinzugefügt.'
       participant_removed: '%{name} wurde entfernt.'
+      participant_removed_with_lecture: '%{name} wurde von der Teilnahmeliste entfernt und ist nicht mehr in der Veranstaltung eingeschrieben, da es der letzte Platz war.'
       remove_blocked: 'Diese Person kann nicht aus der Teilnahmeliste entfernt werden, da bereits Bewertungsdaten vorliegen.'
       user_not_found: 'Kein:e Nutzer:in mit dieser E-Mail-Adresse gefunden.'
       already_registered: 'Diese Person ist bereits angemeldet.'
@@ -283,18 +290,36 @@ de:
       participation_id_has_no_assignment: 'Teilnahme %{participation_id} hat keine zugehörige Hausaufgabe'
       participation_has_task_points: 'Für diese Teilnahme wurden bereits Punkte eingetragen, daher kann sie nicht gelöscht werden.'
       not_in_group: 'Nur ein Mitglied der Gruppe kann in eines ihrer Teams aufgenommen werden.'
+      not_in_any_group: 'Nur ein Mitglied eines Tutoriums der Veranstaltung kann in ein Team aufgenommen werden.'
       team_rejected: 'Eine abgelehnte Abgabe nimmt niemanden auf.'
+      team_full: 'Das Team ist voll: höchstens %{max} pro Team.'
       joined_late: 'Nach der Deadline zum Team gekommen, am %{time}.'
+      added_by_tutor: 'Von %{tutor} ins Team aufgenommen, am %{time}.'
+      late_submission: 'Verspätete Abgabe, hochgeladen am %{time}.'
       marked_on_own: >-
         %{name} ist für dieses Blatt schon auf einer eigenen Zeile bewertet.
         Lösche das zuerst.
       member_added: '%{name} ist jetzt im Team.'
+      member_removed: '%{name} ist nicht mehr im Team.'
+      remove_member: 'Jemanden wieder aus diesem Team nehmen'
+      remove_member_hint: >-
+        Für jemanden, der versehentlich aufgenommen wurde. Die Person verliert
+        die Punkte des Teams und bekommt eine E-Mail.
+      not_removable: '%{name} kann nicht aus diesem Team genommen werden.'
+      last_member: 'Die letzte Person in einem Team kann nicht herausgenommen werden.'
+      team_closed: 'Das Team lässt sich erst ändern, wenn Punkte eingetragen werden können.'
       add_member: 'Jemanden in dieses Team aufnehmen'
       add_member_hint: 'Für jemanden, der den Beitritt vergessen hat. Die Person bekommt die Punkte, die das Team schon hat.'
+      add_member_search: 'Nach Namen suchen'
+      add_member_no_match: 'Niemand mit diesem Namen ist ohne Team.'
+      add_member_search_elsewhere: 'Ab %{min} Buchstaben erscheinen auch Personen aus anderen Tutorien.'
+      add_member_elsewhere: 'Andere Tutorien'
+      add_member_elsewhere_more: 'Es gibt weitere Treffer. Tippe mehr vom Namen.'
+      add_member_search_failed: 'Die anderen Tutorien konnten nicht durchsucht werden. Versuch es noch einmal.'
       hand_over: 'Dieses Team an ein anderes Tutorium übergeben'
       hand_over_hint: >-
-        Die Mitglieder dieses Teams sitzen in verschiedenen Tutorien. Übergib
-        es an eines davon; Punkte und Korrektur werden dann dort eingetragen.
+        Übergib das Team an das Tutorium eines seiner Mitglieder; Punkte und
+        Korrektur werden dann dort eingetragen.
       marked_elsewhere: 'Korrektur in %{tutorial}'
     errors:
       feature_not_available: 'Bewertungsfunktion ist nicht verfügbar.'
@@ -324,6 +349,8 @@ de:
       max_points: 'Pkt'
       no_submissions: 'Keine Abgaben für diese Hausaufgabe.'
       no_tutorial_badge: 'Ohne Übungsgruppe'
+      left_lecture: "Ausgetreten"
+      left_lecture_frozen: "Wer ausgetreten ist, behält Abgabe und Anwesenheit, wie sie waren."
       paper_hand_in: 'Abgabe auf Papier oder anderem Weg vermerken'
       paper_hand_in_remove: 'Vermerk „abgegeben“ zurücknehmen'
       paper_hand_in_kept: 'Auf Papier oder anderem Weg abgegeben; mit eingetragenen Punkten bleibt der Vermerk'
@@ -335,7 +362,8 @@ de:
       download_correction: 'Korrektur herunterladen'
       show_correction: 'Korrektur anzeigen'
       upload_correction: 'Korrektur hochladen'
-      upload_correction_closed: 'Korrekturen können erst nach der Frist hochgeladen werden'
+      upload_correction_closed: 'Korrekturen erst nach der Kulanzfrist, ab %{time}'
+      download_closed: 'Paketdownload erst nach der Kulanzfrist, ab %{time}'
       delete_correction: 'Korrektur löschen'
       confirm_delete_correction: 'Korrektur löschen? Die Datei ist dann weg, die Punkte bleiben.'
       accept_late: 'Verspätete Abgabe annehmen'
@@ -358,6 +386,7 @@ de:
       page_size_label: 'Pro Seite'
       pager_label: 'Seiten'
       more_actions: 'Weitere Aktionen'
+      blank_points_hint: 'Ein leeres Feld heißt: noch nicht korrigiert. Die Zeile bleibt dann „Noch nicht bewertet“ und zählt noch nicht. Trag bei einer nicht bearbeiteten Aufgabe 0 ein.'
       summary:
         handed_in:
           one: '1 abgegeben'

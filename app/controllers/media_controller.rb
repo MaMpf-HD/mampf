@@ -1,12 +1,18 @@
 # MediaController
 class MediaController < ApplicationController
+  skip_before_action :verify_authenticity_token, only: [:add_transcript,
+                                                        :transcription_failed]
   skip_before_action :authenticate_user!, only: [:play, :screenshot,
                                                  :chapters_vtt,
                                                  :references_vtt, :display,
                                                  :stream_video,
+                                                 :stream_transcript,
                                                  :inline_manuscript,
                                                  :geogebra, :inline_geogebra,
-                                                 :download]
+                                                 :download,
+                                                 :transcription_stream_video,
+                                                 :add_transcript,
+                                                 :transcription_failed]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select,
@@ -23,15 +29,22 @@ class MediaController < ApplicationController
                                              :chapters_vtt,
                                              :references_vtt, :display,
                                              :stream_video,
+                                             :stream_transcript,
                                              :inline_manuscript,
                                              :geogebra, :inline_geogebra,
-                                             :download]
+                                             :download,
+                                             :transcription_stream_video,
+                                             :add_transcript,
+                                             :transcription_failed]
   after_action :store_access, only: [:play, :display]
   authorize_resource except: [:index, :new, :create, :search,
                               :fill_teachable_select, :fill_media_select,
                               :fill_medium_preview, :render_medium_actions,
                               :render_import_media, :render_import_vertex,
-                              :cancel_import_media, :cancel_import_vertex]
+                              :cancel_import_media, :cancel_import_vertex,
+                              :transcription_stream_video,
+                              :add_transcript,
+                              :transcription_failed]
   layout :staff_layout
 
   def current_ability
@@ -255,6 +268,71 @@ class MediaController < ApplicationController
     end
   end
 
+  def transcribe
+    return head :not_found unless Rails.env.local?
+
+    authorize! :transcribe, @medium
+    unless @medium.transcribable?
+      redirect_back_or_to(root_path, alert: I18n.t("controllers.media.cannot_transcribe"))
+      return
+    end
+
+    @medium.update!(transcription_status: :queued,
+                    transcription_attempts: 0, transcription_error: nil)
+    MampfsearchIngestJob.perform_later(@medium.id)
+    redirect_back_or_to(root_path, notice: I18n.t("controllers.media.transcription_started"))
+  end
+
+  def add_transcript
+    return unless verify_search_api_token!
+
+    @medium.with_lock do
+      next unless verify_transcription_token!(purpose: :transcript)
+
+      upload = params[:transcript]
+      if upload.respond_to?(:tempfile)
+        attach_scanned_transcript(upload)
+        @medium.transcription_status = :completed
+        @medium.transcription_error = nil
+        if @medium.save
+          head :ok
+        else
+          render json: { errors: @medium.errors.full_messages }, status: :unprocessable_content
+        end
+      else
+        head :bad_request
+      end
+    end
+  rescue MalwareScanGate::InfectedUploadError
+    render json: { errors: [t("submission.upload_failure_malware")] },
+           status: :unprocessable_content
+  rescue MalwareScanGate::ScannerUnavailableError
+    render json: { errors: [t("submission.upload_failure_scanner_unavailable")] },
+           status: :service_unavailable
+  end
+
+  def transcription_failed
+    return unless verify_search_api_token!
+
+    @medium.with_lock do
+      next unless verify_transcription_token!(purpose: :transcription_failed)
+
+      attempts = @medium.transcription_attempts + 1
+      status = if attempts >= SearchClient::MAX_TRANSCRIPTION_ATTEMPTS
+        :failed_permanently
+      else
+        :failed_temporarily
+      end
+      @medium.update!(
+        transcription_status: status,
+        transcription_attempts: attempts,
+        transcription_error: params[:error].to_s.truncate(1000).presence ||
+                             "MampfSearch transcription failed."
+      )
+      head :ok
+    end
+  end
+
   # play the video using thyme player
   def play
     if @medium.video.nil?
@@ -302,6 +380,25 @@ class MediaController < ApplicationController
     end
 
     send_stored_file(@medium.video, disposition: "inline", fallback: "video")
+    prevent_caching unless @medium.free?
+  end
+
+  def transcription_stream_video
+    return unless verify_search_api_token!
+    return unless verify_transcription_token!(purpose: :video)
+    return head :not_found if @medium.video.nil?
+
+    send_stored_file(@medium.video, disposition: "inline", fallback: "video")
+    prevent_caching
+  end
+
+  def stream_transcript
+    if @medium.transcript.nil?
+      head :not_found
+      return
+    end
+
+    send_stored_file(@medium.transcript, disposition: "inline", fallback: "transcript")
     prevent_caching unless @medium.free?
   end
 
@@ -600,6 +697,48 @@ class MediaController < ApplicationController
   end
 
   private
+
+    def verify_search_api_token!
+      auth_header = request.authorization
+      if auth_header.blank? || !auth_header.start_with?("Bearer ")
+        head :unauthorized
+        return false
+      end
+
+      token = auth_header.delete_prefix("Bearer ").strip
+      SearchApiToken.verify!(token, scope: request.path)
+      true
+    rescue SearchApiToken::InvalidTokenError, SearchClient::ServiceUnavailableError
+      head :unauthorized
+      false
+    end
+
+    def verify_transcription_token!(purpose:)
+      payload = TranscriptionToken.verify!(params[:token], purpose: purpose)
+      unless payload.fetch("medium_id").to_i == @medium.id
+        raise(TranscriptionToken::InvalidTokenError)
+      end
+
+      if payload.fetch("video_version") != @medium.video_fingerprint
+        head :conflict
+        return false
+      end
+
+      true
+    rescue TranscriptionToken::InvalidTokenError
+      head :forbidden
+      false
+    end
+
+    # Caches the transcript through the malware scan; the attacher refuses a
+    # request file assigned directly.
+    def attach_scanned_transcript(upload)
+      File.open(upload.tempfile.path) do |file|
+        @medium.transcript_attacher.attach_cached(
+          file, metadata: { "filename" => upload.original_filename }
+        )
+      end
+    end
 
     def medium_params
       params.expect(medium: [:sort, :description, :video, :manuscript,

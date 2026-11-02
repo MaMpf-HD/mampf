@@ -5,11 +5,10 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
   let(:group_type) { :all }
   let(:participants) { lecture.lecture_memberships }
   let(:pagy) { nil }
-  let(:filter_mode) { "all" }
   let(:component) do
     lecture.reload
     described_class.new(lecture: lecture, group_type: group_type,
-                        participants: participants, pagy: pagy, filter_mode: filter_mode)
+                        participants: participants, pagy: pagy)
   end
 
   describe "#participants" do
@@ -24,42 +23,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     end
   end
 
-  describe "filtering behavior" do
-    let(:user_assigned) { create(:user) }
-    let(:user_unassigned) { create(:user) }
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-
-    before do
-      create(:lecture_membership, lecture: lecture, user: user_assigned)
-      create(:lecture_membership, lecture: lecture, user: user_unassigned)
-      create(:tutorial_membership, tutorial: tutorial, user: user_assigned)
-    end
-
-    context "when filter_mode is 'all'" do
-      let(:filter_mode) { "all" }
-
-      it "shows all participants" do
-        expect(component.filter_mode).to eq("all")
-        expect(component.participants.map(&:user)).to include(user_assigned, user_unassigned)
-      end
-    end
-
-    context "when filter_mode is 'unassigned'" do
-      let(:filter_mode) { "unassigned" }
-      let(:participants) do
-        lecture.lecture_memberships.joins(:user)
-               .where.not(user_id: TutorialMembership.joins(:tutorial)
-                                                     .where(tutorials: { lecture_id: lecture.id })
-                                                     .select(:user_id))
-      end
-
-      it "shows only unassigned participants" do
-        expect(component.filter_mode).to eq("unassigned")
-        expect(component.participants.map(&:user)).to include(user_unassigned)
-        expect(component.participants.map(&:user)).not_to include(user_assigned)
-      end
-    end
-
+  describe "pagination" do
     context "when pagy is provided" do
       let(:pagy) do
         double("Pagy",
@@ -74,69 +38,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       it "enables pagination" do
         expect(component.pagy).to eq(pagy)
       end
-    end
-  end
-
-  describe "#participant_status" do
-    let(:user) { create(:user) }
-    let!(:membership) { create(:lecture_membership, lecture: lecture, user: user) }
-
-    context "when user is not in any group" do
-      it "returns :unassigned" do
-        expect(component.participant_status(user)).to eq(:unassigned)
-      end
-    end
-
-    context "when user is in a tutorial" do
-      let(:tutorial) { create(:tutorial, lecture: lecture) }
-      let!(:tutorial_membership) { create(:tutorial_membership, tutorial: tutorial, user: user) }
-
-      it "returns :assigned" do
-        expect(component.participant_status(user)).to eq(:assigned)
-      end
-    end
-
-    context "when user is in a cohort only" do
-      let(:cohort) { create(:cohort, context: lecture) }
-      let!(:cohort_membership) { create(:cohort_membership, cohort: cohort, user: user) }
-
-      it "returns :unassigned" do
-        expect(component.participant_status(user)).to eq(:unassigned)
-      end
-    end
-  end
-
-  describe "#assigned_participants" do
-    let(:user_assigned) { create(:user) }
-    let(:user_unassigned) { create(:user) }
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-
-    before do
-      create(:lecture_membership, lecture: lecture, user: user_assigned)
-      create(:lecture_membership, lecture: lecture, user: user_unassigned)
-      create(:tutorial_membership, tutorial: tutorial, user: user_assigned)
-    end
-
-    it "returns only assigned participants" do
-      expect(component.assigned_participants.map(&:user)).to include(user_assigned)
-      expect(component.assigned_participants.map(&:user)).not_to include(user_unassigned)
-    end
-  end
-
-  describe "#unassigned_participants" do
-    let(:user_assigned) { create(:user) }
-    let(:user_unassigned) { create(:user) }
-    let!(:tutorial) { create(:tutorial, lecture: lecture) }
-
-    before do
-      create(:lecture_membership, lecture: lecture, user: user_assigned)
-      create(:lecture_membership, lecture: lecture, user: user_unassigned)
-      create(:tutorial_membership, tutorial: tutorial, user: user_assigned)
-    end
-
-    it "returns only unassigned participants" do
-      expect(component.unassigned_participants.map(&:user)).to include(user_unassigned)
-      expect(component.unassigned_participants.map(&:user)).not_to include(user_assigned)
     end
   end
 
@@ -202,7 +103,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
     it "calls helpers.pagy_series_nav and constructs querify correctly" do
       pagy = double("Pagy", pages: 2)
       c = described_class.new(lecture: lecture, group_type: ["t1", "t2"],
-                              filter_mode: "unassigned", search_string: "foo", pagy: pagy)
+                              search_string: "foo", pagy: pagy)
 
       helpers_mock = double("helpers")
       allow(c).to receive(:helpers).and_return(helpers_mock)
@@ -219,7 +120,7 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         mock_params = {}
         querify.call(mock_params)
 
-        expect(mock_params["filter"]).to eq("unassigned")
+        expect(mock_params).not_to have_key("filter")
         expect(mock_params["search"]).to eq("foo")
         expect(mock_params["group_type"]).to eq(["t1", "t2"])
 
@@ -296,6 +197,17 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
 
       expect(groups).to match_array([tutorial, cohort])
     end
+
+    it "includes the exam lists the user is on" do
+      user = create(:confirmed_user)
+      exam = create(:exam, :without_campaign, lecture: lecture, title: "Final")
+      exam.add_user_to_roster!(user)
+
+      c = described_class.new(lecture: lecture, group_type: "tutorial",
+                              participants: [double(user_id: user.id, user: user)])
+
+      expect(c.participant_groups(user)).to eq([exam])
+    end
   end
 
   describe "the study program column" do
@@ -328,7 +240,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       render_inline(component)
 
       expect(rendered_content).to include('id="roster_participants_top_nav"')
-      expect(rendered_content).to include('id="roster_participants_header_controls"')
       expect(rendered_content).to include('id="roster_participants_results"')
       expect(rendered_content).to include('data-turbo-stream="true"')
       expect(rendered_content).to include('id="roster-participants-search-field"')
@@ -342,7 +253,6 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
         view_switch: "roster_participants_view_switch",
         campaign_switch: "roster_participants_campaign_switch",
         top_nav: "roster_participants_top_nav",
-        header_controls: "roster_participants_header_controls",
         results: "roster_participants_results"
       )
     end
@@ -364,6 +274,102 @@ RSpec.describe(RosterParticipantsComponent, type: :component) do
       rendered = render_inline(component)
 
       expect(rendered.text).to include(I18n.t("roster.outside_enrollment", count: 1))
+    end
+  end
+
+  describe "what remains for someone who has left" do
+    let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+    let(:component) do
+      described_class.new(lecture: lecture, group_type: group_type,
+                          participants: lecture.excluded_lecture_memberships, view: "left")
+    end
+    let(:remaining_cell) do
+      row = render_inline(component).css("tr").find { |tr| tr.text.include?("Lina Berg") }
+      row.css("td")[3]
+    end
+    let(:routes) { Rails.application.routes.url_helpers }
+
+    before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
+
+    it "links the flexible groups without enrollment and the running registrations" do
+      waitlist = create(:cohort, context: lecture, title: "Warteliste Di")
+      waitlist.add_user_to_roster!(former)
+      campaign = create(:registration_campaign, :open, campaignable: lecture)
+      create(:registration_user_registration, :pending, user: former,
+                                                        registration_campaign: campaign)
+
+      badges = remaining_cell.css("a.badge").map { |link| [link.text.strip, link["href"]] }
+
+      expect(badges).to eq(
+        [["Warteliste Di",
+          routes.edit_lecture_path(lecture, tab: "groups", open_roster: "Cohort-#{waitlist.id}")],
+         [I18n.t("roster.left.registered_for", title: campaign.student_facing_title),
+          routes.edit_lecture_path(lecture, tab: "participants", view: "registered",
+                                            campaign: campaign.id)]]
+      )
+    end
+
+    # The registered view leaves exam campaigns out.
+    it "links an exam registration to the exams tab" do
+      exam_campaign = create(:exam, lecture: lecture).registration_campaign
+      exam_campaign.update_columns(status: Registration::Campaign.statuses[:open], # rubocop:disable Rails/SkipsModelValidations
+                                   registration_deadline: 1.week.from_now)
+      create(:registration_user_registration, :pending,
+             user: former, registration_campaign: exam_campaign,
+             registration_item: exam_campaign.registration_items.first)
+
+      expect(remaining_cell.at_css("a.badge")["href"])
+        .to eq(routes.edit_lecture_path(lecture, tab: "exams"))
+    end
+
+    it "shows a dash when nothing remains" do
+      expect(remaining_cell.text.strip).to eq("–")
+    end
+  end
+
+  describe "readmitting someone who has left" do
+    let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+    let(:participants) { lecture.excluded_lecture_memberships }
+    let(:component) do
+      lecture.reload
+      described_class.new(lecture: lecture, group_type: group_type,
+                          participants: participants, view: "left")
+    end
+    let(:group_select) do
+      label = I18n.t("roster.left.group_for", user: "Lina Berg")
+      render_inline(component).at_css("select[aria-label='#{label}']")
+    end
+
+    before { create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former) }
+
+    it "offers the groups with enrollment that the staff can add people to" do
+      create(:tutorial, lecture: lecture, title: "Mo 10", skip_campaigns: true)
+      create(:tutorial, lecture: lecture, title: "Di 12", skip_campaigns: false)
+      create(:cohort, context: lecture, title: "Repeaters", propagate_to_lecture: true,
+                      skip_campaigns: true)
+      create(:cohort, context: lecture, title: "Waitlist", propagate_to_lecture: false)
+
+      expect(group_select.css("option").map(&:text))
+        .to eq([I18n.t("roster.left.choose_group"), "Mo 10", "Repeaters"])
+      expect(group_select["required"]).to be_present
+    end
+
+    it "says why nobody can be readmitted while a registration process manages every group" do
+      create(:tutorial, lecture: lecture, skip_campaigns: false)
+
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.left.no_open_group"))
+      expect(rendered.css("select")).to be_empty
+    end
+
+    it "offers no readmission in a lecture without groups with enrollment" do
+      create(:cohort, context: lecture, propagate_to_lecture: false)
+
+      rendered = render_inline(component)
+
+      expect(rendered.text).to include(I18n.t("roster.left.no_open_group"))
+      expect(rendered.css("form[action$='/roster/members']")).to be_empty
     end
   end
 

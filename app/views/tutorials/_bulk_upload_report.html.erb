@@ -89,6 +89,25 @@
 				</tr>
 				<tr class="d-flex">
 					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.elsewhere') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.elsewhere'), false) %>
+					</th>
+					<td class="col">
+						<% if report[:elsewhere].any? %>
+							<ul>
+								<% report[:elsewhere].each do |team, tutorial| %>
+									<li>
+										<%= team %> → <%= tutorial %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
 						<%= t('tutorial.bulk_upload.no_decision') %>
 						<%= helpdesk(t('tutorial.bulk_upload.info.no_decision'),
 												 false) %>

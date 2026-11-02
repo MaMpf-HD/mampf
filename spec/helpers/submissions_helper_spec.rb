@@ -39,6 +39,47 @@ RSpec.describe(SubmissionsHelper, type: :helper) do
     end
   end
 
+  describe "#tutorial_contact_line" do
+    around do |example|
+      I18n.with_locale(:en) { example.run }
+    end
+
+    let(:tutorial) { create(:tutorial, lecture: lecture, title: "Mo 14-16") }
+
+    def tutor(name, email)
+      create(:confirmed_user, name: name, email: email)
+    end
+
+    it "names the tutorial and where to write to its tutor" do
+      tutorial.tutors << tutor("Tara Tutor", "tara@play")
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+
+      expect(helper.tutorial_contact_line(lecture))
+        .to eq("You are in the tutorial Mo 14-16 with Tara Tutor, reachable by email at " \
+               '<a href="mailto:tara@play">tara@play</a>.')
+    end
+
+    it "gives each of several tutors their own address" do
+      tutorial.tutors << [tutor("Tara Tutor", "tara@play"), tutor("Tom Tutor", "tom@play")]
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+
+      line = helper.tutorial_contact_line(lecture)
+
+      expect(line).to include('Tara Tutor (<a href="mailto:tara@play">tara@play</a>)')
+      expect(line).to include('Tom Tutor (<a href="mailto:tom@play">tom@play</a>)')
+    end
+
+    it "names only the tutorial while it has no tutor" do
+      create(:tutorial_membership, tutorial: tutorial, user: user)
+
+      expect(helper.tutorial_contact_line(lecture)).to eq("You are in the tutorial Mo 14-16.")
+    end
+
+    it "says nothing to a reader in no tutorial" do
+      expect(helper.tutorial_contact_line(lecture)).to be_nil
+    end
+  end
+
   describe "#roster_cache" do
     it "returns the same hash across multiple calls within one helper instance" do
       first  = helper.roster_cache

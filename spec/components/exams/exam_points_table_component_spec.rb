@@ -76,6 +76,24 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
       expect(page.css("tr[id^=points-participation-row-]").size).to eq(1)
     end
 
+    describe "the blank points hint" do
+      let(:hint) { I18n.t("assessment.grading_tutorial.blank_points_hint") }
+
+      before { create(:exam_roster_entry, exam: exam, user: create(:confirmed_user)) }
+
+      it "stands above the points inputs" do
+        expect(render_inline(component).text).to include(hint)
+      end
+
+      context "when the exam has no tasks yet" do
+        let!(:task) { nil }
+
+        it "is left out" do
+          expect(render_inline(component).text).not_to include(hint)
+        end
+      end
+    end
+
     it "cuts the rows into pages of 20 unless the reader picks another size" do
       create(:exam_roster_entry, exam: exam, user: create(:confirmed_user))
 
@@ -94,6 +112,7 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
       let(:loner) { create(:confirmed_user, name: "Bob") }
 
       before do
+        tutorial.add_tutor(create(:confirmed_user, first_name: "Ada", last_name: "Lovelace"))
         create(:tutorial_membership, tutorial: tutorial, user: member)
         create(:exam_roster_entry, exam: exam, user: member)
         create(:exam_roster_entry, exam: exam, user: loner)
@@ -104,7 +123,7 @@ RSpec.describe(ExamPointsTableComponent, type: :component) do
 
         options = page.css("select[data-status-filter-target=tutorial] option")
         expect(options.map { |o| [o["value"], o.text.strip] })
-          .to include([tutorial.id.to_s, "Group A"],
+          .to include([tutorial.id.to_s, "Group A (Ada Lovelace)"],
                       ["none", I18n.t("assessment.grading_tutorial.no_tutorial_badge")])
         rows = page.css("tr[data-status-filter-target=row]")
         expect(rows.pluck("data-status-filter-tutorial")).to eq([tutorial.id.to_s, ""])

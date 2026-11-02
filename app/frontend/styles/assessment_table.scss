@@ -76,6 +76,26 @@ thead th.sticky-col {
   z-index: 5;
 }
 
+.team-menu {
+  max-width: 18rem;
+}
+
+/* The menu is positioned fixed, so scrolling the page never brings its lower
+   end into view. Under half the screen's height, it fits above or below its
+   button wherever the row is; the names scroll inside it. */
+.add-member-menu {
+  max-height: 45vh;
+
+  &.show {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.add-member-list {
+  overflow-y: auto;
+}
+
 @mixin column($name) {
   .#{$name}-col {
     --col-width: var(--#{$name}-width);

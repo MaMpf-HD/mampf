@@ -90,12 +90,31 @@ RSpec.describe(MarkingTableHeaderComponent, type: :component) do
         expect(classes_for(component)).to include(a_string_matching(/status-col/))
       end
 
-      it "has one column per task, labelled with position and maximum" do
+      it "has one column per task, labelled with name and maximum" do
+        task.update!(description: "Warm-up")
         task_columns = columns_for(component).select { |c| c.css_class.include?("task-col") }
 
         expect(task_columns.size).to eq(1)
-        expect(task_columns.first.label).to include("1")
+        expect(task_columns.first.label).to eq("Warm-up")
+        expect(task_columns.first.title).to be_nil
         expect(task_columns.first.sublabel).to include("10")
+      end
+
+      it "shortens a long name and keeps the whole one in the title" do
+        task.update!(description: "Induction over the length of the word")
+        column = columns_for(component).find { |c| c.css_class.include?("task-col") }
+
+        expect(column.label).to eq("Induction over the…")
+        expect(column.title).to eq("Induction over the length of the word")
+      end
+
+      it "names a task without a name by its number" do
+        task.update!(description: nil)
+        column = I18n.with_locale(:en) do
+          columns_for(component).find { |c| c.css_class.include?("task-col") }
+        end
+
+        expect(column.label).to eq("Task 1")
       end
 
       # Two icons need no heading over them, but a screen reader still gets

@@ -3,8 +3,6 @@ module Rosters
   # people reach their groups only with Registration::Campaign#finalize!.
   # Exam campaigns are left out: they fill exam rosters, not the lecture's.
   class RunningRegistrations
-    STATUSES = ["open", "closed", "processing"].freeze
-
     Entry = Struct.new(:campaign, :registrations, keyword_init: true) do
       # Leaves out a forced assignment, which the person never chose.
       def chosen_items
@@ -34,7 +32,7 @@ module Rosters
     end
 
     def campaigns
-      Registration::Campaign.where(campaignable: @lecture, status: STATUSES).non_exam
+      Registration::Campaign.running.where(campaignable: @lecture).non_exam
                             .order(:registration_deadline, :created_at, :id)
     end
 
@@ -48,7 +46,7 @@ module Rosters
       scope = people.by_last_name
       return scope unless @search
 
-      scope.where(ParticipantQuery::SEARCH_SQL, q: "%#{@search}%")
+      scope.shown_name_or_matriculation_number_like(@search)
     end
 
     delegate :count, to: :users
@@ -68,7 +66,9 @@ module Rosters
 
       regs = registrations.where(user_id: user_ids)
                           .includes(registration_item: :registerable).to_a
-      preload_titles(regs.map { |r| r.registration_item.registerable })
+      registerables = regs.map { |r| r.registration_item.registerable }
+      preload_titles(registerables)
+      preload_lectures(registerables)
       regs.group_by(&:user_id).transform_values do |user_regs|
         Entry.new(campaign: @campaign, registrations: user_regs)
       end
@@ -89,6 +89,13 @@ module Rosters
           ActiveRecord::Associations::Preloader.new(records: records,
                                                     associations: association).call
         end
+      end
+
+      # A chosen group links to its roster in its lecture.
+      def preload_lectures(registerables)
+        cohorts, groups = registerables.uniq.partition { |group| group.is_a?(Cohort) }
+        ActiveRecord::Associations::Preloader.new(records: groups, associations: :lecture).call
+        ActiveRecord::Associations::Preloader.new(records: cohorts, associations: :context).call
       end
   end
 end

@@ -428,7 +428,7 @@ test.describe("the card for a sheet that is due", () => {
     });
     const assessment = await assignment.__call("assessment");
     await factory.create("assessment_task", [], {
-      assessment_id: assessment.id, max_points: 10,
+      assessment_id: assessment.id, description: "Warm-up", max_points: 10,
     });
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
@@ -448,7 +448,7 @@ test.describe("the card for a sheet that is due", () => {
     await row.getByRole("link", { name: "Record a hand-in on paper or by other means" })
       .click();
     await expect(row.getByText("Pending Grading")).toBeVisible();
-    await row.getByRole("spinbutton", { name: `Task 1 for ${student.user.name_in_tutorials}` })
+    await row.getByRole("spinbutton", { name: `Warm-up for ${student.user.name_in_tutorials}` })
       .fill("8");
     await row.getByRole("button", { name: "Save this row's points" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();

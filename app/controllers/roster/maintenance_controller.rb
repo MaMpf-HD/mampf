@@ -6,11 +6,13 @@ module Roster
 
     class RosterLockedError < StandardError; end
     class UserNotFoundError < StandardError; end
+    class GroupRequiredError < StandardError; end
 
     before_action :set_lecture, only: [:index, :participants]
     before_action :set_rosterable,
-                  only: [:show, :add_member, :remove_member, :move_member,
-                         :update_self_materialization, :bulk_update_self_materialization]
+                  only: [:show, :add_member, :confirm_remove_member, :remove_member,
+                         :move_member, :update_self_materialization,
+                         :bulk_update_self_materialization]
     before_action :build_maintenance_params
     before_action :authorize_lecture
 
@@ -31,12 +33,28 @@ module Roster
                          fallback_location: fallback_path)
     end
 
+    rescue_from "Rosters::MaintenanceService::LectureGradingDataPresentError" do
+      respond_with_flash(:alert, t("roster.errors.lecture_grading_data_present"),
+                         fallback_location: fallback_path)
+    end
+
+    rescue_from "Rosters::MaintenanceService::MoveLeavesLectureError" do
+      respond_with_flash(:alert, t("roster.errors.move_leaves_lecture",
+                                   user: @member_user&.info, group: @rosterable.title),
+                         fallback_location: fallback_path)
+    end
+
     rescue_from RosterLockedError do
       respond_with_flash(:alert, t("roster.errors.item_locked"), fallback_location: fallback_path)
     end
 
     rescue_from UserNotFoundError do
       respond_with_flash(:alert, t("roster.errors.user_not_found"),
+                         fallback_location: fallback_path)
+    end
+
+    rescue_from GroupRequiredError do
+      respond_with_flash(:alert, t("roster.errors.readmission_group_required"),
                          fallback_location: fallback_path)
     end
 
@@ -52,7 +70,7 @@ module Roster
     def index
       if params[:tab] == "participants"
         return redirect_to lecture_roster_participants_path(
-          @lecture, params.permit(:filter, :search, :group_type)
+          @lecture, params.permit(:search, :group_type)
         )
       end
 
@@ -83,19 +101,20 @@ module Roster
       ensure_rosterable_unlocked!
 
       user = find_user
+      rosterable = readmission_group || @rosterable
       added = Rosters::MaintenanceService.new.add_user!(
         user,
-        @rosterable,
-        force: true,
-        source_campaign_id: (@mparams.source_id if @mparams.rejected?)
+        rosterable,
+        ignore_capacity: true,
+        override_rejection_in: @mparams.rejection_campaign_id
       )
 
       flash.now[:notice] = if added
-        t("roster.messages.user_added", user: user.info, group: @rosterable.title)
+        t("roster.messages.user_added", user: user.info, group: rosterable.title)
       else
-        t("roster.messages.user_already_member", user: user.info, group: @rosterable.title)
+        t("roster.messages.user_already_member", user: user.info, group: rosterable.title)
       end
-      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if @rosterable.over_capacity?
+      flash.now[:alert] = t("roster.warnings.capacity_exceeded") if rosterable.over_capacity?
 
       source = find_panel_source
       if source
@@ -108,13 +127,33 @@ module Roster
       end
     end
 
+    # Sends the removal with the button's source and page, which decide what
+    # the response redraws.
+    def confirm_remove_member
+      ensure_rosterable_unlocked!
+
+      user = find_user
+      url = helpers.roster_remove_member_path(
+        @rosterable, user,
+        **params.permit(:source, :page, :group_type, group_type: []).to_h.symbolize_keys
+      )
+      render turbo_stream: turbo_stream.update(
+        "modal-container",
+        RosterRemovalModalComponent.new(user: user, rosterable: @rosterable, url: url)
+                                   .render_in(view_context)
+      )
+    end
+
     def remove_member
       ensure_rosterable_unlocked!
 
       user = find_user
-      Rosters::MaintenanceService.new.remove_user!(user, @rosterable)
+      left = Rosters::MaintenanceService.new.remove_user!(
+        user, @rosterable,
+        by: current_user, notify: @mparams.notify?, keep_list_ids: @mparams.keep_list_ids
+      )
 
-      flash.now[:notice] = t("roster.messages.user_removed", user: user.info)
+      flash.now[:notice] = removal_notice(user, left)
 
       render_membership_streams(stream_builder.streams)
     end
@@ -142,7 +181,8 @@ module Roster
         return
       end
 
-      if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target, force: true)
+      if Rosters::MaintenanceService.new.move_user!(user, @rosterable, target,
+                                                    ignore_capacity: true)
         flash.now[:notice] = move_notice(user, target)
         flash.now[:alert] = t("roster.warnings.capacity_exceeded") if target.over_capacity?
       else
@@ -197,15 +237,16 @@ module Roster
       def setup_participants
         query = Rosters::ParticipantQuery.new(@lecture, params).call
 
-        @participants_filter = query.filter_mode
         @participants_view = query.view
         @participants_campaign = query.campaign
         @total_participants_count = query.total_count
-        @unassigned_participants_count = query.unassigned_count
         @registered_participants_count = query.registered_count
+        @left_participants_count = query.left_count
         @search_string = @mparams.search
 
         @pagy, @participants = pagy(query.scope)
+        # Removing the only person on the last page would leave it empty.
+        @pagy, @participants = pagy(query.scope, page: @pagy.last) if @pagy.page > @pagy.last
         @participants_component_args = participants_component_args
       end
 
@@ -220,7 +261,6 @@ module Roster
           group_type: @group_type,
           participants: @participants,
           pagy: @pagy,
-          filter_mode: @participants_filter,
           view: @participants_view,
           campaign: @participants_campaign,
           search_string: @search_string,
@@ -231,8 +271,8 @@ module Roster
       def participants_counts
         {
           total: @total_participants_count,
-          unassigned: @unassigned_participants_count,
-          registered: @registered_participants_count
+          registered: @registered_participants_count,
+          left: @left_participants_count
         }
       end
 
@@ -284,13 +324,12 @@ module Roster
           participants_state: {
             participants: @participants,
             pagy: @pagy,
-            filter_mode: @participants_filter,
             view: @participants_view,
             campaign: @participants_campaign,
             search_string: @search_string,
             total_count: @total_participants_count,
-            unassigned_count: @unassigned_participants_count,
-            registered_count: @registered_participants_count
+            registered_count: @registered_participants_count,
+            left_count: @left_participants_count
           },
           refresh_campaigns_stream: lambda do |lecture|
             refresh_campaigns_index_stream(lecture)
@@ -303,6 +342,31 @@ module Roster
 
         @group_type ||= @mparams.group_type
         setup_participants
+      end
+
+      # The group the staff picked for taking back someone who has left.
+      # Readmission needs one, because nobody may be enrolled without a group.
+      def readmission_group
+        return unless @rosterable.is_a?(Lecture)
+
+        group = Rosters::RosterableResolver.find_place(@mparams.group, lecture: @lecture)
+        raise(GroupRequiredError) unless group
+        raise(RosterLockedError) if group.locked?
+
+        group
+      end
+
+      def also_left_lecture?(left)
+        left.is_a?(Lecture) && left != @rosterable
+      end
+
+      def removal_notice(user, left)
+        if also_left_lecture?(left)
+          return t("roster.messages.user_removed_with_only_group",
+                   user: user.info, group: @rosterable.title)
+        end
+
+        t("roster.messages.user_removed", user: user.info)
       end
 
       def move_notice(user, target)

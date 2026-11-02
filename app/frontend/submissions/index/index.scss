@@ -24,6 +24,22 @@
   box-shadow: none;
 }
 
+/* Who to write to about a hand-in or a correction: on the standing panel's grey,
+   so it is found without competing with the card that is due. */
+.tutorial-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  background: #f5f7f9;
+  border-radius: 0.5rem;
+  padding: 0.65rem 1rem;
+  margin-bottom: 1rem;
+
+  .bi {
+    color: var(--bs-secondary-color);
+  }
+}
+
 /* The one bordered element on the page, and the only one carrying colour: what
    can still be handed in is where reading starts. */
 .next-action {

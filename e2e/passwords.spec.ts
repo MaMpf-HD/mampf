@@ -36,7 +36,7 @@ test("can reset the password via the mailed reset link", async ({ page, request 
 
   await loginPage.goto();
   await loginPage.login(user.email, newPassword);
-  await expect(page).toHaveURL(/:3145\/$/);
+  await expect(page).toHaveURL("/");
 });
 
 test("clears stale validation errors after correcting a rejected password", async ({ page, request }) => {

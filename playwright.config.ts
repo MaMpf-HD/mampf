@@ -1,4 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
+import { appOrigin, workerCount } from "./e2e/_support/servers";
+
+const appOrigins = Array.from({ length: workerCount }, (_, i) => appOrigin(i));
 
 /**
  * See https://playwright.dev/docs/test-configuration
@@ -11,14 +14,15 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests. */
-  workers: 1,
+  /* One worker per app server, see e2e/_support/servers.ts */
+  workers: workerCount,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: "http://app-test:3145",
+    /* Overridden per worker in e2e/_support/fixtures.ts */
+    baseURL: appOrigin(0),
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -50,7 +54,7 @@ export default defineConfig({
             // (HTTP, not HTTPS). Browsers usually only consider localhost
             // or HTTPS are secure origins. The secure context is needed, such that
             // Playwright can use the browser's Web Crypto API to solve the captcha.
-            "--unsafely-treat-insecure-origin-as-secure=http://app-test:3145",
+            `--unsafely-treat-insecure-origin-as-secure=${appOrigins.join(",")}`,
           ],
         },
       },

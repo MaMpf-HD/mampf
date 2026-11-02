@@ -390,6 +390,24 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
           I18n.t("registration.user_registration.summary.preferences_saved")
         )
       end
+
+      it "offers to withdraw them even when the student may no longer change them" do
+        stuck = create(:tutorial, lecture: lecture,
+                                  self_materialization_mode: :add_only,
+                                  skip_campaigns: true)
+        create(:tutorial_membership, user: user, tutorial: stuck)
+        campaign = lecture.registration_campaigns.first
+
+        get lecture_home_campaign_path(lecture, campaign_id: campaign.id), as: :turbo_stream
+
+        expect(response.body).to include(
+          I18n.t("registration.user_registration.messages.unremovable_assignment")
+        )
+        expect(response.body)
+          .to include(I18n.t("registration.user_registration.withdraw_preferences"))
+        expect(response.body)
+          .not_to include(I18n.t("registration.user_registration.save_choices"))
+      end
     end
 
     context "when the user is already assigned" do
@@ -715,6 +733,42 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
             expect(UserRegistrations::LecturePreferenceEditService).not_to receive(:new)
 
             post save_preferences_path(campaign), params: { preferences: preferences }
+
+            expect(response).to redirect_to(root_path)
+          end
+        end
+      end
+
+      describe "DELETE #withdraw_preferences" do
+        before do
+          [item, item2, item3].each_with_index do |pref_item, index|
+            create(:registration_user_registration,
+                   registration_campaign: campaign, registration_item: pref_item,
+                   user: user, status: :pending, preference_rank: index + 1)
+          end
+        end
+
+        it "removes all preferences and shows the campaign without them" do
+          expect do
+            delete(withdraw_preferences_path(campaign), as: :turbo_stream)
+          end.to change { campaign.user_registrations.where(user: user).count }.from(3).to(0)
+
+          expect(response).to have_http_status(:success)
+          expect(response.body).to include(
+            I18n.t("registration.user_registration.messages.preferences_withdrawn")
+          )
+          expect(response.body).to include(
+            I18n.t("registration.user_registration.summary.no_preferences")
+          )
+        end
+
+        context "when the user is not allowed to enroll" do
+          let(:lecture) { create(:lecture, teacher: user) }
+
+          it "keeps the preferences" do
+            expect do
+              delete(withdraw_preferences_path(campaign))
+            end.not_to(change { Registration::UserRegistration.count })
 
             expect(response).to redirect_to(root_path)
           end

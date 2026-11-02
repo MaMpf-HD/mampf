@@ -156,6 +156,8 @@ import LectureIntroController from "~/lectures/home/lecture_intro.controller.js"
 window.Stimulus.register("lecture-intro", LectureIntroController);
 import ParticipationFocusController from "~/lectures/home/participation_focus.controller.js";
 window.Stimulus.register("participation-focus", ParticipationFocusController);
+import LeaveConfirmationController from "~/lectures/home/leave_confirmation.controller.js";
+window.Stimulus.register("leave-confirmation", LeaveConfirmationController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
@@ -212,6 +214,8 @@ import StatusFilterController from "~/tutorials/status_filter.controller.js";
 window.Stimulus.register("status-filter", StatusFilterController);
 import SelectNavigationController from "~/tutorials/select_navigation.controller.js";
 window.Stimulus.register("select-navigation", SelectNavigationController);
+import AddMemberMenuController from "~/tutorials/add_member_menu.controller.js";
+window.Stimulus.register("add-member-menu", AddMemberMenuController);
 import ExamFormController from "~/exams/form.controller.js";
 window.Stimulus.register("exams--form", ExamFormController);
 

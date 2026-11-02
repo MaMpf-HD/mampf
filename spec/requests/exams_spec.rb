@@ -584,12 +584,25 @@ RSpec.describe("Exams", type: :request) do
     before { exam.registration_campaign.update!(status: :completed) }
 
     context "as a teacher" do
-      before { sign_in teacher }
+      before do
+        sign_in teacher
+        exam.lecture.add_user_to_roster!(new_student)
+      end
 
       it "adds the user as a participant" do
         expect do
           post(participants_exam_path(exam), params: { user_id: new_student.id }, as: :turbo_stream)
         end.to change { exam.roster_entries.count }.by(1)
+      end
+
+      it "enrolls someone not yet in the lecture, and reloads the roster tabs" do
+        stranger = create(:confirmed_user, locale: "en")
+
+        post(participants_exam_path(exam), params: { email: stranger.email }, as: :turbo_stream)
+
+        expect(exam.roster_entries.map(&:user_id)).to include(stranger.id)
+        expect(exam.lecture.reload.members).to include(stranger)
+        expect(response.body).to include('target="roster_participants_panel"')
       end
 
       it "sends an email when a participant is successfully added" do
@@ -648,6 +661,38 @@ RSpec.describe("Exams", type: :request) do
     end
   end
 
+  describe "GET /exams/:id/participants/:user_id/confirm_remove" do
+    let(:member) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+    before do
+      create(:exam_roster_entry, exam: exam, user: member)
+      exam.registration_campaign.update!(status: :completed)
+    end
+
+    it "opens the removal dialog for the teacher" do
+      sign_in teacher
+
+      get confirm_remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream
+
+      body = CGI.unescapeHTML(response.body)
+      expect(body).to include('target="modal-container"')
+      expect(body).to include(
+        I18n.t("roster.removal_modal.title_exam", user: "Lina Berg", group: exam.title)
+      )
+      expect(body).to include(
+        "action=\"#{remove_participant_exam_path(exam, user_id: member.id)}\""
+      )
+    end
+
+    it "opens nothing for a student" do
+      sign_in student
+
+      get confirm_remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream
+
+      expect(response.body).not_to include("modal-container")
+    end
+  end
+
   describe "DELETE /exams/:id/participants/:user_id" do
     let(:member) { create(:confirmed_user, locale: "en") }
 
@@ -665,6 +710,20 @@ RSpec.describe("Exams", type: :request) do
         end.to change { exam.roster_entries.count }.by(-1)
       end
 
+      it "ends the enrollment of someone for whom the list was the last group, and says so" do
+        create(:lecture_membership, lecture: lecture, user: member)
+
+        delete(remove_participant_exam_path(exam, user_id: member.id), as: :turbo_stream)
+
+        expect(lecture.reload.members).not_to include(member)
+        expect(lecture.excluded_lecture_memberships.find_by(user: member).excluded_by)
+          .to eq(teacher)
+        expect(CGI.unescapeHTML(response.body)).to include(
+          I18n.t("assessment.registration_tab.participant_removed_with_lecture",
+                 name: member.tutorial_name.presence || member.email)
+        )
+      end
+
       it "sends an email when a participant is successfully removed" do
         perform_enqueued_jobs do
           expect do
@@ -679,6 +738,16 @@ RSpec.describe("Exams", type: :request) do
                  lecture_title: lecture.title)
         end
         expect(email.subject).to eq(expected_subject)
+      end
+
+      it "sends no email when the staff untick it" do
+        perform_enqueued_jobs do
+          expect do
+            delete(remove_participant_exam_path(exam, user_id: member.id),
+                   params: { notify: "0" }, as: :turbo_stream)
+          end.not_to(change { ActionMailer::Base.deliveries.count })
+        end
+        expect(exam.roster_entries.where(user: member)).to be_empty
       end
 
       context "when removal is blocked" do

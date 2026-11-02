@@ -6,6 +6,15 @@ module LecturesHelper
     { turbo_frame: "lecture-mode", turbo_action: "advance" }
   end
 
+  # Pinned lectures for the navbar's Quick Access menu: by course title,
+  # then newest term first (lectures without a term last).
+  def quick_access_lectures(user)
+    user.favorite_lectures.includes(:course, :term).sort_by do |lecture|
+      begin_date = lecture.term&.begin_date || Date.new(0)
+      [lecture.course.short_title.to_s.to_sort_atoms, -begin_date.jd]
+    end
+  end
+
   def registration_sidebar_visible?(lecture)
     return false unless lecture && user_signed_in?
 

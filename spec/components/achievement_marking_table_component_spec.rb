@@ -87,6 +87,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
 
     it "lists every member group by group, those in no group last, with a group filter" do
       other = create(:tutorial, lecture: lecture, title: "Friday group")
+      other.add_tutor(create(:confirmed_user, first_name: "Grace", last_name: "Hopper"))
       member("Nina", tutorial: other)
       member("Ada")
       member("Ola", tutorial: nil)
@@ -95,7 +96,7 @@ RSpec.describe(AchievementMarkingTableComponent, type: :component) do
 
       expect(page.css("tbody tr").pluck("data-status-filter-name")).to eq(["Nina", "Ada", "Ola"])
       expect(page.css("select[data-status-filter-target=tutorial] option").map { |o| o.text.strip })
-        .to include("Monday group", "Friday group")
+        .to include("Monday group (#{I18n.t("basics.tba")})", "Friday group (Grace Hopper)")
     end
   end
 

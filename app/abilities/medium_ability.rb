@@ -20,7 +20,7 @@ class MediumAbility
          :add_item, :add_reference, :add_screenshot, :remove_screenshot,
          :import_script_items, :import_manuscript, :statistics,
          :render_medium_tags, :fill_quizzable_area,
-         :fill_reassign_modal], Medium do |medium|
+         :fill_reassign_modal, :transcribe], Medium do |medium|
       user.can_edit?(medium)
     end
 
@@ -37,7 +37,8 @@ class MediumAbility
     end
 
     # guest users can play/display media when their release status 'all'
-    can [:play, :screenshot, :chapters_vtt, :references_vtt, :stream_video, :display,
+    can [:play, :screenshot, :chapters_vtt, :references_vtt, :stream_video,
+         :stream_transcript, :display,
          :inline_manuscript, :geogebra, :inline_geogebra,
          :download], Medium do |medium|
       (!user.new_record? && medium.visible_for_user?(user)) ||

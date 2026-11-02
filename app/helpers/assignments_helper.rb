@@ -12,15 +12,30 @@ module AssignmentsHelper
     I18n.t("basics.files")
   end
 
-  def test_week_label(assignment)
-    week_label(assignment.test_week)
+  def test_period_label(assignment)
+    week_label(assignment.test_period)
   end
 
+  def test_period_line(assignment)
+    "#{I18n.t("assessment.test.period", count: assignment.test_week_count)}: " \
+      "#{test_period_label(assignment)}"
+  end
+
+  # A new test is set to this week, or to the term's first while the term lies
+  # ahead. Last week, offered for a test set up after the fact, comes first in
+  # the list and would otherwise be the default.
   def test_week_options(assignment)
-    choices = assignment.test_week_choices.map do |monday|
-      [week_label(monday..(monday + 6)), monday.iso8601]
+    mondays = assignment.test_week_choices
+    choices = mondays.map { |monday| [week_label(monday..(monday + 6)), monday.iso8601] }
+    selected = assignment.test_week || [Time.zone.today.beginning_of_week, mondays.first].max
+    options_for_select(choices, selected.iso8601)
+  end
+
+  def test_week_count_options(assignment)
+    choices = Assignment::TEST_WEEK_COUNTS.map do |count|
+      [I18n.t("assessment.test.week_count_option", count: count), count]
     end
-    options_for_select(choices, assignment.deadline&.to_date&.beginning_of_week&.iso8601)
+    options_for_select(choices, assignment.test_week_count)
   end
 
   def test_badge
