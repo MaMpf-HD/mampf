@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Opens and closes the support panel above its button. The panel does not
+ * Opens and closes the support or feedback panel above its button. The panel does not
  * block the page: a click elsewhere closes it, and Escape or the close button
  * also return the focus to the button.
  */

@@ -1,0 +1,12 @@
+<%# locals: (feedback:) %>
+<p
+  class="feedback-widget__sent small"
+  role="status"
+  tabindex="-1"
+  data-feedback-widget-target="result"
+>
+  <i class="bi bi-heart-fill text-danger me-1" aria-hidden="true"></i>
+  <%= t("feedback.sent") %>
+</p>
+
+<%= render "feedbacks/form", feedback: feedback, intro: false %>

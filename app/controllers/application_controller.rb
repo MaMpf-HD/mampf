@@ -7,6 +7,9 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
   include Flash
 
+  # The feedback muffin sits next to the support button on every page.
+  helper FeedbacksHelper
+
   # Content types allowed to render inline in the browser. Anything else served
   # inline is downgraded so a stored user blob whose real content is HTML/SVG/etc.
   # cannot execute as our own origin (a content-sniffed text/html submission served

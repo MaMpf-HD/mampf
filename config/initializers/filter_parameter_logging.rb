@@ -11,7 +11,7 @@ Rails.application.config.filter_parameters += [
   # A student's points, grades and the notes on them, and whom staff look
   # for. Whole keys only: a partial "grade" would also hide grading_scope_type.
   /\A(grade|comment|note|task_points|submissions|participations|q)\z/,
-  "support_request.message", "user.name", :name_in_tutorials,
+  "support_request.message", "feedback.body", "user.name", :name_in_tutorials,
   # A search is a GET: the logged path carries search%5Bfulltext%5D, which a
   # nested "search.fulltext" would not match.
   :fulltext
