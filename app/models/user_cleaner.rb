@@ -49,12 +49,17 @@ class UserCleaner
   #   but never logged in after that. In this case, current_sign_in_at is indeed nil,
   #   but the user should only be considered inactive if the confirmation_sent_at
   #   date is older than the threshold.
+  #
+  # Banned users are left out: they cannot sign in, and while their account
+  # exists, nobody registers anew with its address or matriculation number.
   def inactive_users
     threshold = INACTIVE_USER_THRESHOLD
-    User.confirmed.and(
-      User.inactive_for(threshold)
-      .or(User.no_sign_in_data.confirmation_sent_before(threshold))
-    ).or(User.unconfirmed.confirmation_sent_before(threshold))
+    User.where(banned_at: nil).and(
+      User.confirmed.and(
+        User.inactive_for(threshold)
+        .or(User.no_sign_in_data.confirmation_sent_before(threshold))
+      ).or(User.unconfirmed.confirmation_sent_before(threshold))
+    )
   end
 
   # Returns all users who have been active in the last INACTIVE_USER_THRESHOLD months,

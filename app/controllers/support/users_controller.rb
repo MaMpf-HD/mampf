@@ -1,7 +1,7 @@
 module Support
   # Lets the support find a person, correct their personal data but the
-  # address, see whether their account is locked or unconfirmed, and send the
-  # mails that get them back in.
+  # address, see whether their account is locked, banned or unconfirmed, and
+  # send the mails that get them back in.
   class UsersController < ApplicationController
     helper SupportUsersHelper
     helper PersonalDataHelper
@@ -66,6 +66,27 @@ module Support
         back_to_person(t("support.users.confirmation_sent"))
       else
         back_to_person(t("support.users.nothing_to_confirm"), kind: :alert)
+      end
+    end
+
+    def ban
+      authorize! :ban, @user
+      return back_to_person(t("support.users.already_banned"), kind: :alert) if @user.banned?
+
+      if @user.ban(by: current_user, reason: params.expect(user: [:ban_reason])[:ban_reason])
+        back_to_person(t("support.users.banned"))
+      else
+        back_to_person(@user.errors.full_messages.to_sentence, kind: :alert)
+      end
+    end
+
+    def unban
+      authorize! :unban, @user
+
+      if @user.unban
+        back_to_person(t("support.users.unbanned"))
+      else
+        back_to_person(@user.errors.full_messages.to_sentence, kind: :alert)
       end
     end
 

@@ -45,6 +45,29 @@ test.describe("the support", () => {
       await expect(results.getByRole("row", { name: /Noether-Lasker, Emmy/ })).toBeVisible();
     });
 
+  test("bans an account, which ends its session, and lifts the ban", async ({ admin, student }) => {
+    await student.page.goto("/");
+
+    const page = admin.page;
+    await page.goto(`/support/users/${student.user.id}/edit`);
+    await page.getByLabel("Reason for the ban").fill("Misuse of exam data");
+    page.once("dialog", confirmation => confirmation.accept());
+    await page.getByRole("button", { name: "Ban the account" }).click();
+    await expect(page.getByText("The account is banned.")).toBeVisible();
+    const status = page.getByTestId("support-account-status");
+    await expect(status).toContainText(`by ${admin.user.email}`);
+    await expect(status).toContainText("Misuse of exam data");
+
+    await student.page.reload();
+    await expect(student.page.getByText("An admin has banned your account.")).toBeVisible();
+
+    page.once("dialog", confirmation => confirmation.accept());
+    await page.getByRole("button", { name: "Lift the ban" }).click();
+    await expect(page.getByText("The ban is lifted.")).toBeVisible();
+    await expect(status).not.toContainText("Misuse of exam data");
+    await expect(page.getByRole("button", { name: "Ban the account" })).toBeVisible();
+  });
+
   test("deletes an account when an admin is asked to", async ({ admin: { page }, factory }) => {
     const person = await factory.create("confirmed_user", [], {
       first_name: "Sofja", last_name: "Kowalewskaja",

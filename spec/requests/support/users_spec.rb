@@ -463,6 +463,94 @@ RSpec.describe("Support users", type: :request) do
     end
   end
 
+  describe "a ban" do
+    let(:admin) { create(:confirmed_user_en, admin: true) }
+
+    def account_status
+      Nokogiri::HTML(response.body).at_css("[data-testid='support-account-status']").text
+    end
+
+    it "is set by an admin with a reason and lifted again" do
+      sign_in(admin)
+
+      patch ban_support_user_path(student),
+            params: { user: { ban_reason: "Misuse of exam data" } }
+      follow_redirect!
+
+      expect(response.body).to include("The account is banned.")
+      expect(student.reload).to have_attributes(banned_by: admin,
+                                                ban_reason: "Misuse of exam data")
+      expect(account_status).to include("by #{admin.email}", "Misuse of exam data")
+
+      patch unban_support_user_path(student)
+      follow_redirect!
+
+      expect(response.body).to include("The ban is lifted.")
+      expect(student.reload.banned?).to be(false)
+    end
+
+    it "needs a reason" do
+      sign_in(admin)
+
+      patch ban_support_user_path(student), params: { user: { ban_reason: " " } }
+
+      expect(flash[:alert]).to eq("Reason for the ban can't be blank")
+      expect(student.reload.banned?).to be(false)
+    end
+
+    it "keeps who banned first and why when a second admin bans again" do
+      student.ban(by: admin, reason: "Misuse of exam data")
+      sign_in(create(:confirmed_user_en, admin: true))
+
+      patch ban_support_user_path(student), params: { user: { ban_reason: "Spam" } }
+
+      expect(flash[:alert]).to eq("The account is banned already.")
+      expect(student.reload).to have_attributes(banned_by: admin,
+                                                ban_reason: "Misuse of exam data")
+    end
+
+    it "keeps the accounts of admins out of reach" do
+      other_admin = create(:confirmed_user, admin: true)
+      sign_in(admin)
+
+      get edit_support_user_path(other_admin)
+      expect(response.body).not_to include(ban_support_user_path(other_admin))
+
+      patch ban_support_user_path(other_admin), params: { user: { ban_reason: "Spam" } }
+      expect(other_admin.reload.banned?).to be(false)
+    end
+
+    it "shows the support the ban but lets them neither set nor lift one" do
+      student.ban(by: admin, reason: "Misuse of exam data")
+      other = create(:confirmed_user)
+      sign_in(support)
+
+      get edit_support_user_path(student)
+      expect(account_status).to include("by #{admin.email}", "Misuse of exam data")
+      expect(response.body).not_to include(unban_support_user_path(student))
+
+      get edit_support_user_path(other)
+      expect(response.body).not_to include(ban_support_user_path(other))
+
+      patch unban_support_user_path(student)
+      patch ban_support_user_path(other), params: { user: { ban_reason: "Spam" } }
+
+      expect(student.reload.banned?).to be(true)
+      expect(other.reload.banned?).to be(false)
+    end
+
+    it "marks a banned account in the search" do
+      sign_in(support)
+      search(fulltext: "Noether")
+      expect(response.body).not_to include("Banned")
+
+      student.ban(by: admin, reason: "Misuse of exam data")
+      search(fulltext: "Noether")
+
+      expect(response.body).to include("Banned")
+    end
+  end
+
   describe "what only admins do" do
     let(:account) { create(:confirmed_user) }
     let(:admin) { create(:confirmed_user_en, admin: true) }

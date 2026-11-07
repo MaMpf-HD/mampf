@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_07_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1363,6 +1363,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
     t.boolean "support", default: false, null: false
     t.boolean "deans_office", default: false, null: false
     t.boolean "email_for_tutorial_change", default: true, null: false
+    t.datetime "banned_at"
+    t.bigint "banned_by_id"
+    t.text "ban_reason"
+    t.index ["banned_by_id"], name: "index_users_on_banned_by_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"
@@ -1370,6 +1374,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uni_id"], name: "index_users_on_uni_id", unique: true, where: "(uni_id IS NOT NULL)"
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+    t.check_constraint "(banned_at IS NULL) = (ban_reason IS NULL)", name: "users_ban_has_reason"
+    t.check_constraint "banned_by_id IS NULL OR banned_at IS NOT NULL", name: "users_banned_by_only_with_ban"
   end
 
   create_table "vignettes_answers", force: :cascade do |t|
@@ -1634,6 +1640,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_30_000002) do
   add_foreign_key "user_submission_joins", "users"
   add_foreign_key "user_submission_joins", "users", column: "added_by_id", on_delete: :nullify
   add_foreign_key "users", "programs", on_delete: :nullify
+  add_foreign_key "users", "users", column: "banned_by_id", on_delete: :nullify
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"

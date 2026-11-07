@@ -35,6 +35,11 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
+  # The admin who banned the account; empty once their own account is deleted.
+  belongs_to :banned_by, class_name: "User", optional: true
+  normalizes :ban_reason, with: ->(value) { value.strip.presence }
+  validates :ban_reason, presence: true, if: :banned_at?
+
   include PgSearch::Model
 
   # a user has many bookmarked lectures (formerly: subscribed lectures)
@@ -1039,6 +1044,31 @@ class User < ApplicationRecord
     return super if access_locked?
 
     send_reset_password_instructions
+  end
+
+  # Keeps the account out until an admin lifts the ban. Its deletion date goes
+  # too, see UserCleaner#inactive_users.
+  def ban(by:, reason:)
+    update(banned_at: Time.current, banned_by: by, ban_reason: reason, deletion_date: nil)
+  end
+
+  def unban
+    update(banned_at: nil, banned_by: nil, ban_reason: nil)
+  end
+
+  def banned?
+    banned_at.present?
+  end
+
+  # Devise asks this at every request, so a running session ends with the
+  # next one, and neither a new password nor a confirmation lets a banned
+  # account in.
+  def active_for_authentication?
+    super && !banned?
+  end
+
+  def inactive_message
+    banned? ? :banned : super
   end
 
   ##############################################################################
