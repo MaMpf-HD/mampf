@@ -539,6 +539,18 @@ RSpec.describe("Support users", type: :request) do
       expect(other.reload.banned?).to be(false)
     end
 
+    # BannedRecipientsInterceptor would drop the mail.
+    it "offers no mails to a banned account" do
+      unconfirmed = create(:user)
+      unconfirmed.ban(by: admin, reason: "Misuse of exam data")
+      sign_in(support)
+
+      get edit_support_user_path(unconfirmed)
+
+      expect(response.body).not_to include(password_reset_support_user_path(unconfirmed),
+                                           confirmation_support_user_path(unconfirmed))
+    end
+
     it "marks a banned account in the search" do
       sign_in(support)
       search(fulltext: "Noether")

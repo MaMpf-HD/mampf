@@ -1060,6 +1060,17 @@ class User < ApplicationRecord
     banned_at.present?
   end
 
+  # The ones among the given addresses that belong to banned accounts,
+  # downcased. A new address that waits for confirmation counts as well.
+  def self.banned_addresses(addresses)
+    addresses = addresses.map(&:downcase).uniq
+    return [] if addresses.empty?
+
+    banned = where.not(banned_at: nil)
+    banned.where(email: addresses).or(banned.where(unconfirmed_email: addresses))
+          .pluck(:email, :unconfirmed_email).flatten & addresses
+  end
+
   # Devise asks this at every request, so a running session ends with the
   # next one, and neither a new password nor a confirmation lets a banned
   # account in.

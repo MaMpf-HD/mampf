@@ -45,9 +45,9 @@ en:
       not_deleted: 'The account was not deleted: records such as exam registrations still refer to it.'
       ban_title: 'Ban'
       ban_hint: >-
-        A banned account cannot sign in, and a running session ends at once.
-        Only an admin lifts the ban, a new password does not. Until then, the
-        account is not deleted for inactivity.
+        A banned account cannot sign in and gets no mails; a running session
+        ends at once. Only an admin lifts the ban. Until then, the account is
+        not deleted for inactivity.
       ban: 'Ban the account'
       ban_confirm: 'Ban the account of %{user}?'
       banned: 'The account is banned.'

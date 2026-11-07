@@ -70,14 +70,16 @@
                     method: :patch, class: "btn btn-sm btn-outline-primary" %>
     <% end %>
 
-    <%= button_to t("support.users.actions.password_reset"),
-                  password_reset_support_user_path(@user, search: search_query),
-                  class: "btn btn-sm btn-outline-primary" %>
-
-    <% if !@user.confirmed? || @user.pending_reconfirmation? %>
-      <%= button_to t("support.users.actions.confirmation"),
-                    confirmation_support_user_path(@user, search: search_query),
+    <%# A banned account gets no mails, see BannedRecipientsInterceptor. %>
+    <% unless @user.banned? %>
+      <%= button_to t("support.users.actions.password_reset"),
+                    password_reset_support_user_path(@user, search: search_query),
                     class: "btn btn-sm btn-outline-primary" %>
+      <% if !@user.confirmed? || @user.pending_reconfirmation? %>
+        <%= button_to t("support.users.actions.confirmation"),
+                      confirmation_support_user_path(@user, search: search_query),
+                      class: "btn btn-sm btn-outline-primary" %>
+      <% end %>
     <% end %>
   </div>
 

@@ -46,9 +46,9 @@ de:
       not_deleted: 'Das Konto wurde nicht gelöscht: Einträge wie Klausuranmeldungen verweisen noch darauf.'
       ban_title: 'Kontosperre'
       ban_hint: >-
-        Ein gesperrtes Konto kann sich nicht anmelden, und eine laufende Sitzung
-        endet sofort. Nur ein Admin hebt die Sperre auf, ein neues Passwort
-        nicht. Bis dahin wird das Konto nicht wegen Inaktivität gelöscht.
+        Ein gesperrtes Konto kann sich nicht anmelden und bekommt keine Mails;
+        eine laufende Sitzung endet sofort. Nur ein Admin hebt die Sperre auf.
+        Bis dahin wird das Konto nicht wegen Inaktivität gelöscht.
       ban: 'Konto sperren'
       ban_confirm: 'Das Konto von %{user} sperren?'
       banned: 'Das Konto ist gesperrt.'
