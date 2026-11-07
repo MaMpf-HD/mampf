@@ -494,4 +494,52 @@ RSpec.describe(User, type: :model) do
         .to include(I18n.t("activerecord.errors.models.user.admin_rights_lost"))
     end
   end
+
+  describe "a ban" do
+    let(:admin) { create(:confirmed_user, admin: true) }
+    let(:user) { create(:confirmed_user, deletion_date: Date.current + 10.days) }
+
+    it "keeps the account out and records who banned it and why" do
+      expect(user.ban(by: admin, reason: "  Misuse of exam data  ")).to be(true)
+
+      expect(user.reload).to have_attributes(banned_by: admin, ban_reason: "Misuse of exam data",
+                                             deletion_date: nil)
+      expect(user.active_for_authentication?).to be(false)
+      expect(user.inactive_message).to eq(:banned)
+    end
+
+    it "needs a reason" do
+      expect(user.ban(by: admin, reason: " ")).to be(false)
+
+      expect(user.reload.banned?).to be(false)
+    end
+
+    it "lets the account in again once lifted" do
+      user.ban(by: admin, reason: "Misuse of exam data")
+
+      expect(user.unban).to be(true)
+
+      expect(user.reload).to have_attributes(banned_at: nil, banned_by: nil, ban_reason: nil)
+      expect(user.active_for_authentication?).to be(true)
+    end
+
+    it "stays when the account of the admin who banned it is deleted" do
+      user.ban(by: admin, reason: "Misuse of exam data")
+
+      admin.destroy
+
+      expect(user.reload).to have_attributes(banned?: true, banned_by_id: nil)
+    end
+
+    # rubocop:disable Rails/SkipsModelValidations
+    it "cannot be stored without a reason, nor a reason or author without a ban" do
+      expect { user.update_columns(banned_at: Time.current) }
+        .to raise_error(ActiveRecord::StatementInvalid, /users_ban_has_reason/)
+      expect { user.update_columns(ban_reason: "Misuse") }
+        .to raise_error(ActiveRecord::StatementInvalid, /users_ban_has_reason/)
+      expect { user.update_columns(banned_by_id: admin.id) }
+        .to raise_error(ActiveRecord::StatementInvalid, /users_banned_by_only_with_ban/)
+    end
+    # rubocop:enable Rails/SkipsModelValidations
+  end
 end

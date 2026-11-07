@@ -6,7 +6,8 @@ en:
       explainer: >-
         Find a person by name, email, matriculation number or Uni ID. On their
         page you correct their personal data, see whether their account is
-        locked or unconfirmed, and send them the mails that get them back in.
+        locked, banned or unconfirmed, and send them the mails that get them
+        back in.
       hits:
         one: '1 person'
         other: '%{count} people'
@@ -42,6 +43,19 @@ en:
       delete_confirm: 'Delete the account of %{user} for good? This cannot be undone.'
       deleted: 'The account of %{user} has been deleted.'
       not_deleted: 'The account was not deleted: records such as exam registrations still refer to it.'
+      ban_title: 'Ban'
+      ban_hint: >-
+        A banned account cannot sign in and gets no mails; a running session
+        ends at once. Only an admin lifts the ban. Until then, the account is
+        not deleted for inactivity.
+      ban: 'Ban the account'
+      ban_confirm: 'Ban the account of %{user}?'
+      banned: 'The account is banned.'
+      already_banned: 'The account is banned already.'
+      banned_badge: 'Banned'
+      unban: 'Lift the ban'
+      unban_confirm: 'Lift the ban on the account of %{user}?'
+      unbanned: 'The ban is lifted.'
       actions:
         unlock: 'Unlock'
         password_reset: 'Send a password reset mail'
@@ -59,6 +73,10 @@ en:
           zero: 'no'
           one: 'no (1 failed sign-in in a row)'
           other: 'no (%{count} failed sign-ins in a row)'
+        banned: 'Banned'
+        not_banned: 'no'
+        banned_at: 'yes, since %{time}'
+        banned_by: 'yes, since %{time}, by %{user}'
         last_sign_in: 'Last sign-in'
         never_signed_in: 'never'
         signed_in:
@@ -77,3 +95,7 @@ en:
         email: 'Email'
         program: 'Program'
         actions: 'Actions'
+  activerecord:
+    attributes:
+      user:
+        ban_reason: 'Reason for the ban'

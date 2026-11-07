@@ -69,6 +69,12 @@
                       <%= t("admin.user.deans_office") %>
                     </span>
                   <% end %>
+
+                  <% if user.banned? %>
+                    <span class="badge bg-secondary">
+                      <%= t("support.users.banned_badge") %>
+                    </span>
+                  <% end %>
                 </th>
 
                 <td><%= user.matriculation_number %></td>
