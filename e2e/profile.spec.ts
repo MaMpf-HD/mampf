@@ -214,6 +214,6 @@ test.describe("Account settings", () => {
 
       await loginPage.goto();
       await loginPage.login(user.email, newPassword);
-      await expect(page).toHaveURL(/:3145\/$/);
+      await expect(page).toHaveURL("/");
     });
 });
