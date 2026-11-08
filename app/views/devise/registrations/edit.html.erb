@@ -1,5 +1,8 @@
 <% password_change_required = resource.password_change_required? %>
+
+<!-- ensure that user is automatically redirected to the password change form if required -->
 <% section = password_change_required ? "password" : params[:section].to_s %>
+
 <% section = nil unless %w[email password].include?(section) %>
 
 <h2><%= t(password_change_required ? 'devise.edit.password_change_required_title' : 'devise.edit.title') %></h2>
@@ -34,8 +37,7 @@
     </h3>
     <%= render "devise/registrations/password_form",
                user: resource,
-               origin: params[:origin],
-               password_change_required: password_change_required %>
+               origin: params[:origin] %>
   </section>
 <% end %>
 

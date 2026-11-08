@@ -185,6 +185,7 @@ class RegistrationsController < Devise::RegistrationsController
     # Swaps only the submitted form, so a failed update from a profile modal
     # keeps the modal open and shows the errors inside it.
     def render_form_errors(section)
+      section = "password" if resource.password_change_required?
       locals = { user: resource,
                  origin: params[:origin].presence_in(["profile"]),
                  autofocus: false }

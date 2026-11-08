@@ -98,7 +98,7 @@ test("keeps helpdesk popovers working after a rejected account password change",
   await page.getByLabel("Current password").fill("wrong-password");
   await page.getByLabel("New password", { exact: true }).fill("super-secure-horse-battery-staple");
   await page.getByLabel("Confirm new password", { exact: true }).fill("super-secure-horse-battery-staple");
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("button", { name: "Update password" }).click();
 
   await expect(page).toHaveURL(/\/users/);
 
@@ -121,14 +121,14 @@ test("clears stale current password errors after correcting an account password 
   await page.getByLabel("Current password").fill("wrong-password");
   await page.getByLabel("New password", { exact: true }).fill(newPassword);
   await page.getByLabel("Confirm new password", { exact: true }).fill(newPassword);
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("button", { name: "Update password" }).click();
 
   await expect(page).toHaveURL(/\/users/);
-  await expect(page.locator("#user_current_password")).toHaveClass(/is-invalid/);
-  await expect(page.locator("#user_current_password + .invalid-feedback")).toHaveCount(1);
+  await expect(page.locator("#password_current_password")).toHaveClass(/is-invalid/);
+  await expect(page.locator("#password_current_password + .invalid-feedback")).toHaveCount(1);
 
   await page.getByLabel("Current password").fill(user.password);
 
-  await expect(page.locator("#user_current_password")).not.toHaveClass(/is-invalid/);
-  await expect(page.locator("#user_current_password + .invalid-feedback")).toHaveCount(0);
+  await expect(page.locator("#password_current_password")).not.toHaveClass(/is-invalid/);
+  await expect(page.locator("#password_current_password + .invalid-feedback")).toHaveCount(0);
 });

@@ -132,7 +132,11 @@ test.describe("Account settings", () => {
       await expect(page).toHaveURL(/\/profile/);
       await expect(page.getByRole("alert")).toBeVisible();
 
-      // ...rest of your existing test unchanged (confirmation link, logout, login checks)
+      const confirmationLink = await confirmationLinkFor(request, newEmail);
+      await page.goto(confirmationLink);
+      await expect(page.getByRole("alert")).toContainText(
+        "Your email address has been confirmed.",
+      );
     });
 
   test("shows the error inside the email modal when a submit fails",
