@@ -3,8 +3,7 @@ module Dev
     skip_before_action :authenticate_user!
 
     def create
-      teacher = User.find_by(email: "teacher@mampf.edu") ||
-                User.joins(:given_lectures).distinct.order(:email).first
+      teacher = User.find_by(email: "teacher@mampf.edu")
       if teacher
         sign_in(:user, teacher)
         redirect_to root_path, notice: "Signed in as teacher." # rubocop:disable Rails/I18nLocaleTexts
