@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modulhandbuch – Edit Description</title>
+    <style>
+      :root {
+        --bg: #f5f6f8;
+        --surface: #fff;
+        --border: #dfe2e6;
+        --border-strong: #c8ccd2;
+        --text: #1f2328;
+        --muted: #656d76;
+        --primary: #1f5fae;
+        --primary-hover: #194e90;
+        --primary-soft: #e8f0fa;
+        --danger: #b42318;
+        --danger-soft: #fdecea;
+        --warn: #8a5a00;
+        --warn-soft: #fff4d6;
+        --ok: #1a7f37;
+        --ok-soft: #e6f4ea;
+        --created: #98a2b3;
+        --checked: #d29922;
+        --add-bg: #dafbe1;
+        --add-fg: #116329;
+        --del-bg: #ffebe9;
+        --del-fg: #a40e26;
+        --radius: 8px;
+        --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.5 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      .topbar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 0 24px;
+        height: 56px;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .brand span {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .nav {
+        display: flex;
+        gap: 4px;
+      }
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+      }
+      .nav a.active {
+        color: var(--primary);
+        background: var(--primary-soft);
+        font-weight: 600;
+      }
+      .nav a:hover:not(.active) {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .user {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .role {
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: 999px;
+        padding: 2px 8px;
+        margin-left: 6px;
+        font-weight: 600;
+      }
+
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 16px 24px 96px;
+      }
+      .crumbrow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .crumbrow a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+      .crumbrow a:hover {
+        text-decoration: underline;
+      }
+      .stepper {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .stepper .pg {
+        min-width: 28px;
+        height: 28px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 6px;
+        font: inherit;
+        cursor: pointer;
+        color: var(--text);
+      }
+      .stepper .pg:hover:not(:disabled) {
+        background: var(--bg);
+      }
+      .stepper .pg:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* Header */
+      .head {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .head-main {
+        flex: 1;
+        min-width: 300px;
+      }
+      .head h1 {
+        font-size: 22px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .head .alt {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 13px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 7px;
+        font-weight: 500;
+      }
+      .term-chip {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 1px 10px;
+        background: var(--surface);
+      }
+      .steps {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        margin-top: 8px;
+      }
+      .steps span.s {
+        padding: 1px 10px;
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .steps span.s.cur {
+        color: #fff;
+        border-color: transparent;
+        font-weight: 600;
+      }
+      .steps span.s.cur.created {
+        background: var(--created);
+      }
+      .steps span.s.cur.checked {
+        background: var(--checked);
+      }
+      .steps span.s.cur.published {
+        background: var(--ok);
+      }
+      .steps .arrow {
+        color: var(--muted);
+      }
+      .head-acts {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font: inherit;
+        font-weight: 500;
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        color: var(--text);
+        padding: 7px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        text-decoration: none;
+      }
+      .btn:hover {
+        background: var(--bg);
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+      .btn.primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn.ok {
+        background: var(--ok);
+        border-color: var(--ok);
+        color: #fff;
+      }
+      .btn.sm {
+        padding: 4px 10px;
+        font-size: 13px;
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .callout {
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 13px;
+        margin-bottom: 14px;
+      }
+      .callout.warn {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+      .callout.info {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .callout a {
+        color: inherit;
+        font-weight: 600;
+      }
+
+      /* Layout */
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: 20px;
+        align-items: start;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      .card + .card {
+        margin-top: 16px;
+      }
+      .card-h {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-h h2 {
+        font-size: 14px;
+        margin: 0;
+      }
+      .card-b {
+        padding: 16px;
+      }
+
+      .field {
+        margin-bottom: 18px;
+      }
+      .field:last-child {
+        margin-bottom: 0;
+      }
+      .field > label,
+      .flabel {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+      .changed-tag {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--warn);
+        background: var(--warn-soft);
+        border-radius: 999px;
+        padding: 0 7px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .row3 {
+        display: grid;
+        grid-template-columns: 1fr 120px 1fr;
+        gap: 12px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        font: inherit;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        padding: 7px 10px;
+      }
+      textarea {
+        resize: vertical;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(31, 95, 174, 0.15);
+      }
+
+      .tabs {
+        display: inline-flex;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-left: auto;
+      }
+      .tabs button {
+        border: 0;
+        background: var(--surface);
+        font: inherit;
+        font-size: 12px;
+        padding: 2px 10px;
+        cursor: pointer;
+        color: var(--muted);
+      }
+      .tabs button + button {
+        border-left: 1px solid var(--border);
+      }
+      .tabs button.on {
+        background: var(--primary-soft);
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .preview {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 14px;
+        min-height: 80px;
+        background: #fcfcfd;
+        font-size: 14px;
+      }
+      .preview p {
+        margin: 0 0 8px;
+      }
+      .preview ul {
+        margin: 0 0 8px;
+        padding-left: 20px;
+      }
+      .preview table {
+        border-collapse: collapse;
+        margin: 6px 0 8px;
+        font-size: 13px;
+      }
+      .preview th,
+      .preview td {
+        border: 1px solid var(--border);
+        padding: 3px 8px;
+        text-align: left;
+      }
+      .preview th {
+        background: var(--bg);
+      }
+
+      .diff {
+        border: 1px dashed var(--border-strong);
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-top: 6px;
+        font-size: 13px;
+        line-height: 1.6;
+        background: #fcfcfd;
+        white-space: pre-wrap;
+      }
+      .diff .lbl {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 2px;
+      }
+      .diff ins {
+        background: var(--add-bg);
+        color: var(--add-fg);
+        text-decoration: none;
+        border-radius: 2px;
+      }
+      .diff del {
+        background: var(--del-bg);
+        color: var(--del-fg);
+        border-radius: 2px;
+      }
+      .diff .same {
+        color: var(--muted);
+        font-style: italic;
+      }
+      .compare-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+      }
+      .switch {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+      }
+      .switch input {
+        width: auto;
+        accent-color: var(--primary);
+      }
+
+      /* Sidebar */
+      .side-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-size: 13.5px;
+      }
+      .side-list li {
+        padding: 7px 0;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .side-list li:last-child {
+        border-bottom: 0;
+      }
+      .side-list a {
+        color: var(--text);
+        text-decoration: none;
+      }
+      .side-list a:hover {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+      .side-list .muted {
+        margin-left: auto;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        flex: none;
+      }
+      .dot.created {
+        background: var(--created);
+      }
+      .dot.checked {
+        background: var(--checked);
+      }
+      .dot.published {
+        background: var(--ok);
+      }
+      .hist li.cur {
+        font-weight: 600;
+      }
+      .hist .t {
+        width: 70px;
+        flex: none;
+      }
+      .meta dt {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .meta dd {
+        margin: 0 0 10px;
+        font-size: 13.5px;
+      }
+
+      /* Sticky save bar */
+      .savebar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        box-shadow: 0 -4px 16px rgba(16, 24, 40, 0.06);
+        padding: 10px 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 5;
+        transform: translateY(100%);
+        transition: transform 0.15s;
+      }
+      .savebar.on {
+        transform: none;
+      }
+      .savebar .msg {
+        font-size: 13px;
+      }
+      .savebar .msg b {
+        color: var(--warn);
+      }
+
+      /* Modal */
+      .backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 24, 40, 0.45);
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 64px 16px;
+        z-index: 20;
+      }
+      .backdrop.open {
+        display: flex;
+      }
+      .modal {
+        background: var(--surface);
+        border-radius: 10px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 12px 32px rgba(16, 24, 40, 0.25);
+      }
+      .modal-h {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .modal-h h2 {
+        font-size: 16px;
+        margin: 0;
+      }
+      .modal-b {
+        padding: 20px;
+      }
+      .modal-f {
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: #1f2328;
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 8px;
+        opacity: 0;
+        transition: 0.2s;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .diff .prevtext {
+        color: var(--muted);
+      }
+      .mock-label {
+        position: fixed;
+        bottom: 12px;
+        left: 12px;
+        background: var(--warn-soft);
+        color: var(--warn);
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+        z-index: 1;
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .topbar {
+          padding: 0 16px;
+        }
+        .nav {
+          display: none;
+        }
+        main {
+          padding: 12px 16px 110px;
+        }
+        .row3 {
+          grid-template-columns: 1fr 1fr;
+        }
+        .head-acts {
+          width: 100%;
+        }
+        .savebar {
+          padding: 10px 16px;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">MaMpf <span>· Modulhandbuch</span></div>
+      <nav class="nav">
+        <a href="#">Master data</a>
+        <a href="#">Handbooks</a>
+        <a href="#" class="active">Module descriptions</a>
+      </nav>
+      <div class="user">Dr. Admin <span class="role">admin</span></div>
+    </header>
+
+    <main>
+      <div class="crumbrow">
+        <a href="#">Module descriptions</a> <span>/</span> <span>WS 26/27 · Created</span>
+        <div class="stepper">
+          <span id="pos"></span>
+          <button class="pg" id="prev" aria-label="Previous description">‹</button>
+          <button class="pg" id="next" aria-label="Next description">›</button>
+        </div>
+      </div>
+
+      <div class="head">
+        <div class="head-main">
+          <h1>
+            <span class="code" id="h-code"></span> <span id="h-name"></span>
+            <span class="term-chip" id="h-term"></span>
+          </h1>
+          <div class="alt" id="h-alt"></div>
+          <div class="steps" id="steps"></div>
+        </div>
+        <div class="head-acts" id="head-acts"></div>
+      </div>
+
+      <div class="callout" id="shared"></div>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <div class="card-h">
+              <h2>Description</h2>
+              <div class="compare-bar" style="margin-left: auto" id="compare-wrap">
+                <label class="switch"
+                  ><input type="checkbox" id="compare" /> Compare with <span id="cmp-term"></span
+                ></label>
+              </div>
+            </div>
+            <div class="card-b">
+              <div class="row3 field">
+                <div>
+                  <label class="flabel" for="f-lang"
+                    >Language of instruction
+                    <span class="changed-tag" data-tag="lang" hidden>changed</span></label
+                  >
+                  <select id="f-lang" data-f="lang">
+                    <option value="de">German</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="flabel" for="f-ects"
+                    >ECTS <span class="changed-tag" data-tag="ects" hidden>changed</span></label
+                  >
+                  <input id="f-ects" data-f="ects" type="number" min="1" />
+                </div>
+                <div>
+                  <label class="flabel" for="f-override">Name override</label>
+                  <input
+                    id="f-override"
+                    data-f="override"
+                    placeholder="Leave empty to use the module name"
+                  />
+                  <div class="hint" id="name-hint"></div>
+                </div>
+              </div>
+              <div id="md-fields"></div>
+              <div class="field">
+                <label class="flabel" for="f-resp"
+                  >Responsible
+                  <span class="changed-tag" data-tag="resp" hidden>changed</span></label
+                >
+                <input id="f-resp" data-f="resp" />
+                <div class="diff" data-diff="resp" hidden></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="card">
+            <div class="card-h">
+              <h2>Used in</h2>
+              <span class="muted" style="margin-left: auto; font-size: 12px" id="used-n"></span>
+            </div>
+            <div class="card-b" style="padding-top: 4px; padding-bottom: 4px">
+              <ul class="side-list" id="used"></ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>History</h2></div>
+            <div class="card-b" style="padding-top: 4px; padding-bottom: 4px">
+              <ul class="side-list hist" id="hist"></ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Details</h2></div>
+            <div class="card-b"><dl class="meta" id="meta" style="margin: 0"></dl></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <div class="savebar" id="savebar">
+      <span class="msg" id="save-msg"></span>
+      <span style="margin-left: auto"></span>
+      <button class="btn" id="discard">Discard</button>
+      <button class="btn primary" id="save">Save</button>
+    </div>
+
+    <div class="backdrop" id="m-confirm">
+      <div class="modal">
+        <div class="modal-h"><h2 id="cf-title"></h2></div>
+        <div class="modal-b" id="cf-body"></div>
+        <div class="modal-f">
+          <button class="btn" data-close>Cancel</button
+          ><button class="btn primary" id="cf-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="mock-label">Mockup · sample data</div>
+
+    <script>
+      /* ===== Sample data: the filtered list the admin came from (WS 26/27 · created) ===== */
+      const MD_FIELDS = [
+        { k: "desc", label: "Content and goals", rows: 7 },
+        { k: "pre", label: "Prerequisites", rows: 2 },
+        { k: "exam", label: "Exam form", rows: 2 },
+        { k: "work", label: "Workload", rows: 4 },
+      ];
+      const STATUS = ["created", "checked", "published"];
+      const items = [
+        {
+          code: "MA101",
+          de: "Lineare Algebra I",
+          en: "Linear Algebra I",
+          term: "WS 26/27",
+          status: "created",
+          updated: "just now by Dr. Admin",
+          used: ["Mathematik B.Sc. 100%", "Mathematik B.Sc. 50%", "Mathematik B.Ed."],
+          cur: {
+            lang: "en",
+            ects: 8,
+            override: "",
+            resp: "Prof. Müller",
+            desc: "- Vector spaces, linear maps, matrices\n- Determinants, eigenvalues and eigenvectors\n- Euclidean and unitary vector spaces\n\nStudents can solve systems of linear equations and work with abstract vector spaces.",
+            pre: "None",
+            exam: "Written exam (120 min)",
+            work: "| Part | Hours |\n|---|---|\n| Lectures | 60 |\n| Exercises | 30 |\n| Self-study | 150 |",
+          },
+          hist: [
+            { term: "WS 26/27", status: "created", lang: "en" },
+            {
+              term: "WS 25/26",
+              status: "published",
+              lang: "de",
+              data: {
+                lang: "de",
+                ects: 8,
+                override: "",
+                resp: "Prof. Müller",
+                desc: "- Vektorräume, lineare Abbildungen, Matrizen\n- Determinanten, Eigenwerte und Eigenvektoren\n- Euklidische und unitäre Vektorräume\n\nStudierende können lineare Gleichungssysteme lösen und mit abstrakten Vektorräumen arbeiten.",
+                pre: "Keine",
+                exam: "Klausur (120 min)",
+                work: "| Teil | Stunden |\n|---|---|\n| Vorlesung | 60 |\n| Übung | 30 |\n| Selbststudium | 150 |",
+              },
+            },
+            { term: "WS 24/25", status: "published", lang: "de" },
+            { term: "WS 23/24", status: "published", lang: "de" },
+          ],
+        },
+        {
+          code: "MA102",
+          de: "Analysis I",
+          en: "Analysis I",
+          term: "WS 26/27",
+          status: "created",
+          updated: "2 days ago by Dr. Admin",
+          used: ["Mathematik B.Sc. 100%", "Mathematik B.Sc. 50%"],
+          cur: {
+            lang: "de",
+            ects: 8,
+            override: "",
+            resp: "Prof. Schmidt",
+            desc: "- Folgen und Reihen, Konvergenz\n- Stetigkeit und Differenzierbarkeit\n- Riemann-Integral\n- Potenzreihen\n\nStudierende beherrschen die Grundbegriffe der Analysis in einer Variablen und können Konvergenz sicher beweisen.",
+            pre: "Keine",
+            exam: "Klausur (150 min)",
+            work: "| Teil | Stunden |\n|---|---|\n| Vorlesung | 60 |\n| Übung | 30 |\n| Selbststudium | 150 |",
+          },
+          hist: [
+            { term: "WS 26/27", status: "created", lang: "de" },
+            {
+              term: "WS 25/26",
+              status: "published",
+              lang: "de",
+              data: {
+                lang: "de",
+                ects: 8,
+                override: "",
+                resp: "Prof. Weber",
+                desc: "- Folgen und Reihen\n- Stetigkeit und Differenzierbarkeit\n- Riemann-Integral\n\nStudierende beherrschen die Grundbegriffe der Analysis in einer Variablen.",
+                pre: "Keine",
+                exam: "Klausur (120 min)",
+                work: "| Teil | Stunden |\n|---|---|\n| Vorlesung | 60 |\n| Übung | 30 |\n| Selbststudium | 150 |",
+              },
+            },
+            { term: "WS 24/25", status: "published", lang: "de" },
+          ],
+        },
+        {
+          code: "MA201",
+          de: "Algebra I",
+          en: "Algebra I",
+          term: "WS 26/27",
+          status: "created",
+          updated: "today by Dr. Admin",
+          used: ["Mathematik B.Sc. 100%"],
+          cur: {
+            lang: "de",
+            ects: 8,
+            override: "",
+            resp: "Prof. Braun",
+            desc: "- Gruppen, Ringe, Körper\n- Galoistheorie\n\nStudierende kennen die algebraischen Grundstrukturen.",
+            pre: "Lineare Algebra I, II",
+            exam: "Klausur",
+            work: "240 Stunden",
+          },
+          hist: [{ term: "WS 26/27", status: "created", lang: "de" }],
+        },
+      ];
+      let idx = 1; // start on MA102: a real cloned-and-edited case
+      let saved,
+        draft,
+        compare = true;
+
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+        );
+      const clone = (o) => JSON.parse(JSON.stringify(o));
+      function toast(m) {
+        const t = $("#toast");
+        t.textContent = m;
+        t.classList.add("show");
+        clearTimeout(t._h);
+        t._h = setTimeout(() => t.classList.remove("show"), 2600);
+      }
+      const openM = (id) => $(id).classList.add("open");
+      const closeM = () =>
+        document.querySelectorAll(".backdrop").forEach((b) => b.classList.remove("open"));
+      document.addEventListener("click", (e) => {
+        if (e.target.matches("[data-close]") || e.target.classList.contains("backdrop")) closeM();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeM();
+      });
+      function confirmBox(title, html, ok, fn) {
+        $("#cf-title").textContent = title;
+        $("#cf-body").innerHTML = html;
+        $("#cf-ok").textContent = ok;
+        $("#cf-ok").onclick = () => {
+          closeM();
+          fn();
+        };
+        openM("#m-confirm");
+      }
+
+      /* ===== Tiny markdown preview (lists, paragraphs, bold, pipe tables) ===== */
+      function md(src) {
+        const lines = String(src || "").split("\n");
+        let out = "",
+          i = 0;
+        const inline = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+        while (i < lines.length) {
+          const l = lines[i];
+          if (/^\s*\|/.test(l)) {
+            const rows = [];
+            while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(lines[i++]);
+            const cells = (r) =>
+              r
+                .trim()
+                .replace(/^\||\|$/g, "")
+                .split("|")
+                .map((c) => c.trim());
+            out +=
+              `<table><tr>${cells(rows[0])
+                .map((c) => `<th>${inline(c)}</th>`)
+                .join("")}</tr>` +
+              rows
+                .slice(2)
+                .map(
+                  (r) =>
+                    `<tr>${cells(r)
+                      .map((c) => `<td>${inline(c)}</td>`)
+                      .join("")}</tr>`,
+                )
+                .join("") +
+              `</table>`;
+            continue;
+          }
+          if (/^\s*- /.test(l)) {
+            out += "<ul>";
+            while (i < lines.length && /^\s*- /.test(lines[i]))
+              out += `<li>${inline(lines[i++].replace(/^\s*- /, ""))}</li>`;
+            out += "</ul>";
+            continue;
+          }
+          if (l.trim()) out += `<p>${inline(l)}</p>`;
+          i++;
+        }
+        return out || `<span class="muted">Nothing to preview.</span>`;
+      }
+
+      /* ===== Word diff (LCS) ===== */
+      function diff(a, b) {
+        a = String(a ?? "");
+        b = String(b ?? "");
+        if (a === b) return `<span class="same">No change since the previous term.</span>`;
+        const A = a.split(/(\s+)/),
+          B = b.split(/(\s+)/),
+          n = A.length,
+          m = B.length;
+        const L = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+        for (let x = n - 1; x >= 0; x--)
+          for (let y = m - 1; y >= 0; y--)
+            L[x][y] = A[x] === B[y] ? L[x + 1][y + 1] + 1 : Math.max(L[x + 1][y], L[x][y + 1]);
+        let x = 0,
+          y = 0,
+          out = "";
+        while (x < n && y < m) {
+          if (A[x] === B[y]) {
+            out += esc(A[x]);
+            x++;
+            y++;
+          } else if (L[x + 1][y] >= L[x][y + 1]) out += `<del>${esc(A[x++])}</del>`;
+          else out += `<ins>${esc(B[y++])}</ins>`;
+        }
+        while (x < n) out += `<del>${esc(A[x++])}</del>`;
+        while (y < m) out += `<ins>${esc(B[y++])}</ins>`;
+        return out;
+      }
+
+      /* ===== Build ===== */
+      const it = () => items[idx];
+      const prevData = () => it().hist.find((h) => h.data)?.data;
+      const prevTerm = () => it().hist.find((h) => h.data)?.term;
+      const nameFor = (d, x = it()) => d.override || (d.lang === "en" ? x.en : x.de);
+
+      function buildFields() {
+        $("#md-fields").innerHTML = MD_FIELDS.map(
+          (f) => `
+    <div class="field">
+      <label class="flabel">${f.label} <span class="changed-tag" data-tag="${f.k}" hidden>changed</span>
+        <span class="tabs"><button class="on" data-tab="${f.k}:write">Write</button><button data-tab="${f.k}:preview">Preview</button></span></label>
+      <textarea rows="${f.rows}" data-f="${f.k}" id="f-${f.k}"></textarea>
+      <div class="preview" id="pv-${f.k}" hidden></div>
+      <div class="diff" data-diff="${f.k}" hidden></div>
+      ${f.k === "desc" ? `<div class="hint">Markdown: lists, <b>**bold**</b>, tables. Exported to LaTeX/Typst via pandoc.</div>` : ""}
+    </div>`,
+        ).join("");
+      }
+
+      function load(i) {
+        idx = i;
+        saved = clone(it().cur);
+        draft = clone(it().cur);
+        const x = it();
+        document.querySelectorAll("[data-f]").forEach((el) => {
+          el.value = draft[el.dataset.f] ?? "";
+        });
+        document
+          .querySelectorAll(".tabs button")
+          .forEach((b) => b.classList.toggle("on", b.dataset.tab.endsWith(":write")));
+        document.querySelectorAll("textarea").forEach((t) => (t.hidden = false));
+        document.querySelectorAll(".preview").forEach((p) => (p.hidden = true));
+
+        $("#pos").textContent = `${i + 1} of ${items.length}`;
+        $("#prev").disabled = i === 0;
+        $("#next").disabled = i === items.length - 1;
+        $("#h-code").textContent = x.code;
+        $("#h-term").textContent = x.term;
+
+        const sh = $("#shared");
+        if (x.used.length > 1) {
+          sh.className = "callout warn";
+          sh.innerHTML = `⚠ This description is used in <b>${x.used.length} handbooks</b>: ${x.used.map((u) => `<a href="#">${esc(u)}</a>`).join(", ")}. Changes apply to all of them.`;
+        } else {
+          sh.className = "callout info";
+          sh.innerHTML = `Used only in <a href="#">${esc(x.used[0])}</a>.`;
+        }
+
+        $("#used-n").textContent = x.used.length;
+        $("#used").innerHTML = x.used
+          .map((u) => `<li><a href="#">${esc(u)}</a><span class="muted">${esc(x.term)}</span></li>`)
+          .join("");
+        $("#hist").innerHTML = x.hist
+          .map(
+            (h, k) => `<li class="${k === 0 ? "cur" : ""}"><span class="t">${h.term}</span>
+    <span>${h.lang.toUpperCase()}</span><span class="muted"><span class="dot ${k === 0 ? x.status : h.status}"></span> ${k === 0 ? x.status : h.status}</span></li>`,
+          )
+          .join("");
+        $("#meta").innerHTML =
+          `<dt>Curriculum module</dt><dd><a href="#" style="color:var(--primary)">${x.code}</a> · ${esc(x.de)} / ${esc(x.en)}</dd>
+    <dt>Copied from</dt><dd>${prevTerm() ? `${prevTerm()} description` : "Created empty in this term"}</dd>
+    <dt>Last updated</dt><dd>${esc(x.updated)}</dd>`;
+
+        const has = !!prevData();
+        $("#compare-wrap").style.display = has ? "" : "none";
+        $("#cmp-term").textContent = prevTerm() || "";
+        $("#compare").checked = has && compare;
+        paint();
+      }
+
+      function paint() {
+        const x = it(),
+          s = x.status,
+          p = prevData();
+        $("#h-name").textContent = nameFor(draft);
+        const alt = draft.lang === "en" ? x.de : x.en;
+        $("#h-alt").textContent = alt !== nameFor(draft) ? alt : "";
+        $("#name-hint").textContent = draft.override
+          ? "Overrides the module name in this term only."
+          : `Shown as "${draft.lang === "en" ? x.en : x.de}"`;
+
+        $("#steps").innerHTML = STATUS.map(
+          (k) => `<span class="s ${k === s ? "cur " + k : ""}">${k}</span>`,
+        ).join(`<span class="arrow">→</span>`);
+        const dirty = isDirty();
+        $("#head-acts").innerHTML =
+          (s !== "created" ? `<button class="btn" id="a-reopen">Reopen</button>` : "") +
+          (s === "created"
+            ? `<button class="btn" id="a-check" ${dirty ? "disabled title='Save first'" : ""}>Mark checked</button>`
+            : "") +
+          (s === "checked"
+            ? `<button class="btn ok" id="a-publish" ${dirty ? "disabled title='Save first'" : ""}>Publish</button>`
+            : "");
+
+        // compare
+        const on = $("#compare").checked && p;
+        const langSwitch = on && p.lang !== draft.lang;
+        const textual = new Set(MD_FIELDS.map((f) => f.k));
+        document.querySelectorAll("[data-diff]").forEach((el) => {
+          const k = el.dataset.diff;
+          el.hidden = !on;
+          if (!on) return;
+          // A word diff between a German and an English text is noise: show the previous text instead.
+          el.innerHTML =
+            langSwitch && textual.has(k)
+              ? `<span class="lbl">${prevTerm()} text (${p.lang.toUpperCase()}): language changed, so no word comparison</span><span class="prevtext">${esc(p[k])}</span>`
+              : `<span class="lbl">Changes since ${prevTerm()}</span>` + diff(p[k], draft[k]);
+        });
+
+        // changed-tags = differs from saved
+        document
+          .querySelectorAll("[data-tag]")
+          .forEach(
+            (t) =>
+              (t.hidden =
+                String(draft[t.dataset.tag] ?? "") === String(saved[t.dataset.tag] ?? "")),
+          );
+
+        // save bar
+        const bar = $("#savebar");
+        bar.classList.toggle("on", dirty);
+        if (dirty) {
+          const n = Object.keys(draft).filter((k) => String(draft[k]) !== String(saved[k])).length;
+          $("#save-msg").innerHTML =
+            `${n} unsaved change${n > 1 ? "s" : ""}` +
+            (s !== "created" ? ` · saving sets the status back to <b>created</b>` : "") +
+            (x.used.length > 1 ? ` · applies to ${x.used.length} handbooks` : "");
+        }
+      }
+      const isDirty = () =>
+        Object.keys(draft).some((k) => String(draft[k] ?? "") !== String(saved[k] ?? ""));
+
+      /* ===== Events ===== */
+      buildFields();
+      document.addEventListener("input", (e) => {
+        const f = e.target.dataset.f;
+        if (!f) return;
+        draft[f] = f === "ects" ? +e.target.value : e.target.value;
+        paint();
+      });
+      document.addEventListener("change", (e) => {
+        if (e.target.dataset.f) {
+          draft[e.target.dataset.f] =
+            e.target.dataset.f === "ects" ? +e.target.value : e.target.value;
+          paint();
+        }
+      });
+      $("#compare").onchange = (e) => {
+        compare = e.target.checked;
+        paint();
+      };
+
+      document.addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.dataset.tab) {
+          const [k, mode] = b.dataset.tab.split(":");
+          b.parentElement
+            .querySelectorAll("button")
+            .forEach((x) => x.classList.toggle("on", x === b));
+          $("#f-" + k).hidden = mode !== "write";
+          const pv = $("#pv-" + k);
+          pv.hidden = mode !== "preview";
+          if (mode === "preview") pv.innerHTML = md(draft[k]);
+        }
+        const x = it();
+        const sharedNote =
+          x.used.length > 1
+            ? `<div class="callout warn" style="margin:0">Shared by ${esc(x.used.join(", "))}. The status changes in all of them.</div>`
+            : "";
+        if (b.id === "a-check")
+          confirmBox(
+            "Mark checked",
+            `<p style="margin-top:0">Mark <b>${x.code} ${esc(nameFor(draft))}</b> as checked?</p>${sharedNote}`,
+            "Mark checked",
+            () => {
+              x.status = "checked";
+              paint();
+              load(idx);
+              toast(`${x.code} → checked`);
+            },
+          );
+        if (b.id === "a-publish")
+          confirmBox(
+            "Publish",
+            `<p style="margin-top:0">Publish <b>${x.code} ${esc(nameFor(draft))}</b>? It will appear in the official PDF.</p>${sharedNote}`,
+            "Publish",
+            () => {
+              x.status = "published";
+              load(idx);
+              toast(`${x.code} → published`);
+            },
+          );
+        if (b.id === "a-reopen") {
+          x.status = "created";
+          load(idx);
+          toast(`${x.code} reopened`);
+        }
+      });
+
+      function doSave() {
+        const x = it(),
+          reset = x.status !== "created";
+        x.cur = clone(draft);
+        x.status = "created";
+        x.updated = "just now by Dr. Admin";
+        load(idx);
+        toast(reset ? "Saved · status set back to created" : "Saved");
+      }
+      $("#save").onclick = () => {
+        const x = it();
+        if (x.used.length > 1 || x.status !== "created") {
+          confirmBox(
+            "Save description",
+            (x.used.length > 1
+              ? `<p style="margin-top:0">This changes the description in <b>${esc(x.used.join(", "))}</b>.</p>`
+              : "") +
+              (x.status !== "created"
+                ? `<div class="callout warn" style="margin:0">It is currently <b>${x.status}</b> and will be set back to <b>created</b> for review.</div>`
+                : ""),
+            "Save",
+            doSave,
+          );
+        } else doSave();
+      };
+      $("#discard").onclick = () => load(idx);
+
+      function go(to) {
+        if (!isDirty()) return load(to);
+        confirmBox(
+          "Unsaved changes",
+          `<p style="margin:0">Leave <b>${it().code}</b> without saving? Your changes will be lost.</p>`,
+          "Discard and continue",
+          () => load(to),
+        );
+      }
+      $("#prev").onclick = () => go(idx - 1);
+      $("#next").onclick = () => go(idx + 1);
+      window.addEventListener("beforeunload", (e) => {
+        if (isDirty()) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+
+      load(idx);
+    </script>
+  </body>
+</html>

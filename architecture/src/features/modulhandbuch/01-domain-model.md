@@ -2,11 +2,8 @@
 
 This chapter summarizes principal entities; authoritative behavioral details live in the referenced chapters.
 
-```admonish warning "Why not `Module`?"
-`Module` is a core Ruby constant. A model called `Module` (or `Handbook::Module`, which shadows it inside the namespace) breaks constant lookup in subtle ways. The stable catalog entry is therefore named `Handbook::CurriculumModule`.
-```
 
-## Catalog
+## Study Programs and Curriculum Modules
 
 | Component | Type | Description |
 |-----------|------|-------------|

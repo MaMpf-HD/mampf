@@ -43,7 +43,7 @@ The table of contents of the printed PDF. Pages (editions) are shared with other
 |------------|-----------|-------------|
 | `study_program_id` | DB column | Foreign key to `Handbook::StudyProgram` |
 | `term_id` | DB column | Foreign key to MaMpf `Term` |
-| `status` | DB column (Enum) | `draft`, `published` (visibility of the handbook itself) |
+| `status` | DB column (Enum) | `draft`, `published` (TODO) |
 | `cloned_from_id` | DB column | Source handbook (nullable) |
 | `sections` | Association | Ordered sections |
 | `module_editions` | Association | All editions, through sections and entries |

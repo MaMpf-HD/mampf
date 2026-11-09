@@ -7,25 +7,20 @@ Export turns a handbook into a document others read.
 - **In this context:** A service that walks a handbook in order, filters editions by status, converts Markdown content with pandoc, and fills a per‑format template.
 ```
 
-## Problem Overview
+## Requirement
 
-- The current handbook is produced from LaTeX with a fixed style; the new export must match it closely enough for the admin to accept it.
-- Typst is wanted as an alternative format; tables inside module content are a known pain point.
-- Viewers must only ever see published content; admins also need a review version.
-- The handbook may need to appear on another (Angular) page.
+- Support 2 format: LaTeX + Typst
+- There are possibility to export based on Module Editions status published or checked status
+- The handbook may need to appear on another page (Future extension)
 
 ## Solution Architecture
 
 - **Content stored as Markdown**, converted per format by **pandoc** (supports LaTeX, Typst and Markdown output, including tables).
-- **Presentation only in templates**, one per format (`lib/templates/handbook/handbook.tex.erb`, `handbook.typ.erb`). Styling changes are template edits, not code changes.
-- **Status filter** as an explicit parameter: `:published` (official) or `:reviewable` (checked + published).
-- **LaTeX first** (matches the existing look), Typst and Markdown follow.
+- **Presentation only in templates**, one per format (`lib/templates/handbook/handbook.tex.erb`, `handbook.typ.erb`). Styling changes are template choices.
+- **Status filter** as an explicit parameter: TODO (check against current system)
+- **LaTeX first** (matches the existing look), Typst follow.
+- **Template is uploadable by admin** (Future extension)
 
-```admonish tip "Glossary (Export)"
-- **Filter:** which edition statuses are printed (`:published`, `:reviewable`).
-- **Template:** the format‑specific frame (title page, section headings, module layout).
-- **Snapshot:** a stored copy of an official export (future, see [Future Extensions](10-future-extensions.md#export-snapshots)).
-```
 
 ---
 
@@ -36,25 +31,21 @@ Export turns a handbook into a document others read.
 Renders one handbook into one output format with one status filter.
 ```
 
-```admonish tip "Think of it as"
-The print shop: it receives the table of contents and the approved pages, and prints them in the house style.
-```
-
 ### Public Interface
 
 | Method | Purpose |
 |--------|---------|
-| `initialize(handbook, format:, filter:)` | `format`: `:latex`, `:typst`, `:markdown`, `:pdf`; `filter`: `:published`, `:reviewable` |
-| `call` | Returns the rendered document (string or file path for `:pdf`) |
+| `initialize(handbook, format:, filter:)` | `format`: `:latex`, `:typst`, `:markdown`, `:pdf`; `filter`: TODO (check against current system) |
+| `call` | Returns the rendered document (string or file path for `:pdf`) TODO: decide on this |
 
 ### Behavior Highlights
 
-- Order = section `position`, then entry `position`.
+- Order: section `position` and entry `position`.
 - Editions not matching the filter are skipped; empty sections are omitted.
-- Viewers are forced to `filter: :published` by the controller (see [Roles & Permissions](08-roles-and-permissions.md)).
 - Each Markdown field is converted separately with pandoc, then inserted into the template.
 
 ### Example Implementation
+Suggested by Claude, not verified
 
 ```ruby
 module Handbook
@@ -105,8 +96,8 @@ end
 
 ```admonish warning "Assumptions"
 - Uses the `pandoc-ruby` gem; pandoc must be installed in the app container.
-- `:pdf` (not shown) runs `latexmk` or `typst compile` on the rendered source in a temp dir. Run it in a background job if compile times exceed a few seconds.
-- Template paths and the `.typ` format need registering as MIME types.
+- Background job consideration
+- MIME types for response types
 ```
 
 ### Known Risks
@@ -120,21 +111,14 @@ end
 
 ---
 
-## Export to Another Page
+## Export to Another Page (Future extension)
 
 ```admonish info "What it represents"
-Showing the published handbook on an external (Angular) page.
+Showing the published handbook on an external page.
 ```
+TODO:
 
-| Approach | How | Fits when |
-|----------|-----|-----------|
-| Link to PDF | The other page links to the official PDF URL | Always works; simplest |
-| HTML via `[innerHTML]` | Serve rendered HTML, injected by Angular | Only plain absolute links needed |
-| JSON endpoint | `GET /handbooks/:id.json` (published only); the page renders itself | In‑app navigation or custom layout needed |
-
-```admonish warning "Angular sanitizer"
-Angular's sanitizer keeps plain `<a href="https://…">` links inside `[innerHTML]`, but strips `javascript:` URLs, inline event handlers, `<script>` and `style` attributes. `routerLink` and other Angular bindings do not work in injected HTML. If the page needs in‑app links, use the JSON endpoint.
-```
+I need to see the page first :))
 
 ## Sequence Diagram
 
@@ -149,7 +133,7 @@ sequenceDiagram
     User->>Controller: GET /handbooks/:id/export?format=pdf&filter=reviewable
     Controller->>Ability: can?(:export_reviewable, handbook)
     alt viewer
-        Controller->>Controller: force filter = :published
+        Controller->>Controller: force filter
     end
     Controller->>Exporter: new(handbook, format:, filter:).call
     loop each section / edition (filtered)
