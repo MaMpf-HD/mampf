@@ -1,8 +1,12 @@
 export class NetworkGraph {
   /**
-   * Renders a network of interconnected particles in an SVG canvas.
+   * Renders a network of interconnected particles on a single 2D canvas.
    * The connections between particles are dynamically created and faded based on
    * their proximity, using a spatial grid for efficient neighbor detection.
+   *
+   * Drawing all lines on one canvas is much cheaper than moving many SVG
+   * elements that each carry their own CSS filter and animation. The glow is
+   * a wider, faint stroke below each line, the pulse is computed per frame.
    */
   constructor(container, particles) {
     this.container = container;
@@ -13,6 +17,7 @@ export class NetworkGraph {
     this.fadeSpeed = 0.02;
     this.minOpacity = 0.15;
     this.maxOpacity = 0.65;
+    this.pulseDurationMs = 3000;
 
     this.frameCounter = 0;
     this.connections = new Map();
@@ -21,21 +26,11 @@ export class NetworkGraph {
   }
 
   init() {
-    this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    this.svg.style.position = "absolute";
-    this.svg.style.top = "0";
-    this.svg.style.left = "0";
-    this.svg.style.width = "100%";
-    this.svg.style.height = "100%";
-    this.svg.style.pointerEvents = "none";
-    this.svg.style.zIndex = "0";
-    this.container.appendChild(this.svg);
-  }
-
-  setSvgSize() {
-    if (!this.svg) return;
-    this.svg.style.width = "100%";
-    this.svg.style.height = "100%";
+    this.canvasElement = document.createElement("canvas");
+    this.canvasElement.className = "network-canvas";
+    this.container.appendChild(this.canvasElement);
+    this.ctx = this.canvasElement.getContext("2d");
+    this.resize();
   }
 
   updateConnections() {
@@ -95,8 +90,9 @@ export class NetworkGraph {
       }
     }
 
-    this.updateConnectionElements();
+    this.updateConnectionOpacities();
     this.cleanupConnections();
+    this.draw();
   }
 
   _getParticlePositions(numParticles) {
@@ -131,14 +127,13 @@ export class NetworkGraph {
     const particle1 = this.particles[i];
     const particle2 = this.particles[j];
     if (!this.connections.has(key)) {
-      const element = this.createConnectionElement();
       this.connections.set(key, {
         particle1,
         particle2,
         distSq,
         targetOpacity: this.calculateOpacityFromSq(distSq, connectionDistanceSq),
         currentOpacity: 0,
-        element,
+        createdAt: performance.now(),
         fadingIn: true,
         fadingOut: false,
       });
@@ -162,17 +157,7 @@ export class NetworkGraph {
     return Math.max(this.minOpacity, normalized * this.maxOpacity);
   }
 
-  createConnectionElement() {
-    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    line.setAttribute("stroke-width", "2.5");
-    line.setAttribute("stroke-linecap", "round");
-    line.setAttribute("stroke", "rgb(100,200,255)");
-    line.setAttribute("stroke-opacity", "0");
-    this.svg.appendChild(line);
-    return line;
-  }
-
-  updateConnectionElements() {
+  updateConnectionOpacities() {
     for (const connection of this.connections.values()) {
       if (connection.fadingIn && connection.currentOpacity < connection.targetOpacity) {
         connection.currentOpacity = Math.min(
@@ -186,25 +171,49 @@ export class NetworkGraph {
           connection.currentOpacity - this.fadeSpeed,
         );
       }
-
-      const { particle1, particle2, element, currentOpacity } = connection;
-
-      element.setAttribute("x1", particle1.x);
-      element.setAttribute("y1", particle1.y);
-      element.setAttribute("x2", particle2.x);
-      element.setAttribute("y2", particle2.y);
-      element.setAttribute("stroke-opacity", String(currentOpacity));
-
-      element.style.display = currentOpacity <= 0.001 ? "none" : "block";
     }
+  }
+
+  /**
+   * Pulses the opacity between 0.6 and 1.0 over `pulseDurationMs`,
+   * starting at 0.6 when the connection is created.
+   */
+  pulseFactor(connection, now) {
+    const phase = ((now - connection.createdAt) / this.pulseDurationMs) * 2 * Math.PI;
+    return 0.8 - 0.2 * Math.cos(phase);
+  }
+
+  draw() {
+    const ctx = this.ctx;
+    ctx.clearRect(0, 0, this.width, this.height);
+
+    const now = performance.now();
+    for (const connection of this.connections.values()) {
+      if (connection.currentOpacity <= 0.001) continue;
+
+      const { particle1, particle2 } = connection;
+      const alpha = connection.currentOpacity * this.pulseFactor(connection, now);
+
+      ctx.beginPath();
+      ctx.moveTo(particle1.x, particle1.y);
+      ctx.lineTo(particle2.x, particle2.y);
+
+      // Glow
+      ctx.globalAlpha = alpha * 0.25;
+      ctx.lineWidth = 8;
+      ctx.stroke();
+
+      // Core line
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
   }
 
   cleanupConnections() {
     for (const [key, connection] of this.connections.entries()) {
       if (connection.fadingOut && connection.currentOpacity <= 0.001) {
-        if (connection.element && connection.element.parentNode) {
-          connection.element.parentNode.removeChild(connection.element);
-        }
         this.connections.delete(key);
       }
     }
@@ -217,24 +226,35 @@ export class NetworkGraph {
       this.updateConnections();
     }
     else {
-      this.updateConnectionElements();
+      this.updateConnectionOpacities();
+      this.draw();
     }
   }
 
+  /**
+   * Matches the canvas resolution to its displayed size (capped at 2x pixel
+   * density, which is sharp enough for thin lines).
+   */
   resize() {
-    this.setSvgSize();
+    if (!this.canvasElement) return;
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.width = this.container.clientWidth;
+    this.height = this.container.clientHeight;
+    this.canvasElement.width = Math.round(this.width * dpr);
+    this.canvasElement.height = Math.round(this.height * dpr);
+
+    // Changing the canvas size resets the context state.
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.ctx.lineCap = "round";
+    this.ctx.strokeStyle = "rgb(100, 200, 255)";
   }
 
   destroy() {
-    for (const connection of this.connections.values()) {
-      if (connection.element && connection.element.parentNode) {
-        connection.element.parentNode.removeChild(connection.element);
-      }
-    }
     this.connections.clear();
 
-    if (this.svg && this.svg.parentNode) {
-      this.svg.parentNode.removeChild(this.svg);
+    if (this.canvasElement && this.canvasElement.parentNode) {
+      this.canvasElement.parentNode.removeChild(this.canvasElement);
     }
   }
 }
