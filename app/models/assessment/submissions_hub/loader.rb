@@ -77,8 +77,6 @@ module Assessment
 
         # `task_points` rather than `task_points: :task`: the tasks already hang on
         # the assessment, and asking for them again here costs three more queries.
-        # The graders stay behind: the fold names the tutors of the group a sheet
-        # was marked in, see #sheets_with_correctors.
         def participations
           @participations ||=
             if assessment_ids.empty?
