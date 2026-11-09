@@ -466,7 +466,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
-  describe "whether the reader can see the marking" do
+  describe "whether the student can see the marking" do
     let(:assignment) { create_assignment(deadline: 1.week.ago) }
 
     it "is not the case while the sheet waits for its tutor" do
