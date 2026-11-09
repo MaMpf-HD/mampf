@@ -150,9 +150,6 @@ class SheetFoldComponent < ViewComponent::Base
     end
   end
 
-  # The tutors of the group the hand-in was marked in, named once the reader
-  # can see the marking and only where somebody other than the reader's own
-  # tutors may have marked it. A tutor with two groups is still their tutor.
   def correctors
     @correctors ||= begin
       tutors = submission && sheet.correction_visible? ? submission.tutorial.tutors.to_a : []

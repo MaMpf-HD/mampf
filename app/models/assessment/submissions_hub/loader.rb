@@ -104,9 +104,6 @@ module Assessment
             end
         end
 
-        # The fold names the tutors of the group a hand-in was marked in, once
-        # the reader can see the marking. The lecture home page has no fold, so
-        # the summary goes without.
         def sheets_with_correctors
           preload_tutorials(sheets.select(&:correction_visible?).filter_map(&:submission))
           sheets
