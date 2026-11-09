@@ -92,6 +92,18 @@
     <p class="hub-aside text-muted mb-0 mt-3"><%= team_line %></p>
   <% end %>
 
+  <% if correctors.any? %>
+    <p class="hub-aside text-muted mb-0 mt-3">
+      <%= t("submission.hub.fold.correctors", count: correctors.size) %>
+      <% correctors.each_with_index do |tutor, index| %>
+        <span class="text-nowrap">
+          <span title="<%= corrector_tutorial %>"><%= tutor.tutorial_name %></span>
+          <%= render "shared/copy_email_button", email: tutor.email %>
+        </span><%= "," if index < correctors.size - 1 %>
+      <% end %>
+    </p>
+  <% end %>
+
   <% if late_join_code %>
     <div
       class="d-flex flex-wrap align-items-center gap-2 mt-3"

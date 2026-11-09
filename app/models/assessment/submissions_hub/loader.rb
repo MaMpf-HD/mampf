@@ -11,7 +11,8 @@ module Assessment
       end
 
       def call
-        Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
+        Result.new(sheets: sheets_with_correctors, standing: standing,
+                   open_sheets: open_sheets,
                    due: due, latest_marked: latest_marked, invitations: invitations,
                    possible_partners: possible_partners, invited_users: invited_users,
                    next_scheduled: next_scheduled)
@@ -76,7 +77,8 @@ module Assessment
 
         # `task_points` rather than `task_points: :task`: the tasks already hang on
         # the assessment, and asking for them again here costs three more queries.
-        # The graders come along because the fold names who marked the sheet.
+        # The graders stay behind: the fold names the tutors of the group a sheet
+        # was marked in, see #sheets_with_correctors.
         def participations
           @participations ||=
             if assessment_ids.empty?
@@ -84,7 +86,7 @@ module Assessment
             else
               Participation
                 .where(assessment_id: assessment_ids, user_id: user.id)
-                .includes(:grader, task_points: :grader)
+                .includes(:task_points)
                 .index_by(&:assessment_id)
             end
         end
@@ -100,6 +102,14 @@ module Assessment
                         .includes(:users)
                         .index_by(&:assignment_id)
             end
+        end
+
+        # The fold names the tutors of the group a hand-in was marked in, once
+        # the reader can see the marking. The lecture home page has no fold, so
+        # the summary goes without.
+        def sheets_with_correctors
+          preload_tutorials(sheets.select(&:correction_visible?).filter_map(&:submission))
+          sheets
         end
 
         def sightings

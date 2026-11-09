@@ -150,7 +150,26 @@ class SheetFoldComponent < ViewComponent::Base
     end
   end
 
+  # The tutors of the group the hand-in was marked in, named once the reader
+  # can see the marking and only where somebody other than the reader's own
+  # tutors may have marked it. A tutor with two groups is still their tutor.
+  def correctors
+    @correctors ||= begin
+      tutors = submission && sheet.correction_visible? ? submission.tutorial.tutors.to_a : []
+      tutors.any? && (tutors - own_tutors).any? ? tutors : []
+    end
+  end
+
+  def corrector_tutorial
+    t("submission.hub.fold.corrector_tutorial", tutorial: submission.tutorial.title)
+  end
+
   private
+
+    def own_tutors
+      tutorial = helpers.rostered_tutorial_for(sheet.assignment.lecture)
+      tutorial ? tutorial.tutors.to_a : []
+    end
 
     def marked_reader_label(task)
       if task_scale?(task)

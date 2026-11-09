@@ -30,7 +30,7 @@ RSpec.describe(SheetRowComponent, type: :component) do
                     # The row renders its fold with it; the fold has a spec of
                     # its own, so here it only has to stay out of the way.
                     submission: nil, tasks: [], partners: [],
-                    points_for: nil, marked_at: nil, marked_by: nil,
+                    points_for: nil, marked_at: nil,
                     joinable_late?: false, late_join_code: nil)
   end
 
