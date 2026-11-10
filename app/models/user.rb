@@ -112,7 +112,14 @@ class User < ApplicationRecord
   # a user has many notifications as recipient
   has_many :notifications,
            foreign_key: "recipient_id",
+           dependent: :delete_all,
            inverse_of: :recipient
+
+  # When the user last read each comment thread, see Reader.
+  has_many :readers, dependent: :delete_all
+
+  # The user's own notes on media, see #own_annotations.
+  has_many :annotations, dependent: :delete_all
 
   # a user has many announcements as announcer
   has_many :announcements,
@@ -221,6 +228,8 @@ class User < ApplicationRecord
 
   before_destroy :destroy_talk_media_upon_user_deletion, prepend: true,
                                                          unless: :skip_destroy_talk_media
+
+  before_destroy :withdraw_comment_votes
 
   # users can comment stuff
   acts_as_commontator
@@ -1118,6 +1127,15 @@ class User < ApplicationRecord
       # Only delete media where the user is the sole editor.
       sole_editor_media = edited_media.select { |m| m.editors.one? }
       Medium.where(id: sole_editor_media.pluck(:id)).destroy_all
+    end
+
+    # Takes back the user's likes on comments. Unvoting through the comment
+    # keeps its cached like count in step with the votes that remain.
+    def withdraw_comment_votes
+      voted = ActsAsVotable::Vote.where(voter: self, votable_type: "Commontator::Comment")
+      Commontator::Comment.where(id: voted.select(:votable_id))
+                          .find_each { |comment| comment.unvote(voter: self) }
+      ActsAsVotable::Vote.where(voter: self).delete_all
     end
 
     def archive_email
