@@ -3663,6 +3663,11 @@ de:
       Zunächst gibt es mit Dir direkt verknüpfte Daten:<br>
 
       Deine Emailadresse: %{email}<br>
+      Vorname: %{first_name}<br>
+      Nachname: %{last_name}<br>
+      Matrikelnummer: %{matriculation_number}<br>
+      Uni-ID: %{uni_id}<br>
+      Studiengang: %{program}<br>
       Account-Erstellung: %{created_at}<br>
       Letzte Account-Änderung: %{updated_at}<br>
       Admin: %{admin}<br>
@@ -3705,6 +3710,10 @@ de:
       -Quizzertifikate<br>
       -Forenbeiträge<br>
       -Kommentare<br>
+      -Video-Annotationen<br>
+      -Mitgliedschaften in Vorlesungen, Tutorien und Gruppen<br>
+      -Anmeldungen zu Tutorien, Klausuren und anderen Kampagnen<br>
+      -Punkte, Noten und Prüfungszulassungen<br>
 
       Einige dieser Daten mögen nicht auf Dich zutreffen.<br>
 

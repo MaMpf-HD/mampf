@@ -3437,6 +3437,11 @@ en:
       First, there is data directly linked to you:<br>
 
       Your email address: %{email}<br>
+      First name: %{first_name}<br>
+      Last name: %{last_name}<br>
+      Matriculation number: %{matriculation_number}<br>
+      Uni ID: %{uni_id}<br>
+      Study program: %{program}<br>
       Account creation: %{created_at}<br>
       Last account change: %{updated_at}<br>
       Admin: %{admin}<br>
@@ -3479,6 +3484,10 @@ en:
       -quizzes certificates<br>
       -forum posts<br>
       -comments<br>
+      -video annotations<br>
+      -memberships in lectures, tutorials and groups<br>
+      -registrations for tutorials, exams and other campaigns<br>
+      -points, grades and exam admissions<br>
 
       Note that not all of these data may apply to you.<br>
 
