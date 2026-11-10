@@ -107,12 +107,15 @@ export class AnnotationArea {
    */
   #updateInfoAndCommentField(annotation, color) {
     const head = annotation.categoryLocale();
-    const comment = annotation.comment.replaceAll("\n", "<br>");
     const headColor = lightenUp(color, 2);
     const backgroundColor = lightenUp(color, 3);
-    this.infoBar.empty().append(head);
+    this.infoBar.text(head);
     this.infoBar.css("background-color", headColor);
-    this.commentField.empty().append(comment);
+    this.commentField.empty();
+    annotation.comment.split("\n").forEach((line, i) => {
+      if (i > 0) this.commentField.append(document.createElement("br"));
+      this.commentField.append(document.createTextNode(line));
+    });
 
     // Comment field background gradient
     const colorGradientEnd = lightenUp(color, 2.5);

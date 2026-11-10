@@ -138,8 +138,12 @@ function presentation() {
 
 function updatePreview() {
   const text = $("#annotation_comment").val();
-  $("#annotation-modal-preview").empty();
-  $("#annotation-modal-preview").append(text.replaceAll("\n", "<br>"));
+  const $preview = $("#annotation-modal-preview");
+  $preview.empty();
+  text.split("\n").forEach((line, i) => {
+    if (i > 0) $preview.append(document.createElement("br"));
+    $preview.append(document.createTextNode(line));
+  });
   renderMathInElement(document.getElementById("annotation-modal-preview"), {
     delimiters: [
       {
