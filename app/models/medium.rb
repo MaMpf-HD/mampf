@@ -509,8 +509,6 @@ class Medium < ApplicationRecord
     manuscript.metadata["pages"]
   end
 
-  # When the manuscript students see was last replaced, or when it was
-  # released if it has not been replaced since.
   def manuscript_updated_at
     return if manuscript.blank?
 
