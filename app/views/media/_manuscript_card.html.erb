@@ -59,12 +59,22 @@
             </span>
           </div>
         </div>
+        <% if medium.manuscript_updated_at %>
+          <div class="row">
+            <div class="col-12">
+              <%= t('manuscript.as_of') %>:
+              <span id="manuscript-updated-at">
+                <%= l medium.manuscript_updated_at.to_date %>
+              </span>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
   <% if medium.sort == 'Exercise' && medium.file_last_edited != nil %>
     <div class="card-footer">
-        <p class="text-danger"><%= t('manuscript.updated') %>: <%= l medium.updated_at, format: :short %></p>
+        <p class="text-danger"><%= t('manuscript.updated') %>: <%= l medium.file_last_edited, format: :short %></p>
     </div>
   <% end %>
 </div>

@@ -43,6 +43,27 @@ RSpec.describe("Media", type: :request) do
       get media_path(id: lecture.id, project: "destroy")
       expect(response).to have_http_status(:ok)
     end
+
+    it "shows when a script was last updated" do
+      script = create(:lecture_medium, :with_manuscript, :released,
+                      teachable: lecture, sort: "Script")
+      script.update!(file_last_edited: Time.zone.local(2026, 11, 3))
+
+      get media_path(id: lecture.id, project: "script")
+      expect(response.body)
+        .to include(I18n.l(Date.new(2026, 11, 3), locale: user.locale))
+    end
+  end
+
+  describe "GET /media/:id" do
+    it "shows when the manuscript was last updated" do
+      medium = create(:lecture_medium, :with_manuscript, :released)
+      medium.update!(file_last_edited: Time.zone.local(2026, 11, 3))
+
+      get medium_path(medium)
+      expect(response.body)
+        .to include(I18n.l(Date.new(2026, 11, 3), locale: user.locale))
+    end
   end
 
   describe "GET /media/search" do
