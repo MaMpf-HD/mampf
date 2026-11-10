@@ -47,22 +47,24 @@ RSpec.describe("Media", type: :request) do
     it "shows when a script was last updated" do
       script = create(:lecture_medium, :with_manuscript, :released,
                       teachable: lecture, sort: "Script")
-      script.update!(file_last_edited: Time.zone.local(2026, 11, 3))
+      edited_at = Time.zone.local(2026, 11, 3, 14, 30)
+      script.update!(file_last_edited: edited_at)
 
       get media_path(id: lecture.id, project: "script")
       expect(response.body)
-        .to include(I18n.l(Date.new(2026, 11, 3), locale: user.locale))
+        .to include(I18n.l(edited_at, format: :file_time, locale: user.locale))
     end
   end
 
   describe "GET /media/:id" do
     it "shows when the manuscript was last updated" do
       medium = create(:lecture_medium, :with_manuscript, :released)
-      medium.update!(file_last_edited: Time.zone.local(2026, 11, 3))
+      edited_at = Time.zone.local(2026, 11, 3, 14, 30)
+      medium.update!(file_last_edited: edited_at)
 
       get medium_path(medium)
       expect(response.body)
-        .to include(I18n.l(Date.new(2026, 11, 3), locale: user.locale))
+        .to include(I18n.l(edited_at, format: :file_time, locale: user.locale))
     end
   end
 

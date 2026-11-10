@@ -64,7 +64,7 @@
             <div class="col-12">
               <%= t('manuscript.as_of') %>:
               <span id="manuscript-updated-at">
-                <%= l medium.manuscript_updated_at.to_date %>
+                <%= l medium.manuscript_updated_at, format: :file_time %>
               </span>
             </div>
           </div>

@@ -143,7 +143,7 @@
         <% if medium.sort == "Script" && medium.manuscript_updated_at %>
           <div class="small text-muted mb-1">
             <%= t("manuscript.as_of") %>:
-            <%= l medium.manuscript_updated_at.to_date %>
+            <%= l medium.manuscript_updated_at, format: :file_time %>
           </div>
         <% end %>
         <div>
