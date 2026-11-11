@@ -19,7 +19,7 @@ $('#tag-courses-error-<%= @tag.id.to_i %>')
 <% if @errors[:notions].present? %>
 <% if @errors.messages[:"notions.title"].present? %>
 $('#tag-notions-error-<%= @tag.id.to_i %>')
-  .append('<%= @errors[:"notions.title"].first %>')
+  .append('<%= j @errors[:"notions.title"].first %>')
   .show()
 <% else%>
 $('#tag-notions-error-<%= @tag.id.to_i %>')
@@ -30,7 +30,7 @@ $('#tag-notions-error-<%= @tag.id.to_i %>')
 <% if @errors[:aliases].present? %>
 <% if @errors.messages[:"aliases.title"].present? %>
 $('#tag-aliases-error-<%= @tag.id.to_i %>')
-  .append('<%= @errors[:"aliases.title"].first %>')
+  .append('<%= j @errors[:"aliases.title"].first %>')
   .show()
 <% else %>
 $('#tag-aliases-error-<%= @tag.id.to_i %>')

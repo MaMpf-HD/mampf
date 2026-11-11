@@ -11,7 +11,7 @@ $('#referral_explanation').removeClass('is-invalid')
 $('#explanation-error').empty()
 
 # fill explanation text area
-$('#referral_explanation').val('<%= @explanation %>')
+$('#referral_explanation').val('<%= j @explanation %>')
 $('#explanation_details').show()
 
 # do not show link details if item is not a link
@@ -35,8 +35,8 @@ $('#item_details').show()
 $('#item_details').hide()
 $('#link_reappearance_title').hide()
 $('#link_reappearance_link').hide()
-$('#referral_description').val('<%= @item.description %>')
-$('#referral_link').val('<%= @item.link %>')
+$('#referral_description').val('<%= j @item.description %>')
+$('#referral_link').val('<%= j @item.link %>')
 
 # show warnings if the link is already referred to in some other place
 # (editing the link and its title has aglobal effect)

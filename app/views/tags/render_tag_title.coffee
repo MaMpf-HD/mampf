@@ -4,8 +4,8 @@ $('#identified_tag_titles select').empty()
 <% @common_titles[l].each do |t| %>
 $('#identified_tag_titles select[data-locale="<%= l.to_s %>"]')
   .append($('<option>',
-    value: '<%= t %>'
-    text: '<%= t %>'))
+    value: '<%= j t %>'
+    text: '<%= j t %>'))
 <% end %>
 <% end %>
 $('#identified_tag_titles select[data-locale="<%= l.to_s %>"] option[value=""]').remove()
