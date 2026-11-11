@@ -1069,9 +1069,9 @@ Rails.application.routes.draw do
       to: "tags#search",
       as: "search_tags"
 
-  get "tags/:id/take_random_quiz",
-      to: "tags#take_random_quiz",
-      as: "tag_random_quiz"
+  post "tags/:id/take_random_quiz",
+       to: "tags#take_random_quiz",
+       as: "tag_random_quiz"
 
   post "tags/postprocess",
        to: "tags#postprocess",
