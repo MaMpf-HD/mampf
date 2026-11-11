@@ -101,8 +101,12 @@ class ReferralsController < ApplicationController
       filter
     end
 
+    # Changes the link only for a user who may update it as an item, as all
+    # referrals to it share it. Anyone else refers to the link as it is.
     def update_item
       item = Item.find(@item_id)
+      return unless ItemAbility.new(current_user).can?(:update, item)
+
       item.update(link: referral_params[:link],
                   description: referral_params[:description])
       @errors = item.errors unless item.valid?

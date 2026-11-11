@@ -72,4 +72,46 @@ RSpec.describe("Referrals Security", type: :request) do
       expect(link_item.reload.link).to eq("https://legit.example")
     end
   end
+
+  # A speaker may edit the medium of their talk, but no link: all media that
+  # refer to a link share it.
+  describe "link referred to from the medium of a talk" do
+    let(:speaker) { create(:confirmed_user) }
+    let(:talk) { create(:talk, speaker_ids: [speaker.id]) }
+    let(:medium) { create(:talk_medium, teachable: talk) }
+    let!(:link_item) do
+      create(:item, sort: "link", medium: nil,
+                    link: "https://example.org/notes", description: "Notes")
+    end
+    let(:referral_params) do
+      { referral: { item_id: link_item.id, medium_id: medium.id,
+                    link: "https://example.org/other",
+                    description: "O'Neil's notes",
+                    explanation: "See chapter 2.",
+                    start_time: "0:00:00.000", end_time: "0:00:01.000" } }
+    end
+
+    before { sign_in speaker }
+
+    it "stays as it is when a speaker creates a referral to it" do
+      expect do
+        post(referrals_path(format: :js), params: referral_params)
+      end.to change(medium.referrals, :count).by(1)
+      expect(link_item.reload)
+        .to have_attributes(link: "https://example.org/notes",
+                            description: "Notes")
+    end
+
+    it "stays as it is when a speaker updates a referral to it" do
+      referral = create(:referral, :with_times, medium: medium,
+                                                item: link_item)
+
+      patch(referral_path(referral, format: :js), params: referral_params)
+
+      expect(referral.reload.explanation).to eq("See chapter 2.")
+      expect(link_item.reload)
+        .to have_attributes(link: "https://example.org/notes",
+                            description: "Notes")
+    end
+  end
 end
