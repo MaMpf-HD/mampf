@@ -114,4 +114,34 @@ RSpec.describe("Referrals Security", type: :request) do
                             description: "Notes")
     end
   end
+
+  describe "PATCH /referrals/:id naming another medium" do
+    let(:speaker) { create(:confirmed_user) }
+    let(:talk) { create(:talk, speaker_ids: [speaker.id]) }
+    let(:medium) { create(:talk_medium, teachable: talk) }
+    let(:other_medium) { create(:valid_medium) }
+    let(:item) do
+      create(:item, sort: "link", medium: nil,
+                    link: "https://example.org/notes", description: "Notes")
+    end
+    let(:referral) do
+      create(:referral, :with_times, medium: medium, item: item)
+    end
+
+    it "keeps the referral on its medium" do
+      sign_in speaker
+
+      patch(referral_path(referral, format: :js),
+            params: { referral: { item_id: item.id,
+                                  medium_id: other_medium.id,
+                                  link: item.link,
+                                  description: item.description,
+                                  explanation: "See chapter 2.",
+                                  start_time: "0:00:00.000",
+                                  end_time: "0:00:01.000" } })
+
+      expect(referral.reload)
+        .to have_attributes(medium: medium, explanation: "See chapter 2.")
+    end
+  end
 end

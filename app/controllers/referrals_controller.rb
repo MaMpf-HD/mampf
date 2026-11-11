@@ -47,7 +47,9 @@ class ReferralsController < ApplicationController
     update_item if Item.find_by(id: @item_id)&.sort == "link"
     return if @errors.present?
 
-    @referral.update(updated_params)
+    # A referral stays on its medium: only that one was checked against the
+    # rights of the user.
+    @referral.update(updated_params.except(:medium_id))
     @errors = @referral.errors unless @referral.valid?
   end
 
