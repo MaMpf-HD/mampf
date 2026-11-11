@@ -1,15 +1,16 @@
 require "rails_helper"
 
 RSpec.describe("Values in script views", type: :request) do
-  # Returns the value as a script view has to print it inside a string: escaped
-  # with `j`, and for HTML as ERB does with every value it prints.
+  # Returns the value as a script view has to print it inside a string whose
+  # receiver takes text, like a form field: escaped with `j` and not for HTML,
+  # so that the field shows `&` and quotes as typed.
   def in_script_string(value)
-    ERB::Util.html_escape(ApplicationController.helpers.j(value))
+    ApplicationController.helpers.j(value)
   end
 
   describe "GET /items/:id/display" do
-    let(:description) { "O'Neil \\ notes\\" }
-    let(:link) { "https://example.org/o'neil?notes=(a)\\" }
+    let(:description) { "O'Neil & Zorn \\ notes\\" }
+    let(:link) { "https://example.org/o'neil?notes=(a)&page=2\\" }
     let(:explanation) { "See O'Neil's notes,\nchapter 2 (\\S 3)\\" }
     let(:item) do
       create(:item, sort: "link", medium: nil, description: description,
@@ -43,7 +44,7 @@ RSpec.describe("Values in script views", type: :request) do
   end
 
   describe "GET /tags/render_tag_title" do
-    let(:title) { "O'Neil \\ notes\\" }
+    let(:title) { "O'Neil & Zorn \\ notes\\" }
     let(:other_title) { "Zorn's lemma\n(see \\S 2)" }
     let(:tag) { create(:tag, title: title) }
     let(:identified_tag) { create(:tag, title: other_title) }
