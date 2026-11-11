@@ -281,14 +281,14 @@ $(document).on 'turbo:load', ->
     catch err
       inputSolution = 'Syntax Error'
     if inputSolution == 'Syntax Error'
-      $('#solution-tex').empty().append(inputSolution)
+      $('#solution-tex').text(inputSolution)
       $('#solution_input_tex').val('')
       $('#solution_input_error').val(inputSolution)
     else
       latex = inputSolution.details.tex
       $('#solution_input_error').val('')
       $('#solution_input_tex').val(latex)
-      $('#solution-tex').empty().append('$$' + latex + '$$')
+      $('#solution-tex').text('$$' + latex + '$$')
       solutionTex = document.getElementById('solution-tex')
       $('#submit-solution').show()
       renderMathInElement solutionTex,
