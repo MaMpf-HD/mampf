@@ -123,6 +123,44 @@ Thredded.messageboard_name_length_range = (1..120)
 # E.g. to allow a custom element <custom-element>:
 # Thredded::ContentFormatter.whitelist[:elements] += %w(custom-element)
 
+# ==> Link targets and positioning in posts
+# By the time this file runs, thredded-markdown_katex has added SVG and MathML
+# to the allowlist, because a rendered formula consists of them. It allows
+# more than a formula needs, and two things are taken back here.
+#
+# A link in a post is an `a` with an `href`. That is the only attribute with a
+# link target whose protocol the allowlist checks, so the attributes below
+# stay only where a protocol rule covers them. No formula carries them.
+#   href, xlink:href      the link target itself
+#   xml:base              the base a relative link target is resolved against
+#   to, from, by, values  what an SVG animation writes into its parent element
+link_target_attributes =
+  ["href", "xlink:href", "xml:base", "to", "from", "by", "values"]
+allowlist = Thredded::ContentFormatter.allowlist
+allowlist[:attributes] = allowlist[:attributes].to_h do |tag, attributes|
+  checked = allowlist[:protocols].fetch(tag, {}).keys
+  [tag, attributes - (link_target_attributes - checked)]
+end
+
+# A formula places its large operators with `position: relative` and uses no
+# other value, so that is the only one a post may use. The allowlist knows CSS
+# properties by name only, hence a transformer that looks at the value.
+relative_position_only = lambda do |env|
+  node = env[:node]
+  next unless node.element? && node["style"]
+
+  declarations = Crass.parse_properties(node["style"])
+  kept = declarations.reject do |declaration|
+    declaration[:node] == :property &&
+      declaration[:name].casecmp?("position") &&
+      !declaration[:value].casecmp?("relative")
+  end
+  next if kept.size == declarations.size
+
+  node["style"] = Crass::Parser.stringify(kept)
+end
+allowlist[:transformers] += [relative_position_only]
+
 # ==> Server-side link previews (onebox) — DISABLED for SSRF safety.
 # OneboxFilter fetches user-supplied URLs server-side from the app host, which sits
 # inside the WireGuard overlay / Uninetz — a request-forgery perimeter bypass. Removing
