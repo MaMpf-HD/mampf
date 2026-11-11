@@ -60,18 +60,6 @@ const CONFIG = {
       return true;
     },
   },
-  "geogebra": {
-    autoProceed: true,
-    allowedFileTypes: [".ggb", "application/zip"],
-    onSuccess(controller, response) {
-      controller.setText("#geogebra-file", response.metadata.filename);
-      controller.setText("#geogebra-size", formatBytes(response.metadata.size));
-      controller.show("#geogebra-meta");
-      controller.setValue("#medium_detach_geogebra", "false");
-      controller.show(controller.warningSelectorValue || "#medium-basics-warning");
-      return true;
-    },
-  },
   "image": {
     autoProceed: true,
     allowedFileTypes: IMAGE_TYPES,

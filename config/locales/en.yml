@@ -1297,10 +1297,6 @@ en:
           used on 16:9 monitors.
         manuscript: >
           The manuscript should be in pdf format.
-        geogebra: >
-          The geogebra applet should be in ggb format. The resolution should
-          ideally be 500x700 pixels, for an explanatory text (including LaTeX)
-          you can use the content description of the medium.
         manuscript_structure: >
           This is the structure of the manuscript that was extracted from the
           pdf. You can import chapters, sections and tags to MaMpf if no
@@ -1782,8 +1778,6 @@ en:
       video_info: 'Explanation Video in THymEPlayer'
       manuscript: 'Manuscript'
       manuscript_info: 'Manuskript as pdf'
-      geogebra: 'Geogebra Applet'
-      geogebra_info: 'Geogebra Applet in new tab'
       medium_for_remark_html: >
         There is a %{medium} for this remark.
       media_for_remark_html: >
@@ -2350,17 +2344,6 @@ en:
         These are items that belong to this manuscript and are
         referenced from other places, but are not present in the current
         pdf file.
-  geogebra:
-    geogebra: Geogebra-Applet
-    download: Download Applet
-    app_name: Applet Type
-    view: View Geogebra Applet in Browser
-    size: Size
-    invalid_archive: Invalid GeoGebra archive.
-    attribution_html: >
-      This applet as been created using %{geogebra_link}, the above animation
-      uses the GeoGebra JavaScript API.
-      Copyright © International GeoGebra Institute, 2013
   quiz:
     quiz: 'Quiz'
     start: 'start quiz'
@@ -3950,7 +3933,6 @@ en:
       MaMpf's homepage.
     no_video: 'There is no video for this medium.'
     no_manuscript: 'There is no manuscript for this medium.'
-    no_geogebra: 'There is no Geogebra applet for this medium.'
     invalid_download: 'The requested download is invalid.'
     no_medium: 'There is no medium with this id.'
     contradiction: 'Contradictory request.'

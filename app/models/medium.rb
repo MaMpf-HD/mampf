@@ -99,7 +99,6 @@ class Medium < ApplicationRecord
   include VideoUploader[:video]
   include ScreenshotUploader[:screenshot]
   include PdfUploader[:manuscript]
-  include GeogebraUploader[:geogebra]
   include TranscriptUploader[:transcript]
 
   # if an external reference is given, check if it is (at least syntactically)
@@ -464,31 +463,6 @@ class Medium < ApplicationRecord
     return if video.blank?
 
     Digest::SHA256.hexdigest("#{video.id}:#{video.size}")
-  end
-
-  def geogebra_filename
-    return if geogebra.blank?
-
-    geogebra.metadata["filename"]
-  end
-
-  def geogebra_size
-    return if geogebra.blank?
-
-    geogebra.metadata["size"]
-  end
-
-  def geogebra_screenshot_file
-    return if geogebra.blank?
-
-    geogebra(:screenshot)
-  end
-
-  def geogebra_screenshot_url
-    return "" if geogebra_screenshot_file.blank?
-
-    Rails.application.routes.url_helpers.screenshot_medium_path(id,
-                                                                sort: "geogebra")
   end
 
   def manuscript_filename
