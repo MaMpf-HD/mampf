@@ -161,6 +161,56 @@ relative_position_only = lambda do |env|
 end
 allowlist[:transformers] += [relative_position_only]
 
+# ==> Classes in posts
+# A class takes effect through the stylesheets of the page that shows the
+# post, so a post keeps only the classes that the formatter writes itself.
+# Any other class is dropped; the element and its text stay.
+#
+# Markdown writes classes for footnotes, for the whitespace marks in a code
+# block with `show-whitespaces`, and for spoilers.
+markdown_classes = [
+  "footnote", "footnotes", "reversefootnote",
+  "ws-space", "ws-space-l", "ws-space-r", "ws-tab", "ws-tab-l", "ws-tab-r",
+  "thredded--post--content--spoiler",
+  "thredded--post--content--spoiler--summary",
+  "thredded--post--content--spoiler--contents"
+]
+
+# A formula carries the classes of KaTeX. Those with a rule are read from the
+# stylesheet that the katex gem ships next to its script, so they follow the
+# gem when it is updated. The script writes a few more that have no rule; they
+# are listed so that the markup of a formula stays as it is.
+katex_stylesheet =
+  File.read(File.join(Katex.gem_path, "vendor/katex/stylesheets/katex.css"))
+styled_formula_classes =
+  katex_stylesheet.scan(/[^{}]+(?=\{)/).flat_map do |selector|
+    selector.scan(/\.([\w-]+)/).flatten
+  end
+unstyled_formula_classes = [
+  "mord", "mop", "mbin", "mrel", "mopen", "mclose", "mpunct", "minner",
+  "mtight", "text", "textmd", "textup", "nobreak", "allowbreak",
+  "accentunder", "colorbox", "delimsizinginner", "vcenter", "katex-error",
+  "latin_fallback", "cyrillic_fallback", "armenian_fallback",
+  "brahmic_fallback", "georgian_fallback", "cjk_fallback", "hangul_fallback"
+]
+formatter_classes =
+  (markdown_classes + styled_formula_classes + unstyled_formula_classes).to_set
+
+formatter_classes_only = lambda do |env|
+  node = env[:node]
+  next unless node.element? && node["class"]
+
+  kept = node["class"].split.select { |name| formatter_classes.include?(name) }
+  next if kept.join(" ") == node["class"]
+
+  if kept.empty?
+    node.remove_attribute("class")
+  else
+    node["class"] = kept.join(" ")
+  end
+end
+allowlist[:transformers] += [formatter_classes_only]
+
 # ==> Server-side link previews (onebox) — DISABLED for SSRF safety.
 # OneboxFilter fetches user-supplied URLs server-side from the app host, which sits
 # inside the WireGuard overlay / Uninetz — a request-forgery perimeter bypass. Removing

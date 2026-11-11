@@ -37,7 +37,105 @@ RSpec.describe("Allowlist for forum posts") do
       "an arrow stretched over its label" =>
         ['$$A \xrightarrow{f \circ g} B$$', "<svg"],
       "a struck-out term" =>
-        ['$$\cancel{x} + y$$', "<line"]
+        ['$$\cancel{x} + y$$', "<line"],
+      "fractions and binomials" => [
+        '$$\frac{1}{1 + \frac{a}{b}} + \dfrac{c}{d} + \tfrac{e}{f} + ' \
+        '\binom{n}{k} + \cfrac{x}{y}$$',
+        "frac-line"
+      ],
+      "a matrix and an array with rules" => [
+        '$$\begin{pmatrix} a & b \\\\ c & d \end{pmatrix} ' \
+        '\begin{array}{c|l:r} 1 & 2 & 3 \\\\ \hline 4 & 5 & 6 \\\\ ' \
+        '\hdashline 7 & 8 & 9 \end{array}$$',
+        "col-align-l"
+      ],
+      "cases with a tag" => [
+        '$$\begin{cases} x & \text{if } x \geqslant 0 \\\\ ' \
+        '-x & \text{otherwise} \end{cases} \tag{1}$$',
+        'class="tag"'
+      ],
+      "numbered equations" => [
+        '$$\begin{align} a &= b \\\\ c &= d \end{align}$$',
+        "eqn-num"
+      ],
+      "sizing commands" => [
+        '$${\tiny a {\normalsize b}} {\sixptsize a {\normalsize b}} ' \
+        '{\scriptsize a {\normalsize b}} {\footnotesize a {\normalsize b}} ' \
+        '{\small a {\normalsize b}} {\large a {\normalsize b}} ' \
+        '{\Large a {\normalsize b}} {\LARGE a {\normalsize b}} ' \
+        '{\huge a {\normalsize b}} {\Huge a {\normalsize b}}$$',
+        "reset-size11 size6"
+      ],
+      "delimiters of several sizes" => [
+        '$$\left( \frac{a}{b} \right) \big[ \Big\{ \bigg\langle \Bigg\vert ' \
+        '\left\{ \begin{matrix} a \\\\ b \\\\ c \\\\ d \\\\ e \end{matrix} ' \
+        '\right\rceil \left. x \right)$$',
+        "delimsizing"
+      ],
+      "colours" => [
+        '$$\color{blue} x + \textcolor{red}{y} + \colorbox{yellow}{z} + ' \
+        '\fcolorbox{red}{white}{w}$$',
+        "color:blue"
+      ],
+      "accents and braces" => [
+        '$$\hat{a} + \tilde{b} + \vec{c} + \bar{d} + \dot{e} + \ddot{f} + ' \
+        '\widehat{xyz} + \underline{g} + \overrightarrow{AB} + ' \
+        '\underbrace{x + y}_{n} + \overbrace{u + v}^{m} + \utilde{h}$$',
+        "accent-body"
+      ],
+      "arrows with labels above and below" => [
+        '$$A \xleftrightarrow[g]{f} B \xrightleftharpoons{h} C$$',
+        "x-arrow-pad"
+      ],
+      "text mode and fonts" => [
+        '$$\text{if } x \textbf{ is } \textit{really } \texttt{small} ' \
+        '\textsf{, } \textmd{then } \textup{so } \textrm{is } \mathrm{d}x, ' \
+        '\mathbb{R}, \mathcal{L}, \mathfrak{g}, \mathsf{A}, \mathtt{B}, ' \
+        '\mathscr{C}, \mathit{D}, \mathbf{E}, \mathsfit{F}, ' \
+        '\boldsymbol{\alpha}, \text{\textcircled{a}}$$',
+        "textbf"
+      ],
+      "letters typed as mathematical characters" => [
+        '$$𝕬 + 𝗔 + 𝘈 + \text{𝔸 𝕬 𝗔 𝔄 𝘈 𝒜}$$',
+        "textboldfrak"
+      ],
+      "operators with limits" => [
+        '$$\sum_{i=1}^n a_i + \prod_{k} b_k + \lim_{x \to 0} f(x) + ' \
+        '\int\limits_a^b g + \bigcup_{j} A_j + \operatorname*{argmax}_x h$$',
+        "op-limits"
+      ],
+      "inline operators with limits" => [
+        'With $$\sum_{i=1}^n a_i$$ and $$\max_x f(x)$$ in a line.',
+        "small-op"
+      ],
+      "a line break in an inline formula" => [
+        'Both $$a \\\\ b$$ in a line.',
+        "newline"
+      ],
+      "spacing, overlaps and kinds of symbols" => [
+        '$$a \, b \; c \quad d~e \nobreak f \allowbreak g + \llap{h} ' \
+        '\rlap{i} \mathclap{j} \phantom{k} \smash{l} \mathrel{R} ' \
+        '\mathbin{B} \mathopen{(} \mathclose{)} \mathpunct{,} \mathinner{I} ' \
+        '\overset{a}{=} \vcenter{m} \raisebox{1pt}{n} \rule{1em}{1pt}$$',
+        "mspace"
+      ],
+      "boxes and strokes" => [
+        '$$\boxed{a} + \fbox{b} + \sout{c} + \bcancel{de} + \xcancel{f} + ' \
+        '\angl{n} + \phase{g}$$',
+        "boxpad"
+      ],
+      "a commutative diagram" => [
+        '$$\begin{CD} A @>f>> B \\\\ @VgVV @VVhV \\\\ C @>>k> D \end{CD}$$',
+        "cd-vert-arrow"
+      ],
+      "text in several scripts" => [
+        '$$\text{Łódź Привет Հայերեն हिन्दी ქართული 日本語 한국어}$$',
+        "cyrillic_fallback"
+      ],
+      "a formula with an error" => [
+        'Compare $$\frac{1$$ with the next line.',
+        "katex-error"
+      ]
     }.each do |name, (post, part)|
       it "renders #{name} as the original allowlist does" do
         html = format_post(post)
@@ -107,6 +205,81 @@ RSpec.describe("Allowlist for forum posts") do
           .to include("position:#{position}")
         expect(format_post(post)).to include('style="top:1em"')
       end
+    end
+  end
+
+  describe "classes" do
+    {
+      "a code block with a language" =>
+        ["```ruby\nputs 1\n```", "<pre><code>puts 1\n</code></pre>"],
+      "the whitespace marks in a code block" => [
+        "~~~\n \ta  b\tc \t\n~~~\n{: .show-whitespaces}",
+        'class="ws-space-r"'
+      ],
+      "footnotes" =>
+        ["Text[^1].\n\n[^1]: The note.", 'class="reversefootnote"'],
+      "a spoiler" => [
+        "<spoiler>\nhidden\n</spoiler>",
+        'class="thredded--post--content--spoiler--contents"'
+      ]
+    }.each do |name, (post, part)|
+      it "renders #{name} as the original allowlist does" do
+        html = format_post(post)
+
+        expect(html).to include(part)
+        expect(html).to eq(format_post(post, allowlist: original_allowlist))
+      end
+    end
+
+    {
+      "layout and utility classes" => [
+        '<div class="position-fixed w-100">text</div>',
+        "<div>text</div>"
+      ],
+      "classes that the forum uses for its pages" => [
+        '<div class="thredded--main-container thredded--navigation">text' \
+        "</div>",
+        "<div>text</div>"
+      ],
+      "classes given in Markdown" => [
+        "[text](https://example.org){: .btn .btn-lg}",
+        '<p><a href="https://example.org" target="_blank" ' \
+        'rel="nofollow noopener">text</a></p>'
+      ],
+      "classes of SVG elements" => [
+        '<svg class="w-100"><text class="fs-1">text</text></svg>',
+        "<svg><text>text</text></svg>"
+      ],
+      "classes of MathML elements" => [
+        '<math class="w-100"><mtext class="fs-1">text</mtext></math>',
+        "<math><mtext>text</mtext></math>"
+      ]
+    }.each do |name, (post, html)|
+      it "drops #{name}, which the original allowlist lets through" do
+        expect(format_post(post, allowlist: original_allowlist))
+          .to include(" class=")
+        expect(format_post(post)).to eq(html)
+      end
+    end
+
+    it "keeps the classes of a formula next to other classes" do
+      post = '<span class="katex position-fixed base w-100">text</span>'
+
+      expect(format_post(post))
+        .to eq('<p><span class="katex base">text</span></p>')
+    end
+
+    it "tells classes apart at a tab as well" do
+      post = "<span class=\"katex\tposition-fixed\">text</span>"
+
+      expect(format_post(post)).to eq('<p><span class="katex">text</span></p>')
+    end
+
+    it "joins the classes it keeps with a space" do
+      post = "<span class=\"katex\tbase\">text</span>"
+
+      expect(format_post(post))
+        .to eq('<p><span class="katex base">text</span></p>')
     end
   end
 end
