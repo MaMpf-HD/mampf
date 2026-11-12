@@ -94,10 +94,10 @@ module Assessment
         participation.graded_at || latest_task_point&.updated_at
       end
 
-      def marked_by
-        return unless participation
-
-        participation.grader || latest_task_point&.grader
+      # Sheets have no release step: a correction shows as soon as it is
+      # uploaded, points as soon as they are entered.
+      def correction_visible?
+        submission&.correction.present? || state.in?([:marked, :partially_marked])
       end
 
       def new_correction?

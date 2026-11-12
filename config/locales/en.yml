@@ -2937,6 +2937,10 @@ en:
         join_late: >
           Handed in with a team after all? Its code still gets you on it, until
           the team has been marked; after that your tutor can still add you.
+        correctors:
+          one: "Your marker:"
+          other: "Your markers:"
+        corrector_tutorial: "Tutorial %{tutorial}"
         team_code: >
           Somebody missing from your team? With this code they still get on it,
           until the team has been marked:

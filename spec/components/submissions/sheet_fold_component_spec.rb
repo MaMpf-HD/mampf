@@ -20,8 +20,8 @@ RSpec.describe(SheetFoldComponent, type: :component) do
 
   def sheet_defaults
     { points_by_task: {}, submission: nil, points: nil, max_points: 16,
-      partners: [], marked_at: nil, marked_by: nil, test: false,
-      late_join_code: nil }
+      partners: [], marked_at: nil, test: false,
+      late_join_code: nil, correction_visible: false }
   end
 
   # A sheet has its problems set up as soon as there are any, and where the
@@ -41,7 +41,7 @@ RSpec.describe(SheetFoldComponent, type: :component) do
                                             attrs[:max_points].to_f.positive?,
                              partners: attrs[:partners],
                              marked_at: attrs[:marked_at],
-                             marked_by: attrs[:marked_by],
+                             correction_visible?: attrs[:correction_visible],
                              joinable_late?: attrs.fetch(:joinable_late, false),
                              late_join_code: attrs[:late_join_code],
                              assignment: instance_double(Assignment, id: 7,
@@ -365,16 +365,99 @@ RSpec.describe(SheetFoldComponent, type: :component) do
     # says nothing about when, rather than something wrong.
     it "keeps the marking time away from the correction" do
       typed = Time.zone.local(2026, 8, 16, 9, 0)
-      tutor = instance_double(User, tutorial_name: "Dr. Tutor")
 
       content = render_fold(:marked, points_by_task: { task => 2 },
-                                     marked_at: typed, marked_by: tutor,
+                                     marked_at: typed,
                                      submission: handed_in_file(correction: "c.pdf",
                                                                 at: nil))
 
       expect(content).to include("c.pdf")
       expect(content).not_to include(I18n.l(typed, format: :file_time))
-      expect(content).not_to include("Dr. Tutor")
+    end
+  end
+
+  describe "who marked it" do
+    let(:ada) { instance_double(User, tutorial_name: "Ada", email: "ada@example.com") }
+    let(:bob) { instance_double(User, tutorial_name: "Bob", email: "bob@example.com") }
+
+    def group(title, tutors)
+      instance_double(Tutorial, title: title, tutors: tutors)
+    end
+
+    def marked_in(tutorial)
+      instance_double(Submission, manuscript_filename: "h.pdf",
+                                  correction_filename: "c.pdf",
+                                  last_modification_by_users_at: nil,
+                                  created_at: nil, to_param: "a-submission",
+                                  tutorial: tutorial)
+    end
+
+    def render_marked_in(tutorial, visible: true)
+      render_fold(:marked, points_by_task: { task => 2 },
+                           submission: marked_in(tutorial),
+                           correction_visible: visible)
+    end
+
+    def corrector_line
+      I18n.t("submission.hub.fold.correctors", count: 1)
+    end
+
+    # Cross-tutorial teams go to the least busy group, so the student cannot
+    # tell whose desk their hand-in landed on.
+    it "names a tutor of another group, with the group and the address" do
+      reader_rostered(group("Group 1", [ada]))
+
+      content = render_marked_in(group("Group 3", [bob]))
+
+      expect(content).to include(corrector_line)
+      expect(content).to include("Bob")
+      expect(content).to include('title="Tutorial Group 3"')
+      expect(content).to include("bob@example.com")
+      expect(content).not_to include("mailto:")
+    end
+
+    it "says nothing where the student's own tutor marked it" do
+      reader_rostered(group("Group 1", [ada]))
+
+      content = render_marked_in(group("Group 1", [ada]))
+
+      expect(content).not_to include(corrector_line)
+    end
+
+    # A tutor with two groups is the student's tutor whichever group it was.
+    it "says nothing where the other group has the student's tutor" do
+      reader_rostered(group("Group 1", [ada]))
+
+      content = render_marked_in(group("Group 2", [ada]))
+
+      expect(content).not_to include(corrector_line)
+    end
+
+    # Either may have marked it, so neither is left out.
+    it "names every tutor of a group that has somebody else on it too" do
+      reader_rostered(group("Group 1", [ada]))
+
+      content = render_marked_in(group("Group 2", [ada, bob]))
+
+      expect(content).to include(I18n.t("submission.hub.fold.correctors", count: 2))
+      expect(content).to include("Ada")
+      expect(content).to include("Bob")
+    end
+
+    it "names the tutor to somebody in no group any more" do
+      reader_rostered(nil)
+
+      content = render_marked_in(group("Group 3", [bob]))
+
+      expect(content).to include("Bob")
+    end
+
+    it "waits until the student can see the marking" do
+      reader_rostered(group("Group 1", [ada]))
+
+      content = render_marked_in(group("Group 3", [bob]), visible: false)
+
+      expect(content).not_to include(corrector_line)
     end
   end
 

@@ -3152,6 +3152,10 @@ de:
           Doch mit einem Team abgegeben? Mit dessen Code kommst Du noch dazu,
           solange das Team nicht bewertet ist; danach kann Dich Dein Tutor
           noch aufnehmen.
+        correctors:
+          one: "Deine KorrektorIn:"
+          other: "Deine KorrektorInnen:"
+        corrector_tutorial: "Tutorium %{tutorial}"
         team_code: >
           Fehlt jemand in Deinem Team? Mit diesem Code kommt die Person noch
           dazu, solange das Team nicht bewertet ist:
