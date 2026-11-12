@@ -123,93 +123,18 @@ Thredded.messageboard_name_length_range = (1..120)
 # E.g. to allow a custom element <custom-element>:
 # Thredded::ContentFormatter.whitelist[:elements] += %w(custom-element)
 
-# ==> Link targets and positioning in posts
-# By the time this file runs, thredded-markdown_katex has added SVG and MathML
-# to the allowlist, because a rendered formula consists of them. It allows
-# more than a formula needs, and two things are taken back here.
-#
-# A link in a post is an `a` with an `href`. That is the only attribute with a
-# link target whose protocol the allowlist checks, so the attributes below
-# stay only where a protocol rule covers them. No formula carries them.
-#   href, xlink:href      the link target itself
-#   xml:base              the base a relative link target is resolved against
-#   to, from, by, values  what an SVG animation writes into its parent element
-link_target_attributes =
-  ["href", "xlink:href", "xml:base", "to", "from", "by", "values"]
+# ==> Link attributes in posts
+# thredded-markdown_katex adds SVG and MathML to the allowlist. Only `a[href]`
+# has a protocol check there, so every other attribute that can hold a link is
+# dropped. Formulas don't use them. `to`, `from`, `by` and `values` are what an
+# SVG animation writes into an attribute, `xml:base` is the base for relative
+# links.
+link_attributes = ["href", "xlink:href", "xml:base", "to", "from", "by", "values"]
 allowlist = Thredded::ContentFormatter.allowlist
 allowlist[:attributes] = allowlist[:attributes].to_h do |tag, attributes|
   checked = allowlist[:protocols].fetch(tag, {}).keys
-  [tag, attributes - (link_target_attributes - checked)]
+  [tag, attributes - (link_attributes - checked)]
 end
-
-# A formula places its large operators with `position: relative` and uses no
-# other value, so that is the only one a post may use. The allowlist knows CSS
-# properties by name only, hence a transformer that looks at the value.
-relative_position_only = lambda do |env|
-  node = env[:node]
-  next unless node.element? && node["style"]
-
-  declarations = Crass.parse_properties(node["style"])
-  kept = declarations.reject do |declaration|
-    declaration[:node] == :property &&
-      declaration[:name].casecmp?("position") &&
-      !declaration[:value].casecmp?("relative")
-  end
-  next if kept.size == declarations.size
-
-  node["style"] = Crass::Parser.stringify(kept)
-end
-allowlist[:transformers] += [relative_position_only]
-
-# ==> Classes in posts
-# A class takes effect through the stylesheets of the page that shows the
-# post, so a post keeps only the classes that the formatter writes itself.
-# Any other class is dropped; the element and its text stay.
-#
-# Markdown writes classes for footnotes, for the whitespace marks in a code
-# block with `show-whitespaces`, and for spoilers.
-markdown_classes = [
-  "footnote", "footnotes", "reversefootnote",
-  "ws-space", "ws-space-l", "ws-space-r", "ws-tab", "ws-tab-l", "ws-tab-r",
-  "thredded--post--content--spoiler",
-  "thredded--post--content--spoiler--summary",
-  "thredded--post--content--spoiler--contents"
-]
-
-# A formula carries the classes of KaTeX. Those with a rule are read from the
-# stylesheet that the katex gem ships next to its script, so they follow the
-# gem when it is updated. The script writes a few more that have no rule; they
-# are listed so that the markup of a formula stays as it is.
-katex_stylesheet =
-  File.read(File.join(Katex.gem_path, "vendor/katex/stylesheets/katex.css"))
-styled_formula_classes =
-  katex_stylesheet.scan(/[^{}]+(?=\{)/).flat_map do |selector|
-    selector.scan(/\.([\w-]+)/).flatten
-  end
-unstyled_formula_classes = [
-  "mord", "mop", "mbin", "mrel", "mopen", "mclose", "mpunct", "minner",
-  "mtight", "text", "textmd", "textup", "nobreak", "allowbreak",
-  "accentunder", "colorbox", "delimsizinginner", "vcenter", "katex-error",
-  "latin_fallback", "cyrillic_fallback", "armenian_fallback",
-  "brahmic_fallback", "georgian_fallback", "cjk_fallback", "hangul_fallback"
-]
-formatter_classes =
-  (markdown_classes + styled_formula_classes + unstyled_formula_classes).to_set
-
-formatter_classes_only = lambda do |env|
-  node = env[:node]
-  next unless node.element? && node["class"]
-
-  kept = node["class"].split.select { |name| formatter_classes.include?(name) }
-  next if kept.join(" ") == node["class"]
-
-  if kept.empty?
-    node.remove_attribute("class")
-  else
-    node["class"] = kept.join(" ")
-  end
-end
-allowlist[:transformers] += [formatter_classes_only]
 
 # ==> Server-side link previews (onebox) — DISABLED for SSRF safety.
 # OneboxFilter fetches user-supplied URLs server-side from the app host, which sits

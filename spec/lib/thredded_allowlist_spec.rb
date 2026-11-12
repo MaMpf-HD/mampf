@@ -6,18 +6,12 @@ RSpec.describe("Allowlist for forum posts") do
   end
 
   # Rebuilds the allowlist as it is before config/initializers/thredded.rb
-  # narrows it: thredded-markdown_katex adds all it allows once more, and the
-  # transformers that the initializer appends are left out.
+  # narrows it: thredded-markdown_katex adds all it allows once more.
   def original_allowlist
     narrowed = Thredded::ContentFormatter.allowlist
-    initializer = Rails.root.join("config/initializers/thredded.rb").to_s
     Thredded::ContentFormatter.allowlist = narrowed.deep_dup
     Thredded::MarkdownKatex.send(:configure_allowlist!)
-    Thredded::ContentFormatter.allowlist.tap do |original|
-      original[:transformers].reject! do |transformer|
-        transformer.source_location.first == initializer
-      end
-    end
+    Thredded::ContentFormatter.allowlist
   ensure
     Thredded::ContentFormatter.allowlist = narrowed
   end
@@ -187,99 +181,6 @@ RSpec.describe("Allowlist for forum posts") do
           .to include(*attributes)
         expect(format_post(post)).not_to include(*attributes)
       end
-    end
-  end
-
-  describe "positioning" do
-    it "keeps a relative position" do
-      post = '<span style="position:relative;top:1em">text</span>'
-
-      expect(format_post(post)).to include('style="position:relative;top:1em"')
-    end
-
-    ["absolute", "fixed", "sticky"].each do |position|
-      it "drops the position `#{position}` and keeps the rest of the style" do
-        post = %(<span style="position:#{position};top:1em">text</span>)
-
-        expect(format_post(post, allowlist: original_allowlist))
-          .to include("position:#{position}")
-        expect(format_post(post)).to include('style="top:1em"')
-      end
-    end
-  end
-
-  describe "classes" do
-    {
-      "a code block with a language" =>
-        ["```ruby\nputs 1\n```", "<pre><code>puts 1\n</code></pre>"],
-      "the whitespace marks in a code block" => [
-        "~~~\n \ta  b\tc \t\n~~~\n{: .show-whitespaces}",
-        'class="ws-space-r"'
-      ],
-      "footnotes" =>
-        ["Text[^1].\n\n[^1]: The note.", 'class="reversefootnote"'],
-      "a spoiler" => [
-        "<spoiler>\nhidden\n</spoiler>",
-        'class="thredded--post--content--spoiler--contents"'
-      ]
-    }.each do |name, (post, part)|
-      it "renders #{name} as the original allowlist does" do
-        html = format_post(post)
-
-        expect(html).to include(part)
-        expect(html).to eq(format_post(post, allowlist: original_allowlist))
-      end
-    end
-
-    {
-      "layout and utility classes" => [
-        '<div class="position-fixed w-100">text</div>',
-        "<div>text</div>"
-      ],
-      "classes that the forum uses for its pages" => [
-        '<div class="thredded--main-container thredded--navigation">text' \
-        "</div>",
-        "<div>text</div>"
-      ],
-      "classes given in Markdown" => [
-        "[text](https://example.org){: .btn .btn-lg}",
-        '<p><a href="https://example.org" target="_blank" ' \
-        'rel="nofollow noopener">text</a></p>'
-      ],
-      "classes of SVG elements" => [
-        '<svg class="w-100"><text class="fs-1">text</text></svg>',
-        "<svg><text>text</text></svg>"
-      ],
-      "classes of MathML elements" => [
-        '<math class="w-100"><mtext class="fs-1">text</mtext></math>',
-        "<math><mtext>text</mtext></math>"
-      ]
-    }.each do |name, (post, html)|
-      it "drops #{name}, which the original allowlist lets through" do
-        expect(format_post(post, allowlist: original_allowlist))
-          .to include(" class=")
-        expect(format_post(post)).to eq(html)
-      end
-    end
-
-    it "keeps the classes of a formula next to other classes" do
-      post = '<span class="katex position-fixed base w-100">text</span>'
-
-      expect(format_post(post))
-        .to eq('<p><span class="katex base">text</span></p>')
-    end
-
-    it "tells classes apart at a tab as well" do
-      post = "<span class=\"katex\tposition-fixed\">text</span>"
-
-      expect(format_post(post)).to eq('<p><span class="katex">text</span></p>')
-    end
-
-    it "joins the classes it keeps with a space" do
-      post = "<span class=\"katex\tbase\">text</span>"
-
-      expect(format_post(post))
-        .to eq('<p><span class="katex base">text</span></p>')
     end
   end
 end
