@@ -18,6 +18,9 @@ module Registration
     # when the lecture has no non-draft registration campaign at all. Exam
     # campaigns are left out: registering for an exam is not registering for
     # the lecture (see Lecture#open_exam_registration_for for those).
+    # A rejection no longer counts once a teacher has overridden it or the
+    # student has meanwhile got a place on the lecture's roster, e.g. when a
+    # teacher put them into a group by hand after the campaign.
     def statuses
       return {} if @lecture_ids.empty?
 
@@ -31,7 +34,8 @@ module Registration
             :pending
           elsif campaigns.any?(&:open_for_registrations?)
             :open
-          elsif regs.any? { |reg| reg.status == "rejected" && reg.dismissed_at.nil? }
+          elsif regs.any? { |reg| open_rejection?(reg) } &&
+                seated_lecture_ids.exclude?(lecture_id)
             :rejected
           end
 
@@ -40,6 +44,21 @@ module Registration
     end
 
     private
+
+      def open_rejection?(reg)
+        reg.status == "rejected" && reg.dismissed_at.nil? &&
+          reg.rejection_overridden_at.nil?
+      end
+
+      # Only queried once a lecture would otherwise show a rejection. Active
+      # lecture memberships rather than User#roster_lectures: a waitlist or
+      # planning cohort does not grant a place, while every place (tutorial,
+      # talk, propagating cohort) creates a lecture membership.
+      def seated_lecture_ids
+        @seated_lecture_ids ||= @user.lecture_memberships
+                                     .where(lecture_id: @lecture_ids)
+                                     .pluck(:lecture_id).to_set
+      end
 
       def campaigns_by_lecture
         @campaigns_by_lecture ||= Registration::Campaign
