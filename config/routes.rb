@@ -203,6 +203,9 @@ Rails.application.routes.draw do
   # support request routes
   resources :support_requests, only: [:create]
 
+  # feedback routes
+  resources :feedbacks, only: [:create]
+
   # items routes
 
   get "items/:id/display",
