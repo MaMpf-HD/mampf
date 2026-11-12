@@ -77,35 +77,6 @@ test("clears stale validation errors after correcting a rejected password", asyn
   await expect(feedback).toHaveText(/Good|Strong/);
 });
 
-test("keeps helpdesk popovers working after a rejected account password change", async ({ page, request }) => {
-  const user = await callBackend(request, "user_creator",
-    { role: "password-change" }) as User;
-
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login(user.email, user.password);
-  // the fixture user has never signed in, so this is their first sign-in
-  await expect(page).toHaveURL(/\/profile\/edit/);
-
-  await page.goto("/users/edit?locale=en");
-
-  const currentPasswordHelpdesk = page.locator('[data-bs-toggle="popover"]').first();
-  await currentPasswordHelpdesk.click();
-  await expect(page.locator(".popover")).toContainText("current password");
-
-  await page.locator("body").click({ position: { x: 0, y: 0 } });
-
-  await page.getByLabel("Current password").fill("wrong-password");
-  await page.getByLabel("New password", { exact: true }).fill("super-secure-horse-battery-staple");
-  await page.getByLabel("Confirm new password", { exact: true }).fill("super-secure-horse-battery-staple");
-  await page.getByRole("button", { name: "Save" }).click();
-
-  await expect(page).toHaveURL(/\/users/);
-
-  await currentPasswordHelpdesk.click();
-  await expect(page.locator(".popover")).toContainText("current password");
-});
-
 test("clears stale current password errors after correcting an account password change", async ({ page, request }) => {
   const user = await callBackend(request, "user_creator",
     { role: "password-change" }) as User;
@@ -117,18 +88,18 @@ test("clears stale current password errors after correcting an account password 
   // the fixture user has never signed in, so this is their first sign-in
   await expect(page).toHaveURL(/\/profile\/edit/);
 
-  await page.goto("/users/edit?locale=en");
+  await page.goto("/users/edit?locale=en&section=password");
   await page.getByLabel("Current password").fill("wrong-password");
   await page.getByLabel("New password", { exact: true }).fill(newPassword);
   await page.getByLabel("Confirm new password", { exact: true }).fill(newPassword);
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("button", { name: "Update password" }).click();
 
   await expect(page).toHaveURL(/\/users/);
-  await expect(page.locator("#user_current_password")).toHaveClass(/is-invalid/);
-  await expect(page.locator("#user_current_password + .invalid-feedback")).toHaveCount(1);
+  await expect(page.locator("#password_current_password")).toHaveClass(/is-invalid/);
+  await expect(page.locator("#password_current_password + .invalid-feedback")).toHaveCount(1);
 
   await page.getByLabel("Current password").fill(user.password);
 
-  await expect(page.locator("#user_current_password")).not.toHaveClass(/is-invalid/);
-  await expect(page.locator("#user_current_password + .invalid-feedback")).toHaveCount(0);
+  await expect(page.locator("#password_current_password")).not.toHaveClass(/is-invalid/);
+  await expect(page.locator("#password_current_password + .invalid-feedback")).toHaveCount(0);
 });

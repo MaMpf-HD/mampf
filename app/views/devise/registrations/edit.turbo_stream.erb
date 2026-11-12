@@ -1,0 +1,13 @@
+<% section = params[:section].presence_in(%w[email password]) %>
+<% origin  = params[:origin].presence_in(["profile"]) %>
+
+<% if section == "email" %>
+  <%= turbo_stream.replace "email-form-container",
+        partial: "devise/registrations/email_form",
+        locals: { user: resource, origin: origin, autofocus: false } %>
+<% elsif section == "password" %>
+  <%= turbo_stream.replace "password-form-container",
+        partial: "devise/registrations/password_form",
+        locals: { user: resource, origin: origin, autofocus: false,
+                  password_change_required: resource.password_change_required? } %>
+<% end %>
