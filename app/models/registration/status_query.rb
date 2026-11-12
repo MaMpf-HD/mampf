@@ -50,10 +50,14 @@ module Registration
           reg.rejection_overridden_at.nil?
       end
 
-      # Only queried once a lecture would otherwise show a rejection.
+      # Only queried once a lecture would otherwise show a rejection. Active
+      # lecture memberships rather than User#roster_lectures: a waitlist or
+      # planning cohort does not grant a place, while every place (tutorial,
+      # talk, propagating cohort) creates a lecture membership.
       def seated_lecture_ids
-        @seated_lecture_ids ||= @user.roster_lectures.where(id: @lecture_ids)
-                                     .pluck(:id).to_set
+        @seated_lecture_ids ||= @user.lecture_memberships
+                                     .where(lecture_id: @lecture_ids)
+                                     .pluck(:lecture_id).to_set
       end
 
       def campaigns_by_lecture

@@ -81,6 +81,14 @@ RSpec.describe(Registration::StatusQuery) do
     expect(status).to be_nil
   end
 
+  it "keeps a rejection for a student who is only on a waitlist" do
+    register(campaign(:completed), :rejected)
+    waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+    Rosters::MaintenanceService.new.add_user!(user, waitlist)
+
+    expect(status).to eq(:rejected)
+  end
+
   it "keeps a rejection for a student without a place" do
     register(campaign(:completed), :rejected)
     create(:lecture, :released_for_all).lecture_memberships.create!(user: user)
