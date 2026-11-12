@@ -137,14 +137,9 @@ function presentation() {
 }
 
 function updatePreview() {
-  const text = $("#annotation_comment").val();
-  const $preview = $("#annotation-modal-preview");
-  $preview.empty();
-  text.split("\n").forEach((line, i) => {
-    if (i > 0) $preview.append(document.createElement("br"));
-    $preview.append(document.createTextNode(line));
-  });
-  renderMathInElement(document.getElementById("annotation-modal-preview"), {
+  const preview = document.getElementById("annotation-modal-preview");
+  preview.innerText = $("#annotation_comment").val();
+  renderMathInElement(preview, {
     delimiters: [
       {
         left: "$$",

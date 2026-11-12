@@ -111,11 +111,7 @@ export class AnnotationArea {
     const backgroundColor = lightenUp(color, 3);
     this.infoBar.text(head);
     this.infoBar.css("background-color", headColor);
-    this.commentField.empty();
-    annotation.comment.split("\n").forEach((line, i) => {
-      if (i > 0) this.commentField.append(document.createElement("br"));
-      this.commentField.append(document.createTextNode(line));
-    });
+    this.commentField[0].innerText = annotation.comment;
 
     // Comment field background gradient
     const colorGradientEnd = lightenUp(color, 2.5);

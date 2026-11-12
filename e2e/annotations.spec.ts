@@ -1,12 +1,20 @@
 import { expect, Locator, test } from "./_support/fixtures";
 import { ThymePlayer } from "./page-objects/thyme_player";
 
-/** Looks like markup and spans two lines; both have to come out as typed. */
-const COMMENT = "Why is a<b here?\nSee <i>Lemma 2</i>.";
+/**
+ * Spans two lines and carries markup that would run a script if it were
+ * inserted as HTML; all of it has to come out as typed.
+ */
+const COMMENT
+  = "Why is a<b here?\nSee <i>Lemma 2</i> and <img src=x onerror=\"window.xss = true\">.";
 
-/** `toHaveText` collapses whitespace, so the line break is read off `innerText`. */
+/**
+ * `toHaveText` collapses whitespace, so the line break is read off `innerText`.
+ * No image element may exist, since that is what would run the script.
+ */
 async function expectShownAsTyped(locator: Locator) {
   await expect(locator).toHaveJSProperty("innerText", COMMENT);
+  await expect(locator.getByRole("img")).toHaveCount(0);
 }
 
 test.describe("annotation comments", () => {
