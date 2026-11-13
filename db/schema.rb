@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_11_11_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -696,7 +696,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_11_11_000000) do
     t.bigint "subject_id"
     t.string "degree"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
-    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying, 'bsc50'::character varying, 'msc'::character varying, 'med'::character varying, 'med_extension'::character varying, 'phd'::character varying]::text[])", name: "programs_degree_check"
+    t.check_constraint "degree::text = ANY (ARRAY['bsc100'::character varying::text, 'bsc50'::character varying::text, 'msc'::character varying::text, 'med'::character varying::text, 'med_extension'::character varying::text, 'phd'::character varying::text])", name: "programs_degree_check"
   end
 
   create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
