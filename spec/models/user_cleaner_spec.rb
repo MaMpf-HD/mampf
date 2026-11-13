@@ -42,6 +42,13 @@ RSpec.describe(UserCleaner, type: :model) do
         FactoryBot.create(:confirmed_user, current_sign_in_at: 5.months.ago)
         expect(UserCleaner.new.inactive_users.count).to eq(0)
       end
+
+      it "does not count banned users as inactive" do
+        user = FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago)
+        user.ban(by: user_admin, reason: "Misuse of exam data")
+
+        expect(UserCleaner.new.inactive_users).not_to include(user)
+      end
     end
 
     context "when user is not confirmed yet" do
