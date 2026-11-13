@@ -1,6 +1,7 @@
 module Assessment
   class AssessmentsController < ApplicationController
-    before_action :set_lecture, only: [:index, :assignments_complete]
+    before_action :set_lecture, only: [:index, :assignments_complete,
+                                       :tests_in_points_total]
     before_action :set_assessable, only: [:show]
     before_action :set_assessment, only: [:update]
 
@@ -51,6 +52,16 @@ module Assessment
       redirect_to assessment_assessments_path(lecture_id: @lecture.id,
                                               tab: "assessments"),
                   **flash_opts
+    end
+
+    # Takes the tests' points out of every student's points total, or puts
+    # them back.
+    def tests_in_points_total
+      authorize! :update, @lecture
+
+      @lecture.update!(tests_in_points_total: params[:counted] == "1")
+      redirect_to assessment_assessments_path(lecture_id: @lecture.id,
+                                              tab: "assessments")
     end
 
     def show

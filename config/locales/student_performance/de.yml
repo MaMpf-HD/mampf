@@ -34,10 +34,12 @@ de:
         due_so_far_hint: "Punkte und Prozent zählen, was für die Studierende feststeht: Blätter, deren Frist samt Nachfrist vorbei ist, und bereits korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
         due_so_far_hint_with_tests: "Punkte und Prozent zählen, was für die Studierende feststeht, Blätter und Tests zusammen: Blätter, deren Frist samt Nachfrist vorbei ist, Tests, deren Woche vorbei ist, und alles bereits Korrigierte - ohne die entschuldigten und ohne die, die noch auf Korrektur warten. Die Höchstpunktzahl unterscheidet sich deshalb je Studierendem."
         sheets_and_tests: "Blätter und Tests"
+        sheets_only: "nur Blätter"
         maximum: "Maximum"
         assignments: "Übungsblätter"
         tests: "Tests"
         tests_hint: 'Testpunkte stecken auch in den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
+        tests_hint_apart: 'Testpunkte zählen in dieser Veranstaltung nicht zu den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
         test_share: "Anteil in den Tests"
         not_due_count: "%{count} noch nicht fällig"
         achievements: "Zusatzkriterien"
@@ -81,6 +83,7 @@ de:
         view_correction: "Korrektur ansehen"
         total_row: "Gesamt"
         total_row_hint: "über alle Blätter des Semesters"
+        total_row_hint_without_tests: "über alle Blätter des Semesters, ohne die Tests"
         last_computed: "Zuletzt berechnet vor %{time}."
         exempt: "Befreiung eintragen"
         exempt_column: "Befreiung"
@@ -96,6 +99,7 @@ de:
       show:
         of_total_points: "der Gesamtpunkte erforderlich"
         points_absolute: "Punkte erforderlich (absolut)"
+        without_tests: "ohne Tests"
         no_requirement: "Keine Voraussetzung"
         no_requirement_hint: "jede Person wird zur Zulassung vorgeschlagen"
         edit_button: "Regel bearbeiten"

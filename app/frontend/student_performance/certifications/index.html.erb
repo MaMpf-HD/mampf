@@ -104,6 +104,12 @@
               </span>
             <% end %>
 
+            <% if @rule.points_threshold? && @lecture.tests_kept_apart? %>
+              <span class="small text-muted">
+                (<%= t("student_performance.rules.show.without_tests") %>)
+              </span>
+            <% end %>
+
             <% if @rule.no_requirement? %>
               <strong>
                 <%= t("student_performance.rules.show.no_requirement") %>

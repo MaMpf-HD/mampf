@@ -311,6 +311,89 @@ RSpec.describe("Assessment::Assessments", type: :request) do
     end
   end
 
+  describe "PATCH /assessment/assessments/tests_in_points_total" do
+    def test_points_path(**params)
+      tests_in_points_total_assessment_assessments_path(lecture_id: lecture.id, **params)
+    end
+
+    context "as a teacher" do
+      before { sign_in teacher }
+
+      it "offers the choice below the tests it is about" do
+        create(:valid_assignment, lecture: lecture, kind: :test)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.label"))
+        )
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.exclude_dialog.body"))
+        )
+      end
+
+      it "does not offer it while the lecture has no test" do
+        create(:valid_assignment, lecture: lecture)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).not_to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.label"))
+        )
+      end
+
+      it "asks the other question once the tests are out of the total" do
+        create(:valid_assignment, lecture: lecture, kind: :test)
+        lecture.update!(tests_in_points_total: false)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.include_dialog.body"))
+        )
+      end
+
+      it "says that decisions already taken stay" do
+        create(:valid_assignment, lecture: lecture, kind: :test)
+        create(:student_performance_certification, :passed, lecture: lecture)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(
+            I18n.t("assessment.tests_in_points_total.decisions_stay",
+                   count: 1, tab: I18n.t("assessment.tabs.certifications"))
+          )
+        )
+      end
+
+      it "takes the tests out of the points total" do
+        patch test_points_path(counted: "0")
+
+        expect(lecture.reload.tests_in_points_total?).to be(false)
+        expect(response).to redirect_to(
+          assessment_assessments_path(lecture_id: lecture.id, tab: "assessments")
+        )
+      end
+
+      it "puts them back" do
+        lecture.update!(tests_in_points_total: false)
+
+        patch test_points_path(counted: "1")
+
+        expect(lecture.reload.tests_in_points_total?).to be(true)
+      end
+    end
+
+    it "is refused to a student" do
+      sign_in student
+
+      patch test_points_path(counted: "0")
+
+      expect(lecture.reload.tests_in_points_total?).to be(true)
+    end
+  end
+
   describe "PATCH /assessment/assessments/assignments_complete" do
     context "as a teacher" do
       before { sign_in teacher }

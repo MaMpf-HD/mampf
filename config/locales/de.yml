@@ -3026,6 +3026,8 @@ de:
         mark_percentage: "%{percentage} %"
         heading: Klausurzulassung
         of_marked: "von %{max} bisher möglichen Punkten"
+        of_marked_sheets: "von %{max} bisher möglichen Punkten aus den Übungsblättern"
+        tests_apart: "Tests: %{points} von %{max} bisher möglichen Punkten"
         of_needed: "von %{max} nötigen Punkten"
         no_max: "Punkte, noch nichts korrigiert"
         nothing_marked: Es ist noch nichts korrigiert.

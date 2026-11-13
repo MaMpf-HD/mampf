@@ -198,6 +198,20 @@ en:
           other: 'Without the tick the eligibility rule decides nothing — %{count} computed decisions will contradict it afterwards. They stay, because the registration for %{campaigns} still asks for them.'
         reset: 'Reset'
         confirm: 'Keep'
+    tests_in_points_total:
+      label: 'Test points count towards the points total'
+      hint: 'Without the tick, the students’ points total is made up of the homework sheets alone, and so is the points threshold of the eligibility rule. The test results then stand beside it.'
+      exclude_dialog:
+        title: 'Take the tests out of the points total'
+        body: 'Every student’s points total is then made up of the homework sheets alone, also for the points threshold of the eligibility rule. The test results stay visible and stand beside the total.'
+        confirm: 'Take out'
+      include_dialog:
+        title: 'Count the tests towards the points total'
+        body: 'Every student’s points total is then made up of homework sheets and tests, also for the points threshold of the eligibility rule.'
+        confirm: 'Count them'
+      decisions_stay:
+        one: '%{count} eligibility decision has already been taken. It stays; the tab %{tab} shows whether it still fits the new points total.'
+        other: '%{count} eligibility decisions have already been taken. They stay; the tab %{tab} shows which of them no longer fit the new points total.'
     campaign_status:
       title: 'Registration'
       none: 'No registration'

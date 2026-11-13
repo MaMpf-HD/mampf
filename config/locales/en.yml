@@ -2813,6 +2813,8 @@ en:
         mark_percentage: "%{percentage} %"
         heading: Exam admission
         of_marked: "of %{max} points possible so far"
+        of_marked_sheets: "of %{max} points possible so far from the homework sheets"
+        tests_apart: "Tests: %{points} of %{max} points possible so far"
         of_needed: "of %{max} points needed"
         no_max: "points, nothing marked yet"
         nothing_marked: Nothing has been marked yet.

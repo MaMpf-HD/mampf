@@ -29,6 +29,34 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
+      # "50 % of the total points" is another figure once the lecture keeps
+      # its tests out of the total, and the rule's summary has to say which.
+      context "with a points threshold and a test" do
+        let(:without_tests) do
+          "(#{I18n.t("student_performance.rules.show.without_tests")})"
+        end
+
+        before do
+          FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                            lecture: lecture, min_percentage: 50)
+          FactoryBot.create(:assignment, lecture: lecture, kind: :test)
+        end
+
+        it "says nothing about the tests while they are in the points total" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).not_to include(without_tests)
+        end
+
+        it "says that the threshold leaves the tests out once the lecture keeps them apart" do
+          lecture.update!(tests_in_points_total: false)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(without_tests)
+        end
+      end
+
       context "with a rule that asks for nothing, while the list is open" do
         before do
           FactoryBot.create(:student_performance_rule, :active, :without_criteria,

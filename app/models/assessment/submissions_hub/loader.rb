@@ -120,6 +120,9 @@ module Assessment
                        points_marked_so_far: points_marked_so_far,
                        points_awaiting_marks: points_awaiting_marks,
                        sheets_awaiting_marks: awaiting_marks_sheets.size,
+                       tests_apart: tests_apart?,
+                       test_points_total: test_points_total,
+                       test_points_marked_so_far: test_points_marked_so_far,
                        assignments_complete: lecture.assignments_complete?,
                        uses_exam_eligibility: lecture.uses_exam_eligibility?)
         end
@@ -146,8 +149,8 @@ module Assessment
         end
 
         def points_due
-          sheets.select { |sheet| due_for_points?(sheet) }
-                .sum { |sheet| sheet.max_points || 0 }
+          counted_sheets.select { |sheet| due_for_points?(sheet) }
+                        .sum { |sheet| sheet.max_points || 0 }
         end
 
         # Marked although the deadline is still ahead: a deadline may be moved
@@ -155,8 +158,8 @@ module Assessment
         # The points are in the total whatever the clock says, so they have to
         # be in the base as well - otherwise 20 of 20 turns into 200 %.
         def points_marked_not_due
-          sheets.select { |sheet| marked_not_due?(sheet) }
-                .sum { |sheet| sheet.max_points || 0 }
+          counted_sheets.select { |sheet| marked_not_due?(sheet) }
+                        .sum { |sheet| sheet.max_points || 0 }
         end
 
         # Absent from a running test counts like marked: the points are
@@ -181,7 +184,7 @@ module Assessment
         # Reuse the loaded sheets for the same due, pending, and submitted_at
         # conditions as StudentPerformance::DuePoints, avoiding another query.
         def awaiting_marks_sheets
-          @awaiting_marks_sheets ||= sheets.select { |sheet| awaiting_marks?(sheet) }
+          @awaiting_marks_sheets ||= counted_sheets.select { |sheet| awaiting_marks?(sheet) }
         end
 
         # A test nobody has entered anything on is with the tutor too - row or
@@ -198,8 +201,8 @@ module Assessment
         # StudentPerformance::Record does not track assignment deadlines or sheet
         # states, so it cannot distinguish available points from missed work.
         def points_still_open
-          sheets.reject { |sheet| decided?(sheet) }
-                .sum { |sheet| sheet.max_points || 0 }
+          counted_sheets.reject { |sheet| decided?(sheet) }
+                        .sum { |sheet| sheet.max_points || 0 }
         end
 
         # Marked, or counted as nothing, or taken out of the reckoning: whatever
@@ -207,6 +210,48 @@ module Assessment
         def decided?(sheet)
           sheet.state.in?([:marked, :absent, :missed, :not_recorded, :rejected,
                            :exempt, :no_points])
+        end
+
+        # Leaves the tests out where the lecture keeps them out of the points
+        # total, as `Lecture#assignments_in_points_total` does.
+        def counted_sheets
+          @counted_sheets ||= if lecture.tests_in_points_total?
+            sheets
+          else
+            sheets.reject { |sheet| sheet.assignment.kind_test? }
+          end
+        end
+
+        def test_sheets
+          @test_sheets ||= sheets.select { |sheet| sheet.assignment.kind_test? }
+        end
+
+        # Asks for tests as well as for the setting: a lecture without tests
+        # has no second sum to show.
+        def tests_apart?
+          !lecture.tests_in_points_total? && test_sheets.any?
+        end
+
+        def test_points_total
+          return unless tests_apart?
+
+          test_sheets.select { |sheet| sheet.participation&.reviewed? }
+                     .sum { |sheet| sheet.participation.points_total || 0 }
+        end
+
+        # Counts the tests as `points_marked_so_far` counts the sheets:
+        # settled for the reader, not still with the tutor.
+        def test_points_marked_so_far
+          return unless tests_apart?
+
+          test_sheets.select { |sheet| settled_for_points?(sheet) }
+                     .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        def settled_for_points?(sheet)
+          return marked_not_due?(sheet) unless due_for_points?(sheet)
+
+          !awaiting_marks?(sheet)
         end
 
         def record

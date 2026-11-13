@@ -18,7 +18,8 @@ class StandingComponent < ViewComponent::Base
            :points_awaiting_marks,
            :sheets_awaiting_marks, :percentage, :required_points_so_far,
            :required_points_at_end, :reachable_points, :points_out_of_reach?,
-           :required_achievements, to: :standing
+           :required_achievements, :tests_apart, :test_points_total,
+           :test_points_marked_so_far, to: :standing
 
   def initialize(standing:, compact: false)
     super()
@@ -50,8 +51,19 @@ class StandingComponent < ViewComponent::Base
     end
     base = points_marked_so_far
     return t("submission.hub.standing.no_max") unless base.to_f.positive?
+    return t("submission.hub.standing.of_marked_sheets", max: number(base)) if tests_apart
 
     t("submission.hub.standing.of_marked", max: number(base))
+  end
+
+  # Shows the tests' own sum where the lecture keeps tests out of the points
+  # total. Left out of the compact form, and until a test is settled for the
+  # reader.
+  def tests_line
+    return if compact || !test_points_marked_so_far.to_f.positive?
+
+    t("submission.hub.standing.tests_apart",
+      points: number(test_points_total), max: number(test_points_marked_so_far))
   end
 
   def total

@@ -754,6 +754,75 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  # A lecture may judge its tests apart from the homework: the block's points
+  # are then the sheets' alone, and the tests get a sum of their own.
+  describe "tests kept out of the points total" do
+    before { lecture.update!(tests_in_points_total: false) }
+
+    def create_test(expired_since: 1.week, max_points: 10)
+      test = create(:assignment, :expired, lecture: lecture, kind: :test,
+                                           title: "Test 1", expired_since: expired_since)
+      create(:assessment_task, assessment: test.assessment, max_points: max_points)
+      test
+    end
+
+    it "measures the reader against the sheets alone and sums the tests beside them" do
+      sheet = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                max_points: [4, 6])
+      mark(sheet, [3, 5])
+      mark(create_test, [7])
+
+      standing = result.standing
+      expect(standing.points_marked_so_far).to eq(10)
+      expect(standing.tests_apart).to be(true)
+      expect(standing.test_points_total).to eq(7)
+      expect(standing.test_points_marked_so_far).to eq(10)
+    end
+
+    # Nobody can say yet whether the reader sat it, so it is in no sum.
+    it "leaves a test nobody has entered anything on out of every sum" do
+      create_test
+
+      standing = result.standing
+      expect(standing.points_awaiting_marks).to eq(0)
+      expect(standing.sheets_awaiting_marks).to eq(0)
+      expect(standing.points_still_open).to eq(0)
+      expect(standing.test_points_marked_so_far).to eq(0)
+    end
+
+    it "counts a test the reader was absent from as lost, among the tests" do
+      participate(create_test, status: :absent)
+
+      standing = result.standing
+      expect(standing.points_marked_so_far).to eq(0)
+      expect(standing.test_points_total).to eq(0)
+      expect(standing.test_points_marked_so_far).to eq(10)
+    end
+
+    it "has no second sum where the lecture has set up no test" do
+      create_assignment(title: "Homework 1", deadline: 1.week.ago)
+
+      standing = result.standing
+      expect(standing.tests_apart).to be(false)
+      expect(standing.test_points_total).to be_nil
+      expect(standing.test_points_marked_so_far).to be_nil
+    end
+  end
+
+  # With the tests in the total, which is how a lecture starts out, there is
+  # one sum and nothing beside it.
+  it "keeps the tests in the one sum unless the lecture takes them out" do
+    test = create(:assignment, :expired, lecture: lecture, kind: :test,
+                                         title: "Test 1", expired_since: 1.week)
+    create(:assessment_task, assessment: test.assessment, max_points: 10)
+    mark(test, [7])
+
+    standing = result.standing
+    expect(standing.points_marked_so_far).to eq(10)
+    expect(standing.tests_apart).to be(false)
+    expect(standing.test_points_marked_so_far).to be_nil
+  end
+
   # Handed in, deadline behind it, nothing marked on it yet: already in the
   # denominator and counting as nothing, which is what the block says out loud.
   # Deliberately not the record's own pending points, which count a sheet handed

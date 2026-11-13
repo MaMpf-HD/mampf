@@ -209,4 +209,80 @@ test.describe("a test written in the tutorial", () => {
     await row.getByRole("button", { name: "Save this row's points" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();
   });
+
+  /**
+   * A lecture may judge its tests apart from the homework. The teacher says so
+   * below the tests and is asked first, and from then on the student reads two
+   * sums where there was one.
+   */
+  test("is taken out of the points total once the teacher says so", async ({
+    factory,
+    teacher,
+    student,
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+    });
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Monday group",
+    });
+    await factory.create("lecture_bookmark", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+
+    // a sheet and a test, each marked with 3.5 of 8 points
+    for (const [title, kind] of [["Homework 1", "homework"], ["Test 1", "test"]]) {
+      const assignment = await factory.create("assignment", ["expired"], {
+        lecture_id: lecture.id, title, kind,
+      });
+      const book = await assignment.__call("assessment");
+      await factory.create("assessment_participation", ["marked"], {
+        assessment_id: book.id, user_id: student.user.id,
+      });
+    }
+
+    // one sum over both, which is how a lecture starts out
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    const standing = student.page
+      .getByRole("complementary", { name: "Exam admission" });
+    await expect(standing.getByText("of 16 points possible so far")).toBeVisible();
+
+    // a question that is dismissed leaves the box ticked
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+    const box = teacher.page.getByLabel("Test points count towards the points total");
+    await expect(box).toBeChecked();
+    await box.uncheck();
+    const dialog = teacher.page
+      .getByRole("dialog", { name: "Take the tests out of the points total" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+    await expect(box).toBeChecked();
+
+    // answered, it goes through; the overview lives in a Turbo frame, so the
+    // round trip is what there is to wait for
+    await box.uncheck();
+    const saved = teacher.page.waitForResponse(
+      r => r.request().method() === "POST",
+    );
+    await dialog.getByRole("button", { name: "Take out" }).click();
+    await saved;
+    await dashboard.gotoOverview();
+    await expect(teacher.page.getByLabel("Test points count towards the points total"))
+      .not.toBeChecked();
+
+    // the student now reads the sheets' sum, and the tests' beside it
+    await student.page.reload();
+    await expect(
+      standing.getByText("of 8 points possible so far from the homework sheets"),
+    ).toBeVisible();
+    await expect(standing.getByText("Tests: 3.5 of 8 points possible so far"))
+      .toBeVisible();
+  });
 });

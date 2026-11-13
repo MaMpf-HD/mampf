@@ -500,6 +500,33 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.details[:not_due_sheets]).to eq(2)
       end
 
+      it "counts a test to come apart from the sheets to come" do
+        sheet(deadline: 2.days.ago, points: 20)
+        sheet(deadline: 3.days.from_now, points: 60)
+        coming_test = sheet(deadline: 5.days.from_now, points: 40)
+        coming_test.assessable.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+
+        result = evaluator.evaluate(record_with(total: 5, max: 120))
+
+        expect(result.details[:not_due_sheets]).to eq(1)
+        expect(result.details[:not_due_tests]).to eq(1)
+      end
+
+      # A test to come changes nothing the points wait for once the lecture
+      # keeps its tests out of the points total.
+      it "names no test to come where tests are kept out of the points total" do
+        lecture.update!(tests_in_points_total: false)
+        sheet(deadline: 2.days.ago, points: 20)
+        sheet(deadline: 3.days.from_now, points: 60)
+        coming_test = sheet(deadline: 5.days.from_now, points: 40)
+        coming_test.assessable.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+
+        result = evaluator.evaluate(record_with(total: 5, max: 80))
+
+        expect(result.details[:not_due_sheets]).to eq(1)
+        expect(result.details[:not_due_tests]).to eq(0)
+      end
+
       it "says as much about the hand-ins that are waiting" do
         due = sheet(deadline: 2.days.ago, points: 20)
         FactoryBot.create(:assessment_participation, assessment: due,

@@ -3,10 +3,16 @@ module Assessment
     # What the exam-admission block reads. The record carries achievements as two
     # id lists, met and not graded yet, and never the value behind one - so
     # "you have 67.3 %" comes alongside rather than out of it.
+    #
+    # `tests_apart` is set where the lecture keeps its tests out of the points
+    # total. The points are then the homework's alone, and the two
+    # `test_points_*` figures hold the tests'.
     Standing = Struct.new(:record, :rule, :achievement_values,
                           :points_still_open, :points_marked_so_far,
                           :points_awaiting_marks, :sheets_awaiting_marks,
                           :assignments_complete, :uses_exam_eligibility,
+                          :tests_apart, :test_points_total,
+                          :test_points_marked_so_far,
                           keyword_init: true) do
       def required_achievements
         rule ? rule.required_achievements.to_a : []

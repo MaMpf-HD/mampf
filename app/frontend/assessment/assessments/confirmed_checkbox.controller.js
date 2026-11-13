@@ -1,6 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
+/**
+ * Submits the form of a checkbox only once its dialog has been confirmed, and
+ * puts the box back where it stood if the dialog is left any other way. The
+ * `reset` target is optional: a hidden field for a dialog with a third button.
+ */
 export default class extends Controller {
   static targets = ["checkbox", "reset", "dialog"];
 
@@ -67,7 +72,9 @@ export default class extends Controller {
   }
 
   submit(resetCertifications) {
-    this.resetTarget.value = resetCertifications ? "1" : "0";
+    if (this.hasResetTarget) {
+      this.resetTarget.value = resetCertifications ? "1" : "0";
+    }
     this.element.requestSubmit();
   }
 

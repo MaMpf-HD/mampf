@@ -108,27 +108,102 @@
             <% end %>
           </tbody>
         </table>
+        <%= form_with url: tests_in_points_total_assessment_assessments_path(
+                              lecture_id: lecture.id
+                            ),
+                      method: :patch,
+                      data: { controller: "assessments--confirmed-checkbox" },
+                      class: "mb-4" do %>
+          <%= hidden_field_tag :counted, "0", id: nil %>
+
+          <div class="form-check">
+            <%= check_box_tag :counted, "1", lecture.tests_in_points_total?,
+                              class: "form-check-input",
+                              data: {
+                                assessments__confirmed_checkbox_target: "checkbox",
+                                action: "change->assessments--confirmed-checkbox#change"
+                              } %>
+
+            <%= label_tag :counted,
+                          t('assessment.tests_in_points_total.label'),
+                          class: "form-check-label" %>
+          </div>
+
+          <p class="text-muted small mb-0 mt-1">
+            <%= t('assessment.tests_in_points_total.hint') %>
+          </p>
+
+          <div
+            class="modal fade"
+            tabindex="-1"
+            aria-labelledby="tests-in-points-total-title"
+            aria-hidden="true"
+            data-assessments--confirmed-checkbox-target="dialog"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="tests-in-points-total-title">
+                    <%= t("assessment.tests_in_points_total.#{tests_dialog}.title") %>
+                  </h5>
+                </div>
+
+                <div class="modal-body">
+                  <p class="mb-0">
+                    <%= t("assessment.tests_in_points_total.#{tests_dialog}.body") %>
+                  </p>
+
+                  <% if decisions_count.positive? %>
+                    <p class="mt-2 mb-0">
+                      <%= t("assessment.tests_in_points_total.decisions_stay",
+                            count: decisions_count,
+                            tab: t("assessment.tabs.certifications")) %>
+                    </p>
+                  <% end %>
+                </div>
+
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-action="assessments--confirmed-checkbox#cancel"
+                  >
+                    <%= t('assessment.assignments_complete.cancel') %>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-action="assessments--confirmed-checkbox#confirm"
+                  >
+                    <%= t("assessment.tests_in_points_total.#{tests_dialog}.confirm") %>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
       <% end %>
     </div>
     <%= form_with url: assignments_complete_assessment_assessments_path(
                           lecture_id: lecture.id
                         ),
                     method: :patch,
-                    data: { controller: "assessments--assignments-complete" },
+                    data: { controller: "assessments--confirmed-checkbox" },
                     class: "border-top pt-3" do %>
       <%= hidden_field_tag :complete, "0", id: nil %>
 
       <%= hidden_field_tag :reset_certifications, "0", id: nil,
                              data: {
-                               assessments__assignments_complete_target: "reset"
+                               assessments__confirmed_checkbox_target: "reset"
                              } %>
 
       <div class="form-check">
         <%= check_box_tag :complete, "1", lecture.assignments_complete?,
                             class: "form-check-input",
                             data: {
-                              assessments__assignments_complete_target: "checkbox",
-                              action: "change->assessments--assignments-complete#change"
+                              assessments__confirmed_checkbox_target: "checkbox",
+                              action: "change->assessments--confirmed-checkbox#change"
                             } %>
 
         <%= label_tag :complete,
@@ -151,7 +226,7 @@
         tabindex="-1"
         aria-labelledby="assignments-complete-title"
         aria-hidden="true"
-        data-assessments--assignments-complete-target="dialog"
+        data-assessments--confirmed-checkbox-target="dialog"
       >
         <div class="modal-dialog">
           <div class="modal-content">
@@ -169,7 +244,7 @@
               <button
                 type="button"
                 class="btn btn-outline-secondary"
-                data-action="assessments--assignments-complete#cancel"
+                data-action="assessments--confirmed-checkbox#cancel"
               >
                 <%= t('assessment.assignments_complete.cancel') %>
               </button>
@@ -177,7 +252,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                data-action="assessments--assignments-complete#confirm"
+                data-action="assessments--confirmed-checkbox#confirm"
               >
                 <%= confirmation_button %>
               </button>
@@ -186,7 +261,7 @@
                 <button
                   type="button"
                   class="btn btn-outline-danger"
-                  data-action="assessments--assignments-complete#reset"
+                  data-action="assessments--confirmed-checkbox#reset"
                 >
                   <%= t('assessment.assignments_complete.reopen_dialog.reset') %>
                 </button>

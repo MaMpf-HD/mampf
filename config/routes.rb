@@ -137,6 +137,7 @@ Rails.application.routes.draw do
     resources :assessments, only: [:index, :show, :update] do
       collection do
         patch :assignments_complete
+        patch :tests_in_points_total
       end
       resources :tasks, except: [:index] do
         member do

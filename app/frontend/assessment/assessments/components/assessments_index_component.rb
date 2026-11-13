@@ -89,6 +89,17 @@ class AssessmentsIndexComponent < ViewComponent::Base
                                          .computed.decided.count
   end
 
+  # Picks the dialog for the way the tick below the tests is about to go: out
+  # of the points total, or back in.
+  def tests_dialog
+    lecture.tests_in_points_total? ? :exclude_dialog : :include_dialog
+  end
+
+  # Counts manual decisions too: they were taken on the points total as well.
+  def decisions_count
+    @decisions_count ||= lecture.current_certifications.decided.count
+  end
+
   private
 
     def build_assessables_by_type

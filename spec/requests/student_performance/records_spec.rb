@@ -312,6 +312,26 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           )
         end
 
+        # The reader of the table has to be told which of the two the lecture
+        # chose: the same three columns hold another sum.
+        it "says that the marked-so-far figures are the sheets' alone once tests are kept out" do
+          lecture.update!(tests_in_points_total: false)
+          test(deadline: 2.weeks.from_now.end_of_week, points: 10)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(groups.join).to include(
+            I18n.t("student_performance.records.columns.sheets_only")
+          )
+          expect(groups.join).not_to include(
+            I18n.t("student_performance.records.columns.sheets_and_tests")
+          )
+          expect(response.body).to include(
+            CGI.escapeHTML(I18n.t("student_performance.records.columns.tests_hint_apart"))
+          )
+        end
+
         it "has no tests group without a test" do
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
 
@@ -940,6 +960,25 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         )
         expect(response.body).not_to include(
           I18n.t("student_performance.records.columns.not_submitted")
+        )
+      end
+
+      # The list holds the tests as well; the total below them does not once
+      # the lecture keeps them out of it, and it has to say so.
+      it "says that the total leaves the tests out once the lecture keeps them apart" do
+        lecture.update!(tests_in_points_total: false)
+        written_test = FactoryBot.create(:assignment, :expired, lecture: lecture,
+                                                                kind: :test)
+        FactoryBot.create(:assessment_task, assessment: written_test.assessment,
+                                            max_points: 10)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body).to include(
+          I18n.t("student_performance.records.show.total_row_hint_without_tests")
+        )
+        expect(response.body).not_to include(
+          I18n.t("student_performance.records.columns.not_due")
         )
       end
 
