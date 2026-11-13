@@ -12,6 +12,18 @@ RSpec.describe(User) do
     expect { user.destroy! }.to change(Annotation, :count).by(-1)
   end
 
+  # The talk media go before anything else of the account, and a medium
+  # cannot go while notes point to it - the user's or anybody else's.
+  it "deletes an account whose own talk medium carries annotations" do
+    talk_medium = create(:talk_medium)
+    talk_medium.editors = [user]
+    create(:annotation, user_id: user.id, medium_id: talk_medium.id)
+    create(:annotation, user_id: create(:confirmed_user).id, medium_id: talk_medium.id)
+
+    expect { user.destroy! }.to change(Annotation, :count).by(-2)
+    expect(Medium.exists?(talk_medium.id)).to be(false)
+  end
+
   it "deletes the user's notifications and read marks" do
     create(:notification, recipient: user)
     create(:reader, user: user, thread: medium.commontator_thread)
