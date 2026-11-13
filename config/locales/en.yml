@@ -2281,6 +2281,7 @@ en:
     length: 'Length'
     size: 'Size'
     updated: 'Updated'
+    as_of: 'As of'
     pages: 'p'
     destinations: 'destinations'
     structure: 'Structure of the manuscript'

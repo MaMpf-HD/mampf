@@ -372,6 +372,42 @@ RSpec.describe(Medium, type: :model) do
   #   end
   # end
 
+  describe "#manuscript_updated_at" do
+    let(:released_at) { Time.zone.local(2026, 10, 1) }
+    let(:medium) do
+      FactoryBot.build(:lecture_medium, :with_manuscript, released: "all",
+                                                          released_at: released_at)
+    end
+
+    it "is nil without a manuscript" do
+      medium = FactoryBot.build(:lecture_medium, released: "all", released_at: released_at)
+      expect(medium.manuscript_updated_at).to be_nil
+    end
+
+    it "is the release date while the manuscript has not been replaced" do
+      expect(medium.manuscript_updated_at).to eq(released_at)
+    end
+
+    it "is the date the manuscript was last replaced" do
+      medium.file_last_edited = Time.zone.local(2026, 11, 3)
+      expect(medium.manuscript_updated_at).to eq(Time.zone.local(2026, 11, 3))
+    end
+
+    # A medium released anew is out since then, whatever was replaced before.
+    it "is the release date where the manuscript was last replaced before it" do
+      medium.file_last_edited = Time.zone.local(2026, 9, 1)
+      expect(medium.manuscript_updated_at).to eq(released_at)
+    end
+
+    # Moving a medium to an unpublished lecture takes it back and leaves
+    # both dates on it.
+    it "is nil while the medium is not published" do
+      medium.released = nil
+      medium.file_last_edited = Time.zone.local(2026, 11, 3)
+      expect(medium.manuscript_updated_at).to be_nil
+    end
+  end
+
   describe "#editors_with_inheritance" do
     it "returns [] for a medium without a teachable instead of raising" do
       expect(FactoryBot.build(:medium).editors_with_inheritance).to eq([])
