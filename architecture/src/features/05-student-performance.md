@@ -168,6 +168,8 @@ The main fields and methods of `StudentPerformance::Record` are:
 | `percentage_materialized` | DB column         | Computed percentage (points_total / points_max)                          |
 | `achievements_met_ids`    | DB column (JSONB) | Optional list of achievement IDs currently met (factual audit)           |
 | `achievements_ungraded_ids` | DB column (JSONB) | Achievement IDs with no grade recorded yet — not met, but not missed either |
+| `tests_passed_ids`        | DB column (JSONB) | Assignment IDs of the tests passed; excused counts as passed             |
+| `tests_failed_ids`        | DB column (JSONB) | Assignment IDs of the tests failed; absent counts as failed. A test in neither list is still open |
 | `computed_at`             | DB column         | Timestamp of last computation                                            |
 
 ### Behavior Highlights
@@ -336,6 +338,7 @@ A configuration record that defines the criteria a student must meet to be eligi
 | `lecture_id`                   | DB column (FK)   | The lecture this rule applies to                               |
 | `min_percentage`               | DB column        | Minimum percentage of points (0-100), mutually exclusive with `min_points_absolute` |
 | `min_points_absolute`          | DB column        | Minimum absolute points, mutually exclusive with `min_percentage` |
+| `min_tests_passed`             | DB column        | Number of tests that have to be passed, optional              |
 | `active`                       | DB column (Bool) | Whether this rule is currently in effect                       |
 | `rule_achievements`            | Association      | Join records linking to required achievements                  |
 | `required_achievements`        | Association      | Achievement records that must be completed (via `rule_achievements`) |
@@ -348,6 +351,7 @@ A configuration record that defines the criteria a student must meet to be eligi
 - References multiple achievements via join table (`student_performance_rule_achievements`)
 - Database-level integrity prevents deletion of achievements still referenced by rules
 - Enforces mutual exclusivity of percentage vs absolute point thresholds
+- May ask for a number of passed tests (`min_tests_passed`). Only a test with a passing threshold (`Assignment#passing_points`) can be passed or failed, so only those are counted; `Assignment#test_verdict` is the one place that decides
 - Points are aggregated from all assignments of the lecture (no filtering by type or archived status)
 
 ### Example Implementation
@@ -582,6 +586,7 @@ defers it.
 | Criterion | States |
 |---|---|
 | points | `:met` · `:pending` (marking outstanding, or a sheet not due yet) · `:not_measurable` (nothing to measure) · `:not_met` |
+| tests | `:met` (enough tests passed) · `:pending` (the tests nobody has settled for the student could still make up the number) · `:not_met` |
 | achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
 
 **`:pending`** means the student is below the threshold but what is still
