@@ -164,7 +164,7 @@ The main fields and methods of `StudentPerformance::Record` are:
 | `lecture_id`              | DB column (FK)    | The lecture this performance record applies to                           |
 | `user_id`                 | DB column (FK)    | The student whose performance is materialized                            |
 | `points_total_materialized` | DB column       | Points awarded so far — only participations that are fully marked count  |
-| `points_max_materialized` | DB column         | Maximum of every assignment in the lecture, minus the ones this student is exempt from |
+| `points_max_materialized` | DB column         | Maximum of every assignment in the points total, minus the ones this student is exempt from |
 | `percentage_materialized` | DB column         | Computed percentage (points_total / points_max)                          |
 | `achievements_met_ids`    | DB column (JSONB) | Optional list of achievement IDs currently met (factual audit)           |
 | `achievements_ungraded_ids` | DB column (JSONB) | Achievement IDs with no grade recorded yet — not met, but not missed either |
@@ -175,6 +175,7 @@ The main fields and methods of `StudentPerformance::Record` are:
 - Enforces uniqueness per (lecture, user) via database constraint.
 - Contains only factual data; interpretation is handled by `Evaluator` and teacher certification.
 - Re-computation updates materialized values and `computed_at`.
+- **Tests in or out of the points total:** `Lecture#tests_in_points_total` (on by default, a checkbox below the tests in the Assignments & Tests tab) decides whether tests count towards the two points columns. With it off they hold the homework's points alone; `DuePoints` and the submissions hub follow through `Lecture#assignments_in_points_total`, and the hub shows the tests' sum on a line of its own.
 
 ### Example Implementation
 
@@ -449,6 +450,7 @@ The service is invoked in several scenarios to keep performance records accurate
 2.  **After achievement changes:** When tutors record or correct lecture achievements for a user.
 3.  **Just-in-Time:** The `Registration::Policy` triggers a recomputation for a single user at the moment of an exam registration attempt to guarantee 100% correctness.
 4.  **On-demand by staff:** Manual trigger via an admin interface for debugging or corrections.
+5.  **After a lecture-wide statement changes:** Ticking or clearing "the list of sheets and tests is complete" or "test points count towards the points total" recomputes every record of the lecture, so decisions taken before read as outdated.
 
 ### Example Implementation
 
