@@ -2825,7 +2825,7 @@ en:
         condition_tests:
           one: "At least 1 test passed"
           other: "At least %{count} tests passed"
-        you_have_tests: "You have %{passed} of %{settled} so far"
+        you_have_tests: "you have %{passed} of %{settled} so far"
         tests_out_of_reach:
           one: >
             Even passing every test still open would leave you at %{best}

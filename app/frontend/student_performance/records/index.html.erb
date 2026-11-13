@@ -291,7 +291,7 @@
             <% if @test_points %>
               <th
                 scope="col"
-                class="text-center test-share <%= "tests-start" if @tests.empty? %>"
+                class="text-center test-share <%= "tests-start" if @tests.empty? %> <%= "tests-end" if @judged_test_ids.empty? %>"
                 aria-sort="<%= records_sort_state("test_share") %>"
               >
                 <%= records_sort_link(@lecture, "test_share") do %>
@@ -307,7 +307,7 @@
             <% if @judged_test_ids.any? %>
               <th
                 scope="col"
-                class="text-center small"
+                class="text-center small tests-end"
                 title="<%= t("student_performance.records.columns.tests_passed_hint") %>"
               >
                 <%= t("student_performance.records.columns.tests_passed") %>
@@ -403,7 +403,8 @@
                 <% test_share = @test_points.marked_percentage_of(
                      record.user_id, @test_points_by_user.fetch(record.user_id, 0)) %>
                 <% share_classes = ["text-center text-nowrap numeric test-share",
-                                    ("tests-start" if @tests.empty?)].compact.join(" ") %>
+                                    ("tests-start" if @tests.empty?),
+                                    ("tests-end" if @judged_test_ids.empty?)].compact.join(" ") %>
                 <td class="<%= share_classes %>">
                   <% if test_share.nil? %>
                     <span class="text-muted" aria-hidden="true">&mdash;</span>
@@ -417,7 +418,7 @@
               <% end %>
 
               <% if @judged_test_ids.any? %>
-                <td class="text-center text-nowrap numeric">
+                <td class="text-center text-nowrap numeric tests-end">
                   <%= record.tests_passed_among(@judged_test_ids) %>
                   <span class="text-muted">/ <%= @judged_test_ids.size %></span>
                 </td>
