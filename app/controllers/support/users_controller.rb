@@ -71,7 +71,6 @@ module Support
 
     def ban
       authorize! :ban, @user
-      return back_to_person(t("support.users.already_banned"), kind: :alert) if @user.banned?
 
       if @user.ban(by: current_user, reason: params.expect(user: [:ban_reason])[:ban_reason])
         back_to_person(t("support.users.banned"))

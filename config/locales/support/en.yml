@@ -51,7 +51,6 @@ en:
       ban: 'Ban the account'
       ban_confirm: 'Ban the account of %{user}?'
       banned: 'The account is banned.'
-      already_banned: 'The account is banned already.'
       banned_badge: 'Banned'
       unban: 'Lift the ban'
       unban_confirm: 'Lift the ban on the account of %{user}?'

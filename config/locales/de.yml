@@ -4538,6 +4538,13 @@ de:
               does_not_match_tutorial: stimmt nicht mit der Veranstaltung des Tutoriums überein.
         user:
           admin_rights_lost: 'Du bist nicht mehr Admin, deshalb wurde nichts gespeichert.'
+          already_banned: 'Das Konto ist bereits gesperrt.'
+          admin_not_banned: >-
+            Das Konto eines Admins kann nicht gesperrt werden. Entziehe zuerst
+            die Admin-Rechte.
+          banned_gets_no_admin_rights: >-
+            Ein gesperrtes Konto kann keine Admin-Rechte bekommen. Hebe zuerst
+            die Sperre auf.
           attributes:
             consents:
               accepted: 'Du musst der Datenschutzerklärung zustimmen, um ein Konto anzulegen.'

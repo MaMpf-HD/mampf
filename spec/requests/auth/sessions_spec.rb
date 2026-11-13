@@ -266,6 +266,7 @@ RSpec.describe("Auth sessions", type: :request) do
         user: { reset_password_token: token, password: new_password,
                 password_confirmation: new_password }
       }
+      expect(user.reload.valid_password?(new_password)).to be(true)
       get news_path
 
       expect(response).to redirect_to(new_user_session_path)

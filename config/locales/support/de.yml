@@ -52,7 +52,6 @@ de:
       ban: 'Konto sperren'
       ban_confirm: 'Das Konto von %{user} sperren?'
       banned: 'Das Konto ist gesperrt.'
-      already_banned: 'Das Konto ist bereits gesperrt.'
       banned_badge: 'Gesperrt'
       unban: 'Sperre aufheben'
       unban_confirm: 'Die Sperre des Kontos von %{user} aufheben?'

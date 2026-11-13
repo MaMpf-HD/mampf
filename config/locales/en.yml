@@ -4289,6 +4289,12 @@ en:
               does_not_match_tutorial: does not match the tutorial's lecture.
         user:
           admin_rights_lost: 'You are no longer an admin, so nothing was saved.'
+          already_banned: 'The account is banned already.'
+          admin_not_banned: >-
+            An admin's account cannot be banned. Take away the admin rights
+            first.
+          banned_gets_no_admin_rights: >-
+            A banned account cannot get admin rights. Lift the ban first.
           attributes:
             consents:
               accepted: 'You need to accept the privacy policy to create an account.'
