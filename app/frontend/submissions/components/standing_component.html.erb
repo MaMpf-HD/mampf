@@ -9,7 +9,10 @@
 
   <div class="num num-total mb-2<%= " num-none" unless marked? %>">
     <%= total %>
-    <span class="hub-body fw-normal text-muted"><%= points_line %></span>
+
+    <span class="hub-body fw-normal text-muted num-total-of">
+      <%= points_line %>
+    </span>
   </div>
 
   <% if bar? %>
