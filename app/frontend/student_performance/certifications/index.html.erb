@@ -110,6 +110,20 @@
               </span>
             <% end %>
 
+            <% if @rule.tests_criterion? %>
+              <% if @rule.points_threshold? %>
+                <span class="text-muted small mx-1">
+                  <i class="bi bi-plus"></i>
+                </span>
+              <% end %>
+              <strong><%= @rule.min_tests_passed %></strong>
+              <span class="small text-muted">
+                <%= t("student_performance.rules.show.tests_passed",
+                      count: @rule.min_tests_passed,
+                      judged: @lecture.judged_test_ids.size) %>
+              </span>
+            <% end %>
+
             <% if @rule.no_requirement? %>
               <strong>
                 <%= t("student_performance.rules.show.no_requirement") %>
@@ -120,7 +134,7 @@
             <% end %>
 
             <% if @rule.required_achievements.any? %>
-              <% if @rule.points_threshold? %>
+              <% if @rule.waits_for_list? %>
                 <span class="text-muted small mx-1">
                   <i class="bi bi-plus"></i>
                 </span>

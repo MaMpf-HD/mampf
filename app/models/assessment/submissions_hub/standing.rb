@@ -7,12 +7,16 @@ module Assessment
     # `tests_apart` is set where the lecture keeps its tests out of the points
     # total. The points are then the homework's alone, and the two
     # `test_points_*` figures hold the tests'.
+    #
+    # `tests_judged` counts the tests with a passing threshold, `tests_passed`
+    # and `tests_failed` those of them the reader can see a result for.
     Standing = Struct.new(:record, :rule, :achievement_values,
                           :points_still_open, :points_marked_so_far,
                           :points_awaiting_marks, :sheets_awaiting_marks,
                           :assignments_complete, :uses_exam_eligibility,
                           :tests_apart, :test_points_total,
                           :test_points_marked_so_far,
+                          :tests_judged, :tests_passed, :tests_failed,
                           keyword_init: true) do
       def required_achievements
         rule ? rule.required_achievements.to_a : []
@@ -33,6 +37,27 @@ module Assessment
 
       def points_total
         record&.points_total_materialized
+      end
+
+      # The tests with a passing threshold that are settled for the reader.
+      def tests_settled
+        tests_passed.to_i + tests_failed.to_i
+      end
+
+      def tests_to_come
+        tests_judged.to_i - tests_settled
+      end
+
+      def tests_needed
+        rule&.min_tests_passed
+      end
+
+      # Like the points, only once the lecture says its list is complete:
+      # another test is another chance to pass one.
+      def tests_out_of_reach?
+        return false unless assignments_complete && tests_needed
+
+        tests_passed.to_i + tests_to_come < tests_needed
       end
 
       # Two maxima live here, and they answer different questions.

@@ -123,6 +123,10 @@
             <col class="records-col-share">
           <% end %>
 
+          <% if @judged_test_ids.any? %>
+            <col class="records-col-share">
+          <% end %>
+
           <% @achievements.each do %>
             <col class="records-col-achievement">
           <% end %>
@@ -176,7 +180,7 @@
             <% if @test_points %>
               <th
                 scope="colgroup"
-                colspan="<%= @tests.size + 1 %>"
+                colspan="<%= @tests.size + 1 + (@judged_test_ids.any? ? 1 : 0) %>"
                 class="text-center text-nowrap tests-start"
               >
                 <%= t("student_performance.records.columns.tests") %>
@@ -300,6 +304,16 @@
               </th>
             <% end %>
 
+            <% if @judged_test_ids.any? %>
+              <th
+                scope="col"
+                class="text-center small"
+                title="<%= t("student_performance.records.columns.tests_passed_hint") %>"
+              >
+                <%= t("student_performance.records.columns.tests_passed") %>
+              </th>
+            <% end %>
+
             <% @achievements.each do |achievement| %>
               <th scope="col" class="text-center small">
                 <abbr title="<%= achievement.title %>">
@@ -399,6 +413,13 @@
                   <% else %>
                     <%= number_to_percentage(test_share, precision: 0) %>
                   <% end %>
+                </td>
+              <% end %>
+
+              <% if @judged_test_ids.any? %>
+                <td class="text-center text-nowrap numeric">
+                  <%= (Array(record.tests_passed_ids).map(&:to_i) & @judged_test_ids).size %>
+                  <span class="text-muted">/ <%= @judged_test_ids.size %></span>
                 </td>
               <% end %>
 

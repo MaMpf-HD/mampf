@@ -67,6 +67,15 @@
             </span>
           </div>
         <% end %>
+        <% if tests_condition %>
+          <div class="requirement">
+            <span><%= tests_condition %></span>
+
+            <span class="hub-aside <%= tests_class %>">
+              <%= tests_standing %>
+            </span>
+          </div>
+        <% end %>
         <% required_achievements.each do |achievement| %>
           <div class="requirement">
             <span><%= achievement_label(achievement) %></span>

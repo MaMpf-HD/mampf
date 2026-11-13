@@ -41,6 +41,8 @@ en:
         tests_hint: "Test points are in the figures under \"Marked so far\" as well. The percentage at the end of this group is the tests on their own, worked out the same way."
         tests_hint_apart: "In this lecture test points are not in the figures under \"Marked so far\". The percentage at the end of this group is the tests on their own, worked out the same way."
         test_share: "Test percentage"
+        tests_passed: "passed"
+        tests_passed_hint: "Tests passed, of those with a passing threshold. Excused counts as passed."
         not_due_count: "%{count} not due yet"
         achievements: "Achievements"
         assessments: "Assessments"
@@ -82,6 +84,8 @@ en:
         view_manuscript: "View submission"
         view_correction: "View correction"
         total_row: "Total"
+        test_passed: "passed"
+        test_failed: "not passed"
         total_row_hint: "over every assignment of the term"
         total_row_hint_without_tests: "over every sheet of the term, without the tests"
         last_computed: "Last computed %{time} ago."
@@ -100,6 +104,9 @@ en:
         of_total_points: "of total points required"
         points_absolute: "points required (absolute)"
         without_tests: "without tests"
+        tests_passed:
+          one: "passed test required (of %{judged} with a passing threshold)"
+          other: "passed tests required (of %{judged} with a passing threshold)"
         no_requirement: "No requirement"
         no_requirement_hint: "every student is proposed as eligible"
         edit_button: "Edit Rule"
@@ -123,6 +130,15 @@ en:
         percentage_field: "Minimum percentage"
         absolute_field: "Minimum points"
         achievements_section: "Required Achievements"
+        tests_section: "Passed tests"
+        tests_at_least: "at least"
+        tests_of:
+          one: "of 1 test with a passing threshold"
+          other: "of %{count} tests with a passing threshold"
+        tests_hint: "Leave empty if no passed tests are asked for. Excused counts as passed, absent as failed."
+        tests_without_threshold:
+          one: "1 test has no passing threshold and is not counted."
+          other: "%{count} tests have no passing threshold and are not counted."
         achievements_hint: "Select which achievements students must complete."
         remove: "Remove rule"
         remove_confirm:
@@ -190,6 +206,9 @@ en:
         required: "Required"
         result: "Result"
         achievements_check: "Achievements Check"
+        tests_check: "Tests check"
+        tests_passed: "Tests passed"
+        tests_still_open: "Tests still open"
         no_achievements_required: "No achievements are required by the current rule."
         info: "This proposal is a preview only; decisions are made under Exam Eligibility."
     certifications:

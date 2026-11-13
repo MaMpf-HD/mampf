@@ -67,6 +67,17 @@ class SheetRowComponent < ViewComponent::Base
     NOTE_TONES[state] == :bad ? "sheet-note-bad" : "sheet-note"
   end
 
+  # Says where a test's passing threshold lies and, once the reader has a
+  # result, whether they cleared it.
+  def passing_note
+    threshold = sheet.assignment.passing_points
+    return unless threshold
+    return t("submission.hub.passing.excused") if state == :exempt
+
+    t("submission.hub.passing.#{sheet.test_verdict || "threshold"}",
+      points: format_number(threshold))
+  end
+
   # Whatever the sheet carries is shown; whether it can be put over a maximum
   # is a separate question, and the answer to it is `maximum?`.
   def number?

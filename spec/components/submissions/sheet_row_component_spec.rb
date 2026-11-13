@@ -14,10 +14,12 @@ RSpec.describe(SheetRowComponent, type: :component) do
   # problems, so a sheet worth 16 has them. The two are told apart where it
   # matters - a problem may be set at 0.
   def sheet(state, points: nil, max_points: 16, tasks_set_up: nil, **assignment_attrs)
+    # The verdict is the sheet's, not the assignment's.
+    test_verdict = assignment_attrs.delete(:test_verdict)
     # `dom_id` names the row after the assignment, which takes a key.
     assignment = instance_double(Assignment, title: "Homework 8",
                                              friendly_deadline: 15.minutes.from_now,
-                                             kind_test?: false,
+                                             kind_test?: false, passing_points: nil,
                                              **assignment_attrs,
                                              id: 8, to_key: [8],
                                              model_name: Assignment.model_name)
@@ -26,7 +28,7 @@ RSpec.describe(SheetRowComponent, type: :component) do
                     state: state, points: points, max_points: max_points,
                     scale?: scale,
                     tasks_set_up?: tasks_set_up.nil? ? scale : tasks_set_up,
-                    assignment: assignment, news?: false,
+                    assignment: assignment, news?: false, test_verdict: test_verdict,
                     # The row renders its fold with it; the fold has a spec of
                     # its own, so here it only has to stay out of the way.
                     submission: nil, tasks: [], partners: [],
@@ -37,6 +39,44 @@ RSpec.describe(SheetRowComponent, type: :component) do
   def render_state(state, **)
     render_inline(described_class.new(sheet: sheet(state, **)))
     rendered_content
+  end
+
+  # A test may carry a passing threshold; the row names it, and says whether
+  # the reader cleared it once they have a result.
+  describe "a test's passing threshold" do
+    def passing(key, points: "5")
+      I18n.t("submission.hub.passing.#{key}", points: points)
+    end
+
+    it "names the threshold while nothing is settled" do
+      content = render_state(:awaiting_record, kind_test?: true, passing_points: 5)
+
+      expect(content).to include(passing(:threshold))
+    end
+
+    it "says passed or not passed once the test is marked" do
+      passed = render_state(:marked, points: 6, kind_test?: true, passing_points: 5,
+                                     test_verdict: :passed)
+      failed = render_state(:marked, points: 4, kind_test?: true, passing_points: 5,
+                                     test_verdict: :failed)
+
+      expect(passed).to include(passing(:passed))
+      expect(failed).to include(passing(:failed))
+    end
+
+    it "says that an excused test counts as passed" do
+      content = render_state(:exempt, kind_test?: true, passing_points: 5,
+                                      test_verdict: :passed)
+
+      expect(content).to include(passing(:excused))
+    end
+
+    it "says nothing on a test without a threshold" do
+      content = render_state(:marked, points: 6, kind_test?: true)
+
+      expect(content).not_to include(passing(:passed))
+      expect(content).not_to include(passing(:threshold))
+    end
   end
 
   describe "the number and the badge never both speak" do

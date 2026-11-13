@@ -33,6 +33,8 @@ module StudentPerformance
 
       sheets, tests = assignment_assessments.partition { |a| !a.assessable.kind_test? }
       load_test_share(scope, tests) if tests.any?
+      @judged_test_ids = tests.select { |a| a.assessable.passing_points }
+                              .map(&:assessable_id)
       @pagy, @records = pagy(sorted(@left ? left_records(scope) : scope))
       # Test results become visible while the test runs, as each tutorial is graded.
       @sheets = sheets.select { |a| due_points.due?(a.id) }

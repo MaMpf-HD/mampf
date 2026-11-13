@@ -41,6 +41,8 @@ de:
         tests_hint: 'Testpunkte stecken auch in den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
         tests_hint_apart: 'Testpunkte zählen in dieser Veranstaltung nicht zu den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
         test_share: "Anteil in den Tests"
+        tests_passed: "best."
+        tests_passed_hint: "Bestandene Tests, von denen mit Bestehensgrenze. Mit Attest befreit zählt als bestanden."
         not_due_count: "%{count} noch nicht fällig"
         achievements: "Zusatzkriterien"
         assessments: "Bewertungen"
@@ -82,6 +84,8 @@ de:
         view_manuscript: "Abgabe ansehen"
         view_correction: "Korrektur ansehen"
         total_row: "Gesamt"
+        test_passed: "bestanden"
+        test_failed: "nicht bestanden"
         total_row_hint: "über alle Blätter des Semesters"
         total_row_hint_without_tests: "über alle Blätter des Semesters, ohne die Tests"
         last_computed: "Zuletzt berechnet vor %{time}."
@@ -100,6 +104,9 @@ de:
         of_total_points: "der Gesamtpunkte erforderlich"
         points_absolute: "Punkte erforderlich (absolut)"
         without_tests: "ohne Tests"
+        tests_passed:
+          one: "bestandener Test erforderlich (von %{judged} mit Bestehensgrenze)"
+          other: "bestandene Tests erforderlich (von %{judged} mit Bestehensgrenze)"
         no_requirement: "Keine Voraussetzung"
         no_requirement_hint: "jede Person wird zur Zulassung vorgeschlagen"
         edit_button: "Regel bearbeiten"
@@ -123,6 +130,15 @@ de:
         percentage_field: "Mindestprozentsatz"
         absolute_field: "Mindestpunktzahl"
         achievements_section: "Erforderliche Zusatzkriterien"
+        tests_section: "Bestandene Tests"
+        tests_at_least: "mindestens"
+        tests_of:
+          one: "von 1 Test mit Bestehensgrenze"
+          other: "von %{count} Tests mit Bestehensgrenze"
+        tests_hint: "Leer lassen, wenn keine bestandenen Tests verlangt werden. Mit Attest befreit zählt als bestanden, abwesend als nicht bestanden."
+        tests_without_threshold:
+          one: "1 Test hat keine Bestehensgrenze und zählt nicht mit."
+          other: "%{count} Tests haben keine Bestehensgrenze und zählen nicht mit."
         achievements_hint: "Wählen Sie, welche Zusatzkriterien Studierende erfüllen müssen."
         remove: "Regel entfernen"
         remove_confirm:
@@ -190,6 +206,9 @@ de:
         required: "Erforderlich"
         result: "Ergebnis"
         achievements_check: "Zusatzkriterien-Prüfung"
+        tests_check: "Test-Prüfung"
+        tests_passed: "Bestandene Tests"
+        tests_still_open: "Noch offene Tests"
         no_achievements_required: "Die aktuelle Regel erfordert keine Zusatzkriterien."
         info: "Dieser Vorschlag ist nur eine Ansicht; entschieden wird unter Prüfungszulassungen."
     certifications:

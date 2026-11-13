@@ -29,6 +29,9 @@ en:
       week_hint: 'Students take the test in their tutorial that week; with a longer duration, the tutorials spread it over the weeks after. Tutors can enter points from the Monday of the first week. You can add an unannounced test until the end of the following week.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
+      passing_points: 'Passing threshold'
+      passing_points_hint: 'Optional. From this number of points on the test counts as passed; without it the test is neither passed nor failed.'
+      passing_points_out_of_reach: 'The passing threshold is higher than the points of the test.'
     scheduled_sheet:
       appears_on: 'appears on %{date}'
       overdue: 'was to appear on %{date} – the release is still pending'

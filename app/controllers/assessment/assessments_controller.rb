@@ -201,7 +201,8 @@ module Assessment
           assessment_assessment: [:requires_submission,
                                   { assessable_attributes: [:id, :title, :deadline, :test_week,
                                                             :test_week_count, :medium_id,
-                                                            :accepted_file_type] }]
+                                                            :accepted_file_type,
+                                                            :passing_points] }]
         )
       end
   end

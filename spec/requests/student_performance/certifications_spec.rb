@@ -29,6 +29,54 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
+      # A rule may ask for passed tests. The summary names the number and how
+      # many tests can be passed at all; a row says where a student stands.
+      context "with a rule that asks for passed tests" do
+        let!(:tests) do
+          FactoryBot.create_list(:assignment, 2, :expired, lecture: lecture,
+                                                           kind: :test, passing_points: 5)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                            lecture: lecture, min_tests_passed: 2)
+          lecture.update!(assignments_complete: true)
+        end
+
+        def record_with(passed: [], failed: [])
+          FactoryBot.create(:student_performance_record, lecture: lecture, user: student,
+                                                         tests_passed_ids: passed,
+                                                         tests_failed_ids: failed)
+        end
+
+        it "names the passed tests the rule asks for" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.show.tests_passed", count: 2, judged: 2)
+          )
+        end
+
+        it "defers a student whose open tests could still make up the number" do
+          record_with(passed: [tests.first.id])
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.deferral.tests_open", passed: 1, open: 1)
+          )
+        end
+
+        it "says that too few tests are passed once that is settled" do
+          record_with(passed: [tests.first.id], failed: [tests.last.id])
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body)
+            .to include(I18n.t("student_performance.evaluator.missed.tests"))
+        end
+      end
+
       # "50 % of the total points" is another figure once the lecture keeps
       # its tests out of the total, and the rule's summary has to say which.
       context "with a points threshold and a test" do

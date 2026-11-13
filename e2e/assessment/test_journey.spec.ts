@@ -1,5 +1,6 @@
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
+import { createEligibilityLecture } from "./helpers";
 
 /**
  * A test written in the tutorial, start to finish: the teacher puts it up for
@@ -284,5 +285,72 @@ test.describe("a test written in the tutorial", () => {
     ).toBeVisible();
     await expect(standing.getByText("Tests: 3.5 of 8 points possible so far"))
       .toBeVisible();
+  });
+
+  /**
+   * A test may be passed or failed, and the rule may ask for a number of
+   * passed tests. The teacher sets both up; the student reads where they
+   * stand.
+   */
+  test("is passed from its threshold on, and the rule can ask for passed tests", async ({
+    factory,
+    teacher,
+    student,
+  }) => {
+    const lecture = await createEligibilityLecture(factory, teacher.user.id);
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Monday group",
+    });
+    await factory.create("lecture_bookmark", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+
+    // a test the student has 3.5 of 8 points on
+    const written = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id, title: "Test 1", kind: "test",
+    });
+    const book = await written.__call("assessment");
+    await factory.create("assessment_participation", ["marked"], {
+      assessment_id: book.id, user_id: student.user.id,
+    });
+
+    // the teacher gives the test a threshold, and the overview lists it
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.open("Test 1");
+    await dashboard.pane.getByLabel("Passing threshold").fill("3");
+    await dashboard.saveButton.click();
+    await expect(teacher.page.getByText("Assessment updated successfully."))
+      .toBeVisible();
+    await dashboard.gotoOverview();
+    await expect(teacher.page.getByRole("columnheader", { name: "Passing threshold" }))
+      .toBeVisible();
+    await expect(teacher.page.getByRole("cell", { name: "3 pts", exact: true }))
+      .toBeVisible();
+
+    // the rule asks for one passed test and for nothing else
+    await dashboard.overviewTab("Exam Eligibility").click();
+    await teacher.page.getByRole("link", { name: "Set up rule" }).click();
+    await teacher.page.getByRole("radio", { name: "No point threshold" }).check();
+    await teacher.page.getByLabel("at least").fill("1");
+    await teacher.page.getByRole("button", { name: "Save Rule" }).click();
+    await expect(teacher.page.getByText("Eligibility rule updated.")).toBeVisible();
+    await expect(
+      teacher.page.getByText("passed test required (of 1 with a passing threshold)"),
+    ).toBeVisible();
+
+    // the student reads the result on the test and in the admission block
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    const standing = student.page
+      .getByRole("complementary", { name: "Exam admission" });
+    await expect(standing.getByText("1 of 1 test so far passed")).toBeVisible();
+    await expect(standing.getByText("At least 1 test passed")).toBeVisible();
+    await expect(standing.getByText("You have 1 of 1 so far")).toBeVisible();
+    await expect(student.page.getByText("passed (from 3 points on)")).toBeVisible();
   });
 });

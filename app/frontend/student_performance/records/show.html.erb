@@ -146,6 +146,15 @@
                   <%= assessment.title %>
 
                   <%= test_badge if assessment.assessable.kind_test? %>
+
+                  <% verdict = assessment.assessable.test_verdict(
+                       status: participation&.status, points_total: points) %>
+
+                  <% if verdict %>
+                    <span class="small text-muted">
+                      <%= t("student_performance.records.show.test_#{verdict}") %>
+                    </span>
+                  <% end %>
                 </td>
 
                 <td>

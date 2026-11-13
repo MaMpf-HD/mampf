@@ -19,7 +19,8 @@ class StandingComponent < ViewComponent::Base
            :sheets_awaiting_marks, :percentage, :required_points_so_far,
            :required_points_at_end, :reachable_points, :points_out_of_reach?,
            :required_achievements, :tests_apart, :test_points_total,
-           :test_points_marked_so_far, to: :standing
+           :test_points_marked_so_far, :tests_passed, :tests_settled,
+           :tests_to_come, :tests_needed, :tests_out_of_reach?, to: :standing
 
   def initialize(standing:, compact: false)
     super()
@@ -56,14 +57,17 @@ class StandingComponent < ViewComponent::Base
     t("submission.hub.standing.of_marked", max: number(base))
   end
 
-  # Shows the tests' own sum where the lecture keeps tests out of the points
-  # total. Left out of the compact form, and until a test is settled for the
-  # reader.
+  # Says how the reader stands in the tests: how many of those settled so
+  # far are passed, and the tests' own sum where the lecture keeps tests out
+  # of the points total. Left out of the compact form, and until a test is
+  # settled for the reader.
   def tests_line
-    return if compact || !test_points_marked_so_far.to_f.positive?
+    return if compact
 
-    t("submission.hub.standing.tests_apart",
-      points: number(test_points_total), max: number(test_points_marked_so_far))
+    parts = [tests_passed_part, test_points_part].compact
+    return if parts.empty?
+
+    (parts + [tests_to_come_part].compact).join(" · ")
   end
 
   def total
@@ -178,6 +182,17 @@ class StandingComponent < ViewComponent::Base
     t("submission.hub.standing.you_have_points", points: total)
   end
 
+  def tests_condition
+    return unless rule && tests_needed
+
+    t("submission.hub.standing.condition_tests", count: tests_needed)
+  end
+
+  def tests_standing
+    t("submission.hub.standing.you_have_tests",
+      passed: tests_passed.to_i, settled: tests_settled)
+  end
+
   def achievement_label(achievement)
     return achievement.title if achievement.boolean?
 
@@ -202,11 +217,21 @@ class StandingComponent < ViewComponent::Base
   # loss is a fact, three is a scolding. The points come first because they are
   # the condition a student can still work on.
   def lost
-    @lost ||= points_out_of_reach? ? :points : failed_achievements.first
+    @lost ||= if points_out_of_reach?
+      :points
+    elsif tests_out_of_reach?
+      :tests
+    else
+      failed_achievements.first
+    end
   end
 
   def points_class
     lost == :points ? "req-lost" : "req-settled"
+  end
+
+  def tests_class
+    lost == :tests ? "req-lost" : "req-settled"
   end
 
   def achievement_class(achievement)
@@ -220,6 +245,7 @@ class StandingComponent < ViewComponent::Base
 
     parts = []
     parts << out_of_reach_sentence if points_out_of_reach?
+    parts << tests_out_of_reach_sentence if tests_out_of_reach?
     parts << failed_sentence if failed_achievements.any?
     parts << t("submission.hub.standing.ask_your_tutor")
     parts.join(" ")
@@ -236,6 +262,35 @@ class StandingComponent < ViewComponent::Base
     def out_of_reach_sentence
       t("submission.hub.standing.out_of_reach",
         best: number(reachable_points), needed: number(required_points_at_end))
+    end
+
+    def tests_passed_part
+      return unless tests_settled.positive?
+
+      t("submission.hub.standing.tests_passed_so_far",
+        passed: tests_passed.to_i, count: tests_settled)
+    end
+
+    # Names the tests itself where no part before it has done so.
+    def test_points_part
+      return unless test_points_marked_so_far.to_f.positive?
+
+      key = tests_settled.positive? ? "test_points" : "tests_apart"
+      t("submission.hub.standing.#{key}",
+        points: number(test_points_total), max: number(test_points_marked_so_far))
+    end
+
+    # How many tests are still to come is only known once the lecture calls
+    # its list complete.
+    def tests_to_come_part
+      return unless standing.assignments_complete && tests_to_come.positive?
+
+      t("submission.hub.standing.tests_to_come", count: tests_to_come)
+    end
+
+    def tests_out_of_reach_sentence
+      t("submission.hub.standing.tests_out_of_reach",
+        best: tests_passed.to_i + tests_to_come, count: tests_needed)
     end
 
     def failed_sentence

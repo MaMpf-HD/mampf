@@ -29,6 +29,9 @@ de:
       week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen, bei längerer Dauer verteilt auf die Wochen danach. Punkte lassen sich ab dem Montag der ersten Woche eintragen. Einen unangekündigten Test kannst Du bis zum Ende der Folgewoche nachtragen.'
       week_label: '%{from}–%{to}'
       badge: 'Test'
+      passing_points: 'Bestehensgrenze'
+      passing_points_hint: 'Optional. Ab dieser Punktzahl gilt der Test als bestanden; ohne Angabe wird er nicht nach bestanden und nicht bestanden gewertet.'
+      passing_points_out_of_reach: 'Die Bestehensgrenze liegt über der Punktzahl des Tests.'
     scheduled_sheet:
       appears_on: 'erscheint am %{date}'
       overdue: 'sollte am %{date} erscheinen – die Veröffentlichung steht noch aus'

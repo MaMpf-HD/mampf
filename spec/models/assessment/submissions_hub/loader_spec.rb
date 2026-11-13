@@ -809,6 +809,51 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  # A test with a passing threshold is passed or failed. The block counts what
+  # the reader can see a result for.
+  describe "tests with a passing threshold" do
+    def create_test(passing_points:, title: "Test 1")
+      test = create(:assignment, :expired, lecture: lecture, kind: :test,
+                                           title: title, expired_since: 1.week,
+                                           passing_points: passing_points)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      test
+    end
+
+    it "counts the passed and the failed among the tests that carry one" do
+      passed = create_test(passing_points: 5)
+      failed = create_test(passing_points: 5, title: "Test 2")
+      create_test(passing_points: 5, title: "Test 3")
+      mark(create_test(passing_points: nil, title: "Test 4"), [9])
+      mark(passed, [5])
+      mark(failed, [4.5])
+
+      standing = result.standing
+      expect(standing.tests_judged).to eq(3)
+      expect(standing.tests_passed).to eq(1)
+      expect(standing.tests_failed).to eq(1)
+      expect(standing.tests_to_come).to eq(1)
+      expect(sheet_for(passed).test_verdict).to eq(:passed)
+      expect(sheet_for(failed).test_verdict).to eq(:failed)
+    end
+
+    it "counts an absence as failed and an excused test as passed" do
+      participate(create_test(passing_points: 5), status: :absent)
+      participate(create_test(passing_points: 5, title: "Test 2"), status: :exempt)
+
+      expect(result.standing.tests_failed).to eq(1)
+      expect(result.standing.tests_passed).to eq(1)
+    end
+
+    it "counts nothing on a test nobody has entered anything on" do
+      test = create_test(passing_points: 5)
+
+      expect(result.standing.tests_passed).to eq(0)
+      expect(result.standing.tests_failed).to eq(0)
+      expect(sheet_for(test).test_verdict).to be_nil
+    end
+  end
+
   # With the tests in the total, which is how a lecture starts out, there is
   # one sum and nothing beside it.
   it "keeps the tests in the one sum unless the lecture takes them out" do

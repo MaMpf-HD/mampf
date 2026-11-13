@@ -50,7 +50,7 @@ class AssessmentsIndexComponent < ViewComponent::Base
   def confirmation
     return :close unless lecture.assignments_complete?
     return :reopen if computed_decisions_count.positive? &&
-                      lecture.active_performance_rule&.points_threshold?
+                      lecture.active_performance_rule&.waits_for_list?
 
     :open
   end

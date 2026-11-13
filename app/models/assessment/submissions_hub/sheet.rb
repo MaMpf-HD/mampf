@@ -58,6 +58,16 @@ module Assessment
         assessment&.effective_total_points
       end
 
+      # Whether the reader has passed the test, as far as they can see it: a
+      # result that is entered but not shown to them yet gives nothing away.
+      # Nil for homework and for a test without a passing threshold.
+      def test_verdict
+        return unless state.in?([:marked, :absent, :exempt])
+
+        assignment.test_verdict(status: participation.status,
+                                points_total: participation.points_total)
+      end
+
       # Every assignment gets its assessment the moment it is created and its
       # problems whenever the lecturer gets round to them, so a sheet with no
       # problems on it is not a rare sheet - it is every sheet, for a while.
