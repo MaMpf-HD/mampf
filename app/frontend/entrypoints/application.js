@@ -11,6 +11,7 @@ import "~/js/bootstrapPopovers";
 // transition phase.
 // https://github.com/hotwired/turbo-rails/blob/main/UPGRADING.md#upgrading-from-rails-ujs--turbolinks-to-turbo
 import Rails from "@rails/ujs";
+import "~/js/jquery_script_nonce";
 
 import "./initHotwire";
 
