@@ -19,7 +19,7 @@ test("adds an editor by the address of their account, and removes them in the se
     await expect(editors).toContainText("Ada Lovelace");
 
     // the select is where editors go again, whichever way they came
-    await editors.getByRole("link", { name: "×" }).click();
+    await editors.getByRole("button", { name: "×" }).click();
     const saved = page.waitForResponse(response => response.request().method() !== "GET"
       && response.url().includes(`/lectures/${lecture.id}`));
     await page.getByRole("button", { name: "Save", exact: true }).click();
