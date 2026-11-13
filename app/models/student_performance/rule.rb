@@ -61,8 +61,8 @@ module StudentPerformance
       min_tests_passed.present?
     end
 
-    def more_tests_than?(judged_count)
-      tests_criterion? && min_tests_passed > judged_count
+    def more_tests_than?(pass_fail_count)
+      tests_criterion? && min_tests_passed > pass_fail_count
     end
 
     # Whether a verdict has to wait until the lecture calls its list of sheets

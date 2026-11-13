@@ -50,13 +50,13 @@ module StudentPerformance
     # threshold_mode. Require assignments_complete and current due_points so
     # decisions account for assignments being created and points still reachable.
     #
-    # `judged_test_ids` are the lecture's tests with a passing threshold. A
-    # rule that asks for passed tests cannot be judged without them.
-    def initialize(rule, assignments_complete:, due_points:, judged_test_ids: nil)
+    # `pass_fail_test_ids` are the lecture's tests with a passing threshold. A
+    # rule that asks for passed tests cannot be evaluated without them.
+    def initialize(rule, assignments_complete:, due_points:, pass_fail_test_ids: nil)
       @rule = rule
       @assignments_complete = assignments_complete
       @due_points = due_points
-      @judged_test_ids = judged_test_ids&.to_set
+      @pass_fail_test_ids = pass_fail_test_ids&.to_set
     end
 
     def evaluate(record)
@@ -151,19 +151,19 @@ module StudentPerformance
       end
 
       def tests_passed(record)
-        record.tests_passed_among(judged_test_ids)
+        record.tests_passed_among(pass_fail_test_ids)
       end
 
       def tests_open(record)
-        judged_test_ids.size - tests_passed(record) -
-          record.tests_failed_among(judged_test_ids)
+        pass_fail_test_ids.size - tests_passed(record) -
+          record.tests_failed_among(pass_fail_test_ids)
       end
 
       # Raises where the tests were not given at all, rather than count none
       # and let every student miss the criterion. An empty set is an answer:
       # the lecture has no test with a passing threshold.
-      def judged_test_ids
-        @judged_test_ids || raise(ArgumentError, "no tests given to judge min_tests_passed on")
+      def pass_fail_test_ids
+        @pass_fail_test_ids || raise(ArgumentError, "no pass/fail tests given for min_tests_passed")
       end
 
       def points_status(record)

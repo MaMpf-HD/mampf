@@ -38,7 +38,7 @@ RSpec.describe("A rule that asks for passed tests") do
       a_rule.reload,
       assignments_complete: lecture.reload.assignments_complete?,
       due_points: StudentPerformance::DuePoints.new(lecture: lecture),
-      judged_test_ids: lecture.judged_test_ids
+      pass_fail_test_ids: lecture.pass_fail_test_ids
     ).evaluate(record)
   end
 
@@ -73,7 +73,7 @@ RSpec.describe("A rule that asks for passed tests") do
     end
   end
 
-  it "judges the same with the test points out of the points total" do
+  it "proposes the same with the test points out of the points total" do
     lecture.update!(tests_in_points_total: false)
     expect(proposal.proposed_status).to eq(:inconclusive)
 
@@ -125,8 +125,8 @@ RSpec.describe("A rule that asks for passed tests") do
       left = StudentPerformance::ComputationService.new(lecture: lecture)
                                                    .unsaved_records_for([student]).first
 
-      expect(left.tests_passed_among(lecture.judged_test_ids)).to eq(1)
-      expect(left.tests_failed_among(lecture.judged_test_ids)).to eq(1)
+      expect(left.tests_passed_among(lecture.pass_fail_test_ids)).to eq(1)
+      expect(left.tests_failed_among(lecture.pass_fail_test_ids)).to eq(1)
     end
   end
 end

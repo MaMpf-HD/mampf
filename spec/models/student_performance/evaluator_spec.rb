@@ -712,14 +712,14 @@ RSpec.describe(StudentPerformance::Evaluator) do
         FactoryBot.create(:student_performance_rule, :active, :without_criteria,
                           lecture: lecture, min_tests_passed: 2)
       end
-      let(:judged) { [11, 12, 13] }
+      let(:pass_fail) { [11, 12, 13] }
 
-      def evaluate(passed: [], failed: [], complete: true, judged_test_ids: judged)
+      def evaluate(passed: [], failed: [], complete: true, pass_fail_test_ids: pass_fail)
         record = FactoryBot.create(:student_performance_record,
                                    lecture: lecture, tests_passed_ids: passed,
                                    tests_failed_ids: failed)
         described_class.new(rule, assignments_complete: complete, due_points: due_points,
-                                  judged_test_ids: judged_test_ids).evaluate(record)
+                                  pass_fail_test_ids: pass_fail_test_ids).evaluate(record)
       end
 
       it "proposes :passed once enough tests are passed, whatever is still open" do
@@ -762,8 +762,8 @@ RSpec.describe(StudentPerformance::Evaluator) do
       end
 
       it "proposes :failed where no test carries a threshold and the list is complete" do
-        expect(evaluate(judged_test_ids: []).proposed_status).to eq(:failed)
-        expect(evaluate(judged_test_ids: [], complete: false).proposed_status)
+        expect(evaluate(pass_fail_test_ids: []).proposed_status).to eq(:failed)
+        expect(evaluate(pass_fail_test_ids: [], complete: false).proposed_status)
           .to eq(:inconclusive)
       end
 
@@ -782,7 +782,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
         result = described_class.new(rule.reload, assignments_complete: true,
                                                   due_points: due_points,
-                                                  judged_test_ids: judged).evaluate(record)
+                                                  pass_fail_test_ids: pass_fail).evaluate(record)
 
         expect(result.proposed_status).to eq(:failed)
         expect(result.missed_criteria).to eq([:achievements])
@@ -804,16 +804,16 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
         result = described_class.new(rule, assignments_complete: true,
                                            due_points: due_points,
-                                           judged_test_ids: judged).evaluate(record)
+                                           pass_fail_test_ids: pass_fail).evaluate(record)
 
         expect(result.proposed_status).to eq(:failed)
         expect(result.missed_criteria).to eq([:tests])
       end
 
       # Not given at all is not the same as an empty list, which is an answer.
-      it "refuses to judge without being told which tests are judged" do
-        expect { evaluate(judged_test_ids: nil) }
-          .to raise_error(ArgumentError, /no tests given/)
+      it "refuses to evaluate without being told which tests are pass/fail" do
+        expect { evaluate(pass_fail_test_ids: nil) }
+          .to raise_error(ArgumentError, %r{no pass/fail tests given})
       end
 
       it "asks for both where the rule also sets a points threshold" do
@@ -826,7 +826,7 @@ RSpec.describe(StudentPerformance::Evaluator) do
 
         result = described_class.new(rule, assignments_complete: true,
                                            due_points: due_points,
-                                           judged_test_ids: judged).evaluate(record)
+                                           pass_fail_test_ids: pass_fail).evaluate(record)
 
         expect(result.proposed_status).to eq(:failed)
         expect(result.missed_criteria).to eq([:points])

@@ -43,15 +43,15 @@ module StudentPerformance
 
       # Read once per request: the evaluators and the pages ask for the same
       # tests.
-      def judged_test_ids
-        @judged_test_ids ||= @lecture.judged_test_ids
+      def pass_fail_test_ids
+        @pass_fail_test_ids ||= @lecture.pass_fail_test_ids
       end
 
       def evaluator_for(rule)
         Evaluator.new(rule,
                       assignments_complete: @lecture.assignments_complete?,
                       due_points: due_points,
-                      judged_test_ids: judged_test_ids)
+                      pass_fail_test_ids: pass_fail_test_ids)
       end
   end
 end

@@ -7,7 +7,7 @@ import { Controller } from "@hotwired/stimulus";
  */
 export default class extends Controller {
   static targets = ["input", "warning"];
-  static values = { judged: Number };
+  static values = { passFail: Number };
 
   connect() {
     this.check();
@@ -15,6 +15,6 @@ export default class extends Controller {
 
   check() {
     const asked = Number.parseInt(this.inputTarget.value, 10);
-    this.warningTarget.hidden = !(asked > this.judgedValue);
+    this.warningTarget.hidden = !(asked > this.passFailValue);
   }
 }

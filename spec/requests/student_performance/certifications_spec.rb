@@ -51,7 +51,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
 
           expect(response.body).to include(
-            I18n.t("student_performance.rules.show.tests_passed", count: 2, judged: 2)
+            I18n.t("student_performance.rules.show.tests_passed", count: 2, pass_fail: 2)
           )
         end
 

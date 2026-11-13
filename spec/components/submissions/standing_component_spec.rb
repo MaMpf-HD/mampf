@@ -36,7 +36,7 @@ RSpec.describe(StandingComponent, type: :component) do
     { rule: nil, achievements: [], values: {}, eligibility: true,
       still_open: 0, due: 176, awaiting: 16, awaiting_sheets: 2,
       complete: true, tests_apart: false, test_total: nil, test_due: nil,
-      tests_judged: 0, tests_passed: 0, tests_failed: 0 }
+      pass_fail_tests: 0, tests_passed: 0, tests_failed: 0 }
   end
 
   def standing(**overrides)
@@ -51,7 +51,7 @@ RSpec.describe(StandingComponent, type: :component) do
       uses_exam_eligibility: attrs[:eligibility],
       tests_apart: attrs[:tests_apart], test_points_total: attrs[:test_total],
       test_points_marked_so_far: attrs[:test_due],
-      tests_judged: attrs[:tests_judged], tests_passed: attrs[:tests_passed],
+      pass_fail_tests: attrs[:pass_fail_tests], tests_passed: attrs[:tests_passed],
       tests_failed: attrs[:tests_failed]
     ).tap do |built|
       allow(built).to receive(:required_achievements)
@@ -223,7 +223,7 @@ RSpec.describe(StandingComponent, type: :component) do
     end
 
     it "says how many of the tests so far are passed" do
-      content = render_standing(standing(tests_judged: 5, tests_passed: 1,
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1,
                                          tests_failed: 1, complete: false))
 
       expect(content).to include(passed_line(passed: 1, settled: 2))
@@ -231,7 +231,7 @@ RSpec.describe(StandingComponent, type: :component) do
     end
 
     it "adds the tests' own points where the lecture keeps tests out of the total" do
-      content = render_standing(standing(tests_judged: 5, tests_passed: 1, tests_failed: 1,
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1, tests_failed: 1,
                                          tests_apart: true, test_total: 5, test_due: 20))
 
       expect(content).to include(
@@ -242,7 +242,7 @@ RSpec.describe(StandingComponent, type: :component) do
 
     # A test may be worth nothing and still carry points.
     it "adds the tests' points without a maximum where the tests are worth nothing" do
-      content = render_standing(standing(tests_judged: 5, tests_passed: 1, tests_failed: 1,
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1, tests_failed: 1,
                                          tests_apart: true, test_total: 2, test_due: 0))
 
       expect(content).to include(
@@ -252,20 +252,20 @@ RSpec.describe(StandingComponent, type: :component) do
     end
 
     it "names the tests to come once the list is complete" do
-      content = render_standing(standing(tests_judged: 5, tests_passed: 1,
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1,
                                          tests_failed: 1, complete: true))
 
       expect(content).to include(to_come(3))
     end
 
     it "has no line before a test is settled for the reader" do
-      content = render_standing(standing(tests_judged: 5, complete: true))
+      content = render_standing(standing(pass_fail_tests: 5, complete: true))
 
       expect(content).not_to include(to_come(5))
     end
 
     it "lists the passed tests the rule asks for, with the reader's standing" do
-      content = render_standing(standing(rule: rule(:none, tests: 3), tests_judged: 5,
+      content = render_standing(standing(rule: rule(:none, tests: 3), pass_fail_tests: 5,
                                          tests_passed: 1, tests_failed: 1))
 
       expect(content)
@@ -277,7 +277,7 @@ RSpec.describe(StandingComponent, type: :component) do
     end
 
     it "says so in red once the tests to come cannot make up the number" do
-      content = render_standing(standing(rule: rule(:none, tests: 3), tests_judged: 4,
+      content = render_standing(standing(rule: rule(:none, tests: 3), pass_fail_tests: 4,
                                          tests_passed: 0, tests_failed: 2, complete: true))
 
       expect(content).to include("req-lost")
@@ -288,7 +288,7 @@ RSpec.describe(StandingComponent, type: :component) do
 
     # Another test may still be set up, so nothing is lost yet.
     it "passes no such judgement while the list is open" do
-      content = render_standing(standing(rule: rule(:none, tests: 3), tests_judged: 4,
+      content = render_standing(standing(rule: rule(:none, tests: 3), pass_fail_tests: 4,
                                          tests_passed: 0, tests_failed: 2, complete: false))
 
       expect(content).not_to include("req-lost")

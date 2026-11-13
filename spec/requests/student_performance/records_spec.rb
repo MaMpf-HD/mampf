@@ -299,11 +299,11 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         end
 
         it "counts the passed tests of those that carry a passing threshold" do
-          judged = test(deadline: 1.week.ago.end_of_week, points: 10)
-          judged.assessable.update!(passing_points: 5)
+          with_threshold = test(deadline: 1.week.ago.end_of_week, points: 10)
+          with_threshold.assessable.update!(passing_points: 5)
           test(deadline: 1.week.ago.end_of_week, points: 10)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
-          FactoryBot.create(:assessment_participation, :reviewed, assessment: judged,
+          FactoryBot.create(:assessment_participation, :reviewed, assessment: with_threshold,
                                                                   user: member, points_total: 6)
 
           get lecture_student_performance_records_path(lecture)

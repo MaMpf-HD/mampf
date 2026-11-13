@@ -108,8 +108,8 @@ de:
         points_absolute: "Punkte erforderlich (absolut)"
         without_tests: "ohne Tests"
         tests_passed:
-          one: "bestandener Test erforderlich (von %{judged} mit Bestehensgrenze)"
-          other: "bestandene Tests erforderlich (von %{judged} mit Bestehensgrenze)"
+          one: "bestandener Test erforderlich (von %{pass_fail} mit Bestehensgrenze)"
+          other: "bestandene Tests erforderlich (von %{pass_fail} mit Bestehensgrenze)"
         more_tests_than: "Die Regel verlangt mehr bestandene Tests, als derzeit eine Bestehensgrenze haben (%{count}). So kann sie niemand erfüllen."
         no_requirement: "Keine Voraussetzung"
         no_requirement_hint: "jede Person wird zur Zulassung vorgeschlagen"

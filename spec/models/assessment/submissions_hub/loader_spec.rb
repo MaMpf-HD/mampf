@@ -825,7 +825,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       mark(failed, [4.5])
 
       standing = result.standing
-      expect(standing.tests_judged).to eq(3)
+      expect(standing.pass_fail_tests).to eq(3)
       expect(standing.tests_passed).to eq(1)
       expect(standing.tests_failed).to eq(1)
       expect(standing.tests_to_come).to eq(1)

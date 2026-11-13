@@ -104,7 +104,7 @@ module StudentPerformance
       def load_edit_form
         @achievements = Achievement.where(lecture: @lecture).order(:title)
         @tests_count = @lecture.assignments.kind_test.count
-        @judged_tests_count = judged_test_ids.size
+        @pass_fail_tests_count = pass_fail_test_ids.size
         @computed_count = @lecture.current_certifications.computed.decided.count
         @eligibility_in_use_by = @lecture.eligibility_in_use_by
       end

@@ -236,7 +236,7 @@
           <div
             class="col-12"
             data-controller="tests-criterion"
-            data-tests-criterion-judged-value="<%= @judged_tests_count %>"
+            data-tests-criterion-pass-fail-value="<%= @pass_fail_tests_count %>"
           >
             <div class="fw-semibold small mb-2">
               <%= t("student_performance.rules.edit.tests_section") %>
@@ -262,7 +262,7 @@
 
               <span class="input-group-text">
                 <%= t("student_performance.rules.edit.tests_of",
-                      count: @judged_tests_count) %>
+                      count: @pass_fail_tests_count) %>
               </span>
             </div>
 
@@ -275,14 +275,14 @@
             <p class="small text-muted mb-0 mt-1">
               <%= t("student_performance.rules.edit.tests_hint") %>
 
-              <% if @tests_count > @judged_tests_count %>
+              <% if @tests_count > @pass_fail_tests_count %>
                 <%= t("student_performance.rules.edit.tests_without_threshold",
-                      count: @tests_count - @judged_tests_count) %>
+                      count: @tests_count - @pass_fail_tests_count) %>
               <% end %>
             </p>
 
             <%= tag.p(class: "small text-warning-emphasis mb-0 mt-1",
-                      hidden: !@rule.more_tests_than?(@judged_tests_count),
+                      hidden: !@rule.more_tests_than?(@pass_fail_tests_count),
                       data: { tests_criterion_target: "warning" }) do %>
               <i
                 class="bi bi-exclamation-triangle-fill me-1"
@@ -290,7 +290,7 @@
               ></i>
 
               <%= t("student_performance.rules.show.more_tests_than",
-                    count: @judged_tests_count) %>
+                    count: @pass_fail_tests_count) %>
             <% end %>
           </div>
         <% end %>

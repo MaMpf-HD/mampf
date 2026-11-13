@@ -563,7 +563,7 @@ repeating them in every row of the table says nothing.
 Three criteria, each in one of several states, and one rule that weighs them: a
 criterion nobody can satisfy any more settles the case, one that is merely open
 defers it. The tests criterion counts against the lecture's tests with a passing
-threshold, which the caller hands in as `judged_test_ids:`; a rule that asks for
+threshold, which the caller hands in as `pass_fail_test_ids:`; a rule that asks for
 passed tests cannot be evaluated without them.
 
 ```ruby

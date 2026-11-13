@@ -116,23 +116,23 @@ module StudentPerformance
       # The tests that can be passed or failed, by the id of their assessment.
       # They are read apart from the points: a lecture may keep its tests out
       # of the points total and still ask for a number of them to be passed.
-      def judged_tests
-        @judged_tests ||= lecture.assignments.with_passing_points
-                                 .includes(:assessment)
-                                 .select(&:assessment)
-                                 .index_by { |test| test.assessment.id }
+      def pass_fail_tests
+        @pass_fail_tests ||= lecture.assignments.with_passing_points
+                                    .includes(:assessment)
+                                    .select(&:assessment)
+                                    .index_by { |test| test.assessment.id }
       end
 
       # Per user, the ids of the tests passed and of the tests failed. A
-      # judged test in neither list is still open for that student.
+      # pass/fail test in neither list is still open for that student.
       def test_verdicts(user_ids)
-        return {} if judged_tests.empty?
+        return {} if pass_fail_tests.empty?
 
         Assessment::Participation
-          .where(assessment_id: judged_tests.keys, user_id: user_ids)
+          .where(assessment_id: pass_fail_tests.keys, user_id: user_ids)
           .pluck(:user_id, :assessment_id, :status, :points_total)
           .each_with_object({}) do |(user_id, assessment_id, status, points), verdicts|
-            test = judged_tests.fetch(assessment_id)
+            test = pass_fail_tests.fetch(assessment_id)
             verdict = test.test_verdict(status: status, points_total: points)
             next unless verdict
 

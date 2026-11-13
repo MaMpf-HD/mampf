@@ -1075,7 +1075,7 @@ class Lecture < ApplicationRecord
     !tests_in_points_total? && assignments.kind_test.exists?
   end
 
-  def judged_test_ids
+  def pass_fail_test_ids
     assignments.with_passing_points.ids
   end
 
