@@ -152,18 +152,12 @@ module StudentPerformance
       end
 
       def tests_passed(record)
-        (record_test_ids(record.tests_passed_ids) & judged_test_ids).size
+        record.tests_passed_among(judged_test_ids)
       end
 
       def tests_open(record)
-        failed = (record_test_ids(record.tests_failed_ids) & judged_test_ids).size
-        judged_test_ids.size - tests_passed(record) - failed
-      end
-
-      # The record may still name a test that has since lost its threshold or
-      # been deleted, hence the intersection with the tests judged today.
-      def record_test_ids(ids)
-        Array(ids).to_set(&:to_i)
+        judged_test_ids.size - tests_passed(record) -
+          record.tests_failed_among(judged_test_ids)
       end
 
       # Not an empty set: with no tests to count, every student would miss

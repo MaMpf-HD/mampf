@@ -269,6 +269,10 @@ de:
         manual_failed: "Nicht zugelassen (manuell)"
         manual_stale: "Regel oder Leistungsdaten haben sich nach dieser Entscheidung geändert"
       columns:
+        tests_passed: "Tests bestanden"
+        tests_needed:
+          one: "mindestens 1 nötig"
+          other: "mindestens %{count} nötig"
         proposed: "Vorschlag"
         rule_today: "Regel heute:"
         certification: "Zulassung"

@@ -10,6 +10,21 @@ RSpec.describe(StudentPerformance::Record, type: :model) do
     end
   end
 
+  # The lists may still hold a test that has lost its threshold or been
+  # deleted, so the count is taken among the tests the caller names.
+  describe "the tests passed and failed" do
+    let(:record) do
+      FactoryBot.build(:student_performance_record, tests_passed_ids: [11, 12, 99],
+                                                    tests_failed_ids: [13])
+    end
+
+    it "counts them among the tests it is given" do
+      expect(record.tests_passed_among([11, 12, 13])).to eq(2)
+      expect(record.tests_failed_among([11, 12, 13])).to eq(1)
+      expect(record.tests_passed_among([])).to eq(0)
+    end
+  end
+
   describe "associations" do
     it "belongs to a lecture" do
       record = FactoryBot.build(:student_performance_record, lecture: nil)

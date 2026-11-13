@@ -418,7 +418,7 @@
 
               <% if @judged_test_ids.any? %>
                 <td class="text-center text-nowrap numeric">
-                  <%= (Array(record.tests_passed_ids).map(&:to_i) & @judged_test_ids).size %>
+                  <%= record.tests_passed_among(@judged_test_ids) %>
                   <span class="text-muted">/ <%= @judged_test_ids.size %></span>
                 </td>
               <% end %>

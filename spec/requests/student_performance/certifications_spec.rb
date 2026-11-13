@@ -57,6 +57,24 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
+        # The rule asks for it, so the table shows it: next to the points,
+        # how many of the tests with a threshold each student has passed.
+        it "has a column for the passed tests, counted for each student" do
+          record_with(passed: [tests.first.id])
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          page = Nokogiri::HTML(response.body)
+          heading = page.at_css("th.tests-column").text.squish
+          expect(heading).to include(
+            I18n.t("student_performance.certifications.columns.tests_passed")
+          )
+          expect(heading).to include(
+            I18n.t("student_performance.certifications.columns.tests_needed", count: 2)
+          )
+          expect(page.css("tbody td").map { |td| td.text.squish }).to include("1 / 2")
+        end
+
         it "warns once the rule asks for more passed tests than carry a threshold" do
           warning = I18n.t("student_performance.rules.show.more_tests_than", count: 1)
 
@@ -105,6 +123,7 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           get lecture_student_performance_certifications_path(lecture)
 
           expect(response.body).not_to include(without_tests)
+          expect(Nokogiri::HTML(response.body).at_css("th.tests-column")).to be_nil
         end
 
         it "says that the threshold leaves the tests out once the lecture keeps them apart" do

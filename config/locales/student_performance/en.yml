@@ -269,6 +269,10 @@ en:
         manual_failed: "Not Eligible (manual)"
         manual_stale: "Rule or performance data changed after this decision"
       columns:
+        tests_passed: "Tests passed"
+        tests_needed:
+          one: "at least 1 needed"
+          other: "at least %{count} needed"
         proposed: "Proposed"
         rule_today: "Rule today:"
         certification: "Decision"

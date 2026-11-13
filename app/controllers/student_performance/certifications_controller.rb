@@ -38,6 +38,7 @@ module StudentPerformance
         Achievement.none
       end
       @achievement_headings = Achievement.short_titles(@achievements)
+      @judged_test_ids = @rule&.tests_criterion? ? @lecture.judged_test_ids : []
       load_filtered_records
     end
 
