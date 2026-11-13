@@ -15,9 +15,8 @@ module StudentPerformance
       ParticipationRowComponent::ROW_ACTION_CLASSES
     end
 
-    # Whether the open list of sheets and tests defers every proposal: only a
-    # rule with a points threshold waits for it.
-    # A rule that asks for passed tests waits for it as well.
+    # Whether the open list of sheets and tests defers every proposal: a rule
+    # waits for it if it asks for points or for passed tests.
     def assignment_list_holds_back?(lecture, rule)
       rule.present? && rule.waits_for_list? && !lecture.assignments_complete?
     end

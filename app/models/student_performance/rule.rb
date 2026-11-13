@@ -1,12 +1,11 @@
 module StudentPerformance
   # What a lecture asks of a student before they may sit its exam: a points
-  # threshold, a set of required achievements, both, or neither. With neither,
-  # every student is proposed as eligible and staff refuse single students by
-  # hand. One rule is active per lecture; the earlier ones stay for the
-  # certifications that cite them.
-  #
-  # It may also ask for a number of passed tests. Only tests with a passing
-  # threshold can be passed, so only those are counted.
+  # threshold, a number of passed tests, a set of required achievements, any
+  # of them together, or nothing. With nothing, every student is proposed as
+  # eligible and staff refuse single students by hand. Only a test with a
+  # passing threshold can be passed, so only those are counted. One rule is
+  # active per lecture; the earlier ones stay for the certifications that cite
+  # them.
   class Rule < ApplicationRecord
     belongs_to :lecture
 
@@ -52,8 +51,7 @@ module StudentPerformance
       end
     end
 
-    # Whether points decide anything. Only then does the rule wait for the
-    # lecture's list of sheets and tests: another sheet changes the points
+    # Whether points decide anything: another sheet changes the points
     # reachable and, as a share, the points needed.
     def points_threshold?
       min_percentage.present? || min_points_absolute.present?
@@ -63,8 +61,6 @@ module StudentPerformance
       min_tests_passed.present?
     end
 
-    # Whether the rule asks for more passed tests than the lecture has tests
-    # with a passing threshold, so that nobody can meet it.
     def more_tests_than?(judged_count)
       tests_criterion? && min_tests_passed > judged_count
     end
@@ -102,9 +98,11 @@ module StudentPerformance
         self.threshold_mode = :none
       end
 
-      # Stores "0 tests" as no criterion, as a zero threshold is stored.
+      # Stores "0 tests" as no criterion, as a zero threshold is stored. Only a
+      # zero that was typed: Rails casts text and fractions to 0 as well, and
+      # those are for the validation to refuse.
       def drop_zero_tests
-        self.min_tests_passed = nil if min_tests_passed&.zero?
+        self.min_tests_passed = nil if min_tests_passed_before_type_cast.to_s.strip == "0"
       end
 
       # The mode is the single source of truth; the two value columns have to

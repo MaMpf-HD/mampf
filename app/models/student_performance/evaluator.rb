@@ -125,7 +125,8 @@ module StudentPerformance
         :passed
       end
 
-      # Without a points threshold another sheet changes nothing the rule asks.
+      # A rule that asks for neither points nor passed tests is not moved by
+      # another sheet or test.
       def held_back_by_list?
         !@assignments_complete && rule.waits_for_list?
       end
@@ -143,8 +144,6 @@ module StudentPerformance
         :not_met
       end
 
-      # How many tests the student has passed and how many are still open, for
-      # the page to say next to the number the rule asks for.
       def test_amounts(record)
         return {} unless rule.tests_criterion?
 
@@ -160,8 +159,9 @@ module StudentPerformance
           record.tests_failed_among(judged_test_ids)
       end
 
-      # Not an empty set: with no tests to count, every student would miss
-      # the criterion, and quietly.
+      # Raises where the tests were not given at all, rather than count none
+      # and let every student miss the criterion. An empty set is an answer:
+      # the lecture has no test with a passing threshold.
       def judged_test_ids
         @judged_test_ids || raise(ArgumentError, "no tests given to judge min_tests_passed on")
       end

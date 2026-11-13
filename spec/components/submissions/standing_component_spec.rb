@@ -211,9 +211,8 @@ RSpec.describe(StandingComponent, type: :component) do
     end
   end
 
-  # A test with a passing threshold is passed or failed, and a rule may ask
-  # for a number of passed ones. "Of 2" is the tests settled so far - how many
-  # are still to come is only known once the lecture calls its list complete.
+  # "Of 2" is the tests settled so far: how many are still to come is known
+  # only once the lecture calls its list complete.
   describe "with tests that are passed or failed" do
     def passed_line(passed:, settled:)
       I18n.t("submission.hub.standing.tests_passed_so_far", passed: passed, count: settled)

@@ -67,8 +67,6 @@ class SheetRowComponent < ViewComponent::Base
     NOTE_TONES[state] == :bad ? "sheet-note-bad" : "sheet-note"
   end
 
-  # Says where a test's passing threshold lies and, once the reader has a
-  # result, whether they cleared it.
   def passing_note
     threshold = sheet.assignment.passing_points
     return unless threshold

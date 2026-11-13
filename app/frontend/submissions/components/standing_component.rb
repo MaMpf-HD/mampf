@@ -57,10 +57,6 @@ class StandingComponent < ViewComponent::Base
     t("submission.hub.standing.of_marked", max: number(base))
   end
 
-  # Says how the reader stands in the tests: how many of those settled so
-  # far are passed, and the tests' own sum where the lecture keeps tests out
-  # of the points total. Left out of the compact form, and until a test is
-  # settled for the reader.
   def tests_line
     return if compact
 
@@ -271,9 +267,9 @@ class StandingComponent < ViewComponent::Base
         passed: tests_passed.to_i, count: tests_settled)
     end
 
-    # Names the tests itself where no part before it has done so. A test may
-    # be worth nothing and still carry points; the sum then stands without a
-    # maximum.
+    # Starts with "Tests:" unless the count of passed tests stands before it.
+    # A test may be worth nothing and still carry points; the sum then has
+    # no maximum.
     def test_points_part
       return unless tests_apart
 

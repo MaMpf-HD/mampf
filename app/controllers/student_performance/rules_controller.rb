@@ -81,6 +81,9 @@ module StudentPerformance
         return
       end
 
+      @input_error = tests_input_error
+      return render(:preview) if @input_error
+
       preview = StudentPerformance::RuleChangePreview.new(
         current_rule: @rule,
         preview_rule: rule_from_form_params,
@@ -101,7 +104,7 @@ module StudentPerformance
       def load_edit_form
         @achievements = Achievement.where(lecture: @lecture).order(:title)
         @tests_count = @lecture.assignments.kind_test.count
-        @judged_tests_count = @lecture.judged_test_ids.size
+        @judged_tests_count = judged_test_ids.size
         @computed_count = @lecture.current_certifications.computed.decided.count
         @eligibility_in_use_by = @lecture.eligibility_in_use_by
       end
@@ -153,6 +156,16 @@ module StudentPerformance
           record = existing[aid] || @rule.rule_achievements.build(achievement_id: aid)
           record.position = index + 1
         end
+      end
+
+      # What saving would refuse about the passed tests. The preview forecasts
+      # nothing for a rule that cannot be saved.
+      def tests_input_error
+        candidate = StudentPerformance::Rule.new(
+          lecture: @lecture, min_tests_passed: params.dig(:rule, :min_tests_passed).presence
+        )
+        candidate.validate
+        candidate.errors.full_messages_for(:min_tests_passed).first
       end
 
       # The thresholds the teacher has typed into the rule form, not the ones on

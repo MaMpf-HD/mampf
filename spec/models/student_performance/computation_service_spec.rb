@@ -181,8 +181,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
         expect(record.points_max_materialized).to eq(30)
       end
 
-      # Passed from the threshold on, failed below it; a test without a
-      # threshold is neither.
       it "writes down the test as passed or failed once it carries a passing threshold" do
         compute
         record = StudentPerformance::Record.find_by(lecture: lecture, user: user)

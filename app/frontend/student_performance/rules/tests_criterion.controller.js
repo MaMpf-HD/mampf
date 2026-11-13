@@ -1,8 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Warns while the rule form asks for more passed tests than the lecture has
- * tests with a passing threshold: nobody could meet such a rule.
+ * Warns while the rule form asks for more passed tests than carry a passing
+ * threshold. Only a warning: thresholds are often set after the rule, so the
+ * form still saves.
  */
 export default class extends Controller {
   static targets = ["input", "warning"];

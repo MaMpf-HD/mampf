@@ -1,5 +1,8 @@
 de:
   activerecord:
+    attributes:
+      student_performance/rule:
+        min_tests_passed: "Zahl der bestandenen Tests"
     errors:
       models:
         student_performance/rule:
@@ -38,8 +41,8 @@ de:
         maximum: "Maximum"
         assignments: "Übungsblätter"
         tests: "Tests"
-        tests_hint: 'Testpunkte stecken auch in den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
-        tests_hint_apart: 'Testpunkte zählen in dieser Veranstaltung nicht zu den Zahlen unter „Bisher korrigiert“. Der Prozentwert am Ende dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
+        tests_hint: 'Testpunkte stecken auch in den Zahlen unter „Bisher korrigiert“. Der Prozentwert in dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
+        tests_hint_apart: 'Testpunkte zählen in dieser Veranstaltung nicht zu den Zahlen unter „Bisher korrigiert“. Der Prozentwert in dieser Gruppe ist der Anteil in den Tests allein, gleich gerechnet.'
         test_share: "Anteil in den Tests"
         tests_passed: "best."
         tests_passed_hint: "Bestandene Tests, von denen mit Bestehensgrenze. Mit Attest befreit zählt als bestanden."
@@ -217,7 +220,7 @@ de:
       back_to_dashboard: "Zurück zum Dashboard"
       index:
         subtitle: "Zulassungsvorschläge prüfen und Studierende zulassen."
-        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich. Lege die fehlenden Blätter und Tests an und setze im Reiter %{tab} das Häkchen „Die Liste der Blätter und Tests ist vollständig“."
+        assignments_incomplete: "Die Blätterliste ist noch offen, deshalb bleibt jeder Vorschlag zurückgestellt: jedes weitere Blatt hebt die nötige und die erreichbare Punktzahl zugleich, und jeder weitere Test ist eine weitere Gelegenheit, einen zu bestehen. Lege die fehlenden Blätter und Tests an und setze im Reiter %{tab} das Häkchen „Die Liste der Blätter und Tests ist vollständig“."
         list_open: "Blätterliste noch offen — die Regel entscheidet derzeit nichts."
         list_open_link: "Zum Reiter %{tab}"
         todo_title: "Zu klären"

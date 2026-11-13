@@ -116,7 +116,7 @@
                   <i class="bi bi-plus"></i>
                 </span>
               <% end %>
-              <% judged_tests = @lecture.judged_test_ids.size %>
+              <% judged_tests = @judged_test_ids.size %>
               <strong><%= @rule.min_tests_passed %></strong>
               <span class="small text-muted">
                 <%= t("student_performance.rules.show.tests_passed",

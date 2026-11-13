@@ -189,7 +189,6 @@ class SubmissionCardComponent < ViewComponent::Base
         time: distance_of_time_in_words(Time.zone.now, assignment.deadline))
     end
 
-    # Said before the test is written, in the words its row uses afterwards.
     def passing
       t("submission.hub.passing.threshold",
         count: assignment.passing_points,

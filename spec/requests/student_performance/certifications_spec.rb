@@ -29,8 +29,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
-      # A rule may ask for passed tests. The summary names the number and how
-      # many tests can be passed at all; a row says where a student stands.
       context "with a rule that asks for passed tests" do
         let!(:tests) do
           FactoryBot.create_list(:assignment, 2, :expired, lecture: lecture,
@@ -57,8 +55,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
-        # The rule asks for it, so the table shows it: next to the points,
-        # how many of the tests with a threshold each student has passed.
         it "has a column for the passed tests, counted for each student" do
           record_with(passed: [tests.first.id])
 

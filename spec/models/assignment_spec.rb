@@ -260,7 +260,6 @@ RSpec.describe(Assignment, type: :model) do
     expect(FactoryBot.create(:valid_assignment)).to be_kind_homework
   end
 
-  # A lecturer may say from how many points on a test counts as passed.
   describe "a test's passing threshold" do
     let(:test) do
       FactoryBot.create(:valid_assignment, :expired, kind: :test, passing_points: 5)
@@ -289,6 +288,12 @@ RSpec.describe(Assignment, type: :model) do
 
     it "says nothing while nothing is settled for the student" do
       expect(verdict(:pending, 7)).to be_nil
+    end
+
+    # No total is no result; calling it failed would refuse somebody an exam
+    # for a number nobody entered.
+    it "says nothing on a reviewed row that carries no total" do
+      expect(verdict(:reviewed, nil)).to be_nil
     end
 
     it "says nothing for a test without a threshold" do

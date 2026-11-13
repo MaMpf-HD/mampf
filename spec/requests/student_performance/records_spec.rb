@@ -298,8 +298,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             .to include(ApplicationController.helpers.number_to_percentage(80, precision: 0))
         end
 
-        # Only a test with a passing threshold can be passed, so the column
-        # counts against those and is not there without one.
         it "counts the passed tests of those that carry a passing threshold" do
           judged = test(deadline: 1.week.ago.end_of_week, points: 10)
           judged.assessable.update!(passing_points: 5)

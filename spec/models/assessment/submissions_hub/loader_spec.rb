@@ -807,8 +807,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
-  # A test with a passing threshold is passed or failed. The block counts what
-  # the reader can see a result for.
   describe "tests with a passing threshold" do
     def create_test(passing_points:, title: "Test 1")
       test = create(:assignment, :expired, lecture: lecture, kind: :test,
@@ -841,6 +839,18 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
 
       expect(result.standing.tests_failed).to eq(1)
       expect(result.standing.tests_passed).to eq(1)
+    end
+
+    # The record counts a result from the moment it is entered. The reader's
+    # page shows a test's points only once a task carries a value, and the
+    # verdict must not get there first.
+    it "counts no result the reader cannot see yet" do
+      test = create_test(passing_points: 5)
+      participate(test, status: :reviewed, points_total: 8, submitted_at: 2.days.ago)
+
+      expect(sheet_for(test).state).to eq(:awaiting_marks)
+      expect(sheet_for(test).test_verdict).to be_nil
+      expect(result.standing.tests_passed).to eq(0)
     end
 
     it "counts nothing on a test nobody has entered anything on" do

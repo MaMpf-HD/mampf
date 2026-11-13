@@ -43,9 +43,9 @@ class AssessmentsIndexComponent < ViewComponent::Base
   end
 
   # Both directions have consequences, so both are asked about: the tick sets
-  # the rule judging, taking it back puts every verdict of a rule with a points
-  # threshold to deferred again. Taking it back on top of computed decisions of
-  # such a rule has one more thing to say, and it is the only dialog with a
+  # the rule judging, taking it back puts every verdict of a rule that waits
+  # for the list to deferred again. Taking it back on top of computed decisions
+  # of such a rule has one more thing to say, and it is the only dialog with a
   # third button.
   def confirmation
     return :close unless lecture.assignments_complete?

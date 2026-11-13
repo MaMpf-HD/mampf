@@ -30,7 +30,6 @@ class MarkingTableLayout
       columns << :tutorial if grading_scope.is_a?(Lecture)
       if assessable.assessable?
         columns += [:status, :tasks, :total]
-        # Only a test with a passing threshold is passed or failed.
         columns << :passed if assessable.passing_points
         columns << :save
       end

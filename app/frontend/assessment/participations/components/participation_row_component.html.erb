@@ -137,7 +137,10 @@
       </td>
     <% end %>
     <% if layout.show?(:passed) %>
-      <td class="text-center <%= layout.column_class(:passed) %>">
+      <td
+        class="text-center <%= layout.column_class(:passed) %>"
+        data-passing-points="<%= @assessable.passing_points %>"
+      >
         <%= test_verdict_label || tag.span("—", class: "text-muted") %>
       </td>
     <% end %>

@@ -1,5 +1,5 @@
 class MarkingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, :title,
+  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, :title, :data,
                       keyword_init: true)
 
   # A heading sits the way its column's content does: text starts at the
@@ -40,7 +40,14 @@ class MarkingTableHeaderComponent < ViewComponent::Base
                  @layout.column_class(column), "grade-th"]
       Column.new(css_class: classes.compact.join(" "),
                  label: label_for(column),
-                 sublabel: sublabel_for(column))
+                 sublabel: sublabel_for(column),
+                 data: data_for(column))
+    end
+
+    # The threshold the table was drawn with. A row that comes back later
+    # carries its own, and the table compares the two.
+    def data_for(column)
+      { passing_points: @assessable.passing_points } if column == :passed
     end
 
     def label_for(column)
@@ -75,8 +82,6 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       end
     end
 
-    # From how many points on the test is passed, over the column that says
-    # who has.
     def passing_label
       points = number_with_precision(@assessable.passing_points,
                                      precision: 2, strip_insignificant_zeros: true)

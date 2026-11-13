@@ -81,8 +81,8 @@ class AssessmentListItemComponent < ViewComponent::Base
       "#{I18n.t("assessment.task.points_abbrev")}"
   end
 
-  # A threshold above what the test's tasks add up to cannot be met by
-  # anybody. Not asked while the test has no tasks yet.
+  # A threshold above what the test's tasks add up to is most likely a slip:
+  # only bonus points reach it. Not asked while the test has no tasks yet.
   def passing_points_out_of_reach?
     assessable.passing_points.present? && tasks_count.positive? &&
       assessable.passing_points > total_points

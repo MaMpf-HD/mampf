@@ -1,5 +1,8 @@
 en:
   activerecord:
+    attributes:
+      student_performance/rule:
+        min_tests_passed: "Number of passed tests"
     errors:
       models:
         student_performance/rule:
@@ -38,8 +41,8 @@ en:
         maximum: "Maximum"
         assignments: "Assignments"
         tests: "Tests"
-        tests_hint: "Test points are in the figures under \"Marked so far\" as well. The percentage at the end of this group is the tests on their own, worked out the same way."
-        tests_hint_apart: "In this lecture test points are not in the figures under \"Marked so far\". The percentage at the end of this group is the tests on their own, worked out the same way."
+        tests_hint: "Test points are in the figures under \"Marked so far\" as well. The percentage in this group is the tests on their own, worked out the same way."
+        tests_hint_apart: "In this lecture test points are not in the figures under \"Marked so far\". The percentage in this group is the tests on their own, worked out the same way."
         test_share: "Test percentage"
         tests_passed: "passed"
         tests_passed_hint: "Tests passed, of those with a passing threshold. Excused counts as passed."
@@ -217,7 +220,7 @@ en:
       back_to_dashboard: "Back to dashboard"
       index:
         subtitle: "Review eligibility proposals and approve students for the exam."
-        assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable. Create the missing assignments and tests and tick \"The list of sheets and tests is complete\" on the %{tab} tab."
+        assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable, and each test still to come is another chance to pass one. Create the missing assignments and tests and tick \"The list of sheets and tests is complete\" on the %{tab} tab."
         list_open: "Assignment list still open — the rule decides nothing for now."
         list_open_link: "Go to the %{tab} tab"
         todo_title: "To settle"

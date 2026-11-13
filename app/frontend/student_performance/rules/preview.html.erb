@@ -1,8 +1,12 @@
 <%= turbo_frame_tag "rule-preview-frame" do %>
-  <% unless @rule %>
+  <% if @rule.nil? %>
     <div class="alert alert-secondary small py-2 mt-2 mb-0">
       <i class="bi bi-info-circle me-1"></i>
       <%= t("student_performance.rules.preview.no_rule") %>
+    </div>
+  <% elsif @input_error %>
+    <div class="alert alert-danger small py-2 mt-2 mb-0">
+      <%= @input_error %>
     </div>
   <% else %>
     <% if @changes.empty? && @manual_conflicts.empty? %>

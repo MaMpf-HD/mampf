@@ -707,9 +707,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
       expect(result.details.keys).to match_array(expected_keys)
     end
 
-    # A lecturer may ask for a number of passed tests. Only tests with a
-    # passing threshold can be passed, so only those are counted - and a test
-    # nobody has settled for the student is a chance still open.
     context "with a rule that asks for passed tests" do
       let(:rule) do
         FactoryBot.create(:student_performance_rule, :active, :without_criteria,
@@ -764,7 +761,56 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.verdict_deferral_reasons).to eq([:assignments_incomplete])
       end
 
-      # With no tests to count everybody would miss the criterion, quietly.
+      it "proposes :failed where no test carries a threshold and the list is complete" do
+        expect(evaluate(judged_test_ids: []).proposed_status).to eq(:failed)
+        expect(evaluate(judged_test_ids: [], complete: false).proposed_status)
+          .to eq(:inconclusive)
+      end
+
+      it "defers a student who has passed enough while the list is open" do
+        expect(evaluate(passed: [11, 12], complete: false).proposed_status)
+          .to eq(:inconclusive)
+      end
+
+      # A missed criterion settles the case whatever else is still open.
+      it "proposes :failed for a missed achievement although tests are still open" do
+        achievement = FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        FactoryBot.create(:student_performance_rule_achievement,
+                          rule: rule, achievement: achievement)
+        record = FactoryBot.create(:student_performance_record, lecture: lecture,
+                                                                tests_passed_ids: [11])
+
+        result = described_class.new(rule.reload, assignments_complete: true,
+                                                  due_points: due_points,
+                                                  judged_test_ids: judged).evaluate(record)
+
+        expect(result.proposed_status).to eq(:failed)
+        expect(result.missed_criteria).to eq([:achievements])
+      end
+
+      it "proposes :failed for missed tests although points are still open" do
+        rule.update!(threshold_mode: :percentage, min_percentage: 50)
+        pending_sheet = FactoryBot.create(:assignment, :expired, lecture: lecture)
+        FactoryBot.create(:assessment_task, assessment: pending_sheet.assessment,
+                                            max_points: 100)
+        FactoryBot.create(:assessment_participation, :submitted,
+                          assessment: pending_sheet.assessment, user: student)
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture, user: student,
+                                   points_total_materialized: 0,
+                                   points_max_materialized: 100,
+                                   percentage_materialized: 0,
+                                   tests_passed_ids: [11], tests_failed_ids: [12, 13])
+
+        result = described_class.new(rule, assignments_complete: true,
+                                           due_points: due_points,
+                                           judged_test_ids: judged).evaluate(record)
+
+        expect(result.proposed_status).to eq(:failed)
+        expect(result.missed_criteria).to eq([:tests])
+      end
+
+      # Not given at all is not the same as an empty list, which is an answer.
       it "refuses to judge without being told which tests are judged" do
         expect { evaluate(judged_test_ids: nil) }
           .to raise_error(ArgumentError, /no tests given/)

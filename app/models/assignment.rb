@@ -60,12 +60,10 @@ class Assignment < ApplicationRecord
   # The form offers a test no sheet to attach; a request that names one
   # anyway is refused rather than quietly obeyed.
   validates :medium_id, absence: true, if: :kind_test?
-  # Only a test is passed or failed; homework collects points.
   validates :passing_points, numericality: { greater_than: 0 }, allow_nil: true
   validates :passing_points, absence: true, unless: :kind_test?
 
   scope :active, -> { where(deadline: Time.zone.now..) }
-  # The tests that can be passed or failed: those with a passing threshold.
   scope :with_passing_points, -> { kind_test.where.not(passing_points: nil) }
 
   scope :expired, -> { where(deadline: ...Time.zone.now) }
@@ -191,17 +189,20 @@ class Assignment < ApplicationRecord
     weeks.sort
   end
 
-  # The one place that decides whether a test is passed, for the performance
-  # computation and for every page that shows it. Excused counts as passed,
-  # absent as failed. Nil while nothing is settled for the student, and for
-  # a test without a passing threshold.
+  # Decides for the performance record and for every page whether a test is
+  # passed. Excused counts as passed, absent as failed. Nil while nothing is
+  # settled for the student - a reviewed row without a total included - and
+  # for a test without a passing threshold.
   def test_verdict(status:, points_total:)
     return if passing_points.nil?
 
     case status.to_s
     when "exempt" then :passed
     when "absent" then :failed
-    when "reviewed" then (points_total || 0) >= passing_points ? :passed : :failed
+    when "reviewed"
+      return if points_total.nil?
+
+      points_total >= passing_points ? :passed : :failed
     end
   end
 

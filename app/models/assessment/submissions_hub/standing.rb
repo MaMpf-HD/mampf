@@ -38,7 +38,6 @@ module Assessment
         record&.points_total_materialized
       end
 
-      # The tests with a passing threshold that are settled for the reader.
       def tests_settled
         tests_passed.to_i + tests_failed.to_i
       end

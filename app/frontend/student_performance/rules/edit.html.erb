@@ -251,7 +251,7 @@
                 type="number"
                 name="rule[min_tests_passed]"
                 id="rule-min-tests-passed"
-                value="<%= @rule.min_tests_passed %>"
+                value="<%= @rule.min_tests_passed_before_type_cast %>"
                 class="form-control<% if @rule.errors[:min_tests_passed].any? %> is-invalid <% end %>"
                 min="0"
                 step="1"

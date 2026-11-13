@@ -179,9 +179,6 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
           .to eq(tutorial)
       end
 
-      # A tutor enters points against the threshold, so the line above the
-      # table names it and counts who is on which side of it, and each row
-      # says where its student stands.
       context "with a passing threshold" do
         let(:other) { create(:confirmed_user, name: "Bea") }
         let(:summary_scope) { "assessment.grading_tutorial.summary" }
@@ -226,6 +223,19 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
             .to eq(I18n.t("assessment.test.verdict.failed"))
           expect(page.css("thead th.passed-col").text)
             .to include(I18n.t("assessment.test.passed_column"))
+        end
+
+        # A row answered after the threshold was changed carries the new one;
+        # the table compares it with its heading and asks for a reload.
+        it "marks heading and rows with the threshold they were drawn with" do
+          page = render_table
+
+          expect(page.at_css("thead th.passed-col")["data-passing-points"]).to eq("5.0")
+          expect(page.css("td.passed-col").pluck("data-passing-points").uniq).to eq(["5.0"])
+          notice = page.at_css("[data-marking-table-target='outdated']")
+          expect(notice["hidden"]).not_to be_nil
+          expect(notice.text)
+            .to include(I18n.t("assessment.grading_tutorial.passing_points_changed"))
         end
 
         it "says nothing about passing once the threshold is taken off" do

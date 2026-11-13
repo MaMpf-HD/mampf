@@ -33,7 +33,7 @@ module Assessment
       @lecture.update!(assignments_complete: params[:complete])
       # Without the change check, a resubmitted form would delete a second
       # time — after the dialog had already been answered with "keep".
-      # A rule without a points threshold proposes the same with the list open,
+      # A rule that does not wait for the list proposes the same with it open,
       # so its dialog offers no reset and none is taken.
       wanted = params[:reset_certifications] == "1" &&
                @lecture.saved_change_to_assignments_complete_at? &&

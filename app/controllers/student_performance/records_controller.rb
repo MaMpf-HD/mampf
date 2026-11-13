@@ -261,7 +261,8 @@ module StudentPerformance
         participations = Assessment::Participation
                          .where(assessment_id: @assessments.map(&:id),
                                 user_id: @record.user_id)
-                         .select(:id, :assessment_id, :status, :submitted_at, :note)
+                         .select(:id, :assessment_id, :status, :submitted_at, :note,
+                                 :points_total)
 
         @participation_by_assessment = participations.index_by(&:assessment_id)
 

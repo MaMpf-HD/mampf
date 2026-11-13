@@ -123,8 +123,8 @@ module StudentPerformance
                                  .index_by { |test| test.assessment.id }
       end
 
-      # Per user, the ids of the tests passed and of the tests failed. A test
-      # in neither list is still open for that student.
+      # Per user, the ids of the tests passed and of the tests failed. A
+      # judged test in neither list is still open for that student.
       def test_verdicts(user_ids)
         return {} if judged_tests.empty?
 

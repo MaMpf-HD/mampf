@@ -143,8 +143,6 @@ class TutorialMarkingTableComponent < ViewComponent::Base
                                 teams: team_count, extra_parts: passing_parts)
   end
 
-  # Names a test's passing threshold and counts who is on which side of it,
-  # so a tutor sees both while entering points.
   def passing_parts
     return [] unless @assignment.passing_points
 

@@ -29,8 +29,6 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
-      # Only tests with a passing threshold can be passed, so the form says
-      # how many there are and how many are left out.
       it "offers the passed tests once the lecture has a test, counting those with a threshold" do
         FactoryBot.create(:assignment, lecture: lecture, kind: :test, passing_points: 5)
         FactoryBot.create(:assignment, lecture: lecture, kind: :test)
@@ -173,6 +171,37 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
               params: { rule: { threshold_mode: "none", min_tests_passed: "-1" } })
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "keeps the rule as it was when the number of tests is not a number" do
+        rule = FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                                 lecture: lecture, min_tests_passed: 3)
+
+        ["text", "0.5", "-0.5", "2.5"].each do |typed|
+          patch(lecture_student_performance_rules_path(lecture),
+                params: { rule: { threshold_mode: "none", min_tests_passed: typed } })
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(rule.reload.min_tests_passed).to eq(3)
+        end
+      end
+
+      it "shows the form again with what was typed, not what it was read as" do
+        patch(lecture_student_performance_rules_path(lecture),
+              params: { rule: { threshold_mode: "none", min_tests_passed: "2.5" } })
+
+        field = Nokogiri::HTML(response.body).at_css("input[name='rule[min_tests_passed]']")
+        expect(field["value"]).to eq("2.5")
+      end
+
+      it "drops the passed tests when the field says zero" do
+        FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                          lecture: lecture, min_tests_passed: 3)
+
+        patch(lecture_student_performance_rules_path(lecture),
+              params: { rule: { threshold_mode: "none", min_tests_passed: "0" } })
+
+        expect(StudentPerformance::Rule.find_by(lecture: lecture).min_tests_passed).to be_nil
       end
 
       it "creates a new rule with percentage threshold" do
@@ -585,8 +614,6 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
           )
         end
 
-        # Nobody has passed a test, so asking for one turns the passing
-        # proposal over - which is what the preview is there to show.
         it "shows the impact of asking for passed tests" do
           FactoryBot.create(:assignment, :expired, lecture: lecture, kind: :test,
                                                    passing_points: 5)
@@ -599,6 +626,21 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
           expect(response.body).to include(
             I18n.t("student_performance.rules.preview.newly_inconclusive")
           )
+        end
+
+        it "forecasts nothing for a number of tests the form would refuse" do
+          ["2.5", "-1", "text"].each do |typed|
+            patch preview_lecture_student_performance_rules_path(lecture),
+                  params: { rule: { threshold_mode: "percentage", min_percentage: "35",
+                                    min_tests_passed: typed } }
+
+            expect(response.body).not_to include(
+              I18n.t("student_performance.rules.preview.newly_passed")
+            )
+            expect(response.body).to include(
+              StudentPerformance::Rule.human_attribute_name(:min_tests_passed)
+            )
+          end
         end
 
         it "renders inside the rule-preview-frame" do

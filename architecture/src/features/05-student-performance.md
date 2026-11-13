@@ -560,9 +560,11 @@ repeating them in every row of the table says nothing.
 
 ### How the decision is reached
 
-Two criteria, each in one of several states, and one rule that weighs them: a
+Three criteria, each in one of several states, and one rule that weighs them: a
 criterion nobody can satisfy any more settles the case, one that is merely open
-defers it.
+defers it. The tests criterion counts against the lecture's tests with a passing
+threshold, which the caller hands in as `judged_test_ids:`; a rule that asks for
+passed tests cannot be evaluated without them.
 
 ```ruby
       # Criteria that are open rather than missed.
@@ -571,11 +573,11 @@ defers it.
       def evaluate(record)
         return Result.new(proposed_status: :failed, details: {}) unless record
 
-        propose(points_status(record), achievements_status(record))
+        propose(points_status(record), tests_status(record), achievements_status(record))
       end
 
       def propose(*statuses)
-        return :inconclusive unless @assignments_complete
+        return :inconclusive if held_back_by_list?
         return :failed if statuses.include?(:not_met)
         return :inconclusive if statuses.intersect?(UNDECIDED)
 
@@ -587,6 +589,11 @@ defers it.
 |---|---|
 | points | `:met` · `:pending` (marking outstanding, or a sheet not due yet) · `:not_measurable` (nothing to measure) · `:not_met` |
 | tests | `:met` (enough tests passed) · `:pending` (the tests nobody has settled for the student could still make up the number) · `:not_met` |
+
+`held_back_by_list?` defers every verdict while the lecture has not called its
+list of sheets and tests complete and the rule waits for it (`Rule#waits_for_list?`):
+a points threshold moves with every further sheet, and every further test is
+another chance to pass one. A rule that asks for achievements alone does not wait.
 | achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
 
 **`:pending`** means the student is below the threshold but what is still
