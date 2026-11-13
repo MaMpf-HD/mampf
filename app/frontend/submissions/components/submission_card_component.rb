@@ -192,6 +192,7 @@ class SubmissionCardComponent < ViewComponent::Base
     # Said before the test is written, in the words its row uses afterwards.
     def passing
       t("submission.hub.passing.threshold",
+        count: assignment.passing_points,
         points: number_to_rounded(assignment.passing_points,
                                   precision: 2, strip_insignificant_zeros: true))
     end

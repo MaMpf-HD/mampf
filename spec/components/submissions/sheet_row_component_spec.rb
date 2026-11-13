@@ -44,14 +44,18 @@ RSpec.describe(SheetRowComponent, type: :component) do
   # A test may carry a passing threshold; the row names it, and says whether
   # the reader cleared it once they have a result.
   describe "a test's passing threshold" do
-    def passing(key, points: "5")
-      I18n.t("submission.hub.passing.#{key}", points: points)
+    def needed
+      I18n.t("submission.hub.passing.threshold", count: 5, points: "5")
+    end
+
+    def passing(key)
+      "#{I18n.t("submission.hub.passing.#{key}")} · #{needed}"
     end
 
     it "names the threshold while nothing is settled" do
       content = render_state(:awaiting_record, kind_test?: true, passing_points: 5)
 
-      expect(content).to include(passing(:threshold))
+      expect(content).to include(needed)
     end
 
     it "says passed or not passed once the test is marked" do
@@ -68,14 +72,14 @@ RSpec.describe(SheetRowComponent, type: :component) do
       content = render_state(:exempt, kind_test?: true, passing_points: 5,
                                       test_verdict: :passed)
 
-      expect(content).to include(passing(:excused))
+      expect(content).to include(I18n.t("submission.hub.passing.excused"))
     end
 
     it "says nothing on a test without a threshold" do
       content = render_state(:marked, points: 6, kind_test?: true)
 
       expect(content).not_to include(passing(:passed))
-      expect(content).not_to include(passing(:threshold))
+      expect(content).not_to include(needed)
     end
   end
 

@@ -143,7 +143,7 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
 
     # A student should know before the test what it takes to pass it.
     it "names its passing threshold, and none where it carries none" do
-      threshold = I18n.t("submission.hub.passing.threshold", points: "4.5")
+      threshold = I18n.t("submission.hub.passing.threshold", count: 4.5, points: "4.5")
       expect(render_card).not_to include(threshold)
 
       assignment.update!(passing_points: 4.5)

@@ -2817,8 +2817,8 @@ en:
         tests_apart: "Tests: %{points} of %{max} points possible so far"
         test_points: "%{points} of %{max} points possible so far"
         tests_passed_so_far:
-          one: "%{passed} of 1 test so far passed"
-          other: "%{passed} of %{count} tests so far passed"
+          one: "%{passed} of 1 test passed so far"
+          other: "%{passed} of %{count} tests passed so far"
         tests_to_come:
           one: "1 more test to come"
           other: "%{count} more tests to come"
@@ -2997,9 +2997,11 @@ en:
         correction_uploaded: Correction uploaded
         exempt: Excused
       passing:
-        threshold: passed from %{points} points on
-        passed: passed (from %{points} points on)
-        failed: not passed (from %{points} points on)
+        threshold:
+          one: 1 point needed to pass
+          other: "%{points} points needed to pass"
+        passed: passed
+        failed: not passed
         excused: counts as passed
       notes:
         grace_period: the deadline has passed, you have %{time}

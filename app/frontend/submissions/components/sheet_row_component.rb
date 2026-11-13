@@ -74,8 +74,10 @@ class SheetRowComponent < ViewComponent::Base
     return unless threshold
     return t("submission.hub.passing.excused") if state == :exempt
 
-    t("submission.hub.passing.#{sheet.test_verdict || "threshold"}",
-      points: format_number(threshold))
+    needed = t("submission.hub.passing.threshold", count: threshold,
+                                                   points: format_number(threshold))
+    verdict = sheet.test_verdict
+    verdict ? "#{t("submission.hub.passing.#{verdict}")} · #{needed}" : needed
   end
 
   # Whatever the sheet carries is shown; whether it can be put over a maximum

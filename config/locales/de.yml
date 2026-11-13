@@ -3212,9 +3212,11 @@ de:
         correction_uploaded: Korrektur da
         exempt: Entschuldigt
       passing:
-        threshold: bestanden ab %{points} Punkten
-        passed: bestanden (ab %{points} Punkten)
-        failed: nicht bestanden (ab %{points} Punkten)
+        threshold:
+          one: "Bestehensgrenze: 1 Punkt"
+          other: "Bestehensgrenze: %{points} Punkte"
+        passed: bestanden
+        failed: nicht bestanden
         excused: zählt als bestanden
       notes:
         grace_period: die Frist ist um, Du hast noch %{time}

@@ -366,12 +366,13 @@ test.describe("a test written in the tutorial", () => {
 
     // the student reads the result on the test and in the admission block
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
-    await expect(student.page.getByText("passed from 4 points on")).toBeVisible();
+    await expect(student.page.getByText("4 points needed to pass")).toBeVisible();
     const standing = student.page
       .getByRole("complementary", { name: "Exam admission" });
-    await expect(standing.getByText("1 of 1 test so far passed")).toBeVisible();
+    await expect(standing.getByText("1 of 1 test passed so far")).toBeVisible();
     await expect(standing.getByText("At least 1 test passed")).toBeVisible();
     await expect(standing.getByText("You have 1 of 1 so far")).toBeVisible();
-    await expect(student.page.getByText("passed (from 3 points on)")).toBeVisible();
+    await expect(student.page.getByText("passed · 3 points needed to pass"))
+      .toBeVisible();
   });
 });

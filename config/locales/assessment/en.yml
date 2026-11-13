@@ -34,7 +34,7 @@ en:
         failed: 'not passed'
         excused: 'counts as passed'
       passing_points: 'Passing threshold'
-      passing_points_hint: 'Optional. From this number of points on the test counts as passed; without it the test is neither passed nor failed.'
+      passing_points_hint: 'Optional. The number of points needed to pass the test; without it the test is neither passed nor failed.'
       passing_points_out_of_reach: 'The passing threshold is higher than the points of the test.'
     scheduled_sheet:
       appears_on: 'appears on %{date}'
