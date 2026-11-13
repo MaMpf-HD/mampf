@@ -173,10 +173,12 @@ de:
           one: "1 noch nicht bewertet"
           other: "%{count} noch nicht bewertet"
         points_not_measurable: "Keine Punkte zu messen"
+        tests_open: "Tests: %{passed} bestanden, %{open} noch offen"
         achievements_ungraded: "Zusatzkriterium noch nicht bewertet"
       missed:
         points: "Schwelle nicht erreicht"
         points_out_of_reach: "Schwelle auch mit allem Offenen nicht mehr erreichbar"
+        tests: "Zu wenige Tests bestanden"
         achievements: "Zusatzkriterium nicht erfüllt"
       single_proposal:
         title: "Zulassungsvorschlag"

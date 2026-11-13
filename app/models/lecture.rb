@@ -1076,6 +1076,11 @@ class Lecture < ApplicationRecord
     !tests_in_points_total? && assignments.kind_test.exists?
   end
 
+  # The tests that can be passed or failed: those with a passing threshold.
+  def judged_test_ids
+    assignments.with_passing_points.ids
+  end
+
   def sync_student_performance_for_members!(user_ids)
     new_user_ids = user_ids.uniq
     return if new_user_ids.empty?

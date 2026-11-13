@@ -4,6 +4,9 @@ module StudentPerformance
   # every student is proposed as eligible and staff refuse single students by
   # hand. One rule is active per lecture; the earlier ones stay for the
   # certifications that cite them.
+  #
+  # It may also ask for a number of passed tests. Only tests with a passing
+  # threshold can be passed, so only those are counted.
   class Rule < ApplicationRecord
     belongs_to :lecture
 
@@ -26,7 +29,11 @@ module StudentPerformance
     validates :min_points_absolute,
               numericality: { greater_than_or_equal_to: 0 },
               allow_nil: true
+    validates :min_tests_passed,
+              numericality: { only_integer: true, greater_than: 0 },
+              allow_nil: true
     before_validation :drop_zero_threshold
+    before_validation :drop_zero_tests
     validate :threshold_matches_mode
 
     # What this rule asks of one student, in points, out of the maximum it is
@@ -52,10 +59,21 @@ module StudentPerformance
       min_percentage.present? || min_points_absolute.present?
     end
 
+    def tests_criterion?
+      min_tests_passed.present?
+    end
+
+    # Whether a verdict has to wait until the lecture calls its list of sheets
+    # and tests complete: another sheet moves the points, another test is
+    # another chance to pass one.
+    def waits_for_list?
+      points_threshold? || tests_criterion?
+    end
+
     # Whether the rule asks for nothing, so that every student is proposed as
     # eligible.
     def no_requirement?
-      !points_threshold? && required_achievements.none?
+      !points_threshold? && !tests_criterion? && required_achievements.none?
     end
 
     def rule_achievement_ids_set
@@ -76,6 +94,11 @@ module StudentPerformance
         end
 
         self.threshold_mode = :none
+      end
+
+      # Stores "0 tests" as no criterion, as a zero threshold is stored.
+      def drop_zero_tests
+        self.min_tests_passed = nil if min_tests_passed&.zero?
       end
 
       # The mode is the single source of truth; the two value columns have to

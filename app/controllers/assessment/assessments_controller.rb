@@ -38,7 +38,7 @@ module Assessment
       wanted = params[:reset_certifications] == "1" &&
                @lecture.saved_change_to_assignments_complete_at? &&
                !@lecture.assignments_complete? &&
-               @lecture.active_performance_rule&.points_threshold?
+               @lecture.active_performance_rule&.waits_for_list?
       count = @lecture.reset_computed_certifications! if wanted
 
       flash_opts = if count

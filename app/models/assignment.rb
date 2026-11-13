@@ -34,6 +34,10 @@ class Assignment < ApplicationRecord
   after_create_commit :reopen_lecture_assignment_list
   after_update_commit :reopen_after_deadline_move, if: :deadline_moved_ahead?
   after_rollback :forget_deadline_move
+  # A moved threshold turns passed tests into failed ones or back, for
+  # everybody who has sat the test.
+  after_update_commit :recompute_performance_records,
+                      if: :saved_change_to_passing_points?
 
   def requires_submission
     return false if kind_test?
@@ -56,8 +60,13 @@ class Assignment < ApplicationRecord
   # The form offers a test no sheet to attach; a request that names one
   # anyway is refused rather than quietly obeyed.
   validates :medium_id, absence: true, if: :kind_test?
+  # Only a test is passed or failed; homework collects points.
+  validates :passing_points, numericality: { greater_than: 0 }, allow_nil: true
+  validates :passing_points, absence: true, unless: :kind_test?
 
   scope :active, -> { where(deadline: Time.zone.now..) }
+  # The tests that can be passed or failed: those with a passing threshold.
+  scope :with_passing_points, -> { kind_test.where.not(passing_points: nil) }
 
   scope :expired, -> { where(deadline: ...Time.zone.now) }
 
@@ -180,6 +189,20 @@ class Assignment < ApplicationRecord
     end
     weeks |= [test_week] if deadline
     weeks.sort
+  end
+
+  # The one place that decides whether a test is passed, for the performance
+  # computation and for every page that shows it. Excused counts as passed,
+  # absent as failed. Nil while nothing is settled for the student, and for
+  # a test without a passing threshold.
+  def test_verdict(status:, points_total:)
+    return if passing_points.nil?
+
+    case status.to_s
+    when "exempt" then :passed
+    when "absent" then :failed
+    when "reviewed" then (points_total || 0) >= passing_points ? :passed : :failed
+    end
   end
 
   def semiactive?
@@ -471,6 +494,12 @@ class Assignment < ApplicationRecord
         .where(assessment_id: assessment.id, tutorial_id: tutorial.id)
         .distinct
         .pluck(:user_id)
+    end
+
+    def recompute_performance_records
+      StudentPerformance::ComputationService
+        .new(lecture: lecture)
+        .compute_and_upsert_all_records!
     end
 
     # Skip Lecture validations so an unrelated validation error cannot

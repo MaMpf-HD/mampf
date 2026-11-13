@@ -844,6 +844,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
                           what: I18n.t("student_performance.evaluator.deferral.sheet_count",
                                        count: count))
           end
+          if reason == :tests_open
+            return I18n.t("student_performance.evaluator.deferral.tests_open",
+                          passed: 0, open: count)
+          end
 
           I18n.t("student_performance.evaluator.deferral.#{reason}", count: count)
         end

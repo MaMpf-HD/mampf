@@ -146,6 +146,36 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         expect(rule).not_to be_points_threshold
       end
 
+      # Another test is another chance to pass one, so such a rule waits for
+      # the lecture's list as a points threshold does.
+      it "accepts a number of tests to pass as its only criterion" do
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                                min_tests_passed: 3)
+
+        expect(rule).to be_valid
+        expect(rule).to be_tests_criterion
+        expect(rule).to be_waits_for_list
+        expect(rule).not_to be_no_requirement
+      end
+
+      it "refuses a number of tests that is negative or no whole number" do
+        [-1, 1.5].each do |number|
+          rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                                  min_tests_passed: number)
+
+          expect(rule).to be_invalid
+        end
+      end
+
+      it "reads zero tests as no criterion" do
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                                min_tests_passed: 0)
+
+        expect(rule).to be_valid
+        expect(rule.min_tests_passed).to be_nil
+        expect(rule).to be_no_requirement
+      end
+
       it "reads a threshold of zero as no threshold" do
         rule = FactoryBot.build(:student_performance_rule, :with_percentage,
                                 min_percentage: 0)

@@ -173,10 +173,12 @@ en:
           one: "1 still to be marked"
           other: "%{count} still to be marked"
         points_not_measurable: "No points to measure"
+        tests_open: "Tests: %{passed} passed, %{open} still open"
         achievements_ungraded: "Achievement not graded yet"
       missed:
         points: "Threshold not reached"
         points_out_of_reach: "Threshold out of reach even with everything still open"
+        tests: "Too few tests passed"
         achievements: "Achievement not met"
       single_proposal:
         title: "Eligibility Proposal"

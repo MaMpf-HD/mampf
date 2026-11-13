@@ -20,21 +20,24 @@ module StudentPerformance
       grade_texts = achievement_grade_texts_for(user.id)
       met_ids = achievement_ids_met(grade_texts)
       ungraded_ids = achievement_ids_ungraded(grade_texts)
+      tests = test_verdicts([user.id]).fetch(user.id, {})
 
-      upsert_records([build_row(user.id, stats, met_ids, ungraded_ids)])
+      upsert_records([build_row(user.id, stats, met_ids, ungraded_ids, tests)])
     end
 
     # Computes records for the users without saving them, for those who have
     # left the lecture and so have no stored record.
     def unsaved_records_for(users)
       participations_by_user = prefetch_participations(users.map(&:id))
+      tests_by_user = test_verdicts(users.map(&:id))
 
       users.map do |user|
         grade_texts = achievement_participations_cache.fetch(user.id, {})
         stats = aggregate_points_from(participations_by_user.fetch(user.id, []))
         Record.new(build_row(user.id, stats,
                              achievement_ids_met(grade_texts),
-                             achievement_ids_ungraded(grade_texts)).merge(user: user))
+                             achievement_ids_ungraded(grade_texts),
+                             tests_by_user.fetch(user.id, {})).merge(user: user))
       end
     end
 
@@ -43,6 +46,7 @@ module StudentPerformance
       return if user_ids.empty?
 
       participations_by_user = prefetch_participations(user_ids)
+      tests_by_user = test_verdicts(user_ids)
 
       rows = user_ids.map do |uid|
         parts = participations_by_user.fetch(uid, [])
@@ -50,7 +54,7 @@ module StudentPerformance
         grade_texts = achievement_participations_cache.fetch(uid, {})
         met_ids = achievement_ids_met(grade_texts)
         ungraded_ids = achievement_ids_ungraded(grade_texts)
-        build_row(uid, stats, met_ids, ungraded_ids)
+        build_row(uid, stats, met_ids, ungraded_ids, tests_by_user.fetch(uid, {}))
       end
 
       rows.each_slice(UPSERT_BATCH_SIZE) do |batch|
@@ -107,6 +111,33 @@ module StudentPerformance
                          .to_a
 
         aggregate_points_from(participations)
+      end
+
+      # The tests that can be passed or failed, by the id of their assessment.
+      # They are read apart from the points: a lecture may keep its tests out
+      # of the points total and still ask for a number of them to be passed.
+      def judged_tests
+        @judged_tests ||= lecture.assignments.with_passing_points
+                                 .includes(:assessment)
+                                 .select(&:assessment)
+                                 .index_by { |test| test.assessment.id }
+      end
+
+      # Per user, the ids of the tests passed and of the tests failed. A test
+      # in neither list is still open for that student.
+      def test_verdicts(user_ids)
+        return {} if judged_tests.empty?
+
+        Assessment::Participation
+          .where(assessment_id: judged_tests.keys, user_id: user_ids)
+          .pluck(:user_id, :assessment_id, :status, :points_total)
+          .each_with_object({}) do |(user_id, assessment_id, status, points), verdicts|
+            test = judged_tests.fetch(assessment_id)
+            verdict = test.test_verdict(status: status, points_total: points)
+            next unless verdict
+
+            ((verdicts[user_id] ||= {})[verdict] ||= []) << test.id
+          end
       end
 
       def lecture_achievements
@@ -184,7 +215,7 @@ module StudentPerformance
       end
 
       def build_row(user_id, stats, achievements_met_ids,
-                    achievements_ungraded_ids)
+                    achievements_ungraded_ids, tests)
         now = Time.current
         percentage = compute_percentage(
           stats[:points_total], stats[:points_max]
@@ -198,6 +229,8 @@ module StudentPerformance
           percentage_materialized: percentage,
           achievements_met_ids: achievements_met_ids,
           achievements_ungraded_ids: achievements_ungraded_ids,
+          tests_passed_ids: tests.fetch(:passed, []),
+          tests_failed_ids: tests.fetch(:failed, []),
           computed_at: now
         }
       end

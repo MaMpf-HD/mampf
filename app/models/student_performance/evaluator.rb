@@ -7,7 +7,7 @@ module StudentPerformance
                         :points_not_measurable].freeze
 
     DEFERRAL_REASONS = ([:assignments_incomplete] + POINTS_DEFERRALS +
-                        [:achievements_ungraded]).freeze
+                        [:tests_open, :achievements_ungraded]).freeze
 
     Result = Struct.new(:proposed_status, :details, keyword_init: true) do
       def verdict_deferral_reasons
@@ -29,6 +29,7 @@ module StudentPerformance
         missed = []
         missed << points_criterion if !details[:meets_points] &&
                                       points_criterion_deferral.nil?
+        missed << :tests if !details[:meets_tests] && !details[:tests_open]
         missed << :achievements if !details[:meets_achievements] && !details[:achievements_ungraded]
         missed
       end
@@ -48,10 +49,14 @@ module StudentPerformance
     # PreviewRule provides min_percentage and min_points_absolute, no
     # threshold_mode. Require assignments_complete and current due_points so
     # decisions account for assignments being created and points still reachable.
-    def initialize(rule, assignments_complete:, due_points:)
+    #
+    # `judged_test_ids` are the lecture's tests with a passing threshold. A
+    # rule that asks for passed tests cannot be judged without them.
+    def initialize(rule, assignments_complete:, due_points:, judged_test_ids: nil)
       @rule = rule
       @assignments_complete = assignments_complete
       @due_points = due_points
+      @judged_test_ids = judged_test_ids&.to_set
     end
 
     def evaluate(record)
@@ -61,9 +66,10 @@ module StudentPerformance
 
       points = points_status(record)
       achievements = achievements_status(record)
+      tests = tests_status(record)
 
       Result.new(
-        proposed_status: propose(points, achievements),
+        proposed_status: propose(points, tests, achievements),
         details: {
           assignments_incomplete: held_back_by_list?,
           meets_points: points == :met,
@@ -71,9 +77,11 @@ module StudentPerformance
           points_pending: points == :pending && awaiting_marking(record).positive?,
           points_not_measurable: points == :not_measurable,
           points_outstanding: outstanding_points(record).positive?,
+          meets_tests: tests == :met,
+          tests_open: tests == :pending,
           meets_achievements: achievements == :met,
           achievements_ungraded: achievements == :ungraded
-        }.merge(deferral_amounts(record))
+        }.merge(deferral_amounts(record)).merge(test_amounts(record))
       )
     end
 
@@ -119,7 +127,49 @@ module StudentPerformance
 
       # Without a points threshold another sheet changes nothing the rule asks.
       def held_back_by_list?
-        !@assignments_complete && rule.points_threshold?
+        !@assignments_complete && rule.waits_for_list?
+      end
+
+      # Passing enough tests settles the criterion whatever is still to come.
+      # Short of that it stays open while the tests nobody has settled for the
+      # student could still make up the number.
+      def tests_status(record)
+        return :met unless rule.tests_criterion?
+
+        passed = tests_passed(record)
+        return :met if passed >= rule.min_tests_passed
+        return :pending if passed + tests_open(record) >= rule.min_tests_passed
+
+        :not_met
+      end
+
+      # How many tests the student has passed and how many are still open, for
+      # the page to say next to the number the rule asks for.
+      def test_amounts(record)
+        return {} unless rule.tests_criterion?
+
+        { tests_passed: tests_passed(record), tests_still_open: tests_open(record) }
+      end
+
+      def tests_passed(record)
+        (record_test_ids(record.tests_passed_ids) & judged_test_ids).size
+      end
+
+      def tests_open(record)
+        failed = (record_test_ids(record.tests_failed_ids) & judged_test_ids).size
+        judged_test_ids.size - tests_passed(record) - failed
+      end
+
+      # The record may still name a test that has since lost its threshold or
+      # been deleted, hence the intersection with the tests judged today.
+      def record_test_ids(ids)
+        Array(ids).to_set(&:to_i)
+      end
+
+      # Not an empty set: with no tests to count, every student would miss
+      # the criterion, and quietly.
+      def judged_test_ids
+        @judged_test_ids || raise(ArgumentError, "no tests given to judge min_tests_passed on")
       end
 
       def points_status(record)

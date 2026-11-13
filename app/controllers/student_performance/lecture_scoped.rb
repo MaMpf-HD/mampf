@@ -44,7 +44,8 @@ module StudentPerformance
       def evaluator_for(rule)
         Evaluator.new(rule,
                       assignments_complete: @lecture.assignments_complete?,
-                      due_points: due_points)
+                      due_points: due_points,
+                      judged_test_ids: @lecture.judged_test_ids)
       end
   end
 end
