@@ -1,4 +1,5 @@
 import "~/entrypoints/jQueryGlobal";
+import "~/js/vendor_globals";
 
 // Bootstrap must be imported AFTER jQuery for Bootstrap-jQuery plugins to work,
 // e.g. $(".modal").modal("show")
