@@ -167,6 +167,16 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         end
       end
 
+      # Nobody can pass more tests than carry a passing threshold.
+      it "knows when it asks for more passed tests than there are to pass" do
+        rule = FactoryBot.build(:student_performance_rule, :without_criteria,
+                                min_tests_passed: 3)
+
+        expect(rule.more_tests_than?(2)).to be(true)
+        expect(rule.more_tests_than?(3)).to be(false)
+        expect(FactoryBot.build(:student_performance_rule).more_tests_than?(0)).to be(false)
+      end
+
       it "reads zero tests as no criterion" do
         rule = FactoryBot.build(:student_performance_rule, :without_criteria,
                                 min_tests_passed: 0)

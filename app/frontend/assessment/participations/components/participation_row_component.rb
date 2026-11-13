@@ -78,6 +78,18 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.is_a?(Assignment) && @assessable.kind_test?
   end
 
+  # Says under the status whether the test is passed, where it carries a
+  # passing threshold. Read off what is saved, like the status itself.
+  def test_verdict_label
+    return unless test?
+
+    verdict = @assessable.test_verdict(status: @participation.status,
+                                       points_total: @participation.points_total)
+    return unless verdict
+
+    I18n.t("assessment.test.verdict.#{@participation.exempt? ? "excused" : verdict}")
+  end
+
   # Somebody absent or excused has no grade to enter; what a scheme gave
   # them stays readable.
   def grade_enterable?

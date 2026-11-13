@@ -107,6 +107,7 @@ en:
         tests_passed:
           one: "passed test required (of %{judged} with a passing threshold)"
           other: "passed tests required (of %{judged} with a passing threshold)"
+        more_tests_than: "The rule asks for more passed tests than currently carry a passing threshold (%{count}). Nobody can meet it like this."
         no_requirement: "No requirement"
         no_requirement_hint: "every student is proposed as eligible"
         edit_button: "Edit Rule"

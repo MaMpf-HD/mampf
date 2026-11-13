@@ -57,6 +57,17 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           )
         end
 
+        it "warns once the rule asks for more passed tests than carry a threshold" do
+          warning = I18n.t("student_performance.rules.show.more_tests_than", count: 1)
+
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).not_to include(warning)
+
+          tests.last.update!(passing_points: nil)
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(warning)
+        end
+
         it "defers a student whose open tests could still make up the number" do
           record_with(passed: [tests.first.id])
 

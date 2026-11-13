@@ -63,6 +63,12 @@ module StudentPerformance
       min_tests_passed.present?
     end
 
+    # Whether the rule asks for more passed tests than the lecture has tests
+    # with a passing threshold, so that nobody can meet it.
+    def more_tests_than?(judged_count)
+      tests_criterion? && min_tests_passed > judged_count
+    end
+
     # Whether a verdict has to wait until the lecture calls its list of sheets
     # and tests complete: another sheet moves the points, another test is
     # another chance to pass one.

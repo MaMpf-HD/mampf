@@ -233,7 +233,11 @@
         <% end %>
 
         <% if @tests_count.positive? || @rule.min_tests_passed.present? %>
-          <div class="col-12">
+          <div
+            class="col-12"
+            data-controller="tests-criterion"
+            data-tests-criterion-judged-value="<%= @judged_tests_count %>"
+          >
             <div class="fw-semibold small mb-2">
               <%= t("student_performance.rules.edit.tests_section") %>
             </div>
@@ -252,6 +256,8 @@
                 min="0"
                 step="1"
                 autocomplete="off"
+                data-tests-criterion-target="input"
+                data-action="input->tests-criterion#check"
               >
 
               <span class="input-group-text">
@@ -274,6 +280,18 @@
                       count: @tests_count - @judged_tests_count) %>
               <% end %>
             </p>
+
+            <%= tag.p(class: "small text-warning-emphasis mb-0 mt-1",
+                      hidden: !@rule.more_tests_than?(@judged_tests_count),
+                      data: { tests_criterion_target: "warning" }) do %>
+              <i
+                class="bi bi-exclamation-triangle-fill me-1"
+                aria-hidden="true"
+              ></i>
+
+              <%= t("student_performance.rules.show.more_tests_than",
+                    count: @judged_tests_count) %>
+            <% end %>
           </div>
         <% end %>
       </div>

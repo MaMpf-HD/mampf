@@ -126,6 +126,10 @@
         <% if locked_reason %>
           <div class="small text-muted"><%= locked_reason %></div>
         <% end %>
+
+        <% if test_verdict_label %>
+          <div class="small text-muted"><%= test_verdict_label %></div>
+        <% end %>
       </td>
     <% end %>
     <% if tasks? %>

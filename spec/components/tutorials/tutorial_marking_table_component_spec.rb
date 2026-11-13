@@ -179,6 +179,56 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
           .to eq(tutorial)
       end
 
+      # A tutor enters points against the threshold, so the line above the
+      # table names it and counts who is on which side of it, and each row
+      # says where its student stands.
+      context "with a passing threshold" do
+        let(:other) { create(:confirmed_user, name: "Bea") }
+        let(:summary_scope) { "assessment.grading_tutorial.summary" }
+
+        before do
+          assignment.update!(test_week: Time.zone.today.beginning_of_week.iso8601,
+                             passing_points: 5)
+          create(:tutorial_membership, tutorial: tutorial, user: other)
+          { member => 6, other => 4 }.each do |user, points|
+            create(:assessment_participation, :reviewed, assessment: assessment, user: user,
+                                                         tutorial: tutorial, points_total: points)
+          end
+        end
+
+        def render_table
+          render_inline(described_class.new(assignment: assignment.reload,
+                                            grading_scope: tutorial))
+        end
+
+        it "names the threshold above the table and counts passed and failed" do
+          summary = render_table.css("#marking-summary").text
+
+          expect(summary).to include(I18n.t("#{summary_scope}.passing_points", points: "5"))
+          expect(summary).to include(I18n.t("#{summary_scope}.passed", count: 1))
+          expect(summary).to include(I18n.t("#{summary_scope}.failed", count: 1))
+        end
+
+        it "says in each row whether the test is passed" do
+          rows = render_table.css("tr[id^=points-participation-row-]").map(&:text)
+
+          expect(rows.find { |row| row.include?("Ada") })
+            .to include(I18n.t("assessment.test.verdict.passed"))
+          expect(rows.find { |row| row.include?("Bea") })
+            .to include(I18n.t("assessment.test.verdict.failed"))
+        end
+
+        it "says nothing about passing once the threshold is taken off" do
+          assignment.update!(passing_points: nil)
+
+          page = render_table
+
+          expect(page.css("#marking-summary").text)
+            .not_to include(I18n.t("#{summary_scope}.passed", count: 1))
+          expect(page.text).not_to include(I18n.t("assessment.test.verdict.failed"))
+        end
+      end
+
       # Three hundred rows made one by one would be three hundred commits,
       # each recomputing a performance record; here they are one statement.
       it "seeds the group's rows in one statement, recomputing nothing" do

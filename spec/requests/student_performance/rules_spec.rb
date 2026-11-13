@@ -46,6 +46,27 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
+      # Such a rule can be saved - the tests may get their thresholds later -
+      # but nobody can meet it as things stand, and the form says so.
+      it "warns where the rule asks for more passed tests than carry a threshold" do
+        FactoryBot.create(:assignment, lecture: lecture, kind: :test, passing_points: 5)
+        rule = FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                                 lecture: lecture, min_tests_passed: 2)
+        warning = lambda do
+          get(edit_lecture_student_performance_rules_path(lecture))
+          Nokogiri::HTML(response.body)
+                  .at_css("[data-tests-criterion-target='warning']")
+        end
+
+        expect(warning.call["hidden"]).to be_nil
+        expect(warning.call.text).to include(
+          I18n.t("student_performance.rules.show.more_tests_than", count: 1)
+        )
+
+        rule.update!(min_tests_passed: 1)
+        expect(warning.call["hidden"]).not_to be_nil
+      end
+
       it "does not offer them in a lecture without tests" do
         get edit_lecture_student_performance_rules_path(lecture)
 

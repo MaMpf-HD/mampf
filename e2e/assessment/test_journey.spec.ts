@@ -295,11 +295,12 @@ test.describe("a test written in the tutorial", () => {
   test("is passed from its threshold on, and the rule can ask for passed tests", async ({
     factory,
     teacher,
+    tutor,
     student,
   }) => {
     const lecture = await createEligibilityLecture(factory, teacher.user.id);
-    const tutorial = await factory.create("tutorial", [], {
-      lecture_id: lecture.id, title: "Monday group",
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Monday group",
     });
     await factory.create("lecture_bookmark", [], {
       lecture_id: lecture.id, user_id: student.user.id,
@@ -333,11 +334,25 @@ test.describe("a test written in the tutorial", () => {
     await expect(teacher.page.getByRole("cell", { name: "3 pts", exact: true }))
       .toBeVisible();
 
-    // the rule asks for one passed test and for nothing else
+    // the tutor reads the threshold above the table and the verdict in the row
+    await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
+    await expect(tutor.page.getByText("passing threshold 3 pts · 1 passed · 0 not passed"))
+      .toBeVisible();
+    const row = tutor.page.getByRole("table")
+      .getByRole("row", { name: student.user.name_in_tutorials });
+    await expect(row.getByText("passed", { exact: true })).toBeVisible();
+
+    // the rule asks for one passed test and for nothing else; asking for
+    // more than can be passed is warned about while it is typed
     await dashboard.overviewTab("Exam Eligibility").click();
     await teacher.page.getByRole("link", { name: "Set up rule" }).click();
     await teacher.page.getByRole("radio", { name: "No point threshold" }).check();
+    const warning = teacher.page
+      .getByText("asks for more passed tests than currently carry a passing threshold");
+    await teacher.page.getByLabel("at least").fill("2");
+    await expect(warning).toBeVisible();
     await teacher.page.getByLabel("at least").fill("1");
+    await expect(warning).toBeHidden();
     await teacher.page.getByRole("button", { name: "Save Rule" }).click();
     await expect(teacher.page.getByText("Eligibility rule updated.")).toBeVisible();
     await expect(

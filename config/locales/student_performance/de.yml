@@ -107,6 +107,7 @@ de:
         tests_passed:
           one: "bestandener Test erforderlich (von %{judged} mit Bestehensgrenze)"
           other: "bestandene Tests erforderlich (von %{judged} mit Bestehensgrenze)"
+        more_tests_than: "Die Regel verlangt mehr bestandene Tests, als derzeit eine Bestehensgrenze haben (%{count}). So kann sie niemand erfüllen."
         no_requirement: "Keine Voraussetzung"
         no_requirement_hint: "jede Person wird zur Zulassung vorgeschlagen"
         edit_button: "Regel bearbeiten"
