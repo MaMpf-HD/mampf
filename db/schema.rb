@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_30_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1547,7 +1547,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_30_000002) do
   add_foreign_key "assessment_participations", "users", column: "grader_id"
   add_foreign_key "assessment_task_points", "assessment_participations"
   add_foreign_key "assessment_task_points", "assessment_tasks", column: "task_id"
-  add_foreign_key "assessment_task_points", "submissions"
+  add_foreign_key "assessment_task_points", "submissions", on_delete: :nullify
   add_foreign_key "assessment_task_points", "users", column: "grader_id"
   add_foreign_key "assessment_tasks", "assessment_assessments", column: "assessment_id"
   add_foreign_key "assignment_sightings", "assignments"

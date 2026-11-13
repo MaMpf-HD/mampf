@@ -151,4 +151,15 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect(task_point_for(assessment)).to be_valid
     end
   end
+
+  describe "when its submission is deleted" do
+    it "keeps the points and drops the link to the submission" do
+      task_point = FactoryBot.create(:assessment_task_point, :with_submission)
+
+      task_point.submission.destroy!
+
+      expect(task_point.reload.submission_id).to be_nil
+      expect(task_point.points).to be_present
+    end
+  end
 end

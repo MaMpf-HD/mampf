@@ -50,6 +50,9 @@ class Medium < ApplicationRecord
   has_many :links, dependent: :destroy
   has_many :linked_media, through: :links
 
+  # the notes users made on the medium; they have no place without it
+  has_many :annotations, dependent: :delete_all
+
   # an editor is a user that is responsible for this medium and has the right to
   # change its content.
   # other users may have editing rights by inheritance (e.g., a course editor
