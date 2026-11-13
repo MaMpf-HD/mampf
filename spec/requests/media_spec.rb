@@ -48,7 +48,7 @@ RSpec.describe("Media", type: :request) do
       script = create(:lecture_medium, :with_manuscript, :released,
                       teachable: lecture, sort: "Script")
       edited_at = Time.zone.local(2026, 11, 3, 14, 30)
-      script.update!(file_last_edited: edited_at)
+      script.update!(released_at: edited_at - 1.month, file_last_edited: edited_at)
 
       get media_path(id: lecture.id, project: "script")
       expect(response.body)
@@ -60,7 +60,7 @@ RSpec.describe("Media", type: :request) do
     it "shows when the manuscript was last updated" do
       medium = create(:lecture_medium, :with_manuscript, :released)
       edited_at = Time.zone.local(2026, 11, 3, 14, 30)
-      medium.update!(file_last_edited: edited_at)
+      medium.update!(released_at: edited_at - 1.month, file_last_edited: edited_at)
 
       get medium_path(medium)
       expect(response.body)

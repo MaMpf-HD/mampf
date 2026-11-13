@@ -509,10 +509,12 @@ class Medium < ApplicationRecord
     manuscript.metadata["pages"]
   end
 
+  # Since when students have the manuscript as it is: the later of its
+  # release and its last replacement. Nil while the medium is not published.
   def manuscript_updated_at
-    return if manuscript.blank?
+    return if manuscript.blank? || !published?
 
-    file_last_edited || released_at
+    [file_last_edited, released_at].compact.max
   end
 
   def manuscript_screenshot_file
