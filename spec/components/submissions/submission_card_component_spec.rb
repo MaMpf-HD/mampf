@@ -140,6 +140,16 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
 
       expect(render_card).to include(I18n.t("assessment.test.period", count: 2))
     end
+
+    # A student should know before the test what it takes to pass it.
+    it "names its passing threshold, and none where it carries none" do
+      threshold = I18n.t("submission.hub.passing.threshold", points: "4.5")
+      expect(render_card).not_to include(threshold)
+
+      assignment.update!(passing_points: 4.5)
+
+      expect(render_card).to include(threshold)
+    end
   end
 
   describe "a sheet nothing has been handed in for" do

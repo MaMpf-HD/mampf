@@ -53,6 +53,7 @@ class SubmissionCardComponent < ViewComponent::Base
     parts << assignment.accepted_file_type.delete_prefix(".").upcase if digital_hand_in?
     parts << time_left if assignment.active? && !test?
     parts << worth if sheet.tasks_set_up?
+    parts << passing if assignment.passing_points
     parts.compact
   end
 
@@ -186,6 +187,13 @@ class SubmissionCardComponent < ViewComponent::Base
     def time_left
       t("submission.hub.card.in_time",
         time: distance_of_time_in_words(Time.zone.now, assignment.deadline))
+    end
+
+    # Said before the test is written, in the words its row uses afterwards.
+    def passing
+      t("submission.hub.passing.threshold",
+        points: number_to_rounded(assignment.passing_points,
+                                  precision: 2, strip_insignificant_zeros: true))
     end
 
     def worth

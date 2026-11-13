@@ -359,8 +359,14 @@ test.describe("a test written in the tutorial", () => {
       teacher.page.getByText("passed test required (of 1 with a passing threshold)"),
     ).toBeVisible();
 
+    // a test still to come says on its card what it takes to pass it
+    await factory.create("assignment", [], {
+      lecture_id: lecture.id, title: "Test 2", kind: "test", passing_points: 4,
+    });
+
     // the student reads the result on the test and in the admission block
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByText("passed from 4 points on")).toBeVisible();
     const standing = student.page
       .getByRole("complementary", { name: "Exam admission" });
     await expect(standing.getByText("1 of 1 test so far passed")).toBeVisible();
