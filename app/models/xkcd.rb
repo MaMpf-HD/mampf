@@ -3,15 +3,24 @@ class Xkcd
   IMAGE_HOST = "imgs.xkcd.com".freeze
   IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif"].freeze
 
+  # Seconds the requests to xkcd may take together. The quiz's last page
+  # waits for the comic, and goes without one after that.
+  DEADLINE = 8
+
   def self.random
+    Timeout.timeout(DEADLINE) { fetch_random }
+  rescue StandardError => e
+    { error: e.message }
+  end
+
+  def self.fetch_random
     max = JSON.parse(URI.open("https://xkcd.com/info.0.json").read)["num"]
     comic_num = 1 + rand(max - 1)
     comic_num = 1 if comic_num == 404 # Avoid 404th comic ;)
     comic = JSON.parse(URI.open("https://xkcd.com/#{comic_num}/info.0.json").read)
     comic.merge("img_data" => image_data(comic["img"]))
-  rescue StandardError => e
-    { error: e.message }
   end
+  private_class_method :fetch_random
 
   # The comic as a data URI. The server fetches it, so that the quiz taker's
   # browser does not contact xkcd just to finish a quiz.
