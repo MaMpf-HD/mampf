@@ -73,7 +73,7 @@ module Demo
           rule,
           assignments_complete: lecture.assignments_complete?,
           due_points: due_points,
-          judged_test_ids: lecture.judged_test_ids
+          pass_fail_test_ids: lecture.pass_fail_test_ids
         )
         records = StudentPerformance::Record.where(lecture_id: lecture.id)
         teacher = lecture.teacher
