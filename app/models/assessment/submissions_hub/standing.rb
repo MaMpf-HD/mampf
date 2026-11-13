@@ -4,8 +4,7 @@ module Assessment
     # id lists, met and not graded yet, and never the value behind one - so
     # "you have 67.3 %" comes alongside rather than out of it.
     #
-    # `tests_apart` is set where the lecture keeps its tests out of the points
-    # total. The points are then the homework's alone, and the two
+    # With `tests_apart` the points are the homework's alone and the two
     # `test_points_*` figures hold the tests'.
     #
     # `tests_judged` counts the tests with a passing threshold, `tests_passed`

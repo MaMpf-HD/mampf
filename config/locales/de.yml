@@ -3028,6 +3028,8 @@ de:
         of_marked: "von %{max} bisher möglichen Punkten"
         of_marked_sheets: "von %{max} bisher möglichen Punkten aus den Übungsblättern"
         tests_apart: "Tests: %{points} von %{max} bisher möglichen Punkten"
+        tests_apart_no_max: "Tests: %{points} Punkte"
+        test_points_no_max: "%{points} Punkte"
         test_points: "%{points} von %{max} bisher möglichen Punkten"
         tests_passed_so_far:
           one: "%{passed} von 1 bisherigen Test bestanden"
@@ -3047,6 +3049,7 @@ de:
             Selbst wenn Du alle noch offenen Tests bestehst, kommst Du auf
             %{best} bestandene statt der nötigen %{count}.
         of_needed: "von %{max} nötigen Punkten"
+        of_needed_sheets: "von %{max} nötigen Punkten aus den Übungsblättern"
         no_max: "Punkte, noch nichts korrigiert"
         nothing_marked: Es ist noch nichts korrigiert.
         awaiting_marks:

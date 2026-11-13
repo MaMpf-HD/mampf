@@ -47,8 +47,8 @@ class StandingComponent < ViewComponent::Base
   # 36 points, when what it means is the two sheets that have come back marked.
   def points_line
     if absolute?
-      return t("submission.hub.standing.of_needed",
-               max: number(rule.min_points_absolute))
+      key = tests_apart ? "of_needed_sheets" : "of_needed"
+      return t("submission.hub.standing.#{key}", max: number(rule.min_points_absolute))
     end
     base = points_marked_so_far
     return t("submission.hub.standing.no_max") unless base.to_f.positive?
@@ -271,13 +271,19 @@ class StandingComponent < ViewComponent::Base
         passed: tests_passed.to_i, count: tests_settled)
     end
 
-    # Names the tests itself where no part before it has done so.
+    # Names the tests itself where no part before it has done so. A test may
+    # be worth nothing and still carry points; the sum then stands without a
+    # maximum.
     def test_points_part
-      return unless test_points_marked_so_far.to_f.positive?
+      return unless tests_apart
 
-      key = tests_settled.positive? ? "test_points" : "tests_apart"
-      t("submission.hub.standing.#{key}",
-        points: number(test_points_total), max: number(test_points_marked_so_far))
+      key = "submission.hub.standing.#{tests_settled.positive? ? "test_points" : "tests_apart"}"
+      if test_points_marked_so_far.to_f.positive?
+        return t(key, points: number(test_points_total),
+                      max: number(test_points_marked_so_far))
+      end
+
+      t("#{key}_no_max", points: number(test_points_total)) if test_points_total.to_f.positive?
     end
 
     # How many tests are still to come is only known once the lecture calls

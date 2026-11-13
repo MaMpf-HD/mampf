@@ -45,6 +45,21 @@ RSpec.describe(DashboardPointsProgressComponent, type: :component) do
       .to eq("width: 50%")
   end
 
+  it "leaves the tests out of both figures once the lecture keeps them apart" do
+    lecture.update!(tests_in_points_total: false)
+    expired_assignment(20)
+    written_test = create(:assignment, :expired, lecture: lecture, kind: :test)
+    create(:assessment_task, assessment: written_test.assessment, max_points: 10)
+    create(:assessment_participation, :reviewed, assessment: written_test.assessment,
+                                                 user: user, points_total: 4)
+    create(:student_performance_record, lecture: lecture, user: user,
+                                        points_total_materialized: 12)
+
+    expect(render_bar.at_css(".dashboard-progress__value").text.strip)
+      .to eq(I18n.t("dashboard.points_progress.label", points: "12", max: "20",
+                                                       percentage: 60))
+  end
+
   it "starts at zero for a student nobody has marked yet" do
     expired_assignment(20)
     create(:student_performance_record, lecture: lecture, user: user)

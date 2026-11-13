@@ -155,13 +155,16 @@ class Lecture < ApplicationRecord
                             greater_than: -1 },
             allow_nil: true
 
+  validates :tests_in_points_total, inclusion: { in: [true, false] }
+
   before_save :initialize_submission_deletion_date
   # Saying that the assignments are all there, or taking it back, turns every
   # eligibility proposal in the lecture over. The figures do not move, but the
   # decisions taken before rested on the answer that just changed, so the
   # records are touched and the reconciliation banner picks them up.
-  # Taking the tests out of the points total, or putting them back, changes
-  # the figures themselves.
+  #
+  # The other trigger does move the figures: taking the tests out of the
+  # points total, or putting them back.
   after_update_commit :recompute_performance_records,
                       if: lambda {
                         saved_change_to_assignments_complete_at? ||
@@ -1064,14 +1067,10 @@ class Lecture < ApplicationRecord
     self.assignments_complete_at = complete ? Time.current : nil
   end
 
-  # The assignments whose points make up a student's total. A lecture that
-  # judges its tests apart from the homework keeps them out of it.
   def assignments_in_points_total
     tests_in_points_total? ? assignments : assignments.kind_homework
   end
 
-  # Whether pages have a second sum to show, or a missing one to explain: the
-  # lecture has tests and keeps them out of the points total.
   def tests_kept_apart?
     !tests_in_points_total? && assignments.kind_test.exists?
   end

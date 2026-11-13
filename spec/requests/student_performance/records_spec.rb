@@ -340,8 +340,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           )
         end
 
-        # The reader of the table has to be told which of the two the lecture
-        # chose: the same three columns hold another sum.
         it "says that the marked-so-far figures are the sheets' alone once tests are kept out" do
           lecture.update!(tests_in_points_total: false)
           test(deadline: 2.weeks.from_now.end_of_week, points: 10)

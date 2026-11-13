@@ -2815,6 +2815,8 @@ en:
         of_marked: "of %{max} points possible so far"
         of_marked_sheets: "of %{max} points possible so far from the homework sheets"
         tests_apart: "Tests: %{points} of %{max} points possible so far"
+        tests_apart_no_max: "Tests: %{points} points"
+        test_points_no_max: "%{points} points"
         test_points: "%{points} of %{max} points possible so far"
         tests_passed_so_far:
           one: "%{passed} of 1 test passed so far"
@@ -2834,6 +2836,7 @@ en:
             Even passing every test still open would leave you at %{best}
             passed instead of the %{count} needed.
         of_needed: "of %{max} points needed"
+        of_needed_sheets: "of %{max} points needed from the homework sheets"
         no_max: "points, nothing marked yet"
         nothing_marked: Nothing has been marked yet.
         awaiting_marks:

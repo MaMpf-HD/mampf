@@ -116,6 +116,18 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
               I18n.t("student_performance.evaluator.single_proposal.points_check")
             )
           end
+
+          it "says that the points leave the tests out once the lecture keeps them apart" do
+            note = I18n.t("student_performance.evaluator.single_proposal.measured_without_tests")
+            FactoryBot.create(:assignment, lecture: lecture, kind: :test)
+
+            get path, params: { record_id: record.id }
+            expect(response.body).not_to include(note)
+
+            lecture.update!(tests_in_points_total: false)
+            get path, params: { record_id: record.id }
+            expect(response.body).to include(note)
+          end
         end
 
         context "with a failing student" do

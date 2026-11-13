@@ -41,6 +41,12 @@
 
             <div class="text-muted small">
               <%= t("student_performance.records.show.total_points") %>
+
+              <% if @lecture.tests_kept_apart? %>
+                <span>
+                  (<%= t("student_performance.rules.show.without_tests") %>)
+                </span>
+              <% end %>
             </div>
 
             <div class="text-muted small mt-1">

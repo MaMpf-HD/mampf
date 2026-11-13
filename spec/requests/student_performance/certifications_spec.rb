@@ -106,8 +106,6 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         end
       end
 
-      # "50 % of the total points" is another figure once the lecture keeps
-      # its tests out of the total, and the rule's summary has to say which.
       context "with a points threshold and a test" do
         let(:without_tests) do
           "(#{I18n.t("student_performance.rules.show.without_tests")})"

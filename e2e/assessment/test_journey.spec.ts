@@ -211,11 +211,6 @@ test.describe("a test written in the tutorial", () => {
     await expect(row.getByText("Reviewed")).toBeVisible();
   });
 
-  /**
-   * A lecture may judge its tests apart from the homework. The teacher says so
-   * below the tests and is asked first, and from then on the student reads two
-   * sums where there was one.
-   */
   test("is taken out of the points total once the teacher says so", async ({
     factory,
     teacher,
@@ -237,7 +232,6 @@ test.describe("a test written in the tutorial", () => {
       tutorial_id: tutorial.id, user_id: student.user.id,
     });
 
-    // a sheet and a test, each marked with 3.5 of 8 points
     for (const [title, kind] of [["Homework 1", "homework"], ["Test 1", "test"]]) {
       const assignment = await factory.create("assignment", ["expired"], {
         lecture_id: lecture.id, title, kind,
@@ -245,16 +239,15 @@ test.describe("a test written in the tutorial", () => {
       const book = await assignment.__call("assessment");
       await factory.create("assessment_participation", ["marked"], {
         assessment_id: book.id, user_id: student.user.id,
+        max_points_per_task: [4, 4], points_per_task: [1.5, 2],
       });
     }
 
-    // one sum over both, which is how a lecture starts out
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     const standing = student.page
       .getByRole("complementary", { name: "Exam admission" });
     await expect(standing.getByText("of 16 points possible so far")).toBeVisible();
 
-    // a question that is dismissed leaves the box ticked
     const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
     await dashboard.gotoOverview();
     const box = teacher.page.getByLabel("Test points count towards the points total");
@@ -265,6 +258,7 @@ test.describe("a test written in the tutorial", () => {
     await expect(dialog).toBeVisible();
     await dialog.getByRole("button", { name: "Cancel" }).click();
     await expect(box).toBeChecked();
+    await expect(box).toBeFocused();
 
     // answered, it goes through; the overview lives in a Turbo frame, so the
     // round trip is what there is to wait for
@@ -278,7 +272,6 @@ test.describe("a test written in the tutorial", () => {
     await expect(teacher.page.getByLabel("Test points count towards the points total"))
       .not.toBeChecked();
 
-    // the student now reads the sheets' sum, and the tests' beside it
     await student.page.reload();
     await expect(
       standing.getByText("of 8 points possible so far from the homework sheets"),
@@ -312,13 +305,13 @@ test.describe("a test written in the tutorial", () => {
       tutorial_id: tutorial.id, user_id: student.user.id,
     });
 
-    // a test the student has 3.5 of 8 points on
     const written = await factory.create("assignment", ["expired"], {
       lecture_id: lecture.id, title: "Test 1", kind: "test",
     });
     const book = await written.__call("assessment");
     await factory.create("assessment_participation", ["marked"], {
       assessment_id: book.id, user_id: student.user.id,
+      max_points_per_task: [4, 4], points_per_task: [1.5, 2],
     });
 
     // the teacher gives the test a threshold, and the overview lists it

@@ -708,8 +708,6 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
-  # A lecture may judge its tests apart from the homework; the points total
-  # then holds the sheets alone.
   describe "#tests_in_points_total" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let!(:sheet) { FactoryBot.create(:assignment, lecture: lecture) }

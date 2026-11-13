@@ -754,8 +754,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
-  # A lecture may judge its tests apart from the homework: the block's points
-  # are then the sheets' alone, and the tests get a sum of their own.
   describe "tests kept out of the points total" do
     before { lecture.update!(tests_in_points_total: false) }
 
@@ -854,8 +852,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
-  # With the tests in the total, which is how a lecture starts out, there is
-  # one sum and nothing beside it.
   it "keeps the tests in the one sum unless the lecture takes them out" do
     test = create(:assignment, :expired, lecture: lecture, kind: :test,
                                          title: "Test 1", expired_since: 1.week)

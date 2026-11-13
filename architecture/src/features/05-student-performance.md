@@ -177,7 +177,7 @@ The main fields and methods of `StudentPerformance::Record` are:
 - Enforces uniqueness per (lecture, user) via database constraint.
 - Contains only factual data; interpretation is handled by `Evaluator` and teacher certification.
 - Re-computation updates materialized values and `computed_at`.
-- **Tests in or out of the points total:** `Lecture#tests_in_points_total` (on by default, a checkbox below the tests in the Assignments & Tests tab) decides whether tests count towards the two points columns. With it off they hold the homework's points alone; `DuePoints` and the submissions hub follow through `Lecture#assignments_in_points_total`, and the hub shows the tests' sum on a line of its own.
+- **Tests in or out of the points total:** `Lecture#tests_in_points_total` (on by default, a checkbox below the tests in the Assignments & Tests tab) decides whether tests count towards the two points columns. With it off they hold the homework's points alone. `ComputationService` asks `Lecture#assignments_in_points_total`; `DuePoints` and the submissions hub's loader apply the same setting to the assignments they have already loaded, and the hub shows the tests' sum on a line of its own.
 
 ### Example Implementation
 
