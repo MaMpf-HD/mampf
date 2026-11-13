@@ -708,6 +708,54 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#tests_in_points_total" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let!(:sheet) { FactoryBot.create(:assignment, lecture: lecture) }
+    let!(:written_test) { FactoryBot.create(:assignment, lecture: lecture, kind: :test) }
+
+    it "counts the tests unless the lecture says otherwise" do
+      expect(lecture.tests_in_points_total?).to be(true)
+      expect(lecture.assignments_in_points_total)
+        .to contain_exactly(sheet, written_test)
+    end
+
+    it "leaves the tests out once the lecture keeps them apart" do
+      lecture.update!(tests_in_points_total: false)
+
+      expect(lecture.assignments_in_points_total).to contain_exactly(sheet)
+      expect(lecture.tests_kept_apart?).to be(true)
+    end
+
+    it "keeps nothing apart while the tests count, or where there is no test" do
+      without_tests = FactoryBot.create(:lecture, tests_in_points_total: false)
+
+      expect(lecture.tests_kept_apart?).to be(false)
+      expect(without_tests.tests_kept_apart?).to be(false)
+    end
+
+    it "recomputes the records, so the decisions before it read as outdated" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      record = lecture.student_performance_records.find_by(user: user)
+      before = record.computed_at
+
+      lecture.update!(tests_in_points_total: false)
+
+      expect(record.reload.computed_at).to be > before
+    end
+
+    it "leaves the records alone on a save that changes neither statement" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      record = lecture.student_performance_records.find_by(user: user)
+      before = record.computed_at
+
+      lecture.update!(submission_grace_period: 30)
+
+      expect(record.reload.computed_at).to eq(before)
+    end
+  end
+
   describe "#reset_computed_certifications!" do
     let(:lecture) do
       create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)

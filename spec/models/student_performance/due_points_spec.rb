@@ -267,6 +267,51 @@ RSpec.describe(StudentPerformance::DuePoints) do
       expect(due_points.pending_points_for(student.id)).to eq(10)
       expect(due_points.pending_count_for(student.id)).to eq(1)
     end
+
+    context "when the lecture keeps its tests out of the points total" do
+      before { lecture.update!(tests_in_points_total: false) }
+
+      it "weighs the student against the sheets alone" do
+        marked_sheet = sheet(deadline: 2.days.ago, points: 20)
+        marked_test = test(deadline: 2.days.ago, points: 10)
+        [marked_sheet, marked_test].each do |assessment|
+          FactoryBot.create(:assessment_participation, :reviewed,
+                            assessment: assessment, user: student)
+        end
+
+        expect(due_points.total).to eq(20)
+        expect(due_points.marked_max_for(student.id)).to eq(20)
+        expect(due_points.marked_percentage_of(student.id, 15)).to eq(75)
+      end
+
+      it "waits for no test, neither one to come nor one nobody has entered" do
+        test(deadline: 2.days.ago, points: 10)
+        test(deadline: 3.days.from_now, points: 6)
+
+        expect(due_points.pending_points_for(student.id)).to eq(0)
+        expect(due_points.pending_count_for(student.id)).to eq(0)
+        expect(due_points.not_yet_due_for(student.id)).to eq(0)
+        expect(due_points.not_yet_due_count_for(student.id)).to eq(0)
+      end
+
+      it "still measures the tests on their own when asked for them" do
+        marked = test(deadline: 2.days.ago, points: 10)
+        FactoryBot.create(:assessment_participation, :reviewed, assessment: marked,
+                                                                user: student)
+
+        expect(test_points.total).to eq(10)
+        expect(test_points.marked_percentage_of(student.id, 8)).to eq(80)
+      end
+
+      # The performance table asks this of every row it lists, tests included.
+      it "still says whether a test is due" do
+        past = test(deadline: 2.days.ago, points: 10)
+        coming = test(deadline: 3.days.from_now, points: 10)
+
+        expect(due_points.due?(past.id)).to be(true)
+        expect(due_points.due?(coming.id)).to be(false)
+      end
+    end
   end
 
   # The reasons on the certification page say how many sheets they are about,

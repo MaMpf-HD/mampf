@@ -154,6 +154,44 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
+    context "with a sheet and a test" do
+      let(:sheet) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:written_test) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture,
+                                                                kind: :test)
+      end
+
+      before do
+        { sheet => [20, 12], written_test => [10, 4] }.each do |assignment, (max, points)|
+          task = FactoryBot.create(:assessment_task, assessment: assignment.assessment,
+                                                     max_points: max)
+          participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                            assessment: assignment.assessment, user: user)
+          FactoryBot.create(:assessment_task_point, task: task, points: points,
+                                                    assessment_participation: participation)
+        end
+      end
+
+      it "counts both towards the points total" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.points_total_materialized).to eq(16)
+        expect(record.points_max_materialized).to eq(30)
+      end
+
+      it "leaves the test out where the lecture keeps tests out of the total" do
+        lecture.update!(tests_in_points_total: false)
+
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.points_total_materialized).to eq(12)
+        expect(record.points_max_materialized).to eq(20)
+        expect(record.percentage_materialized).to eq(60)
+      end
+    end
+
     context "with a point-bearing assessment on something other than an assignment" do
       let(:assignment) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)

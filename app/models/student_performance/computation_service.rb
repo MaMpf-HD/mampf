@@ -61,11 +61,14 @@ module StudentPerformance
     private
 
       # Assignments only. Exams carry points as well, but exam eligibility is
-      # earned from assignments, so exam points never count towards it.
+      # earned from assignments, so exam points never count towards it. Tests
+      # are among them unless the lecture keeps them out of the points total.
       def assessments
         @assessments ||= Assessment::Assessment
                          .where(lecture_id: lecture.id,
-                                assessable_type: "Assignment")
+                                assessable_type: "Assignment",
+                                assessable_id: lecture.assignments_in_points_total
+                                                      .select(:id))
                          .includes(:tasks)
       end
 
