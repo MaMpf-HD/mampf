@@ -1,0 +1,6 @@
+/* Styles and icon fonts of third-party libraries, bundled and served by
+   MaMpf itself so that no page has to load them from a CDN. */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+@import "katex/dist/katex.min.css";
+@import "tom-select/dist/css/tom-select.bootstrap5.min.css";

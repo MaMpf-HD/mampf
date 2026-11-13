@@ -296,6 +296,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-free@npm:5.12.0":
+  version: 5.12.0
+  resolution: "@fortawesome/fontawesome-free@npm:5.12.0"
+  checksum: 10c0/f70737723f10b15d692b590eeeb24a93b9c6675b12e43d6f32283005cdd71bfd3ee7c9e5e7db14ece0866ba68c284f401195f8546194d2fa4b790f92d0c56997
+  languageName: node
+  linkType: hard
+
 "@herb-tools/config@npm:0.9.7":
   version: 0.9.7
   resolution: "@herb-tools/config@npm:0.9.7"
@@ -1345,6 +1352,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bootstrap-icons@npm:1.11.3":
+  version: 1.11.3
+  resolution: "bootstrap-icons@npm:1.11.3"
+  checksum: 10c0/37eefd418c6bbbb304bdff0f2ed527f82c3c6f331d3e3a7c4aa8bbdbaf7118bb86725b024f85e7d738c613d48c7353cd81c09e58e9d8d34c5633960fdec8410b
+  languageName: node
+  linkType: hard
+
 "bootstrap@npm:^5.3.7":
   version: 5.3.8
   resolution: "bootstrap@npm:5.3.8"
@@ -2196,6 +2210,7 @@ __metadata:
   dependencies:
     "@eonasdan/tempus-dominus": "npm:^6.10.4"
     "@eslint/js": "npm:^10.0.1"
+    "@fortawesome/fontawesome-free": "npm:5.12.0"
     "@herb-tools/formatter": "npm:^0.9.5"
     "@herb-tools/linter": "npm:^0.9.5"
     "@hotwired/stimulus": "npm:^3.2.2"
@@ -2218,6 +2233,7 @@ __metadata:
     "@zxcvbn-ts/language-en": "npm:^3.0.2"
     altcha: "npm:^3.1.0"
     bootstrap: "npm:^5.3.7"
+    bootstrap-icons: "npm:1.11.3"
     eslint: "npm:^10.2.0"
     eslint-plugin-erb: "npm:^2.0.0"
     globals: "npm:^17.4.0"
