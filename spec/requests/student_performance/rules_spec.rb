@@ -173,6 +173,17 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         expect(response).to have_http_status(:unprocessable_content)
       end
 
+      it "keeps the rule as it was when the points threshold is not a number" do
+        rule = FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                                 lecture: lecture, min_percentage: 50)
+
+        patch(lecture_student_performance_rules_path(lecture),
+              params: { rule: { threshold_mode: "percentage", min_percentage: "text" } })
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(rule.reload.min_percentage).to eq(50)
+      end
+
       it "keeps the rule as it was when the number of tests is not a number" do
         rule = FactoryBot.create(:student_performance_rule, :active, :without_criteria,
                                  lecture: lecture, min_tests_passed: 3)

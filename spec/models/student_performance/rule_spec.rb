@@ -206,6 +206,18 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         expect(rule.min_percentage).to be_nil
       end
 
+      it "refuses a threshold that is not a number, rather than dropping it" do
+        percentage = FactoryBot.build(:student_performance_rule, :with_percentage,
+                                      min_percentage: "text")
+        absolute = FactoryBot.build(:student_performance_rule, :with_absolute_points,
+                                    min_points_absolute: "text")
+
+        expect(percentage).to be_invalid
+        expect(percentage).to be_threshold_mode_percentage
+        expect(absolute).to be_invalid
+        expect(absolute).to be_threshold_mode_absolute
+      end
+
       it "reads an absolute threshold of zero as no threshold" do
         rule = FactoryBot.build(:student_performance_rule, :with_absolute_points,
                                 min_points_absolute: 0)

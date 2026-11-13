@@ -87,9 +87,9 @@ module StudentPerformance
       # Stores a zero threshold as threshold_mode none, so that 0 %, 0 points
       # and "No point threshold" are the same rule and show as "No requirement".
       def drop_zero_threshold
-        if threshold_mode_percentage? && min_percentage&.zero?
+        if threshold_mode_percentage? && typed_zero?(:min_percentage)
           self.min_percentage = nil
-        elsif threshold_mode_absolute? && min_points_absolute&.zero?
+        elsif threshold_mode_absolute? && typed_zero?(:min_points_absolute)
           self.min_points_absolute = nil
         else
           return
@@ -98,11 +98,17 @@ module StudentPerformance
         self.threshold_mode = :none
       end
 
-      # Stores "0 tests" as no criterion, as a zero threshold is stored. Only a
-      # zero that was typed: Rails casts text and fractions to 0 as well, and
-      # those are for the validation to refuse.
+      # Stores "0 tests" as no criterion, as a zero threshold is stored.
       def drop_zero_tests
-        self.min_tests_passed = nil if min_tests_passed_before_type_cast.to_s.strip == "0"
+        self.min_tests_passed = nil if typed_zero?(:min_tests_passed)
+      end
+
+      # Whether a zero was given. The cast value cannot say: Rails casts text
+      # to 0 as well, and for a whole number a fraction too. Those are for the
+      # validation to refuse, not for a requirement to vanish over.
+      def typed_zero?(attribute)
+        typed = public_send(:"#{attribute}_before_type_cast").to_s
+        Float(typed, exception: false)&.zero? || false
       end
 
       # The mode is the single source of truth; the two value columns have to
