@@ -250,7 +250,7 @@ class Assignment < ApplicationRecord
   def documents?
     return false unless medium
 
-    medium.video || medium.manuscript || medium.geogebra ||
+    medium.video || medium.manuscript ||
       medium.external_reference_link.present? ||
       (medium.sort == "Quiz" && medium.quiz_graph)
   end

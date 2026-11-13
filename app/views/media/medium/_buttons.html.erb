@@ -35,16 +35,6 @@
   </div>
 <% end %>
 
-<% if medium.geogebra.present? %>
-  <div class="m-1">
-    <a href="<%= geogebra_medium_path(medium) %>"
-       class="btn btn-outline-secondary" role="button"
-       target="_blank" title="<%= t('geogebra.view') %>">
-      <i class="bi bi-bullseye fs-6"></i>
-    </a>
-  </div>
-<% end %>
-
 <% if medium.external_reference_link.present? %>
   <div class="m-1">
     <a href="<%= medium.external_reference_link %>"
