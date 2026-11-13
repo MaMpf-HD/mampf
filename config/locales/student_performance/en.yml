@@ -185,6 +185,7 @@ en:
         student_points: "Student points"
         student_percentage: "Student percentage"
         measured_against_all: "The rule measures against every assignment created so far, not only against those due."
+        measured_without_tests: "Tests are not counted."
         required: "Required"
         result: "Result"
         achievements_check: "Achievements Check"

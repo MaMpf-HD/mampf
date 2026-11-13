@@ -512,8 +512,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.details[:not_due_tests]).to eq(1)
       end
 
-      # A test to come changes nothing the points wait for once the lecture
-      # keeps its tests out of the points total.
       it "names no test to come where tests are kept out of the points total" do
         lecture.update!(tests_in_points_total: false)
         sheet(deadline: 2.days.ago, points: 20)

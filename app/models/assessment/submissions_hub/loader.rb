@@ -212,8 +212,6 @@ module Assessment
                            :exempt, :no_points])
         end
 
-        # Leaves the tests out where the lecture keeps them out of the points
-        # total, as `Lecture#assignments_in_points_total` does.
         def counted_sheets
           @counted_sheets ||= if lecture.tests_in_points_total?
             sheets
@@ -226,8 +224,6 @@ module Assessment
           @test_sheets ||= sheets.select { |sheet| sheet.assignment.kind_test? }
         end
 
-        # Asks for tests as well as for the setting: a lecture without tests
-        # has no second sum to show.
         def tests_apart?
           !lecture.tests_in_points_total? && test_sheets.any?
         end

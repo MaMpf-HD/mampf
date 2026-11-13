@@ -185,6 +185,7 @@ de:
         student_points: "Punkte (Studierende/r)"
         student_percentage: "Prozent (Studierende/r)"
         measured_against_all: "Die Regel misst gegen alle bisher angelegten Blätter, nicht nur gegen die fälligen."
+        measured_without_tests: "Tests zählen dabei nicht mit."
         required: "Erforderlich"
         result: "Ergebnis"
         achievements_check: "Zusatzkriterien-Prüfung"

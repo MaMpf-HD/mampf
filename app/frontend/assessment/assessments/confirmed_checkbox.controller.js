@@ -2,9 +2,9 @@ import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
 /**
- * Submits the form of a checkbox only once its dialog has been confirmed, and
- * puts the box back where it stood if the dialog is left any other way. The
- * `reset` target is optional: a hidden field for a dialog with a third button.
+ * Asks before a checkbox's form is submitted, and puts the box back where it
+ * stood when the dialog is left unanswered. Only a dialog with a third button
+ * has a `reset` field, so that target is optional.
  */
 export default class extends Controller {
   static targets = ["checkbox", "reset", "dialog"];
@@ -39,10 +39,13 @@ export default class extends Controller {
   }
 
   // Put back, not flipped: dismissing twice must not toggle the box twice.
+  // The focus goes back as well: a dialog opened from code does not return
+  // it to the box on its own.
   restoreUnlessAnswered() {
     if (this.answered) return;
 
     this.checkboxTarget.checked = this.stood;
+    this.checkboxTarget.focus();
   }
 
   disconnect() {

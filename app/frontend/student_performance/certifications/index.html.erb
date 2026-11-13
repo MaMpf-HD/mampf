@@ -375,6 +375,12 @@
                   <%= t("student_performance.records.columns.of_due_points") %>
                 </span>
               <% end %>
+
+              <% if @lecture.tests_kept_apart? %>
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  (<%= t("student_performance.rules.show.without_tests") %>)
+                </span>
+              <% end %>
             </th>
 
             <% @achievements.each do |achievement| %>

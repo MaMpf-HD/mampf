@@ -392,6 +392,60 @@ RSpec.describe("Assessment::Assessments", type: :request) do
 
       expect(lecture.reload.tests_in_points_total?).to be(true)
     end
+
+    it "is open to an editor and refused to a tutor of the lecture" do
+      tutor = create(:confirmed_user)
+      create(:tutorial, lecture: lecture, tutors: [tutor])
+
+      sign_in tutor
+      patch test_points_path(counted: "0")
+      expect(lecture.reload.tests_in_points_total?).to be(true)
+
+      sign_in editor
+      patch test_points_path(counted: "0")
+      expect(lecture.reload.tests_in_points_total?).to be(false)
+    end
+
+    # Taking the tests out recomputes every record, so a request that does
+    # not say which way is refused rather than read as "take them out".
+    it "refuses a request that does not say which way" do
+      sign_in teacher
+
+      [{}, { counted: "unexpected" }, { counted: ["1"] }].each do |params|
+        patch test_points_path(**params)
+
+        expect(response).to have_http_status(:bad_request)
+        expect(lecture.reload.tests_in_points_total?).to be(true)
+      end
+    end
+
+    # 20 of 30 with the test, 12 of 20 without it: the rule's 65 % are met
+    # only while the test counts.
+    it "keeps a computed decision the new total contradicts, and has it flagged" do
+      sign_in teacher
+      create(:lecture_membership, lecture: lecture, user: student)
+      { homework: [20, 12], test: [10, 8] }.each do |kind, (max, points)|
+        assignment = create(:assignment, :expired, lecture: lecture, kind: kind)
+        task = create(:assessment_task, assessment: assignment.assessment, max_points: max)
+        row = create(:assessment_participation, :reviewed, assessment: assignment.assessment,
+                                                           user: student)
+        create(:assessment_task_point, task: task, assessment_participation: row,
+                                       points: points)
+      end
+      lecture.update!(assignments_complete: true)
+      rule = create(:student_performance_rule, :active, :with_percentage,
+                    lecture: lecture, min_percentage: 65)
+      decision = create(:student_performance_certification, :passed, lecture: lecture,
+                                                                     user: student, rule: rule)
+
+      patch test_points_path(counted: "0")
+
+      expect(decision.reload).to be_passed
+      get lecture_student_performance_certifications_path(lecture)
+      expect(response.body).to include(
+        I18n.t("student_performance.certifications.index.disagreeing_warning", count: 1)
+      )
+    end
   end
 
   describe "PATCH /assessment/assessments/assignments_complete" do

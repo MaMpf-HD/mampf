@@ -46,8 +46,8 @@ class StandingComponent < ViewComponent::Base
   # 36 points, when what it means is the two sheets that have come back marked.
   def points_line
     if absolute?
-      return t("submission.hub.standing.of_needed",
-               max: number(rule.min_points_absolute))
+      key = tests_apart ? "of_needed_sheets" : "of_needed"
+      return t("submission.hub.standing.#{key}", max: number(rule.min_points_absolute))
     end
     base = points_marked_so_far
     return t("submission.hub.standing.no_max") unless base.to_f.positive?
@@ -57,13 +57,18 @@ class StandingComponent < ViewComponent::Base
   end
 
   # Shows the tests' own sum where the lecture keeps tests out of the points
-  # total. Left out of the compact form, and until a test is settled for the
-  # reader.
+  # total, and not in the compact form. A test may be worth nothing and
+  # still carry points; the sum then stands without a maximum.
   def tests_line
-    return if compact || !test_points_marked_so_far.to_f.positive?
+    return if compact || !tests_apart
 
-    t("submission.hub.standing.tests_apart",
-      points: number(test_points_total), max: number(test_points_marked_so_far))
+    if test_points_marked_so_far.to_f.positive?
+      return t("submission.hub.standing.tests_apart",
+               points: number(test_points_total), max: number(test_points_marked_so_far))
+    end
+    return unless test_points_total.to_f.positive?
+
+    t("submission.hub.standing.tests_apart_no_max", points: number(test_points_total))
   end
 
   def total

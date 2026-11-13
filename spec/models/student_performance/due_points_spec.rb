@@ -268,8 +268,6 @@ RSpec.describe(StudentPerformance::DuePoints) do
       expect(due_points.pending_count_for(student.id)).to eq(1)
     end
 
-    # A lecture may judge its tests apart from the homework. The points total
-    # is then the sheets' alone, and so is everything it is measured against.
     context "when the lecture keeps its tests out of the points total" do
       before { lecture.update!(tests_in_points_total: false) }
 

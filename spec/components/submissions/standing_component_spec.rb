@@ -152,8 +152,6 @@ RSpec.describe(StandingComponent, type: :component) do
     end
   end
 
-  # A lecture may judge its tests apart from the homework. The reader then has
-  # two sums, and each has to say which one it is.
   describe "with the tests kept out of the points total" do
     def tests_line(points:, max:)
       I18n.t("submission.hub.standing.tests_apart", points: points, max: max)
@@ -171,6 +169,23 @@ RSpec.describe(StandingComponent, type: :component) do
                                          test_total: 5, test_due: 20))
 
       expect(content).to include(tests_line(points: "5", max: "20"))
+    end
+
+    # A task may be worth nothing and still carry points.
+    it "shows test points without a maximum where the tests are worth nothing" do
+      content = render_standing(standing(total: 30, due: 36, tests_apart: true,
+                                         test_total: 2, test_due: 0))
+
+      expect(content)
+        .to include(I18n.t("submission.hub.standing.tests_apart_no_max", points: "2"))
+    end
+
+    it "names the sheets as the base of an absolute threshold too" do
+      content = render_standing(standing(rule: rule(:absolute, absolute: 10),
+                                         total: 6, tests_apart: true))
+
+      expect(content)
+        .to include(I18n.t("submission.hub.standing.of_needed_sheets", max: "10"))
     end
 
     it "has no line for the tests before one of them is settled" do

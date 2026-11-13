@@ -181,8 +181,6 @@ RSpec.describe(StudentPerformance::ComputationService) do
         expect(record.points_max_materialized).to eq(30)
       end
 
-      # The lecture judges its tests apart from the homework: their points
-      # are in neither the total nor the maximum it is taken of.
       it "leaves the test out where the lecture keeps tests out of the total" do
         lecture.update!(tests_in_points_total: false)
 

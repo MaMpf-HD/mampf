@@ -54,10 +54,11 @@ module Assessment
                   **flash_opts
     end
 
-    # Takes the tests' points out of every student's points total, or puts
-    # them back.
+    # Refuses a request that does not say which way: read as "take the tests
+    # out", it would recompute every record of the lecture.
     def tests_in_points_total
       authorize! :update, @lecture
+      return head(:bad_request) unless params[:counted].in?(["0", "1"])
 
       @lecture.update!(tests_in_points_total: params[:counted] == "1")
       redirect_to assessment_assessments_path(lecture_id: @lecture.id,
