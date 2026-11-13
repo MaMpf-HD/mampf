@@ -78,8 +78,8 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.is_a?(Assignment) && @assessable.kind_test?
   end
 
-  # Says under the status whether the test is passed, where it carries a
-  # passing threshold. Read off what is saved, like the status itself.
+  # Says in a column of its own whether the test is passed, where it carries
+  # a passing threshold. Read off what is saved, like the status.
   def test_verdict_label
     return unless test?
 

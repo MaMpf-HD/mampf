@@ -209,13 +209,23 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
           expect(summary).to include(I18n.t("#{summary_scope}.failed", count: 1))
         end
 
-        it "says in each row whether the test is passed" do
-          rows = render_table.css("tr[id^=points-participation-row-]").map(&:text)
+        # In a column of its own beside the total: passed or not is a
+        # result, and the status column says how far the marking has got.
+        it "says in each row whether the test is passed, apart from the status" do
+          page = render_table
+          verdict_of = lambda do |name|
+            row = page.css("tr[id^=points-participation-row-]")
+                      .find { |tr| tr.text.include?(name) }
+            [row.at_css("td.passed-col").text.squish, row.at_css("td.status-col").text.squish]
+          end
 
-          expect(rows.find { |row| row.include?("Ada") })
-            .to include(I18n.t("assessment.test.verdict.passed"))
-          expect(rows.find { |row| row.include?("Bea") })
-            .to include(I18n.t("assessment.test.verdict.failed"))
+          passed, status = verdict_of.call("Ada")
+          expect(passed).to eq(I18n.t("assessment.test.verdict.passed"))
+          expect(status).not_to include(I18n.t("assessment.test.verdict.passed"))
+          expect(verdict_of.call("Bea").first)
+            .to eq(I18n.t("assessment.test.verdict.failed"))
+          expect(page.css("thead th.passed-col").text)
+            .to include(I18n.t("assessment.test.passed_column"))
         end
 
         it "says nothing about passing once the threshold is taken off" do

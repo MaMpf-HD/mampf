@@ -29,6 +29,8 @@ de:
       week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen, bei längerer Dauer verteilt auf die Wochen danach. Punkte lassen sich ab dem Montag der ersten Woche eintragen. Einen unangekündigten Test kannst Du bis zum Ende der Folgewoche nachtragen.'
       week_label: '%{from}–%{to}'
       badge: 'Test'
+      passed_column: 'Bestanden'
+      passed_from: 'ab %{points} Pkt'
       verdict:
         passed: 'bestanden'
         failed: 'nicht bestanden'
@@ -424,7 +426,7 @@ de:
         unmarked: '%{count} ohne Wert'
         exempt: '%{count} befreit'
         absent: '%{count} abwesend'
-        passing_points: 'Bestehensgrenze %{points} P.'
+        passing_points: 'Bestehensgrenze %{points} Pkt'
         passed: '%{count} bestanden'
         failed: '%{count} nicht bestanden'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id}'

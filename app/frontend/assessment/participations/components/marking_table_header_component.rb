@@ -52,6 +52,7 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       when :hand_in then t("basics.submission")
       when :correction then t("basics.correction")
       when :value then t("assessment.achievements.marking.value")
+      when :passed then t("assessment.test.passed_column")
       else t("assessment.grade_talk_row.#{column}")
       end
     end
@@ -70,7 +71,16 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       case column
       when :hand_in then "(#{@assessable.accepted_file_type})"
       when :value then threshold_label
+      when :passed then passing_label
       end
+    end
+
+    # From how many points on the test is passed, over the column that says
+    # who has.
+    def passing_label
+      points = number_with_precision(@assessable.passing_points,
+                                     precision: 2, strip_insignificant_zeros: true)
+      "(#{t("assessment.test.passed_from", points: points)})"
     end
 
     # What the value is measured against, over the column that takes it.

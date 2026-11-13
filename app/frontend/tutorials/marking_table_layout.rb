@@ -9,6 +9,7 @@ class MarkingTableLayout
     status_compact: 50,
     task: 90,
     total: 100,
+    passed: 150,
     talk: 200,
     grade: 110,
     note: 180,
@@ -27,7 +28,12 @@ class MarkingTableLayout
     when Assignment
       columns = [:team]
       columns << :tutorial if grading_scope.is_a?(Lecture)
-      columns += [:status, :tasks, :total, :save] if assessable.assessable?
+      if assessable.assessable?
+        columns += [:status, :tasks, :total]
+        # Only a test with a passing threshold is passed or failed.
+        columns << :passed if assessable.passing_points
+        columns << :save
+      end
       columns += [:hand_in, :correction] unless assessable.kind_test?
       # Up to four buttons stand beside a team's names here: hand over, put
       # on, take off and email.

@@ -126,10 +126,6 @@
         <% if locked_reason %>
           <div class="small text-muted"><%= locked_reason %></div>
         <% end %>
-
-        <% if test_verdict_label %>
-          <div class="small text-muted"><%= test_verdict_label %></div>
-        <% end %>
       </td>
     <% end %>
     <% if tasks? %>
@@ -138,6 +134,11 @@
       <% end %>
       <td class="text-center <%= layout.column_class(:total) %>">
         <span data-participation-row-target="totalPoints">0</span>
+      </td>
+    <% end %>
+    <% if layout.show?(:passed) %>
+      <td class="text-center <%= layout.column_class(:passed) %>">
+        <%= test_verdict_label || tag.span("—", class: "text-muted") %>
       </td>
     <% end %>
     <% if single_grade? %>

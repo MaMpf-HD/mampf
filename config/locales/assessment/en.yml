@@ -29,6 +29,8 @@ en:
       week_hint: 'Students take the test in their tutorial that week; with a longer duration, the tutorials spread it over the weeks after. Tutors can enter points from the Monday of the first week. You can add an unannounced test until the end of the following week.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
+      passed_column: 'Passed'
+      passed_from: 'from %{points} pts'
       verdict:
         passed: 'passed'
         failed: 'not passed'
