@@ -11,6 +11,25 @@
         </p>
       <% end %>
 
+      <% if @assignment.kind_test? %>
+        <p
+          class="small text-warning-emphasis mt-2 mb-0"
+          hidden
+          data-marking-table-target="outdated"
+        >
+          <i class="bi bi-exclamation-triangle-fill me-1" aria-hidden="true"></i>
+          <%= t("assessment.grading_tutorial.passing_points_changed") %>
+
+          <button
+            type="button"
+            class="btn btn-link btn-sm p-0 align-baseline"
+            data-action="marking-table#reload"
+          >
+            <%= t("assessment.grading_tutorial.reload_table") %>
+          </button>
+        </p>
+      <% end %>
+
       <div
         class="table-wrapper"
         style="<%= layout.css_vars %>"

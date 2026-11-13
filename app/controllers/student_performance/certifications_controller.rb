@@ -38,6 +38,7 @@ module StudentPerformance
         Achievement.none
       end
       @achievement_headings = Achievement.short_titles(@achievements)
+      @pass_fail_test_ids = pass_fail_test_ids
       load_filtered_records
     end
 

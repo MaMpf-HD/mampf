@@ -110,6 +110,32 @@
               </span>
             <% end %>
 
+            <% if @rule.tests_criterion? %>
+              <% if @rule.points_threshold? %>
+                <span class="text-muted small mx-1">
+                  <i class="bi bi-plus"></i>
+                </span>
+              <% end %>
+              <% pass_fail_tests = @pass_fail_test_ids.size %>
+              <strong><%= @rule.min_tests_passed %></strong>
+              <span class="small text-muted">
+                <%= t("student_performance.rules.show.tests_passed",
+                      count: @rule.min_tests_passed,
+                      pass_fail: pass_fail_tests) %>
+              </span>
+              <% if @rule.more_tests_than?(pass_fail_tests) %>
+                <span class="small text-warning-emphasis d-block">
+                  <i
+                    class="bi bi-exclamation-triangle-fill me-1"
+                    aria-hidden="true"
+                  ></i>
+
+                  <%= t("student_performance.rules.show.more_tests_than",
+                        count: pass_fail_tests) %>
+                </span>
+              <% end %>
+            <% end %>
+
             <% if @rule.no_requirement? %>
               <strong>
                 <%= t("student_performance.rules.show.no_requirement") %>
@@ -120,7 +146,7 @@
             <% end %>
 
             <% if @rule.required_achievements.any? %>
-              <% if @rule.points_threshold? %>
+              <% if @rule.waits_for_list? %>
                 <span class="text-muted small mx-1">
                   <i class="bi bi-plus"></i>
                 </span>
@@ -383,6 +409,18 @@
               <% end %>
             </th>
 
+            <% if @rule&.tests_criterion? %>
+              <th scope="col" class="text-end tests-column">
+                <%= t("student_performance.certifications.columns.tests_passed") %>
+                <br>
+
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  <%= t("student_performance.certifications.columns.tests_needed",
+                        count: @rule.min_tests_passed) %>
+                </span>
+              </th>
+            <% end %>
+
             <% @achievements.each do |achievement| %>
               <th scope="col" class="text-center small achievement-column">
                 <abbr title="<%= achievement.title %>">
@@ -446,6 +484,16 @@
                   <% end %>
                 <% end %>
               </td>
+
+              <% if @rule&.tests_criterion? %>
+                <td class="text-end numeric">
+                  <%= record.tests_passed_among(@pass_fail_test_ids) %>
+
+                  <span class="text-muted">
+                    / <%= @pass_fail_test_ids.size %>
+                  </span>
+                </td>
+              <% end %>
 
               <% @achievements.each do |achievement| %>
                 <td class="text-center px-3">

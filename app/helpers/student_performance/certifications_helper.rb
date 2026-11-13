@@ -15,10 +15,10 @@ module StudentPerformance
       ParticipationRowComponent::ROW_ACTION_CLASSES
     end
 
-    # Whether the open list of sheets and tests defers every proposal: only a
-    # rule with a points threshold waits for it.
+    # Whether the open list of sheets and tests defers every proposal: a rule
+    # waits for it if it asks for points or for passed tests.
     def assignment_list_holds_back?(lecture, rule)
-      rule.present? && rule.points_threshold? && !lecture.assignments_complete?
+      rule.present? && rule.waits_for_list? && !lecture.assignments_complete?
     end
 
     # The reasons a row spells out. While the open list of sheets defers every
@@ -50,6 +50,10 @@ module StudentPerformance
         not_due_text(proposal.details[:not_due_sheets], proposal.details[:not_due_tests])
       when :points_pending
         deferral_count(reason, proposal.details[:pending_sheets])
+      when :tests_open
+        t("student_performance.evaluator.deferral.tests_open",
+          passed: proposal.details[:tests_passed],
+          open: proposal.details[:tests_still_open])
       else
         t("student_performance.evaluator.deferral.#{reason}")
       end

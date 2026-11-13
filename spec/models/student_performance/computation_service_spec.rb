@@ -181,6 +181,44 @@ RSpec.describe(StudentPerformance::ComputationService) do
         expect(record.points_max_materialized).to eq(30)
       end
 
+      it "writes down the test as passed or failed once it carries a passing threshold" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.tests_passed_ids).to eq([])
+        expect(record.tests_failed_ids).to eq([])
+
+        written_test.update!(passing_points: 4)
+        expect(record.reload.tests_passed_ids).to eq([written_test.id])
+
+        written_test.update!(passing_points: 5)
+        expect(record.reload.tests_passed_ids).to eq([])
+        expect(record.tests_failed_ids).to eq([written_test.id])
+      end
+
+      it "counts a test the student was excused from as passed, and an absence as failed" do
+        excused, missed = [:exempt, :absent].map do |status|
+          test = FactoryBot.create(:assignment, :expired, :with_lecture,
+                                   lecture: lecture, kind: :test, passing_points: 5)
+          FactoryBot.create(:assessment_participation, status,
+                            assessment: test.assessment, user: user)
+          test
+        end
+
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.tests_passed_ids).to eq([excused.id])
+        expect(record.tests_failed_ids).to eq([missed.id])
+      end
+
+      it "still writes the verdict down where the tests are kept out of the points total" do
+        lecture.update!(tests_in_points_total: false)
+        written_test.update!(passing_points: 4)
+
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.points_max_materialized).to eq(20)
+        expect(record.tests_passed_ids).to eq([written_test.id])
+      end
+
       it "leaves the test out where the lecture keeps tests out of the total" do
         lecture.update!(tests_in_points_total: false)
 

@@ -3029,6 +3029,25 @@ de:
         of_marked_sheets: "von %{max} bisher möglichen Punkten aus den Übungsblättern"
         tests_apart: "Tests: %{points} von %{max} bisher möglichen Punkten"
         tests_apart_no_max: "Tests: %{points} Punkte"
+        test_points_no_max: "%{points} Punkte"
+        test_points: "%{points} von %{max} bisher möglichen Punkten"
+        tests_passed_so_far:
+          one: "%{passed} von 1 bisherigen Test bestanden"
+          other: "%{passed} von %{count} bisherigen Tests bestanden"
+        tests_to_come:
+          one: "es folgt noch 1 Test"
+          other: "es folgen noch %{count} Tests"
+        condition_tests:
+          one: "Mindestens 1 Test bestanden"
+          other: "Mindestens %{count} Tests bestanden"
+        you_have_tests: "Du hast %{passed} von bisher %{settled}"
+        tests_out_of_reach:
+          one: >
+            Selbst wenn Du alle noch offenen Tests bestehst, kommst Du auf
+            %{best} bestandene statt des nötigen einen.
+          other: >
+            Selbst wenn Du alle noch offenen Tests bestehst, kommst Du auf
+            %{best} bestandene statt der nötigen %{count}.
         of_needed: "von %{max} nötigen Punkten"
         of_needed_sheets: "von %{max} nötigen Punkten aus den Übungsblättern"
         no_max: "Punkte, noch nichts korrigiert"
@@ -3195,6 +3214,13 @@ de:
         awaiting_record: Noch nicht erfasst
         correction_uploaded: Korrektur da
         exempt: Entschuldigt
+      passing:
+        threshold:
+          one: "Bestehensgrenze: 1 Punkt"
+          other: "Bestehensgrenze: %{points} Punkte"
+        passed: bestanden
+        failed: nicht bestanden
+        excused: zählt als bestanden
       notes:
         grace_period: die Frist ist um, Du hast noch %{time}
         tutor_decides: nach der Frist abgegeben

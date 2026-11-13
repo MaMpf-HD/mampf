@@ -67,6 +67,17 @@ class SheetRowComponent < ViewComponent::Base
     NOTE_TONES[state] == :bad ? "sheet-note-bad" : "sheet-note"
   end
 
+  def passing_note
+    threshold = sheet.assignment.passing_points
+    return unless threshold
+    return t("submission.hub.passing.excused") if state == :exempt
+
+    needed = t("submission.hub.passing.threshold", count: threshold,
+                                                   points: format_number(threshold))
+    verdict = sheet.test_verdict
+    verdict ? "#{t("submission.hub.passing.#{verdict}")} · #{needed}" : needed
+  end
+
   # Whatever the sheet carries is shown; whether it can be put over a maximum
   # is a separate question, and the answer to it is `maximum?`.
   def number?

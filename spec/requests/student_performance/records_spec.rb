@@ -298,6 +298,32 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
             .to include(ApplicationController.helpers.number_to_percentage(80, precision: 0))
         end
 
+        it "counts the passed tests of those that carry a passing threshold" do
+          with_threshold = test(deadline: 1.week.ago.end_of_week, points: 10)
+          with_threshold.assessable.update!(passing_points: 5)
+          test(deadline: 1.week.ago.end_of_week, points: 10)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+          FactoryBot.create(:assessment_participation, :reviewed, assessment: with_threshold,
+                                                                  user: member, points_total: 6)
+
+          get lecture_student_performance_records_path(lecture)
+
+          page = Nokogiri::HTML(response.body)
+          expect(page.css("thead th").map { |th| th.text.squish })
+            .to include(I18n.t("student_performance.records.columns.tests_passed"))
+          expect(page.css("tbody td").map { |td| td.text.squish }).to include("1 / 1")
+        end
+
+        it "has no column for passed tests while no test carries a threshold" do
+          test(deadline: 1.week.ago.end_of_week, points: 10)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
+
+          get lecture_student_performance_records_path(lecture)
+
+          expect(Nokogiri::HTML(response.body).css("thead th").map { |th| th.text.squish })
+            .not_to include(I18n.t("student_performance.records.columns.tests_passed"))
+        end
+
         it "says that the marked-so-far figures take sheets and tests together" do
           test(deadline: 2.weeks.from_now.end_of_week, points: 10)
           FactoryBot.create(:lecture_membership, lecture: lecture, user: member)
@@ -959,6 +985,23 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
         expect(response.body).not_to include(
           I18n.t("student_performance.records.columns.not_submitted")
         )
+      end
+
+      it "says of a marked test whether it is passed" do
+        written_test = FactoryBot.create(:assignment, :expired, lecture: lecture,
+                                                                kind: :test, passing_points: 5)
+        task = FactoryBot.create(:assessment_task, assessment: written_test.assessment,
+                                                   max_points: 10)
+        participation = FactoryBot.create(:assessment_participation, :reviewed,
+                                          assessment: written_test.assessment,
+                                          user: record.user)
+        FactoryBot.create(:assessment_task_point, task: task, points: 4,
+                                                  assessment_participation: participation)
+
+        get lecture_student_performance_record_path(lecture, record)
+
+        expect(response.body)
+          .to include(I18n.t("student_performance.records.show.test_failed"))
       end
 
       # The list holds the tests as well; the total below them does not once

@@ -2816,6 +2816,25 @@ en:
         of_marked_sheets: "of %{max} points possible so far from the homework sheets"
         tests_apart: "Tests: %{points} of %{max} points possible so far"
         tests_apart_no_max: "Tests: %{points} points"
+        test_points_no_max: "%{points} points"
+        test_points: "%{points} of %{max} points possible so far"
+        tests_passed_so_far:
+          one: "%{passed} of 1 test passed so far"
+          other: "%{passed} of %{count} tests passed so far"
+        tests_to_come:
+          one: "1 more test to come"
+          other: "%{count} more tests to come"
+        condition_tests:
+          one: "At least 1 test passed"
+          other: "At least %{count} tests passed"
+        you_have_tests: "you have %{passed} of %{settled} so far"
+        tests_out_of_reach:
+          one: >
+            Even passing every test still open would leave you at %{best}
+            passed instead of the one needed.
+          other: >
+            Even passing every test still open would leave you at %{best}
+            passed instead of the %{count} needed.
         of_needed: "of %{max} points needed"
         of_needed_sheets: "of %{max} points needed from the homework sheets"
         no_max: "points, nothing marked yet"
@@ -2980,6 +2999,13 @@ en:
         awaiting_record: Not yet recorded
         correction_uploaded: Correction uploaded
         exempt: Excused
+      passing:
+        threshold:
+          one: 1 point needed to pass
+          other: "%{points} points needed to pass"
+        passed: passed
+        failed: not passed
+        excused: counts as passed
       notes:
         grace_period: the deadline has passed, you have %{time}
         tutor_decides: handed in after the deadline

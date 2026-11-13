@@ -1,5 +1,5 @@
 class MarkingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, :title,
+  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, :title, :data,
                       keyword_init: true)
 
   # A heading sits the way its column's content does: text starts at the
@@ -40,7 +40,14 @@ class MarkingTableHeaderComponent < ViewComponent::Base
                  @layout.column_class(column), "grade-th"]
       Column.new(css_class: classes.compact.join(" "),
                  label: label_for(column),
-                 sublabel: sublabel_for(column))
+                 sublabel: sublabel_for(column),
+                 data: data_for(column))
+    end
+
+    # The threshold the table was drawn with. A row that comes back later
+    # carries its own, and the table compares the two.
+    def data_for(column)
+      { passing_points: @assessable.passing_points } if column == :passed
     end
 
     def label_for(column)
@@ -52,6 +59,7 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       when :hand_in then t("basics.submission")
       when :correction then t("basics.correction")
       when :value then t("assessment.achievements.marking.value")
+      when :passed then t("assessment.test.passed_column")
       else t("assessment.grade_talk_row.#{column}")
       end
     end
@@ -70,7 +78,14 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       case column
       when :hand_in then "(#{@assessable.accepted_file_type})"
       when :value then threshold_label
+      when :passed then passing_label
       end
+    end
+
+    def passing_label
+      points = number_with_precision(@assessable.passing_points,
+                                     precision: 2, strip_insignificant_zeros: true)
+      "(#{t("assessment.test.passed_from", points: points)})"
     end
 
     # What the value is measured against, over the column that takes it.

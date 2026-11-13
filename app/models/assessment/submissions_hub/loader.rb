@@ -123,6 +123,9 @@ module Assessment
                        tests_apart: tests_apart?,
                        test_points_total: test_points_total,
                        test_points_marked_so_far: test_points_marked_so_far,
+                       pass_fail_tests: pass_fail_test_sheets.size,
+                       tests_passed: test_verdicts.fetch(:passed, 0),
+                       tests_failed: test_verdicts.fetch(:failed, 0),
                        assignments_complete: lecture.assignments_complete?,
                        uses_exam_eligibility: lecture.uses_exam_eligibility?)
         end
@@ -242,6 +245,17 @@ module Assessment
 
           test_sheets.select { |sheet| settled_for_points?(sheet) }
                      .sum { |sheet| sheet.max_points || 0 }
+        end
+
+        def pass_fail_test_sheets
+          test_sheets.select { |sheet| sheet.assignment.passing_points }
+        end
+
+        # How many tests the reader has passed and failed, read off the
+        # sheets rather than the record: the record counts a result from the
+        # moment it is entered, the reader only from when they may see it.
+        def test_verdicts
+          @test_verdicts ||= pass_fail_test_sheets.filter_map(&:test_verdict).tally
         end
 
         def settled_for_points?(sheet)

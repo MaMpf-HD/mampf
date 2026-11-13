@@ -152,6 +152,10 @@
                   <%= assessment.title %>
 
                   <%= test_badge if assessment.assessable.kind_test? %>
+
+                  <% if (verdict = test_verdict_text(assessment, participation)) %>
+                    <span class="small text-muted"><%= verdict %></span>
+                  <% end %>
                 </td>
 
                 <td>

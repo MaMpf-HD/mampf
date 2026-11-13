@@ -123,6 +123,10 @@
             <col class="records-col-share">
           <% end %>
 
+          <% if @pass_fail_test_ids.any? %>
+            <col class="records-col-share">
+          <% end %>
+
           <% @achievements.each do %>
             <col class="records-col-achievement">
           <% end %>
@@ -142,6 +146,9 @@
               <%= t("student_performance.records.columns.due_so_far") %>
 
               <% tests_counted = @test_points && @lecture.tests_in_points_total? %>
+
+              <% share_edges = [("tests-start" if @tests.empty?),
+                                ("tests-end" if @pass_fail_test_ids.empty?)].compact.join(" ") %>
 
               <% if @test_points %>
                 <span class="fw-normal text-muted">
@@ -176,7 +183,7 @@
             <% if @test_points %>
               <th
                 scope="colgroup"
-                colspan="<%= @tests.size + 1 %>"
+                colspan="<%= @tests.size + 1 + (@pass_fail_test_ids.any? ? 1 : 0) %>"
                 class="text-center text-nowrap tests-start"
               >
                 <%= t("student_performance.records.columns.tests") %>
@@ -287,7 +294,7 @@
             <% if @test_points %>
               <th
                 scope="col"
-                class="text-center test-share <%= "tests-start" if @tests.empty? %>"
+                class="text-center test-share <%= share_edges %>"
                 aria-sort="<%= records_sort_state("test_share") %>"
               >
                 <%= records_sort_link(@lecture, "test_share") do %>
@@ -297,6 +304,16 @@
                     <%= t("student_performance.records.columns.test_share") %>
                   </span>
                 <% end %>
+              </th>
+            <% end %>
+
+            <% if @pass_fail_test_ids.any? %>
+              <th
+                scope="col"
+                class="text-center small tests-end"
+                title="<%= t("student_performance.records.columns.tests_passed_hint") %>"
+              >
+                <%= t("student_performance.records.columns.tests_passed") %>
               </th>
             <% end %>
 
@@ -388,9 +405,7 @@
               <% if @test_points %>
                 <% test_share = @test_points.marked_percentage_of(
                      record.user_id, @test_points_by_user.fetch(record.user_id, 0)) %>
-                <% share_classes = ["text-center text-nowrap numeric test-share",
-                                    ("tests-start" if @tests.empty?)].compact.join(" ") %>
-                <td class="<%= share_classes %>">
+                <td class="text-center text-nowrap numeric test-share <%= share_edges %>">
                   <% if test_share.nil? %>
                     <span class="text-muted" aria-hidden="true">&mdash;</span>
                     <span class="visually-hidden">
@@ -399,6 +414,16 @@
                   <% else %>
                     <%= number_to_percentage(test_share, precision: 0) %>
                   <% end %>
+                </td>
+              <% end %>
+
+              <% if @pass_fail_test_ids.any? %>
+                <td class="text-center text-nowrap numeric tests-end">
+                  <%= record.tests_passed_among(@pass_fail_test_ids) %>
+
+                  <span class="text-muted">
+                    / <%= @pass_fail_test_ids.size %>
+                  </span>
                 </td>
               <% end %>
 

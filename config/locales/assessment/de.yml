@@ -29,6 +29,15 @@ de:
       week_hint: 'Die Tutorien schreiben ihn in dieser Woche in ihren eigenen Sitzungen, bei längerer Dauer verteilt auf die Wochen danach. Punkte lassen sich ab dem Montag der ersten Woche eintragen. Einen unangekündigten Test kannst Du bis zum Ende der Folgewoche nachtragen.'
       week_label: '%{from}–%{to}'
       badge: 'Test'
+      passed_column: 'Bestanden'
+      passed_from: 'ab %{points} Pkt'
+      verdict:
+        passed: 'bestanden'
+        failed: 'nicht bestanden'
+        excused: 'zählt als bestanden'
+      passing_points: 'Bestehensgrenze'
+      passing_points_hint: 'Optional. Ab dieser Punktzahl gilt der Test als bestanden; ohne Angabe wird er nicht nach bestanden und nicht bestanden gewertet.'
+      passing_points_out_of_reach: 'Die Bestehensgrenze liegt über der Punktzahl des Tests.'
     scheduled_sheet:
       appears_on: 'erscheint am %{date}'
       overdue: 'sollte am %{date} erscheinen – die Veröffentlichung steht noch aus'
@@ -178,7 +187,7 @@ de:
       go_to_registration: 'Zur Anmeldung →'
     assignments_complete:
       label: 'Die Liste der Blätter und Tests ist vollständig'
-      hint: 'Setze das Häkchen, wenn alle Übungsblätter und Tests des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück, das von Punkten abhängt — jedes weitere Blatt und jeder weitere Test kann es umwerfen. Ein neues Blatt oder ein neuer Test entfernt das Häkchen wieder.'
+      hint: 'Setze das Häkchen, wenn alle Übungsblätter und Tests des Semesters angelegt sind. Solange es fehlt, stellt die Prüfungszulassung jedes Urteil zurück, das von Punkten oder von bestandenen Tests abhängt — jedes weitere Blatt und jeder weitere Test kann es umwerfen. Ein neues Blatt oder ein neuer Test entfernt das Häkchen wieder.'
       cancel: 'Abbrechen'
       close_dialog:
         title: 'Häkchen setzen'
@@ -186,7 +195,7 @@ de:
         confirm: 'Häkchen setzen'
       open_dialog:
         title: 'Häkchen entfernen'
-        body: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts, was von Punkten abhängt: Solche Urteile werden zurückgestellt, bis Du es wieder setzt.'
+        body: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts, was von Punkten oder von bestandenen Tests abhängt: Solche Urteile werden zurückgestellt, bis Du es wieder setzt.'
         confirm: 'Häkchen entfernen'
       reopen_dialog:
         title: 'Häkchen entfernen'
@@ -401,6 +410,8 @@ de:
       pager_label: 'Seiten'
       more_actions: 'Weitere Aktionen'
       blank_points_hint: 'Ein leeres Feld heißt: noch nicht korrigiert. Die Zeile bleibt dann „Noch nicht bewertet“ und zählt noch nicht. Trag bei einer nicht bearbeiteten Aufgabe 0 ein.'
+      passing_points_changed: 'Die Bestehensgrenze dieses Tests wurde geändert, während die Tabelle offen war. Kopfzeile und Zeilen passen erst nach dem Neuladen wieder zusammen; nicht gespeicherte Punkte gehen dabei verloren.'
+      reload_table: 'Tabelle neu laden'
       summary:
         handed_in:
           one: '1 abgegeben'
@@ -417,6 +428,9 @@ de:
         unmarked: '%{count} ohne Wert'
         exempt: '%{count} befreit'
         absent: '%{count} abwesend'
+        passing_points: 'Bestehensgrenze %{points} Pkt'
+        passed: '%{count} bestanden'
+        failed: '%{count} nicht bestanden'
       no_user_for_config: 'Keine Benutzer für Teilnahme %{participation_id}'
       user_moved_tutorial: 'In %{old_tutorial} abgegeben, seitdem in %{new_tutorial}.'
       user_left_tutorials: 'In %{old_tutorial} abgegeben, seitdem in keiner Übungsgruppe.'

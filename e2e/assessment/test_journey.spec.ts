@@ -1,5 +1,6 @@
 import { expect, test } from "../_support/fixtures";
 import { AssessmentDashboardPage } from "../page-objects/assessment_dashboard_page";
+import { createEligibilityLecture } from "./helpers";
 
 /**
  * A test written in the tutorial, start to finish: the teacher puts it up for
@@ -277,5 +278,136 @@ test.describe("a test written in the tutorial", () => {
     ).toBeVisible();
     await expect(standing.getByText("Tests: 3.5 of 8 points possible so far"))
       .toBeVisible();
+  });
+
+  test("is passed from its threshold on, and the rule can ask for passed tests", async ({
+    factory,
+    teacher,
+    tutor,
+    student,
+  }) => {
+    const lecture = await createEligibilityLecture(factory, teacher.user.id);
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Monday group",
+    });
+    await factory.create("lecture_bookmark", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+
+    const written = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id, title: "Test 1", kind: "test",
+    });
+    const book = await written.__call("assessment");
+    await factory.create("assessment_participation", ["marked"], {
+      assessment_id: book.id, user_id: student.user.id,
+      max_points_per_task: [4, 4], points_per_task: [1.5, 2],
+    });
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.open("Test 1");
+    await dashboard.pane.getByLabel("Passing threshold").fill("3");
+    await dashboard.saveButton.click();
+    await expect(teacher.page.getByText("Assessment updated successfully."))
+      .toBeVisible();
+    await dashboard.gotoOverview();
+    await expect(teacher.page.getByRole("columnheader", { name: "Passing threshold" }))
+      .toBeVisible();
+    await expect(teacher.page.getByRole("cell", { name: "3 pts", exact: true }))
+      .toBeVisible();
+
+    await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
+    await expect(tutor.page.getByText("passing threshold 3 pts · 1 passed · 0 not passed"))
+      .toBeVisible();
+    const row = tutor.page.getByRole("table")
+      .getByRole("row", { name: student.user.name_in_tutorials });
+    await expect(row.getByText("passed", { exact: true })).toBeVisible();
+
+    await dashboard.overviewTab("Exam Eligibility").click();
+    await teacher.page.getByRole("link", { name: "Set up rule" }).click();
+    await teacher.page.getByRole("radio", { name: "No point threshold" }).check();
+    const warning = teacher.page
+      .getByText("asks for more passed tests than currently carry a passing threshold");
+    await teacher.page.getByLabel("at least").fill("2");
+    await expect(warning).toBeVisible();
+    await teacher.page.getByLabel("at least").fill("1");
+    await expect(warning).toBeHidden();
+    await teacher.page.getByRole("button", { name: "Save Rule" }).click();
+    await expect(teacher.page.getByText("Eligibility rule updated.")).toBeVisible();
+    await expect(
+      teacher.page.getByText("passed test required (of 1 with a passing threshold)"),
+    ).toBeVisible();
+
+    await factory.create("assignment", [], {
+      lecture_id: lecture.id, title: "Test 2", kind: "test", passing_points: 4,
+    });
+
+    await student.page.goto(`/lectures/${lecture.id}/submissions`);
+    await expect(student.page.getByText("4 points needed to pass")).toBeVisible();
+    const standing = student.page
+      .getByRole("complementary", { name: "Exam admission" });
+    await expect(standing.getByText("1 of 1 test passed so far")).toBeVisible();
+    await expect(standing.getByText("At least 1 test passed")).toBeVisible();
+    await expect(standing.getByText("you have 1 of 1 so far")).toBeVisible();
+    await expect(student.page.getByText("passed · 3 points needed to pass"))
+      .toBeVisible();
+  });
+
+  /**
+   * A row is answered with the threshold as it is now, the rest of an open
+   * table keeps the one it was drawn with. The two cannot be made to agree
+   * without losing what the tutor has typed, so the table says so and leaves
+   * the reload to them.
+   */
+  test("asks the tutor to reload once the threshold changes under an open table", async ({
+    factory,
+    teacher,
+    tutor,
+    student,
+  }) => {
+    const lecture = await factory.create("lecture", ["released_for_all"], {
+      teacher_id: teacher.user.id,
+    });
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Monday group",
+    });
+    await factory.create("lecture_membership", [], {
+      lecture_id: lecture.id, user_id: student.user.id,
+    });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: student.user.id,
+    });
+    const written = await factory.create("assignment", ["expired"], {
+      lecture_id: lecture.id, title: "Test 1", kind: "test", passing_points: 3,
+    });
+    const book = await written.__call("assessment");
+    await factory.create("assessment_participation", ["marked"], {
+      assessment_id: book.id, user_id: student.user.id, tutorial_id: tutorial.id,
+      max_points_per_task: [4, 4], points_per_task: [1.5, 2],
+    });
+
+    await tutor.page.goto(`/lectures/${lecture.id}/tutorials`);
+    const row = tutor.page.getByRole("table")
+      .getByRole("row", { name: student.user.name_in_tutorials });
+    const notice = tutor.page
+      .getByText("passing threshold was changed while the table was open");
+    await expect(row.getByText("passed", { exact: true })).toBeVisible();
+    await expect(notice).toBeHidden();
+
+    await written.update({ passing_points: 4 });
+    await row
+      .getByRole("button", { name: "Reload the saved points; unsaved changes are lost" })
+      .click();
+    await expect(row.getByText("not passed", { exact: true })).toBeVisible();
+    await expect(notice).toBeVisible();
+
+    await tutor.page.getByRole("button", { name: "Reload the table" }).click();
+    await expect(tutor.page.getByText("(from 4 pts)")).toBeVisible();
+    await expect(notice).toBeHidden();
   });
 });

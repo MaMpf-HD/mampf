@@ -136,6 +136,14 @@
         <span data-participation-row-target="totalPoints">0</span>
       </td>
     <% end %>
+    <% if layout.show?(:passed) %>
+      <td
+        class="text-center <%= layout.column_class(:passed) %>"
+        data-passing-points="<%= @assessable.passing_points %>"
+      >
+        <%= test_verdict_label || tag.span("—", class: "text-muted") %>
+      </td>
+    <% end %>
     <% if single_grade? %>
       <% if layout.show?(:total) %>
         <td class="text-center <%= layout.column_class(:total) %>">

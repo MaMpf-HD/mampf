@@ -9,8 +9,8 @@ module StudentPerformance
     def records_sort_link(lecture, column, &)
       query = request.query_parameters.except("page", "sort", "dir")
       case records_sort_state(column)
-      when "none" then query.merge!("sort" => column, "dir" => "desc")
-      when "descending" then query.merge!("sort" => column, "dir" => "asc")
+      when "none" then query = query.merge("sort" => column, "dir" => "desc")
+      when "descending" then query = query.merge("sort" => column, "dir" => "asc")
       end
 
       link_to(lecture_student_performance_records_path(lecture, query),
@@ -18,6 +18,14 @@ module StudentPerformance
               data: { turbo_frame: "performance-records-frame" }) do
         safe_join([capture(&), records_sort_caret(column)], " ")
       end
+    end
+
+    # "passed" or "not passed" for a test's row on a student's page, nothing
+    # where the test has no passing threshold or nothing is settled.
+    def test_verdict_text(assessment, participation)
+      verdict = assessment.assessable.test_verdict(status: participation&.status,
+                                                   points_total: participation&.points_total)
+      t("student_performance.records.show.test_#{verdict}") if verdict
     end
 
     # Spelled the way `aria-sort` wants it, so the header can pass it straight

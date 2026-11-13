@@ -96,6 +96,11 @@
   // Separate the test percentage from the achievement columns.
   .test-share {
     border-left: var(--bs-border-width) solid var(--bs-border-color);
+  }
+
+  // The heavier line stands after the tests' last column: the percentage,
+  // or the passed tests where a test carries a passing threshold.
+  .tests-end {
     border-right: 2px solid var(--bs-border-color);
   }
 

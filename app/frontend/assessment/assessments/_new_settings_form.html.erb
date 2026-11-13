@@ -35,6 +35,16 @@
           <%= t("assessment.test.week_hint") %>
         </div>
       </div>
+      <div class="col-md-6">
+        <%= f.label :passing_points, t("assessment.test.passing_points"), class: "form-label" %>
+
+        <%= f.number_field :passing_points, class: "form-control",
+                                            min: 0, step: 0.5, autocomplete: "off" %>
+
+        <div class="form-text text-muted">
+          <%= t("assessment.test.passing_points_hint") %>
+        </div>
+      </div>
     <% else %>
       <div class="col-md-6">
         <%= f.label :deadline, t("basics.deadline"), class: "form-label" %>

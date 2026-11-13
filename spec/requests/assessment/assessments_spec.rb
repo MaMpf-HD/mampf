@@ -243,6 +243,33 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.body).to include("assessments_container")
       end
 
+      it "sets a test's passing threshold, and takes it off again" do
+        test = create(:valid_assignment, lecture: lecture, kind: :test,
+                                         deadline: 1.week.from_now)
+        threshold = lambda do |value|
+          patch(assessment_assessment_path(test.assessment.id),
+                params: { assessment_assessment: {
+                  assessable_attributes: { id: test.id, passing_points: value }
+                } },
+                as: :turbo_stream)
+          test.reload.passing_points
+        end
+
+        expect(threshold.call("5")).to eq(5)
+        expect(threshold.call("")).to be_nil
+      end
+
+      it "lists a test's passing threshold in the overview" do
+        create(:valid_assignment, lecture: lecture, kind: :test, passing_points: 4.5)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(I18n.t("assessment.test.passing_points"))
+        cells = Nokogiri::HTML(response.body).css("#assessment-tests-list td")
+        expect(cells.map { |cell| cell.text.squish })
+          .to include("4.5 #{I18n.t("assessment.task.points_abbrev")}")
+      end
+
       it "moves a test to the week it is given, due with its Sunday" do
         test = create(:valid_assignment, lecture: lecture, kind: :test,
                                          deadline: 1.week.from_now)

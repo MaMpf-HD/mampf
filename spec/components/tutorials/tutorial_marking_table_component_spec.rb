@@ -179,6 +179,76 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
           .to eq(tutorial)
       end
 
+      context "with a passing threshold" do
+        let(:other) { create(:confirmed_user, name: "Bea") }
+        let(:summary_scope) { "assessment.grading_tutorial.summary" }
+
+        before do
+          assignment.update!(test_week: Time.zone.today.beginning_of_week.iso8601,
+                             passing_points: 5)
+          create(:tutorial_membership, tutorial: tutorial, user: other)
+          { member => 6, other => 4 }.each do |user, points|
+            create(:assessment_participation, :reviewed, assessment: assessment, user: user,
+                                                         tutorial: tutorial, points_total: points)
+          end
+        end
+
+        def render_table
+          render_inline(described_class.new(assignment: assignment.reload,
+                                            grading_scope: tutorial))
+        end
+
+        it "names the threshold above the table and counts passed and failed" do
+          summary = render_table.css("#marking-summary").text
+
+          expect(summary).to include(I18n.t("#{summary_scope}.passing_points", points: "5"))
+          expect(summary).to include(I18n.t("#{summary_scope}.passed", count: 1))
+          expect(summary).to include(I18n.t("#{summary_scope}.failed", count: 1))
+        end
+
+        # In a column of its own beside the total: passed or not is a
+        # result, and the status column says how far the marking has got.
+        it "says in each row whether the test is passed, apart from the status" do
+          page = render_table
+          verdict_of = lambda do |name|
+            row = page.css("tr[id^=points-participation-row-]")
+                      .find { |tr| tr.text.include?(name) }
+            [row.at_css("td.passed-col").text.squish, row.at_css("td.status-col").text.squish]
+          end
+
+          passed, status = verdict_of.call("Ada")
+          expect(passed).to eq(I18n.t("assessment.test.verdict.passed"))
+          expect(status).not_to include(I18n.t("assessment.test.verdict.passed"))
+          expect(verdict_of.call("Bea").first)
+            .to eq(I18n.t("assessment.test.verdict.failed"))
+          expect(page.css("thead th.passed-col").text)
+            .to include(I18n.t("assessment.test.passed_column"))
+        end
+
+        # A row answered after the threshold was changed carries the new one;
+        # the table compares it with its heading and asks for a reload.
+        it "marks heading and rows with the threshold they were drawn with" do
+          page = render_table
+
+          expect(page.at_css("thead th.passed-col")["data-passing-points"]).to eq("5.0")
+          expect(page.css("td.passed-col").pluck("data-passing-points").uniq).to eq(["5.0"])
+          notice = page.at_css("[data-marking-table-target='outdated']")
+          expect(notice["hidden"]).not_to be_nil
+          expect(notice.text)
+            .to include(I18n.t("assessment.grading_tutorial.passing_points_changed"))
+        end
+
+        it "says nothing about passing once the threshold is taken off" do
+          assignment.update!(passing_points: nil)
+
+          page = render_table
+
+          expect(page.css("#marking-summary").text)
+            .not_to include(I18n.t("#{summary_scope}.passed", count: 1))
+          expect(page.text).not_to include(I18n.t("assessment.test.verdict.failed"))
+        end
+      end
+
       # Three hundred rows made one by one would be three hundred commits,
       # each recomputing a performance record; here they are one statement.
       it "seeds the group's rows in one statement, recomputing nothing" do

@@ -260,6 +260,57 @@ RSpec.describe(Assignment, type: :model) do
     expect(FactoryBot.create(:valid_assignment)).to be_kind_homework
   end
 
+  describe "a test's passing threshold" do
+    let(:test) do
+      FactoryBot.create(:valid_assignment, :expired, kind: :test, passing_points: 5)
+    end
+
+    def verdict(status, points = nil)
+      test.test_verdict(status: status, points_total: points)
+    end
+
+    it "is optional, positive, and a test's alone" do
+      expect(FactoryBot.build(:valid_assignment, kind: :test)).to be_valid
+      expect(FactoryBot.build(:valid_assignment, kind: :test, passing_points: 0))
+        .to be_invalid
+      expect(FactoryBot.build(:valid_assignment, passing_points: 5)).to be_invalid
+    end
+
+    it "passes a marked test from the threshold on" do
+      expect(verdict(:reviewed, 5)).to eq(:passed)
+      expect(verdict(:reviewed, 4.5)).to eq(:failed)
+    end
+
+    it "counts an excused student as passed and an absent one as failed" do
+      expect(verdict(:exempt)).to eq(:passed)
+      expect(verdict(:absent)).to eq(:failed)
+    end
+
+    it "says nothing while nothing is settled for the student" do
+      expect(verdict(:pending, 7)).to be_nil
+    end
+
+    # No total is no result; calling it failed would refuse somebody an exam
+    # for a number nobody entered.
+    it "says nothing on a reviewed row that carries no total" do
+      expect(verdict(:reviewed, nil)).to be_nil
+    end
+
+    it "says nothing for a test without a threshold" do
+      test.update!(passing_points: nil)
+
+      expect(verdict(:reviewed, 9)).to be_nil
+      expect(Assignment.with_passing_points).not_to include(test)
+    end
+
+    it "may be moved after the test has been marked" do
+      FactoryBot.create(:assessment_participation, :reviewed,
+                        assessment: test.assessment, points_total: 4)
+
+      expect(test.update(passing_points: 4)).to be(true)
+    end
+  end
+
   describe "#past_deadline?" do
     it "returns true when deadline is in the past" do
       assignment = FactoryBot.build(:valid_assignment, :inactive)

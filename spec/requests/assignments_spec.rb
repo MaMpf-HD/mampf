@@ -212,6 +212,14 @@ RSpec.describe("Assignments", type: :request) do
           expect(response).to have_http_status(:ok)
         end
 
+        it "creates it with the passing threshold it is given" do
+          post(assignments_path,
+               params: { assignment: test_attributes.merge(passing_points: "4.5") },
+               as: :turbo_stream)
+
+          expect(Assignment.order(:created_at).last.passing_points).to eq(4.5)
+        end
+
         it "takes a kind it does not know for homework" do
           get new_assignment_path(lecture_id: lecture.id, kind: "quiz"), as: :turbo_stream
 

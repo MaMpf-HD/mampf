@@ -129,7 +129,7 @@ class AssignmentsController < ApplicationController
     def assignment_params
       params.expect(assignment: [:title, :medium_id, :lecture_id,
                                  :deadline, :test_week, :test_week_count, :accepted_file_type,
-                                 :requires_submission])
+                                 :requires_submission, :passing_points])
     end
 
     # Unknown enum values raise ArgumentError instead of a validation error.

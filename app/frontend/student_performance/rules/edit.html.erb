@@ -231,6 +231,69 @@
             <% end %>
           </div>
         <% end %>
+
+        <% if @tests_count.positive? || @rule.min_tests_passed.present? %>
+          <div
+            class="col-12"
+            data-controller="tests-criterion"
+            data-tests-criterion-pass-fail-value="<%= @pass_fail_tests_count %>"
+          >
+            <div class="fw-semibold small mb-2">
+              <%= t("student_performance.rules.edit.tests_section") %>
+            </div>
+
+            <div class="input-group input-group-sm" style="max-width: 420px">
+              <label class="input-group-text" for="rule-min-tests-passed">
+                <%= t("student_performance.rules.edit.tests_at_least") %>
+              </label>
+
+              <input
+                type="number"
+                name="rule[min_tests_passed]"
+                id="rule-min-tests-passed"
+                value="<%= @rule.min_tests_passed_before_type_cast %>"
+                class="form-control<% if @rule.errors[:min_tests_passed].any? %> is-invalid <% end %>"
+                min="0"
+                step="1"
+                autocomplete="off"
+                data-tests-criterion-target="input"
+                data-action="input->tests-criterion#check"
+              >
+
+              <span class="input-group-text">
+                <%= t("student_performance.rules.edit.tests_of",
+                      count: @pass_fail_tests_count) %>
+              </span>
+            </div>
+
+            <% if @rule.errors[:min_tests_passed].any? %>
+              <div class="text-danger small mt-1">
+                <%= @rule.errors.full_messages_for(:min_tests_passed).first %>
+              </div>
+            <% end %>
+
+            <p class="small text-muted mb-0 mt-1">
+              <%= t("student_performance.rules.edit.tests_hint") %>
+
+              <% if @tests_count > @pass_fail_tests_count %>
+                <%= t("student_performance.rules.edit.tests_without_threshold",
+                      count: @tests_count - @pass_fail_tests_count) %>
+              <% end %>
+            </p>
+
+            <%= tag.p(class: "small text-warning-emphasis mb-0 mt-1",
+                      hidden: !@rule.more_tests_than?(@pass_fail_tests_count),
+                      data: { tests_criterion_target: "warning" }) do %>
+              <i
+                class="bi bi-exclamation-triangle-fill me-1"
+                aria-hidden="true"
+              ></i>
+
+              <%= t("student_performance.rules.show.more_tests_than",
+                    count: @pass_fail_tests_count) %>
+            <% end %>
+          </div>
+        <% end %>
       </div>
 
       <%= turbo_frame_tag "rule-preview-frame" %>

@@ -39,6 +39,44 @@ RSpec.describe("StudentPerformance::Evaluator", type: :request) do
         end
       end
 
+      context "with a rule that asks for passed tests" do
+        let!(:written_test) do
+          FactoryBot.create(:assignment, :expired, lecture: lecture, kind: :test,
+                                                   passing_points: 5)
+        end
+        let!(:record) do
+          FactoryBot.create(:student_performance_record, lecture: lecture, user: student,
+                                                         tests_passed_ids: [written_test.id])
+        end
+
+        # Setting up the test has opened the list again.
+        before do
+          FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                            lecture: lecture, min_tests_passed: 1)
+          lecture.update!(assignments_complete: true)
+        end
+
+        it "shows the tests check with the student's count, and proposes to admit" do
+          get path, params: { record_id: record.id }
+
+          page = Nokogiri::HTML(response.body)
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.single_proposal.tests_check")
+          )
+          expect(page.at_css(".badge.fs-6").text.strip)
+            .to eq(I18n.t("student_performance.evaluator.status.passed"))
+        end
+
+        it "defers the proposal while the student's tests are open" do
+          record.update!(tests_passed_ids: [])
+
+          get path, params: { record_id: record.id }
+
+          expect(Nokogiri::HTML(response.body).at_css(".badge.fs-6").text.strip)
+            .to eq(I18n.t("student_performance.evaluator.status.inconclusive"))
+        end
+      end
+
       context "with an active rule" do
         let!(:rule) do
           FactoryBot.create(:student_performance_rule, :active,

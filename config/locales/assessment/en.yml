@@ -29,6 +29,15 @@ en:
       week_hint: 'Students take the test in their tutorial that week; with a longer duration, the tutorials spread it over the weeks after. Tutors can enter points from the Monday of the first week. You can add an unannounced test until the end of the following week.'
       week_label: '%{from} – %{to}'
       badge: 'Test'
+      passed_column: 'Passed'
+      passed_from: 'from %{points} pts'
+      verdict:
+        passed: 'passed'
+        failed: 'not passed'
+        excused: 'counts as passed'
+      passing_points: 'Passing threshold'
+      passing_points_hint: 'Optional. The number of points needed to pass the test; without it the test is neither passed nor failed.'
+      passing_points_out_of_reach: 'The passing threshold is higher than the points of the test.'
     scheduled_sheet:
       appears_on: 'appears on %{date}'
       overdue: 'was to appear on %{date} – the release is still pending'
@@ -178,7 +187,7 @@ en:
       go_to_registration: 'Go to Registration →'
     assignments_complete:
       label: 'The list of sheets and tests is complete'
-      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict that depends on points — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
+      hint: 'Tick this once every sheet and test of the term exists. Until then, exam eligibility defers every verdict that depends on points or on passed tests — each one still to come can overturn it. Creating a new sheet or test clears the tick again.'
       cancel: 'Cancel'
       close_dialog:
         title: 'Tick the box'
@@ -186,7 +195,7 @@ en:
         confirm: 'Tick the box'
       open_dialog:
         title: 'Clear the tick'
-        body: 'Without the tick the eligibility rule decides nothing that depends on points: such verdicts are deferred until you set it again.'
+        body: 'Without the tick the eligibility rule decides nothing that depends on points or on passed tests: such verdicts are deferred until you set it again.'
         confirm: 'Clear the tick'
       reopen_dialog:
         title: 'Clear the tick'
@@ -401,6 +410,8 @@ en:
       pager_label: 'Pages'
       more_actions: 'More actions'
       blank_points_hint: 'A blank field means not marked yet: the row then stays "Pending Grading" and does not count yet. For a task left unattempted, enter 0.'
+      passing_points_changed: 'This test''s passing threshold was changed while the table was open. The heading and the rows match again only after a reload; points not saved yet are lost by it.'
+      reload_table: 'Reload the table'
       summary:
         handed_in:
           one: '1 handed in'
@@ -417,6 +428,9 @@ en:
         unmarked: '%{count} without a value'
         exempt: '%{count} exempt'
         absent: '%{count} absent'
+        passing_points: 'passing threshold %{points} pts'
+        passed: '%{count} passed'
+        failed: '%{count} not passed'
       no_user_for_config: 'No user for participation %{participation_id}'
       user_moved_tutorial: 'Handed in in %{old_tutorial}, since then in %{new_tutorial}.'
       user_left_tutorials: 'Handed in in %{old_tutorial}, since then in no tutorial.'

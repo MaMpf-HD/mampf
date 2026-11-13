@@ -807,6 +807,61 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  describe "tests with a passing threshold" do
+    def create_test(passing_points:, title: "Test 1")
+      test = create(:assignment, :expired, lecture: lecture, kind: :test,
+                                           title: title, expired_since: 1.week,
+                                           passing_points: passing_points)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      test
+    end
+
+    it "counts the passed and the failed among the tests that carry one" do
+      passed = create_test(passing_points: 5)
+      failed = create_test(passing_points: 5, title: "Test 2")
+      create_test(passing_points: 5, title: "Test 3")
+      mark(create_test(passing_points: nil, title: "Test 4"), [9])
+      mark(passed, [5])
+      mark(failed, [4.5])
+
+      standing = result.standing
+      expect(standing.pass_fail_tests).to eq(3)
+      expect(standing.tests_passed).to eq(1)
+      expect(standing.tests_failed).to eq(1)
+      expect(standing.tests_to_come).to eq(1)
+      expect(sheet_for(passed).test_verdict).to eq(:passed)
+      expect(sheet_for(failed).test_verdict).to eq(:failed)
+    end
+
+    it "counts an absence as failed and an excused test as passed" do
+      participate(create_test(passing_points: 5), status: :absent)
+      participate(create_test(passing_points: 5, title: "Test 2"), status: :exempt)
+
+      expect(result.standing.tests_failed).to eq(1)
+      expect(result.standing.tests_passed).to eq(1)
+    end
+
+    # The record counts a result from the moment it is entered. The reader's
+    # page shows a test's points only once a task carries a value, and the
+    # verdict must not get there first.
+    it "counts no result the reader cannot see yet" do
+      test = create_test(passing_points: 5)
+      participate(test, status: :reviewed, points_total: 8, submitted_at: 2.days.ago)
+
+      expect(sheet_for(test).state).to eq(:awaiting_marks)
+      expect(sheet_for(test).test_verdict).to be_nil
+      expect(result.standing.tests_passed).to eq(0)
+    end
+
+    it "counts nothing on a test nobody has entered anything on" do
+      test = create_test(passing_points: 5)
+
+      expect(result.standing.tests_passed).to eq(0)
+      expect(result.standing.tests_failed).to eq(0)
+      expect(sheet_for(test).test_verdict).to be_nil
+    end
+  end
+
   it "keeps the tests in the one sum unless the lecture takes them out" do
     test = create(:assignment, :expired, lecture: lecture, kind: :test,
                                          title: "Test 1", expired_since: 1.week)

@@ -81,6 +81,9 @@ module StudentPerformance
         return
       end
 
+      @input_error = tests_input_error
+      return render(:preview) if @input_error
+
       preview = StudentPerformance::RuleChangePreview.new(
         current_rule: @rule,
         preview_rule: rule_from_form_params,
@@ -100,6 +103,8 @@ module StudentPerformance
 
       def load_edit_form
         @achievements = Achievement.where(lecture: @lecture).order(:title)
+        @tests_count = @lecture.assignments.kind_test.count
+        @pass_fail_tests_count = pass_fail_test_ids.size
         @computed_count = @lecture.current_certifications.computed.decided.count
         @eligibility_in_use_by = @lecture.eligibility_in_use_by
       end
@@ -129,6 +134,7 @@ module StudentPerformance
           @rule.min_percentage = nil
           @rule.min_points_absolute = nil
         end
+        @rule.min_tests_passed = params.dig(:rule, :min_tests_passed).presence
       end
 
       # Builds the criteria in memory so that they are present when the rule is
@@ -152,6 +158,16 @@ module StudentPerformance
         end
       end
 
+      # What saving would refuse about the passed tests. The preview forecasts
+      # nothing for a rule that cannot be saved.
+      def tests_input_error
+        candidate = StudentPerformance::Rule.new(
+          lecture: @lecture, min_tests_passed: params.dig(:rule, :min_tests_passed).presence
+        )
+        candidate.validate
+        candidate.errors.full_messages_for(:min_tests_passed).first
+      end
+
       # The thresholds the teacher has typed into the rule form, not the ones on
       # record — this is the preview of an unsaved edit.
       def rule_from_form_params
@@ -160,6 +176,8 @@ module StudentPerformance
         pts = (params.dig(:rule, :min_points_absolute).presence&.to_f if mode == "absolute")
         pct = nil if pct&.zero?
         pts = nil if pts&.zero?
+        tests = params.dig(:rule, :min_tests_passed).presence&.to_i
+        tests = nil unless tests&.positive?
 
         achievement_ids = Set.new(
           Array(params.dig(:rule, :achievement_ids))
@@ -172,6 +190,7 @@ module StudentPerformance
         PreviewRule.new(
           min_percentage: pct,
           min_points_absolute: pts,
+          min_tests_passed: tests,
           required_achievements: achievements
         )
       end
