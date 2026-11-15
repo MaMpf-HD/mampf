@@ -591,7 +591,7 @@
 
               <td class="hint-column small">
                 <% if @disagreeing_user_ids.include?(record.user_id) %>
-                  <span class="text-amber">
+                  <span class="text-muted">
                     <i class="bi bi-clock-history me-1"></i>
                     <%= t("student_performance.certifications.columns.rule_today") %>
                     <%= t("student_performance.certifications.rule_today.#{proposal.proposed_status}") %>
@@ -610,13 +610,13 @@
                   </span>
                 <% elsif proposal && !decided %>
                   <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
-                    <span class="text-amber d-block">
+                    <span class="text-muted d-block">
                       <i class="bi bi-question-circle me-1"></i>
                       <%= deferral_text(proposal, reason) %>
                     </span>
                   <% end %>
                   <% proposal.missed_criteria.each do |criterion| %>
-                    <span class="text-danger d-block">
+                    <span class="text-muted d-block">
                       <i class="bi bi-x-circle me-1"></i>
                       <%= t("student_performance.evaluator.missed.#{criterion}") %>
                     </span>
