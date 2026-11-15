@@ -777,7 +777,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(standing.test_points_marked_so_far).to eq(10)
     end
 
-    # Nobody can say yet whether the reader sat it, so it is in no sum.
     it "leaves a test nobody has entered anything on out of every sum" do
       create_test
 

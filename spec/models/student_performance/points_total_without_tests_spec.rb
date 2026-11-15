@@ -40,7 +40,6 @@ RSpec.describe("The points total with tests kept out of it") do
     DashboardPointsProgressComponent.new(lecture: lecture, user: student)
   end
 
-  # What each place gives as points, the maximum settled so far, and the share.
   def figures
     current = record
     { record: [current.points_total_materialized, current.points_max_materialized],

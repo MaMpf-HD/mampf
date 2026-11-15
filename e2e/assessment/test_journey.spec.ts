@@ -259,8 +259,8 @@ test.describe("a test written in the tutorial", () => {
     await expect(box).toBeChecked();
     await expect(box).toBeFocused();
 
-    // answered, it goes through; the overview lives in a Turbo frame, so the
-    // round trip is what there is to wait for
+    // Nothing visible changes on confirming, so wait for the request before
+    // navigating.
     await box.uncheck();
     const saved = teacher.page.waitForResponse(
       r => r.request().method() === "POST",

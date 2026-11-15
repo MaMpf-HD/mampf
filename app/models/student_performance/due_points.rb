@@ -20,8 +20,8 @@ module StudentPerformance
       @of_kind[kind] ||= self.class.new(lecture: @lecture, kind: kind, user_id: @user_id)
     end
 
-    # Answers for every sheet and test, also for a test kept out of the points
-    # total: the performance table lists those too.
+    # Covers tests kept out of the points total as well, since the performance
+    # table lists them too.
     def due?(assessment_id)
       due_assessment_ids.include?(assessment_id)
     end
@@ -137,8 +137,8 @@ module StudentPerformance
           .where(assignments: { kind: Assignment.kinds.fetch(counted_kind.to_s) })
       end
 
-      # A kind asked for by name is counted even if the lecture keeps it out
-      # of the points total: the table shows the tests' own share either way.
+      # `@kind` wins over `tests_in_points_total?`: the performance table asks
+      # for the tests alone, also where they are kept out of the points total.
       def counted_kind
         return @kind if @kind
 

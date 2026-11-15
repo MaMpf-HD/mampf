@@ -56,9 +56,6 @@ class StandingComponent < ViewComponent::Base
     t("submission.hub.standing.of_marked", max: number(base))
   end
 
-  # Shows the tests' own sum where the lecture keeps tests out of the points
-  # total, and not in the compact form. A test may be worth nothing and
-  # still carry points; the sum then stands without a maximum.
   def tests_line
     return if compact || !tests_apart
 

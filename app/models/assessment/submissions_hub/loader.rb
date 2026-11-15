@@ -235,8 +235,6 @@ module Assessment
                      .sum { |sheet| sheet.participation.points_total || 0 }
         end
 
-        # Counts the tests as `points_marked_so_far` counts the sheets:
-        # settled for the reader, not still with the tutor.
         def test_points_marked_so_far
           return unless tests_apart?
 

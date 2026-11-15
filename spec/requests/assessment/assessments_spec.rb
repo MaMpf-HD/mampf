@@ -406,8 +406,6 @@ RSpec.describe("Assessment::Assessments", type: :request) do
       expect(lecture.reload.tests_in_points_total?).to be(false)
     end
 
-    # Taking the tests out recomputes every record, so a request that does
-    # not say which way is refused rather than read as "take them out".
     it "refuses a request that does not say which way" do
       sign_in teacher
 

@@ -303,7 +303,6 @@ RSpec.describe(StudentPerformance::DuePoints) do
         expect(test_points.marked_percentage_of(student.id, 8)).to eq(80)
       end
 
-      # The performance table asks this of every row it lists, tests included.
       it "still says whether a test is due" do
         past = test(deadline: 2.days.ago, points: 10)
         coming = test(deadline: 3.days.from_now, points: 10)

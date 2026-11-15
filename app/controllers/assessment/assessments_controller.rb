@@ -54,8 +54,6 @@ module Assessment
                   **flash_opts
     end
 
-    # Refuses a request that does not say which way: read as "take the tests
-    # out", it would recompute every record of the lecture.
     def tests_in_points_total
       authorize! :update, @lecture
       return head(:bad_request) unless params[:counted].in?(["0", "1"])
