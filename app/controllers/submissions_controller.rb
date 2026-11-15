@@ -268,6 +268,7 @@ class SubmissionsController < ApplicationController
           locals: { submission: @submission }
         )
       end
+      format.html { redirect_to grading_page }
     end
   end
 
@@ -280,6 +281,7 @@ class SubmissionsController < ApplicationController
           locals: { submission: @submission }
         )
       end
+      format.html { redirect_to grading_page }
     end
   end
 
@@ -355,6 +357,14 @@ class SubmissionsController < ApplicationController
       render partial: "submissions/correction_edit_wrap",
              locals: { submission: @submission, errors: errors },
              status: :unprocessable_content
+    end
+
+    # The grading table a correction link sits in. A plain page request for
+    # such a link (opened in a new tab) is sent here.
+    def grading_page
+      lecture_tutorials_path(@submission.tutorial.lecture,
+                             tutorial: @submission.tutorial_id,
+                             assignment: @submission.assignment_id)
     end
 
     # A write on a submission waits for a hand-over of it and is then asked
