@@ -84,17 +84,6 @@ test.describe("uploading through Uppy", () => {
       expect(attempts).toBe(1);
     });
 
-  test("a geogebra applet on a medium", async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
-    const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
-      { lecture_id: lecture.id, sort: "WorkedExample" });
-
-    await page.goto(`/media/${medium.id}/edit`);
-    await attachToUploadArea(page, "#geogebra-uploadArea", "spec/files/geogebra.ggb");
-
-    await expect(page.locator("#geogebra-file")).toHaveText("geogebra.ggb");
-  });
-
   test("a submission, once the assurance is given",
     async ({ factory, student: { page, user } }) => {
       const lecture = await factory.create("lecture", ["released_for_all"]);

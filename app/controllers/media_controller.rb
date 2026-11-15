@@ -8,7 +8,6 @@ class MediaController < ApplicationController
                                                  :stream_video,
                                                  :stream_transcript,
                                                  :inline_manuscript,
-                                                 :geogebra, :inline_geogebra,
                                                  :download,
                                                  :transcription_stream_video,
                                                  :add_transcript,
@@ -31,7 +30,6 @@ class MediaController < ApplicationController
                                              :stream_video,
                                              :stream_transcript,
                                              :inline_manuscript,
-                                             :geogebra, :inline_geogebra,
                                              :download,
                                              :transcription_stream_video,
                                              :add_transcript,
@@ -133,7 +131,6 @@ class MediaController < ApplicationController
   def update
     old_manuscript_data = @medium.manuscript_data
     old_video_data = @medium.video_data
-    old_geogebra_data = @medium.geogebra_data
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
@@ -154,11 +151,6 @@ class MediaController < ApplicationController
     if @medium.manuscript.present? && changed_manuscript
       @medium.file_last_edited = @medium.updated_at if @medium.released
       @medium.manuscript_derivatives!
-      @medium.save
-    end
-    changed_geogebra = @medium.geogebra_data != old_geogebra_data
-    if @medium.geogebra.present? && changed_geogebra
-      @medium.geogebra_derivatives!
       @medium.save
     end
     changed_video = @medium.video_data != old_video_data
@@ -434,27 +426,6 @@ class MediaController < ApplicationController
     prevent_caching unless @medium.free?
   end
 
-  # run the geogebra applet using Geogebra's Javascript API
-  def geogebra
-    if @medium.geogebra.nil?
-      redirect_to :root, alert: I18n.t("controllers.no_geogebra")
-      return
-    end
-    render layout: "geogebra"
-    prevent_caching unless @medium.free?
-  end
-
-  def inline_geogebra
-    if @medium.geogebra.nil?
-      redirect_to :root, alert: I18n.t("controllers.no_geogebra")
-      return
-    end
-
-    send_stored_file(@medium.geogebra, disposition: "inline",
-                                       fallback: "geogebra")
-    prevent_caching unless @medium.free?
-  end
-
   def download
     download_sort = params[:sort]
     file = case download_sort
@@ -462,8 +433,6 @@ class MediaController < ApplicationController
              @medium.video
            when "manuscript"
              @medium.manuscript
-           when "geogebra"
-             @medium.geogebra
            else
              redirect_to :root,
                          alert: I18n.t("controllers.invalid_download")
@@ -744,7 +713,6 @@ class MediaController < ApplicationController
       params.expect(medium: [:sort, :description, :video, :manuscript,
                              :external_reference_link,
                              :external_link_description,
-                             :geogebra, :geogebra_app_name,
                              :teachable_type, :teachable_id,
                              :released, :text, :locale,
                              :content, :annotations_status,
@@ -801,9 +769,6 @@ class MediaController < ApplicationController
         @medium.update(video: nil)
         @medium.update(screenshot: nil)
       end
-      if params[:medium][:detach_geogebra] == "true" || @medium.sort != "WorkedExample"
-        @medium.update(geogebra: nil)
-      end
       return unless params[:medium][:detach_manuscript] == "true"
 
       @medium.update(manuscript: nil)
@@ -842,8 +807,6 @@ class MediaController < ApplicationController
         @medium.video_screenshot_file
       when "manuscript"
         @medium.manuscript_screenshot_file
-      when "geogebra"
-        @medium.geogebra_screenshot_file
       end
     end
 

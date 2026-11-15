@@ -563,14 +563,6 @@ Rails.application.routes.draw do
       to: "media#inline_manuscript",
       as: "inline_manuscript_medium"
 
-  get "media/:id/geogebra",
-      to: "media#geogebra",
-      as: "geogebra_medium"
-
-  get "media/:id/geogebra/inline",
-      to: "media#inline_geogebra",
-      as: "inline_geogebra_medium"
-
   get "media/:id/download/:sort",
       to: "media#download",
       as: "download_medium"
@@ -1382,10 +1374,6 @@ Rails.application.routes.draw do
       :cache,
       upload: MalwareScanGate.endpoint_upload(PdfUploader, :cache)
     ) => "/pdfs/upload"
-    mount GeogebraUploader.upload_endpoint(
-      :cache,
-      upload: MalwareScanGate.endpoint_upload(GeogebraUploader, :cache)
-    ) => "/ggbs/upload"
     mount SubmissionUploader.upload_endpoint(
       :submission_cache,
       upload: MalwareScanGate.endpoint_upload(SubmissionUploader, :submission_cache)

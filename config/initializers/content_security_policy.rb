@@ -12,9 +12,7 @@ Rails.application.configure do
                     :data,
                     "https://cdn.jsdelivr.net")
     policy.frame_ancestors(:self)
-    policy.frame_src(:self,
-                     "https://www.geogebra.org",
-                     "https://*.geogebra.org")
+    policy.frame_src(:self)
     policy.img_src(:self,
                    :blob,
                    :data,
@@ -30,18 +28,14 @@ Rails.application.configure do
                       :unsafe_inline,
                       :wasm_unsafe_eval,
                       "https://cdn.jsdelivr.net",
-                      "https://cdnjs.cloudflare.com",
-                      "https://www.geogebra.org",
-                      "https://*.geogebra.org")
+                      "https://cdnjs.cloudflare.com")
     policy.style_src(:self,
                      :unsafe_inline,
                      "https://cdn.jsdelivr.net",
                      "https://cdnjs.cloudflare.com")
     policy.connect_src(:self,
                        "https://cdn.jsdelivr.net",
-                       "https://cdnjs.cloudflare.com",
-                       "https://www.geogebra.org",
-                       "https://*.geogebra.org")
+                       "https://cdnjs.cloudflare.com")
     policy.form_action(:self)
 
     if Rails.env.development?

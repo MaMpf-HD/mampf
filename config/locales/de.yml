@@ -1435,11 +1435,6 @@ de:
           bestmöglich ausgenutzt wird, sofern ein 16:9 Monitor verwendet wird.
         manuscript: >
           Das Manuskript sollte im pdf-Format vorliegen.
-        geogebra: >
-          Das Geogebra-Applet sollte im ggb-Format vorliegen. Die Auflösung
-          ist idealerweise 500x700 Pixel, für einen erläuternden Text
-          (einschließlich LaTeX) kann in die Inhaltsbeschreibnung des Mediums
-          verwendet werden.
         manuscript_structure: >
           Das ist die aus dem pdf extrahierte Struktur
           des Manuskripts. Du kannst Kapitel, Abschnitte und Einträge in
@@ -1952,8 +1947,6 @@ de:
       video_info: 'Erklärvideo im THymE-Player'
       manuscript: 'Manuskript'
       manuscript_info: 'Manuskript als pdf'
-      geogebra: 'Geogebra-Applet'
-      geogebra_info: 'Geogebra-Applet in neuem Tab'
       medium_for_remark_html: >
         Es gibt ein %{medium} zu dieser Erläuterung.
       media_for_remark_html: >
@@ -2540,17 +2533,6 @@ de:
         sind. Es handelt sich hierbei um Items, die an anderen Stellen
         referenziert werden und zu diesem Manuskript gehören, aber in der
         vorliegenden pdf-Datei nicht mehr vorkommen.
-  geogebra:
-    geogebra: Geogebra-Applet
-    download: Applet herunterladen
-    app_name: Applet-Typ
-    view: Geogebra-Applet im Browser ansehen
-    size: Größe
-    invalid_archive: Ungültiges GeoGebra-Archiv.
-    attribution_html: >
-      Dieses Applet wurde mit %{geogebra_link} erstellt, die obige Animation
-      verwendet die GeoGebra JavaScript API.
-      Copyright © International GeoGebra Institute, 2013
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
@@ -4180,7 +4162,6 @@ de:
       MaMpf-Homepage umgeleitet.
     no_video: 'Zu diesem Medium existiert kein Video.'
     no_manuscript: 'Zu diesem Medium existiert kein Manuskript.'
-    no_geogebra: 'Zu diesem Medium existiert kein Geogebra-Applet.'
     invalid_download: 'Der angeforderte Download ist ungültig.'
     no_medium: 'Ein Medium mit der angeforderten id existiert nicht.'
     contradiction: 'Widersprüchliche Suchanfrage.'
