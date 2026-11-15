@@ -464,7 +464,15 @@
                 data-controller="certification-inline"
               <% end %>
             >
-              <td><%= record.user.tutorial_name %></td>
+              <td>
+                <div class="d-flex justify-content-between align-items-center">
+                  <%= record.user.tutorial_name %>
+
+                  <span class="ms-3">
+                    <%= render "shared/copy_email_button", email: record.user.email %>
+                  </span>
+                </div>
+              </td>
 
               <td class="text-end numeric">
                 <% if @rule&.min_points_absolute.present? %>
@@ -647,8 +655,6 @@
                 <% if decided %>
                   <div data-certification-inline-target="display">
                     <div class="d-flex align-items-center justify-content-end gap-1">
-                      <%= render "shared/copy_email_button", email: record.user.email %>
-
                       <button
                         type="button"
                         class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
@@ -754,8 +760,6 @@
                     fail_btn = proposal&.proposed_status == :failed ?
                       "btn-danger" : "btn-outline-danger" %>
                   <div class="d-flex align-items-center gap-1 justify-content-end">
-                    <%= render "shared/copy_email_button", email: record.user.email %>
-
                     <%= button_to(
                           lecture_student_performance_certifications_path(
                             @lecture
