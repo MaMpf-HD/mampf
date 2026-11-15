@@ -4,6 +4,13 @@
   # user
 
   thread = comment.thread
+
+  # Data attributes that show the given image while the pointer is over a vote button
+  hover_image = lambda do |image|
+    { controller: "hover-image",
+      hover_image_src_value: image_path(image),
+      action: "mouseover->hover-image#swap mouseout->hover-image#restore" }
+  end
 %>
 
 <% if comment.can_be_voted_on? %>
@@ -19,16 +26,14 @@
             method: :put,
             remote: true do %>
         <%= image_submit_tag "commontator/upvote.png",
-              onmouseover: "this.src='#{image_path("commontator/upvote_hover.png")}'",
-              onmouseout: "this.src='#{image_path("commontator/upvote.png")}'" %>
+              data: hover_image.call("commontator/upvote_hover.png") %>
       <% end %>
     <% elsif can_vote %>
       <%= form_tag commontator.unvote_comment_path(comment),
             method: :put,
             remote: true do %>
         <%= image_submit_tag "commontator/upvote_active.png",
-              onmouseover: "this.src='#{image_path("commontator/upvote.png")}'",
-              onmouseout: "this.src='#{image_path("commontator/upvote_active.png")}'"
+              data: hover_image.call("commontator/upvote.png")
         %>
       <% end %>
     <% else %>
@@ -49,16 +54,14 @@
             method: :put,
             remote: true do %>
         <%= image_submit_tag "commontator/downvote.png",
-              onmouseover: "this.src='#{image_path("commontator/downvote_hover.png")}'",
-              onmouseout: "this.src='#{image_path("commontator/downvote.png")}'" %>
+              data: hover_image.call("commontator/downvote_hover.png") %>
       <% end %>
     <% elsif can_vote %>
       <%= form_tag commontator.unvote_comment_path(comment),
             method: :put,
             remote: true do %>
         <%= image_submit_tag "commontator/downvote_active.png",
-              onmouseover: "this.src='#{image_path("commontator/downvote.png")}'",
-              onmouseout: "this.src='#{image_path("commontator/downvote_active.png")}'"
+              data: hover_image.call("commontator/downvote.png")
         %>
       <% end %>
     <% else %>

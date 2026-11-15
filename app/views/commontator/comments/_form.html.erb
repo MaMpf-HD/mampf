@@ -44,7 +44,7 @@
                               "commontator-comment-#{comment.parent.id}-reply" :
         "commontator-comment-#{comment.id}-edit-body"
     %>
-    <%= javascript_tag('Commontator.initMentions();') if config.mentions_enabled %>
+    <%= javascript_tag('Commontator.initMentions();', nonce: true) if config.mentions_enabled %>
   </div>
 
   <div class="submit">

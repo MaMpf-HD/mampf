@@ -7,6 +7,7 @@
 <link rel="manifest" href="/manifest.json">
 
 <%= csrf_meta_tags %>
+<%= csp_meta_tag %>
 <%= vite_stylesheet_tag "application.scss",
                         media: "all",
                         "data-turbo-track": "reload" %>

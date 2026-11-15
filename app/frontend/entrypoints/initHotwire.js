@@ -97,6 +97,12 @@ window.Stimulus.register("bs-popover", BsPopoverController);
 import RowClickController from "~/controllers/row_click.controller.js";
 window.Stimulus.register("row-click", RowClickController);
 
+import HoverImageController from "~/controllers/hover_image.controller.js";
+window.Stimulus.register("hover-image", HoverImageController);
+
+import ImpersonateDropdownController from "~/dev/impersonate_dropdown.controller.js";
+window.Stimulus.register("impersonate-dropdown", ImpersonateDropdownController);
+
 import DatetimepickerController from "~/controllers/datetimepicker.controller.js";
 window.Stimulus.register("datetimepicker", DatetimepickerController);
 

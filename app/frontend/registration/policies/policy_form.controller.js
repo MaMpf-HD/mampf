@@ -7,6 +7,11 @@ export default class extends Controller {
     this.changeKind();
   }
 
+  /** Empties the Turbo frame the form was loaded into, which closes the form. */
+  closeFrame() {
+    this.element.closest("turbo-frame").innerHTML = "";
+  }
+
   changeKind() {
     const selectedKind = this.kindSelectTarget.value;
     this.configSectionTargets.forEach((section) => {
