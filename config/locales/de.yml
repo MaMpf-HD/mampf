@@ -2468,6 +2468,7 @@ de:
     length: 'Länge'
     size: 'Größe'
     updated: 'Aktualisiert'
+    as_of: 'Stand'
     pages: 'S'
     destinations: 'Destinations'
     structure: 'Struktur des Manuskripts'
