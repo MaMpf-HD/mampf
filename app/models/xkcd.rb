@@ -3,12 +3,10 @@ class Xkcd
   IMAGE_HOST = "imgs.xkcd.com".freeze
   IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif"].freeze
 
-  # Seconds the requests to xkcd may take together. The quiz's last page
-  # waits for the comic, and goes without one after that.
-  DEADLINE = 8
+  TIMEOUT_IN_SECONDS = 8
 
   def self.random
-    Timeout.timeout(DEADLINE) { fetch_random }
+    Timeout.timeout(TIMEOUT_IN_SECONDS) { fetch_random }
   rescue StandardError => e
     { error: e.message }
   end

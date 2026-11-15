@@ -118,7 +118,6 @@ class User < ApplicationRecord
   # When the user last read each comment thread, see Reader.
   has_many :readers, dependent: :delete_all
 
-  # The user's own notes on media, see #own_annotations.
   has_many :annotations, dependent: :delete_all
 
   # a user has many announcements as announcer
@@ -1129,8 +1128,7 @@ class User < ApplicationRecord
       Medium.where(id: sole_editor_media.pluck(:id)).destroy_all
     end
 
-    # Takes back the user's likes on comments. Unvoting through the comment
-    # keeps its cached like count in step with the votes that remain.
+    # Unvotes through the comment so that its cached like count stays right.
     def withdraw_comment_votes
       voted = ActsAsVotable::Vote.where(voter: self, votable_type: "Commontator::Comment")
       Commontator::Comment.where(id: voted.select(:votable_id))

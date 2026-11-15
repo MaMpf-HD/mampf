@@ -36,9 +36,8 @@ RSpec.describe(Xkcd) do
       .to eq("data:image/png;base64,#{Base64.strict_encode64("png-bytes")}")
   end
 
-  # The comic is fetched while the quiz's last page is rendered.
-  it "goes without the comic when xkcd takes longer than the deadline" do
-    stub_const("Xkcd::DEADLINE", 0.05)
+  it "goes without the comic when xkcd takes longer than the timeout" do
+    stub_const("Xkcd::TIMEOUT_IN_SECONDS", 0.05)
     slow_comic = comic("https://imgs.xkcd.com/comics/title.png")
     allow(URI).to receive(:open).with("https://xkcd.com/2/info.0.json") do
       sleep(0.5)

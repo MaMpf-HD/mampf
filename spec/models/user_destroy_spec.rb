@@ -12,8 +12,8 @@ RSpec.describe(User) do
     expect { user.destroy! }.to change(Annotation, :count).by(-1)
   end
 
-  # The talk media go before anything else of the account, and a medium
-  # cannot go while notes point to it - the user's or anybody else's.
+  # Talk media are deleted before the account's own annotations, so the medium
+  # has to take its annotations along.
   it "deletes an account whose own talk medium carries annotations" do
     talk_medium = create(:talk_medium)
     talk_medium.editors = [user]

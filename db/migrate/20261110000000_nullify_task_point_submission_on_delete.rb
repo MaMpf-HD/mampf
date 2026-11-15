@@ -1,6 +1,6 @@
-# A submission goes when its lecture's deletion date has passed or its only
-# author deletes the account. The points it was marked with belong to the
-# student's participation and stay, without the link to the deleted files.
+# Task points outlive their submission. It is deleted with the lecture's
+# deletion date or its author's account; the points belong to the
+# participation.
 class NullifyTaskPointSubmissionOnDelete < ActiveRecord::Migration[8.0]
   def up
     remove_foreign_key :assessment_task_points, :submissions
