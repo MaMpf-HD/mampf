@@ -76,7 +76,6 @@ module Assessment
 
         # `task_points` rather than `task_points: :task`: the tasks already hang on
         # the assessment, and asking for them again here costs three more queries.
-        # The graders come along because the fold names who marked the sheet.
         def participations
           @participations ||=
             if assessment_ids.empty?
@@ -84,11 +83,12 @@ module Assessment
             else
               Participation
                 .where(assessment_id: assessment_ids, user_id: user.id)
-                .includes(:grader, task_points: :grader)
+                .includes(:task_points)
                 .index_by(&:assessment_id)
             end
         end
 
+        # The tutors come along because a card and the fold name them.
         def submissions
           @submissions ||=
             if assignments.empty?
@@ -97,7 +97,7 @@ module Assessment
               Submission.joins(:user_submission_joins)
                         .where(user_submission_joins: { user_id: user.id },
                                assignment_id: assignments.map(&:id))
-                        .includes(:users)
+                        .includes(:users, tutorial: :tutors)
                         .index_by(&:assignment_id)
             end
         end
@@ -337,21 +337,9 @@ module Assessment
           lecture.next_scheduled_sheet
         end
 
-        # The hand-ins that get a card of their own. A card names the group it
-        # hands in to and the tutors on it; a row in the list does not, so the
-        # two queries for them are spent here rather than over every sheet of
-        # the lecture - and not at all once the last sheet is closed.
+        # The hand-ins that get a card of their own.
         def open_submissions
           @open_submissions ||= open_sheets.filter_map(&:submission)
-                                           .tap { |records| preload_tutorials(records) }
-        end
-
-        def preload_tutorials(records)
-          return if records.empty?
-
-          ActiveRecord::Associations::Preloader
-            .new(records: records, associations: { tutorial: :tutors })
-            .call
         end
 
         # Who has been invited to one of those and has not joined yet.
