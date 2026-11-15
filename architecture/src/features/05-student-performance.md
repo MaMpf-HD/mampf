@@ -589,12 +589,13 @@ passed tests cannot be evaluated without them.
 |---|---|
 | points | `:met` · `:pending` (marking outstanding, or a sheet not due yet) · `:not_measurable` (nothing to measure) · `:not_met` |
 | tests | `:met` (enough tests passed) · `:pending` (the tests nobody has settled for the student could still make up the number) · `:not_met` |
+| achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
 
 `held_back_by_list?` defers every verdict while the lecture has not called its
-list of sheets and tests complete and the rule waits for it (`Rule#waits_for_list?`):
-a points threshold moves with every further sheet, and every further test is
-another chance to pass one. A rule that asks for achievements alone does not wait.
-| achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
+list of sheets and tests complete and the rule depends on the assignments
+(`Rule#depends_on_assignments?`): a points threshold moves with every further
+sheet, and every further test is another chance to pass one. A rule that asks
+for achievements alone is not held back.
 
 **`:pending`** means the student is below the threshold but what is still
 outstanding would carry them over it. Two things are outstanding: work handed in,

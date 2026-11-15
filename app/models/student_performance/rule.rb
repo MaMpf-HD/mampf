@@ -65,10 +65,9 @@ module StudentPerformance
       tests_criterion? && min_tests_passed > pass_fail_count
     end
 
-    # Whether a verdict has to wait until the lecture calls its list of sheets
-    # and tests complete: another sheet moves the points, another test is
-    # another chance to pass one.
-    def waits_for_list?
+    # Whether another sheet or test can still change the verdict: the rule
+    # asks for points or for passed tests.
+    def depends_on_assignments?
       points_threshold? || tests_criterion?
     end
 

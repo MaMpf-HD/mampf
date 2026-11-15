@@ -124,7 +124,7 @@ module StudentPerformance
       # A rule that asks for neither points nor passed tests is not moved by
       # another sheet or test.
       def held_back_by_list?
-        !@assignments_complete && rule.waits_for_list?
+        !@assignments_complete && rule.depends_on_assignments?
       end
 
       def tests_status(record)

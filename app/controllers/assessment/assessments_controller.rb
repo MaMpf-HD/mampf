@@ -33,12 +33,13 @@ module Assessment
       @lecture.update!(assignments_complete: params[:complete])
       # Without the change check, a resubmitted form would delete a second
       # time — after the dialog had already been answered with "keep".
-      # A rule that does not wait for the list proposes the same with it open,
-      # so its dialog offers no reset and none is taken.
+      # A rule that does not depend on the assignments proposes the same
+      # without the tick, so its dialog offers no reset and one sent anyway
+      # is ignored.
       wanted = params[:reset_certifications] == "1" &&
                @lecture.saved_change_to_assignments_complete_at? &&
                !@lecture.assignments_complete? &&
-               @lecture.active_performance_rule&.waits_for_list?
+               @lecture.active_performance_rule&.depends_on_assignments?
       count = @lecture.reset_computed_certifications! if wanted
 
       flash_opts = if count

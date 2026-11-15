@@ -16,7 +16,7 @@ module StudentPerformance
       min_tests_passed.present?
     end
 
-    def waits_for_list?
+    def depends_on_assignments?
       points_threshold? || tests_criterion?
     end
   end

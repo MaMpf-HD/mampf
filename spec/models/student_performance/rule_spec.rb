@@ -152,7 +152,7 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
 
         expect(rule).to be_valid
         expect(rule).to be_tests_criterion
-        expect(rule).to be_waits_for_list
+        expect(rule.depends_on_assignments?).to be(true)
         expect(rule).not_to be_no_requirement
       end
 
