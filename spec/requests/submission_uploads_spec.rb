@@ -95,7 +95,6 @@ RSpec.describe("SubmissionUploads", type: :request) do
     expect(form.at_css("input[type=file]")).to be_nil
   end
 
-  # A correction link opened in a new tab arrives as a plain page request.
   it "sends a plain page request for the correction form to the grading table" do
     tutorial = create(:tutorial, :with_tutor_by_id, tutor_id: user.id,
                                                     lecture: assignment.lecture)

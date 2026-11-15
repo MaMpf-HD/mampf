@@ -359,9 +359,8 @@ class SubmissionsController < ApplicationController
              status: :unprocessable_content
     end
 
-    # The correction links only work as Turbo Stream requests. Opened as a
-    # plain page (new tab, before the JS has loaded), they lead to the
-    # grading table the link sits in.
+    # The grading table a correction link sits in. A plain page request for
+    # such a link (opened in a new tab) is sent here.
     def grading_page
       lecture_tutorials_path(@submission.tutorial.lecture,
                              tutorial: @submission.tutorial_id,
