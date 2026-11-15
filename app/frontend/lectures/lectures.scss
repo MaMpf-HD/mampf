@@ -195,3 +195,142 @@ h4.lecture-pane-subheader {
 .btn-outline-lecture-edit {
   @include button-outline-variant($mampf-red);
 }
+
+.pref-section {
+  margin-bottom: 2.5rem;
+}
+.pref-section .helpdesk {
+  font-size: 1rem;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.pref-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+}
+
+.pref-field {
+  min-width: 0;
+  margin-right: 10%;
+
+  .form-label {
+    margin-bottom: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  &--full { grid-column: 1 / -1; }
+
+  &--switch {
+    display: block;
+
+    .form-check-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+  }
+}
+
+.pref-switches {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+
+  .form-check-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+}
+
+.pref-savebar {
+  position: sticky;
+  bottom: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 95%;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  &__text {
+    margin-right: auto;
+    font-size: 0.8125rem;
+    color: var(--bs-secondary-color);
+
+    // Small amber dot instead of a yellow background.
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 0.5rem;
+      height: 0.5rem;
+      margin-right: 0.5rem;
+      border-radius: 50%;
+      background: var(--bs-warning);
+    }
+  }
+}
+
+@media (max-width: 40rem) {
+  .pref-grid { grid-template-columns: 1fr; }
+}
+
+.pref-danger {
+  width: 95%;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  background: #fff;
+}
+
+.pref-danger__title {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--bs-danger);
+}
+
+.pref-danger__subtitle {
+  margin: 0.25rem 0 1rem;
+  font-size: 0.875rem;
+  color: var(--bs-secondary-color);
+}
+
+.pref-danger__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pref-danger__icon {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1rem;
+  color: var(--bs-secondary-color);
+  background: #fff;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+}
+
+.pref-danger__row-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+@media (max-width: 40rem) {
+  .pref-danger__row {
+    grid-template-columns: auto minmax(0, 1fr);
+
+    > .btn { grid-column: 1 / -1; justify-self: start; }
+  }
+}
