@@ -268,8 +268,6 @@ class StandingComponent < ViewComponent::Base
     end
 
     # Starts with "Tests:" unless the count of passed tests stands before it.
-    # A test may be worth nothing and still carry points; the sum then has
-    # no maximum.
     def test_points_part
       return unless tests_apart
 

@@ -35,7 +35,7 @@ class Assignment < ApplicationRecord
   after_update_commit :reopen_after_deadline_move, if: :deadline_moved_ahead?
   after_rollback :forget_deadline_move
   # A moved threshold turns passed tests into failed ones or back, for
-  # everybody who has sat the test.
+  # everybody who took the test.
   after_update_commit :recompute_performance_records,
                       if: :saved_change_to_passing_points?
 

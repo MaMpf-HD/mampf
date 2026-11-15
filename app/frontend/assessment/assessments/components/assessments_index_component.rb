@@ -93,8 +93,6 @@ class AssessmentsIndexComponent < ViewComponent::Base
     lecture.tests_in_points_total? ? :exclude_dialog : :include_dialog
   end
 
-  # Manual decisions count too: once the records are recomputed, they are
-  # flagged as outdated like the computed ones.
   def decisions_count
     @decisions_count ||= lecture.current_certifications.decided.count
   end

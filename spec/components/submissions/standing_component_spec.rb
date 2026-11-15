@@ -175,7 +175,6 @@ RSpec.describe(StandingComponent, type: :component) do
       expect(content).to include(tests_line(points: "5", max: "20"))
     end
 
-    # A task may be worth nothing and still carry points.
     it "shows test points without a maximum where the tests are worth nothing" do
       content = render_standing(standing(total: 30, due: 36, tests_apart: true,
                                          test_total: 2, test_due: 0))
@@ -240,7 +239,6 @@ RSpec.describe(StandingComponent, type: :component) do
       )
     end
 
-    # A test may be worth nothing and still carry points.
     it "adds the tests' points without a maximum where the tests are worth nothing" do
       content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1, tests_failed: 1,
                                          tests_apart: true, test_total: 2, test_due: 0))

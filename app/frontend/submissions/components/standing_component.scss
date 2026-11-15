@@ -18,8 +18,8 @@
   line-height: 1.1;
 }
 
-/* What the number is taken of. A long one runs to a second line beside the
-   number, at the text's own line height rather than the figure's. */
+/* The words after the number ("of 36 points …"). They can wrap, so they get
+   a normal line height instead of the number's. */
 .num-total-of {
   line-height: 1.35;
 }

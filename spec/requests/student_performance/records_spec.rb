@@ -1004,8 +1004,6 @@ RSpec.describe("StudentPerformance::Records", type: :request) do
           .to include(I18n.t("student_performance.records.show.test_failed"))
       end
 
-      # The list holds the tests as well; the total below them does not once
-      # the lecture keeps them out of it, and it has to say so.
       it "says that the total leaves the tests out once the lecture keeps them apart" do
         lecture.update!(tests_in_points_total: false)
         written_test = FactoryBot.create(:assignment, :expired, lecture: lecture,
