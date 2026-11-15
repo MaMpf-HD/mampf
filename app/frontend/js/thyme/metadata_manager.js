@@ -1,3 +1,4 @@
+import { linkTarget } from "~/js/link_target";
 import { onTrackReady } from "./video_events";
 import { renderLatex } from "./utility";
 
@@ -144,12 +145,13 @@ export class MetadataManager {
         text: "link",
         class: "material-icons",
       });
+      const link = linkTarget(meta.link);
       const $extRef = $("<a/>", {
-        href: meta.link,
+        href: link,
         target: "_blank",
       });
       $extRef.append($extIcon);
-      if (!meta.link) {
+      if (!link) {
         $extRef.hide();
       }
       const $description = $("<div/>", {

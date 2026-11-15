@@ -2,4 +2,4 @@
 # view
 if window.matchMedia("screen and (max-width: 767px)")
   .matches || window.matchMedia("screen and (max-device-width: 767px)").matches
-    document.getElementById('<%= @link %>').scrollIntoView()
+    document.getElementById('<%= j @link %>').scrollIntoView()

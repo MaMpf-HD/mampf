@@ -1115,6 +1115,54 @@ RSpec.describe("Media", type: :request) do
     end
   end
 
+  describe "POST /media/:id/import_script_items" do
+    let(:editor) { create(:confirmed_user) }
+    let(:lesson) do
+      create(:valid_lesson, start_destination: "first", end_destination: "last")
+    end
+    let(:lecture) { lesson.lecture }
+    let(:medium) do
+      create(:lesson_medium, :with_lesson_by_id, lesson_id: lesson.id)
+    end
+    let(:path) { import_script_items_path(medium) }
+
+    before do
+      lecture.update!(content_mode: "manuscript")
+      script = create(:lecture_medium, :with_lecture_by_id,
+                      lecture_id: lecture.id, sort: "Script")
+      create(:item, medium: script, sort: "remark", position: 1,
+                    pdf_destination: "first")
+      create(:item, medium: script, sort: "theorem", position: 2,
+                    pdf_destination: "last")
+      create(:editable_user_join, user: editor, editable: lecture)
+      sign_in editor
+    end
+
+    def toc
+      medium.proper_items_by_time.map(&:sort)
+    end
+
+    it "puts the lesson's script items into the table of contents" do
+      expect { post(path, xhr: true) }
+        .to change { toc }.from([]).to(["remark", "theorem"])
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "changes nothing on GET" do
+      expect { get(path, xhr: true) }.not_to(change { toc })
+
+      expect(flash[:alert]).to eq(I18n.t("controllers.no_page"))
+    end
+
+    it "changes nothing for a user who may not edit the medium" do
+      sign_in create(:confirmed_user)
+
+      expect { post(path, xhr: true) }.not_to(change { toc })
+      expect(flash[:alert]).to eq(I18n.t("unauthorized.default"))
+    end
+  end
+
   describe "GET /media/:id/check_annotation_visibility" do
     # SER-05 was a false positive: set_medium (a before_action that also runs for
     # this action) redirects on a missing medium, so the action never sees nil and
