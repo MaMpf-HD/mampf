@@ -29,6 +29,17 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
+      it "says that the points threshold leaves out tests the lecture keeps apart" do
+        FactoryBot.create(:assignment, lecture: lecture, kind: :test)
+        lecture.update!(tests_in_points_total: false)
+
+        get edit_lecture_student_performance_rules_path(lecture)
+
+        expect(response.body).to include(
+          "(#{I18n.t("student_performance.rules.show.without_tests")})"
+        )
+      end
+
       it "says why the rule cannot be removed while a registration asks for it" do
         FactoryBot.create(:student_performance_rule, :active, :with_percentage,
                           lecture: lecture)

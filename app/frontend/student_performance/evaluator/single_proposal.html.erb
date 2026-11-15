@@ -89,6 +89,10 @@
 
             <p class="text-muted small mb-2">
               <%= t("student_performance.evaluator.single_proposal.measured_against_all") %>
+
+              <% if @lecture.tests_kept_apart? %>
+                <%= t("student_performance.evaluator.single_proposal.measured_without_tests") %>
+              <% end %>
             </p>
 
             <div class="d-flex justify-content-between mb-2">

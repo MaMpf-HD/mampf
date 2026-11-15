@@ -198,6 +198,20 @@ de:
           other: 'Ohne das Häkchen entscheidet die Zulassungsregel nichts — %{count} berechnete Zulassungen widersprechen ihr danach. Sie bleiben, weil die Anmeldung für %{campaigns} sie noch abfragt.'
         reset: 'Zurücksetzen'
         confirm: 'Behalten'
+    tests_in_points_total:
+      label: 'Testpunkte zählen zur Punktesumme'
+      hint: 'Ohne das Häkchen bilden nur die Übungsblätter die Punktesumme der Studierenden und damit auch die Punkteschwelle der Zulassungsregel. Die Testergebnisse stehen dann daneben.'
+      exclude_dialog:
+        title: 'Tests aus der Punktesumme nehmen'
+        body: 'Die Punktesumme aller Studierenden wird dann nur noch aus den Übungsblättern gebildet, auch für die Punkteschwelle der Zulassungsregel. Die Testergebnisse bleiben sichtbar und stehen neben der Summe.'
+        confirm: 'Herausnehmen'
+      include_dialog:
+        title: 'Tests in die Punktesumme aufnehmen'
+        body: 'Die Punktesumme aller Studierenden wird dann aus Übungsblättern und Tests gebildet, auch für die Punkteschwelle der Zulassungsregel.'
+        confirm: 'Aufnehmen'
+      decisions_stay:
+        one: '%{count} Zulassung ist schon entschieden. Sie bleibt bestehen; im Reiter %{tab} siehst Du, ob sie noch zur neuen Punktesumme passt.'
+        other: '%{count} Zulassungen sind schon entschieden. Sie bleiben bestehen; im Reiter %{tab} siehst Du, welche nicht mehr zur neuen Punktesumme passen.'
     campaign_status:
       title: 'Anmeldung'
       none: 'Kein Verfahren'
