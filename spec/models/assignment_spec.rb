@@ -57,7 +57,8 @@ RSpec.describe(Assignment, type: :model) do
     end
 
     it "is due with the end of the week it was given a day of" do
-      expect(test.deadline).to eq((1.week.from_now.beginning_of_week + 2.days).end_of_week)
+      expect(test.deadline)
+        .to be_within(1.second).of((1.week.from_now.beginning_of_week + 2.days).end_of_week)
       expect(test.test_week).to eq(1.week.from_now.to_date.beginning_of_week)
       expect(test.test_period).to eq(
         1.week.from_now.beginning_of_week.to_date..(1.week.from_now.end_of_week.to_date)
@@ -167,6 +168,15 @@ RSpec.describe(Assignment, type: :model) do
 
       test.test_week = ""
       expect(test).to be_invalid
+    end
+
+    # The settings form sends the week with every save.
+    it "takes the week it already has without counting as changed" do
+      stored = Assignment.find(test.id)
+
+      stored.test_week = stored.test_week.iso8601
+
+      expect(stored).not_to be_changed
     end
 
     # Written unannounced, a test is set up once its last group has sat it.
@@ -439,6 +449,17 @@ RSpec.describe(Assignment, type: :model) do
       lecture.update!(assignments_complete: true)
 
       assignment.update!(title: "Renamed")
+
+      expect(lecture.reload.assignments_complete?).to be(true)
+    end
+
+    it "stays closed while a coming test is saved with the week it has" do
+      test = FactoryBot.create(:valid_assignment, lecture: lecture, kind: :test,
+                                                  deadline: 1.week.from_now)
+      lecture.update!(assignments_complete: true)
+
+      Assignment.find(test.id).update!(test_week: test.test_week.iso8601,
+                                       passing_points: 5)
 
       expect(lecture.reload.assignments_complete?).to be(true)
     end

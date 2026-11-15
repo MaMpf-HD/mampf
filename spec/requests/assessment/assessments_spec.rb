@@ -259,6 +259,21 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(threshold.call("")).to be_nil
       end
 
+      it "sets the passing threshold of a test written weeks ago" do
+        test = Timecop.travel(4.weeks.ago) do
+          create(:valid_assignment, lecture: lecture, kind: :test, deadline: Time.zone.now)
+        end
+
+        patch assessment_assessment_path(test.assessment.id),
+              params: { assessment_assessment: {
+                assessable_attributes: { id: test.id, test_week: test.test_week.iso8601,
+                                         test_week_count: "1", passing_points: "5" }
+              } },
+              as: :turbo_stream
+
+        expect(test.reload.passing_points).to eq(5)
+      end
+
       it "lists a test's passing threshold in the overview" do
         create(:valid_assignment, lecture: lecture, kind: :test, passing_points: 4.5)
 

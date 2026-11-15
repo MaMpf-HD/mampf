@@ -354,7 +354,13 @@ class Assignment < ApplicationRecord
     end
 
     def test_deadline_from(first)
-      first.in_time_zone.end_of_week + (test_week_count.to_i - 1).weeks
+      end_of_test_week(first.in_time_zone) + (test_week_count.to_i - 1).weeks
+    end
+
+    # Cut to the microseconds the database stores. Otherwise the week a test
+    # already has, sent again by the settings form, counts as a moved deadline.
+    def end_of_test_week(time)
+      time.end_of_week.floor(6)
     end
 
     # A test written unannounced can only be set up once its last group has
@@ -368,7 +374,7 @@ class Assignment < ApplicationRecord
     end
 
     def end_test_week
-      self.deadline = deadline.end_of_week if deadline
+      self.deadline = end_of_test_week(deadline) if deadline
     end
 
     def inherit_deletion_date_from_lecture
