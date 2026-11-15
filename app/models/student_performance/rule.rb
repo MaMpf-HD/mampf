@@ -1,9 +1,11 @@
 module StudentPerformance
   # What a lecture asks of a student before they may sit its exam: a points
-  # threshold, a set of required achievements, both, or neither. With neither,
-  # every student is proposed as eligible and staff refuse single students by
-  # hand. One rule is active per lecture; the earlier ones stay for the
-  # certifications that cite them.
+  # threshold, a number of passed tests, a set of required achievements, any
+  # of them together, or nothing. With nothing, every student is proposed as
+  # eligible and staff refuse single students by hand. Only a test with a
+  # passing threshold can be passed, so only those are counted. One rule is
+  # active per lecture; the earlier ones stay for the certifications that cite
+  # them.
   class Rule < ApplicationRecord
     belongs_to :lecture
 
@@ -26,7 +28,11 @@ module StudentPerformance
     validates :min_points_absolute,
               numericality: { greater_than_or_equal_to: 0 },
               allow_nil: true
+    validates :min_tests_passed,
+              numericality: { only_integer: true, greater_than: 0 },
+              allow_nil: true
     before_validation :drop_zero_threshold
+    before_validation :drop_zero_tests
     validate :threshold_matches_mode
 
     # What this rule asks of one student, in points, out of the maximum it is
@@ -45,17 +51,30 @@ module StudentPerformance
       end
     end
 
-    # Whether points decide anything. Only then does the rule wait for the
-    # lecture's list of sheets and tests: another sheet changes the points
+    # Whether points decide anything: another sheet changes the points
     # reachable and, as a share, the points needed.
     def points_threshold?
       min_percentage.present? || min_points_absolute.present?
     end
 
+    def tests_criterion?
+      min_tests_passed.present?
+    end
+
+    def more_tests_than?(pass_fail_count)
+      tests_criterion? && min_tests_passed > pass_fail_count
+    end
+
+    # Whether another sheet or test can still change the verdict: the rule
+    # asks for points or for passed tests.
+    def depends_on_assignments?
+      points_threshold? || tests_criterion?
+    end
+
     # Whether the rule asks for nothing, so that every student is proposed as
     # eligible.
     def no_requirement?
-      !points_threshold? && required_achievements.none?
+      !points_threshold? && !tests_criterion? && required_achievements.none?
     end
 
     def rule_achievement_ids_set
@@ -67,15 +86,26 @@ module StudentPerformance
       # Stores a zero threshold as threshold_mode none, so that 0 %, 0 points
       # and "No point threshold" are the same rule and show as "No requirement".
       def drop_zero_threshold
-        if threshold_mode_percentage? && min_percentage&.zero?
+        if threshold_mode_percentage? && typed_zero?(:min_percentage)
           self.min_percentage = nil
-        elsif threshold_mode_absolute? && min_points_absolute&.zero?
+        elsif threshold_mode_absolute? && typed_zero?(:min_points_absolute)
           self.min_points_absolute = nil
         else
           return
         end
 
         self.threshold_mode = :none
+      end
+
+      def drop_zero_tests
+        self.min_tests_passed = nil if typed_zero?(:min_tests_passed)
+      end
+
+      # Whether the form sent a zero. Rails also casts text to 0, and a
+      # fraction for a whole number; those are left to the validation.
+      def typed_zero?(attribute)
+        typed = public_send(:"#{attribute}_before_type_cast").to_s
+        Float(typed, exception: false)&.zero? || false
       end
 
       # The mode is the single source of truth; the two value columns have to

@@ -140,7 +140,23 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   # rebuilt from the rows, so the two never disagree.
   def summary
     MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?,
-                                teams: team_count)
+                                teams: team_count, extra_parts: passing_parts)
+  end
+
+  def passing_parts
+    return [] unless @assignment.passing_points
+
+    verdicts = roster_rows.filter_map do |user, tutorial|
+      row = participation_for(user, tutorial)
+      @assignment.test_verdict(status: row.status, points_total: row.points_total)
+    end.tally
+    scope = "assessment.grading_tutorial.summary"
+    threshold = ActiveSupport::NumberHelper.number_to_rounded(
+      @assignment.passing_points, precision: 2, strip_insignificant_zeros: true
+    )
+    [I18n.t("#{scope}.passing_points", points: threshold),
+     I18n.t("#{scope}.passed", count: verdicts.fetch(:passed, 0)),
+     I18n.t("#{scope}.failed", count: verdicts.fetch(:failed, 0))]
   end
 
   # A team row speaks for its first member with a participation, as the row

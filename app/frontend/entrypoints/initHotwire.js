@@ -195,6 +195,9 @@ window.Stimulus.register("certification-inline", CertificationInlineController);
 import ThresholdModeController from "~/student_performance/rules/threshold-mode.controller.js";
 window.Stimulus.register("threshold-mode", ThresholdModeController);
 
+import TestsCriterionController from "~/student_performance/rules/tests_criterion.controller.js";
+window.Stimulus.register("tests-criterion", TestsCriterionController);
+
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
 
