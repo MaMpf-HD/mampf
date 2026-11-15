@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { APIRequestContext, Browser, BrowserContext, expect, Page } from "@playwright/test";
 import { callBackend } from "./backend";
+import { CspViolation, watchCsp } from "./csp";
 
 export type User = {
   id: number;
@@ -63,8 +64,10 @@ async function useUser(
 export async function userPage(
   browser: Browser,
   role: string,
+  cspViolations: CspViolation[],
 ): Promise<[User, Page, BrowserContext]> {
   const browserContext = await browser.newContext();
+  await watchCsp(browserContext, cspViolations);
   const userPage = await browserContext.newPage();
   const user = await useUser(userPage.request, role);
   return [user, userPage, browserContext];

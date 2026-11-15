@@ -1,6 +1,7 @@
-import { test as base, Page } from "@playwright/test";
+import { test as base, expect, Page } from "@playwright/test";
 import { User, userPage } from "./auth";
 import { callBackend } from "./backend";
+import { CspViolation, watchCsp } from "./csp";
 import { FactoryBot } from "./factorybot";
 import { appOrigin } from "./servers";
 import { TimeCop } from "./timecop";
@@ -17,6 +18,7 @@ class UserFixture {
 
 type MaMpfFixtures = {
   _forEachTest: Array<void>;
+  cspViolations: CspViolation[];
   student: UserFixture;
   student2: UserFixture;
   admin: UserFixture;
@@ -45,43 +47,59 @@ export const test = base.extend<MaMpfFixtures>({
     }, { auto: true },
   ],
 
-  student: async ({ browser }, use) => {
-    const [user, page, browserContext] = await userPage(browser, "student");
+  // A test fails if the Content Security Policy blocked something on a page
+  // it opened, so a script the policy does not let run cannot go unnoticed.
+  cspViolations: [
+    // eslint-disable-next-line no-empty-pattern
+    async ({}, use) => {
+      const violations: CspViolation[] = [];
+      await use(violations);
+      expect(violations).toEqual([]);
+    }, { auto: true },
+  ],
+
+  context: async ({ context, cspViolations }, use) => {
+    await watchCsp(context, cspViolations);
+    await use(context);
+  },
+
+  student: async ({ browser, cspViolations }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "student", cspViolations);
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();
   },
 
-  student2: async ({ browser }, use) => {
-    const [user, page, browserContext] = await userPage(browser, "student2");
+  student2: async ({ browser, cspViolations }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "student2", cspViolations);
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();
   },
 
-  admin: async ({ browser }, use) => {
-    const [user, page, browserContext] = await userPage(browser, "admin");
+  admin: async ({ browser, cspViolations }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "admin", cspViolations);
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();
   },
 
-  teacher: async ({ browser }, use) => {
-    const [user, page, browserContext] = await userPage(browser, "teacher");
+  teacher: async ({ browser, cspViolations }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "teacher", cspViolations);
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();
   },
 
-  tutor: async ({ browser }, use) => {
-    const [user, page, browserContext] = await userPage(browser, "tutor");
+  tutor: async ({ browser, cspViolations }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "tutor", cspViolations);
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();
   },
 
-  tutor2: async ({ browser }, use) => {
-    const [user, page, browserContext] = await userPage(browser, "tutor2");
+  tutor2: async ({ browser, cspViolations }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "tutor2", cspViolations);
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();
