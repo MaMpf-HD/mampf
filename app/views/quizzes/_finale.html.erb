@@ -27,9 +27,10 @@
               <%= t('admin.quiz.xkcd_error') %>
             </div>
           <% else %>
-            <%= link_to image_tag(xkcd['img'],
+            <%= link_to image_tag(xkcd['img_data'],
+                                  alt: xkcd['title'],
                                   class: "img-fluid"),
-                        xkcd['img'],
+                        "https://xkcd.com/#{xkcd['num']}/",
                         target: :_blank,
                         title: xkcd['alt'] %>
           <% end %>
