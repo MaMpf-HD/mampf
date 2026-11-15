@@ -11,8 +11,7 @@ module Assessment
       end
 
       def call
-        Result.new(sheets: sheets_with_correctors, standing: standing,
-                   open_sheets: open_sheets,
+        Result.new(sheets: sheets, standing: standing, open_sheets: open_sheets,
                    due: due, latest_marked: latest_marked, invitations: invitations,
                    possible_partners: possible_partners, invited_users: invited_users,
                    next_scheduled: next_scheduled)
@@ -89,6 +88,7 @@ module Assessment
             end
         end
 
+        # The tutors come along because a card and the fold name them.
         def submissions
           @submissions ||=
             if assignments.empty?
@@ -97,14 +97,9 @@ module Assessment
               Submission.joins(:user_submission_joins)
                         .where(user_submission_joins: { user_id: user.id },
                                assignment_id: assignments.map(&:id))
-                        .includes(:users)
+                        .includes(:users, tutorial: :tutors)
                         .index_by(&:assignment_id)
             end
-        end
-
-        def sheets_with_correctors
-          preload_tutorials(sheets.select(&:correction_visible?).filter_map(&:submission))
-          sheets
         end
 
         def sightings
@@ -303,21 +298,9 @@ module Assessment
           lecture.next_scheduled_sheet
         end
 
-        # The hand-ins that get a card of their own. A card names the group it
-        # hands in to and the tutors on it; a row in the list does not, so the
-        # two queries for them are spent here rather than over every sheet of
-        # the lecture - and not at all once the last sheet is closed.
+        # The hand-ins that get a card of their own.
         def open_submissions
           @open_submissions ||= open_sheets.filter_map(&:submission)
-                                           .tap { |records| preload_tutorials(records) }
-        end
-
-        def preload_tutorials(records)
-          return if records.empty?
-
-          ActiveRecord::Associations::Preloader
-            .new(records: records, associations: { tutorial: :tutors })
-            .call
         end
 
         # Who has been invited to one of those and has not joined yet.
