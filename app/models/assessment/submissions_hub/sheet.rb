@@ -94,8 +94,6 @@ module Assessment
         participation.graded_at || latest_task_point&.updated_at
       end
 
-      # Sheets have no release step: a correction shows as soon as it is
-      # uploaded, points as soon as they are entered.
       def correction_visible?
         submission&.correction.present? || state.in?([:marked, :partially_marked])
       end

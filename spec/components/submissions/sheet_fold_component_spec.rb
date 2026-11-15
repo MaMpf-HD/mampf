@@ -402,8 +402,6 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       I18n.t("submission.hub.fold.correctors", count: 1)
     end
 
-    # Cross-tutorial teams go to the least busy group, so the student cannot
-    # tell whose desk their hand-in landed on.
     it "names a tutor of another group, with the group and the address" do
       reader_rostered(group("Group 1", [ada]))
 
@@ -424,7 +422,6 @@ RSpec.describe(SheetFoldComponent, type: :component) do
       expect(content).not_to include(corrector_line)
     end
 
-    # A tutor with two groups is the student's tutor whichever group it was.
     it "says nothing where the other group has the student's tutor" do
       reader_rostered(group("Group 1", [ada]))
 
