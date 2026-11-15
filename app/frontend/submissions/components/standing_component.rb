@@ -280,8 +280,6 @@ class StandingComponent < ViewComponent::Base
       t("#{key}_no_max", points: number(test_points_total)) if test_points_total.to_f.positive?
     end
 
-    # How many tests are still to come is only known once the lecture calls
-    # its list complete.
     def tests_to_come_part
       return unless standing.assignments_complete && tests_to_come.positive?
 

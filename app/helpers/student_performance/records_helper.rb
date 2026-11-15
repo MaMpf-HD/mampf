@@ -20,8 +20,6 @@ module StudentPerformance
       end
     end
 
-    # "passed" or "not passed" for a test's row on a student's page, nothing
-    # where the test has no passing threshold or nothing is settled.
     def test_verdict_text(assessment, participation)
       verdict = assessment.assessable.test_verdict(status: participation&.status,
                                                    points_total: participation&.points_total)

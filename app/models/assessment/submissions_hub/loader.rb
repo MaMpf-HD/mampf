@@ -249,9 +249,8 @@ module Assessment
           test_sheets.select { |sheet| sheet.assignment.passing_points }
         end
 
-        # How many tests the reader has passed and failed, read off the
-        # sheets rather than the record: the record counts a result from the
-        # moment it is entered, the reader only from when they may see it.
+        # Counted from the sheets, not the record: the record has a result
+        # as soon as it is entered, the student's page only once it is visible.
         def test_verdicts
           @test_verdicts ||= pass_fail_test_sheets.filter_map(&:test_verdict).tally
         end

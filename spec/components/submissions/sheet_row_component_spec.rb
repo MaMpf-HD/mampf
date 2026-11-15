@@ -14,8 +14,6 @@ RSpec.describe(SheetRowComponent, type: :component) do
   # problems, so a sheet worth 16 has them. The two are told apart where it
   # matters - a problem may be set at 0.
   def sheet(state, points: nil, max_points: 16, tasks_set_up: nil, **assignment_attrs)
-    # Asked of the sheet, which gives a verdict only once the reader may see
-    # the result.
     test_verdict = assignment_attrs.delete(:test_verdict)
     # `dom_id` names the row after the assignment, which takes a key.
     assignment = instance_double(Assignment, title: "Homework 8",

@@ -50,8 +50,7 @@ module StudentPerformance
     # threshold_mode. Require assignments_complete and current due_points so
     # decisions account for assignments being created and points still reachable.
     #
-    # `pass_fail_test_ids` are the lecture's tests with a passing threshold. A
-    # rule that asks for passed tests cannot be evaluated without them.
+    # `pass_fail_test_ids` are the lecture's tests with a passing threshold.
     def initialize(rule, assignments_complete:, due_points:, pass_fail_test_ids: nil)
       @rule = rule
       @assignments_complete = assignments_complete
@@ -128,9 +127,6 @@ module StudentPerformance
         !@assignments_complete && rule.waits_for_list?
       end
 
-      # Passing enough tests settles the criterion whatever is still to come.
-      # Short of that it stays open while the tests nobody has settled for the
-      # student could still make up the number.
       def tests_status(record)
         return :met unless rule.tests_criterion?
 
@@ -156,9 +152,9 @@ module StudentPerformance
           record.tests_failed_among(pass_fail_test_ids)
       end
 
-      # Raises where the tests were not given at all, rather than count none
-      # and let every student miss the criterion. An empty set is an answer:
-      # the lecture has no test with a passing threshold.
+      # Raises instead of counting no tests, which would make every student
+      # miss the criterion. An empty set is fine: no test has a passing
+      # threshold.
       def pass_fail_test_ids
         @pass_fail_test_ids || raise(ArgumentError, "no pass/fail tests given for min_tests_passed")
       end

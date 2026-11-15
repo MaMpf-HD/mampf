@@ -744,8 +744,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.missed_criteria).to eq([:tests])
       end
 
-      # The record may still name a test that lost its threshold or was
-      # deleted after the record was written.
       it "counts only tests that carry a passing threshold today" do
         result = evaluate(passed: [11, 99], failed: [12, 13])
 
@@ -753,7 +751,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.details[:tests_passed]).to eq(1)
       end
 
-      # Another test is another chance to pass one.
       it "defers every verdict while the list of sheets and tests is open" do
         result = evaluate(passed: [11], failed: [12, 13], complete: false)
 
@@ -772,7 +769,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
           .to eq(:inconclusive)
       end
 
-      # A missed criterion settles the case whatever else is still open.
       it "proposes :failed for a missed achievement although tests are still open" do
         achievement = FactoryBot.create(:achievement, :boolean, lecture: lecture)
         FactoryBot.create(:student_performance_rule_achievement,
@@ -810,7 +806,6 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.missed_criteria).to eq([:tests])
       end
 
-      # Not given at all is not the same as an empty list, which is an answer.
       it "refuses to evaluate without being told which tests are pass/fail" do
         expect { evaluate(pass_fail_test_ids: nil) }
           .to raise_error(ArgumentError, %r{no pass/fail tests given})

@@ -41,8 +41,6 @@ module StudentPerformance
         scope.joins(:user).merge(User.shown_name_like(query))
       end
 
-      # Read once per request: the evaluators and the pages ask for the same
-      # tests.
       def pass_fail_test_ids
         @pass_fail_test_ids ||= @lecture.pass_fail_test_ids
       end

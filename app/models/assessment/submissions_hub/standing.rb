@@ -8,7 +8,7 @@ module Assessment
     # `test_points_*` figures hold the tests'.
     #
     # `pass_fail_tests` counts the tests with a passing threshold, `tests_passed`
-    # and `tests_failed` those of them the reader can see a result for.
+    # and `tests_failed` those of them the student can see a result for.
     Standing = Struct.new(:record, :rule, :achievement_values,
                           :points_still_open, :points_marked_so_far,
                           :points_awaiting_marks, :sheets_awaiting_marks,
@@ -50,8 +50,6 @@ module Assessment
         rule&.min_tests_passed
       end
 
-      # Like the points, only once the lecture says its list is complete:
-      # another test is another chance to pass one.
       def tests_out_of_reach?
         return false unless assignments_complete && tests_needed
 

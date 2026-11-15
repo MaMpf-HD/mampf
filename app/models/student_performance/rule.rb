@@ -98,14 +98,12 @@ module StudentPerformance
         self.threshold_mode = :none
       end
 
-      # Stores "0 tests" as no criterion, as a zero threshold is stored.
       def drop_zero_tests
         self.min_tests_passed = nil if typed_zero?(:min_tests_passed)
       end
 
-      # Whether a zero was given. The cast value cannot say: Rails casts text
-      # to 0 as well, and for a whole number a fraction too. Those are for the
-      # validation to refuse, not for a requirement to vanish over.
+      # Whether the form sent a zero. Rails also casts text to 0, and a
+      # fraction for a whole number; those are left to the validation.
       def typed_zero?(attribute)
         typed = public_send(:"#{attribute}_before_type_cast").to_s
         Float(typed, exception: false)&.zero? || false

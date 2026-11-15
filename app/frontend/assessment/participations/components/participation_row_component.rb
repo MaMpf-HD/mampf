@@ -78,8 +78,6 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.is_a?(Assignment) && @assessable.kind_test?
   end
 
-  # Reads the verdict off what is saved, like the status: the total in the
-  # row moves while points are typed, the verdict only once they are saved.
   def test_verdict_label
     return unless test?
 

@@ -34,8 +34,6 @@ class Assignment < ApplicationRecord
   after_create_commit :reopen_lecture_assignment_list
   after_update_commit :reopen_after_deadline_move, if: :deadline_moved_ahead?
   after_rollback :forget_deadline_move
-  # A moved threshold turns passed tests into failed ones or back, for
-  # everybody who took the test.
   after_update_commit :recompute_performance_records,
                       if: :saved_change_to_passing_points?
 
@@ -189,10 +187,9 @@ class Assignment < ApplicationRecord
     weeks.sort
   end
 
-  # Decides for the performance record and for every page whether a test is
-  # passed. Excused counts as passed, absent as failed. Nil while nothing is
-  # settled for the student - a reviewed row without a total included - and
-  # for a test without a passing threshold.
+  # Whether the test is passed, for the performance record and every page.
+  # Nil while nothing is settled for the student, and for a test without a
+  # passing threshold.
   def test_verdict(status:, points_total:)
     return if passing_points.nil?
 

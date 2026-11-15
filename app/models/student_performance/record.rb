@@ -9,9 +9,8 @@ module StudentPerformance
 
     validates :lecture_id, uniqueness: { scope: :user_id }
 
-    # How many of the given tests the student has passed, or failed. The
-    # caller names the tests that carry a passing threshold today: the lists
-    # may still hold a test that has lost its threshold or been deleted since.
+    # Counts among the given tests only: the stored lists may still hold a
+    # test that has lost its threshold or been deleted.
     def tests_passed_among(test_ids)
       among(tests_passed_ids, test_ids)
     end

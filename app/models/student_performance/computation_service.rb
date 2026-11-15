@@ -113,9 +113,8 @@ module StudentPerformance
         aggregate_points_from(participations)
       end
 
-      # The tests that can be passed or failed, by the id of their assessment.
-      # They are read apart from the points: a lecture may keep its tests out
-      # of the points total and still ask for a number of them to be passed.
+      # Queried on their own: a lecture may keep its tests out of the points
+      # total and still ask for passed tests.
       def pass_fail_tests
         @pass_fail_tests ||= lecture.assignments.with_passing_points
                                     .includes(:assessment)

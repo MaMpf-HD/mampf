@@ -10,8 +10,6 @@ RSpec.describe(StudentPerformance::Record, type: :model) do
     end
   end
 
-  # The lists may still hold a test that has lost its threshold or been
-  # deleted, so the count is taken among the tests the caller names.
   describe "the tests passed and failed" do
     let(:record) do
       FactoryBot.build(:student_performance_record, tests_passed_ids: [11, 12, 99],

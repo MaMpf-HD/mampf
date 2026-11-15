@@ -44,8 +44,8 @@ class MarkingTableHeaderComponent < ViewComponent::Base
                  data: data_for(column))
     end
 
-    # The threshold the table was drawn with. A row that comes back later
-    # carries its own, and the table compares the two.
+    # Read by marking_table.controller.js, which notices when a row carries
+    # a newer threshold.
     def data_for(column)
       { passing_points: @assessable.passing_points } if column == :passed
     end

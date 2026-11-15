@@ -91,8 +91,6 @@ RSpec.describe("A rule that asks for passed tests") do
     expect(proposal.missed_criteria).to eq([:achievements])
   end
 
-  # The record holds the verdicts, so everything that can turn one has to
-  # reach it: a corrected mark, a moved threshold, a threshold taken off.
   describe "what the record holds" do
     it "follows a mark corrected across the threshold" do
       expect(record.tests_passed_ids).to eq([tests[0].id])

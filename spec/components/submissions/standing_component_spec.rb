@@ -210,8 +210,6 @@ RSpec.describe(StandingComponent, type: :component) do
     end
   end
 
-  # "Of 2" is the tests settled so far: how many are still to come is known
-  # only once the lecture calls its list complete.
   describe "with tests that are passed or failed" do
     def passed_line(passed:, settled:)
       I18n.t("submission.hub.standing.tests_passed_so_far", passed: passed, count: settled)
@@ -284,7 +282,6 @@ RSpec.describe(StandingComponent, type: :component) do
       )
     end
 
-    # Another test may still be set up, so nothing is lost yet.
     it "passes no such judgement while the list is open" do
       content = render_standing(standing(rule: rule(:none, tests: 3), pass_fail_tests: 4,
                                          tests_passed: 0, tests_failed: 2, complete: false))

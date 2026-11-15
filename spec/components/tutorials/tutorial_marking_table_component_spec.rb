@@ -206,8 +206,6 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
           expect(summary).to include(I18n.t("#{summary_scope}.failed", count: 1))
         end
 
-        # In a column of its own beside the total: passed or not is a
-        # result, and the status column says how far the marking has got.
         it "says in each row whether the test is passed, apart from the status" do
           page = render_table
           verdict_of = lambda do |name|
@@ -225,8 +223,6 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
             .to include(I18n.t("assessment.test.passed_column"))
         end
 
-        # A row answered after the threshold was changed carries the new one;
-        # the table compares it with its heading and asks for a reload.
         it "marks heading and rows with the threshold they were drawn with" do
           page = render_table
 

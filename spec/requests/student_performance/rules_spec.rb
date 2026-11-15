@@ -44,8 +44,6 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
         )
       end
 
-      # Such a rule can be saved - the tests may get their thresholds later -
-      # but nobody can meet it as things stand, and the form says so.
       it "warns where the rule asks for more passed tests than carry a threshold" do
         FactoryBot.create(:assignment, lecture: lecture, kind: :test, passing_points: 5)
         rule = FactoryBot.create(:student_performance_rule, :active, :without_criteria,

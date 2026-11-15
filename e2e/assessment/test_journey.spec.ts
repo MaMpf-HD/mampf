@@ -358,12 +358,6 @@ test.describe("a test written in the tutorial", () => {
       .toBeVisible();
   });
 
-  /**
-   * A row is answered with the threshold as it is now, the rest of an open
-   * table keeps the one it was drawn with. The two cannot be made to agree
-   * without losing what the tutor has typed, so the table says so and leaves
-   * the reload to them.
-   */
   test("asks the tutor to reload once the threshold changes under an open table", async ({
     factory,
     teacher,

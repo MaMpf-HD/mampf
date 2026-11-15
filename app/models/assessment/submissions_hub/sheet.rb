@@ -58,9 +58,8 @@ module Assessment
         assessment&.effective_total_points
       end
 
-      # Whether the reader has passed the test, as far as they can see it: a
-      # result that is entered but not shown to them yet gives nothing away.
-      # Nil for homework and for a test without a passing threshold.
+      # The verdict as far as the student can see it: nil before the result
+      # is visible, for homework and for a test without a passing threshold.
       def test_verdict
         return unless state.in?([:marked, :absent, :exempt])
 

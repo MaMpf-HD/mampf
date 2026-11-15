@@ -15,10 +15,8 @@ export default class extends Controller {
     this.updateBulkState();
   }
 
-  // A row is answered with the test's passing threshold as it is now, the
-  // heading and the other rows keep the one the table was opened with. Where
-  // the two differ, the columns or the verdicts no longer fit together, and
-  // only a reload puts that right.
+  // A row re-rendered by the server carries the current passing threshold;
+  // if it differs from the heading's, the hint to reload is shown.
   rowTargetConnected(row) {
     if (!this.hasOutdatedTarget) return;
 

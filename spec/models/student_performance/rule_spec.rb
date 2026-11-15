@@ -146,8 +146,6 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         expect(rule).not_to be_points_threshold
       end
 
-      # Another test is another chance to pass one, so such a rule waits for
-      # the lecture's list as a points threshold does.
       it "accepts a number of tests to pass as its only criterion" do
         rule = FactoryBot.build(:student_performance_rule, :without_criteria,
                                 min_tests_passed: 3)
@@ -176,8 +174,6 @@ RSpec.describe(StudentPerformance::Rule, type: :model) do
         expect(FactoryBot.build(:student_performance_rule).more_tests_than?(0)).to be(false)
       end
 
-      # Rails casts text and fractions to 0. Read as "no criterion", a slip in
-      # the form would take an admission requirement away without a word.
       it "refuses a number of tests that is not one, rather than dropping the criterion" do
         ["text", "0.5", "-0.5", "2.5"].each do |typed|
           rule = FactoryBot.build(:student_performance_rule, :without_criteria,

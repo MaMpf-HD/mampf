@@ -840,9 +840,6 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(result.standing.tests_passed).to eq(1)
     end
 
-    # The record counts a result from the moment it is entered. The reader's
-    # page shows a test's points only once a task carries a value, and the
-    # verdict must not get there first.
     it "counts no result the reader cannot see yet" do
       test = create_test(passing_points: 5)
       participate(test, status: :reviewed, points_total: 8, submitted_at: 2.days.ago)

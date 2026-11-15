@@ -158,8 +158,8 @@ module StudentPerformance
         end
       end
 
-      # What saving would refuse about the passed tests. The preview forecasts
-      # nothing for a rule that cannot be saved.
+      # The validation message for the typed number of tests, if any. The
+      # preview shows it instead of a forecast.
       def tests_input_error
         candidate = StudentPerformance::Rule.new(
           lecture: @lecture, min_tests_passed: params.dig(:rule, :min_tests_passed).presence
