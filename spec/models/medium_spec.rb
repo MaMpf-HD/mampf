@@ -393,14 +393,13 @@ RSpec.describe(Medium, type: :model) do
       expect(medium.manuscript_updated_at).to eq(Time.zone.local(2026, 11, 3))
     end
 
-    # A medium released anew is out since then, whatever was replaced before.
     it "is the release date where the manuscript was last replaced before it" do
       medium.file_last_edited = Time.zone.local(2026, 9, 1)
       expect(medium.manuscript_updated_at).to eq(released_at)
     end
 
-    # Moving a medium to an unpublished lecture takes it back and leaves
-    # both dates on it.
+    # A medium moved to an unpublished lecture is unpublished again but keeps
+    # both dates.
     it "is nil while the medium is not published" do
       medium.released = nil
       medium.file_last_edited = Time.zone.local(2026, 11, 3)

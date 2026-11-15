@@ -5,7 +5,6 @@ RSpec.describe("Publishing a lecture", type: :request) do
 
   before { sign_in lecture.teacher }
 
-  # The script is out from this moment on, and its "as of" date says so.
   it "stamps the release date on the media it publishes along" do
     script = create(:lecture_medium, :with_manuscript, teachable: lecture, sort: "Script")
 
