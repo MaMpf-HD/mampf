@@ -33,6 +33,16 @@ module SupportUsersHelper
     end
   end
 
+  # Names who banned the account unless their own account is gone.
+  def ban_status(user)
+    return t("support.users.status.not_banned") unless user.banned?
+
+    time = l(user.banned_at, format: :account)
+    return t("support.users.status.banned_at", time: time) unless user.banned_by
+
+    t("support.users.status.banned_by", time: time, user: user.banned_by.email)
+  end
+
   # Devise keeps the latest sign-in in current_sign_in_at; last_sign_in_at is
   # the one before.
   def sign_in_status(user)

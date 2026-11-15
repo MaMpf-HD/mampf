@@ -35,6 +35,11 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
+  # The admin who banned the account; empty once their own account is deleted.
+  belongs_to :banned_by, class_name: "User", optional: true
+  normalizes :ban_reason, with: ->(value) { value.strip.presence }
+  validates :ban_reason, presence: true, if: :banned_at?
+
   include PgSearch::Model
 
   # a user has many bookmarked lectures (formerly: subscribed lectures)
@@ -994,11 +999,18 @@ class User < ApplicationRecord
   # Saves a change of admin rights after every other one: the rows of all
   # admins are locked, and its author must still be an admin then. Two admins
   # taking each other's rights at once would otherwise leave none.
+  #
+  # A banned account gets no admin rights. Its ban is read under a lock on its
+  # row, the one #ban decides under, so the two cannot pass each other.
   def save_admin_change(by:)
     self.class.transaction do
       self.class.where(admin: true).lock.load
       unless by.reload.admin?
         errors.add(:base, :admin_rights_lost)
+        raise(ActiveRecord::Rollback)
+      end
+      if admin? && self.class.where(id: id).lock.pick(:banned_at)
+        errors.add(:base, :banned_gets_no_admin_rights)
         raise(ActiveRecord::Rollback)
       end
       save || raise(ActiveRecord::Rollback)
@@ -1039,6 +1051,62 @@ class User < ApplicationRecord
     return super if access_locked?
 
     send_reset_password_instructions
+  end
+
+  # Keeps the account out until an admin lifts the ban. Its deletion date goes
+  # too, see UserCleaner#inactive_users.
+  #
+  # Decides on the account as it is stored, under a lock on its row: of two
+  # admins banning at once the second is refused, and so is the ban of an
+  # account that has been made an admin's in the meantime. Checks the ban's
+  # own rules only, so that an account whose other data is invalid can be
+  # banned as well.
+  def ban(by:, reason:)
+    reason = self.class.normalize_value_for(:ban_reason, reason)
+    errors.clear
+    with_lock do
+      if (refusal = ban_refusal(reason))
+        errors.add(*refusal)
+      else
+        assign_attributes(banned_at: Time.current, banned_by: by, ban_reason: reason,
+                          deletion_date: nil)
+        save!(validate: false)
+      end
+    end
+    errors.none?
+  end
+
+  # Skips the validations as #ban does: lifting a ban must not fail over
+  # other data of the account either.
+  def unban
+    assign_attributes(banned_at: nil, banned_by: nil, ban_reason: nil)
+    save(validate: false)
+  end
+
+  def banned?
+    banned_at.present?
+  end
+
+  # The ones among the given addresses that belong to banned accounts,
+  # downcased. A new address that waits for confirmation counts as well.
+  def self.banned_addresses(addresses)
+    addresses = addresses.map(&:downcase).uniq
+    return [] if addresses.empty?
+
+    banned = where.not(banned_at: nil)
+    banned.where(email: addresses).or(banned.where(unconfirmed_email: addresses))
+          .pluck(:email, :unconfirmed_email).flatten & addresses
+  end
+
+  # Devise asks this at every request, so a running session ends with the
+  # next one, and neither a new password nor a confirmation lets a banned
+  # account in.
+  def active_for_authentication?
+    super && !banned?
+  end
+
+  def inactive_message
+    banned? ? :banned : super
   end
 
   ##############################################################################
@@ -1118,6 +1186,15 @@ class User < ApplicationRecord
       # Only delete media where the user is the sole editor.
       sole_editor_media = edited_media.select { |m| m.editors.one? }
       Medium.where(id: sole_editor_media.pluck(:id)).destroy_all
+    end
+
+    # Why the stored account cannot be banned, as the arguments of errors.add;
+    # nil where it can.
+    def ban_refusal(reason)
+      return [:base, :already_banned] if banned?
+      return [:base, :admin_not_banned] if admin?
+
+      [:ban_reason, :blank] if reason.nil?
     end
 
     def archive_email

@@ -18,6 +18,7 @@ de:
         resend: "Erneut senden"
     failure:
       already_authenticated: "Du bist bereits angemeldet."
+      banned: "Ein Admin hat Deinen Account gesperrt."
       inactive: "Dein Account ist nicht aktiv."
       invalid: "E-Mail-Adresse oder Passwort ungültig. Falls Du Dich gerade registriert hast, bestätige zuerst Deine E-Mail-Adresse."
       invalid_token: "Der Anmelde-Token ist ungültig."

@@ -76,6 +76,8 @@ Rails.application.routes.draw do
         patch :unlock
         post :password_reset
         post :confirmation
+        patch :ban
+        patch :unban
       end
     end
   end
