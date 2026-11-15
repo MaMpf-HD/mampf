@@ -62,12 +62,16 @@
 
   <% if @board.empty? %>
     <%= tag.div id: "dashboardEmptyState",
-                class: "text-center text-muted my-5",
+                class: "empty-state text-center",
                 data: { testid: "dashboard-empty-state" } do %>
-      <p class="mb-0">
-        <% key = current_user.teacher? ? "no_lectures_teacher" : "no_lectures" %>
+      <div class="empty-state__symbol" aria-hidden="true">ø</div>
+
+      <p class="empty-state__caption" aria-hidden="true">|lectures| = 0</p>
+
+      <% key = current_user.teacher? ? "no_lectures_teacher" : "no_lectures" %>
+      <p class="empty-state__message">
         <%= @selected_term ? t("main.start.#{key}", term: @selected_term.to_label) :
-                             t("main.start.#{key}_any_term") %>
+                            t("main.start.#{key}_any_term") %>
       </p>
     <% end %>
   <% end %>
