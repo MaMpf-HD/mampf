@@ -122,7 +122,7 @@ class LecturesController < ApplicationController
     @lecture.update(released: "all")
     if params[:medium][:publish_media] == "1"
       @lecture.media_with_inheritance
-              .update(released: params[:medium][:released])
+              .update(released: params[:medium][:released], released_at: Time.zone.now)
     end
     # create notifications about creation od this lecture and send email
     create_notifications
