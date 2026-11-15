@@ -2,9 +2,13 @@ import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
 /**
- * Asks before a checkbox's form is submitted, and puts the box back where it
- * stood when the dialog is left unanswered. Only a dialog with a third button
- * has a `reset` field, so that target is optional.
+ * Opens a confirmation dialog when a checkbox is clicked and submits the
+ * checkbox's form only once the user confirms. If the dialog is closed any
+ * other way, the checkbox goes back to its previous state.
+ *
+ * A dialog may have a second confirm button that calls `reset`. Its form
+ * then needs a hidden field as the `reset` target: it is set to "1" for that
+ * button and to "0" for the plain confirm.
  */
 export default class extends Controller {
   static targets = ["checkbox", "reset", "dialog"];
