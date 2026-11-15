@@ -441,32 +441,53 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
-  describe "who marked a sheet and when" do
+  describe "when a sheet was marked" do
     let(:assignment) { create_assignment(deadline: 1.week.ago) }
 
     it "reads the participation once it is stamped" do
       participation = mark(assignment, [1.5, 2])
 
-      sheet = sheet_for(assignment)
-      expect(sheet.marked_by).to eq(tutor)
-      expect(sheet.marked_at).to be_within(1.second).of(participation.graded_at)
+      expect(sheet_for(assignment).marked_at)
+        .to be_within(1.second).of(participation.graded_at)
     end
 
     # Rows marked before the stamp existed carry none; the task points then
-    # say when and by whom.
+    # say when.
     it "falls back to the task points where there is no stamp" do
       participation = mark(assignment, [1.5, 2])
       participation.update!(graded_at: nil, grader: nil)
 
-      sheet = sheet_for(assignment)
-      expect(sheet.marked_by).to eq(tutor)
-      expect(sheet.marked_at)
+      expect(sheet_for(assignment).marked_at)
         .to be_within(1.second).of(participation.task_points.maximum(:updated_at))
     end
 
     it "is nil for a sheet with no participation at all" do
       expect(sheet_for(assignment).marked_at).to be_nil
-      expect(sheet_for(assignment).marked_by).to be_nil
+    end
+  end
+
+  describe "whether the student can see the marking" do
+    let(:assignment) { create_assignment(deadline: 1.week.ago) }
+
+    it "is not the case while the sheet waits for its tutor" do
+      participate(assignment, submitted_at: 8.days.ago)
+      hand_in(assignment, handed_in_at: 8.days.ago)
+
+      expect(sheet_for(assignment).correction_visible?).to be(false)
+    end
+
+    it "is the case once a correction is uploaded, points or not" do
+      participate(assignment, submitted_at: 8.days.ago)
+      hand_in(assignment, correction: true, handed_in_at: 8.days.ago)
+
+      expect(sheet_for(assignment).correction_visible?).to be(true)
+    end
+
+    it "is the case once the first points are entered" do
+      mark_partially(assignment, [1.5, nil])
+      hand_in(assignment, handed_in_at: 8.days.ago)
+
+      expect(sheet_for(assignment).correction_visible?).to be(true)
     end
   end
 
@@ -1029,7 +1050,7 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
         sheet.points
         sheet.max_points
         sheet.marked_at
-        sheet.marked_by
+        sheet.submission.tutorial.tutors.to_a if sheet.correction_visible?
         sheet.partners
         sheet.tasks.each { |task| sheet.points_for(task) }
       end
