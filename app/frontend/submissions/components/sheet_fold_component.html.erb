@@ -97,7 +97,7 @@
       <%= t("submission.hub.fold.correctors", count: correctors.size) %>
 
       <% correctors.each_with_index do |tutor, index| %>
-        <span class="text-nowrap">
+        <span class="d-inline-flex align-items-center gap-1 text-nowrap">
           <span title="<%= corrector_tutorial %>">
             <%= tutor.tutorial_name %>
           </span>
