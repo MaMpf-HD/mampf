@@ -94,10 +94,8 @@ module Assessment
         participation.graded_at || latest_task_point&.updated_at
       end
 
-      def marked_by
-        return unless participation
-
-        participation.grader || latest_task_point&.grader
+      def correction_visible?
+        submission&.correction.present? || state.in?([:marked, :partially_marked])
       end
 
       def new_correction?

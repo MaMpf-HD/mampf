@@ -66,6 +66,36 @@ RSpec.describe(Registration::StatusQuery) do
     expect(status).to be_nil
   end
 
+  it "drops a rejection a teacher has overridden" do
+    register(campaign(:completed), :rejected)
+      .update!(rejection_overridden_at: Time.current)
+
+    expect(status).to be_nil
+  end
+
+  it "drops a rejection once the student holds a place in a tutorial" do
+    register(campaign(:completed), :rejected)
+    tutorial = create(:tutorial, lecture: lecture)
+    Rosters::MaintenanceService.new.add_user!(user, tutorial)
+
+    expect(status).to be_nil
+  end
+
+  it "keeps a rejection for a student who is only on a waitlist" do
+    register(campaign(:completed), :rejected)
+    waitlist = create(:cohort, context: lecture, propagate_to_lecture: false)
+    Rosters::MaintenanceService.new.add_user!(user, waitlist)
+
+    expect(status).to eq(:rejected)
+  end
+
+  it "keeps a rejection for a student without a place" do
+    register(campaign(:completed), :rejected)
+    create(:lecture, :released_for_all).lecture_memberships.create!(user: user)
+
+    expect(status).to eq(:rejected)
+  end
+
   it "leaves exam campaigns out" do
     exam = create(:exam, lecture: lecture)
     # rubocop:disable Rails/SkipsModelValidations
