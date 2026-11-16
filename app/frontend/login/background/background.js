@@ -16,9 +16,16 @@ class MathBackground {
     this.createParticles();
     this.createBubbles();
     this.createNetwork();
-    this.animate();
 
-    window.addEventListener("resize", () => this.handleResize());
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      this.renderFrame();
+    }
+    else {
+      this.animate();
+    }
+
+    this.resizeHandler = () => this.handleResize();
+    window.addEventListener("resize", this.resizeHandler);
   }
 
   createParticles() {
@@ -57,11 +64,14 @@ class MathBackground {
     }
   }
 
-  animate() {
+  renderFrame() {
     this.particles.forEach(particle => particle.update());
     this.bubbles.forEach(bubble => bubble.update());
     this.network.update();
+  }
 
+  animate() {
+    this.renderFrame();
     this.animationId = requestAnimationFrame(() => this.animate());
   }
 
@@ -80,10 +90,11 @@ class MathBackground {
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
     }
+    window.removeEventListener("resize", this.resizeHandler);
 
-    this.particles.forEach(particle => particle.destroy());
+    this.particles?.forEach(particle => particle.destroy());
     this.particles = [];
-    this.bubbles.forEach(bubble => bubble.destroy());
+    this.bubbles?.forEach(bubble => bubble.destroy());
     this.bubbles = [];
     if (this.network) {
       this.network.destroy();
@@ -91,6 +102,14 @@ class MathBackground {
   }
 }
 
+let mathBackground = null;
+
+/**
+ * Turbo swaps the body on navigation, so the previous background has to be
+ * torn down. Otherwise, its animation loop would keep running on detached
+ * elements and the loops would pile up with every visited page.
+ */
 document.addEventListener("turbo:load", () => {
-  new MathBackground();
+  mathBackground?.destroy();
+  mathBackground = new MathBackground();
 });
