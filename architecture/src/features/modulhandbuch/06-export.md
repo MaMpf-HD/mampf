@@ -1,145 +1,148 @@
 # Export
 
-```admonish question "What is 'Export'?"
-Export turns a handbook into a document others read.
+Export turns a `Handbook` (or one `ModuleEdition`) into something people read: a PDF, or a public web page.
 
-- **Common Examples:** "Official PDF of Mathematik B.Sc. 100%, WS 2026/27", "Review PDF including checked modules"
-- **In this context:** A service that walks a handbook in order, filters editions by status, converts Markdown content with pandoc, and fills a per‑format template.
-```
+**Example:** Before WS 2026/27, the admin downloads the **Draft PDF** of Informatik BSc 100% to proofread all modules, including unreleased ones. After review, the **Official PDF** contains only published modules, and the institute website shows the same handbook as a page.
 
-## Requirement
+| | Old | New |
+|---|---|---|
+| Whole handbook PDF | Modulhandbuch → Zusammenstellung: **Draft PDF** / **PDF** icons | Handbook editor, Handbooks list: **Draft PDF** / **Official PDF** |
+| LaTeX source | Output → Latex (select Modulhandbuch + Semester) | Handbook editor: **Download LaTeX** (admin) |
+| Check all modules | Modulhandbuch → Zusammenstellung: **Check PDF generation of all modules** | Handbook editor: **Check all modules render** |
+| Single module PDF | `pdf` per row (Course, StudDekanin, Dozent lists) | Descriptions list + edit page, handbook editor row: **PDF** |
+| Section PDF | `PDF` per Gruppierung | Dropped (use Draft PDF) |
+| Public web / JSON | Output html/JSON (PHP scripts, no login) | Public handbook + module pages, JSON |
+| Version history | Git → Export | Export snapshots ([future](10-future-extensions.md)) |
 
-- Support 2 format: LaTeX + Typst
-- There are possibility to export based on Module Editions status published or checked status
-- The handbook may need to appear on another page (Future extension)
-
-## Solution Architecture
-
-- **Content stored as Markdown**, converted per format by **pandoc** (supports LaTeX, Typst and Markdown output, including tables).
-- **Presentation only in templates**, one per format (`lib/templates/handbook/handbook.tex.erb`, `handbook.typ.erb`). Styling changes are template choices.
-- **Status filter** as an explicit parameter: TODO (check against current system)
-- **LaTeX first** (matches the existing look), Typst follow.
-- **Template is uploadable by admin** (Future extension)
-
-
----
-
-## Handbook::Exporter (Service Object)
-**_The Typesetter_**
-
-```admonish info "What it represents"
-Renders one handbook into one output format with one status filter.
-```
-
-### Public Interface
-
-| Method | Purpose |
-|--------|---------|
-| `initialize(handbook, format:, filter:)` | `format`: `:latex`, `:typst`, `:markdown`, `:pdf`; `filter`: TODO (check against current system) |
-| `call` | Returns the rendered document (string or file path for `:pdf`) TODO: decide on this |
-
-### Behavior Highlights
-
-- Order: section `position` and entry `position`.
-- Editions not matching the filter are skipped; empty sections are omitted.
-- Each Markdown field is converted separately with pandoc, then inserted into the template.
-
-### Example Implementation
-Suggested by Claude, not verified
-
-```ruby
-module Handbook
-  class Exporter
-    FILTERS = {
-      published: %w[published],
-      reviewable: %w[checked published]
-    }.freeze
-
-    PANDOC_TARGET = { latex: "latex", typst: "typst", markdown: "gfm" }.freeze
-
-    def initialize(handbook, format:, filter: :published)
-      @handbook = handbook
-      @format = format
-      @statuses = FILTERS.fetch(filter)
-    end
-
-    def call
-      ApplicationController.render(
-        template: "handbook/exports/handbook",
-        formats: [template_format],
-        layout: false,
-        assigns: { handbook: @handbook, sections: sections, convert: method(:convert) }
-      )
-    end
-
-    private
-
-    def sections
-      @handbook.sections.includes(section_entries: { module_edition: :catalog_module })
-               .map do |section|
-        entries = section.section_entries.select { |e| @statuses.include?(e.module_edition.status) }
-        [section, entries.map(&:module_edition)]
-      end.reject { |_, editions| editions.empty? }
-    end
-
-    def convert(markdown)
-      return "" if markdown.blank?
-      PandocRuby.convert(markdown, from: :markdown, to: PANDOC_TARGET.fetch(@format))
-    end
-
-    def template_format
-      { latex: :tex, typst: :typ, markdown: :md }.fetch(@format)
-    end
-  end
-end
-```
-
-```admonish warning "Assumptions"
-- Uses the `pandoc-ruby` gem; pandoc must be installed in the app container.
-- Background job consideration
-- MIME types for response types
-```
-
-### Known Risks
-
-| Risk | Mitigation |
-|------|------------|
-| Look differs from current PDF | Port the existing LaTeX preamble into the template first; get the current source |
-| Tables in module content | pandoc emits tables for both formats; test one real module with a table early |
-| Unexpected page breaks | Inspect the current source for manual break handling; reproduce in template |
-| Special characters (`%`, `&`, `_`) | Never interpolate raw content into templates; always pass through `convert` |
+| Action | admin | viewer | lecturer (later) | public |
+|---|---|---|---|---|
+| Official PDF (published `Handbook`) | ✓ | ✓ | ✓ | ✓ |
+| Draft PDF | ✓ | ✓ | | |
+| Single module PDF | ✓ | ✓ | own only | published only |
+| Download LaTeX, check render | ✓ | | | |
+| Public pages / JSON | ✓ (+ draft preview) | ✓ | ✓ | published only |
 
 ---
 
-## Export to Another Page (Future extension)
+## How the PDF Is Built
 
-```admonish info "What it represents"
-Showing the published handbook on an external page.
+### Old: LaTeX pieces glued together
+
+The old system stores **pieces of raw LaTeX** in the database and joins them in order:
+
 ```
-TODO:
-
-I need to see the page first :))
-
-## Sequence Diagram
-
-```mermaid
-sequenceDiagram
-    actor User
-    participant Controller as Handbook::ExportsController
-    participant Ability as HandbookAbility
-    participant Exporter as Handbook::Exporter
-    participant Pandoc
-
-    User->>Controller: GET /handbooks/:id/export?format=pdf&filter=reviewable
-    Controller->>Ability: can?(:export_reviewable, handbook)
-    alt viewer
-        Controller->>Controller: force filter
-    end
-    Controller->>Exporter: new(handbook, format:, filter:).call
-    loop each section / edition (filtered)
-        Exporter->>Pandoc: convert(markdown, to: latex)
-        Pandoc-->>Exporter: fragment
-    end
-    Exporter-->>Controller: rendered document
-    Controller-->>User: send_file
+Latex Element "Header"     → \documentclass…, packages, \begin{document}
+Latex Element "Intro"      → title page, \tableofcontents, Präambel,
+                             Studienverlaufspläne, \chapter{Pflichtbereich}
+for each Gruppierung:
+    heading                → \section{Pflichtmodule Informatik}
+    Latex Intro            → "Nachfolgend sind die Pflichtmodule …"
+    each module            → fixed module page (table: LV-Nr, LP, Dauer, …)
+    Latex Extro            → \newpage   (or \chapter{Wahlbereich} …)
+Latex Element "Footer"     → \end{document}
 ```
+
+The staff types LaTeX by hand: `\newpage` for a new page, `\chapter{Wahlbereich}` hidden in an Extro to start a chapter, `\pageref{…}` for "see page 7". **Content and layout are mixed in the same fields.**
+
+### New: content from the database, layout from one template
+
+| | What | Where | Who changes it |
+|---|---|---|---|
+| **Content** | handbook title, intro, Studienverlaufspläne, section titles + intro/outro, module fields | DB (`Handbook`, `Section`, `ModuleEdition`) | admin, in the UI |
+| **Layout** | document class, fonts, cover design, table of contents, module page table, "each chapter starts on a new page" | **one template** per format | developer, once |
+
+Export = template + content → `.tex` → PDF (later: Typst template, same content).
+
+```
+template (fixed)                    content (from DB)
+──────────────────                  ─────────────────────────
+preamble, cover layout   ← fills ←  Handbook: title, subtitle, issue_date
+table of contents
+intro block              ← fills ←  Handbook.intro (incl. Studienverlaufspläne)
+for each Section:
+  chapter or section     ← uses  ←  Section.heading_level + title
+  intro / outro          ← fills ←  Section.intro / outro
+  new page rule          (template decides, no field)
+  module page layout     ← fills ←  ModuleEdition fields
+end of document
+```
+
+### What changes compared to the old system
+
+| Old | New |
+|-----|-----|
+| `\newpage` typed in an Extro | Template rule (e.g., new page after each section); no field |
+| `\chapter{…}` hidden in an Extro | `Section#heading_level`; template prints chapter or section |
+| Header / Footer as DB records | Template. The old Header is the starting point, so the new PDF looks like the old one |
+| Intro as raw LaTeX | `Handbook` fields: `title`, `subtitle`, `issue_date`, `intro` |
+| Staff types LaTeX | Staff types text; lists and simple tables as Markdown |
+| `\pageref` ("see page 7") | Link to the heading |
+
+```admonish question "Ask the staff"
+Do you ever change layout for one handbook only (a page break in one place, a special heading)? If yes, the template needs a small hook for it.
+```
+
+---
+
+## Draft vs Official
+
+| | Draft PDF | Official PDF |
+|---|---|---|
+| Old | Draft PDF icon, `draft=1` | PDF icon |
+| `ModuleEdition`s included | all statuses, each marked with its status | `published` only |
+| Empty sections | shown | omitted |
+| Watermark | "Entwurf / Draft" | none |
+| `Handbook` status | any | `published` (for viewer / public); admin may preview a draft `Handbook` |
+
+- Publishing a `Handbook` with unpublished `ModuleEdition`s lists them first: they will be missing from the Official PDF.
+- Order: `Section` position, then `SectionEntry` position.
+- Labels (LV‑Nr., LP, Dauer …) in the `Handbook`'s language; module text in the `ModuleEdition`'s language.
+
+## Single Module PDF
+
+- Same module page as in the handbook, standalone (old: `pdf` per row).
+- Status rule as above: public only for `published`.
+
+## Check All Modules Render
+
+- Renders every `ModuleEdition` of the `Handbook` separately and lists the ones that fail, with the error (old: "Check PDF generation of all modules").
+- Needed because one broken module breaks the whole PDF.
+
+## Public Pages
+
+Old Output html/JSON is used by external websites. New equivalent:
+
+| Old script | New |
+|-----------|-----|
+| `web_display_toc.php`, `web_page_display_toc.php` | Handbook page: TOC with links to modules (full page + embeddable fragment) |
+| `web_display_course.php`, `web_page_display_course.php` | Module page (full page + embeddable fragment) |
+| `json_code.php` | JSON: list of `CurriculumModule`s |
+| `json_course.php` | JSON: one `ModuleEdition` |
+
+- URLs by program `short_name` + term, module `code` + term. Default term: newest published.
+- Published only. Drafts need a login (old `draft=1` showed drafts to anyone).
+- No `l=de|en` parameter: each `ModuleEdition` has one language. No `encoding=latin1`: UTF‑8 only.
+
+```admonish question "Ask the staff"
+Which websites use the old html/JSON scripts? The new URLs differ; those pages need updating, or old URLs need redirects.
+```
+
+---
+
+## Formats
+
+- **PDF via LaTeX first**: matches the existing look.
+- **LaTeX source** download for the admin (old Output → Latex).
+- **Typst** later: same content, second template.
+- Template uploadable by admin: [future extension](10-future-extensions.md).
+
+---
+
+## Implementation Notes
+
+- **Service:** `Handbook::Exporter` renders one `Handbook` or one `ModuleEdition` into one format with one filter (`draft` / `official`).
+- **Markdown → LaTeX / Typst:** pandoc, field by field, then inserted into the template. Never put raw text into the template unescaped (`%`, `&`, `_`).
+- **Template:** start from the old Latex Header (packages, settings) and the old module page layout; compare the first new PDF with an old one.
+- **Check render:** compile each module page alone; collect errors instead of stopping.
+- **Runtime:** a full handbook PDF can take seconds; consider a background job and a download link.
+- **Public JSON:** read‑only, published only; plain fields, no rendering.

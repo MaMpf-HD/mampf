@@ -1,180 +1,97 @@
 # Cloning
 
-```admonish question "What is 'Cloning'?"
-Cloning copies a handbook into a new term so the admin edits last term's structure instead of rebuilding it.
+Before a new term, the admin copies last term's handbooks into it, so only the changes need editing.
 
-- **Common Examples:** "Copy Mathematik B.Sc. 100% from WS 2026/27 to WS 2027/28"
-- **In this context:** A transactional service that copies structure (handbook, sections, entries) and finds or creates one module edition per module in the target term.
+**Example:** SoSe 2026 has 160 module descriptions in 16 Modulhandbücher. Before WS 2026/27, the admin copies SoSe 2026 → WS 2026/27. Every handbook gets the same sections, module lists and front matter. The module descriptions are copies, ready to be updated and reviewed.
+
+| | Old | New |
+|---|---|---|
+| Screen | Course → Semester, StudDekanin → SemesterList: `copy to next Semester` on a semester row | Handbooks list → **Prepare a term…** (all programs); **⋯ → Clone to another term** (one handbook); **New handbook → clone from** |
+| Permission | Course, StudDekan tabs | **admin** |
+
+---
+
+## Old System: What the Staff Does
+
+1. Open the Semester list.
+2. On the current semester (e.g., SoSe 2026), click **copy to next Semester**.
+3. Everything is copied to the next semester (WS 2026/27): all modules, all Gruppierungen + Zusammenstellung, all Latex Elemente, for every Modulhandbuch (confirmed by staff).
+4. Copied modules are marked Course Source "02 Semester‑Copy". Then the staff updates what changed.
+
+---
+
+## New: Prepare a Term
+
+1. Handbooks list → **Prepare a term…**
+2. Pick the **target term** (e.g., WS 2026/27; must exist in MaMpf). The source defaults to the latest term with handbooks (SoSe 2026).
+3. Summary: "Clone 12 programs from SoSe 2026 → WS 2026/27". All active programs are selected; the list is collapsed.
+4. **Prepare** → every program is cloned.
+5. Result per program: **"Informatik BSc 50%: 4 created · 12 reused · 1 skipped (inactive)"**.
+
+Unticking programs is possible, but not the normal flow.
+
+```mermaid
+flowchart LR
+    A[Pick target term] --> B[All active programs selected]
+    B --> C[Clone each Handbook]
+    C --> D{ModuleEdition<br/>in target term?}
+    D -->|yes| E[Reuse]
+    D -->|no| F[Copy, status created]
+    E --> G[Result per program]
+    F --> G
 ```
 
-## Problem Overview
+**Single handbook:** Handbooks list → **⋯ → Clone to another term**, or **New handbook → clone from**. Same rules, one program.
 
-- Most of a handbook is unchanged between terms; rebuilding it by hand is slow and error‑prone.
-- **Editions are shared** between handbooks of a term. Cloning Bachelor 100% and then Master 100% into the same term must not create the same edition twice, and must not overwrite an edition someone already reviewed.
-- A half‑finished clone is worse than none.
+---
 
-## Solution Architecture
+## Rules
 
-- **One service, one transaction:** `Handbook::CloneService#call`.
-- **Id map for sections:** entries are placed through an `old section id → new section id` map, never by title or position lookups.
-- **Find‑or‑create editions** via [`Handbook::EditionCopier`](03-module-editions.md#handbookeditioncopier-service-object): existing target‑term editions are reused untouched; missing ones are copied with `status: :created`.
-- **Lineage:** `cloned_from_id` on the new handbook and on every newly created edition.
-- **Report:** the result reports how many editions were created vs. reused, so the admin knows what still needs review.
+- **Copied:**
+  - `Handbook`: `language`, `title`, `subtitle`, `intro`, `outro`
+  - `Section`s: title, heading level, intro, outro, order
+  - `SectionEntry`s: order
+- **Reset:** `Handbook` status → `draft`; `issue_date`, `published_at` cleared.
+- **`ModuleEdition`s are found or created** in the target term:
+  - exists already (another program was cloned first) → **reused untouched**, whatever its status
+  - missing → **copied** from the source, status `created`
+- **Lineage:** `cloned_from` on the new `Handbook`, each `Section`, each created `ModuleEdition` (used by "Compare with previous term").
+- **All or nothing** per `Handbook`.
+- **Refused when:** a `Handbook` for (program, target term) exists, or target term = source term.
+- **Not copied:** expired `StudyProgram`s; inactive `CurriculumModule`s (listed as skipped).
 
-```admonish tip "Glossary (Cloning)"
-- **Source handbook:** the handbook being copied.
-- **Target term:** the term of the new handbook.
-- **Reused edition:** an edition that already existed in the target term (another handbook was cloned first).
-- **Created edition:** a new copy of the source edition, status `created`.
+---
+
+## Usage Scenarios
+
+- **Prepare WS 2026/27:** all active programs cloned from SoSe 2026. IAD is in BSc 100% and BSc 50%: created once, reused for the second.
+- **New program:** Mathematik MSc MLDS has no SoSe 2026 handbook → not in the list; the admin creates it with **New handbook**.
+- **Retry:** Prepare WS 2026/27 again → every program is refused, the `Handbook`s exist.
+
+---
+
+## Differences to the Old System
+
+| Old | New |
+|-----|-----|
+| Pick the **source** semester; always copies to the next one | Pick the **target** term; source preselected |
+| Copies all programs, incl. expired ones | Copies active programs only |
+| Copies all modules, incl. ones in no handbook | Copies only `ModuleEdition`s a cloned `Handbook` lists |
+| Copies marked Course Source "02 Semester‑Copy" | `cloned_from` set, status `created` |
+| Gruppierung linked by "Vorsemester Gruppierung" | `Section#cloned_from` |
+
+```admonish question "Ask the staff"
+- Have you ever needed to copy only some programs, or always all?
+- Are modules in no handbook ever needed in the next term?
+- Are copied modules released or unreleased afterwards?
 ```
 
 ---
 
-## Handbook::CloneService (Service Object)
-**_The Next‑Term Copier_**
+## Implementation Notes
 
-```admonish info "What it represents"
-Copies a handbook into a target term with all its sections and entries.
-```
-
-```admonish tip "Think of it as"
-"Save as… next semester." The table of contents is copied; each page is either taken from the shelf (already exists this term) or photocopied from last term.
-```
-
-### Public Interface
-
-| Method | Purpose |
-|--------|---------|
-| `initialize(source, term:)` | Source handbook and target term |
-| `call` | Performs the clone; returns a `Result` |
-
-| Result field | Description |
-|--------------|-------------|
-| `success?` | Whether the clone ran |
-| `handbook` | The new handbook |
-| `created_count` | Editions newly created |
-| `reused_count` | Editions found in the target term |
-| `error_code` | `:already_exists`, `:same_term` |
-
-### Behavior Highlights
-
-- Refuses if a handbook for (program, target term) already exists (`:already_exists`) or if the target term equals the source term (`:same_term`).
-- Runs entirely inside `ActiveRecord::Base.transaction`; any failure rolls back everything.
-- **Never overwrites** an existing edition, whatever its status.
-- Copies section titles and positions exactly.
-- Idempotent in effect: a second attempt is refused by the uniqueness guard rather than producing duplicates.
-
-### Example Implementation
-
-```ruby
-module Handbook
-  class CloneService
-    Result = Struct.new(:success?, :handbook, :created_count, :reused_count,
-                        :error_code, keyword_init: true)
-
-    def initialize(source, term:)
-      @source = source
-      @term = term
-    end
-
-    def call
-      return failure(:same_term) if @source.term_id == @term.id
-      return failure(:already_exists) if target_exists?
-
-      created = reused = 0
-      handbook = nil
-
-      ActiveRecord::Base.transaction do
-        handbook = Handbook.create!(study_program: @source.study_program,
-                                    term: @term,
-                                    status: :draft,
-                                    cloned_from: @source)
-
-        section_map = {}
-        @source.sections.each do |section|
-          section_map[section.id] = handbook.sections.create!(
-            title_de: section.title_de,
-            title_en: section.title_en,
-            position: section.position
-          )
-        end
-
-        @source.sections.includes(section_entries: :module_edition).each do |section|
-          section.section_entries.each do |entry|
-            copy = EditionCopier.new(entry.module_edition, term: @term).call
-            copy.created? ? created += 1 : reused += 1
-
-            section_map.fetch(section.id).section_entries.create!(
-              module_edition: copy.edition,
-              position: entry.position
-            )
-          end
-        end
-      end
-
-      Result.new(success?: true, handbook: handbook,
-                 created_count: created, reused_count: reused)
-    end
-
-    private
-
-    def target_exists?
-      Handbook.exists?(study_program_id: @source.study_program_id, term: @term)
-    end
-
-    def failure(code)
-      Result.new(success?: false, error_code: code)
-    end
-  end
-end
-```
-
-## Sequence Diagram
-
-```mermaid
-sequenceDiagram
-    actor Admin
-    participant Controller as HandbooksController
-    participant Clone as Handbook::CloneService
-    participant Copier as Handbook::EditionCopier
-    participant DB
-
-    Admin->>Controller: POST /handbooks/:id/clone (term_id)
-    Controller->>Clone: new(source, term:).call
-    Clone->>DB: exists? (program, target term)
-    alt already exists
-        Clone-->>Controller: Result(error_code: :already_exists)
-        Controller-->>Admin: "Handbook for this term exists"
-    else free
-        rect rgb(235, 245, 255)
-        note over Clone,DB: one transaction
-        Clone->>DB: create Handbook (cloned_from: source)
-        loop each section
-            Clone->>DB: create Section (same title, position)
-            note right of Clone: section_map[old_id] = new
-        end
-        loop each entry
-            Clone->>Copier: new(edition, term:).call
-            alt edition exists in target term
-                Copier-->>Clone: existing (reused)
-            else missing
-                Copier->>DB: create edition (status: created, cloned_from)
-                Copier-->>Clone: new (created)
-            end
-            Clone->>DB: create SectionEntry (section_map[old], edition, position)
-        end
-        end
-        Clone-->>Controller: Result(created_count, reused_count)
-        Controller-->>Admin: "Cloned: 14 created, 9 reused"
-    end
-```
-
-### Usage Scenarios
-
-- **First clone of a term:** WS 2026/27 Bachelor 100% → WS 2027/28. No WS 2027/28 editions exist; all 23 are created in status `created`.
-- **Second clone, same term:** WS 2026/27 Master 100% → WS 2027/28. 9 of its modules are already in the Bachelor handbook; those 9 are reused (possibly already `checked`), 14 are created.
-- **Retry:** the admin clicks clone twice; the second call returns `:already_exists`.
-
-```admonish warning "Before migrating old data"
-Cloning assumes one edition per (module, term). If imported legacy data has the same module with **different** text in two programs of the same term, the import must decide which text wins (or use `name_override`/separate catalog modules) before the unique index can be added. See [Integrity & Invariants](09-integrity-and-invariants.md).
-```
+- **Services:** `Handbook::CloneService` clones one `Handbook`; it uses `Handbook::EditionCopier` per entry. "Prepare a term" calls `CloneService` once per selected program.
+- **Transaction:** one per `Handbook` clone. In "Prepare a term", one failure does not stop the others; the result lists failed programs.
+- **Section mapping:** entries are placed through an `old section id → new section id` map, never by title or position.
+- **Duplicates:** unique indexes on `ModuleEdition (curriculum_module_id, term_id)` and `Handbook (study_program_id, term_id)`. If two admins clone at once, `EditionCopier` rescues the unique‑index error and returns the existing `ModuleEdition` as reused.
+- **Result:** per program `created`, `reused`, `skipped`, or an error (`already_exists`, `same_term`).
