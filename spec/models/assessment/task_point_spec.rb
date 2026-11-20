@@ -73,6 +73,13 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect(task_point).to be_valid
     end
 
+    it "refuses points from the limit on" do
+      task_point = FactoryBot.build(:assessment_task_point,
+                                    points: Assessment::TaskPoint::POINTS_LIMIT)
+      expect(task_point).not_to be_valid
+      expect(task_point.errors[:points]).to be_present
+    end
+
     it "allows nil points" do
       task_point = FactoryBot.build(:assessment_task_point, points: nil)
       expect(task_point).to be_valid

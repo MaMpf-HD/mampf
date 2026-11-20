@@ -282,6 +282,7 @@ de:
       assessment_does_not_require_points: 'Bewertung %{assessment_id} erfordert keine Punkteingabe.'
       invalid_task_id: 'Ungültige Aufgabe %{task_id}.'
       invalid_points_value: 'Ungültiger Punktwert für Aufgabe %{task_id}.'
+      points_too_high: 'Punkte müssen unter %{limit} bleiben.'
       not_required_points: 'Punkte können für Hausaufgaben, die keine Punkte erfordern, nicht eingetragen werden.'
       participation_id_tutorial_id_mismatch: 'Teilnahme %{participation_id} gehört nicht zum Tutorium %{tutorial_id}'
       submission_id_assignment_id_mismatch: 'Abgabe %{submission_id} gehört nicht zur Hausaufgabe %{assignment_id}.'
