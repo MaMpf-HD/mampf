@@ -1,62 +1,42 @@
-# Mockups — Modulhandbuch
+# Mockups
 
-```admonish info
-Purpose: index of the HTML mockups for the Modulhandbuch admin screens.
-Screen decisions and flows are described in [UI Design](handbook-ui-design.md)
-and [End-to-End Workflow](07-end-to-end-workflow.md).
-```
+Clickable HTML mockups of the new Modulhandbuch screens. Use **View as** in the header to switch between admin and viewer. The data comes from the old system; the people's names are made up.
 
-```admonish tip
-General mockup conventions (format, authoring checklist, change policy) are in
-the main [Mockups Index](../mockups-index.md).
-```
+Start page with all screens: [All screens](../../mockups/modulhandbuch/index.html)
 
-## Location
+## Handbooks
 
-- Files: `architecture/src/mockups/modulhandbuch/`.
-- All screens are admin screens. Viewer screens are not mocked yet (open
-  question: are published handbooks public?).
+| Screen | Description |
+|---|---|
+| [Handbooks list](../../mockups/modulhandbuch/handbooks-list.html) | All handbooks (study program × term) with filters and status. Entry point for *New handbook* and *Prepare a term* (clone many programs into the next term). |
+| [Handbook editor](../../mockups/modulhandbuch/handbook-editor.html) | Build one handbook: ordered sections and their module entries (drag, move, remove, add via find‑or‑create). Also check render, publish, export, public link and history. |
+| [Handbook front matter](../../mockups/modulhandbuch/handbook-front-matter.html) | Cover fields, issue date, intro (with Studienverlaufsplan table) and outro of a handbook, with live preview. |
 
-```admonish warning "Deviation from conventions"
-These mockups use hand-written CSS styled close to Bootstrap, not Bootstrap 5
-itself. They will be moved to Bootstrap 5 + Bootstrap Icons together with the
-planned table restyle.
-```
+## Module descriptions (Module Editions)
 
-## Index
+| Screen | Description |
+|---|---|
+| [Descriptions list](../../mockups/modulhandbuch/descriptions-list.html) | All module descriptions of a term with filters (incl. source and "in no handbook"), status chips and column chooser. Bulk status change, delete and CSV export. |
+| [Description edit](../../mockups/modulhandbuch/description-edit.html) | Edit one module description: all fields, compare with the previous term, preview as printed. Shows status, the handbooks that use it, and history. |
 
-```admonish abstract
-Master data (admin)
-```
+## Master data
 
-- Study programs and curriculum modules (tabs, create/edit, history, delete
-  rules):
-  [master_data.html](../../mockups/modulhandbuch/master_data.html)
+| Screen | Description |
+|---|---|
+| [Curriculum modules](../../mockups/modulhandbuch/master-data-modules.html) | List and search the term‑independent module identities (code, title, subject area). Create a new one, also straight from an empty search. |
+| [Curriculum module detail](../../mockups/modulhandbuch/curriculum-module-detail.html) | One curriculum module: locked code, deactivate / reactivate, its descriptions per term, history. |
+| [Study programs](../../mockups/modulhandbuch/master-data-programs.html) | List of study programs (program + PO version) with an expired filter. Create a new one. |
+| [Study program detail](../../mockups/modulhandbuch/study-program-detail.html) | One study program: set expire date, short name warning, its handbooks per term. |
 
-```admonish abstract
-Handbooks (admin)
-```
+## Public pages
 
-- Handbooks list (filters by program and term, pagination, new handbook,
-  prepare a term):
-  [module_handbooks_list.html](../../mockups/modulhandbuch/module_handbooks_list.html)
-- Handbook editor (sections, add module with find-or-create, shared badges,
-  description side panel, publish and export):
-  [module_handbook_editing.html](../../mockups/modulhandbuch/module_handbook_editing.html)
+| Screen | Description |
+|---|---|
+| [Public handbook page](../../mockups/modulhandbuch/public-handbook.html) | Published handbook without login: term selector, about, table of contents, download of the official PDF. |
+| [Public module page](../../mockups/modulhandbuch/public-module.html) | A single published module description as the public sees it. |
 
-```admonish abstract
-Module descriptions (admin)
-```
+## Migration
 
-- Module descriptions list (filters, bulk review: mark checked, publish,
-  reopen):
-  [module_descriptions_list.html](../../mockups/modulhandbuch/module_descriptions_list.html)
-- Module description edit (compare with previous term, step through review,
-  save confirm for shared descriptions):
-  [module_edition_description.html](../../mockups/modulhandbuch/module_edition_description.html)
-
-## Change policy
-
-- One screen per file; name it by screen and variant
-  (`module_handbook_editing_empty.html`).
-- When adding a mockup, link it from the relevant chapter and add it here.
+| Screen | Description |
+|---|---|
+| [Import report](../../mockups/modulhandbuch/import-report.html) | Result of importing the old system: record counts and flagged records grouped by reason, with resolve / repeat import. |

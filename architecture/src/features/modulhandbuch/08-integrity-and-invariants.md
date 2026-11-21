@@ -12,7 +12,7 @@ This chapter lists the rules that must always hold, where each is enforced, and 
 | I4 | An entry's edition has the handbook's term | `SectionEntry#edition_term_matches_handbook` | Model |
 | I5 | Catalog module codes are unique | Unique index `handbook_catalog_modules(code)` | DB |
 | I6 | Positions are contiguous per parent | `acts_as_list` (section per handbook, entry per section) | Model |
-| I7 | A checked/published edition matches its reviewed content | `before_update :reset_status_on_content_change` | Model |
+| I7 | — (dropped: status is a manual flag, no reset on edit; see [Future Extensions](09-future-extensions.md#enforced-review-workflow)) | | |
 | I8 | Editions are never destroyed through a handbook | No `dependent` from entries to editions; `restrict_with_error` on edition → entries | Model |
 | I9 | Viewers only receive published content | `HandbookAbility` + controller filter downgrade | Controller |
 | I10 | Clone never overwrites an existing edition | `EditionCopier` find‑or‑create | Service |
@@ -33,22 +33,7 @@ The term lives two joins away (entry → section → handbook). A check constrai
 | `Section` | Removes it and its entries | Never (editions stay) |
 | `SectionEntry` | Removes the placement | Never |
 
-## Integrity Checks
 
-Run these before adding the unique indexes to imported data, and periodically afterwards.
-
-```ruby
-# I1: duplicate editions per (module, term)
-Handbook::ModuleEdition.group(:catalog_module_id, :term_id)
-                       .having("COUNT(*) > 1").count
-
-# I4: entries whose edition term differs from the handbook term
-Handbook::SectionEntry.joins(:module_edition, section: :handbook)
-                      .where("handbook_module_editions.term_id <> handbook_handbooks.term_id")
-
-# Orphans: editions in no handbook (not an error, but worth reviewing)
-Handbook::ModuleEdition.where.missing(:section_entries)
-```
 
 ```admonish warning "Migration hazard"
 Legacy data may contain the same module with **different** text in two programs of the same term. That violates I1. Resolve each case before migrating (choose one text, or split into two catalog modules if they are genuinely different modules, e.g., different ECTS for another faculty).

@@ -40,8 +40,32 @@ Portfolio_Modulhandbuch
     └── Liste
 ```
 
+## Core Flow
 
-Notice: 
+**Once / rarely: base data** (Course tab)
+- Admin creates Codes (module identity: Kurz, Name, Fachgebiet, Info), Modulhandbücher (one per program + PO, e.g. "Informatik BSc 100%", "… alt") and lookups (Fachgebiet, Course Cycle, Course Source).
+- Semesters are created in advance (up to 2030).
+- New PO: new Modulhandbuch; the old one gets an Expire Date.
+
+**Every semester**
+1. **Copy:** Semester list → `copy to next Semester` on the current semester. Copies **everything** to the next semester: all Module, all Gruppierungen + Zusammenstellung, all Latex Elemente, for every Modulhandbuch (confirmed by staff). Copied Module get Course Source "02 Semester‑Copy".
+2. **Update module texts:** one Modul per (Code, Semester), shared by all Modulhandbücher of that semester; every field DE + EN, usually only one filled.
+   - Dozent: creates new Module or corrects own ones (Dozent tab) → Course Source "03 / 04 durch Dozent" (?)
+   - StudDekan / admin: edits any Modul (StudDekan / Course tab).
+3. **Review and release:** a Modul has a status `created` / `checked` / `published` (Freigabe), set by hand; any value can be set directly, nothing changes it automatically. StudDekan can filter by Quelle to see what Dozenten changed. Where exactly the status is set is not visible in the PDFs (?).
+4. **Adjust handbooks** (Modulhandbuch tab), per Modulhandbuch + Semester:
+   - Gruppierung: names, order, Latex Intro / Extro
+   - Zusammenstellung: add / remove Module, set positions
+   - Latex Elemente: update Intro (date, Studienverlaufspläne)
+5. **Check:** `Check PDF generation of all modules`, then Draft PDF (all Module) → PDF (released only).
+6. **Publish:**
+   - Output → Latex: generate the handbook LaTeX → PDF
+   - Websites read Output html/JSON live (released only; `draft=1` shows unreleased, without login)
+   - Git → Export: dump LaTeX records to files for version history
+
+
+
+## All possible screens with its variation 
 * there is a lot of **duplicate screens**. Most likely: in this framework **access is granted per tab**. So each role gets its own tab with copies of the screens it needs
 
   | Tab | Who | Can do |
@@ -57,7 +81,6 @@ Notice:
 
 For MaMpf: one screen per thing; roles decide which actions are shown. No duplicate screens to migrate.
 
-## All possible screens with its variation
 So final list of all possible screens with its variation:
 
 * **Module list** (Course - Liste / StudDekanin Modul Liste / Dozent Course-Liste)

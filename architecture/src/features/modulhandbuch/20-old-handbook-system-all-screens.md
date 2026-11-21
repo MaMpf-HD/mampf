@@ -231,7 +231,6 @@ Intro text: create new Module and correct Module.
 * Columns: Semester, Fachgebiet, Code, Name (EN/DE), `[n]` Modulhandbücher.
 * Actions: `pdf` (all rows), `edit` (only some rows, others show `-`), `copy`, `Neu`.
   * (?) `edit` only for modules not yet released / created by the Dozent. Otherwise the Dozent uses `copy`.
-* Saving sets CourseSource to "03 erstellt durch Dozent" / "04 geändert durch Dozent" (?).
 
 #### Dozent → CourseListe → pdf (PdfExportExample)
 * PDF of one module. 

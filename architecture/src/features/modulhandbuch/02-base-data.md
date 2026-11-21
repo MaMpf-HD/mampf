@@ -115,7 +115,7 @@ A semester, e.g., "WS 2026/27". Existing MaMpf model, no changes.
 
 - The old system's `Start` / `Ende` dates are not needed for handbooks.
 - The old system had future semesters created in advance (up to 2030). In MaMpf, the target `Term` must exist before "Prepare a term". TODO: check who can create terms in MaMpf.
-- Old "copy to next Semester" is replaced by "Prepare a term" (see [Cloning](05-cloning.md)).
+- Old "copy to next Semester" is replaced by "Prepare a term" (see [Cloning](16-cloning.md)).
 
 ---
 

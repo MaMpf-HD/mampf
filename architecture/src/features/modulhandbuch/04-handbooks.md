@@ -24,7 +24,7 @@ A `Handbook` is the ordered list of modules a `StudyProgram` offers in a `Term`.
 
 - **`Handbook` = (`StudyProgram`, `Term`)**, unique. One `StudyProgram` per `Handbook`; the old system never combines programs (BSc 100% and BSc 50% are separate Modulhandbücher).
 - **One language per `Handbook`**, default from `StudyProgram#default_language`. It applies to the handbook's own text (front matter, section titles, field labels). `ModuleEdition` text is printed in the `ModuleEdition`'s language.
-- **Front matter as text fields on `Handbook`** (Markdown formatting), not raw LaTeX. Preamble and layout live in the export template (see [Export](06-export.md)).
+- **Front matter as text fields on `Handbook`** (Markdown formatting), not raw LaTeX. Preamble and layout live in the export template (see [Export](17-export.md)).
 - **`Section`s belong to exactly one `Handbook`**; reuse across handbooks is not worth the coupling.
 - **Membership only through `SectionEntry`**: no direct `Handbook` ↔ `ModuleEdition` link, so there is one source of truth. "Module belongs to K in X but not in Y" falls out of which entries exist.
 - **Ordering via `position`** on `Section`s and `SectionEntry`s. Replaces the old sort by `Kurz` prefix ("01 …", "02 …").
@@ -70,7 +70,7 @@ The printed PDF without the module pages: cover, Präambel, table of contents, S
 - Unique on (`study_program_id`, `term_id`).
 - Destroying a `Handbook` destroys its `Section`s and `SectionEntry`s, **never** the `ModuleEdition`s.
 - A `published` `Handbook` cannot be destroyed; unpublish it first.
-- `Handbook` status and `ModuleEdition` status are independent: publishing the `Handbook` makes it visible to viewers and public; which `ModuleEdition`s are printed is decided by the export filter (see [Export](06-export.md)).
+- `Handbook` status and `ModuleEdition` status are independent: publishing the `Handbook` makes it visible to viewers and public; which `ModuleEdition`s are printed is decided by the export filter (see [Export](17-export.md)).
 - Cloning copies `language`, `title`, `subtitle`, `intro`, `outro`; resets `issue_date`, `status: :draft`, `published_at`.
 - Studienverlaufspläne are part of `intro` (text + simple table). Old `\pageref` references become links to the heading.
 

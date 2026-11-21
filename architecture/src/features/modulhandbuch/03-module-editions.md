@@ -56,7 +56,7 @@ The page "IAD Algorithmen und Datenstrukturen" in the WS 2026/27 handbooks, shar
 | `cloned_from_id` | DB column, nullable | Previous term's `ModuleEdition` this was copied from |
 | `section_entries` | Association | Where this `ModuleEdition` is listed |
 | `handbooks` | Association | `Handbook`s listing it (through `section_entries`) |
-| `check!` / `publish!` / `reopen!` | Methods | Status transitions |
+| `status=` | Enum setter | Set by hand; any value allowed |
 
 **Text fields** (one column each, Markdown):
 
@@ -83,19 +83,20 @@ The export order and labels follow the old single‑module PDF (LV‑Nr., Name, 
 ````mermaid
 stateDiagram-v2
     [*] --> created: new or copied
-    created --> checked: Mark checked
-    checked --> published: Publish
-    checked --> created: Reopen / content saved
-    published --> created: Reopen / content saved
+    created --> checked
+    created --> published
+    checked --> published
+    checked --> created
+    published --> checked
+    published --> created
 ````
 
 - New and copied `ModuleEdition`s start as `created`.
-- Saving `language`, `name`, `lv_number`, `ects` or a text field of a `checked` or `published` `ModuleEdition` resets it to `created`. The save asks first and names every affected `Handbook`.
-- `internal_remarks` and `responsible_user_id` do not reset the status.
+- The status is a **manual flag** (as in the old system): whoever edits sets it, any value directly. Nothing changes it automatically; saving keeps the status. The save names every affected `Handbook`.
 - Official export shows `published` only; draft export shows all (old: PDF vs Draft PDF, `draft=1`).
 
-```admonish warning "⚑ Decision: keep checked?"
-The old system has only released / not released. `checked` is useful if review and release are separate steps (or separate people). If one person does both, drop it: `created` → `published`.
+```admonish warning "⚑ Open: what does `checked` change?"
+`checked` only affects export and views; how exactly is not yet clear (e.g., a "checked + published" draft export). **TODO: ask the staff.** See [Review & Publish](14-review-and-publish.md).
 ```
 
 ### Behavior Highlights

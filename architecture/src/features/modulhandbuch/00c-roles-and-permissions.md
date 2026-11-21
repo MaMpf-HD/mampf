@@ -52,7 +52,7 @@ Screens that I have no idea who have what access rigth
 | `Handbook`: create, front matter, sections, entries | ✓ | | | read | |
 | `ModuleEdition`: create (via handbook) | ✓ | | ✗ (old Dozent could) | | |
 | `ModuleEdition`: edit text | ✓ | | own only | | |
-| `ModuleEdition`: mark checked / publish / reopen | ✓ | ✓ | | | |
+| `ModuleEdition`: set status (created / checked / published) | ✓ | ✓ | | | |
 | Publish / unpublish `Handbook` | ✓ | ✓ | | | |
 | Delete (`ModuleEdition` not in use, empty structure) | ✓ | | | | |
 | Draft PDF, single-module PDF, check render | ✓ | ✓ | own only | ✓ | |

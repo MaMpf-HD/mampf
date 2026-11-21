@@ -17,22 +17,22 @@ flowchart LR
 
 Model:
 
-1. Study Programs and Curriculum Modules ([Catalog](02-catalog.md))
+1. Study Programs and Curriculum Modules ([Base Data](02-base-data.md))
 2. Per‑term descriptions of modules ([Module Editions](03-module-editions.md))
 3. Handbook assembly: sections and ordered entries ([Handbooks](04-handbooks.md))
 
-Possible actions in Modulehandbook: (see [End-to-End Workflow](07-end-to-end-workflow.md) #TODO)
+Possible actions in Modulehandbook: (see [End-to-End Workflow](10-end-to-end-workflow.md))
 
 4. Create master data: Study Programs and Curriculum Modules
 5. Create Modulehandbook
-6. PDF export, filtered by status ([Export](06-export.md))
-7. Next term / or targeted term: clone a handbook into the new term ([Cloning](05-cloning.md))
+6. PDF export, filtered by status ([Export](17-export.md))
+7. Next term / or targeted term: clone a handbook into the new term ([Cloning](16-cloning.md))
 
 Other concerns:
 
-8. Access control ([Roles & Permissions](08-roles-and-permissions.md))
-9. Integrity checks ([Integrity & Invariants](09-integrity-and-invariants.md))
-10. Roadmap & extensibility ([Future Extensions](10-future-extensions.md))
+8. Access control ([Roles & Permissions](00c-roles-and-permissions.md))
+9. Integrity checks ([Integrity & Invariants](08-integrity-and-invariants.md))
+10. Roadmap & extensibility ([Future Extensions](09-future-extensions.md))
 
 
 ## Design Tenets

@@ -50,7 +50,7 @@ This chapter summarizes the principal entities; behavioral details live in the r
 | Course Source | derived, no table | Old values: 01 Admin, 02 Semester‑Copy, 03 erstellt durch Dozent, 04 geändert durch Dozent, 05 Test. Semester‑Copy = `cloned_from` set and not edited since; Admin / Dozent = who edited last (**needs History**); Test = not migrated |
 | LSF‑Sortierung + LSF fields | — | **TODO: verify if still needed (LSF replaced by heiCO since SoSe 2024). Do not implement.** |
 | Abfragen | — | Dropped; filters + CSV export instead |
-| Git Export | Export snapshots | [Future extension](10-future-extensions.md) |
+| Git Export | Export snapshots | [Future extension](09-future-extensions.md) |
 
 ## Linking Concepts
 
@@ -69,7 +69,7 @@ These are the points where the handbook touches existing MaMpf models. The handb
 **Example Flows:**
 
 1. **Build a handbook:** `StudyProgram` + `Term` → `Handbook` (front matter) → `Section`s → `SectionEntry` linking a `ModuleEdition` (found or created for `CurriculumModule` + `Term`)
-2. **Review:** `ModuleEdition` created → checked → published; saving content resets to created
+2. **Publish:** `ModuleEdition` status created / checked / published (manual flag, set by whoever edits); `Handbook` draft → published
 3. **Next term:** "Prepare a term" runs `CloneService` per program: copies `Handbook` + `Section`s, finds or creates `ModuleEdition`s in the target term, rebuilds `SectionEntry`s
 4. **Export:** `Exporter` walks front matter → sections → entries → `ModuleEdition`s in order, filters by status, fills the template
 
@@ -90,7 +90,7 @@ erDiagram
 ```
 
 ```admonish note "One ModuleEdition, many Handbooks"
-A `ModuleEdition` is shared by every `Handbook` of its term that lists it (e.g., Informatik BSc 100% and BSc 50% both list *IAD, WS 2026/27*). Editing it changes all of them. This is intended and is the reason cloning uses find‑or‑create (see [Cloning](05-cloning.md)).
+A `ModuleEdition` is shared by every `Handbook` of its term that lists it (e.g., Informatik BSc 100% and BSc 50% both list *IAD, WS 2026/27*). Editing it changes all of them. This is intended and is the reason cloning uses find‑or‑create (see [Cloning](16-cloning.md)).
 ```
 
 See details:
@@ -98,6 +98,6 @@ See details:
 - [Base Data](02-base-data.md)
 - [Module Editions](03-module-editions.md)
 - [Handbooks](04-handbooks.md)
-- [Cloning](05-cloning.md)
-- [Export](06-export.md)
-- [Integrity & Invariants](09-integrity-and-invariants.md)
+- [Cloning](16-cloning.md)
+- [Export](17-export.md)
+- [Integrity & Invariants](08-integrity-and-invariants.md)
