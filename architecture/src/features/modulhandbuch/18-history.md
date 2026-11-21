@@ -2,6 +2,27 @@
 
 Who changed what and when.
 
+## Why History
+
+The old system already has history (see [Old system: all screens](20-old-handbook-system-all-screens.md)):
+
+- **Every edit form** has a read‑only `History` field and `tst_create` / `tst_change` (or `Erstellt` / `Geändert`).
+- **`History` shows old / new value per field change** (Code, Modulhandbuch, Gruppierung, Latex Elemente, Semester).
+- **Git → Export** writes all LaTeX records to files that are committed to Git: a second version history / backup.
+
+The new system needs it as well:
+
+1. **Keep what exists:** "who changed this module text, and what was it before?" must stay answerable.
+2. **Course Source is derived from it:** "03 erstellt / 04 geändert durch Dozent" = who edited last (see [Domain Model](01-domain-model.md#old-system--new)).
+3. **Descriptions are shared:** one `ModuleEdition` is used by several handbooks, so one edit changes all of them. History shows who changed it, when, and to what.
+
+```admonish note "Scope still open"
+- **Full history** (old → new per field): matches the old `History` field. MaMpf has no versioning gem yet → new dependency (e.g., `paper_trail`) and one `versions` table.
+- **Only "last changed by / at"**: matches `tst_change`. Two columns, but no per‑field diff and no Hi3 / Hi4.
+
+Suggestion: full history, since the old system already shows old / new per field. **TODO: ask the staff whether the old `History` field is actually used** (see [To Verify](pending-thing-need-to-verify.md#9-history)).
+```
+
 ```admonish warning "⚑ Open"
 These flows assume full history (old → new per change). With only "created/updated by", Hi1 shows one line and Hi3 / Hi4 are not possible.
 ```
@@ -18,9 +39,9 @@ These flows assume full history (old → new per change). With only "created/upd
 **Hi2. See who changed it last**
 - Lists show **Last changed** (date, name); "copied" if unchanged since cloning, "imported" after migration.
 
-**Hi3. Why is it back to created?**
+**Hi3. Who changed the status?**
 1. Description → History.
-2. Entry: "15.10. P.-Schmid · literature changed · status published → created".
+2. Entry: "15.10. P.-Schmid · status published → created".
 
 **Hi4. What happened to a handbook?**
 1. Handbook editor → ⋯ → **History**.

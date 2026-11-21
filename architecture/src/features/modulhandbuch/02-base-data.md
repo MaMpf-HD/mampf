@@ -128,6 +128,22 @@ A semester, e.g., "WS 2026/27". Existing MaMpf model, no changes.
 | Course Source table | Old values: 01 Admin, 02 Semester‑Copy, 03/04 Dozent, 05 Test. Derived: Semester‑Copy = `cloned_from` set and not edited since; Admin / Dozent = who edited last (needs History); Test = not migrated |
 | Fachgebiet on the per‑semester Modul | Belongs to `CurriculumModule`, not to the term |
 
+```admonish warning "⚑ To verify: lookup values move from the UI into code"
+In the old system, everyone with edit access could add or change lookup values directly in the UI (Fachgebiet, Course Cycle, Course Source tables). In the new system:
+
+- `subject_area` is an **enum** → a new value (e.g., a 4th Fachgebiet) needs a code change and a deploy, done by a developer. Admin / StudDekan can no longer do it themselves.
+- `cycle` is free text → nothing to maintain.
+- Source is derived → nothing to maintain.
+
+**TODO: ask the staff:**
+1. Has a new Fachgebiet (or Course Cycle / Course Source value) ever been added or renamed, and how often?
+2. Is it acceptable that this now goes through a developer?
+```
+
+**Suggestion:** keep the enum if the answer is "never / almost never" (3 values, tied to the faculty's structure). If values do change, use a small admin‑managed table `handbook_subject_areas` (name DE/EN, position) instead; that costs one model, one list / edit screen and a migration of the 3 values.
+
+
+
 ---
 
 ## Database Tables
