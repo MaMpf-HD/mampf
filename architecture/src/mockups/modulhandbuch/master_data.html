@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modulhandbuch – Master Data</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --border: #dfe2e6;
+    --border-strong: #c8ccd2;
+    --text: #1f2328;
+    --muted: #656d76;
+    --primary: #1f5fae;
+    --primary-hover: #194e90;
+    --primary-soft: #e8f0fa;
+    --danger: #b42318;
+    --danger-soft: #fdecea;
+    --warn: #8a5a00;
+    --warn-soft: #fff4d6;
+    --ok: #1a7f37;
+    --ok-soft: #e6f4ea;
+    --radius: 8px;
+    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  /* Top bar */
+  .topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 24px; padding: 0 24px; height: 56px;
+  }
+  .brand { font-weight: 700; font-size: 16px; }
+  .brand span { color: var(--muted); font-weight: 400; }
+  .nav { display: flex; gap: 4px; }
+  .nav a {
+    color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 6px;
+  }
+  .nav a.active { color: var(--primary); background: var(--primary-soft); font-weight: 600; }
+  .nav a:hover:not(.active) { background: var(--bg); color: var(--text); }
+  .user { margin-left: auto; color: var(--muted); font-size: 13px; }
+  .role { background: var(--primary-soft); color: var(--primary); border-radius: 999px; padding: 2px 8px; margin-left: 6px; font-weight: 600; }
+
+  main { max-width: 1120px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .lead { color: var(--muted); margin: 0 0 20px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .tab {
+    background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    padding: 10px 16px; font: inherit; color: var(--muted); cursor: pointer;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+  .count { background: var(--bg); border: 1px solid var(--border); border-radius: 999px; padding: 0 7px; font-size: 12px; margin-left: 6px; color: var(--muted); }
+  .tab.active .count { background: var(--primary-soft); border-color: transparent; color: var(--primary); }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .search { position: relative; flex: 1; min-width: 220px; max-width: 360px; }
+  .search input { padding-left: 32px; }
+  .search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+
+  input, select, textarea {
+    width: 100%; font: inherit; color: var(--text); background: var(--surface);
+    border: 1px solid var(--border-strong); border-radius: 6px; padding: 7px 10px;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(31,95,174,.15); }
+  select.inline { width: auto; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 500;
+    border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
+    padding: 7px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+  }
+  .btn:hover { background: var(--bg); }
+  .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .btn.primary:hover { background: var(--primary-hover); }
+  .btn.danger { color: var(--danger); }
+  .btn.danger:hover { background: var(--danger-soft); }
+  .btn.sm { padding: 4px 8px; font-size: 13px; }
+  .btn.ghost { border-color: transparent; background: transparent; }
+  .btn.ghost:hover { background: var(--bg); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .spacer { margin-left: auto; }
+
+  /* Table */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: #fafbfc; cursor: pointer; user-select: none; }
+  th.nosort { cursor: default; }
+  th .arrow { opacity: .4; font-size: 10px; margin-left: 4px; }
+  th.sorted .arrow { opacity: 1; color: var(--primary); }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: #fafbfc; }
+  td.actions { text-align: right; white-space: nowrap; width: 1%; }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
+  .sub { color: var(--muted); font-size: 13px; }
+  .pill { display: inline-block; border-radius: 999px; padding: 1px 8px; font-size: 12px; font-weight: 600; }
+  .pill.blue { background: var(--primary-soft); color: var(--primary); }
+  .pill.grey { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+  .usage { color: var(--muted); font-size: 13px; }
+  .usage b { color: var(--text); font-weight: 600; }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  .footer-note { color: var(--muted); font-size: 12px; margin-top: 10px; }
+
+  /* Modal */
+  .backdrop { position: fixed; inset: 0; background: rgba(16,24,40,.45); display: none; align-items: flex-start; justify-content: center; padding: 72px 16px; z-index: 10; }
+  .backdrop.open { display: flex; }
+  .modal { background: var(--surface); border-radius: 10px; width: 100%; max-width: 520px; box-shadow: 0 12px 32px rgba(16,24,40,.25); }
+  .modal.wide { max-width: 680px; }
+  .modal-h { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; }
+  .modal-h h2 { font-size: 16px; margin: 0; }
+  .modal-b { padding: 20px; }
+  .modal-f { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .field.invalid input { border-color: var(--danger); }
+  .field .err { color: var(--danger); font-size: 12px; margin-top: 4px; display: none; }
+  .field.invalid .err { display: block; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .callout { border-radius: 6px; padding: 10px 12px; font-size: 13px; margin-bottom: 14px; }
+  .callout.warn { background: var(--warn-soft); color: var(--warn); }
+  .callout.danger { background: var(--danger-soft); color: var(--danger); }
+  .callout.info { background: var(--primary-soft); color: var(--primary); }
+
+  /* History timeline */
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li { display: grid; grid-template-columns: 110px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .timeline li:last-child { border-bottom: 0; }
+  .term { font-weight: 600; }
+  .status { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.created { background: #98a2b3; }
+  .dot.checked { background: #d29922; }
+  .dot.published { background: var(--ok); }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1f2328; color: #fff; padding: 10px 16px; border-radius: 8px; opacity: 0; transition: .2s; pointer-events: none; z-index: 20; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .mock-label { position: fixed; bottom: 12px; right: 12px; background: var(--warn-soft); color: var(--warn); font-size: 12px; padding: 4px 10px; border-radius: 999px; font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .topbar { padding: 0 16px; gap: 12px; }
+    .nav { display: none; }
+    main { padding: 16px; }
+    .hide-sm { display: none; }
+    .row2 { grid-template-columns: 1fr; }
+    .card { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">MaMpf <span>· Modulhandbuch</span></div>
+  <nav class="nav">
+    <a href="#" class="active">Master data</a>
+    <a href="#">Handbooks</a>
+    <a href="#">Module descriptions</a>
+  </nav>
+  <div class="user">Dr. Admin <span class="role">admin</span></div>
+</header>
+
+<main>
+  <h1>Master data</h1>
+  <p class="lead">Term‑independent records. Changes here apply to every term, including handbooks already published.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="programs" role="tab">Study programs <span class="count" id="count-programs"></span></button>
+    <button class="tab" data-tab="modules" role="tab">Curriculum modules <span class="count" id="count-modules"></span></button>
+  </div>
+
+  <!-- Study programs -->
+  <section id="panel-programs">
+    <div class="toolbar">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+        <input id="q-programs" placeholder="Search programs…">
+      </div>
+      <select class="inline" id="f-degree">
+        <option value="">All degrees</option>
+        <option value="bachelor">Bachelor</option>
+        <option value="master">Master</option>
+      </select>
+      <button class="btn primary spacer" id="new-program">+ New study program</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr>
+          <th data-sort="name_de">Name <span class="arrow">▲</span></th>
+          <th data-sort="degree">Degree <span class="arrow">▲</span></th>
+          <th data-sort="share">Share <span class="arrow">▲</span></th>
+          <th class="nosort hide-sm">Handbooks</th>
+          <th class="nosort"></th>
+        </tr></thead>
+        <tbody id="tbody-programs"></tbody>
+      </table>
+    </div>
+    <p class="footer-note">A study program can only be deleted while no handbook uses it.</p>
+  </section>
+
+  <!-- Curriculum modules -->
+  <section id="panel-modules" hidden>
+    <div class="toolbar">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+        <input id="q-modules" placeholder="Search code or name…">
+      </div>
+      <button class="btn primary spacer" id="new-module">+ New curriculum module</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr>
+          <th data-sort="code">Code <span class="arrow">▲</span></th>
+          <th data-sort="name_de">Name (DE) <span class="arrow">▲</span></th>
+          <th data-sort="name_en" class="hide-sm">Name (EN) <span class="arrow">▲</span></th>
+          <th class="nosort hide-sm">Descriptions</th>
+          <th class="nosort"></th>
+        </tr></thead>
+        <tbody id="tbody-modules"></tbody>
+      </table>
+    </div>
+    <p class="footer-note">A curriculum module can only be deleted while it has no module descriptions in any term.</p>
+  </section>
+</main>
+
+<!-- Program modal -->
+<div class="backdrop" id="m-program">
+  <div class="modal">
+    <div class="modal-h"><h2 id="m-program-title">New study program</h2></div>
+    <div class="modal-b">
+      <div class="callout warn" id="m-program-warn" hidden></div>
+      <div class="row2">
+        <div class="field" id="fp-name_de"><label>Name (DE)</label><input id="p-name_de" placeholder="Mathematik"><div class="err">Required.</div></div>
+        <div class="field" id="fp-name_en"><label>Name (EN)</label><input id="p-name_en" placeholder="Mathematics"><div class="err">Required.</div></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Degree</label>
+          <select id="p-degree"><option value="bachelor">Bachelor (B.Sc.)</option><option value="master">Master (M.Sc.)</option></select></div>
+        <div class="field"><label>Share</label>
+          <select id="p-share"><option value="100">100% (single subject)</option><option value="50">50% (two subjects)</option></select></div>
+      </div>
+      <div class="field" id="fp-dup"><div class="err">This program already exists with the same degree and share.</div></div>
+      <div class="field"><label>Preview</label><div class="sub" id="p-preview"></div></div>
+    </div>
+    <div class="modal-f">
+      <button class="btn" data-close>Cancel</button>
+      <button class="btn primary" id="p-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Module modal -->
+<div class="backdrop" id="m-module">
+  <div class="modal">
+    <div class="modal-h"><h2 id="m-module-title">New curriculum module</h2></div>
+    <div class="modal-b">
+      <div class="callout warn" id="m-module-warn" hidden></div>
+      <div class="field" id="fm-code"><label>Code</label><input id="mo-code" placeholder="MA101"><div class="hint">Stable key across all terms. Must be unique.</div><div class="err" id="fm-code-err">Required.</div></div>
+      <div class="field" id="fm-name_de"><label>Name (DE)</label><input id="mo-name_de" placeholder="Lineare Algebra I"><div class="err">Required.</div></div>
+      <div class="field" id="fm-name_en"><label>Name (EN)</label><input id="mo-name_en" placeholder="Linear Algebra I"><div class="err">Required.</div></div>
+      <div class="hint">The handbook shows the name matching each term's language of instruction.</div>
+    </div>
+    <div class="modal-f">
+      <button class="btn" data-close>Cancel</button>
+      <button class="btn primary" id="mo-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- History modal -->
+<div class="backdrop" id="m-history">
+  <div class="modal wide">
+    <div class="modal-h"><h2 id="m-history-title">History</h2><button class="btn ghost sm spacer" data-close>✕</button></div>
+    <div class="modal-b">
+      <p class="sub" style="margin-top:0">Module descriptions of this module across terms, newest first.</p>
+      <ul class="timeline" id="history-list"></ul>
+    </div>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div class="backdrop" id="m-delete">
+  <div class="modal">
+    <div class="modal-h"><h2 id="m-delete-title">Delete</h2></div>
+    <div class="modal-b" id="m-delete-body"></div>
+    <div class="modal-f">
+      <button class="btn" data-close>Cancel</button>
+      <button class="btn primary" id="d-confirm" style="background:var(--danger);border-color:var(--danger)">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="mock-label">Mockup · sample data</div>
+
+<script>
+/* ---------- Sample data ---------- */
+const programs = [
+  { id: 1, name_de: "Mathematik", name_en: "Mathematics", degree: "bachelor", share: "100", handbooks: ["WS 25/26", "SS 26", "WS 26/27"] },
+  { id: 2, name_de: "Mathematik", name_en: "Mathematics", degree: "bachelor", share: "50",  handbooks: ["WS 26/27"] },
+  { id: 3, name_de: "Mathematik", name_en: "Mathematics", degree: "master",   share: "100", handbooks: ["SS 26", "WS 26/27"] },
+  { id: 4, name_de: "Mathematik", name_en: "Mathematics", degree: "master",   share: "50",  handbooks: [] },
+  { id: 5, name_de: "Scientific Computing", name_en: "Scientific Computing", degree: "master", share: "100", handbooks: ["WS 26/27"] },
+];
+
+const modules = [
+  { id: 1, code: "MA101", name_de: "Lineare Algebra I",  name_en: "Linear Algebra I", editions: [
+    { term: "WS 26/27", lang: "en", ects: 8, status: "checked",   used: ["B.Sc. 100%", "B.Sc. 50%"] },
+    { term: "WS 25/26", lang: "de", ects: 8, status: "published", used: ["B.Sc. 100%"] } ] },
+  { id: 2, code: "MA102", name_de: "Analysis I",         name_en: "Analysis I", editions: [
+    { term: "WS 26/27", lang: "de", ects: 8, status: "published", used: ["B.Sc. 100%", "B.Sc. 50%"] },
+    { term: "WS 25/26", lang: "de", ects: 8, status: "published", used: ["B.Sc. 100%"] } ] },
+  { id: 3, code: "MA201", name_de: "Algebra I",          name_en: "Algebra I", editions: [
+    { term: "SS 26",    lang: "de", ects: 8, status: "published", used: ["B.Sc. 100%", "M.Sc. 100%"] } ] },
+  { id: 4, code: "MA205", name_de: "Topologie",          name_en: "Topology", editions: [] },
+  { id: 5, code: "MA310", name_de: "Funktionalanalysis", name_en: "Functional Analysis", editions: [
+    { term: "WS 26/27", lang: "en", ects: 8, status: "created",   used: ["M.Sc. 100%"] },
+    { term: "SS 26",    lang: "en", ects: 8, status: "published", used: ["M.Sc. 100%"] } ] },
+  { id: 6, code: "MA402", name_de: "Numerik partieller Differentialgleichungen", name_en: "Numerics of Partial Differential Equations", editions: [
+    { term: "WS 26/27", lang: "en", ects: 10, status: "created", used: ["M.Sc. 100%", "Scientific Computing M.Sc. 100%"] } ] },
+  { id: 7, code: "MA050", name_de: "Proseminar",         name_en: "Proseminar", editions: [] },
+];
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const degreeLabel = d => d === "bachelor" ? "B.Sc." : "M.Sc.";
+const programName = p => `${p.name_de} ${degreeLabel(p.degree)} ${p.share}%`;
+let nextId = 100;
+
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+function open(id) { $(id).classList.add("open"); }
+function closeAll() { document.querySelectorAll(".backdrop").forEach(b => b.classList.remove("open")); }
+document.addEventListener("click", e => {
+  if (e.target.matches("[data-close]") || e.target.classList.contains("backdrop")) closeAll();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeAll(); });
+
+/* ---------- Sorting ---------- */
+const sortState = { programs: { key: "name_de", dir: 1 }, modules: { key: "code", dir: 1 } };
+function sorted(list, s) {
+  return [...list].sort((a, b) => String(a[s.key]).localeCompare(String(b[s.key]), "de", { numeric: true }) * s.dir);
+}
+document.querySelectorAll("th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const panel = th.closest("section").id === "panel-programs" ? "programs" : "modules";
+    const s = sortState[panel];
+    s.dir = s.key === th.dataset.sort ? -s.dir : 1;
+    s.key = th.dataset.sort;
+    render();
+  });
+});
+function paintSortHeaders() {
+  ["programs", "modules"].forEach(panel => {
+    const s = sortState[panel];
+    document.querySelectorAll(`#panel-${panel} th[data-sort]`).forEach(th => {
+      const on = th.dataset.sort === s.key;
+      th.classList.toggle("sorted", on);
+      th.querySelector(".arrow").textContent = on && s.dir < 0 ? "▼" : "▲";
+    });
+  });
+}
+
+/* ---------- Render ---------- */
+function render() {
+  const qp = $("#q-programs").value.trim().toLowerCase();
+  const fd = $("#f-degree").value;
+  const plist = sorted(programs, sortState.programs).filter(p =>
+    (!fd || p.degree === fd) && (!qp || `${p.name_de} ${p.name_en}`.toLowerCase().includes(qp)));
+
+  $("#tbody-programs").innerHTML = plist.length ? plist.map(p => `
+    <tr>
+      <td><b>${esc(p.name_de)}</b><div class="sub">${esc(p.name_en)}</div></td>
+      <td><span class="pill blue">${degreeLabel(p.degree)}</span></td>
+      <td>${p.share}%</td>
+      <td class="hide-sm usage">${p.handbooks.length
+        ? `<b>${p.handbooks.length}</b> · ${esc(p.handbooks.join(", "))}`
+        : "None yet"}</td>
+      <td class="actions">
+        <button class="btn sm" data-edit-program="${p.id}">Edit</button>
+        <button class="btn sm danger" data-del-program="${p.id}">Delete</button>
+      </td>
+    </tr>`).join("") : `<tr><td colspan="5" class="empty">No study programs match.</td></tr>`;
+
+  const qm = $("#q-modules").value.trim().toLowerCase();
+  const mlist = sorted(modules, sortState.modules).filter(m =>
+    !qm || `${m.code} ${m.name_de} ${m.name_en}`.toLowerCase().includes(qm));
+
+  $("#tbody-modules").innerHTML = mlist.length ? mlist.map(m => {
+    const n = m.editions.length;
+    const latest = n ? m.editions[0].term : null;
+    return `
+    <tr>
+      <td><span class="code">${esc(m.code)}</span></td>
+      <td>${esc(m.name_de)}</td>
+      <td class="hide-sm sub">${esc(m.name_en)}</td>
+      <td class="hide-sm usage">${n
+        ? `<b>${n}</b> term${n > 1 ? "s" : ""} · latest ${esc(latest)}`
+        : `<span class="pill grey">Not used yet</span>`}</td>
+      <td class="actions">
+        <button class="btn sm ghost" data-history="${m.id}" ${n ? "" : "disabled"}>History</button>
+        <button class="btn sm" data-edit-module="${m.id}">Edit</button>
+        <button class="btn sm danger" data-del-module="${m.id}">Delete</button>
+      </td>
+    </tr>`; }).join("") : `<tr><td colspan="5" class="empty">No curriculum modules match.</td></tr>`;
+
+  $("#count-programs").textContent = programs.length;
+  $("#count-modules").textContent = modules.length;
+  paintSortHeaders();
+}
+["#q-programs", "#f-degree", "#q-modules"].forEach(s => $(s).addEventListener("input", render));
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+  $("#panel-programs").hidden = tab.dataset.tab !== "programs";
+  $("#panel-modules").hidden = tab.dataset.tab !== "modules";
+}));
+
+/* ---------- Study program form ---------- */
+let editingProgram = null;
+function updatePreview() {
+  $("#p-preview").textContent = programName({
+    name_de: $("#p-name_de").value || "…", degree: $("#p-degree").value, share: $("#p-share").value });
+}
+["#p-name_de", "#p-degree", "#p-share"].forEach(s => $(s).addEventListener("input", updatePreview));
+
+function openProgram(p) {
+  editingProgram = p || null;
+  $("#m-program-title").textContent = p ? "Edit study program" : "New study program";
+  $("#p-name_de").value = p ? p.name_de : "";
+  $("#p-name_en").value = p ? p.name_en : "";
+  $("#p-degree").value = p ? p.degree : "bachelor";
+  $("#p-share").value = p ? p.share : "100";
+  const warn = $("#m-program-warn");
+  warn.hidden = !(p && p.handbooks.length);
+  if (p && p.handbooks.length) warn.textContent =
+    `Used by ${p.handbooks.length} handbook${p.handbooks.length > 1 ? "s" : ""} (${p.handbooks.join(", ")}). Renaming changes all of them.`;
+  document.querySelectorAll("#m-program .field").forEach(f => f.classList.remove("invalid"));
+  updatePreview(); open("#m-program"); $("#p-name_de").focus();
+}
+$("#new-program").addEventListener("click", () => openProgram());
+$("#p-save").addEventListener("click", () => {
+  const v = { name_de: $("#p-name_de").value.trim(), name_en: $("#p-name_en").value.trim(),
+              degree: $("#p-degree").value, share: $("#p-share").value };
+  let ok = true;
+  ["name_de", "name_en"].forEach(k => { const bad = !v[k]; $("#fp-" + k).classList.toggle("invalid", bad); if (bad) ok = false; });
+  const dup = programs.some(p => p !== editingProgram && p.name_de.toLowerCase() === v.name_de.toLowerCase() && p.degree === v.degree && p.share === v.share);
+  $("#fp-dup").classList.toggle("invalid", dup);
+  if (!ok || dup) return;
+  if (editingProgram) Object.assign(editingProgram, v);
+  else programs.push({ id: nextId++, handbooks: [], ...v });
+  closeAll(); render(); toast(editingProgram ? "Study program updated" : "Study program created");
+});
+
+/* ---------- Curriculum module form ---------- */
+let editingModule = null;
+function openModule(m) {
+  editingModule = m || null;
+  $("#m-module-title").textContent = m ? "Edit curriculum module" : "New curriculum module";
+  $("#mo-code").value = m ? m.code : "";
+  $("#mo-name_de").value = m ? m.name_de : "";
+  $("#mo-name_en").value = m ? m.name_en : "";
+  const warn = $("#m-module-warn");
+  const n = m ? m.editions.length : 0;
+  warn.hidden = !n;
+  if (n) warn.textContent = `Has descriptions in ${n} term${n > 1 ? "s" : ""}. Changing the code or names changes every term, including published handbooks.`;
+  document.querySelectorAll("#m-module .field").forEach(f => f.classList.remove("invalid"));
+  open("#m-module"); $("#mo-code").focus();
+}
+$("#new-module").addEventListener("click", () => openModule());
+$("#mo-save").addEventListener("click", () => {
+  const v = { code: $("#mo-code").value.trim().toUpperCase(), name_de: $("#mo-name_de").value.trim(), name_en: $("#mo-name_en").value.trim() };
+  let ok = true;
+  ["name_de", "name_en"].forEach(k => { const bad = !v[k]; $("#fm-" + k).classList.toggle("invalid", bad); if (bad) ok = false; });
+  const dup = modules.some(m => m !== editingModule && m.code === v.code);
+  $("#fm-code-err").textContent = !v.code ? "Required." : "This code is already used by another module.";
+  const codeBad = !v.code || dup;
+  $("#fm-code").classList.toggle("invalid", codeBad);
+  if (!ok || codeBad) return;
+  if (editingModule) Object.assign(editingModule, v);
+  else modules.push({ id: nextId++, editions: [], ...v });
+  closeAll(); render(); toast(editingModule ? "Curriculum module updated" : "Curriculum module created");
+});
+
+/* ---------- History ---------- */
+function openHistory(m) {
+  $("#m-history-title").innerHTML = `<span class="code">${esc(m.code)}</span>&nbsp; ${esc(m.name_de)}`;
+  $("#history-list").innerHTML = m.editions.map(e => `
+    <li>
+      <span class="term">${esc(e.term)}</span>
+      <span>
+        ${esc(e.lang === "en" ? m.name_en : m.name_de)}
+        <span class="sub">· ${e.lang.toUpperCase()} · ${e.ects} ECTS</span>
+        <div class="usage">Used in: ${esc(e.used.join(", "))}</div>
+      </span>
+      <span class="status"><span class="dot ${e.status}"></span>${e.status}</span>
+    </li>`).join("");
+  open("#m-history");
+}
+
+/* ---------- Delete ---------- */
+let pendingDelete = null;
+function openDelete(kind, item) {
+  const blockedBy = kind === "program" ? item.handbooks.length : item.editions.length;
+  const label = kind === "program" ? programName(item) : `${item.code} ${item.name_de}`;
+  $("#m-delete-title").textContent = kind === "program" ? "Delete study program" : "Delete curriculum module";
+  if (blockedBy) {
+    const what = kind === "program"
+      ? `${blockedBy} handbook${blockedBy > 1 ? "s" : ""} (${item.handbooks.join(", ")})`
+      : `module descriptions in ${blockedBy} term${blockedBy > 1 ? "s" : ""}`;
+    $("#m-delete-body").innerHTML = `<div class="callout danger" style="margin:0"><b>${esc(label)}</b> can't be deleted: it is used by ${esc(what)}.</div>`;
+    $("#d-confirm").hidden = true;
+    pendingDelete = null;
+  } else {
+    $("#m-delete-body").innerHTML = `<p style="margin:0">Delete <b>${esc(label)}</b>? It isn't used anywhere. This can't be undone.</p>`;
+    $("#d-confirm").hidden = false;
+    pendingDelete = { kind, item };
+  }
+  open("#m-delete");
+}
+$("#d-confirm").addEventListener("click", () => {
+  if (!pendingDelete) return;
+  const list = pendingDelete.kind === "program" ? programs : modules;
+  list.splice(list.indexOf(pendingDelete.item), 1);
+  closeAll(); render(); toast("Deleted");
+});
+
+/* ---------- Row actions ---------- */
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const d = b.dataset;
+  if (d.editProgram) openProgram(programs.find(p => p.id == d.editProgram));
+  if (d.delProgram)  openDelete("program", programs.find(p => p.id == d.delProgram));
+  if (d.editModule)  openModule(modules.find(m => m.id == d.editModule));
+  if (d.delModule)   openDelete("module", modules.find(m => m.id == d.delModule));
+  if (d.history)     openHistory(modules.find(m => m.id == d.history));
+});
+
+render();
+</script>
+</body>
+</html>

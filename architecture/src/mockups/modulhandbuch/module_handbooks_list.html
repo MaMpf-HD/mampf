@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modulhandbuch – Handbooks</title>
+    <style>
+      :root {
+        --bg: #f5f6f8;
+        --surface: #fff;
+        --border: #dfe2e6;
+        --border-strong: #c8ccd2;
+        --text: #1f2328;
+        --muted: #656d76;
+        --primary: #1f5fae;
+        --primary-hover: #194e90;
+        --primary-soft: #e8f0fa;
+        --danger: #b42318;
+        --danger-soft: #fdecea;
+        --warn: #8a5a00;
+        --warn-soft: #fff4d6;
+        --ok: #1a7f37;
+        --ok-soft: #e6f4ea;
+        --radius: 8px;
+        --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.5 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      .topbar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 0 24px;
+        height: 56px;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .brand span {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .nav {
+        display: flex;
+        gap: 4px;
+      }
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+      }
+      .nav a.active {
+        color: var(--primary);
+        background: var(--primary-soft);
+        font-weight: 600;
+      }
+      .nav a:hover:not(.active) {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .user {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .role {
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: 999px;
+        padding: 2px 8px;
+        margin-left: 6px;
+        font-weight: 600;
+      }
+
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 24px 24px 80px;
+      }
+      .page-head {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      h1 {
+        font-size: 22px;
+        margin: 0;
+      }
+      .lead {
+        color: var(--muted);
+        margin: 2px 0 0;
+      }
+      .page-head .acts {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+      }
+
+      /* Buttons/inputs */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font: inherit;
+        font-weight: 500;
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        color: var(--text);
+        padding: 7px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        text-decoration: none;
+      }
+      .btn:hover {
+        background: var(--bg);
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+      .btn.primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn.xs {
+        padding: 2px 8px;
+        font-size: 12.5px;
+      }
+      .btn.ghost {
+        border-color: transparent;
+        background: transparent;
+      }
+      .btn.ghost:hover {
+        background: var(--bg);
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      select,
+      input {
+        width: 100%;
+        font: inherit;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        padding: 7px 10px;
+      }
+      select:focus,
+      input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(31, 95, 174, 0.15);
+      }
+
+      /* Filters */
+      .filters {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .filters select {
+        width: auto;
+        min-width: 200px;
+      }
+      .filters .adv {
+        position: relative;
+      }
+      .badge-soon {
+        font-size: 10.5px;
+        font-weight: 600;
+        background: var(--warn-soft);
+        color: var(--warn);
+        border-radius: 999px;
+        padding: 0 6px;
+      }
+      .clear {
+        color: var(--primary);
+        background: none;
+        border: 0;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+        padding: 4px;
+      }
+      .clear:hover {
+        text-decoration: underline;
+      }
+      .result-count {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* Compact table */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 6px 12px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+        white-space: nowrap;
+      }
+      th {
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        font-weight: 600;
+        background: #fafbfc;
+        padding: 8px 12px;
+        cursor: pointer;
+        user-select: none;
+      }
+      th.nosort {
+        cursor: default;
+      }
+      th .arrow {
+        opacity: 0.35;
+        font-size: 9px;
+        margin-left: 3px;
+      }
+      th.sorted .arrow {
+        opacity: 1;
+        color: var(--primary);
+      }
+      thead th:first-child {
+        border-top-left-radius: var(--radius);
+      }
+      thead th:last-child {
+        border-top-right-radius: var(--radius);
+      }
+      tbody tr:hover {
+        background: #f8f9fb;
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      td.prog a {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      td.prog a:hover {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+      td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      th.num {
+        text-align: right;
+      }
+      td.actions {
+        text-align: right;
+        width: 1%;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 0 8px;
+        font-size: 11.5px;
+        font-weight: 600;
+        line-height: 18px;
+      }
+      .pill.draft {
+        background: var(--bg);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .pill.published {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+      .empty {
+        padding: 32px;
+        text-align: center;
+        color: var(--muted);
+        white-space: normal;
+      }
+
+      /* Pagination */
+      .pager {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 12px;
+        border-top: 1px solid var(--border);
+        font-size: 13px;
+        color: var(--muted);
+        flex-wrap: wrap;
+      }
+      .pager select {
+        width: auto;
+        padding: 3px 6px;
+        font-size: 13px;
+      }
+      .pages {
+        margin-left: auto;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .pg {
+        min-width: 28px;
+        height: 28px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        border-radius: 6px;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+        color: var(--text);
+        padding: 0 6px;
+      }
+      .pg:hover:not(:disabled) {
+        background: var(--bg);
+      }
+      .pg.on {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        font-weight: 600;
+      }
+      .pg:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .gap {
+        padding: 0 2px;
+      }
+
+      /* Menu */
+      .menu-wrap {
+        position: relative;
+        display: inline-block;
+      }
+      .menu {
+        position: absolute;
+        right: 0;
+        top: 26px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(16, 24, 40, 0.15);
+        padding: 6px;
+        min-width: 220px;
+        z-index: 5;
+        display: none;
+        text-align: left;
+      }
+      .menu.open {
+        display: block;
+      }
+      .menu.up {
+        top: auto;
+        bottom: 26px;
+      }
+      .menu button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: 0;
+        font: inherit;
+        font-size: 13.5px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: normal;
+      }
+      .menu button:hover {
+        background: var(--bg);
+      }
+      .menu button.danger {
+        color: var(--danger);
+      }
+      .menu button.danger:hover {
+        background: var(--danger-soft);
+      }
+      .menu button:disabled {
+        color: var(--muted);
+        cursor: not-allowed;
+        background: none;
+      }
+      .menu button small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .menu hr {
+        border: 0;
+        border-top: 1px solid var(--border);
+        margin: 6px 0;
+      }
+
+      /* Modal */
+      .backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 24, 40, 0.45);
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 64px 16px;
+        z-index: 20;
+      }
+      .backdrop.open {
+        display: flex;
+      }
+      .modal {
+        background: var(--surface);
+        border-radius: 10px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 12px 32px rgba(16, 24, 40, 0.25);
+        max-height: calc(100vh - 128px);
+        display: flex;
+        flex-direction: column;
+      }
+      .modal-h {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .modal-h h2 {
+        font-size: 16px;
+        margin: 0;
+      }
+      .modal-b {
+        padding: 20px;
+        overflow: auto;
+      }
+      .modal-f {
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+      .field {
+        margin-bottom: 14px;
+      }
+      .field label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .callout {
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 13px;
+        margin-bottom: 14px;
+      }
+      .callout.info {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .callout.danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+      .callout.ok {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+      .choice {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+      .choice input {
+        width: auto;
+        margin-top: 3px;
+      }
+      .choice.on {
+        border-color: var(--primary);
+        background: var(--primary-soft);
+      }
+      .choice.off {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .plan {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        max-height: 260px;
+        overflow: auto;
+      }
+      .plan li {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 7px 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13.5px;
+      }
+      .plan li:last-child {
+        border-bottom: 0;
+      }
+      .plan input {
+        width: auto;
+      }
+      .plan .sub {
+        margin-left: auto;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: #1f2328;
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 8px;
+        opacity: 0;
+        transition: 0.2s;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .mock-label {
+        position: fixed;
+        bottom: 12px;
+        right: 12px;
+        background: var(--warn-soft);
+        color: var(--warn);
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+        z-index: 1;
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          padding: 0 16px;
+        }
+        .nav {
+          display: none;
+        }
+        main {
+          padding: 16px 16px 80px;
+        }
+        .page-head .acts {
+          margin-left: 0;
+        }
+        .filters select {
+          min-width: 0;
+          flex: 1 1 140px;
+        }
+        .result-count {
+          margin-left: 0;
+          width: 100%;
+        }
+        .hide-sm {
+          display: none;
+        }
+        .table-scroll {
+          overflow-x: auto;
+        }
+        .row2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">MaMpf <span>· Modulhandbuch</span></div>
+      <nav class="nav">
+        <a href="#">Master data</a>
+        <a href="#" class="active">Handbooks</a>
+        <a href="#">Module descriptions</a>
+      </nav>
+      <div class="user">Dr. Admin <span class="role">admin</span></div>
+    </header>
+
+    <main>
+      <div class="page-head">
+        <div>
+          <h1>Handbooks</h1>
+          <p class="lead">One handbook per study program and term.</p>
+        </div>
+        <div class="acts">
+          <button class="btn" id="prepare-btn">Prepare a term…</button>
+          <button class="btn primary" id="new-btn">+ New handbook</button>
+        </div>
+      </div>
+
+      <div class="filters">
+        <select id="f-program"></select>
+        <select id="f-term"></select>
+        <button class="btn adv" id="adv-btn" title="Advanced filter (to be designed)">
+          ⚙ Advanced filter <span class="badge-soon">later</span>
+        </button>
+        <button class="clear" id="clear" hidden>Clear filters</button>
+        <span class="result-count" id="count"></span>
+      </div>
+
+      <div class="card">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="program">Study program <span class="arrow">▲</span></th>
+                <th data-sort="termIdx">Term <span class="arrow">▲</span></th>
+                <th data-sort="status">Status <span class="arrow">▲</span></th>
+                <th data-sort="modules" class="num hide-sm">
+                  Modules <span class="arrow">▲</span>
+                </th>
+                <th data-sort="from" class="hide-sm">Origin <span class="arrow">▲</span></th>
+                <th data-sort="updatedIdx" class="hide-sm">Updated <span class="arrow">▲</span></th>
+                <th class="nosort"></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <span>Rows per page</span>
+          <select id="per-page">
+            <option>10</option>
+            <option selected>25</option>
+            <option>50</option>
+            <option>100</option>
+          </select>
+          <span id="range"></span>
+          <div class="pages" id="pages"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- New handbook -->
+    <div class="backdrop" id="m-new">
+      <div class="modal">
+        <div class="modal-h"><h2>New handbook</h2></div>
+        <div class="modal-b">
+          <div class="row2">
+            <div class="field">
+              <label>Study program</label
+              ><select id="n-program"></select>
+            </div>
+            <div class="field">
+              <label>Term</label
+              ><select id="n-term"></select>
+            </div>
+          </div>
+          <div class="callout danger" id="n-exists" hidden></div>
+          <div id="n-choices">
+            <label class="choice" id="ch-clone"
+              ><input type="radio" name="how" value="clone" />
+              <div>
+                <b>Clone from an earlier term</b>
+                <div class="sub" id="ch-clone-sub">
+                  Copies sections and order. Descriptions are reused if they already exist in the
+                  target term, otherwise copied (status <i>created</i>).
+                </div>
+                <div class="field" style="margin: 8px 0 0">
+                  <select id="n-source"></select>
+                </div></div
+            ></label>
+            <label class="choice" id="ch-empty"
+              ><input type="radio" name="how" value="empty" />
+              <div>
+                <b>Start empty</b>
+                <div class="sub">For a new program or a full restructure.</div>
+              </div></label
+            >
+          </div>
+        </div>
+        <div class="modal-f">
+          <button class="btn" data-close>Cancel</button
+          ><button class="btn primary" id="n-ok">Create</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prepare term -->
+    <div class="backdrop" id="m-prepare">
+      <div class="modal">
+        <div class="modal-h"><h2>Prepare a term</h2></div>
+        <div class="modal-b">
+          <div class="field">
+            <label>Target term</label
+            ><select id="p-term"></select>
+            <div class="hint">
+              Clones the latest handbook of each program that has none in this term yet.
+            </div>
+          </div>
+          <ul class="plan" id="p-plan"></ul>
+        </div>
+        <div class="modal-f">
+          <button class="btn" data-close>Cancel</button
+          ><button class="btn primary" id="p-ok">Clone selected</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generic info / confirm -->
+    <div class="backdrop" id="m-info">
+      <div class="modal">
+        <div class="modal-h"><h2 id="i-title"></h2></div>
+        <div class="modal-b" id="i-body"></div>
+        <div class="modal-f" id="i-foot"></div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="mock-label">Mockup · sample data</div>
+
+    <script>
+      /* ===== Sample data: many records ===== */
+      const terms = [
+        "WS 20/21",
+        "SS 21",
+        "WS 21/22",
+        "SS 22",
+        "WS 22/23",
+        "SS 23",
+        "WS 23/24",
+        "SS 24",
+        "WS 24/25",
+        "SS 25",
+        "WS 25/26",
+        "SS 26",
+        "WS 26/27",
+        "SS 27",
+      ];
+      const programs = [
+        "Mathematik B.Sc. 100%",
+        "Mathematik B.Sc. 50%",
+        "Mathematik M.Sc. 100%",
+        "Mathematik M.Sc. 50%",
+        "Scientific Computing M.Sc. 100%",
+        "Mathematik B.Ed.",
+        "Mathematik M.Ed.",
+        "Data and Computer Science M.Sc. 100%",
+      ];
+      const startTerm = { 0: 0, 1: 0, 2: 0, 3: 4, 4: 2, 5: 0, 6: 3, 7: 8 }; // program index → first term index
+      const UPD = [
+        "just now",
+        "today",
+        "yesterday",
+        "2 days ago",
+        "last week",
+        "2 weeks ago",
+        "last month",
+      ];
+
+      let nextId = 1;
+      const handbooks = [];
+      programs.forEach((p, pi) => {
+        for (let ti = startTerm[pi]; ti < terms.length - 1; ti++) {
+          if ((pi === 3 || pi === 6) && ti % 2 === 1) continue; // some programs only start in winter
+          const latest = ti >= terms.length - 3;
+          handbooks.push({
+            id: nextId++,
+            program: p,
+            programIdx: pi,
+            term: terms[ti],
+            termIdx: ti,
+            status: latest && ti === terms.length - 2 && pi !== 2 ? "draft" : "published",
+            modules: 12 + ((pi * 7 + ti * 3) % 19),
+            from: ti === startTerm[pi] ? null : terms[ti - (pi === 3 || pi === 6 ? 2 : 1)],
+            updatedIdx: latest ? (pi + ti) % 4 : 6 + (terms.length - ti),
+          });
+        }
+      });
+      const updatedLabel = (i) =>
+        i < UPD.length ? UPD[i] : `${Math.round((i - 4) / 2)} terms ago`;
+
+      /* ===== State ===== */
+      const st = { program: "", term: "", sort: { key: "termIdx", dir: -1 }, page: 1, per: 25 };
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+        );
+      const find = (p, t) => handbooks.find((h) => h.program === p && h.term === t);
+      function toast(m) {
+        const t = $("#toast");
+        t.textContent = m;
+        t.classList.add("show");
+        clearTimeout(t._h);
+        t._h = setTimeout(() => t.classList.remove("show"), 2600);
+      }
+      const openM = (id) => $(id).classList.add("open");
+      const closeM = () =>
+        document.querySelectorAll(".backdrop").forEach((b) => b.classList.remove("open"));
+      document.addEventListener("click", (e) => {
+        if (e.target.matches("[data-close]") || e.target.classList.contains("backdrop")) closeM();
+        if (!e.target.closest(".menu-wrap"))
+          document.querySelectorAll(".menu.open").forEach((m) => m.classList.remove("open"));
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeM();
+      });
+
+      /* ===== Filters ===== */
+      $("#f-program").innerHTML =
+        `<option value="">All study programs</option>` +
+        programs.map((p) => `<option>${esc(p)}</option>`).join("");
+      $("#f-term").innerHTML =
+        `<option value="">All terms</option>` +
+        [...terms]
+          .reverse()
+          .map((t) => `<option>${t}</option>`)
+          .join("");
+      $("#f-program").onchange = (e) => {
+        st.program = e.target.value;
+        st.page = 1;
+        render();
+      };
+      $("#f-term").onchange = (e) => {
+        st.term = e.target.value;
+        st.page = 1;
+        render();
+      };
+      $("#clear").onclick = () => {
+        st.program = st.term = "";
+        $("#f-program").value = $("#f-term").value = "";
+        st.page = 1;
+        render();
+      };
+      $("#adv-btn").onclick = () => toast("Advanced filter: to be designed");
+      $("#per-page").onchange = (e) => {
+        st.per = +e.target.value;
+        st.page = 1;
+        render();
+      };
+
+      document.querySelectorAll("th[data-sort]").forEach(
+        (th) =>
+          (th.onclick = () => {
+            const k = th.dataset.sort;
+            st.sort = { key: k, dir: st.sort.key === k ? -st.sort.dir : k === "termIdx" ? -1 : 1 };
+            render();
+          }),
+      );
+
+      /* ===== Render ===== */
+      function filtered() {
+        const { key, dir } = st.sort;
+        return handbooks
+          .filter(
+            (h) => (!st.program || h.program === st.program) && (!st.term || h.term === st.term),
+          )
+          .sort((a, b) => {
+            const va = a[key] ?? "",
+              vb = b[key] ?? "";
+            const c =
+              typeof va === "number"
+                ? va - vb
+                : String(va).localeCompare(String(vb), "de", { numeric: true });
+            return (c || b.termIdx - a.termIdx || a.programIdx - b.programIdx) * (c ? dir : 1);
+          });
+      }
+
+      function render() {
+        const list = filtered();
+        const pages = Math.max(1, Math.ceil(list.length / st.per));
+        st.page = Math.min(st.page, pages);
+        const start = (st.page - 1) * st.per;
+        const rows = list.slice(start, start + st.per);
+
+        $("#rows").innerHTML = rows.length
+          ? rows
+              .map(
+                (h, i) => `
+    <tr>
+      <td class="prog"><a href="#" data-open="${h.id}">${esc(h.program)}</a></td>
+      <td>${esc(h.term)}</td>
+      <td><span class="pill ${h.status}">${h.status === "published" ? "Published" : "Draft"}</span></td>
+      <td class="num hide-sm">${h.modules}</td>
+      <td class="hide-sm muted">${h.from ? `Cloned from ${esc(h.from)}` : "Created empty"}</td>
+      <td class="hide-sm muted">${updatedLabel(h.updatedIdx)}</td>
+      <td class="actions">
+        <button class="btn xs" data-open="${h.id}">Open</button>
+        <span class="menu-wrap"><button class="btn xs ghost" data-menu="${h.id}" aria-label="More actions">⋯</button>
+          <div class="menu ${i >= rows.length - 3 && rows.length > 5 ? "up" : ""}" id="menu-${h.id}">
+            <button data-export="${h.id}">Export PDF<small>${h.status === "published" ? "Official, published only" : "Review: checked + published"}</small></button>
+            <button data-clone="${h.id}">Clone to another term…</button>
+            <hr>
+            ${
+              h.status === "published"
+                ? `<button data-unpublish="${h.id}">Unpublish</button><button disabled>Delete<small>Unpublish first</small></button>`
+                : `<button data-publish="${h.id}">Publish</button><button class="danger" data-delete="${h.id}">Delete draft</button>`
+            }
+          </div></span>
+      </td>
+    </tr>`,
+              )
+              .join("")
+          : `<tr><td colspan="7" class="empty">No handbooks match these filters.</td></tr>`;
+
+        $("#count").textContent = `${list.length} handbook${list.length === 1 ? "" : "s"}`;
+        $("#clear").hidden = !st.program && !st.term;
+        $("#range").textContent = list.length
+          ? `${start + 1}–${Math.min(start + st.per, list.length)} of ${list.length}`
+          : "0 of 0";
+
+        // Page buttons: 1 … p-1 p p+1 … last
+        const nums = [...new Set([1, st.page - 1, st.page, st.page + 1, pages])]
+          .filter((n) => n >= 1 && n <= pages)
+          .sort((a, b) => a - b);
+        let html = `<button class="pg" data-page="${st.page - 1}" ${st.page === 1 ? "disabled" : ""} aria-label="Previous">‹</button>`;
+        nums.forEach((n, i) => {
+          if (i && n - nums[i - 1] > 1) html += `<span class="gap">…</span>`;
+          html += `<button class="pg ${n === st.page ? "on" : ""}" data-page="${n}">${n}</button>`;
+        });
+        html += `<button class="pg" data-page="${st.page + 1}" ${st.page === pages ? "disabled" : ""} aria-label="Next">›</button>`;
+        $("#pages").innerHTML = html;
+
+        document.querySelectorAll("th[data-sort]").forEach((th) => {
+          const on = th.dataset.sort === st.sort.key;
+          th.classList.toggle("sorted", on);
+          th.querySelector(".arrow").textContent = on && st.sort.dir < 0 ? "▼" : "▲";
+        });
+      }
+
+      /* ===== Clone helper ===== */
+      function cloneInto(src, targetTerm) {
+        const existingInTerm = handbooks.filter((h) => h.term === targetTerm).length;
+        const reused = existingInTerm ? Math.min(src.modules - 4, 3 + existingInTerm * 3) : 0;
+        handbooks.push({
+          id: nextId++,
+          program: src.program,
+          programIdx: src.programIdx,
+          term: targetTerm,
+          termIdx: terms.indexOf(targetTerm),
+          status: "draft",
+          modules: src.modules,
+          from: src.term,
+          updatedIdx: 0,
+        });
+        return { created: src.modules - reused, reused };
+      }
+      const latestBefore = (program, t) =>
+        handbooks
+          .filter((h) => h.program === program && h.termIdx < terms.indexOf(t))
+          .sort((a, b) => b.termIdx - a.termIdx)[0];
+
+      /* ===== Row actions ===== */
+      document.addEventListener("click", (e) => {
+        const b = e.target.closest("button, a");
+        if (!b) return;
+        const d = b.dataset;
+        const hb = (id) => handbooks.find((h) => h.id == id);
+
+        if (d.page) {
+          st.page = +d.page;
+          render();
+        }
+        if (d.open) {
+          e.preventDefault();
+          const h = hb(d.open);
+          toast(`→ Handbook editor: ${h.program} · ${h.term}`);
+        }
+        if (d.menu) {
+          e.stopPropagation();
+          const m = $("#menu-" + d.menu);
+          const was = m.classList.contains("open");
+          document.querySelectorAll(".menu.open").forEach((x) => x.classList.remove("open"));
+          if (!was) m.classList.add("open");
+        }
+        if (d.export) {
+          const h = hb(d.export);
+          toast(
+            h.status === "published"
+              ? `Exporting official PDF · ${h.term}`
+              : `Exporting review PDF · ${h.term}`,
+          );
+        }
+        if (d.unpublish) {
+          hb(d.unpublish).status = "draft";
+          render();
+          toast("Handbook is a draft again");
+        }
+        if (d.publish) {
+          hb(d.publish).status = "published";
+          hb(d.publish).updatedIdx = 0;
+          render();
+          toast("Handbook published");
+        }
+        if (d.delete) {
+          const h = hb(d.delete);
+          info(
+            "Delete draft handbook",
+            `<p style="margin-top:0">Delete <b>${esc(h.program)} · ${esc(h.term)}</b>?</p>
+       <div class="callout info" style="margin:0">Its sections and order are deleted. Module descriptions are kept.</div>`,
+            `<button class="btn" data-close>Cancel</button><button class="btn primary" id="del-ok" style="background:var(--danger);border-color:var(--danger)">Delete</button>`,
+          );
+          $("#del-ok").onclick = () => {
+            handbooks.splice(handbooks.indexOf(h), 1);
+            closeM();
+            render();
+            toast("Draft deleted");
+          };
+        }
+        if (d.clone) {
+          const h = hb(d.clone);
+          const targets = terms.filter((t, i) => i > h.termIdx);
+          info(
+            `Clone ${h.program} · ${h.term}`,
+            `<div class="field" style="margin:0"><label>Target term</label><select id="ct-target">${targets
+              .map((t) => {
+                const taken = !!find(h.program, t);
+                return `<option value="${t}" ${taken ? "disabled" : ""}>${t}${taken ? " (already has one)" : ""}</option>`;
+              })
+              .join("")}</select>
+        <div class="hint">Only later terms. Terms that already have a handbook for this program are disabled.</div></div>`,
+            `<button class="btn" data-close>Cancel</button><button class="btn primary" id="ct-ok">Clone</button>`,
+          );
+          const first = [...$("#ct-target").options].find((o) => !o.disabled);
+          if (first) $("#ct-target").value = first.value;
+          else $("#ct-ok").disabled = true;
+          $("#ct-ok").onclick = () => {
+            const t = $("#ct-target").value;
+            if (!t || find(h.program, t)) return;
+            const r = cloneInto(h, t);
+            closeM();
+            render();
+            toast(`Cloned to ${t}: ${r.created} descriptions created, ${r.reused} reused`);
+          };
+        }
+      });
+      function info(title, body, foot) {
+        $("#i-title").textContent = title;
+        $("#i-body").innerHTML = body;
+        $("#i-foot").innerHTML = foot;
+        openM("#m-info");
+      }
+
+      /* ===== New handbook ===== */
+      $("#n-program").innerHTML = programs.map((p) => `<option>${esc(p)}</option>`).join("");
+      $("#n-term").innerHTML = [...terms]
+        .reverse()
+        .map((t) => `<option>${t}</option>`)
+        .join("");
+      $("#new-btn").onclick = () => {
+        $("#n-program").value = st.program || programs[0];
+        $("#n-term").value = st.term || terms[terms.length - 1];
+        updateNew();
+        openM("#m-new");
+      };
+      ["#n-program", "#n-term"].forEach((s) => ($(s).onchange = updateNew));
+      document.addEventListener("change", (e) => {
+        if (e.target.name === "how") paintChoices();
+      });
+      function paintChoices() {
+        document
+          .querySelectorAll(".choice")
+          .forEach((c) => c.classList.toggle("on", c.querySelector("input").checked));
+      }
+      function updateNew() {
+        const p = $("#n-program").value,
+          t = $("#n-term").value;
+        const exists = find(p, t);
+        $("#n-exists").hidden = !exists;
+        if (exists)
+          $("#n-exists").textContent =
+            `${p} already has a handbook for ${t}. Open it instead, or pick another term.`;
+        $("#n-choices").style.display = exists ? "none" : "";
+        $("#n-ok").disabled = !!exists;
+        const sources = handbooks
+          .filter((h) => h.program === p && h.termIdx < terms.indexOf(t))
+          .sort((a, b) => b.termIdx - a.termIdx);
+        $("#n-source").innerHTML = sources
+          .map((h) => `<option value="${h.id}">${h.term}</option>`)
+          .join("");
+        const clone = $("#ch-clone");
+        clone.classList.toggle("off", !sources.length);
+        clone.querySelector("input").disabled = !sources.length;
+        document.querySelector(
+          `input[name=how][value=${sources.length ? "clone" : "empty"}]`,
+        ).checked = true;
+        paintChoices();
+      }
+      $("#n-ok").onclick = () => {
+        const p = $("#n-program").value,
+          t = $("#n-term").value;
+        if (find(p, t)) return;
+        const how = document.querySelector("input[name=how]:checked").value;
+        if (how === "clone") {
+          const r = cloneInto(
+            handbooks.find((h) => h.id == $("#n-source").value),
+            t,
+          );
+          toast(`Created by cloning: ${r.created} descriptions created, ${r.reused} reused`);
+        } else {
+          handbooks.push({
+            id: nextId++,
+            program: p,
+            programIdx: programs.indexOf(p),
+            term: t,
+            termIdx: terms.indexOf(t),
+            status: "draft",
+            modules: 0,
+            from: null,
+            updatedIdx: 0,
+          });
+          toast("Empty handbook created → opening editor");
+        }
+        closeM();
+        render();
+      };
+
+      /* ===== Prepare a term ===== */
+      $("#p-term").innerHTML = [...terms]
+        .reverse()
+        .map((t) => `<option>${t}</option>`)
+        .join("");
+      $("#prepare-btn").onclick = () => {
+        $("#p-term").value = st.term || terms[terms.length - 1];
+        updatePlan();
+        openM("#m-prepare");
+      };
+      $("#p-term").onchange = updatePlan;
+      function updatePlan() {
+        const t = $("#p-term").value;
+        const items = programs
+          .filter((p) => !find(p, t))
+          .map((p) => ({ p, src: latestBefore(p, t) }))
+          .filter((x) => x.src);
+        $("#p-plan").innerHTML = items.length
+          ? items
+              .map(
+                (x) =>
+                  `<li><input type="checkbox" checked data-src="${x.src.id}"><span>${esc(x.p)}</span><span class="sub">from ${esc(x.src.term)}</span></li>`,
+              )
+              .join("")
+          : `<li class="sub">Every program with an earlier handbook already has one for ${esc(t)}.</li>`;
+        $("#p-ok").disabled = !items.length;
+      }
+      $("#p-ok").onclick = () => {
+        const t = $("#p-term").value;
+        const picks = [...document.querySelectorAll("#p-plan input:checked")];
+        if (!picks.length) return;
+        let created = 0,
+          reused = 0;
+        const lines = picks.map((i) => {
+          const src = handbooks.find((h) => h.id == i.dataset.src);
+          const r = cloneInto(src, t);
+          created += r.created;
+          reused += r.reused;
+          return `<li><span>${esc(src.program)}</span><span class="sub">${r.created} created · ${r.reused} reused</span></li>`;
+        });
+        st.term = t;
+        $("#f-term").value = t;
+        st.program = "";
+        $("#f-program").value = "";
+        st.page = 1;
+        render();
+        info(
+          `${t} prepared`,
+          `<div class="callout ok"><b>${picks.length}</b> handbook${picks.length > 1 ? "s" : ""} cloned. <b>${created}</b> descriptions created, <b>${reused}</b> reused across handbooks.</div>
+     <ul class="plan">${lines.join("")}</ul><div class="hint" style="margin-top:8px">All new descriptions start as <i>created</i> and need review.</div>`,
+          `<button class="btn primary" data-close>Done</button>`,
+        );
+      };
+
+      render();
+    </script>
+  </body>
+</html>

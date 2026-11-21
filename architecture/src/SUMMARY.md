@@ -46,4 +46,22 @@
 - [Implementation PR Roadmap](features/implementation-prs.md)
 - [Parallelization Strategy](features/parallelization.md)
 - [Integration Strategy](features/integration-strategy.md)
+
+---
+
+## Modulhandbuch
+- [Overview](features/modulhandbuch/00-overview.md)
+- [Domain Model](features/modulhandbuch/01-domain-model.md)
+- [Catalog](features/modulhandbuch/02-catalog.md)
+- [Module Editions](features/modulhandbuch/03-module-editions.md)
+- [Handbooks](features/modulhandbuch/04-handbooks.md)
+- [Cloning](features/modulhandbuch/05-cloning.md)
+- [Export](features/modulhandbuch/06-export.md)
+- [End-to-End Workflow](features/modulhandbuch/07-end-to-end-workflow.md)
+- [Roles & Permissions](features/modulhandbuch/08-roles-and-permissions.md)
+- [Integrity & Invariants](features/modulhandbuch/09-integrity-and-invariants.md)
+- [Future Extensions](features/modulhandbuch/10-future-extensions.md)
+- [UI Design](features/modulhandbuch/handbook-ui-design.md)
+- [Mockups](features/modulhandbuch/mockups-index.md)
+- [Implementation Plan](features/modulhandbuch/plan.md)
 ```

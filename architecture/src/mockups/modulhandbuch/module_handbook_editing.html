@@ -1,0 +1,1567 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modulhandbuch – Handbook Editor</title>
+    <style>
+      :root {
+        --bg: #f5f6f8;
+        --surface: #fff;
+        --border: #dfe2e6;
+        --border-strong: #c8ccd2;
+        --text: #1f2328;
+        --muted: #656d76;
+        --primary: #1f5fae;
+        --primary-hover: #194e90;
+        --primary-soft: #e8f0fa;
+        --danger: #b42318;
+        --danger-soft: #fdecea;
+        --warn: #8a5a00;
+        --warn-soft: #fff4d6;
+        --ok: #1a7f37;
+        --ok-soft: #e6f4ea;
+        --created: #98a2b3;
+        --checked: #d29922;
+        --radius: 8px;
+        --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px/1.5 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+
+      .topbar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 0 24px;
+        height: 56px;
+      }
+      .brand {
+        font-weight: 700;
+        font-size: 16px;
+      }
+      .brand span {
+        color: var(--muted);
+        font-weight: 400;
+      }
+      .nav {
+        display: flex;
+        gap: 4px;
+      }
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+      }
+      .nav a.active {
+        color: var(--primary);
+        background: var(--primary-soft);
+        font-weight: 600;
+      }
+      .nav a:hover:not(.active) {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .user {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .role {
+        background: var(--primary-soft);
+        color: var(--primary);
+        border-radius: 999px;
+        padding: 2px 8px;
+        margin-left: 6px;
+        font-weight: 600;
+      }
+
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 20px 24px 80px;
+      }
+      .crumbs {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+      .crumbs a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+      .crumbs a:hover {
+        text-decoration: underline;
+      }
+
+      /* Header */
+      .hb-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .hb-title {
+        flex: 1;
+        min-width: 280px;
+      }
+      .hb-title h1 {
+        font-size: 22px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .hb-meta {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 2px;
+      }
+      .hb-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+        position: relative;
+      }
+
+      .progress-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+      .bar {
+        flex: 1;
+        min-width: 200px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--bg);
+        display: flex;
+        overflow: hidden;
+      }
+      .bar span {
+        height: 100%;
+        transition: width 0.2s;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        font-size: 13px;
+        flex-wrap: wrap;
+      }
+      .legend b {
+        font-weight: 600;
+      }
+      .legend button {
+        background: none;
+        border: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend button:hover {
+        background: var(--bg);
+      }
+      .legend button.on {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+
+      /* Buttons & inputs */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font: inherit;
+        font-weight: 500;
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        color: var(--text);
+        padding: 7px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .btn:hover {
+        background: var(--bg);
+      }
+      .btn.primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+      .btn.primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn.danger {
+        color: var(--danger);
+      }
+      .btn.danger:hover {
+        background: var(--danger-soft);
+      }
+      .btn.sm {
+        padding: 3px 8px;
+        font-size: 13px;
+      }
+      .btn.icon {
+        padding: 3px 7px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .btn.ghost {
+        border-color: transparent;
+        background: transparent;
+      }
+      .btn.ghost:hover {
+        background: var(--bg);
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        font: inherit;
+        color: var(--text);
+        background: var(--surface);
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        padding: 7px 10px;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 84px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 13px;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(31, 95, 174, 0.15);
+      }
+
+      .pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 1px 9px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .pill.draft {
+        background: var(--bg);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .pill.published {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+      .code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 6px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        flex: none;
+      }
+      .dot.created {
+        background: var(--created);
+      }
+      .dot.checked {
+        background: var(--checked);
+      }
+      .dot.published {
+        background: var(--ok);
+      }
+
+      /* Dropdown */
+      .menu {
+        position: absolute;
+        right: 0;
+        top: 40px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(16, 24, 40, 0.15);
+        padding: 6px;
+        min-width: 260px;
+        z-index: 5;
+        display: none;
+      }
+      .menu.open {
+        display: block;
+      }
+      .menu h6 {
+        margin: 6px 8px 4px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+      }
+      .menu button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: 0;
+        font: inherit;
+        padding: 7px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .menu button:hover {
+        background: var(--bg);
+      }
+      .menu button small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .menu hr {
+        border: 0;
+        border-top: 1px solid var(--border);
+        margin: 6px 0;
+      }
+
+      /* Sections */
+      .section {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 16px;
+      }
+      .sec-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        background: #fafbfc;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .sec-num {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+        width: 20px;
+      }
+      .sec-title {
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .sec-title-en {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .sec-count {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .sec-tools {
+        margin-left: auto;
+        display: flex;
+        gap: 4px;
+      }
+
+      .entry {
+        display: grid;
+        grid-template-columns: 70px minmax(0, 1fr) 30px 64px 96px 118px 222px;
+        gap: 12px;
+        align-items: center;
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--border);
+      }
+      .entry:last-child {
+        border-bottom: 0;
+      }
+      .entry:hover {
+        background: #fafbfc;
+      }
+      .entry.dim {
+        opacity: 0.35;
+      }
+      .e-name {
+        cursor: pointer;
+        min-width: 0;
+      }
+      .e-name:hover b {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+      .e-name b {
+        font-weight: 500;
+      }
+      .e-name .alt {
+        color: var(--muted);
+        font-size: 12px;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .e-lang {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .e-ects {
+        font-size: 13px;
+      }
+      .e-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+      }
+      .e-tools {
+        display: flex;
+        gap: 4px;
+        justify-content: flex-end;
+      }
+
+      .shared {
+        position: relative;
+      }
+      .shared-btn {
+        background: var(--primary-soft);
+        color: var(--primary);
+        border: 0;
+        border-radius: 999px;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 9px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .shared-pop {
+        position: absolute;
+        right: 0;
+        top: 26px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(16, 24, 40, 0.15);
+        padding: 10px 12px;
+        width: 240px;
+        z-index: 4;
+        font-size: 13px;
+        display: none;
+      }
+      .shared-pop.open {
+        display: block;
+      }
+      .shared-pop ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+
+      .sec-empty {
+        padding: 18px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .sec-foot {
+        padding: 8px 14px;
+      }
+      .add-section {
+        width: 100%;
+        border: 1.5px dashed var(--border-strong);
+        background: transparent;
+        border-radius: var(--radius);
+        padding: 14px;
+        color: var(--muted);
+        font: inherit;
+        cursor: pointer;
+      }
+      .add-section:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-soft);
+      }
+
+      /* Modal */
+      .backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 24, 40, 0.45);
+        display: none;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 64px 16px;
+        z-index: 20;
+      }
+      .backdrop.open {
+        display: flex;
+      }
+      .modal {
+        background: var(--surface);
+        border-radius: 10px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 12px 32px rgba(16, 24, 40, 0.25);
+        max-height: calc(100vh - 128px);
+        display: flex;
+        flex-direction: column;
+      }
+      .modal.wide {
+        max-width: 680px;
+      }
+      .modal-h {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .modal-h h2 {
+        font-size: 16px;
+        margin: 0;
+      }
+      .modal-b {
+        padding: 20px;
+        overflow: auto;
+      }
+      .modal-f {
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+      .field {
+        margin-bottom: 14px;
+      }
+      .field label {
+        display: block;
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+      .hint {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .callout {
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 13px;
+        margin-bottom: 14px;
+      }
+      .callout.warn {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+      .callout.info {
+        background: var(--primary-soft);
+        color: var(--primary);
+      }
+      .callout.danger {
+        background: var(--danger-soft);
+        color: var(--danger);
+      }
+
+      /* Add-module results */
+      .results {
+        margin-top: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        max-height: 360px;
+        overflow: auto;
+      }
+      .result {
+        display: grid;
+        grid-template-columns: 70px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .result:last-child {
+        border-bottom: 0;
+      }
+      .result .state {
+        font-size: 12px;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .result .state.exists {
+        color: var(--ok);
+      }
+      .result .state.none {
+        color: var(--muted);
+      }
+      .result .state.here {
+        color: var(--muted);
+        font-style: italic;
+      }
+      .split {
+        display: inline-flex;
+      }
+      .split .btn:first-child {
+        border-radius: 6px 0 0 6px;
+      }
+      .split .btn:last-child {
+        border-radius: 0 6px 6px 0;
+        border-left: 0;
+      }
+
+      /* Drawer */
+      .drawer-bg {
+        position: fixed;
+        inset: 0;
+        background: rgba(16, 24, 40, 0.35);
+        display: none;
+        z-index: 10;
+      }
+      .drawer-bg.open {
+        display: block;
+      }
+      .drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(560px, 100vw);
+        background: var(--surface);
+        box-shadow: -8px 0 32px rgba(16, 24, 40, 0.2);
+        transform: translateX(100%);
+        transition: transform 0.2s;
+        z-index: 11;
+        display: flex;
+        flex-direction: column;
+      }
+      .drawer.open {
+        transform: none;
+      }
+      .dr-h {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .dr-h h2 {
+        font-size: 17px;
+        margin: 0;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .dr-b {
+        padding: 20px;
+        overflow: auto;
+        flex: 1;
+      }
+      .dr-f {
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .status-steps {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        margin-top: 6px;
+      }
+      .status-steps span {
+        padding: 2px 9px;
+        border-radius: 999px;
+        background: var(--bg);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .status-steps span.cur {
+        color: #fff;
+        border-color: transparent;
+      }
+      .status-steps span.cur.created {
+        background: var(--created);
+      }
+      .status-steps span.cur.checked {
+        background: var(--checked);
+      }
+      .status-steps span.cur.published {
+        background: var(--ok);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: #1f2328;
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 8px;
+        opacity: 0;
+        transition: 0.2s;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .mock-label {
+        position: fixed;
+        bottom: 12px;
+        right: 12px;
+        background: var(--warn-soft);
+        color: var(--warn);
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+        z-index: 1;
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          padding: 0 16px;
+        }
+        .nav {
+          display: none;
+        }
+        main {
+          padding: 16px 16px 80px;
+        }
+        .hb-actions {
+          margin-left: 0;
+        }
+        .entry {
+          grid-template-columns: 1fr auto;
+          row-gap: 4px;
+        }
+        .entry > .code,
+        .e-lang,
+        .e-ects {
+          display: none;
+        }
+        .e-status {
+          grid-column: 1;
+        }
+        .shared {
+          grid-column: 2;
+          grid-row: 1;
+        }
+        .e-tools {
+          grid-column: 1 / -1;
+          justify-content: flex-start;
+        }
+        .row2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">MaMpf <span>· Modulhandbuch</span></div>
+      <nav class="nav">
+        <a href="#">Master data</a>
+        <a href="#" class="active">Handbooks</a>
+        <a href="#">Module descriptions</a>
+      </nav>
+      <div class="user">Dr. Admin <span class="role">admin</span></div>
+    </header>
+
+    <main>
+      <div class="crumbs"><a href="#">Handbooks</a> / WS 26/27</div>
+
+      <div class="hb-head">
+        <div class="hb-title">
+          <h1>
+            Mathematik B.Sc. 100% <span class="muted" style="font-weight: 400">· WS 26/27</span>
+            <span class="pill draft" id="hb-status">Draft</span>
+          </h1>
+          <div class="hb-meta">
+            Cloned from WS 25/26 · Sections and order are this handbook's own; module descriptions
+            may be shared with other handbooks of WS 26/27.
+          </div>
+        </div>
+        <div class="hb-actions">
+          <button class="btn" id="export-btn">Export ▾</button>
+          <div class="menu" id="export-menu">
+            <h6>Official</h6>
+            <button data-export="published">
+              PDF · published only<small>What viewers get</small>
+            </button>
+            <h6>Review</h6>
+            <button data-export="reviewable">
+              PDF · checked + published<small>For proofreading, admin only</small>
+            </button>
+            <hr />
+            <button data-export="latex">LaTeX source<small>Published only</small></button>
+          </div>
+          <button class="btn primary" id="publish-btn">Publish handbook</button>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="bar" id="bar"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div id="sections"></div>
+      <button class="add-section" id="add-section">+ Add section</button>
+    </main>
+
+    <!-- Add module -->
+    <div class="backdrop" id="m-add">
+      <div class="modal wide">
+        <div class="modal-h">
+          <h2>Add module to <span id="add-target"></span></h2>
+          <button class="btn ghost sm" style="margin-left: auto" data-close>✕</button>
+        </div>
+        <div class="modal-b">
+          <input
+            id="add-q"
+            placeholder="Search curriculum modules by code or name…"
+            autocomplete="off"
+          />
+          <div class="hint">
+            Descriptions are looked up for <b>WS 26/27</b>, this handbook's term.
+          </div>
+          <div class="results" id="add-results"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section form -->
+    <div class="backdrop" id="m-section">
+      <div class="modal">
+        <div class="modal-h"><h2 id="sec-form-title">New section</h2></div>
+        <div class="modal-b">
+          <div class="field">
+            <label>Title (DE)</label><input id="sec-de" placeholder="Wahlpflichtmodule" />
+          </div>
+          <div class="field">
+            <label>Title (EN)</label><input id="sec-en" placeholder="Elective modules" />
+            <div class="hint">Optional.</div>
+          </div>
+        </div>
+        <div class="modal-f">
+          <button class="btn" data-close>Cancel</button
+          ><button class="btn primary" id="sec-save">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm -->
+    <div class="backdrop" id="m-confirm">
+      <div class="modal">
+        <div class="modal-h"><h2 id="cf-title"></h2></div>
+        <div class="modal-b" id="cf-body"></div>
+        <div class="modal-f">
+          <button class="btn" data-close>Cancel</button
+          ><button class="btn primary" id="cf-ok">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description drawer -->
+    <div class="drawer-bg" id="dr-bg"></div>
+    <aside class="drawer" id="drawer" aria-label="Module description">
+      <div class="dr-h">
+        <div class="muted" style="font-size: 12px">Module description · WS 26/27</div>
+        <h2><span class="code" id="dr-code"></span> <span id="dr-name"></span></h2>
+        <div class="status-steps" id="dr-steps"></div>
+      </div>
+      <div class="dr-b">
+        <div class="callout info" id="dr-shared"></div>
+        <div class="row2">
+          <div class="field">
+            <label>Language of instruction</label>
+            <select id="dr-lang">
+              <option value="de">German</option>
+              <option value="en">English</option>
+            </select>
+            <div class="hint" id="dr-name-hint"></div>
+          </div>
+          <div class="field"><label>ECTS</label><input id="dr-ects" type="number" min="1" /></div>
+        </div>
+        <div class="field">
+          <label>Content and goals</label><textarea id="dr-desc" rows="5"></textarea>
+          <div class="hint">Markdown. Tables are supported.</div>
+        </div>
+        <div class="field">
+          <label>Prerequisites</label><textarea id="dr-pre" rows="2"></textarea>
+        </div>
+        <div class="field"><label>Exam form</label><textarea id="dr-exam" rows="2"></textarea></div>
+        <div class="field"><label>Responsible</label><input id="dr-resp" /></div>
+        <div class="hint" id="dr-lineage"></div>
+      </div>
+      <div class="dr-f">
+        <button class="btn" id="dr-close">Close</button>
+        <span style="margin-left: auto"></span>
+        <button class="btn" id="dr-reopen">Reopen</button>
+        <button class="btn" id="dr-advance"></button>
+        <button class="btn primary" id="dr-save">Save</button>
+      </div>
+    </aside>
+
+    <div class="toast" id="toast"></div>
+    <div class="mock-label">Mockup · sample data</div>
+
+    <script>
+      /* ===== Sample data =====
+   Current handbook: Mathematik B.Sc. 100%, WS 26/27.
+   editions = descriptions in WS 26/27 (shared across that term's handbooks).
+   otherUse = other WS 26/27 handbooks listing the edition. */
+      const THIS = "B.Sc. 100%";
+      const modules = [
+        { code: "MA101", de: "Lineare Algebra I", en: "Linear Algebra I", prev: "WS 25/26" },
+        { code: "MA102", de: "Analysis I", en: "Analysis I", prev: "WS 25/26" },
+        { code: "MA103", de: "Lineare Algebra II", en: "Linear Algebra II", prev: "SS 26" },
+        { code: "MA104", de: "Analysis II", en: "Analysis II", prev: "SS 26" },
+        { code: "MA201", de: "Algebra I", en: "Algebra I", prev: "SS 26" },
+        { code: "MA205", de: "Topologie", en: "Topology", prev: null },
+        {
+          code: "MA210",
+          de: "Einführung in die Numerik",
+          en: "Introduction to Numerics",
+          prev: "WS 25/26",
+        },
+        {
+          code: "MA220",
+          de: "Wahrscheinlichkeitstheorie",
+          en: "Probability Theory",
+          prev: "WS 25/26",
+        },
+        { code: "MA310", de: "Funktionalanalysis", en: "Functional Analysis", prev: "SS 26" },
+        { code: "MA050", de: "Proseminar", en: "Proseminar", prev: "WS 25/26" },
+        { code: "MA060", de: "Seminar", en: "Seminar", prev: null },
+      ];
+      const mod = (c) => modules.find((m) => m.code === c);
+
+      const editions = {
+        MA101: {
+          lang: "en",
+          ects: 8,
+          status: "checked",
+          otherUse: ["B.Sc. 50%"],
+          desc: "Vector spaces, linear maps, matrices, determinants, eigenvalues.",
+          pre: "None",
+          exam: "Written exam (120 min)",
+          resp: "Prof. Müller",
+          from: "WS 25/26",
+        },
+        MA102: {
+          lang: "de",
+          ects: 8,
+          status: "published",
+          otherUse: ["B.Sc. 50%"],
+          desc: "Folgen, Reihen, Stetigkeit, Differential- und Integralrechnung in einer Variablen.",
+          pre: "Keine",
+          exam: "Klausur (120 min)",
+          resp: "Prof. Schmidt",
+          from: "WS 25/26",
+        },
+        MA210: {
+          lang: "de",
+          ects: 8,
+          status: "published",
+          otherUse: [],
+          desc: "Interpolation, Quadratur, lineare Gleichungssysteme.",
+          pre: "Lineare Algebra I, Analysis I",
+          exam: "Klausur",
+          resp: "Prof. Weber",
+          from: "WS 25/26",
+        },
+        MA220: {
+          lang: "de",
+          ects: 8,
+          status: "created",
+          otherUse: ["M.Sc. 100%"],
+          desc: "Wahrscheinlichkeitsräume, Zufallsvariablen, Grenzwertsätze.",
+          pre: "Analysis I, II",
+          exam: "Mündliche Prüfung",
+          resp: "Prof. Klein",
+          from: "WS 25/26",
+        },
+        MA310: {
+          lang: "en",
+          ects: 8,
+          status: "created",
+          otherUse: ["M.Sc. 100%"],
+          desc: "Banach and Hilbert spaces, bounded operators, spectral theory.",
+          pre: "Analysis I–III",
+          exam: "Oral exam",
+          resp: "Prof. Fischer",
+          from: "SS 26",
+        },
+        MA050: {
+          lang: "de",
+          ects: 4,
+          status: "checked",
+          otherUse: [],
+          desc: "Vortrag zu einem Thema der Grundvorlesungen.",
+          pre: "Lineare Algebra I",
+          exam: "Vortrag",
+          resp: "Dozierende",
+          from: "WS 25/26",
+        },
+        MA201: {
+          lang: "de",
+          ects: 8,
+          status: "checked",
+          otherUse: ["M.Sc. 100%"],
+          desc: "Gruppen, Ringe, Körper, Galoistheorie.",
+          pre: "Lineare Algebra I, II",
+          exam: "Klausur",
+          resp: "Prof. Braun",
+          from: null,
+        },
+      };
+
+      let sections = [
+        {
+          id: 1,
+          de: "Pflichtmodule",
+          en: "Compulsory modules",
+          entries: ["MA101", "MA102", "MA210"],
+        },
+        { id: 2, de: "Wahlpflichtmodule", en: "Elective modules", entries: ["MA220", "MA310"] },
+        { id: 3, de: "Seminare", en: "Seminars", entries: ["MA050"] },
+      ];
+      let hbPublished = false,
+        filter = null,
+        nextId = 10;
+
+      /* ===== Helpers ===== */
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) =>
+        String(s ?? "").replace(
+          /[&<>"']/g,
+          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
+        );
+      const nameFor = (code) => {
+        const m = mod(code),
+          e = editions[code];
+        return e && e.lang === "en" ? m.en : m.de;
+      };
+      const usedIn = (code) => [THIS, ...(editions[code]?.otherUse || [])];
+      const inHandbook = (code) => sections.some((s) => s.entries.includes(code));
+      function toast(msg) {
+        const t = $("#toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        clearTimeout(t._h);
+        t._h = setTimeout(() => t.classList.remove("show"), 2400);
+      }
+      function openModal(id) {
+        $(id).classList.add("open");
+      }
+      function closeModals() {
+        document.querySelectorAll(".backdrop").forEach((b) => b.classList.remove("open"));
+      }
+      function confirmBox(title, html, okLabel, onOk, danger) {
+        $("#cf-title").textContent = title;
+        $("#cf-body").innerHTML = html;
+        const ok = $("#cf-ok");
+        ok.textContent = okLabel;
+        ok.style.background = danger ? "var(--danger)" : "";
+        ok.style.borderColor = danger ? "var(--danger)" : "";
+        ok.onclick = () => {
+          closeModals();
+          onOk();
+        };
+        openModal("#m-confirm");
+      }
+      document.addEventListener("click", (e) => {
+        if (e.target.matches("[data-close]") || e.target.classList.contains("backdrop"))
+          closeModals();
+        if (!e.target.closest(".shared"))
+          document.querySelectorAll(".shared-pop.open").forEach((p) => p.classList.remove("open"));
+        if (!e.target.closest(".hb-actions")) $("#export-menu").classList.remove("open");
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeModals();
+          closeDrawer();
+        }
+      });
+
+      /* ===== Render ===== */
+      function render() {
+        const all = sections.flatMap((s) => s.entries);
+        const counts = { published: 0, checked: 0, created: 0 };
+        all.forEach((c) => counts[editions[c].status]++);
+        const total = all.length || 1;
+        $("#bar").innerHTML = ["published", "checked", "created"]
+          .map(
+            (k) =>
+              `<span style="width:${(counts[k] / total) * 100}%;background:var(--${k === "published" ? "ok" : k})"></span>`,
+          )
+          .join("");
+        $("#legend").innerHTML =
+          ["published", "checked", "created"]
+            .map(
+              (k) =>
+                `<button data-filter="${k}" class="${filter === k ? "on" : ""}" title="Highlight ${k}"><span class="dot ${k}"></span><b>${counts[k]}</b> ${k}</button>`,
+            )
+            .join("") + `<span class="muted">${all.length} modules</span>`;
+
+        $("#sections").innerHTML = sections
+          .map(
+            (s, si) => `
+    <div class="section">
+      <div class="sec-head">
+        <span class="sec-num">${si + 1}.</span>
+        <div><div class="sec-title">${esc(s.de)}</div>${s.en ? `<div class="sec-title-en">${esc(s.en)}</div>` : ""}</div>
+        <span class="sec-count">· ${s.entries.length} module${s.entries.length === 1 ? "" : "s"}</span>
+        <div class="sec-tools">
+          <button class="btn icon" data-sec-up="${si}" ${si === 0 ? "disabled" : ""} title="Move section up">↑</button>
+          <button class="btn icon" data-sec-down="${si}" ${si === sections.length - 1 ? "disabled" : ""} title="Move section down">↓</button>
+          <button class="btn icon" data-sec-edit="${si}" title="Rename">✎</button>
+          <button class="btn icon" data-sec-del="${si}" title="Delete section">🗑</button>
+        </div>
+      </div>
+      ${
+        s.entries.length
+          ? s.entries.map((c, ei) => entryRow(c, si, ei, s.entries.length)).join("")
+          : `<div class="sec-empty">No modules yet.</div>`
+      }
+      <div class="sec-foot"><button class="btn sm ghost" data-add="${si}" style="color:var(--primary)">+ Add module</button></div>
+    </div>`,
+          )
+          .join("");
+
+        const st = $("#hb-status");
+        st.textContent = hbPublished ? "Published" : "Draft";
+        st.className = "pill " + (hbPublished ? "published" : "draft");
+        $("#publish-btn").textContent = hbPublished ? "Unpublish" : "Publish handbook";
+        $("#publish-btn").className = hbPublished ? "btn" : "btn primary";
+      }
+
+      function entryRow(code, si, ei, n) {
+        const m = mod(code),
+          e = editions[code];
+        const others = e.otherUse;
+        const altName = e.lang === "en" ? m.de : m.en;
+        const moveOpts = sections
+          .map((s, i) => (i === si ? "" : `<option value="${i}">${esc(s.de)}</option>`))
+          .join("");
+        return `
+    <div class="entry ${filter && e.status !== filter ? "dim" : ""}">
+      <span class="code">${esc(code)}</span>
+      <div class="e-name" data-open="${code}"><b>${esc(nameFor(code))}</b>${altName !== nameFor(code) ? `<span class="alt">${esc(altName)}</span>` : ""}</div>
+      <span class="e-lang">${e.lang}</span>
+      <span class="e-ects">${e.ects} ECTS</span>
+      <span class="e-status"><span class="dot ${e.status}"></span>${e.status}</span>
+      <span class="shared">${
+        others.length
+          ? `
+        <button class="shared-btn" data-shared="${code}">🔗 ${others.length + 1} handbooks</button>
+        <div class="shared-pop" id="pop-${code}"><b>Shared description</b><br><span class="muted">Editing it changes all of:</span>
+          <ul>${usedIn(code)
+            .map(
+              (h) => `<li>${esc(h)}${h === THIS ? " <span class='muted'>(this)</span>" : ""}</li>`,
+            )
+            .join("")}</ul></div>`
+          : ""
+      }</span>
+      <div class="e-tools">
+        <button class="btn icon" data-up="${si}:${ei}" ${ei === 0 ? "disabled" : ""} title="Move up">↑</button>
+        <button class="btn icon" data-down="${si}:${ei}" ${ei === n - 1 ? "disabled" : ""} title="Move down">↓</button>
+        ${
+          sections.length > 1
+            ? `<select class="btn icon" data-move="${si}:${ei}" title="Move to section" style="width:112px;padding:3px 6px">
+          <option value="">Move…</option>${moveOpts}</select>`
+            : ""
+        }
+        <button class="btn icon" data-remove="${si}:${ei}" title="Remove from this handbook">✕</button>
+      </div>
+    </div>`;
+      }
+
+      /* ===== Entry & section actions ===== */
+      document.addEventListener("click", (e) => {
+        const b = e.target.closest("button, [data-open]");
+        if (!b) return;
+        const d = b.dataset;
+        const pair = (v) => v.split(":").map(Number);
+
+        if (d.filter) {
+          filter = filter === d.filter ? null : d.filter;
+          render();
+        }
+        if (d.shared) {
+          e.stopPropagation();
+          const p = $("#pop-" + d.shared);
+          const was = p.classList.contains("open");
+          document.querySelectorAll(".shared-pop.open").forEach((x) => x.classList.remove("open"));
+          if (!was) p.classList.add("open");
+        }
+        if (d.open) openDrawer(d.open);
+        if (d.add) openAdd(+d.add);
+
+        if (d.up || d.down) {
+          const [si, ei] = pair(d.up || d.down);
+          const list = sections[si].entries;
+          const j = d.up ? ei - 1 : ei + 1;
+          [list[ei], list[j]] = [list[j], list[ei]];
+          render();
+        }
+        if (d.remove) {
+          const [si, ei] = pair(d.remove);
+          const code = sections[si].entries[ei];
+          const others = editions[code].otherUse;
+          confirmBox(
+            "Remove from handbook",
+            `<p style="margin-top:0">Remove <b>${esc(code)} ${esc(nameFor(code))}</b> from <b>${esc(THIS)}</b>?</p>` +
+              (others.length
+                ? `<div class="callout info" style="margin:0">Removes it from ${esc(THIS)} only. ${esc(others.join(", "))} keep${others.length > 1 ? "" : "s"} the description.</div>`
+                : `<div class="callout info" style="margin:0">The description stays in the system and can be added again.</div>`),
+            "Remove",
+            () => {
+              sections[si].entries.splice(ei, 1);
+              render();
+              toast(`${code} removed from ${THIS}`);
+            },
+            true,
+          );
+        }
+
+        if (d.secUp || d.secDown) {
+          const i = +(d.secUp ?? d.secDown);
+          const j = d.secUp ? i - 1 : i + 1;
+          [sections[i], sections[j]] = [sections[j], sections[i]];
+          render();
+        }
+        if (d.secEdit) openSection(+d.secEdit);
+        if (d.secDel) {
+          const s = sections[+d.secDel];
+          confirmBox(
+            "Delete section",
+            `<p style="margin-top:0">Delete <b>${esc(s.de)}</b>?</p>` +
+              (s.entries.length
+                ? `<div class="callout warn" style="margin:0">Its ${s.entries.length} module${s.entries.length > 1 ? "s are" : " is"} removed from this handbook. Descriptions are kept.</div>`
+                : ""),
+            "Delete",
+            () => {
+              sections.splice(+d.secDel, 1);
+              render();
+              toast("Section deleted");
+            },
+            true,
+          );
+        }
+      });
+      document.addEventListener("change", (e) => {
+        const m = e.target.dataset.move;
+        if (!m || e.target.value === "") return;
+        const [si, ei] = m.split(":").map(Number),
+          to = +e.target.value;
+        const [code] = sections[si].entries.splice(ei, 1);
+        sections[to].entries.push(code);
+        render();
+        toast(`${code} moved to ${sections[to].de}`);
+      });
+
+      /* ===== Sections ===== */
+      let editingSec = null;
+      function openSection(i) {
+        editingSec = i ?? null;
+        $("#sec-form-title").textContent = i == null ? "New section" : "Rename section";
+        $("#sec-de").value = i == null ? "" : sections[i].de;
+        $("#sec-en").value = i == null ? "" : sections[i].en;
+        openModal("#m-section");
+        $("#sec-de").focus();
+      }
+      $("#add-section").onclick = () => openSection();
+      $("#sec-save").onclick = () => {
+        const de = $("#sec-de").value.trim(),
+          en = $("#sec-en").value.trim();
+        if (!de) {
+          $("#sec-de").focus();
+          return;
+        }
+        if (editingSec == null) sections.push({ id: nextId++, de, en, entries: [] });
+        else Object.assign(sections[editingSec], { de, en });
+        closeModals();
+        render();
+      };
+
+      /* ===== Add module ===== */
+      let addTarget = 0;
+      function openAdd(si) {
+        addTarget = si;
+        $("#add-target").textContent = sections[si].de;
+        $("#add-q").value = "";
+        renderResults();
+        openModal("#m-add");
+        $("#add-q").focus();
+      }
+      $("#add-q").addEventListener("input", renderResults);
+      function renderResults() {
+        const q = $("#add-q").value.trim().toLowerCase();
+        const list = modules.filter(
+          (m) => !q || `${m.code} ${m.de} ${m.en}`.toLowerCase().includes(q),
+        );
+        $("#add-results").innerHTML =
+          list
+            .map((m) => {
+              const e = editions[m.code];
+              let state, action;
+              if (inHandbook(m.code)) {
+                const where = sections.find((s) => s.entries.includes(m.code)).de;
+                state = `<div class="state here">Already in this handbook (${esc(where)})</div>`;
+                action = `<button class="btn sm" disabled>Added</button>`;
+              } else if (e) {
+                const others = e.otherUse;
+                state = `<div class="state exists"><span class="dot ${e.status}"></span>Description exists for WS 26/27 · ${e.status}${others.length ? ` · shared with ${esc(others.join(", "))}` : ""}</div>`;
+                action = `<button class="btn sm primary" data-link="${m.code}">Add</button>`;
+              } else {
+                state = `<div class="state none">○ No description for WS 26/27 yet</div>`;
+                action = `<span class="split">${m.prev ? `<button class="btn sm primary" data-create="${m.code}:copy">Copy from ${esc(m.prev)}</button>` : ""}<button class="btn sm${m.prev ? "" : " primary"}" data-create="${m.code}:empty">${m.prev ? "Empty" : "Add empty"}</button></span>`;
+              }
+              return `<div class="result"><span class="code">${esc(m.code)}</span><div><b style="font-weight:500">${esc(m.de)}</b> <span class="muted">· ${esc(m.en)}</span>${state}</div>${action}</div>`;
+            })
+            .join("") ||
+          `<div class="sec-empty">No curriculum module matches. Create it in Master data first.</div>`;
+      }
+      $("#add-results").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        if (b.dataset.link) {
+          const c = b.dataset.link;
+          sections[addTarget].entries.push(c);
+          toast(
+            editions[c].otherUse.length
+              ? `${c} linked · description shared with ${editions[c].otherUse.join(", ")}`
+              : `${c} added`,
+          );
+        }
+        if (b.dataset.create) {
+          const [c, how] = b.dataset.create.split(":");
+          const m = mod(c);
+          editions[c] = {
+            lang: "de",
+            ects: 8,
+            status: "created",
+            otherUse: [],
+            resp: "",
+            desc: how === "copy" ? `(Copied from ${m.prev}) …` : "",
+            pre: "",
+            exam: "",
+            from: how === "copy" ? m.prev : null,
+          };
+          sections[addTarget].entries.push(c);
+          toast(
+            how === "copy"
+              ? `${c} added · description copied from ${m.prev}`
+              : `${c} added · empty description created`,
+          );
+        }
+        closeModals();
+        render();
+      });
+
+      /* ===== Export & publish ===== */
+      $("#export-btn").onclick = (e) => {
+        e.stopPropagation();
+        $("#export-menu").classList.toggle("open");
+      };
+      $("#export-menu").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        const all = sections.flatMap((s) => s.entries);
+        const n =
+          b.dataset.export === "reviewable"
+            ? all.filter((c) => editions[c].status !== "created").length
+            : all.filter((c) => editions[c].status === "published").length;
+        $("#export-menu").classList.remove("open");
+        toast(
+          `Exporting ${n} of ${all.length} modules (${b.dataset.export === "reviewable" ? "checked + published" : "published only"})`,
+        );
+      });
+      $("#publish-btn").onclick = () => {
+        if (hbPublished) {
+          hbPublished = false;
+          render();
+          toast("Handbook is a draft again");
+          return;
+        }
+        const all = sections.flatMap((s) => s.entries);
+        const notPub = all.filter((c) => editions[c].status !== "published");
+        confirmBox(
+          "Publish handbook",
+          `<p style="margin-top:0">Viewers will see <b>${esc(THIS)} · WS 26/27</b>.</p>` +
+            (notPub.length
+              ? `<div class="callout warn" style="margin:0"><b>${notPub.length} of ${all.length}</b> module descriptions are not published yet (${esc(notPub.join(", "))}). They won't appear in the official PDF until published.</div>`
+              : ""),
+          "Publish",
+          () => {
+            hbPublished = true;
+            render();
+            toast("Handbook published");
+          },
+        );
+      };
+
+      /* ===== Description drawer ===== */
+      let drCode = null;
+      const ORDER = ["created", "checked", "published"];
+      function openDrawer(code) {
+        drCode = code;
+        const e = editions[code],
+          m = mod(code);
+        $("#dr-code").textContent = code;
+        $("#dr-name").textContent = nameFor(code);
+        $("#dr-lang").value = e.lang;
+        $("#dr-ects").value = e.ects;
+        $("#dr-desc").value = e.desc;
+        $("#dr-pre").value = e.pre;
+        $("#dr-exam").value = e.exam;
+        $("#dr-resp").value = e.resp;
+        $("#dr-lineage").textContent = e.from
+          ? `Copied from the ${e.from} description.`
+          : "Created in WS 26/27.";
+        const u = usedIn(code);
+        const sh = $("#dr-shared");
+        sh.className = "callout " + (u.length > 1 ? "warn" : "info");
+        sh.innerHTML =
+          u.length > 1
+            ? `⚠ This description is used in <b>${u.length} handbooks</b>: ${esc(u.join(", "))}. Changes apply to all of them.`
+            : `Used only in ${esc(THIS)}.`;
+        paintDrawerStatus();
+        updateNameHint();
+        $("#drawer").classList.add("open");
+        $("#dr-bg").classList.add("open");
+      }
+      function updateNameHint() {
+        const m = mod(drCode);
+        $("#dr-name-hint").textContent = `Shown as "${$("#dr-lang").value === "en" ? m.en : m.de}"`;
+      }
+      $("#dr-lang").addEventListener("change", updateNameHint);
+      function paintDrawerStatus() {
+        const s = editions[drCode].status;
+        $("#dr-steps").innerHTML = ORDER.map(
+          (k) => `<span class="${k === s ? "cur " + k : ""}">${k}</span>`,
+        ).join("<span style='border:0;background:none;padding:0'>→</span>");
+        const adv = $("#dr-advance");
+        adv.hidden = s === "published";
+        adv.textContent = s === "created" ? "Mark checked" : "Publish";
+        $("#dr-reopen").hidden = s === "created";
+      }
+      function closeDrawer() {
+        $("#drawer").classList.remove("open");
+        $("#dr-bg").classList.remove("open");
+      }
+      $("#dr-close").onclick = closeDrawer;
+      $("#dr-bg").onclick = closeDrawer;
+
+      function setStatus(s) {
+        editions[drCode].status = s;
+        paintDrawerStatus();
+        render();
+      }
+      $("#dr-advance").onclick = () => {
+        const s = editions[drCode].status;
+        setStatus(s === "created" ? "checked" : "published");
+        toast(`${drCode} ${editions[drCode].status}`);
+      };
+      $("#dr-reopen").onclick = () => {
+        setStatus("created");
+        toast(`${drCode} reopened`);
+      };
+
+      $("#dr-save").onclick = () => {
+        const e = editions[drCode];
+        const v = {
+          lang: $("#dr-lang").value,
+          ects: +$("#dr-ects").value,
+          desc: $("#dr-desc").value,
+          pre: $("#dr-pre").value,
+          exam: $("#dr-exam").value,
+          resp: $("#dr-resp").value,
+        };
+        const changed = Object.keys(v).some((k) => v[k] !== e[k]);
+        if (!changed) {
+          toast("No changes");
+          return;
+        }
+        const apply = () => {
+          Object.assign(e, v);
+          const reset = e.status !== "created";
+          e.status = "created";
+          $("#dr-name").textContent = nameFor(drCode);
+          paintDrawerStatus();
+          render();
+          toast(reset ? `Saved · ${drCode} set back to created` : "Saved");
+        };
+        const u = usedIn(drCode);
+        if (u.length > 1 || e.status !== "created") {
+          confirmBox(
+            "Save description",
+            (u.length > 1
+              ? `<p style="margin-top:0">This changes the description in <b>${esc(u.join(", "))}</b>.</p>`
+              : "") +
+              (e.status !== "created"
+                ? `<div class="callout warn" style="margin:0">It is currently <b>${e.status}</b> and will be set back to <b>created</b> for review${u.length > 1 ? " in every handbook" : ""}.</div>`
+                : ""),
+            "Save",
+            apply,
+          );
+        } else apply();
+      };
+
+      render();
+    </script>
+  </body>
+</html>
