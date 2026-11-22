@@ -21,7 +21,7 @@ The new system needs it as well:
 - **Full history** (old → new per field): matches the old `History` field. MaMpf has no versioning gem yet → new dependency (e.g., `paper_trail`) and one `versions` table.
 - **Only "last changed by / at"**: matches `tst_change`. Two columns, but no per‑field diff and no Hi3 / Hi4.
 
-Suggestion: full history, since the old system already shows old / new per field. **TODO: ask the staff whether the old `History` field is actually used, and whether they miss it on module texts** (see [To Verify](pending-thing-need-to-verify.md#8-history)).
+Suggestion: full history, since the old system already shows old / new per field. **TODO: ask the staff whether the old `History` field is actually used, and whether they miss it on module texts** (see [To Verify](pending-thing-need-to-verify.md#9-history)).
 ```
 
 ```admonish warning "⚑ Open"
