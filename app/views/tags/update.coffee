@@ -19,7 +19,7 @@ $('#tag-courses-error-<%= @tag.id.to_i %>')
 <% if @errors[:notions].present? %>
 <% if @errors.messages[:"notions.title"].present? %>
 $('#tag-notions-error-<%= @tag.id.to_i %>')
-  .append('<%= @errors[:"notions.title"].first %>')
+  .append('<%= j @errors[:"notions.title"].first %>')
   .show()
 <% else%>
 $('#tag-notions-error-<%= @tag.id.to_i %>')
@@ -30,7 +30,7 @@ $('#tag-notions-error-<%= @tag.id.to_i %>')
 <% if @errors[:aliases].present? %>
 <% if @errors.messages[:"aliases.title"].present? %>
 $('#tag-aliases-error-<%= @tag.id.to_i %>')
-  .append('<%= @errors[:"aliases.title"].first %>')
+  .append('<%= j @errors[:"aliases.title"].first %>')
   .show()
 <% else %>
 $('#tag-aliases-error-<%= @tag.id.to_i %>')
@@ -49,33 +49,34 @@ $('#tag-related-tags-error-<%= @tag.id.to_i %>')
 <% if @modal %>
 $('#newTagModal').modal('hide')
 # update tag selectors depending on where the new tag modal was called from
+# The selector shows the title as text, so it is escaped for the string only.
 if $('#newTagModal').data('from') == 'section'
   tagSelector = document.getElementById('section_tag_ids_<%= @section&.id&.to_i %>').tomselect
-  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= @tag.title %>'})
+  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= raw j(@tag.title) %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'medium'
   tagSelector = document.getElementById('medium_tag_ids').tomselect
-  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= @tag.title %>'})
+  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= raw j(@tag.title) %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'lesson'
   tagSelector = document.getElementById('lesson_tag_ids').tomselect
-  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= @tag.title %>'})
+  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= raw j(@tag.title) %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'talk'
   tagSelector = document.getElementById('talk_tag_ids').tomselect
-  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= @tag.title %>'})
+  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= raw j(@tag.title) %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'tag'
   tagSelector = document.getElementById('tag_related_tag_ids').tomselect
-  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= @tag.title %>'})
+  tagSelector.addOption({ value: <%= @tag.id %>, name: '<%= raw j(@tag.title) %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()

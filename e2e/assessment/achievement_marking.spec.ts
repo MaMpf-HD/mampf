@@ -39,8 +39,8 @@ test.describe("entering an achievement", () => {
     // the tutor's page opens on the first achievement, there being no sheet
     // yet, and the tutor enters a yes/no one and then a number
     await tutor.page.goto(`/lectures/${lecture.id}/tutorials?tutorial=${tutorial.id}`);
-    await expect(tutor.page.getByLabel("Sheet, test or achievement"))
-      .toHaveValue("Blackboard talk");
+    await expect(tutor.page.getByLabel("Sheet, test or achievement")
+      .getByRole("option", { selected: true })).toHaveText("Blackboard talk");
     await expect(tutor.page.getByText("2 without a value")).toBeVisible();
     const ada = tutor.page.getByRole("table").getByRole("row", { name: /Ada Lovelace/ });
     await ada.getByRole("combobox", { name: "Value for Ada Lovelace" }).selectOption("met");
