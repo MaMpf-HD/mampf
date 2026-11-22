@@ -11,7 +11,7 @@ $('#questionDetails').empty()
                         locals: { question: @question } %>')
 <% end %>
 <% else %>
-$('#solution-error').append('<%= @errors[:base].join(", ") %>').show()
+$('#solution-error').append('<%= j @errors[:base].join(", ") %>').show()
 <% end %>
 
 questionDetails = document.getElementById('questionDetails')

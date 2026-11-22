@@ -4,7 +4,7 @@
         data-action="change->select-navigation#visit">
 
   <!-- Current tutorial -->
-  <option selected>
+  <option value="" selected>
     <% if @tutorial %>
       <%= tutorial_option_label(@tutorial, current_user) %>
     <% else %>

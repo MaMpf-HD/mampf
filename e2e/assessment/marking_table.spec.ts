@@ -427,11 +427,13 @@ test.describe("marking table", () => {
 
     await tutor.page.getByLabel("Assignment").selectOption({ label: "Problem Set 2" });
     await expect(tutor.page).toHaveURL(new RegExp(`assignment=${second.id}`));
-    await expect(tutor.page.getByLabel("Assignment")).toHaveValue("Problem Set 2");
+    await expect(tutor.page.getByLabel("Assignment").getByRole("option", { selected: true }))
+      .toHaveText("Problem Set 2");
 
     await tutor.page.getByLabel("Tutorial").selectOption({ label: "Friday group" });
     await expect(tutor.page).toHaveURL(new RegExp(`tutorial=${friday.id}`));
-    await expect(tutor.page.getByLabel("Tutorial")).toHaveValue("Friday group");
+    await expect(tutor.page.getByLabel("Tutorial").getByRole("option", { selected: true }))
+      .toHaveText("Friday group");
   });
 
   test("narrows a sheet from before there were points by name", async ({

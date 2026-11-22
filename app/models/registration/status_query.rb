@@ -31,7 +31,8 @@ module Registration
             :pending
           elsif campaigns.any?(&:open_for_registrations?)
             :open
-          elsif regs.any? { |reg| reg.status == "rejected" && reg.dismissed_at.nil? }
+          elsif regs.any? { |reg| open_rejection?(reg) } &&
+                seated_lecture_ids.exclude?(lecture_id)
             :rejected
           end
 
@@ -40,6 +41,20 @@ module Registration
     end
 
     private
+
+      def open_rejection?(reg)
+        reg.status == "rejected" && reg.dismissed_at.nil? &&
+          reg.rejection_overridden_at.nil?
+      end
+
+      # Lectures where the student has a place by now, e.g. put into a group
+      # by hand after the campaign. Lecture memberships, because a waitlist or
+      # a planning cohort creates none.
+      def seated_lecture_ids
+        @seated_lecture_ids ||= @user.lecture_memberships
+                                     .where(lecture_id: @lecture_ids)
+                                     .pluck(:lecture_id).to_set
+      end
 
       def campaigns_by_lecture
         @campaigns_by_lecture ||= Registration::Campaign

@@ -43,6 +43,29 @@ RSpec.describe("Media", type: :request) do
       get media_path(id: lecture.id, project: "destroy")
       expect(response).to have_http_status(:ok)
     end
+
+    it "shows when a script was last updated" do
+      script = create(:lecture_medium, :with_manuscript, :released,
+                      teachable: lecture, sort: "Script")
+      edited_at = Time.zone.local(2026, 11, 3, 14, 30)
+      script.update!(released_at: edited_at - 1.month, file_last_edited: edited_at)
+
+      get media_path(id: lecture.id, project: "script")
+      expect(response.body)
+        .to include(I18n.l(edited_at, format: :file_time, locale: user.locale))
+    end
+  end
+
+  describe "GET /media/:id" do
+    it "shows when the manuscript was last updated" do
+      medium = create(:lecture_medium, :with_manuscript, :released)
+      edited_at = Time.zone.local(2026, 11, 3, 14, 30)
+      medium.update!(released_at: edited_at - 1.month, file_last_edited: edited_at)
+
+      get medium_path(medium)
+      expect(response.body)
+        .to include(I18n.l(edited_at, format: :file_time, locale: user.locale))
+    end
   end
 
   describe "GET /media/search" do
@@ -946,6 +969,54 @@ RSpec.describe("Media", type: :request) do
       expect(medium.reload.released).to be_nil
       expect(medium.publisher.assignment_title).to eq("Sheet 3")
       expect(lecture.scheduled_sheets.map(&:title)).to eq(["Sheet 3"])
+    end
+  end
+
+  describe "POST /media/:id/import_script_items" do
+    let(:editor) { create(:confirmed_user) }
+    let(:lesson) do
+      create(:valid_lesson, start_destination: "first", end_destination: "last")
+    end
+    let(:lecture) { lesson.lecture }
+    let(:medium) do
+      create(:lesson_medium, :with_lesson_by_id, lesson_id: lesson.id)
+    end
+    let(:path) { import_script_items_path(medium) }
+
+    before do
+      lecture.update!(content_mode: "manuscript")
+      script = create(:lecture_medium, :with_lecture_by_id,
+                      lecture_id: lecture.id, sort: "Script")
+      create(:item, medium: script, sort: "remark", position: 1,
+                    pdf_destination: "first")
+      create(:item, medium: script, sort: "theorem", position: 2,
+                    pdf_destination: "last")
+      create(:editable_user_join, user: editor, editable: lecture)
+      sign_in editor
+    end
+
+    def toc
+      medium.proper_items_by_time.map(&:sort)
+    end
+
+    it "puts the lesson's script items into the table of contents" do
+      expect { post(path, xhr: true) }
+        .to change { toc }.from([]).to(["remark", "theorem"])
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "changes nothing on GET" do
+      expect { get(path, xhr: true) }.not_to(change { toc })
+
+      expect(flash[:alert]).to eq(I18n.t("controllers.no_page"))
+    end
+
+    it "changes nothing for a user who may not edit the medium" do
+      sign_in create(:confirmed_user)
+
+      expect { post(path, xhr: true) }.not_to(change { toc })
+      expect(flash[:alert]).to eq(I18n.t("unauthorized.default"))
     end
   end
 
