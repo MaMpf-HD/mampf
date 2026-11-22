@@ -57,6 +57,23 @@ RSpec.describe("Tag search", type: :request) do
     expect(response.body).to include("1 additional results")
   end
 
+  it "adds the tags of preceding courses for a user who follows those" do
+    user.update!(subscription_type: 1)
+    create(:course_self_join, course: bookmarked_lecture.course,
+                              preceding_course: other_lecture.course)
+
+    search("Eigenraum")
+
+    expect(response.body).to include("Eigenraum Alpha", "Eigenraum Beta", "Eigenraum Gamma")
+    expect(response.body).not_to include("Eigenraum Delta")
+  end
+
+  it "reports a search without hits" do
+    search("Quaternion")
+
+    expect(response.body).to include("has returned 0 results")
+  end
+
   it "needs no more queries when there are more lectures" do
     user.update!(subscription_type: 2)
     queries_before = queries_of_repeated_search("Eigenraum")
