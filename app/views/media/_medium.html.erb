@@ -113,10 +113,6 @@
           <%= image_tag(medium.manuscript_screenshot_url || '',
                         alt: "Card image cap",
                         class: "mampf-card-image manuscript-thumbnail") %>
-        <% elsif medium.geogebra_screenshot_url.present? %>
-          <%= image_tag(medium.geogebra_screenshot_url,
-                        alt: 'Card image cap',
-                        class: 'mampf-card-image') %>
         <% else %>
           <div class="empty-default-screenshot"></div>
         <% end %>

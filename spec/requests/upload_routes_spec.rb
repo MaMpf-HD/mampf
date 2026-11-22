@@ -21,10 +21,6 @@ RSpec.describe("UploadRoutes", type: :request) do
         File.join(SPEC_FILES, "manuscript.pdf"),
         "application/pdf"
       ),
-      "/ggbs/upload" => Rack::Test::UploadedFile.new(
-        File.join(SPEC_FILES, "manuscript.pdf"),
-        "application/zip"
-      ),
       "/corrections/upload" => Rack::Test::UploadedFile.new(
         File.join(SPEC_FILES, "manuscript.pdf"),
         "application/pdf"
@@ -37,7 +33,6 @@ RSpec.describe("UploadRoutes", type: :request) do
     "/profile_image/upload",
     "/videos/upload",
     "/pdfs/upload",
-    "/ggbs/upload",
     "/submissions/upload",
     "/corrections/upload"
   ].each do |path|
@@ -291,7 +286,6 @@ RSpec.describe("UploadRoutes", type: :request) do
       "/screenshots/upload" => ScreenshotUploader,
       "/videos/upload" => VideoUploader,
       "/pdfs/upload" => PdfUploader,
-      "/ggbs/upload" => GeogebraUploader,
       "/corrections/upload" => CorrectionUploader
     }
 
@@ -350,16 +344,14 @@ RSpec.describe("UploadRoutes", type: :request) do
         {
           "/screenshots/upload" => course,
           "/videos/upload" => Medium.new(teachable: course),
-          "/pdfs/upload" => Medium.new(teachable: course),
-          "/ggbs/upload" => Medium.new(teachable: course)
+          "/pdfs/upload" => Medium.new(teachable: course)
         }
       end
 
       [
         "/screenshots/upload",
         "/videos/upload",
-        "/pdfs/upload",
-        "/ggbs/upload"
+        "/pdfs/upload"
       ].each do |path|
         it "allows #{path}" do
           post path, params: { file: restricted_uploads.fetch(path) },

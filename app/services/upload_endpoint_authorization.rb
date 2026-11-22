@@ -1,7 +1,6 @@
 class UploadEndpointAuthorization
   UPLOADERS = {
     "correction" => CorrectionUploader,
-    "geogebra" => GeogebraUploader,
     "lecture_home_attachment" => LectureHomeAttachmentUploader,
     "pdf" => PdfUploader,
     "profile_image" => ProfileimageUploader,
@@ -34,7 +33,7 @@ class UploadEndpointAuthorization
         # upload intent: a historic editor of an existing non-talk medium
         # must still be able to replace the video on that medium.
         content_editor?(user) || user&.speaker?
-      when "PdfUploader", "GeogebraUploader", "ScreenshotUploader",
+      when "PdfUploader", "ScreenshotUploader",
            "ProfileimageUploader", "LectureHomeAttachmentUploader"
         content_editor?(user)
       when "CorrectionUploader", "StudentMessageUploader"

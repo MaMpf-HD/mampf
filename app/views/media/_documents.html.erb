@@ -44,10 +44,5 @@
       <%= render partial: 'media/external_link',
                  locals: { f: f } %>
     <% end %>
-    <% if medium.sort.in?(['WorkedExample', 'Remark']) %>
-      <%= render partial: 'media/geogebra',
-                 locals: { medium: medium,
-                           f: f } %>
-    <% end %>
   </div>
 </div>

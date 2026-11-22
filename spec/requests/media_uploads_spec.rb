@@ -74,23 +74,6 @@ RSpec.describe("MediaUploads", type: :request) do
     )
   end
 
-  it "rejects infected geogebra uploads before archive inspection runs" do
-    allow(scanner).to receive(:scan)
-      .and_return(UploadScanResult.infected("Eicar-Signature"))
-
-    upload = Rack::Test::UploadedFile.new(File.join(SPEC_FILES, "manuscript.pdf"),
-                                          "application/zip")
-
-    post "/ggbs/upload", params: { file: upload },
-                         headers: upload_intent_headers(GeogebraUploader, user: user,
-                                                                          target: medium)
-
-    expect(response.status).to eq(422)
-    expect(response.body).to include(
-      I18n.t("submission.upload_failure_malware", locale: user.locale)
-    )
-  end
-
   it "scans only the bounded prefix for video uploads and stamps them clean" do
     allow(scanner).to receive(:scan).and_return(UploadScanResult.clean)
 
