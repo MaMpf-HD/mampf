@@ -64,6 +64,12 @@
         >
           <div class="fw-semibold small mb-2">
             <%= t("student_performance.rules.edit.threshold_section") %>
+
+            <% if @lecture.tests_kept_apart? %>
+              <span class="fw-normal text-muted">
+                (<%= t("student_performance.rules.show.without_tests") %>)
+              </span>
+            <% end %>
           </div>
 
           <div class="mb-2">

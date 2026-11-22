@@ -10,9 +10,18 @@
 /* The one number the standing is about. Size sets it apart; the weight is the
    second of the two places size alone cannot carry a heading. */
 .num-total {
+  display: flex;
+  align-items: baseline;
+  column-gap: 0.5rem;
   font-size: var(--hub-figure);
   font-weight: 600;
   line-height: 1.1;
+}
+
+/* The words after the number ("of 36 points …"). They can wrap, so they get
+   a normal line height instead of the number's. */
+.num-total-of {
+  line-height: 1.35;
 }
 
 /* One bar in two sizes, and the size is the hierarchy: the standing is 8px and

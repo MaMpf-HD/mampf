@@ -141,15 +141,18 @@
             >
               <%= t("student_performance.records.columns.due_so_far") %>
 
+              <% tests_counted = @test_points && @lecture.tests_in_points_total? %>
+
               <% if @test_points %>
                 <span class="fw-normal text-muted">
-                  (<%= t("student_performance.records.columns.sheets_and_tests") %>)
+                  (<%= t("student_performance.records.columns." \
+                         "#{tests_counted ? "sheets_and_tests" : "sheets_only"}") %>)
                 </span>
               <% end %>
 
               <%= helpdesk(
                     t("student_performance.records.columns." \
-                      "#{@test_points ? "due_so_far_hint_with_tests" : "due_so_far_hint"}"),
+                      "#{tests_counted ? "due_so_far_hint_with_tests" : "due_so_far_hint"}"),
                     false) %>
             </th>
 
@@ -186,7 +189,8 @@
                 <% end %>
 
                 <%= helpdesk(
-                      t("student_performance.records.columns.tests_hint"),
+                      t("student_performance.records.columns." \
+                        "#{tests_counted ? "tests_hint" : "tests_hint_apart"}"),
                       false) %>
               </th>
             <% end %>
