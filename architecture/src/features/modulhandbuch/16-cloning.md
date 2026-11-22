@@ -1,6 +1,6 @@
 # Flows & Screens: Cloning
 
-Copy handbooks into another term.
+Copy handbooks into another term. Who may do it: see [Roles & Permissions](00c-roles-and-permissions.md).
 
 ---
 

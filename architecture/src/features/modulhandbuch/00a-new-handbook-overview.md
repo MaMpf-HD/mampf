@@ -38,7 +38,7 @@ Other concerns:
 ## Design Tenets
 
 * MaMpf already has `Course`, `Lecture` and `Term`. 
-    * A MaMpf `Course` and `Lecture` is created by teachers for teaching and is not verified by the admin. The handbook needs its own verified records, so it introduces `CurriculumModule` and `ModuleEdition`
+    * A MaMpf `Course` and `Lecture` is created by teachers for teaching and is not verified. The handbook needs its own verified records, so it introduces `CurriculumModule` and `ModuleEdition`
     * only **reuses `Term`**. 
     * An optional link from a module edition to a MaMpf `Lecture` is a future extension.
 

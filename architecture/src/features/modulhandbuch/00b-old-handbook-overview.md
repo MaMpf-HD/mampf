@@ -43,7 +43,7 @@ Portfolio_Modulhandbuch
 ## Core Flow
 
 **Once / rarely: base data** (Course tab)
-- Admin creates Codes (module identity: Kurz, Name, Fachgebiet, Info), Modulhandbücher (one per program + PO, e.g. "Informatik BSc 100%", "… alt") and lookups (Fachgebiet, Course Cycle, Course Source).
+- In the Course tab, Codes (module identity: Kurz, Name, Fachgebiet, Info), Modulhandbücher (one per program + PO, e.g. "Informatik BSc 100%", "… alt") and lookups (Fachgebiet, Course Cycle, Course Source) are created.
 - Semesters are created in advance (up to 2030).
 - New PO: new Modulhandbuch; the old one gets an Expire Date.
 
@@ -51,8 +51,8 @@ Portfolio_Modulhandbuch
 1. **Copy:** Semester list → `copy to next Semester` on the current semester. Copies **everything** to the next semester: all Module, all Gruppierungen + Zusammenstellung, all Latex Elemente, for every Modulhandbuch (confirmed by staff). Copied Module get Course Source "02 Semester‑Copy".
 2. **Update module texts:** one Modul per (Code, Semester), shared by all Modulhandbücher of that semester; every field DE + EN, usually only one filled.
    - Dozent: creates new Module or corrects own ones (Dozent tab) → Course Source "03 / 04 durch Dozent" (?)
-   - StudDekan / admin: edits any Modul (StudDekan / Course tab).
-3. **Review and release:** a Modul has a status `created` / `checked` / `published` (Freigabe), set by hand; any value can be set directly, nothing changes it automatically. StudDekan can filter by Quelle to see what Dozenten changed. Where exactly the status is set is not visible in the PDFs (?).
+   - StudDekanin / Course tab: edit any Modul.
+3. **Review and release:** a Modul has a status `created` / `checked` / `published`, set by hand; nothing changes it automatically. **Release (Freigabe) is done by the Studiendekan** (Output_Html: module data "must be released by the Studiendekan" after entry). StudDekan filters by Quelle to see what Dozenten changed. Where exactly the status is set is not visible in the PDFs (?).
 4. **Adjust handbooks** (Modulhandbuch tab), per Modulhandbuch + Semester:
    - Gruppierung: names, order, Latex Intro / Extro
    - Zusammenstellung: add / remove Module, set positions
@@ -68,13 +68,15 @@ Portfolio_Modulhandbuch
 ## All possible screens with its variation 
 * there is a lot of **duplicate screens**. Most likely: in this framework **access is granted per tab**. So each role gets its own tab with copies of the screens it needs
 
-  | Tab | Who | Can do |
-  |---|---|---|
-  | Course | system admin | everything, including lookups and Semester |
-  | StudDekanin | Studiendekan/in | Codes, Module, Freigabe, LSF, Semester + copy |
-  | Modulhandbuch | handbook editor | Modulhandbuch, Gruppierung, Zusammenstellung, Latex |
-  | Dozent | lecturer | create and correct Module, pdf |
-  | (none) | public / website | read released data via html/JSON |
+  | Tab | Can do |
+  |---|---|
+  | Course | everything, including lookups and Semester |
+  | StudDekanin | Codes, Module, Freigabe, LSF, Semester + copy |
+  | Modulhandbuch | Modulhandbuch, Gruppierung, Zusammenstellung, Latex |
+  | Dozent | create and correct Module, pdf |
+  | (none) | read released data via html/JSON (public) |
+
+  Who uses which tab: see [Roles & Permissions](00c-roles-and-permissions.md).
 
 
 * There is some variations between these duplicates.
@@ -140,43 +142,6 @@ Only in one tab
 
 ---
 
-## Roles 
+## Roles
 
-| Tab | Who | Can do |
-|---|---|---|
-| Course | system admin | everything, including lookups and Semester |
-| StudDekanin | Studiendekan/in | Codes, Module, Freigabe, LSF, Semester + copy |
-| Modulhandbuch | handbook editor | Modulhandbuch, Gruppierung, Zusammenstellung, Latex |
-| Dozent | lecturer | create and correct Module, pdf |
-| (none) | public / website | read released data via html/JSON |
-
-| Role | Job |
-|---|---|
-| Course (admin) | create master data, look at everything |
-| StudDekan | review and release modules, clean up, LSF |
-| Modulhandbuch | build handbooks, LaTeX, PDF |
-| Dozent | write their own modules |
-
-- **StudDekanin can delete any module, even one in use.** 
-  * That's the strongest permission of any role on the module list.
-- **Dozent is restricted role, can only take actions on seen rows**
-  * hence no filter (as it may not necessary), no lookup support
-- **The Output tab can still add and remove modules from a handbook.** That's probably unintended, a leftover from copying the screen over.
-- **Course is a superset in information** but **lack of features.** 
-  * It can open almost everything, but its copies lack the newer features (Default Sprache, Latex Intro/Extro, positions, Draft PDF).
-  * Seems like this is more about seeing overall data, not possible for strong manipulation
-  * #TODO: elaborate which can be done by which
-
-- **Course (admin): master data and overview**
-  - Creates the base data: Codes, the lookup tables (Fachgebiet, Course Cycle, Course Source), Semester and Modulhandbuch.
-  - Has the widest view
-  - Records in use are protected: delete only works when nothing uses them.
-
-- **StudDekan: module content, review, cleanup**
-  - Works **one semester at a time**, 
-  - better filters
-    - Quelle filter is exactly what you need to review what Dozenten changed.
-  - Stronger delete: 
-    - modules can be deleted even while in use.
-  - More edit rights: 
-    - LSF-Sortierung
+Roles and who may do what (old tabs, official notes, new roles) are kept in one place: [Roles & Permissions](00c-roles-and-permissions.md).

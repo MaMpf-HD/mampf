@@ -1,6 +1,6 @@
 # Flows & Screens: Descriptions List
 
-Find, filter and export `ModuleEdition`s; bulk status; clean up. **admin** all actions; **viewer** read, PDF, CSV.
+Find, filter and export `ModuleEdition`s; bulk status; clean up. Who may do what: see [Roles & Permissions](00c-roles-and-permissions.md).
 
 ---
 
@@ -85,7 +85,9 @@ They are in no handbook. This cannot be undone.
                                        [Cancel] [Delete]
 ```
 
-### Viewer
+### Read-only view
+For users without edit rights (who: see [Roles & Permissions](00c-roles-and-permissions.md)).
+
 S1 without checkboxes, bulk bar and Delete; Columns and CSV available.
 
 ---

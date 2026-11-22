@@ -115,7 +115,9 @@ Literature                                         compared with SoSe 2026
 Topics                                             unchanged ▸
 ```
 
-### Viewer
+### Read-only view
+For users without edit rights (who: see [Roles & Permissions](00c-roles-and-permissions.md)).
+
 S1 read‑only: no Save, no status buttons, internal section hidden.
 
 ---
@@ -124,4 +126,4 @@ S1 read‑only: no Save, no status buttons, internal section hidden.
 
 1. No "New description" button anywhere; descriptions come from a handbook or cloning.
 2. Side panel for quick edits plus full page for long edits / review.
-3. Internal fields (`responsible_user_id`, `internal_remarks`) never reset the status and are hidden from viewers.
+3. Internal fields (`responsible_user_id`, `internal_remarks`) are hidden in the read‑only view.

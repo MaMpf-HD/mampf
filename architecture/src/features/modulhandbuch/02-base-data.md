@@ -1,7 +1,7 @@
 # Base Data: Study Programs, Curriculum Modules, Terms
 
 ```admonish question "What is 'Base data'?"
-The admin‑verified, term‑independent master data (Stammdaten) of the handbook: `StudyProgram`, `CurriculumModule`, and `Term` (from MaMpf).
+The verified, term‑independent master data (Stammdaten) of the handbook: `StudyProgram`, `CurriculumModule`, and `Term` (from MaMpf).
 
 - **Common Examples:**
   * `StudyProgram`: "Informatik BSc 100%", "Informatik BSc 100% alt"
@@ -62,7 +62,7 @@ The cover page of a handbook: "Modulhandbuch Informatik BSc 100%".
 ## Handbook::CurriculumModule (ActiveRecord Model)
 
 ```admonish info "What it represents"
-A module code, verified by the admin, independent of any term.
+A verified module code, independent of any term.
 ```
 
 ```admonish tip "Think of it as"
@@ -94,9 +94,9 @@ The printed name (`name`) lives on `ModuleEdition`, in its language, and is copi
 
 ### Usage Scenarios
 
-- The admin creates `CurriculumModule` `IAD` once.
+- `CurriculumModule` `IAD` is created once.
 - When the `Handbook` *Informatik BSc 100%, WS 2027/28* adds `IAD`, the `ModuleEdition` (IAD, WS 2027/28) is found or created.
-- `MA4` is taught in English from WS 2027/28: the admin sets `language: en` and name "Linear Algebra I" on the WS 2027/28 `ModuleEdition`. The WS 2026/27 `ModuleEdition` keeps "Lineare Algebra I".
+- `MA4` is taught in English from WS 2027/28: its WS 2027/28 `ModuleEdition` gets `language: en` and name "Linear Algebra I" there. The WS 2026/27 `ModuleEdition` keeps "Lineare Algebra I".
 
 ---
 
@@ -131,7 +131,7 @@ A semester, e.g., "WS 2026/27". Existing MaMpf model, no changes.
 ```admonish warning "⚑ To verify: lookup values move from the UI into code"
 In the old system, everyone with edit access could add or change lookup values directly in the UI (Fachgebiet, Course Cycle, Course Source tables). In the new system:
 
-- `subject_area` is an **enum** → a new value (e.g., a 4th Fachgebiet) needs a code change and a deploy, done by a developer. Admin / StudDekan can no longer do it themselves.
+- `subject_area` is an **enum** → a new value (e.g., a 4th Fachgebiet) needs a code change and a deploy, done by a developer. Staff can no longer do it themselves in the UI.
 - `cycle` is free text → nothing to maintain.
 - Source is derived → nothing to maintain.
 
@@ -140,7 +140,7 @@ In the old system, everyone with edit access could add or change lookup values d
 2. Is it acceptable that this now goes through a developer?
 ```
 
-**Suggestion:** keep the enum if the answer is "never / almost never" (3 values, tied to the faculty's structure). If values do change, use a small admin‑managed table `handbook_subject_areas` (name DE/EN, position) instead; that costs one model, one list / edit screen and a migration of the 3 values.
+**Suggestion:** keep the enum if the answer is "never / almost never" (3 values, tied to the faculty's structure). If values do change, use a small table editable in the UI, `handbook_subject_areas` (name DE/EN, position) instead; that costs one model, one list / edit screen and a migration of the 3 values.
 
 
 

@@ -143,7 +143,9 @@ Handbooks
 History  ▸
 ```
 
-### Viewer
+### Read-only view
+For users without edit rights (who: see [Roles & Permissions](00c-roles-and-permissions.md)).
+
 S1–S4 without buttons, all fields read‑only.
 
 ---

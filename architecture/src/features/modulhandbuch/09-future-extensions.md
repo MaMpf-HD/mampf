@@ -11,15 +11,15 @@ The first version keeps the old behavior: `created` / `checked` / `published` is
 **Idea:** turn the manual flag into a workflow.
 
 - **Fixed order**: `created` → `checked` → `published`; no jump from `created` to `published`.
-- **Approver**: the author marks `checked`, a second person (e.g., an `approver` role, or the admin when lecturers edit their own modules) publishes.
+- **A separate release right is already in v1** (see [Review & Publish](14-review-and-publish.md)); this extension only adds the fixed order and the reset.
 - **Reset on edit**: saving a printed field (`language`, `name`, `lv_number`, `ects`, text fields) of a `checked` or `published` description sets it back to `created`, so a changed text cannot go live unreviewed. Internal fields (`internal_remarks`, `responsible_user_id`) do not reset it. The save asks first and names every affected handbook.
 - **Invariant**: a `checked` / `published` description always matches the content that was reviewed (`before_update :reset_status_on_content_change`).
 
-**When it becomes useful:** together with the lecturer role below, since lecturers would edit and the admin would approve.
+**When it becomes useful:** together with Dozent self‑editing below, when many people edit texts that were already released.
 
-## Lecturer role
+## Dozent self‑editing
 
-Lecturers edit their own descriptions (`responsible_user_id`), like the old Dozent tab. See [Roles & Permissions](00c-roles-and-permissions.md).
+Lecturers edit their own descriptions (`responsible_user_id`), like the old Dozent tab. Rights: see [Roles & Permissions](00c-roles-and-permissions.md).
 
 ## Link to MaMpf `Lecture`
 

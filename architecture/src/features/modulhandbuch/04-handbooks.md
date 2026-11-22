@@ -70,7 +70,7 @@ The printed PDF without the module pages: cover, Präambel, table of contents, S
 - Unique on (`study_program_id`, `term_id`).
 - Destroying a `Handbook` destroys its `Section`s and `SectionEntry`s, **never** the `ModuleEdition`s.
 - A `published` `Handbook` cannot be destroyed; unpublish it first.
-- `Handbook` status and `ModuleEdition` status are independent: publishing the `Handbook` makes it visible to viewers and public; which `ModuleEdition`s are printed is decided by the export filter (see [Export](17-export.md)).
+- `Handbook` status and `ModuleEdition` status are independent: publishing the `Handbook` makes it visible to read‑only users and the public; which `ModuleEdition`s are printed is decided by the export filter (see [Export](17-export.md)).
 - Cloning copies `language`, `title`, `subtitle`, `intro`, `outro`; resets `issue_date`, `status: :draft`, `published_at`.
 - Studienverlaufspläne are part of `intro` (text + simple table). Old `\pageref` references become links to the heading.
 
@@ -134,7 +134,7 @@ The placement of one `ModuleEdition` at a position in one `Section`.
 
 ### Usage Scenarios
 
-- **Add a module with an existing `ModuleEdition`:** the admin searches *IAD* in *Informatik BSc 50%, WS 2026/27*; the WS 2026/27 `ModuleEdition` exists (added by BSc 100%), so an entry is created pointing at it.
+- **Add a module with an existing `ModuleEdition`:** searching *IAD* in *Informatik BSc 50%, WS 2026/27*: the WS 2026/27 `ModuleEdition` exists (added by BSc 100%), so an entry is created pointing at it.
 - **Add a module without a `ModuleEdition`:** none exists for this term; the UI offers "empty" or "copy from previous term" ([EditionCopier](03-module-editions.md#handbookeditioncopier-service-object)), then creates the entry.
 - **Move a module:** the entry changes `section_id` and `position`; the `ModuleEdition` is untouched.
 

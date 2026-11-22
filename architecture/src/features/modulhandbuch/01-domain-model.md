@@ -7,7 +7,7 @@ This chapter summarizes the principal entities; behavioral details live in the r
 | Component | Type | Description |
 |-----------|------|-------------|
 | `Handbook::StudyProgram` | ActiveRecord | Study program variant incl. PO version (e.g., "Informatik BSc 100%", "Informatik BSc 100% alt"); default language, expire date |
-| `Handbook::CurriculumModule` | ActiveRecord | Admin‑verified, term‑independent module identity: code, internal title, subject area, notes, active |
+| `Handbook::CurriculumModule` | ActiveRecord | Verified, term‑independent module identity: code, internal title, subject area, notes, active |
 | `Term` | ActiveRecord (MaMpf, reused) | Semester (e.g., WS 2026/27) |
 
 ## Module Editions
@@ -31,15 +31,15 @@ This chapter summarizes the principal entities; behavioral details live in the r
 |-----------|------|-------------|
 | `Handbook::CloneService` | Service | Copies a `Handbook` into a target term; find‑or‑create `ModuleEdition`s. "Prepare a term" runs it for many programs at once |
 | `Handbook::Exporter` | Service | Renders a `Handbook` (draft = all, official = published only) through a template; also single `ModuleEdition`s |
-| `HandbookAbility` | Ability (CanCanCan) | admin, viewer, public (published only); lecturer later |
-| History | TBD (e.g., versions table) | Who changed what and when, on all models above. **TODO: decide** |
+| `HandbookAbility` | Ability (CanCanCan) | Permissions per action; roles see [Roles & Permissions](00c-roles-and-permissions.md) |
+| History | TBD (e.g., versions table) | Who changed what and when, on all models above. For module texts this is **new** (the old Modul form had no History). See [History](18-history.md) |
 
 ## Old System → New
 
 | Old | New | Note |
 |-----|-----|------|
 | Code | `CurriculumModule` | |
-| Fachgebiet | enum `subject_area` on `CurriculumModule` | 3 fixed values (Mathematik, Informatik, Allgemeine Module); no admin‑managed table needed |
+| Fachgebiet | enum `subject_area` on `CurriculumModule` | 3 fixed values (Mathematik, Informatik, Allgemeine Module); no table editable in the UI needed |
 | Modulhandbuch | `StudyProgram` | Term‑independent, like the old one |
 | Semester | `Term` (MaMpf) | Start / Ende not needed |
 | Modul | `ModuleEdition` | One language instead of DE/EN pairs |
@@ -62,14 +62,14 @@ These are the points where the handbook touches existing MaMpf models. The handb
 |--------------|----------|-----|---------|
 | `Term` | `ModuleEdition` | `belongs_to :term` | Scope a `ModuleEdition` to a semester |
 | `Term` | `Handbook` | `belongs_to :term` | Scope a `Handbook` to a semester |
-| `User` | Permissions | `HandbookAbility` | admin / viewer (lecturer later) |
-| `User` | `ModuleEdition` | `responsible_user_id` (nullable) | Lecturer role later |
+| `User` | Permissions | `HandbookAbility` | Roles, see [Roles & Permissions](00c-roles-and-permissions.md) |
+| `User` | `ModuleEdition` | `responsible_user_id` (nullable) | Owner of a description (for the `dozent` rights in [Roles & Permissions](00c-roles-and-permissions.md)) |
 | `Lecture` | `ModuleEdition` | none (future, optional) | Link a `ModuleEdition` to the lecture that teaches it |
 
 **Example Flows:**
 
 1. **Build a handbook:** `StudyProgram` + `Term` → `Handbook` (front matter) → `Section`s → `SectionEntry` linking a `ModuleEdition` (found or created for `CurriculumModule` + `Term`)
-2. **Publish:** `ModuleEdition` status created / checked / published (manual flag, set by whoever edits); `Handbook` draft → published
+2. **Publish:** `ModuleEdition` status created / checked → published (release right, see [Roles & Permissions](00c-roles-and-permissions.md)); `Handbook` draft → published
 3. **Next term:** "Prepare a term" runs `CloneService` per program: copies `Handbook` + `Section`s, finds or creates `ModuleEdition`s in the target term, rebuilds `SectionEntry`s
 4. **Export:** `Exporter` walks front matter → sections → entries → `ModuleEdition`s in order, filters by status, fills the template
 

@@ -5,10 +5,15 @@ Publishing is a **status flag**, nothing more. There are two independent flags:
 | Flag | On | Values | Means |
 |---|---|---|---|
 | Description status | `ModuleEdition.status` | `created` / `checked` / `published` | How far the text is. Only `published` descriptions appear in the official PDF and on public pages. |
-| Handbook status | `Handbook.status` | `draft` / `published` | "This handbook is online." Viewers and public pages see only `published` handbooks. |
+| Handbook status | `Handbook.status` | `draft` / `published` | "This handbook is online." Read‑only users and public pages see only `published` handbooks. |
 
-```admonish info "Manual flag, as in the old system"
-The description status is set by hand, by whoever edits the description. Any value can be set directly (e.g., `created` → `published`). Nothing changes it automatically: saving keeps the status. There is no approver. An enforced review workflow is described in [Future Extensions](09-future-extensions.md#enforced-review-workflow); it may never be needed.
+```admonish info "Release is a separate right"
+The description status is a manual flag; nothing changes it automatically, and saving keeps the status.
+- `created` / `checked`: anyone who may edit the description.
+- `published` (Freigabe), set or remove: only with the **release right**.
+- Any transition is allowed within those rights (e.g., `created` → `published`).
+
+Who has which right: [Roles & Permissions](00c-roles-and-permissions.md). An enforced workflow (fixed order, reset on edit) is in [Future Extensions](09-future-extensions.md#enforced-review-workflow).
 ```
 
 ```admonish warning "⚑ Open: what does `checked` change?"
@@ -22,12 +27,14 @@ So far `checked` only affects export and views; it is not yet clear how. Candida
 ### Description status (`ModuleEdition`)
 
 **R1. Set the status of one description**
-- Edit page → status control (S4) → choose `created`, `checked` or `published`.
+- Edit page → status control (S4) → choose `created` or `checked`, or `published` (release right only).
+- Without the release right, `published` is disabled ("Needs release right").
 - Setting `published` or leaving it: if the description is in a published handbook, the confirmation says so ("IAD appears in / disappears from the official PDF of BSc 100%").
 
 **R2. Set the status in bulk**
 1. Descriptions list → filter by status (e.g., chip "created 40").
-2. Select rows (or all) → **Set status ▾** → `created` / `checked` / `published` (bulk bar).
+2. Select rows (or all) → **Set status ▾** → `created` / `checked` / `published` (bulk bar; `published` with release right only).
+   - Typical release: filter **checked** → select all → **published**.
 3. Dialog (S2): "Publish 37 descriptions? 12 are used in published handbooks and appear there now." → confirm.
 
 **R3. Edit a published description**
@@ -41,7 +48,7 @@ So far `checked` only affects export and views; it is not yet clear how. Candida
 2. Dialog (S3):
    - `issue_date` empty → "Set the issue date first" (blocks).
    - Descriptions not `published` → "3 descriptions are not published and will be missing from the official PDF: IPK, IITS3, MLat." → **Publish anyway** / **Go to descriptions**.
-3. Status `published`, `published_at` set. Viewers and public pages see it.
+3. Status `published`, `published_at` set. Read‑only users and public pages see it.
 
 **R5. Unpublish a handbook**
 - Editor → ⋯ → **Unpublish** → "Removes BSc 100% WS 2026/27 from public pages." → confirm → `draft`.
@@ -92,13 +99,15 @@ Publish Informatik BSc 100% · WS 2026/27?
 Status  ( ○ created | ◐ checked | ● published )
 ```
 
+`● published` is only clickable with the release right; otherwise disabled.
+
 Disabled while there are unsaved changes ("Save first").
 
 ---
 
 ## Small Decisions
 
-1. Three statuses (`created` / `checked` / `published`), set by hand; any transition allowed.
+1. Three statuses (`created` / `checked` / `published`), set by hand. `created` / `checked` by anyone who may edit; `published` only with the release right.
 2. Saving never changes the status. History records who changed what.
 3. `issue_date` must be set before publishing a handbook (old: the "Datum muss noch aktualisiert werden!" note was easy to forget).
 4. Unpublished descriptions do not block handbook publishing; they are listed and left out.

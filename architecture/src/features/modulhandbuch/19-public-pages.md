@@ -4,8 +4,10 @@ Published handbooks and modules on the web, without login. Replaces the old Outp
 
 | Who | Sees |
 |-----|------|
-| public, viewer | published `Handbook`s, published `ModuleEdition`s |
-| admin | the same + **draft preview** (logged in) |
+| Anyone (no login) | published `Handbook`s, published `ModuleEdition`s |
+| Logged in, may edit the handbook | the same + **draft preview** |
+
+Roles: see [Roles & Permissions](00c-roles-and-permissions.md).
 
 **URLs** (design, stable):
 
@@ -38,14 +40,14 @@ Published handbooks and modules on the web, without login. Replaces the old Outp
 - Module JSON: all printed fields of the `ModuleEdition`.
 - Module list JSON: all active `CurriculumModule`s (code, title, subject area).
 
-**Pu5. Admin previews a draft**
-- Logged in as admin → handbook page shows **Show draft** toggle → draft content with a "Draft" banner. Never visible without login (old `draft=1` hole closed).
+**Pu5. Preview a draft**
+- Logged in, with edit rights on the handbook → handbook page shows **Show draft** toggle → draft content with a "Draft" banner. Never visible without login (old `draft=1` hole closed).
 
 **Pu6. Old links**
 - Old `…/OUTPUT/web_page_display_course.php?code=IMI1` → redirect to `/modulhandbuch/module/IMI1`.
 - Old `…?id_modulhandbuch=13` → redirect via a mapping of old ids to `short_name`.
 
-**Pu7. Admin gets a link to share**
+**Pu7. Get a link to share**
 - Handbook editor → ⋯ → **Public link** → copy URL / embed URL.
 
 ---
@@ -88,7 +90,7 @@ Topics          …
 Listed in: Mathematik MSc, Informatik MSc DaCS, SciComp MSc (WS 2026/27)
 ```
 
-### S3. Public link dialog (admin)
+### S3. Public link dialog
 
 ```
 Public link · Informatik BSc 100%

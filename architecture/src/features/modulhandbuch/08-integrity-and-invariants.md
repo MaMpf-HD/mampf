@@ -14,7 +14,7 @@ This chapter lists the rules that must always hold, where each is enforced, and 
 | I6 | Positions are contiguous per parent | `acts_as_list` (section per handbook, entry per section) | Model |
 | I7 | — (dropped: status is a manual flag, no reset on edit; see [Future Extensions](09-future-extensions.md#enforced-review-workflow)) | | |
 | I8 | Editions are never destroyed through a handbook | No `dependent` from entries to editions; `restrict_with_error` on edition → entries | Model |
-| I9 | Viewers only receive published content | `HandbookAbility` + controller filter downgrade | Controller |
+| I9 | Users without draft access only receive published content | `HandbookAbility` + controller filter downgrade | Controller |
 | I10 | Clone never overwrites an existing edition | `EditionCopier` find‑or‑create | Service |
 | I11 | Clone is all‑or‑nothing | Single transaction in `CloneService#call` | Service |
 

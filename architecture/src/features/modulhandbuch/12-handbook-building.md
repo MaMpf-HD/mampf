@@ -155,7 +155,9 @@ Outro       [                                                     ]
                                                   [Cancel] [Save]
 ```
 
-### Viewer
+### Read-only view
+For users without edit rights (who: see [Roles & Permissions](00c-roles-and-permissions.md)).
+
 S1, S2, S5 read‑only: no drag handles, no buttons except PDF.
 
 ---

@@ -72,7 +72,6 @@
   - [Public Pages](features/modulhandbuch/19-public-pages.md)
 - [Future Extensions](features/modulhandbuch/09-future-extensions.md)
 - [To Verify](features/modulhandbuch/pending-thing-need-to-verify.md)
-- [UI Design](features/modulhandbuch/handbook-ui-design.md)
 - [Mockups](features/modulhandbuch/mockups-index.md)
 - [Implementation Plan](features/modulhandbuch/plan.md)
 ```

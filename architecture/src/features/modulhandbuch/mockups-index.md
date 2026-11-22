@@ -1,6 +1,6 @@
 # Mockups
 
-Clickable HTML mockups of the new Modulhandbuch screens. Use **View as** in the header to switch between admin and viewer. The data comes from the old system; the people's names are made up.
+Clickable HTML mockups of the new Modulhandbuch screens. Use **View as** in the header to switch between the editing and the read‑only view; who gets which is in [Roles & Permissions](00c-roles-and-permissions.md). The data comes from the old system; the people's names are made up.
 
 Start page with all screens: [All screens](../../mockups/modulhandbuch/index.html)
 

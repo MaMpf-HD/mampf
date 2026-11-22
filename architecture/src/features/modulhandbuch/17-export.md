@@ -2,10 +2,7 @@
 
 PDFs and LaTeX of handbooks and single modules. Public web pages: see [Public Pages](19-public-pages.md).
 
-| Action | admin | viewer |
-|--------|-------|--------|
-| Draft PDF, Official PDF, single module PDF | ✓ | ✓ |
-| Check render, Download LaTeX | ✓ | |
+Who may run which export: see [Roles & Permissions](00c-roles-and-permissions.md).
 
 ---
 
@@ -17,7 +14,7 @@ PDFs and LaTeX of handbooks and single modules. Public web pages: see [Public Pa
 - All `ModuleEdition`s, each with a status mark; watermark "Entwurf / Draft"; empty sections shown.
 
 **E2. Official PDF**
-1. Handbook editor → **Draft PDF ▾ → Official PDF** (admin, any handbook status: preview); viewer only for `published` handbooks.
+1. Handbook editor → **Draft PDF ▾ → Official PDF** (any handbook status as a preview for users who may edit the handbook; otherwise only for `published` handbooks).
 - Only `published` `ModuleEdition`s; empty sections omitted; no watermark.
 
 **E3. Single module PDF**
@@ -74,6 +71,6 @@ Preparing Draft PDF … (Informatik BSc 100%, 39 modules)
 
 ## Small Decisions
 
-1. Official PDF of a draft handbook is allowed for admin as a preview; viewers only get it for published handbooks.
+1. Official PDF of a draft handbook is a preview for users who may edit the handbook; read‑only users only get it for published handbooks.
 2. Single module PDF uses the module's own language for labels.
 3. A failed export never returns a half PDF; it lists the failing modules.

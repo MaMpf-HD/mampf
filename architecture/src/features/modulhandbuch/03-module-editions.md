@@ -50,13 +50,13 @@ The page "IAD Algorithmen und Datenstrukturen" in the WS 2026/27 handbooks, shar
 | `lv_number` | DB column | LV-Nr. |
 | `ects` | DB column (integer) | Leistungspunkte |
 | text fields | DB columns (Markdown) | See below |
-| `responsible_user_id` | DB column, nullable | MaMpf `User`; for the lecturer role later |
+| `responsible_user_id` | DB column, nullable | MaMpf `User`; owner of the description (see [Roles & Permissions](00c-roles-and-permissions.md)) |
 | `internal_remarks` | DB column | Old `Dozent (intern)` + `Bemerkungen`; never exported |
 | `status` | DB column (Enum) | `created`, `checked`, `published` |
 | `cloned_from_id` | DB column, nullable | Previous term's `ModuleEdition` this was copied from |
 | `section_entries` | Association | Where this `ModuleEdition` is listed |
 | `handbooks` | Association | `Handbook`s listing it (through `section_entries`) |
-| `status=` | Enum setter | Set by hand; any value allowed |
+| `status=` | Enum setter | Set by hand; `published` needs the release right (see [Roles & Permissions](00c-roles-and-permissions.md)) |
 
 **Text fields** (one column each, Markdown):
 
@@ -92,7 +92,8 @@ stateDiagram-v2
 ````
 
 - New and copied `ModuleEdition`s start as `created`.
-- The status is a **manual flag** (as in the old system): whoever edits sets it, any value directly. Nothing changes it automatically; saving keeps the status. The save names every affected `Handbook`.
+- The status is a **manual flag**: nothing changes it automatically; saving keeps the status. The save names every affected `Handbook`.
+- `created` / `checked` can be set by anyone who may edit the description; **setting or removing `published` (Freigabe) needs the release right** (see [Roles & Permissions](00c-roles-and-permissions.md)).
 - Official export shows `published` only; draft export shows all (old: PDF vs Draft PDF, `draft=1`).
 
 ```admonish warning "⚑ Open: what does `checked` change?"
@@ -103,7 +104,7 @@ stateDiagram-v2
 
 - Unique on (`curriculum_module_id`, `term_id`), with a DB unique index.
 - Term guard: only listed in `Handbook`s of the same `Term` (see [Handbooks](04-handbooks.md)).
-- Shared across `Handbook`s of the same term; the edit page shows "Used in: …" so the admin sees the reach of a change.
+- Shared across `Handbook`s of the same term; the edit page shows "Used in: …" so the editor sees the reach of a change.
 - Cannot be destroyed while any `SectionEntry` references it. Not in any `Handbook` → shown as "Not in any handbook" in the list, deletable there.
 - Status is per `ModuleEdition` → published for BSc 100% means published for BSc 50% too.
 
@@ -157,4 +158,4 @@ Two admins cloning into the same term at once: both see "missing" and both inser
 
 **Follow-up in the Base Data file:** the ⚑ name box there still says `name_de`, `name_en` on `ModuleEdition`. It becomes:
 - **B. On `ModuleEdition`** (`name`, in the `ModuleEdition`'s language, copied to the next term on clone).
-- Usage scenario: "…the admin sets `language: en` and name "Linear Algebra I" on the WS 2027/28 `ModuleEdition`…"
+- Usage scenario: "…its WS 2027/28 `ModuleEdition` gets `language: en` and name "Linear Algebra I" on the WS 2027/28 `ModuleEdition`…"

@@ -23,7 +23,7 @@ from the data.
 - **In:** master data (study programs, curriculum modules), per-term module
   descriptions, handbook assembly, review & publish, cloning to the next term,
   PDF/LaTeX export, public pages, migration of the old data
-- **Out (for now):** lecturer self-editing, link to MaMpf `Lecture`, LSF/heiCO sync
+- **Out (for now):** Dozent self-editing (see [Roles & Permissions](00c-roles-and-permissions.md)), link to MaMpf `Lecture`, LSF/heiCO sync
 
 ## How to read this chapter
 
