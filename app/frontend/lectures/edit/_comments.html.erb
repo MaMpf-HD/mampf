@@ -7,13 +7,15 @@
   <div id="comments-buttons">
     <% if lecture.comments_closed? %>
       <%= link_to lecture_open_comments_path(lecture),
-        class: "btn btn-sm btn-outline-secondary", role: :button do %>
+        class: "btn btn-sm btn-outline-secondary", role: :button,
+        data: { turbo_method: :patch } do %>
         <i class="fas fa-unlock"></i>
         <%= t('buttons.open_comments') %>
       <% end %>
     <% else %>
       <%= link_to lecture_close_comments_path(lecture),
-        class: "btn btn-sm btn-outline-secondary", role: :button do %>
+        class: "btn btn-sm btn-outline-secondary", role: :button,
+        data: { turbo_method: :patch } do %>
         <i class="fas fa-lock"></i>
         <%= t('buttons.close_comments') %>
       <% end %>

@@ -181,7 +181,8 @@ jobs:
   brakeman-scan:
     name: Brakeman Scan
     environment: testing-review
-    runs-on: ubuntu-latest
+    # Not ubuntu-latest: the or-tools gem has no binary for Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       security-events: write
@@ -192,7 +193,7 @@ jobs:
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.4.12
+        ruby-version: 3.4.13
         bundler-cache: true
 
     - name: Install Brakeman
