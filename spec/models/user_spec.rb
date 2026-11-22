@@ -494,4 +494,96 @@ RSpec.describe(User, type: :model) do
         .to include(I18n.t("activerecord.errors.models.user.admin_rights_lost"))
     end
   end
+
+  describe "a ban" do
+    let(:admin) { create(:confirmed_user, admin: true) }
+    let(:user) { create(:confirmed_user, deletion_date: Date.current + 10.days) }
+
+    it "keeps the account out and records who banned it and why" do
+      expect(user.ban(by: admin, reason: "  Misuse of exam data  ")).to be(true)
+
+      expect(user.reload).to have_attributes(banned_by: admin, ban_reason: "Misuse of exam data",
+                                             deletion_date: nil)
+      expect(user.active_for_authentication?).to be(false)
+      expect(user.inactive_message).to eq(:banned)
+    end
+
+    it "needs a reason" do
+      expect(user.ban(by: admin, reason: " ")).to be(false)
+
+      expect(user.reload.banned?).to be(false)
+    end
+
+    it "is refused on an account that is banned already, and keeps who banned first and why" do
+      user.ban(by: admin, reason: "Misuse of exam data")
+      loaded_before = User.find(user.id)
+
+      expect(loaded_before.ban(by: create(:confirmed_user, admin: true), reason: "Spam"))
+        .to be(false)
+
+      expect(user.reload).to have_attributes(banned_by: admin,
+                                             ban_reason: "Misuse of exam data")
+    end
+
+    # The account is judged as it is stored, not as it was loaded.
+    it "is refused on an account that has been made an admin's since it was loaded" do
+      loaded_before = User.find(user.id)
+      user.update!(admin: true)
+
+      expect(loaded_before.ban(by: admin, reason: "Spam")).to be(false)
+
+      expect(loaded_before.errors.of_kind?(:base, :admin_not_banned)).to be(true)
+      expect(user.reload.banned?).to be(false)
+    end
+
+    it "keeps the account from being made an admin's, also one loaded before the ban" do
+      loaded_before = User.find(user.id)
+      user.ban(by: admin, reason: "Spam")
+      loaded_before.admin = true
+
+      expect(loaded_before.save_admin_change(by: admin)).to be_falsey
+
+      expect(loaded_before.errors.of_kind?(:base, :banned_gets_no_admin_rights)).to be(true)
+      expect(user.reload.admin).to be(false)
+    end
+
+    # Old accounts hold data that today's validations refuse.
+    it "is set and lifted on an account whose other data is invalid" do
+      user.update_column(:homepage, "no address") # rubocop:disable Rails/SkipsModelValidations
+      expect(user).not_to be_valid
+
+      expect(user.ban(by: admin, reason: "Spam")).to be(true)
+      expect(user.reload.banned?).to be(true)
+      expect(user.unban).to be(true)
+      expect(user.reload.banned?).to be(false)
+    end
+
+    it "lets the account in again once lifted" do
+      user.ban(by: admin, reason: "Misuse of exam data")
+
+      expect(user.unban).to be(true)
+
+      expect(user.reload).to have_attributes(banned_at: nil, banned_by: nil, ban_reason: nil)
+      expect(user.active_for_authentication?).to be(true)
+    end
+
+    it "stays when the account of the admin who banned it is deleted" do
+      user.ban(by: admin, reason: "Misuse of exam data")
+
+      admin.destroy
+
+      expect(user.reload).to have_attributes(banned?: true, banned_by_id: nil)
+    end
+
+    # rubocop:disable Rails/SkipsModelValidations
+    it "cannot be stored without a reason, nor a reason or author without a ban" do
+      expect { user.update_columns(banned_at: Time.current) }
+        .to raise_error(ActiveRecord::StatementInvalid, /users_ban_has_reason/)
+      expect { user.update_columns(ban_reason: "Misuse") }
+        .to raise_error(ActiveRecord::StatementInvalid, /users_ban_has_reason/)
+      expect { user.update_columns(banned_by_id: admin.id) }
+        .to raise_error(ActiveRecord::StatementInvalid, /users_banned_by_only_with_ban/)
+    end
+    # rubocop:enable Rails/SkipsModelValidations
+  end
 end

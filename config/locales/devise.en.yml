@@ -18,6 +18,7 @@ en:
         resend: "Resend"
     failure:
       already_authenticated: "You are already signed in."
+      banned: "An admin has banned your account."
       inactive: "Your account is not activated yet."
       invalid: "Invalid email or password. If you have just registered, please confirm your email address first."
       invalid_token: "The sign-in token is invalid."

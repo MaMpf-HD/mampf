@@ -24,6 +24,13 @@ class SupportAbility
       person != user
     end
 
+    # An admin loses their rights before their account can be banned, so that
+    # two admins cannot ban each other and leave none.
+    can :ban, User do |person|
+      !person.admin?
+    end
+    can :unban, User
+
     # Accounts of admins, teachers and editors hold lectures, courses and
     # media; they stay.
     can :destroy, User do |person|

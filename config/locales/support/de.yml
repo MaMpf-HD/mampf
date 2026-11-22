@@ -44,6 +44,18 @@ de:
       delete_confirm: 'Das Konto von %{user} endgültig löschen? Das lässt sich nicht rückgängig machen.'
       deleted: 'Das Konto von %{user} ist gelöscht.'
       not_deleted: 'Das Konto wurde nicht gelöscht: Einträge wie Klausuranmeldungen verweisen noch darauf.'
+      ban_title: 'Kontosperre'
+      ban_hint: >-
+        Ein gesperrtes Konto kann sich nicht anmelden und bekommt keine Mails;
+        eine laufende Sitzung endet sofort. Nur ein Admin hebt die Sperre auf.
+        Bis dahin wird das Konto nicht wegen Inaktivität gelöscht.
+      ban: 'Konto sperren'
+      ban_confirm: 'Das Konto von %{user} sperren?'
+      banned: 'Das Konto ist gesperrt.'
+      banned_badge: 'Gesperrt'
+      unban: 'Sperre aufheben'
+      unban_confirm: 'Die Sperre des Kontos von %{user} aufheben?'
+      unbanned: 'Die Sperre ist aufgehoben.'
       actions:
         unlock: 'Entsperren'
         password_reset: 'Mail zum Zurücksetzen des Passworts schicken'
@@ -55,12 +67,16 @@ de:
         unconfirmed: 'nein, registriert am %{time}'
         email_change_pending: 'Änderung auf %{email} am %{time} beantragt.'
         no_email_change: 'Keine Änderung offen.'
-        locked: 'Gesperrt'
+        locked: 'Anmeldesperre'
         locked_until: 'ja, bis %{time} (%{attempts} fehlgeschlagene Anmeldungen)'
         not_locked:
           zero: 'nein'
           one: 'nein (1 fehlgeschlagene Anmeldung in Folge)'
           other: 'nein (%{count} fehlgeschlagene Anmeldungen in Folge)'
+        banned: 'Kontosperre'
+        not_banned: 'nein'
+        banned_at: 'ja, seit %{time}'
+        banned_by: 'ja, seit %{time}, durch %{user}'
         last_sign_in: 'Letzte Anmeldung'
         never_signed_in: 'nie'
         signed_in:
@@ -79,3 +95,7 @@ de:
         email: 'E-Mail'
         program: 'Studiengang'
         actions: 'Aktionen'
+  activerecord:
+    attributes:
+      user:
+        ban_reason: 'Grund für die Sperre'

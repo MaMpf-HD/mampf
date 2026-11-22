@@ -230,6 +230,49 @@ RSpec.describe("Auth sessions", type: :request) do
     end
   end
 
+  describe "a banned account" do
+    let(:admin) { create(:confirmed_user, admin: true) }
+
+    it "keeps the failure generic at the sign-in" do
+      user.ban(by: admin, reason: "Misuse of exam data")
+
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+
+      expect(flash[:alert]).to eq(I18n.t("devise.failure.invalid"))
+      get news_path
+      expect(response).to redirect_to(new_user_session_path)
+    end
+
+    it "ends a running session with its next request" do
+      post user_session_path, params: {
+        user: { email: user.email, password: password }
+      }
+      user.ban(by: admin, reason: "Misuse of exam data")
+
+      get news_path
+
+      expect(response).to redirect_to(new_user_session_path)
+      expect(flash[:alert]).to eq(I18n.t("devise.failure.banned"))
+    end
+
+    it "stays out after resetting the password" do
+      user.ban(by: admin, reason: "Misuse of exam data")
+      token = user.send_reset_password_instructions
+      new_password = "zitrone-diskette-vorhang-42"
+
+      put user_password_path, params: {
+        user: { reset_password_token: token, password: new_password,
+                password_confirmation: new_password }
+      }
+      expect(user.reload.valid_password?(new_password)).to be(true)
+      get news_path
+
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
+
   describe "sign out" do
     before do
       post user_session_path, params: {
