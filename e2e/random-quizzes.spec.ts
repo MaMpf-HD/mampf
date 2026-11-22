@@ -53,3 +53,26 @@ test("tag filter updates question counter when a tag is selected",
       .locator(".remove").click();
     await expect(page.locator("#question_counter")).toBeEmpty();
   });
+
+test("starts a random quiz for a tag in a new tab",
+  async ({ factory, student: { page, user } }) => {
+    const course = await factory.create("course");
+    const lecture = await factory.create("lecture", ["released_for_all"],
+      { course_id: course.id });
+    await factory.create("lecture_bookmark", [], { lecture_id: lecture.id, user_id: user.id });
+    const tag = await factory.create("tag", [], { title: "Algebra" });
+    for (let i = 0; i < 3; i++) {
+      const question = await factory.createNoValidate("question", ["with_stuff"], {
+        teachable_type: "Course",
+        teachable_id: course.id,
+        released: "all",
+      });
+      await factory.create("medium_tag_join", [], { medium_id: question.id, tag_id: tag.id });
+    }
+
+    await page.goto(`/tags/${tag.id}`);
+    const quizTab = page.waitForEvent("popup");
+    await page.getByRole("button", { name: "Start" }).click();
+
+    await expect(await quizTab).toHaveURL(/\/quizzes\/\d+\/take/);
+  });

@@ -1,0 +1,11 @@
+/*
+ * A post shows what it contains inside its own box. An element in a post may
+ * be shifted or made larger than the post, since formulas place their parts
+ * that way; here it ends at the edge of the post and cannot lie over the rest
+ * of the page. What does not fit can be scrolled to.
+ */
+.thredded--post--content {
+  position: relative;
+  contain: paint;
+  overflow: auto;
+}

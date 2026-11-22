@@ -35,4 +35,25 @@ RSpec.describe("Tags", type: :request) do
       end
     end
   end
+
+  describe "POST /tags/:id/take_random_quiz" do
+    let(:quiz) { create(:valid_random_quiz) }
+
+    it "starts a random quiz for the tag" do
+      allow_any_instance_of(Tag).to receive(:create_random_quiz!)
+        .and_return(quiz)
+
+      post tag_random_quiz_path(tag_math)
+
+      expect(response).to redirect_to(take_quiz_path(quiz))
+    end
+
+    it "creates no quiz on GET" do
+      expect_any_instance_of(Tag).not_to receive(:create_random_quiz!)
+
+      get tag_random_quiz_path(tag_math)
+
+      expect(flash[:alert]).to eq(I18n.t("controllers.no_page"))
+    end
+  end
 end

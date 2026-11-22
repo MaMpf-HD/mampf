@@ -1,8 +1,8 @@
-$("<%= '#'+@id%>").empty()
+$('#<%= j @id %>').empty()
 <% unless @quizzable.nil? %>
   .append '<%= j render partial: "vertices/quizzable",
                         locals: { quizzable: @quizzable } %>'
-texRefresh = document.getElementById('<%= @id %>')
+texRefresh = document.getElementById('<%= j @id %>')
 renderMathInElement texRefresh,
   delimiters: [
     {

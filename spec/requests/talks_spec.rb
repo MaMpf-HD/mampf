@@ -219,4 +219,62 @@ RSpec.describe("Talks", type: :request) do
       expect(response.body).not_to include("<script>alert('xss-description')</script>")
     end
   end
+
+  describe "the description written by the speakers" do
+    let(:teacher) { create(:confirmed_user) }
+    let(:speaker) { create(:confirmed_user) }
+    let(:lecture) { create(:seminar, :released_for_all, teacher: teacher) }
+    let(:talk) do
+      create(:talk,
+             lecture: lecture,
+             speaker_ids: [speaker.id],
+             display_description: true,
+             description: '<div class="big" name="intro">A <strong>bold' \
+                          '</strong> word, a <a href="https://example.com">' \
+                          'link</a> and <img src="x.png"> more</div>')
+    end
+
+    # What the page shows, not what its Trix editor holds.
+    def shown_description
+      Nokogiri::HTML(response.body).xpath("//div[strong='bold']").map(&:to_html)
+    end
+
+    def what_the_trix_editor_writes
+      ["<div>A <strong>bold</strong> word, a " \
+       '<a href="https://example.com">link</a> and  more</div>']
+    end
+
+    it "shows only what the Trix editor writes on the talk's page" do
+      sign_in teacher
+
+      get talk_path(talk)
+
+      expect(shown_description).to eq(what_the_trix_editor_writes)
+    end
+
+    it "shows only what the Trix editor writes to the seminar's editors" do
+      sign_in teacher
+
+      get edit_talk_path(talk)
+
+      expect(shown_description).to eq(what_the_trix_editor_writes)
+    end
+
+    it "shows only what the Trix editor writes to a speaker who edits the seminar" do
+      talk.speakers << teacher
+      sign_in teacher
+
+      get edit_talk_path(talk)
+
+      expect(shown_description).to eq(what_the_trix_editor_writes)
+    end
+
+    it "shows only what the Trix editor writes to a speaker" do
+      sign_in speaker
+
+      get assemble_talk_path(talk)
+
+      expect(shown_description).to eq(what_the_trix_editor_writes)
+    end
+  end
 end

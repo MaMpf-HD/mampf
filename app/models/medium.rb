@@ -509,6 +509,13 @@ class Medium < ApplicationRecord
     manuscript.metadata["pages"]
   end
 
+  # Since when students have had the manuscript in its current version.
+  def manuscript_updated_at
+    return if manuscript.blank? || !published?
+
+    [file_last_edited, released_at].compact.max
+  end
+
   def manuscript_screenshot_file
     return if manuscript.blank?
 
