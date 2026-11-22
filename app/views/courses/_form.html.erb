@@ -1,7 +1,8 @@
-<%= turbo_frame_tag "course_form" do %>
+<%= turbo_frame_tag "course_form", target: "_top" do %>
   <%= form_with model: course,
           html: { id: 'course-form',
-            data: { controller: 'courses-edit',
+            data: { turbo_frame: 'course_form',
+              controller: 'courses-edit',
               action: 'change->courses-edit#onFormChange' } } do |f| %>
     <div class="row p-2 mb-3">
       <div class="col-3">
