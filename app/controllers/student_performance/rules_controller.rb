@@ -81,7 +81,7 @@ module StudentPerformance
         return
       end
 
-      @input_error = tests_input_error
+      @input_error = input_error
       return render(:preview) if @input_error
 
       preview = StudentPerformance::RuleChangePreview.new(
@@ -117,24 +117,24 @@ module StudentPerformance
         end
       end
 
-      def apply_threshold_params
+      def apply_threshold_params(rule = @rule)
         mode = params.dig(:rule, :threshold_mode)
         # Guard the enum assignment: an unknown value would otherwise raise.
         mode = "none" unless StudentPerformance::Rule.threshold_modes.key?(mode)
-        @rule.threshold_mode = mode
+        rule.threshold_mode = mode
 
         case mode
         when "percentage"
-          @rule.min_percentage = params.dig(:rule, :min_percentage)
-          @rule.min_points_absolute = nil
+          rule.min_percentage = params.dig(:rule, :min_percentage)
+          rule.min_points_absolute = nil
         when "absolute"
-          @rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
-          @rule.min_percentage = nil
+          rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
+          rule.min_percentage = nil
         else
-          @rule.min_percentage = nil
-          @rule.min_points_absolute = nil
+          rule.min_percentage = nil
+          rule.min_points_absolute = nil
         end
-        @rule.min_tests_passed = params.dig(:rule, :min_tests_passed).presence
+        rule.min_tests_passed = params.dig(:rule, :min_tests_passed).presence
       end
 
       # Builds the criteria in memory so that they are present when the rule is
@@ -158,14 +158,15 @@ module StudentPerformance
         end
       end
 
-      # The validation message for the typed number of tests, if any. The
+      # The message saving would give for the typed thresholds, if any. The
       # preview shows it instead of a forecast.
-      def tests_input_error
-        candidate = StudentPerformance::Rule.new(
-          lecture: @lecture, min_tests_passed: params.dig(:rule, :min_tests_passed).presence
-        )
+      def input_error
+        candidate = StudentPerformance::Rule.new(lecture: @lecture)
+        apply_threshold_params(candidate)
         candidate.validate
-        candidate.errors.full_messages_for(:min_tests_passed).first
+        [:min_percentage, :min_points_absolute, :min_tests_passed, :base]
+          .flat_map { |attribute| candidate.errors.full_messages_for(attribute) }
+          .first
       end
 
       # The thresholds the teacher has typed into the rule form, not the ones on

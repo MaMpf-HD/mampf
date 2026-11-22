@@ -652,6 +652,22 @@ RSpec.describe("StudentPerformance::Rules", type: :request) do
           end
         end
 
+        it "forecasts nothing for a points threshold the form would refuse" do
+          { min_points_absolute: { threshold_mode: "absolute", min_points_absolute: "text" },
+            min_percentage: { threshold_mode: "percentage", min_percentage: "150" } }
+            .each do |attribute, typed|
+            patch preview_lecture_student_performance_rules_path(lecture),
+                  params: { rule: typed }
+
+            expect(response.body).not_to include(
+              I18n.t("student_performance.rules.preview.newly_passed")
+            )
+            expect(response.body).to include(
+              StudentPerformance::Rule.human_attribute_name(attribute)
+            )
+          end
+        end
+
         it "renders inside the rule-preview-frame" do
           patch preview_lecture_student_performance_rules_path(lecture),
                 params: { rule: {
