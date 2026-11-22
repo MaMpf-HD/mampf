@@ -5,7 +5,7 @@ $('#section-content-modal-content').empty()
                                   embedded: false,
                                   section_links: false,
                                   content: nil } %>')
-$('#section-title-modal').empty().append('"<%= @section.title %>"')
+$('#section-title-modal').empty().append('"<%= j @section.title %>"')
 
 sectionModal = document.getElementById('sectionContentModal')
 renderMathInElement sectionModal,
