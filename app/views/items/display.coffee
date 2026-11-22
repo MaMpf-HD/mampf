@@ -11,7 +11,10 @@ $('#referral_explanation').removeClass('is-invalid')
 $('#explanation-error').empty()
 
 # fill explanation text area
-$('#referral_explanation').val('<%= @explanation %>')
+# A field takes its value as text, so the values below are escaped for the
+# string only. Escaped for HTML as well, the field would show entities, and
+# saving the reference would write them into the link.
+$('#referral_explanation').val('<%= raw j(@explanation) %>')
 $('#explanation_details').show()
 
 # do not show link details if item is not a link
@@ -35,8 +38,8 @@ $('#item_details').show()
 $('#item_details').hide()
 $('#link_reappearance_title').hide()
 $('#link_reappearance_link').hide()
-$('#referral_description').val('<%= @item.description %>')
-$('#referral_link').val('<%= @item.link %>')
+$('#referral_description').val('<%= raw j(@item.description) %>')
+$('#referral_link').val('<%= raw j(@item.link) %>')
 
 # show warnings if the link is already referred to in some other place
 # (editing the link and its title has aglobal effect)
