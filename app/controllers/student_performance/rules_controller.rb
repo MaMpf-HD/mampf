@@ -81,6 +81,9 @@ module StudentPerformance
         return
       end
 
+      @input_error = input_error
+      return render(:preview) if @input_error
+
       preview = StudentPerformance::RuleChangePreview.new(
         current_rule: @rule,
         preview_rule: rule_from_form_params,
@@ -100,6 +103,8 @@ module StudentPerformance
 
       def load_edit_form
         @achievements = Achievement.where(lecture: @lecture).order(:title)
+        @tests_count = @lecture.assignments.kind_test.count
+        @pass_fail_tests_count = pass_fail_test_ids.size
         @computed_count = @lecture.current_certifications.computed.decided.count
         @eligibility_in_use_by = @lecture.eligibility_in_use_by
       end
@@ -112,23 +117,24 @@ module StudentPerformance
         end
       end
 
-      def apply_threshold_params
+      def apply_threshold_params(rule = @rule)
         mode = params.dig(:rule, :threshold_mode)
         # Guard the enum assignment: an unknown value would otherwise raise.
         mode = "none" unless StudentPerformance::Rule.threshold_modes.key?(mode)
-        @rule.threshold_mode = mode
+        rule.threshold_mode = mode
 
         case mode
         when "percentage"
-          @rule.min_percentage = params.dig(:rule, :min_percentage)
-          @rule.min_points_absolute = nil
+          rule.min_percentage = params.dig(:rule, :min_percentage)
+          rule.min_points_absolute = nil
         when "absolute"
-          @rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
-          @rule.min_percentage = nil
+          rule.min_points_absolute = params.dig(:rule, :min_points_absolute)
+          rule.min_percentage = nil
         else
-          @rule.min_percentage = nil
-          @rule.min_points_absolute = nil
+          rule.min_percentage = nil
+          rule.min_points_absolute = nil
         end
+        rule.min_tests_passed = params.dig(:rule, :min_tests_passed).presence
       end
 
       # Builds the criteria in memory so that they are present when the rule is
@@ -152,6 +158,17 @@ module StudentPerformance
         end
       end
 
+      # The message saving would give for the typed thresholds, if any. The
+      # preview shows it instead of a forecast.
+      def input_error
+        candidate = StudentPerformance::Rule.new(lecture: @lecture)
+        apply_threshold_params(candidate)
+        candidate.validate
+        [:min_percentage, :min_points_absolute, :min_tests_passed, :base]
+          .flat_map { |attribute| candidate.errors.full_messages_for(attribute) }
+          .first
+      end
+
       # The thresholds the teacher has typed into the rule form, not the ones on
       # record — this is the preview of an unsaved edit.
       def rule_from_form_params
@@ -160,6 +177,8 @@ module StudentPerformance
         pts = (params.dig(:rule, :min_points_absolute).presence&.to_f if mode == "absolute")
         pct = nil if pct&.zero?
         pts = nil if pts&.zero?
+        tests = params.dig(:rule, :min_tests_passed).presence&.to_i
+        tests = nil unless tests&.positive?
 
         achievement_ids = Set.new(
           Array(params.dig(:rule, :achievement_ids))
@@ -172,6 +191,7 @@ module StudentPerformance
         PreviewRule.new(
           min_percentage: pct,
           min_points_absolute: pts,
+          min_tests_passed: tests,
           required_achievements: achievements
         )
       end

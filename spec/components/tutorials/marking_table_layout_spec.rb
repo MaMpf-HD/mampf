@@ -32,6 +32,14 @@ RSpec.describe(MarkingTableLayout) do
         .to eq([:team, :status, :tasks, :total, :save])
     end
 
+    it "gives a test with a passing threshold a column for who has passed" do
+      assignment = build_stubbed(:assignment, kind: :test, passing_points: 5)
+      allow(assignment).to receive(:assessable?).and_return(true)
+
+      expect(described_class.for(assessable: assignment).columns)
+        .to eq([:team, :status, :tasks, :total, :passed, :save])
+    end
+
     it "gives a talk a single grade" do
       layout = described_class.for(assessable: build_stubbed(:talk))
 

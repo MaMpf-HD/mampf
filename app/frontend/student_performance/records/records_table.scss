@@ -96,6 +96,10 @@
   // Separate the test percentage from the achievement columns.
   .test-share {
     border-left: var(--bs-border-width) solid var(--bs-border-color);
+  }
+
+  // Close the group of test columns with a heavier line.
+  .tests-end {
     border-right: 2px solid var(--bs-border-color);
   }
 

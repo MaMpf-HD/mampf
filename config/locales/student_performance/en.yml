@@ -1,5 +1,8 @@
 en:
   activerecord:
+    attributes:
+      student_performance/rule:
+        min_tests_passed: "Number of passed tests"
     errors:
       models:
         student_performance/rule:
@@ -38,9 +41,11 @@ en:
         maximum: "Maximum"
         assignments: "Assignments"
         tests: "Tests"
-        tests_hint: "Test points are in the figures under \"Marked so far\" as well. The percentage at the end of this group is the tests on their own, worked out the same way."
-        tests_hint_apart: "In this lecture test points are not in the figures under \"Marked so far\". The percentage at the end of this group is the tests on their own, worked out the same way."
+        tests_hint: "Test points are in the figures under \"Marked so far\" as well. The percentage in this group is the tests on their own, worked out the same way."
+        tests_hint_apart: "In this lecture test points are not in the figures under \"Marked so far\". The percentage in this group is the tests on their own, worked out the same way."
         test_share: "Test percentage"
+        tests_passed: "passed"
+        tests_passed_hint: "Tests passed, of those with a passing threshold. Excused counts as passed."
         not_due_count: "%{count} not due yet"
         achievements: "Achievements"
         assessments: "Assessments"
@@ -82,6 +87,8 @@ en:
         view_manuscript: "View submission"
         view_correction: "View correction"
         total_row: "Total"
+        test_passed: "passed"
+        test_failed: "not passed"
         total_row_hint: "over every assignment of the term"
         total_row_hint_without_tests: "over every sheet of the term, without the tests"
         last_computed: "Last computed %{time} ago."
@@ -100,6 +107,10 @@ en:
         of_total_points: "of total points required"
         points_absolute: "points required (absolute)"
         without_tests: "without tests"
+        tests_passed:
+          one: "passed test required (of %{pass_fail} with a passing threshold)"
+          other: "passed tests required (of %{pass_fail} with a passing threshold)"
+        more_tests_than: "The rule asks for more passed tests than currently carry a passing threshold (%{count}). Nobody can meet it like this."
         no_requirement: "No requirement"
         no_requirement_hint: "every student is proposed as eligible"
         edit_button: "Edit Rule"
@@ -123,6 +134,15 @@ en:
         percentage_field: "Minimum percentage"
         absolute_field: "Minimum points"
         achievements_section: "Required Achievements"
+        tests_section: "Passed tests"
+        tests_at_least: "at least"
+        tests_of:
+          one: "of 1 test with a passing threshold"
+          other: "of %{count} tests with a passing threshold"
+        tests_hint: "Leave empty if no passed tests are asked for. Excused counts as passed, absent as failed."
+        tests_without_threshold:
+          one: "1 test has no passing threshold and is not counted."
+          other: "%{count} tests have no passing threshold and are not counted."
         achievements_hint: "Select which achievements students must complete."
         remove: "Remove rule"
         remove_confirm:
@@ -173,10 +193,12 @@ en:
           one: "1 still to be marked"
           other: "%{count} still to be marked"
         points_not_measurable: "No points to measure"
+        tests_open: "Tests: %{passed} passed, %{open} still open"
         achievements_ungraded: "Achievement not graded yet"
       missed:
         points: "Threshold not reached"
         points_out_of_reach: "Threshold out of reach even with everything still open"
+        tests: "Too few tests passed"
         achievements: "Achievement not met"
       single_proposal:
         title: "Eligibility Proposal"
@@ -189,13 +211,16 @@ en:
         required: "Required"
         result: "Result"
         achievements_check: "Achievements Check"
+        tests_check: "Tests check"
+        tests_passed: "Tests passed"
+        tests_still_open: "Tests still open"
         no_achievements_required: "No achievements are required by the current rule."
         info: "This proposal is a preview only; decisions are made under Exam Eligibility."
     certifications:
       back_to_dashboard: "Back to dashboard"
       index:
         subtitle: "Review eligibility proposals and approve students for the exam."
-        assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable. Create the missing assignments and tests and tick \"The list of sheets and tests is complete\" on the %{tab} tab."
+        assignments_incomplete: "The assignment list is still open, so every proposal stays deferred: each assignment still to come raises both the points needed and the points reachable, and each test still to come is another chance to pass one. Create the missing assignments and tests and tick \"The list of sheets and tests is complete\" on the %{tab} tab."
         list_open: "Assignment list still open — the rule decides nothing for now."
         list_open_link: "Go to the %{tab} tab"
         todo_title: "To settle"
@@ -248,6 +273,10 @@ en:
         manual_failed: "Not Eligible (manual)"
         manual_stale: "Rule or performance data changed after this decision"
       columns:
+        tests_passed: "Tests passed"
+        tests_needed:
+          one: "at least 1 needed"
+          other: "at least %{count} needed"
         proposed: "Proposed"
         rule_today: "Rule today:"
         certification: "Decision"

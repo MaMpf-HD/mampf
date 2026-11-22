@@ -72,7 +72,8 @@ module Demo
         evaluator = StudentPerformance::Evaluator.new(
           rule,
           assignments_complete: lecture.assignments_complete?,
-          due_points: due_points
+          due_points: due_points,
+          pass_fail_test_ids: lecture.pass_fail_test_ids
         )
         records = StudentPerformance::Record.where(lecture_id: lecture.id)
         teacher = lecture.teacher
