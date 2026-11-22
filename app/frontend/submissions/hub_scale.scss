@@ -38,6 +38,10 @@
 /* Said quietly, beside something that carries the meaning. */
 .hub-aside {
   font-size: var(--hub-aside);
+
+  .icon-button {
+    font-size: inherit;
+  }
 }
 
 .hub-body {

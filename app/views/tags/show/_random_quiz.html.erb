@@ -11,10 +11,10 @@
     <% if questions %>
       <div class="row">
         <div class="col-12 text-center">
-          <%= link_to t('test.start'),
-                      tag_random_quiz_path(tag),
-                      class: 'btn btn-sm btn-primary',
-                      target: :_blank %>
+          <%= button_to t('test.start'),
+                        tag_random_quiz_path(tag),
+                        class: 'btn btn-sm btn-primary',
+                        form: { target: :_blank, data: { turbo: false } } %>
         </div>
       </div>
     <% end %>

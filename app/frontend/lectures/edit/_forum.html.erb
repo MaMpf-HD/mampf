@@ -8,13 +8,15 @@
 
     <% if lecture.forum&.locked %>
       <%= link_to unlock_forum_path(lecture),
-        class: "btn btn-sm btn-outline-primary", role: :button do %>
+        class: "btn btn-sm btn-outline-primary", role: :button,
+        data: { turbo_method: :patch } do %>
         <i class="fas fa-unlock"></i>
         <%= t('buttons.unlock_board') %>
       <% end %>
     <% else %>
       <%= link_to lock_forum_path(lecture),
-        class: "btn btn-sm btn-outline-primary", role: :button do %>
+        class: "btn btn-sm btn-outline-primary", role: :button,
+        data: { turbo_method: :patch } do %>
         <i class="fas fa-lock"></i>
         <%= t('buttons.lock_board') %>
       <% end %>
@@ -22,7 +24,8 @@
 
     <%= link_to destroy_forum_path(lecture),
       id: "delete-forum", class: "btn btn-sm btn-outline-danger", role: :button,
-      data: { action: "click->lecture-edit#confirmForumDeletion",
+      data: { turbo_method: :delete,
+              action: "click->lecture-edit#confirmForumDeletion",
               lecture_edit_confirmation_param:
                 t('buttons.delete_board_sure_to_delete') } do %>
       <i class="fas fa-trash"></i>
@@ -31,7 +34,8 @@
 
   <% else %>
     <%= link_to add_forum_path(lecture),
-      class: "btn btn-sm btn-outline-primary", role: :button do %>
+      class: "btn btn-sm btn-outline-primary", role: :button,
+      data: { turbo_method: :patch } do %>
       <i class="fas fa-plus"></i>
       <%= t('buttons.add_board') %>
     <% end %>
