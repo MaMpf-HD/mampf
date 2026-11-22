@@ -9,7 +9,7 @@
               class="form-select form-select-sm"
               data-controller="select-navigation"
               data-action="change->select-navigation#visit">
-        <option selected><%= @cohort.title %></option>
+        <option value="" selected><%= @cohort.title %></option>
         <% (@cohorts - [@cohort]).each do |cohort| %>
           <option value="<%= lecture_cohort_participants_path(@lecture, cohort: cohort.id) %>">
             <%= cohort.title %>

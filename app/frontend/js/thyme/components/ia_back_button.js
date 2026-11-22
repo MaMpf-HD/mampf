@@ -34,7 +34,7 @@ export class IaBackButton extends Component {
       else {
         backInfo = this.element.dataset.backto + backInfo;
       }
-      $(this.element).empty().append(backInfo).show();
+      $(this.element).text(backInfo).show();
       renderLatex(this.element);
     }
   }

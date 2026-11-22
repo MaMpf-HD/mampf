@@ -11,7 +11,7 @@ initBootstrapPopovers()
 fillOptionsByAjax($('#new-tag-modal-content .selectize'))
 
 # store from where the modal was called
-$('#newTagModal').modal('show').data('from','<%= @from %>')
+$('#newTagModal').modal('show').data('from','<%= j @from %>')
 
 $('#newTagModal').on 'shown.bs.modal', ->
   $('#titlesInput input[data-locale="<%= @locale %>"]').first().focus()

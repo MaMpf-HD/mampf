@@ -81,7 +81,7 @@
         "commontator-comment-#{comment.id}-edit-body-preview" %>'
        class="border p-2 comment-field"
        style="display: none; min-height: 3em;">
-    <%= commontator_simple_format comment.body %>
+    <%= ApplicationController.helpers.format_comment_body(comment.body) %>
   </div>
   <div class="mb-2">
   </div>
