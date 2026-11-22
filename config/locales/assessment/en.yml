@@ -303,6 +303,7 @@ en:
       assessment_does_not_require_points: 'Assessment %{assessment_id} does not accept points.'
       invalid_task_id: 'Invalid task %{task_id}.'
       invalid_points_value: 'Invalid points value for task %{task_id}.'
+      points_too_high: 'Points must stay below %{limit}.'
       assessment_not_found: 'Assessment for this assignment not found.'
       cannot_score_not_grading_open_assignment: 'Points cannot be entered for this assignment.'
       not_required_points: 'Points cannot be entered for assignments that do not require points.'

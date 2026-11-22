@@ -102,6 +102,32 @@ RSpec.describe(StudentPerformance::ComputationService) do
       end
     end
 
+    context "when the points come to a thousand percent or more" do
+      let(:assignment) do
+        FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)
+      end
+      let(:assessment) do
+        FactoryBot.create(:assessment, :with_points, assessable: assignment, lecture: lecture)
+      end
+      let(:task) { FactoryBot.create(:assessment_task, assessment: assessment, max_points: 1) }
+      let(:participation) do
+        FactoryBot.create(:assessment_participation, :reviewed,
+                          assessment: assessment, user: user)
+      end
+
+      before do
+        FactoryBot.create(:assessment_task_point, task: task,
+                                                  assessment_participation: participation,
+                                                  points: 25)
+      end
+
+      it "stores the percentage" do
+        compute
+        record = StudentPerformance::Record.find_by(lecture: lecture, user: user)
+        expect(record.percentage_materialized).to eq(2500)
+      end
+    end
+
     context "with multiple assessments" do
       let(:assignment1) do
         FactoryBot.create(:assignment, :expired, :with_lecture, lecture: lecture)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_13_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_16_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -902,7 +902,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_000002) do
     t.bigint "user_id", null: false
     t.decimal "points_total_materialized", precision: 10, scale: 2
     t.decimal "points_max_materialized", precision: 10, scale: 2
-    t.decimal "percentage_materialized", precision: 5, scale: 2
+    t.decimal "percentage_materialized"
     t.jsonb "achievements_met_ids", default: [], null: false
     t.jsonb "achievements_ungraded_ids", default: [], null: false
     t.datetime "computed_at"
