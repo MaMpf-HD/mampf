@@ -1,6 +1,7 @@
 $('#reassignModal').modal 'hide'
 $('#quizzableModalLabel').empty()
-  .append('<%= I18n.t("admin.remark.edit_remark", remark: @remark.description) %>')
+  .append('<%= j I18n.t("admin.remark.edit_remark",
+                        remark: @remark.description) %>')
 $('#quizzable-data').empty()
   .append '<%= j render partial: "remarks/data",
                         locals: { remark: @remark } %>'

@@ -1,4 +1,4 @@
-id = <%= @id %>
+id = <%= @id.to_i %>
 importTab = document.getElementById('importMedia')
 selected = importTab.dataset.selected
 if selected

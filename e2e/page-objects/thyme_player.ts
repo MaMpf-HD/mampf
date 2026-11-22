@@ -53,4 +53,16 @@ export class ThymePlayer {
   get annotationComment(): Locator {
     return this.page.locator("#annotation-comment");
   }
+
+  get annotationButton(): Locator {
+    return this.page.getByTitle("Create annotation");
+  }
+
+  get annotationDialog(): Locator {
+    return this.page.getByRole("dialog");
+  }
+
+  get annotationPreview(): Locator {
+    return this.page.locator("#annotation-modal-preview");
+  }
 }
