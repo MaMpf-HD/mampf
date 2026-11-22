@@ -128,3 +128,20 @@ test("finds a course by title and keeps the results in their frame", async ({
   await expect(page).toHaveURL(/\/courses\/\d+\/edit/);
   await expect(page.getByRole("heading", { name: "Zahlentheorie" })).toBeVisible();
 });
+
+// The course form sits in a frame, so its links have to break out of it,
+// or the medium's page answers without the frame and shows "Content missing".
+test("opens a medium from the course's media list", async ({ factory, admin: { page } }) => {
+  const course = await factory.create("course");
+  const term = await factory.create("term");
+  const lecture = await factory.create("lecture", [], { term_id: term.id, course_id: course.id });
+  const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
+    { lecture_id: lecture.id, description: "Satz von Cayley-Hamilton" });
+
+  await page.goto(`/courses/${course.id}/edit`);
+  await page.getByRole("tab", { name: /Worked Examples/ }).click();
+  await page.getByRole("link", { name: /Satz von Cayley-Hamilton/ }).click();
+
+  await expect(page).toHaveURL(`/media/${medium.id}/edit`);
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue("Satz von Cayley-Hamilton");
+});

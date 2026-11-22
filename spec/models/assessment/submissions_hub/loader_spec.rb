@@ -775,6 +775,131 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
     end
   end
 
+  describe "tests kept out of the points total" do
+    before { lecture.update!(tests_in_points_total: false) }
+
+    def create_test(expired_since: 1.week, max_points: 10)
+      test = create(:assignment, :expired, lecture: lecture, kind: :test,
+                                           title: "Test 1", expired_since: expired_since)
+      create(:assessment_task, assessment: test.assessment, max_points: max_points)
+      test
+    end
+
+    it "measures the reader against the sheets alone and sums the tests beside them" do
+      sheet = create_assignment(title: "Homework 1", deadline: 1.week.ago,
+                                max_points: [4, 6])
+      mark(sheet, [3, 5])
+      mark(create_test, [7])
+
+      standing = result.standing
+      expect(standing.points_marked_so_far).to eq(10)
+      expect(standing.tests_apart).to be(true)
+      expect(standing.test_points_total).to eq(7)
+      expect(standing.test_points_marked_so_far).to eq(10)
+    end
+
+    it "leaves a test nobody has entered anything on out of every sum" do
+      create_test
+
+      standing = result.standing
+      expect(standing.points_awaiting_marks).to eq(0)
+      expect(standing.sheets_awaiting_marks).to eq(0)
+      expect(standing.points_still_open).to eq(0)
+      expect(standing.test_points_marked_so_far).to eq(0)
+    end
+
+    it "counts a test the reader was absent from as lost, among the tests" do
+      participate(create_test, status: :absent)
+
+      standing = result.standing
+      expect(standing.points_marked_so_far).to eq(0)
+      expect(standing.test_points_total).to eq(0)
+      expect(standing.test_points_marked_so_far).to eq(10)
+    end
+
+    it "has no second sum where the lecture has set up no test" do
+      create_assignment(title: "Homework 1", deadline: 1.week.ago)
+
+      standing = result.standing
+      expect(standing.tests_apart).to be(false)
+      expect(standing.test_points_total).to be_nil
+      expect(standing.test_points_marked_so_far).to be_nil
+    end
+  end
+
+  describe "tests with a passing threshold" do
+    def create_test(passing_points:, title: "Test 1")
+      test = create(:assignment, :expired, lecture: lecture, kind: :test,
+                                           title: title, expired_since: 1.week,
+                                           passing_points: passing_points)
+      create(:assessment_task, assessment: test.assessment, max_points: 10)
+      test
+    end
+
+    it "counts the passed and the failed among the tests that carry one" do
+      passed = create_test(passing_points: 5)
+      failed = create_test(passing_points: 5, title: "Test 2")
+      create_test(passing_points: 5, title: "Test 3")
+      mark(create_test(passing_points: nil, title: "Test 4"), [9])
+      mark(passed, [5])
+      mark(failed, [4.5])
+
+      standing = result.standing
+      expect(standing.pass_fail_tests).to eq(3)
+      expect(standing.tests_passed).to eq(1)
+      expect(standing.tests_failed).to eq(1)
+      expect(standing.tests_to_come).to eq(1)
+      expect(sheet_for(passed).test_verdict).to eq(:passed)
+      expect(sheet_for(failed).test_verdict).to eq(:failed)
+    end
+
+    it "counts the earlier tests without a passing threshold, not the coming ones" do
+      create_test(passing_points: 5)
+      create_test(passing_points: nil, title: "Test 2")
+      create(:valid_assignment, lecture: lecture, kind: :test, title: "Test 3",
+                                deadline: 1.week.from_now)
+
+      expect(result.standing.past_tests_without_threshold).to eq(1)
+    end
+
+    it "counts an absence as failed and an excused test as passed" do
+      participate(create_test(passing_points: 5), status: :absent)
+      participate(create_test(passing_points: 5, title: "Test 2"), status: :exempt)
+
+      expect(result.standing.tests_failed).to eq(1)
+      expect(result.standing.tests_passed).to eq(1)
+    end
+
+    it "counts no result the reader cannot see yet" do
+      test = create_test(passing_points: 5)
+      participate(test, status: :reviewed, points_total: 8, submitted_at: 2.days.ago)
+
+      expect(sheet_for(test).state).to eq(:awaiting_marks)
+      expect(sheet_for(test).test_verdict).to be_nil
+      expect(result.standing.tests_passed).to eq(0)
+    end
+
+    it "counts nothing on a test nobody has entered anything on" do
+      test = create_test(passing_points: 5)
+
+      expect(result.standing.tests_passed).to eq(0)
+      expect(result.standing.tests_failed).to eq(0)
+      expect(sheet_for(test).test_verdict).to be_nil
+    end
+  end
+
+  it "keeps the tests in the one sum unless the lecture takes them out" do
+    test = create(:assignment, :expired, lecture: lecture, kind: :test,
+                                         title: "Test 1", expired_since: 1.week)
+    create(:assessment_task, assessment: test.assessment, max_points: 10)
+    mark(test, [7])
+
+    standing = result.standing
+    expect(standing.points_marked_so_far).to eq(10)
+    expect(standing.tests_apart).to be(false)
+    expect(standing.test_points_marked_so_far).to be_nil
+  end
+
   # Handed in, deadline behind it, nothing marked on it yet: already in the
   # denominator and counting as nothing, which is what the block says out loud.
   # Deliberately not the record's own pending points, which count a sheet handed

@@ -113,6 +113,7 @@ thead th.sticky-col {
 @include column(status-compact);
 @include column(task);
 @include column(total);
+@include column(passed);
 @include column(grade);
 @include column(graded);
 @include column(save);
