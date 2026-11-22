@@ -10,7 +10,7 @@ module Assessment
 
     # Far above anything a task is worth, so only a typo gets there, and low
     # enough that what a lecture's points add up to still fits its columns.
-    POINTS_LIMIT = 100_000
+    POINTS_LIMIT = 1_000
 
     validates :points, numericality: { greater_than_or_equal_to: 0,
                                        less_than: POINTS_LIMIT },

@@ -256,17 +256,17 @@ RSpec.describe(Assessment::PointEntryService, type: :model) do
 
       it "raises Assessment::PointEntryService::PointEntryError" do
         expect do
-          described_class.enter_points(participation, { task1.id => "100000" }, grader)
+          described_class.enter_points(participation, { task1.id => "1000" }, grader)
         end.to raise_error(Assessment::PointEntryService::PointEntryError,
-                           /below 100,000|unter 100\.000/)
+                           /below 1,000|unter 1\.000/)
       end
 
       it "saves points just below it" do
-        described_class.enter_points(participation, { task1.id => "99999.5" }, grader)
+        described_class.enter_points(participation, { task1.id => "999.5" }, grader)
 
         tp = Assessment::TaskPoint.find_by(task_id: task1.id,
                                            assessment_participation_id: participation.id)
-        expect(tp.points).to eq(99_999.5)
+        expect(tp.points).to eq(999.5)
       end
     end
 
