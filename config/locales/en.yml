@@ -2822,6 +2822,9 @@ en:
         tests_passed_so_far:
           one: "%{passed} of 1 test passed so far"
           other: "%{passed} of %{count} tests passed so far"
+        tests_with_threshold_passed_so_far:
+          one: "%{passed} of 1 test with a passing threshold passed so far"
+          other: "%{passed} of %{count} tests with a passing threshold passed so far"
         tests_to_come:
           one: "1 more test to come"
           other: "%{count} more tests to come"

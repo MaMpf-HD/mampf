@@ -36,7 +36,8 @@ RSpec.describe(StandingComponent, type: :component) do
     { rule: nil, achievements: [], values: {}, eligibility: true,
       still_open: 0, due: 176, awaiting: 16, awaiting_sheets: 2,
       complete: true, tests_apart: false, test_total: nil, test_due: nil,
-      pass_fail_tests: 0, tests_passed: 0, tests_failed: 0 }
+      pass_fail_tests: 0, tests_passed: 0, tests_failed: 0,
+      without_threshold: 0 }
   end
 
   def standing(**overrides)
@@ -52,7 +53,8 @@ RSpec.describe(StandingComponent, type: :component) do
       tests_apart: attrs[:tests_apart], test_points_total: attrs[:test_total],
       test_points_marked_so_far: attrs[:test_due],
       pass_fail_tests: attrs[:pass_fail_tests], tests_passed: attrs[:tests_passed],
-      tests_failed: attrs[:tests_failed]
+      tests_failed: attrs[:tests_failed],
+      past_tests_without_threshold: attrs[:without_threshold]
     ).tap do |built|
       allow(built).to receive(:required_achievements)
         .and_return(attrs[:achievements])
@@ -225,6 +227,17 @@ RSpec.describe(StandingComponent, type: :component) do
 
       expect(content).to include(passed_line(passed: 1, settled: 2))
       expect(content).not_to include(to_come(3))
+    end
+
+    it "names the passing threshold while earlier tests have none" do
+      content = render_standing(standing(pass_fail_tests: 1, tests_passed: 1,
+                                         without_threshold: 3, complete: false))
+
+      expect(content).to include(
+        I18n.t("submission.hub.standing.tests_with_threshold_passed_so_far",
+               passed: 1, count: 1)
+      )
+      expect(content).not_to include(passed_line(passed: 1, settled: 1))
     end
 
     it "adds the tests' own points where the lecture keeps tests out of the total" do

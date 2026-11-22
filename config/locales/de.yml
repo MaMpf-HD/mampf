@@ -3035,6 +3035,9 @@ de:
         tests_passed_so_far:
           one: "%{passed} von 1 bisherigen Test bestanden"
           other: "%{passed} von %{count} bisherigen Tests bestanden"
+        tests_with_threshold_passed_so_far:
+          one: "%{passed} von 1 bisherigen Test mit Bestehensgrenze bestanden"
+          other: "%{passed} von %{count} bisherigen Tests mit Bestehensgrenze bestanden"
         tests_to_come:
           one: "es folgt noch 1 Test"
           other: "es folgen noch %{count} Tests"

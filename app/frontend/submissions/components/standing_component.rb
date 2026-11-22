@@ -260,10 +260,14 @@ class StandingComponent < ViewComponent::Base
         best: number(reachable_points), needed: number(required_points_at_end))
     end
 
+    # Names the passing threshold while earlier tests have none, so that the
+    # count does not read as one of all the tests in the list below.
     def tests_passed_part
       return unless tests_settled.positive?
 
-      t("submission.hub.standing.tests_passed_so_far",
+      mixed = standing.past_tests_without_threshold.to_i.positive?
+      key = mixed ? "tests_with_threshold_passed_so_far" : "tests_passed_so_far"
+      t("submission.hub.standing.#{key}",
         passed: tests_passed.to_i, count: tests_settled)
     end
 

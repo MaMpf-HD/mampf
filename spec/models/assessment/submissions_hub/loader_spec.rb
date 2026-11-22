@@ -853,6 +853,15 @@ RSpec.describe(Assessment::SubmissionsHub::Loader) do
       expect(sheet_for(failed).test_verdict).to eq(:failed)
     end
 
+    it "counts the earlier tests without a passing threshold, not the coming ones" do
+      create_test(passing_points: 5)
+      create_test(passing_points: nil, title: "Test 2")
+      create(:valid_assignment, lecture: lecture, kind: :test, title: "Test 3",
+                                deadline: 1.week.from_now)
+
+      expect(result.standing.past_tests_without_threshold).to eq(1)
+    end
+
     it "counts an absence as failed and an excused test as passed" do
       participate(create_test(passing_points: 5), status: :absent)
       participate(create_test(passing_points: 5, title: "Test 2"), status: :exempt)

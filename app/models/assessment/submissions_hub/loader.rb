@@ -126,6 +126,7 @@ module Assessment
                        pass_fail_tests: pass_fail_test_sheets.size,
                        tests_passed: test_verdicts.fetch(:passed, 0),
                        tests_failed: test_verdicts.fetch(:failed, 0),
+                       past_tests_without_threshold: past_tests_without_threshold,
                        assignments_complete: lecture.assignments_complete?,
                        uses_exam_eligibility: lecture.uses_exam_eligibility?)
         end
@@ -247,6 +248,12 @@ module Assessment
 
         def pass_fail_test_sheets
           test_sheets.select { |sheet| sheet.assignment.passing_points }
+        end
+
+        def past_tests_without_threshold
+          test_sheets.count do |sheet|
+            sheet.assignment.passing_points.nil? && sheet.assignment.totally_expired?
+          end
         end
 
         # Counted from the sheets, not the record: the record has a result

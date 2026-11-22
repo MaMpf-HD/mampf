@@ -9,6 +9,8 @@ module Assessment
     #
     # `pass_fail_tests` counts the tests with a passing threshold, `tests_passed`
     # and `tests_failed` those of them the student can see a result for.
+    # `past_tests_without_threshold` counts the tests whose week is over and
+    # that can be neither passed nor failed.
     Standing = Struct.new(:record, :rule, :achievement_values,
                           :points_still_open, :points_marked_so_far,
                           :points_awaiting_marks, :sheets_awaiting_marks,
@@ -16,6 +18,7 @@ module Assessment
                           :tests_apart, :test_points_total,
                           :test_points_marked_so_far,
                           :pass_fail_tests, :tests_passed, :tests_failed,
+                          :past_tests_without_threshold,
                           keyword_init: true) do
       def required_achievements
         rule ? rule.required_achievements.to_a : []
