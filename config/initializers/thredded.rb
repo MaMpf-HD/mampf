@@ -123,6 +123,19 @@ Thredded.messageboard_name_length_range = (1..120)
 # E.g. to allow a custom element <custom-element>:
 # Thredded::ContentFormatter.whitelist[:elements] += %w(custom-element)
 
+# ==> Link attributes in posts
+# thredded-markdown_katex adds SVG and MathML to the allowlist. Only `a[href]`
+# has a protocol check there, so every other attribute that can hold a link is
+# dropped. Formulas don't use them. `to`, `from`, `by` and `values` are what an
+# SVG animation writes into an attribute, `xml:base` is the base for relative
+# links.
+link_attributes = ["href", "xlink:href", "xml:base", "to", "from", "by", "values"]
+allowlist = Thredded::ContentFormatter.allowlist
+allowlist[:attributes] = allowlist[:attributes].to_h do |tag, attributes|
+  checked = allowlist[:protocols].fetch(tag, {}).keys
+  [tag, attributes - (link_attributes - checked)]
+end
+
 # ==> Server-side link previews (onebox) — DISABLED for SSRF safety.
 # OneboxFilter fetches user-supplied URLs server-side from the app host, which sits
 # inside the WireGuard overlay / Uninetz — a request-forgery perimeter bypass. Removing

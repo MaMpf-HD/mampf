@@ -1,9 +1,14 @@
+import { linkTarget } from "~/js/link_target";
+
 /**
  * Opens any link with target="_blank" in a new window when the app is running
  * as a Progressive Web App (PWA).
  *
  * Without this, on Desktop clients, these links would instead open in the
  * default browser, and thus the user would be taken out of the MaMpf app.
+ *
+ * Only a link to an http(s) URL or to a path within MaMpf is opened that way.
+ * Any other link is left to the browser.
  *
  * Notice that on mobile devices, this opening of new windows might not work.
  * Oftentimes, a dummy in-app browser is opened instead, which is also fine.
@@ -17,7 +22,7 @@
  */
 $(document).on("turbo:load", function () {
   $(document).on("click", "a[target='_blank'], a[target='blank']", function (event) {
-    const url = $(this).attr("href");
+    const url = linkTarget($(this).attr("href"));
     const isPWA = window.matchMedia("(display-mode: standalone)").matches
       || window.navigator.standalone;
 
