@@ -227,8 +227,6 @@ module Seeds
         Announcement.where(details: ADMIN_ANNOUNCEMENTS + LECTURE_ANNOUNCEMENTS)
                     .destroy_all
 
-        # Site-wide announcements only show up in the main page banner, so they
-        # notify nobody.
         ADMIN_ANNOUNCEMENTS.each do |text|
           Announcement.create!(announcer: admin, details: text, banner_active: false)
         end
