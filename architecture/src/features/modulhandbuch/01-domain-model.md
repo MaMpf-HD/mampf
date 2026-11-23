@@ -63,7 +63,7 @@ These are the points where the handbook touches existing MaMpf models. The handb
 | `Term` | `ModuleEdition` | `belongs_to :term` | Scope a `ModuleEdition` to a semester |
 | `Term` | `Handbook` | `belongs_to :term` | Scope a `Handbook` to a semester |
 | `User` | Permissions | `HandbookAbility` | Roles, see [Roles & Permissions](00c-roles-and-permissions.md) |
-| `User` | `ModuleEdition` | `responsible_user_id` (nullable) | Owner of a description (for the `dozent` rights in [Roles & Permissions](00c-roles-and-permissions.md)) |
+| `User` | `ModuleEdition` | `responsible_user_id` (nullable) | Lecturer assigned to a description. Access check is a user id match, not a role (see [Roles & Permissions](00c-roles-and-permissions.md)) |
 | `Lecture` | `ModuleEdition` | none (future, optional) | Link a `ModuleEdition` to the lecture that teaches it |
 
 **Example Flows:**

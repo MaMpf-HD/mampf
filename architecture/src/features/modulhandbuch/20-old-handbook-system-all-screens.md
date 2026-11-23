@@ -64,7 +64,11 @@ So each role gets its own tab with copies of the screens it needs
 
 ### Course
 
-Module list, master data, lookup tables, and copies of the Modulhandbuch screens. Who used this tab is unknown.
+```admonish info "Info text"
+In the Course module, module data is maintained.
+```
+
+Module list, master data, lookup tables, and copies of the Modulhandbuch screens. Same job as StudDekanin → used by the Dean of Studies (see [Roles & Permissions](00c-roles-and-permissions.md)).
 
 #### Course → Course (Liste)
 * Path: main → Course
@@ -135,8 +139,8 @@ Same data as `StudDekanin` → `ModulListe`, over all semesters.
 
 ### Modulhandbuch
 
-```admonish info "Intro text"
-Create Modulhandbücher, create Gruppierungen, assign Module to Gruppierungen, maintain LaTeX elements.
+```admonish info "Info text"
+In the Modulhandbuch module, the module handbooks are created, the groupings of the module handbooks are created, the modules are assigned to the groupings within the module handbooks, and the LaTeX elements of the module handbooks are recorded and maintained.
 ```
 
 The per-semester screens (Gruppierung, Zusammenstellung, Latex) have a header selector:
@@ -200,8 +204,11 @@ The per-semester screens (Gruppierung, Zusammenstellung, Latex) have a header se
 
 ### StudDekanin (Studiendekan/in)
 
-```admonish info "Intro text"
-maintain Codes, maintain Module, release (freigeben) Module.
+```admonish info "Info text"
+In the module [Dean of Studies]:
+- the codes are maintained
+- the modules are maintained
+- the modules are released
 ```
 
 
@@ -248,7 +255,13 @@ Edit: `Name`*, `Name Kurz`*, `Start`*, `Ende`*, `Info`, `History`.
 
 ### Dozent
 
-Intro text: create new Module and correct Module.
+```admonish info "Info text"
+Original: "Im Dozent-Modul können neue Module angelegt und Module korrigiert werden."
+
+In the Dozent module, new modules can be created and modules can be corrected.
+```
+
+In the PDFs the list shows descriptions that already exist in the semester (created centrally, e.g. by the semester copy), and the lecturer corrects them. The new system keeps only the editing (see [Roles & Permissions](00c-roles-and-permissions.md)).
 
 #### Dozent → CourseListe
 * Path: main → Dozent → CourseListe
@@ -268,6 +281,10 @@ Intro text: create new Module and correct Module.
 ---
 
 ### Output
+
+```admonish info "Info text"
+The Output module generates data for web and PDF output.
+```
 
 #### Output (Latex)
 * Path: main → Output
@@ -309,6 +326,16 @@ Intro text: create new Module and correct Module.
 ---
 
 ### Abfragen
+
+```admonish info "Info text"
+Original: "Im Abfragen-Modul hat man Zugriff auf die Daten der Datenbank. An Hand von vorgefertigten SQL-Abfragen kann man die Datenbank abfragen. Diese SQL-Abfragen können hier erstellt, geändert und gelöscht werden. Die vordefinierten Abfragen können in die Menüs von [Portfolio_Modulhandbuch] eingehängt werden."
+
+In the Abfragen (queries) module you have access to the data of the database. You query the database with prepared SQL queries. These SQL queries can be created, changed and deleted here. The predefined queries can be attached to the menus of [Portfolio_Modulhandbuch].
+```
+
+```admonish warning "Planned: drop"
+Abfragen is a feature of the generic Portfolio framework, not of the handbook, and the query list is empty. The new system replaces it by list filters + CSV export. See [To Verify](pending-thing-need-to-verify.md#8-dropped-features).
+```
 
 #### Abfragen → Info
 * Help page for the SQL query module: stored SQL queries can be attached to a menu (`Add to Modul`) and granted to users (`Grant Access To`). Results as table with Excel export.

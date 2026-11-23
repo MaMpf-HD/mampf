@@ -3,7 +3,7 @@
 A **Modulhandbuch** (module handbook) is the official catalog of a study program
 for one term: which modules are offered, grouped into sections, with one
 description per module (content, ECTS, cycle, prerequisites, …). It is published
-as a PDF and on the department websites.
+as a **PDF** and as public web pages.
 
 ## Why a rebuild
 
@@ -20,10 +20,10 @@ from the data.
 
 ## Scope
 
-- **In:** master data (study programs, curriculum modules), per-term module
-  descriptions, handbook assembly, review & publish, cloning to the next term,
-  PDF/LaTeX export, public pages, migration of the old data
-- **Out (for now):** Dozent self-editing (see [Roles & Permissions](00c-roles-and-permissions.md)), link to MaMpf `Lecture`, LSF/heiCO sync
+- master data (study programs, curriculum modules), per-term module descriptions, 
+- handbook assembly, review & publish, cloning to the next term
+- PDF export, public pages
+- migration of the old data
 
 ## How to read this chapter
 

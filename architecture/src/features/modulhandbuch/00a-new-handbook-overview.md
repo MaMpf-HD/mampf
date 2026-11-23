@@ -2,7 +2,7 @@
 
 The handbook is an **catalog**: which modules a study program offers in a given term (with posibility of grouping into sections) with one description per module and term. 
 
-Possible sequential actions after defining catalog is: exporting as Latex, Typs
+Possible sequential actions after defining catalog is: exporting as PDF and showing it on public pages.
 
 ```mermaid
 flowchart LR

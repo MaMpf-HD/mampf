@@ -68,13 +68,17 @@ Portfolio_Modulhandbuch
 ## All possible screens with its variation 
 * there is a lot of **duplicate screens**. Most likely: in this framework **access is granted per tab**. So each role gets its own tab with copies of the screens it needs
 
-  | Tab | Can do |
-  |---|---|
-  | Course | everything, including lookups and Semester |
-  | StudDekanin | Codes, Module, Freigabe, LSF, Semester + copy |
-  | Modulhandbuch | Modulhandbuch, Gruppierung, Zusammenstellung, Latex |
-  | Dozent | create and correct Module, pdf |
-  | (none) | read released data via html/JSON (public) |
+  | Tab | Info text (translated) | Can do |
+  |---|---|---|
+  | Course | Module data is maintained. | everything, including lookups and Semester |
+  | StudDekanin | Codes are maintained, modules are maintained, modules are released. | Codes, Module, Freigabe, LSF, Semester + copy |
+  | Modulhandbuch | Handbooks and groupings are created, modules assigned to groupings, LaTeX elements maintained. | Modulhandbuch, Gruppierung, Zusammenstellung, Latex |
+  | Output | Generates data for web and PDF output. | generate LaTeX, docs of the public html/JSON scripts |
+  | Dozent | New modules can be created and modules corrected. | correct Module (create / copy also present), pdf |
+  | Abfragen | Access to the database via stored SQL queries. | raw SQL (framework feature, planned to drop) |
+  | (none) | – | read released data via html/JSON (public) |
+
+  Full texts: [Old system: all screens](20-old-handbook-system-all-screens.md).
 
   Who uses which tab: see [Roles & Permissions](00c-roles-and-permissions.md).
 
