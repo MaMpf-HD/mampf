@@ -29,13 +29,16 @@ class UploadEndpointAuthorization
   class << self
     def authorized?(uploader_class:, user:)
       case uploader_class.name
-      when "VideoUploader"
+      when "VideoUploader", "PdfUploader", "GeogebraUploader", "ScreenshotUploader"
         # Keep video intentionally broad until we have target-bound signed
         # upload intent: a historic editor of an existing non-talk medium
         # must still be able to replace the video on that medium.
+        # Speakers edit the media of their own talks (video, manuscript,
+        # GeoGebra, screenshot), and `editor?` deliberately leaves talk media
+        # out. The signed intent then binds the upload to a medium they may
+        # edit.
         content_editor?(user) || user&.speaker?
-      when "PdfUploader", "GeogebraUploader", "ScreenshotUploader",
-           "ProfileimageUploader", "LectureHomeAttachmentUploader"
+      when "ProfileimageUploader", "LectureHomeAttachmentUploader"
         content_editor?(user)
       when "CorrectionUploader", "StudentMessageUploader"
         content_editor?(user) || user&.tutor?
