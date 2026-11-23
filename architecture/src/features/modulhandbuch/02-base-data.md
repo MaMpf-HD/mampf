@@ -86,7 +86,7 @@ The printed name (`name`) lives on `ModuleEdition`, in its language, and is copi
 
 ### Behavior Highlights
 
-- `code` is required and unique.
+- `code` is required and unique. Old codes differ only by case in some places (`IIug_alt` / `IIuG_alt`, `IBa_100_neu` / `IBA_100_neu`), contain spaces (`MA6 IPR`) or umlauts (`ISWÖk`): uniqueness is case‑sensitive, and URLs must escape the code.
 - Cannot be destroyed while a `ModuleEdition` exists. Use `active: false` instead.
 - Creating a `CurriculumModule` does **not** create a `ModuleEdition`.
 - A real rename in the old system usually got a **new code** (IOPWR → IOPSC, ISWÖk → ISWEco) with a note in both. Keep that practice; optional later: `replaced_by_id`.
@@ -119,13 +119,23 @@ A semester, e.g., "WS 2026/27". Existing MaMpf model, no changes.
 
 ---
 
+## Migration from the Old System
+
+- `code` from Name (printed form, e.g. `MB1`); Kurz (`MB01`) only sorts. ⚑ see [To Verify](pending-thing-need-to-verify.md#3-base-data--lookups).
+- `title` from the first part of Info (before the first comma), else from the newest Modul name. Empty Info (placeholders MG*, MH*, …) → empty title, flagged.
+- `subject_area` from Fachgebiet; `select ...` (ITA, SCAP, SCASP, SCMa, SCS, TEST) → flagged.
+- `notes` = Info as is.
+- `active` = has a Modul in the newest semester with modules; flagged when Info says otherwise ("nicht mehr im MHB").
+- `StudyProgram.expires_on`: `2099-01-01` → empty.
+- `Term`: matched by name (`Wintersemester 2026/27`); Start / Ende dropped.
+
 ## Not Migrated
 
 | Old | Why |
 |-----|-----|
 | Fachgebiet table | Enum `subject_area` on `CurriculumModule` |
-| Course Cycle table | Old values: other, SS, WS, WS/SS. Becomes the text field `cycle` on `ModuleEdition`; a 4‑value table adds nothing |
-| Course Source table | Old values: 01 Admin, 02 Semester‑Copy, 03/04 Dozent, 05 Test. Derived: Semester‑Copy = `cloned_from` set and not edited since; Admin / Dozent = who edited last (needs History); Test = not migrated |
+| Course Cycle table | Old values: other, SS, WS, WS/SS. Not referenced by the Modul edit form (Turnus is free text there), so dropped. `cycle` on `ModuleEdition` comes from Turnus |
+| Course Source table | Old values: 01 Admin, 02 Semester‑Copy, 03/04 Dozent, 05 Test. Not in the Modul edit form → the old system set it itself. Derived: Semester‑Copy = `cloned_from` set and not edited since; Admin / Dozent = who edited last (needs History); Test = not migrated |
 | Fachgebiet on the per‑semester Modul | Belongs to `CurriculumModule`, not to the term |
 
 ```admonish warning "⚑ To verify: lookup values move from the UI into code"

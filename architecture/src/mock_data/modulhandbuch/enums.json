@@ -1,0 +1,81 @@
+{
+  "subject_area": [
+    {
+      "key": "math",
+      "position": 1,
+      "label_de": "Mathematik",
+      "label_en": "Mathematics",
+      "old_kurz": "01 Mathematik"
+    },
+    {
+      "key": "cs",
+      "position": 2,
+      "label_de": "Informatik",
+      "label_en": "Computer Science",
+      "old_kurz": "02 Informatik"
+    },
+    {
+      "key": "general",
+      "position": 3,
+      "label_de": "Allgemeine Module",
+      "label_en": "General Modules",
+      "old_kurz": "03 Allgemeine Module"
+    }
+  ],
+  "language": [
+    {
+      "key": "de",
+      "label_de": "Deutsch",
+      "label_en": "German"
+    },
+    {
+      "key": "en",
+      "label_de": "Englisch",
+      "label_en": "English"
+    }
+  ],
+  "edition_status": [
+    {
+      "key": "created",
+      "label_de": "Erstellt",
+      "label_en": "Created"
+    },
+    {
+      "key": "checked",
+      "label_de": "Geprüft",
+      "label_en": "Checked"
+    },
+    {
+      "key": "published",
+      "label_de": "Freigegeben",
+      "label_en": "Published"
+    }
+  ],
+  "edition_source": {
+    "derived": true,
+    "note": "Not stored. Computed from cloned_from_id, created_by_id, updated_by_id (old Course Source).",
+    "values": [
+      {
+        "key": "cloned",
+        "label_de": "Semester-Kopie",
+        "label_en": "Term copy",
+        "rule": "cloned_from_id set and updated_at == created_at",
+        "old": "02 Semester-Copy"
+      },
+      {
+        "key": "staff",
+        "label_de": "Studiendekanat",
+        "label_en": "Dean of Studies",
+        "rule": "last editor has role dean_of_studies",
+        "old": "01 Admin"
+      },
+      {
+        "key": "lecturer",
+        "label_de": "Dozent/in",
+        "label_en": "Lecturer",
+        "rule": "last editor == responsible_user_id",
+        "old": "03 erstellt / 04 geändert durch Dozent"
+      }
+    ]
+  }
+}

@@ -46,8 +46,8 @@ This chapter summarizes the principal entities; behavioral details live in the r
 | Gruppierung | `Section` | ⚑ `heading_level` open |
 | Zusammenstellung | `SectionEntry` | |
 | Latex Elemente / Layout | `Handbook` front matter + export template | Header / Footer → template; Intro → `title`, `subtitle`, `issue_date`, `intro` |
-| Course Cycle | text field `cycle` on `ModuleEdition` | Old values: other, SS, WS, WS/SS. A `ModuleEdition` already has the Turnus text ("every winter semester"); a 4‑value table adds nothing |
-| Course Source | derived, no table | Old values: 01 Admin, 02 Semester‑Copy, 03 erstellt durch Dozent, 04 geändert durch Dozent, 05 Test. Semester‑Copy = `cloned_from` set and not edited since; Admin / Dozent = who edited last (**needs History**); Test = not migrated |
+| Course Cycle | — (dropped) | Old values: other, SS, WS, WS/SS. Not used by the Modul edit form; the Turnus text ("every winter semester") becomes `cycle` on `ModuleEdition` |
+| Course Source | derived, no table (not in the old edit form either) | Old values: 01 Admin, 02 Semester‑Copy, 03 erstellt durch Dozent, 04 geändert durch Dozent, 05 Test. Semester‑Copy = `cloned_from` set and not edited since; Admin / Dozent = who edited last (**needs History**); Test = not migrated |
 | LSF‑Sortierung + LSF fields | — | **TODO: verify if still needed (LSF replaced by heiCO since SoSe 2024). Do not implement.** |
 | Abfragen | — | Dropped; filters + CSV export instead |
 | Git Export | Export snapshots | [Future extension](09-future-extensions.md) |
