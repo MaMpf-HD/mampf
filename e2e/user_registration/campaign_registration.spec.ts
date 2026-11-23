@@ -858,6 +858,65 @@ test.describe("campaign registration", () => {
     await expect(home.participation("Assigned")).toHaveCount(0);
   });
 
+  test("withdraws all saved preferences after confirming", async ({
+    factory,
+    student,
+  }) => {
+    const lecture = await createReleasedLecture(factory);
+    await subscribeToLecture(factory, lecture, student.user.id);
+    const { campaign } = await createTutorialItemsCampaign(
+      factory,
+      lecture,
+      "preference_based",
+      "Preference tutorial registration",
+    );
+    const tutorial = await factory.create("tutorial", [], {
+      lecture_id: lecture.id,
+      title: "Withdrawn Preference Tutorial",
+      capacity: 2,
+    });
+    const item = await factory.create("registration_item", [], {
+      registration_campaign_id: campaign.id,
+      registerable_type: "Tutorial",
+      registerable_id: tutorial.id,
+    });
+    await factory.create("registration_user_registration", [], {
+      user_id: student.user.id,
+      registration_campaign_id: campaign.id,
+      registration_item_id: item.id,
+      preference_rank: 1,
+      status: "pending",
+    });
+
+    const home = new CampaignRegistrationPage(student.page, lecture.id);
+    await home.goto();
+    await home.openCampaign("Preference tutorial registration");
+
+    const withdrawButton = student.page.getByRole("button", { name: "Withdraw preferences" });
+    await student.page
+      .getByRole("button", { name: "Withdrawn Preference Tutorial as 2nd choice" }).click();
+    await expect(withdrawButton).toBeHidden();
+    await student.page
+      .getByRole("button", { name: "Withdrawn Preference Tutorial as 1st choice" }).click();
+    await expect(withdrawButton).toBeVisible();
+
+    let confirmation = "";
+    student.page.once("dialog", (dialog) => {
+      confirmation = dialog.message();
+      void dialog.accept();
+    });
+    await withdrawButton.click();
+
+    await expect(student.page.getByText("Your preferences have been withdrawn."))
+      .toBeVisible();
+    expect(confirmation).toContain("no longer take part in the allocation");
+    await expect(home.campaign("Preference tutorial registration"))
+      .toContainText("No preferences yet");
+    await expect(student.page.getByRole("group", { name: "Selected preference ranks" }))
+      .not.toContainText("Withdrawn Preference Tutorial");
+    await expect(withdrawButton).toHaveCount(0);
+  });
+
   test("shows an assignment next to a campaign that is still open", async ({
     factory,
     student,
@@ -1156,7 +1215,7 @@ test.describe("campaign registration", () => {
 
     await expect(home.participation("No place")).toHaveCount(2);
     await expect(home.participation("Overbooked tutorial registration")).toContainText(
-      "Your preferences: 1st Popular Tutorial, 2nd Early Morning Tutorial",
+      "Your preferences: 1st Popular Tutorial (tba), 2nd Early Morning Tutorial (tba)",
     );
     await expect(home.participation("Backup tutorial registration"))
       .toContainText("Your preferences: 1st Quiet Tutorial");

@@ -1,11 +1,9 @@
-<%= vite_stylesheet_tag "styles/navbar.scss" %>
-
 <%= render partial: "shared/announcement_banner" %>
 
 <div class="navbars-container">
   <nav class="navbar navbar-expand" id="firstnav">
-    <%# Sized in the markup: the svg declares 97mm, and navbar.scss is loaded
-        from the body, so without this the logo is briefly rendered huge. %>
+    <%# Sized in the markup: the svg declares 97mm, and without this the logo
+        is rendered huge until navbar.scss applies. %>
     <%= link_to image_tag("/images/mampf-logo.svg",
                           class: 'me-2',
                           id: 'mampf-logo',

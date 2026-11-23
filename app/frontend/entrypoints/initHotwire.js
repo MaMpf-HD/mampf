@@ -156,6 +156,8 @@ import LectureIntroController from "~/lectures/home/lecture_intro.controller.js"
 window.Stimulus.register("lecture-intro", LectureIntroController);
 import ParticipationFocusController from "~/lectures/home/participation_focus.controller.js";
 window.Stimulus.register("participation-focus", ParticipationFocusController);
+import LeaveConfirmationController from "~/lectures/home/leave_confirmation.controller.js";
+window.Stimulus.register("leave-confirmation", LeaveConfirmationController);
 
 import CapacityEditorController from "~/registration/allocations/capacity_editor.controller.js";
 window.Stimulus.register("capacity-editor", CapacityEditorController);
@@ -181,8 +183,8 @@ window.Stimulus.register("assessments--points-precision", PointsPrecisionControl
 import SchemeFormController from "~/assessment/assessments/scheme_form.controller.js";
 window.Stimulus.register("assessments--scheme-form", SchemeFormController);
 
-import AssignmentsCompleteController from "~/assessment/assessments/assignments_complete.controller.js";
-window.Stimulus.register("assessments--assignments-complete", AssignmentsCompleteController);
+import ConfirmedCheckboxController from "~/assessment/assessments/confirmed_checkbox.controller.js";
+window.Stimulus.register("assessments--confirmed-checkbox", ConfirmedCheckboxController);
 
 import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
 window.Stimulus.register("achievement-form", AchievementFormController);
@@ -192,6 +194,9 @@ window.Stimulus.register("certification-inline", CertificationInlineController);
 
 import ThresholdModeController from "~/student_performance/rules/threshold-mode.controller.js";
 window.Stimulus.register("threshold-mode", ThresholdModeController);
+
+import TestsCriterionController from "~/student_performance/rules/tests_criterion.controller.js";
+window.Stimulus.register("tests-criterion", TestsCriterionController);
 
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
@@ -212,6 +217,8 @@ import StatusFilterController from "~/tutorials/status_filter.controller.js";
 window.Stimulus.register("status-filter", StatusFilterController);
 import SelectNavigationController from "~/tutorials/select_navigation.controller.js";
 window.Stimulus.register("select-navigation", SelectNavigationController);
+import AddMemberMenuController from "~/tutorials/add_member_menu.controller.js";
+window.Stimulus.register("add-member-menu", AddMemberMenuController);
 import ExamFormController from "~/exams/form.controller.js";
 window.Stimulus.register("exams--form", ExamFormController);
 

@@ -134,6 +134,21 @@ RSpec.describe(SubmissionCardComponent, type: :component) do
       expect(content).not_to include(I18n.t("submission.hub.card.hand_in"))
       expect(content).not_to include("PDF")
     end
+
+    it "names its weeks when it lasts several" do
+      assignment.update!(test_week_count: 2)
+
+      expect(render_card).to include(I18n.t("assessment.test.period", count: 2))
+    end
+
+    it "names its passing threshold, and none where it carries none" do
+      threshold = I18n.t("submission.hub.passing.threshold", count: 4.5, points: "4.5")
+      expect(render_card).not_to include(threshold)
+
+      assignment.update!(passing_points: 4.5)
+
+      expect(render_card).to include(threshold)
+    end
   end
 
   describe "a sheet nothing has been handed in for" do

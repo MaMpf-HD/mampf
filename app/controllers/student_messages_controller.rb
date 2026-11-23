@@ -14,26 +14,31 @@ class StudentMessagesController < ApplicationController
   end
 
   # How many, and whom, a selection reaches: the picker asks on every change.
+  # The tutors who would get a copy are named along with it.
   def recipients
     audiences = @catalog.pick(params[:audiences])
     return head(:forbidden) unless audiences
 
-    render turbo_stream: turbo_stream.replace(
-      "student-message-recipients",
-      partial: "student_messages/recipients",
-      locals: { emails: emails_of(audiences), picker: true }
-    )
+    render turbo_stream: [
+      turbo_stream.replace("student-message-recipients",
+                           partial: "student_messages/recipients",
+                           locals: { emails: emails_of(audiences), picker: true }),
+      turbo_stream.replace("student-message-tutor-copy",
+                           partial: "student_messages/tutor_copy",
+                           locals: { tutors: tutors_of(audiences) })
+    ]
   end
 
   def create
     audiences = @catalog.pick(message_params[:audiences])
     return redirect_to(return_path, alert: t("student_message.no_audience")) if audiences.blank?
 
-    @message = StudentMessage.new(message_params.except(:audiences, :attachment))
+    @message = StudentMessage.new(message_params.except(:audiences, :attachment, :copy_tutors))
     @message.lecture = @lecture
     @message.sender = current_user
     @message.sender_role = @catalog.staff? ? :staff : :tutor
-    @message.address_to(audiences, labels: @catalog.labels_by_locale(audiences.map(&:key)))
+    @message.address_to(audiences, labels: @catalog.labels_by_locale(audiences.map(&:key)),
+                                   copy_tutors: copy_tutors?)
     attach_scanned(message_params[:attachment])
 
     if @message.save
@@ -84,6 +89,16 @@ class StudentMessagesController < ApplicationController
       StudentMessages::Audience.recipients(audiences).pluck(:email)
     end
 
+    def tutors_of(audiences)
+      StudentMessages::Audience.tutors_of(StudentMessages::Audience.recipients(audiences),
+                                          @lecture).by_last_name.to_a
+    end
+
+    # Only the staff's form offers the copy; a tutor writes to their own group.
+    def copy_tutors?
+      @catalog.staff? && message_params[:copy_tutors] == "1"
+    end
+
     # Where the form was, or the sender's own page. Both forms hand over a
     # path of this app; a value that is not one is not followed, so that a
     # bad one cannot fail the redirect once the message is on its way.
@@ -108,6 +123,7 @@ class StudentMessagesController < ApplicationController
     end
 
     def message_params
-      params.expect(student_message: [:subject, :body, :attachment, { audiences: [] }])
+      params.expect(student_message: [:subject, :body, :attachment, :copy_tutors,
+                                      { audiences: [] }])
     end
 end

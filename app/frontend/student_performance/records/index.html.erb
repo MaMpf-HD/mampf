@@ -19,6 +19,11 @@
         <%= hidden_field_tag :dir, params[:dir] %>
       <% end %>
 
+      <%# A tutor's page picks the tutorial above the table. %>
+      <% if @own_tutorial %>
+        <%= hidden_field_tag :tutorial_id, @own_tutorial.id %>
+      <% end %>
+
       <div class="col-12 col-md-4">
         <div class="position-relative">
           <span
@@ -50,38 +55,44 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-4">
-        <select
-          name="tutorial_id"
-          class="form-select"
-          aria-label="<%= t("student_performance.records.index.all_participants") %>"
-          data-action="change->auto-submit-form#submit"
-        >
-          <option value="">
-            <%= t("student_performance.records.index.all_participants") %>
-          </option>
+      <% unless @own_tutorial %>
+        <div class="col-12 col-md-4">
+          <select
+            name="tutorial_id"
+            class="form-select"
+            aria-label="<%= t("student_performance.records.index.all_participants") %>"
+            data-action="change->auto-submit-form#submit"
+          >
+            <option value="">
+              <%= t("student_performance.records.index.all_participants") %>
+            </option>
 
-          <% @lecture.tutorials.each do |tutorial| %>
+            <% @tutorials.each do |tutorial| %>
+              <option
+                value="<%= tutorial.id %>"
+                <% if params[:tutorial_id] == tutorial.id.to_s %>
+                  selected
+                <% end %>
+              >
+                <%= tutorial.title_with_tutors %>
+              </option>
+            <% end %>
+
             <option
-              value="<%= tutorial.id %>"
-              <% if params[:tutorial_id] == tutorial.id.to_s %>
+              value="none"
+              <% if params[:tutorial_id] == "none" %>
                 selected
               <% end %>
             >
-              <%= tutorial.title %>
+              <%= t("student_performance.records.index.without_tutorial") %>
             </option>
-          <% end %>
 
-          <option
-            value="none"
-            <% if params[:tutorial_id] == "none" %>
-              selected
-            <% end %>
-          >
-            <%= t("student_performance.records.index.without_tutorial") %>
-          </option>
-        </select>
-      </div>
+            <option value="left" <% if @left %> selected <% end %>>
+              <%= t("student_performance.records.index.left") %>
+            </option>
+          </select>
+        </div>
+      <% end %>
     <% end %>
   </div>
 
@@ -89,6 +100,8 @@
     <p class="text-center text-muted py-4">
       <% if params[:q].present? %>
         <%= t("student_performance.lists.no_match") %>
+      <% elsif @left %>
+        <%= t("roster.left.empty") %>
       <% else %>
         <%= t("student_performance.records.index.empty") %>
       <% end %>
@@ -110,6 +123,10 @@
             <col class="records-col-share">
           <% end %>
 
+          <% if @pass_fail_test_ids.any? %>
+            <col class="records-col-share">
+          <% end %>
+
           <% @achievements.each do %>
             <col class="records-col-achievement">
           <% end %>
@@ -128,15 +145,21 @@
             >
               <%= t("student_performance.records.columns.due_so_far") %>
 
+              <% tests_counted = @test_points && @lecture.tests_in_points_total? %>
+
+              <% share_edges = [("tests-start" if @tests.empty?),
+                                ("tests-end" if @pass_fail_test_ids.empty?)].compact.join(" ") %>
+
               <% if @test_points %>
                 <span class="fw-normal text-muted">
-                  (<%= t("student_performance.records.columns.sheets_and_tests") %>)
+                  (<%= t("student_performance.records.columns." \
+                         "#{tests_counted ? "sheets_and_tests" : "sheets_only"}") %>)
                 </span>
               <% end %>
 
               <%= helpdesk(
                     t("student_performance.records.columns." \
-                      "#{@test_points ? "due_so_far_hint_with_tests" : "due_so_far_hint"}"),
+                      "#{tests_counted ? "due_so_far_hint_with_tests" : "due_so_far_hint"}"),
                     false) %>
             </th>
 
@@ -160,7 +183,7 @@
             <% if @test_points %>
               <th
                 scope="colgroup"
-                colspan="<%= @tests.size + 1 %>"
+                colspan="<%= @tests.size + 1 + (@pass_fail_test_ids.any? ? 1 : 0) %>"
                 class="text-center text-nowrap tests-start"
               >
                 <%= t("student_performance.records.columns.tests") %>
@@ -173,7 +196,8 @@
                 <% end %>
 
                 <%= helpdesk(
-                      t("student_performance.records.columns.tests_hint"),
+                      t("student_performance.records.columns." \
+                        "#{tests_counted ? "tests_hint" : "tests_hint_apart"}"),
                       false) %>
               </th>
             <% end %>
@@ -270,7 +294,7 @@
             <% if @test_points %>
               <th
                 scope="col"
-                class="text-center test-share <%= "tests-start" if @tests.empty? %>"
+                class="text-center test-share <%= share_edges %>"
                 aria-sort="<%= records_sort_state("test_share") %>"
               >
                 <%= records_sort_link(@lecture, "test_share") do %>
@@ -280,6 +304,16 @@
                     <%= t("student_performance.records.columns.test_share") %>
                   </span>
                 <% end %>
+              </th>
+            <% end %>
+
+            <% if @pass_fail_test_ids.any? %>
+              <th
+                scope="col"
+                class="text-center small tests-end"
+                title="<%= t("student_performance.records.columns.tests_passed_hint") %>"
+              >
+                <%= t("student_performance.records.columns.tests_passed") %>
               </th>
             <% end %>
 
@@ -295,12 +329,30 @@
 
         <tbody>
           <% @records.each do |record| %>
-            <tr id="<%= dom_id(record) %>">
+            <tr
+              id="<%= record.persisted? ? dom_id(record) : dom_id(record.user, :left) %>"
+            >
               <td class="text-truncate">
-                <%= link_to record.user.tutorial_name,
-                            lecture_student_performance_record_path(@lecture, record),
-                            title: record.user.tutorial_name,
-                            data: { turbo_frame: "performance-records-frame" } %>
+                <% if @own_tutorial %>
+                  <%= record.user.tutorial_name %>
+                <% elsif record.persisted? %>
+                  <%= link_to record.user.tutorial_name,
+                              lecture_student_performance_record_path(@lecture, record),
+                              title: record.user.tutorial_name,
+                              data: { turbo_frame: "performance-records-frame" } %>
+                <% else %>
+                  <span title="<%= record.user.tutorial_name %>">
+                    <%= record.user.tutorial_name %>
+                  </span>
+                  <span
+                    class="
+                      badge bg-secondary-subtle text-secondary-emphasis
+                      fw-normal ms-1
+                    "
+                  >
+                    <%= t("assessment.grading_tutorial.left_lecture") %>
+                  </span>
+                <% end %>
               </td>
 
               <td class="text-end text-nowrap numeric due-points">
@@ -353,9 +405,7 @@
               <% if @test_points %>
                 <% test_share = @test_points.marked_percentage_of(
                      record.user_id, @test_points_by_user.fetch(record.user_id, 0)) %>
-                <% share_classes = ["text-center text-nowrap numeric test-share",
-                                    ("tests-start" if @tests.empty?)].compact.join(" ") %>
-                <td class="<%= share_classes %>">
+                <td class="text-center text-nowrap numeric test-share <%= share_edges %>">
                   <% if test_share.nil? %>
                     <span class="text-muted" aria-hidden="true">&mdash;</span>
                     <span class="visually-hidden">
@@ -364,6 +414,16 @@
                   <% else %>
                     <%= number_to_percentage(test_share, precision: 0) %>
                   <% end %>
+                </td>
+              <% end %>
+
+              <% if @pass_fail_test_ids.any? %>
+                <td class="text-center text-nowrap numeric tests-end">
+                  <%= record.tests_passed_among(@pass_fail_test_ids) %>
+
+                  <span class="text-muted">
+                    / <%= @pass_fail_test_ids.size %>
+                  </span>
                 </td>
               <% end %>
 

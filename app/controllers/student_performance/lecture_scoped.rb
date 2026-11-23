@@ -1,7 +1,9 @@
 module StudentPerformance
   # Every screen in this namespace hangs off one lecture and is for its editors
-  # only. Kept in one place so the three steps cannot drift apart, and so the
-  # include list answers which controllers are covered.
+  # only - but for the list of records, which a tutor reads for their own
+  # tutorial (RecordsController#authorize_index). Kept in one place so the three
+  # steps cannot drift apart, and so the include list answers which controllers
+  # are covered.
   module LectureScoped
     extend ActiveSupport::Concern
 
@@ -36,14 +38,18 @@ module StudentPerformance
         query = params[:q].presence
         return scope unless query
 
-        scope.joins(:user)
-             .where("#{User::SHOWN_NAME_SQL} ILIKE :q", q: "%#{query}%")
+        scope.joins(:user).merge(User.shown_name_like(query))
+      end
+
+      def pass_fail_test_ids
+        @pass_fail_test_ids ||= @lecture.pass_fail_test_ids
       end
 
       def evaluator_for(rule)
         Evaluator.new(rule,
                       assignments_complete: @lecture.assignments_complete?,
-                      due_points: due_points)
+                      due_points: due_points,
+                      pass_fail_test_ids: pass_fail_test_ids)
       end
   end
 end

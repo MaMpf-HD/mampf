@@ -11,6 +11,44 @@ RSpec.describe(Item, type: :model) do
     expect(FactoryBot.build(:item, sort: "some BS")).to be_invalid
   end
 
+  describe "link" do
+    ["link", "remark"].each do |sort|
+      context "with sort #{sort}" do
+        def item_with(sort, link)
+          build(:item, sort: sort, description: "O'Neil's notes", link: link)
+        end
+
+        it "is valid with an http(s) URL" do
+          expect(item_with(sort, "https://example.org/a?b=c")).to be_valid
+        end
+
+        it "is valid without a link" do
+          item = item_with(sort, "")
+          item.explanation = "See the notes."
+          expect(item).to be_valid
+        end
+
+        it "is invalid with another scheme" do
+          item = item_with(sort, "ftp://example.org/a")
+          expect(item).to be_invalid
+          expect(item.errors[:link]).to be_present
+        end
+
+        it "is invalid with a line break" do
+          item = item_with(sort, "https://example.org/a\nb")
+          expect(item).to be_invalid
+          expect(item.errors[:link]).to be_present
+        end
+
+        it "is invalid with a control character" do
+          item = item_with(sort, "https://example.org/a\tb")
+          expect(item).to be_invalid
+          expect(item.errors[:link]).to be_present
+        end
+      end
+    end
+  end
+
   # test traits and subfactories
 
   describe "with start time" do

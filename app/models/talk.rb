@@ -30,8 +30,6 @@ class Talk < ApplicationRecord
   has_many :talk_tag_joins, dependent: :destroy
   has_many :tags, through: :talk_tag_joins
 
-  after_save :touch_lecture
-
   # the talks of a lecture form an ordered list
   acts_as_list scope: :lecture
 
@@ -182,10 +180,6 @@ class Talk < ApplicationRecord
   end
 
   private
-
-    def touch_lecture
-      lecture.touch
-    end
 
     # path for show talk action
     def talk_path

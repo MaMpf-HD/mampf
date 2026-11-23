@@ -1,9 +1,10 @@
+import { expectDialogOpened } from "./_support/dialogs";
 import { expect, Page, test } from "./_support/fixtures";
 
 async function createLecture(page: Page, course: string) {
   const dialog = page.getByRole("dialog", { name: "Create an event series" });
   await page.getByTestId("new-lecture-course-select").selectOption({ label: course });
-  await page.keyboard.press("Escape");
+  await expectDialogOpened(dialog);
   await dialog.getByRole("button", { name: "Save" }).click();
   return dialog;
 }

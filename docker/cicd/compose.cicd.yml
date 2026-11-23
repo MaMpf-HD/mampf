@@ -8,7 +8,17 @@ services:
     image: ghcr.io/mampf-hd/mampftest:image
     # Playwright needs a running server; the unit-test job overrides the
     # entrypoint and command to run RSpec directly.
-    command: "CI=true RUBY_DEBUG_ENABLE=0 DISABLE_VITE_IN_CI=true /workspaces/mampf/docker/development/init-and-run.sh"
+    # Three parallel Playwright workers on the 4 vCPUs of GitHub's runners,
+    # one is left for Postgres, Redis & co. (see run.sh)
+    environment:
+      - E2E_WORKERS=3
+      # Set here and not in `command`: the image's ENTRYPOINT runs
+      # init-and-run.sh, which ignores its arguments. CI turns on Playwright's
+      # retries and Rails' eager loading; without the Vite dev server, the app
+      # serves the assets precompiled into the image.
+      - CI=true
+      - DISABLE_VITE_IN_CI=true
+      - RUBY_DEBUG_ENABLE=0
     # REPLACE (not merge) the dev app-base volumes for CI. The dev `bundle_cache` mount
     # uses `nocopy: true` so Docker skips copy-up; on a fresh CI volume that leaves
     # /usr/local/bundle empty and hides the gems baked into mampftest:image (rspec etc.),
@@ -24,7 +34,8 @@ services:
       # see https://docs.docker.com/compose/how-tos/startup-order/#reference-information
       # and https://docs.docker.com/reference/compose-file/services/#healthcheck
       # and https://docs.docker.com/reference/dockerfile/#healthcheck
-      test: curl --fail http://localhost:3145 || exit 1
+      # One app server per Playwright worker, all of them have to be up
+      test: /workspaces/mampf/docker/development/e2e-healthcheck.sh
       interval: 5s
       retries: 10
       # Cold start runs the full init-and-run.sh (bundle + yarn + db:prepare +

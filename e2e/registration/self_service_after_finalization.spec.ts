@@ -54,6 +54,7 @@ test.describe("self-enrollment prompt after finalization", () => {
 
       const modal = page.getByTestId("self-service-modal");
       await expect(modal).toBeVisible();
+      await expect(modal.getByText(/nobody can leave the course either/)).toBeVisible();
 
       await modal.getByRole("button", { name: "Keep self-enrollment disabled" }).click();
       await expect(modal).toBeHidden();

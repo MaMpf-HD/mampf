@@ -29,6 +29,106 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
         )
       end
 
+      context "with a rule that asks for passed tests" do
+        let!(:tests) do
+          FactoryBot.create_list(:assignment, 2, :expired, lecture: lecture,
+                                                           kind: :test, passing_points: 5)
+        end
+
+        before do
+          FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                            lecture: lecture, min_tests_passed: 2)
+          lecture.update!(assignments_complete: true)
+        end
+
+        def record_with(passed: [], failed: [])
+          FactoryBot.create(:student_performance_record, lecture: lecture, user: student,
+                                                         tests_passed_ids: passed,
+                                                         tests_failed_ids: failed)
+        end
+
+        it "names the passed tests the rule asks for" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.rules.show.tests_passed", count: 2, pass_fail: 2)
+          )
+        end
+
+        it "has a column for the passed tests, counted for each student" do
+          record_with(passed: [tests.first.id])
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          page = Nokogiri::HTML(response.body)
+          heading = page.at_css("th.tests-column").text.squish
+          expect(heading).to include(
+            I18n.t("student_performance.certifications.columns.tests_passed")
+          )
+          expect(heading).to include(
+            I18n.t("student_performance.certifications.columns.tests_needed", count: 2)
+          )
+          expect(page.css("tbody td").map { |td| td.text.squish }).to include("1 / 2")
+        end
+
+        it "warns once the rule asks for more passed tests than carry a threshold" do
+          warning = I18n.t("student_performance.rules.show.more_tests_than", count: 1)
+
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).not_to include(warning)
+
+          tests.last.update!(passing_points: nil)
+          get lecture_student_performance_certifications_path(lecture)
+          expect(response.body).to include(warning)
+        end
+
+        it "defers a student whose open tests could still make up the number" do
+          record_with(passed: [tests.first.id])
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(
+            I18n.t("student_performance.evaluator.deferral.tests_open", passed: 1, open: 1)
+          )
+        end
+
+        it "says that too few tests are passed once that is settled" do
+          record_with(passed: [tests.first.id], failed: [tests.last.id])
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body)
+            .to include(I18n.t("student_performance.evaluator.missed.tests"))
+        end
+      end
+
+      context "with a points threshold and a test" do
+        let(:without_tests) do
+          "(#{I18n.t("student_performance.rules.show.without_tests")})"
+        end
+
+        before do
+          FactoryBot.create(:student_performance_rule, :active, :with_percentage,
+                            lecture: lecture, min_percentage: 50)
+          FactoryBot.create(:assignment, lecture: lecture, kind: :test)
+        end
+
+        it "says nothing about the tests while they are in the points total" do
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).not_to include(without_tests)
+          expect(Nokogiri::HTML(response.body).at_css("th.tests-column")).to be_nil
+        end
+
+        it "says that the threshold leaves the tests out once the lecture keeps them apart" do
+          lecture.update!(tests_in_points_total: false)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          expect(response.body).to include(without_tests)
+        end
+      end
+
       context "with a rule that asks for nothing, while the list is open" do
         before do
           FactoryBot.create(:student_performance_rule, :active, :without_criteria,
@@ -187,6 +287,27 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
           filters = I18n.t("student_performance.certifications.filters")
           expect(pills).to eq({ filters[:all] => 3, filters[:passed] => 1, filters[:failed] => 1,
                                 filters[:uncertified] => 1, filters[:flagged] => 0 })
+        end
+
+        # Someone who has left keeps their admission for a return, but is no
+        # student of the lecture meanwhile.
+        it "leaves out the admission of someone who has left" do
+          [user_a, user_b, user_c].each do |user|
+            FactoryBot.create(:student_performance_record, lecture: lecture, user: user)
+          end
+          former = FactoryBot.create(:confirmed_user)
+          FactoryBot.create(:lecture_membership, lecture: lecture, user: former)
+                    .exclude!(by: former)
+          FactoryBot.create(:student_performance_certification, :passed,
+                            lecture: lecture, user: former)
+
+          get lecture_student_performance_certifications_path(lecture)
+
+          pills = Nokogiri::HTML(response.body).css(".count-pills a").to_h do |pill|
+            [pill.text.squish.sub(/ \d+\z/, ""), pill.at_css(".badge").text.to_i]
+          end
+          filters = I18n.t("student_performance.certifications.filters")
+          expect(pills).to include(filters[:passed] => 1, filters[:uncertified] => 1)
         end
 
         it "shows certification badges for each student" do
@@ -794,6 +915,10 @@ RSpec.describe("StudentPerformance::Certifications", type: :request) do
             return I18n.t("student_performance.evaluator.deferral.points_not_due",
                           what: I18n.t("student_performance.evaluator.deferral.sheet_count",
                                        count: count))
+          end
+          if reason == :tests_open
+            return I18n.t("student_performance.evaluator.deferral.tests_open",
+                          passed: 0, open: count)
           end
 
           I18n.t("student_performance.evaluator.deferral.#{reason}", count: count)

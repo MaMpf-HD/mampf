@@ -95,7 +95,7 @@
             <% statistics.task_rows.each do |row| %>
               <tr>
                 <th scope="row" class="fw-normal">
-                  <%= task_label(row.task) %>
+                  <%= row.task.label %>
                 </th>
 
                 <td class="text-end">

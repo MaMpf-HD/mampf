@@ -6,11 +6,16 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
 
+# The jobs only check out and lint the code.
+permissions:
+  contents: read
+
 jobs:
 
   rubocop:
     name: RuboCop (Ruby)
-    runs-on: ubuntu-latest
+    # Not ubuntu-latest: the or-tools gem has no binary for Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
@@ -27,7 +32,7 @@ jobs:
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.4.10
+          ruby-version: 3.4.13
           bundler-cache: true
 
       - name: Run RuboCop

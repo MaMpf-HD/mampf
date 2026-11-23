@@ -62,10 +62,6 @@ class StatisticsTabComponent < ViewComponent::Base
     mean / max.to_f
   end
 
-  def task_label(task)
-    "#{t("assessment.grading_tutorial.task")} #{task.position}"
-  end
-
   def grade_count_bar(count, total)
     figure_with_bar(count.to_s, count, [total, 1].max)
   end

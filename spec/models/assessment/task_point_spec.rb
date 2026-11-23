@@ -73,6 +73,13 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect(task_point).to be_valid
     end
 
+    it "refuses points from the limit on" do
+      task_point = FactoryBot.build(:assessment_task_point,
+                                    points: Assessment::TaskPoint::POINTS_LIMIT)
+      expect(task_point).not_to be_valid
+      expect(task_point.errors[:points]).to be_present
+    end
+
     it "allows nil points" do
       task_point = FactoryBot.build(:assessment_task_point, points: nil)
       expect(task_point).to be_valid
@@ -104,6 +111,13 @@ RSpec.describe(Assessment::TaskPoint, type: :model) do
       expect { other_point.destroy! }
         .to change { participation.reload.points_total }
         .to(task_point.points)
+    end
+
+    it "leaves no total once the last task point is gone" do
+      task_point.destroy!
+
+      expect(participation.reload.points_total).to be_nil
+      expect(Assessment::Participation.with_grading_data).not_to include(participation)
     end
 
     it "refreshes points_total even when participation validations are closed" do

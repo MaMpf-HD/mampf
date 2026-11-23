@@ -178,6 +178,35 @@ RSpec.describe("StudentMessages", type: :request) do
       end
     end
 
+    # The tutors should know what their students were told.
+    context "as the teacher, with a copy to the tutors" do
+      let(:other_tutor) { create(:confirmed_user) }
+
+      before do
+        other_tutorial.tutors << other_tutor
+        sign_in teacher
+      end
+
+      it "copies the message to the tutors of the students it reaches" do
+        send_message({ copy_tutors: "1" })
+
+        expect(StudentMessage.last.tutor_emails).to contain_exactly(tutor.email,
+                                                                    other_tutor.email)
+      end
+
+      it "copies a message to one group to that group's tutor only" do
+        send_message({ copy_tutors: "1" }, audiences: ["tutorial:#{tutorial.id}"])
+
+        expect(StudentMessage.last.tutor_emails).to eq([tutor.email])
+      end
+
+      it "copies it to nobody without the tick" do
+        send_message
+
+        expect(StudentMessage.last.tutor_emails).to be_empty
+      end
+    end
+
     # A tutor writes to their own group, as themselves, and to nobody else.
     context "as a tutor" do
       before { sign_in tutor }
@@ -190,6 +219,13 @@ RSpec.describe("StudentMessages", type: :request) do
         message = StudentMessage.last
         expect(message).to be_tutor
         expect(message.recipient_emails).to eq([member.email])
+      end
+
+      # A tutor's mail to their group is theirs alone.
+      it "copies nobody, whatever the form says" do
+        send_message({ copy_tutors: "1" }, audiences: ["tutorial:#{tutorial.id}"])
+
+        expect(StudentMessage.last.tutor_emails).to be_empty
       end
 
       it "cannot write to another group or to everybody" do
@@ -309,6 +345,15 @@ RSpec.describe("StudentMessages", type: :request) do
       expect(response.body).not_to include(outsider.email)
     end
 
+    it "names the tutors who would get a copy" do
+      tutor.update!(name_in_tutorials: "Hannes Neumann")
+      sign_in teacher
+      ask(["tutorial:#{tutorial.id}"])
+
+      expect(response.body).to include("target=\"student-message-tutor-copy\"")
+      expect(response.body).to include("(1: Hannes Neumann)")
+    end
+
     it "says nobody for an empty selection" do
       sign_in teacher
       ask([])
@@ -347,6 +392,26 @@ RSpec.describe("StudentMessages", type: :request) do
       expect(response.body).not_to include("Tutor&#39;s own")
     end
 
+    it "offers the staff the copy to the tutors, ticked" do
+      sign_in teacher
+
+      get edit_lecture_path(lecture, tab: "communication")
+
+      box = Nokogiri::HTML(response.body).at_css("#student-message-copy-tutors")
+      expect(box["checked"]).to be_present
+    end
+
+    it "names the staff who always get a copy, the sender aside" do
+      teacher.update!(name_in_tutorials: "Ada Lovelace")
+      lecture.editors << create(:confirmed_user, name_in_tutorials: "Grace Hopper")
+      sign_in teacher
+
+      get edit_lecture_path(lecture, tab: "communication")
+
+      line = Nokogiri::HTML(response.body).at_css("#student-message-staff-copy").text.squish
+      expect(line).to eq(I18n.t("student_message.staff_copy", names: "Grace Hopper"))
+    end
+
     # The hint after a group joined a running process links here.
     it "opens the staff's form on a group and a subject handed in" do
       sign_in teacher
@@ -370,6 +435,7 @@ RSpec.describe("StudentMessages", type: :request) do
 
       expect(response.body).to include(I18n.t("student_message.tutorial.button"))
       expect(response.body).to include("value=\"tutorial:#{tutorial.id}\"")
+      expect(response.body).not_to include("student-message-copy-tutors")
     end
 
     # A first word to the group comes before the first sheet.

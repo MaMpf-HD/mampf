@@ -20,6 +20,8 @@ module StudentPerformance
       @of_kind[kind] ||= self.class.new(lecture: @lecture, kind: kind, user_id: @user_id)
     end
 
+    # Covers tests kept out of the points total as well, since the performance
+    # table lists them too.
     def due?(assessment_id)
       due_assessment_ids.include?(assessment_id)
     end
@@ -121,22 +123,34 @@ module StudentPerformance
       end
 
       def assignment_assessments
-        scope = Assessment::Assessment
-                .where(lecture_id: @lecture.id, assessable_type: "Assignment")
-                .joins("JOIN assignments ON assignments.id = " \
-                       "assessment_assessments.assessable_id")
-                .includes(:tasks).preload(:assessable)
-        return scope unless @kind
+        Assessment::Assessment
+          .where(lecture_id: @lecture.id, assessable_type: "Assignment")
+          .joins("JOIN assignments ON assignments.id = " \
+                 "assessment_assessments.assessable_id")
+          .includes(:tasks).preload(:assessable)
+      end
 
-        scope.where(assignments: { kind: Assignment.kinds.fetch(@kind.to_s) })
+      def counted_assessments
+        return assignment_assessments unless counted_kind
+
+        assignment_assessments
+          .where(assignments: { kind: Assignment.kinds.fetch(counted_kind.to_s) })
+      end
+
+      # `@kind` wins over `tests_in_points_total?`: the performance table asks
+      # for the tests alone, also where they are kept out of the points total.
+      def counted_kind
+        return @kind if @kind
+
+        :homework unless @lecture.tests_in_points_total?
       end
 
       def due_assessments
-        @due_assessments ||= assignment_assessments.where(due_condition).to_a
+        @due_assessments ||= counted_assessments.where(due_condition).to_a
       end
 
       def coming_assessments
-        @coming_assessments ||= assignment_assessments.where.not(due_condition).to_a
+        @coming_assessments ||= counted_assessments.where.not(due_condition).to_a
       end
 
       # Tests have no uploads, so their cutoff excludes the submission grace period.
@@ -152,7 +166,11 @@ module StudentPerformance
       end
 
       def due_assessment_ids
-        @due_assessment_ids ||= due_assessments.to_set(&:id)
+        @due_assessment_ids ||= if counted_kind
+          assignment_assessments.where(due_condition).ids.to_set
+        else
+          due_assessments.to_set(&:id)
+        end
       end
 
       # Include submission_grace_period because a sheet still accepts
@@ -219,7 +237,7 @@ module StudentPerformance
       end
 
       # Marked before its deadline was moved forward, or recorded absent from a
-      # test in its week: those points are settled - in the total or lost - so
+      # running test: those points are settled - in the total or lost - so
       # they are in the base, and they are not still to be had, which is what
       # `not_yet_due_for` would otherwise say about them.
       def settled_coming

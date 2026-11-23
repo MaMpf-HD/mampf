@@ -12,7 +12,10 @@
 
   <%= render "main/start/lecture_cards" %>
 
-  <a href="#lecture-search" id="go-to-lecture-search">
+  <%# Jumps without Turbo: a Turbo visit renders the page anew and scrolls
+      before the stylesheets in the body have loaded, so the page stays at
+      the top. %>
+  <a href="#lecture-search" id="go-to-lecture-search" data-turbo="false">
     <span class="go-to-lecture-search-label">
       <%= t("lecture.search.go_to_search") %>
     </span>

@@ -255,6 +255,11 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   describe "#late_submission_info" do
+    let(:late_text) do
+      I18n.t("assessment.task_points.late_submission",
+             time: I18n.l(submission.created_at, format: :file_time))
+    end
+
     context "when submission decision is already made (accepted is not nil)" do
       before do
         allow(vc_test_controller).to receive(:current_user).and_return(tutor)
@@ -262,9 +267,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         allow(submission).to receive(:accepted).and_return(true)
       end
 
-      it "returns just the late text" do
-        expect(component_tutorial.late_submission_info(submission, tutorial))
-          .to eq(component_tutorial.send(:t, "submission.late"))
+      it "says when it was uploaded, and no more" do
+        expect(component_tutorial.late_submission_info(submission, tutorial)).to eq(late_text)
       end
     end
 
@@ -272,12 +276,22 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       before do
         allow(submission).to receive(:accepted).and_return(nil)
         allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+        Timecop.travel(assignment.friendly_deadline + 1.minute)
         render_inline(component_tutorial)
       end
 
-      it "includes the late-submission-decision hint" do
+      after { Timecop.return }
+
+      it "says when it was uploaded, and that the tutor decides" do
         result = component_tutorial.late_submission_info(submission, tutorial)
-        expect(result).to include(component_tutorial.send(:t, "tutorial.late_submission_decision"))
+        expect(result).to eq("#{late_text} #{I18n.t("tutorial.late_submission_decision").strip}")
+      end
+
+      # Until then the team may still upload again, which undoes a decision.
+      it "leaves the hint out during the grace period" do
+        Timecop.travel(assignment.friendly_deadline - 1.minute)
+
+        expect(component_tutorial.late_submission_info(submission, tutorial)).to eq(late_text)
       end
     end
 
@@ -288,9 +302,8 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
         render_inline(component_tutorial)
       end
 
-      it "returns just the late text" do
-        expect(component_tutorial.late_submission_info(submission, tutorial))
-          .to eq(component_tutorial.send(:t, "submission.late"))
+      it "says when it was uploaded, and no more" do
+        expect(component_tutorial.late_submission_info(submission, tutorial)).to eq(late_text)
       end
     end
   end
@@ -312,12 +325,12 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                                                assignment: assignment,
                                                grading_scope: tutorial))
 
-      marker = html.css(".bi-box-arrow-in-right")
+      marker = html.css(".bi-info-circle")
       expect(marker.size).to eq(1)
       expect(marker.first["aria-label"])
         .to eq(I18n.t("assessment.task_points.joined_late",
                       time: I18n.l(Time.current, format: :file_time)))
-      expect(marker.first.parent.text).to include(student2.tutorial_name)
+      expect(marker.first.ancestors("div").first.text.squish).to include(student2.tutorial_name)
       expect(html.css(".bi-exclamation-triangle-fill")).to be_empty
     end
 
@@ -331,8 +344,140 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                                                assignment: assignment,
                                                grading_scope: tutorial))
 
-      expect(html.css(".bi-box-arrow-in-right")).to be_empty
+      expect(html.css(".bi-info-circle")).to be_empty
       expect(html.css(".bi-exclamation-triangle-fill").size).to eq(1)
+    end
+  end
+
+  describe "somebody a tutor put on the team" do
+    let(:added) { create(:confirmed_user) }
+    let!(:join) { submission.user_submission_joins.create!(user: added, added_by: tutor) }
+
+    before { Timecop.travel(3.hours.from_now) }
+    after { Timecop.return }
+    let(:added_info) do
+      I18n.t("assessment.task_points.added_by_tutor",
+             tutor: tutor.tutorial_name, time: I18n.l(join.created_at, format: :file_time))
+    end
+
+    def render_as(user, scope: tutorial)
+      allow(vc_test_controller).to receive(:current_user).and_return(user)
+      render_inline(described_class.new(submission: submission.reload,
+                                        assignment: assignment, grading_scope: scope))
+    end
+
+    def marks(html)
+      html.css("[aria-label]").pluck("aria-label").grep(added_info)
+    end
+
+    def remove_items(html)
+      toggle = html.css("button[aria-label]").find do |button|
+        button["aria-label"] == I18n.t("assessment.task_points.remove_member")
+      end
+      return [] unless toggle
+
+      toggle.parent.css("button.dropdown-item").map { |item| item.text.squish }
+    end
+
+    it "is named with the tutor, and offered to take off to the tutor who marks the team" do
+      html = render_as(tutor)
+
+      expect(marks(html)).to eq([added_info])
+      expect(remove_items(html)).to eq([added.tutorial_name])
+    end
+
+    it "is not offered to take off while points cannot be entered" do
+      assignment.update!(deadline: 1.day.from_now)
+
+      expect(remove_items(render_as(tutor))).to be_empty
+    end
+
+    # A double name can still wrap at its hyphen.
+    it "keeps its mark with the last part of the name" do
+      { "Mia Zimmermann" => "Zimmermann",
+        "Anna Müller-Lüdenscheidt" => "Lüdenscheidt" }.each do |name, last_part|
+        added.update!(name_in_tutorials: name)
+        mark = render_as(tutor).css("[aria-label]").find do |node|
+          node["aria-label"] == added_info
+        end
+
+        expect(mark.parent["class"]).to include("text-nowrap")
+        expect(mark.parent.text.squish).to eq(last_part)
+        expect(mark.ancestors("div").first.text.squish).to eq(name)
+      end
+    end
+
+    it "shares one info mark with a change of tutorial" do
+      component = described_class.new(submission: submission.reload, assignment: assignment,
+                                      grading_scope: tutorial)
+      allow(component).to receive(:movement_info_for_user).and_call_original
+      allow(component).to receive(:movement_info_for_user).with(added).and_return("Moved.")
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      html = render_inline(component)
+
+      expect(html.css(".bi-info-circle").pluck("aria-label")).to eq(["Moved. #{added_info}"])
+    end
+
+    it "is offered to the lecturer on the lecture's table" do
+      expect(remove_items(render_as(teacher, scope: lecture))).to eq([added.tutorial_name])
+    end
+
+    it "is not offered as the last one on the team, and still named with the tutor" do
+      submission.user_submission_joins.find_by(user: student).destroy!
+      html = render_as(tutor)
+
+      expect(remove_items(html)).to be_empty
+      expect(marks(html)).to eq([added_info])
+    end
+
+    it "is not offered to a tutor who reads the team from another tutorial" do
+      html = render_as(tutor, scope: create(:tutorial, lecture: lecture))
+
+      expect(remove_items(html)).to be_empty
+      expect(marks(html)).to eq([added_info])
+    end
+  end
+
+  # The team may still upload again until then, which would undo both.
+  describe "the tutor's actions during the grace period" do
+    let(:late) do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            users: [student2],
+                                            last_modification_by_users_at:
+                                              assignment.deadline + 10.minutes)
+    end
+
+    def labels(submission)
+      render_inline(described_class.new(submission: submission, assignment: assignment,
+                                        grading_scope: tutorial))
+        .css("[aria-label]").pluck("aria-label")
+    end
+
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      submission
+      late
+      Timecop.travel(assignment.deadline + 20.minutes)
+    end
+
+    after { Timecop.return }
+
+    it "holds back the correction until the grace period is over" do
+      closed = I18n.t("assessment.grading_tutorial.upload_correction_closed",
+                      time: I18n.l(assignment.friendly_deadline, format: :short))
+
+      expect(labels(submission)).to include(closed)
+      Timecop.travel(assignment.friendly_deadline + 1.minute)
+      expect(labels(submission))
+        .to include(I18n.t("assessment.grading_tutorial.upload_correction"))
+    end
+
+    it "holds back accepting or rejecting a late hand-in until then" do
+      accept = I18n.t("assessment.grading_tutorial.accept_late")
+
+      expect(labels(late)).not_to include(accept)
+      Timecop.travel(assignment.friendly_deadline + 1.minute)
+      expect(labels(late)).to include(accept)
     end
   end
 
@@ -417,6 +562,121 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
     end
   end
 
+  describe "the menu for putting somebody on the team" do
+    before do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      Timecop.travel(3.hours.from_now)
+    end
+
+    after { Timecop.return }
+
+    def render_with(count)
+      render_inline(described_class.new(submission: submission, assignment: assignment,
+                                        grading_scope: tutorial,
+                                        addable_members: create_list(:confirmed_user, count)))
+    end
+
+    it "offers no search over five names" do
+      html = render_with(5)
+
+      expect(html.css("button.dropdown-item").size).to eq(5)
+      expect(html.css("input[type=search]")).to be_empty
+    end
+
+    it "is not offered while points cannot be entered" do
+      assignment.update!(deadline: 1.day.from_now)
+
+      expect(render_with(1).css("[data-controller=add-member-menu]")).to be_empty
+    end
+
+    it "offers a search over six names" do
+      search = render_with(6).css("input[type=search]")
+
+      expect(search.size).to eq(1)
+      expect(search.first["aria-label"])
+        .to eq(I18n.t("assessment.task_points.add_member_search"))
+    end
+
+    # A row drawn on its own, after a save, reads the names itself.
+    it "offers nobody marked on a row of their own when it reads the names itself" do
+      marked, free = create_list(:confirmed_user, 2)
+      [marked, free].each { |user| create(:tutorial_membership, tutorial: tutorial, user: user) }
+      Timecop.travel(3.hours.from_now) do
+        row = create(:assessment_participation, :submitted, assessment: assessment,
+                                                            user: marked, tutorial: tutorial)
+        create(:assessment_task_point, task: create(:assessment_task, assessment: assessment),
+                                       assessment_participation: row, points: 2)
+        html = render_inline(described_class.new(submission: submission, assignment: assignment,
+                                                 grading_scope: tutorial))
+
+        expect(html.css("[data-controller=add-member-menu] button.dropdown-item")
+                   .map { |item| item.text.squish }).to eq([free.tutorial_name])
+      end
+    end
+
+    it "offers nobody who moved to another group when it reads the names itself" do
+      stayed, moved = create_list(:confirmed_user, 2)
+      create(:tutorial_membership, tutorial: tutorial, user: stayed)
+      create(:tutorial_membership, tutorial: create(:tutorial, lecture: lecture), user: moved)
+      create(:assessment_participation, assessment: assessment, user: moved, tutorial: tutorial)
+      html = render_inline(described_class.new(submission: submission, assignment: assignment,
+                                               grading_scope: tutorial))
+
+      expect(html.css("[data-controller=add-member-menu] button.dropdown-item")
+                 .map { |item| item.text.squish }).to eq([stayed.tutorial_name])
+    end
+
+    it "offers the menu on a rejected hand-in that a moved deadline made in time" do
+      submission.update!(accepted: false,
+                         last_modification_by_users_at: assignment.deadline - 1.hour)
+
+      expect(render_with(1).css("[data-controller=add-member-menu]").size).to eq(1)
+    end
+
+    # The server would refuse anybody more; the menu says why instead.
+    it "says the team is full instead of offering names" do
+      submission
+      assignment.lecture.update!(submission_max_team_size: 1)
+      html = render_with(2)
+
+      expect(html.at_css("[data-controller=add-member-menu]").text)
+        .to include(I18n.t("assessment.task_points.team_full", max: 1))
+      expect(html.css("[data-controller=add-member-menu] button.dropdown-item")).to be_empty
+      expect(html.css("input[type=search]")).to be_empty
+    end
+
+    it "offers no menu without names where teams stay within one tutorial" do
+      expect(render_with(0).css("[data-controller=add-member-menu]")).to be_empty
+    end
+
+    # The other tutorials are reached only by typing a name.
+    context "where teams may span tutorials" do
+      before { lecture.update!(cross_tutorial_teams: true) }
+
+      it "offers the search even without names of the group's own" do
+        html = render_with(0)
+        menu = html.at_css("[data-controller=add-member-menu]")
+
+        expect(menu["data-add-member-menu-url-value"])
+          .to eq(Rails.application.routes.url_helpers
+                      .add_member_candidates_submission_path(submission,
+                                                             grading_scope_type: "tutorial"))
+        expect(html.css("input[type=search]").size).to eq(1)
+        expect(html.text).to include(I18n.t("assessment.task_points.add_member_search_elsewhere",
+                                            min: Submission::MEMBER_SEARCH_MIN_LENGTH))
+        expect(html.css("#add-member-elsewhere-#{submission.id}").size).to eq(1)
+      end
+
+      it "offers no search on a rejected hand-in" do
+        html = render_inline(described_class.new(submission: late_rejected_submission,
+                                                 assignment: assignment, grading_scope: tutorial,
+                                                 addable_members: []))
+
+        expect(html.css("[data-controller=add-member-menu]")).to be_empty
+      end
+    end
+  end
+
   describe "rendering" do
     before do
       submission
@@ -431,7 +691,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
   end
 
   describe "a team across tutorials" do
-    let(:other_tutor) { create(:confirmed_user) }
+    let(:other_tutor) { create(:confirmed_user, first_name: "Grace", last_name: "Hopper") }
     let(:other_tutorial) do
       create(:tutorial, :with_tutor_by_id, tutor_id: other_tutor.id, lecture: lecture,
                                            title: "Tuesday")
@@ -445,7 +705,10 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       lecture.update!(cross_tutorial_teams: true)
       create(:tutorial_membership, tutorial: tutorial, user: student)
       create(:tutorial_membership, tutorial: other_tutorial, user: student2)
+      Timecop.travel(assignment.friendly_deadline + 1.minute)
     end
+
+    after { Timecop.return }
 
     def render_for(user, scope)
       allow(vc_test_controller).to receive(:current_user).and_return(user)
@@ -464,7 +727,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
 
       expect(labelled(html, hand_over)).to be_present
       expect(html.css("button.dropdown-item").map { |item| item.text.strip })
-        .to include(other_tutorial.title_with_tutors)
+        .to include("Tuesday (Grace Hopper)")
     end
 
     it "shows the other tutor the team read-only, saying who marks it" do
@@ -472,7 +735,7 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
       html = render_for(other_tutor, other_tutorial)
 
       expect(html.text).to include(I18n.t("assessment.task_points.marked_elsewhere",
-                                          tutorial: tutorial.title_with_tutors))
+                                          tutorial: "#{tutorial.title} (#{tutor.tutorial_name})"))
       inputs = html.css("input[type=number]")
       expect(inputs).to be_present
       expect(inputs.pluck("disabled")).to all(be_present)
@@ -500,13 +763,35 @@ RSpec.describe(SubmissionRowComponent, type: :component) do
                            ))
 
       expect(html.css("button.dropdown-item").map { |item| item.text.strip })
-        .to eq([other_tutorial.title_with_tutors])
+        .to eq(["Tuesday (Grace Hopper)"])
+    end
+
+    it "offers no hand-over during the grace period" do
+      Timecop.travel(assignment.friendly_deadline - 1.minute)
+
+      expect(labelled(render_for(tutor, tutorial), hand_over)).to be_empty
     end
 
     it "offers no hand-over once the team has a correction" do
       team.update!(correction: File.open("#{SPEC_FILES}/manuscript.pdf", "rb"))
 
       expect(labelled(render_for(tutor, tutorial), hand_over)).to be_empty
+    end
+
+    # Left behind after the deadline by a partner who left.
+    it "offers a team of one in another member's tutorial the hand-over" do
+      allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+      alone = create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                                    users: [create(:confirmed_user)])
+
+      html = render_inline(described_class.new(
+                             submission: alone, assignment: assignment, grading_scope: tutorial,
+                             participations: [], addable_members: [],
+                             member_tutorials: { alone.users.first.id => other_tutorial }
+                           ))
+
+      expect(html.css("button.dropdown-item").map { |item| item.text.strip })
+        .to eq([other_tutorial.title_with_tutors])
     end
   end
 end

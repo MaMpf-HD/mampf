@@ -109,9 +109,10 @@ Apply confirmed registrations to domain model rosters
 ```admonish info "Lecture Roster as Superset"
 The lecture roster is the **union of all sub-group rosters** that propagate:
 - All Tutorial members are automatically added
-- All Talk speakers are automatically added  
+- All Talk speakers are automatically added
+- Everyone on an exam list is automatically added
 - Cohort members are added **only if** `propagate_to_lecture: true`
-- **Sticky Membership:** Students remain in lecture roster even after leaving sub-groups
+- **Enrollment follows places:** Students stay on the lecture roster while they hold a place; losing the last one ends the enrollment
 
 See [Rosters](03-rosters.md#the-core-concept-lecture-roster-as-superset) for details.
 ```

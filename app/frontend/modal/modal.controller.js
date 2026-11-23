@@ -32,17 +32,25 @@ export default class extends Controller {
       "turbo:submit-end", this.boundHideModalOnSuccess,
     );
 
-    if (this.modal) {
-      try {
-        const backdrop = document.querySelector(".modal-backdrop");
-        if (backdrop) {
-          backdrop.remove();
-        }
-        this.modal.dispose();
-      }
-      catch {
-        // Modal already disposed or element removed
-      }
+    if (!this.modal) return;
+
+    const modal = this.modal;
+    this.modal = null;
+
+    // A stream can replace the section of a modal that is still open or
+    // fading out. Bootstrap restores the page only at the end of hiding, so
+    // the instance is disposed once that is done, not before.
+    if (this.element.style.display === "block") {
+      this.element.addEventListener("hidden.bs.modal", () => modal.dispose(), { once: true });
+      modal.hide();
+      return;
+    }
+
+    try {
+      modal.dispose();
+    }
+    catch {
+      // Modal already disposed or element removed
     }
   }
 

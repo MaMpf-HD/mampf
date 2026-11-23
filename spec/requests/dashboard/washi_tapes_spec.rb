@@ -18,14 +18,6 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
         user.bookmark_lecture!(lecture)
       end
 
-      it "saves the chosen color" do
-        patch dashboard_lecture_washi_tape_path(lecture),
-              params: { washi_tape: { tape_color: "mint" } }
-
-        expect(response).to have_http_status(:no_content)
-        expect(style.tape_color).to eq("mint")
-      end
-
       it "replaces a color that was picked before" do
         Dashboard::CardStyle.create!(user: user, lecture: lecture,
                                      tape_color: "sky")
@@ -57,19 +49,6 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
       expect(style.tape_color).to eq("peach")
     end
 
-    it "styles a lecture shown only through a pending registration application" do
-      campaign = create(:registration_campaign, :open, campaignable: lecture)
-      create(:registration_user_registration, :pending,
-             user: user, registration_campaign: campaign,
-             registration_item: campaign.registration_items.first)
-
-      patch dashboard_lecture_washi_tape_path(lecture),
-            params: { washi_tape: { tape_color: "peach" } }
-
-      expect(response).to have_http_status(:no_content)
-      expect(style.tape_color).to eq("peach")
-    end
-
     it "styles a seminar the user gives a talk in" do
       seminar = create(:lecture, sort: "seminar")
       talk = create(:talk, lecture: seminar)
@@ -81,6 +60,16 @@ RSpec.describe("Dashboard::WashiTapes", type: :request) do
       expect(response).to have_http_status(:no_content)
       expect(Dashboard::CardStyle.find_by(user: user, lecture: seminar)
                                  .tape_color).to eq("lavender")
+    end
+
+    it "styles a lecture the user edits" do
+      lecture.editors << user
+
+      patch dashboard_lecture_washi_tape_path(lecture),
+            params: { washi_tape: { tape_color: "mint" } }
+
+      expect(response).to have_http_status(:no_content)
+      expect(style.tape_color).to eq("mint")
     end
 
     it "refuses a lecture that is not on this user's dashboard" do

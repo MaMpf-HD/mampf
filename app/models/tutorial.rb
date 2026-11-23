@@ -9,7 +9,7 @@ class Tutorial < ApplicationRecord
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
-  has_many :tutors, through: :tutor_tutorial_joins
+  has_many :tutors, -> { by_last_name }, through: :tutor_tutorial_joins
 
   # Roster associations
   has_many :tutorial_memberships, dependent: :destroy
@@ -18,6 +18,13 @@ class Tutorial < ApplicationRecord
   has_many :submissions, dependent: :destroy
 
   has_many :claims, as: :claimable, dependent: :destroy
+
+  # Grading rows outlive the group: they move to the group the person is in
+  # now, so that group's tutor holds them; without one they keep no group.
+  # Declared before the association, so it runs before the nullify.
+  before_destroy :rehome_assessment_participations
+  has_many :assessment_participations, class_name: "Assessment::Participation",
+                                       dependent: :nullify
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validate :lecture_must_not_be_seminar
@@ -29,16 +36,14 @@ class Tutorial < ApplicationRecord
       .or(where.not(self_materialization_mode: "disabled"))
   }
 
+  # Tells the tutorials apart the way staff do, by their tutors; tba marks
+  # one without a tutor yet.
   def title_with_tutors
-    return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
-
-    "#{title}, #{tutor_names}"
+    "#{title} (#{tutor_names || I18n.t("basics.tba")})"
   end
 
   def registration_title
-    return title unless tutors.any?
-
-    "#{title} (#{tutor_names})"
+    title_with_tutors
   end
 
   def tutor_names
@@ -109,6 +114,17 @@ class Tutorial < ApplicationRecord
   end
 
   private
+
+    def rehome_assessment_participations
+      current_group = TutorialMembership
+                      .where(lecture_id: lecture_id)
+                      .where("tutorial_memberships.user_id = " \
+                             "assessment_participations.user_id")
+                      .select(:tutorial_id)
+      assessment_participations.update_all( # rubocop:disable Rails/SkipsModelValidations
+        "tutorial_id = (#{current_group.to_sql})"
+      )
+    end
 
     def lecture_id_immutable
       errors.add(:lecture_id, :immutable) if lecture_id_changed?

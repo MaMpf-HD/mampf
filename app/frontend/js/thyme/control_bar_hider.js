@@ -64,10 +64,12 @@ export class ControlBarHider {
   showControlBar() {
     $("#" + this.controlBarId).css("visibility", "visible");
     $(thymeAttributes.video).css("cursor", "");
+    $("#hypervideo-container").addClass("control-bar-visible");
   }
 
   hideControlBar() {
     $("#" + this.controlBarId).css("visibility", "hidden");
     $(thymeAttributes.video).css("cursor", "none");
+    $("#hypervideo-container").removeClass("control-bar-visible");
   }
 }

@@ -108,4 +108,9 @@ bundle exec rails db:prepare
 echo "🛠️  Loading test database schema"
 RAILS_ENV="test" bundle exec rails db:schema:load
 
+if [ "$RAILS_ENV" = "test" ]; then
+  ./docker/development/e2e-workers.sh
+  ./docker/development/e2e-databases.sh
+fi
+
 echo "✅  Finished initialization of MaMpf in environment: $RAILS_ENV"

@@ -52,7 +52,8 @@ module RedemptionsHelper
     end
 
     def tutor_notification_details(redemption)
-      user_info = I18n.t("notifications.became_tutor", user: redemption.user.info)
+      user_info = I18n.t("notifications.became_tutor",
+                         user: escaped_user_info(redemption))
       tutorials = redemption.claimed_tutorials
 
       tutorial_details = if tutorials.present?
@@ -66,10 +67,18 @@ module RedemptionsHelper
     end
 
     def editor_notification_details(redemption)
-      I18n.t("notifications.became_editor", user: redemption.user.info)
+      I18n.t("notifications.became_editor",
+             user: escaped_user_info(redemption))
     end
 
     def teacher_notification_details(redemption)
-      I18n.t("notifications.became_teacher", user: redemption.user.info)
+      I18n.t("notifications.became_teacher",
+             user: escaped_user_info(redemption))
+    end
+
+    # The notification shows these details as HTML, so the name and email of
+    # the user enter them as plain text.
+    def escaped_user_info(redemption)
+      h(redemption.user.info)
     end
 end

@@ -141,6 +141,11 @@ module Rosters
       nil
     end
 
+    def enrolls_in_lecture?
+      is_a?(Tutorial) || is_a?(Talk) || is_a?(Exam) ||
+        (is_a?(Cohort) && propagate_to_lecture? && lecture_id.present?)
+    end
+
     def config_allow_self_add?
       SELF_ADD_MODES.include?(self_materialization_mode.to_sym)
     end
@@ -225,6 +230,13 @@ module Rosters
                         .exists?
     end
 
+    # Unlike in_active_campaign?, a draft does not count.
+    def in_running_campaign?
+      return false unless respond_to?(:registration_items)
+
+      registration_items.running.exists?
+    end
+
     # Checks if the item is associated with a completed campaign.
     def in_completed_campaign?
       return false unless respond_to?(:registration_items)
@@ -272,8 +284,13 @@ module Rosters
     # Updates the roster based on the target list of users and the source campaign.
     # - Synchronizes the local roster (bulk adds/removes users for this campaign).
     # - Propagates new members to the parent lecture roster (if applicable).
+    # - Locks the lecture first when this group enrolls in it (finalization has
+    #   already locked the campaign). Removals and
+    #   Rosters::EnrollmentReconciliation decide under the same lock whether
+    #   someone keeps a group that enrolls them.
     def materialize_allocation!(user_ids:, campaign:)
       transaction do
+        lecture&.lock! if enrolls_in_lecture?
         current_ids = roster_entries.pluck(roster_user_id_column)
         target_ids = user_ids.uniq
 
@@ -286,17 +303,9 @@ module Rosters
     end
 
     def propagate_to_lecture!(user_ids)
-      return if user_ids.empty?
+      return if user_ids.empty? || !enrolls_in_lecture?
 
-      return if is_a?(Cohort) && !propagate_to_lecture
-
-      return unless respond_to?(:lecture)
-
-      parent = lecture
-      return unless parent.is_a?(Lecture)
-      return if parent == self
-
-      parent.ensure_roster_membership!(user_ids)
+      lecture&.ensure_roster_membership!(user_ids)
     end
 
     # Identifies users in the target list who are not yet in the roster and

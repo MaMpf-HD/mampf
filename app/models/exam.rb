@@ -92,10 +92,19 @@ class Exam < ApplicationRecord
     end
   end
 
-  # Admission is decided for the lecture's members only, so nobody else can
-  # register; a repeater is put on the roster through a cohort.
+  # With an admission check, only members of the lecture and people with an
+  # admission decision may register, e.g. someone admitted who has left. Without
+  # one, anybody may; the exam list then enrolls them in the lecture.
   def registrable_by?(user)
-    lecture.members.exists?(user.id)
+    return true unless checks_admission?
+
+    lecture.members.exists?(user.id) ||
+      lecture.student_performance_certifications.decided.exists?(user: user)
+  end
+
+  def checks_admission?
+    campaign = registration_campaign
+    campaign.present? && campaign.registration_policies.active.student_performance.exists?
   end
 
   def participant_removable?(user)

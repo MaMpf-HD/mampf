@@ -199,6 +199,20 @@
 }
 
 .roster-search-group {
-  width: 14rem;
+  width: 20rem;
   max-width: 100%;
+}
+
+.registration-choices-toggle {
+  flex: 0 0 1.25rem;
+  line-height: inherit;
+}
+
+.registration-choices-toggle > i {
+  display: inline-block;
+  transition: transform 0.15s;
+}
+
+.registration-choices-toggle[aria-expanded="true"] > i {
+  transform: rotate(90deg);
 }

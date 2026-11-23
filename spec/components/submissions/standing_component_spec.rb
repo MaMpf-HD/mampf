@@ -35,7 +35,9 @@ RSpec.describe(StandingComponent, type: :component) do
   def standing_defaults
     { rule: nil, achievements: [], values: {}, eligibility: true,
       still_open: 0, due: 176, awaiting: 16, awaiting_sheets: 2,
-      complete: true }
+      complete: true, tests_apart: false, test_total: nil, test_due: nil,
+      pass_fail_tests: 0, tests_passed: 0, tests_failed: 0,
+      without_threshold: 0 }
   end
 
   def standing(**overrides)
@@ -47,7 +49,12 @@ RSpec.describe(StandingComponent, type: :component) do
       points_marked_so_far: attrs[:due], points_awaiting_marks: attrs[:awaiting],
       sheets_awaiting_marks: attrs[:awaiting_sheets],
       assignments_complete: attrs[:complete],
-      uses_exam_eligibility: attrs[:eligibility]
+      uses_exam_eligibility: attrs[:eligibility],
+      tests_apart: attrs[:tests_apart], test_points_total: attrs[:test_total],
+      test_points_marked_so_far: attrs[:test_due],
+      pass_fail_tests: attrs[:pass_fail_tests], tests_passed: attrs[:tests_passed],
+      tests_failed: attrs[:tests_failed],
+      past_tests_without_threshold: attrs[:without_threshold]
     ).tap do |built|
       allow(built).to receive(:required_achievements)
         .and_return(attrs[:achievements])
@@ -57,12 +64,13 @@ RSpec.describe(StandingComponent, type: :component) do
   # The double answers `required_points` the way the rule does, out of whatever
   # maximum it is asked with - which is the whole point of the argument: the
   # mark asks with the points due, the reachability test with the term's total.
-  def rule(mode, percentage: nil, absolute: nil)
+  def rule(mode, percentage: nil, absolute: nil, tests: nil)
     built = instance_double(StudentPerformance::Rule,
                             threshold_mode_percentage?: mode == :percentage,
                             threshold_mode_absolute?: mode == :absolute,
                             min_percentage: percentage,
-                            min_points_absolute: absolute)
+                            min_points_absolute: absolute,
+                            min_tests_passed: tests)
     allow(built).to receive(:required_points) do |max|
       case mode
       when :percentage then (percentage * max / 100).round(2) if max.to_f.positive?
@@ -147,6 +155,151 @@ RSpec.describe(StandingComponent, type: :component) do
       content = render_standing(standing(awaiting: 0, awaiting_sheets: 0))
 
       expect(content).not_to include("not marked yet")
+    end
+  end
+
+  describe "with the tests kept out of the points total" do
+    def tests_line(points:, max:)
+      I18n.t("submission.hub.standing.tests_apart", points: points, max: max)
+    end
+
+    it "names the sheets as the base of the points" do
+      content = render_standing(standing(total: 30, due: 36, tests_apart: true))
+
+      expect(content)
+        .to include(I18n.t("submission.hub.standing.of_marked_sheets", max: "36"))
+    end
+
+    it "sums the tests in a line of their own" do
+      content = render_standing(standing(total: 30, due: 36, tests_apart: true,
+                                         test_total: 5, test_due: 20))
+
+      expect(content).to include(tests_line(points: "5", max: "20"))
+    end
+
+    it "shows test points without a maximum where the tests are worth nothing" do
+      content = render_standing(standing(total: 30, due: 36, tests_apart: true,
+                                         test_total: 2, test_due: 0))
+
+      expect(content)
+        .to include(I18n.t("submission.hub.standing.tests_apart_no_max", points: "2"))
+    end
+
+    it "names the sheets as the base of an absolute threshold too" do
+      content = render_standing(standing(rule: rule(:absolute, absolute: 10),
+                                         total: 6, tests_apart: true))
+
+      expect(content)
+        .to include(I18n.t("submission.hub.standing.of_needed_sheets", max: "10"))
+    end
+
+    it "has no line for the tests before one of them is settled" do
+      content = render_standing(standing(total: 30, due: 36, tests_apart: true,
+                                         test_total: 0, test_due: 0))
+
+      expect(content).not_to include(tests_line(points: "0", max: "0"))
+    end
+
+    it "keeps the base in the compact form and leaves the tests' line out" do
+      render_inline(described_class.new(standing: standing(total: 30, due: 36,
+                                                           tests_apart: true,
+                                                           test_total: 5, test_due: 20),
+                                        compact: true))
+
+      expect(rendered_content)
+        .to include(I18n.t("submission.hub.standing.of_marked_sheets", max: "36"))
+      expect(rendered_content).not_to include(tests_line(points: "5", max: "20"))
+    end
+  end
+
+  describe "with tests that are passed or failed" do
+    def passed_line(passed:, settled:)
+      I18n.t("submission.hub.standing.tests_passed_so_far", passed: passed, count: settled)
+    end
+
+    def to_come(count)
+      I18n.t("submission.hub.standing.tests_to_come", count: count)
+    end
+
+    it "says how many of the tests so far are passed" do
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1,
+                                         tests_failed: 1, complete: false))
+
+      expect(content).to include(passed_line(passed: 1, settled: 2))
+      expect(content).not_to include(to_come(3))
+    end
+
+    it "names the passing threshold while earlier tests have none" do
+      content = render_standing(standing(pass_fail_tests: 1, tests_passed: 1,
+                                         without_threshold: 3, complete: false))
+
+      expect(content).to include(
+        I18n.t("submission.hub.standing.tests_with_threshold_passed_so_far",
+               passed: 1, count: 1)
+      )
+      expect(content).not_to include(passed_line(passed: 1, settled: 1))
+    end
+
+    it "adds the tests' own points where the lecture keeps tests out of the total" do
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1, tests_failed: 1,
+                                         tests_apart: true, test_total: 5, test_due: 20))
+
+      expect(content).to include(
+        "#{passed_line(passed: 1, settled: 2)} · " \
+        "#{I18n.t("submission.hub.standing.test_points", points: "5", max: "20")}"
+      )
+    end
+
+    it "adds the tests' points without a maximum where the tests are worth nothing" do
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1, tests_failed: 1,
+                                         tests_apart: true, test_total: 2, test_due: 0))
+
+      expect(content).to include(
+        "#{passed_line(passed: 1, settled: 2)} · " \
+        "#{I18n.t("submission.hub.standing.test_points_no_max", points: "2")}"
+      )
+    end
+
+    it "names the tests to come once the list is complete" do
+      content = render_standing(standing(pass_fail_tests: 5, tests_passed: 1,
+                                         tests_failed: 1, complete: true))
+
+      expect(content).to include(to_come(3))
+    end
+
+    it "has no line before a test is settled for the reader" do
+      content = render_standing(standing(pass_fail_tests: 5, complete: true))
+
+      expect(content).not_to include(to_come(5))
+    end
+
+    it "lists the passed tests the rule asks for, with the reader's standing" do
+      content = render_standing(standing(rule: rule(:none, tests: 3), pass_fail_tests: 5,
+                                         tests_passed: 1, tests_failed: 1))
+
+      expect(content)
+        .to include(I18n.t("submission.hub.standing.condition_tests", count: 3))
+      expect(content).to include(
+        I18n.t("submission.hub.standing.you_have_tests", passed: 1, settled: 2)
+      )
+      expect(content).not_to include("req-lost")
+    end
+
+    it "says so in red once the tests to come cannot make up the number" do
+      content = render_standing(standing(rule: rule(:none, tests: 3), pass_fail_tests: 4,
+                                         tests_passed: 0, tests_failed: 2, complete: true))
+
+      expect(content).to include("req-lost")
+      expect(content).to include(
+        I18n.t("submission.hub.standing.tests_out_of_reach", best: 2, count: 3).squish
+      )
+    end
+
+    it "passes no such judgement while the list is open" do
+      content = render_standing(standing(rule: rule(:none, tests: 3), pass_fail_tests: 4,
+                                         tests_passed: 0, tests_failed: 2, complete: false))
+
+      expect(content).not_to include("req-lost")
     end
   end
 

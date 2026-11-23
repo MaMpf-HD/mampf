@@ -73,6 +73,8 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
     # The student is back among the campaign's unplaced ones, and the
     # participants tab lists her without a group - neither is on the panel.
     it "counts the campaign's unplaced students anew and reloads the participants tab" do
+      create(:cohort_membership, cohort: create(:cohort, :enrollment, context: lecture),
+                                 user: student)
       delete remove_member_tutorial_path(campaign_tutorial, user_id: student.id),
              params: { source: "panel" },
              as: :turbo_stream
@@ -82,6 +84,16 @@ RSpec.describe(Rosters::StreamBuilder, type: :request) do
         assert_select "template", text: /1\s+#{I18n.t("roster.candidates.short_title")}/
       end
       assert_turbo_stream action: :replace, target: "roster_participants_panel"
+    end
+
+    it "does not count a student who leaves the lecture among the campaign's unplaced" do
+      delete remove_member_tutorial_path(campaign_tutorial, user_id: student.id),
+             params: { source: "panel" },
+             as: :turbo_stream
+
+      expect(response).to have_http_status(:success)
+      assert_turbo_stream action: :replace, target: "dissolved_campaign_#{campaign.id}"
+      expect(response.body).not_to include("campaign_#{campaign.id}_unassigned")
     end
   end
 

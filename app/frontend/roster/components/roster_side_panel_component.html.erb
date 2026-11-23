@@ -273,11 +273,12 @@
                       ></span>
                     </div>
 
-                    <% path = show_remove_button? && remove_member_path(student) %>
+                    <% path = show_remove_button? && confirm_remove_member_path(student) %>
 
                     <% if path %>
                       <%= button_to path,
-                                    method: :delete,
+                                    method: :get,
+                                    params: { source: :panel },
                                     class: "btn icon-button icon-button--danger " \
                                            "tutorial-roster-student-remove",
                                     title: t("roster.group_row.remove",
@@ -286,10 +287,7 @@
                                                     name: student_display_name(student)),
                                     form: {
                                       class: "mb-0 d-flex",
-                                      data: {
-                                        turbo_confirm:
-                                          t("roster.warnings.confirm_kick_from_group")
-                                      }
+                                      data: { turbo_stream: true }
                                     } do %>
                         <i class="bi bi-trash" aria-hidden="true"></i>
                       <% end %>

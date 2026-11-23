@@ -80,12 +80,14 @@ module Registration
         t("registration.allocation.started"),
         redirect_path: registration_campaign_allocation_path(@campaign)
       ) do
-        turbo_stream.update("campaigns_container",
-                            partial: "registration/campaigns/card_body_index",
-                            locals: {
-                              lecture: @campaign.campaignable,
-                              expanded_campaign_id: @campaign.id
-                            })
+        [turbo_stream.update("campaigns_container",
+                             partial: "registration/campaigns/card_body_index",
+                             locals: {
+                               lecture: @campaign.campaignable,
+                               expanded_campaign_id: @campaign.id
+                             }),
+         participants_reload_stream(@campaign.campaignable,
+                                    view: "registered", campaign: @campaign.id)]
       end
     rescue Registration::AllocationService::BlockedError
       @dashboard = Registration::AllocationDashboard.new(@campaign)

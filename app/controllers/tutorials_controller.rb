@@ -47,8 +47,12 @@ class TutorialsController < ApplicationController
     # so the page opens on the first one; nil only while the lecture has none.
     @tutorial = @tutorials.find_by(id: params[:tutorial]) ||
                 current_user.tutorials(@lecture).first || @tutorials.first
-    @participants = params[:view] == "participants" || (@assignment.nil? && @achievement.nil?)
-    @assignment = @achievement = nil if @participants
+    # The group's points over all sheets, as the lecturer's performance tab
+    # shows them.
+    @performance = params[:view] == "performance"
+    @participants = params[:view] == "participants" ||
+                    (@assignment.nil? && @achievement.nil? && !@performance)
+    @assignment = @achievement = nil if @participants || @performance
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
 
@@ -194,6 +198,8 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_download_submissions
+    return redirect_to_marking(alert: not_final_yet) unless @assignment.totally_expired?
+
     @zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
     bulk_download(@zipped_submissions)
   end
@@ -203,7 +209,13 @@ class TutorialsController < ApplicationController
     bulk_download(@zipped_corrections, "-Corrections")
   end
 
+  # Without a report, the answer reloads the page, which shows the alert.
   def bulk_upload
+    unless @assignment.totally_expired?
+      flash[:alert] = not_final_yet
+      return
+    end
+
     files = JSON.parse(params[:cached_files].to_s)
     @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
     send_correction_upload_emails
@@ -230,10 +242,19 @@ class TutorialsController < ApplicationController
   private
 
     # The sheet a tutor has work on: the newest whose marking is open - a
-    # test in its week counts - and, before any is, the first still to come.
+    # running test counts - and, before any is, the first still to come.
     def current_assignment
       open, ahead = @assignments.partition(&:grading_open?)
-      open.first || ahead.last
+      open.max_by { |a| ranking_deadline(a) } || ahead.min_by { |a| ranking_deadline(a) }
+    end
+
+    # A test counts with the end of its first week, as a test of one week does;
+    # one of several weeks would otherwise keep the sheets that fall due in its
+    # later weeks out of sight.
+    def ranking_deadline(assignment)
+      return assignment.deadline unless assignment.kind_test?
+
+      assignment.test_week.in_time_zone.end_of_week
     end
 
     def set_tutorial
@@ -244,8 +265,10 @@ class TutorialsController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_tutorial")
     end
 
+    # Only a sheet of the tutorial's lecture: the ability checks the tutorial,
+    # not the sheet.
     def set_assignment
-      @assignment = Assignment.find_by(id: params[:ass_id])
+      @assignment = @lecture.assignments.find_by(id: params[:ass_id])
       return if @assignment
 
       redirect_to :root, alert: I18n.t("controllers.no_assignment")
@@ -291,13 +314,22 @@ class TutorialsController < ApplicationController
                   type: "application/zip",
                   disposition: "attachment")
       else
-        flash[:alert] = I18n.t("controllers.tutorials.bulk_download_failed",
-                               message: zipped)
-        redirect_to lecture_tutorials_path(@tutorial.lecture,
-                                           params:
-                                            { assignment: @assignment.id,
-                                              tutorial: @tutorial.id })
+        redirect_to_marking(alert: I18n.t("controllers.tutorials.bulk_download_failed",
+                                          message: zipped))
       end
+    end
+
+    def redirect_to_marking(alert:)
+      redirect_to lecture_tutorials_path(@tutorial.lecture,
+                                         params: { assignment: @assignment.id,
+                                                   tutorial: @tutorial.id }),
+                  alert: alert
+    end
+
+    # Until the grace period is over the hand-ins may still change and their
+    # teams still move.
+    def not_final_yet
+      t("tutorial.hand_ins_not_final", time: l(@assignment.friendly_deadline, format: :short))
     end
 
     def send_correction_upload_emails

@@ -23,17 +23,27 @@ module SubmissionsHelper
     end
   end
 
+  # Tells the reader which tutorial they are in and where to write to its
+  # tutors, the ones to ask when a hand-in or a correction is off.
+  def tutorial_contact_line(lecture)
+    tutorial = rostered_tutorial_for(lecture)
+    return unless tutorial
+
+    tutors = tutorial.tutors.to_a
+    contacts = tutors.map do |tutor|
+      safe_join([tutor.tutorial_name, " (", mail_to(tutor.email), ")"])
+    end
+    t("submission.hub.tutorial_line_html",
+      count: tutors.size, tutorial: tutorial.title,
+      tutor: tutors.first&.tutorial_name,
+      email: tutors.first && mail_to(tutors.first.email),
+      tutors: safe_join(contacts, ", "))
+  end
+
   def submission_late_color(submission)
     return "" unless submission.too_late?
     return "" unless submission.accepted.nil?
 
     "bg-submission-orange"
-  end
-
-  def late_submission_info(submission, tutorial)
-    text = t("submission.late")
-    return text unless submission.accepted.nil? && current_user.in?(tutorial.tutors)
-
-    "#{text} (#{t("tutorial.late_submission_decision")})"
   end
 end

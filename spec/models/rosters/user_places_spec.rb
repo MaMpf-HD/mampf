@@ -75,6 +75,14 @@ RSpec.describe(Rosters::UserPlaces) do
 
       expect(places.lectures).to contain_exactly(lecture, other)
     end
+
+    it "names a lecture with only a rejected registration, which giving up withdraws" do
+      create(:registration_user_registration, :rejected,
+             user: student,
+             registration_campaign: create(:registration_campaign, :open, campaignable: lecture))
+
+      expect(places.lectures).to eq([lecture])
+    end
   end
 
   describe "#results?" do
@@ -112,6 +120,14 @@ RSpec.describe(Rosters::UserPlaces) do
       expect(described_class.new(student).any?).to be(false)
     end
 
+    it "locks every group before the first lecture" do
+      [create(:tutorial, lecture: lecture), create(:cohort, :enrollment, context: lecture),
+       lecture].each { |rosterable| rosterable.add_user_to_roster!(student) }
+      models = locked_models { places.give_up!([lecture]) }
+
+      expect(models.index(Cohort)).to be < models.index(Lecture)
+    end
+
     it "counts a withdrawn confirmed registration off its item" do
       campaign = create(:registration_campaign, :closed, campaignable: lecture)
       registration = create(:registration_user_registration, :confirmed,
@@ -127,6 +143,33 @@ RSpec.describe(Rosters::UserPlaces) do
       lecture.add_user_to_roster!(student)
 
       expect { places.give_up!([lecture]) }.not_to have_enqueued_mail
+    end
+
+    it "keeps the registrations of a campaign completed before its lock" do
+      campaign = create(:registration_campaign, :closed, campaignable: lecture)
+      registration = create(:registration_user_registration, :pending,
+                            user: student, registration_campaign: campaign)
+      allow_any_instance_of(Registration::Campaign).to receive(:lock!) do |locked|
+        locked.update_column(:status, Registration::Campaign.statuses[:completed]) # rubocop:disable Rails/SkipsModelValidations
+        locked
+      end
+
+      places.give_up!([lecture])
+
+      expect(Registration::UserRegistration.exists?(registration.id)).to be(true)
+    end
+
+    it "dismisses a rejection of a finished campaign, keeping it on record" do
+      rejection = create(:registration_user_registration, :rejected,
+                         user: student,
+                         registration_campaign: create(:registration_campaign, :completed,
+                                                       campaignable: lecture))
+      lecture.add_user_to_roster!(student)
+
+      places.give_up!([lecture])
+
+      expect(rejection.reload.dismissed_at).to be_present
+      expect(student.lectures_with_registration_application).not_to include(lecture)
     end
 
     it "keeps a registration of a finished campaign" do

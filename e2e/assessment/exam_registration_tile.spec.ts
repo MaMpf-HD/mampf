@@ -101,7 +101,8 @@ test.describe("registering for an exam", () => {
     });
 
     await student.page.goto(`/lectures/${lecture.id}`);
-    await expect(student.page.getByTestId("participation-row")).toHaveCount(0);
+    await expect(student.page.getByTestId("participation-row").filter({ hasText: "Main Exam" }))
+      .toHaveCount(0);
 
     // a seat is what an entry in the exam's roster means
     await factory.create("exam_roster_entry", [], {

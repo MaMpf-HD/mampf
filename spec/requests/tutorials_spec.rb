@@ -74,6 +74,38 @@ RSpec.describe("Tutorials", type: :request) do
       expect(selected.text.strip).to eq(sheet.title)
     end
 
+    # Friday of this week, with Sheet 5 due on Thursday.
+    def on_friday_with_sheet_due_thursday(&)
+      Timecop.travel(Time.zone.today.beginning_of_week + 4.days + 12.hours) do
+        create(:assignment, :expired, lecture: lecture, title: "Sheet 5", expired_since: 1.day)
+        yield
+      end
+    end
+
+    it "opens on a sheet due in a test's second week, not on the test" do
+      on_friday_with_sheet_due_thursday do
+        create(:assignment, lecture: lecture, title: "Test 2", kind: :test,
+                            test_week: Time.zone.today.prev_week.iso8601, test_week_count: 2)
+
+        get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+        selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+        expect(selected.text.strip).to eq("Sheet 5")
+      end
+    end
+
+    it "opens on a test of one week over a sheet that fell due in it" do
+      on_friday_with_sheet_due_thursday do
+        create(:assignment, lecture: lecture, title: "Test 1", kind: :test,
+                            test_week: Time.zone.today.beginning_of_week.iso8601)
+
+        get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+        selected = Nokogiri::HTML(response.body).at_css("#assignment-select option[selected]")
+        expect(selected.text.strip).to eq("Test 1")
+      end
+    end
+
     it "shows the achievement asked for, and nothing of a sheet named beside it" do
       achievement = create(:achievement, :boolean, lecture: lecture, title: "Blackboard talk")
 
@@ -96,7 +128,7 @@ RSpec.describe("Tutorials", type: :request) do
 
       expect(response).to have_http_status(:success)
       expect(Nokogiri::HTML(response.body).at_css("#tutorial-select")["value"])
-        .to eq(tutorial.title)
+        .to eq("#{tutorial.title} (#{tutor.tutorial_name})")
     end
 
     it "says so when the lecture has no group at all" do
@@ -174,6 +206,25 @@ RSpec.describe("Tutorials", type: :request) do
       expect(body.css("tr.submission-row")).to be_empty
     end
 
+    it "shows the sheets under the marking tab only" do
+      create(:assignment, lecture: lecture)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+      marking = body.css("a").find { |a| a.text.strip == I18n.t("tutorial.tabs.marking") }
+      expect(marking["aria-current"]).to eq("page")
+      expect(body.at_css("#assignment-select")).to be_present
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
+      expect(body.at_css("#assignment-select")).to be_nil
+    end
+
+    it "offers no marking tab before there is anything to mark" do
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+
+      expect(body.css("a").map { |a| a.text.strip })
+        .not_to include(I18n.t("tutorial.tabs.marking"))
+    end
+
     it "stays on the participants when the tutor switches to another group" do
       create(:assignment, lecture: lecture)
       other = create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: tutor.id,
@@ -200,6 +251,50 @@ RSpec.describe("Tutorials", type: :request) do
 
       expect(response.body).to include(I18n.t("student_message.tutorial.registered_button"))
       expect(response.body).to include("value=\"item:#{item.id}:provisional\"")
+    end
+  end
+
+  # The lecturer's performance table, for the tutor's own group.
+  describe "GET /lectures/:id/tutorials, the group's performance" do
+    before { sign_in tutor }
+
+    def body
+      Nokogiri::HTML(response.body)
+    end
+
+    def performance_link
+      body.css("a").find { |a| a.text.strip == I18n.t("assessment.tabs.performance") }
+    end
+
+    it "is a tab next to the marking and the participants" do
+      create(:assignment, lecture: lecture)
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id })
+      expect(performance_link["href"]).to include("view=performance")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "participants" })
+      expect(performance_link["href"]).to include("view=performance")
+    end
+
+    it "loads the table for the group, under its own tab" do
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "performance" })
+
+      frame = body.at_css("turbo-frame#performance-records-frame")
+      expect(frame["src"]).to eq(lecture_student_performance_records_path(lecture,
+                                                                          tutorial_id: tutorial.id))
+      expect(performance_link["aria-current"]).to eq("page")
+      expect(body.css("a").map { |a| a.text.strip })
+        .to include(I18n.t("tutorial.participants.button"))
+    end
+
+    it "stays on the performance when the tutor switches to another group" do
+      other = create(:tutorial, :with_tutor_by_id, lecture: lecture, tutor_id: tutor.id,
+                                                   title: "Other group")
+
+      get lecture_tutorials_path(lecture, params: { tutorial: tutorial.id, view: "performance" })
+      option = body.css("#tutorial-select option").find { |o| o.text.strip == "Other group" }
+
+      expect(option["value"]).to include("view=performance", "tutorial=#{other.id}")
     end
   end
 
@@ -268,6 +363,78 @@ RSpec.describe("Tutorials", type: :request) do
       sign_in tutor
 
       expect(queries_for(8)).to eq(queries_for(2))
+    end
+  end
+
+  # Until the grace period is over the files may still change and the
+  # teams still move.
+  describe "the bundle and the bulk upload during the grace period" do
+    include ActiveSupport::Testing::TimeHelpers
+
+    let(:assignment) { create(:assignment, lecture: lecture) }
+    let(:until_final) do
+      I18n.t("tutorial.hand_ins_not_final",
+             time: I18n.l(assignment.friendly_deadline, format: :short))
+    end
+
+    before do
+      create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                            last_modification_by_users_at: Time.current)
+        .users << create(:confirmed_user)
+      travel_to(assignment.deadline + 1.minute)
+      sign_in tutor
+    end
+
+    after { travel_back }
+
+    it "sends no bundle, and says until when" do
+      get bulk_download_submissions_path(id: tutorial.id, ass_id: assignment.id)
+
+      marking = { assignment: assignment.id, tutorial: tutorial.id }
+      expect(response).to redirect_to(lecture_tutorials_path(lecture, params: marking))
+      expect(flash[:alert]).to eq(until_final)
+    end
+
+    it "takes no corrections, and says until when" do
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: assignment.id),
+            params: { cached_files: "[]" }, xhr: true
+
+      expect(flash[:alert]).to eq(until_final)
+    end
+
+    it "names the tutorial a handed-over team went to in the report" do
+      other = create(:tutorial, lecture: lecture, title: "Tuesday group")
+      handed_over = create(:submission, :with_manuscript, assignment: assignment,
+                                                          tutorial: other,
+                                                          handed_over_to_id: other.id)
+      handed_over.users << create(:confirmed_user, name_in_tutorials: "Anna Keller")
+      travel_to(assignment.friendly_deadline + 1.minute)
+      files = [{ metadata: { filename: "correction-ID-#{handed_over.id}.pdf" } }]
+
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: assignment.id),
+            params: { cached_files: files.to_json }, xhr: true
+
+      expect(response.body).to include(I18n.t("tutorial.bulk_upload.elsewhere"))
+      expect(response.body).to include("Anna Keller")
+      expect(response.body).to include(ERB::Util.html_escape(other.title_with_tutors))
+    end
+
+    it "takes no sheet of another lecture" do
+      foreign = create(:assignment, lecture: create(:lecture))
+      travel_to(foreign.friendly_deadline + 1.minute)
+
+      patch bulk_upload_corrections_path(id: tutorial.id, ass_id: foreign.id),
+            params: { cached_files: "[]" }
+
+      expect(response).to redirect_to(:root)
+      expect(flash[:alert]).to eq(I18n.t("controllers.no_assignment"))
+    end
+
+    it "sends the bundle once the grace period is over" do
+      travel_to(assignment.friendly_deadline + 1.minute)
+      get bulk_download_submissions_path(id: tutorial.id, ass_id: assignment.id)
+
+      expect(response.media_type).to eq("application/zip")
     end
   end
 

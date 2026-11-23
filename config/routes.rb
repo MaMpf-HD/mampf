@@ -137,6 +137,7 @@ Rails.application.routes.draw do
     resources :assessments, only: [:index, :show, :update] do
       collection do
         patch :assignments_complete
+        patch :tests_in_points_total
       end
       resources :tasks, except: [:index] do
         member do
@@ -193,6 +194,8 @@ Rails.application.routes.draw do
                            :destroy] do
     member do
       post "participants", action: :add_participant
+      get "participants/:user_id/confirm_remove", action: :confirm_remove_participant,
+                                                  as: :confirm_remove_participant
       delete "participants/:user_id", action: :remove_participant,
                                       as: :remove_participant
     end
@@ -263,21 +266,21 @@ Rails.application.routes.draw do
       to: "lectures#update_editors",
       as: "update_editors"
 
-  get "lectures/:id/add_forum",
-      to: "lectures#add_forum",
-      as: "add_forum"
+  patch "lectures/:id/add_forum",
+        to: "lectures#add_forum",
+        as: "add_forum"
 
-  get "lectures/:id/lock_forum",
-      to: "lectures#lock_forum",
-      as: "lock_forum"
+  patch "lectures/:id/lock_forum",
+        to: "lectures#lock_forum",
+        as: "lock_forum"
 
-  get "lectures/:id/unlock_forum",
-      to: "lectures#unlock_forum",
-      as: "unlock_forum"
+  patch "lectures/:id/unlock_forum",
+        to: "lectures#unlock_forum",
+        as: "unlock_forum"
 
-  get "lectures/:id/destroy_forum",
-      to: "lectures#destroy_forum",
-      as: "destroy_forum"
+  delete "lectures/:id/destroy_forum",
+         to: "lectures#destroy_forum",
+         as: "destroy_forum"
 
   get "lectures/:id/announcements",
       to: "lectures#show_announcements",
@@ -315,13 +318,13 @@ Rails.application.routes.draw do
          to: "lectures#remove_imported_medium",
          as: "lecture_remove_imported_medium"
 
-  get "lectures/:id/close_comments",
-      to: "lectures#close_comments",
-      as: "lecture_close_comments"
+  patch "lectures/:id/close_comments",
+        to: "lectures#close_comments",
+        as: "lecture_close_comments"
 
-  get "lectures/:id/open_comments",
-      to: "lectures#open_comments",
-      as: "lecture_open_comments"
+  patch "lectures/:id/open_comments",
+        to: "lectures#open_comments",
+        as: "lecture_open_comments"
 
   get "lectures/:id/submissions",
       to: "submissions#index",
@@ -364,6 +367,10 @@ Rails.application.routes.draw do
        to: "lectures/unlocks#create",
        as: "lecture_unlock"
 
+  delete "lectures/:lecture_id/membership",
+         to: "lectures/memberships#destroy",
+         as: "lecture_membership"
+
   get "lectures/:id/home/campaigns/:campaign_id",
       to: "lectures/home#campaign",
       as: "lecture_home_campaign"
@@ -391,6 +398,8 @@ Rails.application.routes.draw do
         patch "bulk_self_materialization", action: :bulk_update_self_materialization,
                                            as: :roster_bulk_update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end
@@ -495,6 +504,14 @@ Rails.application.routes.draw do
 
   # media routes
 
+  post "api/webhooks/media/:id/transcripts",
+       to: "media#add_transcript",
+       as: "add_transcript"
+
+  post "api/webhooks/media/:id/transcription_failed",
+       to: "media#transcription_failed",
+       as: "transcription_failed"
+
   get "media/search",
       to: "media#search",
       as: "search_media"
@@ -531,6 +548,14 @@ Rails.application.routes.draw do
       to: "media#stream_video",
       as: "stream_video_medium"
 
+  get "media/:id/video/transcription_stream",
+      to: "media#transcription_stream_video",
+      as: "transcription_stream_video_medium"
+
+  get "media/:id/transcript/stream",
+      to: "media#stream_transcript",
+      as: "stream_transcript_medium"
+
   get "media/:id/display",
       to: "media#display",
       as: "display_medium"
@@ -559,9 +584,9 @@ Rails.application.routes.draw do
       to: "media#add_reference",
       as: "add_reference"
 
-  get "media/:id/import_script_items",
-      to: "media#import_script_items",
-      as: "import_script_items"
+  post "media/:id/import_script_items",
+       to: "media#import_script_items",
+       as: "import_script_items"
 
   patch "media/:id/remove_screenshot",
         to: "media#remove_screenshot",
@@ -590,6 +615,10 @@ Rails.application.routes.draw do
   post "media/update_tags",
        to: "media#update_tags",
        as: "update_tags"
+
+  post "media/:id/transcribe",
+       to: "media#transcribe",
+       as: "transcribe_medium"
 
   get "media/:id/statistics",
       to: "media#statistics",
@@ -700,11 +729,11 @@ Rails.application.routes.draw do
   get "profile/show_accordion",
       as: "show_accordion"
 
-  patch "profile/star_lecture",
-        as: "star_lecture"
+  patch "profile/pin_lecture",
+        as: "pin_lecture"
 
-  patch "profile/unstar_lecture",
-        as: "unstar_lecture"
+  patch "profile/unpin_lecture",
+        as: "unpin_lecture"
 
   namespace :dashboard do
     resources :lectures, only: [] do
@@ -970,6 +999,14 @@ Rails.application.routes.draw do
         to: "assessment/task_points#add_member",
         as: "add_member_submission"
 
+  get "submissions/:submission_id/add_member_candidates",
+      to: "assessment/task_points#add_member_candidates",
+      as: "add_member_candidates_submission"
+
+  patch "submissions/:submission_id/remove_member",
+        to: "assessment/task_points#remove_member",
+        as: "remove_member_submission"
+
   patch "participations/:participation_id/refresh_point_participation",
         to: "assessment/task_points#refresh_participation",
         as: "refresh_point_participation"
@@ -1029,9 +1066,9 @@ Rails.application.routes.draw do
       to: "tags#search",
       as: "search_tags"
 
-  get "tags/:id/take_random_quiz",
-      to: "tags#take_random_quiz",
-      as: "tag_random_quiz"
+  post "tags/:id/take_random_quiz",
+       to: "tags#take_random_quiz",
+       as: "tag_random_quiz"
 
   post "tags/postprocess",
        to: "tags#postprocess",
@@ -1060,6 +1097,8 @@ Rails.application.routes.draw do
         patch "self_materialization", action: :update_self_materialization,
                                       as: :update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end
@@ -1111,6 +1150,8 @@ Rails.application.routes.draw do
         patch "self_materialization", action: :update_self_materialization,
                                       as: :update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end
@@ -1129,10 +1170,13 @@ Rails.application.routes.draw do
     get "roster", to: "roster/maintenance#show", defaults: { type: "Cohort" }
 
     member do
+      get :confirm_destroy
       scope "roster", controller: "roster/maintenance", defaults: { type: "Cohort" } do
         patch "self_materialization", action: :update_self_materialization,
                                       as: :update_self_materialization
         post "members", action: :add_member, as: :add_member
+        get "members/:user_id/confirm_remove", action: :confirm_remove_member,
+                                               as: :confirm_remove_member
         delete "members/:user_id", action: :remove_member, as: :remove_member
         patch "members/:user_id/move", action: :move_member, as: :move_member
       end
@@ -1244,6 +1288,9 @@ Rails.application.routes.draw do
     post "campaign_registrations/:campaign_id/preferences",
          to: "user_registrations#save_preferences",
          as: :save_preferences
+    delete "campaign_registrations/:campaign_id/preferences",
+           to: "user_registrations#withdraw_preferences",
+           as: :withdraw_preferences
   end
 
   # participations routes

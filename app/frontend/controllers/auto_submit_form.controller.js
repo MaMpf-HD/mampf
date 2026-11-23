@@ -10,7 +10,7 @@ const DEFAULT_DELAY = 300;
 const carriedTyping = new Map();
 
 export default class extends Controller {
-  static targets = ["form", "searchInput", "clearButton", "filterInput"];
+  static targets = ["form", "searchInput", "clearButton"];
   static values = { delay: Number };
 
   submit(event) {
@@ -143,15 +143,6 @@ export default class extends Controller {
   needsSubmit() {
     return this.hasSearchInputTarget
       && this.searchInputTarget.value !== this.lastSubmittedValue;
-  }
-
-  filterSelected(event) {
-    if (!this.hasFilterInputTarget) return;
-
-    const { filterValue } = event.currentTarget.dataset;
-    if (!filterValue) return;
-
-    this.filterInputTarget.value = filterValue;
   }
 
   get delay() {

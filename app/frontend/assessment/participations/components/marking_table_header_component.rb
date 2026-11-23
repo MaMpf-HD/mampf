@@ -1,9 +1,13 @@
 class MarkingTableHeaderComponent < ViewComponent::Base
-  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, keyword_init: true)
+  Column = Struct.new(:css_class, :label, :sublabel, :label_hidden, :title, :data,
+                      keyword_init: true)
 
   # A heading sits the way its column's content does: text starts at the
   # left, a badge, a select or an icon stands in the middle.
   TEXT_COLUMNS = [:team, :talk, :note, :graded].freeze
+
+  # About two lines of a task column's heading.
+  TASK_LABEL_LENGTH = 20
 
   def initialize(assessable:, layout:)
     @assessable = assessable
@@ -36,7 +40,14 @@ class MarkingTableHeaderComponent < ViewComponent::Base
                  @layout.column_class(column), "grade-th"]
       Column.new(css_class: classes.compact.join(" "),
                  label: label_for(column),
-                 sublabel: sublabel_for(column))
+                 sublabel: sublabel_for(column),
+                 data: data_for(column))
+    end
+
+    # Read by marking_table.controller.js, which notices when a row carries
+    # a newer threshold.
+    def data_for(column)
+      { passing_points: @assessable.passing_points } if column == :passed
     end
 
     def label_for(column)
@@ -48,6 +59,7 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       when :hand_in then t("basics.submission")
       when :correction then t("basics.correction")
       when :value then t("assessment.achievements.marking.value")
+      when :passed then t("assessment.test.passed_column")
       else t("assessment.grade_talk_row.#{column}")
       end
     end
@@ -66,7 +78,14 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       case column
       when :hand_in then "(#{@assessable.accepted_file_type})"
       when :value then threshold_label
+      when :passed then passing_label
       end
+    end
+
+    def passing_label
+      points = number_with_precision(@assessable.passing_points,
+                                     precision: 2, strip_insignificant_zeros: true)
+      "(#{t("assessment.test.passed_from", points: points)})"
     end
 
     # What the value is measured against, over the column that takes it.
@@ -81,10 +100,13 @@ class MarkingTableHeaderComponent < ViewComponent::Base
       @assessable.threshold.to_s.sub(/\.0+\z/, "")
     end
 
+    # A long task name would widen its column, so the heading keeps the
+    # start and the title the whole name.
     def task_column(task)
       Column.new(
         css_class: "text-center #{@layout.column_class(:task)} grade-th",
-        label: "#{t("assessment.grading_tutorial.task")} #{task.position}",
+        label: truncate(task.label, length: TASK_LABEL_LENGTH, separator: " ", omission: "…"),
+        title: (task.label if task.label.length > TASK_LABEL_LENGTH),
         sublabel: "(#{task.max_points || 0} #{t("assessment.grading_tutorial.max_points")})"
       )
     end

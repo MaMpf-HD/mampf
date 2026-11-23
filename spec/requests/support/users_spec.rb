@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe("Support users", type: :request) do
-  let(:support) { create(:confirmed_user_en, support: true) }
+  let(:support) { create(:confirmed_user_en, name: "Olga Taussky", support: true) }
   let!(:student) do
-    create(:confirmed_user, first_name: "Emmy", last_name: "Noether",
+    create(:confirmed_user, first_name: "Emmy", last_name: "Noether", name: "Emmy Noether",
                             matriculation_number: "1234567", email: "emmy@example.org")
   end
 
@@ -214,9 +214,12 @@ RSpec.describe("Support users", type: :request) do
     end
 
     it "lists equally close matches by last name, then first name" do
-      create(:confirmed_user, first_name: "Zoe", last_name: "Keller", email: "zoe@example.org")
-      create(:confirmed_user, first_name: "Anna", last_name: "Keller", email: "anna@example.org")
-      create(:confirmed_user, first_name: "Bert", last_name: "Abel", email: "bert@example.org")
+      create(:confirmed_user, first_name: "Zoe", last_name: "Keller", name: "Zoe Keller",
+                              email: "zoe@example.org")
+      create(:confirmed_user, first_name: "Anna", last_name: "Keller", name: "Anna Keller",
+                              email: "anna@example.org")
+      create(:confirmed_user, first_name: "Bert", last_name: "Abel", name: "Bert Abel",
+                              email: "bert@example.org")
 
       ["Keller", "Heller"].each do |query|
         search(fulltext: query)

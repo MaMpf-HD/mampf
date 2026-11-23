@@ -29,6 +29,12 @@ module Assessment
       task_points.where.not(points: nil).exists?
     end
 
+    # The name the lecturer gave the task, or its number when it has none.
+    def label
+      description.to_s.squish.presence ||
+        I18n.t("assessment.task.default_name", number: position)
+    end
+
     private
 
       def assessment_requires_points
