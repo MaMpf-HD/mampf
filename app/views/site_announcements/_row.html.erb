@@ -8,7 +8,6 @@
       &middot;
       <%= announcement.announcer.name %>
     </div>
-    <%# Site-wide announcements are plain text, not typeset with KaTeX. %>
     <div class="text-break no-katex">
       <%= sanitize(announcement.details) %>
     </div>

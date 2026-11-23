@@ -8,9 +8,6 @@ class Announcement < ApplicationRecord
 
   validates :details, presence: true
 
-  # Site-wide announcements belong to no lecture and notify nobody; admins
-  # show them as a banner above the navbar. Only they can be banner_active
-  # (enforced by a check constraint).
   scope :site_wide, -> { where(lecture: nil) }
   scope :on_banner, -> { where(banner_active: true).order(created_at: :desc) }
 

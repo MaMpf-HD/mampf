@@ -1,6 +1,5 @@
-# Announcements without a lecture are shown as a banner above the navbar
-# (there is no main page listing them anymore). Only those can be active as a
-# banner, so the database now enforces that for lecture announcements.
+# Rename `on_main_page` to `banner_active` to better reflect its purpose,
+# which is to show the announcement as a banner above the navbar.
 class RenameOnMainPageToBannerActive < ActiveRecord::Migration[8.1]
   # Minimal model, so the migration does not depend on the app's models.
   class Announcement < ApplicationRecord

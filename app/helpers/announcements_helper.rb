@@ -1,6 +1,7 @@
 # Announcements Helper
 module AnnouncementsHelper
-  # Separates the announcements shown together in the banner above the navbar.
+  # Also used by the site-announcement-form preview, so a draft looks as it
+  # will once published.
   BANNER_SEPARATOR = '<hr class="my-2 mx-n3">'.freeze
 
   # Returns joined HTML of all admin-level announcements shown above the navbar.

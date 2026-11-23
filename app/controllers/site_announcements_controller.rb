@@ -1,6 +1,5 @@
-# Site-wide announcements: admins publish them as a banner above the navbar
-# and switch that banner on or off. They belong to no lecture and notify
-# nobody (see AnnouncementsController for lecture announcements).
+# Announcements without a lecture, shown in the banner above the navbar. They
+# notify nobody; lecture announcements are in AnnouncementsController.
 class SiteAnnouncementsController < ApplicationController
   layout -> { turbo_frame_request? ? "turbo_frame" : "administration" }
 

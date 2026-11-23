@@ -1,6 +1,4 @@
-<%# Inline form on the admin announcements page for a new site-wide
-    announcement; publishing it puts it up as the banner right away.
-    Rendered into the "new_site_announcement" frame by the turbo_frame layout. %>
+<%# the turbo_frame layout wraps this form in the "new_site_announcement" frame. %>
 <%= form_with model: @announcement, url: site_announcements_path, local: true,
               class: "px-3 pt-4 pb-3 border-bottom bg-body-tertiary",
               data: {

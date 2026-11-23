@@ -1,10 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Inline form for a new site announcement. Previews the text being written in
- * the banner above the navbar, on top of the announcements already shown
- * there, i.e. as it will look once published. The banner is restored when the
- * form goes away (cancel or publish).
+ * Previews the draft for the announcement in the banner above the navbar.
  */
 export default class extends Controller {
   static values = { separator: String };
@@ -36,10 +33,6 @@ export default class extends Controller {
     banner.hidden = false;
   }
 
-  /**
-   * The banner's alert. When the server swapped the banner meanwhile (e.g. an
-   * announcement was switched on), its new content is the one to restore.
-   */
   #banner() {
     const banner = document.querySelector("#site-announcement-banner .alert");
     if (banner && banner !== this.banner) {

@@ -1,6 +1,5 @@
-# The MaMpf News page is gone.
-# Announcements without a lecture don't notify anybody anymore, so the
-# notifications for them can be deleted.
+# Now that the MaMpf News page is gone, announcements without a lecture don't notify
+# anybody anymore, so the notifications for them can be deleted.
 class DeleteMampfNewsNotifications < ActiveRecord::Migration[8.1]
   # Minimal models, so the migration does not depend on the app's models.
   class Announcement < ApplicationRecord
