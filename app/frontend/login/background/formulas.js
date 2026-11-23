@@ -1,4 +1,3 @@
-
 /**
  * Mix of formulas from various mathematical fields and related sciences,
  * e.g. including physics formulas.
