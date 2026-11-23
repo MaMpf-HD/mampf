@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["row", "bulkSave", "dirtyCount", "form", "payload"];
+  static targets = ["row", "bulkSave", "dirtyCount", "form", "payload", "outdated"];
 
   connect() {
     this.newValues = [];
@@ -13,6 +13,22 @@ export default class extends Controller {
   rowTargetDisconnected(row) {
     this.newValues = this.newValues.filter(value => value.id !== row.dataset.rowId);
     this.updateBulkState();
+  }
+
+  // A row re-rendered by the server carries the current passing threshold;
+  // if it differs from the heading's, the hint to reload is shown.
+  rowTargetConnected(row) {
+    if (!this.hasOutdatedTarget) return;
+
+    const heading = this.element.querySelector("thead th.passed-col");
+    const cell = row.querySelector("td.passed-col");
+    if ((heading?.dataset.passingPoints ?? "") !== (cell?.dataset.passingPoints ?? "")) {
+      this.outdatedTarget.hidden = false;
+    }
+  }
+
+  reload() {
+    window.location.reload();
   }
 
   rowDirty(event) {

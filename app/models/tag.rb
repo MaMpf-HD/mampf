@@ -224,18 +224,6 @@ class Tag < ApplicationRecord
     in?(lecture.tags)
   end
 
-  def in_lectures?(lectures)
-    lectures.any? { |l| in_lecture?(l) }
-  end
-
-  def in_course?(course)
-    in?(course.tags)
-  end
-
-  def in_courses?(courses)
-    courses.any? { |c| in_course?(c) }
-  end
-
   # returns the ARel of lectures the tag is associated to
   def lectures
     Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))

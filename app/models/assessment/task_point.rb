@@ -8,7 +8,12 @@ module Assessment
     belongs_to :grader, class_name: "User", optional: true, inverse_of: false
     belongs_to :submission, optional: true, inverse_of: false
 
-    validates :points, numericality: { greater_than_or_equal_to: 0 },
+    # Far above anything a task is worth, so only a typo gets there, and low
+    # enough that what a lecture's points add up to still fits its columns.
+    POINTS_LIMIT = 1_000
+
+    validates :points, numericality: { greater_than_or_equal_to: 0,
+                                       less_than: POINTS_LIMIT },
                        allow_nil: true
     validate :ensure_task_and_participation_match_assessment
     validate :grading_lifecycle_must_be_open

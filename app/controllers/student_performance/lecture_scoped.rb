@@ -41,10 +41,15 @@ module StudentPerformance
         scope.joins(:user).merge(User.shown_name_like(query))
       end
 
+      def pass_fail_test_ids
+        @pass_fail_test_ids ||= @lecture.pass_fail_test_ids
+      end
+
       def evaluator_for(rule)
         Evaluator.new(rule,
                       assignments_complete: @lecture.assignments_complete?,
-                      due_points: due_points)
+                      due_points: due_points,
+                      pass_fail_test_ids: pass_fail_test_ids)
       end
   end
 end

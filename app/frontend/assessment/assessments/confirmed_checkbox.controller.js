@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import { Modal } from "bootstrap";
 
+/** Asks for confirmation in a dialog before a checkbox submits its form. */
 export default class extends Controller {
   static targets = ["checkbox", "reset", "dialog"];
 
@@ -34,10 +35,13 @@ export default class extends Controller {
   }
 
   // Put back, not flipped: dismissing twice must not toggle the box twice.
+  // The focus goes back as well: a dialog opened from code does not return
+  // it to the box on its own.
   restoreUnlessAnswered() {
     if (this.answered) return;
 
     this.checkboxTarget.checked = this.stood;
+    this.checkboxTarget.focus();
   }
 
   disconnect() {
@@ -67,7 +71,9 @@ export default class extends Controller {
   }
 
   submit(resetCertifications) {
-    this.resetTarget.value = resetCertifications ? "1" : "0";
+    if (this.hasResetTarget) {
+      this.resetTarget.value = resetCertifications ? "1" : "0";
+    }
     this.element.requestSubmit();
   }
 

@@ -73,6 +73,19 @@ class AssessmentListItemComponent < ViewComponent::Base
     "#{formatted} #{I18n.t("assessment.task.points_abbrev")}"
   end
 
+  def passing_points_display
+    return "—" if assessable.passing_points.nil?
+
+    "#{helpers.number_with_precision(assessable.passing_points,
+                                     precision: 2, strip_insignificant_zeros: true)} " \
+      "#{I18n.t("assessment.task.points_abbrev")}"
+  end
+
+  def passing_points_out_of_reach?
+    assessable.passing_points.present? && tasks_count.positive? &&
+      assessable.passing_points > total_points
+  end
+
   def requires_submission?
     assessment&.requires_submission
   end
