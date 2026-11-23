@@ -1,16 +1,23 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Previews the site announcement being written in the banner above the
- * navbar, on top of the announcements already shown there, i.e. as it will
- * look once published. The banner is restored when the form goes away
- * (cancel or publish).
+ * Inline form for a new site announcement. Previews the text being written in
+ * the banner above the navbar, on top of the announcements already shown
+ * there, i.e. as it will look once published. The banner is restored when the
+ * form goes away (cancel or publish).
  */
 export default class extends Controller {
   static values = { separator: String };
 
   disconnect() {
     this.#restore();
+  }
+
+  /** Closes the form by emptying the frame it was loaded into. */
+  cancel() {
+    const frame = this.element.closest("turbo-frame");
+    frame.removeAttribute("src");
+    frame.replaceChildren();
   }
 
   update(event) {

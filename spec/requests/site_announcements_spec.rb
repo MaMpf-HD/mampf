@@ -35,12 +35,27 @@ RSpec.describe("Site announcements", type: :request) do
       expect(response.body).to include("Maintenance tonight")
     end
 
+    it "renders the form into the list's frame, without the page around it" do
+      get new_site_announcement_path,
+          headers: { "Turbo-Frame" => "new_site_announcement" }
+
+      expect(response).to be_successful
+      expect(response.body).to include('<turbo-frame id="new_site_announcement">')
+      expect(response.body).not_to include("<head>")
+    end
+
+    it "sends a direct visit of the form back to the list" do
+      get new_site_announcement_path
+      expect(response).to redirect_to(site_announcements_path)
+    end
+
     it "shows the inline form again for an empty one" do
       expect do
-        post(site_announcements_path, params: { announcement: { details: "" } })
+        post(site_announcements_path, params: { announcement: { details: "" } },
+                                      headers: { "Turbo-Frame" => "new_site_announcement" })
       end.not_to change(Announcement, :count)
       expect(response).to have_http_status(:unprocessable_content)
-      expect(response.body).to include("new_site_announcement")
+      expect(response.body).to include('<turbo-frame id="new_site_announcement">')
     end
 
     it "puts one up as the banner and swaps row and banner via Turbo Stream" do

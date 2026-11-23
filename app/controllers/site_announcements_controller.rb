@@ -2,7 +2,7 @@
 # and switch that banner on or off. They belong to no lecture and notify
 # nobody (see AnnouncementsController for lecture announcements).
 class SiteAnnouncementsController < ApplicationController
-  layout "administration"
+  layout -> { turbo_frame_request? ? "turbo_frame" : "administration" }
 
   def current_ability
     @current_ability ||= SiteAnnouncementAbility.new(current_user)
@@ -17,6 +17,7 @@ class SiteAnnouncementsController < ApplicationController
   def new
     @announcement = Announcement.new
     authorize! :new, @announcement
+    redirect_to site_announcements_path unless turbo_frame_request?
   end
 
   # Publishing puts the announcement up as the banner right away.
