@@ -49,6 +49,22 @@ RSpec.describe("Site announcements", type: :request) do
       expect(response).to redirect_to(site_announcements_path)
     end
 
+    it "notifies nobody about it, neither in MaMpf nor by mail" do
+      create_list(:confirmed_user, 2, email_for_announcement: true)
+      create(:confirmed_user, email_for_announcement: true).bookmark_lecture!(lecture)
+
+      notifications_before = Notification.count
+
+      expect do
+        post(site_announcements_path,
+             params: { announcement: { details: "Maintenance tonight" } },
+             as: :turbo_stream)
+      end.not_to have_enqueued_mail
+
+      expect(Announcement.last.details).to include("Maintenance tonight")
+      expect(Notification.count).to eq(notifications_before)
+    end
+
     it "shows the inline form again for an empty one" do
       expect do
         post(site_announcements_path, params: { announcement: { details: "" } },
