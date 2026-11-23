@@ -500,6 +500,31 @@ RSpec.describe(StudentPerformance::Evaluator) do
         expect(result.details[:not_due_sheets]).to eq(2)
       end
 
+      it "counts a test to come apart from the sheets to come" do
+        sheet(deadline: 2.days.ago, points: 20)
+        sheet(deadline: 3.days.from_now, points: 60)
+        coming_test = sheet(deadline: 5.days.from_now, points: 40)
+        coming_test.assessable.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+
+        result = evaluator.evaluate(record_with(total: 5, max: 120))
+
+        expect(result.details[:not_due_sheets]).to eq(1)
+        expect(result.details[:not_due_tests]).to eq(1)
+      end
+
+      it "names no test to come where tests are kept out of the points total" do
+        lecture.update!(tests_in_points_total: false)
+        sheet(deadline: 2.days.ago, points: 20)
+        sheet(deadline: 3.days.from_now, points: 60)
+        coming_test = sheet(deadline: 5.days.from_now, points: 40)
+        coming_test.assessable.update_column(:kind, Assignment.kinds.fetch("test")) # rubocop:disable Rails/SkipsModelValidations
+
+        result = evaluator.evaluate(record_with(total: 5, max: 80))
+
+        expect(result.details[:not_due_sheets]).to eq(1)
+        expect(result.details[:not_due_tests]).to eq(0)
+      end
+
       it "says as much about the hand-ins that are waiting" do
         due = sheet(deadline: 2.days.ago, points: 20)
         FactoryBot.create(:assessment_participation, assessment: due,
@@ -676,10 +701,131 @@ RSpec.describe(StudentPerformance::Evaluator) do
                                          due_points: due_points).evaluate(record)
       expected_keys = [:assignments_incomplete, :meets_points, :points_not_due,
                        :points_pending, :points_not_measurable,
-                       :points_outstanding, :meets_achievements,
-                       :achievements_ungraded, :not_due_sheets, :not_due_tests,
-                       :pending_sheets]
+                       :points_outstanding, :meets_tests, :tests_open,
+                       :meets_achievements, :achievements_ungraded,
+                       :not_due_sheets, :not_due_tests, :pending_sheets]
       expect(result.details.keys).to match_array(expected_keys)
+    end
+
+    context "with a rule that asks for passed tests" do
+      let(:rule) do
+        FactoryBot.create(:student_performance_rule, :active, :without_criteria,
+                          lecture: lecture, min_tests_passed: 2)
+      end
+      let(:pass_fail) { [11, 12, 13] }
+
+      def evaluate(passed: [], failed: [], complete: true, pass_fail_test_ids: pass_fail)
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture, tests_passed_ids: passed,
+                                   tests_failed_ids: failed)
+        described_class.new(rule, assignments_complete: complete, due_points: due_points,
+                                  pass_fail_test_ids: pass_fail_test_ids).evaluate(record)
+      end
+
+      it "proposes :passed once enough tests are passed, whatever is still open" do
+        result = evaluate(passed: [11, 12])
+
+        expect(result.proposed_status).to eq(:passed)
+        expect(result.details[:meets_tests]).to be(true)
+      end
+
+      it "defers while the open tests could still make up the number" do
+        result = evaluate(passed: [11], failed: [12])
+
+        expect(result.proposed_status).to eq(:inconclusive)
+        expect(result.verdict_deferral_reasons).to eq([:tests_open])
+        expect(result.details).to include(tests_passed: 1, tests_still_open: 1)
+      end
+
+      it "proposes :failed once the open tests cannot make it up any more" do
+        result = evaluate(passed: [11], failed: [12, 13])
+
+        expect(result.proposed_status).to eq(:failed)
+        expect(result.missed_criteria).to eq([:tests])
+      end
+
+      it "counts only tests that carry a passing threshold today" do
+        result = evaluate(passed: [11, 99], failed: [12, 13])
+
+        expect(result.proposed_status).to eq(:failed)
+        expect(result.details[:tests_passed]).to eq(1)
+      end
+
+      it "defers every verdict while the list of sheets and tests is open" do
+        result = evaluate(passed: [11], failed: [12, 13], complete: false)
+
+        expect(result.proposed_status).to eq(:inconclusive)
+        expect(result.verdict_deferral_reasons).to eq([:assignments_incomplete])
+      end
+
+      it "proposes :failed where no test carries a threshold and the list is complete" do
+        expect(evaluate(pass_fail_test_ids: []).proposed_status).to eq(:failed)
+        expect(evaluate(pass_fail_test_ids: [], complete: false).proposed_status)
+          .to eq(:inconclusive)
+      end
+
+      it "defers a student who has passed enough while the list is open" do
+        expect(evaluate(passed: [11, 12], complete: false).proposed_status)
+          .to eq(:inconclusive)
+      end
+
+      it "proposes :failed for a missed achievement although tests are still open" do
+        achievement = FactoryBot.create(:achievement, :boolean, lecture: lecture)
+        FactoryBot.create(:student_performance_rule_achievement,
+                          rule: rule, achievement: achievement)
+        record = FactoryBot.create(:student_performance_record, lecture: lecture,
+                                                                tests_passed_ids: [11])
+
+        result = described_class.new(rule.reload, assignments_complete: true,
+                                                  due_points: due_points,
+                                                  pass_fail_test_ids: pass_fail).evaluate(record)
+
+        expect(result.proposed_status).to eq(:failed)
+        expect(result.missed_criteria).to eq([:achievements])
+      end
+
+      it "proposes :failed for missed tests although points are still open" do
+        rule.update!(threshold_mode: :percentage, min_percentage: 50)
+        pending_sheet = FactoryBot.create(:assignment, :expired, lecture: lecture)
+        FactoryBot.create(:assessment_task, assessment: pending_sheet.assessment,
+                                            max_points: 100)
+        FactoryBot.create(:assessment_participation, :submitted,
+                          assessment: pending_sheet.assessment, user: student)
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture, user: student,
+                                   points_total_materialized: 0,
+                                   points_max_materialized: 100,
+                                   percentage_materialized: 0,
+                                   tests_passed_ids: [11], tests_failed_ids: [12, 13])
+
+        result = described_class.new(rule, assignments_complete: true,
+                                           due_points: due_points,
+                                           pass_fail_test_ids: pass_fail).evaluate(record)
+
+        expect(result.proposed_status).to eq(:failed)
+        expect(result.missed_criteria).to eq([:tests])
+      end
+
+      it "refuses to evaluate without being told which tests are pass/fail" do
+        expect { evaluate(pass_fail_test_ids: nil) }
+          .to raise_error(ArgumentError, %r{no pass/fail tests given})
+      end
+
+      it "asks for both where the rule also sets a points threshold" do
+        rule.update!(threshold_mode: :percentage, min_percentage: 50)
+        record = FactoryBot.create(:student_performance_record,
+                                   lecture: lecture, percentage_materialized: 40,
+                                   points_total_materialized: 40,
+                                   points_max_materialized: 100,
+                                   tests_passed_ids: [11, 12])
+
+        result = described_class.new(rule, assignments_complete: true,
+                                           due_points: due_points,
+                                           pass_fail_test_ids: pass_fail).evaluate(record)
+
+        expect(result.proposed_status).to eq(:failed)
+        expect(result.missed_criteria).to eq([:points])
+      end
     end
   end
 

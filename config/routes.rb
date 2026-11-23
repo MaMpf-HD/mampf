@@ -137,6 +137,7 @@ Rails.application.routes.draw do
     resources :assessments, only: [:index, :show, :update] do
       collection do
         patch :assignments_complete
+        patch :tests_in_points_total
       end
       resources :tasks, except: [:index] do
         member do
@@ -265,21 +266,21 @@ Rails.application.routes.draw do
       to: "lectures#update_editors",
       as: "update_editors"
 
-  get "lectures/:id/add_forum",
-      to: "lectures#add_forum",
-      as: "add_forum"
+  patch "lectures/:id/add_forum",
+        to: "lectures#add_forum",
+        as: "add_forum"
 
-  get "lectures/:id/lock_forum",
-      to: "lectures#lock_forum",
-      as: "lock_forum"
+  patch "lectures/:id/lock_forum",
+        to: "lectures#lock_forum",
+        as: "lock_forum"
 
-  get "lectures/:id/unlock_forum",
-      to: "lectures#unlock_forum",
-      as: "unlock_forum"
+  patch "lectures/:id/unlock_forum",
+        to: "lectures#unlock_forum",
+        as: "unlock_forum"
 
-  get "lectures/:id/destroy_forum",
-      to: "lectures#destroy_forum",
-      as: "destroy_forum"
+  delete "lectures/:id/destroy_forum",
+         to: "lectures#destroy_forum",
+         as: "destroy_forum"
 
   get "lectures/:id/announcements",
       to: "lectures#show_announcements",
@@ -317,13 +318,13 @@ Rails.application.routes.draw do
          to: "lectures#remove_imported_medium",
          as: "lecture_remove_imported_medium"
 
-  get "lectures/:id/close_comments",
-      to: "lectures#close_comments",
-      as: "lecture_close_comments"
+  patch "lectures/:id/close_comments",
+        to: "lectures#close_comments",
+        as: "lecture_close_comments"
 
-  get "lectures/:id/open_comments",
-      to: "lectures#open_comments",
-      as: "lecture_open_comments"
+  patch "lectures/:id/open_comments",
+        to: "lectures#open_comments",
+        as: "lecture_open_comments"
 
   get "lectures/:id/submissions",
       to: "submissions#index",
@@ -583,9 +584,9 @@ Rails.application.routes.draw do
       to: "media#add_reference",
       as: "add_reference"
 
-  get "media/:id/import_script_items",
-      to: "media#import_script_items",
-      as: "import_script_items"
+  post "media/:id/import_script_items",
+       to: "media#import_script_items",
+       as: "import_script_items"
 
   patch "media/:id/remove_screenshot",
         to: "media#remove_screenshot",
@@ -1069,9 +1070,9 @@ Rails.application.routes.draw do
       to: "tags#search",
       as: "search_tags"
 
-  get "tags/:id/take_random_quiz",
-      to: "tags#take_random_quiz",
-      as: "tag_random_quiz"
+  post "tags/:id/take_random_quiz",
+       to: "tags#take_random_quiz",
+       as: "tag_random_quiz"
 
   post "tags/postprocess",
        to: "tags#postprocess",

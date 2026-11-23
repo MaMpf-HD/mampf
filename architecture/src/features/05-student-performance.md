@@ -164,10 +164,12 @@ The main fields and methods of `StudentPerformance::Record` are:
 | `lecture_id`              | DB column (FK)    | The lecture this performance record applies to                           |
 | `user_id`                 | DB column (FK)    | The student whose performance is materialized                            |
 | `points_total_materialized` | DB column       | Points awarded so far — only participations that are fully marked count  |
-| `points_max_materialized` | DB column         | Maximum of every assignment in the lecture, minus the ones this student is exempt from |
+| `points_max_materialized` | DB column         | Maximum of every assignment in the points total, minus the ones this student is exempt from |
 | `percentage_materialized` | DB column         | Computed percentage (points_total / points_max)                          |
 | `achievements_met_ids`    | DB column (JSONB) | Optional list of achievement IDs currently met (factual audit)           |
 | `achievements_ungraded_ids` | DB column (JSONB) | Achievement IDs with no grade recorded yet — not met, but not missed either |
+| `tests_passed_ids`        | DB column (JSONB) | Assignment IDs of the tests passed; excused counts as passed             |
+| `tests_failed_ids`        | DB column (JSONB) | Assignment IDs of the tests failed; absent counts as failed. A test in neither list is still open |
 | `computed_at`             | DB column         | Timestamp of last computation                                            |
 
 ### Behavior Highlights
@@ -175,6 +177,7 @@ The main fields and methods of `StudentPerformance::Record` are:
 - Enforces uniqueness per (lecture, user) via database constraint.
 - Contains only factual data; interpretation is handled by `Evaluator` and teacher certification.
 - Re-computation updates materialized values and `computed_at`.
+- **Tests in or out of the points total:** `Lecture#tests_in_points_total` (on by default, a checkbox below the tests in the Assignments & Tests tab) decides whether tests count towards the two points columns. With it off they hold the homework's points alone. `ComputationService` asks `Lecture#assignments_in_points_total`; `DuePoints` and the submissions hub's loader apply the same setting to the assignments they have already loaded, and the hub shows the tests' sum on a line of its own.
 
 ### Example Implementation
 
@@ -335,6 +338,7 @@ A configuration record that defines the criteria a student must meet to be eligi
 | `lecture_id`                   | DB column (FK)   | The lecture this rule applies to                               |
 | `min_percentage`               | DB column        | Minimum percentage of points (0-100), mutually exclusive with `min_points_absolute` |
 | `min_points_absolute`          | DB column        | Minimum absolute points, mutually exclusive with `min_percentage` |
+| `min_tests_passed`             | DB column        | Number of tests that have to be passed, optional              |
 | `active`                       | DB column (Bool) | Whether this rule is currently in effect                       |
 | `rule_achievements`            | Association      | Join records linking to required achievements                  |
 | `required_achievements`        | Association      | Achievement records that must be completed (via `rule_achievements`) |
@@ -347,6 +351,7 @@ A configuration record that defines the criteria a student must meet to be eligi
 - References multiple achievements via join table (`student_performance_rule_achievements`)
 - Database-level integrity prevents deletion of achievements still referenced by rules
 - Enforces mutual exclusivity of percentage vs absolute point thresholds
+- May ask for a number of passed tests (`min_tests_passed`). Only a test with a passing threshold (`Assignment#passing_points`) can be passed or failed, so only those are counted; `Assignment#test_verdict` is the one place that decides
 - Points are aggregated from all assignments of the lecture (no filtering by type or archived status)
 
 ### Example Implementation
@@ -449,6 +454,7 @@ The service is invoked in several scenarios to keep performance records accurate
 2.  **After achievement changes:** When tutors record or correct lecture achievements for a user.
 3.  **Just-in-Time:** The `Registration::Policy` triggers a recomputation for a single user at the moment of an exam registration attempt to guarantee 100% correctness.
 4.  **On-demand by staff:** Manual trigger via an admin interface for debugging or corrections.
+5.  **After a lecture-wide statement changes:** Ticking or clearing "the list of sheets and tests is complete" or "test points count towards the points total" recomputes every record of the lecture, so decisions taken before read as outdated.
 
 ### Example Implementation
 
@@ -554,9 +560,11 @@ repeating them in every row of the table says nothing.
 
 ### How the decision is reached
 
-Two criteria, each in one of several states, and one rule that weighs them: a
+Three criteria, each in one of several states, and one rule that weighs them: a
 criterion nobody can satisfy any more settles the case, one that is merely open
-defers it.
+defers it. The tests criterion counts against the lecture's tests with a passing
+threshold, which the caller hands in as `pass_fail_test_ids:`; a rule that asks for
+passed tests cannot be evaluated without them.
 
 ```ruby
       # Criteria that are open rather than missed.
@@ -565,11 +573,11 @@ defers it.
       def evaluate(record)
         return Result.new(proposed_status: :failed, details: {}) unless record
 
-        propose(points_status(record), achievements_status(record))
+        propose(points_status(record), tests_status(record), achievements_status(record))
       end
 
       def propose(*statuses)
-        return :inconclusive unless @assignments_complete
+        return :inconclusive if held_back_by_list?
         return :failed if statuses.include?(:not_met)
         return :inconclusive if statuses.intersect?(UNDECIDED)
 
@@ -580,7 +588,14 @@ defers it.
 | Criterion | States |
 |---|---|
 | points | `:met` · `:pending` (marking outstanding, or a sheet not due yet) · `:not_measurable` (nothing to measure) · `:not_met` |
+| tests | `:met` (enough tests passed) · `:pending` (the tests nobody has settled for the student could still make up the number) · `:not_met` |
 | achievements | `:met` · `:ungraded` (no grade recorded) · `:not_met` |
+
+`held_back_by_list?` defers every verdict while the lecture has not called its
+list of sheets and tests complete and the rule depends on the assignments
+(`Rule#depends_on_assignments?`): a points threshold moves with every further
+sheet, and every further test is another chance to pass one. A rule that asks
+for achievements alone is not held back.
 
 **`:pending`** means the student is below the threshold but what is still
 outstanding would carry them over it. Two things are outstanding: work handed in,

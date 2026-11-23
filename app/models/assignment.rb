@@ -34,6 +34,8 @@ class Assignment < ApplicationRecord
   after_create_commit :reopen_lecture_assignment_list
   after_update_commit :reopen_after_deadline_move, if: :deadline_moved_ahead?
   after_rollback :forget_deadline_move
+  after_update_commit :recompute_performance_records,
+                      if: :saved_change_to_passing_points?
 
   def requires_submission
     return false if kind_test?
@@ -56,8 +58,11 @@ class Assignment < ApplicationRecord
   # The form offers a test no sheet to attach; a request that names one
   # anyway is refused rather than quietly obeyed.
   validates :medium_id, absence: true, if: :kind_test?
+  validates :passing_points, numericality: { greater_than: 0 }, allow_nil: true
+  validates :passing_points, absence: true, unless: :kind_test?
 
   scope :active, -> { where(deadline: Time.zone.now..) }
+  scope :with_passing_points, -> { kind_test.where.not(passing_points: nil) }
 
   scope :expired, -> { where(deadline: ...Time.zone.now) }
 
@@ -180,6 +185,22 @@ class Assignment < ApplicationRecord
     end
     weeks |= [test_week] if deadline
     weeks.sort
+  end
+
+  # Whether the test is passed, for the performance record and every page.
+  # Nil while nothing is settled for the student, and for a test without a
+  # passing threshold.
+  def test_verdict(status:, points_total:)
+    return if passing_points.nil?
+
+    case status.to_s
+    when "exempt" then :passed
+    when "absent" then :failed
+    when "reviewed"
+      return if points_total.nil?
+
+      points_total >= passing_points ? :passed : :failed
+    end
   end
 
   def semiactive?
@@ -333,7 +354,13 @@ class Assignment < ApplicationRecord
     end
 
     def test_deadline_from(first)
-      first.in_time_zone.end_of_week + (test_week_count.to_i - 1).weeks
+      end_of_test_week(first.in_time_zone) + (test_week_count.to_i - 1).weeks
+    end
+
+    # Cut to the microseconds the database stores. Otherwise the week a test
+    # already has, sent again by the settings form, counts as a moved deadline.
+    def end_of_test_week(time)
+      time.end_of_week.floor(6)
     end
 
     # A test written unannounced can only be set up once its last group has
@@ -347,7 +374,7 @@ class Assignment < ApplicationRecord
     end
 
     def end_test_week
-      self.deadline = deadline.end_of_week if deadline
+      self.deadline = end_of_test_week(deadline) if deadline
     end
 
     def inherit_deletion_date_from_lecture
@@ -471,6 +498,12 @@ class Assignment < ApplicationRecord
         .where(assessment_id: assessment.id, tutorial_id: tutorial.id)
         .distinct
         .pluck(:user_id)
+    end
+
+    def recompute_performance_records
+      StudentPerformance::ComputationService
+        .new(lecture: lecture)
+        .compute_and_upsert_all_records!
     end
 
     # Skip Lecture validations so an unrelated validation error cannot

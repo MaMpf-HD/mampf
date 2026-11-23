@@ -140,6 +140,30 @@ RSpec.describe(MarkingTableHeaderComponent, type: :component) do
     end
   end
 
+  describe "a test with a passing threshold" do
+    let(:test) do
+      create(:assignment, :with_lecture, kind: :test, passing_points: 4.5)
+    end
+
+    it "has a column for who has passed, headed with the threshold" do
+      passed = columns_for(header(test)).find { |c| c.css_class.include?("passed-col") }
+
+      expect(passed.label).to eq(I18n.t("assessment.test.passed_column"))
+      expect(passed.sublabel).to eq(
+        "(#{I18n.t("assessment.test.passed_from",
+                   points: ActiveSupport::NumberHelper.number_to_rounded(
+                     4.5, precision: 2, strip_insignificant_zeros: true
+                   ))})"
+      )
+    end
+
+    it "has no such column once the threshold is taken off" do
+      test.update!(passing_points: nil)
+
+      expect(classes_for(header(test))).not_to include(a_string_including("passed-col"))
+    end
+  end
+
   describe "a talk's columns" do
     let(:seminar) { create(:lecture, :is_seminar) }
     let(:talk) do

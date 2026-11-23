@@ -243,6 +243,48 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.body).to include("assessments_container")
       end
 
+      it "sets a test's passing threshold, and takes it off again" do
+        test = create(:valid_assignment, lecture: lecture, kind: :test,
+                                         deadline: 1.week.from_now)
+        threshold = lambda do |value|
+          patch(assessment_assessment_path(test.assessment.id),
+                params: { assessment_assessment: {
+                  assessable_attributes: { id: test.id, passing_points: value }
+                } },
+                as: :turbo_stream)
+          test.reload.passing_points
+        end
+
+        expect(threshold.call("5")).to eq(5)
+        expect(threshold.call("")).to be_nil
+      end
+
+      it "sets the passing threshold of a test written weeks ago" do
+        test = Timecop.travel(4.weeks.ago) do
+          create(:valid_assignment, lecture: lecture, kind: :test, deadline: Time.zone.now)
+        end
+
+        patch assessment_assessment_path(test.assessment.id),
+              params: { assessment_assessment: {
+                assessable_attributes: { id: test.id, test_week: test.test_week.iso8601,
+                                         test_week_count: "1", passing_points: "5" }
+              } },
+              as: :turbo_stream
+
+        expect(test.reload.passing_points).to eq(5)
+      end
+
+      it "lists a test's passing threshold in the overview" do
+        create(:valid_assignment, lecture: lecture, kind: :test, passing_points: 4.5)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(I18n.t("assessment.test.passing_points"))
+        cells = Nokogiri::HTML(response.body).css("#assessment-tests-list td")
+        expect(cells.map { |cell| cell.text.squish })
+          .to include("4.5 #{I18n.t("assessment.task.points_abbrev")}")
+      end
+
       it "moves a test to the week it is given, due with its Sunday" do
         test = create(:valid_assignment, lecture: lecture, kind: :test,
                                          deadline: 1.week.from_now)
@@ -308,6 +350,141 @@ RSpec.describe("Assessment::Assessments", type: :request) do
         expect(response.media_type).to eq(Mime[:turbo_stream])
         expect(response.body).to include("assessments_container")
       end
+    end
+  end
+
+  describe "PATCH /assessment/assessments/tests_in_points_total" do
+    def test_points_path(**params)
+      tests_in_points_total_assessment_assessments_path(lecture_id: lecture.id, **params)
+    end
+
+    context "as a teacher" do
+      before { sign_in teacher }
+
+      it "offers the choice below the tests it is about" do
+        create(:valid_assignment, lecture: lecture, kind: :test)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.label"))
+        )
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.exclude_dialog.body"))
+        )
+      end
+
+      it "does not offer it while the lecture has no test" do
+        create(:valid_assignment, lecture: lecture)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).not_to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.label"))
+        )
+      end
+
+      it "asks the other question once the tests are out of the total" do
+        create(:valid_assignment, lecture: lecture, kind: :test)
+        lecture.update!(tests_in_points_total: false)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(I18n.t("assessment.tests_in_points_total.include_dialog.body"))
+        )
+      end
+
+      it "says that decisions already taken stay" do
+        create(:valid_assignment, lecture: lecture, kind: :test)
+        create(:student_performance_certification, :passed, lecture: lecture)
+
+        get assessment_assessments_path(lecture_id: lecture.id)
+
+        expect(response.body).to include(
+          CGI.escapeHTML(
+            I18n.t("assessment.tests_in_points_total.decisions_stay",
+                   count: 1, tab: I18n.t("assessment.tabs.certifications"))
+          )
+        )
+      end
+
+      it "takes the tests out of the points total" do
+        patch test_points_path(counted: "0")
+
+        expect(lecture.reload.tests_in_points_total?).to be(false)
+        expect(response).to redirect_to(
+          assessment_assessments_path(lecture_id: lecture.id, tab: "assessments")
+        )
+      end
+
+      it "puts them back" do
+        lecture.update!(tests_in_points_total: false)
+
+        patch test_points_path(counted: "1")
+
+        expect(lecture.reload.tests_in_points_total?).to be(true)
+      end
+    end
+
+    it "is refused to a student" do
+      sign_in student
+
+      patch test_points_path(counted: "0")
+
+      expect(lecture.reload.tests_in_points_total?).to be(true)
+    end
+
+    it "is open to an editor and refused to a tutor of the lecture" do
+      tutor = create(:confirmed_user)
+      create(:tutorial, lecture: lecture, tutors: [tutor])
+
+      sign_in tutor
+      patch test_points_path(counted: "0")
+      expect(lecture.reload.tests_in_points_total?).to be(true)
+
+      sign_in editor
+      patch test_points_path(counted: "0")
+      expect(lecture.reload.tests_in_points_total?).to be(false)
+    end
+
+    it "refuses a request that does not say which way" do
+      sign_in teacher
+
+      [{}, { counted: "unexpected" }, { counted: ["1"] }].each do |params|
+        patch test_points_path(**params)
+
+        expect(response).to have_http_status(:bad_request)
+        expect(lecture.reload.tests_in_points_total?).to be(true)
+      end
+    end
+
+    # 20 of 30 with the test, 12 of 20 without it: the rule's 65 % are met
+    # only while the test counts.
+    it "keeps a computed decision the new total contradicts, and has it flagged" do
+      sign_in teacher
+      create(:lecture_membership, lecture: lecture, user: student)
+      { homework: [20, 12], test: [10, 8] }.each do |kind, (max, points)|
+        assignment = create(:assignment, :expired, lecture: lecture, kind: kind)
+        task = create(:assessment_task, assessment: assignment.assessment, max_points: max)
+        row = create(:assessment_participation, :reviewed, assessment: assignment.assessment,
+                                                           user: student)
+        create(:assessment_task_point, task: task, assessment_participation: row,
+                                       points: points)
+      end
+      lecture.update!(assignments_complete: true)
+      rule = create(:student_performance_rule, :active, :with_percentage,
+                    lecture: lecture, min_percentage: 65)
+      decision = create(:student_performance_certification, :passed, lecture: lecture,
+                                                                     user: student, rule: rule)
+
+      patch test_points_path(counted: "0")
+
+      expect(decision.reload).to be_passed
+      get lecture_student_performance_certifications_path(lecture)
+      expect(response.body).to include(
+        I18n.t("student_performance.certifications.index.disagreeing_warning", count: 1)
+      )
     end
   end
 

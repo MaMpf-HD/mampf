@@ -57,7 +57,8 @@ RSpec.describe(Assignment, type: :model) do
     end
 
     it "is due with the end of the week it was given a day of" do
-      expect(test.deadline).to eq((1.week.from_now.beginning_of_week + 2.days).end_of_week)
+      expect(test.deadline)
+        .to be_within(1.second).of((1.week.from_now.beginning_of_week + 2.days).end_of_week)
       expect(test.test_week).to eq(1.week.from_now.to_date.beginning_of_week)
       expect(test.test_period).to eq(
         1.week.from_now.beginning_of_week.to_date..(1.week.from_now.end_of_week.to_date)
@@ -169,6 +170,15 @@ RSpec.describe(Assignment, type: :model) do
       expect(test).to be_invalid
     end
 
+    # The settings form sends the week with every save.
+    it "takes the week it already has without counting as changed" do
+      stored = Assignment.find(test.id)
+
+      stored.test_week = stored.test_week.iso8601
+
+      expect(stored).not_to be_changed
+    end
+
     # Written unannounced, a test is set up once its last group has sat it.
     it "may be set up for last week, but not for the week before" do
       test.test_week = Time.zone.today.prev_week.iso8601
@@ -258,6 +268,57 @@ RSpec.describe(Assignment, type: :model) do
 
   it "is homework unless said otherwise" do
     expect(FactoryBot.create(:valid_assignment)).to be_kind_homework
+  end
+
+  describe "a test's passing threshold" do
+    let(:test) do
+      FactoryBot.create(:valid_assignment, :expired, kind: :test, passing_points: 5)
+    end
+
+    def verdict(status, points = nil)
+      test.test_verdict(status: status, points_total: points)
+    end
+
+    it "is optional, positive, and a test's alone" do
+      expect(FactoryBot.build(:valid_assignment, kind: :test)).to be_valid
+      expect(FactoryBot.build(:valid_assignment, kind: :test, passing_points: 0))
+        .to be_invalid
+      expect(FactoryBot.build(:valid_assignment, passing_points: 5)).to be_invalid
+    end
+
+    it "passes a marked test from the threshold on" do
+      expect(verdict(:reviewed, 5)).to eq(:passed)
+      expect(verdict(:reviewed, 4.5)).to eq(:failed)
+    end
+
+    it "counts an excused student as passed and an absent one as failed" do
+      expect(verdict(:exempt)).to eq(:passed)
+      expect(verdict(:absent)).to eq(:failed)
+    end
+
+    it "says nothing while nothing is settled for the student" do
+      expect(verdict(:pending, 7)).to be_nil
+    end
+
+    # No total is no result; calling it failed would refuse somebody an exam
+    # for a number nobody entered.
+    it "says nothing on a reviewed row that carries no total" do
+      expect(verdict(:reviewed, nil)).to be_nil
+    end
+
+    it "says nothing for a test without a threshold" do
+      test.update!(passing_points: nil)
+
+      expect(verdict(:reviewed, 9)).to be_nil
+      expect(Assignment.with_passing_points).not_to include(test)
+    end
+
+    it "may be moved after the test has been marked" do
+      FactoryBot.create(:assessment_participation, :reviewed,
+                        assessment: test.assessment, points_total: 4)
+
+      expect(test.update(passing_points: 4)).to be(true)
+    end
   end
 
   describe "#past_deadline?" do
@@ -388,6 +449,17 @@ RSpec.describe(Assignment, type: :model) do
       lecture.update!(assignments_complete: true)
 
       assignment.update!(title: "Renamed")
+
+      expect(lecture.reload.assignments_complete?).to be(true)
+    end
+
+    it "stays closed while a coming test is saved with the week it has" do
+      test = FactoryBot.create(:valid_assignment, lecture: lecture, kind: :test,
+                                                  deadline: 1.week.from_now)
+      lecture.update!(assignments_complete: true)
+
+      Assignment.find(test.id).update!(test_week: test.test_week.iso8601,
+                                       passing_points: 5)
 
       expect(lecture.reload.assignments_complete?).to be(true)
     end

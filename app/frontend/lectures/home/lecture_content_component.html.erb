@@ -66,7 +66,7 @@
 
         <div class="lecture-home-content-media">
           <% last_lesson_links.each do |link| %>
-            <%= link_to link.path do %>
+            <%= link_to link.path, target: "_blank" do %>
               <i class="bi <%= link.icon %>" aria-hidden="true"></i>
               <%= link.label %>
             <% end %>

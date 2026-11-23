@@ -41,7 +41,9 @@ class Item < ApplicationRecord
                                      "proposition", "Lemma", "Theorem",
                                      "subsection", "Corollary", "figure",
                                      "chapter", "exercise", "equation"] }
-  validates :link, http_url: true, if: :proper_link?
+  # Checks the link for every sort: the references of a video offer it as
+  # link target whatever the sort of the item.
+  validates :link, http_url: true, allow_blank: true
   validates :description, presence: true, if: :link?
   validate :valid_start_time
   validate :start_time_not_too_late
@@ -311,10 +313,6 @@ class Item < ApplicationRecord
 
     def other_items
       ["section", "self", "link", "label", "pdf_destination", "chapter"]
-    end
-
-    def proper_link?
-      sort == "link" && link.present?
     end
 
     def next_item

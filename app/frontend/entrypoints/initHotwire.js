@@ -183,8 +183,8 @@ window.Stimulus.register("assessments--points-precision", PointsPrecisionControl
 import SchemeFormController from "~/assessment/assessments/scheme_form.controller.js";
 window.Stimulus.register("assessments--scheme-form", SchemeFormController);
 
-import AssignmentsCompleteController from "~/assessment/assessments/assignments_complete.controller.js";
-window.Stimulus.register("assessments--assignments-complete", AssignmentsCompleteController);
+import ConfirmedCheckboxController from "~/assessment/assessments/confirmed_checkbox.controller.js";
+window.Stimulus.register("assessments--confirmed-checkbox", ConfirmedCheckboxController);
 
 import AchievementFormController from "~/student_performance/achievements/achievement_form.controller.js";
 window.Stimulus.register("achievement-form", AchievementFormController);
@@ -194,6 +194,9 @@ window.Stimulus.register("certification-inline", CertificationInlineController);
 
 import ThresholdModeController from "~/student_performance/rules/threshold-mode.controller.js";
 window.Stimulus.register("threshold-mode", ThresholdModeController);
+
+import TestsCriterionController from "~/student_performance/rules/tests_criterion.controller.js";
+window.Stimulus.register("tests-criterion", TestsCriterionController);
 
 import SortableController from "~/assessment/sortable.controller.js";
 window.Stimulus.register("sortable", SortableController);
