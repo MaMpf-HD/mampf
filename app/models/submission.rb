@@ -7,6 +7,8 @@ class Submission < ApplicationRecord
 
   self.implicit_order_column = "created_at"
 
+  MEMBER_SEARCH_MIN_LENGTH = 2
+
   include SubmissionUploader[:manuscript]
   include CorrectionUploader[:correction]
 
@@ -51,6 +53,95 @@ class Submission < ApplicationRecord
 
   def team
     users.map(&:tutorial_name).natural_sort.join(", ")
+  end
+
+  def member_tutorial_ids
+    TutorialMembership.where(user_id: user_ids, lecture_id: assignment.lecture_id)
+                      .distinct.pluck(:tutorial_id)
+  end
+
+  # Whom a tutor may put on the team: a member of its tutorial, or of any of
+  # the lecture's tutorials where teams may span them, as a join by code
+  # allows.
+  def member_candidates
+    lecture = assignment.lecture
+    memberships = if lecture.cross_tutorial_teams?
+      TutorialMembership.where(lecture_id: lecture.id)
+    else
+      TutorialMembership.where(tutorial_id: tutorial_id)
+    end
+    User.where(id: memberships.select(:user_id))
+  end
+
+  # The candidates from the lecture's other tutorials whose shown name
+  # matches, on no team for the sheet yet; the group's own are on the page
+  # already, also anybody who moved away and left their row with it. A shorter
+  # query would match much of a large lecture. Somebody marked on a row of
+  # their own is done with the sheet.
+  def member_candidates_elsewhere(query)
+    return User.none if query.length < MEMBER_SEARCH_MIN_LENGTH
+
+    joined = UserSubmissionJoin.where(submission: assignment.submissions)
+    marked = Assessment::Participation.marked.where(assessment: assessment)
+    member_candidates
+      .where.not(id: TutorialMembership.where(tutorial_id: tutorial_id).select(:user_id))
+      .where.not(id: assignment.non_submitters_in_tutorial(tutorial).select(:id))
+      .where.not(id: joined.select(:user_id))
+      .where.not(id: marked.select(:user_id))
+      .where("#{User::SHOWN_NAME_SQL} ILIKE :q",
+             q: "%#{User.sanitize_sql_like(query)}%")
+      .by_last_name
+  end
+
+  # Whether a tutor may put somebody on the team: not while the hand-in is
+  # rejected as late. A deadline moved past it since makes it count again,
+  # as it does for marking.
+  def takes_members?
+    !(too_late? && accepted == false)
+  end
+
+  # Once a team has points or a correction, the tutorial that marked it
+  # keeps it.
+  def movable?
+    correction.blank? && !marked?
+  end
+
+  # A team of one sits in another tutorial when its member moved after
+  # handing in; its tutor hands it over like any other. Until the grace
+  # period is over, a join or a leave still places the team, not a tutor.
+  def hand_over_targets
+    return Tutorial.none unless movable? && assignment.totally_expired?
+
+    Tutorial.where(id: member_tutorial_ids - [tutorial_id]).order(:title)
+  end
+
+  # A mixed team goes to the member tutorial with the fewest hand-ins, so the
+  # uploader does not choose the tutor. A tutor's hand-over holds while a
+  # member sits in that tutorial, even across a leave and a rejoin.
+  # Once the grace period is over a team stays where it is: its tutor may be
+  # marking it from a bulk download already, which leaves no trace here.
+  # Only a hand-over moves it then.
+  def place_team!(tutorials_before)
+    return if assignment.totally_expired?
+
+    with_team_locked do
+      next unless movable?
+
+      tutorials = member_tutorial_ids
+      next if tutorials.empty?
+
+      file_under!(placement_for(tutorials, tutorials_before))
+    end
+  end
+
+  def hand_over!(target)
+    with_team_locked do
+      next false unless target&.in?(hand_over_targets)
+
+      update!(handed_over_to_id: target.id)
+      file_under!(target.id)
+      true
+    end
   end
 
   def manuscript_filename
@@ -265,7 +356,7 @@ class Submission < ApplicationRecord
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
     report = { successful_saves: [], submissions: submissions.size,
-               invalid_filenames: [], invalid_id: [], in_subfolder: [],
+               invalid_filenames: [], invalid_id: [], elsewhere: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
     begin
       files.each do |file_shrine|
@@ -280,7 +371,8 @@ class Submission < ApplicationRecord
         # uploaded filename cannot target a submission in another tutorial.
         submission = submissions.find_by(id: submission_id)
         unless submission
-          report[:invalid_id].push(filename)
+          elsewhere = known_elsewhere(tutorial, assignment, submission_id)
+          elsewhere ? report_elsewhere(report, elsewhere) : report[:invalid_id].push(filename)
           next
         end
         if submission.too_late? && submission.accepted.nil?
@@ -291,7 +383,16 @@ class Submission < ApplicationRecord
           report[:rejected].push(submission.team)
           next
         end
-        submission.update(correction: file_shrine.to_json)
+        moved = submission.with_lock do
+          next true unless submission.tutorial_id == tutorial.id
+
+          submission.update(correction: file_shrine.to_json)
+          false
+        end
+        if moved
+          report_elsewhere(report, submission)
+          next
+        end
         unless submission.valid?
           report[:invalid_file].push(filename)
           next
@@ -304,7 +405,63 @@ class Submission < ApplicationRecord
     report
   end
 
+  # A hand-in of the same sheet that another tutorial has now and that may
+  # have been in this tutorial's bundle: one handed over, or one of a team
+  # with somebody in this tutorial. Any other id stays invalid, so the report
+  # does not name a team the tutor has nothing to do with.
+  def self.known_elsewhere(tutorial, assignment, submission_id)
+    elsewhere = where(assignment: assignment).includes(:users, tutorial: :tutors)
+                                             .find_by(id: submission_id)
+    return unless elsewhere
+    return elsewhere if elsewhere.handed_over_to_id?
+
+    elsewhere if elsewhere.member_tutorial_ids.include?(tutorial.id)
+  end
+
+  # Names the team and the tutorial that has its hand-in now, so the
+  # correction can go there. Nothing is written on it.
+  def self.report_elsewhere(report, submission)
+    report[:elsewhere].push([submission.team, submission.tutorial.title_with_tutors])
+  end
+  private_class_method :known_elsewhere, :report_elsewhere
+
   private
+
+    # Takes the submission first and the team's participations second, the
+    # order a team's point entry takes them in: a move and a point entry or
+    # correction then wait for each other, and each sees the other's result.
+    def with_team_locked
+      with_lock do
+        if assignment.assessable?
+          assessment.assessment_participations.where(user_id: user_ids).lock.load
+        end
+        yield
+      end
+    end
+
+    def placement_for(tutorials, tutorials_before)
+      return handed_over_to_id if handed_over_to_id.in?(tutorials)
+      return tutorials.first if tutorials.one?
+      return tutorial_id if tutorials_before.many? && tutorial_id.in?(tutorials)
+
+      least_busy(tutorials)
+    end
+
+    # The participations move with the submission, so the marking backlog
+    # counts the team in the tutorial that marks it.
+    def file_under!(target_id)
+      update!(tutorial_id: target_id) unless tutorial_id == target_id
+      return unless assignment.assessable?
+
+      assessment.assessment_participations.where(user_id: user_ids)
+                .update_all(tutorial_id: target_id, updated_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+    end
+
+    def least_busy(tutorials)
+      counts = Submission.proper.where(assignment: assignment, tutorial_id: tutorials)
+                         .where.not(id: id).group(:tutorial_id).count
+      tutorials.min_by { |tutorial| [counts.fetch(tutorial, 0), tutorial] }
+    end
 
     def matching_lecture
       return true if tutorial&.lecture == assignment&.lecture

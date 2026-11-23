@@ -104,6 +104,38 @@
               </span>
             <% end %>
 
+            <% if @rule.points_threshold? && @lecture.tests_kept_apart? %>
+              <span class="small text-muted">
+                (<%= t("student_performance.rules.show.without_tests") %>)
+              </span>
+            <% end %>
+
+            <% if @rule.tests_criterion? %>
+              <% if @rule.points_threshold? %>
+                <span class="text-muted small mx-1">
+                  <i class="bi bi-plus"></i>
+                </span>
+              <% end %>
+              <% pass_fail_tests = @pass_fail_test_ids.size %>
+              <strong><%= @rule.min_tests_passed %></strong>
+              <span class="small text-muted">
+                <%= t("student_performance.rules.show.tests_passed",
+                      count: @rule.min_tests_passed,
+                      pass_fail: pass_fail_tests) %>
+              </span>
+              <% if @rule.more_tests_than?(pass_fail_tests) %>
+                <span class="small text-warning-emphasis d-block">
+                  <i
+                    class="bi bi-exclamation-triangle-fill me-1"
+                    aria-hidden="true"
+                  ></i>
+
+                  <%= t("student_performance.rules.show.more_tests_than",
+                        count: pass_fail_tests) %>
+                </span>
+              <% end %>
+            <% end %>
+
             <% if @rule.no_requirement? %>
               <strong>
                 <%= t("student_performance.rules.show.no_requirement") %>
@@ -114,7 +146,7 @@
             <% end %>
 
             <% if @rule.required_achievements.any? %>
-              <% if @rule.points_threshold? %>
+              <% if @rule.depends_on_assignments? %>
                 <span class="text-muted small mx-1">
                   <i class="bi bi-plus"></i>
                 </span>
@@ -369,7 +401,25 @@
                   <%= t("student_performance.records.columns.of_due_points") %>
                 </span>
               <% end %>
+
+              <% if @lecture.tests_kept_apart? %>
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  (<%= t("student_performance.rules.show.without_tests") %>)
+                </span>
+              <% end %>
             </th>
+
+            <% if @rule&.tests_criterion? %>
+              <th scope="col" class="text-end tests-column">
+                <%= t("student_performance.certifications.columns.tests_passed") %>
+                <br>
+
+                <span class="fw-normal text-muted" style="font-size: 0.75em">
+                  <%= t("student_performance.certifications.columns.tests_needed",
+                        count: @rule.min_tests_passed) %>
+                </span>
+              </th>
+            <% end %>
 
             <% @achievements.each do |achievement| %>
               <th scope="col" class="text-center small achievement-column">
@@ -414,7 +464,15 @@
                 data-controller="certification-inline"
               <% end %>
             >
-              <td><%= record.user.tutorial_name %></td>
+              <td>
+                <div class="d-flex justify-content-between align-items-center">
+                  <%= record.user.tutorial_name %>
+
+                  <span class="ms-3">
+                    <%= render "shared/copy_email_button", email: record.user.email %>
+                  </span>
+                </div>
+              </td>
 
               <td class="text-end numeric">
                 <% if @rule&.min_points_absolute.present? %>
@@ -434,6 +492,16 @@
                   <% end %>
                 <% end %>
               </td>
+
+              <% if @rule&.tests_criterion? %>
+                <td class="text-end numeric">
+                  <%= record.tests_passed_among(@pass_fail_test_ids) %>
+
+                  <span class="text-muted">
+                    / <%= @pass_fail_test_ids.size %>
+                  </span>
+                </td>
+              <% end %>
 
               <% @achievements.each do |achievement| %>
                 <td class="text-center px-3">
@@ -531,7 +599,7 @@
 
               <td class="hint-column small">
                 <% if @disagreeing_user_ids.include?(record.user_id) %>
-                  <span class="text-amber">
+                  <span class="text-muted">
                     <i class="bi bi-clock-history me-1"></i>
                     <%= t("student_performance.certifications.columns.rule_today") %>
                     <%= t("student_performance.certifications.rule_today.#{proposal.proposed_status}") %>
@@ -550,13 +618,13 @@
                   </span>
                 <% elsif proposal && !decided %>
                   <% Array(proposal.verdict_deferral_reasons).each do |reason| %>
-                    <span class="text-amber d-block">
+                    <span class="text-muted d-block">
                       <i class="bi bi-question-circle me-1"></i>
                       <%= deferral_text(proposal, reason) %>
                     </span>
                   <% end %>
                   <% proposal.missed_criteria.each do |criterion| %>
-                    <span class="text-danger d-block">
+                    <span class="text-muted d-block">
                       <i class="bi bi-x-circle me-1"></i>
                       <%= t("student_performance.evaluator.missed.#{criterion}") %>
                     </span>
@@ -587,8 +655,6 @@
                 <% if decided %>
                   <div data-certification-inline-target="display">
                     <div class="d-flex align-items-center justify-content-end gap-1">
-                      <%= render "shared/copy_email_button", email: record.user.email %>
-
                       <button
                         type="button"
                         class="btn btn-link text-muted btn-sm p-0 text-decoration-none"
@@ -694,8 +760,6 @@
                     fail_btn = proposal&.proposed_status == :failed ?
                       "btn-danger" : "btn-outline-danger" %>
                   <div class="d-flex align-items-center gap-1 justify-content-end">
-                    <%= render "shared/copy_email_button", email: record.user.email %>
-
                     <%= button_to(
                           lecture_student_performance_certifications_path(
                             @lecture

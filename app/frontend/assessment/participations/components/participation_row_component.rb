@@ -78,6 +78,16 @@ class ParticipationRowComponent < ViewComponent::Base
     @assessable.is_a?(Assignment) && @assessable.kind_test?
   end
 
+  def test_verdict_label
+    return unless test?
+
+    verdict = @assessable.test_verdict(status: @participation.status,
+                                       points_total: @participation.points_total)
+    return unless verdict
+
+    I18n.t("assessment.test.verdict.#{@participation.exempt? ? "excused" : verdict}")
+  end
+
   # Somebody absent or excused has no grade to enter; what a scheme gave
   # them stays readable.
   def grade_enterable?
@@ -91,7 +101,8 @@ class ParticipationRowComponent < ViewComponent::Base
   # A greyed-out field needs its reason in sight, not in a tooltip.
   def locked_reason
     if elsewhere?
-      t("assessment.grading_tutorial.held_by", tutorial: @participation.tutorial.title)
+      t("assessment.grading_tutorial.held_by",
+        tutorial: @participation.tutorial.title_with_tutors)
     elsif status == :awaiting_record && can_enter_points? && !test?
       t("assessment.grading_tutorial.record_first")
     end
@@ -280,6 +291,7 @@ class ParticipationRowComponent < ViewComponent::Base
   def absence_button
     return unless can_enter_points?
     return if test? && elsewhere?
+    return if left_lecture?
 
     if @participation.absent?
       row_action_link(remove_absent_path(@participation, grading_scope_type: grading_scope_type),
@@ -346,7 +358,7 @@ class ParticipationRowComponent < ViewComponent::Base
   end
 
   def paper_hand_in_removable?
-    @participation.task_points.all? { |point| point.points.nil? }
+    !left_lecture? && @participation.task_points.all? { |point| point.points.nil? }
   end
 
   def task_points_participation_input(task, allow_grading)
@@ -375,7 +387,7 @@ class ParticipationRowComponent < ViewComponent::Base
 
   def points_input_label(task)
     t("assessment.grading_tutorial.points_input_label",
-      task: "#{t("assessment.grading_tutorial.task")} #{task.position}",
+      task: task.label,
       name: @user.tutorial_name)
   end
 
@@ -447,6 +459,11 @@ class ParticipationRowComponent < ViewComponent::Base
   def users_movement_map
     helpers.users_movement_map_cache[@assessable.id] ||=
       helpers.calculate_user_movement_map_assignment(@assessable, @assessable.lecture)
+  end
+
+  def left_lecture?
+    @assessable.is_a?(Assignment) &&
+      @assessable.lecture.left_user_ids.include?(@user.id)
   end
 
   # Tutorial movement compares a sheet's participation with the user's

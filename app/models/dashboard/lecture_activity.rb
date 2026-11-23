@@ -21,6 +21,13 @@ module Dashboard
       comment_counts.fetch(lecture.id, 0)
     end
 
+    # The media whose comments unread_comments counts. The comments page
+    # filtered to a lecture lists these, so its list matches the count.
+    def media_with_unread_comments
+      Medium.where(id: unread_comments_scope.select("media.id"))
+            .includes(commontator_thread: :comments)
+    end
+
     # See Lecture#registration_status_for.
     def registration_status(lecture)
       registration_statuses[lecture.id]
@@ -73,6 +80,11 @@ module Dashboard
       end
 
       def unread_comments_by_teachable
+        unread_comments_scope.group("media.teachable_type", "media.teachable_id")
+                             .count
+      end
+
+      def unread_comments_scope
         reader = ActiveRecord::Base.sanitize_sql_array(
           ["LEFT JOIN readers ON readers.thread_id = commontator_threads.id " \
            "AND readers.user_id = ?", user.id]
@@ -89,8 +101,6 @@ module Dashboard
                      user.class.base_class.name, user.id)
           .where("readers.updated_at IS NULL OR " \
                  "readers.updated_at < commontator_comments.created_at")
-          .group("media.teachable_type", "media.teachable_id")
-          .count
       end
 
       # Excludes course-level media, which can't be attributed to one lecture,

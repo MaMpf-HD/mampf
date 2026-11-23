@@ -253,14 +253,58 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
   describe "DELETE /tutorials/:id/roster/self_remove" do
     before { create(:tutorial_membership, tutorial: tutorial, user: user) }
 
+    context "when the group is the student's only one with enrollment" do
+      before { lecture.add_user_to_roster!(user) }
+
+      it "ends the enrollment as left on their own and keeps the bookmark" do
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(lecture.reload.members).not_to include(user)
+        expect(lecture.excluded_lecture_memberships.find_by(user: user)).to be_left_by_self
+        expect(user.reload.lectures).to include(lecture)
+        expect(CGI.unescapeHTML(response.body))
+          .to include(I18n.t("roster.messages.self_removed", group: tutorial.title))
+      end
+
+      it "keeps the student while an exam registration past its deadline holds them" do
+        campaign = create(:exam, lecture: lecture).registration_campaign
+        campaign.update_columns(status: Registration::Campaign.statuses[:closed], # rubocop:disable Rails/SkipsModelValidations
+                                registration_deadline: 1.day.ago)
+        create(:registration_user_registration, :confirmed,
+               user: user, registration_campaign: campaign,
+               registration_item: campaign.registration_items.first)
+
+        delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+        expect(CGI.unescapeHTML(response.body)).to include(
+          I18n.t("roster.errors.self_remove_held", group: tutorial.title)
+        )
+        expect(tutorial.reload.members).to include(user)
+      end
+    end
+
     it "removes the user from the tutorial" do
       expect do
         delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
       end.to change { tutorial.members.count }.by(-1)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(
-        I18n.t("roster.messages.user_removed", user: user.info)
+      expect(CGI.unescapeHTML(response.body)).to include(
+        I18n.t("roster.messages.self_removed", group: tutorial.title)
+      )
+    end
+
+    it "says the enrollment stays while another group remains" do
+      lecture.add_user_to_roster!(user)
+      create(:cohort, :enrollment, context: lecture, skip_campaigns: true)
+        .add_user_to_roster!(user)
+
+      delete self_remove_tutorial_path(tutorial), as: :turbo_stream
+
+      expect(tutorial.reload.members).not_to include(user)
+      expect(CGI.unescapeHTML(response.body)).to include(
+        I18n.t("roster.messages.self_removed_still_enrolled",
+               group: tutorial.title, lecture: lecture.title_term_info_no_type)
       )
     end
 
@@ -323,21 +367,39 @@ RSpec.describe("Roster::SelfMaterializationController", type: :request) do
       end
     end
 
-    context "when self-remove succeeds and should send email" do
-      it "sends an email" do
-        perform_enqueued_jobs do
-          expect do
-            delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
-          end.to change { ActionMailer::Base.deliveries.count }.by(1)
-        end
-        email = ActionMailer::Base.deliveries.last
-        expected_subject = I18n.with_locale(user.locale) do
-          I18n.t("roster.mailer.roster_removed_from_group_email_subject",
-                 rosterable_title: tutorial.title,
-                 lecture_title: lecture.title)
-        end
-        expect(email.subject).to eq(expected_subject)
+    context "when the talk holds a grade for the user" do
+      let(:seminar) { create(:lecture, :is_seminar, :released_for_all) }
+      let(:talk) do
+        create(:talk, lecture: seminar, title: "Groups", skip_campaigns: true,
+                      self_materialization_mode: :add_and_remove)
       end
+
+      before do
+        create(:lecture_bookmark, user: user, lecture: seminar)
+        talk.add_user_to_roster!(user)
+        talk.ensure_assessment!(requires_points: false)
+        Assessment::Participation.create!(assessment: talk.assessment, user: user)
+                                 .update!(grade_numeric: 2.0, grader: create(:confirmed_user),
+                                          graded_at: Time.current, status: :reviewed)
+      end
+
+      it "says the result keeps the user, not that a switch failed" do
+        delete self_remove_talk_path(talk), as: :turbo_stream
+
+        expect(CGI.unescapeHTML(response.body))
+          .to include(I18n.t("roster.errors.self_remove_graded", group: "Groups"))
+        expect(talk.reload.speakers).to include(user)
+      end
+    end
+
+    # The student did it themselves and sees it on the page.
+    it "sends no email" do
+      perform_enqueued_jobs do
+        expect do
+          delete(self_remove_tutorial_path(tutorial), as: :turbo_stream)
+        end.not_to(change { ActionMailer::Base.deliveries.count })
+      end
+      expect(tutorial.reload.members).not_to include(user)
     end
   end
 end

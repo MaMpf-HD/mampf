@@ -429,6 +429,17 @@ RSpec.describe(Lecture, type: :model) do
       expect(LectureMembership.where(lecture: lecture, user: users.first).count).to eq(1)
     end
 
+    it "takes back those who had left, with their bookmark" do
+      create(:lecture_membership, lecture: lecture, user: users.first).exclude!
+
+      expect do
+        lecture.ensure_roster_membership!([users.first.id])
+      end.not_to change(LectureMembership, :count)
+
+      expect(lecture.members).to include(users.first)
+      expect(lecture.users).to include(users.first)
+    end
+
     it "bookmarks the lecture for roster members" do
       expect do
         lecture.ensure_roster_membership!(users.map(&:id))
@@ -506,6 +517,24 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#readmission_groups" do
+    it "returns the tutorials and the cohorts with enrollment" do
+      lecture = create(:lecture)
+      tutorial = create(:tutorial, lecture: lecture)
+      repeaters = create(:cohort, context: lecture, propagate_to_lecture: true)
+      create(:cohort, context: lecture, propagate_to_lecture: false)
+
+      expect(lecture.readmission_groups).to eq([tutorial, repeaters])
+    end
+
+    it "returns a seminar's talks" do
+      seminar = create(:lecture, :is_seminar)
+      talk = create(:talk, lecture: seminar)
+
+      expect(seminar.readmission_groups).to eq([talk])
+    end
+  end
+
   describe "#registration_mail_recipients" do
     let(:lecture) { create(:lecture, :released_for_all) }
     let(:users) { create_list(:confirmed_user, 3) }
@@ -546,6 +575,24 @@ RSpec.describe(Lecture, type: :model) do
       create(:lecture_membership, lecture: lecture, user: user)
 
       expect(lecture.registration_mail_recipients.count).to eq(1)
+    end
+
+    it "leaves out a completed group campaign's registrant off the roster" do
+      completed = create(:registration_campaign, :completed, campaignable: lecture)
+      departed = create(:confirmed_user)
+      create(:registration_user_registration, :confirmed,
+             registration_campaign: completed, user: departed,
+             registration_item: completed.registration_items.first)
+
+      expect(lecture.registration_mail_recipients).not_to include(departed)
+    end
+
+    it "includes the members of the lecture's cohorts, also those off the roster" do
+      cohort = create(:cohort, context: lecture, propagate_to_lecture: false)
+      member = create(:confirmed_user)
+      create(:cohort_membership, cohort: cohort, user: member)
+
+      expect(lecture.registration_mail_recipients).to include(member)
     end
 
     it "does not include registrants of other lectures" do
@@ -661,6 +708,54 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#tests_in_points_total" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let!(:sheet) { FactoryBot.create(:assignment, lecture: lecture) }
+    let!(:written_test) { FactoryBot.create(:assignment, lecture: lecture, kind: :test) }
+
+    it "counts the tests unless the lecture says otherwise" do
+      expect(lecture.tests_in_points_total?).to be(true)
+      expect(lecture.assignments_in_points_total)
+        .to contain_exactly(sheet, written_test)
+    end
+
+    it "leaves the tests out once the lecture keeps them apart" do
+      lecture.update!(tests_in_points_total: false)
+
+      expect(lecture.assignments_in_points_total).to contain_exactly(sheet)
+      expect(lecture.tests_kept_apart?).to be(true)
+    end
+
+    it "keeps nothing apart while the tests count, or where there is no test" do
+      without_tests = FactoryBot.create(:lecture, tests_in_points_total: false)
+
+      expect(lecture.tests_kept_apart?).to be(false)
+      expect(without_tests.tests_kept_apart?).to be(false)
+    end
+
+    it "recomputes the records, so the decisions before it read as outdated" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      record = lecture.student_performance_records.find_by(user: user)
+      before = record.computed_at
+
+      lecture.update!(tests_in_points_total: false)
+
+      expect(record.reload.computed_at).to be > before
+    end
+
+    it "leaves the records alone on a save that changes neither statement" do
+      user = FactoryBot.create(:confirmed_user)
+      FactoryBot.create(:lecture_membership, lecture: lecture, user: user)
+      record = lecture.student_performance_records.find_by(user: user)
+      before = record.computed_at
+
+      lecture.update!(submission_grace_period: 30)
+
+      expect(record.reload.computed_at).to eq(before)
+    end
+  end
+
   describe "#reset_computed_certifications!" do
     let(:lecture) do
       create(:lecture, :with_organizational_stuff, uses_exam_eligibility: true)
@@ -671,6 +766,19 @@ RSpec.describe(Lecture, type: :model) do
     end
 
     it "drops the computed decisions, keeps the manual ones and counts them" do
+      expect(lecture.reset_computed_certifications!).to eq(1)
+      expect(StudentPerformance::Certification.where(lecture: lecture))
+        .to contain_exactly(manual)
+    end
+
+    # A reset withdraws what the rule decided, for everybody alike: a return
+    # must not bring back an admission the rule no longer backs.
+    # The count is the one the eligibility page showed, which leaves them out.
+    it "drops the computed decision of someone who has left too, without counting it" do
+      former = create(:confirmed_user)
+      create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+      create(:student_performance_certification, :passed, lecture: lecture, user: former)
+
       expect(lecture.reset_computed_certifications!).to eq(1)
       expect(StudentPerformance::Certification.where(lecture: lecture))
         .to contain_exactly(manual)

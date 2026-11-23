@@ -20,7 +20,6 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
     it "returns a result object" do
       expect(subject).to be_a(Rosters::ParticipantQuery::Result)
       expect(subject.total_count).to eq(3)
-      expect(subject.filter_mode).to eq("all")
     end
 
     describe "searching" do
@@ -50,6 +49,11 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
         expect(described_class.new(lecture, search: "Bob").call.scope).to be_empty
       end
 
+      it "takes a percent sign or an underscore in the search literally" do
+        expect(described_class.new(lecture, search: "A_a").call.scope).to be_empty
+        expect(described_class.new(lecture, search: "%").call.scope).to be_empty
+      end
+
       it "ignores the email address" do
         user3.update!(email: "someone19@example.com")
 
@@ -62,61 +66,8 @@ RSpec.describe(Rosters::ParticipantQuery, type: :model) do
     end
 
     describe "counts" do
-      # We need separate tests or separate lectures for tutorials and talks
-      # because a seminar cannot have tutorials, and a lecture cannot have talks
-
-      context "with tutorials" do
-        let(:lecture) { create(:lecture) }
-        let(:tutorial) { create(:tutorial, lecture: lecture) }
-
-        before do
-          create(:tutorial_membership, tutorial: tutorial, user: user1)
-          # user2 and user3 unassigned
-        end
-
-        it "calculates correct counts" do
-          expect(subject.total_count).to eq(3)
-          expect(subject.unassigned_count).to eq(2)
-        end
-      end
-
-      context "with talks" do
-        let(:lecture) { create(:lecture, :is_seminar) }
-        let(:talk) { create(:talk, lecture: lecture) }
-
-        before do
-          create(:speaker_talk_join, talk: talk, speaker: user2)
-          # user1 and user3 unassigned
-        end
-
-        it "calculates correct counts" do
-          expect(subject.total_count).to eq(3)
-          expect(subject.unassigned_count).to eq(2)
-        end
-      end
-    end
-
-    describe "filtering" do
-      context "when filter is 'all'" do
-        let(:params) { { filter: "all" } }
-
-        it "returns all participants" do
-          expect(subject.scope.count).to eq(3)
-        end
-      end
-
-      context "when filter is 'unassigned'" do
-        let(:params) { { filter: "unassigned" } }
-        let(:tutorial) { create(:tutorial, lecture: lecture) }
-
-        before do
-          create(:tutorial_membership, tutorial: tutorial, user: user1)
-        end
-
-        it "returns only unassigned participants" do
-          expect(subject.scope.map(&:user)).to contain_exactly(user2, user3)
-          expect(subject.scope.count).to eq(2)
-        end
+      it "counts every enrolled participant" do
+        expect(subject.total_count).to eq(3)
       end
     end
 

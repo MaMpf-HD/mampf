@@ -325,6 +325,28 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
+  describe "the button that copies every address" do
+    let(:label) { I18n.t("buttons.copy_all_email_addresses") }
+
+    it "copies the addresses of everyone in the panel, in the panel's order" do
+      students = [create(:confirmed_user, last_name: "Brown", email: "bob@example.com"),
+                  create(:confirmed_user, last_name: "Adams", email: "alice@example.com")]
+      rendered = render_inline(described_class.new(registerable: tutorial,
+                                                   students: students))
+
+      button = rendered.at_css("button[aria-label='#{label}']")
+      expect(button.ancestors("[data-controller='clipboard']").first
+                   .attr("data-clipboard-text-value"))
+        .to eq("alice@example.com, bob@example.com")
+    end
+
+    it "is missing from an empty panel" do
+      rendered = render_inline(described_class.new(registerable: tutorial))
+
+      expect(rendered.at_css("button[aria-label='#{label}']")).to be_nil
+    end
+  end
+
   describe "#campaign_wishes" do
     let(:campaign) { double(id: 1) }
 
@@ -529,15 +551,16 @@ RSpec.describe(RosterSidePanelComponent, type: :component) do
     end
   end
 
-  describe "#remove_member_path" do
+  describe "#confirm_remove_member_path" do
     it "returns nil without registerable" do
-      expect(described_class.new.remove_member_path(double)).to be_nil
+      expect(described_class.new.confirm_remove_member_path(double)).to be_nil
     end
 
     it "delegates to helpers with registerable" do
       c = described_class.new(registerable: tutorial)
-      allow(c).to receive(:helpers).and_return(double(roster_remove_member_path: "/remove"))
-      expect(c.remove_member_path(double("student"))).to eq("/remove")
+      allow(c).to receive(:helpers)
+        .and_return(double(roster_confirm_remove_member_path: "/remove"))
+      expect(c.confirm_remove_member_path(double("student"))).to eq("/remove")
     end
   end
 

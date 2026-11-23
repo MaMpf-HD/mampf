@@ -78,6 +78,11 @@ module Assessment
         raise(PointEntryError,
               I18n.t("assessment.task_points.invalid_points_value", task_id: task_id))
       end
+
+      return if Float(points) < TaskPoint::POINTS_LIMIT
+
+      limit = ActiveSupport::NumberHelper.number_to_delimited(TaskPoint::POINTS_LIMIT)
+      raise(PointEntryError, I18n.t("assessment.task_points.points_too_high", limit: limit))
     end
 
     private_class_method :validate_points, :refuse_absent_or_exempt!

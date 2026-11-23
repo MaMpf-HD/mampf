@@ -6,20 +6,37 @@
 >
   <% actions.each_with_index do |action, index| %>
     <li class="quick-actions__item">
-      <%= link_to action.href,
-                  class: "quick-action",
-                  style: style(index),
-                  data: { testid: "quick-action-#{action.kind}" } do %>
-        <span class="quick-action__label">
-          <i
-            class="bi <%= action.icon %> quick-action__icon"
-            aria-hidden="true"
-          ></i>
+      <% if action.links %>
+        <div
+          class="quick-action"
+          style="<%= style(index) %>"
+          data-testid="quick-action-<%= action.kind %>"
+        >
+          <span class="quick-action__label">
+            <i
+              class="bi <%= action.icon %> quick-action__icon"
+              aria-hidden="true"
+            ></i>
 
-          <%= action.label %>
-        </span>
+            <%= links_sentence(action) %>
+          </span>
+        </div>
+      <% else %>
+        <%= link_to action.href,
+                    class: "quick-action",
+                    style: style(index),
+                    data: { testid: "quick-action-#{action.kind}" } do %>
+          <span class="quick-action__label">
+            <i
+              class="bi <%= action.icon %> quick-action__icon"
+              aria-hidden="true"
+            ></i>
 
-        <span class="visually-hidden"><%= lecture.title_no_term %></span>
+            <%= action.label %>
+          </span>
+
+          <span class="visually-hidden"><%= lecture.title_no_term %></span>
+        <% end %>
       <% end %>
     </li>
   <% end %>

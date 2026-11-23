@@ -148,6 +148,16 @@ module Registration
       t("registration.campaign.actions.discard")
     end
 
+    # Leaves the roster frame, since the participants tab is another tab of the
+    # lecture page.
+    def campaign_registrations_link(campaign)
+      link_to(t("registration.campaign.registrations_link"),
+              edit_lecture_path(campaign.campaignable, tab: "participants",
+                                                       view: "registered",
+                                                       campaign: campaign.id),
+              data: { turbo_frame: "_top" })
+    end
+
     def campaign_finalize_confirmation
       t("registration.campaign.confirmations.finalize")
     end

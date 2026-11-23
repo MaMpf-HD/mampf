@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_16_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -210,9 +210,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.text "accepted_file_type", default: ".pdf"
     t.date "deletion_date", default: "2200-01-01", null: false
     t.integer "kind", default: 0, null: false
+    t.integer "test_week_count", default: 1, null: false
+    t.decimal "passing_points", precision: 10, scale: 2
     t.index ["deadline", "deletion_date"], name: "index_assignments_on_deadline_and_deletion_date"
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
+    t.check_constraint "kind = 1 OR passing_points IS NULL", name: "passing_points_only_for_tests"
+    t.check_constraint "kind = 1 OR test_week_count = 1", name: "test_week_count_only_for_tests"
+    t.check_constraint "passing_points > 0::numeric", name: "passing_points_positive"
+    t.check_constraint "test_week_count >= 1", name: "test_week_count_positive"
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -508,6 +514,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.uuid "source_campaign_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "excluded_at"
+    t.bigint "excluded_by_id"
+    t.index ["excluded_by_id"], name: "index_lecture_memberships_on_excluded_by_id"
+    t.index ["lecture_id", "excluded_at"], name: "index_lecture_memberships_on_lecture_id_and_excluded_at"
     t.index ["lecture_id"], name: "index_lecture_memberships_on_lecture_id"
     t.index ["source_campaign_id"], name: "index_lecture_memberships_on_source_campaign_id"
     t.index ["user_id", "lecture_id"], name: "index_lecture_memberships_on_user_id_and_lecture_id", unique: true
@@ -545,6 +555,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.date "submission_deletion_date", null: false
     t.boolean "uses_exam_eligibility", default: true, null: false
     t.datetime "assignments_complete_at"
+    t.boolean "cross_tutorial_teams", default: false, null: false
+    t.boolean "tests_in_points_total", default: true, null: false
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["submission_deletion_date"], name: "index_lectures_on_submission_deletion_date"
@@ -625,6 +637,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.text "external_link_description"
     t.integer "annotations_status", default: -1, null: false
     t.integer "answers_count", default: 0, null: false
+    t.text "transcript_data"
+    t.integer "transcription_status", default: 0, null: false
+    t.integer "transcription_attempts", default: 0, null: false
+    t.datetime "transcription_requested_at"
+    t.text "transcription_error"
     t.index ["answers_count"], name: "index_media_on_answers_count"
     t.index ["content"], name: "index_media_on_content_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["description"], name: "index_media_on_description_trgm", opclass: :gin_trgm_ops, using: :gin
@@ -633,6 +650,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.index ["sort"], name: "index_media_on_sort"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
     t.index ["text"], name: "index_media_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["transcription_status", "transcription_requested_at"], name: "index_media_on_pending_transcriptions", where: "((transcription_status = ANY (ARRAY[0, 1, 3])) AND (video_data IS NOT NULL))"
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|
@@ -857,6 +875,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.datetime "updated_at", null: false
     t.jsonb "audiences", default: [], null: false
     t.integer "sender_role", default: 0, null: false
+    t.string "tutor_emails", default: [], null: false, array: true
     t.index ["lecture_id"], name: "index_student_messages_on_lecture_id"
     t.index ["sender_id"], name: "index_student_messages_on_sender_id"
   end
@@ -883,12 +902,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.bigint "user_id", null: false
     t.decimal "points_total_materialized", precision: 10, scale: 2
     t.decimal "points_max_materialized", precision: 10, scale: 2
-    t.decimal "percentage_materialized", precision: 5, scale: 2
+    t.decimal "percentage_materialized"
     t.jsonb "achievements_met_ids", default: [], null: false
     t.jsonb "achievements_ungraded_ids", default: [], null: false
     t.datetime "computed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "tests_passed_ids", default: [], null: false
+    t.jsonb "tests_failed_ids", default: [], null: false
     t.index ["lecture_id", "user_id"], name: "index_performance_records_on_lecture_and_user", unique: true
     t.index ["user_id"], name: "index_student_performance_records_on_user_id"
   end
@@ -911,8 +932,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.boolean "active", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "min_tests_passed"
     t.index ["lecture_id"], name: "index_sp_rules_one_active_per_lecture", unique: true, where: "(active = true)"
     t.index ["lecture_id"], name: "index_student_performance_rules_on_lecture_id"
+    t.check_constraint "min_tests_passed > 0", name: "min_tests_passed_positive"
   end
 
   create_table "subject_translations", force: :cascade do |t|
@@ -944,7 +967,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.datetime "last_modification_by_users_at", precision: nil
     t.boolean "accepted"
     t.datetime "corrected_at"
+    t.bigint "handed_over_to_id"
     t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
+    t.index ["handed_over_to_id"], name: "index_submissions_on_handed_over_to_id"
     t.index ["token"], name: "index_submissions_on_token", unique: true
     t.index ["tutorial_id"], name: "index_submissions_on_tutorial_id"
   end
@@ -1284,6 +1309,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "submission_id"
+    t.bigint "added_by_id"
+    t.index ["added_by_id"], name: "index_user_submission_joins_on_added_by_id"
     t.index ["submission_id"], name: "index_user_submission_joins_on_submission_id"
     t.index ["user_id"], name: "index_user_submission_joins_on_user_id"
   end
@@ -1343,6 +1370,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
     t.bigint "program_id"
     t.boolean "support", default: false, null: false
     t.boolean "deans_office", default: false, null: false
+    t.boolean "email_for_tutorial_change", default: true, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["matriculation_number"], name: "index_users_on_matriculation_number", unique: true, where: "(matriculation_number IS NOT NULL)"
@@ -1558,6 +1586,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
   add_foreign_key "lecture_memberships", "lectures"
   add_foreign_key "lecture_memberships", "registration_campaigns", column: "source_campaign_id"
   add_foreign_key "lecture_memberships", "users"
+  add_foreign_key "lecture_memberships", "users", column: "excluded_by_id", on_delete: :nullify
   add_foreign_key "links", "media"
   add_foreign_key "links", "media", column: "linked_medium_id"
   add_foreign_key "medium_tag_joins", "media"
@@ -1591,6 +1620,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
   add_foreign_key "student_performance_rules", "lectures"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
+  add_foreign_key "submissions", "tutorials", column: "handed_over_to_id", on_delete: :nullify
   add_foreign_key "talk_tag_joins", "tags"
   add_foreign_key "talk_tag_joins", "talks"
   add_foreign_key "talks", "lectures"
@@ -1610,6 +1640,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_01_000000) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "user_submission_joins", "users", column: "added_by_id", on_delete: :nullify
   add_foreign_key "users", "programs", on_delete: :nullify
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"

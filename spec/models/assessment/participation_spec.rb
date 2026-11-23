@@ -472,12 +472,34 @@ RSpec.describe(Assessment::Participation, type: :model) do
       create(:assessment_task_point, task: task, assessment_participation: pointed, points: 1)
       reviewed = create(:assessment_participation, :reviewed)
       absent = create(:assessment_participation, :absent, assessment: assessment)
-      rows = [empty, pointed, reviewed, absent].map(&:reload)
+      blank_text = create(:assessment_participation, assessment: assessment, grade_text: "")
+      rows = [empty, pointed, reviewed, absent, blank_text].map(&:reload)
 
       graded = rows.select { |row| row.assessment.grading_data_for?(row) }
 
       expect(graded).to contain_exactly(pointed, reviewed, absent)
       expect(described_class.with_grading_data.where(id: rows)).to match_array(graded)
+    end
+  end
+
+  describe ".marked" do
+    it "picks the rows Assessment#marked? calls marked" do
+      assessment = create(:assessment, :for_expired_assignment, :with_points)
+      task = create(:assessment_task, assessment: assessment, max_points: 4)
+      empty = create(:assessment_participation, :submitted, assessment: assessment)
+      blank = create(:assessment_participation, :submitted, assessment: assessment)
+      create(:assessment_task_point, task: task, assessment_participation: blank, points: nil)
+      pointed = create(:assessment_participation, :submitted, assessment: assessment)
+      create(:assessment_task_point, task: task, assessment_participation: pointed, points: 1)
+      no_text = create(:assessment_participation, :submitted, assessment: assessment,
+                                                              grade_text: "")
+      absent = create(:assessment_participation, :absent, assessment: assessment)
+      rows = [empty, blank, pointed, no_text, absent].map(&:reload)
+
+      marked = rows.select { |row| assessment.marked?(row) }
+
+      expect(marked).to contain_exactly(pointed, absent)
+      expect(described_class.marked.where(id: rows)).to match_array(marked)
     end
   end
 

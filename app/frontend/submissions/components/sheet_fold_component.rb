@@ -23,7 +23,7 @@ class SheetFoldComponent < ViewComponent::Base
 
   attr_reader :sheet
 
-  delegate :submission, :tasks, to: :sheet
+  delegate :submission, :tasks, :late_join_code, to: :sheet
 
   def initialize(sheet:)
     super()
@@ -150,7 +150,23 @@ class SheetFoldComponent < ViewComponent::Base
     end
   end
 
+  def correctors
+    @correctors ||= begin
+      tutors = submission && sheet.correction_visible? ? submission.tutorial.tutors.to_a : []
+      tutors.any? && (tutors - own_tutors).any? ? tutors : []
+    end
+  end
+
+  def corrector_tutorial
+    t("submission.hub.fold.corrector_tutorial", tutorial: submission.tutorial.title)
+  end
+
   private
+
+    def own_tutors
+      tutorial = helpers.rostered_tutorial_for(sheet.assignment.lecture)
+      tutorial ? tutorial.tutors.to_a : []
+    end
 
     def marked_reader_label(task)
       if task_scale?(task)

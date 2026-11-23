@@ -43,6 +43,18 @@
                       wrapper_class: 'checkbox-list' %>
     <% end %>
   </div>
+  <% if @user.tutor? %>
+    <div class="col-12">
+      <h5>
+        <%= t('profile.tutorials') %>
+      </h5>
+      <%= f.form_group :tutorial_emails do %>
+        <%= f.check_box :email_for_tutorial_change,
+                        label: t('profile.email_for_tutorial_change'),
+                        wrapper_class: 'checkbox-list' %>
+      <% end %>
+    </div>
+  <% end %>
   <div class="col-12">
     <h5>
       <%= t('profile.miscellaneous') %>

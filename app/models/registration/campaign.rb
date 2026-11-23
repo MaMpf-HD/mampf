@@ -47,6 +47,10 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    RUNNING_STATUSES = [:open, :closed, :processing].freeze
+
+    scope :running, -> { where(status: RUNNING_STATUSES) }
+
     scope :non_exam, lambda {
       where.not(
         id: Registration::Item.where(registerable_type: "Exam")
@@ -123,6 +127,23 @@ module Registration
 
     def open_for_registrations?
       open? && registration_deadline > Time.current
+    end
+
+    # Past its deadline and not finalized: finalize! has not yet put the
+    # registered people into their groups.
+    def awaiting_finalization?
+      (open? || closed? || processing?) && registration_deadline <= Time.current
+    end
+
+    # Whether finalize! also puts everyone onto the lecture roster, which a
+    # cohort without enrollment does not.
+    def enrolls_in_lecture?
+      registration_items.includes(:registerable)
+                        .all? { |item| item.registerable.enrolls_in_lecture? }
+    end
+
+    def running?
+      status.to_sym.in?(RUNNING_STATUSES)
     end
 
     def open_for_withdrawals?
@@ -424,7 +445,8 @@ module Registration
     # through another campaign. A user is considered unassigned if they haven't
     # secured a spot in any of the campaign's registerables, even if they are
     # members of the lecture roster. Open rejected registrations are excluded
-    # and shown in the rejected queue instead.
+    # and shown in the rejected queue instead. People who left the lecture
+    # after registering are left out too.
     #
     # When preload_registrations is true, the returned relation also eager-loads
     # the registration data needed by the "unassigned side panel", which sorts
@@ -438,6 +460,7 @@ module Registration
 
       relation = users.where.not(id: allocated_ids)
                       .where.not(id: open_rejected_registrations.select(:user_id))
+                      .where.not(id: left_after_registering.select(:user_id))
       return relation unless preload_registrations
 
       relation.includes(
@@ -733,6 +756,15 @@ module Registration
         else
           registration_items.pluck(:registerable_type).uniq
         end
+      end
+
+      # Registrations made before their user left the lecture. Someone who
+      # registers again after leaving shows up as unassigned again.
+      def left_after_registering
+        user_registrations.joins(user: :lecture_memberships_including_excluded)
+                          .merge(LectureMembership.excluded.where(lecture_id: campaignable_id))
+                          .where("lecture_memberships.excluded_at > " \
+                                 "registration_user_registrations.created_at")
       end
 
       def allocated_user_ids_for_type(type)

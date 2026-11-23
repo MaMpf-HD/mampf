@@ -107,9 +107,9 @@
                     <%= render "shared/copy_email_button", email: user.email %>
 
                     <% if removable %>
-                      <%= button_to remove_participant_exam_path(exam,
-                                                                 user_id: user.id),
-                                    method: :delete,
+                      <%= button_to confirm_remove_participant_exam_path(exam,
+                                                                         user_id: user.id),
+                                    method: :get,
                                     class: "btn icon-button icon-button--danger",
                                     title: t("assessment.registration_tab.remove_tooltip"),
                                     aria: {
@@ -117,9 +117,7 @@
                                     },
                                     form: {
                                       class: "d-inline-flex mb-0",
-                                      data: {
-                                        turbo_confirm: t("assessment.registration_tab.remove_confirm")
-                                      }
+                                      data: { turbo_stream: true }
                                     } do %>
                         <i class="bi bi-trash" aria-hidden="true"></i>
                       <% end %>

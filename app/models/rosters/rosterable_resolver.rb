@@ -63,6 +63,20 @@ module Rosters
       end
     end
 
+    def self.group_key(group)
+      "#{group.class.name}-#{group.id}"
+    end
+
+    # Finds the group a group_key names, if it belongs to the lecture and
+    # enrolls in it. Returns nil for anything else.
+    def self.find_place(key, lecture:)
+      type, id = key.to_s.split("-", 2)
+      return if type.blank? || type == "Lecture"
+
+      group = find_target(id, type: type, lecture: lecture, default_type: nil)
+      group if group&.enrolls_in_lecture?
+    end
+
     def self.collection_for(type_name, lecture)
       assoc = COLLECTION_MAP[type_name]
       return nil unless assoc

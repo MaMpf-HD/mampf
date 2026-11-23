@@ -122,7 +122,7 @@ class LecturesController < ApplicationController
     @lecture.update(released: "all")
     if params[:medium][:publish_media] == "1"
       @lecture.media_with_inheritance
-              .update(released: params[:medium][:released])
+              .update(released: params[:medium][:released], released_at: Time.zone.now)
     end
     # create notifications about creation od this lecture and send email
     create_notifications
@@ -150,28 +150,32 @@ class LecturesController < ApplicationController
       forum.save
       @lecture.update(forum_id: forum.id) if forum.valid?
     end
-    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication",
+                status: :see_other
   end
 
   # lock forum for this lecture
   def lock_forum
     @lecture.forum.update(locked: true) if @lecture.forum?
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication",
+                status: :see_other
   end
 
   # unlock forum for this lecture
   def unlock_forum
     @lecture.forum.update(locked: false) if @lecture.forum?
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication",
+                status: :see_other
   end
 
   # destroy forum for this lecture
   def destroy_forum
     @lecture.forum.destroy if @lecture.forum?
     @lecture.update(forum_id: nil)
-    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication",
+                status: :see_other
   end
 
   # show all announcements for this lecture
@@ -239,13 +243,15 @@ class LecturesController < ApplicationController
       lesson.media.update(annotations_status: -1)
     end
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication",
+                status: :see_other
   end
 
   def open_comments
     @lecture.open_comments!(current_user)
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication",
+                status: :see_other
   end
 
   def search
@@ -402,6 +408,7 @@ class LecturesController < ApplicationController
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
+                        :cross_tutorial_teams,
                         :submission_deletion_date, :uses_exam_eligibility,
                         :annotations_status,
                         :home_intro, :remove_home_attachment]
@@ -594,7 +601,7 @@ class LecturesController < ApplicationController
 
       flash.now[:notice] = t("admin.lecture.updated")
       streams = [
-        turbo_stream.replace(
+        turbo_stream.update(
           "lecture-submission-settings",
           partial: "assessment/assessments/submission_settings",
           locals: { lecture: @lecture }

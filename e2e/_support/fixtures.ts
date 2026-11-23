@@ -2,6 +2,7 @@ import { test as base, Page } from "@playwright/test";
 import { User, userPage } from "./auth";
 import { callBackend } from "./backend";
 import { FactoryBot } from "./factorybot";
+import { appOrigin } from "./servers";
 import { TimeCop } from "./timecop";
 
 class UserFixture {
@@ -21,12 +22,20 @@ type MaMpfFixtures = {
   admin: UserFixture;
   teacher: UserFixture;
   tutor: UserFixture;
+  tutor2: UserFixture;
   factory: FactoryBot;
   timeCop: TimeCop;
 };
 
 export * from "@playwright/test";
 export const test = base.extend<MaMpfFixtures>({
+  // Each worker talks to its own app server (and thus its own database).
+  // `parallelIndex` stays the same when a worker restarts after a failure.
+  // eslint-disable-next-line no-empty-pattern
+  baseURL: async ({}, use, testInfo) => {
+    await use(appOrigin(testInfo.parallelIndex));
+  },
+
   // https://playwright.dev/docs/test-fixtures#adding-global-beforeeachaftereach-hooks
   _forEachTest: [
     async ({ request }, use) => {
@@ -66,6 +75,13 @@ export const test = base.extend<MaMpfFixtures>({
 
   tutor: async ({ browser }, use) => {
     const [user, page, browserContext] = await userPage(browser, "tutor");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
+    await browserContext.close();
+  },
+
+  tutor2: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "tutor2");
     const fixture = new UserFixture(page, user);
     await use(fixture);
     await browserContext.close();

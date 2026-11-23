@@ -8,7 +8,12 @@ module Assessment
     belongs_to :grader, class_name: "User", optional: true, inverse_of: false
     belongs_to :submission, optional: true, inverse_of: false
 
-    validates :points, numericality: { greater_than_or_equal_to: 0 },
+    # Far above anything a task is worth, so only a typo gets there, and low
+    # enough that what a lecture's points add up to still fits its columns.
+    POINTS_LIMIT = 1_000
+
+    validates :points, numericality: { greater_than_or_equal_to: 0,
+                                       less_than: POINTS_LIMIT },
                        allow_nil: true
     validate :ensure_task_and_participation_match_assessment
     validate :grading_lifecycle_must_be_open
@@ -28,14 +33,13 @@ module Assessment
         errors.add(:base, :early_grading_not_allowed)
       end
 
+      # A row without any task point left has no total: a 0 there would count
+      # as grading data (Participation.with_grading_data) for nothing marked.
       def refresh_participation_points_total
         return unless assessment_participation_id
 
-        sum = self.class
-                  .where(
-                    assessment_participation_id: assessment_participation_id
-                  )
-                  .sum(:points)
+        points = self.class.where(assessment_participation_id: assessment_participation_id)
+        sum = points.exists? ? points.sum(:points) : nil
         # points_total mirrors committed task points and must stay in sync
         # rubocop:disable Rails/SkipsModelValidations
         ::Assessment::Participation

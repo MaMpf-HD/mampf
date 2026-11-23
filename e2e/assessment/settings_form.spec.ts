@@ -112,4 +112,32 @@ test.describe("assessment settings form", () => {
     await expect(saveButton).toBeHidden();
     expect(await lecture.__call("submission_max_team_size")).toBe(3);
   });
+
+  test("saves the lecture submission settings twice in a row", async ({
+    factory,
+    teacher,
+  }) => {
+    const { lecture } = await createAssessedAssignment(factory, teacher.user.id);
+
+    const dashboard = new AssessmentDashboardPage(teacher.page, lecture.id);
+    await dashboard.gotoOverview();
+
+    const form = dashboard.submissionSettingsForm;
+    const box = form.getByLabel("allow submission teams across tutorials");
+    const saveButton = form.getByRole("button", { name: "Save", exact: true });
+    const saved = teacher.page.getByText("Submission settings successfully updated.");
+
+    await box.check();
+    await saveButton.click();
+    await expect(saved).toBeVisible();
+    await expect(saveButton).toBeHidden();
+
+    await box.uncheck();
+    await expect(saveButton).toBeVisible();
+    await saveButton.click();
+    await expect(saveButton).toBeHidden();
+    await expect(form.getByText("Attention, there are unsaved changes!")).toBeHidden();
+    await expect(box).not.toBeChecked();
+    expect(await lecture.__call("cross_tutorial_teams")).toBe(false);
+  });
 });

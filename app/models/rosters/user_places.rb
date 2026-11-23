@@ -5,8 +5,6 @@ module Rosters
   # number, so a student with a place may not decline to give them, but may
   # give up the places instead; a student with results may not.
   class UserPlaces
-    RUNNING_CAMPAIGN_STATUSES = [:open, :closed, :processing].freeze
-
     # Raised when giving up the places of the named lectures leaves a place
     # the student was not shown.
     class PlacesChangedError < StandardError; end
@@ -21,9 +19,10 @@ module Rosters
     end
 
     # Names the lectures rather than every group, so that the student
-    # recognizes them in one line.
+    # recognizes them in one line. Lectures with only a rejected registration
+    # are included, because giving up the places withdraws it too.
     def lectures
-      (rosterables.map(&:lecture) + running_campaigns.map(&:campaignable))
+      (rosterables.map(&:lecture) + withdrawable_campaigns.map(&:campaignable))
         .grep(Lecture).uniq.sort_by(&:title)
     end
 
@@ -41,10 +40,41 @@ module Rosters
     # an exam holds a result; either way nothing is given up.
     def give_up!(lectures)
       ActiveRecord::Base.transaction do
-        withdraw_registrations!(lectures)
-        leave_rosters!(lectures)
+        leave!(lectures)
         raise(PlacesChangedError) if any?
       end
+    end
+
+    # Doesn't check whether leaving is allowed; callers do that and wrap it in
+    # a transaction.
+    def leave!(lectures)
+      withdraw_registrations!(lectures)
+      leave_rosters!(lectures)
+    end
+
+    # Withdraws the registrations in the given lectures, rejected ones too: a
+    # new allocation can still give them a place. Locks each campaign first,
+    # like allocation and finalization do.
+    def withdraw_registrations!(lectures)
+      campaigns_to_withdraw(lectures).order(:id).each do |campaign|
+        campaign.lock!
+        next unless campaign.running?
+
+        campaign.user_registrations.where(user: @user).find_each(&:destroy!)
+      end
+      dismiss_rejections!(lectures)
+    end
+
+    # Locks the campaigns #withdraw_registrations! would touch, for callers that
+    # decide only later, under further locks, whether to withdraw at all.
+    def lock_campaigns!(lectures)
+      campaigns_to_withdraw(lectures).order(:id).lock.load
+    end
+
+    # The running campaigns of the given lectures #withdraw_registrations!
+    # takes the user out of, for a dialog to name them beforehand.
+    def campaigns_to_withdraw(lectures)
+      withdrawable_campaigns.where(campaignable: lectures)
     end
 
     private
@@ -61,19 +91,27 @@ module Rosters
          StudentPerformance::Certification.decided.where(user: @user)]
       end
 
-      def withdraw_registrations!(lectures)
-        running_campaigns.where(campaignable: lectures).order(:id).each do |campaign|
-          campaign.lock!
-          running_registrations.where(registration_campaign: campaign).find_each(&:destroy!)
-        end
+      # Marks the rejections in completed campaigns as dismissed; otherwise the
+      # lecture would stay on the student's dashboard. Dismissing rather than
+      # deleting keeps the application on record.
+      def dismiss_rejections!(lectures)
+        completed = Registration::Campaign.where(campaignable: lectures, status: :completed)
+                                          .non_exam
+        Registration::UserRegistration.rejected.not_dismissed
+                                      .where(user: @user, registration_campaign: completed)
+                                      .find_each(&:dismiss!)
       end
 
+      # Locks all groups first and the lectures last, like LectureLeave.
+      # Removing the groups one at a time would not do: each removal locks the
+      # lecture, so the lecture would be locked before the next group.
       def leave_rosters!(lectures)
         service = MaintenanceService.new
         named = rosterables.select { |rosterable| rosterable.lecture.in?(lectures) }
+        named.each(&:lock!)
         groups, lecture_rosters = named.partition { |rosterable| !rosterable.is_a?(Lecture) }
         (groups + lecture_rosters).each do |rosterable|
-          service.remove_user!(@user, rosterable, notify: false)
+          service.remove_user!(@user, rosterable, notify: false, by: @user)
         end
       end
 
@@ -82,15 +120,21 @@ module Rosters
          SpeakerTalkJoin.where(speaker: @user),
          lecture_cohort_memberships,
          ExamRosterEntry.active.where(user: @user),
-         LectureMembership.where(user: @user)]
+         LectureMembership.active.where(user: @user)]
       end
 
+      # The user's groups, sorted in the order LectureLeave and the bulk
+      # self-service setting lock them, so they wait for each other instead of
+      # deadlocking.
       def rosterables
-        Tutorial.where(id: TutorialMembership.where(user: @user).select(:tutorial_id)).to_a +
-          Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).to_a +
-          Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).to_a +
-          Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id)).to_a +
-          Lecture.where(id: LectureMembership.where(user: @user).select(:lecture_id)).to_a
+        Tutorial.where(id: TutorialMembership.where(user: @user).select(:tutorial_id))
+                .order(:id).to_a +
+          Cohort.where(id: lecture_cohort_memberships.select(:cohort_id)).order(:id).to_a +
+          Talk.where(id: SpeakerTalkJoin.where(speaker: @user).select(:talk_id)).order(:id).to_a +
+          Exam.where(id: ExamRosterEntry.active.where(user: @user).select(:exam_id))
+              .order(:id).to_a +
+          Lecture.where(id: LectureMembership.active.where(user: @user).select(:lecture_id))
+                 .order(:id).to_a
       end
 
       # A cohort outside a lecture names no lecture to give up, so it is not a
@@ -105,11 +149,13 @@ module Rosters
           .where(user: @user)
           .where.not(status: :rejected)
           .joins(:registration_campaign)
-          .merge(Registration::Campaign.where(status: RUNNING_CAMPAIGN_STATUSES))
+          .merge(Registration::Campaign.running)
       end
 
-      def running_campaigns
-        Registration::Campaign.where(id: running_registrations.select(:registration_campaign_id))
+      def withdrawable_campaigns
+        Registration::Campaign.running.where(
+          id: Registration::UserRegistration.where(user: @user).select(:registration_campaign_id)
+        )
       end
   end
 end

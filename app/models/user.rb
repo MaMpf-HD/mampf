@@ -43,7 +43,11 @@ class User < ApplicationRecord
   has_many :lectures, -> { distinct }, through: :lecture_bookmarks
 
   # Roster memberships
-  has_many :lecture_memberships, dependent: :destroy
+  has_many :lecture_memberships_including_excluded,
+           class_name: "LectureMembership",
+           dependent: :destroy,
+           inverse_of: :user
+  has_many :lecture_memberships, -> { active }, inverse_of: :user
   has_many :assignment_sightings, dependent: :destroy
   has_many :enrolled_lectures, through: :lecture_memberships, source: :lecture
 
@@ -233,6 +237,8 @@ class User < ApplicationRecord
         -> { where(email_for_correction_upload: true) }
   scope :email_for_submission_decision,
         -> { where(email_for_submission_decision: true) }
+  scope :email_for_tutorial_change,
+        -> { where(email_for_tutorial_change: true) }
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
 
@@ -261,22 +267,18 @@ class User < ApplicationRecord
   SEARCHED_FIELDS = [:first_name, :last_name, :name, :email, :matriculation_number,
                      :uni_id].freeze
 
-  pg_search_scope :search_by_similarity,
-                  against: SEARCHED_FIELDS,
-                  using: {
-                    tsearch: { prefix: true, any_word: true },
-                    trigram: { word_similarity: true, threshold: 0.3 }
-                  }
+  # Only word beginnings count: a similarity search would mix "Neumann" and
+  # "Zimmermann" into the hits for "Bergmann".
   pg_search_scope :search_by_word_start,
                   against: SEARCHED_FIELDS,
-                  using: { tsearch: { prefix: true, any_word: true } }
-
-  # Search::Filters::FulltextFilter calls search_by_title on every model. Below
-  # three characters only word beginnings count: the similarity search would
-  # match most addresses by their ".de".
-  def self.search_by_title(term)
-    term.to_s.strip.length < 3 ? search_by_word_start(term) : search_by_similarity(term)
-  end
+                  using: { tsearch: { prefix: true, any_word: true } },
+                  ignoring: :accents
+  # Names only: addresses share their domains, and a similar matriculation
+  # number belongs to somebody else.
+  pg_search_scope :search_by_similar_name,
+                  against: [:first_name, :last_name, :name],
+                  using: { trigram: { word_similarity: true, threshold: 0.3 } },
+                  ignoring: :accents
 
   def self.default_search_order
     Arel.sql("LOWER(unaccent(users.last_name)), LOWER(unaccent(users.first_name)), " \
@@ -321,6 +323,16 @@ class User < ApplicationRecord
                                        .or(where.not(name_in_tutorials: [nil,
                                                                          ""])
                .name_in_tutorials_or_email_like(search_string))
+  end
+
+  def self.shown_name_like(search_string)
+    where(Arel.sql(SHOWN_NAME_SQL).matches("%#{sanitize_sql_like(search_string)}%"))
+  end
+
+  def self.shown_name_or_matriculation_number_like(search_string)
+    pattern = "%#{sanitize_sql_like(search_string)}%"
+    where(Arel.sql(SHOWN_NAME_SQL).matches(pattern)
+            .or(arel_table[:matriculation_number].matches(pattern)))
   end
 
   def self.values_for_select
@@ -370,11 +382,16 @@ class User < ApplicationRecord
   # returns ARel of all those tags from the given tags that belong to
   # the user's related lectures
   def filter_tags(tags)
-    Tag.where(id: tags.select do |t|
-                    t.in_lectures?(related_lectures) ||
-                                      t.in_courses?(related_courses)
-                  end
-                      .map(&:id))
+    tag_ids = tags.pluck(:id)
+    return Tag.none if tag_ids.empty?
+
+    course_ids = related_courses.select(:id)
+    in_lectures = SectionTagJoin.joins(section: { chapter: :lecture })
+                                .where(lectures: { course_id: course_ids })
+                                .select(:tag_id)
+    in_courses = CourseTagJoin.where(course_id: course_ids).select(:tag_id)
+    Tag.where(id: tag_ids)
+       .and(Tag.where(id: in_lectures).or(Tag.where(id: in_courses)))
   end
 
   # returns ARel of all those lectures from the given lectures that belong to
@@ -707,9 +724,15 @@ class User < ApplicationRecord
   # - the latest comment by somebody else than the current user
   # - the latest comment by any user (which might include the current user)
   def subscribed_media_with_latest_comments_not_by_creator
+    media_with_latest_comments_not_by_creator(subscribed_commentable_media_with_comments)
+  end
+
+  # The same as subscribed_media_with_latest_comments_not_by_creator, for the
+  # given media instead of the subscribed ones.
+  def media_with_latest_comments_not_by_creator(commented_media)
     media = []
 
-    subscribed_commentable_media_with_comments.each do |m|
+    commented_media.each do |m|
       thread = m.commontator_thread
       comments = thread.comments
       next if comments.blank?
@@ -774,7 +797,6 @@ class User < ApplicationRecord
     return false unless lecture.in?(lectures)
 
     lecture_bookmarks.where(lecture: lecture).destroy_all
-    favorite_lectures.delete(lecture)
 
     true
   end
@@ -790,19 +812,21 @@ class User < ApplicationRecord
 
   # Lectures with a pending application, or a rejected one not yet dismissed
   # (see Registration::UserRegistration#dismiss!). A confirmed application
-  # is normally already covered by `roster_lectures`; this catches it before
-  # rostering happens, or if the campaign never rosters the user at all.
+  # counts only until its campaign is completed. After that, the roster decides.
+  # A rejection counts only in a lecture where the user has no confirmed
+  # application at all: otherwise it is one of the other choices of someone who
+  # got a place, or a round before the one that gave them a place. Its card
+  # would then show the confirmed one and offer no way to dismiss the rejection
+  # (see Registration::StatusQuery).
   def lectures_with_registration_application
-    campaign_ids = user_registrations
-                   .where(status: [:pending, :confirmed])
-                   .or(user_registrations.rejected.not_dismissed)
-                   .select(:registration_campaign_id)
-    Lecture.where(
-      id: Registration::Campaign.where(id: campaign_ids,
-                                       campaignable_type: "Lecture")
-                                .non_exam
-                                .select(:campaignable_id)
-    )
+    unfinished = Registration::Campaign.where.not(status: :completed).select(:id)
+    applied = user_registrations.where(status: [:pending, :confirmed],
+                                       registration_campaign_id: unfinished)
+    placed = lecture_campaigns(user_registrations.confirmed).select(:campaignable_id)
+    rejected = lecture_campaigns(user_registrations.rejected.not_dismissed)
+               .where.not(campaignable_id: placed)
+    Lecture.where(id: lecture_campaigns(applied).select(:campaignable_id))
+           .or(Lecture.where(id: rejected.select(:campaignable_id)))
   end
 
   def submission_partners(lecture)
@@ -812,7 +836,7 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
   end
 
   def recent_submission_partners(lecture)
@@ -824,7 +848,19 @@ class User < ApplicationRecord
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)
-    User.where(id: partner_ids - [id])
+    partners_who_may_join(lecture, partner_ids)
+  end
+
+  # A partner without a tutorial in the lecture could not accept, and neither
+  # could one from another tutorial where the lecture keeps teams within one,
+  # so they are not offered.
+  def partners_who_may_join(lecture, partner_ids)
+    seats = TutorialMembership.where(lecture_id: lecture.id)
+    partners = User.where(id: partner_ids - [id]).where(id: seats.select(:user_id))
+    return partners if lecture.cross_tutorial_teams?
+
+    own = seats.where(user_id: id).select(:tutorial_id)
+    partners.where.not(id: seats.where.not(tutorial_id: own).select(:user_id))
   end
 
   def rostered_tutorial_in(lecture)
@@ -1024,6 +1060,14 @@ class User < ApplicationRecord
   end
 
   private
+
+    # The lecture campaigns of the given registrations, without exam ones:
+    # registering for an exam is not registering for the lecture.
+    def lecture_campaigns(registrations)
+      Registration::Campaign.where(id: registrations.select(:registration_campaign_id),
+                                   campaignable_type: "Lecture")
+                            .non_exam
+    end
 
     def program_offered_to_students
       return if program.nil? || program.degree.present?

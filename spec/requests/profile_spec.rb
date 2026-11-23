@@ -111,6 +111,30 @@ RSpec.describe("Profile", type: :request) do
       expect(response).to have_http_status(:ok)
       expect(user.reload.lectures).to be_empty
     end
+
+    it "lets a tutor stop the mails about participants changing tutorial" do
+      create(:tutor_tutorial_join, tutor: user)
+
+      save_profile(email_for_tutorial_change: "0")
+
+      expect(user.reload.email_for_tutorial_change).to be(false)
+    end
+  end
+
+  describe "GET /profile/edit" do
+    it "offers a tutor the mails about participants changing tutorial" do
+      create(:tutor_tutorial_join, tutor: user)
+
+      get edit_profile_path
+
+      expect(response.body).to include("user[email_for_tutorial_change]")
+    end
+
+    it "does not offer them to someone who gives no tutorial" do
+      get edit_profile_path
+
+      expect(response.body).not_to include("user[email_for_tutorial_change]")
+    end
   end
 
   describe "GET /profile/request_data" do
@@ -178,6 +202,34 @@ RSpec.describe("Profile", type: :request) do
               xhr: true)
 
         expect(response.body).to include(next_term.to_label_short)
+      end
+    end
+  end
+
+  describe "PATCH /profile/pin_lecture" do
+    def pin(lecture)
+      patch(pin_lecture_path,
+            params: { lecture: { id: lecture.id } },
+            as: :turbo_stream)
+    end
+
+    context "with an unpublished lecture" do
+      let(:lecture) { create(:lecture) }
+
+      it "refuses a student and pins nothing" do
+        pin(lecture)
+
+        expect(response).to have_http_status(:forbidden)
+        expect(user.reload.favorite_lectures).not_to include(lecture)
+      end
+
+      it "lets an editor pin it" do
+        create(:editable_user_join, user: user, editable: lecture)
+
+        pin(lecture)
+
+        expect(response).to have_http_status(:ok)
+        expect(user.reload.favorite_lectures).to include(lecture)
       end
     end
   end

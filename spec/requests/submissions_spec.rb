@@ -392,6 +392,7 @@ RSpec.describe("Submissions", type: :request) do
       end
 
       it "opens it with a seat in another group of the lecture" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)
@@ -403,6 +404,7 @@ RSpec.describe("Submissions", type: :request) do
       # The group named on the form is the one the work is filed under - the
       # tutor who has it - not the seat the reader happens to have now.
       it "names the group the work is filed under, not the reader's seat" do
+        submission
         create(:tutorial_membership, tutorial: other_tutorial, user: user)
 
         get edit_submission_path(submission)
@@ -539,6 +541,15 @@ RSpec.describe("Submissions", type: :request) do
       get lecture_submissions_path(lecture)
 
       expect(response).to have_http_status(:success)
+    end
+
+    it "tells the reader how to reach the tutor of their tutorial" do
+      tutorial.tutors << create(:confirmed_user, email: "tara@play")
+
+      get lecture_submissions_path(lecture)
+
+      expect(response.body).to include("submissions-tutorial-line")
+      expect(response.body).to include('href="mailto:tara@play"')
     end
   end
 
@@ -1448,6 +1459,17 @@ RSpec.describe("Submissions", type: :request) do
 
           expect(response.body).to include(I18n.t("submission.hub.fold.join_late").strip)
         end
+
+        it "shows the team its code on the closed sheet's row" do
+          team.users << user
+          create(:assessment_participation, assessment: closed_assignment.assessment,
+                                            user: user, submitted_at: 2.days.ago)
+
+          get lecture_submissions_path(lecture)
+
+          expect(response.body).to include(I18n.t("submission.hub.fold.team_code").strip)
+          expect(response.body).to include(team.token)
+        end
       end
     end
 
@@ -1493,6 +1515,7 @@ RSpec.describe("Submissions", type: :request) do
       # before - the first team-up goes through the code.
       it "offers a past partner when inviting" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])
@@ -1507,6 +1530,7 @@ RSpec.describe("Submissions", type: :request) do
 
       it "answers an invitation with the card naming who was invited_users" do
         partner = create(:confirmed_user, name_in_tutorials: "Ada")
+        create(:tutorial_membership, tutorial: tutorial, user: partner)
         earlier = create(:assignment, :expired, lecture: lecture,
                                                 title: "Homework 0")
         hand_in(earlier, users: [user, partner])

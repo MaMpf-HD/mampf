@@ -30,6 +30,23 @@ RSpec.describe(StudentMessages::Catalog) do
       expect(catalog.pick(["tutorial:#{other_tutorial.id}"]).first.count).to eq(0)
     end
 
+    # The message stores the label; the tutors only help to pick.
+    it "names a group's tutors beside its title" do
+      tutor.update!(first_name: "Ada", last_name: "Lovelace")
+      audience = catalog.pick(["tutorial:#{tutorial.id}"]).first
+
+      expect(audience.label).to eq(tutorial.title)
+      expect(audience.detail).to eq("Ada Lovelace")
+      expect(catalog.pick(["tutorial:#{other_tutorial.id}"]).first.detail)
+        .to eq(I18n.t("basics.tba"))
+    end
+
+    it "leaves a tutorial the sender tutors by its title" do
+      other_tutorial.add_tutor(teacher)
+
+      expect(catalog.pick(["tutorial:#{other_tutorial.id}"]).first.detail).to be_nil
+    end
+
     # Everybody next to a group is everybody; the record must not name a
     # group the mail did not single out.
     it "reads everybody beside a group as everybody alone" do
@@ -69,9 +86,17 @@ RSpec.describe(StudentMessages::Catalog) do
 
         expect(by_key["campaign:#{campaign.id}:all"].user_ids).to eq([registrant.id])
         expect(by_key["item:#{item.id}"].user_ids).to eq([registrant.id])
-        expect(by_key["item:#{item.id}"].label).to end_with(item.title)
+        expect(by_key["item:#{item.id}"].label).to end_with(item.registerable.title)
         expect(by_key["campaign:#{campaign.id}:rejected"].user_ids).to eq([rejected.id])
         expect(by_key["campaign:#{campaign.id}:rejected"].count).to eq(1)
+      end
+
+      it "names a registered tutorial's tutors beside it" do
+        listed = create(:registration_item, registration_campaign: campaign,
+                                            registerable: tutorial)
+        tutor.update!(first_name: "Ada", last_name: "Lovelace")
+
+        expect(catalog.pick(["item:#{listed.id}"]).first.detail).to eq("Ada Lovelace")
       end
 
       # "Rejected" is the campaign's own queue: a rejection that was
@@ -219,6 +244,10 @@ RSpec.describe(StudentMessages::Catalog) do
 
   describe "for a tutor" do
     subject(:catalog) { described_class.new(lecture, tutor) }
+
+    it "leaves their own group by its title alone" do
+      expect(catalog.pick(["tutorial:#{tutorial.id}"]).first.detail).to be_nil
+    end
 
     it "offers their own group and nothing else, without asking every group" do
       selects = 0

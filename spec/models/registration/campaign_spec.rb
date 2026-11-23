@@ -359,6 +359,53 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "#enrolls_in_lecture?" do
+    it "holds for tutorials" do
+      expect(FactoryBot.create(:registration_campaign, :closed).enrolls_in_lecture?).to be(true)
+    end
+
+    it "does not hold for a cohort without enrollment" do
+      campaign = FactoryBot.create(:registration_campaign)
+      cohort = FactoryBot.create(:cohort, context: campaign.campaignable,
+                                          propagate_to_lecture: false)
+      FactoryBot.create(:registration_item, registration_campaign: campaign,
+                                            registerable: cohort)
+
+      expect(campaign.enrolls_in_lecture?).to be(false)
+    end
+  end
+
+  describe "#awaiting_finalization?" do
+    it "holds for a closed campaign" do
+      expect(FactoryBot.create(:registration_campaign, :closed).awaiting_finalization?)
+        .to be(true)
+    end
+
+    it "holds for an open campaign past its deadline" do
+      campaign = FactoryBot.create(:registration_campaign, :open,
+                                   registration_deadline: 1.hour.from_now)
+
+      Timecop.travel(2.hours.from_now) do
+        expect(campaign.awaiting_finalization?).to be(true)
+      end
+    end
+
+    it "holds while the computed allocation waits to be carried out" do
+      expect(FactoryBot.create(:registration_campaign, :processing).awaiting_finalization?)
+        .to be(true)
+    end
+
+    it "does not hold while the registration is open" do
+      expect(FactoryBot.create(:registration_campaign, :open).awaiting_finalization?)
+        .to be(false)
+    end
+
+    it "does not hold once the campaign is completed" do
+      expect(FactoryBot.create(:registration_campaign, :completed).awaiting_finalization?)
+        .to be(false)
+    end
+  end
+
   # This example only verifies delegation to PolicyEngine; both methods
   # evaluate_policies_for and policies_satisfied? are only thin wrappers.
   # Engine behavior is already tested in the policy_engine spec.
@@ -1083,6 +1130,27 @@ RSpec.describe(Registration::Campaign, type: :model) do
       it "does not include users who are not registered in the campaign" do
         # other_user is not registered
         expect(campaign.unassigned_users).not_to include(other_user)
+      end
+
+      context "when a registered user left a lecture" do
+        let(:membership) do
+          create(:lecture_membership, lecture: lecture, user: unassigned_user)
+        end
+
+        it "leaves out whoever left this lecture after registering" do
+          membership.exclude!
+          expect(campaign.unassigned_users).not_to include(unassigned_user)
+        end
+
+        it "lists whoever registered again after leaving" do
+          membership.update!(excluded_at: 1.day.ago)
+          expect(campaign.unassigned_users).to include(unassigned_user)
+        end
+
+        it "lists whoever left another lecture" do
+          create(:lecture_membership, user: unassigned_user).exclude!
+          expect(campaign.unassigned_users).to include(unassigned_user)
+        end
       end
 
       context "with multiple tutorials in the lecture" do

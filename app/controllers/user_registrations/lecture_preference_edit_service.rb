@@ -26,7 +26,33 @@ module UserRegistrations
       Result.new(true, [])
     end
 
+    # Removes all of the user's preferences so they no longer take part in the
+    # allocation of this campaign.
+    def withdraw!
+      ActiveRecord::Base.transaction do
+        @campaign.lock!
+        errors = validate_withdraw
+        return Result.new(false, errors) unless errors.empty?
+
+        registrations = @campaign.user_registrations.where(user_id: @user.id)
+        unless registrations.exists?
+          return Result.new(false, [I18n.t("registration.user_registration.none")])
+        end
+
+        registrations.destroy_all
+      end
+      Result.new(true, [])
+    end
+
     private
+
+      def validate_withdraw
+        [
+          check_preference_based_mode,
+          check_campaign_open_for_withdraw,
+          check_not_referenced_as_prerequisite
+        ].compact
+      end
 
       def validate_update(pref_items)
         [

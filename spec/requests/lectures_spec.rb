@@ -948,7 +948,27 @@ RSpec.describe("Lectures", type: :request) do
         expect(lecture.submission_grace_period).to eq(30)
       end
 
-      it "renders turbo_stream replacing submission settings" do
+      it "lets teams cross tutorials once the box is ticked" do
+        patch lecture_path(lecture),
+              params: { lecture: { cross_tutorial_teams: "1" }, subpage: "assessments" },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response).to have_http_status(:ok)
+        expect(lecture.reload.cross_tutorial_teams).to be(true)
+      end
+
+      # Replacing the frame would drop it, and the next save would have
+      # nothing to answer into.
+      it "fills the settings frame rather than replacing it" do
+        patch lecture_path(lecture),
+              params: { lecture: { submission_max_team_size: 3 }, subpage: "assessments" },
+              headers: { "ACCEPT" => "text/vnd.turbo-stream.html" }
+
+        expect(response.body)
+          .to include('<turbo-stream action="update" target="lecture-submission-settings">')
+      end
+
+      it "renders turbo_stream filling the submission settings" do
         patch lecture_path(lecture),
               params: {
                 lecture: { submission_max_team_size: 3 },

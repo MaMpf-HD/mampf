@@ -2,17 +2,24 @@
   <div class="row">
     <div class="col-12 col-xl-6">
       <h5>
-        <%= t('comments.title') %>
+        <% if @lecture %>
+          <%= t('comments.title_for_lecture', lecture: @lecture.title) %>
+        <% else %>
+          <%= t('comments.title') %>
+        <% end %>
         <span id="mediaCommentsSize"
               data-size="<%= @media_comments.size %>">
           (<%= @media_comments.size %>)
         </span>
       </h5>
+      <% if @lecture %>
+        <%= link_to t('comments.all_lectures'), comments_path %>
+      <% end %>
     </div>
     <% if @media_comments.size.positive? %>
       <div class="col-12 col-xl-6 text-end">
         <%= link_to t('notifications.check_notifications'),
-                    update_all_readers_path,
+                    update_all_readers_path(lecture_id: @lecture&.id),
                     class: 'btn btn-secondary mediaCommentsDecoration',
                     method: :patch,
                     remote: true %>

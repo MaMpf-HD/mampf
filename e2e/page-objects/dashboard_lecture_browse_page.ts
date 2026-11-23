@@ -1,4 +1,5 @@
-import { Page } from "../_support/fixtures";
+import { expectDialogOpened } from "../_support/dialogs";
+import { expect, Page } from "../_support/fixtures";
 
 export class DashboardLectureBrowsePage {
   readonly page: Page;
@@ -25,10 +26,15 @@ export class DashboardLectureBrowsePage {
     );
   }
 
+  /**
+   * Waits for the results on screen, not only for the response: Turbo renders
+   * the stream a moment later, and until then there is no "next page" marker.
+   */
   async scrollToSearchAndWaitForResults() {
     const lectureSearchPromise = this.getLectureSearchPromise();
     await this.scrollToSearchBar();
     await lectureSearchPromise;
+    await expect(this.results).toBeVisible();
   }
 
   async searchFor(query: string) {
@@ -71,8 +77,41 @@ export class DashboardLectureBrowsePage {
     await this.page.waitForTimeout(500);
   }
 
+  get searchBar() {
+    return this.page.getByTestId("lecture-search-bar");
+  }
+
+  /**
+   * Lets every stylesheet arrive late, as on a slow connection. Routing also
+   * turns off the browser cache, so a stylesheet put back on the page is
+   * fetched again.
+   */
+  async delayStylesheets(milliseconds: number) {
+    await this.page.route(/\.s?css(\?|$)/, async (route) => {
+      await new Promise(resolve => setTimeout(resolve, milliseconds));
+      await route.continue();
+    });
+  }
+
+  /**
+   * Waits until every stylesheet of MaMpf on the page has loaded; only then
+   * do the board and the search have their final height.
+   */
+  async waitForStylesheets() {
+    await expect.poll(() => this.page.evaluate(() =>
+      [...document.querySelectorAll<HTMLLinkElement>("link[rel=stylesheet]")]
+        .filter(link => link.href.startsWith(window.location.origin))
+        .every(link => link.sheet !== null),
+    )).toBe(true);
+  }
+
   get results() {
     return this.page.getByTestId("lecture-search-results");
+  }
+
+  /** Holds the next page to load; removed once the last page is rendered. */
+  get nextPageMarker() {
+    return this.page.locator("#pagy-nav-next");
   }
 
   async getLectureCardCount() {
@@ -104,26 +143,40 @@ export class DashboardLectureBrowsePage {
       .getByTestId("lecture-search-bookmark-button");
   }
 
+  /**
+   * Turbo changes the URL when a visit starts, so the card going away and
+   * coming back tells when each page is actually on screen.
+   */
   async openLectureAndGoBack(lectureId: number) {
-    await this.dashboardCard(lectureId).click();
+    const card = this.dashboardCard(lectureId);
+    await card.click();
     await this.page.waitForURL(/\/lectures\//);
+    await expect(card).toBeHidden();
     await this.page.goBack();
     await this.page.waitForURL("/");
+    await expect(card).toBeVisible();
   }
 
+  /** The dashboard's own requests, not the assets under vite-public/dashboard. */
   async waitForBoardRefresh(action: () => Promise<void>) {
     const refreshed = this.page.waitForResponse(response =>
-      response.url().includes("/dashboard/") && response.status() === 200,
+      new URL(response.url()).pathname.startsWith("/dashboard/")
+        && response.status() === 200,
     );
     await action();
     await refreshed;
   }
 
-  /** Removes a bookmarked lecture from the dashboard, confirming the modal. */
+  /**
+   * Removes a bookmarked lecture from the dashboard, confirming the modal.
+   * The card goes once the modal has closed, and Bootstrap does not close one
+   * that is still opening.
+   */
   async removeBookmark(lectureId: number) {
     const card = this.dashboardCard(lectureId);
     await this.waitForBoardRefresh(async () => {
       await card.getByRole("button", { name: "Remove bookmark" }).click();
+      await expectDialogOpened(this.page.getByRole("dialog", { name: "Remove bookmark?" }));
       await this.page.getByRole("button", { name: "Remove", exact: true }).click();
     });
   }
@@ -137,6 +190,7 @@ export class DashboardLectureBrowsePage {
 
     await this.waitForBoardRefresh(async () => {
       await card.getByRole("button", { name: "Dismiss" }).click();
+      await expectDialogOpened(this.page.getByRole("dialog", { name: "Dismiss the notice?" }));
       await this.page.getByRole("button", { name: buttonName }).click();
     });
   }
@@ -153,8 +207,9 @@ export class DashboardLectureBrowsePage {
     await this.openWashiTapePicker(lectureId);
     const answered = this.page.waitForResponse(response =>
       response.url().endsWith("/washi_tape"));
-    await this.dashboardCard(lectureId)
-      .getByRole("radio", { name: colorLabel }).click();
+    // The radio itself is a hidden 1px dot, so click the swatch around it
+    const radio = this.page.getByRole("radio", { name: colorLabel });
+    await this.dashboardCard(lectureId).locator("label").filter({ has: radio }).click();
     await answered;
   }
 

@@ -41,7 +41,7 @@ class SubmissionCardComponent < ViewComponent::Base
   end
 
   def due_line
-    return "#{t("assessment.test.week")}: #{helpers.test_week_label(assignment)}" if test?
+    return helpers.test_period_line(assignment) if test?
 
     t("submission.hub.card.due", time: l(assignment.deadline,
                                          format: :submission_deadline))
@@ -53,6 +53,7 @@ class SubmissionCardComponent < ViewComponent::Base
     parts << assignment.accepted_file_type.delete_prefix(".").upcase if digital_hand_in?
     parts << time_left if assignment.active? && !test?
     parts << worth if sheet.tasks_set_up?
+    parts << passing if assignment.passing_points
     parts.compact
   end
 
@@ -186,6 +187,13 @@ class SubmissionCardComponent < ViewComponent::Base
     def time_left
       t("submission.hub.card.in_time",
         time: distance_of_time_in_words(Time.zone.now, assignment.deadline))
+    end
+
+    def passing
+      t("submission.hub.passing.threshold",
+        count: assignment.passing_points,
+        points: number_to_rounded(assignment.passing_points,
+                                  precision: 2, strip_insignificant_zeros: true))
     end
 
     def worth

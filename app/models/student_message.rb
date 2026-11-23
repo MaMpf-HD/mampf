@@ -25,9 +25,11 @@ class StudentMessage < ApplicationRecord
 
   # The groups the message goes to, as StudentMessages::Audience objects the
   # catalog resolved; what is stored is their keys, labels and addresses.
-  def address_to(audiences, labels: {})
+  # With copy_tutors, the tutors of the recipients are stored as well.
+  def address_to(audiences, labels: {}, copy_tutors: false)
     @addressed = audiences
     @labels = labels
+    @copy_tutors = copy_tutors
   end
 
   # Some saved audiences have `label` but no `labels`; keep `label` as the
@@ -68,7 +70,11 @@ class StudentMessage < ApplicationRecord
       self.audiences = @addressed.map do |audience|
         { key: audience.key, label: audience.label, labels: @labels[audience.key] }.compact
       end
-      self.recipient_emails = StudentMessages::Audience.recipients(@addressed).pluck(:email)
+      recipients = StudentMessages::Audience.recipients(@addressed)
+      self.recipient_emails = recipients.pluck(:email)
       self.recipients_count = recipient_emails.size
+      return unless @copy_tutors
+
+      self.tutor_emails = StudentMessages::Audience.tutors_of(recipients, lecture).pluck(:email)
     end
 end

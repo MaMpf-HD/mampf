@@ -1,6 +1,7 @@
 module Assessment
   class AssessmentsController < ApplicationController
-    before_action :set_lecture, only: [:index, :assignments_complete]
+    before_action :set_lecture, only: [:index, :assignments_complete,
+                                       :tests_in_points_total]
     before_action :set_assessable, only: [:show]
     before_action :set_assessment, only: [:update]
 
@@ -32,12 +33,13 @@ module Assessment
       @lecture.update!(assignments_complete: params[:complete])
       # Without the change check, a resubmitted form would delete a second
       # time — after the dialog had already been answered with "keep".
-      # A rule without a points threshold proposes the same with the list open,
-      # so its dialog offers no reset and none is taken.
+      # A rule that does not depend on the assignments proposes the same
+      # without the tick, so its dialog offers no reset and one sent anyway
+      # is ignored.
       wanted = params[:reset_certifications] == "1" &&
                @lecture.saved_change_to_assignments_complete_at? &&
                !@lecture.assignments_complete? &&
-               @lecture.active_performance_rule&.points_threshold?
+               @lecture.active_performance_rule&.depends_on_assignments?
       count = @lecture.reset_computed_certifications! if wanted
 
       flash_opts = if count
@@ -51,6 +53,15 @@ module Assessment
       redirect_to assessment_assessments_path(lecture_id: @lecture.id,
                                               tab: "assessments"),
                   **flash_opts
+    end
+
+    def tests_in_points_total
+      authorize! :update, @lecture
+      return head(:bad_request) unless params[:counted].in?(["0", "1"])
+
+      @lecture.update!(tests_in_points_total: params[:counted] == "1")
+      redirect_to assessment_assessments_path(lecture_id: @lecture.id,
+                                              tab: "assessments")
     end
 
     def show
@@ -189,7 +200,9 @@ module Assessment
         params.expect(
           assessment_assessment: [:requires_submission,
                                   { assessable_attributes: [:id, :title, :deadline, :test_week,
-                                                            :medium_id, :accepted_file_type] }]
+                                                            :test_week_count, :medium_id,
+                                                            :accepted_file_type,
+                                                            :passing_points] }]
         )
       end
   end

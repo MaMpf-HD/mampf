@@ -117,7 +117,7 @@ class RosterSidePanelComponent < ViewComponent::Base
   # Such a group's members are not enrolled in the lecture, so they are
   # missing from its Participants tab.
   def without_enrollment?
-    registerable.is_a?(Cohort) && !registerable.propagate_to_lecture?
+    !registerable.enrolls_in_lecture?
   end
 
   def preference_based_campaign?
@@ -169,12 +169,10 @@ class RosterSidePanelComponent < ViewComponent::Base
     helpers.roster_move_member_path_template(registerable)
   end
 
-  def remove_member_path(student)
+  def confirm_remove_member_path(student)
     return unless registerable
 
-    helpers.roster_remove_member_path(
-      registerable, student, source: :panel
-    )
+    helpers.roster_confirm_remove_member_path(registerable, student)
   end
 
   def drag_controller?
@@ -263,6 +261,11 @@ class RosterSidePanelComponent < ViewComponent::Base
   # The panel shows no address, so the copy button names the one it copies.
   def copy_email_label(student)
     "#{t("buttons.copy_email_address")}: #{student.email}"
+  end
+
+  # Joined the way a mail client takes several recipients in one field.
+  def all_emails
+    students.map(&:email).join(", ")
   end
 
   def overbooking_warning

@@ -112,7 +112,7 @@ class LectureDashboardCardComponent < ViewComponent::Base
   # on its roster can unlock it without the pass phrase, so only the others are
   # warned.
   def relocked_by_removal?
-    lecture.restricted? && !LectureMembership.exists?(user: user, lecture: lecture)
+    lecture.restricted? && !lecture.lecture_memberships.exists?(user: user)
   end
 
   def remove_bookmark_body

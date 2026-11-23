@@ -28,6 +28,35 @@ en:
       scroll_for_more_results: Scroll down to see more results
       no_results: No lectures found, try a different search term.
   lecture_home:
+    leave:
+      title: "Leave this course"
+      intro: "What happens when you leave:"
+      only_group: "“%{group}” is your only group: leaving it means leaving the course."
+      consequences:
+        groups: "You leave %{groups}."
+        campaigns:
+          one: "Your registration for %{campaigns} is withdrawn."
+          other: "Your registrations for %{campaigns} are withdrawn."
+        points: "Your points stay stored."
+        admission: "Your exam admission stays stored."
+        points_and_admission: "Your points and your exam admission stay stored."
+        dashboard: "The course disappears from your dashboard, and you get no more mails from it."
+        dashboard_restricted: "The course disappears from your dashboard, you get no more mails from it, and you need the pass phrase again for its materials."
+      button: "Leave course"
+      confirmation_label: "Type “%{word}” to confirm:"
+      confirmation_word: "Leave"
+      blocked: "You cannot leave this course yourself right now:"
+      blockers:
+        group_held: "You cannot leave “%{title}” yourself."
+        exam_closed: "You cannot withdraw from “%{title}” yourself."
+        graded: "“%{title}” has already been graded."
+        prerequisite: "Your registration for “%{title}” requires your registration in this course."
+      contact: "Please contact the lecturer."
+      done: "You have left “%{lecture}”."
+      not_allowed: "You cannot leave this course yourself right now."
+      not_participating: "You are no longer taking part in “%{lecture}”."
+      not_confirmed: "The confirmation word did not match. You are still taking part."
+      failed: "Unfortunately, that did not work. You are still taking part. Please try again."
     intro:
       more: "Read more"
       less: "Show less"

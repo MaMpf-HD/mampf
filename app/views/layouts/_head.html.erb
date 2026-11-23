@@ -10,6 +10,9 @@
 <%= vite_stylesheet_tag "application.scss",
                         media: "all",
                         "data-turbo-track": "reload" %>
+<%# In the head, which a Turbo visit keeps: loaded with the navbar in the body,
+    it went and came back on every visit, and the icons flashed dark. %>
+<%= vite_stylesheet_tag "styles/navbar.scss", "data-turbo-track": "reload" %>
 
 <!-- For old sprockets assets (commontator, thredded, exception_handler) -->
 <%= stylesheet_link_tag "sprockets" , media: "all" %>
@@ -28,8 +31,8 @@
         crossorigin="anonymous">
 </script>
 <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css"
-      integrity="sha384-Pu5+C18nP5dwykLJOhd2U4Xen7rjScHN/qusop27hdd2drI+lL5KvX7YntvT8yew"
+      href="https://cdn.jsdelivr.net/npm/katex@0.18.10/dist/katex.min.css"
+      integrity="sha384-rdqqrpVNEfmY6hsVFS50HU5L84tWeMdr4XpF+TJPvLR6e8YxPgRyDzzpawPHMQE6"
       crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.0/nerdamer.core.min.js"
         integrity="sha384-mo+DEHNvIr4nfkGOgfSQJq4RKwFne1moJQZHH1nGEntYBXYMGPj++dK0NmuQfbcF"
@@ -42,13 +45,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sanitize-html@1.27.0/dist/sanitize-html.min.js" integrity="sha256-+Tha6wUu+wzAOUzilJ7AmF4OXc3CsY1aMsWopnCVwb4=" crossorigin="anonymous"></script>
 <script defer
-        src="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.js"
-        integrity="sha384-2B8pfmZZ6JlVoScJm/5hQfNS2TI/6hPqDZInzzPc8oHpN5SgeNOf4LzREO6p5YtZ"
+        src="https://cdn.jsdelivr.net/npm/katex@0.18.10/dist/katex.min.js"
+        integrity="sha384-oeXTyN/gxEn/v98/oDFW+7XVfZrp59R6Tporzsg2uNs9g+G9Xel/Afxdamc4Mags"
         crossorigin="anonymous">
 </script>
 <script defer
-        src="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/auto-render.min.js"
-        integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+        src="https://cdn.jsdelivr.net/npm/katex@0.18.10/dist/contrib/auto-render.min.js"
+        integrity="sha384-bjyGPfbij8/NDKJhSGZNP/khQVgtHUE5exjm4Ydllo42FwIgYsdLO2lXGmRBf5Mz"
         crossorigin="anonymous">
 </script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"

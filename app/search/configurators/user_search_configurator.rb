@@ -8,8 +8,8 @@ module Search
         return if search_params[:fulltext].blank? && program_ids.blank?
         return if search_params[:fulltext].to_s.strip.length == 1
 
-        Configuration.new(filters: [Filters::ProgramFilter, Filters::FulltextFilter],
-                          params: search_params)
+        Configuration.new(filters: [Filters::ProgramFilter, Filters::UserFulltextFilter],
+                          params: search_params, sorter_class: Sorters::UserSearchSorter)
       end
 
       private

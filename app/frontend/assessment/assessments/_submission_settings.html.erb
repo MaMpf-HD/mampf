@@ -41,6 +41,23 @@
                             action: 'input->assessments--dirty-form#checkForChanges'
                           } %>
     </div>
+
+    <div class="col-12 mt-3">
+      <div class="form-check">
+        <%= f.check_box :cross_tutorial_teams,
+                        class: "form-check-input",
+                        data: {
+                          assessments__dirty_form_target: 'field',
+                          action: 'change->assessments--dirty-form#checkForChanges'
+                        } %>
+
+        <%= f.label :cross_tutorial_teams,
+                    t('admin.lecture.cross_tutorial_teams'),
+                    class: "form-check-label" %>
+
+        <%= helpdesk t('admin.lecture.info.cross_tutorial_teams'), false %>
+      </div>
+    </div>
   </div>
 
   <div

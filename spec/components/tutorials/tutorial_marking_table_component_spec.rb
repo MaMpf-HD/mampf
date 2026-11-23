@@ -36,6 +36,90 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       end
     end
 
+    describe "the blank points hint" do
+      let(:hint) { I18n.t("assessment.grading_tutorial.blank_points_hint") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:tutorial_membership, tutorial: tutorial, user: create(:confirmed_user))
+      end
+
+      it "stands above the points inputs" do
+        create(:assessment_task, assessment: assessment)
+
+        expect(render_inline(component).text).to include(hint)
+      end
+
+      it "is left out while the sheet has no tasks to enter points on" do
+        expect(render_inline(component).text).not_to include(hint)
+      end
+    end
+
+    # Somebody marked on a row of their own is done with the sheet; the
+    # server would refuse them anyway.
+    describe "the menu for putting somebody on a team" do
+      let(:marked) { create(:confirmed_user, name_in_tutorials: "Leon Fischer") }
+      let(:free) { create(:confirmed_user, name_in_tutorials: "Mia Bauer") }
+
+      before do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+        [marked, free].each { |user| create(:tutorial_membership, tutorial: tutorial, user: user) }
+        Timecop.travel(3.hours.from_now)
+        row = create(:assessment_participation, :submitted, assessment: assessment,
+                                                            user: marked, tutorial: tutorial)
+        create(:assessment_task_point, task: create(:assessment_task, assessment: assessment),
+                                       assessment_participation: row, points: 2)
+      end
+
+      after { Timecop.return }
+
+      def offered(scope)
+        render_inline(described_class.new(assignment: assignment.reload, grading_scope: scope))
+          .css("[data-controller=add-member-menu] button.dropdown-item")
+          .map { |item| item.text.squish }
+      end
+
+      it "offers nobody marked on a row of their own" do
+        tutor = create(:confirmed_user)
+        tutorial.tutors << tutor
+        allow(vc_test_controller).to receive(:current_user).and_return(tutor)
+
+        expect(offered(tutorial)).to eq(["Mia Bauer"])
+      end
+
+      it "offers nobody marked on a row of their own on the lecture's table" do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+
+        expect(offered(lecture)).to eq(["Mia Bauer"])
+      end
+
+      # Ben handed in on paper and then moved to another group; his row stays
+      # here, but the add action takes him only where teams may span groups.
+      context "with somebody who moved to another group" do
+        let(:moved) { create(:confirmed_user, name_in_tutorials: "Ben Weber") }
+
+        before do
+          create(:tutorial_membership, tutorial: create(:tutorial, lecture: lecture), user: moved)
+          create(:assessment_participation, assessment: assessment, user: moved,
+                                            tutorial: tutorial, submitted_at: 4.hours.ago)
+          allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        end
+
+        it "does not offer them where teams stay within one group" do
+          expect(offered(tutorial)).to eq(["Mia Bauer"])
+          expect(offered(lecture)).to eq(["Mia Bauer"])
+        end
+
+        it "offers them where teams may span groups" do
+          lecture.update!(cross_tutorial_teams: true)
+
+          expect(offered(tutorial)).to contain_exactly("Mia Bauer", "Ben Weber")
+          expect(offered(lecture)).to contain_exactly("Mia Bauer", "Ben Weber")
+        end
+      end
+    end
+
     describe "#rows?" do
       context "when there are submissions" do
         let!(:submission) do
@@ -93,6 +177,72 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(row.text).not_to include(I18n.t("assessment.grading_tutorial.record_first"))
         expect(assessment.assessment_participations.find_by(user: member).tutorial)
           .to eq(tutorial)
+      end
+
+      context "with a passing threshold" do
+        let(:other) { create(:confirmed_user, name: "Bea") }
+        let(:summary_scope) { "assessment.grading_tutorial.summary" }
+
+        before do
+          assignment.update!(test_week: Time.zone.today.beginning_of_week.iso8601,
+                             passing_points: 5)
+          create(:tutorial_membership, tutorial: tutorial, user: other)
+          { member => 6, other => 4 }.each do |user, points|
+            create(:assessment_participation, :reviewed, assessment: assessment, user: user,
+                                                         tutorial: tutorial, points_total: points)
+          end
+        end
+
+        def render_table
+          render_inline(described_class.new(assignment: assignment.reload,
+                                            grading_scope: tutorial))
+        end
+
+        it "names the threshold above the table and counts passed and failed" do
+          summary = render_table.css("#marking-summary").text
+
+          expect(summary).to include(I18n.t("#{summary_scope}.passing_points", points: "5"))
+          expect(summary).to include(I18n.t("#{summary_scope}.passed", count: 1))
+          expect(summary).to include(I18n.t("#{summary_scope}.failed", count: 1))
+        end
+
+        it "says in each row whether the test is passed, apart from the status" do
+          page = render_table
+          verdict_of = lambda do |name|
+            row = page.css("tr[id^=points-participation-row-]")
+                      .find { |tr| tr.text.include?(name) }
+            [row.at_css("td.passed-col").text.squish, row.at_css("td.status-col").text.squish]
+          end
+
+          passed, status = verdict_of.call("Ada")
+          expect(passed).to eq(I18n.t("assessment.test.verdict.passed"))
+          expect(status).not_to include(I18n.t("assessment.test.verdict.passed"))
+          expect(verdict_of.call("Bea").first)
+            .to eq(I18n.t("assessment.test.verdict.failed"))
+          expect(page.css("thead th.passed-col").text)
+            .to include(I18n.t("assessment.test.passed_column"))
+        end
+
+        it "marks heading and rows with the threshold they were drawn with" do
+          page = render_table
+
+          expect(page.at_css("thead th.passed-col")["data-passing-points"]).to eq("5.0")
+          expect(page.css("td.passed-col").pluck("data-passing-points").uniq).to eq(["5.0"])
+          notice = page.at_css("[data-marking-table-target='outdated']")
+          expect(notice["hidden"]).not_to be_nil
+          expect(notice.text)
+            .to include(I18n.t("assessment.grading_tutorial.passing_points_changed"))
+        end
+
+        it "says nothing about passing once the threshold is taken off" do
+          assignment.update!(passing_points: nil)
+
+          page = render_table
+
+          expect(page.css("#marking-summary").text)
+            .not_to include(I18n.t("#{summary_scope}.passed", count: 1))
+          expect(page.text).not_to include(I18n.t("assessment.test.verdict.failed"))
+        end
       end
 
       # Three hundred rows made one by one would be three hundred commits,
@@ -256,6 +406,8 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(rendered.css("tr[id^=participation-row]")).to be_empty
         expect(rendered.text).to include(I18n.t("submission.bulk_download_submissions"))
         expect(rendered.text).not_to include(I18n.t("assessment.grading_tutorial.save_all"))
+        expect(rendered.text)
+          .not_to include(I18n.t("assessment.grading_tutorial.blank_points_hint"))
       end
     end
 
@@ -347,6 +499,29 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
         expect(rendered_content).to include("marking-table")
       end
     end
+
+    describe "a team another tutorial marks" do
+      let(:member) { create(:confirmed_user) }
+      let(:other_tutorial) { create(:tutorial, lecture: lecture) }
+      let!(:team) do
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: other_tutorial,
+                                              users: [member, create(:confirmed_user)])
+      end
+
+      before { create(:tutorial_membership, tutorial: tutorial, user: member) }
+
+      it "shows the row of the member who sits here" do
+        allow(vc_test_controller).to receive(:current_user).and_return(create(:confirmed_user))
+
+        render_inline(component)
+
+        expect(rendered_content).to include("submission-row-#{team.id}")
+      end
+
+      it "leaves it to the marking tutorial's summary" do
+        expect(component.row_statuses).to be_empty
+      end
+    end
   end
 
   describe "when grading_scope is a Lecture" do
@@ -395,6 +570,147 @@ RSpec.describe(TutorialMarkingTableComponent, type: :component) do
       it "renders the grading table" do
         render_inline(component)
         expect(rendered_content).to include("marking-table")
+      end
+    end
+
+    context "with somebody who left during a test's week" do
+      let!(:assignment) do
+        create(:assignment, :with_lecture, lecture: lecture, kind: :test,
+                                           deadline: Time.zone.now.end_of_week)
+      end
+      let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, points_total: 4,
+                                          status: :reviewed)
+      end
+
+      it "lists their marked row before the deadline, for the lecturer and the old tutor" do
+        [lecture, tutorial].each do |scope|
+          rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                   grading_scope: scope)).css("tr")
+
+          expect(rows.find { |tr| tr.text.include?("Lina Berg") }&.text)
+            .to include(I18n.t("assessment.grading_tutorial.left_lecture")), scope.class.name
+        end
+      end
+
+      # Points entered and taken back again leave a task point of nothing
+      # behind: the row is blank, and no group would hold it once listed.
+      it "lists a row by its points, not by task points of nothing" do
+        task = create(:assessment_task, assessment: assessment)
+        { "Mia Roth" => nil, "Ben Ott" => 3 }.each do |name, points|
+          former = create(:confirmed_user, name_in_tutorials: name)
+          create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+          row = create(:assessment_participation, assessment: assessment, user: former,
+                                                  tutorial: tutorial)
+          create(:assessment_task_point, assessment_participation: row, task: task,
+                                         points: points)
+        end
+
+        text = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: tutorial)).text
+
+        expect(text).to include("Ben Ott")
+        expect(text).not_to include("Mia Roth")
+      end
+    end
+
+    context "with somebody who left the lecture" do
+      let(:former) { create(:confirmed_user, name_in_tutorials: "Lina Berg") }
+
+      before do
+        allow(vc_test_controller).to receive(:current_user).and_return(lecture.teacher)
+        assignment.update_column(:deadline, 2.days.ago) # rubocop:disable Rails/SkipsModelValidations
+        create(:lecture_membership, lecture: lecture, user: former).exclude!(by: former)
+      end
+
+      it "lists their work that no tutorial holds, saying they left" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: nil, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: lecture)).css("tr")
+
+        expect(rows.find { |row| row.text.include?("Lina Berg") }&.text)
+          .to include(I18n.t("assessment.grading_tutorial.left_lecture"))
+      end
+
+      it "leaves out a blank row of theirs" do
+        create(:assessment_participation, assessment: assessment, user: former, tutorial: nil)
+
+        rendered = render_inline(described_class.new(assignment: assignment.reload,
+                                                     grading_scope: lecture))
+
+        expect(rendered.text).not_to include("Lina Berg")
+      end
+
+      it "keeps their hand-in as it was, with no button to take it back" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: nil, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: lecture)).css("tr")
+        row = rows.find { |tr| tr.text.include?("Lina Berg") }
+
+        kept = I18n.t("assessment.grading_tutorial.paper_hand_in_kept")
+        expect(row.css("[aria-label='#{kept}']")).to be_present
+        expect(row.css("a[data-turbo-method='patch']")).to be_empty
+      end
+
+      it "does not offer them for a team, which takes only the tutorial's members" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, submitted_at: 3.days.ago)
+        submission = create(:submission, :with_manuscript, assignment: assignment,
+                                                           tutorial: tutorial,
+                                                           users: [create(:confirmed_user)])
+        create(:tutorial_membership, tutorial: tutorial,
+                                     user: create(:confirmed_user, name_in_tutorials: "Max Kurz"))
+
+        rendered = render_inline(described_class.new(assignment: assignment.reload,
+                                                     grading_scope: tutorial))
+        path = Rails.application.routes.url_helpers.add_member_submission_path(submission)
+        offered = rendered.css("form[action='#{path}']").map(&:text).join
+
+        expect(offered).to include("Max Kurz")
+        expect(offered).not_to include("Lina Berg")
+      end
+
+      it "asks once who has left, however many rows the table has" do
+        members = create_list(:confirmed_user, 3)
+        members.each do |member|
+          create(:tutorial_membership, tutorial: tutorial, user: member)
+          create(:assessment_participation, assessment: assessment, user: member,
+                                            tutorial: tutorial, submitted_at: 3.days.ago)
+        end
+        create(:submission, :with_manuscript, assignment: assignment, tutorial: tutorial,
+                                              users: [create(:confirmed_user)])
+        lookups = 0
+        callback = lambda { |*, payload|
+          lookups += 1 if payload[:sql].start_with?('SELECT "lecture_memberships"."user_id"') &&
+                          payload[:sql].include?('"excluded_at" IS NOT NULL')
+        }
+
+        ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+          render_inline(described_class.new(assignment: assignment.reload,
+                                            grading_scope: tutorial))
+        end
+
+        expect(lookups).to eq(1)
+      end
+
+      it "says so in the old tutorial's table too" do
+        create(:assessment_participation, assessment: assessment, user: former,
+                                          tutorial: tutorial, submitted_at: 3.days.ago)
+
+        rows = render_inline(described_class.new(assignment: assignment.reload,
+                                                 grading_scope: tutorial)).css("tr")
+
+        expect(rows.find { |row| row.text.include?("Lina Berg") }&.text)
+          .to include(I18n.t("assessment.grading_tutorial.left_lecture"))
       end
     end
   end

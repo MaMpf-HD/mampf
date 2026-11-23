@@ -7,6 +7,24 @@
 <% dashboard = Registration::AllocationDashboard.new(campaign) if show_allocation_dashboard %>
 <% has_violators = dashboard&.blockers? %>
 
+<% hint_suffix = campaign.enrolls_in_lecture? ? "" : "_without_enrollment" %>
+
+<% if campaign.awaiting_finalization? %>
+  <p class="small text-muted">
+    <i class="bi bi-clock me-1" aria-hidden="true"></i>
+
+    <%= t("registration.campaign.deadline_passed_hint#{hint_suffix}_html",
+          link: campaign_registrations_link(campaign)) %>
+  </p>
+<% elsif campaign.open? %>
+  <p class="small text-muted">
+    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
+
+    <%= t("registration.campaign.registrations_hint#{hint_suffix}_html",
+          link: campaign_registrations_link(campaign)) %>
+  </p>
+<% end %>
+
 <%= render "registration/campaigns/card_body_actions",
            campaign: campaign, has_violators: has_violators %>
 

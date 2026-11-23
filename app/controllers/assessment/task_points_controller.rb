@@ -4,9 +4,13 @@ module Assessment
     include AchievementStreams
     include GradingTable
 
+    # How many members of other tutorials the add-member menu lists at once.
+    ELSEWHERE_SHOWN = 10
+
     before_action :set_assessable_resource,
                   only: [:update_team_multi, :update_exam_multi, :update_team,
-                         :add_member, :update_participation, :refresh_submission,
+                         :add_member, :add_member_candidates, :remove_member,
+                         :update_participation, :refresh_submission,
                          :refresh_participation, :mark_as_participated,
                          :remove_participated, :mark_as_absent, :remove_absent,
                          :mark_as_exempt, :remove_exempt]
@@ -14,6 +18,8 @@ module Assessment
                                                  :update_exam_multi,
                                                  :update_team,
                                                  :add_member,
+                                                 :add_member_candidates,
+                                                 :remove_member,
                                                  :update_participation,
                                                  :refresh_submission,
                                                  :refresh_participation,
@@ -32,6 +38,8 @@ module Assessment
     before_action :refuse_unless_candidate, only: [:update_participation, :mark_as_absent,
                                                    :remove_absent, :mark_as_exempt,
                                                    :remove_exempt]
+    before_action :refuse_after_leaving, only: [:remove_participated, :mark_as_absent,
+                                                :remove_absent]
 
     rescue_from ActiveRecord::RecordNotFound,
                 ActiveRecord::RecordInvalid do |_e|
@@ -139,7 +147,7 @@ module Assessment
     # Somebody who forgot to join is put on the team by the tutor: the row
     # they had of their own goes, the team's row shows them.
     def add_member
-      user = @tutorial.members.find_by(id: params[:user_id])
+      user = @submission.member_candidates.find_by(id: params[:user_id])
       unless user
         return respond_with_flash(:alert, t("assessment.errors.user_not_found"),
                                   status: :not_found)
@@ -151,6 +159,40 @@ module Assessment
 
       flash.now[:notice] = t("assessment.task_points.member_added", name: user.tutorial_name)
       render turbo_stream: [gone, submission_row_stream, summary_stream, stream_flash].flatten
+    end
+
+    # Members of the lecture's other tutorials are looked up as the tutor
+    # types: the page holds only the group's own, and a lecture may have
+    # hundreds. One more than shown tells whether there are more.
+    def add_member_candidates
+      query = params[:q].to_s.strip
+      found = @submission.member_candidates_elsewhere(query).limit(ELSEWHERE_SHOWN + 1).to_a
+      render turbo_stream: turbo_stream.update(
+        "add-member-elsewhere-#{@submission.id}",
+        partial: "tutorials/add_member_elsewhere",
+        locals: { submission: @submission, query: query,
+                  found: found.first(ELSEWHERE_SHOWN), more: found.size > ELSEWHERE_SHOWN,
+                  tutorials: tutorials_of(found),
+                  grading_scope_type: params[:grading_scope_type] }
+      )
+    end
+
+    # Takes back what add_member did. The person has a row of their own
+    # again, which may sort anywhere in the table, so the table is drawn
+    # anew, as for a hand-over.
+    def remove_member
+      user = @submission.users.find_by(id: params[:user_id])
+      unless user
+        return respond_with_flash(:alert, t("assessment.errors.user_not_found"),
+                                  status: :not_found)
+      end
+
+      SubmissionGraderService.remove_member!(@submission, user, current_user)
+
+      flash.now[:notice] = t("assessment.task_points.member_removed", name: user.tutorial_name)
+      table = TutorialMarkingTableComponent.new(assignment: @assessable, grading_scope: table_scope)
+      render turbo_stream: [turbo_stream.replace("marking-table", html: render_to_string(table)),
+                            stream_flash]
     end
 
     def update_participation
@@ -257,6 +299,14 @@ module Assessment
         row_ids.map { |id| turbo_stream.replace(id, html: html) }
       end
 
+      # The tutorial each found member sits in, named next to them: a name
+      # alone may be shared across a large lecture.
+      def tutorials_of(users)
+        TutorialMembership.where(lecture_id: @lecture.id, user_id: users.map(&:id))
+                          .includes(:tutorial)
+                          .to_h { |membership| [membership.user_id, membership.tutorial] }
+      end
+
       # The ids a page may have drawn somebody's own row under: the row's, or
       # the user's while there was no row. Which one the page has cannot be
       # known here - the backfill worker seeds rows every minute and may have
@@ -324,6 +374,15 @@ module Assessment
         ParticipationIndex.follow_membership(@participation)
         @tutorial = @participation.tutorial
         authorize_assessment!
+      end
+
+      # Refuses to change the hand-in or absence of someone who has left the
+      # lecture. Without them, the row would disappear from the marking table.
+      def refuse_after_leaving
+        return unless @assessable.is_a?(Assignment)
+        return unless @lecture.excluded_lecture_memberships.exists?(user_id: @participation.user_id)
+
+        respond_with_flash(:alert, t("assessment.grading_tutorial.left_lecture_frozen"))
       end
 
       def refuse_unless_candidate

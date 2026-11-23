@@ -34,6 +34,15 @@ module Assessment
         state == :missed && assessment&.requires_submission
       end
 
+      # The team's side of a late join: its code, while the reader's own row is
+      # still unmarked. Whether a partner's row is, is asked when the code arrives.
+      def late_join_code
+        return unless state == :awaiting_marks && !participation.reviewed?
+        return unless assessment.requires_submission
+
+        submission&.token
+      end
+
       # Whatever the participation carries is shown. The 0 the other states read
       # is not carried by anything - it is the statement "this sheet counts and
       # counts as nothing", and that takes something having been at stake.
@@ -47,6 +56,15 @@ module Assessment
 
       def max_points
         assessment&.effective_total_points
+      end
+
+      # The verdict as far as the student can see it: nil before the result
+      # is visible, for homework and for a test without a passing threshold.
+      def test_verdict
+        return unless state.in?([:marked, :absent, :exempt])
+
+        assignment.test_verdict(status: participation.status,
+                                points_total: participation.points_total)
       end
 
       # Every assignment gets its assessment the moment it is created and its
@@ -85,10 +103,8 @@ module Assessment
         participation.graded_at || latest_task_point&.updated_at
       end
 
-      def marked_by
-        return unless participation
-
-        participation.grader || latest_task_point&.grader
+      def correction_visible?
+        submission&.correction.present? || state.in?([:marked, :partially_marked])
       end
 
       def new_correction?

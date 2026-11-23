@@ -209,7 +209,7 @@ test.describe("the card for a sheet that is due", () => {
     await page.uploadSubmission();
     await student.page.getByRole("button", { name: "Save" }).click();
     await expect(first.getByRole("link", { name: "Replace file" })).toBeVisible();
-    const code = await first.locator("code").innerText();
+    const code = await first.getByRole("code").innerText();
 
     await student2.page.goto(`/lectures/${lecture.id}/submissions`);
     const joined = student2.page.getByRole("region", { name: "Homework 1" });
@@ -261,7 +261,7 @@ test.describe("the card for a sheet that is due", () => {
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();
     await page.createSubmission();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     await student2.page.goto(`/lectures/${lecture.id}/submissions`);
     await student2.page.getByRole("link", { name: "Join with a code" }).click();
@@ -271,6 +271,39 @@ test.describe("the card for a sheet that is due", () => {
     await expect(student2.page.getByText(student.user.name_in_tutorials))
       .toBeVisible();
     expect(assignment.id).toBeTruthy();
+  });
+
+  test("joins through the link in an invitation once the reader confirms", async ({
+    factory,
+    teacher,
+    student,
+    student2,
+  }) => {
+    const { lecture } = await lectureWithSheet(
+      factory, teacher.user.id, [student.user.id, student2.user.id],
+    );
+
+    const page = new SubmissionsPage(student.page, lecture.id);
+    await page.goto();
+    await page.createSubmission();
+    const code = await student.page.getByRole("code").innerText();
+
+    await student2.page.goto(`/submissions/redeem_code?code=${code}`);
+    await expect(student2.page.getByText(
+      `Do you want to join the submission team of ${student.user.name_in_tutorials}`,
+    )).toBeVisible();
+
+    const ownCard = student.page.getByRole("region", { name: "Homework 1" });
+    await student.page.reload();
+    await expect(ownCard.getByRole("link", { name: "Replace file" })).toBeVisible();
+    await expect(ownCard.getByText(student2.user.name_in_tutorials)).toHaveCount(0);
+
+    await student2.page.getByRole("button", { name: "Join" }).click();
+    const card = student2.page.getByRole("region", { name: "Homework 1" });
+    await expect(card.getByText(student.user.name_in_tutorials)).toBeVisible();
+
+    await student.page.reload();
+    await expect(ownCard.getByText(student2.user.name_in_tutorials)).toBeVisible();
   });
 
   // Both have the form open; whoever saves second would overwrite the other's
@@ -288,7 +321,7 @@ test.describe("the card for a sheet that is due", () => {
     const page = new SubmissionsPage(student.page, lecture.id);
     await page.goto();
     await page.createSubmission();
-    const code = await student.page.locator("code").innerText();
+    const code = await student.page.getByRole("code").innerText();
 
     const page2 = new SubmissionsPage(student2.page, lecture.id);
     await page2.goto();
@@ -395,7 +428,7 @@ test.describe("the card for a sheet that is due", () => {
     });
     const assessment = await assignment.__call("assessment");
     await factory.create("assessment_task", [], {
-      assessment_id: assessment.id, max_points: 10,
+      assessment_id: assessment.id, description: "Warm-up", max_points: 10,
     });
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
@@ -415,7 +448,7 @@ test.describe("the card for a sheet that is due", () => {
     await row.getByRole("link", { name: "Record a hand-in on paper or by other means" })
       .click();
     await expect(row.getByText("Pending Grading")).toBeVisible();
-    await row.getByRole("spinbutton", { name: `Task 1 for ${student.user.name_in_tutorials}` })
+    await row.getByRole("spinbutton", { name: `Warm-up for ${student.user.name_in_tutorials}` })
       .fill("8");
     await row.getByRole("button", { name: "Save this row's points" }).click();
     await expect(row.getByText("Reviewed")).toBeVisible();

@@ -55,10 +55,6 @@ class ExamGradingTableComponent < ViewComponent::Base
       [["flag:points_changed", I18n.t("assessment.grading_exam.filter_points_changed")]]
   end
 
-  def tutorial_options
-    ExamRows.tutorial_options(@exam)
-  end
-
   private
 
     def tutorial_ids_by_user

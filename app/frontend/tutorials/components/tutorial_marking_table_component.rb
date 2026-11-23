@@ -18,10 +18,24 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @mode = "tutor"
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+                        .includes(:users, { user_submission_joins: :added_by },
+                                  tutorial: [:tutors, { lecture: :editors }])
     @non_submitters = @assignment.non_submitters_in_tutorial(@tutorial).by_last_name
+    @elsewhere = elsewhere_teams
     @participations_by_user_id =
-      preload_participations(@non_submitters, @stack, groups_of(@non_submitters))
+      preload_participations(@non_submitters, @stack + @elsewhere, groups_of(@non_submitters))
+    @addable_members = unmarked(addable(@non_submitters, @tutorial))
+  end
+
+  # A tutor reads the teams of their students that another tutorial marks;
+  # the marking tutorial counts them in its summary, this one does not.
+  def elsewhere_teams
+    member_joins = UserSubmissionJoin.where(user_id: @tutorial.members.select(:id))
+    @assignment.submissions.proper.where.not(tutorial: @tutorial)
+               .where(id: member_joins.select(:submission_id))
+               .order(:last_modification_by_users_at)
+               .includes(:users, { user_submission_joins: :added_by },
+                         tutorial: [:tutors, { lecture: :editors }]).to_a
   end
 
   def init_teacher_case
@@ -29,13 +43,15 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     @tutorials = @lecture.tutorials
     @stack = @assignment.submissions.proper
                         .order(:last_modification_by_users_at)
-                        .includes(:users, tutorial: [:tutors, { lecture: :editors }])
+                        .includes(:users, { user_submission_joins: :added_by },
+                                  tutorial: [:tutors, { lecture: :editors }])
     @submissions_by_tutorial = @stack.group_by(&:tutorial)
 
     @non_submitters = @assignment.non_submitters_in_tutorials.by_last_name
     # Somebody who left the groups after handing in sits with the group that
     # has the sheet - as a file row or a roster row - not among those in none.
     @non_tutorial_participants = @assignment.applicable_users_not_in_tutorials
+                                            .or(@assignment.left_users_with_unheld_work)
                                             .where.not(id: @non_submitters.map(&:id) +
                                                            @stack.flat_map(&:user_ids))
     listed = @non_submitters.to_a + @non_tutorial_participants.to_a
@@ -45,6 +61,9 @@ class TutorialMarkingTableComponent < ViewComponent::Base
     # that has the sheet; everybody else sits with the group they are in.
     @non_submitters_by_tutorial = @non_submitters.group_by do |user|
       @participations_by_user_id[user.id]&.tutorial || membership_tutorials[user.id]
+    end
+    @addable_by_tutorial = @non_submitters_by_tutorial.to_h do |tutorial, users|
+      [tutorial, unmarked(addable(users, tutorial))]
     end
   end
 
@@ -68,6 +87,25 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   # row behind, so the page's own group is not the answer.
   def groups_of(users)
     users.to_h { |user| [user.id, membership_tutorials[user.id]] }
+  end
+
+  # Whoever is marked on a row of their own cannot be put on a team. Read off
+  # the rows loaded for the page, so the table needs no query per row.
+  def unmarked(users)
+    assessment = @assignment.assessment
+    return users unless assessment
+
+    users.reject { |user| assessment.marked?(@participations_by_user_id[user.id]) }
+  end
+
+  # Whom the add action takes, as Submission#member_candidates: somebody who
+  # moved to another group keeps a row here, but joins a team of this group
+  # only where teams may span groups.
+  def addable(users, tutorial)
+    users.select do |user|
+      current = membership_tutorials[user.id]
+      current && (@lecture.cross_tutorial_teams? || current == tutorial)
+    end
   end
 
   def team_participations(submission)
@@ -102,7 +140,23 @@ class TutorialMarkingTableComponent < ViewComponent::Base
   # rebuilt from the rows, so the two never disagree.
   def summary
     MarkingSummaryComponent.new(statuses: row_statuses, hand_ins: !@assignment.kind_test?,
-                                teams: team_count)
+                                teams: team_count, extra_parts: passing_parts)
+  end
+
+  def passing_parts
+    return [] unless @assignment.passing_points
+
+    verdicts = roster_rows.filter_map do |user, tutorial|
+      row = participation_for(user, tutorial)
+      @assignment.test_verdict(status: row.status, points_total: row.points_total)
+    end.tally
+    scope = "assessment.grading_tutorial.summary"
+    threshold = ActiveSupport::NumberHelper.number_to_rounded(
+      @assignment.passing_points, precision: 2, strip_insignificant_zeros: true
+    )
+    [I18n.t("#{scope}.passing_points", points: threshold),
+     I18n.t("#{scope}.passed", count: verdicts.fetch(:passed, 0)),
+     I18n.t("#{scope}.failed", count: verdicts.fetch(:failed, 0))]
   end
 
   # A team row speaks for its first member with a participation, as the row
@@ -136,7 +190,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
 
   # A sheet from before there were points has file rows only.
   def rows?
-    @stack.any? ||
+    @stack.any? || @elsewhere.present? ||
       (grading_enabled? && (@non_submitters.any? || @non_tutorial_participants.present?))
   end
 
@@ -157,7 +211,7 @@ class TutorialMarkingTableComponent < ViewComponent::Base
 
     def membership_tutorials
       @membership_tutorials ||=
-        TutorialMembership.where(tutorial: @lecture.tutorials).includes(:tutorial)
+        TutorialMembership.where(tutorial: @lecture.tutorials).includes(tutorial: :tutors)
                           .index_by(&:user_id).transform_values(&:tutorial)
     end
 end

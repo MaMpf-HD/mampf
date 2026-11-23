@@ -57,5 +57,13 @@ RSpec.describe(Registration::ScreeningService) do
       expect(result.violations.pluck(:registration_id))
         .to contain_exactly(invalid_registration_a.id, invalid_registration_b.id)
     end
+
+    it "names users by their personal data rather than their display name" do
+      invalid_user.update!(name: "nickname", first_name: "Ada", last_name: "Lovelace")
+
+      result = described_class.new(campaign, registrations: campaign.user_registrations).call
+
+      expect(result.violations.pluck(:name).uniq).to eq(["Ada Lovelace"])
+    end
   end
 end

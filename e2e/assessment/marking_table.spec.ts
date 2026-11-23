@@ -68,8 +68,9 @@ test.describe("marking table", () => {
   });
 
   // Somebody forgot to join their team's upload; the tutor puts them on it,
-  // and the points the team already has come along.
-  test("puts a member who forgot to join onto the team, with its points", async ({
+  // and the points the team already has come along. Somebody put on by
+  // mistake is taken off again from the same row.
+  test("puts a member who forgot to join onto the team, with its points, and off again", async ({
     factory,
     teacher,
     tutor,
@@ -85,18 +86,22 @@ test.describe("marking table", () => {
     for (const name of ["Ada Lovelace", "Grace Hopper"]) {
       const student = await factory.create("confirmed_user", [], { name_in_tutorials: name });
       await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: student.id });
-      await factory.create("tutorial_membership", [], {
-        tutorial_id: tutorial.id, user_id: student.id,
-      });
       members.push(student);
     }
     const [ada] = members;
     await handIn(factory, assignment.id, tutorial.id, ada.id);
+    // Before the tutorial memberships: from then on the minutely backfill of
+    // the expired sheet may write a blank participation for each of them.
     const adaRow = await factory.create("assessment_participation", [], {
       assessment_id: assessmentId, user_id: ada.id, tutorial_id: tutorial.id,
       submitted_at: new Date(Date.now() - 2 * 86400000).toISOString(),
     });
     await scoreTask(factory, task.id, adaRow.id, 7);
+    for (const member of members) {
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: member.id,
+      });
+    }
 
     await tutor.page.goto(
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
@@ -113,8 +118,118 @@ test.describe("marking table", () => {
     const joined = table.getByRole("row", { name: /Ada Lovelace/ });
     await expect(joined).toContainText("Grace Hopper");
     await expect(table.getByRole("row", { name: /Grace Hopper/ })).toHaveCount(1);
-    await expect(joined.getByRole("spinbutton", { name: /Task 1 for Ada Lovelace/ }))
+    await expect(joined.getByRole("spinbutton", { name: /Warm-up for Ada Lovelace/ }))
       .toHaveValue("7.0");
+
+    await expect(joined.getByRole("img", { name: /^Put on the team by/ })).toHaveCount(1);
+    const takeOff = joined.getByRole("button", { name: "Take somebody off this team again" });
+    await takeOff.click();
+    await joined.getByRole("button", { name: "Grace Hopper", exact: true }).click();
+
+    await expect(tutor.page.getByText("Grace Hopper is no longer on the team.")).toBeVisible();
+    await expect(takeOff).toHaveCount(0);
+    await expect(table.getByRole("row", { name: /Grace Hopper/ }).getByText("Not Submitted"))
+      .toBeVisible();
+  });
+
+  // Seven names on a short screen stand in for a group of thirty on a
+  // laptop: the tutor narrows the list by typing, or scrolls it to the end.
+  test("finds the member to put on the team by name", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const { lecture, assignment, assessmentId } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    await addTask(factory, assessmentId, "Warm-up", 10);
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Tuesday group",
+    });
+    const members = [];
+    for (const name of [
+      "Ada Lovelace", "Sophie Germain", "Grace Hopper", "Katherine Johnson",
+      "Emmy Noether", "Mary Somerville", "Alan Turing",
+    ]) {
+      const student = await factory.create("confirmed_user", [], { name_in_tutorials: name });
+      await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: student.id });
+      members.push(student);
+    }
+    await handIn(factory, assignment.id, tutorial.id, members[0].id);
+    for (const member of members) {
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: member.id,
+      });
+    }
+
+    await tutor.page.setViewportSize({ width: 1280, height: 400 });
+    await tutor.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
+    );
+    const teamRow = tutor.page.getByRole("table").getByRole("row", { name: /Ada Lovelace/ });
+    await teamRow.getByRole("button", { name: "Put somebody on this team" }).click();
+    const search = teamRow.getByRole("searchbox", { name: "Search by name" });
+    await expect(search).toBeFocused();
+
+    await search.fill("hop");
+    await expect(teamRow.getByRole("button", { name: "Grace Hopper" })).toBeVisible();
+    await expect(teamRow.getByRole("button", { name: "Alan Turing" })).toBeHidden();
+
+    const noMatch = teamRow.getByText("Nobody by that name is without a team.");
+    await search.fill("Lovelace");
+    await expect(noMatch).toBeVisible();
+
+    await search.fill("");
+    await expect(noMatch).toBeHidden();
+    await teamRow.getByRole("button", { name: "Sophie Germain" }).click();
+    await expect(tutor.page.getByText("Sophie Germain is on the team now.")).toBeVisible();
+    await expect(teamRow).toContainText("Sophie Germain");
+  });
+
+  // Where teams may span tutorials, somebody from another group who forgot
+  // to join is found by name; the page holds only the tutor's own group.
+  test("puts somebody from another tutorial on the team", async ({
+    factory,
+    teacher,
+    tutor,
+  }) => {
+    const { lecture, assignment, assessmentId } = await createAssessedAssignment(
+      factory, teacher.user.id, "Problem Set 1", ["expired"],
+    );
+    await lecture.update({ cross_tutorial_teams: true });
+    await addTask(factory, assessmentId, "Warm-up", 10);
+    const tutorial = await factory.create("tutorial", ["with_tutor_by_id"], {
+      lecture_id: lecture.id, tutor_id: tutor.user.id, title: "Tuesday group",
+    });
+    const other = await factory.create("tutorial", [], {
+      lecture_id: lecture.id, title: "Friday group",
+    });
+    const ada = await factory.create("confirmed_user", [], { name_in_tutorials: "Ada Lovelace" });
+    const clara = await factory.create("confirmed_user", [], { name_in_tutorials: "Clara Wieck" });
+    for (const student of [ada, clara]) {
+      await factory.create("lecture_membership", [], {
+        lecture_id: lecture.id, user_id: student.id,
+      });
+    }
+    await handIn(factory, assignment.id, tutorial.id, ada.id);
+    await factory.create("tutorial_membership", [], { tutorial_id: tutorial.id, user_id: ada.id });
+    await factory.create("tutorial_membership", [], { tutorial_id: other.id, user_id: clara.id });
+
+    await tutor.page.goto(
+      `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
+    );
+    const teamRow = tutor.page.getByRole("table").getByRole("row", { name: /Ada Lovelace/ });
+    await teamRow.getByRole("button", { name: "Put somebody on this team" }).click();
+    const search = teamRow.getByRole("searchbox", { name: "Search by name" });
+    await expect(search).toBeFocused();
+
+    await search.fill("nobody here");
+    await expect(teamRow.getByText("Nobody by that name is without a team.")).toBeVisible();
+
+    await search.fill("wie");
+    await teamRow.getByRole("button", { name: "Clara Wieck Friday group" }).click();
+    await expect(tutor.page.getByText("Clara Wieck is on the team now.")).toBeVisible();
+    await expect(teamRow).toContainText("Clara Wieck");
   });
 
   test("says where the sheet stands and narrows the rows", async ({
@@ -138,11 +253,9 @@ test.describe("marking table", () => {
       await factory.create("lecture_membership", [], {
         lecture_id: lecture.id, user_id: student.id,
       });
-      await factory.create("tutorial_membership", [], {
-        tutorial_id: tutorial.id, user_id: student.id,
-      });
       students.push(student);
     }
+    // Before the tutorial memberships, for the backfill: see above.
     const marked = await factory.create("assessment_participation", [], {
       assessment_id: assessmentId,
       user_id: students[0].id,
@@ -151,6 +264,11 @@ test.describe("marking table", () => {
       submitted_at: new Date().toISOString(),
     });
     await scoreTask(factory, task.id, marked.id, 7);
+    for (const student of students) {
+      await factory.create("tutorial_membership", [], {
+        tutorial_id: tutorial.id, user_id: student.id,
+      });
+    }
 
     await tutor.page.goto(
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
@@ -210,7 +328,7 @@ test.describe("marking table", () => {
     const saveAll = tutor.page.getByRole("button", { name: /Save all changes/ });
     await expect(saveAll).toBeDisabled();
 
-    await ada.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" }).fill("7");
+    await ada.getByRole("spinbutton", { name: "Warm-up for Ada Lovelace" }).fill("7");
     await expect(saveAll).toBeEnabled();
     await expect(saveAll).toContainText("1");
     await ada.getByRole("button", { name: "Save this row's points" }).click();
@@ -219,7 +337,7 @@ test.describe("marking table", () => {
     // the saved row left the pile of unsaved changes
     await expect(saveAll).toBeDisabled();
 
-    await grace.getByRole("spinbutton", { name: "Task 1 for Grace Hopper" }).fill("4");
+    await grace.getByRole("spinbutton", { name: "Warm-up for Grace Hopper" }).fill("4");
     await saveAll.click();
     await expect(grace.getByText("Reviewed")).toBeVisible();
     await expect(tutor.page.getByText("2 handed in · 2 reviewed")).toBeVisible();
@@ -256,7 +374,7 @@ test.describe("marking table", () => {
       `/lectures/${lecture.id}/tutorials?assignment=${assignment.id}&tutorial=${tutorial.id}`,
     );
     const row = tutor.page.getByRole("row", { name: /Ada Lovelace/ });
-    const points = row.getByRole("spinbutton", { name: "Task 1 for Ada Lovelace" });
+    const points = row.getByRole("spinbutton", { name: "Warm-up for Ada Lovelace" });
 
     const amber = "rgb(255, 193, 7)";
     await points.fill("25");
@@ -309,11 +427,13 @@ test.describe("marking table", () => {
 
     await tutor.page.getByLabel("Assignment").selectOption({ label: "Problem Set 2" });
     await expect(tutor.page).toHaveURL(new RegExp(`assignment=${second.id}`));
-    await expect(tutor.page.getByLabel("Assignment")).toHaveValue("Problem Set 2");
+    await expect(tutor.page.getByLabel("Assignment").getByRole("option", { selected: true }))
+      .toHaveText("Problem Set 2");
 
     await tutor.page.getByLabel("Tutorial").selectOption({ label: "Friday group" });
     await expect(tutor.page).toHaveURL(new RegExp(`tutorial=${friday.id}`));
-    await expect(tutor.page.getByLabel("Tutorial")).toHaveValue("Friday group");
+    await expect(tutor.page.getByLabel("Tutorial").getByRole("option", { selected: true }))
+      .toHaveText("Friday group");
   });
 
   test("narrows a sheet from before there were points by name", async ({

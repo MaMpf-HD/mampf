@@ -10,7 +10,7 @@ test.describe("the student's sheet list", () => {
     factory: FactoryBot,
     teacherId: number,
     studentId: number,
-  ): Promise<FactoryBotObject> {
+  ): Promise<{ lecture: FactoryBotObject; tutorial: FactoryBotObject }> {
     const lecture = await factory.create("lecture", ["released_for_all"], {
       teacher_id: teacherId,
     });
@@ -32,7 +32,7 @@ test.describe("the student's sheet list", () => {
       tutorial_id: tutorial.id,
       user_id: studentId,
     });
-    return lecture;
+    return { lecture, tutorial };
   }
 
   // At the start of a term nobody has a seat yet. The page used to send them to
@@ -99,6 +99,7 @@ test.describe("the student's sheet list", () => {
   async function markedSheetWithFiles(
     factory: FactoryBot,
     lectureId: number,
+    tutorialId: number,
     studentId: number,
     title: string,
   ): Promise<FactoryBotObject> {
@@ -108,14 +109,10 @@ test.describe("the student's sheet list", () => {
       assessment_id: book.id,
       user_id: studentId,
     });
-    const tutorial = await factory.create("tutorial", [], {
-      lecture_id: lectureId,
-      title: `Group for ${title}`,
-    });
     const submission = await factory.create(
       "submission", ["with_manuscript", "with_correction"], {
         assignment_id: assignment.id,
-        tutorial_id: tutorial.id,
+        tutorial_id: tutorialId,
       },
     );
     await factory.create("user_submission_join", [], {
@@ -127,7 +124,7 @@ test.describe("the student's sheet list", () => {
 
   test("shows a marked sheet by its number and an unmarked one by its badge",
     async ({ factory, teacher, student }) => {
-      const lecture = await enrolledLecture(
+      const { lecture } = await enrolledLecture(
         factory, teacher.user.id, student.user.id,
       );
 
@@ -170,7 +167,7 @@ test.describe("the student's sheet list", () => {
     teacher,
     student,
   }) => {
-    const lecture = await enrolledLecture(
+    const { lecture } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
     const marked = await closedSheet(factory, lecture.id, "Homework 1");
@@ -193,7 +190,7 @@ test.describe("the student's sheet list", () => {
     teacher,
     student,
   }) => {
-    const lecture = await enrolledLecture(
+    const { lecture } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
     await factory.create("assignment", ["expired", "without_assessment"], {
@@ -216,7 +213,7 @@ test.describe("the student's sheet list", () => {
     teacher,
     student,
   }) => {
-    const lecture = await enrolledLecture(
+    const { lecture } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
     await closedSheet(factory, lecture.id, "Homework 1");
@@ -250,10 +247,10 @@ test.describe("the student's sheet list", () => {
     teacher,
     student,
   }) => {
-    const lecture = await enrolledLecture(
+    const { lecture, tutorial } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
-    await markedSheetWithFiles(factory, lecture.id, student.user.id, "Homework 1");
+    await markedSheetWithFiles(factory, lecture.id, tutorial.id, student.user.id, "Homework 1");
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     const list = student.page.getByRole("region", { name: "Earlier sheets" });
@@ -280,17 +277,18 @@ test.describe("the student's sheet list", () => {
     student,
     student2,
   }) => {
-    const lecture = await enrolledLecture(factory, teacher.user.id, student.user.id);
+    const { lecture, tutorial } = await enrolledLecture(
+      factory, teacher.user.id, student.user.id,
+    );
     const assignment = await closedSheet(factory, lecture.id, "Homework 1");
     const partner = student2.user;
     await factory.create("lecture_bookmark", [], { lecture_id: lecture.id, user_id: partner.id });
     await factory.create("lecture_membership", [], { lecture_id: lecture.id, user_id: partner.id });
-    const group = (await factory.create("tutorial", [], {
-      lecture_id: lecture.id, title: "Tuesday group",
-    }));
-    await factory.create("tutorial_membership", [], { tutorial_id: group.id, user_id: partner.id });
+    await factory.create("tutorial_membership", [], {
+      tutorial_id: tutorial.id, user_id: partner.id,
+    });
     const team = await factory.create("submission", ["with_manuscript"], {
-      assignment_id: assignment.id, tutorial_id: group.id,
+      assignment_id: assignment.id, tutorial_id: tutorial.id,
     });
     await factory.create("user_submission_join", [], {
       submission_id: team.id, user_id: partner.id,
@@ -313,11 +311,11 @@ test.describe("the student's sheet list", () => {
     teacher,
     student,
   }) => {
-    const lecture = await enrolledLecture(
+    const { lecture, tutorial } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
     const submission = await markedSheetWithFiles(
-      factory, lecture.id, student.user.id, "Homework 1",
+      factory, lecture.id, tutorial.id, student.user.id, "Homework 1",
     );
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
@@ -342,10 +340,10 @@ test.describe("the student's sheet list", () => {
     teacher,
     student,
   }) => {
-    const lecture = await enrolledLecture(
+    const { lecture, tutorial } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
-    await markedSheetWithFiles(factory, lecture.id, student.user.id, "Homework 1");
+    await markedSheetWithFiles(factory, lecture.id, tutorial.id, student.user.id, "Homework 1");
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     const list = student.page.getByRole("region", { name: "Earlier sheets" });
@@ -374,11 +372,11 @@ test.describe("the student's sheet list", () => {
   });
 
   test("clears every marker at once", async ({ factory, teacher, student }) => {
-    const lecture = await enrolledLecture(
+    const { lecture, tutorial } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
-    await markedSheetWithFiles(factory, lecture.id, student.user.id, "Homework 1");
-    await markedSheetWithFiles(factory, lecture.id, student.user.id, "Homework 2");
+    await markedSheetWithFiles(factory, lecture.id, tutorial.id, student.user.id, "Homework 1");
+    await markedSheetWithFiles(factory, lecture.id, tutorial.id, student.user.id, "Homework 2");
 
     await student.page.goto(`/lectures/${lecture.id}/submissions`);
     const list = student.page.getByRole("region", { name: "Earlier sheets" });
@@ -404,7 +402,7 @@ test.describe("the student's sheet list", () => {
     teacher,
     student,
   }) => {
-    const lecture = await enrolledLecture(
+    const { lecture } = await enrolledLecture(
       factory, teacher.user.id, student.user.id,
     );
 
