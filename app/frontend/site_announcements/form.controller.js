@@ -4,8 +4,6 @@ import { Controller } from "@hotwired/stimulus";
  * Previews the draft for the announcement in the banner above the navbar.
  */
 export default class extends Controller {
-  static values = { separator: String };
-
   disconnect() {
     this.#restore();
   }
@@ -19,7 +17,7 @@ export default class extends Controller {
   }
 
   update(event) {
-    const banner = this.#banner();
+    const banner = document.querySelector("#site-announcement-banner .alert");
     if (!banner) return;
 
     const draft = event.target.value;
@@ -27,24 +25,23 @@ export default class extends Controller {
       this.#restore();
       return;
     }
-    banner.innerHTML = this.original.hidden
-      ? draft
-      : draft + this.separatorValue + this.original.html;
+
+    // A Turbo Stream may have replaced the banner, and the preview with it.
+    if (!this.preview?.isConnected) {
+      this.preview = document.createElement("div");
+      this.preview.className = "site-announcement";
+      banner.prepend(this.preview);
+    }
+    this.preview.innerHTML = draft;
     banner.hidden = false;
   }
 
-  #banner() {
-    const banner = document.querySelector("#site-announcement-banner .alert");
-    if (banner && banner !== this.banner) {
-      this.banner = banner;
-      this.original = { html: banner.innerHTML, hidden: banner.hidden };
-    }
-    return banner;
-  }
-
   #restore() {
-    if (!this.banner) return;
-    this.banner.innerHTML = this.original.html;
-    this.banner.hidden = this.original.hidden;
+    if (!this.preview) return;
+
+    const banner = this.preview.parentElement;
+    this.preview.remove();
+    this.preview = null;
+    if (banner) banner.hidden = !banner.querySelector(".site-announcement");
   }
 }

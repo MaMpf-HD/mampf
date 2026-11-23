@@ -3,8 +3,6 @@
               class: "px-3 pt-4 pb-3 border-bottom bg-body-tertiary",
               data: {
                 controller: "site-announcement-form",
-                site_announcement_form_separator_value:
-                  AnnouncementsHelper::BANNER_SEPARATOR,
                 action: "trix-initialize->site-announcement-form#update " \
                         "trix-change->site-announcement-form#update " \
                         "turbo:before-cache@document->site-announcement-form#cancel"

@@ -1,8 +1,11 @@
+<% details = Announcement.on_banner.pluck(:details) %>
 <div id="site-announcement-banner">
   <%= tag.div class: "alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium " \
                      "py-2 px-3 no-katex",
               role: "alert",
-              hidden: site_announcements_html.blank? do %>
-    <%= sanitize(site_announcements_html) %>
+              hidden: details.none? do %>
+    <% details.each do |text| %>
+      <div class="site-announcement"><%= sanitize(text) %></div>
+    <% end %>
   <% end %>
 </div>

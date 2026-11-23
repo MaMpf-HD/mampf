@@ -1,15 +1,5 @@
 # Announcements Helper
 module AnnouncementsHelper
-  # Also used by the site-announcement-form preview, so a draft looks as it
-  # will once published.
-  BANNER_SEPARATOR = '<hr class="my-2 mx-n3">'.freeze
-
-  # Returns joined HTML of all admin-level announcements shown above the navbar.
-  def site_announcements_html
-    @site_announcements_html ||=
-      Announcement.on_banner.pluck(:details).join(BANNER_SEPARATOR)
-  end
-
   # create text for notification about new announcement in notification dropdown
   # menu
   def announcement_notification_item_header(announcement)
