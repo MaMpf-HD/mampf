@@ -9,7 +9,7 @@ class Announcement < ApplicationRecord
   validates :details, presence: true
 
   scope :site_wide, -> { where(lecture: nil) }
-  scope :on_banner, -> { where(banner_active: true).order(created_at: :desc) }
+  scope :banner_active, -> { where(banner_active: true).order(created_at: :desc) }
 
   # does there (still) exist a notification for the announcement for
   # the given user
