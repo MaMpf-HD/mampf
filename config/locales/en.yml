@@ -379,17 +379,11 @@ en:
         Here you can enter a text. You may use LaTeX (by putting the
         corresponding expression inside $...$). A preview of your
         text is shown below.
-      on_main_page: >
-        Display on home page
-      main_page: >
-        On Home Page
-      propagate: set on home page
-      expel: remove from home page
-      info:
-        on_main_page: >
-          If you check this box, the announcement will be displayed on the MaMpf
-          homepage. This can be useful if it is an announcement of a server
-          downtime.
+      active: 'Active'
+      inactive: 'Inactive'
+      active_hint: >
+        Active announcements are shown as a yellow banner above the navigation
+        bar on almost every page. Use the switch to put one up or take it down.
     lecture:
       editors_by_email:
         label: "Add an editor by email address"

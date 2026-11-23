@@ -99,15 +99,7 @@ Rails.application.routes.draw do
 
   # announcements routes
 
-  post "announcements/:id/propagate",
-       to: "announcements#propagate",
-       as: "propagate_announcement"
-
-  post "announcements/:id/expel",
-       to: "announcements#expel",
-       as: "expel_announcement"
-
-  resources :announcements, only: [:index, :new, :create]
+  resources :announcements, only: [:index, :new, :create, :update]
 
   # answers routes
   get "answers/:id/cancel_edit",

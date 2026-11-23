@@ -1,25 +1,32 @@
-<div class="col-2">
-  <%= human_readable_date(announcement.created_at) %>
-</div>
-<div class="col-2">
-  <%= announcement.announcer.name %>
-</div>
-<div class="col-5">
-  <%= sanitize(announcement.details) %>
-</div>
-<div class="col-1">
-  <%= ballot_box(announcement.on_main_page) %>
-</div>
-<div class="col-2">
-  <% if announcement.on_main_page %>
-  	<%= link_to t('admin.announcement.expel'),
-  							expel_announcement_path(announcement),
-  							class: 'btn btn-sm btn-primary',
-  							method: :post %>
-  <% else %>
-  	<%= link_to t('admin.announcement.propagate'),
-  							propagate_announcement_path(announcement),
-  							class: 'btn btn-sm btn-primary',
-  							method: :post %>
+<% active = announcement.on_main_page %>
+<li id="<%= dom_id(announcement) %>"
+    class="list-group-item d-flex align-items-center gap-3 py-3
+           <%= 'list-group-item-warning' if active %>">
+  <div class="flex-grow-1 min-w-0">
+    <div class="small text-muted mb-1">
+      <%= human_readable_date(announcement.created_at) %>
+      &middot;
+      <%= announcement.announcer.name %>
+    </div>
+    <%# Site-wide announcements are plain text, not typeset with KaTeX. %>
+    <div class="text-break no-katex">
+      <%= sanitize(announcement.details) %>
+    </div>
+  </div>
+  <%= form_with model: announcement,
+                local: true,
+                class: "flex-shrink-0",
+                data: { controller: "submit-on-change" } do |f| %>
+    <div class="form-check form-check-reverse form-switch mb-0">
+      <%= f.check_box :on_main_page,
+                      id: "announcement-active-#{announcement.id}",
+                      class: "form-check-input",
+                      role: "switch",
+                      data: { action: "change->submit-on-change#change" } %>
+      <%= f.label :on_main_page,
+                  active ? t("admin.announcement.active") : t("admin.announcement.inactive"),
+                  for: "announcement-active-#{announcement.id}",
+                  class: "form-check-label small #{active ? 'fw-semibold' : 'text-muted'}" %>
+    </div>
   <% end %>
-</div>
+</li>

@@ -1,0 +1,4 @@
+<%= turbo_frame_tag "new_announcement" do %>
+  <%= render partial: "announcements/inline_form",
+             locals: { announcement: @announcement } %>
+<% end %>

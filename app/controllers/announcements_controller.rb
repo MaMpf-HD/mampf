@@ -1,7 +1,7 @@
 class AnnouncementsController < ApplicationController
   layout "administration"
-  before_action :set_announcement, except: [:new, :create, :index]
-  authorize_resource except: [:new, :create, :index]
+  before_action :set_announcement, only: :update
+  authorize_resource only: :update
 
   def current_ability
     @current_ability ||= AnnouncementAbility.new(current_user)
@@ -9,10 +9,9 @@ class AnnouncementsController < ApplicationController
 
   def index
     authorize! :index, Announcement.new
-    announcements_scope = Announcement.where(lecture: nil)
-                                      .order(:created_at)
-                                      .reverse_order
-    @pagy, @announcements = pagy(announcements_scope, limit: 10)
+    @pagy, @announcements = pagy(Announcement.where(lecture: nil)
+                                             .order(created_at: :desc),
+                                 limit: 10)
   end
 
   def new
@@ -24,44 +23,71 @@ class AnnouncementsController < ApplicationController
   def create
     @announcement = Announcement.new(announcement_params)
     @announcement.announcer = current_user
+    # announcements without a lecture only feed the banner above the navbar,
+    # so publishing one puts it up right away
+    @announcement.on_main_page = @announcement.lecture.nil?
     authorize! :create, @announcement
-    @announcement.save
-    if @announcement.valid?
-      # redirection depending from where the announcement was created
-      # (announcements without a lecture only feed the main page banner)
-      if @announcement.lecture.blank?
-        redirect_to announcements_path
-        return
-      end
-      # trigger creation of notifications for all relevant users
-      create_notifications
-      # send notification email
-      send_notification_email
-      redirect_to "#{edit_lecture_path(@announcement.lecture)}?tab=communication"
-      return
+
+    if @announcement.lecture.nil?
+      create_site_announcement
+    else
+      create_lecture_announcement
     end
-    @errors = @announcement.errors[:details].join(", ")
   end
 
-  def propagate
-    @announcement.update(on_main_page: true)
-    redirect_to announcements_path
-  end
-
-  def expel
-    @announcement.update(on_main_page: false)
-    redirect_to announcements_path
+  # Switches a site-wide announcement's banner on or off.
+  def update
+    @announcement.update(params.expect(announcement: [:on_main_page]))
+    render turbo_stream: [
+      turbo_stream.replace(@announcement,
+                           partial: "announcements/row",
+                           locals: { announcement: @announcement }),
+      banner_stream
+    ]
   end
 
   private
 
     def announcement_params
-      # on_main_page controls the (lecture-less) main-page banner and is an
-      # admin-only concern; strip it for non-admins so it can't be set via a
-      # crafted request.
-      permitted = [:details, :lecture_id]
-      permitted << :on_main_page if current_user.admin?
-      params.expect(announcement: permitted)
+      params.expect(announcement: [:details, :lecture_id])
+    end
+
+    # Adds the published announcement on top of the admin list and puts up the
+    # banner, or shows the inline form again with its errors.
+    def create_site_announcement
+      unless @announcement.save
+        render :new, status: :unprocessable_content
+        return
+      end
+
+      render turbo_stream: [
+        turbo_stream.update("new_announcement", ""),
+        turbo_stream.remove("no-announcements"),
+        turbo_stream.prepend("announcements",
+                             partial: "announcements/row",
+                             locals: { announcement: @announcement }),
+        banner_stream
+      ]
+    end
+
+    # Notifies the lecture's audience and goes back to the lecture's
+    # communication tab, or lets create.coffee show the errors in the modal.
+    def create_lecture_announcement
+      unless @announcement.save
+        @errors = @announcement.errors[:details].join(", ")
+        return
+      end
+
+      # trigger creation of notifications for all relevant users
+      create_notifications
+      # send notification email
+      send_notification_email
+      redirect_to edit_lecture_path(@announcement.lecture, tab: "communication")
+    end
+
+    def banner_stream
+      turbo_stream.replace("site-announcement-banner",
+                           partial: "shared/announcement_banner")
     end
 
     def create_notifications

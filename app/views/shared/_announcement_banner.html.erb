@@ -1,6 +1,11 @@
-<% if site_announcements_html.present? %>
-  <div class="alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium py-2 px-3"
-       role="alert">
-    <%= sanitize(site_announcements_html) %>
-  </div>
-<% end %>
+<%# The wrapper stays even when empty, so toggling an announcement on the
+    admin page can swap the banner in place via Turbo Stream. %>
+<div id="site-announcement-banner">
+  <% if site_announcements_html.present? %>
+    <div class="alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium py-2 px-3
+                no-katex"
+         role="alert">
+      <%= sanitize(site_announcements_html) %>
+    </div>
+  <% end %>
+</div>

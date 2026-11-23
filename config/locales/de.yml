@@ -443,16 +443,12 @@ de:
         Hier kannst Du den Text eingeben. Du kannst LaTeX benutzen
         (indem Du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
         siehst Du unten.
-      on_main_page: >
-        auf Startseite anzeigen
-      main_page: auf Startseite
-      propagate: auf Startseite setzen
-      expel: von Startseite nehmen
-      info:
-        on_main_page: >
-          Wenn Du diesen Haken setzt, wird die Mitteilung auf der
-          MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
-          eine Ankündigung für Wartungsarbeiten betrifft.
+      active: 'Aktiv'
+      inactive: 'Inaktiv'
+      active_hint: >
+        Aktive Mitteilungen erscheinen als gelbes Banner über der
+        Navigationsleiste auf fast jeder Seite. Mit dem Schalter kannst Du sie
+        einblenden oder wieder ausblenden.
     lecture:
       editors_by_email:
         label: "EditorIn per E-Mail-Adresse hinzufügen"
