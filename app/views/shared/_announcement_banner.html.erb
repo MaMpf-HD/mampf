@@ -1,11 +1,11 @@
 <%# The wrapper stays even when empty, so toggling an announcement on the
-    admin page can swap the banner in place via Turbo Stream. %>
+    admin page can swap the banner in place via Turbo Stream. The alert stays
+    too (hidden), so the admin page can preview a new announcement in it. %>
 <div id="site-announcement-banner">
-  <% if site_announcements_html.present? %>
-    <div class="alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium py-2 px-3
-                no-katex"
-         role="alert">
-      <%= sanitize(site_announcements_html) %>
-    </div>
+  <%= tag.div class: "alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium " \
+                     "py-2 px-3 no-katex",
+              role: "alert",
+              hidden: site_announcements_html.blank? do %>
+    <%= sanitize(site_announcements_html) %>
   <% end %>
 </div>

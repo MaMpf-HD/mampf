@@ -1,9 +1,12 @@
 # Announcements Helper
 module AnnouncementsHelper
+  # Separates the announcements shown together in the banner above the navbar.
+  BANNER_SEPARATOR = '<hr class="my-2 mx-n3">'.freeze
+
   # Returns joined HTML of all admin-level announcements shown above the navbar.
   def site_announcements_html
     @site_announcements_html ||=
-      Announcement.on_banner.pluck(:details).join('<hr class="my-2 mx-n3">')
+      Announcement.on_banner.pluck(:details).join(BANNER_SEPARATOR)
   end
 
   # create text for notification about new announcement in notification dropdown
