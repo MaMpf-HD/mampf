@@ -1,12 +1,24 @@
-.math-particle {
+// All motion below is driven by CSS animations of `translate`, `rotate`,
+// `scale` and `opacity` only, so the browser runs it on the compositor.
+// The random parameters are set as CSS variables in background.js.
+
+.math-particle,
+.floating-bubble {
+    position: absolute;
+    left: var(--left);
+    top: var(--top);
+    translate: -50% -50%;
+    pointer-events: none;
     user-select: none;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
-    cursor: pointer;
-    
-    // Performance optimizations
-    will-change: transform;
-    backface-visibility: hidden;
-    transform-style: preserve-3d;
+}
+
+.math-particle {
+    z-index: 1;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    animation:
+        drift var(--drift-duration) ease-in-out var(--drift-delay) infinite alternate,
+        sway var(--sway-duration) ease-in-out var(--sway-delay) infinite alternate;
 
     .katex {
         color: inherit !important;
@@ -16,103 +28,66 @@
     .katex-display {
         margin: 0 !important;
     }
-
-    &:hover {
-        filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 20px rgba(100, 200, 255, 0.3));
-        transform: scale(1.15) !important;
-        z-index: 10;
-        transition: filter 0.2s ease, z-index 0s; // Only transition the filter, not transform
-    }
 }
 
 .floating-bubble {
-    animation: bubbleFloat 40s infinite ease-in-out;
-    opacity: 0.8;
-    transition: all 0.1s ease-out;
+    z-index: 0;
+    width: var(--width);
+    height: var(--height);
+    background:
+        radial-gradient(circle at 35% 35%, rgba(100, 150, 255, 0.18), transparent 40%),
+        radial-gradient(closest-side, rgba(150, 100, 255, 0.14),
+            rgba(255, 100, 150, 0.06) 60%, transparent);
+    animation:
+        drift var(--drift-duration) ease-in-out var(--drift-delay) infinite alternate,
+        morph var(--morph-duration) ease-in-out var(--morph-delay) infinite alternate;
+}
 
-    &:nth-child(even) {
-        animation-direction: reverse;
-        animation-duration: 35s;
+@keyframes drift {
+    from {
+        translate: -50% -50%;
     }
 
-    &:nth-child(3n) {
-        animation-duration: 45s;
-    }
-
-    &:nth-child(4n) {
-        animation-duration: 50s;
-        animation-direction: reverse;
+    to {
+        translate: calc(-50% + var(--dx)) calc(-50% + var(--dy));
     }
 }
 
-@keyframes mathFloat {
-    0% {
-        opacity: 0.4;
-        transform: translateY(0px) rotate(0deg);
+@keyframes sway {
+    from {
+        rotate: var(--rotate-from);
     }
 
-    25% {
-        opacity: 0.8;
-        transform: translateY(-10px) rotate(2deg);
-    }
-
-    50% {
-        opacity: 0.9;
-        transform: translateY(0px) rotate(0deg);
-    }
-
-    75% {
-        opacity: 0.7;
-        transform: translateY(5px) rotate(-1deg);
-    }
-
-    100% {
-        opacity: 0.4;
-        transform: translateY(0px) rotate(0deg);
+    to {
+        rotate: var(--rotate-to);
     }
 }
 
-@keyframes bubbleFloat {
+// Non-uniform scaling and rotation make the blob look like it changes shape.
+@keyframes morph {
     0% {
-        transform: translateY(0px) scale(1);
-        opacity: 0.3;
-    }
-
-    25% {
-        transform: translateY(-20px) scale(1.05);
+        scale: 1 1;
+        rotate: 0deg;
         opacity: 0.6;
     }
 
     50% {
-        transform: translateY(-10px) scale(0.95);
-        opacity: 0.4;
-    }
-
-    75% {
-        transform: translateY(-15px) scale(1.02);
-        opacity: 0.7;
+        scale: 1.15 0.9;
+        rotate: 25deg;
+        opacity: 1;
     }
 
     100% {
-        transform: translateY(0px) scale(1);
-        opacity: 0.3;
+        scale: 0.9 1.1;
+        rotate: -20deg;
+        opacity: 0.75;
     }
 }
 
-// Particle connection lines
-svg line {
-    animation: connectionPulse 3s infinite ease-in-out;
-    filter: drop-shadow(0 0 3px rgba(100, 200, 255, 0.4));
-}
-
-@keyframes connectionPulse {
-
-    0%,
-    100% {
-        opacity: 0.6;
-    }
-
-    50% {
-        opacity: 1.0;
+@media (prefers-reduced-motion: reduce) {
+    .math-particle,
+    .floating-bubble,
+    #landing-background::before {
+        animation: none;
     }
 }

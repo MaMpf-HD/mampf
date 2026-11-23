@@ -1,96 +1,118 @@
-import { FloatingBubble } from "./bubble.js";
-import { NetworkGraph } from "./network.js";
-import { MathParticle } from "./particle.js";
+import katex from "katex";
+import { mathFormulas } from "./formulas.js";
 
-class MathBackground {
-  PARTICLES_COUNT_FACTOR = 150;
-  BUBBLE_COUNT_FACTOR = 400;
+// One element per this many pixels of viewport width
+const FORMULA_COUNT_FACTOR = 150;
+const BUBBLE_COUNT_FACTOR = 400;
 
-  constructor() {
-    this.canvas = document.getElementById("landing-background");
-    if (!this.canvas) return;
+/**
+ * Fills the landing page background with drifting formulas and bubbles.
+ *
+ * JS only creates the elements once, with random positions and motion
+ * parameters as CSS variables. The motion itself is a CSS animation of
+ * `translate`, `rotate`, `scale` and `opacity` (see background.scss),
+ * which the browser runs on the compositor: no JS, style recalculation,
+ * layout or repaint per frame.
+ */
+function populateBackground() {
+  const container = document.getElementById("landing-background");
+  if (!container) return;
 
-    this.particles = [];
-    this.bubbles = [];
+  // Turbo restores cached pages including the elements created here.
+  container.replaceChildren();
 
-    this.createParticles();
-    this.createBubbles();
-    this.createNetwork();
-    this.animate();
-
-    window.addEventListener("resize", () => this.handleResize());
+  const bubbleCount = Math.floor(window.innerWidth / BUBBLE_COUNT_FACTOR) + 2;
+  for (let i = 0; i < bubbleCount; i++) {
+    container.appendChild(createBubble());
   }
 
-  createParticles() {
-    const desiredCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
-    const particleCount = Math.min(desiredCount, MathParticle.getAvailableCount());
+  const formulaCount = Math.floor(window.innerWidth / FORMULA_COUNT_FACTOR);
+  pickFormulas(formulaCount).forEach((formula) => {
+    container.appendChild(createFormula(formula));
+  });
+}
 
-    for (let i = 0; i < particleCount; i++) {
-      this.particles.push(new MathParticle(this.canvas));
-    }
+/**
+ * A large, soft blob of color. The gradient itself fades out towards the
+ * edges, so the bubble needs no (expensive) blur filter.
+ */
+function createBubble() {
+  const element = document.createElement("div");
+  element.className = "floating-bubble";
+
+  const width = random(220, 420);
+  const driftDuration = random(50, 90);
+  const morphDuration = random(15, 30);
+  setVariables(element, {
+    "left": `${random(0, 100)}%`,
+    "top": `${random(0, 100)}%`,
+    "width": `${width}px`,
+    "height": `${width * random(0.75, 1.25)}px`,
+    "dx": `${random(-15, 15)}vw`,
+    "dy": `${random(-15, 15)}vh`,
+    "drift-duration": `${driftDuration}s`,
+    "drift-delay": `${-random(0, driftDuration)}s`,
+    "morph-duration": `${morphDuration}s`,
+    "morph-delay": `${-random(0, morphDuration)}s`,
+  });
+
+  return element;
+}
+
+function createFormula(formula) {
+  const element = document.createElement("div");
+  element.className = "math-particle";
+  element.style.fontSize = `${random(0.55, 1.25)}rem`;
+  element.style.opacity = random(0.3, 1);
+
+  const baseRotation = random(-20, 20);
+  const swayAmplitude = random(5, 15);
+  const driftDuration = random(40, 70);
+  const swayDuration = random(8, 16);
+  setVariables(element, {
+    "left": `${random(0, 100)}%`,
+    "top": `${random(0, 100)}%`,
+    "dx": `${random(-20, 20)}vw`,
+    "dy": `${random(-20, 20)}vh`,
+    "rotate-from": `${baseRotation - swayAmplitude}deg`,
+    "rotate-to": `${baseRotation + swayAmplitude}deg`,
+    "drift-duration": `${driftDuration}s`,
+    "drift-delay": `${-random(0, driftDuration)}s`,
+    "sway-duration": `${swayDuration}s`,
+    "sway-delay": `${-random(0, swayDuration)}s`,
+  });
+
+  try {
+    katex.render(formula, element, { throwOnError: false, displayMode: true });
+  }
+  catch (err) {
+    console.error("Failed to render formula with KaTeX:", formula, err);
+    element.textContent = formula;
   }
 
-  createBubbles() {
-    const bubbleCount = Math.floor(window.innerWidth / this.BUBBLE_COUNT_FACTOR) + 2;
+  return element;
+}
 
-    for (let i = 0; i < bubbleCount; i++) {
-      this.bubbles.push(new FloatingBubble(this.canvas));
-    }
+/**
+ * Returns `count` distinct formulas in random order (Fisher-Yates shuffle).
+ */
+function pickFormulas(count) {
+  const formulas = [...mathFormulas];
+  for (let i = formulas.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [formulas[i], formulas[j]] = [formulas[j], formulas[i]];
   }
+  return formulas.slice(0, count);
+}
 
-  createNetwork() {
-    this.network = new NetworkGraph(this.canvas, this.particles);
-  }
-
-  adjustArrayCount(arr, desiredCount, factory) {
-    const current = arr.length;
-    if (desiredCount > current) {
-      for (let i = current; i < desiredCount; i++) {
-        arr.push(factory());
-      }
-    }
-    else if (desiredCount < current) {
-      for (let i = current - 1; i >= desiredCount; i--) {
-        if (arr[i] && typeof arr[i].destroy === "function") arr[i].destroy();
-        arr.splice(i, 1);
-      }
-    }
-  }
-
-  animate() {
-    this.particles.forEach(particle => particle.update());
-    this.bubbles.forEach(bubble => bubble.update());
-    this.network.update();
-
-    this.animationId = requestAnimationFrame(() => this.animate());
-  }
-
-  handleResize() {
-    this.network.resize();
-
-    const desiredParticleCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
-    const newParticleCount = Math.min(desiredParticleCount, MathParticle.getAvailableCount() + this.particles.length);
-    this.adjustArrayCount(this.particles, newParticleCount, () => new MathParticle(this.canvas));
-
-    const newBubbleCount = Math.floor(window.innerWidth / this.BUBBLE_COUNT_FACTOR) + 2;
-    this.adjustArrayCount(this.bubbles, newBubbleCount, () => new FloatingBubble(this.canvas));
-  }
-
-  destroy() {
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-    }
-
-    this.particles.forEach(particle => particle.destroy());
-    this.particles = [];
-    this.bubbles.forEach(bubble => bubble.destroy());
-    this.bubbles = [];
-    if (this.network) {
-      this.network.destroy();
-    }
+function setVariables(element, variables) {
+  for (const [name, value] of Object.entries(variables)) {
+    element.style.setProperty(`--${name}`, value);
   }
 }
 
-document.addEventListener("turbo:load", () => {
-  new MathBackground();
-});
+function random(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+document.addEventListener("turbo:load", populateBackground);
