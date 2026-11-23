@@ -4,14 +4,9 @@ class AnnouncementAbility
   def initialize(user)
     clear_aliased_actions
 
-    # site-wide announcements
-    can [:index, :update], Announcement do
-      user.admin?
-    end
-
+    # lecture announcements; site-wide ones go via SiteAnnouncementAbility
     can [:new, :create], Announcement do |announcement|
-      user.admin? ||
-        (announcement.lecture.present? && user.can_edit?(announcement.lecture))
+      announcement.lecture.present? && user.can_edit?(announcement.lecture)
     end
   end
 end

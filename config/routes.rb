@@ -99,7 +99,9 @@ Rails.application.routes.draw do
 
   # announcements routes
 
-  resources :announcements, only: [:index, :new, :create, :update]
+  resources :announcements, only: [:new, :create]
+
+  resources :site_announcements, only: [:index, :new, :create, :update]
 
   # answers routes
   get "answers/:id/cancel_edit",

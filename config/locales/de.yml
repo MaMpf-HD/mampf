@@ -4289,8 +4289,6 @@ de:
     no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
-    no_announcement: >
-      Eine Mitteilung mit dieser id existiert nicht.
     no_watchlist: 'Watchlist existiert nicht oder ist privat.'
     created_lecture_success: >
       Die Veranstaltung %{lecture} wurde erfolgreich angelegt.

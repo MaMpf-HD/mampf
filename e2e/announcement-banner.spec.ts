@@ -9,7 +9,7 @@ test("shows the site announcement banner above the regular navbar",
   async ({ factory, student: { page } }) => {
     await factory.create("announcement", [], {
       details: "Scheduled maintenance tonight",
-      on_main_page: true,
+      banner_active: true,
     });
 
     await page.goto("/");
@@ -22,7 +22,7 @@ test("shows the site announcement banner above the administration navbar",
   async ({ factory, admin: { page } }) => {
     await factory.create("announcement", [], {
       details: "Scheduled maintenance tonight",
-      on_main_page: true,
+      banner_active: true,
     });
 
     await page.goto("/administration");

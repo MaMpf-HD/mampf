@@ -1,4 +1,4 @@
-<% active = announcement.on_main_page %>
+<% active = announcement.banner_active %>
 <li id="<%= dom_id(announcement) %>"
     class="list-group-item d-flex align-items-center gap-3 py-3
            <%= 'list-group-item-warning' if active %>">
@@ -14,16 +14,17 @@
     </div>
   </div>
   <%= form_with model: announcement,
+                url: site_announcement_path(announcement),
                 local: true,
                 class: "flex-shrink-0",
                 data: { controller: "submit-on-change" } do |f| %>
     <div class="form-check form-check-reverse form-switch mb-0">
-      <%= f.check_box :on_main_page,
+      <%= f.check_box :banner_active,
                       id: "announcement-active-#{announcement.id}",
                       class: "form-check-input",
                       role: "switch",
                       data: { action: "change->submit-on-change#change" } %>
-      <%= f.label :on_main_page,
+      <%= f.label :banner_active,
                   active ? t("admin.announcement.active") : t("admin.announcement.inactive"),
                   for: "announcement-active-#{announcement.id}",
                   class: "form-check-label small #{active ? 'fw-semibold' : 'text-muted'}" %>

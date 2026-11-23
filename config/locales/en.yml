@@ -4058,7 +4058,6 @@ en:
     no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
-    no_announcement: There is no announcement with this id.
     no_watchlist: 'Watchlist does not exist or is private.'
     created_lecture_success: >
       The lecture %{lecture} has been successfully created.

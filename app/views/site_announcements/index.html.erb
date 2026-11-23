@@ -11,27 +11,27 @@
     <%# Zero-height anchor, so the button sits centered on the header's
         bottom border. %>
     <div class="position-relative">
-      <%= link_to new_announcement_path,
+      <%= link_to new_site_announcement_path,
                   class: "btn btn-light border shadow-sm rounded-circle p-0 " \
                          "d-inline-flex align-items-center justify-content-center " \
                          "position-absolute top-0 start-50 translate-middle z-1",
                   style: "width: 2.25rem; height: 2.25rem;",
-                  id: "new-announcement-button",
+                  id: "new-site-announcement-button",
                   title: t("buttons.create_announcement"),
                   aria: { label: t("buttons.create_announcement") },
-                  data: { turbo_frame: "new_announcement" } do %>
+                  data: { turbo_frame: "new_site_announcement" } do %>
         <i class="bi bi-plus-lg" aria-hidden="true"></i>
       <% end %>
     </div>
-    <%= turbo_frame_tag "new_announcement" %>
-    <ul class="list-group list-group-flush" id="announcements">
+    <%= turbo_frame_tag "new_site_announcement" %>
+    <ul class="list-group list-group-flush" id="site_announcements">
       <% @announcements.each do |a| %>
-        <%= render partial: "announcements/row",
+        <%= render partial: "site_announcements/row",
                    locals: { announcement: a } %>
       <% end %>
     </ul>
     <% if @announcements.none? %>
-      <p class="text-muted text-center mt-5 mb-4" id="no-announcements">
+      <p class="text-muted text-center mt-5 mb-4" id="no-site-announcements">
         <%= t("no_announcements") %>
       </p>
     <% end %>
