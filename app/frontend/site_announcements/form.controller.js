@@ -15,6 +15,7 @@ export default class extends Controller {
 
   /** Closes the form by emptying the frame it was loaded into. */
   cancel() {
+    this.#restore();
     const frame = this.element.closest("turbo-frame");
     frame.removeAttribute("src");
     frame.replaceChildren();

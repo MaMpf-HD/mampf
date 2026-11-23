@@ -8,7 +8,8 @@
                 site_announcement_form_separator_value:
                   AnnouncementsHelper::BANNER_SEPARATOR,
                 action: "trix-initialize->site-announcement-form#update " \
-                        "trix-change->site-announcement-form#update"
+                        "trix-change->site-announcement-form#update " \
+                        "turbo:before-cache@document->site-announcement-form#cancel"
               } do |f| %>
   <%= f.trix_editor :details,
                     id: "site-announcement-details-trix",
