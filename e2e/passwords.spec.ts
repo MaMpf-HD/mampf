@@ -25,7 +25,8 @@ test("can reset the password via the mailed reset link", async ({ page, request 
   // the reset signs the user in, and this is their first sign-in
   await expect(page).toHaveURL(/\/profile\/edit/);
 
-  await page.getByTitle("Logout").click();
+  await page.getByRole("button", { name: "Account menu" }).click();
+  await page.getByRole("link", { name: "Logout" }).click();
   await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
 
   const loginPage = new LoginPage(page);

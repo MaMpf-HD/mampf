@@ -254,6 +254,9 @@ window.Stimulus.register("registration-notice-removal", RegistrationNoticeRemova
 import BookmarkController from "~/lectures/search/bookmark.controller.js";
 window.Stimulus.register("bookmark", BookmarkController);
 
+import AvatarDropdownController from "~/navbar/avatar_dropdown.controller.js";
+window.Stimulus.register("avatar-dropdown", AvatarDropdownController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

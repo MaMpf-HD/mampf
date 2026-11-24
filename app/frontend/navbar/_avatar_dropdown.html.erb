@@ -10,7 +10,7 @@
        active: get_class_for_path_startswith(watchlists_path).present? }
    ] %>
 
-<ul class="navbar-nav" id="avatarDropdown">
+<ul class="navbar-nav" id="avatarDropdown" data-controller="avatar-dropdown">
   <li class="nav-item dropdown">
     <button
       class="btn p-0 border-0 rounded-circle ms-2"
@@ -39,6 +39,37 @@
           <% end %>
         </li>
       <% end %>
+
+      <li><hr class="dropdown-divider"></li>
+
+      <% if Rails.env.local? %>
+        <li data-keep-open>
+          <button
+            class="dropdown-item rounded-2"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#avatarImpersonate"
+            aria-expanded="false"
+            aria-controls="avatarImpersonate"
+          >
+            <i class="bi bi-people me-2" aria-hidden="true"></i>
+            Switch user (dev only)
+          </button>
+          <div class="collapse" id="avatarImpersonate">
+            <%= render partial: "dev/impersonate_user_list",
+                       locals: { max_height: "250px" } %>
+          </div>
+        </li>
+      <% end %>
+
+      <li>
+        <%= link_to destroy_user_session_path(params: { locale: current_user.locale }),
+                    class: "dropdown-item rounded-2",
+                    data: { turbo_method: :delete } do %>
+          <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
+          <%= t("navbar.logout") %>
+        <% end %>
+      </li>
     </ul>
   </li>
 </ul>

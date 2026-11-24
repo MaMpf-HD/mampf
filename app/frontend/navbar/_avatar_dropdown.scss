@@ -13,4 +13,8 @@
     .dropdown-menu {
         max-width: 16rem;
     }
+
+    #avatarImpersonate.collapsing {
+        transition: none;
+    }
 }
