@@ -1,6 +1,9 @@
 class MampfsearchSyncJob
   include Sidekiq::Worker
 
+  # Runs via cron anyway, so retries would only pile up on top of it.
+  sidekiq_options retry: false
+
   def perform
     return unless SearchClient.instance.configured?
 

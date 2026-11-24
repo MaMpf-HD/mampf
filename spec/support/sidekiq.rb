@@ -5,6 +5,6 @@ Sidekiq.testing!(:fake)
 
 RSpec.configure do |config|
   config.before do
-    Sidekiq::Worker.clear_all
+    Sidekiq::Job.clear_all
   end
 end

@@ -77,7 +77,8 @@ services:
       - THRUSTER_TARGET_PORT=3146
       - THRUSTER_STORAGE_PATH=/cache/thruster-test
       - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
-      # Avoid Sidekiq workers from calling a local MaMpfSearch API.
+      # Keep everything in this container (Sidekiq, e2e Rails servers, RSpec)
+      # from calling a local MaMpfSearch API.
       # A blank URL means that SearchClient reports itself as unconfigured.
       - MAMPFSEARCH_BASE_URL=
     ports:

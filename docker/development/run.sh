@@ -40,7 +40,7 @@ for port in $ports_to_clean; do
 done
 
 # Clean up stale Sidekiq processes.
-stale_sidekiq=$(pgrep -d " " -f "^sidekiq " || true)
+stale_sidekiq=$(pgrep -d " " -f "^sidekiq |bin/sidekiq" || true)
 if [ -n "$stale_sidekiq" ]; then
 	echo "Stopping stale Sidekiq processes: $stale_sidekiq"
 	# shellcheck disable=SC2086
@@ -49,7 +49,7 @@ fi
 
 # Background processes started below ignore Ctrl+C, so stop them ourselves
 # once this script exits via an EXIT trap.
-trap 'kill -TERM $(jobs -p) 2>/dev/null || true' EXIT
+trap 'kill -TERM $(jobs -p) 2>/dev/null || true; wait || true' EXIT
 
 bundle exec rake js:recompile_routes
 
