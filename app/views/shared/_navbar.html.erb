@@ -71,7 +71,7 @@
         </li>
       </ul>
 
-      <%= render partial: "navbar/avatar_dropdown" %>
+      <%= render(AvatarDropdownComponent.new(user: current_user)) %>
   </nav>
   <nav class="navbar navbar-expand" id="secondnav"
       style="display: none;">
