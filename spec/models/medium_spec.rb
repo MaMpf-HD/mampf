@@ -466,7 +466,7 @@ RSpec.describe(Medium, type: :model) do
     end
 
     it "enqueues MampfsearchIngestJob when video is attached or updated" do
-      expect(MampfsearchIngestJob).to receive(:perform_later).at_least(:once)
+      expect(MampfsearchIngestJob).to receive(:perform_async).at_least(:once)
       FactoryBot.create(:valid_medium, :with_video)
     end
   end
@@ -504,7 +504,7 @@ RSpec.describe(Medium, type: :model) do
                                  transcription_error: "Previous error",
                                  transcription_requested_at: 1.hour.ago)
 
-      expect(MampfsearchDeleteJob).to receive(:perform_later).with(medium.id)
+      expect(MampfsearchDeleteJob).to receive(:perform_async).with(medium.id)
 
       medium.update!(video: nil)
 
@@ -534,7 +534,7 @@ RSpec.describe(Medium, type: :model) do
                                  transcription_error: "Previous error",
                                  transcription_requested_at: 10.minutes.ago)
 
-      expect(MampfsearchIngestJob).to receive(:perform_later).with(medium.id)
+      expect(MampfsearchIngestJob).to receive(:perform_async).with(medium.id)
 
       medium.update!(video: File.open(File.join(SPEC_FILES, "talk.mp4"), "rb"))
 

@@ -1,11 +1,11 @@
-class MampfsearchMetadataSyncJob < ApplicationJob
-  queue_as :default
+class MampfsearchMetadataSyncJob
+  include Sidekiq::Worker
 
   def self.enqueue_for(media)
     media.where(transcription_status: :completed)
          .where.not(video_data: nil)
          .reorder(nil)
-         .find_each { |medium| perform_later(medium.id) }
+         .find_each { |medium| perform_async(medium.id) }
   end
 
   def perform(medium_id)

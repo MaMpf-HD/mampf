@@ -404,7 +404,7 @@ RSpec.describe("Media", type: :request) do
     let(:medium) { create(:lecture_medium, :with_video) }
 
     it "enqueues MampfsearchIngestJob and redirects with notice" do
-      expect(MampfsearchIngestJob).to receive(:perform_later).with(medium.id)
+      expect(MampfsearchIngestJob).to receive(:perform_async).with(medium.id)
 
       post transcribe_medium_path(medium)
 
@@ -414,7 +414,7 @@ RSpec.describe("Media", type: :request) do
 
     it "marks a completed medium queued for manual retranscription" do
       medium.update!(transcription_status: :completed)
-      allow(MampfsearchIngestJob).to receive(:perform_later)
+      allow(MampfsearchIngestJob).to receive(:perform_async)
 
       post transcribe_medium_path(medium)
 
@@ -424,7 +424,7 @@ RSpec.describe("Media", type: :request) do
     it "returns not found in production" do
       target_medium = medium
       allow(Rails.env).to receive(:local?).and_return(false)
-      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+      expect(MampfsearchIngestJob).not_to receive(:perform_async)
 
       post transcribe_medium_path(target_medium)
 

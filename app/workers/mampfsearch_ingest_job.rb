@@ -1,5 +1,5 @@
-class MampfsearchIngestJob < ApplicationJob
-  queue_as :default
+class MampfsearchIngestJob
+  include Sidekiq::Worker
 
   def perform(medium_id)
     medium = Medium.find_by(id: medium_id)

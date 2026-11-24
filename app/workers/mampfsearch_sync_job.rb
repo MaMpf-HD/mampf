@@ -1,5 +1,5 @@
-class MampfsearchSyncJob < ApplicationJob
-  queue_as :default
+class MampfsearchSyncJob
+  include Sidekiq::Worker
 
   def perform
     return unless SearchClient.instance.configured?
@@ -96,7 +96,7 @@ class MampfsearchSyncJob < ApplicationJob
                     lesson_id ? lecture_id : nil]
         next if search_hierarchies[id] == expected
 
-        MampfsearchMetadataSyncJob.perform_later(id)
+        MampfsearchMetadataSyncJob.perform_async(id)
       end
     end
 
@@ -134,7 +134,7 @@ class MampfsearchSyncJob < ApplicationJob
           claimed = true
         end
       end
-      MampfsearchIngestJob.perform_later(medium.id) if claimed
+      MampfsearchIngestJob.perform_async(medium.id) if claimed
       claimed
     end
 end
