@@ -102,14 +102,6 @@
         </li>
 
         <li class="nav-item">
-          <a href="<%= DefaultSetting::BLOG_LINK %>"
-            class="nav-link bi bi-newspaper"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.blog') %>">
-          </a>
-        </li>
-
-        <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
             class="nav-link bi bi-box-arrow-right"
             data-bs-toggle="tooltip"
