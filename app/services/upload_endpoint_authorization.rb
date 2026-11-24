@@ -29,20 +29,18 @@ class UploadEndpointAuthorization
   class << self
     def authorized?(uploader_class:, user:)
       case uploader_class.name
-      when "VideoUploader"
-        # Keep video intentionally broad until we have target-bound signed
-        # upload intent: a historic editor of an existing non-talk medium
-        # must still be able to replace the video on that medium.
+      when "VideoUploader", "PdfUploader", "GeogebraUploader", "ScreenshotUploader"
+        # Check if the user is a medium editor (content editor or speaker).
+        # This is just a quick first check to reject unauthorized users before
+        # file transfer. The specific medium authorization is checked later in
+        # .intent_authorized?.
         content_editor?(user) || user&.speaker?
-      when "PdfUploader", "GeogebraUploader", "ScreenshotUploader",
-           "ProfileimageUploader", "LectureHomeAttachmentUploader"
+      when "ProfileimageUploader", "LectureHomeAttachmentUploader"
         content_editor?(user)
       when "CorrectionUploader", "StudentMessageUploader"
         content_editor?(user) || user&.tutor?
       when "SubmissionUploader"
-        # Manuscript submissions are open to any authenticated user (and sit
-        # behind `authenticate :user`); require a present user so nil callers
-        # fail closed. Other uploaders fall through to a raise.
+        # Manuscript submissions are open to any authenticated user
         user.present?
       else
         raise(ArgumentError, "Unhandled uploader: #{uploader_class.name}")
@@ -60,9 +58,6 @@ class UploadEndpointAuthorization
 
       ability.can?(intent.action, target)
     rescue StandardError => e
-      # Refuse the upload, but report it: an ability that raises on a record
-      # of its own kind is a defect elsewhere, and a silent refusal would be
-      # its only trace.
       Rails.error.report(e, handled: true, source: "upload_intent",
                             context: { target_type: intent.target_type,
                                        action: intent.action })

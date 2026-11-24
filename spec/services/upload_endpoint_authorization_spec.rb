@@ -16,6 +16,17 @@ RSpec.describe(UploadEndpointAuthorization) do
                                          user: user)).to be(false)
     end
 
+    it "lets a speaker send talk media files past the edge" do
+      speaker = create(:valid_talk_with_speaker).speakers.first
+
+      [PdfUploader, GeogebraUploader, ScreenshotUploader].each do |uploader|
+        expect(described_class.authorized?(uploader_class: uploader,
+                                           user: speaker)).to be(true)
+      end
+      expect(described_class.authorized?(uploader_class: ProfileimageUploader,
+                                         user: speaker)).to be(false)
+    end
+
     it "allows content editors to upload profile images" do
       admin = create(:confirmed_user, admin: true)
 
@@ -89,6 +100,26 @@ RSpec.describe(UploadEndpointAuthorization) do
       expect(described_class.intent_authorized?(intent: intent,
                                                 uploader_class: VideoUploader,
                                                 user: user)).to be(false)
+    end
+
+    it "lets a speaker upload a manuscript to their own talk's medium only" do
+      talk = create(:valid_talk_with_speaker)
+      speaker = talk.speakers.first
+      talk_medium = lambda do |t|
+        create(:medium, :with_description, sort: "Talk", teachable: t,
+                                           editors: [t.lecture.teacher])
+      end
+      own = talk_medium.call(talk)
+      foreign = talk_medium.call(create(:valid_talk_with_speaker))
+
+      [[own, true], [foreign, false]].each do |target, allowed|
+        upload = intent(minted_for: speaker, uploader_class: PdfUploader,
+                        target: target)
+
+        expect(described_class.intent_authorized?(intent: upload,
+                                                  uploader_class: PdfUploader,
+                                                  user: speaker)).to be(allowed)
+      end
     end
 
     it "asks about the record a form is about to create" do
