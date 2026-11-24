@@ -60,9 +60,6 @@ class UploadEndpointAuthorization
 
       ability.can?(intent.action, target)
     rescue StandardError => e
-      # Refuse the upload, but report it: an ability that raises on a record
-      # of its own kind is a defect elsewhere, and a silent refusal would be
-      # its only trace.
       Rails.error.report(e, handled: true, source: "upload_intent",
                             context: { target_type: intent.target_type,
                                        action: intent.action })
