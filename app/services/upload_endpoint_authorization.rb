@@ -30,11 +30,10 @@ class UploadEndpointAuthorization
     def authorized?(uploader_class:, user:)
       case uploader_class.name
       when "VideoUploader", "PdfUploader", "GeogebraUploader", "ScreenshotUploader"
-        # A coarse role check, so that nobody without any medium to edit
-        # streams a body past the edge. Speakers count, because they edit the
-        # media of their own talks and `editor?` deliberately leaves talk
-        # media out. Which medium an upload may go to is decided by the
-        # signed intent (see .intent_authorized?).
+        # Check if the user is a medium editor (content editor or speaker).
+        # This is just a quick first check to reject unauthorized users before
+        # file transfer. The specific medium authorization is checked later in
+        # .intent_authorized?.
         content_editor?(user) || user&.speaker?
       when "ProfileimageUploader", "LectureHomeAttachmentUploader"
         content_editor?(user)
