@@ -12,7 +12,9 @@
 
     <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2">
       <li>
-        <h6 class="dropdown-header text-truncate"><%= display_name %></h6>
+        <h6 class="dropdown-header text-truncate" title="<%= display_name %>">
+          <%= display_name %>
+        </h6>
       </li>
 
       <% item_groups.each do |items| %>
