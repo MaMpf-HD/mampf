@@ -44,22 +44,14 @@
 
       <% if Rails.env.local? %>
         <li data-keep-open>
-          <button
-            class="dropdown-item rounded-2"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#avatarImpersonate"
-            aria-expanded="false"
-            aria-controls="avatarImpersonate"
-          >
+          <h6 class="dropdown-header">
             <i class="bi bi-people me-2" aria-hidden="true"></i>
             Switch user (dev only)
-          </button>
-          <div class="collapse" id="avatarImpersonate">
-            <%= render partial: "dev/impersonate_user_list",
-                       locals: { max_height: "250px" } %>
-          </div>
+          </h6>
+          <%= render partial: "dev/impersonate_user_list",
+                     locals: { max_height: "250px" } %>
         </li>
+        <li><hr class="dropdown-divider"></li>
       <% end %>
 
       <li>

@@ -18,12 +18,12 @@ test("avatar menu links to profile, annotations and watchlists",
       .toHaveAttribute("aria-current", "page");
   });
 
-test("avatar menu expands the user switcher and logs out",
+test("avatar menu shows the user switcher and logs out",
   async ({ student: { page } }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Account menu" }).click();
 
-    await page.getByRole("button", { name: "Switch user (dev only)" }).click();
+    await expect(page.getByRole("heading", { name: "Switch user (dev only)" })).toBeVisible();
     await expect(page.getByPlaceholder("Search...")).toBeFocused();
     await expect(page.getByRole("link", { name: "Logout" })).toBeVisible();
 
