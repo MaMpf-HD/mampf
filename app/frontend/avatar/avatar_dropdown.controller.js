@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
-/** Keeps the menu open for `data-keep-open` interactions.
+/**
+ * Keeps the menu open for `data-keep-open` interactions.
  * Focuses the dev-only user search (if present) when the menu opens.
  */
 export default class extends Controller {

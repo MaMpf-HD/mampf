@@ -1,6 +1,3 @@
-# Account menu behind the user's avatar in the navbar: personal pages,
-# role-specific pages (support, dean's office, administration), the dev-only
-# user switcher and the logout link.
 class AvatarDropdownComponent < ViewComponent::Base
   Item = Struct.new(:path, :icon, :label, :active, keyword_init: true)
 
@@ -9,7 +6,6 @@ class AvatarDropdownComponent < ViewComponent::Base
     @user = user
   end
 
-  # Item groups, each separated by a divider. Empty groups are left out.
   def item_groups
     [personal_items, role_items].reject(&:empty?)
   end

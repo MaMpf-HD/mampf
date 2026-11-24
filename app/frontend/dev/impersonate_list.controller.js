@@ -1,9 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 /**
- * Dev-only user switcher: filters the users by the search term and lets
- * the down arrow jump from the search field to the first visible user.
- * From there on, Bootstrap's dropdown handles the arrow keys.
+ * User switcher (dev-only) including a filter.
  */
 export default class extends Controller {
   static targets = ["search", "user"];
