@@ -25,28 +25,6 @@
           </a>
         </li>
 
-        <% if current_user.support? || current_user.admin? %>
-          <li class="nav-item">
-            <a href="<%= support_users_path %>"
-              class="nav-link bi bi-life-preserver <%= get_class_for_path(support_users_path) %>"
-              data-bs-toggle="tooltip"
-              title="<%= t('support.title') %>"
-              aria-label="<%= t('support.title') %>">
-            </a>
-          </li>
-        <% end %>
-
-        <% if current_user.deans_office? || current_user.admin? %>
-          <li class="nav-item">
-            <a href="<%= deans_office_path %>"
-              class="nav-link bi bi-building <%= get_class_for_path(deans_office_path) %>"
-              data-bs-toggle="tooltip"
-              title="<%= t('deans_office.title') %>"
-              aria-label="<%= t('deans_office.title') %>">
-            </a>
-          </li>
-        <% end %>
-
         <% if current_user.admin? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"

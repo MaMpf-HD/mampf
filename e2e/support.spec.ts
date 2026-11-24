@@ -16,6 +16,7 @@ test.describe("the support", () => {
 
       const page = student.page;
       await page.goto("/");
+      await page.getByRole("button", { name: "Account menu" }).click();
       await page.getByRole("link", { name: "Support" }).click();
       await expect(page.getByRole("heading", { name: "Support: accounts" })).toBeVisible();
 

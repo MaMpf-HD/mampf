@@ -24,6 +24,7 @@ test.describe("dean's office", () => {
       await expect(admin.page.getByText("The changes have been saved.")).toBeVisible();
 
       await student.page.reload();
+      await student.page.getByRole("button", { name: "Account menu" }).click();
       await student.page.getByRole("link", { name: "Dean's office" }).click();
       await expect(student.page.getByRole("heading", { name: "Dean's office" })).toBeVisible();
 

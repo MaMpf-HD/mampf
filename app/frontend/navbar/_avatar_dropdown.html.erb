@@ -8,7 +8,18 @@
      { path: watchlists_path, icon: "bi-tv-fill",
        label: t("navbar.my_watchlists"),
        active: get_class_for_path_startswith(watchlists_path).present? }
-   ] %>
+   ]
+   role_items = []
+   if current_user.support? || current_user.admin?
+     role_items << { path: support_users_path, icon: "bi-life-preserver",
+                     label: t("support.title"),
+                     active: get_class_for_path(support_users_path).present? }
+   end
+   if current_user.deans_office? || current_user.admin?
+     role_items << { path: deans_office_path, icon: "bi-building",
+                     label: t("deans_office.title"),
+                     active: get_class_for_path(deans_office_path).present? }
+   end %>
 
 <ul class="navbar-nav" id="avatarDropdown" data-controller="avatar-dropdown">
   <li class="nav-item dropdown">
@@ -29,18 +40,20 @@
         </h6>
       </li>
 
-      <% avatar_items.each do |item| %>
-        <li>
-          <%= link_to item[:path],
-                      class: ["dropdown-item rounded-2", { active: item[:active] }],
-                      "aria-current": (item[:active] ? "page" : nil) do %>
-            <i class="bi <%= item[:icon] %> me-2" aria-hidden="true"></i>
-            <%= item[:label] %>
-          <% end %>
-        </li>
-      <% end %>
+      <% [avatar_items, role_items].reject(&:empty?).each do |items| %>
+        <% items.each do |item| %>
+          <li>
+            <%= link_to item[:path],
+                        class: ["dropdown-item rounded-2", { active: item[:active] }],
+                        "aria-current": (item[:active] ? "page" : nil) do %>
+              <i class="bi <%= item[:icon] %> me-2" aria-hidden="true"></i>
+              <%= item[:label] %>
+            <% end %>
+          </li>
+        <% end %>
 
-      <li><hr class="dropdown-divider"></li>
+        <li><hr class="dropdown-divider"></li>
+      <% end %>
 
       <% if Rails.env.local? %>
         <li data-keep-open>
