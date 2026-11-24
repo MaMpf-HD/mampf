@@ -14,9 +14,15 @@
     >
   </div>
 
-  <ul class="list-unstyled mb-0 p-1" style="max-height: <%= max_height %>; overflow-y: auto;">
+  <ul
+    class="list-unstyled mb-0 p-1"
+    style="max-height: <%= max_height %>; overflow-y: auto;"
+  >
     <% all_users_for_impersonation.each do |id, name| %>
-      <li data-username="<%= name.downcase %>" data-impersonate-list-target="user">
+      <li
+        data-username="<%= name.downcase %>"
+        data-impersonate-list-target="user"
+      >
         <%= button_to name,
                       dev_impersonate_path(id),
                       class: "dropdown-item rounded-2",
