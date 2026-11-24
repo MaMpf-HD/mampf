@@ -39,6 +39,18 @@ for port in $ports_to_clean; do
     fi
 done
 
+# Clean up stale Sidekiq processes.
+stale_sidekiq=$(pgrep -d " " -f "^sidekiq " || true)
+if [ -n "$stale_sidekiq" ]; then
+	echo "Stopping stale Sidekiq processes: $stale_sidekiq"
+	# shellcheck disable=SC2086
+	kill -TERM $stale_sidekiq || true
+fi
+
+# Background processes started below ignore Ctrl+C, so stop them ourselves
+# once this script exits via an EXIT trap.
+trap 'kill -TERM $(jobs -p) 2>/dev/null || true' EXIT
+
 bundle exec rake js:recompile_routes
 
 if [ "${DISABLE_VITE_IN_CI:-}" != "true" ]; then
