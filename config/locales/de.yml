@@ -179,6 +179,9 @@ de:
     quick_access: 'Schnellzugriff'
     pin_lecture: '%{title} anheften'
     unpin_lecture: '%{title} nicht mehr anheften'
+    account_menu: 'Profil'
+    my_annotations: 'Meine Annotationen'
+    my_watchlists: 'Meine Watchlists'
   info: 'Info'
   admin:
     navbar:

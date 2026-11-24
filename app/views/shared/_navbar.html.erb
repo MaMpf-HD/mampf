@@ -25,14 +25,6 @@
           </a>
         </li>
 
-        <li class="nav-item">
-          <a href="<%= edit_profile_path %>"
-            class="nav-link bi bi-person-circle <%= get_class_for_path(edit_profile_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.profile') %>">
-          </a>
-        </li>
-
         <% if current_user.support? || current_user.admin? %>
           <li class="nav-item">
             <a href="<%= support_users_path %>"
@@ -64,23 +56,6 @@
             </a>
           </li>
         <% end %>
-
-        <li class="nav-item">
-          <a href="<%= annotations_path %>"
-            class="nav-link bi bi-stickies-fill <%= get_class_for_path(annotations_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('admin.annotation.annotations') %>">
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a href="<%= watchlists_path %>"
-            id="watchlistsIcon"
-            class="nav-link bi bi-tv-fill <%= get_class_for_path_startswith(watchlists_path()) %>"
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.watchlist') %>">
-          </a>
-        </li>
 
         <li class="nav-item">
           <a href="<%= comments_path %>"
@@ -140,11 +115,8 @@
           </a>
         </li>
       </ul>
-  </nav>
-  <nav class="navbar navbar-expand" id="secondnav"
-      style="display: none;">
-  </nav>
-</div>
+
+      <%= render partial: 'navbar/avatar_dropdown' %>
   </nav>
   <nav class="navbar navbar-expand" id="secondnav"
       style="display: none;">

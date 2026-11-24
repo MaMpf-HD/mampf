@@ -1,0 +1,16 @@
+#avatarDropdown {
+    .avatar {
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #fff;
+    }
+
+    .btn:hover .avatar,
+    .btn.show .avatar {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .dropdown-menu {
+        max-width: 16rem;
+    }
+}

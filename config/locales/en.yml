@@ -134,6 +134,9 @@ en:
     quick_access: 'Quick Access'
     pin_lecture: 'Pin %{title}'
     unpin_lecture: 'Unpin %{title}'
+    account_menu: 'Account menu'
+    my_annotations: 'My Annotations'
+    my_watchlists: 'My Watchlists'
   info: 'Info'
   admin:
     navbar:

@@ -1,0 +1,44 @@
+<% avatar_items = [
+     { path: edit_profile_path, icon: "bi-person-circle",
+       label: t("navbar.profile"),
+       active: get_class_for_path(edit_profile_path).present? },
+     { path: annotations_path, icon: "bi-stickies-fill",
+       label: t("navbar.my_annotations"),
+       active: get_class_for_path(annotations_path).present? },
+     { path: watchlists_path, icon: "bi-tv-fill",
+       label: t("navbar.my_watchlists"),
+       active: get_class_for_path_startswith(watchlists_path).present? }
+   ] %>
+
+<ul class="navbar-nav" id="avatarDropdown">
+  <li class="nav-item dropdown">
+    <button
+      class="btn p-0 border-0 rounded-circle ms-2"
+      type="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      aria-label="<%= t("navbar.account_menu") %>"
+    >
+      <%= render(AvatarComponent.new(user: current_user)) %>
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2">
+      <li>
+        <h6 class="dropdown-header text-truncate">
+          <%= current_user.full_name || current_user.name_or_email %>
+        </h6>
+      </li>
+
+      <% avatar_items.each do |item| %>
+        <li>
+          <%= link_to item[:path],
+                      class: ["dropdown-item rounded-2", { active: item[:active] }],
+                      "aria-current": (item[:active] ? "page" : nil) do %>
+            <i class="bi <%= item[:icon] %> me-2" aria-hidden="true"></i>
+            <%= item[:label] %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </li>
+</ul>

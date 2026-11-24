@@ -1,0 +1,12 @@
+// TODO: Bootstrap 6 has an `.avatar` component, then we can replace this here.
+.avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--bs-secondary-bg);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
