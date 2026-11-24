@@ -25,16 +25,6 @@
           </a>
         </li>
 
-        <% if current_user.admin? %>
-          <li class="nav-item">
-            <a href="<%= administration_path %>"
-              class="nav-link bi bi-tools"
-              data-bs-toggle="tooltip"
-              title="<%= t('navbar.administration') %>">
-            </a>
-          </li>
-        <% end %>
-
         <li class="nav-item">
           <a href="<%= news_path %>"
             class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"

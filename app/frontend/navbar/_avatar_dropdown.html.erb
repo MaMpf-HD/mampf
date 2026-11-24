@@ -19,6 +19,10 @@
      role_items << { path: deans_office_path, icon: "bi-building",
                      label: t("deans_office.title"),
                      active: get_class_for_path(deans_office_path).present? }
+   end
+   if current_user.admin?
+     role_items << { path: administration_path, icon: "bi-tools",
+                     label: t("navbar.administration"), active: false }
    end %>
 
 <ul class="navbar-nav" id="avatarDropdown" data-controller="avatar-dropdown">
