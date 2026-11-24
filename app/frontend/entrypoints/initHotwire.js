@@ -257,6 +257,9 @@ window.Stimulus.register("bookmark", BookmarkController);
 import AvatarDropdownController from "~/navbar/avatar_dropdown.controller.js";
 window.Stimulus.register("avatar-dropdown", AvatarDropdownController);
 
+import ImpersonateListController from "~/dev/impersonate_list.controller.js";
+window.Stimulus.register("impersonate-list", ImpersonateListController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

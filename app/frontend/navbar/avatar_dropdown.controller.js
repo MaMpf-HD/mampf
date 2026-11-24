@@ -23,6 +23,6 @@ export default class extends Controller {
   }
 
   focusSearch() {
-    this.element.querySelector("[data-impersonate-list] input[type=text]")?.focus();
+    this.element.querySelector("[data-impersonate-list-target=search]")?.focus();
   }
 }
