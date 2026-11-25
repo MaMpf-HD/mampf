@@ -1,18 +1,8 @@
+# Announcements in a lecture, which notify the lecture's audience. Site-wide
+# announcements are handled by SiteAnnouncementsController.
 class AnnouncementsController < ApplicationController
-  layout "administration"
-  before_action :set_announcement, except: [:new, :create, :index]
-  authorize_resource except: [:new, :create, :index]
-
   def current_ability
     @current_ability ||= AnnouncementAbility.new(current_user)
-  end
-
-  def index
-    authorize! :index, Announcement.new
-    announcements_scope = Announcement.where(lecture: nil)
-                                      .order(:created_at)
-                                      .reverse_order
-    @pagy, @announcements = pagy(announcements_scope, limit: 10)
   end
 
   def new
@@ -25,50 +15,26 @@ class AnnouncementsController < ApplicationController
     @announcement = Announcement.new(announcement_params)
     @announcement.announcer = current_user
     authorize! :create, @announcement
-    @announcement.save
-    if @announcement.valid?
-      # trigger creation of notifications for all relevant users
-      create_notifications
-      # send notification email
-      send_notification_email
-      # redirection depending from where the announcement was created
-      if @announcement.lecture.blank?
-        redirect_to announcements_path
-        return
-      end
-      redirect_to "#{edit_lecture_path(@announcement.lecture)}?tab=communication"
+    unless @announcement.save
+      @errors = @announcement.errors[:details].join(", ")
       return
     end
-    @errors = @announcement.errors[:details].join(", ")
-  end
 
-  def propagate
-    @announcement.update(on_main_page: true)
-    redirect_to announcements_path
-  end
-
-  def expel
-    @announcement.update(on_main_page: false)
-    redirect_to announcements_path
+    # trigger creation of notifications for all relevant users
+    create_notifications
+    # send notification email
+    send_notification_email
+    redirect_to edit_lecture_path(@announcement.lecture, tab: "communication")
   end
 
   private
 
     def announcement_params
-      # on_main_page controls the (lecture-less) main-page banner and is an
-      # admin-only concern; strip it for non-admins so it can't be set via a
-      # crafted request.
-      permitted = [:details, :lecture_id]
-      permitted << :on_main_page if current_user.admin?
-      params.expect(announcement: permitted)
+      params.expect(announcement: [:details, :lecture_id])
     end
 
     def create_notifications
-      users_to_notify = if @announcement.lecture.present?
-        @announcement.lecture.audience
-      else
-        User
-      end
+      users_to_notify = @announcement.lecture.audience
       notifications = []
       users_to_notify.touch_all
       users_to_notify.find_each do |u|
@@ -82,12 +48,8 @@ class AnnouncementsController < ApplicationController
     end
 
     def send_notification_email
-      recipients = if @announcement.lecture.present?
-        @announcement.lecture.audience
-                     .where(email_for_announcement: true)
-      else
-        User.where(email_for_news: true)
-      end
+      recipients = @announcement.lecture.audience
+                                .where(email_for_announcement: true)
       I18n.available_locales.each do |l|
         local_recipients = recipients.where(locale: l)
         next unless local_recipients.any?
@@ -97,12 +59,5 @@ class AnnouncementsController < ApplicationController
                                 announcement: @announcement)
                           .announcement_email.deliver_later
       end
-    end
-
-    def set_announcement
-      @announcement = Announcement.find_by(id: params[:id])
-      return if @announcement.present?
-
-      redirect_to :root, alert: I18n.t("controllers.no_announcement")
     end
 end

@@ -27,7 +27,8 @@ $(document).on("turbo:load", function () {
         display: true,
       },
     ],
-    ignoredClasses: ["trix-content", "form-control"],
+    // no-katex: text shown verbatim, e.g. the site-wide announcements
+    ignoredClasses: ["trix-content", "form-control", "no-katex"],
     throwOnError: false,
   },
   );

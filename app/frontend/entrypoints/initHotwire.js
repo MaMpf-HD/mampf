@@ -28,6 +28,9 @@ window.Stimulus.register("turbo-modal", TurboModalController);
 import FlashMessagesController from "~/flash/_messages.controller.js";
 window.Stimulus.register("flash-messages", FlashMessagesController);
 
+import SiteAnnouncementFormController from "~/site_announcements/form.controller.js";
+window.Stimulus.register("site-announcement-form", SiteAnnouncementFormController);
+
 import SupportWidgetController from "~/support_requests/widget.controller.js";
 window.Stimulus.register("support-widget", SupportWidgetController);
 

@@ -58,7 +58,6 @@ en:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
-    mampf_news: 'MaMpf-News'
     submissions: 'Submissions'
     tutorials: 'Tutorials'
     cohorts: 'Flexible Groups'
@@ -121,7 +120,6 @@ en:
     search: 'Search'
     profile: 'Profile'
     administration: 'Administration'
-    news: 'News'
     comments: 'Comments'
     blog: 'Blog'
     logout: 'Logout'
@@ -149,7 +147,7 @@ en:
       tag_search: 'Tag search'
       terms: 'Terms'
       classification: 'Classification'
-      news: 'News'
+      announcements: 'MaMpf announcements'
       boards: 'Messageboards'
       stats: 'Access statistics'
       export_stats: 'Export statistics'
@@ -377,21 +375,16 @@ en:
         mistake: "toggle mistake annotations"
         presentation: "toggle presentation annotations"
     announcement:
+      title: 'MaMpf announcements'
       help: >
         Here you can enter a text. You may use LaTeX (by putting the
         corresponding expression inside $...$). A preview of your
         text is shown below.
-      on_main_page: >
-        Display on home page
-      main_page: >
-        On Home Page
-      propagate: set on home page
-      expel: remove from home page
-      info:
-        on_main_page: >
-          If you check this box, the announcement will be displayed on the MaMpf
-          homepage. This can be useful if it is an announcement of a server
-          downtime.
+      active: 'Active'
+      inactive: 'Inactive'
+      active_hint: >
+        Active announcements are shown as a yellow banner above the navigation
+        bar on almost every page. Use the switch to put one up or take it down.
     lecture:
       editors_by_email:
         label: "Add an editor by email address"
@@ -1948,8 +1941,6 @@ en:
       new media in event series or courses I have subscribed to
     email_for_teachable:
       new event series or courses
-    email_for_news:
-      news about MaMpf
     email_for_tutorial_change:
       participants switching into or out of my tutorials
     update: 'Update profile'
@@ -2020,7 +2011,6 @@ en:
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments
     tutorials: Tutorials
-    miscellaneous: Miscellaneous
     pin_lecture: Pin to Quick Access
     unpin_lecture: Unpin from Quick Access
     media_search: Media Search
@@ -2070,10 +2060,6 @@ en:
       The former teacher will be demoted to editor.
     already_teacher_html: >
       You are already the teacher for <strong>%{lecture}</strong>.
-  mampf_news:
-    title: 'MaMpf News'
-    check_notifications: 'Clear all'
-    no_news: 'There are no MaMpf news available.'
   notifications:
     title: 'New notifications'
     check_notifications: 'Clear all'
@@ -2087,7 +2073,6 @@ en:
     subscribe_course: 'You can find its event series in the lecture search on your dashboard.'
     subscribe_course_html: 'You can find its event series in %{dashboard}.'
     profile: 'profile'
-    mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
     edit_lecture: 'Edit event'
@@ -3345,7 +3330,6 @@ en:
     student_message_role:
       staff: "lecture staff"
       tutor: "tutor"
-    mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
@@ -3487,7 +3471,6 @@ en:
       Emails for media: %{email_for_medium}<br>
       Emails for announcements: %{email_for_announcement}<br>
       Emails for lectures: %{email_for_teachable}<br>
-      Emails for news: %{email_for_news}<br>
       Unread comments: %{unread_comments}<br>
       Emails for submission Upload: %{email_for_submission_upload}<br>
       Emails for submission deletion: %{email_for_submission_removal}<br>
@@ -3652,7 +3635,6 @@ en:
     number: 'Number'
     hide: 'Hide'
     link: 'Link'
-    news: 'News'
     time: 'Time'
     author: 'Author'
     mark_as_read: 'Mark as read'
@@ -4077,7 +4059,6 @@ en:
     no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
-    no_announcement: There is no announcement with this id.
     no_watchlist: 'Watchlist does not exist or is private.'
     created_lecture_success: >
       The lecture %{lecture} has been successfully created.
