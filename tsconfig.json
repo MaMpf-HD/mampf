@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "nodenext",
+    "module": "esnext",
     "lib": [
       "ESNext",
       "DOM"
     ],
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "paths": {
+      "~/*": ["./app/frontend/*"]
+    },
     "isolatedModules": true,
     "useDefineForClassFields": true,
     "strict": true,

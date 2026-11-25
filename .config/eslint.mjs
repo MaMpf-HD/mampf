@@ -71,7 +71,10 @@ export default tseslint.config(
         "brace-style": "1tbs",
       }).rules,
       "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      // The base rule does not understand TypeScript (e.g. constructor parameter
+      // properties) and reports false positives. The @typescript-eslint rule
+      // below checks JavaScript and TypeScript files alike.
+      "no-unused-vars": "off",
       // https://playwright.dev/docs/best-practices#lint-your-tests
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
