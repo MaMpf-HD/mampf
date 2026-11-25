@@ -166,7 +166,6 @@ de:
     profile: 'Profil'
     administration: 'Administration'
     comments: 'Kommentare'
-    blog: 'Blog'
     logout: 'Logout'
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
@@ -341,9 +340,7 @@ de:
     annotation:
       your_annotations: 'Deine Annotationen'
       students_annotations: 'Annotationen der Studierenden'
-      none_yet_html: >
-        Du hast noch keine Annotationen erstellt. Erfahre mehr in unserem
-        <a href="https://mampf.blog/2024/04/02/annotation-tool/">Blog post</a>.
+      none_yet: 'Du hast noch keine Annotationen erstellt.'
       none_yet_students: >
         Noch keiner Deiner Studierenden hat eine Annotation erstellt und sie
         mit Dir geteilt.

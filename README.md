@@ -12,7 +12,6 @@
   </div>
   <div align="center">
     <a href="https://mampf.mathi.uni-heidelberg.de">Website</a>
-    | <a href="https://mampf.blog/">Blog</a>
     | <a href="https://mampf-hd.github.io/mampf/">Müsli Architecture Book</a>
     | <a href="https://github.com/MaMpf-HD/mampf/wiki">Dev wiki</a>
     <br>

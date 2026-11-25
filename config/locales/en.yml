@@ -121,7 +121,6 @@ en:
     profile: 'Profile'
     administration: 'Administration'
     comments: 'Comments'
-    blog: 'Blog'
     logout: 'Logout'
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
@@ -280,9 +279,7 @@ en:
     annotation:
       your_annotations: 'Your annotations'
       students_annotations: 'Students annotations'
-      none_yet_html: >
-        You have not created any annotations yet. Learn how to do so in our
-        <a href="https://mampf.blog/2024/04/02/annotation-tool/">blog post</a>.
+      none_yet: 'You have not created any annotations yet.'
       none_yet_students: >
         None of your students has created an annotation yet and shared it
         with you.
