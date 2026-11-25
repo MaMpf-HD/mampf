@@ -859,15 +859,13 @@ class Lecture < ApplicationRecord
   def tutor?(user)
     return false unless user
 
-    TutorTutorialJoin.exists?(tutorial: tutorials, tutor: user) ||
-      tutor_appointments.exists?(user: user) ||
-      Redemption.exists?(voucher: vouchers.for_tutors, user: user)
+    LectureTutors.lectures_of(user).exists?(id)
   end
 
   def cohort_tutor?(user)
     return false unless user
 
-    CohortTutorJoin.exists?(cohort: cohorts, tutor: user)
+    LectureTutors.cohort_lectures_of(user).exists?(id)
   end
 
   def default_submission_deletion_date

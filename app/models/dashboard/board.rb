@@ -80,6 +80,11 @@ module Dashboard
       @lecture_activity ||= Dashboard::LectureActivity.new(user: user, lectures: lectures)
     end
 
+    # The lectures the user holds a place in or has applied to as a student.
+    def seated_lectures
+      user.roster_lectures.or(user.lectures_with_registration_application)
+    end
+
     private
 
       def staff_scope
@@ -88,19 +93,9 @@ module Dashboard
       end
 
       def tutored_scope
-        Lecture.where(id: user.given_tutorials.select(:lecture_id))
-               .or(Lecture.where(id: user.given_cohorts.where(context_type: "Lecture")
-                                                   .select(:context_id))
-                          .where.not(id: seated_lectures.select(:id)))
-               .or(Lecture.where(id: user.tutor_appointments.select(:lecture_id)))
-               .or(Lecture.where(id: Voucher.for_tutors
-                                            .where(id: user.redemptions.select(:voucher_id))
-                                            .select(:lecture_id)))
-      end
-
-      # The lectures the user holds a place in or has applied to as a student.
-      def seated_lectures
-        user.roster_lectures.or(user.lectures_with_registration_application)
+        LectureTutors.lectures_of(user)
+                     .or(LectureTutors.cohort_lectures_of(user)
+                                      .where.not(id: seated_lectures.select(:id)))
       end
 
       def lectures_of_term(scope)
