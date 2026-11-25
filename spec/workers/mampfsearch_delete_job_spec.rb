@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(MampfsearchDeleteJob, :mampfsearch, type: :job) do
+RSpec.describe(MampfsearchDeleteJob, :mampfsearch) do
   describe "#perform" do
     before do
       allow(SearchClient.instance).to receive(:configured?).and_return(true)

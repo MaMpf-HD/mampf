@@ -1,5 +1,5 @@
-class MampfsearchDeleteJob < ApplicationJob
-  queue_as :default
+class MampfsearchDeleteJob
+  include Sidekiq::Worker
 
   def perform(media_rails_id)
     return unless SearchClient.instance.configured?

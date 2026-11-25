@@ -1182,27 +1182,27 @@ class Medium < ApplicationRecord
     def purge_from_mampfsearch
       return if video_data.blank?
 
-      MampfsearchDeleteJob.perform_later(id)
+      MampfsearchDeleteJob.perform_async(id)
     end
 
     def purge_from_mampfsearch_if_video_detached
       return unless @video_detached_to_purge
 
       @video_detached_to_purge = nil
-      MampfsearchDeleteJob.perform_later(id)
+      MampfsearchDeleteJob.perform_async(id)
     end
 
     def trigger_transcription_if_video_attached_or_changed
       return unless saved_change_to_video_data? && transcribable?
       return unless not_transcribed?
 
-      MampfsearchIngestJob.perform_later(id)
+      MampfsearchIngestJob.perform_async(id)
     end
 
     def sync_mampfsearch_hierarchy_if_changed
       return unless saved_change_to_teachable_id? || saved_change_to_teachable_type?
       return unless transcribable? && completed?
 
-      MampfsearchMetadataSyncJob.perform_later(id)
+      MampfsearchMetadataSyncJob.perform_async(id)
     end
 end

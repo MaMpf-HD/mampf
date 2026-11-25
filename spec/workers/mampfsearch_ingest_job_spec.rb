@@ -1,20 +1,20 @@
 require "rails_helper"
 
-RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
+RSpec.describe(MampfsearchIngestJob, :mampfsearch) do
   let(:medium) { FactoryBot.create(:valid_medium, :with_video) }
   let(:search_client) { instance_double(SearchClient, configured?: true) }
 
   before do
     allow(SearchClient).to receive(:instance).and_return(search_client)
     allow(MampfsearchHealth).to receive(:ingest_available?).and_return(true)
-    allow(described_class).to receive(:perform_later)
+    allow(described_class).to receive(:perform_async)
     medium.update!(transcription_attempts: 0, transcription_status: :not_transcribed)
   end
 
   it "calls IngestionService.transcribe, updates status to queued, and preserves attempts" do
     expect(Mampfsearch::IngestionService).to receive(:transcribe).with(medium)
 
-    described_class.perform_now(medium.id)
+    described_class.new.perform(medium.id)
 
     medium.reload
     expect(medium.transcription_attempts).to eq(0)
@@ -27,7 +27,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     medium.update!(transcription_status: :completed, transcription_attempts: 1)
     expect(Mampfsearch::IngestionService).to receive(:transcribe).with(medium)
 
-    described_class.perform_now(medium.id)
+    described_class.new.perform(medium.id)
 
     expect(medium.reload.transcription_status).to eq("completed")
     expect(medium.transcription_attempts).to eq(1)
@@ -37,7 +37,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     medium_without_video = FactoryBot.create(:valid_medium, video: nil)
     expect(Mampfsearch::IngestionService).not_to receive(:transcribe)
 
-    described_class.perform_now(medium_without_video.id)
+    described_class.new.perform(medium_without_video.id)
   end
 
   it "marks failed_permanently when a failure reaches max attempts" do
@@ -49,7 +49,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     )
     expect(Rails.logger).to receive(:error).with(/permanently failed/)
 
-    described_class.perform_now(medium.id)
+    described_class.new.perform(medium.id)
 
     medium.reload
     expect(medium.transcription_status).to eq("failed_permanently")
@@ -61,7 +61,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
       SearchClient::TimeoutError, "timed out"
     )
 
-    described_class.perform_now(medium.id)
+    described_class.new.perform(medium.id)
 
     medium.reload
     expect(medium.transcription_attempts).to eq(1)
@@ -75,7 +75,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     )
     expect(Rails.logger).to receive(:warn).with(/transcription failed/)
 
-    described_class.perform_now(medium.id)
+    described_class.new.perform(medium.id)
 
     medium.reload
     expect(medium.transcription_attempts).to eq(1)
@@ -89,7 +89,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
     )
     expect(Rails.logger).to receive(:warn).with(/Unexpected DB connection drop/)
 
-    described_class.perform_now(medium.id)
+    described_class.new.perform(medium.id)
 
     medium.reload
     expect(medium.transcription_attempts).to eq(1)
@@ -104,7 +104,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
       it "leaves an uploaded medium untouched" do
         expect(Mampfsearch::IngestionService).not_to receive(:transcribe)
 
-        described_class.perform_now(medium.id)
+        described_class.new.perform(medium.id)
 
         medium.reload
         expect(medium).to be_not_transcribed
@@ -119,7 +119,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
           SearchClient::ServiceUnavailableError, "offline"
         )
 
-        described_class.perform_now(medium.id)
+        described_class.new.perform(medium.id)
 
         medium.reload
         expect(medium).to be_not_transcribed
@@ -134,7 +134,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
           SearchClient::ServiceUnavailableError, "offline"
         )
 
-        described_class.perform_now(medium.id)
+        described_class.new.perform(medium.id)
 
         expect(medium.reload).to be_completed
         expect(medium.transcription_attempts).to eq(0)
@@ -150,7 +150,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
         medium.update!(transcription_status: :queued, transcription_requested_at: Time.current)
         expect(Mampfsearch::IngestionService).not_to receive(:transcribe)
 
-        described_class.perform_now(medium.id)
+        described_class.new.perform(medium.id)
 
         medium.reload
         expect(medium).to be_not_transcribed
@@ -162,7 +162,7 @@ RSpec.describe(MampfsearchIngestJob, :mampfsearch, type: :job) do
       it "dispatches the medium" do
         expect(Mampfsearch::IngestionService).to receive(:transcribe).with(medium)
 
-        described_class.perform_now(medium.id)
+        described_class.new.perform(medium.id)
 
         expect(medium.reload).to be_queued
       end
