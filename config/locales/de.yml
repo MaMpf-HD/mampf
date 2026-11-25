@@ -161,7 +161,6 @@ de:
   disclosure: 'Impressum'
   policy: 'Datenschutzerklärung'
   navbar:
-    home: 'Home'
     search: 'Suche'
     profile: 'Profil'
     administration: 'Administration'

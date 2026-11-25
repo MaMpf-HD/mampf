@@ -116,7 +116,6 @@ en:
   disclosure: 'Legal disclosure'
   policy: 'Privacy Policy'
   navbar:
-    home: 'Home'
     search: 'Search'
     profile: 'Profile'
     administration: 'Administration'
