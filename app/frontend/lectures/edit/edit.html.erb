@@ -12,6 +12,7 @@
   <%= turbo_frame_tag "lecture-area", target: "_top",
                       data: { controller: "lecture-highlights" } do %>
     <% active_tab = params[:tab] || "content" %>
+    <% tabs = LectureEditTabs.for(@lecture) %>
     <%= render LectureTabsComponent.new(active_tab) do |component| %>
 
       <% component.with_tab(name: "content", label: t("content")) do %>
@@ -67,7 +68,7 @@
         </div>
       <% end %>
 
-      <% unless legacy_seminar %>
+      <% if tabs.include?("groups") %>
         <% component.with_tab(name: "groups", label: t("roster.tabs.groups")) do %>
           <div class="container small-width lecture-pane">
             <%= render partial: 'lectures/edit/roster',
@@ -75,7 +76,9 @@
                                  group_type: roster_group_types(@lecture) } %>
           </div>
         <% end %>
+      <% end %>
 
+      <% if tabs.include?("participants") %>
         <% component.with_tab(name: "participants", label: t("basics.participants")) do %>
           <div class="container-fluid medium-width lecture-pane">
             <%= render partial: 'lectures/edit/participants',

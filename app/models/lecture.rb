@@ -722,6 +722,12 @@ class Lecture < ApplicationRecord
     Thredded::Messageboard.find_by(id: forum_id)
   end
 
+  # Thredded finds a messageboard by its id as well as by its slug, so this
+  # needs no query for the forum.
+  def forum_path
+    "/forum/#{forum_id}" if forum?
+  end
+
   # extract how many posts in the lecture's forum have not been read
   # by the user
   def unread_forum_topics_count(user)
