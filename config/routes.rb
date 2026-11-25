@@ -729,6 +729,16 @@ Rails.application.routes.draw do
   patch "profile/unpin_lecture",
         as: "unpin_lecture"
 
+  get "command_palette/catalog",
+      to: "command_palette#catalog",
+      as: "command_palette_catalog",
+      defaults: { format: :json }
+
+  get "command_palette/me",
+      to: "command_palette#me",
+      as: "command_palette_me",
+      defaults: { format: :json }
+
   namespace :dashboard do
     resources :lectures, only: [] do
       resource :bookmark, only: [:create, :destroy]
