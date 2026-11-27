@@ -77,6 +77,10 @@ services:
       - THRUSTER_TARGET_PORT=3146
       - THRUSTER_STORAGE_PATH=/cache/thruster-test
       - THRUSTER_GZIP_COMPRESSION_DISABLE_ON_AUTH=true
+      # Keep everything in this container (Sidekiq, e2e Rails servers, RSpec)
+      # from calling a local MaMpfSearch API.
+      # A blank URL means that SearchClient reports itself as unconfigured.
+      - MAMPFSEARCH_BASE_URL=
     ports:
       - 3145:3145 # Thruster public HTTP (Playwright target)
       - 3037:3037 # Vite server

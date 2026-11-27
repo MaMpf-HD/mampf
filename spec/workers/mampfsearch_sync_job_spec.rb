@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
+RSpec.describe(MampfsearchSyncJob, :mampfsearch) do
   let(:search_client) { instance_double(SearchClient, configured?: true) }
 
   before do
@@ -17,7 +17,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
                                 transcription_attempts: 1,
                                 transcription_requested_at: 3.hours.ago)
 
-      described_class.perform_now
+      described_class.new.perform
 
       stuck.reload
       expect(stuck.transcription_attempts).to eq(2)
@@ -33,7 +33,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       expect(Rails.logger).to receive(:error).with(/permanently timed out/)
 
-      described_class.perform_now
+      described_class.new.perform
 
       stuck.reload
       expect(stuck.transcription_status).to eq("failed_permanently")
@@ -43,7 +43,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
   describe "#feed_next_batch" do
     before do
       Medium.delete_all
-      allow(MampfsearchIngestJob).to receive(:perform_later)
+      allow(MampfsearchIngestJob).to receive(:perform_async)
     end
 
     it "enqueues next batch of un-transcribed media" do
@@ -52,9 +52,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
 
-      expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
+      expect(MampfsearchIngestJob).to receive(:perform_async).exactly(3).times
 
-      described_class.perform_now
+      described_class.new.perform
 
       expect(Medium.where(transcription_status: :queued).count).to eq(3)
     end
@@ -63,10 +63,10 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       FactoryBot.create_list(:valid_medium, 3, :with_video,
                              transcription_status: :not_transcribed)
 
-      expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
+      expect(MampfsearchIngestJob).to receive(:perform_async).exactly(3).times
 
-      described_class.perform_now
-      described_class.perform_now
+      described_class.new.perform
+      described_class.new.perform
     end
 
     it "caps enqueuing when in-flight queued jobs approach threshold" do
@@ -81,9 +81,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
 
       # max in-flight - (max in-flight - 3) existing = 3 batch size
-      expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
+      expect(MampfsearchIngestJob).to receive(:perform_async).exactly(3).times
 
-      described_class.perform_now
+      described_class.new.perform
     end
   end
 
@@ -100,10 +100,10 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
                                   hierarchy[:course_rails_id],
                                   hierarchy[:lecture_rails_id]])
 
-      expect(MampfsearchMetadataSyncJob).to receive(:perform_later).with(medium.id)
-      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+      expect(MampfsearchMetadataSyncJob).to receive(:perform_async).with(medium.id)
+      expect(MampfsearchIngestJob).not_to receive(:perform_async)
 
-      described_class.perform_now
+      described_class.new.perform
     end
 
     it "skips metadata sync when the indexed hierarchy matches" do
@@ -119,8 +119,8 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
                                   hierarchy[:course_rails_id],
                                   hierarchy[:lecture_rails_id]])
 
-      expect(MampfsearchMetadataSyncJob).not_to receive(:perform_later)
-      described_class.perform_now
+      expect(MampfsearchMetadataSyncJob).not_to receive(:perform_async)
+      described_class.new.perform
     end
 
     it "repairs a stale parent link even if the medium IDs match" do
@@ -135,8 +135,8 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
                                   hierarchy[:lesson_rails_id],
                                   hierarchy[:course_rails_id], 0])
 
-      expect(MampfsearchMetadataSyncJob).to receive(:perform_later).with(medium.id)
-      described_class.perform_now
+      expect(MampfsearchMetadataSyncJob).to receive(:perform_async).with(medium.id)
+      described_class.new.perform
     end
 
     it "invalidates an older version and re-ingests the completed video" do
@@ -147,9 +147,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       expect(search_client).to receive(:invalidate_media)
         .with(medium.id, expected_video_version: "old-version")
         .and_return(true)
-      expect(MampfsearchIngestJob).to receive(:perform_later).with(medium.id)
+      expect(MampfsearchIngestJob).to receive(:perform_async).with(medium.id)
 
-      described_class.perform_now
+      described_class.new.perform
 
       expect(medium.reload.transcription_status).to eq("completed")
     end
@@ -162,9 +162,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       expect(search_client).to receive(:invalidate_media)
         .with(medium.id, expected_video_version: "old-version")
         .and_return(false)
-      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+      expect(MampfsearchIngestJob).not_to receive(:perform_async)
 
-      described_class.perform_now
+      described_class.new.perform
     end
 
     it "invalidates orphaned IDs and ingests missing media" do
@@ -188,9 +188,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       expect(search_client).to receive(:invalidate_media)
         .with(non_existent_id, expected_video_version: "old-version")
         .and_return(true)
-      expect(MampfsearchIngestJob).to receive(:perform_later).with(missing_medium.id)
+      expect(MampfsearchIngestJob).to receive(:perform_async).with(missing_medium.id)
 
-      described_class.perform_now
+      described_class.new.perform
 
       expect(missing_medium.reload.transcription_status).to eq("completed")
     end
@@ -202,7 +202,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       expect(Rails.logger).to receive(:warn)
         .with(/Search index reconciliation skipped.*Connection failed/)
 
-      expect { described_class.perform_now }.not_to raise_error
+      expect { described_class.new.perform }.not_to raise_error
     end
 
     it "caps enqueuing of missing media when in-flight jobs approach threshold" do
@@ -216,9 +216,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
       # max in-flight - (max in-flight - 3) existing queued = 3 batch size
-      expect(MampfsearchIngestJob).to receive(:perform_later).exactly(3).times
+      expect(MampfsearchIngestJob).to receive(:perform_async).exactly(3).times
 
-      described_class.perform_now
+      described_class.new.perform
 
       expect(Medium.where(transcription_status: :queued).count).to eq(in_flight)
       expect(missing_media.count { |m| m.reload.completed? }).to eq(5)
@@ -234,9 +234,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       allow(search_client).to receive(:list_media_versions).and_return({})
 
       RSpec::Mocks.space.proxy_for(MampfsearchIngestJob).reset
-      expect(MampfsearchIngestJob).not_to receive(:perform_later)
+      expect(MampfsearchIngestJob).not_to receive(:perform_async)
 
-      described_class.perform_now
+      described_class.new.perform
 
       expect(missing_medium.reload.transcription_status).to eq("completed")
     end
@@ -251,7 +251,7 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
     end
 
     before do
-      allow(MampfsearchIngestJob).to receive(:perform_later)
+      allow(MampfsearchIngestJob).to receive(:perform_async)
     end
 
     context "when MampfSearch is not configured" do
@@ -265,9 +265,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
         expect(search_client).not_to receive(:list_media_versions)
         expect(Rails.logger).not_to receive(:warn)
 
-        described_class.perform_now
+        described_class.new.perform
 
-        expect(MampfsearchIngestJob).not_to have_received(:perform_later)
+        expect(MampfsearchIngestJob).not_to have_received(:perform_async)
         expect(pending_medium.reload).to be_not_transcribed
         expect(stuck.reload.transcription_attempts).to eq(1)
       end
@@ -283,9 +283,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
       it "claims no media and skips reconciliation with a warning" do
         expect(Rails.logger).to receive(:warn).with(/reconciliation skipped.*offline/)
 
-        described_class.perform_now
+        described_class.new.perform
 
-        expect(MampfsearchIngestJob).not_to have_received(:perform_later)
+        expect(MampfsearchIngestJob).not_to have_received(:perform_async)
         expect(pending_medium.reload).to be_not_transcribed
       end
     end
@@ -300,9 +300,9 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
         expect(search_client).to receive(:invalidate_media)
           .with(99_999, expected_video_version: "old-version").and_return(true)
 
-        described_class.perform_now
+        described_class.new.perform
 
-        expect(MampfsearchIngestJob).not_to have_received(:perform_later)
+        expect(MampfsearchIngestJob).not_to have_received(:perform_async)
         expect(pending_medium.reload).to be_not_transcribed
         expect(missing_medium.reload).to be_completed
       end
@@ -310,10 +310,10 @@ RSpec.describe(MampfsearchSyncJob, :mampfsearch, type: :job) do
 
     context "when MampfSearch is fully available" do
       it "claims pending media and re-ingests media missing from the index" do
-        described_class.perform_now
+        described_class.new.perform
 
-        expect(MampfsearchIngestJob).to have_received(:perform_later).with(pending_medium.id)
-        expect(MampfsearchIngestJob).to have_received(:perform_later).with(missing_medium.id)
+        expect(MampfsearchIngestJob).to have_received(:perform_async).with(pending_medium.id)
+        expect(MampfsearchIngestJob).to have_received(:perform_async).with(missing_medium.id)
         expect(pending_medium.reload).to be_queued
       end
     end
