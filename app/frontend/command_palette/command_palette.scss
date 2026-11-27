@@ -1,0 +1,57 @@
+.command-palette-trigger {
+    width: clamp(14rem, 32vw, 28rem);
+    --bs-btn-border-radius: 0.65rem;
+    --bs-btn-color: rgba(255, 255, 255, 0.85);
+    --bs-btn-bg: rgba(255, 255, 255, 0.12);
+    --bs-btn-border-color: rgba(255, 255, 255, 0.25);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: rgba(255, 255, 255, 0.2);
+    --bs-btn-hover-border-color: rgba(255, 255, 255, 0.25);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: rgba(255, 255, 255, 0.2);
+    --bs-btn-active-border-color: rgba(255, 255, 255, 0.25);
+}
+
+// Below the navbar's breakpoint, the palette gets a row of its own.
+@media (max-width: 859.98px) {
+    .command-palette-trigger {
+        width: 100%;
+    }
+}
+
+// Keys like "Ctrl" have no descenders in the DOM and sat too high in their
+// container. Here, we add a bit of padding to the bottom of the key to make it
+// sit visually centered in its container.
+.command-palette kbd {
+    padding-block: 0.25rem 0.125rem;
+}
+
+.command-palette-dialog {
+    width: min(40rem, calc(100vw - 2rem));
+    max-height: min(36rem, calc(100dvh - 4rem));
+    margin-top: 10vh;
+
+    &[open] {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &::backdrop {
+        background: rgba(15, 30, 50, 0.45);
+    }
+}
+
+.command-palette-option {
+    cursor: pointer;
+
+    &[aria-selected="true"] {
+        background: var(--bs-primary-bg-subtle);
+    }
+
+    mark {
+        padding: 0;
+        background: none;
+        color: inherit;
+        font-weight: 600;
+    }
+}

@@ -2,23 +2,24 @@
 
 <div class="navbars-container">
   <nav class="navbar navbar-expand" id="firstnav">
-    <%# Sized in the markup: the svg declares 97mm, and without this the logo
-        is rendered huge until navbar.scss applies. %>
-    <%= link_to image_tag("/images/mampf-logo.svg",
-                          class: 'me-2',
-                          id: 'mampf-logo',
-                          width: 35, height: 35),
-                home_path %>
-    <%= link_to t('mampf'),
-                home_path,
-                class: 'navbar-brand',
-                style: "text-decoration: none;",
-                id: 'mampfbrand' %>
-      <ul class="navbar-nav ms-auto me-auto" id="lecturesDropdown">
-        <%= render partial: 'shared/dropdown_lectures',
-                  locals: { lecture: @lecture } %>
-      </ul>
+    <div class="navbar-start d-flex align-items-center">
+      <%# Sized in the markup: the svg declares 97mm, and without this the logo
+          is rendered huge until navbar.scss applies. %>
+      <%= link_to image_tag("/images/mampf-logo.svg",
+                            class: 'me-2',
+                            id: 'mampf-logo',
+                            width: 35, height: 35),
+                  home_path %>
+      <%= link_to t('mampf'),
+                  home_path,
+                  class: 'navbar-brand',
+                  style: "text-decoration: none;",
+                  id: 'mampfbrand' %>
+    </div>
 
+    <%= render(CommandPaletteComponent.new(user: current_user, lecture: @lecture)) %>
+
+    <div class="navbar-end d-flex flex-wrap justify-content-end align-items-center row-gap-2">
       <%= render partial: 'shared/dropdown_notifications' %>
 
       <ul class="navbar-nav" id="searchField">
@@ -44,6 +45,7 @@
       </ul>
 
       <%= render(AvatarDropdownComponent.new(user: current_user)) %>
+    </div>
   </nav>
   <nav class="navbar navbar-expand" id="secondnav"
       style="display: none;">

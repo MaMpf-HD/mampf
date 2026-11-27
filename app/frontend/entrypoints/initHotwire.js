@@ -16,6 +16,9 @@ window.Stimulus.register("lecture-home-form", LectureHomeFormController);
 import MediaButtonSortController from "~/lectures/edit/media/media_button_sort.controller.js";
 window.Stimulus.register("media-button-sort", MediaButtonSortController);
 
+import CommandPaletteController from "~/command_palette/command_palette.controller.ts";
+window.Stimulus.register("command-palette", CommandPaletteController);
+
 import SearchFormController from "~/_components/search_form/search_form.controller.js";
 window.Stimulus.register("search-form", SearchFormController);
 
