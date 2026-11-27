@@ -1,32 +1,17 @@
-/**
- * LectureEntry to UserPayload mirror the JSON of CommandPaletteCatalog and
- * CommandPaletteUserData; the other types are built here.
- */
-
-/** A lecture as the catalog sends it; the user's own ones carry more. */
 export interface LectureEntry {
   id: number;
   path: string;
   title: string;
   short: string;
   term: string | null;
-  /**
-   * Terms between the lecture's term and Term.active in Term.chronological;
-   * null without either.
-   */
+  /** Distance of the lecture's term to the current term. */
   term_distance: number | null;
   favorite?: boolean;
-  /** How the user takes part in it, for the user's own lectures only. */
   participation?: Participation;
-  /** Maps a destination key to its path, for the user's own lectures only. */
   destinations?: Record<string, string>;
 }
 
-/**
- * How the user takes part in a lecture, as in the dashboard's sections.
- * "enrolled" means holding a place in it (or having applied for one),
- * "bookmarked" only having bookmarked or pinned it.
- */
+/** How the user takes part in a lecture, as in the dashboard's sections. */
 export type Participation = "staff" | "tutor" | "enrolled" | "bookmarked";
 
 /** A page inside a lecture, e.g. "Exercises". */
@@ -64,31 +49,39 @@ export interface ItemText {
   compact: string;
 }
 
-export interface IndexedLecture {
+/**
+ * What an item is found by.
+ *
+ * For example, exercises can be found by the page's label "Exercises" and
+ * its keywords "exercise sheets", "übungsblätter" etc.
+ */
+export interface Findable {
+  texts: ItemText[];
+  keywords?: ItemText[];
+}
+
+export interface IndexedLecture extends Findable {
   lecture: LectureEntry;
   /** Whether the lecture is one of the user's own (not just in the catalog). */
   mine: boolean;
-  texts: ItemText[];
 }
 
-export interface IndexedDestination {
+export interface IndexedDestination extends Findable {
   info: DestinationInfo;
-  labelText: ItemText;
-  keywordTexts: ItemText[];
 }
 
-export interface IndexedGlobal {
+export interface IndexedGlobal extends Findable {
   item: GlobalItem;
-  labelText: ItemText;
-  keywordTexts: ItemText[];
 }
 
-export interface IndexedRecent {
+export interface IndexedRecent extends Findable {
   result: PaletteResult;
-  texts: ItemText[];
 }
 
-/** Everything the palette searches through, rebuilt by buildIndex on every open. */
+/**
+ * Everything the palette searches through, rebuilt by buildIndex,
+ * whenever the palette is reopened.
+ * */
 export interface PaletteIndex {
   lectures: IndexedLecture[];
   destinations: Map<string, IndexedDestination>;
@@ -100,14 +93,14 @@ export interface PaletteIndex {
 export type ResultGroup = "favorites" | "recent" | "lectures" | "lecturePages"
   | "goTo" | "actions";
 
-/** One option in the palette's listbox. */
+/** One option in the palette. */
 export interface PaletteResult {
   /** Identifies the target, e.g. "lecture:5:exercises", to remove duplicates. */
   id: string;
   group: ResultGroup;
   icon: string;
   label: string;
-  /** Secondary text, e.g. the lecture of a lecture page. */
+  /** Secondary text that is shown in smaller font for a palette entry. */
   detail: string;
   path: string;
   method: string;

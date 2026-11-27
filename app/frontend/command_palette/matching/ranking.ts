@@ -1,11 +1,11 @@
 import { globalResult, lecturePageResult, lectureResult } from "../results";
 import type {
-  IndexedDestination, IndexedGlobal, IndexedLecture, PaletteIndex, PaletteResult,
+  IndexedGlobal, IndexedLecture, PaletteIndex, PaletteResult,
   Participation, ResultGroup,
 } from "../types";
 import { tokenize } from "./normalize";
 import { splitQuery } from "./query_split";
-import { scoreAllTokens, scoreLabelAndKeywords, ScoreTier } from "./token_score";
+import { scoreQuery, ScoreTier } from "./token_score";
 
 /**
  * Boost factors for a lecture's score, e.g. when a user is registered for a lecture
@@ -92,7 +92,7 @@ function suggestions(index: PaletteIndex): PaletteResult[] {
 function lectureResults(tokens: string[], lectures: IndexedLecture[]): PaletteResult[] {
   const results: PaletteResult[] = [];
   for (const indexed of lectures) {
-    const score = scoreAllTokens(tokens, indexed.texts);
+    const score = scoreQuery(tokens, indexed);
     if (score > ScoreTier.NONE) {
       results.push(lectureResult(indexed.lecture, "lectures", score * lectureWeight(indexed)));
     }
@@ -117,7 +117,7 @@ function lecturePageResults(tokens: string[], index: PaletteIndex): PaletteResul
         if (!destination) {
           continue;
         }
-        const destinationScore = scoreDestination(split.destinationTokens, destination);
+        const destinationScore = scoreQuery(split.destinationTokens, destination);
         if (destinationScore === ScoreTier.NONE) {
           continue;
         }
@@ -145,7 +145,7 @@ function bareDestinationResults(tokens: string[], index: PaletteIndex): PaletteR
   const results: PaletteResult[] = [];
 
   for (const destination of index.destinations.values()) {
-    const destinationScore = scoreDestination(tokens, destination);
+    const destinationScore = scoreQuery(tokens, destination);
     if (destinationScore === ScoreTier.NONE) {
       continue;
     }
@@ -167,7 +167,7 @@ function globalResults(
 ): PaletteResult[] {
   const results: PaletteResult[] = [];
   for (const indexed of items) {
-    const score = scoreLabelAndKeywords(tokens, indexed.labelText, indexed.keywordTexts);
+    const score = scoreQuery(tokens, indexed);
     if (score > ScoreTier.NONE) {
       results.push(globalResult(indexed, group, score));
     }
@@ -178,7 +178,7 @@ function globalResults(
 function recentResults(tokens: string[], index: PaletteIndex): PaletteResult[] {
   const results: PaletteResult[] = [];
   for (const indexed of index.recent) {
-    const score = scoreAllTokens(tokens, indexed.texts);
+    const score = scoreQuery(tokens, indexed);
     if (score > ScoreTier.NONE) {
       results.push({ ...indexed.result, score: score * Boost.RECENT });
     }
@@ -196,7 +196,7 @@ function bestLectures(
 ): { indexed: IndexedLecture; score: number }[] {
   const matches: { indexed: IndexedLecture; score: number }[] = [];
   for (const indexed of lectures) {
-    const score = scoreAllTokens(tokens, indexed.texts);
+    const score = scoreQuery(tokens, indexed);
     if (score > ScoreTier.NONE) {
       matches.push({ indexed, score });
     }
@@ -204,10 +204,6 @@ function bestLectures(
   matches.sort((a, b) =>
     b.score * lectureWeight(b.indexed) - a.score * lectureWeight(a.indexed));
   return matches.slice(0, MAX_LECTURES_WITH_PAGES);
-}
-
-function scoreDestination(tokens: string[], destination: IndexedDestination): number {
-  return scoreLabelAndKeywords(tokens, destination.labelText, destination.keywordTexts);
 }
 
 /** See Boost and TERM_DISTANCE_PENALTY. */

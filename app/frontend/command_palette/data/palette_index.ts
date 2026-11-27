@@ -9,9 +9,8 @@ import type {
 import type { PaletteData } from "./palette_data";
 
 /**
- * Prepares everything the palette searches through: the user's lectures
- * first, then the rest of the catalog, each text normalized once instead of
- * on every keystroke.
+ * Builds the index of what the command palette can search through:
+ * first the user's lectures, then the rest of the catalog.
  */
 export function buildIndex(
   data: PaletteData, recentIds: string[], actions: GlobalItem[],
@@ -27,8 +26,8 @@ export function buildIndex(
     destinations: new Map(data.user.destinations.map((info) => {
       const indexed: IndexedDestination = {
         info: info,
-        labelText: itemText(info.label),
-        keywordTexts: info.keywords.map(itemText),
+        texts: [itemText(info.label)],
+        keywords: info.keywords.map(itemText),
       };
       return [info.key, indexed];
     })),
@@ -41,8 +40,8 @@ export function buildIndex(
 }
 
 /**
- * Looks up the remembered ids in the current data, so that their labels follow
- * the locale and results the user can no longer reach are left out.
+ * Check the stored recent ids against the current index to get rid of those
+ * that are no longer reachable (e.g. a lecture the user has left in the meantime).
  */
 function resolveRecent(ids: string[], index: PaletteIndex): PaletteResult[] {
   const lectures = new Map(index.lectures.map(indexed => [indexed.lecture.id, indexed]));
@@ -86,8 +85,8 @@ function indexLecture(lecture: LectureEntry, mine: boolean): IndexedLecture {
 function indexGlobal(item: GlobalItem): IndexedGlobal {
   return {
     item: item,
-    labelText: itemText(item.label),
-    keywordTexts: item.keywords.map(itemText),
+    texts: [itemText(item.label)],
+    keywords: item.keywords.map(itemText),
   };
 }
 

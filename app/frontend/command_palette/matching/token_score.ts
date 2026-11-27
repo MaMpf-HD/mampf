@@ -1,4 +1,4 @@
-import type { ItemText } from "../types";
+import type { Findable, ItemText } from "../types";
 
 /** How well one query word matches a text. */
 export const ScoreTier = {
@@ -67,41 +67,19 @@ function bestScore(token: string, texts: ItemText[]): number {
 }
 
 /**
- * How well a query matches an item with several texts (e.g. a lecture's
- * title, short title and term): every query word must match one of the
- * texts, e.g. for "la2 ws", "la2" the short title and "ws" the term.
+ * How well a query matches an item: every query word must match one of its
+ * texts or keywords, e.g. for "la2 ws", "la2" a lecture's short title and
+ * "ws" its term. The result is the average over the words.
  */
-export function scoreAllTokens(queryWords: string[], itemTexts: ItemText[]): number {
+export function scoreQuery(queryWords: string[], item: Findable): number {
   if (queryWords.length === 0) {
     return ScoreTier.NONE;
   }
 
   let sum = 0;
   for (const word of queryWords) {
-    const score = bestScore(word, itemTexts);
-    if (score === ScoreTier.NONE) {
-      return ScoreTier.NONE;
-    }
-    sum += score;
-  }
-  return sum / queryWords.length;
-}
-
-/**
- * Like scoreAllTokens, but for an item with a label and keywords: each word
- * may match either, keywords counting a bit less.
- */
-export function scoreLabelAndKeywords(
-  queryWords: string[], label: ItemText, keywords: ItemText[],
-): number {
-  if (queryWords.length === 0) {
-    return ScoreTier.NONE;
-  }
-
-  let sum = 0;
-  for (const word of queryWords) {
-    const score = Math.max(scoreToken(word, label),
-      bestScore(word, keywords) * KEYWORD_WEIGHT);
+    const score = Math.max(bestScore(word, item.texts),
+      bestScore(word, item.keywords ?? []) * KEYWORD_WEIGHT);
     if (score === ScoreTier.NONE) {
       return ScoreTier.NONE;
     }
