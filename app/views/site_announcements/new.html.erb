@@ -1,0 +1,30 @@
+<%# the turbo_frame layout wraps this form in the "new_site_announcement" frame. %>
+<%= form_with model: @announcement, url: site_announcements_path, local: true,
+              class: "p-3 pt-4 border-bottom bg-body-tertiary",
+              data: {
+                controller: "site-announcement-form",
+                action: "trix-initialize->site-announcement-form#update " \
+                        "trix-change->site-announcement-form#update " \
+                        "turbo:before-cache@document->site-announcement-form#cancel"
+              } do |f| %>
+  <%= f.trix_editor :details,
+                    id: "site-announcement-details-trix",
+                    class: "bg-body #{'is-invalid' if @announcement.errors[:details].any?}",
+                    autofocus: true %>
+
+  <% if @announcement.errors[:details].any? %>
+    <div class="invalid-feedback">
+      <%= @announcement.errors[:details].to_sentence %>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-end gap-2 mt-2">
+    <button type="button" class="btn btn-sm btn-outline-secondary"
+            data-action="site-announcement-form#cancel">
+      <%= t("buttons.cancel") %>
+    </button>
+    <%= f.submit t("buttons.publish"),
+                 class: "btn btn-sm btn-primary",
+                 data: { turbo_confirm: t("confirmation.announcement") } %>
+  </div>
+<% end %>

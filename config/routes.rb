@@ -99,15 +99,9 @@ Rails.application.routes.draw do
 
   # announcements routes
 
-  post "announcements/:id/propagate",
-       to: "announcements#propagate",
-       as: "propagate_announcement"
+  resources :announcements, only: [:new, :create]
 
-  post "announcements/:id/expel",
-       to: "announcements#expel",
-       as: "expel_announcement"
-
-  resources :announcements, only: [:index, :new, :create]
+  resources :site_announcements, only: [:index, :new, :create, :update]
 
   # answers routes
   get "answers/:id/cancel_edit",
@@ -689,10 +683,6 @@ Rails.application.routes.draw do
   post "notifications/destroy_lecture_media_notifications",
        to: "notifications#destroy_lecture_media_notifications",
        as: "destroy_lecture_media_notifications"
-
-  post "notifications/destroy_news_notifications",
-       to: "notifications#destroy_news_notifications",
-       as: "destroy_news_notifications"
 
   resources :notifications, only: [:index, :destroy]
 
@@ -1344,10 +1334,6 @@ Rails.application.routes.draw do
 
   get "error",
       to: "main#error"
-
-  get "main/news",
-      to: "main#news",
-      as: "news"
 
   get "main/comments",
       to: "main#comments",

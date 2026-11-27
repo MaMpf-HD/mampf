@@ -293,7 +293,7 @@ RSpec.describe("Auth registrations", type: :request) do
       # rubocop:enable Rails/SkipsModelValidations
       sign_in user
 
-      get news_path
+      get comments_path
 
       expect(response).to redirect_to(edit_user_registration_path)
     end
@@ -372,7 +372,7 @@ RSpec.describe("Auth registrations", type: :request) do
       # rubocop:enable Rails/SkipsModelValidations
       sign_in user
 
-      get news_path, headers: { "Turbo-Frame" => "some-frame" }
+      get comments_path, headers: { "Turbo-Frame" => "some-frame" }
 
       expect(response.body)
         .to include('<meta name="turbo-visit-control" content="reload">')

@@ -8,18 +8,6 @@
   <div class="invalid-feedback"
        id="announcement-error">
   </div>
-  <% unless announcement.lecture.present? %>
-    <div class="my-3">
-      <div class="form-check">
-        <%= f.check_box :on_main_page,
-                        class: 'form-check-input' %>
-        <%= f.label :on_main_page,
-                    t('admin.announcement.on_main_page'),
-                    { class: 'form-check-label' } %>
-        <%= helpdesk(t('admin.announcement.info.on_main_page'), false) %>
-      </div>
-    </div>
-  <% end %>
   <%= f.hidden_field :lecture_id, value: @lecture&.id %>
   <div class="row my-2">
     <div class="col-12">

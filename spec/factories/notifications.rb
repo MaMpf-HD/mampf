@@ -9,7 +9,10 @@ FactoryBot.define do
         end
       end
       after :build do |n, evaluator|
-        n.notifiable = build(evaluator.notifiable_sort.downcase.to_sym)
+        sort = evaluator.notifiable_sort.downcase.to_sym
+        # only lecture announcements notify anybody
+        traits = sort == :announcement ? [:with_lecture] : []
+        n.notifiable = build(sort, *traits)
       end
     end
   end

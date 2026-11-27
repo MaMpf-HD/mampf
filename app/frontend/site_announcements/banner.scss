@@ -1,0 +1,7 @@
+// Separator between the announcements in the banner
+// (cancels the px-3 padding of the alert).
+.site-announcement + .site-announcement {
+  margin: 0.5rem -1rem 0;
+  padding: 0.5rem 1rem 0;
+  border-top: var(--bs-border-width) solid color-mix(in srgb, currentcolor 25%, transparent);
+}
