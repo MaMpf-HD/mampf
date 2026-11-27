@@ -1,0 +1,157 @@
+<%= tag.div class: "command-palette", data: controller_data do %>
+  <button
+    type="button"
+    class="btn command-palette-trigger d-flex align-items-center gap-2 text-start"
+    data-action="command-palette#open"
+    aria-haspopup="dialog"
+    aria-keyshortcuts="Control+K Meta+K"
+  >
+    <i class="bi bi-search lh-1" aria-hidden="true"></i>
+
+    <span class="flex-grow-1 text-truncate">
+      <%= t("command_palette.trigger") %>
+    </span>
+
+    <kbd
+      class="bg-white bg-opacity-25 lh-1"
+      data-command-palette-target="shortcut"
+    >
+      Ctrl K
+    </kbd>
+  </button>
+
+  <dialog
+    class="
+      command-palette-dialog p-0 border-0 rounded-3 shadow-lg
+      overflow-hidden
+    "
+    aria-label="<%= t("command_palette.dialog_label") %>"
+    data-command-palette-target="dialog"
+    data-action="
+      pointerdown->command-palette#notePointerDown
+      click->command-palette#closeOnBackdrop
+    "
+  >
+    <div class="d-flex align-items-center gap-2 px-3 border-bottom">
+      <i class="bi bi-search lh-1 text-body-secondary" aria-hidden="true"></i>
+
+      <input
+        type="text"
+        class="form-control form-control-lg border-0 shadow-none px-1"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="command-palette-listbox"
+        aria-autocomplete="list"
+        aria-label="<%= t("command_palette.dialog_label") %>"
+        placeholder="<%= t("command_palette.placeholder") %>"
+        autocomplete="off"
+        spellcheck="false"
+        data-command-palette-target="input"
+        data-action="input->command-palette#search keydown->command-palette#navigate"
+      >
+    </div>
+
+    <div
+      id="command-palette-listbox"
+      class="overflow-auto px-2"
+      role="listbox"
+      aria-label="<%= t("command_palette.dialog_label") %>"
+      data-command-palette-target="listbox"
+      data-action="
+        mousedown->command-palette#keepFocus
+        click->command-palette#pick
+        mousemove->command-palette#hover
+      "
+    ></div>
+
+    <p
+      class="mb-0 p-3 text-center text-body-secondary"
+      data-command-palette-target="loading"
+      hidden
+    >
+      <%= t("command_palette.loading") %>
+    </p>
+
+    <p
+      class="mb-0 p-3 text-center text-body-secondary"
+      data-command-palette-target="empty"
+      hidden
+    >
+      <%= t("command_palette.no_results") %>
+    </p>
+
+    <p
+      class="mb-0 p-3 text-center text-danger"
+      data-command-palette-target="error"
+      hidden
+    >
+      <%= t("command_palette.load_error") %>
+    </p>
+
+    <p
+      class="
+        d-flex gap-2 mb-0 px-3 py-2 border-top bg-body-tertiary small
+        text-body-secondary
+      "
+    >
+      <i class="bi bi-info-circle" aria-hidden="true"></i>
+
+      <span>
+        <%= t("command_palette.disclaimer_html",
+              link: link_to(t("command_palette.disclaimer_link"), search_index_path)) %>
+      </span>
+    </p>
+
+    <footer
+      class="
+        d-flex flex-wrap column-gap-3 row-gap-1 px-3 py-2 border-top small
+        text-body-secondary
+      "
+      aria-hidden="true"
+    >
+      <% [[["↑", "↓"], "hint_navigate"], [["↵"], "hint_open"],
+          [["Ctrl", "↵"], "hint_new_tab"], [["Esc"], "hint_close"]].each do |keys, hint| %>
+        <span class="d-inline-flex align-items-center gap-1">
+          <% keys.each do |key| %>
+            <%= tag.kbd key,
+                        class: "px-1 border bg-transparent text-body-secondary lh-1",
+                        data: { command_palette_target: ("modifier" if key == "Ctrl") } %>
+          <% end %>
+
+          <%= t("command_palette.#{hint}") %>
+        </span>
+      <% end %>
+    </footer>
+
+    <template data-command-palette-target="groupTemplate">
+      <div role="group" class="pb-2">
+        <div
+          class="
+            px-2 pt-2 pb-1 small fw-semibold text-uppercase
+            text-body-secondary
+          "
+          data-slot="heading"
+        ></div>
+      </div>
+    </template>
+
+    <template data-command-palette-target="optionTemplate">
+      <div
+        role="option"
+        class="
+          command-palette-option d-flex align-items-baseline gap-2 p-2
+          rounded-2
+        "
+        aria-selected="false"
+      >
+        <i class="bi text-body-secondary" data-slot="icon" aria-hidden="true"></i>
+        <span class="text-truncate" data-slot="label"></span>
+
+        <span
+          class="small text-body-secondary text-truncate"
+          data-slot="detail"
+        ></span>
+      </div>
+    </template>
+  </dialog>
+<% end %>

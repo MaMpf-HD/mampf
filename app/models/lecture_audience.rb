@@ -25,12 +25,14 @@ module LectureAudience
 
   # For media, a registration counts only where the lecture has no
   # passphrase, since registering does not ask for it; its announcements
-  # still reach whoever registered.
-  def lectures_of(user, media: false)
-    lecture_id_scopes(user, media: media).map { |ids| Lecture.where(id: ids) }.reduce(:or)
+  # still reach whoever registered. Without bookmarks, these are the lectures
+  # the user takes part in beyond following them.
+  def lectures_of(user, media: false, bookmarks: true)
+    lecture_id_scopes(user, media: media, bookmarks: bookmarks)
+      .map { |ids| Lecture.where(id: ids) }.reduce(:or)
   end
 
-  def lecture_id_scopes(user, media: false)
+  def lecture_id_scopes(user, media: false, bookmarks: true)
     running = Registration::Campaign.running.where(
       id: Registration::UserRegistration.where(user: user).where.not(status: :rejected)
                                         .select(:registration_campaign_id),
@@ -38,15 +40,19 @@ module LectureAudience
     )
     registered = running.select(:campaignable_id)
     registered = Lecture.where(id: registered, passphrase: nil).select(:id) if media
-    [LectureBookmark.where(user: user).select(:lecture_id),
-     LectureMembership.active.where(user: user).select(:lecture_id),
-     Cohort.where(context_type: "Lecture",
-                  id: CohortMembership.where(user: user).select(:cohort_id))
-           .select(:context_id),
-     Talk.where(id: SpeakerTalkJoin.where(speaker: user).select(:talk_id)).select(:lecture_id),
-     Exam.where(id: ExamRosterEntry.active.where(user: user).select(:exam_id))
-         .select(:lecture_id),
-     registered]
+    taking_part = [
+      LectureMembership.active.where(user: user).select(:lecture_id),
+      Cohort.where(context_type: "Lecture",
+                   id: CohortMembership.where(user: user).select(:cohort_id))
+            .select(:context_id),
+      Talk.where(id: SpeakerTalkJoin.where(speaker: user).select(:talk_id)).select(:lecture_id),
+      Exam.where(id: ExamRosterEntry.active.where(user: user).select(:exam_id))
+          .select(:lecture_id),
+      registered
+    ]
+    return taking_part unless bookmarks
+
+    [LectureBookmark.where(user: user).select(:lecture_id), *taking_part]
   end
 
   def running_registrations(lecture_ids)

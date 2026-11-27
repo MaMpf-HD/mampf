@@ -1,6 +1,11 @@
-<% if site_announcements_html.present? %>
-  <div class="alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium py-2 px-3"
-       role="alert">
-    <%= sanitize(site_announcements_html) %>
-  </div>
-<% end %>
+<% details = Announcement.banner_active.pluck(:details) %>
+<div id="site-announcement-banner">
+  <%= tag.div class: "alert alert-warning mb-0 rounded-0 border-0 text-center fw-medium " \
+                     "py-2 px-3 no-katex",
+              role: "alert",
+              hidden: details.none? do %>
+    <% details.each do |text| %>
+      <div class="site-announcement"><%= sanitize(text) %></div>
+    <% end %>
+  <% end %>
+</div>

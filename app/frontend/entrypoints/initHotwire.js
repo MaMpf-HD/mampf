@@ -16,6 +16,9 @@ window.Stimulus.register("lecture-home-form", LectureHomeFormController);
 import MediaButtonSortController from "~/lectures/edit/media/media_button_sort.controller.js";
 window.Stimulus.register("media-button-sort", MediaButtonSortController);
 
+import CommandPaletteController from "~/command_palette/command_palette.controller.ts";
+window.Stimulus.register("command-palette", CommandPaletteController);
+
 import SearchFormController from "~/_components/search_form/search_form.controller.js";
 window.Stimulus.register("search-form", SearchFormController);
 
@@ -27,6 +30,9 @@ window.Stimulus.register("turbo-modal", TurboModalController);
 
 import FlashMessagesController from "~/flash/_messages.controller.js";
 window.Stimulus.register("flash-messages", FlashMessagesController);
+
+import SiteAnnouncementFormController from "~/site_announcements/form.controller.js";
+window.Stimulus.register("site-announcement-form", SiteAnnouncementFormController);
 
 import SupportWidgetController from "~/support_requests/widget.controller.js";
 window.Stimulus.register("support-widget", SupportWidgetController);
@@ -253,6 +259,12 @@ window.Stimulus.register("registration-notice-removal", RegistrationNoticeRemova
 
 import BookmarkController from "~/lectures/search/bookmark.controller.js";
 window.Stimulus.register("bookmark", BookmarkController);
+
+import AvatarDropdownController from "~/avatar/avatar_dropdown.controller.js";
+window.Stimulus.register("avatar-dropdown", AvatarDropdownController);
+
+import ImpersonateListController from "~/dev/impersonate_list.controller.js";
+window.Stimulus.register("impersonate-list", ImpersonateListController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";

@@ -39,6 +39,15 @@ RSpec.describe(LectureAudience) do
     expect(in_audience?).to be(true)
   end
 
+  it "leaves out a bookmark when asked for the lectures taken part in" do
+    create(:lecture_bookmark, user: student, lecture: lecture)
+    member_of = create(:lecture, :released_for_all)
+    create(:lecture_membership, user: student, lecture: member_of)
+
+    expect(described_class.lectures_of(student, bookmarks: false))
+      .to contain_exactly(member_of)
+  end
+
   it "takes in a lecture membership" do
     create(:lecture_membership, user: student, lecture: lecture)
 

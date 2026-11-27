@@ -1,0 +1,44 @@
+<%= vite_stylesheet_tag "site_announcements/index.scss" %>
+
+<div class="container-lg my-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-body position-relative pt-3 pb-4">
+      <h4 class="mb-1">
+        <%= t("admin.announcement.title") %>
+      </h4>
+      <p class="text-muted small mb-0">
+        <%= t("admin.announcement.active_hint") %>
+      </p>
+
+      <%= link_to new_site_announcement_path,
+                  class: "btn btn-light border shadow-sm new-site-announcement-button",
+                  id: "new-site-announcement-button",
+                  title: t("buttons.create_announcement"),
+                  aria: { label: t("buttons.create_announcement") },
+                  data: { turbo_frame: "new_site_announcement" } do %>
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      <% end %>
+    </div>
+
+    <%= turbo_frame_tag "new_site_announcement" %>
+
+    <ul class="list-group list-group-flush" id="site_announcements">
+      <% @announcements.each do |a| %>
+        <%= render partial: "site_announcements/row",
+                   locals: { announcement: a } %>
+      <% end %>
+    </ul>
+
+    <% if @announcements.none? %>
+      <p class="text-muted text-center mt-5 mb-4" id="no-site-announcements">
+        <%= t("no_announcements") %>
+      </p>
+    <% end %>
+
+    <% if @pagy.pages > 1 %>
+      <div class="card-footer bg-body text-center py-3">
+        <%== pagy_series_nav(@pagy) %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -17,33 +17,6 @@
       </div>
       <div class="col-4 col-sm-5 col-lg-4 col-xl-4 text-end">
         <% if subscribed %>
-          <% if lecture.in?(current_user.favorite_lectures) %>
-            <%= link_to '',
-                        unpin_lecture_path(params:
-                                              { lecture:
-                                                  { id: lecture.id,
-                                                    parent: parent } }),
-                        class: 'fas fa-bookmark text-light me-2',
-                        style: 'text-decoration: none;',
-                        method: :patch,
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('profile.unpin_lecture'),
-                        remote: true %>
-          <% else %>
-            <%= link_to '',
-                        pin_lecture_path(params:
-                                            { lecture:
-                                                { id: lecture.id,
-                                                  parent: parent } }),
-                        class: 'far fa-bookmark text-light me-2',
-                        style: 'text-decoration: none;',
-                        method: :patch,
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('profile.pin_lecture'),
-                        remote: true %>
-          <% end %>
           <%= link_to '',
                       unsubscribe_lecture_path(params:
                                                  { lecture:

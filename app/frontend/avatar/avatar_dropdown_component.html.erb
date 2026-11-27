@@ -1,0 +1,58 @@
+<ul class="navbar-nav" id="avatarDropdown" data-controller="avatar-dropdown">
+  <li class="nav-item dropdown">
+    <button
+      class="btn p-0 border-0 rounded-circle ms-2"
+      type="button"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+      aria-label="<%= t("navbar.account_menu") %>"
+    >
+      <%= render(AvatarComponent.new(user: @user)) %>
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-2">
+      <li>
+        <h6 class="dropdown-header text-truncate" title="<%= display_name %>">
+          <%= display_name %>
+        </h6>
+      </li>
+
+      <% item_groups.each do |items| %>
+        <% items.each do |item| %>
+          <li>
+            <%= link_to item.path,
+                        class: ["dropdown-item rounded-2", { active: item.active }],
+                        "aria-current": (item.active ? "page" : nil) do %>
+              <i class="bi <%= item.icon %> me-2" aria-hidden="true"></i>
+              <%= item.label %>
+            <% end %>
+          </li>
+        <% end %>
+
+        <li><hr class="dropdown-divider"></li>
+      <% end %>
+
+      <% if Rails.env.local? %>
+        <li data-keep-open>
+          <h6 class="dropdown-header">
+            <i class="bi bi-people me-2" aria-hidden="true"></i>
+            Switch user (dev only)
+          </h6>
+
+          <%= render partial: "dev/impersonate_user_list",
+                     locals: { max_height: "250px" } %>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+      <% end %>
+
+      <li>
+        <%= link_to logout_path,
+                    class: "dropdown-item rounded-2",
+                    data: { turbo_method: :delete } do %>
+          <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>
+          <%= t("navbar.logout") %>
+        <% end %>
+      </li>
+    </ul>
+  </li>
+</ul>

@@ -17,9 +17,9 @@ $(document).on("turbo:load", function () {
     $(".tagbadgeshort").show();
     $(".courseMenuItemShort").show();
     $("#secondnav").show();
-    $("#lecturesDropdown").appendTo($("#secondnav"));
     $("#notificationDropdown").appendTo($("#secondnav"));
     $("#searchField").appendTo($("#secondnav"));
+    $("#avatarDropdown").appendTo($("#secondnav"));
     $("#second-admin-nav").show();
     $("#adminDetails").appendTo($("#second-admin-nav"));
     $("#adminUsers").appendTo($("#second-admin-nav"));
@@ -38,9 +38,9 @@ $(document).on("turbo:load", function () {
     $(".tagbadgeshort").hide();
     $(".courseMenuItemShort").hide();
     $("#secondnav").hide();
-    $("#lecturesDropdown").appendTo($("#firstnav"));
-    $("#notificationDropdown").appendTo($("#firstnav"));
-    $("#searchField").appendTo($("#firstnav"));
+    $("#notificationDropdown").appendTo($("#firstnav .navbar-end"));
+    $("#searchField").appendTo($("#firstnav .navbar-end"));
+    $("#avatarDropdown").appendTo($("#firstnav .navbar-end"));
     $("#second-admin-nav").hide();
     $("#teachableDrop").appendTo($("#first-admin-nav"));
     $("#adminDetails").appendTo($("#first-admin-nav"));

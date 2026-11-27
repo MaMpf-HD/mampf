@@ -90,14 +90,13 @@ class ProfileController < ApplicationController
     # the lecture show action, make sure the cache is invalidated by
     # touching the user
     current_user.touch
-    @success = true
-    respond_with_quick_access
+    respond_to_pin("command_palette.pinned")
   end
 
   def unpin_lecture
     current_user.favorite_lectures.delete(@lecture)
     current_user.touch
-    respond_with_quick_access
+    respond_to_pin("command_palette.unpinned")
   end
 
   # Firefox scrolls a newly-opened accordion fold out of view (see
@@ -149,7 +148,7 @@ class ProfileController < ApplicationController
 
     def email_params
       params.expect(user: [:email_for_medium, :email_for_announcement,
-                           :email_for_teachable, :email_for_news,
+                           :email_for_teachable,
                            :email_for_submission_upload,
                            :email_for_submission_removal,
                            :email_for_submission_join,
@@ -174,15 +173,11 @@ class ProfileController < ApplicationController
         @lecture.edited_by?(current_user)
     end
 
-    # The pin in the navbar gets its Quick Access menu swapped via Turbo Stream,
-    # the old lecture card (search page) its JS response.
-    def respond_with_quick_access
+    def respond_to_pin(message_key)
       respond_to do |format|
-        format.js
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("lecturesDropdown",
-                                                   partial: "shared/dropdown_lectures",
-                                                   locals: { lecture: @lecture })
+          flash.now[:success] = t(message_key, title: @lecture.course.short_title)
+          render_flash
         end
       end
     end

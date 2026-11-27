@@ -1,0 +1,150 @@
+de:
+  command_palette:
+    trigger: 'Suchen oder springen…'
+    placeholder: 'Springe zu einer Veranstaltung, einer Seite darin oder woandershin'
+    dialog_label: 'Schnellnavigation'
+    disclaimer_html: >
+      Hier springst du nur zu Veranstaltungen, ihren Seiten und anderen Orten
+      in MaMpf. Deren Inhalte werden noch nicht durchsucht. Medien, Tags und
+      mehr findest du über die %{link}.
+    disclaimer_link: 'Suchseite'
+    no_results: 'Nichts gefunden.'
+    load_error: 'Die Schnellnavigation konnte nicht geladen werden. Bitte lade die Seite neu.'
+    loading: 'Lädt…'
+    hint_open: 'zum Öffnen'
+    hint_new_tab: 'neuer Tab'
+    hint_navigate: 'zum Navigieren'
+    hint_close: 'zum Schließen'
+    groups:
+      favorites: 'Favoriten'
+      recent: 'Zuletzt besucht'
+      lectures: 'Veranstaltungen'
+      lecture_pages: 'Seiten in Veranstaltungen'
+      go_to: 'Gehe zu'
+      actions: 'Aktionen'
+    pin: '%{title} anheften'
+    unpin: '%{title} nicht mehr anheften'
+    pinned: '%{title} angeheftet.'
+    unpinned: '%{title} nicht mehr angeheftet.'
+    pin_keywords: ['anheften', 'favorit', 'merken']
+    unpin_keywords: ['lösen', 'favorit', 'entfernen']
+    globals:
+      start:
+        label: 'Startseite'
+        keywords: ['übersicht', 'dashboard']
+      lecture_search:
+        label: 'Veranstaltungssuche'
+        keywords: ['veranstaltung finden', 'alle veranstaltungen', 'abonnieren', 'katalog']
+      search:
+        label: 'Suche'
+        keywords: ['medien', 'tags', 'finden']
+      comments:
+        label: 'Kommentare'
+        keywords: ['diskussion', 'nachrichten']
+      notifications:
+        label: 'Benachrichtigungen'
+        keywords: ['neuigkeiten', 'glocke']
+      profile:
+        label: 'Profil'
+        keywords: ['konto', 'einstellungen', 'sprache', 'passwort']
+      annotations:
+        label: 'Meine Annotationen'
+        keywords: ['notizen', 'fehler']
+      watchlists:
+        label: 'Meine Watchlists'
+        keywords: ['merkliste', 'videos']
+      support:
+        label: 'Support'
+        keywords: ['hilfe', 'nutzer']
+      deans_office:
+        label: 'Dekanat'
+        keywords: ['prüfungssekretariat', 'noten']
+      administration:
+        label: 'Administration'
+        keywords: ['verwaltung']
+    destinations:
+      outline:
+        keywords: ['inhalt', 'kapitel', 'inhaltsverzeichnis']
+      lesson_materials:
+        keywords:
+          - 'sitzungsmaterialien'
+          - 'sitzungen'
+          - 'vorlesungen'
+          - 'videos'
+          - 'aufzeichnungen'
+          - 'folien'
+      script:
+        keywords: ['mitschrift', 'pdf']
+      exercises:
+        keywords: ['übungsblätter', 'blätter', 'aufgaben']
+      submissions:
+        keywords: ['hausaufgaben', 'abgeben', 'hochladen', 'tutorium']
+      tutorials:
+        keywords: ['hausaufgaben', 'korrektur', 'korrigieren', 'abgaben', 'mein tutorium']
+      cohorts:
+        keywords: ['kohorten', 'teilnehmende', 'gruppen']
+      quizzes:
+        keywords: ['quiz']
+      vignettes:
+        keywords: ['vignetten', 'fragebögen', 'umfrage']
+      self_test:
+        keywords: ['zufallsquiz', 'test', 'üben']
+      worked_examples:
+        keywords: ['beispiele', 'durchgerechnete beispiele']
+      repetitions:
+        keywords: ['wiederholen']
+      miscellaneous:
+        keywords: ['anderes']
+      forum:
+        keywords: ['fragen', 'diskussion']
+      announcements:
+        keywords: ['ankündigungen', 'neuigkeiten']
+      organizational:
+        keywords: ['orga', 'organisation', 'klausurtermin', 'termine']
+      course:
+        keywords: ['kurs']
+      edit_content:
+        label: 'Inhalt bearbeiten'
+        keywords: ['bearbeiten', 'kapitel', 'abschnitte', 'sitzungen']
+      edit_home:
+        label: 'Startseite bearbeiten'
+        keywords: ['intro']
+      settings:
+        label: 'Einstellungen'
+        keywords: ['einstellungen', 'veröffentlichen', 'passphrase']
+      people:
+        label: 'Personal'
+        keywords: ['personen', 'editoren', 'dozent', 'tutoren', 'personal', 'gutscheine']
+      groups:
+        label: 'Gruppen'
+        keywords: ['tutorien', 'vorträge']
+      participants:
+        label: 'Teilnehmende'
+        keywords: ['studierende', 'mitglieder', 'roster']
+      orga:
+        label: 'Orga'
+        keywords: ['organisatorisches', 'orga', 'konzept']
+      communication:
+        label: 'Kommunikation'
+        keywords: ['e-mail', 'mail an studierende', 'nachricht', 'mitteilung']
+      assessments:
+        label: 'Testate'
+        keywords:
+          - 'leistungen'
+          - 'hausaufgaben'
+          - 'übungsblätter'
+          - 'blätter'
+          - 'punkte'
+          - 'bewertung'
+      exams:
+        label: 'Prüfungen'
+        keywords: ['klausur', 'noten']
+      campaigns:
+        label: 'Anmeldekampagnen'
+        keywords: ['anmeldung', 'kampagne', 'verteilung']
+      performance:
+        label: 'Studienleistungen'
+        keywords: ['zulassung', 'leistungen', 'bonus']
+      certifications:
+        label: 'Bescheinigungen'
+        keywords: ['zertifikate', 'zulassung', 'bestanden']

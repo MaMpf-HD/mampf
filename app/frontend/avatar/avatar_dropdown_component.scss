@@ -1,0 +1,21 @@
+#avatarDropdown {
+    .user-avatar {
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #fff;
+    }
+
+    .btn:hover .user-avatar,
+    .btn.show .user-avatar {
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn:focus-visible .user-avatar {
+        outline: 2px solid #fff;
+        outline-offset: 2px;
+    }
+
+    .dropdown-menu {
+        max-width: 16rem;
+    }
+}

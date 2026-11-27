@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_16_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_23_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -89,9 +89,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_16_000000) do
     t.text "details"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.boolean "on_main_page", default: false
+    t.boolean "banner_active", default: false, null: false
     t.index ["announcer_id"], name: "index_announcements_on_announcer_id"
     t.index ["lecture_id"], name: "index_announcements_on_lecture_id"
+    t.check_constraint "lecture_id IS NULL OR NOT banner_active", name: "banner_only_for_site_announcements"
   end
 
   create_table "answers", force: :cascade do |t|
@@ -1334,7 +1335,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_16_000000) do
     t.boolean "email_for_medium"
     t.boolean "email_for_announcement"
     t.boolean "email_for_teachable"
-    t.boolean "email_for_news"
     t.integer "current_lecture_id"
     t.string "confirmation_token"
     t.datetime "confirmed_at", precision: nil

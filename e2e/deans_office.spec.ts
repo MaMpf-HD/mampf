@@ -16,6 +16,9 @@ test.describe("dean's office", () => {
       await factory.create("lecture", [], { term_id: older.id, course_id: otherCourse.id });
 
       await student.page.goto("/");
+      await student.page.getByRole("button", { name: "Account menu" }).click();
+      await expect(student.page.getByRole("link", { name: "Profile", exact: true }))
+        .toBeVisible();
       await expect(student.page.getByRole("link", { name: "Dean's office" })).toHaveCount(0);
 
       await admin.page.goto(`/support/users/${student.user.id}/edit`);
@@ -24,6 +27,7 @@ test.describe("dean's office", () => {
       await expect(admin.page.getByText("The changes have been saved.")).toBeVisible();
 
       await student.page.reload();
+      await student.page.getByRole("button", { name: "Account menu" }).click();
       await student.page.getByRole("link", { name: "Dean's office" }).click();
       await expect(student.page.getByRole("heading", { name: "Dean's office" })).toBeVisible();
 

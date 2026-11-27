@@ -1,0 +1,138 @@
+en:
+  command_palette:
+    trigger: 'Search or jump to…'
+    placeholder: 'Jump to a lecture, a page in it or anywhere else'
+    dialog_label: 'Quick navigation'
+    disclaimer_html: >
+      This only takes you to lectures, their pages and other places in MaMpf.
+      It does not search their contents yet. To find media, tags and more,
+      use the %{link}.
+    disclaimer_link: 'search page'
+    no_results: 'Nothing found.'
+    load_error: 'The quick navigation could not be loaded. Please reload the page.'
+    loading: 'Loading…'
+    hint_open: 'to open'
+    hint_new_tab: 'new tab'
+    hint_navigate: 'to navigate'
+    hint_close: 'to close'
+    groups:
+      favorites: 'Favorites'
+      recent: 'Recently visited'
+      lectures: 'Lectures'
+      lecture_pages: 'Pages in lectures'
+      go_to: 'Go to'
+      actions: 'Actions'
+    pin: 'Pin %{title}'
+    unpin: 'Unpin %{title}'
+    pinned: '%{title} pinned.'
+    unpinned: '%{title} unpinned.'
+    pin_keywords: ['pin', 'favorite', 'bookmark']
+    unpin_keywords: ['unpin', 'favorite', 'remove']
+    globals:
+      start:
+        label: 'Start page'
+        keywords: ['home', 'dashboard', 'overview']
+      lecture_search:
+        label: 'Lecture search'
+        keywords: ['find lecture', 'all lectures', 'subscribe', 'catalog']
+      search:
+        label: 'Search'
+        keywords: ['media', 'tags', 'find']
+      comments:
+        label: 'Comments'
+        keywords: ['discussion', 'messages']
+      notifications:
+        label: 'Notifications'
+        keywords: ['news', 'updates', 'bell']
+      profile:
+        label: 'Profile'
+        keywords: ['account', 'settings', 'language', 'email', 'password']
+      annotations:
+        label: 'My annotations'
+        keywords: ['notes', 'mistakes']
+      watchlists:
+        label: 'My watchlists'
+        keywords: ['watch later', 'videos']
+      support:
+        label: 'Support'
+        keywords: ['help', 'users']
+      deans_office:
+        label: "Dean's office"
+        keywords: ['exams office', 'grades']
+      administration:
+        label: 'Administration'
+        keywords: ['admin']
+    destinations:
+      outline:
+        keywords: ['contents', 'chapters', 'table of contents', 'toc']
+      lesson_materials:
+        keywords: ['lesson materials', 'lessons', 'lectures', 'videos', 'recordings', 'slides']
+      script:
+        keywords: ['script', 'lecture notes', 'notes', 'pdf']
+      exercises:
+        keywords: ['exercise sheets', 'sheets', 'problems']
+      submissions:
+        keywords: ['homework', 'hand in', 'submit', 'upload', 'tutorial']
+      tutorials:
+        keywords: ['homework', 'correction', 'grading', 'submissions', 'my tutorial']
+      cohorts:
+        keywords: ['cohorts', 'participants', 'groups']
+      quizzes:
+        keywords: ['quiz']
+      vignettes:
+        keywords: ['questionnaires', 'survey']
+      self_test:
+        keywords: ['self test', 'random quiz', 'test', 'practice']
+      worked_examples:
+        keywords: ['examples']
+      repetitions:
+        keywords: ['review', 'revision']
+      miscellaneous:
+        keywords: ['misc', 'other']
+      forum:
+        keywords: ['forum', 'board', 'questions', 'discussion']
+      announcements:
+        keywords: ['news']
+      organizational:
+        keywords: ['orga', 'organization', 'exam date', 'dates', 'info']
+      course:
+        keywords: ['module']
+      edit_content:
+        label: 'Edit content'
+        keywords: ['edit', 'chapters', 'sections', 'lessons']
+      edit_home:
+        label: 'Edit home page'
+        keywords: ['edit home', 'intro']
+      settings:
+        label: 'Preferences'
+        keywords: ['settings', 'preferences', 'publish', 'passphrase']
+      people:
+        label: 'Personnel'
+        keywords: ['people', 'editors', 'teacher', 'tutors', 'staff', 'vouchers']
+      groups:
+        label: 'Groups'
+        keywords: ['tutorials', 'talks']
+      participants:
+        label: 'Participants'
+        keywords: ['roster', 'students', 'members']
+      orga:
+        label: 'Orga'
+        keywords: ['organizational', 'orga', 'concept']
+      communication:
+        label: 'Communication'
+        keywords: ['email', 'mail students', 'message', 'announcement']
+      assessments:
+        label: 'Assessments'
+        keywords: ['homework', 'assignments', 'sheets', 'points', 'grading']
+      exams:
+        label: 'Exams'
+        keywords: ['exam', 'grades']
+      campaigns:
+        label: 'Registration campaigns'
+        keywords: ['registration', 'campaign', 'allocation']
+      performance:
+        label: 'Student performance'
+        keywords: ['admission', 'performance', 'records', 'bonus']
+      certifications:
+        label: 'Certifications'
+        keywords: ['certificates', 'admission', 'pass']

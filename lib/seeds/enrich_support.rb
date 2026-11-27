@@ -219,7 +219,7 @@ module Seeds
       # visitor before anything else.
       def add_announcements!
         # rubocop:disable Rails/SkipsModelValidations
-        Announcement.update_all(on_main_page: false)
+        Announcement.update_all(banner_active: false)
         # rubocop:enable Rails/SkipsModelValidations
 
         # An edition is built from the one before it, so what this step wrote
@@ -228,20 +228,19 @@ module Seeds
                     .destroy_all
 
         ADMIN_ANNOUNCEMENTS.each do |text|
-          announce!(Announcement.create!(announcer: admin, details: text,
-                                         on_main_page: false))
+          Announcement.create!(announcer: admin, details: text, banner_active: false)
         end
 
         current_lectures.each_with_index do |lecture, index|
           text = LECTURE_ANNOUNCEMENTS[index % LECTURE_ANNOUNCEMENTS.size]
           announce!(Announcement.create!(announcer: lecture.teacher,
                                          lecture: lecture, details: text,
-                                         on_main_page: false))
+                                         banner_active: false))
         end
       end
 
       def announce!(announcement)
-        recipients = announcement.lecture&.users || User.all
+        recipients = announcement.lecture.users
         recipients.find_each do |user|
           Notification.create!(recipient: user, notifiable: announcement,
                                action: "create")

@@ -33,7 +33,7 @@ RSpec.describe("Announcements", type: :request) do
   describe "GET /" do
     let!(:main_announcement) do
       details = "<div id='test-main-xss-xyz123'><script>alert('main-xss')</script></div>"
-      create(:announcement, lecture: nil, announcer: teacher, on_main_page: true,
+      create(:announcement, lecture: nil, announcer: teacher, banner_active: true,
                             details: details)
     end
 
@@ -45,11 +45,11 @@ RSpec.describe("Announcements", type: :request) do
   end
 
   describe "POST /announcements" do
-    it "ignores on_main_page from a non-admin editor" do
+    it "never puts a lecture announcement on the banner" do
       post announcements_path,
            params: { announcement: { details: "Hi", lecture_id: lecture.id,
-                                     on_main_page: "1" } }
-      expect(Announcement.last.on_main_page).to be_falsey
+                                     banner_active: "1" } }
+      expect(Announcement.last).to have_attributes(lecture: lecture, banner_active: false)
     end
 
     it "notifies who bookmarked, sits on a roster or has a registration running" do
@@ -68,11 +68,19 @@ RSpec.describe("Announcements", type: :request) do
       expect(recipients).not_to include(reader)
     end
 
-    it "lets an admin set on_main_page" do
+    it "does not create an announcement without a lecture, not even for an admin" do
       sign_in create(:confirmed_user, admin: true)
-      post announcements_path,
-           params: { announcement: { details: "Hi", on_main_page: "1" } }
-      expect(Announcement.last.on_main_page).to be(true)
+      expect do
+        post(announcements_path, params: { announcement: { details: "Hi" } })
+      end.not_to change(Announcement, :count)
+    end
+
+    it "does not create one for a lecture the user cannot edit" do
+      sign_in create(:confirmed_user)
+      expect do
+        post(announcements_path,
+             params: { announcement: { details: "Hi", lecture_id: lecture.id } })
+      end.not_to change(Announcement, :count)
     end
   end
 end

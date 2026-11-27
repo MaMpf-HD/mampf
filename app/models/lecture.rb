@@ -722,6 +722,12 @@ class Lecture < ApplicationRecord
     Thredded::Messageboard.find_by(id: forum_id)
   end
 
+  # Thredded finds a messageboard by its id as well as by its slug, so this
+  # needs no query for the forum.
+  def forum_path
+    "/forum/#{forum_id}" if forum?
+  end
+
   # extract how many posts in the lecture's forum have not been read
   # by the user
   def unread_forum_topics_count(user)
@@ -859,15 +865,13 @@ class Lecture < ApplicationRecord
   def tutor?(user)
     return false unless user
 
-    TutorTutorialJoin.exists?(tutorial: tutorials, tutor: user) ||
-      tutor_appointments.exists?(user: user) ||
-      Redemption.exists?(voucher: vouchers.for_tutors, user: user)
+    LectureTutors.lectures_of(user).exists?(id)
   end
 
   def cohort_tutor?(user)
     return false unless user
 
-    CohortTutorJoin.exists?(cohort: cohorts, tutor: user)
+    LectureTutors.cohort_lectures_of(user).exists?(id)
   end
 
   def default_submission_deletion_date

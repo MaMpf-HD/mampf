@@ -22,7 +22,7 @@ test.describe("Account settings", () => {
       await commentsPage.goto();
       const COMMENT = "Super comment";
       await commentsPage.postComment(COMMENT);
-      await expect(page.getByText(user.name)).toBeVisible();
+      await expect(page.getByText(user.name).filter({ visible: true })).toBeVisible();
       await expect(page.getByText(COMMENT)).toBeVisible();
 
       const newName = "Jean-Jacques Rousseau";
@@ -30,7 +30,7 @@ test.describe("Account settings", () => {
       await page.getByRole("textbox", { name: "display name" }).fill(newName);
       await profilePage.save();
       await commentsPage.goto();
-      await expect(page.getByText(newName)).toBeVisible();
+      await expect(page.getByText(newName).filter({ visible: true })).toBeVisible();
       await expect(page.getByText(COMMENT)).toBeVisible();
     });
 
@@ -106,7 +106,8 @@ test.describe("Account settings", () => {
         "Your email address has been confirmed.",
       );
 
-      await page.getByTitle("Logout").click();
+      await page.getByRole("button", { name: "Account menu" }).click();
+      await page.getByRole("link", { name: "Logout" }).click();
       await expect(page.getByRole("alert")).toContainText("Signed out successfully.");
 
       const loginPage = new LoginPage(page);
