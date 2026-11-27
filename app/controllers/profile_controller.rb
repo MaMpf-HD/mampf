@@ -90,7 +90,6 @@ class ProfileController < ApplicationController
     # the lecture show action, make sure the cache is invalidated by
     # touching the user
     current_user.touch
-    @success = true
     respond_with_quick_access
   end
 
@@ -174,11 +173,9 @@ class ProfileController < ApplicationController
         @lecture.edited_by?(current_user)
     end
 
-    # The pin in the navbar gets its Quick Access menu swapped via Turbo Stream,
-    # the old lecture card (search page) its JS response.
+    # The pin in the navbar gets its Quick Access menu swapped via Turbo Stream.
     def respond_with_quick_access
       respond_to do |format|
-        format.js
         format.turbo_stream do
           render turbo_stream: turbo_stream.update("lecturesDropdown",
                                                    partial: "shared/dropdown_lectures",
