@@ -168,12 +168,6 @@ de:
     logout: 'Logout'
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
-    no_favorite_lectures_yet: >
-      Du hast noch keine Veranstaltung angeheftet.
-      Öffne eine Veranstaltung, um sie hier anzuheften.
-    quick_access: 'Schnellzugriff'
-    pin_lecture: '%{title} anheften'
-    unpin_lecture: '%{title} nicht mehr anheften'
     account_menu: 'Kontomenü'
     my_annotations: 'Meine Annotationen'
     my_watchlists: 'Meine Watchlists'
