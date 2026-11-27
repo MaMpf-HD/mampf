@@ -147,10 +147,12 @@ test.describe("switching between viewing and editing a lecture", () => {
       await expect(page.getByTestId("lecture-home")).toBeVisible();
     });
 
-  test("gives teachers no administration icon", async ({ teacher: { page } }) => {
+  test("gives teachers no administration link", async ({ teacher: { page } }) => {
     await page.goto("/");
+    await page.getByRole("button", { name: "Account menu" }).click();
 
-    await expect(page.getByTitle("administration")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Profile", exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Administration" })).toHaveCount(0);
   });
 
   test("shows no toggle to students", async ({ factory, student: { page } }) => {

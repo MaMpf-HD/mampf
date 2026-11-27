@@ -1,4 +1,5 @@
 @import "~/styles/branding";
+@import "~/avatar/avatar_dropdown_component";
 
 .navbars-container {
     background: linear-gradient(110deg, #223e62 0%, #405d75 100%);
@@ -120,7 +121,8 @@
 
     #lecturesDropdown,
     #notificationDropdown,
-    #searchField {
+    #searchField,
+    #avatarDropdown {
         order: 2;
         margin-top: 0.5rem;
     }

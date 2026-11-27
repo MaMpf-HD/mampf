@@ -170,7 +170,6 @@ de:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
-    watchlist: 'Watchlist'
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
@@ -179,6 +178,9 @@ de:
     quick_access: 'Schnellzugriff'
     pin_lecture: '%{title} anheften'
     unpin_lecture: '%{title} nicht mehr anheften'
+    account_menu: 'Kontomenü'
+    my_annotations: 'Meine Annotationen'
+    my_watchlists: 'Meine Watchlists'
   info: 'Info'
   admin:
     navbar:
@@ -347,7 +349,6 @@ de:
       none_yet_students: >
         Noch keiner Deiner Studierenden hat eine Annotation erstellt und sie
         mit Dir geteilt.
-      annotations: 'Annotationen'
       overview_description: >
         Hier findest Du eine Liste aller Annotationen, die Du zu verschiedenen
         Vorlesungen erstellt hast. Klicke auf eine Annotation, um zu ihr zu springen.

@@ -125,7 +125,6 @@ en:
     comments: 'Comments'
     blog: 'Blog'
     logout: 'Logout'
-    watchlist: 'Watchlist'
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
@@ -134,6 +133,9 @@ en:
     quick_access: 'Quick Access'
     pin_lecture: 'Pin %{title}'
     unpin_lecture: 'Unpin %{title}'
+    account_menu: 'Account menu'
+    my_annotations: 'My Annotations'
+    my_watchlists: 'My Watchlists'
   info: 'Info'
   admin:
     navbar:
@@ -286,7 +288,6 @@ en:
       none_yet_students: >
         None of your students has created an annotation yet and shared it
         with you.
-      annotations: 'Annotations'
       overview_description: >
         This list comprises all annotations you have created across various
         lectures. Click on an annotation to view it.
