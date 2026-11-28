@@ -108,6 +108,13 @@ RSpec.describe("Auth registrations", type: :request) do
         [response.status, response.location, flash[:notice]]
       end
 
+      # The body of the last answer without what differs between any two of
+      # them: the address typed in and the nonce for scripts.
+      def body_without(address)
+        nonce = response.headers["content-security-policy"][/'nonce-([^']+)'/, 1]
+        response.body.gsub(address, "ADDRESS").gsub(nonce, "NONCE")
+      end
+
       it "answers exactly as for a new address" do
         new_answer = sign_up_with(email)
 
@@ -157,9 +164,9 @@ RSpec.describe("Auth registrations", type: :request) do
         create(:user, created_at: 1.minute.ago)
 
         sign_up_with(email)
-        new_answer = [response.status, response.body.gsub(email, "ADDRESS")]
+        new_answer = [response.status, body_without(email)]
         sign_up_with("owner@example.com")
-        taken_answer = [response.status, response.body.gsub("owner@example.com", "ADDRESS")]
+        taken_answer = [response.status, body_without("owner@example.com")]
 
         expect(taken_answer).to eq(new_answer)
         expect(ActionMailer::Base.deliveries.flat_map(&:to)).not_to include("owner@example.com")
