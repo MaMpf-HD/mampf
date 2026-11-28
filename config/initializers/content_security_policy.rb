@@ -9,8 +9,7 @@ Rails.application.configure do
     policy.default_src(:self)
     policy.base_uri(:self)
     policy.font_src(:self,
-                    :data,
-                    "https://cdn.jsdelivr.net")
+                    :data)
     policy.frame_ancestors(:self)
     policy.frame_src(:self,
                      "https://www.geogebra.org",
@@ -29,17 +28,11 @@ Rails.application.configure do
     policy.script_src(:self,
                       :unsafe_inline,
                       :wasm_unsafe_eval,
-                      "https://cdn.jsdelivr.net",
-                      "https://cdnjs.cloudflare.com",
                       "https://www.geogebra.org",
                       "https://*.geogebra.org")
     policy.style_src(:self,
-                     :unsafe_inline,
-                     "https://cdn.jsdelivr.net",
-                     "https://cdnjs.cloudflare.com")
+                     :unsafe_inline)
     policy.connect_src(:self,
-                       "https://cdn.jsdelivr.net",
-                       "https://cdnjs.cloudflare.com",
                        "https://www.geogebra.org",
                        "https://*.geogebra.org")
     policy.form_action(:self)
