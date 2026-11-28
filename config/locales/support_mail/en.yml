@@ -1,0 +1,8 @@
+en:
+  support_mail:
+    send_failed: >
+      Sorry, your message could not be sent. Please copy it, so that it does
+      not get lost, and try again later.
+    copy: "Copy my message"
+    copied: "Copied to your clipboard"
+    copy_failed: "Copying did not work. Please select the text and copy it yourself."

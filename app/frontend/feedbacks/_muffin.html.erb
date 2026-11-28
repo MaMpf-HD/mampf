@@ -1,0 +1,70 @@
+<%#
+  A pixel-art muffin, 24 × 21 pixels. Each letter is one pixel and picks its
+  color from the stylesheet:
+  o outline, c cap, h highlight, s shade, p chip, q chip light, b lash, e eye,
+  l light, k cheek, m mouth, f foil, t pleat, r heart.
+  `closed_eye` (for a blink) and `heart_eye` (once feedback is sent) are drawn
+  over the open eyes; the stylesheet decides when they show.
+%>
+
+<% pixels = [
+  "......oooooooooooo......",
+  "....oohhccccccccccoo....",
+  "....ohhccqpccccqpcco....",
+  "...ohccccppccccppccco...",
+  "..ohcpccccccpcccccpcco..",
+  ".ohcccccccccccccccccsco.",
+  ".occcccccccccccccccccso.",
+  "occcceeecccccccceeecccso",
+  "ocpcelleeccccccelleeccso",
+  "occcelleeccccccelleecpso",
+  "occceeeeecccccceeeeeccso",
+  "occceeelecmccmceeeleccso",
+  "ockkkeeecccmmccceeekkkso",
+  ".okkkcccccccccccccckkko.",
+  "..osssoossssssssoossso..",
+  "...ofoccotfffftoccofo...",
+  "...offooftfffftfooffo...",
+  "....oftfftfffftfftfo....",
+  "....oftfftfffftfftfo....",
+  ".....otfftfffftffto.....",
+  ".....oooooooooooooo....."
+] %>
+
+<% closed_eye = [
+  ".ccc.",
+  "ccccc",
+  "cbbbc",
+  "bcccb",
+  "ccccc",
+  ".ccc."
+] %>
+
+<% heart_eye = [
+  ".rcr.",
+  "rlrrr",
+  "rrrrr",
+  "crrrc",
+  "ccrcc",
+  ".ccc."
+] %>
+
+<svg
+  class="feedback-muffin"
+  viewBox="0 0 24 21"
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+  focusable="false"
+>
+  <%= muffin_pixels(pixels) %>
+
+  <g class="feedback-muffin__eyes-closed">
+    <%= muffin_pixels(closed_eye, left: 4, top: 7) %>
+    <%= muffin_pixels(closed_eye, left: 15, top: 7) %>
+  </g>
+
+  <g class="feedback-muffin__eyes-love">
+    <%= muffin_pixels(heart_eye, left: 4, top: 7) %>
+    <%= muffin_pixels(heart_eye, left: 15, top: 7) %>
+  </g>
+</svg>

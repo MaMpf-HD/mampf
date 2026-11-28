@@ -1,0 +1,45 @@
+<%= vite_stylesheet_tag "feedbacks/widget.scss" %>
+
+<div
+  class="feedback-widget d-print-none"
+  data-controller="feedback-widget"
+  data-action="keydown.esc->feedback-widget#close"
+>
+  <section
+    id="feedback-widget-panel"
+    class="feedback-widget__panel card shadow"
+    aria-labelledby="feedback-widget-title"
+    hidden
+    data-feedback-widget-target="panel"
+  >
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h2 id="feedback-widget-title" class="h6 mb-0">
+        <%= t("feedback.title") %>
+      </h2>
+
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="<%= t("buttons.close") %>"
+        data-action="feedback-widget#close"
+      ></button>
+    </div>
+
+    <div id="feedback-body" class="card-body">
+      <%= render "feedbacks/form", feedback: Feedback.new %>
+    </div>
+  </section>
+
+  <button
+    type="button"
+    class="feedback-widget__toggle"
+    title="<%= t("feedback.open") %>"
+    aria-label="<%= t("feedback.open") %>"
+    aria-expanded="false"
+    aria-controls="feedback-widget-panel"
+    data-feedback-widget-target="toggle"
+    data-action="feedback-widget#toggle"
+  >
+    <%= render "feedbacks/muffin" %>
+  </button>
+</div>

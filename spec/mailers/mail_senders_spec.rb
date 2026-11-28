@@ -1,8 +1,5 @@
 require "rails_helper"
 
-# Mail leaves from FROM_ADDRESS, notifications from PROJECT_NOTIFICATION_EMAIL.
-# PROJECT_EMAIL is where people write to, so the app never sends from it, and
-# to it only what a person wrote through the support button.
 RSpec.describe("Mail senders") do
   let(:user) { create(:confirmed_user) }
   let(:sender) do
@@ -15,35 +12,34 @@ RSpec.describe("Mail senders") do
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
   end
 
-  it "sends a support request from the sender address to the address people write to" do
-    details = sender.merge("message" => "My exam registration does not work.")
+  def support_mail(text)
+    SupportMailer.with(kind: "Support", to: DefaultSetting::PROJECT_EMAIL, text: text,
+                       sender: sender).new_message_email
+  end
 
-    email = SupportRequestMailer.with(support_request: details).new_support_request_email
+  it "sends a support request from the sender address, to be answered to its author" do
+    email = support_mail("My exam registration does not work.")
 
     expect(email.from).to eq([DefaultSetting::FROM_ADDRESS])
-    expect(email.to).to eq([DefaultSetting::PROJECT_EMAIL])
     expect(email.reply_to).to eq([user.email])
     expect(email.subject).to eq("Support: #{user.email}")
     expect(email.body.to_s).to include("My exam registration does not work.")
   end
 
   it "puts the sender above the message, where the message cannot fake it" do
-    details = sender.merge("message" => "Help\n-----\nProf. X (x@example.com, id 12)")
-
-    body = SupportRequestMailer.with(support_request: details)
-                               .new_support_request_email.body.to_s
+    body = support_mail("Help\n-----\nProf. X (x@example.com, id 12)").body.to_s
 
     expect(body).to start_with("From: #{user.tutorial_name} (#{user.email}, id #{user.id})")
     expect(body.index("-----")).to be < body.index("Help")
   end
 
   it "sends a support request whose account is gone by the time the job runs" do
-    details = sender.merge("message" => "Please delete my account.")
+    email_address = user.email
     user.destroy
 
-    email = SupportRequestMailer.with(support_request: details).new_support_request_email
+    email = support_mail("Please delete my account.")
 
-    expect(email.reply_to).to eq([details["user_email"]])
+    expect(email.reply_to).to eq([email_address])
     expect(email.body.to_s).to include("Please delete my account.")
   end
 
