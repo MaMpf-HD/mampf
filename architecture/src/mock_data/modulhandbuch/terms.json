@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "year": 2025,
+    "season": "SS",
+    "label_de": "Sommersemester 2025",
+    "label_en": "Summer term 2025",
+    "short": "SoSe 2025"
+  },
+  {
+    "id": 2,
+    "year": 2025,
+    "season": "WS",
+    "label_de": "Wintersemester 2025/26",
+    "label_en": "Winter term 2025/26",
+    "short": "WS 2025/26"
+  },
+  {
+    "id": 3,
+    "year": 2026,
+    "season": "SS",
+    "label_de": "Sommersemester 2026",
+    "label_en": "Summer term 2026",
+    "short": "SoSe 2026"
+  },
+  {
+    "id": 4,
+    "year": 2026,
+    "season": "WS",
+    "label_de": "Wintersemester 2026/27",
+    "label_en": "Winter term 2026/27",
+    "short": "WS 2026/27"
+  }
+]

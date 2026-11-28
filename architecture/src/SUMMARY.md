@@ -46,4 +46,32 @@
 - [Implementation PR Roadmap](features/implementation-prs.md)
 - [Parallelization Strategy](features/parallelization.md)
 - [Integration Strategy](features/integration-strategy.md)
+
+---
+
+## Modulhandbuch
+- [Overview](features/modulhandbuch/00-overview.md)
+  - [New Handbook](features/modulhandbuch/00a-new-handbook-overview.md)
+  - [Old Handbook System](features/modulhandbuch/00b-old-handbook-overview.md)
+  - [Old System: All Screens](features/modulhandbuch/20-old-handbook-system-all-screens.md)
+  - [Roles & Permissions](features/modulhandbuch/00c-roles-and-permissions.md)
+- [Domain Model](features/modulhandbuch/01-domain-model.md)
+  - [Base Data](features/modulhandbuch/02-base-data.md)
+  - [Module Editions](features/modulhandbuch/03-module-editions.md)
+  - [Handbooks](features/modulhandbuch/04-handbooks.md)
+  - [Integrity & Invariants](features/modulhandbuch/08-integrity-and-invariants.md)
+- [End-to-End Workflow](features/modulhandbuch/10-end-to-end-workflow.md)
+  - [Base Data](features/modulhandbuch/11-base-data.md)
+  - [Handbook Building](features/modulhandbuch/12-handbook-building.md)
+  - [Description Editing](features/modulhandbuch/13-description-editing.md)
+  - [Review & Publish](features/modulhandbuch/14-review-and-publish.md)
+  - [Descriptions List](features/modulhandbuch/15-descriptions-list.md)
+  - [Cloning](features/modulhandbuch/16-cloning.md)
+  - [Export](features/modulhandbuch/17-export.md)
+  - [History](features/modulhandbuch/18-history.md)
+  - [Public Pages](features/modulhandbuch/19-public-pages.md)
+- [Future Extensions](features/modulhandbuch/09-future-extensions.md)
+- [To Verify](features/modulhandbuch/pending-thing-need-to-verify.md)
+- [Mockups](features/modulhandbuch/mockups-index.md)
+- [Implementation Plan](features/modulhandbuch/plan.md)
 ```

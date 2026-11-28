@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "code": "IAD",
+    "title": "Algorithmen und Datenstrukturen",
+    "subject_area": "cs",
+    "notes": "Algorithmen und Datenstrukturen",
+    "active": true
+  },
+  {
+    "id": 2,
+    "code": "IPK",
+    "title": "Programmierkurs",
+    "subject_area": "cs",
+    "notes": "Programmierkurs mit C++ mit 4 LP für die neue PO im BSc Informatik ab WS 2021/22 im MHB",
+    "active": true
+  },
+  {
+    "id": 3,
+    "code": "IACO",
+    "title": "Applied Combinatorial Optimization",
+    "subject_area": "cs",
+    "notes": "Applied Combinatorial Optimization, ab WiSe 2024/25 im MHB, ersetzt Optimization for Machine Learning",
+    "active": true
+  },
+  {
+    "id": 4,
+    "code": "IAML",
+    "title": "Advanced Machine Learning",
+    "subject_area": "cs",
+    "notes": "Advanced Machine Learning, ab WS 2015/16 im MHB, ab SS 2026 nicht mehr im MHB",
+    "active": false
+  },
+  {
+    "id": 5,
+    "code": "IFML",
+    "title": "Fundamentals of Machine Learning",
+    "subject_area": "cs",
+    "notes": "Fundamentals of Machine Learning, ab WS 2015/16 im MHB, ab SS 2026 nicht mehr im MHB",
+    "active": false
+  },
+  {
+    "id": 6,
+    "code": "IARCA",
+    "title": "Algorithmic Randomness and Computable Analysis",
+    "subject_area": "cs",
+    "notes": "Algorithmic Randomness and Computable Analysis, ab SoSe 2026 im MHB",
+    "active": true
+  },
+  {
+    "id": 7,
+    "code": "IRL",
+    "title": "Reinforcement Learning",
+    "subject_area": "cs",
+    "notes": "Reinforcement Learning, ab SoSe 2026 im MHB",
+    "active": true
+  },
+  {
+    "id": 8,
+    "code": "IITS3",
+    "title": "IT-Sicherheit 3",
+    "subject_area": "cs",
+    "notes": "IT-Sicherheit 3 (für MSc) ab WS 2026/27 im MHB",
+    "active": true
+  },
+  {
+    "id": 9,
+    "code": "ILat",
+    "title": "Einführung in das Textsatzsystem LaTeX",
+    "subject_area": "cs",
+    "notes": "Einführung in das Textsatzsystem LaTeX, ab WiSe 26/27 nicht mehr im MHB, ersetzt durch MLat",
+    "active": false
+  },
+  {
+    "id": 10,
+    "code": "MLat",
+    "title": "Introduction to LaTeX",
+    "subject_area": "math",
+    "notes": "Introduction to LaTeX, ab WiSe 26/27 im MHB, ersetzt ILat",
+    "active": true
+  },
+  {
+    "id": 11,
+    "code": "MA1",
+    "title": "Analysis 1",
+    "subject_area": "math",
+    "notes": "Analysis 1",
+    "active": true
+  },
+  {
+    "id": 12,
+    "code": "MA4",
+    "title": "Lineare Algebra 1",
+    "subject_area": "math",
+    "notes": "Lineare Algebra 1",
+    "active": true
+  },
+  {
+    "id": 13,
+    "code": "MB1",
+    "title": "Algebra 1",
+    "subject_area": "math",
+    "notes": "Algebra 1",
+    "active": true
+  },
+  {
+    "id": 14,
+    "code": "MD1",
+    "title": "Numerik",
+    "subject_area": "math",
+    "notes": "Numerik, ab SS 2026 nicht mehr im MHB",
+    "active": false
+  },
+  {
+    "id": 15,
+    "code": "ME9",
+    "title": "Logic, Type Theory and Functional Programming",
+    "subject_area": "math",
+    "notes": "Logic, Type Theory and Functional Programming, ab SoSe 2026 im MHB",
+    "active": true
+  },
+  {
+    "id": 16,
+    "code": "MLC1",
+    "title": "Geometric Methods for Machine Learning",
+    "subject_area": "math",
+    "notes": "Geometric Methods for Machine Learning, Core Module MMLDS",
+    "active": true
+  },
+  {
+    "id": 17,
+    "code": "MFIN",
+    "title": "Finanz- und Versicherungsmathematik",
+    "subject_area": "general",
+    "notes": "Finanz- und Versicherungsmathematik",
+    "active": true
+  },
+  {
+    "id": 18,
+    "code": "SCFA",
+    "title": "Field of Application",
+    "subject_area": "general",
+    "notes": "Field of Application, ab WiSe 2022/23 in MHB mit 16 LP",
+    "active": true
+  },
+  {
+    "id": 19,
+    "code": "SCMT",
+    "title": "Master's Thesis (Scientific Computing)",
+    "subject_area": "general",
+    "notes": "Master's Thesis, ab WiSe 2022/23 im MHB",
+    "active": true
+  },
+  {
+    "id": 20,
+    "code": "MG10",
+    "title": null,
+    "subject_area": "math",
+    "notes": null,
+    "active": true
+  }
+]

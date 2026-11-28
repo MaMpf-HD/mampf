@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "Informatik BSc 100%",
+    "short_name": "Informatik BSc 100",
+    "default_language": "de",
+    "expires_on": null,
+    "info": "MHB für den Bachelor 100% Informatik nach der PO vom 29.09.2021, gültig ab WiSe 2021/22"
+  },
+  {
+    "id": 2,
+    "name": "Informatik BSc 100% alt",
+    "short_name": "Informatik BSc 100 alt",
+    "default_language": "de",
+    "expires_on": "2026-01-01",
+    "info": "MHB für den Bachelor 100% Angewandte Informatik nach der alten PO"
+  },
+  {
+    "id": 3,
+    "name": "Informatik MSc Data and Computer Science",
+    "short_name": "Informatik MSc DaCS",
+    "default_language": "en",
+    "expires_on": null,
+    "info": "Master Data and Computer Science"
+  },
+  {
+    "id": 4,
+    "name": "Mathematik BSc 100%",
+    "short_name": "Mathematik BSc 100",
+    "default_language": "de",
+    "expires_on": null,
+    "info": "MHB für den Bachelor 100% Mathematik"
+  }
+]

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Master data: curriculum modules · Modulhandbuch mockup</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>/* ===== Modulhandbuch mockups — shared style ===== */
+:root {
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  --fs: 14px;          /* page text */
+  --fs-title: 18px;    /* page / dialog titles */
+  --fs-td: 13px;       /* table cells */
+  --fs-th: 12px;       /* table headers, pager */
+  --text: #1f2328;
+  --muted: #59636e;
+  --border: #d1d9e0;
+  --border-soft: #e7ecf0;
+  --bg-soft: #f6f8fa;
+  --accent: #0969da;
+  --accent-soft: #ddf4ff;
+  --primary: #1f883d;
+  --primary-hover: #1a7f37;
+  --danger: #cf222e;
+  --radius: 6px;
+}
+
+html, body { font-family: var(--font); font-size: var(--fs); color: var(--text); background: #fff; }
+body { -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 { font-size: var(--fs); font-weight: 600; margin: 0; line-height: 1.5; }
+small, .small, .form-text, .dropdown-item, .dropdown-header, .btn, .form-control, .form-select,
+.form-check-label, .nav-link, .breadcrumb, .badge, .popover, .tooltip, .list-group-item, .alert, label, legend {
+  font-size: var(--fs);
+}
+.form-text { color: var(--muted); margin-top: 2px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.text-muted, .muted { color: var(--muted) !important; }
+.mono { font-family: var(--font); font-variant-numeric: tabular-nums; }
+.code { font-weight: 600; }
+
+/* ----- App header ----- */
+.app-header { height: 52px; border-bottom: 1px solid var(--border); background: #fff; position: sticky; top: 0; z-index: 1030; }
+.app-header .inner { max-width: 1320px; margin: 0 auto; height: 100%; display: flex; align-items: center; gap: 24px; padding: 0 24px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text); }
+.brand:hover { text-decoration: none; }
+.brand .logo { width: 26px; height: 26px; border-radius: 7px; background: #1f2328; color: #fff; display: grid; place-items: center; font-size: var(--fs); }
+.brand .sub { color: var(--muted); font-weight: 400; }
+.app-nav { display: flex; gap: 4px; height: 100%; }
+.app-nav a { display: flex; align-items: center; gap: 6px; padding: 0 10px; color: var(--text); border-bottom: 2px solid transparent; }
+.app-nav a:hover { text-decoration: none; background: var(--bg-soft); }
+.app-nav a.active { border-bottom-color: #fd8c73; font-weight: 600; }
+.app-nav a i, .btn i { font-size: var(--fs); }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.role-switch { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: #e7ecf0; display: grid; place-items: center; color: var(--muted); }
+
+/* ----- Page ----- */
+.page { max-width: 1320px; margin: 0 auto; padding: 20px 24px 48px; }
+.page-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+.page-title { font-size: var(--fs-title); font-weight: 600; line-height: 1.35; margin: 0; }
+.page-sub { color: var(--muted); margin-top: 2px; }
+.page-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.crumbs { color: var(--muted); margin-bottom: 6px; }
+.crumbs a { color: var(--muted); }
+.crumbs i { font-size: var(--fs); margin: 0 4px; opacity: .6; }
+
+/* ----- Underline tabs (GitHub) ----- */
+.utabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.utabs a { padding: 8px 12px; color: var(--text); border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 6px; }
+.utabs a:hover { text-decoration: none; background: var(--bg-soft); border-radius: var(--radius) var(--radius) 0 0; }
+.utabs a.active { border-bottom-color: #fd8c73; font-weight: 600; }
+.utabs .count { background: #e7ecf0; border-radius: 999px; padding: 0 7px; color: var(--muted); }
+
+/* ----- Buttons ----- */
+.btn { height: 32px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius); font-weight: 500; line-height: 1; white-space: nowrap; }
+.btn-sm { height: 28px; padding: 0 10px; }
+.btn-icon { width: 28px; padding: 0; justify-content: center; }
+.btn-default { background: var(--bg-soft); border: 1px solid var(--border); color: var(--text); }
+.btn-default:hover { background: #eef1f4; border-color: #c4ccd4; color: var(--text); }
+.btn-primary { background: var(--primary); border: 1px solid rgba(31,35,40,.15); color: #fff; }
+.btn-primary:hover, .btn-primary:focus { background: var(--primary-hover); border-color: rgba(31,35,40,.15); color: #fff; }
+.btn-accent { background: var(--accent); border: 1px solid rgba(31,35,40,.15); color: #fff; }
+.btn-accent:hover { background: #0860c4; color: #fff; }
+.btn-danger-o { background: var(--bg-soft); border: 1px solid var(--border); color: var(--danger); }
+.btn-danger-o:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn-ghost { background: transparent; border: 1px solid transparent; color: var(--muted); }
+.btn-ghost:hover { background: var(--bg-soft); color: var(--text); }
+.btn:disabled, .btn.disabled { opacity: .5; }
+.btn-group .btn + .btn { margin-left: -1px; }
+
+/* ----- Form controls ----- */
+.form-control, .form-select { border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); box-shadow: none; }
+.form-control { height: 32px; padding: 4px 10px; }
+textarea.form-control { height: auto; padding: 6px 10px; line-height: 1.5; resize: vertical; }
+.form-control:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(9,105,218,.15); }
+.form-control[readonly], .form-control:disabled, .form-select:disabled { background: var(--bg-soft); color: var(--muted); }
+.form-label { font-weight: 600; margin-bottom: 4px; }
+.form-check-input { margin-top: .2em; }
+.form-check-input:checked { background-color: var(--accent); border-color: var(--accent); }
+
+/* Filter dropdown: plain, no icon, professional */
+.filter {
+  appearance: none; -webkit-appearance: none;
+  height: 32px; padding: 0 30px 0 10px; border: 1px solid var(--border); border-radius: var(--radius);
+  background-color: #fff; color: var(--text); font: inherit; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2359636e' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='M4 6l4 4 4-4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat; background-position: right 9px center; background-size: 12px;
+  min-width: 120px; max-width: 260px; text-overflow: ellipsis;
+}
+.filter:hover { background-color: var(--bg-soft); }
+.filter:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(9,105,218,.15); }
+.filter.is-set { border-color: #8fb8ec; background-color: #f3f8fe; }
+.search { position: relative; }
+.search input { padding-left: 30px; width: 240px; }
+.search i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.toolbar .spacer { flex: 1; }
+.link-btn { background: none; border: 0; color: var(--accent); padding: 0 4px; font: inherit; }
+.link-btn:hover { text-decoration: underline; }
+
+/* ----- Status pills (pastel) ----- */
+.st { font-size: var(--fs); display: inline-flex; align-items: center; gap: 6px; padding: 0 8px; height: 22px; border-radius: 999px; border: 1px solid; font-weight: 500; white-space: nowrap; line-height: 1; }
+.st::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .8; }
+.st-created   { background: #fff8e1; color: #7a5a00; border-color: #f2df9f; }
+.st-checked   { background: #eaf2fd; color: #1d4f91; border-color: #c9ddf6; }
+.st-published { background: #e8f5ec; color: #1d6b34; border-color: #c3e5cd; }
+.st-draft     { background: #f1f3f5; color: #57606a; border-color: #d8dee4; }
+.st-inactive  { background: #f1f3f5; color: #6e7781; border-color: #d8dee4; }
+.st-expired   { background: #fdeeee; color: #8c2f2f; border-color: #f3cfcf; }
+.st-failed    { background: #fdeeee; color: #8c2f2f; border-color: #f3cfcf; }
+.st-ok        { background: #e8f5ec; color: #1d6b34; border-color: #c3e5cd; }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 0 7px; height: 20px; border-radius: 999px; background: #eef1f4; color: var(--muted); white-space: nowrap; }
+.lang { font-size: var(--fs); display: inline-block; min-width: 26px; text-align: center; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); padding: 0 4px; text-transform: uppercase; }
+
+/* Status chips (filter) */
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: #fff; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text); font: inherit; }
+.chip .n { color: var(--muted); }
+.chip:hover { background: var(--bg-soft); }
+.chip.active { background: #1f2328; color: #fff; border-color: #1f2328; }
+.chip.active .n { color: #c9d1d9; }
+
+/* ----- Data grid (compact, AG-Grid like) ----- */
+.grid { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: #fff; }
+.grid-scroll { overflow-x: auto; }
+.grid table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--fs-td); font-variant-numeric: tabular-nums; }
+.grid th { font-size: var(--fs-th); font-weight: 600; color: var(--muted); background: var(--bg-soft); text-align: left; padding: 0 10px; height: 32px; border-bottom: 1px solid var(--border); white-space: nowrap; user-select: none; position: sticky; top: 0; }
+.grid th.sortable { cursor: pointer; }
+.grid th.sortable:hover { color: var(--text); }
+.grid th .sort { margin-left: 4px; opacity: .35; font-size: var(--fs-th); }
+.grid th.sorted .sort { opacity: 1; color: var(--text); }
+.grid td { padding: 0 10px; height: 34px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; vertical-align: middle; }
+.grid tbody tr:last-child td { border-bottom: 0; }
+.grid tbody tr:hover td { background: #f6f8fa; }
+.grid tbody tr.clickable { cursor: pointer; }
+.grid tbody tr.selected td { background: #eef6ff; }
+.grid td.trunc { max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+.grid td.num, .grid th.num { text-align: right; }
+.grid td.chk, .grid th.chk { width: 36px; padding-right: 0; }
+.grid td.act, .grid th.act { width: 44px; text-align: right; }
+.grid .st { height: 20px; padding: 0 7px; }
+.grid .lang { padding: 0 3px; }
+.grid .empty { text-align: center; color: var(--muted); height: 80px; }
+.grid td .sub { color: var(--muted); }
+.row-btn { border: 0; background: none; color: var(--muted); width: 26px; height: 26px; border-radius: var(--radius); display: inline-grid; place-items: center; }
+.row-btn:hover { background: #e7ecf0; color: var(--text); }
+.row-btn i { font-size: var(--fs-td); }
+
+.grid-foot { display: flex; align-items: center; gap: 12px; padding: 0 10px; height: 40px; border-top: 1px solid var(--border); background: var(--bg-soft); font-size: var(--fs-th); color: var(--muted); }
+.grid-foot .filter { height: 26px; min-width: 64px; font-size: var(--fs-th); padding-right: 24px; background-position: right 7px center; }
+.pager { margin-left: auto; display: flex; gap: 2px; align-items: center; }
+.pager button { min-width: 26px; height: 26px; border: 1px solid transparent; background: none; border-radius: var(--radius); color: var(--text); font-size: var(--fs-th); padding: 0 6px; }
+.pager button:hover:not(:disabled) { background: #e7ecf0; }
+.pager button.cur { border-color: var(--border); background: #fff; font-weight: 600; }
+.pager button:disabled { color: #adb5bd; }
+.pager i { font-size: var(--fs-th); }
+
+/* Bulk bar */
+.bulkbar { display: none; align-items: center; gap: 8px; padding: 0 10px; height: 44px; background: #eef6ff; border-bottom: 1px solid #c9ddf6; }
+.bulkbar.show { display: flex; }
+.bulkbar .count { font-weight: 600; margin-right: 6px; }
+
+/* ----- Cards / boxes ----- */
+.box { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
+.box-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg-soft); border-radius: var(--radius) var(--radius) 0 0; font-weight: 600; }
+.box-head .actions { margin-left: auto; display: flex; gap: 6px; font-weight: 400; }
+.box-body { padding: 14px; }
+.box + .box { margin-top: 16px; }
+.kv { display: grid; grid-template-columns: 140px 1fr; row-gap: 8px; column-gap: 12px; }
+.kv dt { color: var(--muted); font-weight: 400; }
+.kv dd { margin: 0; }
+
+/* Form grid (label left) */
+.fgrid { display: grid; grid-template-columns: 180px 1fr; column-gap: 16px; row-gap: 12px; align-items: start; }
+.fgrid > label { padding-top: 6px; font-weight: 600; }
+.fgrid > label .hint { display: block; font-weight: 400; color: var(--muted); }
+.fgrid .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fsep { grid-column: 1 / -1; border-top: 1px solid var(--border-soft); margin: 4px 0; padding-top: 12px; color: var(--muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+/* Banners */
+.banner { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; border-radius: var(--radius); border: 1px solid; margin-bottom: 16px; }
+.banner i { margin-top: 1px; }
+.banner-info { background: #f3f8fe; border-color: #c9ddf6; color: #1d4f91; }
+.banner-warn { background: #fffaeb; border-color: #f2df9f; color: #6b4f00; }
+.banner-ok   { background: #effaf2; border-color: #c3e5cd; color: #1d6b34; }
+.banner-muted{ background: var(--bg-soft); border-color: var(--border); color: var(--muted); }
+.banner .actions { margin-left: auto; }
+
+/* Layout with sidebar */
+.with-side { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px; align-items: start; }
+.side-block { padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--border-soft); }
+.side-block:last-child { border-bottom: 0; }
+.side-title { font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; }
+.side-title .actions { margin-left: auto; }
+.side-list { list-style: none; padding: 0; margin: 0; }
+.side-list li { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+.side-list li .r { margin-left: auto; }
+
+/* Timeline (history) */
+.timeline { list-style: none; padding: 0; margin: 0; position: relative; }
+.timeline li { position: relative; padding: 0 0 14px 22px; }
+.timeline li::before { content: ""; position: absolute; left: 5px; top: 18px; bottom: 0; width: 1px; background: var(--border); }
+.timeline li:last-child::before { display: none; }
+.timeline .dot { position: absolute; left: 0; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 2px solid #8c959f; }
+.timeline .who { font-weight: 600; }
+.timeline .when { color: var(--muted); }
+.timeline .what { color: var(--text); }
+.diff { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-top: 6px; }
+.diff div { padding: 2px 10px; white-space: pre-wrap; }
+.diff .del { background: #ffebe9; }
+.diff .add { background: #dafbe1; }
+.diff .ctx { color: var(--muted); }
+del.w { background: #ffcecb; text-decoration: line-through; color: #82071e; }
+ins.w { background: #aceebb; text-decoration: none; color: #116329; }
+
+/* Dropdowns / modals / offcanvas */
+.dropdown-menu { border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(140,149,159,.2); padding: 4px; }
+.dropdown-item { border-radius: var(--radius); padding: 6px 10px; display: flex; align-items: center; gap: 8px; }
+.dropdown-item .desc { color: var(--muted); margin-left: auto; }
+.dropdown-item.text-danger:hover { background: var(--danger); color: #fff !important; }
+.dropdown-header { color: var(--muted); font-weight: 600; padding: 6px 10px; }
+.modal-content { border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 16px 48px rgba(31,35,40,.25); }
+.modal-header { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+.modal-title { font-size: var(--fs-title); font-weight: 600; }
+.modal-body { padding: 16px 18px; }
+.modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); gap: 8px; }
+.modal-footer > * { margin: 0; }
+.offcanvas { border-left: 1px solid var(--border) !important; }
+.offcanvas-header { border-bottom: 1px solid var(--border); padding: 12px 16px; }
+.offcanvas-title { font-size: var(--fs-title); font-weight: 600; }
+.btn-close { width: 12px; height: 12px; }
+
+/* Option cards (radio) */
+.optcard { display: flex; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; }
+.optcard + .optcard { margin-top: 8px; }
+.optcard:has(input:checked) { border-color: var(--accent); background: #f3f8fe; }
+.optcard .t { font-weight: 600; }
+
+/* Handbook editor */
+.hb-head { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.hb-meta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; color: var(--muted); }
+.statbar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; width: 180px; background: #eef1f4; }
+.statbar span { display: block; height: 100%; }
+.sec { border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; background: #fff; }
+.sec.chapter { border-style: dashed; background: var(--bg-soft); }
+.sec-head { display: flex; align-items: center; gap: 8px; padding: 0 8px 0 6px; height: 42px; }
+.sec-head .num { color: var(--muted); min-width: 28px; }
+.sec-head .title { font-weight: 600; }
+.sec-head .lvl { color: var(--muted); }
+.sec-head .actions { margin-left: auto; display: flex; gap: 2px; align-items: center; }
+.sec-intro { padding: 0 14px 10px 44px; color: var(--muted); }
+.sec-body { border-top: 1px solid var(--border-soft); }
+.drag { color: #8c959f; cursor: grab; width: 22px; display: inline-grid; place-items: center; }
+.drag:active { cursor: grabbing; }
+.entries { font-size: var(--fs-td); }
+.entry { display: grid; grid-template-columns: 22px 80px minmax(0,1fr) 40px 44px 100px 44px 70px; gap: 8px; align-items: center; height: 34px; padding: 0 8px 0 6px; border-bottom: 1px solid var(--border-soft); }
+.entry:hover { background: #f6f8fa; }
+.entry .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.entry .name:hover { color: var(--accent); }
+.entry .st { height: 20px; padding: 0 7px; }
+.entry .muted { font-size: var(--fs-td); }
+.entry .r { text-align: right; }
+.sec-add { padding: 6px 8px 6px 34px; }
+.sortable-ghost { opacity: .4; background: #eef6ff; }
+.sec-edit { display: none; padding: 12px 14px; border-top: 1px solid var(--border-soft); background: #fbfcfd; }
+.sec-edit.show { display: block; }
+.empty-sec { padding: 12px 14px 12px 44px; color: var(--muted); font-size: var(--fs-td); }
+
+/* Add-module results */
+.res { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--border-soft); }
+.res:last-child { border-bottom: 0; }
+.res .info { flex: 1; min-width: 0; }
+.res .state { color: var(--muted); }
+.res .btns { display: flex; gap: 6px; }
+
+/* Markdown editor + preview */
+.md-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.md-wrap textarea { border: 0; border-radius: 0; min-height: 320px; box-shadow: none !important; }
+.md-wrap .pv { border-left: 1px solid var(--border); padding: 10px 14px; background: #fbfcfd; overflow: auto; max-height: 520px; }
+.md-bar { display: flex; gap: 2px; padding: 4px 6px; border-bottom: 1px solid var(--border); background: var(--bg-soft); grid-column: 1 / -1; }
+.md-bar button { border: 0; background: none; width: 28px; height: 26px; border-radius: var(--radius); color: var(--muted); }
+.md-bar button:hover { background: #e7ecf0; color: var(--text); }
+.pv table { border-collapse: collapse; margin: 6px 0; }
+.pv th, .pv td { border: 1px solid var(--border); padding: 2px 8px; }
+.pv p { margin: 0 0 8px; }
+
+/* Module page preview (like PDF) */
+.mpage { border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; background: #fff; }
+.mpage .mtitle { font-size: var(--fs-title); font-weight: 600; margin-bottom: 12px; }
+.mtable { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+.mtable th, .mtable td { border: 1px solid var(--border); padding: 6px 10px; vertical-align: top; text-align: left; }
+.mtable th { background: var(--bg-soft); font-weight: 600; white-space: nowrap; }
+.mrow { display: grid; grid-template-columns: 200px 1fr; border: 1px solid var(--border); border-top: 0; }
+.mrow:first-of-type { border-top: 1px solid var(--border); }
+.mrow > div { padding: 8px 10px; }
+.mrow > div:first-child { background: var(--bg-soft); font-weight: 600; border-right: 1px solid var(--border); }
+.mrow ul { margin: 0; padding-left: 18px; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 16px; }
+.stat { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
+.stat .v { font-size: var(--fs-title); font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat .l { color: var(--muted); }
+
+/* Role: viewer */
+body.viewer .admin-only { display: none !important; }
+.viewer-only { display: none !important; }
+body.viewer .viewer-only { display: flex !important; }
+
+/* Mockup note */
+.mock-note { position: fixed; right: 16px; bottom: 16px; background: #1f2328; color: #fff; border-radius: 999px; padding: 6px 12px; opacity: .85; z-index: 2000; display: flex; gap: 6px; align-items: center; }
+.mock-note a { color: #9cd0ff; }
+
+/* Toast */
+.toast-box { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #1f2328; color: #fff; padding: 8px 14px; border-radius: 8px; display: none; z-index: 3000; align-items: center; gap: 8px; }
+.toast-box.show { display: flex; }
+
+/* Public pages */
+.pub-header { border-bottom: 1px solid var(--border); background: #fff; }
+.pub-header .inner { max-width: 980px; margin: 0 auto; height: 56px; display: flex; align-items: center; gap: 12px; padding: 0 24px; }
+.pub { max-width: 980px; margin: 0 auto; padding: 24px; }
+.toc { list-style: none; padding: 0; margin: 0; }
+.toc .ch { font-weight: 600; padding: 12px 0 4px; border-bottom: 1px solid var(--border-soft); }
+.toc .se { font-weight: 600; padding: 10px 0 4px 18px; }
+.toc .mo { display: grid; grid-template-columns: 90px 1fr 60px; padding: 4px 0 4px 36px; border-bottom: 1px solid var(--border-soft); }
+.toc .mo:hover { background: var(--bg-soft); }
+.toc .mo .lp { text-align: right; color: var(--muted); }
+body.viewer .entry .drag.admin-only { display: inline-grid !important; visibility: hidden; }
+
+.grid .st, .entry .st, .grid .lang, .entry .lang, .grid .tag, .entry .tag { font-size: var(--fs-td); }
+.page-title .st { vertical-align: 3px; }
+.grid .btn { font-size: var(--fs-td); height: 26px; padding: 0 8px; }
+</style>
+</head><body>
+
+<header class="app-header"><div class="inner">
+  <a class="brand" href="handbooks-list.html"><span class="logo"><i class="bi bi-mortarboard"></i></span>MaMpf <span class="sub">Modulhandbuch</span></a>
+  <nav class="app-nav"><a href="handbooks-list.html" class=""><i class="bi bi-journal-bookmark"></i>Handbooks</a><a href="descriptions-list.html" class=""><i class="bi bi-file-earmark-text"></i>Descriptions</a><a href="master-data-modules.html" class="active"><i class="bi bi-database"></i>Master data</a></nav>
+  <div class="header-right">
+    <div class="dropdown">
+      <button class="btn btn-ghost btn-sm" data-bs-toggle="dropdown"><i class="bi bi-grid-3x3-gap"></i>Screens</button>
+      <ul class="dropdown-menu dropdown-menu-end"><li class="dropdown-header">Mockup screens</li><li><a class="dropdown-item" href="index.html">All screens</a></li><li><a class="dropdown-item" href="handbooks-list.html">Handbooks list</a></li><li><a class="dropdown-item" href="handbook-editor.html">Handbook editor</a></li><li><a class="dropdown-item" href="handbook-front-matter.html">Handbook front matter</a></li><li><a class="dropdown-item" href="descriptions-list.html">Descriptions list</a></li><li><a class="dropdown-item" href="description-edit.html">Description edit</a></li><li><a class="dropdown-item" href="master-data-modules.html">Master data: curriculum modules</a></li><li><a class="dropdown-item" href="curriculum-module-detail.html">Curriculum module detail</a></li><li><a class="dropdown-item" href="master-data-programs.html">Master data: study programs</a></li><li><a class="dropdown-item" href="study-program-detail.html">Study program detail</a></li><li><a class="dropdown-item" href="import-report.html">Import report (migration)</a></li><li><a class="dropdown-item" href="public-handbook.html">Public handbook page</a></li><li><a class="dropdown-item" href="public-module.html">Public module page</a></li></ul>
+    </div>
+    <label class="role-switch">View as
+      <select id="roleSwitch" class="filter" style="min-width:96px"><option value="admin">Editor</option><option value="viewer">Read-only</option></select>
+    </label>
+    <span class="avatar"><i class="bi bi-person"></i></span>
+  </div>
+</div></header>
+<main class="page">
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">Master data</h1>
+      <div class="page-sub">Term‑independent records: module codes and study programs.</div>
+    </div>
+  </div>
+
+  <div class="utabs">
+    <a href="master-data-modules.html" class="active"><i class="bi bi-boxes"></i>Curriculum modules <span class="count" id="tabCountM"></span></a>
+    <a href="master-data-programs.html"><i class="bi bi-mortarboard"></i>Study programs <span class="count" id="tabCountP"></span></a>
+  </div>
+
+  <div class="toolbar">
+    <div class="search"><i class="bi bi-search"></i><input id="q" class="form-control" placeholder="Search code or title"></div>
+    <select id="fSubject" class="filter">
+      <option value="">All subject areas</option><option value="cs">Informatik</option><option value="math">Mathematik</option><option value="general">Allgemeine Module</option>
+    </select>
+    <select id="fActive" class="filter">
+      <option value="active">Active only</option><option value="inactive">Inactive only</option><option value="">Active and inactive</option>
+    </select>
+    <button class="link-btn" id="reset">Reset filters</button>
+    <span class="spacer"></span>
+    <button class="btn btn-default admin-only" id="csv"><i class="bi bi-download"></i>CSV</button>
+    <button class="btn btn-primary admin-only" data-bs-toggle="modal" data-bs-target="#newModule"><i class="bi bi-plus-lg"></i>New module</button>
+  </div>
+
+  <div id="grid" class="grid"></div>
+  <div id="noHit" class="banner banner-muted mt-3 admin-only" style="display:none">
+    <i class="bi bi-search"></i><span>No module <b id="noHitCode"></b>.</span>
+    <span class="actions"><button class="btn btn-default btn-sm" id="createFromSearch"><i class="bi bi-plus-lg"></i>Create module <span id="noHitCode2"></span></button></span>
+  </div>
+</main>
+
+<!-- New module -->
+<div class="modal fade" id="newModule" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+  <div class="modal-header"><h2 class="modal-title">New curriculum module</h2><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body">
+    <div class="mb-3"><label class="form-label">Code</label><input id="nmCode" class="form-control" placeholder="e.g. IARCA">
+      <div class="form-text">Unique. Cannot be changed once the module has descriptions.</div>
+      <div class="form-text text-danger" id="nmErr" style="display:none">Code exists already: <a href="curriculum-module-detail.html">open IAD</a></div></div>
+    <div class="mb-3"><label class="form-label">Title</label><input class="form-control" placeholder="Internal label for search and lists">
+      <div class="form-text">The printed name is set per term on the description.</div></div>
+    <div class="mb-3"><label class="form-label">Subject area</label>
+      <select class="form-select"><option>Informatik</option><option>Mathematik</option><option>Allgemeine Module</option></select></div>
+    <div><label class="form-label">Notes</label><textarea class="form-control" rows="2" placeholder="e.g. ab SoSe 2026 im MHB"></textarea></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-default" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="nmSave">Create module</button></div>
+</div></div></div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>/* ===== Modulhandbuch mockups — shared script ===== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const STATUS_LABEL = { created: 'created', checked: 'checked', published: 'published', draft: 'draft', inactive: 'inactive', expired: 'expired', active: 'active', ok: 'ok', failed: 'failed' };
+function pill(st, label) { return `<span class="st st-${st}">${esc(label || STATUS_LABEL[st] || st)}</span>`; }
+function lang(l) { return `<span class="lang">${esc(l)}</span>`; }
+
+function toast(msg) {
+  let t = $('#toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast-box'; document.body.appendChild(t); }
+  t.innerHTML = `<i class="bi bi-check2-circle"></i><span>${esc(msg)}</span>`;
+  t.classList.add('show');
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ---- Role switch (admin / viewer) ---- */
+function applyRole(role) {
+  document.body.classList.toggle('viewer', role === 'viewer');
+  $$('.ro-field').forEach(el => { el.disabled = role === 'viewer'; });
+  const sel = $('#roleSwitch'); if (sel) sel.value = role;
+  document.dispatchEvent(new CustomEvent('rolechange', { detail: role }));
+}
+function currentRole() { try { return localStorage.getItem('mhb-role') || 'admin'; } catch (e) { return 'admin'; } }
+document.addEventListener('DOMContentLoaded', () => {
+  const sel = $('#roleSwitch');
+  if (sel) sel.addEventListener('change', () => { try { localStorage.setItem('mhb-role', sel.value); } catch (e) {} applyRole(sel.value); });
+  applyRole(currentRole());
+  $$('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+});
+const isViewer = () => document.body.classList.contains('viewer');
+
+/* ---- Data grid: sort, paginate, select, column visibility ---- */
+function Grid(opts) {
+  const st = { page: 1, size: opts.pageSize || 25, sort: opts.sort || null, dir: opts.dir || 1, sel: new Set() };
+  const root = typeof opts.el === 'string' ? $(opts.el) : opts.el;
+  const cols = opts.columns.map(c => Object.assign({ visible: c.visible !== false }, c));
+  const selectable = () => opts.selectable && !(opts.selectAdminOnly && isViewer());
+
+  function rows() {
+    let r = opts.data.filter(opts.filter || (() => true));
+    if (st.sort) {
+      const c = cols.find(c => c.key === st.sort);
+      const v = c && c.sortVal ? c.sortVal : (x => x[st.sort]);
+      r = [...r].sort((a, b) => { const va = v(a), vb = v(b); return (va > vb ? 1 : va < vb ? -1 : 0) * st.dir; });
+    }
+    return r;
+  }
+
+  function render() {
+    const all = rows();
+    const pages = Math.max(1, Math.ceil(all.length / st.size));
+    if (st.page > pages) st.page = pages;
+    const from = (st.page - 1) * st.size;
+    const view = all.slice(from, from + st.size);
+    const vis = cols.filter(c => c.visible);
+    const sel = selectable();
+
+    let h = '';
+    if (opts.bulk) h += `<div class="bulkbar ${st.sel.size && sel ? 'show' : ''}"><span class="count">${st.sel.size} selected</span>${opts.bulk}<button class="link-btn ms-auto" data-clear>Clear selection</button></div>`;
+    h += '<div class="grid-scroll"><table><thead><tr>';
+    if (sel) {
+      const allSel = view.length && view.every(r => st.sel.has(r[opts.idKey || 'id']));
+      h += `<th class="chk"><input class="form-check-input" type="checkbox" data-all ${allSel ? 'checked' : ''}></th>`;
+    }
+    vis.forEach(c => {
+      const sorted = st.sort === c.key;
+      const icon = sorted ? (st.dir > 0 ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up';
+      h += `<th class="${c.cls || ''} ${c.sortable !== false && c.label ? 'sortable' : ''} ${sorted ? 'sorted' : ''}" data-key="${c.key}">${esc(c.label || '')}${c.sortable !== false && c.label ? `<i class="bi ${icon} sort"></i>` : ''}</th>`;
+    });
+    h += '</tr></thead><tbody>';
+    if (!view.length) h += `<tr><td class="empty" colspan="${vis.length + (sel ? 1 : 0)}">${esc(opts.emptyText || 'No results for these filters.')}</td></tr>`;
+    view.forEach(r => {
+      const id = r[opts.idKey || 'id'];
+      h += `<tr class="${opts.onRow ? 'clickable' : ''} ${st.sel.has(id) ? 'selected' : ''}" data-id="${esc(id)}">`;
+      if (sel) h += `<td class="chk"><input class="form-check-input" type="checkbox" data-row ${st.sel.has(id) ? 'checked' : ''}></td>`;
+      vis.forEach(c => { h += `<td class="${c.cls || ''}">${c.render ? c.render(r) : esc(r[c.key])}</td>`; });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+    const a = all.length ? from + 1 : 0, b = Math.min(from + st.size, all.length);
+    h += `<div class="grid-foot"><span>Rows per page</span><select class="filter" data-size>${[10, 25, 50, 100].map(n => `<option ${n === st.size ? 'selected' : ''}>${n}</option>`).join('')}</select><span>${a}–${b} of ${all.length}</span><div class="pager">`;
+    h += `<button data-p="1" ${st.page === 1 ? 'disabled' : ''} title="First"><i class="bi bi-chevron-double-left"></i></button><button data-p="${st.page - 1}" ${st.page === 1 ? 'disabled' : ''} title="Previous"><i class="bi bi-chevron-left"></i></button>`;
+    pageList(st.page, pages).forEach(p => { h += p === '…' ? '<button disabled>…</button>' : `<button data-p="${p}" class="${p === st.page ? 'cur' : ''}">${p}</button>`; });
+    h += `<button data-p="${st.page + 1}" ${st.page === pages ? 'disabled' : ''} title="Next"><i class="bi bi-chevron-right"></i></button><button data-p="${pages}" ${st.page === pages ? 'disabled' : ''} title="Last"><i class="bi bi-chevron-double-right"></i></button></div></div>`;
+    root.innerHTML = h;
+    if (opts.onRender) opts.onRender(all);
+    if (opts.onSelect) opts.onSelect([...st.sel]);
+  }
+
+  function pageList(p, n) {
+    if (n <= 7) return Array.from({ length: n }, (_, i) => i + 1);
+    const s = new Set([1, n, p - 1, p, p + 1].filter(x => x >= 1 && x <= n));
+    const arr = [...s].sort((a, b) => a - b), out = [];
+    arr.forEach((x, i) => { if (i && x - arr[i - 1] > 1) out.push('…'); out.push(x); });
+    return out;
+  }
+
+  root.addEventListener('click', e => {
+    const th = e.target.closest('th.sortable');
+    if (th) { const k = th.dataset.key; if (st.sort === k) st.dir *= -1; else { st.sort = k; st.dir = 1; } render(); return; }
+    const pb = e.target.closest('[data-p]');
+    if (pb && !pb.disabled) { st.page = +pb.dataset.p; render(); return; }
+    if (e.target.matches('[data-clear]')) { st.sel.clear(); render(); return; }
+    if (e.target.matches('[data-all]')) {
+      const view = $$('tbody tr[data-id]', root).map(tr => tr.dataset.id);
+      view.forEach(id => { const key = coerce(id); e.target.checked ? st.sel.add(key) : st.sel.delete(key); });
+      render(); return;
+    }
+    if (e.target.matches('[data-row]')) { const id = coerce(e.target.closest('tr').dataset.id); e.target.checked ? st.sel.add(id) : st.sel.delete(id); render(); return; }
+    if (e.target.closest('button, a, input, .dropdown-menu')) return;
+    const tr = e.target.closest('tbody tr[data-id]');
+    if (tr && opts.onRow) opts.onRow(opts.data.find(r => String(r[opts.idKey || 'id']) === tr.dataset.id));
+  });
+  root.addEventListener('change', e => { if (e.target.matches('[data-size]')) { st.size = +e.target.value; st.page = 1; render(); } });
+  function coerce(id) { const r = opts.data.find(x => String(x[opts.idKey || 'id']) === id); return r ? r[opts.idKey || 'id'] : id; }
+
+  document.addEventListener('rolechange', render);
+  render();
+  return {
+    refresh() { st.page = 1; render(); },
+    redraw: render,
+    setVisible(key, on) { const c = cols.find(c => c.key === key); if (c) { c.visible = on; render(); } },
+    columns: cols,
+    selected() { return [...st.sel]; },
+    clearSelection() { st.sel.clear(); render(); },
+  };
+}
+
+/* ---- tiny deterministic "random" for mock data ---- */
+function hash(s) { let h = 2166136261; for (const ch of String(s)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return Math.abs(h); }
+function pick(s, arr) { return arr[hash(s) % arr.length]; }
+
+function fmtDate(iso) { const [y, m, d] = String(iso).split('-'); return d ? `${d}.${m}.${y}` : iso; }
+
+/* ===== Mock data (codes and names from the old system) ===== */
+const SUBJECT = { cs: 'Informatik', math: 'Mathematik', general: 'Allgemeine Module' };
+const TERMS = ['WS 2026/27', 'SoSe 2026', 'WS 2025/26', 'SoSe 2025', 'WS 2024/25', 'SoSe 2024', 'WS 2023/24'];
+const USERS = ['A. Becker', 'L. Hoffmann', 'system'];
+const LECTURERS = ['N. Vogel', 'K. Brandt', 'S. Lorenz', 'J. Winter', 'M. Albrecht', 'T. Kaiser', 'R. Engel', 'depending on teaching offer'];
+
+// code, name (printed, in its language), subject, language, ECTS, active, first term
+const MODULES_RAW = [
+  ['IACO', 'Applied Combinatorial Optimization', 'cs', 'en', 8, 1, 'WS 2024/25'],
+  ['IAD', 'Algorithmen und Datenstrukturen', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IADS2', 'Algorithms and Data Structures 2', 'cs', 'en', 8, 1, 'WS 2020/21'],
+  ['IAE', 'Algorithm Engineering', 'cs', 'en', 8, 1, 'WS 2020/21'],
+  ['IAF', 'Application Field', 'cs', 'en', 16, 1, 'WS 2021/22'],
+  ['IAI', 'Artificial Intelligence', 'cs', 'en', 8, 1, 'WS 2017/18'],
+  ['IAIP', 'Artificial Intelligence for Programming', 'cs', 'en', 6, 1, 'WS 2021/22'],
+  ['IAML', 'Advanced Machine Learning', 'cs', 'en', 8, 0, 'WS 2015/16'],
+  ['IAP', 'Anfängerpraktikum', 'cs', 'de', 6, 1, 'WS 2013/14'],
+  ['IARCA', 'Algorithmic Randomness and Computable Analysis', 'cs', 'en', 8, 1, 'SoSe 2026'],
+  ['IASE', 'Advanced Software Engineering', 'cs', 'en', 8, 1, 'SoSe 2026'],
+  ['IAuPl', 'Automated Planning', 'cs', 'en', 8, 1, 'SoSe 2026'],
+  ['IAus', 'Auslandsstudium', 'cs', 'de', 10, 1, 'WS 2013/14'],
+  ['IBa_100', 'Bachelorarbeit', 'cs', 'de', 12, 1, 'WS 2021/22'],
+  ['IBa_50', 'Bachelorarbeit', 'cs', 'de', 12, 1, 'WS 2021/22'],
+  ['IBil', 'Bildung durch Sommerschule, Ferienkurs oder Konferenz', 'cs', 'de', 2, 1, 'WS 2013/14'],
+  ['IBK', 'Bachelor-Kolloquium', 'cs', 'de', 2, 1, 'WS 2021/22'],
+  ['IBN', 'Betriebssysteme und Netzwerke', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IBS', 'Bachelor-Seminar', 'cs', 'de', 4, 1, 'WS 2021/22'],
+  ['ICCS', 'Computational Cognitive Science', 'cs', 'en', 8, 1, 'WS 2024/25'],
+  ['ICG', 'Computer Graphics', 'cs', 'en', 8, 1, 'WS 2016/17'],
+  ['ICGeo', 'Computational Geometry', 'cs', 'en', 8, 1, 'WS 2020/21'],
+  ['ICNA', 'Complex Network Analysis', 'cs', 'en', 8, 1, 'WS 2016/17'],
+  ['ICS', 'Computer Games (Game Engine Design)', 'cs', 'en', 8, 1, 'WS 2013/14'],
+  ['ICV', 'Computer Vision', 'cs', 'en', 8, 1, 'WS 2024/25'],
+  ['IDB', 'Datenbanken', 'cs', 'de', 8, 1, 'SoSe 2018'],
+  ['IDI', 'Didaktik der Informatik', 'cs', 'de', 4, 1, 'SoSe 2018'],
+  ['IDPA', 'Distributed and Parallel Algorithms', 'cs', 'en', 8, 1, 'WS 2022/23'],
+  ['IDS1', 'Discrete Structures 1', 'cs', 'en', 8, 1, 'WS 2020/21'],
+  ['IDS2', 'Discrete Structures 2', 'cs', 'en', 8, 1, 'WS 2020/21'],
+  ['IDSTA', 'Data Science for Text Analytics', 'cs', 'en', 8, 1, 'WS 2022/23'],
+  ['IEPK', 'Einführung in die Programmierung mit Kotlin', 'cs', 'de', 4, 1, 'SoSe 2023'],
+  ['IFML', 'Fundamentals of Machine Learning', 'cs', 'en', 8, 0, 'WS 2015/16'],
+  ['IFP', 'Fortgeschrittenenpraktikum', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IGMA', 'Geometric Modeling and Animation', 'cs', 'en', 8, 1, 'SoSe 2015'],
+  ['IGNNS', 'Generative Neural Networks for the Sciences', 'cs', 'en', 8, 1, 'WS 2023/24'],
+  ['IHASC', 'Hardware Aware Scientific Computing', 'cs', 'en', 8, 1, 'SoSe 2021'],
+  ['IInd', 'Industriepraktikum', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IIntS', 'Intelligent Systems', 'cs', 'en', 8, 1, 'SoSe 2024'],
+  ['IIP', 'Inverse Problems', 'cs', 'en', 8, 1, 'WS 2013/14'],
+  ['IITS1', 'IT-Sicherheit 1', 'cs', 'de', 8, 1, 'WS 2022/23'],
+  ['IITS2', 'IT-Sicherheit 2', 'cs', 'de', 8, 1, 'WS 2022/23'],
+  ['IITS3', 'IT-Sicherheit 3', 'cs', 'de', 8, 1, 'WS 2026/27'],
+  ['IIuG', 'Informatik und Gesellschaft', 'cs', 'de', 2, 1, 'WS 2021/22'],
+  ['ILat', 'Einführung in das Textsatzsystem LaTeX', 'cs', 'de', 2, 1, 'WS 2013/14'],
+  ['IMBTSA', 'Model-Based Time Series Analysis', 'cs', 'en', 8, 1, 'WS 2025/26'],
+  ['IMC', "Master's Colloquium", 'cs', 'en', 2, 1, 'WS 2021/22'],
+  ['IMI1', 'Mathematik für die Informatik 1', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IMI2', 'Mathematik für die Informatik 2', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IMLE', 'Machine Learning Essentials', 'cs', 'en', 8, 1, 'SoSe 2024'],
+  ['IMMD', 'Mining Massive Datasets', 'cs', 'en', 8, 1, 'WS 2017/18'],
+  ['IMoCh', 'Model Checking', 'cs', 'en', 8, 1, 'SoSe 2026'],
+  ['IMP', "Master's Advanced Practical", 'cs', 'en', 8, 1, 'WS 2021/22'],
+  ['IMS', "Master's Advanced Seminar", 'cs', 'en', 4, 1, 'WS 2021/22'],
+  ['IMT', "Master's Thesis", 'cs', 'en', 30, 1, 'WS 2021/22'],
+  ['INLPT', 'Natural Language Processing with Transformers', 'cs', 'en', 8, 1, 'WS 2023/24'],
+  ['IOML', 'Optimization for Machine Learning', 'cs', 'en', 8, 0, 'SoSe 2018'],
+  ['IOPSC', 'Object-Oriented Programming for Scientific Computing', 'cs', 'en', 6, 1, 'SoSe 2017'],
+  ['IPBB', 'Projektseminar Biomedizinische Bildanalyse', 'cs', 'de', 6, 1, 'WS 2013/14'],
+  ['IPGeo', 'Practical Geometry', 'cs', 'en', 8, 1, 'SoSe 2019'],
+  ['IPI', 'Einführung in die Praktische Informatik', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IPK', 'Programmierkurs', 'cs', 'de', 4, 1, 'WS 2021/22'],
+  ['IPM', 'IT Project Management', 'cs', 'en', 6, 1, 'WS 2013/14'],
+  ['IRA', 'Randomized Algorithms', 'cs', 'en', 8, 1, 'WS 2013/14'],
+  ['IRL', 'Reinforcement Learning', 'cs', 'en', 8, 1, 'SoSe 2026'],
+  ['IRMI', 'Robotics and Machine Intelligence', 'cs', 'en', 8, 1, 'WS 2026/27'],
+  ['ISE', 'Einführung ins Software Engineering', 'cs', 'de', 8, 1, 'WS 2025/26'],
+  ['ISV', 'Scientific Visualization', 'cs', 'en', 8, 1, 'WS 2013/14'],
+  ['ISWEco', 'Software Economics', 'cs', 'en', 6, 1, 'WS 2023/24'],
+  ['ISWEvol', 'Software Evolution', 'cs', 'en', 6, 1, 'WS 2022/23'],
+  ['ISWKM', 'Knowledge Management and Decision-Making in Software Engineering', 'cs', 'en', 6, 1, 'WS 2022/23'],
+  ['ISWRE', 'Requirements Engineering', 'cs', 'de', 6, 0, 'WS 2013/14'],
+  ['ITE', 'Einführung in die Technische Informatik', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['ITH', 'Einführung in die Theoretische Informatik', 'cs', 'de', 8, 1, 'WS 2013/14'],
+  ['IVCH', 'Visualisierung im Bereich Cultural Heritage', 'cs', 'de', 6, 1, 'WS 2013/14'],
+  ['IVV', 'Volume Visualization', 'cs', 'en', 6, 1, 'WS 2013/14'],
+  ['MA1', 'Analysis I', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MA2', 'Analysis II', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MA3', 'Höhere Analysis', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MA4', 'Lineare Algebra I', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MA5', 'Lineare Algebra II', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MA7', 'Einführung in die Numerik', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MA8', 'Einführung in die Wahrscheinlichkeitstheorie und Statistik', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MAMB', 'Applied Mathematics in Biology: Single-cell omics', 'math', 'en', 8, 1, 'SoSe 2024'],
+  ['MB1', 'Algebra I', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MB2', 'Algebra II', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MB3', 'Funktionentheorie I', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MB4', 'Funktionentheorie II', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MB5', 'Algebraische Topologie I', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MB7', 'Grundlagen Geometrie und Topologie', 'math', 'de', 8, 1, 'SoSe 2025'],
+  ['MBA_100', 'Bachelorarbeit', 'math', 'de', 12, 1, 'WS 2013/14'],
+  ['MC1', 'Gewöhnliche Differentialgleichungen', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MC2', 'Partielle Differentialgleichungen', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MC3', 'Funktionalanalysis', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MC4', 'Wahrscheinlichkeitstheorie', 'math', 'de', 8, 1, 'WS 2013/14'],
+  ['MD1', 'Numerik', 'math', 'de', 8, 0, 'WS 2013/14'],
+  ['MD7', 'Die Programmiersprache R und ihre Anwendungen in der Stochastik', 'math', 'de', 4, 1, 'WS 2018/19'],
+  ['MD8', 'Numerical Linear Algebra', 'math', 'en', 8, 1, 'WS 2021/22'],
+  ['ME9', 'Logic, Type Theory and Functional Programming', 'math', 'en', 8, 1, 'SoSe 2026'],
+  ['MLat', 'Introduction to LaTeX', 'math', 'en', 2, 1, 'WS 2026/27'],
+  ['MM15', 'Grundmodul Numerik und Optimierung', 'math', 'de', 8, 1, 'WS 2022/23'],
+  ['SCFA', 'Field of Application', 'general', 'en', 16, 1, 'WS 2022/23'],
+  ['SCMT', "Master's Thesis", 'general', 'en', 30, 1, 'WS 2022/23'],
+  ['SCS', 'Master Seminar (Mathematics)', 'general', 'en', 6, 1, 'WS 2013/14'],
+];
+const NOTES = {
+  IACO: 'ab WiSe 2024/25 im MHB, ersetzt Optimization for Machine Learning',
+  IAML: 'ab WS 2015/16 im MHB, ab SS 2026 nicht mehr im MHB',
+  IFML: 'ab WS 2015/16 im MHB, ab SS 2026 nicht mehr im MHB',
+  IOML: 'ab SS 2018 im MHB, ab WiSe 24/25 Änderung zu Applied Combinatorial Optimization',
+  ISWRE: 'Requirements Engineering, ab WS 25/26 nicht mehr im MHB',
+  MD1: 'Numerik, ab SS 2026 nicht mehr im MHB',
+  IITS3: 'IT-Sicherheit 3 (für MSc) ab WS 2026/27 im MHB',
+  IRMI: 'Robotics and Machine Intelligence ab WiSe 26/27 im MHB',
+  ISE: 'Änderung von ISW auf ISE zum WS 25/26',
+};
+
+const MODULES = MODULES_RAW.map(([code, name, subject, lng, ects, active, first]) => ({
+  id: code, code, title: name, name, subject, lang: lng, ects, active: !!active, first,
+  last: active ? 'WS 2026/27' : (code === 'ISWRE' ? 'SoSe 2025' : 'WS 2025/26'),
+  notes: NOTES[code] || '',
+}));
+function termIdx(t) { const m = t.match(/(WS|SoSe) (\d{4})/); return +m[2] * 2 + (m[1] === 'WS' ? 1 : 0); }
+MODULES.forEach(m => { m.terms = termIdx(m.last) - termIdx(m.first) + 1; });
+
+const PROGRAMS = [
+  { id: 13, name: 'Informatik BSc 100%', short: 'Informatik BSc 100', lang: 'de', expires: '', count: 10, latest: 'WS 2026/27', info: 'MHB für den Bachelor 100% Informatik nach der neuen PO (letzte Änderung vom 05.10.2022) gültig ab WiSe 2021/22' },
+  { id: 10, name: 'Informatik BSc 100% alt', short: 'Informatik BSc 100 alt', lang: 'de', expires: '2026-01-01', count: 21, latest: 'WS 2025/26', info: 'MHB für den Bachelor 100% Angewandte Informatik nach der alten PO vom 26.03.2015' },
+  { id: 16, name: 'Informatik BSc 50%', short: 'Informatik BSc 50', lang: 'de', expires: '', count: 10, latest: 'WS 2026/27', info: 'MHB für den Bachelor 50% Informatik nach der neuen PO (letzte Änderung vom 05.10.2022) gültig ab WiSe 2021/22' },
+  { id: 11, name: 'Informatik BSc 50% alt', short: 'Informatik BSc 50 alt', lang: 'de', expires: '2026-01-01', count: 21, latest: 'WS 2025/26', info: 'MHB für den Bachelor 50% Angewandte Informatik nach der alten PO vom 26.03.2015' },
+  { id: 3, name: 'Informatik BSc (alt PO 3.7.2012)', short: 'Informatik BSc alt', lang: 'de', expires: '2024-01-01', count: 21, latest: 'WS 2023/24', info: 'MHB für den Bachelor Angewandte Informatik nach der alten PO vom 3.7.2012' },
+  { id: 2, name: 'Informatik Lehramt', short: 'Informatik Lehramt', lang: 'de', expires: '2025-01-01', count: 23, latest: 'WS 2024/25', info: '' },
+  { id: 5, name: 'Informatik MSc AI alt', short: 'Informatik MSc AI alt', lang: 'de', expires: '2026-01-01', count: 25, latest: 'WS 2025/26', info: 'MHB für den Master Angewandte Informatik nach der alten PO vom 22.07.2010 (letzte Änderung vom 07.02.2013)' },
+  { id: 15, name: 'Informatik MSc Data and Computer Science', short: 'Informatik MSc DaCS', lang: 'en', expires: '', count: 11, latest: 'WS 2026/27', info: 'MHB für den MSc DaCS (englisch) gültig ab WiSe 2021/22, PO Änderung vom 29.09.2021, letzte Änderung der PO vom 05.10.2022' },
+  { id: 6, name: 'Mathematik MSc (alt)', short: 'MaM', lang: 'de', expires: '2024-01-01', count: 1, latest: 'WS 2014/15', info: '' },
+  { id: 1, name: 'Mathematik BSc 100%', short: 'Mathematik BSc 100', lang: 'de', expires: '', count: 27, latest: 'WS 2026/27', info: 'MHB für den Bachelor 100% Mathematik nach der neuen PO vom 05.10.2022' },
+  { id: 9, name: 'Mathematik BSc 50%', short: 'Mathematik BSc 50', lang: 'de', expires: '', count: 27, latest: 'WS 2026/27', info: 'MHB für den Bachelor 50% Mathematik nach der neuen PO vom 05.10.2022' },
+  { id: 4, name: 'Mathematik Lehramt', short: 'Mathematik Lehramt', lang: 'de', expires: '2024-01-01', count: 19, latest: 'WS 2023/24', info: '' },
+  { id: 12, name: 'Mathematik MSc', short: 'Mathematik MSc', lang: 'de', expires: '', count: 27, latest: 'WS 2026/27', info: 'MHB für den Master Mathematik nach der neuen PO vom 05.10.2022' },
+  { id: 18, name: 'Mathematik MSc Machine Learning and Data Science', short: 'Mathematik MSc MLDS', lang: 'en', expires: '', count: 5, latest: 'WS 2026/27', info: 'MHB für den MSc MLDS (englisch) gültig ab WiSe 2024/25' },
+  { id: 17, name: 'SciComp MSc', short: 'SciComp MSc', lang: 'en', expires: '', count: 9, latest: 'WS 2026/27', info: 'MHB für den Master Scientific Computing nach der PO vom 05.10.2022' },
+  { id: 7, name: 'SciComp MSc old', short: 'SciComp MSc old', lang: 'en', expires: '2026-01-01', count: 25, latest: 'WS 2025/26', info: 'MHB für den Master Scientific Computing nach der alten PO vom 22.04.2013' },
+];
+const TODAY = '2026-11-21';
+PROGRAMS.forEach(p => { p.expired = !!p.expires && p.expires <= TODAY; });
+const ACTIVE_PROGRAMS = PROGRAMS.filter(p => !p.expired);
+
+/* Descriptions (ModuleEdition) for the newest terms */
+function makeDescriptions() {
+  const out = [];
+  ['WS 2026/27', 'SoSe 2026', 'WS 2025/26'].forEach((term, ti) => {
+    MODULES.filter(m => m.active || ti > 0).forEach(m => {
+      if (ti === 0 && !m.active) return;
+      const h = hash(m.code + term);
+      const status = ti > 0 ? 'published' : (h % 10 < 3 ? 'created' : h % 10 < 4 ? 'checked' : 'published');
+      const used = ['ILat', 'IAML'].includes(m.code) && ti === 0 ? 0 : 1 + h % 3;
+      const source = m.first === term ? 'new' : (status === 'created' ? 'edited' : (h % 3 ? 'copied' : 'edited'));
+      const day = 1 + h % 20;
+      out.push({
+        id: m.code + '|' + term, code: m.code, name: m.name, term, lang: m.lang, ects: m.ects, subject: m.subject,
+        status, used, source, lv: '13' + String(1000000 + h % 8999999).slice(0, 8),
+        lecturers: pick(m.code, LECTURERS), cycle: pick(m.code + 'c', ['every winter semester', 'every summer semester', 'each semester', 'irregular']),
+        responsible: pick(m.code + 'r', LECTURERS.slice(0, 7)),
+        changed: (ti === 0 ? '2026-' + (10 + h % 2) + '-' : '2026-0' + (4 + ti) + '-') + String(day).padStart(2, '0'),
+        by: source === 'copied' ? 'system' : pick(m.code, USERS.slice(0, 2)),
+      });
+    });
+  });
+  return out;
+}
+const DESCRIPTIONS = makeDescriptions();
+Object.assign(DESCRIPTIONS.find(d => d.id === 'IACO|WS 2026/27'), { used: 3, status: 'published', source: 'edited', changed: '2026-10-15', by: 'A. Becker' });
+</script>
+<script>
+const subjLabel = s => SUBJECT[s];
+const grid = Grid({
+  el: '#grid', data: MODULES, pageSize: 25, sort: 'code',
+  filter: m => {
+    const q = $('#q').value.trim().toLowerCase(), s = $('#fSubject').value, a = $('#fActive').value;
+    if (q && !(m.code.toLowerCase().includes(q) || m.title.toLowerCase().includes(q))) return false;
+    if (s && m.subject !== s) return false;
+    if (a === 'active' && !m.active) return false;
+    if (a === 'inactive' && m.active) return false;
+    return true;
+  },
+  columns: [
+    { key: 'code', label: 'Code', render: m => `<span class="code">${esc(m.code)}</span>` },
+    { key: 'title', label: 'Title', cls: 'trunc' },
+    { key: 'subject', label: 'Subject area', render: m => esc(subjLabel(m.subject)) },
+    { key: 'used', label: 'Used in', sortVal: m => m.first, render: m => `${esc(m.first)} – ${esc(m.last)} <span class="sub">· ${m.terms} terms</span>` },
+    { key: 'notes', label: 'Notes', cls: 'trunc', render: m => `<span class="sub">${esc(m.notes)}</span>` },
+    { key: 'active', label: 'Status', sortVal: m => m.active ? 0 : 1, render: m => pill(m.active ? 'published' : 'inactive', m.active ? 'active' : 'inactive') },
+    { key: 'act', label: '', cls: 'act', sortable: false, render: m => `<div class="dropdown"><button class="row-btn" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></button><ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="curriculum-module-detail.html"><i class="bi bi-box-arrow-up-right"></i>Open</a></li>
+        <li class="admin-only"><a class="dropdown-item" href="#"><i class="bi bi-${m.active ? 'pause-circle' : 'play-circle'}"></i>${m.active ? 'Deactivate' : 'Reactivate'}</a></li>
+        <li class="admin-only"><a class="dropdown-item text-danger disabled" href="#"><i class="bi bi-trash"></i>Delete <span class="desc">has descriptions</span></a></li></ul></div>` },
+  ],
+  onRow: () => location.href = 'curriculum-module-detail.html',
+  onRender: rows => {
+    const q = $('#q').value.trim();
+    $('#noHit').style.display = rows.length || !q ? 'none' : 'flex';
+    $('#noHitCode').textContent = $('#noHitCode2').textContent = q.toUpperCase();
+    ['#fSubject', '#fActive'].forEach(s => $(s).classList.toggle('is-set', $(s).value !== (s === '#fActive' ? 'active' : '')));
+  },
+});
+$('#tabCountM').textContent = MODULES.length;
+$('#tabCountP').textContent = PROGRAMS.length;
+['#q', '#fSubject', '#fActive'].forEach(s => $(s).addEventListener('input', grid.refresh));
+$('#reset').onclick = () => { $('#q').value = ''; $('#fSubject').value = ''; $('#fActive').value = 'active'; grid.refresh(); };
+$('#createFromSearch').onclick = () => { $('#nmCode').value = $('#q').value.trim().toUpperCase(); new bootstrap.Modal('#newModule').show(); };
+$('#nmCode').addEventListener('input', e => { $('#nmErr').style.display = MODULES.some(m => m.code.toLowerCase() === e.target.value.trim().toLowerCase()) ? 'block' : 'none'; });
+$('#nmSave').onclick = () => { bootstrap.Modal.getInstance('#newModule').hide(); toast('Module created'); };
+$('#csv').onclick = () => toast('CSV with current filter downloaded');
+</script>
+</body></html>

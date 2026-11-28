@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Dana Dekanat",
+    "email": "dana.dekanat@example.org",
+    "roles": [
+      "dean_of_studies"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Sam Studienbüro",
+    "email": "sam.studienbuero@example.org",
+    "roles": [
+      "dean_of_studies"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Prof. Dr. Anna Algo",
+    "email": "anna.algo@example.org",
+    "roles": []
+  },
+  {
+    "id": 4,
+    "name": "Dr. Ben Bayes",
+    "email": "ben.bayes@example.org",
+    "roles": []
+  },
+  {
+    "id": 5,
+    "name": "Prof. Dr. Clara Cauchy",
+    "email": "clara.cauchy@example.org",
+    "roles": []
+  },
+  {
+    "id": 6,
+    "name": "Dr. David Daten",
+    "email": "david.daten@example.org",
+    "roles": []
+  }
+]
